@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 from plot_widget import PlotWidget
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QFrame, QPainter, QPushButton, QBrush
@@ -120,11 +121,19 @@ class Joystick(PluginBase):
         layout.addWidget(self.calibration_button)
 
     def start(self):
-        self.js.set_position_callback_period(20)
+        try:
+            self.js.set_position_callback_period(20)
+        except ip_connection.Error:
+            return
+        
         self.plot_widget.stop = False
         
     def stop(self):
-        self.js.set_position_callback_period(0)
+        try:
+            self.js.set_position_callback_period(0)
+        except ip_connection.Error:
+            pass
+        
         self.plot_widget.stop = True
 
     @staticmethod
@@ -132,8 +141,10 @@ class Joystick(PluginBase):
         return 'Joystick Bricklet' in name 
 
     def calibration_pressed(self):
-        self.js.calibrate()
-        print "calibration"
+        try:
+            self.js.calibrate()
+        except ip_connection.Error:
+            return
         
     def get_current_x(self):
         return self.current_x

@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QComboBox
 from PyQt4.QtCore import pyqtSignal
         
@@ -80,21 +81,25 @@ class LCD16x2(PluginBase):
         self.bl_button = QPushButton()
         self.cursor_button = QPushButton()
         self.blink_button = QPushButton()
-        if self.lcd.is_backlight_on():
-            self.bl_button.setText('Backlight Off')
-        else:
-            self.bl_button.setText('Backlight On')
-            
-        cursor, blink = self.lcd.get_config()
-        if cursor:
-            self.cursor_button.setText('Cursor Off')
-        else:
-            self.cursor_button.setText('Cursor On')
-            
-        if blink:
-            self.blink_button.setText('Blink Off')
-        else:
-            self.blink_button.setText('Blink On')
+        
+        try:
+            if self.lcd.is_backlight_on():
+                self.bl_button.setText('Backlight Off')
+            else:
+                self.bl_button.setText('Backlight On')
+                
+            cursor, blink = self.lcd.get_config()
+            if cursor:
+                self.cursor_button.setText('Cursor Off')
+            else:
+                self.cursor_button.setText('Cursor On')
+                
+            if blink:
+                self.blink_button.setText('Blink Off')
+            else:
+                self.blink_button.setText('Blink On')
+        except ip_connection.Error:
+            pass
             
         self.onofflayout = QHBoxLayout()
         self.onofflayout.addWidget(self.bl_button)
@@ -149,12 +154,15 @@ class LCD16x2(PluginBase):
             self.b2_label.setText('Button 2: Released')
     
     def bl_pressed(self):
-        if self.bl_button.text() == 'Backlight On':
-            self.lcd.backlight_on()
-            self.bl_button.setText('Backlight Off')
-        else:
-            self.lcd.backlight_off()
-            self.bl_button.setText('Backlight On')
+        try:
+            if self.bl_button.text() == 'Backlight On':
+                self.lcd.backlight_on()
+                self.bl_button.setText('Backlight Off')
+            else:
+                self.lcd.backlight_off()
+                self.bl_button.setText('Backlight On')
+        except ip_connection.Error:
+            return
     
     def get_config(self):
         cursor = self.cursor_button.text() == 'Cursor Off'
@@ -163,7 +171,11 @@ class LCD16x2(PluginBase):
     
     def cursor_pressed(self):
         cursor, blink = self.get_config()
-        self.lcd.set_config(not cursor, blink)
+        try:
+            self.lcd.set_config(not cursor, blink)
+        except ip_connection.Error:
+            return
+        
         if cursor:
             self.cursor_button.setText('Cursor On')
         else:
@@ -171,17 +183,26 @@ class LCD16x2(PluginBase):
     
     def blink_pressed(self):
         cursor, blink = self.get_config()
-        self.lcd.set_config(cursor, not blink)
+        try:
+            self.lcd.set_config(cursor, not blink)
+        except ip_connection.Error:
+            return
         if blink:
             self.blink_button.setText('Blink On')
         else:
             self.blink_button.setText('Blink Off')
     
     def clear_pressed(self):
-        self.lcd.clear_display()
+        try:
+            self.lcd.clear_display()
+        except ip_connection.Error:
+            return
     
     def text_pressed(self):
         line = int(self.line_combo.currentText())
         position = int(self.pos_combo.currentText())
         text = str(self.text_edit.text())
-        self.lcd.write_line(line, position, text)
+        try:
+            self.lcd.write_line(line, position, text)
+        except ip_connection.Error:
+            return

@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 from plot_widget import PlotWidget
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QSlider
@@ -67,12 +68,20 @@ class LinearPoti(PluginBase):
         layout.addWidget(self.plot_widget)
         
     def start(self):
-        self.cb_position(self.lp.get_position())
-        self.lp.set_position_callback_period(20)
+        try:
+            self.cb_position(self.lp.get_position())
+            self.lp.set_position_callback_period(20)
+        except ip_connection.Error:
+            return
+        
         self.plot_widget.stop = False
         
     def stop(self):
-        self.lp.set_position_callback_period(0)
+        try:
+            self.lp.set_position_callback_period(0)
+        except ip_connection.Error:
+            pass
+        
         self.plot_widget.stop = True
 
     @staticmethod

@@ -21,17 +21,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-#import logging
-
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 
 #from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QVBoxLayout, QLabel, QWidget, QColor, QPainter, QSizePolicy, QInputDialog
 from PyQt4.QtCore import Qt, QRect, QTimer
 import PyQt4.Qwt5 as Qwt
 import brick_servo
-
-from ip_connection import Error
 
 import time
 import random
@@ -243,13 +240,16 @@ class Servo(PluginBase, Ui_Servo):
             self.enable_checkbox.setCheckState(Qt.Unchecked)
             return
         
-        pos = self.servo.get_position(i);
-        vel = self.servo.get_velocity(i);
-        acc = self.servo.get_acceleration(i);
-        per = self.servo.get_period(i)
-        ena = self.servo.is_enabled(i)
-        deg_min, deg_max = self.servo.get_degree(i)
-        pulse_min, pulse_max = self.servo.get_pulse_width(i)
+        try:
+            pos = self.servo.get_position(i);
+            vel = self.servo.get_velocity(i);
+            acc = self.servo.get_acceleration(i);
+            per = self.servo.get_period(i)
+            ena = self.servo.is_enabled(i)
+            deg_min, deg_max = self.servo.get_degree(i)
+            pulse_min, pulse_max = self.servo.get_pulse_width(i)
+        except ip_connection.Error:
+            return
         
         self.position_spin.setValue(pos)
         self.velocity_spin.setValue(vel)
@@ -321,10 +321,13 @@ class Servo(PluginBase, Ui_Servo):
 
     def enable_state_changed(self, state):
         s = self.selected_servo()
-        if state == Qt.Checked:
-            self.servo.enable(s)
-        elif state == Qt.Unchecked:
-            self.servo.disable(s)
+        try:
+            if state == Qt.Checked:
+                self.servo.enable(s)
+            elif state == Qt.Unchecked:
+                self.servo.disable(s)
+        except ip_connection.Error:
+            return
             
     def update_apply(self):
         self.servo_current_update(self.up_cur)
@@ -372,7 +375,7 @@ class Servo(PluginBase, Ui_Servo):
                 self.update_done_event.set()
                 self.update_event.wait()
                 self.update_done_event.clear()
-            except Error:
+            except ip_connection.Error:
                 pass
         self.update_done_event.set()
             
@@ -381,13 +384,16 @@ class Servo(PluginBase, Ui_Servo):
             if not self.alive:
                 return
 
-            if ena:
-                self.servo.enable(num)
-            else:
-                self.servo.disable(num)
-            self.servo.set_acceleration(num, acc)
-            self.servo.set_velocity(num, vel)
-            self.servo.set_position(num, pos)
+            try:
+                if ena:
+                    self.servo.enable(num)
+                else:
+                    self.servo.disable(num)
+                self.servo.set_acceleration(num, acc)
+                self.servo.set_velocity(num, vel)
+                self.servo.set_position(num, pos)
+            except ip_connection.Error:
+                return
         
         def random_test():
             for i in range(7):
@@ -458,59 +464,92 @@ class Servo(PluginBase, Ui_Servo):
         qid.setIntMinimum(5000)
         qid.setIntMaximum(27000)
         qid.setIntStep(100)
-        qid.setIntValue(self.servo.get_output_voltage())
+        try:
+            qid.setIntValue(self.servo.get_output_voltage())
+        except ip_connection.Error:
+            return
         qid.intValueSelected.connect(self.output_voltage_selected)
         qid.setLabelText("Choose Output Voltage in mV.")
 #                         "<font color=red>Setting this too high can destroy your servo.</font>")
         qid.open()
         
     def output_voltage_selected(self, value):
-        self.servo.set_output_voltage(value)
+        try:
+            self.servo.set_output_voltage(value)
+        except ip_connection.Error:
+            return
         
     def position_slider_released(self):
         value = self.position_slider.value()
         self.position_spin.setValue(value)
-        self.servo.set_position(self.selected_servo(), value)
+        try:
+            self.servo.set_position(self.selected_servo(), value)
+        except ip_connection.Error:
+            return
  
     def position_spin_finished(self):
         value = self.position_spin.value()
         self.position_slider.setValue(value)
-        self.servo.set_position(self.selected_servo(), value)
+        try:
+            self.servo.set_position(self.selected_servo(), value)
+        except ip_connection.Error:
+            return
         
     def velocity_slider_released(self):
         value = self.velocity_slider.value()
         self.velocity_spin.setValue(value)
-        self.servo.set_velocity(self.selected_servo(), value)
+        try:
+            self.servo.set_velocity(self.selected_servo(), value)
+        except ip_connection.Error:
+            return
         
     def velocity_spin_finished(self):
         value = self.velocity_spin.value()
         self.velocity_slider.setValue(value)
-        self.servo.set_velocity(self.selected_servo(), value)
+        try:
+            self.servo.set_velocity(self.selected_servo(), value)
+        except ip_connection.Error:
+            return
         
     def acceleration_slider_released(self):
         value = self.acceleration_slider.value()
         self.acceleration_spin.setValue(value)
-        self.servo.set_acceleration(self.selected_servo(), value)
+        try:
+            self.servo.set_acceleration(self.selected_servo(), value)
+        except ip_connection.Error:
+            return
         
     def acceleration_spin_finished(self):
         value = self.acceleration_spin.value()
         self.acceleration_slider.setValue(value)
-        self.servo.set_acceleration(self.selected_servo(), value)
+        try:
+            self.servo.set_acceleration(self.selected_servo(), value)
+        except ip_connection.Error:
+            return
         
     def period_slider_released(self):
         value = self.period_slider.value()
         self.period_spin.setValue(value)
-        self.servo.set_period(self.selected_servo(), value)
+        try:
+            self.servo.set_period(self.selected_servo(), value)
+        except ip_connection.Error:
+            return
         
     def period_spin_finished(self):
         value = self.period_spin.value()
         self.period_slider.setValue(value)
-        self.servo.set_period(self.selected_servo(), value)
+        try:
+            self.servo.set_period(self.selected_servo(), value)
+        except ip_connection.Error:
+            return
         
     def pulse_width_spin_finished(self):
-        self.servo.set_pulse_width(self.selected_servo(), 
-                                   self.pulse_width_min_spin.value(), 
-                                   self.pulse_width_max_spin.value())
+        try:
+            self.servo.set_pulse_width(self.selected_servo(), 
+                                       self.pulse_width_min_spin.value(), 
+                                       self.pulse_width_max_spin.value())
+        except ip_connection.Error:
+            return
     
     def degree_spin_finished(self):
         min = self.degree_min_spin.value()
@@ -524,4 +563,7 @@ class Servo(PluginBase, Ui_Servo):
         self.position_list[servo].setTotalAngle((max - min)/100)
         self.position_list[servo].setRange(min/100, max/100)
         
-        self.servo.set_degree(servo, min, max)
+        try:
+            self.servo.set_degree(servo, min, max)
+        except ip_connection.Error:
+            return

@@ -26,6 +26,7 @@ from PyQt4.QtCore import QTimer, Qt, pyqtSignal
 
 from speedometer import SpeedoMeter
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 import brick_dc
 
 from ui_dc import Ui_DC
@@ -98,13 +99,19 @@ class DC(PluginBase, Ui_DC):
     
     def start(self):
         self.update_timer.start(1000)
-        self.dc.set_current_velocity_period(100)
-        self.update_start()
-        self.update_data()
+        try:
+            self.dc.set_current_velocity_period(100)
+            self.update_start()
+            self.update_data()
+        except ip_connection.Error:
+            return
         
     def stop(self):
         self.update_timer.stop()
-        self.dc.set_current_velocity_period(0)
+        try:
+            self.dc.set_current_velocity_period(0)
+        except ip_connection.Error:
+            return
         
     @staticmethod
     def has_name(name):
@@ -123,25 +130,39 @@ class DC(PluginBase, Ui_DC):
         #qem.exec_()
         
     def enable_state_changed(self, state):
-        if state == Qt.Checked:
-            self.dc.enable()
-        elif state == Qt.Unchecked:
-            self.dc.disable()
+        try:
+            if state == Qt.Checked:
+                self.dc.enable()
+            elif state == Qt.Unchecked:
+                self.dc.disable()
+        except ip_connection.Error:
+            return
             
     def brake_value_changed(self, checked):
         if checked:
-            self.dc.set_drive_mode(0)
+            try:
+                self.dc.set_drive_mode(0)
+            except ip_connection.Error:
+                return
         
     def coast_value_changed(self, checked):
         if checked:
-            self.dc.set_drive_mode(1)
+            try:
+                self.dc.set_drive_mode(1)
+            except ip_connection.Error:
+                return
         
     def full_brake_pressed(self):
-        self.dc.full_brake()
+        try:
+            self.dc.full_brake()
+        except ip_connection.Error:
+            return
         
     def minimum_voltage_selected(self, value):
-        print "minimum_motor_voltage_button_pressed:", value
-        self.dc.set_minimum_voltage(value)
+        try:
+            self.dc.set_minimum_voltage(value)
+        except ip_connection.Error:
+            return
         
     def minimum_voltage_button_pressed(self):
         qid = QInputDialog(self)
@@ -149,7 +170,10 @@ class DC(PluginBase, Ui_DC):
         qid.setIntMinimum(5000)
         qid.setIntMaximum(0xFFFF)
         qid.setIntStep(100)
-        qid.setIntValue(self.dc.get_minimum_voltage())
+        try:
+            qid.setIntValue(self.dc.get_minimum_voltage())
+        except ip_connection.Error:
+            return
         qid.intValueSelected.connect(self.minimum_voltage_selected)
         qid.setLabelText("Choose minimum motor voltage in mV.")
         qid.open()
@@ -190,74 +214,94 @@ class DC(PluginBase, Ui_DC):
             self.speedometer.set_velocity(value)
         
     def update_start(self):
-        dm = self.dc.get_drive_mode()
-        self.drive_mode_update(dm)
-        
-        if not self.velocity_slider.isSliderDown():
-            velocity = self.dc.get_velocity()
-            if velocity != self.velocity_slider.sliderPosition():
-                self.velocity_slider.setSliderPosition(velocity)
-                self.velocity_spin.setValue(velocity)
-             
-        if not self.acceleration_slider.isSliderDown():
-            acceleration = self.dc.get_acceleration()
-            if acceleration != self.acceleration_slider.sliderPosition():
-                self.acceleration_slider.setSliderPosition(acceleration)
-                self.acceleration_spin.setValue(acceleration)
-                
-        if not self.frequency_slider.isSliderDown():
-            frequency = self.dc.get_pwm_frequency()
-            if frequency != self.frequency_slider.sliderPosition():
-                self.frequency_slider.setSliderPosition(frequency)
-                self.frequency_spin.setValue(frequency)
-
-        enabled = self.dc.is_enabled()
-        if enabled:
-            self.enable_checkbox.setCheckState(Qt.Checked)
-        else:
-            self.enable_checkbox.setCheckState(Qt.Unchecked)
+        try:
+            dm = self.dc.get_drive_mode()
+            self.drive_mode_update(dm)
+            
+            if not self.velocity_slider.isSliderDown():
+                velocity = self.dc.get_velocity()
+                if velocity != self.velocity_slider.sliderPosition():
+                    self.velocity_slider.setSliderPosition(velocity)
+                    self.velocity_spin.setValue(velocity)
+                 
+            if not self.acceleration_slider.isSliderDown():
+                acceleration = self.dc.get_acceleration()
+                if acceleration != self.acceleration_slider.sliderPosition():
+                    self.acceleration_slider.setSliderPosition(acceleration)
+                    self.acceleration_spin.setValue(acceleration)
+                    
+            if not self.frequency_slider.isSliderDown():
+                frequency = self.dc.get_pwm_frequency()
+                if frequency != self.frequency_slider.sliderPosition():
+                    self.frequency_slider.setSliderPosition(frequency)
+                    self.frequency_spin.setValue(frequency)
+    
+            enabled = self.dc.is_enabled()
+            if enabled:
+                self.enable_checkbox.setCheckState(Qt.Checked)
+            else:
+                self.enable_checkbox.setCheckState(Qt.Unchecked)
+        except ip_connection.Error:
+            return
         
     def update_data(self):
-        sv = self.dc.get_stack_input_voltage()
-        ev = self.dc.get_external_input_voltage()
-        mv = self.dc.get_minimum_voltage()
-        cc = self.dc.get_current_consumption()
-        
+        try:
+            sv = self.dc.get_stack_input_voltage()
+            ev = self.dc.get_external_input_voltage()
+            mv = self.dc.get_minimum_voltage()
+            cc = self.dc.get_current_consumption()
+        except ip_connection.Error:
+            return
         
         self.stack_input_voltage_update(sv)
         self.external_input_voltage_update(ev)
         self.minimum_voltage_update(mv)
         self.current_consumption_update(cc)
-
-        
-        
         
     def acceleration_slider_released(self):
         value = self.acceleration_slider.value()
         self.acceleration_spin.setValue(value)
-        self.dc.set_acceleration(value)
+        try:
+            self.dc.set_acceleration(value)
+        except ip_connection.Error:
+            return
         
     def acceleration_spin_finished(self):
         value = self.acceleration_spin.value()
         self.acceleration_slider.setValue(value)
-        self.dc.set_acceleration(value)
+        try:
+            self.dc.set_acceleration(value)
+        except ip_connection.Error:
+            return
         
     def velocity_slider_released(self):
         value = self.velocity_slider.value()
         self.velocity_spin.setValue(value)
-        self.dc.set_velocity(value)
+        try:
+            self.dc.set_velocity(value)
+        except ip_connection.Error:
+            return
         
     def velocity_spin_finished(self):
         value = self.velocity_spin.value()
         self.velocity_slider.setValue(value)
-        self.dc.set_velocity(value)
+        try:
+            self.dc.set_velocity(value)
+        except ip_connection.Error:
+            return
         
     def frequency_slider_released(self):
         value = self.frequency_slider.value()
         self.frequency_spin.setValue(value)
-        self.dc.set_pwm_frequency(value)
+        try:
+            self.dc.set_pwm_frequency(value)
+        except ip_connection.Error:
+            return
         
     def frequency_spin_finished(self):
         value = self.frequency_spin.value()
         self.frequency_slider.setValue(value)
-        self.dc.set_pwm_frequency(value)
+        try:
+            self.dc.set_pwm_frequency(value)
+        except ip_connection.Error:
+            return

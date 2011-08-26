@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 from plot_widget import PlotWidget
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFileDialog
@@ -104,14 +105,22 @@ class DistanceIR(PluginBase):
         layout.addLayout(self.sample_layout)
         
     def start(self):
-        self.cb_distance(self.dist.get_distance())
-        self.dist.set_distance_callback_period(100)
-        self.dist.set_analog_value_callback_period(20)
+        try:
+            self.cb_distance(self.dist.get_distance())
+            self.dist.set_distance_callback_period(100)
+            self.dist.set_analog_value_callback_period(20)
+        except ip_connection.Error:
+            return
+            
         self.plot_widget.stop = False
         
     def stop(self):
-        self.dist.set_distance_callback_period(0)
-        self.dist.set_analog_value_callback_period(0)
+        try:
+            self.dist.set_distance_callback_period(0)
+            self.dist.set_analog_value_callback_period(0)
+        except ip_connection.Error:
+            pass
+        
         self.plot_widget.stop = True
 
     @staticmethod
@@ -143,8 +152,11 @@ class DistanceIR(PluginBase):
             if py[i] < y[-1]:
                 py[i] = y[-1]
             
-        for i in range(DistanceIR.NUM_VALUES):
-            self.dist.set_sampling_point(i, int(py[i]*100))
+        try:
+            for i in range(DistanceIR.NUM_VALUES):
+                self.dist.set_sampling_point(i, int(py[i]*100))
+        except ip_connection.Error:
+            return
         
         pylab.plot(px, py, "bo")
         pylab.plot(x, y, "rs")

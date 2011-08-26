@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit
 from PyQt4.QtCore import pyqtSignal
         
@@ -96,14 +97,22 @@ class PiezoBuzzer(PluginBase):
     
     def beep_pressed(self):
         duration = int(self.beep_edit.text())
-        self.pb.beep(duration)
+        try:
+            self.pb.beep(duration)
+        except ip_connection.Error:
+            return
+        
         self.beep_button.setDisabled(True)
         self.morse_button.setDisabled(True)
         self.status_label.setText('Beeping...')        
         
     def morse_pressed(self):
         morse = str(self.morse_edit.text())
-        self.pb.morse_code(morse)
+        try:
+            self.pb.morse_code(morse)
+        except ip_connection.Error:
+            return
+        
         self.beep_button.setDisabled(True)
         self.morse_button.setDisabled(True)
         self.status_label.setText('Beeping...')

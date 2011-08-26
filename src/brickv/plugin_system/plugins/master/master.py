@@ -24,9 +24,9 @@ Boston, MA 02111-1307, USA.
 #import logging
 
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 
-from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QVBoxLayout, QLabel
+from PyQt4.QtCore import QTimer
 from ui_master import Ui_Master
 
 import brick_master
@@ -54,10 +54,13 @@ class Master(PluginBase, Ui_Master):
         return 'Master Brick' in name
         
     def update_data(self):
-        sv = self.master.get_stack_voltage()
-        sc = self.master.get_stack_current()
-        self.stack_voltage_update(sv)
-        self.stack_current_update(sc)
+        try:
+            sv = self.master.get_stack_voltage()
+            sc = self.master.get_stack_current()
+            self.stack_voltage_update(sv)
+            self.stack_current_update(sc)
+        except ip_connection.Error:
+            return
         
     def stack_voltage_update(self, sv):
         sv_str = "%gV"  % round(sv/1000.0, 1)

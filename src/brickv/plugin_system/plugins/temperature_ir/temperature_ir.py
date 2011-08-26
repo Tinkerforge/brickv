@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 from plot_widget import PlotWidget
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton
@@ -57,14 +58,10 @@ class TemperatureIR(PluginBase):
                                    self.qtcb_object_temperature.emit) 
         
         self.ambient_label = AmbientLabel()
-        self.cb_ambient_temperature(self.tem.get_ambient_temperature())
-        
         self.object_label = ObjectLabel()
-        self.cb_object_temperature(self.tem.get_object_temperature())
         
         self.emissivity_label = QLabel('Emissivity: ')
         self.emissivity_edit = QLineEdit()
-        self.emissivity_edit.setText(str(self.tem.get_emissivity()))
         self.emissivity_button = QPushButton('Save')
         self.emissivity_layout = QHBoxLayout()
         self.emissivity_layout.addWidget(self.emissivity_label)
@@ -98,15 +95,24 @@ class TemperatureIR(PluginBase):
         layout.addLayout(self.emissivity_layout)
         
     def start(self):
-        self.cb_ambient_temperature(self.tem.get_ambient_temperature())
-        self.cb_object_temperature(self.tem.get_object_temperature())
-        self.tem.set_ambient_temperature_callback_period(250)
-        self.tem.set_object_temperature_callback_period(250)
+        try:
+            self.cb_ambient_temperature(self.tem.get_ambient_temperature())
+            self.cb_object_temperature(self.tem.get_object_temperature())
+            self.emissivity_edit.setText(str(self.tem.get_emissivity()))
+            self.tem.set_ambient_temperature_callback_period(250)
+            self.tem.set_object_temperature_callback_period(250)
+        except ip_connection.Error:
+            return
+        
         self.plot_widget.stop = False
         
     def stop(self):
-        self.tem.set_ambient_temperature_callback_period(0)
-        self.tem.set_object_temperature_callback_period(0)
+        try:
+            self.tem.set_ambient_temperature_callback_period(0)
+            self.tem.set_object_temperature_callback_period(0)
+        except ip_connection.Error:
+            pass
+        
         self.plot_widget.stop = True
 
     @staticmethod
@@ -129,4 +135,7 @@ class TemperatureIR(PluginBase):
         
     def emissivity_pressed(self):
         value = int(self.emissivity_edit.text())
-        self.tem.set_emissivity(value)
+        try:
+            self.tem.set_emissivity(value)
+        except ip_connection.Error:
+            return

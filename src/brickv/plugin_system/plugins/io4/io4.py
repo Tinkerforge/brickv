@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 from PyQt4.QtCore import pyqtSignal
 from ui_io4 import Ui_IO4
@@ -47,13 +48,15 @@ class IO4(PluginBase, Ui_IO4):
         self.port_direction = [self.ad0, self.ad1, self.ad2, self.ad3]
         self.port_config = [self.ac0, self.ac1, self.ac2, self.ac3]
         
-        value = self.io.get_value()
-        dir, config = self.io.get_configuration()
-        self.init_values(value, dir, config)
+        try:
+            value = self.io.get_value()
+            dir, config = self.io.get_configuration()
+            self.init_values(value, dir, config)
         
-        
-        debounce = self.io.get_debounce_period()
-        self.debounce_edit.setText(str(debounce))
+            debounce = self.io.get_debounce_period()
+            self.debounce_edit.setText(str(debounce))
+        except ip_connection.Error:
+            pass
         
         self.save_button.pressed.connect(self.save_pressed)
         self.pin_box.currentIndexChanged.connect(self.pin_changed)
@@ -63,10 +66,16 @@ class IO4(PluginBase, Ui_IO4):
         self.pin_changed(0)
         
     def start(self):
-        self.io.set_interrupt(1 | 2 | 4 | 8)
+        try:
+            self.io.set_interrupt(1 | 2 | 4 | 8)
+        except ip_connection.Error:
+            return
         
     def stop(self):
-        self.io.set_interrupt(0)
+        try:
+            self.io.set_interrupt(0)
+        except ip_connection.Error:
+            return
 
     @staticmethod
     def has_name(name):
@@ -103,7 +112,10 @@ class IO4(PluginBase, Ui_IO4):
         else:
             value = self.value_box.currentText() == 'Pull Up'
             
-        self.io.set_configuration(1 << pin, direction, value)
+        try:
+            self.io.set_configuration(1 << pin, direction, value)
+        except ip_connection.Error:
+            return
             
         self.port_direction[pin].setText(self.direction_box.currentText())
         self.port_config[pin].setText(self.value_box.currentText())
@@ -148,5 +160,8 @@ class IO4(PluginBase, Ui_IO4):
                 
     def debounce_save_pressed(self):
         debounce = int(str(self.debounce_edit.text()))
-        self.io.set_debounce_period(debounce)
+        try:
+            self.io.set_debounce_period(debounce)
+        except ip_connection.Error:
+            return
             

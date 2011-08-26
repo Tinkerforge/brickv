@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 from PyQt4.QtCore import pyqtSignal
 from ui_io16 import Ui_IO16
 
@@ -57,16 +58,19 @@ class IO16(PluginBase, Ui_IO16):
                              'b': [self.bc0, self.bc1, self.bc2, self.bc3,
                                    self.bc4, self.bc5, self.bc6, self.bc7]}
         
-        value = self.io.get_port('a')
-        dir, config = self.io.get_port_configuration('a')
-        self.init_values('a', value, dir, config)
+        try:
+            value = self.io.get_port('a')
+            dir, config = self.io.get_port_configuration('a')
+            self.init_values('a', value, dir, config)
         
-        value = self.io.get_port('b')
-        dir, config = self.io.get_port_configuration('b')
-        self.init_values('b', value, dir, config)
+            value = self.io.get_port('b')
+            dir, config = self.io.get_port_configuration('b')
+            self.init_values('b', value, dir, config)
         
-        debounce = self.io.get_debounce_period()
-        self.debounce_edit.setText(str(debounce))
+            debounce = self.io.get_debounce_period()
+            self.debounce_edit.setText(str(debounce))
+        except ip_connection.Error:
+            pass
         
         self.save_button.pressed.connect(self.save_pressed)
         self.port_box.currentIndexChanged.connect(self.port_changed)
@@ -77,12 +81,18 @@ class IO16(PluginBase, Ui_IO16):
         self.port_changed(0)
         
     def start(self):
-        self.io.set_port_interrupt('a', 0xFF)
-        self.io.set_port_interrupt('b', 0xFF)
+        try:
+            self.io.set_port_interrupt('a', 0xFF)
+            self.io.set_port_interrupt('b', 0xFF)
+        except ip_connection.Error:
+            return
         
     def stop(self):
-        self.io.set_port_interrupt('a', 0)
-        self.io.set_port_interrupt('b', 0)
+        try:
+            self.io.set_port_interrupt('a', 0)
+            self.io.set_port_interrupt('b', 0)
+        except ip_connection.Error:
+            return
 
     @staticmethod
     def has_name(name):
@@ -120,7 +130,10 @@ class IO16(PluginBase, Ui_IO16):
         else:
             value = self.value_box.currentText() == 'Pull Up'
             
-        self.io.set_port_configuration(port, 1 << pin, direction, value)
+        try:
+            self.io.set_port_configuration(port, 1 << pin, direction, value)
+        except ip_connection.Error:
+            return
             
         self.port_direction[port][pin].setText(self.direction_box.currentText())
         self.port_config[port][pin].setText(self.value_box.currentText())
@@ -171,5 +184,8 @@ class IO16(PluginBase, Ui_IO16):
                 
     def debounce_save_pressed(self):
         debounce = int(str(self.debounce_edit.text()))
-        self.io.set_debounce_period(debounce)
+        try:
+            self.io.set_debounce_period(debounce)
+        except ip_connection.Error:
+            return
             

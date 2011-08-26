@@ -27,6 +27,7 @@ from PyQt4.QtCore import QTimer, Qt, pyqtSignal
 from speedometer import SpeedoMeter
 
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 from ui_stepper import Ui_Stepper
 
 import brick_stepper
@@ -122,27 +123,45 @@ class Stepper(PluginBase, Ui_Stepper):
         self.full_brake_button.setEnabled(value)
         
     def mode_changed(self, index):
-        self.stepper.set_step_mode(1 << index)
+        try:
+            self.stepper.set_step_mode(1 << index)
+        except ip_connection.Error:
+            return
         
     def forward_pressed(self):
-        self.stepper.drive_forward()
+        try:
+            self.stepper.drive_forward()
+        except ip_connection.Error:
+            return
         self.disable_list([self.to_button, self.steps_button])
         
     def backward_pressed(self):
-        self.stepper.drive_backward()
+        try:
+            self.stepper.drive_backward()
+        except ip_connection.Error:
+            return
         self.disable_list([self.to_button, self.steps_button])
         
     def stop_pressed(self):
-        self.stepper.stop()
+        try:
+            self.stepper.stop()
+        except ip_connection.Error:
+            return
         self.endis_all(True)
         
     def full_brake_pressed(self):
-        self.stepper.full_brake()
+        try:
+            self.stepper.full_brake()
+        except ip_connection.Error:
+            return
         self.endis_all(True)
         
     def to_button_pressed(self):
         drive_to = self.to_spin.value()
-        self.stepper.set_target_position(drive_to)
+        try:
+            self.stepper.set_target_position(drive_to)
+        except ip_connection.Error:
+            return
         self.disable_list([self.to_button, 
                            self.steps_button, 
                            self.forward_button,
@@ -150,7 +169,10 @@ class Stepper(PluginBase, Ui_Stepper):
         
     def steps_button_pressed(self):
         drive_steps = self.steps_spin.value()
-        self.stepper.set_steps(drive_steps)
+        try:
+            self.stepper.set_steps(drive_steps)
+        except ip_connection.Error:
+            return
         self.disable_list([self.to_button, 
                            self.steps_button, 
                            self.forward_button,
@@ -162,7 +184,10 @@ class Stepper(PluginBase, Ui_Stepper):
         qid.setIntMinimum(0)
         qid.setIntMaximum(2500)
         qid.setIntStep(100)
-        qid.setIntValue(self.stepper.get_motor_current())
+        try:
+            qid.setIntValue(self.stepper.get_motor_current())
+        except ip_connection.Error:
+            return
         qid.intValueSelected.connect(self.motor_current_selected)
         qid.setLabelText("Choose motor current in mA.")
 #                         "<font color=red>Setting this too high can destroy your Motor.</font>")
@@ -174,16 +199,25 @@ class Stepper(PluginBase, Ui_Stepper):
         qid.setIntMinimum(0)
         qid.setIntMaximum(40000)
         qid.setIntStep(100)
-        qid.setIntValue(self.stepper.get_minimum_voltage())
+        try:
+            qid.setIntValue(self.stepper.get_minimum_voltage())
+        except ip_connection.Error:
+            return
         qid.intValueSelected.connect(self.minimum_motor_voltage_selected)
         qid.setLabelText("Choose minimum motor voltage in mV.")
         qid.open()
         
     def motor_current_selected(self, value):
-        self.stepper.set_motor_current(value)
+        try:
+            self.stepper.set_motor_current(value)
+        except ip_connection.Error:
+            return
         
     def minimum_motor_voltage_selected(self, value):
-        self.stepper.set_minimum_voltage(value)
+        try:
+            self.stepper.set_minimum_voltage(value)
+        except ip_connection.Error:
+            return
         
     def cb_under_voltage(self, ov):
         qem = QErrorMessage()
@@ -194,13 +228,16 @@ class Stepper(PluginBase, Ui_Stepper):
         qem.exec_()
         
     def enable_state_changed(self, state):
-        if state == Qt.Checked:
-            self.endis_all(True)
-            self.stepper.enable()
-        elif state == Qt.Unchecked:
-            self.endis_all(False)
-            self.stepper.disable()
-            
+        try:
+            if state == Qt.Checked:
+                self.endis_all(True)
+                self.stepper.enable()
+            elif state == Qt.Unchecked:
+                self.endis_all(False)
+                self.stepper.disable()
+        except ip_connection.Error:
+            return
+        
     def stack_input_voltage_update(self, sv):
         sv_str = "%gV"  % round(sv/1000.0, 1)
         self.stack_voltage_label.setText(sv_str)
@@ -239,44 +276,50 @@ class Stepper(PluginBase, Ui_Stepper):
         
         
     def update_start(self):
-        if not self.velocity_slider.isSliderDown():
-            velocity = self.stepper.get_max_velocity()
-            if velocity != self.velocity_slider.sliderPosition():
-                self.velocity_slider.setSliderPosition(velocity)
-                self.velocity_spin.setValue(velocity)
-             
-        if not self.acceleration_slider.isSliderDown() and \
-           not self.deceleration_slider.isSliderDown():
-            acc, dec = self.stepper.get_speed_ramping()
-            if acc != self.acceleration_slider.sliderPosition():
-                self.acceleration_slider.setSliderPosition(acc)
-                self.acceleration_spin.setValue(acc)
-            if dec != self.deceleration_slider.sliderPosition():
-                self.deceleration_slider.setSliderPosition(dec)
-                self.deceleration_spin.setValue(dec)
-                
-        if not self.decay_slider.isSliderDown():
-            dec = self.stepper.get_decay()
-            if dec != self.decay_slider.sliderPosition():
-                self.decay_slider.setSliderPosition(dec)
-                self.decay_spin.setValue(dec)
-
-        enabled = self.stepper.is_enabled()
-        if enabled:
-            if self.enable_checkbox.checkState() != Qt.Checked:
-                self.endis_all(True)
-                self.enable_checkbox.setCheckState(Qt.Checked)
-        else:
-            if self.enable_checkbox.checkState() != Qt.Unchecked:
-                self.endis_all(False)
-                self.enable_checkbox.setCheckState(Qt.Unchecked)
+        try:
+            if not self.velocity_slider.isSliderDown():
+                velocity = self.stepper.get_max_velocity()
+                if velocity != self.velocity_slider.sliderPosition():
+                    self.velocity_slider.setSliderPosition(velocity)
+                    self.velocity_spin.setValue(velocity)
+                 
+            if not self.acceleration_slider.isSliderDown() and \
+               not self.deceleration_slider.isSliderDown():
+                acc, dec = self.stepper.get_speed_ramping()
+                if acc != self.acceleration_slider.sliderPosition():
+                    self.acceleration_slider.setSliderPosition(acc)
+                    self.acceleration_spin.setValue(acc)
+                if dec != self.deceleration_slider.sliderPosition():
+                    self.deceleration_slider.setSliderPosition(dec)
+                    self.deceleration_spin.setValue(dec)
+                    
+            if not self.decay_slider.isSliderDown():
+                dec = self.stepper.get_decay()
+                if dec != self.decay_slider.sliderPosition():
+                    self.decay_slider.setSliderPosition(dec)
+                    self.decay_spin.setValue(dec)
+    
+            enabled = self.stepper.is_enabled()
+            if enabled:
+                if self.enable_checkbox.checkState() != Qt.Checked:
+                    self.endis_all(True)
+                    self.enable_checkbox.setCheckState(Qt.Checked)
+            else:
+                if self.enable_checkbox.checkState() != Qt.Unchecked:
+                    self.endis_all(False)
+                    self.enable_checkbox.setCheckState(Qt.Unchecked)
+        except ip_connection.Error:
+            return
         
     def update_infos(self):
-        cur = self.stepper.get_motor_current()
-        sv  = self.stepper.get_stack_input_voltage()
-        ev  = self.stepper.get_external_input_voltage()
-        mv  = self.stepper.get_minimum_voltage()
-        mod = self.stepper.get_step_mode()
+        try:
+            cur = self.stepper.get_motor_current()
+            sv  = self.stepper.get_stack_input_voltage()
+            ev  = self.stepper.get_external_input_voltage()
+            mv  = self.stepper.get_minimum_voltage()
+            mod = self.stepper.get_step_mode()
+        except ip_connection.Error:
+            return
         
         self.maximum_current_update(cur)
         self.stack_input_voltage_update(sv)
@@ -286,16 +329,30 @@ class Stepper(PluginBase, Ui_Stepper):
         
         
     def update_values(self):
-        ste = self.stepper.get_remaining_steps()
-        pos = self.stepper.get_current_position()
-        self.remaining_steps_update(ste)
-        self.position_update(pos)
-        
-        current_velocity = self.stepper.get_current_velocity()
-        if current_velocity != self.speedometer.value():
-            self.speedometer.set_velocity(current_velocity)
+        try:
+            ste = self.stepper.get_remaining_steps()
+            pos = self.stepper.get_current_position()
+            self.remaining_steps_update(ste)
+            self.position_update(pos)
+            
+            current_velocity = self.stepper.get_current_velocity()
+            if current_velocity != self.speedometer.value():
+                self.speedometer.set_velocity(current_velocity)
+        except ip_connection.Error:
+            return
 
     def update_data(self):
+        try:
+            ste = self.stepper.get_remaining_steps()
+            pos = self.stepper.get_current_position()
+            self.remaining_steps_update(ste)
+            self.position_update(pos)
+            
+            current_velocity = self.stepper.get_current_velocity()
+            if current_velocity != self.speedometer.value():
+                self.speedometer.set_velocity(current_velocity)
+        except ip_connection.Error:
+            return
         self.update_counter += 1
         if self.update_counter % 10 == 0:
             self.update_infos()
@@ -306,43 +363,67 @@ class Stepper(PluginBase, Ui_Stepper):
     def velocity_slider_released(self):
         value = self.velocity_slider.value()
         self.velocity_spin.setValue(value)
-        self.stepper.set_max_velocity(value)
+        try:
+            self.stepper.set_max_velocity(value)
+        except ip_connection.Error:
+            return
  
     def velocity_spin_finished(self):
         value = self.velocity_spin.value()
         self.velocity_slider.setValue(value)
-        self.stepper.set_max_velocity(value)
+        try:
+            self.stepper.set_max_velocity(value)
+        except ip_connection.Error:
+            return
     
     def acceleration_slider_released(self):
         acc = self.acceleration_slider.value()
         dec = self.deceleration_slider.value()
         self.acceleration_spin.setValue(acc)
-        self.stepper.set_speed_ramping(acc, dec)
+        try:
+            self.stepper.set_speed_ramping(acc, dec)
+        except ip_connection.Error:
+            return
  
     def acceleration_spin_finished(self):
         acc = self.acceleration_spin.value()
         dec = self.deceleration_spin.value()
         self.acceleration_slider.setValue(acc)
-        self.stepper.set_speed_ramping(acc, dec)
+        try:
+            self.stepper.set_speed_ramping(acc, dec)
+        except ip_connection.Error:
+            return
             
     def deceleration_slider_released(self):
         acc = self.acceleration_slider.value()
         dec = self.deceleration_slider.value()
         self.deceleration_spin.setValue(dec)
-        self.stepper.set_speed_ramping(acc, dec)
+        try:
+            self.stepper.set_speed_ramping(acc, dec)
+        except ip_connection.Error:
+            return
  
     def deceleration_spin_finished(self):
         acc = self.acceleration_spin.value()
         dec = self.deceleration_spin.value()
         self.deceleration_slider.setValue(dec)
-        self.stepper.set_speed_ramping(acc, dec)
+        try:
+            self.stepper.set_speed_ramping(acc, dec)
+        except ip_connection.Error:
+            return
 
     def decay_slider_released(self):
         value = self.decay_slider.value()
         self.decay_spin.setValue(value)
-        self.stepper.set_decay(value)
+        try:
+            self.stepper.set_decay(value)
+        except ip_connection.Error:
+            return
  
     def decay_spin_finished(self):
         value = self.decay_spin.value()
         self.decay_slider.setValue(value)
-        self.stepper.set_decay(value)
+        try:
+            self.stepper.set_decay(value)
+        except ip_connection.Error:
+            return

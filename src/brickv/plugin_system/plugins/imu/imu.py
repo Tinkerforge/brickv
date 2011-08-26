@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 #import logging
 
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 
 from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QVBoxLayout, QLabel, QColor
@@ -167,11 +168,14 @@ class IMU(PluginBase, Ui_IMU):
         self.tem_plot.clear_graph()
         
     def update_data(self):
-        acc_x, acc_y, acc_z, \
-        mag_x, mag_y, mag_z, \
-        gyr_x, gyr_y, gyr_z, tem = self.imu.get_all_data()
-        qua_x, qua_y, qua_z, qua_w = self.imu.get_quaternion()
-        roll, pitch, yaw = self.imu.get_orientation()
+        try:
+            acc_x, acc_y, acc_z, \
+            mag_x, mag_y, mag_z, \
+            gyr_x, gyr_y, gyr_z, tem = self.imu.get_all_data()
+            qua_x, qua_y, qua_z, qua_w = self.imu.get_quaternion()
+            roll, pitch, yaw = self.imu.get_orientation()
+        except ip_connection.Error:
+            return
         
         gyr_x = gyr_x/14.375
         gyr_y = gyr_y/14.375

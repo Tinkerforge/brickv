@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 from PyQt4.QtCore import Qt
         
@@ -79,7 +80,10 @@ class DualRelay(PluginBase):
         
         dr1, dr2 = self.get_state()
         
-        self.dr.set_state(dr1, dr2)
+        try:
+            self.dr.set_state(dr1, dr2)
+        except ip_connection.Error:
+            return
         
     def dr2_pressed(self):
         if self.dr2_button.text() == 'On':
@@ -89,4 +93,7 @@ class DualRelay(PluginBase):
         
         dr1, dr2 = self.get_state()
         
-        self.dr.set_state(dr1, dr2)
+        try:
+            self.dr.set_state(dr1, dr2)
+        except ip_connection.Error:
+            return

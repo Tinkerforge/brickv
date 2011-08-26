@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 from plot_widget import PlotWidget
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QPushButton, QHBoxLayout
@@ -79,12 +80,20 @@ class Current12(PluginBase):
         layout.addWidget(self.calibrate_button)
 
     def start(self):
-        self.cb_current(self.cur.get_current())
-        self.cur.set_current_callback_period(100)
+        try:
+            self.cb_current(self.cur.get_current())
+            self.cur.set_current_callback_period(100)
+        except ip_connection.Error:
+            return
+        
         self.plot_widget.stop = False
         
     def stop(self):
-        self.cur.set_current_callback_period(0)
+        try:
+            self.cur.set_current_callback_period(0)
+        except ip_connection.Error:
+            pass
+            
         self.plot_widget.stop = True
 
     @staticmethod
@@ -102,4 +111,7 @@ class Current12(PluginBase):
         self.over_label.setText('Over Current: Yes')
         
     def calibrate_pressed(self):
-        self.cur.calibrate()
+        try:
+            self.cur.calibrate()
+        except ip_connection.Error:
+            return

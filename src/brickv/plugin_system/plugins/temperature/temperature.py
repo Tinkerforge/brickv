@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
+import ip_connection
 from plot_widget import PlotWidget
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
@@ -65,12 +66,20 @@ class Temperature(PluginBase):
         layout.addWidget(self.plot_widget)
 
     def start(self):
-        self.cb_temperature(self.tem.get_temperature())
-        self.tem.set_temperature_callback_period(100)
+        try:
+            self.cb_temperature(self.tem.get_temperature())
+            self.tem.set_temperature_callback_period(100)
+        except ip_connection.Error:
+            return
+        
         self.plot_widget.stop = False
         
     def stop(self):
-        self.tem.set_temperature_callback_period(0)
+        try:
+            self.tem.set_temperature_callback_period(0)
+        except ip_connection.Error:
+            pass
+        
         self.plot_widget.stop = True
 
     @staticmethod
