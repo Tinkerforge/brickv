@@ -1,0 +1,9 @@
+Package: brickv
+Version: 1.0
+Section: electronics
+Maintainer: Olaf Lüke <olaf@tinkerforge.com>
+Architecture: all
+Depends: python
+Description: Brick Viewer
+ Brick Viewer is a small Qt GUI with which one can control and test
+ all Bricks and Bricklets from Tinkerforge (see www.tinkerforge.com)

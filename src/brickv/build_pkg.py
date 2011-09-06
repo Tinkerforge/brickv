@@ -18,7 +18,6 @@
 import sys  
 from distutils.core import setup
 import os
-import py2exe
 import glob
 import shutil
 import matplotlib
@@ -28,7 +27,7 @@ NAME = 'Brickv'
 
 
 def build_windows_pkg():
-    
+    import py2exe
     os.system("python build_all_ui.py")
     
     data_files = matplotlib.get_py2exe_datafiles()
@@ -66,9 +65,24 @@ def build_windows_pkg():
     print "run:", run
     print "data:", data
     os.system(run + data)
+
+def build_linux_pkg():
+    import shutil
+    src_path = os.getcwd()
+    build_dir = 'build_data/linux/brickv/usr/share/brickv'
+    dest_path = os.path.join(os.path.split(src_path)[0], build_dir)
+    if os.path.isdir(dest_path):
+        shutil.rmtree(dest_path)
+
+    shutil.copytree(src_path, dest_path)
     
+    build_data_path = os.path.join(os.path.split(src_path)[0], 'build_data/linux')
+    os.chdir(build_data_path)
+    os.system('dpkg -b brickv/ brickv-1.0_all.deb')
     
 if __name__ == "__main__":
     if sys.argv[1] == "win":
         sys.argv[1] = "py2exe" # rewrite sys.argv[1] for setup(), want to call py2exe
         build_windows_pkg()
+    if sys.argv[1] == "linux":
+        build_linux_pkg()

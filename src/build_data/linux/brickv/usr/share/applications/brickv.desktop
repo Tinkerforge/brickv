@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Brick Viewer
+Version=1.0
+Comment=Viewer for Bricks and Bricklets
+GenericName=Brick Viewer
+Terminal=false
+Icon=brickv-icon.png
+Type=Application
+Exec=python /usr/share/brickv/main.py
+Categories=Electronics;
