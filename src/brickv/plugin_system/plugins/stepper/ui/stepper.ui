@@ -388,6 +388,9 @@ steps/s²</string>
              <property name="buttonSymbols">
               <enum>QAbstractSpinBox::PlusMinus</enum>
              </property>
+             <property name="minimum">
+              <number>-2147483647</number>
+             </property>
              <property name="maximum">
               <number>2147483647</number>
              </property>
@@ -400,6 +403,9 @@ steps/s²</string>
             <widget class="QSpinBox" name="steps_spin">
              <property name="buttonSymbols">
               <enum>QAbstractSpinBox::PlusMinus</enum>
+             </property>
+             <property name="minimum">
+              <number>-2147483647</number>
              </property>
              <property name="maximum">
               <number>2147483647</number>
