@@ -60,6 +60,7 @@ class Stepper(PluginBase, Ui_Stepper):
         self.full_brake_time = 0
 
         self.qem = QErrorMessage(self)
+        self.qem.setWindowTitle("Under Voltage")
         
         self.velocity_slider.sliderReleased.connect(self.velocity_slider_released)
         self.velocity_slider.valueChanged.connect(self.velocity_spin.setValue)

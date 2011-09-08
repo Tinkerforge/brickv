@@ -119,15 +119,16 @@ class DC(PluginBase, Ui_DC):
         
     def cb_emergency_shutdown(self):
         if not self.qem.isVisible():
+            self.qem.setWindowTitle("Emergency Shutdown")
             self.qem.showMessage("Emergency Shutdown: Short-Circuit or Over-Temperature")
         
     def cb_under_voltage(self, ov):
         mv_str = self.minimum_voltage_label.text()
         ov_str = "%gV"  % round(ov/1000.0, 1)
         if not self.qem.isVisible():
+            self.qem.setWindowTitle("Under Voltage")
             self.qem.showMessage("Under Voltage: Output Voltage of " + ov_str +
                                  " is below minimum voltage of " + mv_str)
-        #qem.exec_()
         
     def enable_state_changed(self, state):
         try:

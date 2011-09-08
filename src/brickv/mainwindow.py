@@ -69,6 +69,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         signal.signal(signal.SIGINT, self.exit_brickv) 
         signal.signal(signal.SIGTERM, self.exit_brickv) 
         
+        self.setWindowTitle("Brick Viewer")
+        
         self.table_view_header = ['#', 'Device Name', 'UID']
 
         # Remove dummy tab

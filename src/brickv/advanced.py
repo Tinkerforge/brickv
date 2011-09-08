@@ -31,6 +31,9 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
     def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
         self.setupUi(self)
+        
+        self.setWindowTitle("Advanced Functions")
+        
         self.ipcon = parent.ipcon
         self.button_name_load.pressed.connect(self.name_load_pressed)
         self.button_name_save.pressed.connect(self.name_save_pressed)

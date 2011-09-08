@@ -173,6 +173,7 @@ class Servo(PluginBase, Ui_Servo):
             self.status_grid.addWidget(cb, i, 4)
             
         self.qem = QErrorMessage(self)
+        self.qem.setWindowTitle("Under Voltage")
             
         self.test_button.clicked.connect(self.test_button_clicked)
         self.output_voltage_button.clicked.connect(self.output_voltage_button_clicked)
