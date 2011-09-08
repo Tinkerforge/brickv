@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>681</width>
+    <width>712</width>
     <height>290</height>
    </rect>
   </property>
@@ -501,6 +501,12 @@
          </item>
          <item>
           <widget class="QLabel" name="minimum_voltage_label">
+           <property name="minimumSize">
+            <size>
+             <width>50</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="text">
             <string>5V</string>
            </property>

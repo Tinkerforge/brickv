@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>635</width>
+    <width>633</width>
     <height>337</height>
    </rect>
   </property>
@@ -580,8 +580,14 @@ steps/s²</string>
          </item>
          <item>
           <widget class="QLabel" name="minimum_voltage_label">
+           <property name="minimumSize">
+            <size>
+             <width>50</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="text">
-            <string>5V</string>
+            <string>5.0V</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
