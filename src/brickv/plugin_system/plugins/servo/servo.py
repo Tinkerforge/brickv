@@ -25,8 +25,8 @@ from plugin_system.plugin_base import PluginBase
 import ip_connection
 
 #from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QLabel, QWidget, QColor, QPainter, QSizePolicy, QInputDialog
-from PyQt4.QtCore import Qt, QRect, QTimer
+from PyQt4.QtGui import QVBoxLayout, QLabel, QWidget, QColor, QPainter, QSizePolicy, QInputDialog, QErrorMessage
+from PyQt4.QtCore import Qt, QRect, QTimer, pyqtSignal
 import PyQt4.Qwt5 as Qwt
 import brick_servo
 
@@ -124,6 +124,8 @@ class PositionKnob(Qwt.QwtKnob):
 
 
 class Servo(PluginBase, Ui_Servo):
+    qtcb_under_voltage = pyqtSignal(int)
+    
     def __init__ (self, ipcon, uid):
         PluginBase.__init__(self, ipcon, uid)
         self.setupUi(self)
@@ -170,6 +172,8 @@ class Servo(PluginBase, Ui_Servo):
             self.acceleration_list.append(cb)
             self.status_grid.addWidget(cb, i, 4)
             
+        self.qem = QErrorMessage(self)
+            
         self.test_button.clicked.connect(self.test_button_clicked)
         self.output_voltage_button.clicked.connect(self.output_voltage_button_clicked)
             
@@ -196,6 +200,12 @@ class Servo(PluginBase, Ui_Servo):
         self.pulse_width_max_spin.editingFinished.connect(self.pulse_width_spin_finished)
         self.degree_min_spin.editingFinished.connect(self.degree_spin_finished)
         self.degree_max_spin.editingFinished.connect(self.degree_spin_finished)
+        
+        self.minimum_voltage_button.pressed.connect(self.minimum_voltage_button_pressed)
+        
+        self.qtcb_under_voltage.connect(self.cb_under_voltage)
+        self.servo.register_callback(self.servo.CALLBACK_UNDER_VOLTAGE,
+                                     self.qtcb_under_voltage.emit) 
         
         self.test_event = Event()
         self.test_thread_object = Thread(target=self.test_thread)
@@ -294,6 +304,10 @@ class Servo(PluginBase, Ui_Servo):
         ov_str = "%gV"  % round(ov/1000.0, 1)
         self.output_voltage_label.setText(ov_str)
         
+    def minimum_voltage_update(self, mv):
+        mv_str = "%gV"  % round(mv/1000.0, 1)
+        self.minimum_voltage_label.setText(mv_str)
+        
     def position_update(self, i, pos):
         self.position_list[i].setValue(pos/100)
     
@@ -334,6 +348,7 @@ class Servo(PluginBase, Ui_Servo):
         self.stack_input_voltage_update(self.up_siv)
         self.external_input_voltage_update(self.up_eiv)
         self.output_voltage_update(self.up_opv)
+        self.minimum_voltage_update(self.up_mv)
         for i in range(7):
             if self.up_ena[i]:
                 self.activate_servo(i)
@@ -361,6 +376,7 @@ class Servo(PluginBase, Ui_Servo):
                 self.up_siv = self.servo.get_stack_input_voltage()
                 self.up_eiv = self.servo.get_external_input_voltage()
                 self.up_opv = self.servo.get_output_voltage()
+                self.up_mv = self.servo.get_minimum_voltage()
                 
                 for i in range(7):
                     self.up_ena[i] = self.servo.is_enabled(i)
@@ -567,3 +583,30 @@ class Servo(PluginBase, Ui_Servo):
             self.servo.set_degree(servo, min, max)
         except ip_connection.Error:
             return
+        
+    def cb_under_voltage(self, ov):
+        mv_str = self.minimum_voltage_label.text()
+        ov_str = "%gV"  % round(ov/1000.0, 1)
+        if not self.qem.isVisible():
+            self.qem.showMessage("Under Voltage: Output Voltage of " + ov_str +
+                                 " is below minimum voltage of " + mv_str)
+            
+    def minimum_voltage_selected(self, value):
+        try:
+            self.servo.set_minimum_voltage(value)
+        except ip_connection.Error:
+            return
+
+    def minimum_voltage_button_pressed(self):
+        qid = QInputDialog(self)
+        qid.setInputMode(QInputDialog.IntInput)
+        qid.setIntMinimum(5000)
+        qid.setIntMaximum(0xFFFF)
+        qid.setIntStep(100)
+        try:
+            qid.setIntValue(self.servo.get_minimum_voltage())
+        except ip_connection.Error:
+            return
+        qid.intValueSelected.connect(self.minimum_voltage_selected)
+        qid.setLabelText("Choose minimum servo voltage in mV.")
+        qid.open()
