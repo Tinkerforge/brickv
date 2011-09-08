@@ -58,6 +58,8 @@ class Stepper(PluginBase, Ui_Stepper):
         self.update_counter = 0
         
         self.full_brake_time = 0
+
+        self.qem = QErrorMessage(self)
         
         self.velocity_slider.sliderReleased.connect(self.velocity_slider_released)
         self.velocity_slider.valueChanged.connect(self.velocity_spin.setValue)
@@ -220,12 +222,11 @@ class Stepper(PluginBase, Ui_Stepper):
             return
         
     def cb_under_voltage(self, ov):
-        qem = QErrorMessage()
         mv_str = self.minimum_voltage_label.text()
         ov_str = "%gV"  % round(ov/1000.0, 1)
-        qem.showMessage("Under Voltage: Output Voltage of " + ov_str +
-                        " is below minimum voltage of " + mv_str)
-        qem.exec_()
+        if not self.qem.isVisible():
+            self.qem.showMessage("Under Voltage: Output Voltage of " + ov_str +
+                                 " is below minimum voltage of " + mv_str)
         
     def enable_state_changed(self, state):
         try:
