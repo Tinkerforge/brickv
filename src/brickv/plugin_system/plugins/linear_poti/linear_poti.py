@@ -43,6 +43,7 @@ class LinearPoti(PluginBase):
         
         self.lp = bricklet_linear_poti.LinearPoti(self.uid)
         self.ipcon.add_device(self.lp)
+        self.version = '.'.join(map(str, self.lp.get_version()[1]))
         
         self.qtcb_position.connect(self.cb_position)
         self.lp.register_callback(self.lp.CALLBACK_POSITION,

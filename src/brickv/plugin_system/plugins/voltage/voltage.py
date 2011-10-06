@@ -43,6 +43,7 @@ class Voltage(PluginBase):
         
         self.vol = bricklet_voltage.Voltage(self.uid)
         self.ipcon.add_device(self.vol)
+        self.version = '.'.join(map(str, self.vol.get_version()[1]))
         
         self.qtcb_voltage.connect(self.cb_voltage)
         self.vol.register_callback(self.vol.CALLBACK_VOLTAGE,

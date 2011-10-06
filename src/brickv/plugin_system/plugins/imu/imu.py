@@ -101,6 +101,7 @@ class IMU(PluginBase, Ui_IMU):
         self.imu = brick_imu.IMU(self.uid)
         self.device = self.imu
         self.ipcon.add_device(self.imu)
+        self.version = '.'.join(map(str, self.imu.get_version()[1]))
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)

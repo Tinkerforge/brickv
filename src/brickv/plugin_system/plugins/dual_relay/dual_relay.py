@@ -34,6 +34,7 @@ class DualRelay(PluginBase):
         
         self.dr = bricklet_dual_relay.DualRelay(self.uid)
         self.ipcon.add_device(self.dr)
+        self.version = '.'.join(map(str, self.dr.get_version()[1]))
         
         dr1_label = QLabel("Relay 1:")
         self.dr1_button = QPushButton("Off")

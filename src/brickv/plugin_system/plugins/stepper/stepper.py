@@ -33,7 +33,6 @@ from ui_stepper import Ui_Stepper
 import brick_stepper
 
 class Stepper(PluginBase, Ui_Stepper):
-    
     qtcb_position_reached = pyqtSignal(int)
     qtcb_under_voltage = pyqtSignal(int)
     
@@ -44,6 +43,7 @@ class Stepper(PluginBase, Ui_Stepper):
         self.stepper = brick_stepper.Stepper(self.uid)
         self.device = self.stepper
         self.ipcon.add_device(self.stepper)
+        self.version = '.'.join(map(str, self.stepper.get_version()[1]))
      
         self.endis_all(False)
         

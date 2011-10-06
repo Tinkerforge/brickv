@@ -71,7 +71,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.setWindowTitle("Brick Viewer")
         
-        self.table_view_header = ['#', 'Device Name', 'UID']
+        self.table_view_header = ['#', 'Device Name', 'UID', 'FW Version']
 
         # Remove dummy tab
         self.tab_widget.removeTab(1)
@@ -195,7 +195,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_table_view(self):
         data = []
         for p in self.plugins[1:]:
-            data.append(p[1:])
+            data.append((p[1], p[2], p[3], p[0].version))
             
         mtm = MainTableModel(self.table_view_header, data)
         self.table_view.setModel(mtm)

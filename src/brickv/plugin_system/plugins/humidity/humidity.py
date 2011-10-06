@@ -43,6 +43,7 @@ class Humidity(PluginBase):
         
         self.hum = bricklet_humidity.Humidity(self.uid)
         self.ipcon.add_device(self.hum)
+        self.version = '.'.join(map(str, self.hum.get_version()[1]))
         
         self.qtcb_humidity.connect(self.cb_humidity)
         self.hum.register_callback(self.hum.CALLBACK_HUMIDITY,

@@ -38,6 +38,7 @@ class IO16(PluginBase, Ui_IO16):
         
         self.io = bricklet_io16.IO16(self.uid)
         self.ipcon.add_device(self.io)
+        self.version = '.'.join(map(str, self.io.get_version()[1]))
         
         self.qtcb_interrupt.connect(self.cb_interrupt)
         self.io.register_callback(self.io.CALLBACK_INTERRUPT,

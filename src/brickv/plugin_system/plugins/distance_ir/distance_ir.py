@@ -55,6 +55,7 @@ class DistanceIR(PluginBase):
         
         self.dist = bricklet_distance_ir.DistanceIR(self.uid)
         self.ipcon.add_device(self.dist)
+        self.version = '.'.join(map(str, self.dist.get_version()[1]))
         
         self.qtcb_distance.connect(self.cb_distance)
         self.dist.register_callback(self.dist.CALLBACK_DISTANCE,

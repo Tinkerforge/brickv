@@ -49,6 +49,7 @@ class TemperatureIR(PluginBase):
         
         self.tem = bricklet_temperature_ir.TemperatureIR(self.uid)
         self.ipcon.add_device(self.tem)
+        self.version = '.'.join(map(str, self.tem.get_version()[1]))
         
         self.qtcb_ambient_temperature.connect(self.cb_ambient_temperature)
         self.tem.register_callback(self.tem.CALLBACK_AMBIENT_TEMPERATURE,

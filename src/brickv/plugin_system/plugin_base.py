@@ -28,6 +28,7 @@ class PluginBase(QWidget, object):
         QWidget.__init__(self)
         self.ipcon = ipcon
         self.uid = uid
+        self.version = "none"
         
     # To be overridden by parent class
     def stop(self):

@@ -44,6 +44,7 @@ class DC(PluginBase, Ui_DC):
         self.dc = brick_dc.DC(self.uid)
         self.device = self.dc
         self.ipcon.add_device(self.dc)
+        self.version = '.'.join(map(str, self.dc.get_version()[1]))
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)

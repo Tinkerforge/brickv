@@ -65,6 +65,7 @@ class AmbientLight(PluginBase):
         
         self.al = bricklet_ambient_light.AmbientLight(self.uid)
         self.ipcon.add_device(self.al)
+        self.version = '.'.join(map(str, self.al.get_version()[1]))
         
         self.qtcb_illuminance.connect(self.cb_illuminance)
         self.al.register_callback(self.al.CALLBACK_ILLUMINANCE,

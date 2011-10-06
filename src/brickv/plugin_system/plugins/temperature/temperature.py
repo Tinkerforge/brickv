@@ -43,6 +43,7 @@ class Temperature(PluginBase):
         
         self.tem = bricklet_temperature.Temperature(self.uid)
         self.ipcon.add_device(self.tem)
+        self.version = '.'.join(map(str, self.tem.get_version()[1]))
         
         self.qtcb_temperature.connect(self.cb_temperature)
         self.tem.register_callback(self.tem.CALLBACK_TEMPERATURE,

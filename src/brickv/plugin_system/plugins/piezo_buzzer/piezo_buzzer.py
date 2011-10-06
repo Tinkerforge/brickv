@@ -37,6 +37,7 @@ class PiezoBuzzer(PluginBase):
         
         self.pb = bricklet_piezo_buzzer.PiezoBuzzer(self.uid)
         self.ipcon.add_device(self.pb)
+        self.version = '.'.join(map(str, self.pb.get_version()[1]))
         
         self.qtcb_beep_finished.connect(self.cb_beep)
         self.pb.register_callback(self.pb.CALLBACK_BEEP_FINISHED,

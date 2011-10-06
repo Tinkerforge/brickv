@@ -39,6 +39,7 @@ class Master(PluginBase, Ui_Master):
         self.master = brick_master.Master(self.uid)
         self.device = self.master
         self.ipcon.add_device(self.master)
+        self.version = '.'.join(map(str, self.master.get_version()[1]))
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)

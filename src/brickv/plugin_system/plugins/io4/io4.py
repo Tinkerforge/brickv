@@ -39,6 +39,7 @@ class IO4(PluginBase, Ui_IO4):
         
         self.io = bricklet_io4.IO4(self.uid)
         self.ipcon.add_device(self.io)
+        self.version = '.'.join(map(str, self.io.get_version()[1]))
         
         self.qtcb_interrupt.connect(self.cb_interrupt)
         self.io.register_callback(self.io.CALLBACK_INTERRUPT,

@@ -44,6 +44,7 @@ class Current25(PluginBase):
         
         self.cur = bricklet_current25.Current25(self.uid)
         self.ipcon.add_device(self.cur)
+        self.version = '.'.join(map(str, self.cur.get_version()[1]))
         
         self.qtcb_current.connect(self.cb_current)
         self.cur.register_callback(self.cur.CALLBACK_CURRENT,

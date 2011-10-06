@@ -133,6 +133,7 @@ class Servo(PluginBase, Ui_Servo):
         self.servo = brick_servo.Servo(self.uid)
         self.device = self.servo
         self.ipcon.add_device(self.servo)
+        self.version = '.'.join(map(str, self.servo.get_version()[1]))
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_apply)

@@ -74,6 +74,7 @@ class Joystick(PluginBase):
         
         self.js = bricklet_joystick.Joystick(self.uid)
         self.ipcon.add_device(self.js)
+        self.version = '.'.join(map(str, self.js.get_version()[1]))
         
         self.qtcb_position.connect(self.cb_position)
         self.js.register_callback(self.js.CALLBACK_POSITION,

@@ -39,6 +39,7 @@ class LCD20x4(PluginBase):
         
         self.lcd = bricklet_lcd_20x4.LCD20x4(self.uid)
         self.ipcon.add_device(self.lcd)
+        self.version = '.'.join(map(str, self.lcd.get_version()[1]))
         
         self.qtcb_pressed.connect(self.cb_pressed)
         self.lcd.register_callback(self.lcd.CALLBACK_BUTTON_PRESSED,

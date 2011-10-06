@@ -44,6 +44,7 @@ class RotaryPoti(PluginBase):
         
         self.rp = bricklet_rotary_poti.RotaryPoti(self.uid)
         self.ipcon.add_device(self.rp)
+        self.version = '.'.join(map(str, self.rp.get_version()[1]))
         
         self.qtcb_position.connect(self.cb_position)
         self.rp.register_callback(self.rp.CALLBACK_POSITION,
