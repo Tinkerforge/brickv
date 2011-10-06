@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2011-08-23.      #
+# This file was automatically generated on 2011-10-06.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -15,6 +15,7 @@ from ip_connection import Device, IPConnection, Error
 
 GetPulseWidth = namedtuple('PulseWidth', ['min', 'max'])
 GetDegree = namedtuple('Degree', ['min', 'max'])
+GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
 
 class Servo(Device):
     CALLBACK_UNDER_VOLTAGE = 26
@@ -53,9 +54,14 @@ class Servo(Device):
     def __init__(self, uid):
         Device.__init__(self, uid)
 
+        self.binding_version = [1, 0, 0]
+
         self.callbacks_format[Servo.CALLBACK_UNDER_VOLTAGE] = 'H'
         self.callbacks_format[Servo.CALLBACK_POSITION_REACHED] = 'B h'
         self.callbacks_format[Servo.CALLBACK_VELOCITY_REACHED] = 'B h'
+
+    def get_version(self):
+        return GetVersion(self.name, self.firmware_version, self.binding_version)
 
     def enable(self, servo_num):
         self.ipcon.write(self, Servo.TYPE_ENABLE, (servo_num,), 'B', '')

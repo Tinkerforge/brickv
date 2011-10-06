@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2011-08-23.      #
+# This file was automatically generated on 2011-10-06.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -15,6 +15,7 @@ from ip_connection import Device, IPConnection, Error
 
 GetCurrentCallbackThreshold = namedtuple('CurrentCallbackThreshold', ['option', 'min', 'max'])
 GetAnalogValueCallbackThreshold = namedtuple('AnalogValueCallbackThreshold', ['option', 'min', 'max'])
+GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
 
 class Current25(Device):
     CALLBACK_CURRENT = 15
@@ -46,11 +47,16 @@ class Current25(Device):
     def __init__(self, uid):
         Device.__init__(self, uid)
 
+        self.binding_version = [1, 0, 0]
+
         self.callbacks_format[Current25.CALLBACK_CURRENT] = 'h'
         self.callbacks_format[Current25.CALLBACK_ANALOG_VALUE] = 'H'
         self.callbacks_format[Current25.CALLBACK_CURRENT_REACHED] = 'h'
         self.callbacks_format[Current25.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
         self.callbacks_format[Current25.CALLBACK_OVER_CURRENT] = ''
+
+    def get_version(self):
+        return GetVersion(self.name, self.firmware_version, self.binding_version)
 
     def get_current(self):
         return self.ipcon.write(self, Current25.TYPE_GET_CURRENT, (), '', 'h')

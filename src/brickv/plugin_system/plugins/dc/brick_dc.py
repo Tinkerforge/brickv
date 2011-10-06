@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2011-08-23.      #
+# This file was automatically generated on 2011-10-06.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -13,6 +13,7 @@ except ImportError:
     from ip_connection import namedtuple
 from ip_connection import Device, IPConnection, Error
 
+GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
 
 class DC(Device):
     CALLBACK_UNDER_VOLTAGE = 21
@@ -48,10 +49,15 @@ class DC(Device):
     def __init__(self, uid):
         Device.__init__(self, uid)
 
+        self.binding_version = [1, 0, 0]
+
         self.callbacks_format[DC.CALLBACK_UNDER_VOLTAGE] = 'H'
         self.callbacks_format[DC.CALLBACK_EMERGENCY_SHUTDOWN] = ''
         self.callbacks_format[DC.CALLBACK_VELOCITY_REACHED] = 'h'
         self.callbacks_format[DC.CALLBACK_CURRENT_VELOCITY] = 'h'
+
+    def get_version(self):
+        return GetVersion(self.name, self.firmware_version, self.binding_version)
 
     def set_velocity(self, velocity):
         self.ipcon.write(self, DC.TYPE_SET_VELOCITY, (velocity,), 'h', '')

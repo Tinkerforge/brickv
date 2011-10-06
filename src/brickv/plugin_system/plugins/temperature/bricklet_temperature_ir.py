@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2011-08-23.      #
+# This file was automatically generated on 2011-10-06.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -15,6 +15,7 @@ from ip_connection import Device, IPConnection, Error
 
 GetAmbientTemperatureCallbackThreshold = namedtuple('AmbientTemperatureCallbackThreshold', ['option', 'min', 'max'])
 GetObjectTemperatureCallbackThreshold = namedtuple('ObjectTemperatureCallbackThreshold', ['option', 'min', 'max'])
+GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
 
 class TemperatureIR(Device):
     CALLBACK_AMBIENT_TEMPERATURE = 15
@@ -44,10 +45,15 @@ class TemperatureIR(Device):
     def __init__(self, uid):
         Device.__init__(self, uid)
 
+        self.binding_version = [1, 0, 0]
+
         self.callbacks_format[TemperatureIR.CALLBACK_AMBIENT_TEMPERATURE] = 'h'
         self.callbacks_format[TemperatureIR.CALLBACK_OBJECT_TEMPERATURE] = 'h'
         self.callbacks_format[TemperatureIR.CALLBACK_AMBIENT_TEMPERATURE_REACHED] = 'h'
         self.callbacks_format[TemperatureIR.CALLBACK_OBJECT_TEMPERATURE_REACHED] = 'h'
+
+    def get_version(self):
+        return GetVersion(self.name, self.firmware_version, self.binding_version)
 
     def get_ambient_temperature(self):
         return self.ipcon.write(self, TemperatureIR.TYPE_GET_AMBIENT_TEMPERATURE, (), '', 'h')

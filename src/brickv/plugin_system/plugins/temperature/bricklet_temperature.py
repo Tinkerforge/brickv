@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2011-08-23.      #
+# This file was automatically generated on 2011-10-06.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -14,6 +14,7 @@ except ImportError:
 from ip_connection import Device, IPConnection, Error
 
 GetTemperatureCallbackThreshold = namedtuple('TemperatureCallbackThreshold', ['option', 'min', 'max'])
+GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
 
 class Temperature(Device):
     CALLBACK_TEMPERATURE = 8
@@ -32,8 +33,13 @@ class Temperature(Device):
     def __init__(self, uid):
         Device.__init__(self, uid)
 
+        self.binding_version = [1, 0, 0]
+
         self.callbacks_format[Temperature.CALLBACK_TEMPERATURE] = 'h'
         self.callbacks_format[Temperature.CALLBACK_TEMPERATURE_REACHED] = 'h'
+
+    def get_version(self):
+        return GetVersion(self.name, self.firmware_version, self.binding_version)
 
     def get_temperature(self):
         return self.ipcon.write(self, Temperature.TYPE_GET_TEMPERATURE, (), '', 'h')

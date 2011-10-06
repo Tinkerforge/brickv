@@ -35,8 +35,6 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
         self.setWindowTitle("Advanced Functions")
         
         self.ipcon = parent.ipcon
-        self.button_name_load.pressed.connect(self.name_load_pressed)
-        self.button_name_save.pressed.connect(self.name_save_pressed)
         self.button_uid_load.pressed.connect(self.uid_load_pressed)
         self.button_uid_save.pressed.connect(self.uid_save_pressed)
         self.button_plugin_save.pressed.connect(self.plugin_save_pressed)
@@ -52,31 +50,6 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
     def popup_fail(self):
         QMessageBox.critical(self, "Upload", "Check Failed", QMessageBox.Ok)
         pass
-        
-    def name_save_pressed(self):
-        device, port = self.current_device_and_port()
-        name = str(self.edit_name.text())
-        try:
-            self.ipcon.write_bricklet_name(device, port, name)
-        except:
-            self.popup_fail()
-            return
-        
-        try:
-            name_read = self.ipcon.read_bricklet_name(device, port)
-        except:
-            self.popup_fail()
-            return
-        
-        if name == name_read:
-            self.popup_ok()
-        else:
-            self.popup_fail()
-    
-    def name_load_pressed(self):
-        device, port = self.current_device_and_port()
-        name = self.ipcon.read_bricklet_name(device, port)
-        self.edit_name.setText(name)
         
     def uid_save_pressed(self):
         device, port = self.current_device_and_port()

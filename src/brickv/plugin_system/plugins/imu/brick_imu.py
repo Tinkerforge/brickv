@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2011-08-23.      #
+# This file was automatically generated on 2011-10-06.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -24,6 +24,7 @@ GetMagneticFieldThreshold = namedtuple('MagneticFieldThreshold', ['threshold', '
 GetAngularVelocityThreshold = namedtuple('AngularVelocityThreshold', ['threshold', 'option'])
 GetAllDataThreshold = namedtuple('AllDataThreshold', ['threshold', 'option'])
 GetOrientationThreshold = namedtuple('OrientationThreshold', ['threshold', 'option'])
+GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
 
 class IMU(Device):
     CALLBACK_ACCELERATION = 40
@@ -92,6 +93,8 @@ class IMU(Device):
     def __init__(self, uid):
         Device.__init__(self, uid)
 
+        self.binding_version = [1, 0, 0]
+
         self.callbacks_format[IMU.CALLBACK_ACCELERATION] = 'h h h'
         self.callbacks_format[IMU.CALLBACK_MAGNETIC_FIELD] = 'h h h'
         self.callbacks_format[IMU.CALLBACK_ANGULAR_VELOCITY] = 'h h h'
@@ -103,6 +106,9 @@ class IMU(Device):
         self.callbacks_format[IMU.CALLBACK_ANGULAR_VELOCITY_REACHED] = 'h h h'
         self.callbacks_format[IMU.CALLBACK_ALL_DATA_REACHED] = 'h h h h h h h h h h'
         self.callbacks_format[IMU.CALLBACK_ORIENTATION_REACHED] = 'h h h'
+
+    def get_version(self):
+        return GetVersion(self.name, self.firmware_version, self.binding_version)
 
     def get_acceleration(self):
         return GetAcceleration(*self.ipcon.write(self, IMU.TYPE_GET_ACCELERATION, (), '', 'h h h'))

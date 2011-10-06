@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2011-08-23.      #
+# This file was automatically generated on 2011-10-06.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -14,6 +14,7 @@ except ImportError:
 from ip_connection import Device, IPConnection, Error
 
 GetPortConfiguration = namedtuple('PortConfiguration', ['direction_mask', 'value_mask'])
+GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
 
 class IO16(Device):
     CALLBACK_INTERRUPT = 9
@@ -31,7 +32,12 @@ class IO16(Device):
     def __init__(self, uid):
         Device.__init__(self, uid)
 
+        self.binding_version = [1, 0, 0]
+
         self.callbacks_format[IO16.CALLBACK_INTERRUPT] = 'c B B'
+
+    def get_version(self):
+        return GetVersion(self.name, self.firmware_version, self.binding_version)
 
     def set_port(self, port, value_mask):
         self.ipcon.write(self, IO16.TYPE_SET_PORT, (port, value_mask), 'c B', '')

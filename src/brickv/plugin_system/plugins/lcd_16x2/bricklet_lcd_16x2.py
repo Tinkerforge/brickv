@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2011-08-23.      #
+# This file was automatically generated on 2011-10-06.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -14,6 +14,7 @@ except ImportError:
 from ip_connection import Device, IPConnection, Error
 
 GetConfig = namedtuple('Config', ['cursor', 'blinking'])
+GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
 
 class LCD16x2(Device):
     CALLBACK_BUTTON_PRESSED = 9
@@ -33,8 +34,13 @@ class LCD16x2(Device):
     def __init__(self, uid):
         Device.__init__(self, uid)
 
+        self.binding_version = [1, 0, 0]
+
         self.callbacks_format[LCD16x2.CALLBACK_BUTTON_PRESSED] = 'B'
         self.callbacks_format[LCD16x2.CALLBACK_BUTTON_RELEASED] = 'B'
+
+    def get_version(self):
+        return GetVersion(self.name, self.firmware_version, self.binding_version)
 
     def write_line(self, line, position, text):
         self.ipcon.write(self, LCD16x2.TYPE_WRITE_LINE, (line, position, text), 'B B 16s', '')

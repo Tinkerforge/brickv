@@ -89,6 +89,9 @@ class Device(DeviceConCheckerMeta):
         self.uid = base58decode(uid)
         self.ipcon = None
         self.stack_id = 0
+        self.name = ''
+        self.firmware_version = [0, 0, 0]
+        self.binding_version = [0, 0, 0]
         self.callbacks = {}
         self.callbacks_format = {}
         self.answer_type = -1
@@ -291,10 +294,13 @@ class IPConnection:
         if self.add_dev == None:
             return length
 
-        value = struct.unpack('<BBHQB', data[:length])
+        value = struct.unpack('<BBHQ 3B 40s B', data[:length])
+
         if self.add_dev.uid == value[3]:
-            self.add_dev.stack_id = value[4]
-            self.devices[value[4]] = self.add_dev
+            self.add_dev.firmware_version = [value[4], value[5], value[6]]
+            self.add_dev.name = value[7].replace(chr(0), '').decode()
+            self.add_dev.stack_id = value[8]
+            self.devices[value[8]] = self.add_dev
             self.add_dev.answer_queue.put(None)
             self.add_dev = None
 
@@ -393,22 +399,6 @@ class IPConnection:
                              'Q')
 
         return base58encode(uid_int)
-
-    def write_bricklet_name(self, device, port, name):
-        self.write(device,
-                   IPConnection.TYPE_WRITE_BRICKLET_NAME,
-                   (port, name + '\x00'*(40-len(name))),
-                   'c 40s',
-                   '')
-
-    def read_bricklet_name(self, device, port):
-        name = self.write(device, 
-                          IPConnection.TYPE_READ_BRICKLET_NAME, 
-                          (port,), 
-                          'c', 
-                          '40s')
-        # remove trailing 0s
-        return name.replace('\x00', '')
 
 # use normal tuples instead of namedtuples in python version below 2.6
 if sys.hexversion < 0x02060000:
