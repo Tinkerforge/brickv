@@ -31,15 +31,16 @@ if not __path in sys.path:
     sys.path.insert(0, __path)
 
 import logging
+import config
 
 #import PyQt4
 from PyQt4.QtGui import QApplication
 from mainwindow import MainWindow
 
 logging.basicConfig( 
-    level = logging.DEBUG, 
-    format = "%(asctime)s <%(levelname)s> <%(filename)s:%(lineno)s> %(message)s",
-    datefmt = "%H:%M:%S"
+    level = config.LOGGING_LEVEL, 
+    format = config.LOGGING_FORMAT,
+    datefmt = config.LOGGING_DATEFMT
 ) 
 
 if __name__ == "__main__":
