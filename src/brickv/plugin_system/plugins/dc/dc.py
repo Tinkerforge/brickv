@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-  
 """
 brickv (Brick Viewer) 
-Copyright (C) 2009-2010 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2009-2011 Olaf Lüke <olaf@tinkerforge.com>
 
-dc.py: TODO
+dc.py: DC Plugin implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -210,8 +210,6 @@ class DC(PluginBase, Ui_DC):
 
     
     def update_velocity(self, value):
-#        import time
-#        print time.time(), value
         if value != self.speedometer.value():
             self.speedometer.set_velocity(value)
         
