@@ -168,7 +168,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.host.setDisabled(False)
         
     def callback_enumerate(self, uid, name, stack_id, is_new):
-        print uid, name, stack_id, is_new
         if is_new:
             for plugin in self.plugins:
                 # Plugin already loaded
