@@ -52,19 +52,20 @@ NAME = 'Brickv'
 
 def build_windows_pkg():
     import py2exe
-    os.system("python build_all_ui.py")
+#    os.system("python build_all_ui.py")
     
-    data_files = matplotlib.get_py2exe_datafiles()
-    
+#    data_files = matplotlib.get_py2exe_datafiles()
+    data_files = []
     def visitor(arg, dirname, names):
         for n in names:
+
             if os.path.isfile(os.path.join(dirname, n)):
                 if arg[0] == 'y': #replace first folder name
                     data_files.append((os.path.join(dirname.replace(arg[1],"")) , [os.path.join(dirname, n)]))
                 else: # keep full path
                     data_files.append((os.path.join(dirname) , [os.path.join(dirname, n)]))
     
-    os.path.walk("..\build_data\Windows\\", visitor, ('y',"..\build_data\Windows\\"))
+    os.path.walk(os.path.normcase("../build_data/Windows/"), visitor, ('y',os.path.normcase("../build_data/Windows/")))
     os.path.walk("plugin_system", visitor, ('n',"plugin_system"))
     
     setup(
@@ -80,7 +81,7 @@ def build_windows_pkg():
                         }
                     },
           zipfile=None,
-          windows = [{'script':'main.py'}]
+          windows = [{'script':'main.py', 'icon_resources':[(0,os.path.normcase("../build_data/Windows/brickv-icon.ico"))]}]
     )
     
     # build nsis
