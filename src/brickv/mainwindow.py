@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt
-from PyQt4.QtGui import QMainWindow, QMessageBox, QStandardItemModel, QStandardItem, QWidget
+from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon
 from ui_mainwindow import Ui_MainWindow
 from plugin_system.plugin_manager import PluginManager
 from ip_connection import IPConnection, Error
@@ -66,6 +66,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
         self.setupUi(self)
+        self.setWindowIcon(QIcon("brickv-icon.png"))
         signal.signal(signal.SIGINT, self.exit_brickv) 
         signal.signal(signal.SIGTERM, self.exit_brickv) 
         
