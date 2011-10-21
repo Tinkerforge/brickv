@@ -68,6 +68,8 @@ def build_windows_pkg():
     os.path.walk(os.path.normcase("../build_data/Windows/"), visitor, ('y',os.path.normcase("../build_data/Windows/")))
     os.path.walk("plugin_system", visitor, ('n',"plugin_system"))
     
+    data_files.append( ( os.path.join('.') , [os.path.join('.', 'brickv-icon.png')] ) )
+    
     setup(
           name = NAME,
           description = DESCRIPTION,
