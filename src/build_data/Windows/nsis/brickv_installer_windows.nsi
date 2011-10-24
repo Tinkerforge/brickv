@@ -1,6 +1,6 @@
 Name "Brickv Windows Installer"
 
-OutFile "brickv_installer_windows.exe"
+OutFile "brickv_windows.exe"
 
 ; The default installation directory
 InstallDir $PROGRAMFILES\Tinkerforge\Brickv
@@ -68,7 +68,7 @@ Section "Install Brickv Programm"
   ${VersionCompare} $0 ${BRICKV_VERSION} $1
   IntCmp $1 2 uninstall
     MessageBox MB_YESNO|MB_ICONQUESTION "Brickv version $0 seems to be already installed on your system.$\n\
-    Would you like to proceed with the installation of version ${BRICKV_VERSION}? \
+    Would you like to proceed with the installation of version ${BRICKV_VERSION}?$\n\
     Old Version will be first uninstalled." \
         IDYES uninstall IDNO quit
 
@@ -108,7 +108,7 @@ Section "Install Brickv Programm"
   WriteRegStr HKLM SOFTWARE\TINKERFORGE\BRICKV "Version" ${BRICKV_VERSION}
   
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "DisplayName" "Brickv Windows"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "DisplayName" "Brickv"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "Publisher" "Tinkerforge GmbH"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "UninstallString" '"$INSTDIR\uninstall.exe"'
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "NoModify" 1
