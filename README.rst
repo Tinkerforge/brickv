@@ -22,3 +22,14 @@ The following libraries are required:
 On Debian based linux distributions try::
  
  sudo apt-get install python python-qt4 python-qwt5-qt4 python-matplotlib python-scipy python-opengl python-numpy python-qt4-gl
+
+Building Packages
+-----------------
+The python script src/brickv/build_pkg.py can build a Debian package and a
+setup.exe for Windows. Try::
+
+ python build_pkg.py linux
+
+or::
+
+ python build_pkg.py windows
