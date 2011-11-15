@@ -26,13 +26,13 @@ import ip_connection
 
 #from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QVBoxLayout, QLabel, QWidget, QColor, QPainter, QSizePolicy, QInputDialog, QErrorMessage
-from PyQt4.QtCore import Qt, QRect, QTimer, pyqtSignal
+from PyQt4.QtCore import Qt, QRect, QTimer, pyqtSignal, QThread
 import PyQt4.Qwt5 as Qwt
 import brick_servo
 
 import time
 import random
-from threading import Thread, Event
+from threading import Event
 from ui_servo import Ui_Servo
 
 class ColorBar(QWidget):
@@ -137,6 +137,7 @@ class Servo(PluginBase, Ui_Servo):
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_apply)
+        self.update_timer.setSingleShot(True)
         
         layout = QVBoxLayout(self)
         layout.addWidget(QLabel('Servo'))
@@ -209,10 +210,19 @@ class Servo(PluginBase, Ui_Servo):
         self.servo.register_callback(self.servo.CALLBACK_UNDER_VOLTAGE,
                                      self.qtcb_under_voltage.emit) 
         
+        class WorkerThread(QThread):
+            def __init__(self, parent = None, func = None):
+                QThread.__init__(self, parent)
+                self.func = func
+                
+            def run(self):
+                self.func()
+        
+        
         self.test_event = Event()
-        self.test_thread_object = Thread(target=self.test_thread)
+        self.test_thread_object = WorkerThread(self, self.test_thread)
         self.update_event = Event()
-        self.update_thread_object = Thread(target=self.update_thread)
+        self.update_thread_object = WorkerThread(self, self.update_thread)
         
         self.update_done_event = Event()
         self.update_done_event.set()
@@ -230,10 +240,10 @@ class Servo(PluginBase, Ui_Servo):
         self.update_done_event.set()
         self.update_event.set()
         
-        if not self.test_thread_object.is_alive():
+        if not self.test_thread_object.isRunning():
             self.test_thread_object.start()
             
-        if not self.update_thread_object.is_alive():
+        if not self.update_thread_object.isRunning():
             self.update_thread_object.start() 
             
         self.update_servo_specific()
@@ -388,7 +398,7 @@ class Servo(PluginBase, Ui_Servo):
                         self.up_vel[i] = self.servo.get_current_velocity(i)
                         self.up_acc[i] = self.servo.get_acceleration(i)
     
-                self.update_timer.singleShot(0, self.update_apply)
+                self.update_timer.start()
                 
                 self.update_done_event.set()
                 self.update_event.wait()
