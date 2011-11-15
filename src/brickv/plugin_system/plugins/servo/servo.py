@@ -137,6 +137,7 @@ class Servo(PluginBase, Ui_Servo):
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_apply)
+        self.update_timer.setInterval(0)
         self.update_timer.setSingleShot(True)
         
         layout = QVBoxLayout(self)
@@ -373,7 +374,7 @@ class Servo(PluginBase, Ui_Servo):
             else:
                 self.deactivate_servo(i)
                 self.enable_list[i].setText('Off')
-    
+                
     def update_thread(self):
         while self.alive:
             time.sleep(0.1)
@@ -398,7 +399,8 @@ class Servo(PluginBase, Ui_Servo):
                         self.up_vel[i] = self.servo.get_current_velocity(i)
                         self.up_acc[i] = self.servo.get_acceleration(i)
     
-                self.update_timer.start()
+                #self.update_timer.start()
+                self.update_apply()
                 
                 self.update_done_event.set()
                 self.update_event.wait()
