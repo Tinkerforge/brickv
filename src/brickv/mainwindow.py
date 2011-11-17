@@ -135,6 +135,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ipcon = None
             
     def advanced_pressed(self):
+        if len(self.plugins) < 2:
+            QMessageBox.warning(self, "Error", "You have to connect at least one Brick", QMessageBox.Ok)
+            return
+        
         aw = AdvancedWindow(self)
         for plugin in self.plugins[1:]:
             if ' Brick ' in plugin[2]:
