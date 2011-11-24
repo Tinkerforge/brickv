@@ -399,8 +399,8 @@ class Servo(PluginBase, Ui_Servo):
                         self.up_vel[i] = self.servo.get_current_velocity(i)
                         self.up_acc[i] = self.servo.get_acceleration(i)
     
-                #self.update_timer.start()
-                self.update_apply()
+                self.update_timer.start()
+                #self.update_apply()
                 
                 self.update_done_event.set()
                 self.update_event.wait()
