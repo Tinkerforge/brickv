@@ -248,6 +248,10 @@ class Servo(PluginBase, Ui_Servo):
             self.update_thread_object.start() 
             
         self.update_servo_specific()
+        
+        for i in range(7):
+            if not self.servo.is_enabled(i):
+                self.servo.set_position(i, 0)
             
     def destroy(self):
         self.test_event.set()
