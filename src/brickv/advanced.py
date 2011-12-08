@@ -49,7 +49,6 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
     
     def popup_fail(self):
         QMessageBox.critical(self, "Upload", "Check Failed", QMessageBox.Ok)
-        pass
         
     def uid_save_pressed(self):
         device, port = self.current_device_and_port()

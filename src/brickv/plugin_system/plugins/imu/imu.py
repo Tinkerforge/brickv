@@ -152,7 +152,7 @@ class IMU(PluginBase, Ui_IMU):
         #min: (-872, -252, -392)
 
     def start(self):
-        self.update_timer.start(100)
+        self.update_timer.start(50)
 
     def stop(self):
         self.update_timer.stop()
