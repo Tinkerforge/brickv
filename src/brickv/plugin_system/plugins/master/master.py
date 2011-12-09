@@ -165,10 +165,10 @@ class Master(PluginBase, Ui_Master):
         
         num_extensions = 0
         # construct chibi widget
-        if self.master.is_chibi_present():
-            num_extensions += 1
-            chibi = Chibi(self.master)
-            self.extension_layout.addWidget(chibi)
+#        if self.master.is_chibi_present():
+#            num_extensions += 1
+#            chibi = Chibi(self.master)
+#            self.extension_layout.addWidget(chibi)
             
         if num_extensions == 0:
             self.extension_label.setText("None Present")
