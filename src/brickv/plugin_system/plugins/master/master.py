@@ -158,6 +158,8 @@ class Master(PluginBase, Ui_Master):
         self.ipcon.add_device(self.master)
         self.version = '.'.join(map(str, self.master.get_version()[1]))
         
+        self.extension_type_button.setEnabled(False)
+        
         self.extension_type_button.pressed.connect(self.extension_pressed)
         
         self.update_timer = QTimer()
