@@ -224,6 +224,8 @@ class Servo(PluginBase, Ui_Servo):
         self.test_thread_object = WorkerThread(self, self.test_thread)
         self.update_event = Event()
         self.update_thread_object = WorkerThread(self, self.update_thread)
+
+        self.update_thread_first_time = False
         
         self.update_done_event = Event()
         self.update_done_event.set()
@@ -357,8 +359,9 @@ class Servo(PluginBase, Ui_Servo):
             return
             
     def update_apply(self):
-        if not self.__dict__.has_key('up_cur'):
+        if not self.update_thread_first_time:
             return
+
         self.servo_current_update(self.up_cur)
         self.stack_input_voltage_update(self.up_siv)
         self.external_input_voltage_update(self.up_eiv)
@@ -408,6 +411,9 @@ class Servo(PluginBase, Ui_Servo):
                 self.update_done_event.clear()
             except ip_connection.Error:
                 pass
+
+            self.update_thread_first_time = True
+
         self.update_done_event.set()
             
     def test_thread(self):
