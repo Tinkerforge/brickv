@@ -137,8 +137,8 @@ class Servo(PluginBase, Ui_Servo):
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_apply)
-        self.update_timer.setInterval(0)
-        self.update_timer.setSingleShot(True)
+        self.update_timer.setInterval(50)
+        self.update_timer.start()
         
         layout = QVBoxLayout(self)
         layout.addWidget(QLabel('Servo'))
@@ -357,6 +357,8 @@ class Servo(PluginBase, Ui_Servo):
             return
             
     def update_apply(self):
+        if not self.__dict__.has_key('up_cur'):
+            return
         self.servo_current_update(self.up_cur)
         self.stack_input_voltage_update(self.up_siv)
         self.external_input_voltage_update(self.up_eiv)
@@ -399,7 +401,6 @@ class Servo(PluginBase, Ui_Servo):
                         self.up_vel[i] = self.servo.get_current_velocity(i)
                         self.up_acc[i] = self.servo.get_acceleration(i)
     
-                self.update_timer.start()
                 #self.update_apply()
                 
                 self.update_done_event.set()

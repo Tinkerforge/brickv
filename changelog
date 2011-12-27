@@ -1,0 +1,2 @@
+1.0.0: Initial Version
+1.0.1: Fix problem with Servo plugin on windows (can't start timer in thread)
