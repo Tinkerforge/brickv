@@ -52,10 +52,9 @@ NAME = 'Brickv'
 
 def build_windows_pkg():
     import py2exe
-#    os.system("python build_all_ui.py")
+    os.system("python build_all_ui.py")
     
-#    data_files = matplotlib.get_py2exe_datafiles()
-    data_files = []
+    data_files = matplotlib.get_py2exe_datafiles()
     def visitor(arg, dirname, names):
         for n in names:
 
