@@ -82,21 +82,25 @@ class ExtensionTypeWindow(QFrame, Ui_extension_type):
             self.popup_fail()
     
 class Chibi(QWidget, Ui_Chibi):
-    def __init__(self, master):
+    def __init__(self, parent):
         QWidget.__init__(self)
         self.setupUi(self)
         
-        self.master = master
+        self.master = parent.master
         
-        address = self.master.get_chibi_address()
-        address_recv = self.master.get_chibi_receiver_address(0)
-        
-        self.address_box.setValue(address)
-        self.receiver_address_box.setValue(address_recv)
-        
-        self.receiver_num_combo.currentIndexChanged.connect(self.index_changed)
-        self.address_button.pressed.connect(self.address_pressed)
-        self.receiver_address_button.pressed.connect(self.receiver_address_pressed)
+        if parent.version_minor > 0:
+            address = self.master.get_chibi_address()
+            address_slave = self.master.get_chibi_slave_address(0)
+            address_master = self.master.get_chibi_master_address()
+            
+            self.address_spinbox.setValue(address)
+            self.slave_address_spinbox.setValue(address_slave)
+            self.master_address_spinbox.setValue(address_master)
+            
+            self.slave_num_combo.currentIndexChanged.connect(self.index_changed)
+            self.address_button.pressed.connect(self.address_pressed)
+            self.slave_address_button.pressed.connect(self.slave_address_pressed)
+            self.master_address_button.pressed.connect(self.master_address_pressed)
         
     def popup_ok(self):
         QMessageBox.information(self, "Save", "Check OK", QMessageBox.Ok)
@@ -105,7 +109,7 @@ class Chibi(QWidget, Ui_Chibi):
         QMessageBox.critical(self, "Save", "Check Failed", QMessageBox.Ok)
         
     def address_pressed(self):
-        addr = self.address_box.value()
+        addr = self.address_spinbox.value()
         try:
             self.master.set_chibi_address(addr)
         except:
@@ -123,17 +127,36 @@ class Chibi(QWidget, Ui_Chibi):
         else:
             self.popup_fail()
         
-    def receiver_address_pressed(self):
-        num = self.receiver_num_combo.currentIndex()
-        addr = self.receiver_address_box.value()
+    def slave_address_pressed(self):
+        num = self.slave_num_combo.currentIndex()
+        addr = self.slave_address_spinbox.value()
         try:
-            self.master.set_chibi_receiver_address(num, addr)
+            self.master.set_chibi_slave_address(num, addr)
         except:
             self.popup_fail()
             return
         
         try:
-            new_addr = self.master.get_chibi_receiver_address(num)
+            new_addr = self.master.get_chibi_slave_address(num)
+        except:
+            self.popup_fail()
+            return
+        
+        if addr == new_addr:
+            self.popup_ok()
+        else:
+            self.popup_fail()
+            
+    def master_address_pressed(self):
+        addr = self.master_address_spinbox.value()
+        try:
+            self.master.set_chibi_master_address(addr)
+        except:
+            self.popup_fail()
+            return
+        
+        try:
+            new_addr = self.master.get_chibi_master_address()
         except:
             self.popup_fail()
             return
@@ -144,8 +167,19 @@ class Chibi(QWidget, Ui_Chibi):
             self.popup_fail()
         
     def index_changed(self, index):
-        addr = self.master.get_chibi_receiver_address(index)
-        self.receiver_address_box.setValue(addr)
+        addr = self.master.get_chibi_slave_address(index)
+        self.slave_address_spinbox.setValue(addr)
+        
+    def signal_strength_update(self, ss):
+        ss_str = "%g dBm"  % (ss,)
+        self.signal_strength_label.setText(ss_str)
+        
+    def update_data(self):
+        try:
+            ss = self.master.get_chibi_signal_strength()
+            self.signal_strength_update(ss)
+        except ip_connection.Error:
+            return
     
 
 class Master(PluginBase, Ui_Master):
@@ -154,23 +188,29 @@ class Master(PluginBase, Ui_Master):
         self.setupUi(self)
 
         self.master = brick_master.Master(self.uid)
+        
         self.device = self.master
         self.ipcon.add_device(self.master)
-        self.version = '.'.join(map(str, self.master.get_version()[1]))
+        version = self.master.get_version()
+        self.version = '.'.join(map(str, version[1]))
+        self.version_minor = version[1][1]
         
-        self.extension_type_button.setEnabled(False)
-        
-        self.extension_type_button.pressed.connect(self.extension_pressed)
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
         
+        self.extensions = []
         num_extensions = 0
         # construct chibi widget
-#        if self.master.is_chibi_present():
-#            num_extensions += 1
-#            chibi = Chibi(self.master)
-#            self.extension_layout.addWidget(chibi)
+        if self.version_minor > 0:
+            self.extension_type_button.pressed.connect(self.extension_pressed)
+            if self.master.is_chibi_present():
+                num_extensions += 1
+                chibi = Chibi(self)
+                self.extensions.append(chibi)
+                self.extension_layout.addWidget(chibi)
+        else:
+            self.extension_type_button.setEnabled(False)
             
         if num_extensions == 0:
             self.extension_label.setText("None Present")
@@ -195,6 +235,8 @@ class Master(PluginBase, Ui_Master):
             self.stack_current_update(sc)
         except ip_connection.Error:
             return
+        for extension in self.extensions:
+            extension.update_data()
         
     def stack_voltage_update(self, sv):
         sv_str = "%gV"  % round(sv/1000.0, 1)

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>338</width>
-    <height>216</height>
+    <width>329</width>
+    <height>260</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,6 +30,34 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Signal Strength:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="signal_strength_label">
+             <property name="text">
+              <string>0</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
             <widget class="QLabel" name="label">
@@ -39,13 +67,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="address_box">
-             <property name="buttonSymbols">
-              <enum>QAbstractSpinBox::NoButtons</enum>
-             </property>
-             <property name="minimum">
-              <number>0</number>
-             </property>
+            <widget class="QSpinBox" name="address_spinbox">
              <property name="maximum">
               <number>255</number>
              </property>
@@ -61,16 +83,55 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <widget class="Line" name="line_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
            <item>
-            <widget class="QLabel" name="label_3">
+            <widget class="QLabel" name="label_5">
              <property name="text">
-              <string>Receiver Num:</string>
+              <string>Master Address:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="receiver_num_combo">
+            <widget class="QSpinBox" name="master_address_spinbox">
+             <property name="maximum">
+              <number>255</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="master_address_button">
+             <property name="text">
+              <string>Save</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="Line" name="line_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>Slave Num:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="slave_num_combo">
              <item>
               <property name="text">
                <string>0</string>
@@ -240,25 +301,19 @@
            <item>
             <widget class="QLabel" name="label_2">
              <property name="text">
-              <string>Receiver Address:</string>
+              <string>Slave Address:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="receiver_address_box">
-             <property name="buttonSymbols">
-              <enum>QAbstractSpinBox::NoButtons</enum>
-             </property>
-             <property name="minimum">
-              <number>0</number>
-             </property>
+            <widget class="QSpinBox" name="slave_address_spinbox">
              <property name="maximum">
               <number>255</number>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="receiver_address_button">
+            <widget class="QPushButton" name="slave_address_button">
              <property name="text">
               <string>Save</string>
              </property>

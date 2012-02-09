@@ -126,6 +126,8 @@ class IPConnection:
 
     PLUGIN_CHUNK_SIZE = 32
 
+    callback_queue = Queue()
+
     def __init__(self, host, port):
         self.add_dev = None
         self.devices = {}
@@ -135,9 +137,13 @@ class IPConnection:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((host, port))
 
-        self.thread = Thread(target=self.recv_loop)
-        self.thread.daemon = True
-        self.thread.start()
+        self.thread_recv = Thread(target=self.recv_loop)
+        self.thread_recv.daemon = True
+        self.thread_recv.start()
+
+        self.thread_callback = Thread(target=self.callback_loop)
+        self.thread_callback.daemon = True
+        self.thread_callback.start()
 
     def recv_loop(self):
         while self.recv_loop_flag:
@@ -152,6 +158,43 @@ class IPConnection:
                 handled = self.handle_message(data)
                 data = data[handled:]
 
+    def callback_loop(self):
+        while self.recv_loop_flag:
+            try:
+                data = self.callback_queue.get(True, 1.0)
+            except:
+                if self.recv_loop_flag:
+                    continue
+                else:
+                    return
+
+
+            typ = get_type_from_data(data)
+            stack_id = get_stack_id_from_data(data)
+            length = get_length_from_data(data)
+            
+            if typ == IPConnection.TYPE_ENUMERATE_CALLBACK:
+                data = data[:length]
+                data = data[4:]
+
+                uid, name, stack_id, new = self.data_to_return(data, 'Q 40s B ?')
+
+                # Remove \0 from end of string
+                name = name.replace(chr(0), '')
+
+                self.enumerate_callback(base58encode(uid), name.decode(), stack_id, new)
+                continue
+
+            device = self.devices[stack_id]
+            if typ in device.callbacks:
+                form = device.callbacks_format[typ]
+                if len(form) == 0:
+                    device.callbacks[typ]()
+                elif len(form) == 1:
+                    device.callbacks[typ](self.data_to_return(data[4:], form))
+                else:
+                    device.callbacks[typ](*self.data_to_return(data[4:], form))
+
     def destroy(self):
         self.recv_loop_flag = False
         try:
@@ -159,6 +202,8 @@ class IPConnection:
         except socket.error:
             pass
         self.sock.close()
+
+        self.join_thread()
 
     def data_to_return(self, data, form):
         ret = []
@@ -180,7 +225,8 @@ class IPConnection:
         return ret
 
     def join_thread(self):
-        self.thread.join()
+        self.thread_recv.join()
+        self.thread_callback.join()
 
     def write(self, device, typ, data, form, form_ret):
         device.sem_write.acquire()
@@ -244,13 +290,7 @@ class IPConnection:
             return length
     
         if typ in device.callbacks:
-            form = device.callbacks_format[typ]
-            if len(form) == 0:
-                device.callbacks[typ]()
-            elif len(form) == 1:
-                device.callbacks[typ](self.data_to_return(data[4:], form))
-            else:
-                device.callbacks[typ](*self.data_to_return(data[4:], form))
+            self.callback_queue.put(data)
             return length
 
         # Message seems to be OK, but can't be handled, most likely
@@ -263,15 +303,7 @@ class IPConnection:
         if self.enumerate_callback == None:
             return length
 
-        data = data[:length]
-        data = data[4:]
-
-        uid, name, stack_id, new = self.data_to_return(data, 'Q 40s B ?')
-
-        # Remove \0 from end of string
-        name = name.replace(chr(0), '')
-
-        self.enumerate_callback(base58encode(uid), name.decode(), stack_id, new)
+        self.callback_queue.put(data) 
         return length
 
 
