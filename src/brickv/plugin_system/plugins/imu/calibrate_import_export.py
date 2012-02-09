@@ -21,8 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget, QFrame, QMessageBox
-from PyQt4.QtCore import QTimer, Qt, pyqtSignal
+from PyQt4.QtGui import QWidget, QMessageBox
 
 from ui_calibrate_import_export import Ui_calibrate_import_export
 

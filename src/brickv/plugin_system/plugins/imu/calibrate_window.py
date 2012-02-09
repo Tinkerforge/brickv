@@ -22,10 +22,9 @@ Boston, MA 02111-1307, USA.
 """
 
 from ui_calibrate import Ui_widget_calibrate
-import time
 
-from PyQt4.QtCore import pyqtSignal, Qt
-from PyQt4.QtGui import QFrame, QFileDialog, QMessageBox, QWidget, QTabWidget
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QFrame, QTabWidget
 
 from calibrate_accelerometer import CalibrateAccelerometer
 from calibrate_magnetometer import CalibrateMagnetometer

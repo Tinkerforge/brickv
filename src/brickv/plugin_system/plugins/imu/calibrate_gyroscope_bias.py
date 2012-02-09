@@ -21,8 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget, QFrame, QMessageBox
-from PyQt4.QtCore import QTimer, Qt, pyqtSignal
+from PyQt4.QtGui import QWidget
+from PyQt4.QtCore import pyqtSignal
 
 from ui_calibrate_gyroscope_bias import Ui_calibrate_gyroscope_bias
 
@@ -40,6 +40,7 @@ class CalibrateGyroscopeBias(QWidget, Ui_calibrate_gyroscope_bias):
         self.parent = parent
         self.imu = parent.parent.imu
         
+        self.set_default()
         self.start_button.pressed.connect(self.next_state)
         self.i = 0
         self.t = 0
@@ -57,6 +58,21 @@ class CalibrateGyroscopeBias(QWidget, Ui_calibrate_gyroscope_bias):
         
     def stop(self):
         self.imu.set_angular_velocity_period(0)
+        
+    def set_default(self):
+        self.gyr_sum = [0, 0, 0]
+        self.gyr_bias = [0, 0, 0]
+        text = """For the gyroscope bias calibration the IMU Brick has \
+to lie still for about 5 seconds. As soon as you press "Start Calibration" \
+the calibration will begin.
+
+Make sure that the IMU Brick lies absolutely still during the calibration. \
+Don't make vibrations by walking around and don't type on your keyboard \
+if the IMU Brick is placed on the same desk etc. Even small vibrations can \
+deteriorate this calibration significantly."""
+            
+        self.text_label.setText(text)
+        self.start_button.setText("Start Calibration")
         
     def calc(self):
         for i in range(3):
@@ -89,8 +105,7 @@ class CalibrateGyroscopeBias(QWidget, Ui_calibrate_gyroscope_bias):
             self.bias_y.setText("?")
             self.bias_z.setText("?")
             
-            self.text_label.setText("Gyroscope Gain Calibration..., lay still")
-            self.start_button.setText("Start Calibration")
+            self.set_default()
             
         elif self.state == 1:
             bias = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -103,7 +118,8 @@ class CalibrateGyroscopeBias(QWidget, Ui_calibrate_gyroscope_bias):
             
         if self.state == 2:
             self.calc()
-            self.text_label.setText("Ready")
+            self.text_label.setText("""Ready. To save the calibration \
+press "Save Calibration" """)
             self.start_button.setText("Save Calibration")
         
     def callback(self, gyr_x, gyr_y, gyr_z):

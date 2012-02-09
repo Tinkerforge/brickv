@@ -32,7 +32,10 @@
      <item>
       <widget class="QLabel" name="text_label">
        <property name="text">
-        <string>Not implemented yet. Comming Soon!</string>
+        <string>Not implemented yet. Comming soon!</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>596</width>
-    <height>332</height>
+    <width>720</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -230,6 +230,12 @@
       <widget class="QLabel" name="label_10">
        <property name="text">
         <string>Calibrate:</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::AutoText</enum>
+       </property>
+       <property name="wordWrap">
+        <bool>false</bool>
        </property>
       </widget>
      </item>

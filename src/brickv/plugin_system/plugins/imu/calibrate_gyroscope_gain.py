@@ -21,8 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget, QFrame, QMessageBox
-from PyQt4.QtCore import QTimer, Qt, pyqtSignal
+from PyQt4.QtGui import QWidget
+from PyQt4.QtCore import pyqtSignal
 
 from ui_calibrate_gyroscope_gain import Ui_calibrate_gyroscope_gain
 
@@ -40,6 +40,7 @@ class CalibrateGyroscopeGain(QWidget, Ui_calibrate_gyroscope_gain):
         self.parent = parent
         self.imu = parent.parent.imu
         
+        self.set_default()
         self.start_button.pressed.connect(self.next_state)
         self.i = 0
         self.t = 0
@@ -60,6 +61,26 @@ class CalibrateGyroscopeGain(QWidget, Ui_calibrate_gyroscope_gain):
         
     def stop(self):
         self.imu.set_angular_velocity_period(0)
+        
+    def set_default(self):
+        self.i = 0
+        self.t = 0
+        
+        self.gyr = [0, 0, 0]
+        self.gyr_sum = [0, 0, 0]
+        
+        self.gyr_gain_mult = [0, 0, 0]
+        self.gyr_gain_div = [0, 0, 0]
+        
+        self.text_label.setText("""<p>To calibrate the \
+gyroscope gain you need to rotate the IMU Brick with precise speeds, this is \
+only possible with suitable machinery. <font color="red">We highly recommend \
+hat you keep the factory calibration here.</font></p>
+
+Note: As soon as you click "Start Calibration", the current calibration \
+will be deleted. You can make a backup of the old calibration \
+in the Im/Export tab.""")
+        self.start_button.setText("Start Calibration")
         
     def calc(self, i):
         self.gyr_gain_mult[i] = 1000
@@ -96,15 +117,14 @@ class CalibrateGyroscopeGain(QWidget, Ui_calibrate_gyroscope_gain):
             self.gain_x.setText("?")
             self.gain_y.setText("?")
             self.gain_z.setText("?")
-            
-            self.text_label.setText("Gyroscope gain Calibration...")
-            self.start_button.setText("Start Calibration")
+        
+            self.set_default()
         if self.state == 1:
             gain = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
             self.imu.set_calibration(self.TYPE_GYR_GAIN, gain)
             self.parent.refresh_values()
             
-            self.text_label.setText("Hold IMU in certain way X...")
+            self.text_label.setText("Turn IMU Brick 10°/s around X-axis.")
             self.start_button.setText("Start X Calibration")
         if self.state == 2:
             self.i = 0
@@ -113,7 +133,7 @@ class CalibrateGyroscopeGain(QWidget, Ui_calibrate_gyroscope_gain):
         if self.state == 3:
             self.gyr[0] = self.gyr_sum[0]/self.NUM_AVG
             self.calc(0)
-            self.text_label.setText("Hold IMU in certain way Y...")
+            self.text_label.setText("Turn IMU Brick 10°/s around Y-axis.")
             self.start_button.setText("Start Y Calibration")
         if self.state == 4:
             self.i = 0
@@ -122,7 +142,7 @@ class CalibrateGyroscopeGain(QWidget, Ui_calibrate_gyroscope_gain):
         if self.state == 5:
             self.gyr[1] = self.gyr_sum[1]/self.NUM_AVG
             self.calc(1)
-            self.text_label.setText("Hold IMU in certain way Z...")
+            self.text_label.setText("Turn IMU Brick 10°/s around Z-axis.")
             self.start_button.setText("Start Z Calibration")
         if self.state == 6:
             self.i = 0
@@ -131,7 +151,8 @@ class CalibrateGyroscopeGain(QWidget, Ui_calibrate_gyroscope_gain):
         if self.state == 7:
             self.gyr[2] = self.gyr_sum[2]/self.NUM_AVG
             self.calc(2)
-            self.text_label.setText("Save calibration")
+            self.text_label.setText("""Ready. Press "Save Calibration" to \
+upload the new calibration.""")
             self.start_button.setText("Save Calibration")
         
     def callback(self, gyr_x, gyr_y, gyr_z):

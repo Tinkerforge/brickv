@@ -88,6 +88,9 @@
        <property name="text">
         <string>Text</string>
        </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>

@@ -26,10 +26,9 @@ Boston, MA 02111-1307, USA.
 from plugin_system.plugin_base import PluginBase
 from calibrate_window import CalibrateWindow
 import ip_connection
-import time
 
+from PyQt4.QtGui import QLabel, QVBoxLayout
 from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QVBoxLayout, QLabel, QColor
 import PyQt4.Qwt5 as Qwt
 
 from ui_imu import Ui_IMU
@@ -42,8 +41,6 @@ class Plot(Qwt.QwtPlot):
         
         self.setAxisTitle(Qwt.QwtPlot.xBottom, "Time [s]")
         self.setAxisTitle(Qwt.QwtPlot.yLeft, y_axis)
-        
-        #self.setTitle("Test")
         
         legend = Qwt.QwtLegend()
         legend.setItemMode(Qwt.QwtLegend.CheckableItem)
@@ -69,9 +66,6 @@ class Plot(Qwt.QwtPlot):
         self.legendChecked.connect(self.show_curve)
         
         
-        #self.setAxisAutoScale(Qwt.QwtPlot.xBottom, True)
-        #self.curve.setData([0,1,2,3,4,5,6,7], [1,2,3,4,4,4,3,2])
-        
     def show_curve(self, item, on):
         item.setVisible(on)
         widget = self.legend().find(item)
@@ -81,7 +75,6 @@ class Plot(Qwt.QwtPlot):
            
 
     def add_data(self, i, data_x, data_y):
-        #print index, data
         self.data_x[i].append(data_x)
         self.data_y[i].append(data_y)
         if len(self.data_x[i]) == 600: # 300 = 5 minutes
@@ -168,10 +161,19 @@ class IMU(PluginBase, Ui_IMU):
         self.tem_plot = Plot("Temperature [%cC]" % 0xB0,
                              [["t", Qt.red]])
         
+        
+        self.orientation_label = QLabel("""Position your IMU Brick as shown \
+in the image above, then press "Save Orientation".""")
+        self.orientation_label.setWordWrap(True)
+        self.orientation_label.setAlignment(Qt.AlignHCenter)
+        self.gl_layout = QVBoxLayout()
+        self.gl_layout.addWidget(self.imu_gl)
+        self.gl_layout.addWidget(self.orientation_label)
+        
         self.grid_layout.addWidget(self.gyr_plot, 0, 0)
         self.grid_layout.addWidget(self.acc_plot, 0, 2)
         self.grid_layout.addWidget(self.mag_plot, 0, 4)
-        self.grid_layout.addWidget(self.imu_gl, 2, 2)
+        self.grid_layout.addLayout(self.gl_layout, 2, 2)
         self.grid_layout.addWidget(self.tem_plot, 2, 4)
         
         self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
@@ -251,71 +253,7 @@ class IMU(PluginBase, Ui_IMU):
         self.orientation_update(self.roll, self.pitch, self.yaw)
         self.temperature_update(self.tem)
         
-        #print qua_x, qua_y, qua_z, qua_w
-        
-#        import math
-#        print math.atan2((float((mag_x-self.min_x))/(self.max_x-self.min_x))*2 - 1.0, 
-#                         (float((mag_y-self.min_y))/(self.max_y-self.min_y))*2 - 1.0)*360.0/math.pi
-
-        # MAGNETORMETER
-        #print mag_x, mag_y, mag_z
-        
-        #if mag_x > self.max_x:
-        #    self.max_x = int(mag_x)
-        #if mag_x < self.min_x:
-        #    self.min_x = int(mag_x)
-            
-        #if mag_y > self.max_y:
-        #    self.max_y = int(mag_y)
-        #if mag_y < self.min_y:
-        #    self.min_y = int(mag_y)
-            
-        #if mag_z > self.max_z:
-        #    self.max_z = int(mag_z)
-        #if mag_z < self.min_z:
-        #    self.min_z = int(mag_z)
-            
-        # ACCELEROMETER
-        #print acc_x, acc_y, acc_z
-        
-        #if acc_x > self.max_x:
-        #    self.max_x = int(acc_x)
-        #if acc_x < self.min_x:
-        #    self.min_x = int(acc_x)
-           
-        #if acc_y > self.max_y:
-        #    self.max_y = int(acc_y)
-        #if acc_y < self.min_y:
-        #    self.min_y = int(acc_y)
-            
-        #if acc_z > self.max_z:
-        #    self.max_z = int(acc_z)
-        #if acc_z < self.min_z:
-        #    self.min_z = int(acc_z)
-        
-        # GYROSCOPE
-        #print self.counter, gyr_x, gyr_y, gyr_z
-
-        #if self.counter % 1000 == 0:
-        #    print "avg: " + str((self.max_x/1000.0, self.max_y/1000.0, self.max_z/1000.0))
-        #    self.max_x = 0
-        #    self.max_y = 0
-        #    self.max_z = 0
-        #    if self.counter != 0:
-        #        exit()
-        
-        #self.max_x += gyr_x
-        #self.max_y += gyr_y
-        #self.max_z += gyr_z
-        
-        #self.counter += 1
-            
-        #print "max: " + str((self.max_x, self.max_y, self.max_z))
-        #print "min: " + str((self.min_x, self.min_y, self.min_z))
-        
-        
-        self.imu_gl.update(self.qua_x, self.qua_y, self.qua_z, self.qua_w, self.roll, self.pitch, self.yaw)
-        #self.imu_gl.update(1.0, 0.0, 0.0, 0.0)
+        self.imu_gl.update(self.qua_x, self.qua_y, self.qua_z, self.qua_w)
         
         
         self.gyr_plot.add_data(0, self.counter, gyr_x)
@@ -330,7 +268,7 @@ class IMU(PluginBase, Ui_IMU):
         self.mag_plot.add_data(1, self.counter, self.mag_y)
         self.mag_plot.add_data(2, self.counter, self.mag_z)
         
-        self.tem_plot.add_data(0, self.counter, tem)
+        self.tem_plot.add_data(0, self.counter, self.tem/10.0)
         
         self.counter += 0.1
         
@@ -368,7 +306,7 @@ class IMU(PluginBase, Ui_IMU):
         self.yaw_label.setText(y_str)
         
     def temperature_update(self, t):
-        t_str = "%.2f" % t/10.0
+        t_str = "%.2f" % (t/10.0)
         self.tem_label.setText(t_str)
         
         

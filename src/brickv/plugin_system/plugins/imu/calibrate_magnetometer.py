@@ -21,8 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget, QFrame, QMessageBox
-from PyQt4.QtCore import QTimer, Qt, pyqtSignal
+from PyQt4.QtGui import QWidget
+from PyQt4.QtCore import pyqtSignal
 
 from ui_calibrate_magnetometer import Ui_calibrate_magnetometer
 
@@ -38,6 +38,7 @@ class CalibrateMagnetometer(QWidget, Ui_calibrate_magnetometer):
         self.parent = parent
         self.imu = parent.parent.imu
         
+        self.set_default()
         self.start_button.pressed.connect(self.next_state)
         
         self.state = 0
@@ -57,6 +58,26 @@ class CalibrateMagnetometer(QWidget, Ui_calibrate_magnetometer):
         
     def stop(self):
         self.imu.set_magnetic_field_period(0)
+        
+    def set_default(self):
+        self.mag_max = [0, 0, 0]
+        self.mag_min = [0, 0, 0]
+        
+        self.acc_gain_mult = [0, 0, 0]
+        self.acc_gain_div = [0, 0, 0]
+        self.acc_bias = [0, 0, 0]
+        
+        text = """The magnetometer calibration should take place in the \
+same location where the IMU Brick is used later on. Especially if the \
+IMU Brick is used near a motor or any other device with a strong magnetic \
+field, you have to calibrate it "in place".
+
+Note: As soon as you click "Start Calibration", the current calibration \
+will be deleted. You can make a backup of the old calibration \
+in the Im/Export tab."""
+            
+        self.text_label.setText(text)
+        self.start_button.setText("Start Calibration")
         
     def calc(self):
         for i in range(3):
@@ -111,8 +132,8 @@ class CalibrateMagnetometer(QWidget, Ui_calibrate_magnetometer):
             self.bias_y.setText("?")
             self.bias_z.setText("?")
             
-            self.text_label.setText("Magnetometer Calibration...")
-            self.start_button.setText("Start Calibration")
+            
+            self.set_default()
             
         elif self.state == 1:
             gain = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
@@ -122,7 +143,11 @@ class CalibrateMagnetometer(QWidget, Ui_calibrate_magnetometer):
             self.parent.refresh_values()
             
             self.imu.set_magnetic_field_period(1)
-            self.text_label.setText("Fling around until values don't change")
+            self.text_label.setText("""Now fling your IMU Brick around until \
+the values shown above stop changing. Make sure that you reach every \
+possible orientation at least once.
+
+If you press "Ready" the magnetometer calibration will be uploaded""")
             self.start_button.setText("Ready")
         
     def callback(self, mag_x, mag_y, mag_z):
