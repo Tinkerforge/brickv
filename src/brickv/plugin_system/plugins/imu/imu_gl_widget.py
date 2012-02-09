@@ -91,7 +91,6 @@ class IMUGLWidget(QGLWidget):
         self.roll = roll
         self.pitch = pitch
         self.yaw = yaw
-        print x, y, z, w
         
         if self.save_orientation_flag:
             self.rel_x = x

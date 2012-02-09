@@ -22,16 +22,16 @@
      <property name="spacing">
       <number>6</number>
      </property>
-     <item row="0" column="2">
+     <item row="0" column="3">
       <widget class="QWidget" name="widget" native="true"/>
      </item>
-     <item row="0" column="4">
+     <item row="0" column="5">
       <widget class="QWidget" name="widget_2" native="true"/>
      </item>
      <item row="0" column="0">
       <widget class="QWidget" name="widget_3" native="true"/>
      </item>
-     <item row="2" column="4">
+     <item row="2" column="5">
       <widget class="QWidget" name="widget_5" native="true"/>
      </item>
      <item row="1" column="0">
@@ -41,42 +41,42 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="2">
+     <item row="1" column="3">
       <widget class="Line" name="line_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="1" column="4">
+     <item row="1" column="5">
       <widget class="Line" name="line_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="2" column="2">
       <widget class="Line" name="line_4">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
-     <item row="2" column="3">
+     <item row="2" column="4">
       <widget class="Line" name="line_5">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="0" column="2">
       <widget class="Line" name="line_6">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </item>
-     <item row="0" column="3">
+     <item row="0" column="4">
       <widget class="Line" name="line_7">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -318,29 +318,65 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="clear_graphs">
-         <property name="text">
-          <string>Clear Graphs</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>Convergence Speed:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="speed_spinbox">
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+           <property name="value">
+            <number>30</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="set_zero">
-         <property name="text">
-          <string>Set Zero</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="led_button">
+           <property name="text">
+            <string>Turn LEDs Off</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="clear_graphs">
+           <property name="text">
+            <string>Clear Graphs</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="save_orientation">
-         <property name="text">
-          <string>Save Orientation</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QPushButton" name="calibrate">
+           <property name="text">
+            <string>Calibrate</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="save_orientation">
+           <property name="text">
+            <string>Save Orientation</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
-     <item row="2" column="2">
+     <item row="2" column="3">
       <widget class="QWidget" name="widget_4" native="true"/>
      </item>
     </layout>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2011-10-06.      #
+# This file was automatically generated on 2012-02-08.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -19,25 +19,15 @@ GetAngularVelocity = namedtuple('AngularVelocity', ['x', 'y', 'z'])
 GetAllData = namedtuple('AllData', ['acc_x', 'acc_y', 'acc_z', 'mag_x', 'mag_y', 'mag_z', 'ang_x', 'ang_y', 'ang_z', 'temperature'])
 GetOrientation = namedtuple('Orientation', ['roll', 'pitch', 'yaw'])
 GetQuaternion = namedtuple('Quaternion', ['w', 'x', 'y', 'z'])
-GetAccelerationThreshold = namedtuple('AccelerationThreshold', ['threshold', 'option'])
-GetMagneticFieldThreshold = namedtuple('MagneticFieldThreshold', ['threshold', 'option'])
-GetAngularVelocityThreshold = namedtuple('AngularVelocityThreshold', ['threshold', 'option'])
-GetAllDataThreshold = namedtuple('AllDataThreshold', ['threshold', 'option'])
-GetOrientationThreshold = namedtuple('OrientationThreshold', ['threshold', 'option'])
 GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
 
 class IMU(Device):
-    CALLBACK_ACCELERATION = 40
-    CALLBACK_MAGNETIC_FIELD = 41
-    CALLBACK_ANGULAR_VELOCITY = 42
-    CALLBACK_ALL_DATA = 43
-    CALLBACK_ORIENTATION = 44
-    CALLBACK_QUATERNION = 45
-    CALLBACK_ACCELERATION_REACHED = 46
-    CALLBACK_MAGNETIC_FIELD_REACHED = 47
-    CALLBACK_ANGULAR_VELOCITY_REACHED = 48
-    CALLBACK_ALL_DATA_REACHED = 49
-    CALLBACK_ORIENTATION_REACHED = 50
+    CALLBACK_ACCELERATION = 31
+    CALLBACK_MAGNETIC_FIELD = 32
+    CALLBACK_ANGULAR_VELOCITY = 33
+    CALLBACK_ALL_DATA = 34
+    CALLBACK_ORIENTATION = 35
+    CALLBACK_QUATERNION = 36
 
     TYPE_GET_ACCELERATION = 1
     TYPE_GET_MAGNETIC_FIELD = 2
@@ -53,42 +43,28 @@ class IMU(Device):
     TYPE_GET_ACCELERATION_RANGE = 12
     TYPE_SET_MAGNETOMETER_RANGE = 13
     TYPE_GET_MAGNETOMETER_RANGE = 14
-    TYPE_SET_ZERO = 15
-    TYPE_SET_DEBOUNCE_PERIOD = 16
-    TYPE_GET_DEBOUNCE_PERIOD = 17
-    TYPE_SET_ACCELERATION_THRESHOLD = 18
-    TYPE_GET_ACCELERATION_THRESHOLD = 19
-    TYPE_SET_MAGNETIC_FIELD_THRESHOLD = 20
-    TYPE_GET_MAGNETIC_FIELD_THRESHOLD = 21
-    TYPE_SET_ANGULAR_VELOCITY_THRESHOLD = 22
-    TYPE_GET_ANGULAR_VELOCITY_THRESHOLD = 23
-    TYPE_SET_ALL_DATA_THRESHOLD = 24
-    TYPE_GET_ALL_DATA_THRESHOLD = 25
-    TYPE_SET_ORIENTATION_THRESHOLD = 26
-    TYPE_GET_ORIENTATION_THRESHOLD = 27
-    TYPE_SET_ACCELERATION_PERIOD = 28
-    TYPE_GET_ACCELERATION_PERIOD = 29
-    TYPE_SET_MAGNETIC_FIELD_PERIOD = 30
-    TYPE_GET_MAGNETIC_FIELD_PERIOD = 31
-    TYPE_SET_ANGULAR_VELOCITY_PERIOD = 32
-    TYPE_GET_ANGULAR_VELOCITY_PERIOD = 33
-    TYPE_SET_ALL_DATA_PERIOD = 34
-    TYPE_GET_ALL_DATA_PERIOD = 35
-    TYPE_SET_ORIENTATION_PERIOD = 36
-    TYPE_GET_ORIENTATION_PERIOD = 37
-    TYPE_SET_QUATERNION_PERIOD = 38
-    TYPE_GET_QUATERNION_PERIOD = 39
-    TYPE_ACCELERATION = 40
-    TYPE_MAGNETIC_FIELD = 41
-    TYPE_ANGULAR_VELOCITY = 42
-    TYPE_ALL_DATA = 43
-    TYPE_ORIENTATION = 44
-    TYPE_QUATERNION = 45
-    TYPE_ACCELERATION_REACHED = 46
-    TYPE_MAGNETIC_FIELD_REACHED = 47
-    TYPE_ANGULAR_VELOCITY_REACHED = 48
-    TYPE_ALL_DATA_REACHED = 49
-    TYPE_ORIENTATION_REACHED = 50
+    TYPE_SET_CONVERGENCE_SPEED = 15
+    TYPE_GET_CONVERGENCE_SPEED = 16
+    TYPE_SET_CALIBRATION = 17
+    TYPE_GET_CALIBRATION = 18
+    TYPE_SET_ACCELERATION_PERIOD = 19
+    TYPE_GET_ACCELERATION_PERIOD = 20
+    TYPE_SET_MAGNETIC_FIELD_PERIOD = 21
+    TYPE_GET_MAGNETIC_FIELD_PERIOD = 22
+    TYPE_SET_ANGULAR_VELOCITY_PERIOD = 23
+    TYPE_GET_ANGULAR_VELOCITY_PERIOD = 24
+    TYPE_SET_ALL_DATA_PERIOD = 25
+    TYPE_GET_ALL_DATA_PERIOD = 26
+    TYPE_SET_ORIENTATION_PERIOD = 27
+    TYPE_GET_ORIENTATION_PERIOD = 28
+    TYPE_SET_QUATERNION_PERIOD = 29
+    TYPE_GET_QUATERNION_PERIOD = 30
+    TYPE_ACCELERATION = 31
+    TYPE_MAGNETIC_FIELD = 32
+    TYPE_ANGULAR_VELOCITY = 33
+    TYPE_ALL_DATA = 34
+    TYPE_ORIENTATION = 35
+    TYPE_QUATERNION = 36
 
     def __init__(self, uid):
         Device.__init__(self, uid)
@@ -101,11 +77,6 @@ class IMU(Device):
         self.callbacks_format[IMU.CALLBACK_ALL_DATA] = 'h h h h h h h h h h'
         self.callbacks_format[IMU.CALLBACK_ORIENTATION] = 'h h h'
         self.callbacks_format[IMU.CALLBACK_QUATERNION] = 'f f f f'
-        self.callbacks_format[IMU.CALLBACK_ACCELERATION_REACHED] = 'h h h'
-        self.callbacks_format[IMU.CALLBACK_MAGNETIC_FIELD_REACHED] = 'h h h'
-        self.callbacks_format[IMU.CALLBACK_ANGULAR_VELOCITY_REACHED] = 'h h h'
-        self.callbacks_format[IMU.CALLBACK_ALL_DATA_REACHED] = 'h h h h h h h h h h'
-        self.callbacks_format[IMU.CALLBACK_ORIENTATION_REACHED] = 'h h h'
 
     def get_version(self):
         return GetVersion(self.name, self.firmware_version, self.binding_version)
@@ -152,44 +123,17 @@ class IMU(Device):
     def get_magnetometer_range(self):
         return self.ipcon.write(self, IMU.TYPE_GET_MAGNETOMETER_RANGE, (), '', 'B')
 
-    def set_zero(self):
-        self.ipcon.write(self, IMU.TYPE_SET_ZERO, (), '', '')
+    def set_convergence_speed(self, speed):
+        self.ipcon.write(self, IMU.TYPE_SET_CONVERGENCE_SPEED, (speed,), 'H', '')
 
-    def set_debounce_period(self, debounce_period):
-        self.ipcon.write(self, IMU.TYPE_SET_DEBOUNCE_PERIOD, (debounce_period,), 'I', '')
+    def get_convergence_speed(self):
+        return self.ipcon.write(self, IMU.TYPE_GET_CONVERGENCE_SPEED, (), '', 'H')
 
-    def get_debounce_period(self):
-        return self.ipcon.write(self, IMU.TYPE_GET_DEBOUNCE_PERIOD, (), '', 'I')
+    def set_calibration(self, type, data):
+        self.ipcon.write(self, IMU.TYPE_SET_CALIBRATION, (type, data), 'B 10h', '')
 
-    def set_acceleration_threshold(self, num, threshold, option):
-        self.ipcon.write(self, IMU.TYPE_SET_ACCELERATION_THRESHOLD, (num, threshold, option), 'B 3h 3c', '')
-
-    def get_acceleration_threshold(self, num):
-        return GetAccelerationThreshold(*self.ipcon.write(self, IMU.TYPE_GET_ACCELERATION_THRESHOLD, (num,), 'B', '3h 3c'))
-
-    def set_magnetic_field_threshold(self, num, threshold, option):
-        self.ipcon.write(self, IMU.TYPE_SET_MAGNETIC_FIELD_THRESHOLD, (num, threshold, option), 'B 3h 3c', '')
-
-    def get_magnetic_field_threshold(self, num):
-        return GetMagneticFieldThreshold(*self.ipcon.write(self, IMU.TYPE_GET_MAGNETIC_FIELD_THRESHOLD, (num,), 'B', '3h 3c'))
-
-    def set_angular_velocity_threshold(self, num, threshold, option):
-        self.ipcon.write(self, IMU.TYPE_SET_ANGULAR_VELOCITY_THRESHOLD, (num, threshold, option), 'B 3h 3c', '')
-
-    def get_angular_velocity_threshold(self, num):
-        return GetAngularVelocityThreshold(*self.ipcon.write(self, IMU.TYPE_GET_ANGULAR_VELOCITY_THRESHOLD, (num,), 'B', '3h 3c'))
-
-    def set_all_data_threshold(self, num, threshold, option):
-        self.ipcon.write(self, IMU.TYPE_SET_ALL_DATA_THRESHOLD, (num, threshold, option), 'B 9h 9c', '')
-
-    def get_all_data_threshold(self, num):
-        return GetAllDataThreshold(*self.ipcon.write(self, IMU.TYPE_GET_ALL_DATA_THRESHOLD, (num,), 'B', '9h 9c'))
-
-    def set_orientation_threshold(self, num, threshold, option):
-        self.ipcon.write(self, IMU.TYPE_SET_ORIENTATION_THRESHOLD, (num, threshold, option), 'B 3h 3c', '')
-
-    def get_orientation_threshold(self, num):
-        return GetOrientationThreshold(*self.ipcon.write(self, IMU.TYPE_GET_ORIENTATION_THRESHOLD, (num,), 'B', '3h 3c'))
+    def get_calibration(self, type):
+        return self.ipcon.write(self, IMU.TYPE_GET_CALIBRATION, (type,), 'B', '10h')
 
     def set_acceleration_period(self, period):
         self.ipcon.write(self, IMU.TYPE_SET_ACCELERATION_PERIOD, (period,), 'I', '')

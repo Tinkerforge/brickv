@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
-Master Plugin
-Copyright (C) 2010-2011 Olaf Lüke <olaf@tinkerforge.com>
+IMU Plugin
+Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 imu.py: IMU Plugin implementation
 
@@ -24,7 +24,9 @@ Boston, MA 02111-1307, USA.
 #import logging
 
 from plugin_system.plugin_base import PluginBase
+from calibrate_window import CalibrateWindow
 import ip_connection
+import time
 
 from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QVBoxLayout, QLabel, QColor
@@ -103,8 +105,35 @@ class IMU(PluginBase, Ui_IMU):
         self.ipcon.add_device(self.imu)
         self.version = '.'.join(map(str, self.imu.get_version()[1]))
         
+        self.acc_x = 0
+        self.acc_y = 0
+        self.acc_z = 0
+        self.mag_x = 0
+        self.mag_y = 0
+        self.mag_z = 0
+        self.gyr_x = 0
+        self.gyr_y = 0
+        self.gyr_z = 0
+        self.tem   = 0
+        self.roll  = 0
+        self.pitch = 0
+        self.yaw   = 0
+        self.qua_x = 0
+        self.qua_y = 0
+        self.qua_z = 0
+        self.qua_w = 0
+        
+        self.old_time = 0
+        
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
+        
+        self.imu.register_callback(self.imu.CALLBACK_ALL_DATA, 
+                                   self.all_data_callback)
+        self.imu.register_callback(self.imu.CALLBACK_ORIENTATION,
+                                   self.orientation_callback)
+        self.imu.register_callback(self.imu.CALLBACK_QUATERNION,
+                                   self.quaternion_callback)
         
         # Import IMUGLWidget here, not global. If globally included we get
         # 'No OpenGL_accelerate module loaded: No module named OpenGL_accelerate'
@@ -147,19 +176,51 @@ class IMU(PluginBase, Ui_IMU):
         
         self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
         self.clear_graphs.clicked.connect(self.clear_graphs_clicked)
+        self.calibrate.clicked.connect(self.calibrate_pressed)
+        self.led_button.clicked.connect(self.led_clicked)
+        self.speed_spinbox.editingFinished.connect(self.speed_finished)
         
-        #max: (189, 769, 467)
-        #min: (-872, -252, -392)
-
     def start(self):
+        self.imu.set_all_data_period(100)
+        self.imu.set_orientation_period(100)
+        self.imu.set_quaternion_period(50)
         self.update_timer.start(50)
+        
+        speed = self.imu.get_convergence_speed()
+        self.speed_spinbox.setValue(speed)
 
     def stop(self):
         self.update_timer.stop()
+        self.imu.set_all_data_period(0)
+        self.imu.set_orientation_period(0)
+        self.imu.set_quaternion_period(0)
         
     @staticmethod
     def has_name(name):
         return 'IMU Brick' in name 
+        
+    def all_data_callback(self, acc_x, acc_y, acc_z, mag_x, mag_y, mag_z, gyr_x, gyr_y, gyr_z, tem):
+        self.acc_x = acc_x
+        self.acc_y = acc_y
+        self.acc_z = acc_z
+        self.mag_x = mag_x
+        self.mag_y = mag_y
+        self.mag_z = mag_z
+        self.gyr_x = gyr_x
+        self.gyr_y = gyr_y
+        self.gyr_z = gyr_z
+        self.tem = tem
+        
+    def quaternion_callback(self, qua_x, qua_y, qua_z, qua_w):
+        self.qua_x = qua_x
+        self.qua_y = qua_y
+        self.qua_z = qua_z
+        self.qua_w = qua_w
+        
+    def orientation_callback(self, roll, pitch, yaw):
+        self.roll = roll
+        self.pitch = pitch
+        self.yaw = yaw
         
     def clear_graphs_clicked(self):
         self.counter = 0
@@ -168,26 +229,27 @@ class IMU(PluginBase, Ui_IMU):
         self.gyr_plot.clear_graph()
         self.tem_plot.clear_graph()
         
+    def set_zero_clicked(self):
+        self.imu.set_zero()
+        
+    def led_clicked(self):
+        if 'On' in self.led_button.text():
+            self.led_button.setText('Turn LEDs Off')
+            self.imu.leds_on()
+        elif 'Off' in self.led_button.text():
+            self.led_button.setText('Turn LEDs On')
+            self.imu.leds_off()
+        
     def update_data(self):
-        try:
-            acc_x, acc_y, acc_z, \
-            mag_x, mag_y, mag_z, \
-            gyr_x, gyr_y, gyr_z, tem = self.imu.get_all_data()
-            qua_x, qua_y, qua_z, qua_w = self.imu.get_quaternion()
-            roll, pitch, yaw = self.imu.get_orientation()
-        except ip_connection.Error:
-            return
+        gyr_x = self.gyr_x/14.375
+        gyr_y = self.gyr_y/14.375
+        gyr_z = self.gyr_z/14.375
         
-        gyr_x = gyr_x/14.375
-        gyr_y = gyr_y/14.375
-        gyr_z = gyr_z/14.375
-        tem = 35.0 + (tem + 13200)/280.0
-        
-        self.acceleration_update(acc_x, acc_y, acc_z)
-        self.magnetometer_update(mag_x, mag_y, mag_z)
+        self.acceleration_update(self.acc_x, self.acc_y, self.acc_z)
+        self.magnetometer_update(self.mag_x, self.mag_y, self.mag_z)
         self.gyroscope_update(gyr_x, gyr_y, gyr_z)
-        self.orientation_update(roll, pitch, yaw)
-        self.temperature_update(tem)
+        self.orientation_update(self.roll, self.pitch, self.yaw)
+        self.temperature_update(self.tem)
         
         #print qua_x, qua_y, qua_z, qua_w
         
@@ -252,7 +314,7 @@ class IMU(PluginBase, Ui_IMU):
         #print "min: " + str((self.min_x, self.min_y, self.min_z))
         
         
-        self.imu_gl.update(qua_x, qua_y, qua_z, qua_w, roll, pitch, yaw)
+        self.imu_gl.update(self.qua_x, self.qua_y, self.qua_z, self.qua_w, self.roll, self.pitch, self.yaw)
         #self.imu_gl.update(1.0, 0.0, 0.0, 0.0)
         
         
@@ -260,13 +322,13 @@ class IMU(PluginBase, Ui_IMU):
         self.gyr_plot.add_data(1, self.counter, gyr_y)
         self.gyr_plot.add_data(2, self.counter, gyr_z)
         
-        self.acc_plot.add_data(0, self.counter, acc_x)
-        self.acc_plot.add_data(1, self.counter, acc_y)
-        self.acc_plot.add_data(2, self.counter, acc_z)
+        self.acc_plot.add_data(0, self.counter, self.acc_x)
+        self.acc_plot.add_data(1, self.counter, self.acc_y)
+        self.acc_plot.add_data(2, self.counter, self.acc_z)
         
-        self.mag_plot.add_data(0, self.counter, mag_x)
-        self.mag_plot.add_data(1, self.counter, mag_y)
-        self.mag_plot.add_data(2, self.counter, mag_z)
+        self.mag_plot.add_data(0, self.counter, self.mag_x)
+        self.mag_plot.add_data(1, self.counter, self.mag_y)
+        self.mag_plot.add_data(2, self.counter, self.mag_z)
         
         self.tem_plot.add_data(0, self.counter, tem)
         
@@ -306,7 +368,16 @@ class IMU(PluginBase, Ui_IMU):
         self.yaw_label.setText(y_str)
         
     def temperature_update(self, t):
-        t_str = "%.2f" % t
+        t_str = "%.2f" % t/10.0
         self.tem_label.setText(t_str)
         
         
+    def calibrate_pressed(self):
+        self.stop()
+        aw = CalibrateWindow(self)  
+        aw.setAttribute(Qt.WA_QuitOnClose)
+        aw.show()
+        
+    def speed_finished(self):
+        speed = self.speed_spinbox.value()
+        self.imu.set_convergence_speed(speed)
