@@ -231,9 +231,6 @@ in the image above, then press "Save Orientation".""")
         self.gyr_plot.clear_graph()
         self.tem_plot.clear_graph()
         
-    def set_zero_clicked(self):
-        self.imu.set_zero()
-        
     def led_clicked(self):
         if 'On' in self.led_button.text():
             self.led_button.setText('Turn LEDs Off')
