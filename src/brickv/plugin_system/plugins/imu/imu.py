@@ -265,7 +265,7 @@ in the image above, then press "Save Orientation".""")
         self.mag_plot.add_data(1, self.counter, self.mag_y)
         self.mag_plot.add_data(2, self.counter, self.mag_z)
         
-        self.tem_plot.add_data(0, self.counter, self.tem/10.0)
+        self.tem_plot.add_data(0, self.counter, self.tem/100.0)
         
         self.counter += 0.1
         
@@ -303,7 +303,7 @@ in the image above, then press "Save Orientation".""")
         self.yaw_label.setText(y_str)
         
     def temperature_update(self, t):
-        t_str = "%.2f" % (t/10.0)
+        t_str = "%.2f" % (t/100.0)
         self.tem_label.setText(t_str)
         
         

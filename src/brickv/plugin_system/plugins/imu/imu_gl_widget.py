@@ -34,7 +34,7 @@ class IMUGLWidget(QGLWidget):
         col = parent.palette().background().color()
         
 #        self.color_background = (col.redF(), col.greenF(), col.blueF(), 1.0)
-        self.color_background = (0.3, 0.3, 0.3, 1.0)
+        self.color_background = (0.85, 0.85, 0.85, 1.0)
         self.color_led_red = (1.0, 0.0, 0.0)
         self.color_led_green = (0.0, 1.0, 0.0)
         self.color_board = (0.0, 0.7, 0.0)
@@ -77,6 +77,7 @@ class IMUGLWidget(QGLWidget):
             self.rel_z = z
             self.rel_w = w
             self.save_orientation_flag = False
+            self.parent.orientation_label.setText("")
             self.parent.gl_layout.removeWidget(self.parent.orientation_label)
             self.parent.orientation_label.destroy()
         
