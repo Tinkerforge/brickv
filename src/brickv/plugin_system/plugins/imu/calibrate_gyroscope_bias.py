@@ -125,7 +125,7 @@ press "Save Calibration" """)
     def callback(self, gyr_x, gyr_y, gyr_z):
         if self.i == 0:
             self.t = time.time()
-            self.acc_sum = [0, 0, 0]
+            self.gyr_sum = [0, 0, 0]
             
         if not self.start_button.isEnabled():
             self.text_label.setText("Calibrating: " + 
@@ -142,7 +142,6 @@ press "Save Calibration" """)
         self.i += 1
         
         if self.i == self.NUM_AVG:
-            print time.time() - self.t 
             self.imu.set_angular_velocity_period(0)
             self.start_button.setEnabled(True)
             self.next_state()

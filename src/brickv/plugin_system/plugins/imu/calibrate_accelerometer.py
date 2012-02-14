@@ -264,7 +264,6 @@ the accelerometer calibration data to the IMU Brick""")
         self.i += 1
         
         if self.i == self.NUM_AVG:
-            print time.time() - self.t 
             self.imu.set_acceleration_period(0)
             self.start_button.setEnabled(True)
             self.next_state()

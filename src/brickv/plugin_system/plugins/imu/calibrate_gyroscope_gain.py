@@ -30,7 +30,7 @@ import time
 
 class CalibrateGyroscopeGain(QWidget, Ui_calibrate_gyroscope_gain):
     TYPE_GYR_GAIN = 4
-    NUM_AVG = 1000
+    NUM_AVG = 5000
     qtcb_callback = pyqtSignal(int, int, int)
     
     def __init__(self, parent):
@@ -83,8 +83,8 @@ in the Im/Export tab.""")
         self.start_button.setText("Start Calibration")
         
     def calc(self, i):
-        self.gyr_gain_mult[i] = 1000
-        self.gyr_gain_div[i] = self.gyr[i]
+        self.gyr_gain_mult[i] = 647 # 45*14.375
+        self.gyr_gain_div[i] = abs(self.gyr[i])
         
         if i == 0:
             self.gain_x.setText(str(self.gyr_gain_mult[i]) + '/' + 
@@ -124,7 +124,7 @@ in the Im/Export tab.""")
             self.imu.set_calibration(self.TYPE_GYR_GAIN, gain)
             self.parent.refresh_values()
             
-            self.text_label.setText("Turn IMU Brick 10°/s around X-axis.")
+            self.text_label.setText("Turn IMU Brick 45%c/s around X-axis." % 0xB0)
             self.start_button.setText("Start X Calibration")
         if self.state == 2:
             self.i = 0
@@ -133,7 +133,7 @@ in the Im/Export tab.""")
         if self.state == 3:
             self.gyr[0] = self.gyr_sum[0]/self.NUM_AVG
             self.calc(0)
-            self.text_label.setText("Turn IMU Brick 10°/s around Y-axis.")
+            self.text_label.setText("Turn IMU Brick 45%c/s around Y-axis." % 0xB0)
             self.start_button.setText("Start Y Calibration")
         if self.state == 4:
             self.i = 0
@@ -142,7 +142,7 @@ in the Im/Export tab.""")
         if self.state == 5:
             self.gyr[1] = self.gyr_sum[1]/self.NUM_AVG
             self.calc(1)
-            self.text_label.setText("Turn IMU Brick 10°/s around Z-axis.")
+            self.text_label.setText("Turn IMU Brick 45%c/s around Z-axis." % 0xB0)
             self.start_button.setText("Start Z Calibration")
         if self.state == 6:
             self.i = 0
@@ -175,7 +175,6 @@ upload the new calibration.""")
         self.i += 1
         
         if self.i == self.NUM_AVG:
-            print time.time() - self.t 
             self.imu.set_angular_velocity_period(0)
             self.start_button.setEnabled(True)
             self.next_state()

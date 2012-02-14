@@ -295,9 +295,9 @@ in the image above, then press "Save Orientation".""")
         self.gyr_z_label.setText(z_str)
         
     def orientation_update(self, r, p, y):
-        r_str = "%g" % r
-        p_str = "%g" % p
-        y_str = "%g" % y
+        r_str = "%g" % (r/100)
+        p_str = "%g" % (p/100)
+        y_str = "%g" % (y/100)
         self.roll_label.setText(r_str)
         self.pitch_label.setText(p_str)
         self.yaw_label.setText(y_str)
@@ -305,7 +305,6 @@ in the image above, then press "Save Orientation".""")
     def temperature_update(self, t):
         t_str = "%.2f" % (t/100.0)
         self.tem_label.setText(t_str)
-        
         
     def calibrate_pressed(self):
         self.stop()
