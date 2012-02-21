@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-01-03.      #
+# This file was automatically generated on 2012-02-21.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -31,6 +31,10 @@ class Master(Device):
     TYPE_GET_CHIBI_SLAVE_ADDRESS = 11
     TYPE_GET_CHIBI_SIGNAL_STRENGTH = 12
     TYPE_GET_CHIBI_ERROR_LOG = 13
+    TYPE_SET_CHIBI_FREQUENCY = 14
+    TYPE_GET_CHIBI_FREQUENCY = 15
+    TYPE_SET_CHIBI_CHANNEL = 16
+    TYPE_GET_CHIBI_CHANNEL = 17
 
     def __init__(self, uid):
         Device.__init__(self, uid)
@@ -79,3 +83,15 @@ class Master(Device):
 
     def get_chibi_error_log(self):
         return GetChibiErrorLog(*self.ipcon.write(self, Master.TYPE_GET_CHIBI_ERROR_LOG, (), '', 'H H H H'))
+
+    def set_chibi_frequency(self, frequency):
+        self.ipcon.write(self, Master.TYPE_SET_CHIBI_FREQUENCY, (frequency,), 'B', '')
+
+    def get_chibi_frequency(self):
+        return self.ipcon.write(self, Master.TYPE_GET_CHIBI_FREQUENCY, (), '', 'B')
+
+    def set_chibi_channel(self, channel):
+        self.ipcon.write(self, Master.TYPE_SET_CHIBI_CHANNEL, (channel,), 'B', '')
+
+    def get_chibi_channel(self):
+        return self.ipcon.write(self, Master.TYPE_GET_CHIBI_CHANNEL, (), '', 'B')

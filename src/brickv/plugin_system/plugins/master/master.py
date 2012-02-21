@@ -92,21 +92,70 @@ class Chibi(QWidget, Ui_Chibi):
             address = self.master.get_chibi_address()
             address_slave = self.master.get_chibi_slave_address(0)
             address_master = self.master.get_chibi_master_address()
+            frequency = self.master.get_chibi_frequency()
+            channel = self.master.get_chibi_channel()
             
             self.address_spinbox.setValue(address)
             self.slave_address_spinbox.setValue(address_slave)
             self.master_address_spinbox.setValue(address_master)
+            self.chibi_frequency.setCurrentIndex(frequency)
+            self.chibi_channel.setCurrentIndex(channel)
             
             self.slave_num_combo.currentIndexChanged.connect(self.index_changed)
             self.address_button.pressed.connect(self.address_pressed)
             self.slave_address_button.pressed.connect(self.slave_address_pressed)
             self.master_address_button.pressed.connect(self.master_address_pressed)
+            self.chibi_frequency.currentIndexChanged.connect(self.chibi_frequency_changed)
+            self.chibi_channel.currentIndexChanged.connect(self.chibi_channel_changed)
+            
+            self.new_max_count()
         
     def popup_ok(self):
         QMessageBox.information(self, "Save", "Check OK", QMessageBox.Ok)
     
     def popup_fail(self):
         QMessageBox.critical(self, "Save", "Check Failed", QMessageBox.Ok)
+        
+    def new_max_count(self):
+        channel = int(self.chibi_channel.currentText())
+        self.chibi_channel.currentIndexChanged.disconnect(self.chibi_channel_changed)
+        
+        for i in range(12):
+            self.chibi_channel.removeItem(0)
+            
+        index = self.chibi_frequency.currentIndex()
+        
+        if index == 0:
+            self.chibi_channel.addItem("0")
+            if channel != 0:
+                channel = 0
+        elif index in (1, 3):
+            channel -= 1
+            self.chibi_channel.addItem("1")
+            self.chibi_channel.addItem("2")
+            self.chibi_channel.addItem("3")
+            self.chibi_channel.addItem("4")
+            self.chibi_channel.addItem("5")
+            self.chibi_channel.addItem("6")
+            self.chibi_channel.addItem("7")
+            self.chibi_channel.addItem("8")
+            self.chibi_channel.addItem("9")
+            self.chibi_channel.addItem("10")
+            if not channel in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10):
+                channel = 0
+        elif index == 2:
+            self.chibi_channel.addItem("0")
+            self.chibi_channel.addItem("1")
+            self.chibi_channel.addItem("2")
+            self.chibi_channel.addItem("3")
+            if not channel in (0, 1, 2, 3):
+                channel = 0
+                
+                
+        self.master.set_chibi_channel(channel)
+        self.chibi_channel.setCurrentIndex(channel)
+        self.chibi_channel.currentIndexChanged.connect(self.chibi_channel_changed)
+            
         
     def address_pressed(self):
         addr = self.address_spinbox.value()
@@ -169,6 +218,14 @@ class Chibi(QWidget, Ui_Chibi):
     def index_changed(self, index):
         addr = self.master.get_chibi_slave_address(index)
         self.slave_address_spinbox.setValue(addr)
+        
+    def chibi_frequency_changed(self, index):
+        self.master.set_chibi_frequency(index)
+        self.new_max_count()
+
+    def chibi_channel_changed(self, index):
+        channel = int(self.chibi_channel.itemText(index))
+        self.master.set_chibi_channel(channel)
         
     def signal_strength_update(self, ss):
         ss_str = "%g dBm"  % (ss,)
