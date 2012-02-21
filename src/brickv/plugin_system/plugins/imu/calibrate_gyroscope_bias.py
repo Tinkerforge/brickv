@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWidget
-from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import pyqtSignal, QTimer
 
 from ui_calibrate_gyroscope_bias import Ui_calibrate_gyroscope_bias
 
@@ -46,18 +46,39 @@ class CalibrateGyroscopeBias(QWidget, Ui_calibrate_gyroscope_bias):
         self.t = 0
         
         self.state = 0
+        self.temperature_raw = 0
+        self.t_raw_start_low = 0
+        self.t_raw_end_high = 0
         
         self.gyr_sum = [0, 0, 0]
-        self.gyr_bias = [0, 0, 0]
+        self.gyr_bias_low = [0, 0, 0]
+        self.gyr_bias_high = [0, 0, 0]
+        
+        self.update_timer = QTimer()
+        self.update_timer.timeout.connect(self.update_temperature)
+        self.update_timer.setInterval(1000)
         
         self.qtcb_callback.connect(self.callback)
         
     def start(self):
+        self.update_temperature()
+        self.update_timer.start()
         self.imu.register_callback(self.imu.CALLBACK_ANGULAR_VELOCITY, 
                                    self.qtcb_callback.emit)
         
     def stop(self):
+        self.update_timer.stop()
         self.imu.set_angular_velocity_period(0)
+        
+    def update_temperature(self):
+        self.temperature_raw = self.imu.get_imu_temperature()
+        t_str = "%.2f" % (self.temperature_raw/100.0)
+        
+        if self.state < 2:
+            self.t_low.setText(t_str)
+        else:
+            self.t_high.setText(t_str)
+            
         
     def set_default(self):
         self.gyr_sum = [0, 0, 0]
@@ -68,46 +89,79 @@ the calibration will begin.
 
 Make sure that the IMU Brick lies absolutely still during the calibration. \
 Don't make vibrations by walking around and don't type on your keyboard \
-if the IMU Brick is placed on the same desk etc. Even small vibrations can \
-deteriorate this calibration significantly."""
+if possible place the IMU Brick on another desk. Even small vibrations can \
+deteriorate this calibration significantly.
+
+The gyroscope bias is highly dependent on the temperature, so you have to \
+calibrate the bias two times with different temperatures. The first \
+measurement should be with a low temperature and the second with a high one. \
+The temperature difference should be at least 5%cC. If you have \
+a temperature where the IMU Brick is mostly used, you should use this \
+temperature for one of the sampling points.
+""" % 0xB0 
             
         self.text_label.setText(text)
-        self.start_button.setText("Start Calibration")
+        self.start_button.setText("Start Calibration Low Temperature")
         
     def calc(self):
-        for i in range(3):
-            self.gyr_bias[i] = self.gyr_sum[i]/self.NUM_AVG
-                                
-            if i == 0:
-                self.bias_x.setText(str(self.gyr_bias[i]))
-            elif i == 1:
-                self.bias_y.setText(str(self.gyr_bias[i]))
-            elif i == 2:
-                self.bias_z.setText(str(self.gyr_bias[i]))
+        if self.state == 2:
+            for i in range(3):
+                self.gyr_bias_low[i] = self.gyr_sum[i]/self.NUM_AVG
+                                    
+                if i == 0:
+                    self.bias_low_x.setText(str(self.gyr_bias_low[i]))
+                elif i == 1:
+                    self.bias_low_y.setText(str(self.gyr_bias_low[i]))
+                elif i == 2:
+                    self.bias_low_z.setText(str(self.gyr_bias_low[i]))
+        else:
+            for i in range(3):
+                self.gyr_bias_high[i] = self.gyr_sum[i]/self.NUM_AVG
+                                    
+                if i == 0:
+                    self.bias_high_x.setText(str(self.gyr_bias_high[i]))
+                elif i == 1:
+                    self.bias_high_y.setText(str(self.gyr_bias_high[i]))
+                elif i == 2:
+                    self.bias_high_z.setText(str(self.gyr_bias_high[i]))
             
         
     def next_state(self):
         self.state += 1
-        if self.state == 3:
+        if self.state == 5:
             self.state = 0
             
         if self.state == 0:
+            self.gyr_sum = [0, 0, 0]
+            self.update_temperature()
             self.imu.set_angular_velocity_period(0)
-            bias = [self.gyr_bias[0],
-                    self.gyr_bias[1],
-                    self.gyr_bias[2],
-                    0, 0, 0, 0, 0, 0, 0]
+            bias = [self.gyr_bias_low[0],
+                    self.gyr_bias_low[1],
+                    self.gyr_bias_low[2],
+                    (self.t_raw_start_low + self.t_raw_start_low)/2, 
+                    self.gyr_bias_high[0],
+                    self.gyr_bias_high[1],
+                    self.gyr_bias_high[2],
+                    (self.t_raw_start_high + self.t_raw_start_high)/2, 
+                    0, 0]
             
             self.imu.set_calibration(self.TYPE_GYR_BIAS, bias)
             self.parent.refresh_values()
             
-            self.bias_x.setText("?")
-            self.bias_y.setText("?")
-            self.bias_z.setText("?")
+            self.bias_low_x.setText("?")
+            self.bias_low_y.setText("?")
+            self.bias_low_z.setText("?")
+            self.t_low.setText("?")
+            self.bias_high_x.setText("?")
+            self.bias_high_y.setText("?")
+            self.bias_high_z.setText("?")
+            self.t_high.setText("?")
             
             self.set_default()
             
         elif self.state == 1:
+            self.update_timer.stop()
+            self.t_raw_start_low = self.imu.get_imu_temperature()
             bias = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             self.imu.set_calibration(self.TYPE_GYR_BIAS, bias)
             self.parent.refresh_values()
@@ -116,7 +170,26 @@ deteriorate this calibration significantly."""
             self.text_label.setText("Waiting...")
             self.start_button.setEnabled(False)
             
-        if self.state == 2:
+        elif self.state == 2:
+            self.t_raw_end_low = self.imu.get_imu_temperature()
+            self.calc()
+            self.update_temperature()
+            self.update_timer.start()
+            self.start_button.setText("Start Calibration High Temperature")
+            self.text_label.setText("""Now wait for the temperature to rise. \
+A temperature difference of at least 5%cC is recommended.
+
+The calibration will again take 5 seconds and the IMU Brick needs to lie
+absolutely still.""" % 0xB0)
+        elif self.state == 3:
+            self.update_timer.stop()
+            self.t_raw_start_high = self.imu.get_imu_temperature()
+            self.imu.set_angular_velocity_period(1)
+            self.text_label.setText("Waiting...")
+            self.start_button.setEnabled(False)
+            pass
+        if self.state == 4:
+            self.t_raw_end_high = self.imu.get_imu_temperature()
             self.calc()
             self.text_label.setText("""Ready. To save the calibration \
 press "Save Calibration" """)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-02-08.      #
+# This file was automatically generated on 2012-02-17.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -18,7 +18,7 @@ GetMagneticField = namedtuple('MagneticField', ['x', 'y', 'z'])
 GetAngularVelocity = namedtuple('AngularVelocity', ['x', 'y', 'z'])
 GetAllData = namedtuple('AllData', ['acc_x', 'acc_y', 'acc_z', 'mag_x', 'mag_y', 'mag_z', 'ang_x', 'ang_y', 'ang_z', 'temperature'])
 GetOrientation = namedtuple('Orientation', ['roll', 'pitch', 'yaw'])
-GetQuaternion = namedtuple('Quaternion', ['w', 'x', 'y', 'z'])
+GetQuaternion = namedtuple('Quaternion', ['x', 'y', 'z', 'w'])
 GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
 
 class IMU(Device):
@@ -129,11 +129,11 @@ class IMU(Device):
     def get_convergence_speed(self):
         return self.ipcon.write(self, IMU.TYPE_GET_CONVERGENCE_SPEED, (), '', 'H')
 
-    def set_calibration(self, type, data):
-        self.ipcon.write(self, IMU.TYPE_SET_CALIBRATION, (type, data), 'B 10h', '')
+    def set_calibration(self, typ, data):
+        self.ipcon.write(self, IMU.TYPE_SET_CALIBRATION, (typ, data), 'B 10h', '')
 
-    def get_calibration(self, type):
-        return self.ipcon.write(self, IMU.TYPE_GET_CALIBRATION, (type,), 'B', '10h')
+    def get_calibration(self, typ):
+        return self.ipcon.write(self, IMU.TYPE_GET_CALIBRATION, (typ,), 'B', '10h')
 
     def set_acceleration_period(self, period):
         self.ipcon.write(self, IMU.TYPE_SET_ACCELERATION_PERIOD, (period,), 'I', '')

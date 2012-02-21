@@ -151,6 +151,9 @@ If you press "Ready" the magnetometer calibration will be uploaded""")
             self.start_button.setText("Ready")
         
     def callback(self, mag_x, mag_y, mag_z):
+        if self.state == 0:
+            return
+        
         if self.mag_max[0] < mag_x:
             self.mag_max[0] = mag_x
         elif self.mag_min[0] > mag_x:

@@ -54,8 +54,8 @@ class CalibrateWindow(QFrame, Ui_widget_calibrate):
         self.cal_acc = CalibrateAccelerometer(self)
         self.cal_mag = CalibrateMagnetometer(self)
         self.cal_gyr_bias = CalibrateGyroscopeBias(self)
+        self.cal_gyr_bias = CalibrateGyroscopeBias(self)
         self.cal_gyr_gain = CalibrateGyroscopeGain(self)
-        self.cal_temp = CalibrateTemperature(self)
         self.cal_imex = CalibrateImportExport(self)
         
         
@@ -65,7 +65,6 @@ class CalibrateWindow(QFrame, Ui_widget_calibrate):
         self.tab_widget.addTab(self.cal_mag, "Magnetometer")
         self.tab_widget.addTab(self.cal_gyr_bias, "Gyroscope Bias")
         self.tab_widget.addTab(self.cal_gyr_gain, "Gyroscope Gain")
-        self.tab_widget.addTab(self.cal_temp, "Temperature")
         self.tab_widget.addTab(self.cal_imex, "Im/Export")
         
         self.vlayout.addWidget(self.tab_widget)
@@ -99,9 +98,14 @@ class CalibrateWindow(QFrame, Ui_widget_calibrate):
         self.label_gyr_gain_x.setText(str(gyr_gain[0]) + '/' + str(gyr_gain[3]))
         self.label_gyr_gain_y.setText(str(gyr_gain[1]) + '/' + str(gyr_gain[4]))
         self.label_gyr_gain_z.setText(str(gyr_gain[2]) + '/' + str(gyr_gain[5]))
-        self.label_gyr_bias_x.setText(str(gyr_bias[0]))
-        self.label_gyr_bias_y.setText(str(gyr_bias[1]))
-        self.label_gyr_bias_z.setText(str(gyr_bias[2]))
+        self.label_gyr_bias_low_x.setText(str(gyr_bias[0]))
+        self.label_gyr_bias_low_y.setText(str(gyr_bias[1]))
+        self.label_gyr_bias_low_z.setText(str(gyr_bias[2]))
+        self.label_gyr_bias_low_t.setText(str(gyr_bias[3]))
+        self.label_gyr_bias_high_x.setText(str(gyr_bias[4]))
+        self.label_gyr_bias_high_y.setText(str(gyr_bias[5]))
+        self.label_gyr_bias_high_z.setText(str(gyr_bias[6]))
+        self.label_gyr_bias_high_t.setText(str(gyr_bias[7]))
     
     def current_tab_changed(self, index):
         if index == 0:
@@ -124,4 +128,3 @@ class CalibrateWindow(QFrame, Ui_widget_calibrate):
             self.cal_mag.stop()
             self.cal_gyr_bias.stop()
             self.cal_gyr_gain.start()
-        

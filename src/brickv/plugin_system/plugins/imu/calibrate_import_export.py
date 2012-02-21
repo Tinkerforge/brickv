@@ -62,16 +62,16 @@ Multiplier and Divider are written as "mul/div" """
                         continue
                     
                     y = x[1].split(',')
-                    if len(y) != 3:
-                        continue
                     
                     if x[0] in ('0', '2', '4'):
                         a = y[0].split('/')
                         b = y[1].split('/')
                         c = y[2].split('/')
                         values.append([int(x[0]), [int(a[0]), int(b[0]), int(c[0]), int(a[1]), int(b[1]), int(c[1]), 0, 0, 0, 0]])
-                    elif x[0] in ('1', '3', '5'):
+                    elif x[0] in ('1', '3'):
                         values.append([int(x[0]), [int(y[0]), int(y[1]), int(y[2]), 0, 0, 0, 0, 0, 0, 0]])
+                    elif x[0] in ('5',):
+                        values.append([int(x[0]), [int(y[0]), int(y[1]), int(y[2]), int(y[3]), int(y[4]), int(y[5]), int(y[6]), int(y[7]), 0, 0]])
                         
             for value in values:
                 self.imu.set_calibration(value[0], value[1])
@@ -102,6 +102,6 @@ Multiplier and Divider are written as "mul/div" """
         text += '\n'
         text += '4: ' + str(c[4][0]) + '/' + str(c[4][3]) + ', ' + str(c[4][1]) + '/' + str(c[4][4]) + ', ' + str(c[4][2]) + '/' + str(c[4][5])
         text += '\n'
-        text += '5: ' + str(c[5][0]) + ', ' + str(c[5][1]) + ', ' + str(c[5][2])
+        text += '5: ' + str(c[5][0]) + ', ' + str(c[5][1]) + ', ' + str(c[5][2]) + ', ' + str(c[5][3]) + ', ' + str(c[5][4]) + ', ' + str(c[5][5]) + ', ' + str(c[5][6]) + ', ' + str(c[5][7])
         
         self.text_edit.setPlainText(text)
