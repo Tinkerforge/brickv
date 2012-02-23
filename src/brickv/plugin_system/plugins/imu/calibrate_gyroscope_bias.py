@@ -138,11 +138,11 @@ temperature for one of the sampling points.
             bias = [self.gyr_bias_low[0],
                     self.gyr_bias_low[1],
                     self.gyr_bias_low[2],
-                    (self.t_raw_start_low + self.t_raw_start_low)/2, 
+                    (self.t_raw_start_low + self.t_raw_end_low)/2, 
                     self.gyr_bias_high[0],
                     self.gyr_bias_high[1],
                     self.gyr_bias_high[2],
-                    (self.t_raw_start_high + self.t_raw_start_high)/2, 
+                    (self.t_raw_start_high + self.t_raw_end_high)/2, 
                     0, 0]
             
             self.imu.set_calibration(self.TYPE_GYR_BIAS, bias)
