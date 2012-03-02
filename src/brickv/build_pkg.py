@@ -76,7 +76,7 @@ def build_windows_pkg():
           data_files = data_files,
           options = {
                     "py2exe":{
-                        "dll_excludes":["MSVCP90.dll"], 
+                    "dll_excludes":["MSVCP90.dll"], 
                         "includes":["PyQt4.QtSvg", "sip","PyQt4.Qwt5", "PyQt4.QtCore", "PyQt4.QtGui","numpy.core.multiarray", "PyQt4.QtOpenGL","OpenGL.GL", "ctypes.util", "plot_widget", "pylab", "matplotlib.backends.backend_qt4agg", "scipy.interpolate"],
                         "excludes":["_gtkagg", "_tkagg"]
                         }
