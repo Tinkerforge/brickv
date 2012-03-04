@@ -242,8 +242,6 @@ class IMUGLWidget(QGLWidget):
         
         glPopMatrix()
         
-        self.swapBuffers()
-
     def polygon(self, a, b, c, d):
         # draw a polygon
         glBegin(GL_POLYGON)

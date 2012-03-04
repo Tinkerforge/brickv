@@ -14,7 +14,7 @@ RequestExecutionLevel admin
 
 ;--------------------------------
 
-!define BRICKV_VERSION "1.0.2"
+!define BRICKV_VERSION "1.0.3"
 
 ;--------------------------------
 
