@@ -2,6 +2,7 @@
 """
 brickv (Brick Viewer) 
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
 
 advanced.py: GUI for advanced features
 
@@ -78,7 +79,7 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
     def plugin_save_pressed(self):
         device, port = self.current_device_and_port()
         plugin_url = self.edit_plugin.text()
-        plugin = file(plugin_url).read()
+        plugin = file(plugin_url, 'rb').read()
         
         try:
             self.ipcon.write_bricklet_plugin(device, port, plugin)

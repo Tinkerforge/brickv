@@ -1,2 +1,5 @@
 1.0.0: Initial Version
 1.0.1: Fix problem with Servo plugin on windows (can't start timer in thread)
+1.0.2: Fix some windows installation problems, uid's copyable
+1.0.3: Fix OpenGL doublebuffering bug (only imu), fix bias bug
+1.0.4: Fix bricklet flash problem on windows
