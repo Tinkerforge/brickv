@@ -35,6 +35,8 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
         
         self.setWindowTitle("Advanced Functions")
         
+        self.button_calibrate.setEnabled(False)
+        
         self.ipcon = parent.ipcon
         self.button_uid_load.pressed.connect(self.uid_load_pressed)
         self.button_uid_save.pressed.connect(self.uid_save_pressed)
@@ -42,6 +44,7 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
         self.button_calibrate.pressed.connect(self.calibrate_pressed)
         self.button_browse.pressed.connect(self.browse_pressed)
         self.combo_brick.currentIndexChanged.connect(self.index_changed)
+        self.check_enable_calibration.stateChanged.connect(self.enable_calibration_changed)
         self.devices = []
         
         
@@ -138,3 +141,10 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
                                                 "", 
                                                 "*.bin")
         self.edit_plugin.setText(file_name)
+        
+    def enable_calibration_changed(self, state):
+        if state == Qt.Unchecked:
+            self.button_calibrate.setEnabled(False) 
+        else:
+            self.button_calibrate.setEnabled(True)
+        
