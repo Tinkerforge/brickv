@@ -90,24 +90,36 @@ class Chibi(QWidget, Ui_Chibi):
         
         if parent.version_minor > 0:
             address = self.master.get_chibi_address()
-            address_slave = self.master.get_chibi_slave_address(0)
+            address_slave = []
+            for i in range(32):
+                x = self.master.get_chibi_slave_address(i)
+                if x == 0:
+                    break
+                else:
+                    address_slave.append(str(x))
+                    
+            address_slave_text = ', '.join(address_slave)
             address_master = self.master.get_chibi_master_address()
             frequency = self.master.get_chibi_frequency()
             channel = self.master.get_chibi_channel()
             
+            type = 0
+            if address == address_master:
+                type = 1
+            
+            self.lineedit_slave_address.setText(address_slave_text)
             self.address_spinbox.setValue(address)
-            self.slave_address_spinbox.setValue(address_slave)
             self.master_address_spinbox.setValue(address_master)
             self.chibi_frequency.setCurrentIndex(frequency)
             self.chibi_channel.setCurrentIndex(channel)
             
-            self.slave_num_combo.currentIndexChanged.connect(self.index_changed)
-            self.address_button.pressed.connect(self.address_pressed)
-            self.slave_address_button.pressed.connect(self.slave_address_pressed)
-            self.master_address_button.pressed.connect(self.master_address_pressed)
+            self.save_button.pressed.connect(self.save_pressed)
+            self.chibi_type.currentIndexChanged.connect(self.chibi_type_changed)
             self.chibi_frequency.currentIndexChanged.connect(self.chibi_frequency_changed)
             self.chibi_channel.currentIndexChanged.connect(self.chibi_channel_changed)
             
+            self.chibi_type.setCurrentIndex(type)
+            self.chibi_type_changed(type)
             self.new_max_count()
         
     def popup_ok(self):
@@ -152,80 +164,79 @@ class Chibi(QWidget, Ui_Chibi):
                 channel = 0
                 
                 
-        self.master.set_chibi_channel(channel)
         self.chibi_channel.setCurrentIndex(channel)
         self.chibi_channel.currentIndexChanged.connect(self.chibi_channel_changed)
             
-        
-    def address_pressed(self):
-        addr = self.address_spinbox.value()
-        try:
-            self.master.set_chibi_address(addr)
-        except:
-            self.popup_fail()
-            return
-        
-        try:
-            new_addr = self.master.get_chibi_address()
-        except:
-            self.popup_fail()
-            return
-        
-        if addr == new_addr:
-            self.popup_ok()
+    def save_pressed(self):
+        type = self.chibi_type.currentIndex()
+        frequency = self.chibi_frequency.currentIndex()
+        channel = self.chibi_channel.currentIndex()
+        address = self.address_spinbox.value()
+        address_master = self.master_address_spinbox.value()
+        address_slave_text = str(self.lineedit_slave_address.text().replace(' ', ''))
+        if address_slave_text == '':
+            address_slave = []
         else:
-            self.popup_fail()
-        
-    def slave_address_pressed(self):
-        num = self.slave_num_combo.currentIndex()
-        addr = self.slave_address_spinbox.value()
-        try:
-            self.master.set_chibi_slave_address(num, addr)
-        except:
-            self.popup_fail()
-            return
-        
-        try:
-            new_addr = self.master.get_chibi_slave_address(num)
-        except:
-            self.popup_fail()
-            return
-        
-        if addr == new_addr:
-            self.popup_ok()
-        else:
-            self.popup_fail()
+            address_slave = map(int, address_slave_text.split(','))
+            address_slave.append(0)
             
-    def master_address_pressed(self):
-        addr = self.master_address_spinbox.value()
-        try:
-            self.master.set_chibi_master_address(addr)
-        except:
-            self.popup_fail()
-            return
-        
-        try:
-            new_addr = self.master.get_chibi_master_address()
-        except:
-            self.popup_fail()
-            return
-        
-        if addr == new_addr:
-            self.popup_ok()
+        self.master.set_chibi_frequency(frequency)
+        self.master.set_chibi_channel(channel)
+        self.master.set_chibi_address(address)
+        if type == 0:
+            self.master.set_chibi_master_address(address_master)
         else:
-            self.popup_fail()
+            self.master.set_chibi_master_address(address)
+            for i in range(len(address_slave)):
+                self.master.set_chibi_slave_address(i, address_slave[i])
+                
+        new_frequency = self.master.get_chibi_frequency()
+        new_channel = self.master.get_chibi_channel()
+        new_address = self.master.get_chibi_address()
+        if type == 0:
+            new_address_master = self.master.get_chibi_master_address()
+            if new_frequency == frequency and \
+               new_channel == channel and \
+               new_address == address and \
+               new_address_master == address_master:
+                self.popup_ok()
+            else:
+                self.popup_fail()
+        else:
+            new_address_master = self.master.get_chibi_master_address()
+            new_address_slave = []
+            for i in range(len(address_slave)):
+                new_address_slave.append(self.master.get_chibi_slave_address(i))
+            if new_frequency == frequency and \
+               new_channel == channel and \
+               new_address == address and \
+               new_address_master == address and \
+               new_address_slave == address_slave:
+                self.popup_ok()
+            else:
+                self.popup_fail()
         
     def index_changed(self, index):
         addr = self.master.get_chibi_slave_address(index)
         self.slave_address_spinbox.setValue(addr)
         
     def chibi_frequency_changed(self, index):
-        self.master.set_chibi_frequency(index)
         self.new_max_count()
 
     def chibi_channel_changed(self, index):
         channel = int(self.chibi_channel.itemText(index))
-        self.master.set_chibi_channel(channel)
+        
+    def chibi_type_changed(self, index):
+        if index == 0:
+            self.label_slave_address.hide()
+            self.lineedit_slave_address.hide()
+            self.label_master_address.show()
+            self.master_address_spinbox.show()
+        else:
+            self.label_master_address.hide()
+            self.master_address_spinbox.hide()
+            self.label_slave_address.show()
+            self.lineedit_slave_address.show()
         
     def signal_strength_update(self, ss):
         ss_str = "%g dBm"  % (ss,)
