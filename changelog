@@ -4,3 +4,4 @@
 1.0.3: Fix OpenGL doublebuffering bug (only imu), fix bias bug
 1.0.4: Fix bricklet flash problem on windows
 1.0.5: Add warning to ADC calibration
+1.0.6: Better usability for Chibi configuration
