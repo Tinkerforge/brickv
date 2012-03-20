@@ -183,6 +183,7 @@ in the image above, then press "Save Orientation".""")
         self.speed_spinbox.editingFinished.connect(self.speed_finished)
         
     def start(self):
+        self.gl_layout.activate()
         self.imu.set_all_data_period(100)
         self.imu.set_orientation_period(100)
         self.imu.set_quaternion_period(50)
@@ -190,7 +191,11 @@ in the image above, then press "Save Orientation".""")
         
         speed = self.imu.get_convergence_speed()
         self.speed_spinbox.setValue(speed)
+        # self.orientation_label.setText("")
+        #self.gl_layout.removeWidget(self..orientation_label)
+        #self.orientation_label.destroy()
 
+        #self.orientation_label.setFixedHeight()
     def stop(self):
         self.update_timer.stop()
         self.imu.set_all_data_period(0)

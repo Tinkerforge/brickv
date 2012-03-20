@@ -25,6 +25,8 @@ from PyQt4.QtGui import QErrorMessage, QInputDialog
 from PyQt4.QtCore import QTimer, Qt, pyqtSignal
 
 from speedometer import SpeedoMeter
+from threading import Thread
+import time
 
 from plugin_system.plugin_base import PluginBase
 import ip_connection
@@ -98,12 +100,30 @@ class Stepper(PluginBase, Ui_Stepper):
         self.stepper.register_callback(self.stepper.CALLBACK_UNDER_VOLTAGE, 
                                        self.qtcb_under_voltage.emit)
         
+        self.update_data_async_thread = None
+        self.update_data_alive = False
+        
+        self.ste = 0
+        self.pos = 0
+        self.current_velocity = 0
+        self.cur = 0
+        self.sv  = 0
+        self.ev  = 0
+        self.mv  = 0
+        self.mod = 0
+        
     def start(self):
         self.update_timer.start(100)
         self.update_start()
+        
+        self.update_data_alive = True
+        self.update_data_async_thread = Thread(target=self.update_data_async)
+        self.update_data_async_thread.daemon = True
+        self.update_data_async_thread.start()
     
     def stop(self):
         self.update_timer.stop()
+        self.update_data_alive = False
         
     @staticmethod
     def has_name(name):
@@ -128,6 +148,7 @@ class Stepper(PluginBase, Ui_Stepper):
     def mode_changed(self, index):
         try:
             self.stepper.set_step_mode(1 << index)
+            self.mod = 1 << index
         except ip_connection.Error:
             return
         
@@ -312,55 +333,39 @@ class Stepper(PluginBase, Ui_Stepper):
                     self.enable_checkbox.setCheckState(Qt.Unchecked)
         except ip_connection.Error:
             return
-        
-    def update_infos(self):
-        try:
-            cur = self.stepper.get_motor_current()
-            sv  = self.stepper.get_stack_input_voltage()
-            ev  = self.stepper.get_external_input_voltage()
-            mv  = self.stepper.get_minimum_voltage()
-            mod = self.stepper.get_step_mode()
-        except ip_connection.Error:
-            return
-        
-        self.maximum_current_update(cur)
-        self.stack_input_voltage_update(sv)
-        self.external_input_voltage_update(ev)
-        self.minimum_voltage_update(mv)
-        self.mode_update(mod)
-        
-        
-    def update_values(self):
-        try:
-            ste = self.stepper.get_remaining_steps()
-            pos = self.stepper.get_current_position()
-            self.remaining_steps_update(ste)
-            self.position_update(pos)
-            
-            current_velocity = self.stepper.get_current_velocity()
-            if current_velocity != self.speedometer.value():
-                self.speedometer.set_velocity(current_velocity)
-        except ip_connection.Error:
-            return
 
     def update_data(self):
-        try:
-            ste = self.stepper.get_remaining_steps()
-            pos = self.stepper.get_current_position()
-            self.remaining_steps_update(ste)
-            self.position_update(pos)
+        self.remaining_steps_update(self.ste)
+        self.position_update(self.pos)
             
-            current_velocity = self.stepper.get_current_velocity()
-            if current_velocity != self.speedometer.value():
-                self.speedometer.set_velocity(current_velocity)
-        except ip_connection.Error:
-            return
-        self.update_counter += 1
-        if self.update_counter % 10 == 0:
-            self.update_infos()
+        if self.current_velocity != self.speedometer.value():
+            self.speedometer.set_velocity(self.current_velocity)
         
-        self.update_values()
+        self.maximum_current_update(self.cur)
+        self.stack_input_voltage_update(self.sv)
+        self.external_input_voltage_update(self.ev)
+        self.minimum_voltage_update(self.mv)
+        self.mode_update(self.mod)
         
+    def update_data_async(self):
+        while self.update_data_alive:
+            try:
+                self.ste = self.stepper.get_remaining_steps()
+                self.pos = self.stepper.get_current_position()
+                self.current_velocity = self.stepper.get_current_velocity()
+                
+                self.update_counter += 1
+                if self.update_counter % 10 == 0:
+                    self.cur = self.stepper.get_motor_current()
+                    self.sv  = self.stepper.get_stack_input_voltage()
+                    self.ev  = self.stepper.get_external_input_voltage()
+                    self.mv  = self.stepper.get_minimum_voltage()
+                    self.mod = self.stepper.get_step_mode()
+            except:
+                pass
+            time.sleep(0.1)
+            
+            
         
     def velocity_slider_released(self):
         value = self.velocity_slider.value()

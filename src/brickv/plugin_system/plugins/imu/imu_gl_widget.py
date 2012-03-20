@@ -78,8 +78,7 @@ class IMUGLWidget(QGLWidget):
             self.rel_w = w
             self.save_orientation_flag = False
             self.parent.orientation_label.setText("")
-            self.parent.gl_layout.removeWidget(self.parent.orientation_label)
-            self.parent.orientation_label.destroy()
+            self.parent.orientation_label.setFixedHeight(0)
         
         # conjugate
         x = -x

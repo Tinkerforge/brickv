@@ -51,9 +51,9 @@ class SpeedoMeter(Qwt.QwtDial):
         
     def set_velocity(self, value):
         if value > 0:
-            self.direction = 'Forward'
+            self.direction = ''
         elif value < 0: 
-            self.direction = 'Backward'
+            self.direction = ''
         else:
             self.direction = 'Standstill'
             
