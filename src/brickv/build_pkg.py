@@ -49,6 +49,146 @@ import matplotlib
 DESCRIPTION = 'Brick Viewer'
 NAME = 'Brickv'
 
+def build_macos_pkg():
+    from setuptools import setup, find_packages
+
+    os.system("python build_all_ui.py")
+
+    PWD = os.path.dirname(os.path.realpath(__file__))
+    APP_NAME = 'main'
+    MAIN_APP_NAME = '%s.py' % APP_NAME
+    RES_PATH = os.path.join(PWD, 'dist', '%s.app' % APP_NAME, 'Contents', 'Resources')
+    data_files = [
+        ("../build_data/macos/", glob.glob(os.path.join(PWD, "../build_data/macos/", "*.nib"))),
+        #('/usr/share/applications',['foo.desktop']),
+    ]
+    packages = find_packages()
+
+    plist = dict(
+        CFBundleName = APP_NAME,
+        CFBundleShortVersionString = '0.1',
+        CFBundleGetInfoString = ' '.join([APP_NAME, '0.1']),
+        CFBundleExecutable = APP_NAME,
+        CFBundleIdentifier = 'org.tinkerforge.brickv',
+        # hide dock icon
+    #    LSUIElement = True,
+    )
+
+    additional_data_files = matplotlib.get_py2exe_datafiles()
+    def visitor(arg, dirname, names):
+        for n in names:
+
+            if os.path.isfile(os.path.join(dirname, n)):
+                if arg[0] == 'y': #replace first folder name
+                    additional_data_files.append((os.path.join(dirname.replace(arg[1],"")) , [os.path.join(dirname, n)]))
+                else: # keep full path
+                    additional_data_files.append((os.path.join(dirname) , [os.path.join(dirname, n)]))
+    
+    os.path.walk(os.path.normcase("../build_data/macos/"), visitor, ('y',os.path.normcase("../build_data/macos/")))
+    os.path.walk("plugin_system", visitor, ('n',"plugin_system"))
+    
+    additional_data_files.append( ( os.path.join('.') , [os.path.join('.', 'brickv-icon.png')] ) )
+ 
+
+
+
+    def delete_old():
+        BUILD_PATH = os.path.join(PWD, "build")
+        DIST_PATH = os.path.join(PWD, "dist")
+        if os.path.exists(BUILD_PATH):
+            shutil.rmtree(BUILD_PATH)
+        if os.path.exists(DIST_PATH):
+            shutil.rmtree(DIST_PATH)
+
+    def create_app():
+        apps = [
+            {
+                "script" : MAIN_APP_NAME,
+                "plist" : plist,
+            }
+        ]
+
+        OPTIONS = {'argv_emulation': True, 'site_packages': True, "includes":["atexit", "PyQt4.QtSvg", "sip","PyQt4.Qwt5", "PyQt4.QtCore", "PyQt4.QtGui","numpy.core.multiarray", "PyQt4.QtOpenGL","OpenGL.GL", "ctypes.util", "plot_widget", "pylab", "matplotlib.backends.backend_qt4agg", "scipy.interpolate"],}
+
+        data = data_files + additional_data_files
+
+        setup(
+            name = APP_NAME,
+            version = '0.1',
+            description = 'Brick Viewer Software',
+            author = 'Tinkerforge',
+            author_email = 'info@tinkerforge.com',
+            platforms = ["Mac OSX"],
+            license = "GPL V2",
+            url = "http://www.tinkerforge.com",
+            scripts = [MAIN_APP_NAME],
+
+            app = apps,
+            options = {'py2app': OPTIONS},
+            # setup_requires = ['py2app'],
+            data_files = data,
+            packages = packages,
+        )
+
+        print data
+
+    def qt_menu_patch():
+        src = os.path.join(PWD, '../build_data/macos/', 'qt_menu.nib')
+        dst = os.path.join(RES_PATH, 'qt_menu.nib')
+        if not os.path.exists(dst):
+            shutil.copytree(src, dst)
+
+
+    _RUN_IN_TERM_PATCH = """import os
+import sys
+
+os.environ['RESOURCEPATH'] = os.path.dirname(os.path.realpath(__file__))
+
+"""
+
+    def run_in_term_patch():
+        BOOT_FILE_PATH = os.path.join(RES_PATH, "__boot__.py")
+        with open(BOOT_FILE_PATH) as f:
+            old = f.read()
+
+        new = _RUN_IN_TERM_PATCH + old
+
+        with open(BOOT_FILE_PATH, 'w') as f:
+            f.write(new)
+
+    def data_files_patch():
+        for item in data_files:
+            if isinstance(item, tuple):
+                folder_name = item[0]
+            else:
+                folder_name = item
+
+            src = os.path.join(PWD, folder_name)
+            dst = os.path.join(RES_PATH, folder_name)
+            if not os.path.exists(dst):
+                shutil.copytree(src, dst)
+
+#hack: fix wrong position of plugin_system
+        src = os.path.join(RES_PATH, "plugin_system")
+        dst = os.path.join(RES_PATH, "../MacOS/plugin_system")
+        shutil.copytree(src, dst)
+
+        
+    ACTION_CREATE = len(sys.argv) == 3 and sys.argv[-1] == "build"
+
+    if ACTION_CREATE:
+        delete_old()
+        create_app()
+        qt_menu_patch()
+        run_in_term_patch()
+        data_files_patch()
+    else:
+        create_app()
+        print "Usage: python setup.py py2app build"
+
+
+
+
 
 def build_windows_pkg():
     import py2exe
@@ -112,3 +252,7 @@ if __name__ == "__main__":
         build_windows_pkg()
     if sys.argv[1] == "linux":
         build_linux_pkg()
+    if sys.argv[1] == "macos":
+        sys.argv[1] = "py2app" # rewrite sys.argv[1] for setup(), want to call py2exe
+        sys.argv.append("build") # rewrite sys.argv[1] for setup(), want to call py2exe
+        build_macos_pkg()
