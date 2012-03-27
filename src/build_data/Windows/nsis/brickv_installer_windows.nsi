@@ -14,8 +14,7 @@ RequestExecutionLevel admin
 
 ;--------------------------------
 
-!define BRICKV_VERSION "1.0.4"
-
+!define BRICKV_VERSION 1.0.7
 ;--------------------------------
 
 !macro macrouninstall

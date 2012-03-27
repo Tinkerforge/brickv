@@ -55,9 +55,7 @@ def build_macos_pkg():
     os.system("python build_all_ui.py")
 
     PWD = os.path.dirname(os.path.realpath(__file__))
-    APP_NAME = 'main'
-    MAIN_APP_NAME = '%s.py' % APP_NAME
-    RES_PATH = os.path.join(PWD, 'dist', '%s.app' % APP_NAME, 'Contents', 'Resources')
+    RES_PATH = os.path.join(PWD, 'dist', '%s.app' % 'brickv', 'Contents', 'Resources')
     data_files = [
         ("../build_data/macos/", glob.glob(os.path.join(PWD, "../build_data/macos/", "*.nib"))),
         #('/usr/share/applications',['foo.desktop']),
@@ -65,10 +63,10 @@ def build_macos_pkg():
     packages = find_packages()
 
     plist = dict(
-        CFBundleName = APP_NAME,
-        CFBundleShortVersionString = '0.1',
-        CFBundleGetInfoString = ' '.join([APP_NAME, '0.1']),
-        CFBundleExecutable = APP_NAME,
+        CFBundleName = 'Brickv',
+        CFBundleShortVersionString = config.BRICKV_VERSION,
+        CFBundleGetInfoString = ' '.join(['Brickv', config.BRICKV_VERSION]),
+        CFBundleExecutable = 'main',
         CFBundleIdentifier = 'org.tinkerforge.brickv',
         # hide dock icon
     #    LSUIElement = True,
@@ -103,25 +101,25 @@ def build_macos_pkg():
     def create_app():
         apps = [
             {
-                "script" : MAIN_APP_NAME,
+                "script" : "main.py",
                 "plist" : plist,
             }
         ]
 
-        OPTIONS = {'argv_emulation': True, 'site_packages': True, "includes":["atexit", "PyQt4.QtSvg", "sip","PyQt4.Qwt5", "PyQt4.QtCore", "PyQt4.QtGui","numpy.core.multiarray", "PyQt4.QtOpenGL","OpenGL.GL", "ctypes.util", "plot_widget", "pylab", "matplotlib.backends.backend_qt4agg", "scipy.interpolate"],}
+        OPTIONS = {'argv_emulation': True, 'iconfile':'../build_data/macos/brickv-icon.icns','site_packages': True, "includes":["atexit", "PyQt4.QtSvg", "sip","PyQt4.Qwt5", "PyQt4.QtCore", "PyQt4.QtGui","numpy.core.multiarray", "PyQt4.QtOpenGL","OpenGL.GL", "ctypes.util", "plot_widget", "pylab", "matplotlib.backends.backend_qt4agg", "scipy.interpolate"],}
 
         data = data_files + additional_data_files
 
         setup(
-            name = APP_NAME,
-            version = '0.1',
+            name = 'brickv',
+            version = config.BRICKV_VERSION,
             description = 'Brick Viewer Software',
             author = 'Tinkerforge',
             author_email = 'info@tinkerforge.com',
             platforms = ["Mac OSX"],
             license = "GPL V2",
             url = "http://www.tinkerforge.com",
-            scripts = [MAIN_APP_NAME],
+            scripts = ['main.py'],
 
             app = apps,
             options = {'py2app': OPTIONS},
@@ -208,7 +206,21 @@ def build_windows_pkg():
     os.path.walk("plugin_system", visitor, ('n',"plugin_system"))
     
     data_files.append( ( os.path.join('.') , [os.path.join('.', 'brickv-icon.png')] ) )
-    
+      
+    STEXT = '!define BRICKV_VERSION'
+    RTEXT = '!define BRICKV_VERSION ' + config.BRICKV_VERSION
+
+    f = open('../build_data/Windows/nsis/brickv_installer_windows.nsi', 'r')
+    lines = f.readlines()
+    f.close()
+
+    f = open('../build_data/Windows/nsis/brickv_installer_windows.nsi', 'w')
+    for line in lines:
+        if not line.find(STEXT) == -1:
+            line = RTEXT
+        f.write(line)
+    f.close()
+
     setup(
           name = NAME,
           description = DESCRIPTION,
@@ -233,7 +245,6 @@ def build_windows_pkg():
     os.system(run + data)
 
 def build_linux_pkg():
-    import shutil
     src_path = os.getcwd()
     build_dir = 'build_data/linux/brickv/usr/share/brickv'
     dest_path = os.path.join(os.path.split(src_path)[0], build_dir)
