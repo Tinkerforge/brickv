@@ -27,7 +27,7 @@ from plugin_system.plugin_base import PluginBase
 from calibrate_window import CalibrateWindow
 import ip_connection
 
-from PyQt4.QtGui import QLabel, QVBoxLayout
+from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy
 from PyQt4.QtCore import Qt, QTimer
 import PyQt4.Qwt5 as Qwt
 
@@ -135,7 +135,8 @@ class IMU(PluginBase, Ui_IMU):
         from imu_gl_widget import IMUGLWidget
         
         self.imu_gl = IMUGLWidget(self)
-        self.imu_gl.setMinimumSize(200, 200)
+        self.imu_gl.setMinimumSize(150, 150)
+        self.imu_gl.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.min_x = 0
         self.min_y = 0
         self.min_z = 0
@@ -144,6 +145,7 @@ class IMU(PluginBase, Ui_IMU):
         self.max_z = 0
         
         self.counter = 0
+        self.update_counter = 0
         
         self.mag_plot = Plot("Magnetic Field [mG]",
                              [["X", Qt.red],
@@ -161,6 +163,11 @@ class IMU(PluginBase, Ui_IMU):
         self.tem_plot = Plot("Temperature [%cC]" % 0xB0,
                              [["t", Qt.red]])
         
+        self.mag_plot.setMinimumSize(250, 200)
+        self.acc_plot.setMinimumSize(250, 200)
+        self.gyr_plot.setMinimumSize(250, 200)
+        self.tem_plot.setMinimumSize(250, 200)
+        
         
         self.orientation_label = QLabel("""Position your IMU Brick as shown \
 in the image above, then press "Save Orientation".""")
@@ -170,11 +177,11 @@ in the image above, then press "Save Orientation".""")
         self.gl_layout.addWidget(self.imu_gl)
         self.gl_layout.addWidget(self.orientation_label)
         
-        self.grid_layout.addWidget(self.gyr_plot, 0, 0)
-        self.grid_layout.addWidget(self.acc_plot, 0, 2)
-        self.grid_layout.addWidget(self.mag_plot, 0, 4)
-        self.grid_layout.addLayout(self.gl_layout, 2, 2)
-        self.grid_layout.addWidget(self.tem_plot, 2, 4)
+        self.layout_top.addWidget(self.gyr_plot)
+        self.layout_top.addWidget(self.acc_plot)
+        self.layout_top.addWidget(self.mag_plot)
+        self.layout_bottom.addLayout(self.gl_layout)
+        self.layout_bottom.addWidget(self.tem_plot)
         
         self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
         self.clear_graphs.clicked.connect(self.clear_graphs_clicked)
@@ -191,11 +198,7 @@ in the image above, then press "Save Orientation".""")
         
         speed = self.imu.get_convergence_speed()
         self.speed_spinbox.setValue(speed)
-        # self.orientation_label.setText("")
-        #self.gl_layout.removeWidget(self..orientation_label)
-        #self.orientation_label.destroy()
-
-        #self.orientation_label.setFixedHeight()
+        
     def stop(self):
         self.update_timer.stop()
         self.imu.set_all_data_period(0)
@@ -245,34 +248,38 @@ in the image above, then press "Save Orientation".""")
             self.imu.leds_off()
         
     def update_data(self):
-        gyr_x = self.gyr_x/14.375
-        gyr_y = self.gyr_y/14.375
-        gyr_z = self.gyr_z/14.375
-        
-        self.acceleration_update(self.acc_x, self.acc_y, self.acc_z)
-        self.magnetometer_update(self.mag_x, self.mag_y, self.mag_z)
-        self.gyroscope_update(gyr_x, gyr_y, gyr_z)
-        self.orientation_update(self.roll, self.pitch, self.yaw)
-        self.temperature_update(self.tem)
+        self.update_counter += 1
         
         self.imu_gl.update(self.qua_x, self.qua_y, self.qua_z, self.qua_w)
         
+        if self.update_counter % 2:
+            gyr_x = self.gyr_x/14.375
+            gyr_y = self.gyr_y/14.375
+            gyr_z = self.gyr_z/14.375
+            
+            self.acceleration_update(self.acc_x, self.acc_y, self.acc_z)
+            self.magnetometer_update(self.mag_x, self.mag_y, self.mag_z)
+            self.gyroscope_update(gyr_x, gyr_y, gyr_z)
+            self.orientation_update(self.roll, self.pitch, self.yaw)
+            self.temperature_update(self.tem)
+            
+            
+            
+            self.gyr_plot.add_data(0, self.counter, gyr_x)
+            self.gyr_plot.add_data(1, self.counter, gyr_y)
+            self.gyr_plot.add_data(2, self.counter, gyr_z)
+            
+            self.acc_plot.add_data(0, self.counter, self.acc_x)
+            self.acc_plot.add_data(1, self.counter, self.acc_y)
+            self.acc_plot.add_data(2, self.counter, self.acc_z)
+            
+            self.mag_plot.add_data(0, self.counter, self.mag_x)
+            self.mag_plot.add_data(1, self.counter, self.mag_y)
+            self.mag_plot.add_data(2, self.counter, self.mag_z)
+            
+            self.tem_plot.add_data(0, self.counter, self.tem/100.0)
         
-        self.gyr_plot.add_data(0, self.counter, gyr_x)
-        self.gyr_plot.add_data(1, self.counter, gyr_y)
-        self.gyr_plot.add_data(2, self.counter, gyr_z)
-        
-        self.acc_plot.add_data(0, self.counter, self.acc_x)
-        self.acc_plot.add_data(1, self.counter, self.acc_y)
-        self.acc_plot.add_data(2, self.counter, self.acc_z)
-        
-        self.mag_plot.add_data(0, self.counter, self.mag_x)
-        self.mag_plot.add_data(1, self.counter, self.mag_y)
-        self.mag_plot.add_data(2, self.counter, self.mag_z)
-        
-        self.tem_plot.add_data(0, self.counter, self.tem/100.0)
-        
-        self.counter += 0.1
+            self.counter += 0.1
         
     def acceleration_update(self, x, y, z):
         x_str = "%g" % x
