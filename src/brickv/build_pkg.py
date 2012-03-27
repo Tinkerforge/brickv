@@ -68,6 +68,7 @@ def build_macos_pkg():
         CFBundleGetInfoString = ' '.join(['Brickv', config.BRICKV_VERSION]),
         CFBundleExecutable = 'main',
         CFBundleIdentifier = 'org.tinkerforge.brickv',
+        CFBundleIconFile = 'brickv-icon.icns',
         # hide dock icon
     #    LSUIElement = True,
     )
