@@ -52,7 +52,6 @@ NAME = 'Brickv'
 def build_macos_pkg():
     from setuptools import setup, find_packages
 
-    os.system("python build_all_ui.py")
 
     PWD = os.path.dirname(os.path.realpath(__file__))
     RES_PATH = os.path.join(PWD, 'dist', '%s.app' % 'brickv', 'Contents', 'Resources')
@@ -100,6 +99,7 @@ def build_macos_pkg():
             shutil.rmtree(DIST_PATH)
 
     def create_app():
+        os.system("python build_all_ui.py")
         apps = [
             {
                 "script" : "main.py",
@@ -129,7 +129,6 @@ def build_macos_pkg():
             packages = packages,
         )
 
-        print data
 
     def qt_menu_patch():
         src = os.path.join(PWD, '../build_data/macos/', 'qt_menu.nib')
@@ -182,7 +181,7 @@ os.environ['RESOURCEPATH'] = os.path.dirname(os.path.realpath(__file__))
         run_in_term_patch()
         data_files_patch()
     else:
-        create_app()
+#create_app()
         print "Usage: python setup.py py2app build"
 
 
