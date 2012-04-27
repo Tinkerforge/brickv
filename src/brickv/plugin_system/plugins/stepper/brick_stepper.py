@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2011-10-06.      #
+# This file was automatically generated on 2012-04-27.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -52,6 +52,8 @@ class Stepper(Device):
     TYPE_GET_MINIMUM_VOLTAGE = 30
     TYPE_UNDER_VOLTAGE = 31
     TYPE_POSITION_REACHED = 32
+    TYPE_SET_SYNC_RECT = 33
+    TYPE_IS_SYNC_RECT = 34
 
     def __init__(self, uid):
         Device.__init__(self, uid)
@@ -153,3 +155,9 @@ class Stepper(Device):
 
     def get_minimum_voltage(self):
         return self.ipcon.write(self, Stepper.TYPE_GET_MINIMUM_VOLTAGE, (), '', 'H')
+
+    def set_sync_rect(self, sync_rect):
+        self.ipcon.write(self, Stepper.TYPE_SET_SYNC_RECT, (sync_rect,), '?', '')
+
+    def is_sync_rect(self):
+        return self.ipcon.write(self, Stepper.TYPE_IS_SYNC_RECT, (), '', '?')

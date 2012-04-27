@@ -76,9 +76,9 @@ class Stepper(PluginBase, Ui_Stepper):
         self.deceleration_slider.valueChanged.connect(self.deceleration_spin.setValue)
         self.deceleration_spin.editingFinished.connect(self.deceleration_spin_finished)
         
-        self.decay_slider.sliderReleased.connect(self.decay_slider_released)
-        self.decay_slider.valueChanged.connect(self.decay_spin.setValue)
-        self.decay_spin.editingFinished.connect(self.decay_spin_finished)
+#        self.decay_slider.sliderReleased.connect(self.decay_slider_released)
+#        self.decay_slider.valueChanged.connect(self.decay_spin.setValue)
+#        self.decay_spin.editingFinished.connect(self.decay_spin_finished)
         
         self.enable_checkbox.stateChanged.connect(self.enable_state_changed)
         self.forward_button.pressed.connect(self.forward_pressed)
@@ -316,11 +316,11 @@ class Stepper(PluginBase, Ui_Stepper):
                     self.deceleration_slider.setSliderPosition(dec)
                     self.deceleration_spin.setValue(dec)
                     
-            if not self.decay_slider.isSliderDown():
-                dec = self.stepper.get_decay()
-                if dec != self.decay_slider.sliderPosition():
-                    self.decay_slider.setSliderPosition(dec)
-                    self.decay_spin.setValue(dec)
+#            if not self.decay_slider.isSliderDown():
+#                dec = self.stepper.get_decay()
+#                if dec != self.decay_slider.sliderPosition():
+#                    self.decay_slider.setSliderPosition(dec)
+#                    self.decay_spin.setValue(dec)
     
             enabled = self.stepper.is_enabled()
             if enabled:
@@ -419,18 +419,18 @@ class Stepper(PluginBase, Ui_Stepper):
         except ip_connection.Error:
             return
 
-    def decay_slider_released(self):
-        value = self.decay_slider.value()
-        self.decay_spin.setValue(value)
-        try:
-            self.stepper.set_decay(value)
-        except ip_connection.Error:
-            return
+#    def decay_slider_released(self):
+#        value = self.decay_slider.value()
+#        self.decay_spin.setValue(value)
+#        try:
+#            self.stepper.set_decay(value)
+#        except ip_connection.Error:
+#            return
  
-    def decay_spin_finished(self):
-        value = self.decay_spin.value()
-        self.decay_slider.setValue(value)
-        try:
-            self.stepper.set_decay(value)
-        except ip_connection.Error:
-            return
+#    def decay_spin_finished(self):
+#        value = self.decay_spin.value()
+#        self.decay_slider.setValue(value)
+#        try:
+#            self.stepper.set_decay(value)
+#        except ip_connection.Error:
+#            return

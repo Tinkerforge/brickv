@@ -171,6 +171,8 @@ class Chibi(QWidget, Ui_Chibi):
         type = self.chibi_type.currentIndex()
         frequency = self.chibi_frequency.currentIndex()
         channel = self.chibi_channel.currentIndex()
+        if frequency in (1, 3):
+            channel += 1
         address = self.address_spinbox.value()
         address_master = self.master_address_spinbox.value()
         address_slave_text = str(self.lineedit_slave_address.text().replace(' ', ''))

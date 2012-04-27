@@ -330,7 +330,10 @@ class IPConnection:
 
         if self.add_dev.uid == value[3]:
             self.add_dev.firmware_version = [value[4], value[5], value[6]]
-            self.add_dev.name = value[7].replace(chr(0), '').decode()
+            if sys.hexversion < 0x03000000:
+                self.add_dev.name = value[7].replace(chr(0), '').decode()
+            else:
+                self.add_dev.name = str(value[7]).replace(chr(0), '')
             self.add_dev.stack_id = value[8]
             self.devices[value[8]] = self.add_dev
             self.add_dev.answer_queue.put(None)
