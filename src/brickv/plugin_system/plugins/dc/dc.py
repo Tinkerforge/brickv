@@ -26,8 +26,8 @@ from PyQt4.QtCore import QTimer, Qt, pyqtSignal
 
 from speedometer import SpeedoMeter
 from plugin_system.plugin_base import PluginBase
-import ip_connection
-import brick_dc
+from bindings import ip_connection
+from bindings import brick_dc
 
 from ui_dc import Ui_DC
 

@@ -22,13 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-import ip_connection
+from bindings import ip_connection
 from plot_widget import PlotWidget
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPainter, QColor, QBrush, QFrame
 from PyQt4.QtCore import Qt, pyqtSignal
         
-import bricklet_ambient_light
+from bindings import bricklet_ambient_light
         
 class AmbientLightFrame(QFrame):
     def __init__(self, parent = None):

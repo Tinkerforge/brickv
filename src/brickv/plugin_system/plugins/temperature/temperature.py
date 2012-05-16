@@ -22,13 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-import ip_connection
+from bindings import ip_connection
 from plot_widget import PlotWidget
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
         
-import bricklet_temperature
+from bindings import bricklet_temperature
         
 class TemperatureLabel(QLabel):
     def setText(self, text):

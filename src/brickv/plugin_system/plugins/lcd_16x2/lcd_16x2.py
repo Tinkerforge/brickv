@@ -22,11 +22,11 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-import ip_connection
+from bindings import ip_connection
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QComboBox
 from PyQt4.QtCore import pyqtSignal
         
-import bricklet_lcd_16x2
+from bindings import bricklet_lcd_16x2
         
 class LCD16x2(PluginBase):
     MAX_LINE = 2

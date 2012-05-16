@@ -25,7 +25,7 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from calibrate_window import CalibrateWindow
-import ip_connection
+from bindings import ip_connection
 
 from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy
 from PyQt4.QtCore import Qt, QTimer
@@ -33,7 +33,7 @@ import PyQt4.Qwt5 as Qwt
 
 from ui_imu import Ui_IMU
 
-import brick_imu
+from bindings import brick_imu
 
 class Plot(Qwt.QwtPlot):
     def __init__(self, y_axis, plot_list, *args):

@@ -25,7 +25,7 @@ from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt
 from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon
 from ui_mainwindow import Ui_MainWindow
 from plugin_system.plugin_manager import PluginManager
-from ip_connection import IPConnection, Error
+from bindings.ip_connection import IPConnection, Error
 from advanced import AdvancedWindow
 
 import socket

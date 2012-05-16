@@ -22,13 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-import ip_connection
+from bindings import ip_connection
 from plot_widget import PlotWidget
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QPushButton, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
         
-import bricklet_current12
+from bindings import bricklet_current12
         
 class CurrentLabel(QLabel):
     def setText(self, text):

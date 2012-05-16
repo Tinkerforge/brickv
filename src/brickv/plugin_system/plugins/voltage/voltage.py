@@ -22,13 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-import ip_connection
+from bindings import ip_connection
 from plot_widget import PlotWidget
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
         
-import bricklet_voltage
+from bindings import bricklet_voltage
         
 class CurrentLabel(QLabel):
     def setText(self, text):
@@ -91,4 +91,4 @@ class Voltage(PluginBase):
 
     def cb_voltage(self, voltage):
         self.current_value = voltage
-        self.voltage_label.setText(str(voltage/1000.0)) 
+        self.voltage_label.setText(str(voltage/1000.0))

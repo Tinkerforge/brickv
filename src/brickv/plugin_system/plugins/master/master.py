@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 #import logging
 
 from plugin_system.plugin_base import PluginBase
-import ip_connection
+from bindings import ip_connection
 
 from PyQt4.QtGui import QWidget, QFrame, QMessageBox
 from PyQt4.QtCore import QTimer, Qt
@@ -33,7 +33,7 @@ from ui_master import Ui_Master
 from ui_chibi import Ui_Chibi
 from ui_extension_type import Ui_extension_type
 
-import brick_master
+from bindings import brick_master
 
 class ExtensionTypeWindow(QFrame, Ui_extension_type):
     def __init__(self, parent):
