@@ -27,6 +27,7 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit
 from PyQt4.QtCore import pyqtSignal
         
 from bindings import bricklet_lcd_16x2
+from bindings.ks0066u import unicode_to_ks0066u
         
 class LCD16x2(PluginBase):
     MAX_LINE = 2
@@ -202,8 +203,8 @@ class LCD16x2(PluginBase):
     def text_pressed(self):
         line = int(self.line_combo.currentText())
         position = int(self.pos_combo.currentText())
-        text = str(self.text_edit.text())
+        text = unicode(self.text_edit.text().toUtf8(), 'utf-8')
         try:
-            self.lcd.write_line(line, position, text)
+            self.lcd.write_line(line, position, text, unicode_to_ks0066u(text))
         except ip_connection.Error:
             return
