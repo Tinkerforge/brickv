@@ -100,6 +100,7 @@ class Device(DeviceConCheckerMeta):
         self.uid = base58decode(uid)
         self.ipcon = None
         self.stack_id = 0
+        self.expected_name = ''
         self.name = ''
         self.firmware_version = [0, 0, 0]
         self.binding_version = [0, 0, 0]
@@ -354,11 +355,17 @@ class IPConnection:
         value = struct.unpack('<BBHQ 3B 40s B', data[:length])
 
         if self.add_dev.uid == value[3]:
-            self.add_dev.firmware_version = [value[4], value[5], value[6]]
             if sys.hexversion < 0x03000000:
-                self.add_dev.name = value[7].replace(chr(0), '').decode()
+                name = value[7].replace(chr(0), '').decode()
             else:
-                self.add_dev.name = str(value[7]).replace(chr(0), '')
+                name = value[7].decode('ascii').replace(chr(0), '')
+
+            i = name.rfind(' ')
+            if i < 0 or name[0:i] != self.add_dev.expected_name:
+                return length;
+
+            self.add_dev.firmware_version = [value[4], value[5], value[6]]
+            self.add_dev.name = name
             self.add_dev.stack_id = value[8]
             self.devices[value[8]] = self.add_dev
             self.add_dev.answer_queue.put(None)

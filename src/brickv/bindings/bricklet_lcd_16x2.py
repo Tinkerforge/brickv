@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-16.      #
+# This file was automatically generated on 2012-05-21.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -39,6 +39,8 @@ class LCD16x2(Device):
         """
         Device.__init__(self, uid)
 
+        self.expected_name = 'LCD 16x2 Bricklet';
+
         self.binding_version = [1, 0, 0]
 
         self.callbacks_format[LCD16x2.CALLBACK_BUTTON_PRESSED] = 'B'
@@ -51,6 +53,12 @@ class LCD16x2(Device):
         
         For example: (0, 5, "Hello") will write *Hello* in the middle of the
         first line of the display.
+        
+        The display uses a special charset that includes all ASCII characters except
+        backslash and tilde. The LCD charset also includes several other non-ASCII characters, see
+        the `charset specification <https://github.com/Tinkerforge/lcd-16x2-bricklet/raw/master/datasheets/standard_charset.pdf>`__
+        for details. The Unicode example above shows how to specify non-ASCII characters
+        and how to translate from Unicode to the LCD charset.
         """
         self.ipcon.write(self, LCD16x2.FUNCTION_WRITE_LINE, (line, position, text), 'B B 16s', '')
 
