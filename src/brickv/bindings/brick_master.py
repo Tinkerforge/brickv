@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-18.      #
+# This file was automatically generated on 2012-05-23.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -46,7 +46,7 @@ class Master(Device):
         """
         Device.__init__(self, uid)
 
-        self.expected_name = 'Master Brick';
+        self.expected_name = 'Master Brick'
 
         self.binding_version = [1, 1, 0]
 
@@ -79,8 +79,8 @@ class Master(Device):
          :header: "Type", "Description"
          :widths: 10, 100
         
-         "1", "Chibi"
-         "2", "RS485"
+         "1",    "Chibi"
+         "2",    "RS485"
         
         The extension type is already set when bought and it can be set with the 
         Brick Viewer, it is unlikely that you need this function.
@@ -181,10 +181,10 @@ class Master(Device):
          :header: "Type", "Description"
          :widths: 10, 100
         
-         "0", "OQPSK 868Mhz (Europe)"
-         "1", "OQPSK 915Mhz (US)"
-         "2", "OQPSK 780Mhz (China)"
-         "3", "BPSK40 915Mhz"
+         "0",    "OQPSK 868Mhz (Europe)"
+         "1",    "OQPSK 915Mhz (US)"
+         "2",    "OQPSK 780Mhz (China)"
+         "3",    "BPSK40 915Mhz"
         
         It is possible to set the frequency with the Brick Viewer and it will be 
         saved in the EEPROM of the Chibi Extension, it does not
@@ -204,13 +204,13 @@ class Master(Device):
         different for different frequencies:
         
         .. csv-table::
-         :header: "Frequency", "Possible Channels"
+         :header: "Frequency",             "Possible Channels"
          :widths: 40, 60
         
          "OQPSK 868Mhz (Europe)", "0"
-         "OQPSK 915Mhz (US)", "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
-         "OQPSK 780Mhz (China)", "0, 1, 2, 3"
-         "BPSK40 915Mhz", "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
+         "OQPSK 915Mhz (US)",     "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
+         "OQPSK 780Mhz (China)",  "0, 1, 2, 3"
+         "BPSK40 915Mhz",         "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
         
         It is possible to set the frequency with the Brick Viewer and it will be 
         saved in the EEPROM of the Chibi Extension, it does not

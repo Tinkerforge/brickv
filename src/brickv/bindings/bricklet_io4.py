@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-18.      #
+# This file was automatically generated on 2012-05-23.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -38,7 +38,7 @@ class IO4(Device):
         """
         Device.__init__(self, uid)
 
-        self.expected_name = 'IO-4 Bricklet';
+        self.expected_name = 'IO-4 Bricklet'
 
         self.binding_version = [1, 0, 0]
 

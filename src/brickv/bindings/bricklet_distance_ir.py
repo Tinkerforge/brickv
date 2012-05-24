@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-18.      #
+# This file was automatically generated on 2012-05-23.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -48,7 +48,7 @@ class DistanceIR(Device):
         """
         Device.__init__(self, uid)
 
-        self.expected_name = 'Distance IR Bricklet';
+        self.expected_name = 'Distance IR Bricklet'
 
         self.binding_version = [1, 0, 0]
 
@@ -162,11 +162,11 @@ class DistanceIR(Device):
          :header: "Option", "Description"
          :widths: 10, 100
         
-         "'x'", "Callback is turned off."
-         "'o'", "Callback is triggered when the distance is *outside* the min and max values"
-         "'i'", "Callback is triggered when the distance is *inside* the min and max values"
-         "'<'", "Callback is triggered when the distance is smaller than the min value (max is ignored)"
-         "'>'", "Callback is triggered when the distance is greater than the min value (max is ignored)"
+         "'x'",    "Callback is turned off."
+         "'o'",    "Callback is triggered when the distance is *outside* the min and max values"
+         "'i'",    "Callback is triggered when the distance is *inside* the min and max values"
+         "'<'",    "Callback is triggered when the distance is smaller than the min value (max is ignored)"
+         "'>'",    "Callback is triggered when the distance is greater than the min value (max is ignored)"
         
         The default value is ('x', 0, 0).
         """
@@ -188,11 +188,11 @@ class DistanceIR(Device):
          :header: "Option", "Description"
          :widths: 10, 100
         
-         "'x'", "Callback is turned off."
-         "'o'", "Callback is triggered when the distance is *outside* the min and max values"
-         "'i'", "Callback is triggered when the distance is *inside* the min and max values"
-         "'<'", "Callback is triggered when the distance is smaller than the min value (max is ignored)"
-         "'>'", "Callback is triggered when the distance is greater than the min value (max is ignored)"
+         "'x'",    "Callback is turned off."
+         "'o'",    "Callback is triggered when the distance is *outside* the min and max values"
+         "'i'",    "Callback is triggered when the distance is *inside* the min and max values"
+         "'<'",    "Callback is triggered when the distance is smaller than the min value (max is ignored)"
+         "'>'",    "Callback is triggered when the distance is greater than the min value (max is ignored)"
         
         The default value is ('x', 0, 0).
         """
