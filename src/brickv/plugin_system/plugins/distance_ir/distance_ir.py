@@ -25,12 +25,15 @@ from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
 from plot_widget import PlotWidget
 
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFileDialog
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFileDialog, QApplication
 from PyQt4.QtCore import pyqtSignal, Qt
 
 import sys
-import pylab
-import scipy.interpolate
+try:
+    no_scipy_interpolate = False
+    import scipy.interpolate
+except:
+    no_scipy_interpolate = True
 
 from bindings import bricklet_distance_ir
         
@@ -106,6 +109,12 @@ class DistanceIR(PluginBase):
         layout.addWidget(self.plot_widget)
         layout.addLayout(self.sample_layout)
         
+        if no_scipy_interpolate:
+            self.sample_file.setEnabled(False)
+            self.sample_save.setEnabled(False)
+            self.sample_edit.setText('Install scipy to for sample point interpolation.')
+            
+        
     def start(self):
         try:
             self.cb_distance(self.dist.get_distance())
@@ -139,7 +148,7 @@ class DistanceIR(PluginBase):
     def sample_interpolate(self, x, y):
         spl = scipy.interpolate.splrep(x, y)
     
-        px = pylab.arange(0, 2**12, DistanceIR.DIVIDER)
+        px = range(0, 2**12, DistanceIR.DIVIDER)
         py = scipy.interpolate.splev(px, spl)
         
         for i in range(x[0]/DistanceIR.DIVIDER):
@@ -155,16 +164,21 @@ class DistanceIR(PluginBase):
                 py[i] = y[-1]
             
         try:
+            old_text = self.sample_edit.text()
             for i in range(DistanceIR.NUM_VALUES):
-                self.dist.set_sampling_point(i, int(py[i]*100))
+                value = int(round(py[i]*100))
+                self.dist.set_sampling_point(i, value)
+                set_value = self.dist.get_sampling_point(i)
+                if set_value != value:
+                    self.sample_edit.setText("Error while writing sample point " + str(i))
+                    
+                self.sample_edit.setText("writing sample point, value: " +  str((i, value)))
+                    
+                QApplication.processEvents()
+            self.sample_edit.setText(old_text)
         except ip_connection.Error:
             return
         
-        pylab.plot(px, py, "bo")
-        pylab.plot(x, y, "rs")
-        pylab.title('Spline Interpolation as written to Distance-IR Bricklet')
-        pylab.show()
-    
     def sample_save_pressed(self):
         x = []
         y = []
