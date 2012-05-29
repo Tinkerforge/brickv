@@ -72,7 +72,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.setWindowTitle("Brick Viewer")
         
-        self.table_view_header = ['#', 'Device Name', 'UID', 'FW Version']
+        self.table_view_header = ['Stack ID', 'Device Name', 'UID', 'FW Version']
 
         # Remove dummy tab
         self.tab_widget.removeTab(1)
