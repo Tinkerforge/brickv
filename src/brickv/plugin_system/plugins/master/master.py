@@ -31,6 +31,7 @@ from PyQt4.QtCore import QTimer, Qt
 
 from ui_master import Ui_Master
 from ui_chibi import Ui_Chibi
+from ui_rs485 import Ui_RS485
 from ui_extension_type import Ui_extension_type
 
 import brick_master
@@ -251,7 +252,93 @@ class Chibi(QWidget, Ui_Chibi):
         except ip_connection.Error:
             return
     
-
+class RS485(QWidget, Ui_RS485):
+    def __init__(self, parent):
+        QWidget.__init__(self)
+        self.setupUi(self)
+        
+        self.master = parent.master
+        
+        if parent.version_minor > 1:
+            address = self.master.get_rs485_address()
+            address_slave = []
+            for i in range(32):
+                x = self.master.get_rs485_slave_address(i)
+                if x == 0:
+                    break
+                else:
+                    address_slave.append(str(x))
+                    
+            address_slave_text = ', '.join(address_slave)
+            
+            type = 0
+            if address == 0:
+                type = 1
+            
+            self.lineedit_slave_address.setText(address_slave_text)
+            self.address_spinbox.setValue(address)
+            
+            self.save_button.pressed.connect(self.save_pressed)
+            self.rs485_type.currentIndexChanged.connect(self.rs485_type_changed)
+            
+            self.rs485_type.setCurrentIndex(type)
+            self.rs485_type_changed(type)
+        
+    def popup_ok(self):
+        QMessageBox.information(self, "Save", "Check OK", QMessageBox.Ok)
+    
+    def popup_fail(self):
+        QMessageBox.critical(self, "Save", "Check Failed", QMessageBox.Ok)
+        
+    def save_pressed(self):
+        type = self.rs485_type.currentIndex()
+        if type == 0:
+            address = self.address_spinbox.value()
+        else:
+            address = 0
+            
+        address_slave_text = str(self.lineedit_slave_address.text().replace(' ', ''))
+        if address_slave_text == '':
+            address_slave = []
+        else:
+            address_slave = map(int, address_slave_text.split(','))
+            address_slave.append(0)
+            
+        self.master.set_rs485_address(address)
+        if type == 1:
+            for i in range(len(address_slave)):
+                self.master.set_rs485_slave_address(i, address_slave[i])
+                
+        new_address = self.master.get_rs485_address()
+        if type == 0:
+            if new_address == address:
+                self.popup_ok()
+            else:
+                self.popup_fail()
+        else:
+            new_address_slave = []
+            for i in range(len(address_slave)):
+                new_address_slave.append(self.master.get_rs485_slave_address(i))
+            if new_address == 0 and new_address_slave == address_slave:
+                self.popup_ok()
+            else:
+                self.popup_fail()
+        
+    def rs485_type_changed(self, index):
+        if index == 0:
+            self.label_slave_address.hide()
+            self.lineedit_slave_address.hide()
+            self.label.show()
+            self.address_spinbox.show()
+        else:
+            self.label_slave_address.show()
+            self.lineedit_slave_address.show()
+            self.label.hide()
+            self.address_spinbox.hide()
+            
+    def update_data(self):
+        pass
+        
 class Master(PluginBase, Ui_Master):
     def __init__ (self, ipcon, uid):
         PluginBase.__init__(self, ipcon, uid)
@@ -279,6 +366,17 @@ class Master(PluginBase, Ui_Master):
                 chibi = Chibi(self)
                 self.extensions.append(chibi)
                 self.extension_layout.addWidget(chibi)
+        else:
+            self.extension_type_button.setEnabled(False)
+            
+        # RS485 widget
+        if self.version_minor > 1:
+            self.extension_type_button.pressed.connect(self.extension_pressed)
+            if self.master.is_rs485_present():
+                num_extensions += 1
+                rs485 = RS485(self)
+                self.extensions.append(rs485)
+                self.extension_layout.addWidget(rs485)
         else:
             self.extension_type_button.setEnabled(False)
             

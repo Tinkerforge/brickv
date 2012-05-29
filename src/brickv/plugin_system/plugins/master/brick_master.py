@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-02-21.      #
+# This file was automatically generated on 2012-04-30.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -14,6 +14,7 @@ except ImportError:
 from ip_connection import Device, IPConnection, Error
 
 GetChibiErrorLog = namedtuple('ChibiErrorLog', ['underrun', 'crc_error', 'no_ack', 'overflow'])
+GetRS485ErrorLog = namedtuple('RS485ErrorLog', ['underrun', 'crc_error', 'no_ack', 'overflow'])
 GetVersion = namedtuple('Version', ['name', 'firmware_version', 'binding_version'])
 
 class Master(Device):
@@ -35,11 +36,17 @@ class Master(Device):
     TYPE_GET_CHIBI_FREQUENCY = 15
     TYPE_SET_CHIBI_CHANNEL = 16
     TYPE_GET_CHIBI_CHANNEL = 17
+    TYPE_IS_RS485_PRESENT = 18
+    TYPE_SET_RS485_ADDRESS = 19
+    TYPE_GET_RS485_ADDRESS = 20
+    TYPE_SET_RS485_SLAVE_ADDRESS = 21
+    TYPE_GET_RS485_SLAVE_ADDRESS = 22
+    TYPE_GET_RS485_ERROR_LOG = 23
 
     def __init__(self, uid):
         Device.__init__(self, uid)
 
-        self.binding_version = [1, 1, 0]
+        self.binding_version = [1, 2, 0]
 
 
     def get_version(self):
@@ -95,3 +102,21 @@ class Master(Device):
 
     def get_chibi_channel(self):
         return self.ipcon.write(self, Master.TYPE_GET_CHIBI_CHANNEL, (), '', 'B')
+
+    def is_rs485_present(self):
+        return self.ipcon.write(self, Master.TYPE_IS_RS485_PRESENT, (), '', '?')
+
+    def set_rs485_address(self, address):
+        self.ipcon.write(self, Master.TYPE_SET_RS485_ADDRESS, (address,), 'B', '')
+
+    def get_rs485_address(self):
+        return self.ipcon.write(self, Master.TYPE_GET_RS485_ADDRESS, (), '', 'B')
+
+    def set_rs485_slave_address(self, num, address):
+        self.ipcon.write(self, Master.TYPE_SET_RS485_SLAVE_ADDRESS, (num, address), 'B B', '')
+
+    def get_rs485_slave_address(self, num):
+        return self.ipcon.write(self, Master.TYPE_GET_RS485_SLAVE_ADDRESS, (num,), 'B', 'B')
+
+    def get_rs485_error_log(self):
+        return GetRS485ErrorLog(*self.ipcon.write(self, Master.TYPE_GET_RS485_ERROR_LOG, (), '', 'H H H H'))
