@@ -22,16 +22,17 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-import ip_connection
+from bindings import ip_connection
 from plot_widget import PlotWidget
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFileDialog
 from PyQt4.QtCore import pyqtSignal, Qt
 
+import sys
 import pylab
 import scipy.interpolate
 
-import bricklet_distance_ir
+from bindings import bricklet_distance_ir
         
 class AnalogLabel(QLabel):
     def setText(self, text):
@@ -167,7 +168,10 @@ class DistanceIR(PluginBase):
     def sample_save_pressed(self):
         x = []
         y = []
-        with open(self.sample_edit.text()) as f:
+        text = self.sample_edit.text()
+        text = unicode(text.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
+
+        with open(text) as f:
             for line in f:
                 if line[0] != '#':
                     s = line[:-1].split(": ")

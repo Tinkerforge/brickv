@@ -28,6 +28,8 @@ import time
 from PyQt4.QtCore import pyqtSignal, Qt
 from PyQt4.QtGui import QFrame, QFileDialog, QMessageBox
 
+import sys
+
 class AdvancedWindow(QFrame, Ui_widget_advanced):
     def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
@@ -82,6 +84,7 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
     def plugin_save_pressed(self):
         device, port = self.current_device_and_port()
         plugin_url = self.edit_plugin.text()
+        plugin_url = unicode(plugin_url.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
         plugin = file(plugin_url, 'rb').read()
         
         try:

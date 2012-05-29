@@ -22,13 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-import ip_connection
+from bindings import ip_connection
 
 #from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QVBoxLayout, QLabel, QWidget, QColor, QPainter, QSizePolicy, QInputDialog, QErrorMessage
 from PyQt4.QtCore import Qt, QRect, QTimer, pyqtSignal, QThread
 import PyQt4.Qwt5 as Qwt
-import brick_servo
+from bindings import brick_servo
 
 import time
 import random

@@ -29,10 +29,10 @@ from threading import Thread
 import time
 
 from plugin_system.plugin_base import PluginBase
-import ip_connection
+from bindings import ip_connection
 from ui_stepper import Ui_Stepper
 
-import brick_stepper
+from bindings import brick_stepper
 
 class Stepper(PluginBase, Ui_Stepper):
     qtcb_position_reached = pyqtSignal(int)

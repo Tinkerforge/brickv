@@ -22,12 +22,12 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-import ip_connection
+from bindings import ip_connection
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 from PyQt4.QtCore import pyqtSignal
 from ui_io4 import Ui_IO4
 
-import bricklet_io4
+from bindings import bricklet_io4
         
 class IO4(PluginBase, Ui_IO4):
     qtcb_interrupt = pyqtSignal(int, int)
