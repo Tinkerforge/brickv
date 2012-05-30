@@ -26,6 +26,7 @@ from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon
 from ui_mainwindow import Ui_MainWindow
 from plugin_system.plugin_manager import PluginManager
 from bindings.ip_connection import IPConnection, Error
+from flashing import FlashingWindow
 from advanced import AdvancedWindow
 import config
 
@@ -64,7 +65,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     callback_enumerate_signal = pyqtSignal(str, str, int, bool)
     
-    def __init__(self, parent=None):
+    def __init__(self, app, parent=None):
         QMainWindow.__init__(self, parent)
         self.setupUi(self)
         self.setWindowIcon(QIcon("brickv-icon.png"))
@@ -88,9 +89,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.tab_widget.currentChanged.connect(self.tab_changed)
         self.connect.pressed.connect(self.connect_pressed)
+        self.button_flashing.pressed.connect(self.flashing_pressed)
         self.button_advanced.pressed.connect(self.advanced_pressed)
         self.plugin_manager = PluginManager()
         
+        self.app = app
+
     def closeEvent(self, event):
         self.exit_brickv()
         
@@ -134,7 +138,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.ipcon:
             self.ipcon.destroy()
         self.ipcon = None
-            
+
+    def flashing_pressed(self):
+        fw = FlashingWindow(self.app, self)
+        for plugin in self.plugins[1:]:
+            if ' Brick ' in plugin[2]:
+                fw.combo_brick.addItem(plugin[2])
+                fw.devices.append(plugin[0].device)
+
+        if len(fw.devices) == 0:
+            fw.tab_widget.setTabEnabled(1, False)
+
+        fw.setAttribute(Qt.WA_QuitOnClose)
+        fw.show()
+
     def advanced_pressed(self):
         if len(self.plugins) < 2:
             QMessageBox.warning(self, "Error", "You have to connect at least one Brick", QMessageBox.Ok)

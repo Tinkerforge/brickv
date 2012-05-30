@@ -3,6 +3,7 @@
 brickv (Brick Viewer) 
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
+Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 
 advanced.py: GUI for advanced features
 
@@ -34,81 +35,15 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
     def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
         self.setupUi(self)
-        
-        self.setWindowTitle("Advanced Functions")
-        
+
         self.button_calibrate.setEnabled(False)
         
         self.ipcon = parent.ipcon
-        self.button_uid_load.pressed.connect(self.uid_load_pressed)
-        self.button_uid_save.pressed.connect(self.uid_save_pressed)
-        self.button_plugin_save.pressed.connect(self.plugin_save_pressed)
         self.button_calibrate.pressed.connect(self.calibrate_pressed)
-        self.button_browse.pressed.connect(self.browse_pressed)
-        self.combo_brick.currentIndexChanged.connect(self.index_changed)
+        self.combo_brick.currentIndexChanged.connect(self.brick_changed)
         self.check_enable_calibration.stateChanged.connect(self.enable_calibration_changed)
         self.devices = []
-        
-        
-    def popup_ok(self):
-        QMessageBox.information(self, "Upload", "Check OK", QMessageBox.Ok)
-    
-    def popup_fail(self):
-        QMessageBox.critical(self, "Upload", "Check Failed", QMessageBox.Ok)
-        
-    def uid_save_pressed(self):
-        device, port = self.current_device_and_port()
-        uid = str(self.edit_uid.text())
-        try:
-            self.ipcon.write_bricklet_uid(device, port, uid)
-        except:
-            self.popup_fail()
-            return
-        
-        try:
-            uid_read = self.ipcon.read_bricklet_uid(device, port)
-        except:
-            self.popup_fail()
-            return
-        
-        if uid == uid_read:
-            self.popup_ok()
-        else:
-            self.popup_fail()
-    
-    def uid_load_pressed(self):
-        device, port = self.current_device_and_port()
-        uid = self.ipcon.read_bricklet_uid(device, port)
-        self.edit_uid.setText(uid)
-    
-    def plugin_save_pressed(self):
-        device, port = self.current_device_and_port()
-        plugin_url = self.edit_plugin.text()
-        plugin_url = unicode(plugin_url.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
-        plugin = file(plugin_url, 'rb').read()
-        
-        try:
-            self.ipcon.write_bricklet_plugin(device, port, plugin)
-        except:
-            self.popup_fail()
-            return
-        
-        time.sleep(2)
-        
-        try:
-            plugin_read = self.ipcon.read_bricklet_plugin(device, 
-                                                          port, 
-                                                          len(plugin))
-        except:
-            self.popup_fail()
-            return
-        
-        if plugin == plugin_read:
-            self.popup_ok()
-        else:
-            self.popup_fail()
-        
-    
+
     def calibrate_pressed(self):
         self.ipcon.adc_calibrate(self.current_device(), 
                                  str(self.combo_port.currentText()).lower())
@@ -118,11 +53,10 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
     def current_device_and_port(self):
         return (self.current_device(), 
                 str(self.combo_port.currentText()).lower())
-    
+
     def current_device(self):
         return self.devices[self.combo_brick.currentIndex()]
-        
-        
+
     def update_calibration(self, device = None):
         if device == None:
             device = self.current_device()
@@ -132,22 +66,14 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
         self.label_offset.setText(str(offset))
         self.label_gain.setText(str(gain))
         
-    def index_changed(self, index):
+    def brick_changed(self, index):
         if len(self.devices) <= index:
             return
         
         self.update_calibration(self.devices[index])
-        
-    def browse_pressed(self):
-        file_name = QFileDialog.getOpenFileName(self,
-                                                "Open Firmware", 
-                                                "", 
-                                                "*.bin")
-        self.edit_plugin.setText(file_name)
-        
+
     def enable_calibration_changed(self, state):
         if state == Qt.Unchecked:
             self.button_calibrate.setEnabled(False) 
         else:
             self.button_calibrate.setEnabled(True)
-        
