@@ -27,6 +27,7 @@ from ui_mainwindow import Ui_MainWindow
 from plugin_system.plugin_manager import PluginManager
 from bindings.ip_connection import IPConnection, Error
 from advanced import AdvancedWindow
+import config
 
 import socket
 import signal
@@ -70,7 +71,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         signal.signal(signal.SIGINT, self.exit_brickv) 
         signal.signal(signal.SIGTERM, self.exit_brickv) 
         
-        self.setWindowTitle("Brick Viewer")
+        self.setWindowTitle("Brick Viewer " + config.BRICKV_VERSION)
         
         self.table_view_header = ['Stack ID', 'Device Name', 'UID', 'FW Version']
 
