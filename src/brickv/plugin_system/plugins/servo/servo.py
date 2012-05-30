@@ -140,8 +140,6 @@ class Servo(PluginBase, Ui_Servo):
         self.update_timer.setInterval(50)
         self.update_timer.start()
         
-        layout = QVBoxLayout(self)
-        layout.addWidget(QLabel('Servo'))
         self.position_list = []
         self.velocity_list = []
         self.acceleration_list = []
