@@ -91,7 +91,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             tree = etreefromstring(data)
             body = tree.find("body")
 
-            for a in body.iter("a"):
+            for a in body.getiterator('a'):
                 url_part = a.text.replace('/', '')
                 name = url_part
                 if name == '..':
@@ -128,7 +128,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             tree = etreefromstring(data)
             body = tree.find("body")
 
-            for a in body.iter("a"):
+            for a in body.getiterator('a'):
                 url_part = a.text.replace('/', '')
                 name = url_part
                 if name == '..':
