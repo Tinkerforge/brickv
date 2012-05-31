@@ -65,10 +65,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 self.combo_brick.addItem(device[0])
                 self.devices.append(device[1])
 
-        progress = QProgressDialog(self)
-        progress.setAutoClose(False)
-        progress.setWindowTitle('Discovering')
-        progress.setCancelButton(None)
+        progress = self.create_progress_bar('Discovering')
 
         # discover serial ports
         self.serial_port_refresh(progress)
@@ -172,6 +169,14 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         self.update_ui_state()
 
+    def create_progress_bar(self, title):
+        progress = QProgressDialog(self)
+        progress.setAutoClose(False)
+        progress.setWindowTitle(title)
+        progress.setCancelButton(None)
+        progress.setWindowModality(Qt.WindowModal)
+        return progress
+
     def popup_ok(self, title, message):
         QMessageBox.information(self, title, message, QMessageBox.Ok)
 
@@ -182,10 +187,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.combo_serial_port.clear()
 
         if progress is None:
-            progress = QProgressDialog(self)
-            progress.setAutoClose(False)
-            progress.setWindowTitle('Discovering')
-            progress.setCancelButton(None)
+            progress = self.create_progress_bar('Discovering')
 
         try:
             progress.setLabelText('Discovering serial ports')
@@ -243,10 +245,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             self.popup_fail('Brick', 'Could not connect to Brick')
             return
 
-        progress = QProgressDialog(self)
-        progress.setAutoClose(False)
-        progress.setWindowTitle('Flashing')
-        progress.setCancelButton(None)
+        progress = self.create_progress_bar('Flashing')
 
         current_text = self.combo_firmware.currentText()
 
@@ -342,11 +341,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.update_ui_state()
 
     def plugin_save_pressed(self):
-        progress = QProgressDialog(self)
-        progress.setAutoClose(False)
-        progress.setWindowTitle('Flashing')
-        progress.setCancelButton(None)
-
+        progress = self.create_progress_bar('Flashing')
         current_text = self.combo_plugin.currentText()
 
         # Get plugin
