@@ -22,30 +22,34 @@ Boston, MA 02111-1307, USA.
 """
 
 import sys
+import glob
 import struct
 import math
 from serial import Serial
 
-try:
-    from serial.tools.list_ports import comports as get_serial_ports
-except:
-    import glob
-
-    if sys.platform == 'linux2':
-        def get_serial_ports():
-            ports = []
-            for tty in glob.glob('/dev/ttyACM*') + glob.glob('/dev/ttyUSB*'):
-                ports.append((tty, tty, tty))
-            return ports
-    elif sys.platform == 'darwin':
-        def get_serial_ports():
-            ports = []
-            for tty in glob.glob('/dev/tty.*'):
-                ports.append((tty, tty, tty))
-            return ports
-    else:
-        def get_serial_ports():
-            return []
+if sys.platform == 'linux2':
+    def get_serial_ports():
+        ports = []
+        for tty in glob.glob('/dev/ttyACM*') + glob.glob('/dev/ttyUSB*'):
+            ports.append((tty, tty, tty))
+        return ports
+elif sys.platform == 'darwin':
+    def get_serial_ports():
+        ports = []
+        for tty in glob.glob('/dev/tty.*'):
+            ports.append((tty, tty, tty))
+        return ports
+elif sys.platform == 'win32':
+    import win32com.client
+    def get_serial_ports():
+        wmi = win32com.client.GetObject('winmgmts:')
+        ports = []
+        for port in wmi.InstancesOf('Win32_SerialPort'):
+            ports.append((port.DeviceID, port.Name, ''))
+        return ports
+else:
+    def get_serial_ports():
+        return []
 
 CHIPID_CIDR = 0x400e0740
 

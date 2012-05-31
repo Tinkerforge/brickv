@@ -80,7 +80,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             response = urllib2.urlopen(FIRMWARE_URL + 'bricks/')
             data = response.read().replace('<hr>', '').replace('<br>', '')
             tree = etreefromstring(data)
-            body = tree.find("body")
+            body = tree.find('body')
             firmwares = []
 
             for a in body.getiterator('a'):
@@ -125,7 +125,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/')
             data = response.read().replace('<hr>', '').replace('<br>', '')
             tree = etreefromstring(data)
-            body = tree.find("body")
+            body = tree.find('body')
             plugins = []
 
             for a in body.getiterator('a'):
@@ -201,7 +201,11 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             self.popup_fail('Brick', 'Could not discover serial ports')
         else:
             for port in ports:
-                self.combo_serial_port.addItem(port[0])
+                if len(port[1]) > 0 and port[0] != port[1]:
+                    self.combo_serial_port.addItem('{0} - {1}'.format(port[0], port[1]), port[0])
+                else:
+                    self.combo_serial_port.addItem(port[0], port[0])
+
 
             self.update_ui_state()
 
@@ -234,8 +238,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.update_ui_state()
 
     def firmware_save_pressed(self):
+        port = str(self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString())
         try:
-            samba = SAMBA(str(self.combo_serial_port.currentText()), self.app)
+            samba = SAMBA(port, self.app)
         except SAMBAException, e:
             self.serial_port_refresh()
             self.popup_fail('Brick', 'Could not connect to Brick: {0}'.format(str(e)))
