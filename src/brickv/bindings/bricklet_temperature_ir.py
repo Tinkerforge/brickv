@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-23.      #
+# This file was automatically generated on 2012-05-31.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -75,7 +75,7 @@ class TemperatureIR(Device):
         Returns the object temperature of the sensor, i.e. the temperature
         of the surface of the object the sensor is aimed at. The value
         has a range of -700 to 3800 and is given in °C/10,
-        e.g. a value of 30001 means that a temperature of 300.01 °C is measured
+        e.g. a value of 3001 means that a temperature of 300.1 °C is measured
         on the surface of the object.
         
         The temperature of different materials is dependent on their `emissivity 

@@ -140,15 +140,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ipcon = None
 
     def flashing_pressed(self):
-        fw = FlashingWindow(self.app, self)
+        devices = []
         for plugin in self.plugins[1:]:
             if ' Brick ' in plugin[2]:
-                fw.combo_brick.addItem(plugin[2])
-                fw.devices.append(plugin[0].device)
+                devices.append((plugin[2], plugin[0].device))
 
-        if len(fw.devices) == 0:
-            fw.tab_widget.setTabEnabled(1, False)
-
+        fw = FlashingWindow(self.app, devices, self)
         fw.setAttribute(Qt.WA_QuitOnClose)
         fw.show()
 

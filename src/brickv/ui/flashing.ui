@@ -17,22 +17,49 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tab_widget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_brick">
       <attribute name="title">
        <string>Brick</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0" rowspan="2">
+       <item row="7" column="0" rowspan="2" colspan="3">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="button_serial_port_refresh">
+         <property name="text">
+          <string>Refresh</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="combo_serial_port"/>
+       </item>
+       <item row="1" column="0" colspan="3">
+        <widget class="Line" name="line_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
           <string>Serial Port:</string>
          </property>
         </widget>
-       </item>
-       <item row="0" column="1" rowspan="2" colspan="2">
-        <widget class="QComboBox" name="combo_serial_port"/>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="label_8">
@@ -51,19 +78,6 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0" colspan="3">
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="3" column="2">
         <widget class="QPushButton" name="button_firmware_save">
          <property name="text">
@@ -71,20 +85,13 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="2">
-        <widget class="QPushButton" name="button_firmware_browse">
-         <property name="text">
-          <string>Browse..</string>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="1">
         <widget class="QLineEdit" name="edit_custom_firmware"/>
        </item>
-       <item row="2" column="0" colspan="3">
-        <widget class="Line" name="line_2">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+       <item row="4" column="2">
+        <widget class="QPushButton" name="button_firmware_browse">
+         <property name="text">
+          <string>Browse...</string>
          </property>
         </widget>
        </item>
@@ -197,7 +204,7 @@
        <item row="7" column="2" colspan="2">
         <widget class="QPushButton" name="button_plugin_browse">
          <property name="text">
-          <string>Browse..</string>
+          <string>Browse...</string>
          </property>
         </widget>
        </item>

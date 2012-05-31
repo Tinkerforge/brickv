@@ -36,16 +36,18 @@ from xml.etree.ElementTree import fromstring as etreefromstring
 from samba import SAMBA, SAMBAException, get_serial_ports
 from serial import SerialException
 
+SELECT = 'Select...'
 CUSTOM = 'Custom...'
 FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
 
 class FlashingWindow(QFrame, Ui_widget_flashing):
-    def __init__(self, app, parent):
+    def __init__(self, app, devices, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
         self.setupUi(self)
 
         self.app = app
         self.ipcon = parent.ipcon
+        self.button_serial_port_refresh.pressed.connect(self.serial_port_refresh)
         self.combo_firmware.currentIndexChanged.connect(self.firmware_changed)
         self.button_firmware_save.pressed.connect(self.firmware_save_pressed)
         self.button_firmware_browse.pressed.connect(self.firmware_browse_pressed)
@@ -54,7 +56,14 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.combo_plugin.currentIndexChanged.connect(self.plugin_changed)
         self.button_plugin_save.pressed.connect(self.plugin_save_pressed)
         self.button_plugin_browse.pressed.connect(self.plugin_browse_pressed)
+
         self.devices = []
+        if len(devices) == 0:
+            self.tab_widget.setTabEnabled(1, False)
+        else:
+            for device in devices:
+                self.combo_brick.addItem(device[0])
+                self.devices.append(device[1])
 
         progress = QProgressDialog(self)
         progress.setAutoClose(False)
@@ -62,22 +71,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         progress.setCancelButton(None)
 
         # discover serial ports
-        try:
-            progress.setLabelText('Discovering serial ports')
-            progress.setMaximum(0)
-            progress.setValue(0)
-            progress.show()
-
-            ports = get_serial_ports()
-        except:
-            self.tab_widget.setTabEnabled(0, False)
-            self.popup_fail('Brick', 'Could not discover serial ports')
-        else:
-            if len(ports) == 0:
-                self.tab_widget.setTabEnabled(0, False)
-            else:
-                for port in ports:
-                    self.combo_serial_port.addItem(port[0])
+        self.serial_port_refresh(progress)
 
         # discover firmwares
         try:
@@ -90,6 +84,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             data = response.read().replace('<hr>', '').replace('<br>', '')
             tree = etreefromstring(data)
             body = tree.find("body")
+            firmwares = []
 
             for a in body.getiterator('a'):
                 url_part = a.text.replace('/', '')
@@ -105,7 +100,14 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                         parts.append(word[0].upper() + word[1:])
                     name = ' '.join(parts)
 
-                self.combo_firmware.addItem(name, url_part)
+                firmwares.append((name, url_part))
+
+            if len(firmwares) > 0:
+                self.combo_firmware.addItem(SELECT)
+                self.combo_firmware.insertSeparator(self.combo_firmware.count())
+
+            for firmware in firmwares:
+                self.combo_firmware.addItem(*firmware)
 
             if self.combo_firmware.count() > 0:
                 self.combo_firmware.insertSeparator(self.combo_firmware.count())
@@ -127,6 +129,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             data = response.read().replace('<hr>', '').replace('<br>', '')
             tree = etreefromstring(data)
             body = tree.find("body")
+            plugins = []
 
             for a in body.getiterator('a'):
                 url_part = a.text.replace('/', '')
@@ -147,7 +150,14 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                     parts.append(word[0].upper() + word[1:])
                 name = ' '.join(parts)
 
-                self.combo_plugin.addItem(name, url_part)
+                plugins.append((name, url_part))
+
+            if len(plugins) > 0:
+                self.combo_plugin.addItem(SELECT)
+                self.combo_plugin.insertSeparator(self.combo_plugin.count())
+
+            for plugin in plugins:
+                self.combo_plugin.addItem(*plugin)
 
             if self.combo_plugin.count() > 0:
                 self.combo_plugin.insertSeparator(self.combo_plugin.count())
@@ -160,16 +170,58 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         progress.cancel()
 
+        self.update_ui_state()
+
     def popup_ok(self, title, message):
         QMessageBox.information(self, title, message, QMessageBox.Ok)
 
     def popup_fail(self, title, message):
         QMessageBox.critical(self, title, message, QMessageBox.Ok)
 
+    def serial_port_refresh(self, progress=None):
+        self.combo_serial_port.clear()
+
+        if progress is None:
+            progress = QProgressDialog(self)
+            progress.setAutoClose(False)
+            progress.setWindowTitle('Discovering')
+            progress.setCancelButton(None)
+
+        try:
+            progress.setLabelText('Discovering serial ports')
+            progress.setMaximum(0)
+            progress.setValue(0)
+            progress.show()
+
+            ports = get_serial_ports()
+        except:
+            self.update_ui_state()
+            self.popup_fail('Brick', 'Could not discover serial ports')
+        else:
+            for port in ports:
+                self.combo_serial_port.addItem(port[0])
+
+            self.update_ui_state()
+
+        progress.cancel()
+
+    def update_ui_state(self):
+        is_firmware_select = self.combo_firmware.currentText() == SELECT
+        is_firmware_custom = self.combo_firmware.currentText() == CUSTOM
+        self.combo_serial_port.setEnabled(self.combo_serial_port.count() > 0)
+        self.button_firmware_save.setEnabled(not is_firmware_select and self.combo_serial_port.count() > 0)
+        self.edit_custom_firmware.setEnabled(is_firmware_custom)
+        self.button_firmware_browse.setEnabled(is_firmware_custom)
+
+        is_plugin_select = self.combo_plugin.currentText() == SELECT
+        is_plugin_custom = self.combo_plugin.currentText() == CUSTOM
+        self.combo_brick.setEnabled(self.combo_brick.count() > 0)
+        self.button_plugin_save.setEnabled(not is_plugin_select and self.combo_brick.count() > 0)
+        self.edit_custom_plugin.setEnabled(is_plugin_custom)
+        self.button_plugin_browse.setEnabled(is_plugin_custom)
+
     def firmware_changed(self, index):
-        enabled = self.combo_firmware.currentText() == CUSTOM
-        self.edit_custom_firmware.setEnabled(enabled)
-        self.button_firmware_browse.setEnabled(enabled)
+        self.update_ui_state()
 
     def firmware_browse_pressed(self):
         file_name = QFileDialog.getOpenFileName(self,
@@ -177,14 +229,17 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                                                 '',
                                                 '*.bin')
         self.edit_custom_firmware.setText(file_name)
+        self.update_ui_state()
 
     def firmware_save_pressed(self):
         try:
             samba = SAMBA(str(self.combo_serial_port.currentText()), self.app)
         except SAMBAException, e:
+            self.serial_port_refresh()
             self.popup_fail('Brick', 'Could not connect to Brick: {0}'.format(str(e)))
             return
         except:
+            self.serial_port_refresh()
             self.popup_fail('Brick', 'Could not connect to Brick')
             return
 
@@ -196,10 +251,18 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         current_text = self.combo_firmware.currentText()
 
         # Get firmware
-        if current_text == CUSTOM:
+        if current_text == SELECT:
+            return
+        elif current_text == CUSTOM:
             firmware_file_name = self.edit_custom_firmware.text()
             firmware_file_name = unicode(firmware_file_name.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
-            firmware = file(firmware_file_name, 'rb').read()
+
+            try:
+                firmware = file(firmware_file_name, 'rb').read()
+            except IOError:
+                progress.cancel()
+                self.popup_fail('Brick', 'Could not read firmware file')
+                return
         else:
             url_part = self.combo_firmware.itemData(self.combo_firmware.currentIndex()).toString()
 
@@ -237,9 +300,11 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 self.popup_ok('Brick', 'Succesfully flashed latest {0} Brick firmware'.format(current_text))
         except SAMBAException, e:
             progress.cancel()
+            self.serial_port_refresh()
             self.popup_fail('Brick', 'Could not flash Brick: {0}'.format(str(e)))
         except:
             progress.cancel()
+            self.serial_port_refresh()
             self.popup_fail('Brick', 'Could not flash Brick')
 
     def uid_save_pressed(self):
@@ -274,9 +339,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.edit_uid.setText(uid)
 
     def plugin_changed(self, index):
-        enabled = self.combo_plugin.currentText() == CUSTOM
-        self.edit_custom_plugin.setEnabled(enabled)
-        self.button_plugin_browse.setEnabled(enabled)
+        self.update_ui_state()
 
     def plugin_save_pressed(self):
         progress = QProgressDialog(self)
@@ -287,10 +350,18 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         current_text = self.combo_plugin.currentText()
 
         # Get plugin
-        if current_text == CUSTOM:
+        if current_text == SELECT:
+            return
+        elif current_text == CUSTOM:
             plugin_file_name = self.edit_custom_plugin.text()
             plugin_file_name = unicode(plugin_file_name.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
-            plugin = file(plugin_file_name, 'rb').read()
+
+            try:
+                plugin = file(plugin_file_name, 'rb').read()
+            except IOError:
+                progress.cancel()
+                self.popup_fail('Brick', 'Could not read plugin file')
+                return
         else:
             url_part = self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString()
 
