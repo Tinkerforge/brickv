@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 
 import sys
 import struct
+import math
 from serial import Serial
 
 try:
@@ -111,7 +112,7 @@ class SAMBA:
             page = firmware[offset:offset + self.flash_page_size]
 
             if len(page) < self.flash_page_size:
-                page += '\0' * (self.flash_page_size - len(page))
+                page += '\xff' * (self.flash_page_size - len(page))
 
             firmware_pages.append(page)
             offset += self.flash_page_size
@@ -122,7 +123,7 @@ class SAMBA:
         # Unlock
         for region in range(self.flash_lockbit_count):
             self.waitForFlashReady()
-            page_num = region * self.flash_page_count / self.flash_lockbit_count
+            page_num = (region * self.flash_page_count) / self.flash_lockbit_count
             self.writeFlashCommand(EEFC_FCR_FCMD_CLB, page_num)
 
         # Erase All
@@ -155,9 +156,9 @@ class SAMBA:
             self.app.processEvents()
 
         # Lock
-        for region in range(self.flash_lockbit_count):
+        for region in range(int(math.ceil((float(len(firmware_pages)) / self.flash_page_count) * self.flash_lockbit_count))):
             self.waitForFlashReady()
-            page_num = region * self.flash_page_count / self.flash_lockbit_count
+            page_num = (region * self.flash_page_count) / self.flash_lockbit_count
             self.writeFlashCommand(EEFC_FCR_FCMD_SLB, page_num)
 
         self.waitForFlashReady()
