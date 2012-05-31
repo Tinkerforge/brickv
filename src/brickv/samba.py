@@ -25,6 +25,7 @@ import sys
 import glob
 import struct
 import math
+from PyQt4.QtGui import QApplication
 from serial import Serial
 
 if sys.platform == 'linux2':
@@ -80,8 +81,7 @@ class SAMBAException(Exception):
     pass
 
 class SAMBA:
-    def __init__(self, port_name, app):
-        self.app = app
+    def __init__(self, port_name):
         self.port = Serial(port_name, 115200, timeout=5)
 
         self.port.write('N#')
@@ -157,7 +157,7 @@ class SAMBA:
 
             page_num += 1
             progress.setValue(page_num)
-            self.app.processEvents()
+            QApplication.processEvents()
 
         # Lock
         for region in range(int(math.ceil((float(len(firmware_pages)) / self.flash_page_count) * self.flash_lockbit_count))):
@@ -192,7 +192,7 @@ class SAMBA:
 
             page_num += 1
             progress.setValue(page_num)
-            self.app.processEvents()
+            QApplication.processEvents()
 
     def readWord(self, address):
         try:

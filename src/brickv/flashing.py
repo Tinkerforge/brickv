@@ -27,7 +27,7 @@ from ui_flashing import Ui_widget_flashing
 import time
 
 from PyQt4.QtCore import pyqtSignal, Qt
-from PyQt4.QtGui import QFrame, QFileDialog, QMessageBox, QProgressDialog
+from PyQt4.QtGui import QApplication, QFrame, QFileDialog, QMessageBox, QProgressDialog
 
 import sys
 import urllib2
@@ -41,11 +41,10 @@ CUSTOM = 'Custom...'
 FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
 
 class FlashingWindow(QFrame, Ui_widget_flashing):
-    def __init__(self, app, devices, parent):
+    def __init__(self, devices, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
         self.setupUi(self)
 
-        self.app = app
         self.ipcon = parent.ipcon
         self.button_serial_port_refresh.pressed.connect(self.serial_port_refresh)
         self.combo_firmware.currentIndexChanged.connect(self.firmware_changed)
@@ -240,7 +239,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
     def firmware_save_pressed(self):
         port = str(self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString())
         try:
-            samba = SAMBA(port, self.app)
+            samba = SAMBA(port)
         except SAMBAException, e:
             self.serial_port_refresh()
             self.popup_fail('Brick', 'Could not connect to Brick: {0}'.format(str(e)))
@@ -280,14 +279,14 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 length = int(response.headers['Content-Length'])
                 progress.setMaximum(length)
                 progress.setValue(0)
-                self.app.processEvents()
+                QApplication.processEvents()
                 firmware = ''
                 chunk = response.read(1024)
 
                 while len(chunk) > 0:
                     firmware += chunk
                     progress.setValue(len(firmware))
-                    self.app.processEvents()
+                    QApplication.processEvents()
                     chunk = response.read(1024)
             except:
                 progress.cancel()
@@ -374,14 +373,14 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 length = int(response.headers['Content-Length'])
                 progress.setMaximum(length)
                 progress.setValue(0)
-                self.app.processEvents()
+                QApplication.processEvents()
                 plugin = ''
                 chunk = response.read(1024)
 
                 while len(chunk) > 0:
                     plugin += chunk
                     progress.setValue(len(plugin))
-                    self.app.processEvents()
+                    QApplication.processEvents()
                     chunk = response.read(1024)
             except:
                 progress.cancel()
@@ -397,7 +396,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             progress.setMaximum(0)
             progress.setValue(0)
             progress.show()
-            self.app.processEvents()
+            QApplication.processEvents()
 
             self.ipcon.write_bricklet_plugin(device, port, plugin)
             time.sleep(1)
@@ -407,7 +406,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             progress.setMaximum(0)
             progress.setValue(0)
             progress.show()
-            self.app.processEvents()
+            QApplication.processEvents()
 
             time.sleep(1)
             read_plugin = self.ipcon.read_bricklet_plugin(device,

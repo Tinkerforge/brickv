@@ -65,7 +65,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     callback_enumerate_signal = pyqtSignal(str, str, int, bool)
     
-    def __init__(self, app, parent=None):
+    def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
         self.setupUi(self)
         self.setWindowIcon(QIcon("brickv-icon.png"))
@@ -92,8 +92,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_flashing.pressed.connect(self.flashing_pressed)
         self.button_advanced.pressed.connect(self.advanced_pressed)
         self.plugin_manager = PluginManager()
-        
-        self.app = app
 
     def closeEvent(self, event):
         self.exit_brickv()
@@ -145,7 +143,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if ' Brick ' in plugin[2]:
                 devices.append((plugin[2], plugin[0].device))
 
-        fw = FlashingWindow(self.app, devices, self)
+        fw = FlashingWindow(devices, self)
         fw.setAttribute(Qt.WA_QuitOnClose)
         fw.show()
 
