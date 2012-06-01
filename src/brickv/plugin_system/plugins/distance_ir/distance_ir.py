@@ -25,15 +25,11 @@ from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
 from plot_widget import PlotWidget
 
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFileDialog, QApplication
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFileDialog, QApplication, QPolygonF
+from PyQt4.QtCore import pyqtSignal, Qt, QPointF
+from PyQt4.Qwt5 import QwtSpline
 
 import sys
-try:
-    no_scipy_interpolate = False
-    import scipy.interpolate
-except:
-    no_scipy_interpolate = True
 
 from bindings import bricklet_distance_ir
         
@@ -108,13 +104,7 @@ class DistanceIR(PluginBase):
         layout.addLayout(layout_h2)
         layout.addWidget(self.plot_widget)
         layout.addLayout(self.sample_layout)
-        
-        if no_scipy_interpolate:
-            self.sample_file.setEnabled(False)
-            self.sample_save.setEnabled(False)
-            self.sample_edit.setText('Install scipy to for sample point interpolation.')
-            
-        
+
     def start(self):
         try:
             self.cb_distance(self.dist.get_distance())
@@ -146,11 +136,21 @@ class DistanceIR(PluginBase):
         self.sample_edit.setText(file_name)
         
     def sample_interpolate(self, x, y):
-        spl = scipy.interpolate.splrep(x, y)
-    
+        spline = QwtSpline()
+        points = QPolygonF()
+
+        for point in zip(x, y):
+            points.append(QPointF(*point))
+
+        spline.setSplineType(QwtSpline.Natural)
+        spline.setPoints(points)
+
         px = range(0, 2**12, DistanceIR.DIVIDER)
-        py = scipy.interpolate.splev(px, spl)
-        
+        py = []
+
+        for X in px:
+            py.append(spline.value(X))
+
         for i in range(x[0]/DistanceIR.DIVIDER):
             py[i] = y[0]
             
