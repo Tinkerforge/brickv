@@ -36,7 +36,6 @@ Boston, MA 02111-1307, USA.
 #   script copies OpenGL, special libs and plugin_system
 #   in dist folder
 
-
 import config
 
 import sys  
@@ -50,7 +49,6 @@ NAME = 'Brickv'
 
 def build_macos_pkg():
     from setuptools import setup, find_packages
-
 
     PWD = os.path.dirname(os.path.realpath(__file__))
     RES_PATH = os.path.join(PWD, 'dist', '%s.app' % 'brickv', 'Contents', 'Resources')
@@ -71,23 +69,24 @@ def build_macos_pkg():
     #    LSUIElement = True,
     )
 
-    additional_data_files = matplotlib.get_py2exe_datafiles()
+    additional_data_files = []
     def visitor(arg, dirname, names):
         for n in names:
-
             if os.path.isfile(os.path.join(dirname, n)):
-                if arg[0] == 'y': #replace first folder name
+                if arg[0] == 'y': # replace first folder name
                     additional_data_files.append((os.path.join(dirname.replace(arg[1],"")) , [os.path.join(dirname, n)]))
                 else: # keep full path
-                    additional_data_files.append((os.path.join(dirname) , [os.path.join(dirname, n)]))
+                    additional_data_files.append((os.path.join(dirname), [os.path.join(dirname, n)]))
     
     os.path.walk(os.path.normcase("../build_data/macos/"), visitor, ('y',os.path.normcase("../build_data/macos/")))
     os.path.walk("plugin_system", visitor, ('n',"plugin_system"))
     
-    additional_data_files.append( ( os.path.join('.') , [os.path.join('.', 'brickv-icon.png')] ) )
- 
+    additional_data_files.append((os.path.join('.'), [os.path.join('.', 'brickv-icon.png')]))
 
-
+    additional_modules = []
+    for f in os.listdir('bindings'):
+        if f.endswith('.py'):
+            additional_modules.append('bindings.' + f[:-3])
 
     def delete_old():
         BUILD_PATH = os.path.join(PWD, "build")
@@ -106,7 +105,23 @@ def build_macos_pkg():
             }
         ]
 
-        OPTIONS = {'argv_emulation': True, 'iconfile':'../build_data/macos/brickv-icon.icns','site_packages': True, "includes":["atexit", "PyQt4.QtSvg", "sip","PyQt4.Qwt5", "PyQt4.QtCore", "PyQt4.QtGui","numpy.core.multiarray", "PyQt4.QtOpenGL","OpenGL.GL", "ctypes.util", "plot_widget", "pylab", "matplotlib.backends.backend_qt4agg", "scipy.interpolate"],}
+        OPTIONS = {'argv_emulation' : True,
+                   'iconfile' : '../build_data/macos/brickv-icon.icns',
+                   'site_packages' : True,
+                   'includes' : ["atexit",
+                                 "PyQt4.QtSvg",
+                                 "sip",
+                                 "PyQt4.Qwt5",
+                                 "PyQt4.QtCore",
+                                 "PyQt4.QtGui",
+                                 "numpy.core.multiarray",
+                                 "PyQt4.QtOpenGL",
+                                 "OpenGL.GL",
+                                 "ctypes.util",
+                                 "plot_widget",
+                                 "serial",
+                                ] + additional_modules,
+                   'excludes' : ['scipy', 'distutils', 'setuptools', 'email']}
 
         data = data_files + additional_data_files
 
@@ -117,10 +132,9 @@ def build_macos_pkg():
             author = 'Tinkerforge',
             author_email = 'info@tinkerforge.com',
             platforms = ["Mac OSX"],
-            license = "GPL V2",
+            license = "GPL v2",
             url = "http://www.tinkerforge.com",
             scripts = ['main.py'],
-
             app = apps,
             options = {'py2app': OPTIONS},
             # setup_requires = ['py2app'],
@@ -128,13 +142,11 @@ def build_macos_pkg():
             packages = packages,
         )
 
-
     def qt_menu_patch():
         src = os.path.join(PWD, '../build_data/macos/', 'qt_menu.nib')
         dst = os.path.join(RES_PATH, 'qt_menu.nib')
         if not os.path.exists(dst):
             shutil.copytree(src, dst)
-
 
     _RUN_IN_TERM_PATCH = """import os
 import sys
@@ -165,12 +177,17 @@ os.environ['RESOURCEPATH'] = os.path.dirname(os.path.realpath(__file__))
             if not os.path.exists(dst):
                 shutil.copytree(src, dst)
 
-#hack: fix wrong position of plugin_system
+        # HACK: fix wrong position of plugin_system
         src = os.path.join(RES_PATH, "plugin_system")
         dst = os.path.join(RES_PATH, "../MacOS/plugin_system")
         shutil.copytree(src, dst)
 
-        
+    def build_dmg():
+        if os.path.exists("Brickv.dmg"):
+            os.remove("Brickv.dmg")
+        os.system("echo $DYLIB_LIBRARY_PATH")
+        os.system("hdiutil create -fs HFS+ -volname Brickv -srcfolder dist Brickv.dmg")
+
     ACTION_CREATE = len(sys.argv) == 3 and sys.argv[-1] == "build"
 
     if ACTION_CREATE:
@@ -179,12 +196,9 @@ os.environ['RESOURCEPATH'] = os.path.dirname(os.path.realpath(__file__))
         qt_menu_patch()
         run_in_term_patch()
         data_files_patch()
+        #build_dmg()
     else:
-#create_app()
         print "Usage: python setup.py py2app build"
-
-
-
 
 
 def build_windows_pkg():
@@ -194,7 +208,6 @@ def build_windows_pkg():
     data_files = matplotlib.get_py2exe_datafiles()
     def visitor(arg, dirname, names):
         for n in names:
-
             if os.path.isfile(os.path.join(dirname, n)):
                 if arg[0] == 'y': #replace first folder name
                     data_files.append((os.path.join(dirname.replace(arg[1],"")) , [os.path.join(dirname, n)]))
@@ -226,14 +239,26 @@ def build_windows_pkg():
           version = config.BRICKV_VERSION,
           data_files = data_files,
           options = {
-                    "py2exe":{
-                    "dll_excludes":["MSVCP90.dll"], 
-                        "includes":["PyQt4.QtSvg", "sip","PyQt4.Qwt5", "PyQt4.QtCore", "PyQt4.QtGui","numpy.core.multiarray", "PyQt4.QtOpenGL","OpenGL.GL", "ctypes.util", "plot_widget", "pylab", "matplotlib.backends.backend_qt4agg", "scipy.interpolate"],
-                        "excludes":["_gtkagg", "_tkagg"]
-                        }
+                    "py2exe" : {
+                    "dll_excludes" : ["MSVCP90.dll"],
+                    "includes" : ["PyQt4.QtSvg",
+                                  "sip",
+                                  "PyQt4.Qwt5",
+                                  "PyQt4.QtCore",
+                                  "PyQt4.QtGui",
+                                  "numpy.core.multiarray",
+                                  "PyQt4.QtOpenGL",
+                                  "OpenGL.GL",
+                                  "ctypes.util",
+                                  "plot_widget",
+                                  "pylab",
+                                  "matplotlib.backends.backend_qt4agg",
+                                  "scipy.interpolate"],
+                    "excludes" : ["_gtkagg", "_tkagg"]
+                    }
                     },
-          zipfile=None,
-          windows = [{'script':'main.py', 'icon_resources':[(0,os.path.normcase("../build_data/Windows/brickv-icon.ico"))]}]
+          zipfile = None,
+          windows = [{'script' : 'main.py', 'icon_resources' : [(0, os.path.normcase("../build_data/Windows/brickv-icon.ico"))]}]
     )
     
     # build nsis
@@ -259,12 +284,12 @@ def build_linux_pkg():
     os.system('dpkg -b brickv/ brickv-' + config.BRICKV_VERSION + '_all.deb')
     
 if __name__ == "__main__":
-    if sys.argv[1] == "win":
+    if sys.argv[1] == "windows":
         sys.argv[1] = "py2exe" # rewrite sys.argv[1] for setup(), want to call py2exe
         build_windows_pkg()
-    if sys.argv[1] == "linux":
+    elif sys.argv[1] == "linux":
         build_linux_pkg()
-    if sys.argv[1] == "macos":
+    elif sys.argv[1] == "macos":
         sys.argv[1] = "py2app" # rewrite sys.argv[1] for setup(), want to call py2exe
         sys.argv.append("build") # rewrite sys.argv[1] for setup(), want to call py2exe
         build_macos_pkg()
