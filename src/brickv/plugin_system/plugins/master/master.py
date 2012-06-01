@@ -371,14 +371,11 @@ class Master(PluginBase, Ui_Master):
             
         # RS485 widget
         if self.version_minor > 1:
-            self.extension_type_button.pressed.connect(self.extension_pressed)
             if self.master.is_rs485_present():
                 num_extensions += 1
                 rs485 = RS485(self)
                 self.extensions.append(rs485)
                 self.extension_layout.addWidget(rs485)
-        else:
-            self.extension_type_button.setEnabled(False)
             
         if num_extensions == 0:
             self.extension_label.setText("None Present")
