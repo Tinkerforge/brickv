@@ -44,7 +44,6 @@ from distutils.core import setup
 import os
 import glob
 import shutil
-import matplotlib
  
 DESCRIPTION = 'Brick Viewer'
 NAME = 'Brickv'
@@ -255,6 +254,8 @@ def build_linux_pkg():
     
     build_data_path = os.path.join(os.path.split(src_path)[0], 'build_data/linux')
     os.chdir(build_data_path)
+    os.system('chown -R root brickv/usr')
+    os.system('chgrp -R root brickv/usr')
     os.system('dpkg -b brickv/ brickv-' + config.BRICKV_VERSION + '_all.deb')
     
 if __name__ == "__main__":
