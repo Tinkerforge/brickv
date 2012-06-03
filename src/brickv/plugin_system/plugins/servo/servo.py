@@ -496,8 +496,8 @@ class Servo(PluginBase, Ui_Servo):
     def output_voltage_button_clicked(self):
         qid = QInputDialog(self)
         qid.setInputMode(QInputDialog.IntInput)
-        qid.setIntMinimum(5000)
-        qid.setIntMaximum(27000)
+        qid.setIntMinimum(2000)
+        qid.setIntMaximum(9000)
         qid.setIntStep(100)
         try:
             qid.setIntValue(self.servo.get_output_voltage())
