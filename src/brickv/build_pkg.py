@@ -291,6 +291,21 @@ def build_linux_pkg():
     
     build_data_path = os.path.join(os.path.split(src_path)[0], 'build_data/linux')
     os.chdir(build_data_path)
+
+    STEXT = 'Version:'
+    RTEXT = 'Version: {0}\n'.format(config.BRICKV_VERSION)
+
+    f = open('brickv/DEBIAN/control', 'r')
+    lines = f.readlines()
+    f.close()
+
+    f = open('brickv/DEBIAN/control', 'w')
+    for line in lines:
+        if not line.find(STEXT) == -1:
+            line = RTEXT
+        f.write(line)
+    f.close()
+
     os.system('chown -R root brickv/usr')
     os.system('chgrp -R root brickv/usr')
     os.system('dpkg -b brickv/ brickv-' + config.BRICKV_VERSION + '_all.deb')
