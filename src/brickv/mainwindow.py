@@ -82,6 +82,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.plugins = [(self, None, None, None)]
         self.ipcon = None
+        self.flashing_window = None
+        self.advanced_window = None
         self.reset_view()
         self.button_advanced.setDisabled(True)
         
@@ -138,37 +140,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ipcon = None
 
     def flashing_pressed(self):
-        devices = []
-        for plugin in self.plugins[1:]:
-            if ' Brick ' in plugin[2]:
-                devices.append((plugin[2], plugin[0].device))
+        if self.flashing_window is None:
+            self.flashing_window = FlashingWindow(self)
 
-        fw = FlashingWindow(devices, self)
-        fw.setAttribute(Qt.WA_QuitOnClose)
-        fw.show()
+        self.update_flashing_window()
+        self.flashing_window.show()
 
     def advanced_pressed(self):
-        if len(self.plugins) < 2:
-            QMessageBox.warning(self, "Error", "You have to connect at least one Brick", QMessageBox.Ok)
-            return
-        
-        aw = AdvancedWindow(self)
-        for plugin in self.plugins[1:]:
-            if ' Brick ' in plugin[2]:
-                aw.combo_brick.addItem(plugin[2])
-                aw.devices.append(plugin[0].device)
-        
-        aw.setAttribute(Qt.WA_QuitOnClose)
-        aw.update_calibration()
-        aw.show()
-         
+        if self.advanced_window is None:
+            self.advanced_window = AdvancedWindow(self)
+
+        self.update_advanced_window()
+        self.advanced_window.show()
+
     def connect_pressed(self):
         if not self.ipcon:
             try:
                 self.ipcon = IPConnection(self.host.text(), self.port.value())
                 self.ipcon.enumerate(self.callback_enumerate_signal.emit)
                 self.connect.setText("Disconnect")
-                self.button_advanced.setDisabled(False)
                 self.port.setDisabled(True)
                 self.host.setDisabled(True)
             except (Error, socket.error):
@@ -216,3 +206,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
         mtm = MainTableModel(self.table_view_header, data)
         self.table_view.setModel(mtm)
+
+        self.update_flashing_window()
+        self.update_advanced_window()
+
+    def update_flashing_window(self):
+        if self.flashing_window is not None:
+            devices = []
+            for plugin in self.plugins[1:]:
+                if ' Brick ' in plugin[2]:
+                    devices.append((plugin[2], plugin[0].device))
+            self.flashing_window.set_devices(devices)
+
+    def update_advanced_window(self):
+        devices = []
+        for plugin in self.plugins[1:]:
+            if ' Brick ' in plugin[2]:
+                devices.append((plugin[2], plugin[0].device))
+
+        self.button_advanced.setEnabled(len(devices) > 0)
+
+        if self.advanced_window is not None:
+            self.advanced_window.set_devices(devices)

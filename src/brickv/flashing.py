@@ -41,11 +41,11 @@ CUSTOM = 'Custom...'
 FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
 
 class FlashingWindow(QFrame, Ui_widget_flashing):
-    def __init__(self, devices, parent):
+    def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
         self.setupUi(self)
 
-        self.ipcon = parent.ipcon
+        self.parent = parent
         self.button_serial_port_refresh.pressed.connect(self.serial_port_refresh)
         self.combo_firmware.currentIndexChanged.connect(self.firmware_changed)
         self.button_firmware_save.pressed.connect(self.firmware_save_pressed)
@@ -56,115 +56,133 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.button_plugin_save.pressed.connect(self.plugin_save_pressed)
         self.button_plugin_browse.pressed.connect(self.plugin_browse_pressed)
 
-        self.devices = []
-        if len(devices) == 0:
-            self.tab_widget.setTabEnabled(1, False)
-        else:
-            for device in devices:
-                self.combo_brick.addItem(device[0])
-                self.devices.append(device[1])
+        self.set_devices([])
 
         progress = self.create_progress_bar('Discovering')
 
         # discover serial ports
         self.serial_port_refresh(progress)
 
-        # discover firmwares
+        # discover firmwares and plugins
+        available = False
         try:
-            progress.setLabelText('Discovering firmwares on tinkerforge.com')
-            progress.setMaximum(0)
-            progress.setValue(0)
-            progress.show()
+            urllib2.urlopen(FIRMWARE_URL).read()
+            available = True
+        except urllib2.URLError:
+            self.combo_firmware.setDisabled(True)
+            self.combo_plugin.setDisabled(True)
+            self.popup_fail('Bricklet', 'Could not connect to tinkerforge.com.\nFirmwares and plugins can be flashed from local files.')
 
-            response = urllib2.urlopen(FIRMWARE_URL + 'bricks/')
-            data = response.read().replace('<hr>', '').replace('<br>', '')
-            tree = etreefromstring(data)
-            body = tree.find('body')
-            firmwares = []
+        if available:
+            # discover firmwares
+            try:
+                progress.setLabelText('Discovering firmwares on tinkerforge.com')
+                progress.setMaximum(0)
+                progress.setValue(0)
+                progress.show()
 
-            for a in body.getiterator('a'):
-                url_part = a.text.replace('/', '')
-                name = url_part
-                if name == '..':
-                    continue
-                elif name in ['dc', 'imu']:
-                    name = name.upper()
-                else:
+                response = urllib2.urlopen(FIRMWARE_URL + 'bricks/')
+                data = response.read().replace('<hr>', '').replace('<br>', '')
+                tree = etreefromstring(data)
+                body = tree.find('body')
+                firmwares = []
+
+                for a in body.getiterator('a'):
+                    url_part = a.text.replace('/', '')
+                    name = url_part
+                    if name == '..':
+                        continue
+                    elif name in ['dc', 'imu']:
+                        name = name.upper()
+                    else:
+                        words = name.split('_')
+                        parts = []
+                        for word in words:
+                            parts.append(word[0].upper() + word[1:])
+                        name = ' '.join(parts)
+
+                    firmwares.append((name, url_part))
+
+                if len(firmwares) > 0:
+                    self.combo_firmware.addItem(SELECT)
+                    self.combo_firmware.insertSeparator(self.combo_firmware.count())
+
+                for firmware in firmwares:
+                    self.combo_firmware.addItem(*firmware)
+
+                if self.combo_firmware.count() > 0:
+                    self.combo_firmware.insertSeparator(self.combo_firmware.count())
+            except urllib2.URLError:
+                progress.cancel()
+                self.combo_firmware.setDisabled(True)
+                self.popup_fail('Brick', 'Could not discover firmwares on tinkerforge.com.\nFirmwares can be flashed from local files.')
+
+        self.combo_firmware.addItem(CUSTOM)
+        self.firmware_changed(0)
+
+        if available:
+            # discover plugins
+            try:
+                progress.setLabelText('Discovering plugins on tinkerforge.com')
+                progress.setMaximum(0)
+                progress.setValue(0)
+                progress.show()
+
+                response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/')
+                data = response.read().replace('<hr>', '').replace('<br>', '')
+                tree = etreefromstring(data)
+                body = tree.find('body')
+                plugins = []
+
+                for a in body.getiterator('a'):
+                    url_part = a.text.replace('/', '')
+                    name = url_part
+                    if name == '..':
+                        continue
+
+                    if name.startswith('lcd_'):
+                        name = name.replace('lcd_', 'LCD_')
+                    elif name.startswith('io'):
+                        name = name.replace('io', 'IO-')
+                    elif name.endswith('_ir'):
+                        name = name.replace('_ir', '_IR')
+
                     words = name.split('_')
                     parts = []
                     for word in words:
                         parts.append(word[0].upper() + word[1:])
                     name = ' '.join(parts)
 
-                firmwares.append((name, url_part))
+                    plugins.append((name, url_part))
 
-            if len(firmwares) > 0:
-                self.combo_firmware.addItem(SELECT)
-                self.combo_firmware.insertSeparator(self.combo_firmware.count())
+                if len(plugins) > 0:
+                    self.combo_plugin.addItem(SELECT)
+                    self.combo_plugin.insertSeparator(self.combo_plugin.count())
 
-            for firmware in firmwares:
-                self.combo_firmware.addItem(*firmware)
+                for plugin in plugins:
+                    self.combo_plugin.addItem(*plugin)
 
-            if self.combo_firmware.count() > 0:
-                self.combo_firmware.insertSeparator(self.combo_firmware.count())
-        except:
-            self.combo_firmware.setDisabled(True)
-            self.popup_fail('Brick', 'Could not discover firmwares on tinkerforge.com. Flashing firmwares from local files is still possible.')
-
-        self.combo_firmware.addItem(CUSTOM)
-        self.firmware_changed(0)
-
-        # discover plugins
-        try:
-            progress.setLabelText('Discovering plugins on tinkerforge.com')
-            progress.setMaximum(0)
-            progress.setValue(0)
-            progress.show()
-
-            response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/')
-            data = response.read().replace('<hr>', '').replace('<br>', '')
-            tree = etreefromstring(data)
-            body = tree.find('body')
-            plugins = []
-
-            for a in body.getiterator('a'):
-                url_part = a.text.replace('/', '')
-                name = url_part
-                if name == '..':
-                    continue
-
-                if name.startswith('lcd_'):
-                    name = name.replace('lcd_', 'LCD_')
-                elif name.startswith('io'):
-                    name = name.replace('io', 'IO-')
-                elif name.endswith('_ir'):
-                    name = name.replace('_ir', '_IR')
-
-                words = name.split('_')
-                parts = []
-                for word in words:
-                    parts.append(word[0].upper() + word[1:])
-                name = ' '.join(parts)
-
-                plugins.append((name, url_part))
-
-            if len(plugins) > 0:
-                self.combo_plugin.addItem(SELECT)
-                self.combo_plugin.insertSeparator(self.combo_plugin.count())
-
-            for plugin in plugins:
-                self.combo_plugin.addItem(*plugin)
-
-            if self.combo_plugin.count() > 0:
-                self.combo_plugin.insertSeparator(self.combo_plugin.count())
-        except:
-            self.combo_plugin.setDisabled(True)
-            self.popup_fail('Bricklet', 'Could not discover plugins on tinkerforge.com. Flashing plugins from local files is still possible.')
+                if self.combo_plugin.count() > 0:
+                    self.combo_plugin.insertSeparator(self.combo_plugin.count())
+            except urllib2.URLError:
+                progress.cancel()
+                self.combo_plugin.setDisabled(True)
+                self.popup_fail('Bricklet', 'Could not discover plugins on tinkerforge.com.\nPlugins can be flashed from local files.')
 
         self.combo_plugin.addItem(CUSTOM)
         self.plugin_changed(0)
 
         progress.cancel()
+
+        self.update_ui_state()
+
+    def set_devices(self, devices):
+        self.devices = []
+        self.combo_brick.clear()
+
+        for device in devices:
+            self.devices.append(device[1])
+            self.combo_brick.addItem(device[0])
 
         self.update_ui_state()
 
@@ -196,6 +214,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
             ports = get_serial_ports()
         except:
+            progress.cancel()
             self.update_ui_state()
             self.popup_fail('Brick', 'Could not discover serial ports')
         else:
@@ -224,6 +243,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.button_plugin_save.setEnabled(not is_plugin_select and self.combo_brick.count() > 0)
         self.edit_custom_plugin.setEnabled(is_plugin_custom)
         self.button_plugin_browse.setEnabled(is_plugin_custom)
+
+        self.tab_widget.setTabEnabled(1, len(self.devices) > 0)
 
     def firmware_changed(self, index):
         self.update_ui_state()
@@ -288,7 +309,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                     progress.setValue(len(firmware))
                     QApplication.processEvents()
                     chunk = response.read(1024)
-            except:
+            except urllib2.URLError:
                 progress.cancel()
                 self.popup_fail('Brick', 'Could not download latest {0} Brick firmware'.format(current_text))
                 return
@@ -314,13 +335,13 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         device, port = self.current_device_and_port()
         uid = str(self.edit_uid.text())
         try:
-            self.ipcon.write_bricklet_uid(device, port, uid)
+            self.parent.ipcon.write_bricklet_uid(device, port, uid)
         except:
             self.popup_fail('Bricklet', 'Could not write UID')
             return
 
         try:
-            uid_read = self.ipcon.read_bricklet_uid(device, port)
+            uid_read = self.parent.ipcon.read_bricklet_uid(device, port)
         except:
             self.popup_fail('Bricklet', 'Could not read written UID')
             return
@@ -333,7 +354,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
     def uid_load_pressed(self):
         device, port = self.current_device_and_port()
         try:
-            uid = self.ipcon.read_bricklet_uid(device, port)
+            uid = self.parent.ipcon.read_bricklet_uid(device, port)
         except:
             self.edit_uid.setText('')
             self.popup_fail('Bricklet', 'Could not read UID')
@@ -382,7 +403,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                     progress.setValue(len(plugin))
                     QApplication.processEvents()
                     chunk = response.read(1024)
-            except:
+            except urllib2.URLError:
                 progress.cancel()
                 self.popup_fail('Bricklet', 'Could not download latest {0} Bricklet plugin'.format(current_text))
                 return
@@ -398,7 +419,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             progress.show()
             QApplication.processEvents()
 
-            self.ipcon.write_bricklet_plugin(device, port, plugin)
+            self.parent.ipcon.write_bricklet_plugin(device, port, plugin)
             time.sleep(1)
 
             # Verify
@@ -409,9 +430,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             QApplication.processEvents()
 
             time.sleep(1)
-            read_plugin = self.ipcon.read_bricklet_plugin(device,
-                                                          port,
-                                                          len(plugin))
+            read_plugin = self.parent.ipcon.read_bricklet_plugin(device,
+                                                                 port,
+                                                                 len(plugin))
 
             if plugin != read_plugin:
                 raise Exception()

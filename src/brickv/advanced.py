@@ -26,8 +26,8 @@ Boston, MA 02111-1307, USA.
 from ui_advanced import Ui_widget_advanced
 import time
 
-from PyQt4.QtCore import pyqtSignal, Qt
-from PyQt4.QtGui import QFrame, QFileDialog, QMessageBox
+from PyQt4.QtCore import pyqtSignal, Qt, QTimer
+from PyQt4.QtGui import QApplication, QFrame, QFileDialog, QMessageBox
 
 import sys
 
@@ -38,42 +38,59 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
 
         self.button_calibrate.setEnabled(False)
         
-        self.ipcon = parent.ipcon
+        self.parent = parent
         self.button_calibrate.pressed.connect(self.calibrate_pressed)
         self.combo_brick.currentIndexChanged.connect(self.brick_changed)
         self.check_enable_calibration.stateChanged.connect(self.enable_calibration_changed)
+
+        self.set_devices([])
+
+    def set_devices(self, devices):
         self.devices = []
+        self.combo_brick.clear()
+
+        for device in devices:
+            self.devices.append(device[1])
+            self.combo_brick.addItem(device[0])
+
+        self.update_calibration()
+        self.update_ui_state()
 
     def calibrate_pressed(self):
-        self.ipcon.adc_calibrate(self.current_device(), 
-                                 str(self.combo_port.currentText()).lower())
+        self.parent.ipcon.adc_calibrate(self.current_device(),
+                                        str(self.combo_port.currentText()).lower())
         
         self.update_calibration()
-    
-    def current_device_and_port(self):
-        return (self.current_device(), 
-                str(self.combo_port.currentText()).lower())
 
     def current_device(self):
-        return self.devices[self.combo_brick.currentIndex()]
+        index = self.combo_brick.currentIndex()
+        if index < 0:
+            return None
+        else:
+            return self.devices[index]
 
-    def update_calibration(self, device = None):
-        if device == None:
-            device = self.current_device()
-            
-        offset, gain = self.ipcon.get_adc_calibration(device)
-        
-        self.label_offset.setText(str(offset))
-        self.label_gain.setText(str(gain))
+    def update_calibration(self):
+        device = self.current_device()
+
+        if device is None:
+            self.label_offset.setText('-')
+            self.label_gain.setText('-')
+        else:
+            def slot():
+                offset, gain = self.parent.ipcon.get_adc_calibration(device)
+                self.label_offset.setText(str(offset))
+                self.label_gain.setText(str(gain))
+            QTimer.singleShot(0, slot)
         
     def brick_changed(self, index):
-        if len(self.devices) <= index:
-            return
-        
-        self.update_calibration(self.devices[index])
+        self.update_calibration()
 
     def enable_calibration_changed(self, state):
-        if state == Qt.Unchecked:
-            self.button_calibrate.setEnabled(False) 
-        else:
-            self.button_calibrate.setEnabled(True)
+        self.button_calibrate.setEnabled(state == Qt.Checked)
+
+    def update_ui_state(self):
+        enabled = len(self.devices) > 0
+
+        self.combo_brick.setEnabled(enabled)
+        self.check_enable_calibration.setEnabled(enabled)
+        self.button_calibrate.setEnabled(enabled and self.check_enable_calibration.isChecked())
