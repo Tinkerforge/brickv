@@ -1,9 +1,16 @@
-1.0.0: Initial Version
-1.0.1: Fix problem with Servo plugin on windows (can't start timer in thread)
-1.0.2: Fix some windows installation problems, uid's copyable
-1.0.3: Fix OpenGL doublebuffering bug (only imu), fix bias bug
-1.0.4: Fix bricklet flash problem on windows
+1.0.0: Initial version
+1.0.1: Fix problem with Servo plugin on Windows (can't start timer in thread)
+1.0.2: Fix some Windows installation problems
+       Make UIDs copyable
+1.0.3: Fix OpenGL doublebuffering bug (only IMU), fix bias bug
+1.0.4: Fix Bricklet flash problem on Windows
 1.0.5: Add warning to ADC calibration
 1.0.6: Better usability for Chibi configuration
-1.0.7: Use threads in Stepper plugin, more usable over Chibi this way and add mac os support
+1.0.7: Use threads in Stepper plugin, more usable over Chibi this way
+       Add Mac OS support
 1.0.8: Remove Stepper decay slider
+1.1.0: Convert file name to file system encoding before opening the file
+       LCD plugin supports full LCD charset
+       Remove matplotlib, pylab, scipy and numpy from the dependencies list
+       Add version number to window title
+       Add Brick flashing support, no SAM-BA needed anymore
