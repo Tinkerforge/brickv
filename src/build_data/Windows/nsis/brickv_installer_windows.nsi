@@ -14,7 +14,8 @@ RequestExecutionLevel admin
 
 ;--------------------------------
 
-!define BRICKV_VERSION 1.0.7
+!define BRICKV_VERSION 1.0.8
+
 ;--------------------------------
 
 !macro macrouninstall
@@ -25,12 +26,11 @@ RequestExecutionLevel admin
 
 
   ; Remove directories used
+  RMDir /R $INSTDIR\drivers
   RMDir /R $INSTDIR\OpenGL
   RMDir /R $INSTDIR\OpenGL_accelerate
+  RMDir /R $INSTDIR\plugin_system
   RMDir /R $INSTDIR\tcl
-  RMDir /R $INSTDIR\libs
-  RMDir /R $INSTDIR\mpl-data
-  RMDir /R $INSTDIR\plugin_system  
   RMDir /R "$INSTDIR"
   ;Delete $INSTDIR\*
   
@@ -82,25 +82,20 @@ Section "Install Brickv Programm"
   SetOutPath $INSTDIR
   File "..\*"
   
+  SetOutPath $INSTDIR\drivers
+  File /r "..\drivers\*"
+
   SetOutPath $INSTDIR\OpenGL
   File /r "..\OpenGL\*"
   
   SetOutPath $INSTDIR\OpenGL_accelerate
   File /r "..\OpenGL_accelerate\*"
   
-  SetOutPath $INSTDIR\tcl
-  File /r "..\tcl\*"
-  
-  SetOutPath $INSTDIR\libs
-  File /r "..\libs\*"
-  
-  SetOutPath $INSTDIR\mpl-data
-  File /r "..\mpl-data\*"
-  
   SetOutPath $INSTDIR\plugin_system
   File /r "..\plugin_system\*"
   
-  
+  SetOutPath $INSTDIR\tcl
+  File /r "..\tcl\*"
 
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\TINKERFORGE\BRICKV "Install_Dir" "$INSTDIR"

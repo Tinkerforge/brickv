@@ -202,14 +202,22 @@ os.environ['RESOURCEPATH'] = os.path.dirname(os.path.realpath(__file__))
 
 
 def build_windows_pkg():
+    PWD = os.path.dirname(os.path.realpath(__file__))
+    BUILD_PATH = os.path.join(PWD, "build")
+    DIST_PATH = os.path.join(PWD, "dist")
+    if os.path.exists(BUILD_PATH):
+        shutil.rmtree(BUILD_PATH)
+    if os.path.exists(DIST_PATH):
+        shutil.rmtree(DIST_PATH)
+
     import py2exe
     os.system("python build_all_ui.py")
     
-    data_files = matplotlib.get_py2exe_datafiles()
+    data_files = []
     def visitor(arg, dirname, names):
         for n in names:
             if os.path.isfile(os.path.join(dirname, n)):
-                if arg[0] == 'y': #replace first folder name
+                if arg[0] == 'y': # replace first folder name
                     data_files.append((os.path.join(dirname.replace(arg[1],"")) , [os.path.join(dirname, n)]))
                 else: # keep full path
                     data_files.append((os.path.join(dirname) , [os.path.join(dirname, n)]))
@@ -218,9 +226,14 @@ def build_windows_pkg():
     os.path.walk("plugin_system", visitor, ('n',"plugin_system"))
     
     data_files.append( ( os.path.join('.') , [os.path.join('.', 'brickv-icon.png')] ) )
+
+    additional_modules = []
+    for f in os.listdir('bindings'):
+        if f.endswith('.py'):
+            additional_modules.append('bindings.' + f[:-3])
       
     STEXT = '!define BRICKV_VERSION'
-    RTEXT = '!define BRICKV_VERSION ' + config.BRICKV_VERSION
+    RTEXT = '!define BRICKV_VERSION {0}\n'.format(config.BRICKV_VERSION)
 
     f = open('../build_data/Windows/nsis/brickv_installer_windows.nsi', 'r')
     lines = f.readlines()
@@ -251,9 +264,8 @@ def build_windows_pkg():
                                   "OpenGL.GL",
                                   "ctypes.util",
                                   "plot_widget",
-                                  "pylab",
-                                  "matplotlib.backends.backend_qt4agg",
-                                  "scipy.interpolate"],
+                                  "serial",
+                                  "win32com.client"] + additional_modules,
                     "excludes" : ["_gtkagg", "_tkagg"]
                     }
                     },
