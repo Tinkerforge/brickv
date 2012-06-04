@@ -13,15 +13,11 @@ After that you should be able to start brickv from source with
 The following libraries are required:
  * PyQt4
  * PyQwt5
- * pylab
- * scipy
  * pyopengl
- * numpy
- * matplotlib
 
 On Debian based linux distributions try::
  
- sudo apt-get install python python-qt4 python-qwt5-qt4 python-matplotlib python-scipy python-opengl python-numpy python-qt4-gl
+ sudo apt-get install python python-qt4 python-qt4-gl python-qwt5-qt4 python-opengl
 
 Building Packages
 -----------------
