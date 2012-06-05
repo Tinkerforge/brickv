@@ -39,6 +39,8 @@ from serial import SerialException
 SELECT = 'Select...'
 CUSTOM = 'Custom...'
 FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
+NO_BRICK = 'No Brick found'
+NO_BOOTLOADER = 'No Brick in Bootloader found'
 
 class FlashingWindow(QFrame, Ui_widget_flashing):
     def __init__(self, parent):
@@ -184,6 +186,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             self.devices.append(device[1])
             self.combo_brick.addItem(device[0])
 
+        if self.combo_brick.count() == 0:
+            self.combo_brick.addItem(NO_BRICK)
+
         self.update_ui_state()
 
     def create_progress_bar(self, title):
@@ -215,6 +220,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             ports = get_serial_ports()
         except:
             progress.cancel()
+            self.combo_serial_port.addItem(NO_BOOTLOADER)
             self.update_ui_state()
             self.popup_fail('Brick', 'Could not discover serial ports')
         else:
@@ -224,6 +230,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 else:
                     self.combo_serial_port.addItem(port[0], port[0])
 
+            if self.combo_serial_port.count() == 0:
+                self.combo_serial_port.addItem(NO_BOOTLOADER)
 
             self.update_ui_state()
 
@@ -232,15 +240,17 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
     def update_ui_state(self):
         is_firmware_select = self.combo_firmware.currentText() == SELECT
         is_firmware_custom = self.combo_firmware.currentText() == CUSTOM
-        self.combo_serial_port.setEnabled(self.combo_serial_port.count() > 0)
-        self.button_firmware_save.setEnabled(not is_firmware_select and self.combo_serial_port.count() > 0)
+        is_no_bootloader = self.combo_serial_port.currentText() == NO_BOOTLOADER
+        self.combo_serial_port.setEnabled(not is_no_bootloader)
+        self.button_firmware_save.setEnabled(not is_firmware_select and not is_no_bootloader)
         self.edit_custom_firmware.setEnabled(is_firmware_custom)
         self.button_firmware_browse.setEnabled(is_firmware_custom)
 
         is_plugin_select = self.combo_plugin.currentText() == SELECT
         is_plugin_custom = self.combo_plugin.currentText() == CUSTOM
-        self.combo_brick.setEnabled(self.combo_brick.count() > 0)
-        self.button_plugin_save.setEnabled(not is_plugin_select and self.combo_brick.count() > 0)
+        is_no_brick = self.combo_brick.currentText() == NO_BRICK
+        self.combo_brick.setEnabled(not is_no_brick)
+        self.button_plugin_save.setEnabled(not is_plugin_select and not is_no_brick)
         self.edit_custom_plugin.setEnabled(is_plugin_custom)
         self.button_plugin_browse.setEnabled(is_plugin_custom)
 

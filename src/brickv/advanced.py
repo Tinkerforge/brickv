@@ -31,6 +31,8 @@ from PyQt4.QtGui import QApplication, QFrame, QFileDialog, QMessageBox
 
 import sys
 
+NO_BRICK = 'No Brick found'
+
 class AdvancedWindow(QFrame, Ui_widget_advanced):
     def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
@@ -53,6 +55,9 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
             self.devices.append(device[1])
             self.combo_brick.addItem(device[0])
 
+        if self.combo_brick.count() == 0:
+            self.combo_brick.addItem(NO_BRICK)
+
         self.update_calibration()
         self.update_ui_state()
 
@@ -64,7 +69,7 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
 
     def current_device(self):
         index = self.combo_brick.currentIndex()
-        if index < 0:
+        if index < 0 or len(self.devices) == 0:
             return None
         else:
             return self.devices[index]
