@@ -27,7 +27,7 @@ from ui_advanced import Ui_widget_advanced
 import time
 
 from PyQt4.QtCore import pyqtSignal, Qt, QTimer
-from PyQt4.QtGui import QApplication, QFrame, QFileDialog, QMessageBox
+from PyQt4.QtGui import QApplication, QFrame, QMessageBox
 
 import sys
 

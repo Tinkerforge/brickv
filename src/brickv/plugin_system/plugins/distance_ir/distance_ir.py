@@ -29,6 +29,7 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit
 from PyQt4.QtCore import pyqtSignal, Qt, QPointF
 from PyQt4.Qwt5 import QwtSpline
 
+import os
 import sys
 
 from bindings import bricklet_distance_ir
@@ -52,7 +53,7 @@ class DistanceIR(PluginBase):
     
     def __init__ (self, ipcon, uid):
         PluginBase.__init__(self, ipcon, uid)
-        
+
         self.dist = bricklet_distance_ir.DistanceIR(self.uid)
         self.ipcon.add_device(self.dist)
         self.version = '.'.join(map(str, self.dist.get_version()[1]))
@@ -129,12 +130,16 @@ class DistanceIR(PluginBase):
         return 'Distance IR Bricklet' in name 
     
     def sample_file_pressed(self):
+        last_dir = ''
+        if len(self.sample_edit.text()) > 0:
+            last_dir = os.path.dirname(os.path.realpath(unicode(self.sample_edit.text().toUtf8(), 'utf-8')))
         file_name = QFileDialog.getOpenFileName(self,
                                                 "Open Sample Point file", 
-                                                "", 
+                                                last_dir,
                                                 "")
-        self.sample_edit.setText(file_name)
-        
+        if len(file_name) > 0:
+            self.sample_edit.setText(file_name)
+
     def sample_interpolate(self, x, y):
         spline = QwtSpline()
         points = QPolygonF()

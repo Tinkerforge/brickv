@@ -30,6 +30,7 @@ from PyQt4.QtCore import pyqtSignal, Qt
 from PyQt4.QtGui import QApplication, QFrame, QFileDialog, QMessageBox, QProgressDialog
 
 import sys
+import os
 import urllib2
 from xml.etree.ElementTree import ElementTree
 from xml.etree.ElementTree import fromstring as etreefromstring
@@ -260,12 +261,17 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.update_ui_state()
 
     def firmware_browse_pressed(self):
+        last_dir = ''
+        if len(self.edit_custom_firmware.text()) > 0:
+            last_dir = os.path.dirname(os.path.realpath(unicode(self.edit_custom_firmware.text().toUtf8(), 'utf-8')))
+
         file_name = QFileDialog.getOpenFileName(self,
                                                 'Open Firmware',
-                                                '',
+                                                last_dir,
                                                 '*.bin')
-        self.edit_custom_firmware.setText(file_name)
-        self.update_ui_state()
+        if len(file_name) > 0:
+            self.edit_custom_firmware.setText(file_name)
+            self.update_ui_state()
 
     def firmware_save_pressed(self):
         port = str(self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString())
@@ -281,7 +287,6 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             return
 
         progress = self.create_progress_bar('Flashing')
-
         current_text = self.combo_firmware.currentText()
 
         # Get firmware
@@ -390,7 +395,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 plugin = file(plugin_file_name, 'rb').read()
             except IOError:
                 progress.cancel()
-                self.popup_fail('Brick', 'Could not read plugin file')
+                self.popup_fail('Bricklet', 'Could not read plugin file')
                 return
         else:
             url_part = self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString()
@@ -465,8 +470,13 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         return self.devices[self.combo_brick.currentIndex()]
 
     def plugin_browse_pressed(self):
+        last_dir = ''
+        if len(self.edit_custom_plugin.text()) > 0:
+            last_dir = os.path.dirname(os.path.realpath(unicode(self.edit_custom_plugin.text().toUtf8(), 'utf-8')))
+
         file_name = QFileDialog.getOpenFileName(self,
                                                 'Open Plugin',
-                                                '',
+                                                last_dir,
                                                 '*.bin')
-        self.edit_custom_plugin.setText(file_name)
+        if len(file_name) > 0:
+            self.edit_custom_plugin.setText(file_name)
