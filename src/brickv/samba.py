@@ -87,7 +87,7 @@ class SAMBA:
         self.port.write('N#')
 
         if self.port.read(2) != '\n\r':
-            raise SAMBAException('No Brick in SAM-BA mode found')
+            raise SAMBAException('No Brick in Bootloader found')
 
         chipid = self.readUInt(CHIPID_CIDR)
         arch = (chipid >> 20) & 0b11111111
@@ -173,7 +173,7 @@ class SAMBA:
         self.waitForFlashReady()
 
         # Verify
-        progress.setLabelText('Verifing written firmware')
+        progress.setLabelText('Verifying written firmware')
         progress.setMaximum(len(firmware_pages))
         progress.setValue(0)
         progress.show()
@@ -188,7 +188,7 @@ class SAMBA:
                 offset += 4
 
             if read_page != page:
-                raise SAMBAException('Verification failed')
+                raise SAMBAException('Verification error')
 
             page_num += 1
             progress.setValue(page_num)
@@ -199,7 +199,7 @@ class SAMBA:
             self.port.write('w%08X,4#' % address)
             return self.port.read(4)
         except:
-            raise SAMBAException('Memory read error')
+            raise SAMBAException('Read error')
 
     def writeWord(self, address, value):
         self.writeUInt(address, struct.unpack('<I', value)[0])
@@ -211,7 +211,7 @@ class SAMBA:
         try:
             self.port.write('W%08X,%08X#' % (address, value))
         except:
-            raise SAMBAException('Memory write error')
+            raise SAMBAException('Write error')
 
     def waitForFlashReady(self):
         for i in range(1000):

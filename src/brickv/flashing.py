@@ -426,41 +426,49 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         # Flash plugin
         device, port = self.current_device_and_port()
 
-        try:
-            # Write
-            progress.setLabelText('Writing plugin')
-            progress.setMaximum(0)
-            progress.setValue(0)
-            progress.show()
-            QApplication.processEvents()
+        # Write
+        progress.setLabelText('Writing plugin')
+        progress.setMaximum(0)
+        progress.setValue(0)
+        progress.show()
+        QApplication.processEvents()
 
+        try:
             self.parent.ipcon.write_bricklet_plugin(device, port, plugin)
             time.sleep(1)
+        except:
+            progress.cancel()
+            self.popup_fail('Bricklet', 'Could not flash Bricklet: Write error')
+            return
 
-            # Verify
-            progress.setLabelText('Verifing written plugin')
-            progress.setMaximum(0)
-            progress.setValue(0)
-            progress.show()
-            QApplication.processEvents()
+        # Verify
+        progress.setLabelText('Verifying written plugin')
+        progress.setMaximum(0)
+        progress.setValue(0)
+        progress.show()
+        QApplication.processEvents()
 
+        try:
             time.sleep(1)
             read_plugin = self.parent.ipcon.read_bricklet_plugin(device,
                                                                  port,
                                                                  len(plugin))
-
-            if plugin != read_plugin:
-                raise Exception()
-
-            progress.cancel()
-
-            if current_text == CUSTOM:
-                self.popup_ok('Bricklet', 'Succesfully flashed plugin')
-            else:
-                self.popup_ok('Bricklet', 'Succesfully flashed latest {0} Bricklet plugin'.format(current_text))
         except:
             progress.cancel()
-            self.popup_fail('Bricklet', 'Could not flash Bricklet')
+            self.popup_fail('Bricklet', 'Could not flash Bricklet: Read error')
+            return
+
+        if plugin != read_plugin:
+            progress.cancel()
+            self.popup_fail('Bricklet', 'Could not flash Bricklet: Verification error')
+            return
+
+        progress.cancel()
+
+        if current_text == CUSTOM:
+            self.popup_ok('Bricklet', 'Succesfully flashed plugin')
+        else:
+            self.popup_ok('Bricklet', 'Succesfully flashed latest {0} Bricklet plugin'.format(current_text))
 
     def current_device_and_port(self):
         return (self.current_device(),
