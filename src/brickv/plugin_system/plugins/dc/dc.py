@@ -129,7 +129,8 @@ class DC(PluginBase, Ui_DC):
         if not self.qem.isVisible():
             self.qem.setWindowTitle("Under Voltage")
             self.qem.showMessage("Under Voltage: Output Voltage of " + ov_str +
-                                 " is below minimum voltage of " + mv_str)
+                                 " is below minimum voltage of " + mv_str,
+                                 "DC_UnderVoltage")
         
     def enable_state_changed(self, state):
         try:

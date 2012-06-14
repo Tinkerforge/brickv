@@ -248,7 +248,8 @@ class Stepper(PluginBase, Ui_Stepper):
         ov_str = "%gV"  % round(ov/1000.0, 1)
         if not self.qem.isVisible():
             self.qem.showMessage("Under Voltage: Output Voltage of " + ov_str +
-                                 " is below minimum voltage of " + mv_str)
+                                 " is below minimum voltage of " + mv_str,
+                                 "Stepper_UnderVoltage")
         
     def enable_state_changed(self, state):
         try:

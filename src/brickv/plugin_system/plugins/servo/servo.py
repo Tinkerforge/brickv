@@ -608,7 +608,8 @@ class Servo(PluginBase, Ui_Servo):
         ov_str = "%gV"  % round(ov/1000.0, 1)
         if not self.qem.isVisible():
             self.qem.showMessage("Under Voltage: Output Voltage of " + ov_str +
-                                 " is below minimum voltage of " + mv_str)
+                                 " is below minimum voltage of " + mv_str,
+                                 "Servo_UnterVoltage")
             
     def minimum_voltage_selected(self, value):
         try:
