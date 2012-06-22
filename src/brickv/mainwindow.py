@@ -2,6 +2,7 @@
 """
 brickv (Brick Viewer) 
 Copyright (C) 2009-2010 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 
 mainwindow.py: New/Removed Bricks are handled here and plugins shown if clicked 
 
@@ -28,11 +29,24 @@ from plugin_system.plugin_manager import PluginManager
 from bindings.ip_connection import IPConnection, Error
 from flashing import FlashingWindow
 from advanced import AdvancedWindow
-import config
 
 import socket
 import signal
 import sys
+
+if sys.platform == 'linux2':
+    import config_linux as config
+elif sys.platform == 'darwin':
+    import config_macosx as config
+elif sys.platform == 'win32':
+    import config_windows as config
+else:
+    print "Unsupported platform: " + sys.platform
+    import config
+    def get_host(): return config.DEFAULT_HOST
+    def set_host(host): pass
+    def get_port(): return config.DEFAULT_PORT
+    def set_port(port): pass
 
 class MainTableModel(QAbstractTableModel):
     def __init__(self, header, data, parent=None, *args): 
@@ -91,10 +105,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_advanced.pressed.connect(self.advanced_pressed)
         self.plugin_manager = PluginManager()
 
+        self.host.setText(config.get_host())
+        self.port.setValue(config.get_port())
+
     def closeEvent(self, event):
         self.exit_brickv()
         
     def exit_brickv(self, signl=None, frme=None):
+        config.set_host(str(self.host.text()))
+        config.set_port(self.port.value())
+
         if self.ipcon != None:
             self.reset_view()
             
