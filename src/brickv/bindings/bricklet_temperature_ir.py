@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-31.      #
+# This file was automatically generated on 2012-06-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -52,10 +52,10 @@ class TemperatureIR(Device):
 
         self.binding_version = [1, 0, 0]
 
-        self.callbacks_format[TemperatureIR.CALLBACK_AMBIENT_TEMPERATURE] = 'h'
-        self.callbacks_format[TemperatureIR.CALLBACK_OBJECT_TEMPERATURE] = 'h'
-        self.callbacks_format[TemperatureIR.CALLBACK_AMBIENT_TEMPERATURE_REACHED] = 'h'
-        self.callbacks_format[TemperatureIR.CALLBACK_OBJECT_TEMPERATURE_REACHED] = 'h'
+        self.callback_formats[TemperatureIR.CALLBACK_AMBIENT_TEMPERATURE] = 'h'
+        self.callback_formats[TemperatureIR.CALLBACK_OBJECT_TEMPERATURE] = 'h'
+        self.callback_formats[TemperatureIR.CALLBACK_AMBIENT_TEMPERATURE_REACHED] = 'h'
+        self.callback_formats[TemperatureIR.CALLBACK_OBJECT_TEMPERATURE_REACHED] = 'h'
 
     def get_ambient_temperature(self):
         """
@@ -68,7 +68,7 @@ class TemperatureIR(Device):
         to use the callback :func:`AmbientTemperature` and set the period with 
         :func:`SetAmbientTemperatureCallbackPeriod`.
         """
-        return self.ipcon.write(self, TemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE, (), '', 'h')
 
     def get_object_temperature(self):
         """
@@ -86,7 +86,7 @@ class TemperatureIR(Device):
         to use the callback :func:`ObjectTemperature` and set the period with 
         :func:`SetObjectTemperatureCallbackPeriod`.
         """
-        return self.ipcon.write(self, TemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE, (), '', 'h')
 
     def set_emissivity(self, emissivity):
         """
@@ -109,13 +109,13 @@ class TemperatureIR(Device):
         The default emissivity is 1.0 (value of 65535) and the minimum emissivity the
         sensor can handle is 0.1 (value of 6553).
         """
-        self.ipcon.write(self, TemperatureIR.FUNCTION_SET_EMISSIVITY, (emissivity,), 'H', '')
+        self.ipcon.send_request(self, TemperatureIR.FUNCTION_SET_EMISSIVITY, (emissivity,), 'H', '')
 
     def get_emissivity(self):
         """
         Returns the emissivity as set by :func:`SetEmissivity`.
         """
-        return self.ipcon.write(self, TemperatureIR.FUNCTION_GET_EMISSIVITY, (), '', 'H')
+        return self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_EMISSIVITY, (), '', 'H')
 
     def set_ambient_temperature_callback_period(self, period):
         """
@@ -127,13 +127,13 @@ class TemperatureIR(Device):
         
         The default value is 0.
         """
-        self.ipcon.write(self, TemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, TemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_ambient_temperature_callback_period(self):
         """
         Returns the period as set by :func:`SetAmbientTemperatureCallbackPeriod`.
         """
-        return self.ipcon.write(self, TemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_object_temperature_callback_period(self, period):
         """
@@ -145,13 +145,13 @@ class TemperatureIR(Device):
         
         The default value is 0.
         """
-        self.ipcon.write(self, TemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, TemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_object_temperature_callback_period(self):
         """
         Returns the period as set by :func:`SetObjectTemperatureCallbackPeriod`.
         """
-        return self.ipcon.write(self, TemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_ambient_temperature_callback_threshold(self, option, min, max):
         """
@@ -171,13 +171,13 @@ class TemperatureIR(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.write(self, TemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, TemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
 
     def get_ambient_temperature_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetAmbientTemperatureCallbackThreshold`.
         """
-        return GetAmbientTemperatureCallbackThreshold(*self.ipcon.write(self, TemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetAmbientTemperatureCallbackThreshold(*self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c h h'))
 
     def set_object_temperature_callback_threshold(self, option, min, max):
         """
@@ -197,13 +197,13 @@ class TemperatureIR(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.write(self, TemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, TemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
 
     def get_object_temperature_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetAmbientTemperatureCallbackThreshold`.
         """
-        return GetObjectTemperatureCallbackThreshold(*self.ipcon.write(self, TemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetObjectTemperatureCallbackThreshold(*self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c h h'))
 
     def set_debounce_period(self, debounce):
         """
@@ -219,16 +219,16 @@ class TemperatureIR(Device):
         
         The default value is 100.
         """
-        self.ipcon.write(self, TemperatureIR.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, TemperatureIR.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
         """
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
-        return self.ipcon.write(self, TemperatureIR.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def register_callback(self, cb, func):
         """
         Registers a callback with ID cb to the function func.
         """
-        self.callbacks[cb] = func
+        self.registered_callbacks[cb] = func

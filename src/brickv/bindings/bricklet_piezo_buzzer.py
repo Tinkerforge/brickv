@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-23.      #
+# This file was automatically generated on 2012-06-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -36,15 +36,15 @@ class PiezoBuzzer(Device):
 
         self.binding_version = [1, 0, 0]
 
-        self.callbacks_format[PiezoBuzzer.CALLBACK_BEEP_FINISHED] = ''
-        self.callbacks_format[PiezoBuzzer.CALLBACK_MORSE_CODE_FINISHED] = ''
+        self.callback_formats[PiezoBuzzer.CALLBACK_BEEP_FINISHED] = ''
+        self.callback_formats[PiezoBuzzer.CALLBACK_MORSE_CODE_FINISHED] = ''
 
     def beep(self, duration):
         """
         Beeps with the duration in ms. For example: If you set a value of 1000,
         the piezo buzzer will beep for one second.
         """
-        self.ipcon.write(self, PiezoBuzzer.FUNCTION_BEEP, (duration,), 'I', '')
+        self.ipcon.send_request(self, PiezoBuzzer.FUNCTION_BEEP, (duration,), 'I', '')
 
     def morse_code(self, morse):
         """
@@ -58,10 +58,10 @@ class PiezoBuzzer(Device):
         
         The maximum string size is 60.
         """
-        self.ipcon.write(self, PiezoBuzzer.FUNCTION_MORSE_CODE, (morse,), '60s', '')
+        self.ipcon.send_request(self, PiezoBuzzer.FUNCTION_MORSE_CODE, (morse,), '60s', '')
 
     def register_callback(self, cb, func):
         """
         Registers a callback with ID cb to the function func.
         """
-        self.callbacks[cb] = func
+        self.registered_callbacks[cb] = func

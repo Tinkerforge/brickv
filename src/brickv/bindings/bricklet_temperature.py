@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-23.      #
+# This file was automatically generated on 2012-06-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -42,8 +42,8 @@ class Temperature(Device):
 
         self.binding_version = [1, 0, 0]
 
-        self.callbacks_format[Temperature.CALLBACK_TEMPERATURE] = 'h'
-        self.callbacks_format[Temperature.CALLBACK_TEMPERATURE_REACHED] = 'h'
+        self.callback_formats[Temperature.CALLBACK_TEMPERATURE] = 'h'
+        self.callback_formats[Temperature.CALLBACK_TEMPERATURE_REACHED] = 'h'
 
     def get_temperature(self):
         """
@@ -55,7 +55,7 @@ class Temperature(Device):
         to use the callback :func:`Temperature` and set the period with 
         :func:`SetTemperatureCallbackPeriod`.
         """
-        return self.ipcon.write(self, Temperature.FUNCTION_GET_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, Temperature.FUNCTION_GET_TEMPERATURE, (), '', 'h')
 
     def set_temperature_callback_period(self, period):
         """
@@ -67,13 +67,13 @@ class Temperature(Device):
         
         The default value is 0.
         """
-        self.ipcon.write(self, Temperature.FUNCTION_SET_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, Temperature.FUNCTION_SET_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_temperature_callback_period(self):
         """
         Returns the period as set by :func:`SetTemperatureCallbackPeriod`.
         """
-        return self.ipcon.write(self, Temperature.FUNCTION_GET_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, Temperature.FUNCTION_GET_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_temperature_callback_threshold(self, option, min, max):
         """
@@ -93,13 +93,13 @@ class Temperature(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.write(self, Temperature.FUNCTION_SET_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, Temperature.FUNCTION_SET_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
 
     def get_temperature_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetTemperatureCallbackThreshold`.
         """
-        return GetTemperatureCallbackThreshold(*self.ipcon.write(self, Temperature.FUNCTION_GET_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetTemperatureCallbackThreshold(*self.ipcon.send_request(self, Temperature.FUNCTION_GET_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c h h'))
 
     def set_debounce_period(self, debounce):
         """
@@ -115,16 +115,16 @@ class Temperature(Device):
         
         The default value is 100.
         """
-        self.ipcon.write(self, Temperature.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, Temperature.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
         """
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
-        return self.ipcon.write(self, Temperature.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, Temperature.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def register_callback(self, cb, func):
         """
         Registers a callback with ID cb to the function func.
         """
-        self.callbacks[cb] = func
+        self.registered_callbacks[cb] = func

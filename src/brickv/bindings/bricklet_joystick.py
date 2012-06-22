@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-23.      #
+# This file was automatically generated on 2012-06-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -56,12 +56,12 @@ class Joystick(Device):
 
         self.binding_version = [1, 0, 0]
 
-        self.callbacks_format[Joystick.CALLBACK_POSITION] = 'h h'
-        self.callbacks_format[Joystick.CALLBACK_ANALOG_VALUE] = 'H H'
-        self.callbacks_format[Joystick.CALLBACK_POSITION_REACHED] = 'h h'
-        self.callbacks_format[Joystick.CALLBACK_ANALOG_VALUE_REACHED] = 'H H'
-        self.callbacks_format[Joystick.CALLBACK_PRESSED] = ''
-        self.callbacks_format[Joystick.CALLBACK_RELEASED] = ''
+        self.callback_formats[Joystick.CALLBACK_POSITION] = 'h h'
+        self.callback_formats[Joystick.CALLBACK_ANALOG_VALUE] = 'H H'
+        self.callback_formats[Joystick.CALLBACK_POSITION_REACHED] = 'h h'
+        self.callback_formats[Joystick.CALLBACK_ANALOG_VALUE_REACHED] = 'H H'
+        self.callback_formats[Joystick.CALLBACK_PRESSED] = ''
+        self.callback_formats[Joystick.CALLBACK_RELEASED] = ''
 
     def get_position(self):
         """
@@ -73,7 +73,7 @@ class Joystick(Device):
         callback :func:`Position` and set the period with 
         :func:`SetPositionCallbackPeriod`.
         """
-        return GetPosition(*self.ipcon.write(self, Joystick.FUNCTION_GET_POSITION, (), '', 'h h'))
+        return GetPosition(*self.ipcon.send_request(self, Joystick.FUNCTION_GET_POSITION, (), '', 'h h'))
 
     def is_pressed(self):
         """
@@ -82,7 +82,7 @@ class Joystick(Device):
         It is recommended to use the :func:`Pressed` and :func:`Released` callbacks
         to handle the button.
         """
-        return self.ipcon.write(self, Joystick.FUNCTION_IS_PRESSED, (), '', '?')
+        return self.ipcon.send_request(self, Joystick.FUNCTION_IS_PRESSED, (), '', '?')
 
     def get_analog_value(self):
         """
@@ -99,7 +99,7 @@ class Joystick(Device):
         callback :func:`AnalogValue` and set the period with 
         :func:`SetAnalogValueCallbackPeriod`.
         """
-        return GetAnalogValue(*self.ipcon.write(self, Joystick.FUNCTION_GET_ANALOG_VALUE, (), '', 'H H'))
+        return GetAnalogValue(*self.ipcon.send_request(self, Joystick.FUNCTION_GET_ANALOG_VALUE, (), '', 'H H'))
 
     def calibrate(self):
         """
@@ -110,7 +110,7 @@ class Joystick(Device):
         The resulting calibration will be saved on the EEPROM of the Joystick
         Bricklet, thus you only have to calibrate it once.
         """
-        self.ipcon.write(self, Joystick.FUNCTION_CALIBRATE, (), '', '')
+        self.ipcon.send_request(self, Joystick.FUNCTION_CALIBRATE, (), '', '')
 
     def set_position_callback_period(self, period):
         """
@@ -122,13 +122,13 @@ class Joystick(Device):
         
         The default value is 0.
         """
-        self.ipcon.write(self, Joystick.FUNCTION_SET_POSITION_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, Joystick.FUNCTION_SET_POSITION_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_position_callback_period(self):
         """
         Returns the period as set by :func:`SetPositionCallbackPeriod`.
         """
-        return self.ipcon.write(self, Joystick.FUNCTION_GET_POSITION_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, Joystick.FUNCTION_GET_POSITION_CALLBACK_PERIOD, (), '', 'I')
 
     def set_analog_value_callback_period(self, period):
         """
@@ -140,13 +140,13 @@ class Joystick(Device):
         
         The default value is 0.
         """
-        self.ipcon.write(self, Joystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, Joystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_analog_value_callback_period(self):
         """
         Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
         """
-        return self.ipcon.write(self, Joystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, Joystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_position_callback_threshold(self, option, min_x, max_x, min_y, max_y):
         """
@@ -166,13 +166,13 @@ class Joystick(Device):
         
         The default value is ('x', 0, 0, 0, 0).
         """
-        self.ipcon.write(self, Joystick.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y), 'c h h h h', '')
+        self.ipcon.send_request(self, Joystick.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y), 'c h h h h', '')
 
     def get_position_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetPositionCallbackThreshold`.
         """
-        return GetPositionCallbackThreshold(*self.ipcon.write(self, Joystick.FUNCTION_GET_POSITION_CALLBACK_THRESHOLD, (), '', 'c h h h h'))
+        return GetPositionCallbackThreshold(*self.ipcon.send_request(self, Joystick.FUNCTION_GET_POSITION_CALLBACK_THRESHOLD, (), '', 'c h h h h'))
 
     def set_analog_value_callback_threshold(self, option, min_x, max_x, min_y, max_y):
         """
@@ -192,13 +192,13 @@ class Joystick(Device):
         
         The default value is ('x', 0, 0, 0, 0).
         """
-        self.ipcon.write(self, Joystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y), 'c H H H H', '')
+        self.ipcon.send_request(self, Joystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y), 'c H H H H', '')
 
     def get_analog_value_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
         """
-        return GetAnalogValueCallbackThreshold(*self.ipcon.write(self, Joystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H H H'))
+        return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, Joystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H H H'))
 
     def set_debounce_period(self, debounce):
         """
@@ -214,16 +214,16 @@ class Joystick(Device):
         
         The default value is 100.
         """
-        self.ipcon.write(self, Joystick.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, Joystick.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
         """
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
-        return self.ipcon.write(self, Joystick.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, Joystick.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def register_callback(self, cb, func):
         """
         Registers a callback with ID cb to the function func.
         """
-        self.callbacks[cb] = func
+        self.registered_callbacks[cb] = func

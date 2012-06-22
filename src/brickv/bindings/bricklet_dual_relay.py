@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-23.      #
+# This file was automatically generated on 2012-06-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -46,10 +46,10 @@ class DualRelay(Device):
         
         The default value is (false, false).
         """
-        self.ipcon.write(self, DualRelay.FUNCTION_SET_STATE, (relay1, relay2), '? ?', '')
+        self.ipcon.send_request(self, DualRelay.FUNCTION_SET_STATE, (relay1, relay2), '? ?', '')
 
     def get_state(self):
         """
         Returns the state of the relays, *true* means on and *false* means off.
         """
-        return GetState(*self.ipcon.write(self, DualRelay.FUNCTION_GET_STATE, (), '', '? ?'))
+        return GetState(*self.ipcon.send_request(self, DualRelay.FUNCTION_GET_STATE, (), '', '? ?'))

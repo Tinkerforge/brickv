@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-24.      #
+# This file was automatically generated on 2012-06-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -74,12 +74,12 @@ class IMU(Device):
 
         self.binding_version = [1, 0, 0]
 
-        self.callbacks_format[IMU.CALLBACK_ACCELERATION] = 'h h h'
-        self.callbacks_format[IMU.CALLBACK_MAGNETIC_FIELD] = 'h h h'
-        self.callbacks_format[IMU.CALLBACK_ANGULAR_VELOCITY] = 'h h h'
-        self.callbacks_format[IMU.CALLBACK_ALL_DATA] = 'h h h h h h h h h h'
-        self.callbacks_format[IMU.CALLBACK_ORIENTATION] = 'h h h'
-        self.callbacks_format[IMU.CALLBACK_QUATERNION] = 'f f f f'
+        self.callback_formats[IMU.CALLBACK_ACCELERATION] = 'h h h'
+        self.callback_formats[IMU.CALLBACK_MAGNETIC_FIELD] = 'h h h'
+        self.callback_formats[IMU.CALLBACK_ANGULAR_VELOCITY] = 'h h h'
+        self.callback_formats[IMU.CALLBACK_ALL_DATA] = 'h h h h h h h h h h'
+        self.callback_formats[IMU.CALLBACK_ORIENTATION] = 'h h h'
+        self.callback_formats[IMU.CALLBACK_QUATERNION] = 'f f f f'
 
     def get_acceleration(self):
         """
@@ -90,7 +90,7 @@ class IMU(Device):
         to use the callback :func:`Acceleration` and set the period with 
         :func:`SetAccelerationPeriod`.
         """
-        return GetAcceleration(*self.ipcon.write(self, IMU.FUNCTION_GET_ACCELERATION, (), '', 'h h h'))
+        return GetAcceleration(*self.ipcon.send_request(self, IMU.FUNCTION_GET_ACCELERATION, (), '', 'h h h'))
 
     def get_magnetic_field(self):
         """
@@ -101,7 +101,7 @@ class IMU(Device):
         to use the callback :func:`MagneticField` and set the period with 
         :func:`SetMagneticFieldPeriod`.
         """
-        return GetMagneticField(*self.ipcon.write(self, IMU.FUNCTION_GET_MAGNETIC_FIELD, (), '', 'h h h'))
+        return GetMagneticField(*self.ipcon.send_request(self, IMU.FUNCTION_GET_MAGNETIC_FIELD, (), '', 'h h h'))
 
     def get_angular_velocity(self):
         """
@@ -113,7 +113,7 @@ class IMU(Device):
         to use the callback :func:`AngularVelocity` and set the period with 
         :func:`SetAngularVelocityPeriod`.
         """
-        return GetAngularVelocity(*self.ipcon.write(self, IMU.FUNCTION_GET_ANGULAR_VELOCITY, (), '', 'h h h'))
+        return GetAngularVelocity(*self.ipcon.send_request(self, IMU.FUNCTION_GET_ANGULAR_VELOCITY, (), '', 'h h h'))
 
     def get_all_data(self):
         """
@@ -126,7 +126,7 @@ class IMU(Device):
         to use the callback :func:`AllData` and set the period with 
         :func:`SetAllDataPeriod`.
         """
-        return GetAllData(*self.ipcon.write(self, IMU.FUNCTION_GET_ALL_DATA, (), '', 'h h h h h h h h h h'))
+        return GetAllData(*self.ipcon.send_request(self, IMU.FUNCTION_GET_ALL_DATA, (), '', 'h h h h h h h h h h'))
 
     def get_orientation(self):
         """
@@ -143,7 +143,7 @@ class IMU(Device):
         to use the callback :func:`Orientation` and set the period with 
         :func:`SetOrientationPeriod`.
         """
-        return GetOrientation(*self.ipcon.write(self, IMU.FUNCTION_GET_ORIENTATION, (), '', 'h h h'))
+        return GetOrientation(*self.ipcon.send_request(self, IMU.FUNCTION_GET_ORIENTATION, (), '', 'h h h'))
 
     def get_quaternion(self):
         """
@@ -171,57 +171,57 @@ class IMU(Device):
         to use the callback :func:`Quaternion` and set the period with 
         :func:`SetQuaternionPeriod`.
         """
-        return GetQuaternion(*self.ipcon.write(self, IMU.FUNCTION_GET_QUATERNION, (), '', 'f f f f'))
+        return GetQuaternion(*self.ipcon.send_request(self, IMU.FUNCTION_GET_QUATERNION, (), '', 'f f f f'))
 
     def get_imu_temperature(self):
         """
         Returns the temperature of the IMU Brick. The temperature is given in 
         °C/100.
         """
-        return self.ipcon.write(self, IMU.FUNCTION_GET_IMU_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, IMU.FUNCTION_GET_IMU_TEMPERATURE, (), '', 'h')
 
     def leds_on(self):
         """
         Turns the orientation and direction LEDs of the IMU Brick on.
         """
-        self.ipcon.write(self, IMU.FUNCTION_LEDS_ON, (), '', '')
+        self.ipcon.send_request(self, IMU.FUNCTION_LEDS_ON, (), '', '')
 
     def leds_off(self):
         """
         Turns the orientation and direction LEDs of the IMU Brick off.
         """
-        self.ipcon.write(self, IMU.FUNCTION_LEDS_OFF, (), '', '')
+        self.ipcon.send_request(self, IMU.FUNCTION_LEDS_OFF, (), '', '')
 
     def are_leds_on(self):
         """
         Returns true if the orientation and direction LEDs of the IMU Brick
         are on, false otherwise.
         """
-        return self.ipcon.write(self, IMU.FUNCTION_ARE_LEDS_ON, (), '', '?')
+        return self.ipcon.send_request(self, IMU.FUNCTION_ARE_LEDS_ON, (), '', '?')
 
     def set_acceleration_range(self, range):
         """
         Not implemented yet.
         """
-        self.ipcon.write(self, IMU.FUNCTION_SET_ACCELERATION_RANGE, (range,), 'B', '')
+        self.ipcon.send_request(self, IMU.FUNCTION_SET_ACCELERATION_RANGE, (range,), 'B', '')
 
     def get_acceleration_range(self):
         """
         Not implemented yet.
         """
-        return self.ipcon.write(self, IMU.FUNCTION_GET_ACCELERATION_RANGE, (), '', 'B')
+        return self.ipcon.send_request(self, IMU.FUNCTION_GET_ACCELERATION_RANGE, (), '', 'B')
 
     def set_magnetometer_range(self, range):
         """
         Not implemented yet.
         """
-        self.ipcon.write(self, IMU.FUNCTION_SET_MAGNETOMETER_RANGE, (range,), 'B', '')
+        self.ipcon.send_request(self, IMU.FUNCTION_SET_MAGNETOMETER_RANGE, (range,), 'B', '')
 
     def get_magnetometer_range(self):
         """
         Not implemented yet.
         """
-        return self.ipcon.write(self, IMU.FUNCTION_GET_MAGNETOMETER_RANGE, (), '', 'B')
+        return self.ipcon.send_request(self, IMU.FUNCTION_GET_MAGNETOMETER_RANGE, (), '', 'B')
 
     def set_convergence_speed(self, speed):
         """
@@ -253,13 +253,13 @@ class IMU(Device):
         
         The default value is 30.
         """
-        self.ipcon.write(self, IMU.FUNCTION_SET_CONVERGENCE_SPEED, (speed,), 'H', '')
+        self.ipcon.send_request(self, IMU.FUNCTION_SET_CONVERGENCE_SPEED, (speed,), 'H', '')
 
     def get_convergence_speed(self):
         """
         Returns the convergence speed as set by :func:`SetConvergenceSpeed`.
         """
-        return self.ipcon.write(self, IMU.FUNCTION_GET_CONVERGENCE_SPEED, (), '', 'H')
+        return self.ipcon.send_request(self, IMU.FUNCTION_GET_CONVERGENCE_SPEED, (), '', 'H')
 
     def set_calibration(self, typ, data):
         """
@@ -297,13 +297,13 @@ class IMU(Device):
          We highly recommend that you use the Brick Viewer to calibrate your
          IMU Brick.
         """
-        self.ipcon.write(self, IMU.FUNCTION_SET_CALIBRATION, (typ, data), 'B 10h', '')
+        self.ipcon.send_request(self, IMU.FUNCTION_SET_CALIBRATION, (typ, data), 'B 10h', '')
 
     def get_calibration(self, typ):
         """
         Returns the calibration for a given type as set by :func:`SetCalibration`.
         """
-        return self.ipcon.write(self, IMU.FUNCTION_GET_CALIBRATION, (typ,), 'B', '10h')
+        return self.ipcon.send_request(self, IMU.FUNCTION_GET_CALIBRATION, (typ,), 'B', '10h')
 
     def set_acceleration_period(self, period):
         """
@@ -312,81 +312,81 @@ class IMU(Device):
         
         The default value is 0.
         """
-        self.ipcon.write(self, IMU.FUNCTION_SET_ACCELERATION_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, IMU.FUNCTION_SET_ACCELERATION_PERIOD, (period,), 'I', '')
 
     def get_acceleration_period(self):
         """
         Returns the period as set by :func:`SetAccelerationPeriod`.
         """
-        return self.ipcon.write(self, IMU.FUNCTION_GET_ACCELERATION_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, IMU.FUNCTION_GET_ACCELERATION_PERIOD, (), '', 'I')
 
     def set_magnetic_field_period(self, period):
         """
         Sets the period in ms with which the :func:`MagneticField` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
-        self.ipcon.write(self, IMU.FUNCTION_SET_MAGNETIC_FIELD_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, IMU.FUNCTION_SET_MAGNETIC_FIELD_PERIOD, (period,), 'I', '')
 
     def get_magnetic_field_period(self):
         """
         Returns the period as set by :func:`SetMagneticFieldPeriod`.
         """
-        return self.ipcon.write(self, IMU.FUNCTION_GET_MAGNETIC_FIELD_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, IMU.FUNCTION_GET_MAGNETIC_FIELD_PERIOD, (), '', 'I')
 
     def set_angular_velocity_period(self, period):
         """
         Sets the period in ms with which the :func:`AngularVelocity` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
-        self.ipcon.write(self, IMU.FUNCTION_SET_ANGULAR_VELOCITY_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, IMU.FUNCTION_SET_ANGULAR_VELOCITY_PERIOD, (period,), 'I', '')
 
     def get_angular_velocity_period(self):
         """
         Returns the period as set by :func:`SetAngularVelocityPeriod`.
         """
-        return self.ipcon.write(self, IMU.FUNCTION_GET_ANGULAR_VELOCITY_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, IMU.FUNCTION_GET_ANGULAR_VELOCITY_PERIOD, (), '', 'I')
 
     def set_all_data_period(self, period):
         """
         Sets the period in ms with which the :func:`AllData` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
-        self.ipcon.write(self, IMU.FUNCTION_SET_ALL_DATA_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, IMU.FUNCTION_SET_ALL_DATA_PERIOD, (period,), 'I', '')
 
     def get_all_data_period(self):
         """
         Returns the period as set by :func:`SetAllDataPeriod`.
         """
-        return self.ipcon.write(self, IMU.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, IMU.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
 
     def set_orientation_period(self, period):
         """
         Sets the period in ms with which the :func:`Orientation` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
-        self.ipcon.write(self, IMU.FUNCTION_SET_ORIENTATION_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, IMU.FUNCTION_SET_ORIENTATION_PERIOD, (period,), 'I', '')
 
     def get_orientation_period(self):
         """
         Returns the period as set by :func:`SetOrientationPeriod`.
         """
-        return self.ipcon.write(self, IMU.FUNCTION_GET_ORIENTATION_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, IMU.FUNCTION_GET_ORIENTATION_PERIOD, (), '', 'I')
 
     def set_quaternion_period(self, period):
         """
         Sets the period in ms with which the :func:`Quaternion` callback is triggered
         periodically. A value of 0 turns the callback off.
         """
-        self.ipcon.write(self, IMU.FUNCTION_SET_QUATERNION_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, IMU.FUNCTION_SET_QUATERNION_PERIOD, (period,), 'I', '')
 
     def get_quaternion_period(self):
         """
         Returns the period as set by :func:`SetQuaternionPeriod`.
         """
-        return self.ipcon.write(self, IMU.FUNCTION_GET_QUATERNION_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, IMU.FUNCTION_GET_QUATERNION_PERIOD, (), '', 'I')
 
     def register_callback(self, cb, func):
         """
         Registers a callback with ID cb to the function func.
         """
-        self.callbacks[cb] = func
+        self.registered_callbacks[cb] = func

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-31.      #
+# This file was automatically generated on 2012-06-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -42,21 +42,21 @@ class IO16(Device):
 
         self.binding_version = [1, 0, 0]
 
-        self.callbacks_format[IO16.CALLBACK_INTERRUPT] = 'c B B'
+        self.callback_formats[IO16.CALLBACK_INTERRUPT] = 'c B B'
 
     def set_port(self, port, value_mask):
         """
         Sets the output value (high or low) for a port ("a" or "b") with a bit mask. 
         The bit mask is 8 bit long, "true" refers to high and "false" refers to low.
         
-        For example: The bitstring "00001111" will turn the pins 0-3 high and the
+        For example: The value 0b00001111 will turn the pins 0-3 high and the
         pins 4-7 low for the specified port.
         
          .. note::
           This function does nothing for pins that are configured as input.
           Pull up resistors can be switched on with :func:`SetPortConfiguration`.
         """
-        self.ipcon.write(self, IO16.FUNCTION_SET_PORT, (port, value_mask), 'c B', '')
+        self.ipcon.send_request(self, IO16.FUNCTION_SET_PORT, (port, value_mask), 'c B', '')
 
     def get_port(self, port):
         """
@@ -64,7 +64,7 @@ class IO16(Device):
         specified port. This function works if the pin is configured to input
         as well as if it is configured to output.
         """
-        return self.ipcon.write(self, IO16.FUNCTION_GET_PORT, (port,), 'c', 'B')
+        return self.ipcon.send_request(self, IO16.FUNCTION_GET_PORT, (port,), 'c', 'B')
 
     def set_port_configuration(self, port, port_mask, direction, value):
         """
@@ -84,13 +84,13 @@ class IO16(Device):
          * ("b", 3, 'o', false) will set pins 0 and 1 of port b as output low.
          * ("b", 4, 'o', true) will set pin 2 of port b as output high.
         """
-        self.ipcon.write(self, IO16.FUNCTION_SET_PORT_CONFIGURATION, (port, port_mask, direction, value), 'c B c ?', '')
+        self.ipcon.send_request(self, IO16.FUNCTION_SET_PORT_CONFIGURATION, (port, port_mask, direction, value), 'c B c ?', '')
 
     def get_port_configuration(self, port):
         """
         Returns a value bit mask and a direction bit mask for the specified port.
         
-        For example: A return value of the bitstrings "00001111" and "00110011" for
+        For example: A return value of 0b00001111 and 0b00110011 for
         direction and value means that:
         
          * pins 0 and 1 are configured as input pull up, 
@@ -98,7 +98,7 @@ class IO16(Device):
          * pins 4 and 5 are configured as output high
          * and pins 6 and 7 are configured as output low.
         """
-        return GetPortConfiguration(*self.ipcon.write(self, IO16.FUNCTION_GET_PORT_CONFIGURATION, (port,), 'c', 'B B'))
+        return GetPortConfiguration(*self.ipcon.send_request(self, IO16.FUNCTION_GET_PORT_CONFIGURATION, (port,), 'c', 'B B'))
 
     def set_debounce_period(self, debounce):
         """
@@ -110,13 +110,13 @@ class IO16(Device):
         
         The default value is 100.
         """
-        self.ipcon.write(self, IO16.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, IO16.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
         """
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
-        return self.ipcon.write(self, IO16.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, IO16.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def set_port_interrupt(self, port, interrupt_mask):
         """
@@ -129,17 +129,17 @@ class IO16(Device):
         
         The interrupt is delivered with the callback :func:`Interrupt`.
         """
-        self.ipcon.write(self, IO16.FUNCTION_SET_PORT_INTERRUPT, (port, interrupt_mask), 'c B', '')
+        self.ipcon.send_request(self, IO16.FUNCTION_SET_PORT_INTERRUPT, (port, interrupt_mask), 'c B', '')
 
     def get_port_interrupt(self, port):
         """
         Returns the interrupt bit mask for the specified port as set by
         :func:`SetPortInterrupt`.
         """
-        return self.ipcon.write(self, IO16.FUNCTION_GET_PORT_INTERRUPT, (port,), 'c', 'B')
+        return self.ipcon.send_request(self, IO16.FUNCTION_GET_PORT_INTERRUPT, (port,), 'c', 'B')
 
     def register_callback(self, cb, func):
         """
         Registers a callback with ID cb to the function func.
         """
-        self.callbacks[cb] = func
+        self.registered_callbacks[cb] = func

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-23.      #
+# This file was automatically generated on 2012-06-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -56,10 +56,10 @@ class DC(Device):
 
         self.binding_version = [1, 0, 0]
 
-        self.callbacks_format[DC.CALLBACK_UNDER_VOLTAGE] = 'H'
-        self.callbacks_format[DC.CALLBACK_EMERGENCY_SHUTDOWN] = ''
-        self.callbacks_format[DC.CALLBACK_VELOCITY_REACHED] = 'h'
-        self.callbacks_format[DC.CALLBACK_CURRENT_VELOCITY] = 'h'
+        self.callback_formats[DC.CALLBACK_UNDER_VOLTAGE] = 'H'
+        self.callback_formats[DC.CALLBACK_EMERGENCY_SHUTDOWN] = ''
+        self.callback_formats[DC.CALLBACK_VELOCITY_REACHED] = 'h'
+        self.callback_formats[DC.CALLBACK_CURRENT_VELOCITY] = 'h'
 
     def set_velocity(self, velocity):
         """
@@ -75,13 +75,13 @@ class DC(Device):
         
         The default velocity is 0.
         """
-        self.ipcon.write(self, DC.FUNCTION_SET_VELOCITY, (velocity,), 'h', '')
+        self.ipcon.send_request(self, DC.FUNCTION_SET_VELOCITY, (velocity,), 'h', '')
 
     def get_velocity(self):
         """
         Returns the velocity as set by :func:`SetVelocity`.
         """
-        return self.ipcon.write(self, DC.FUNCTION_GET_VELOCITY, (), '', 'h')
+        return self.ipcon.send_request(self, DC.FUNCTION_GET_VELOCITY, (), '', 'h')
 
     def get_current_velocity(self):
         """
@@ -89,7 +89,7 @@ class DC(Device):
         from :func:`GetVelocity` whenever the motor is currently accelerating
         to a goal set by :func:`SetVelocity`.
         """
-        return self.ipcon.write(self, DC.FUNCTION_GET_CURRENT_VELOCITY, (), '', 'h')
+        return self.ipcon.send_request(self, DC.FUNCTION_GET_CURRENT_VELOCITY, (), '', 'h')
 
     def set_acceleration(self, acceleration):
         """
@@ -106,13 +106,13 @@ class DC(Device):
         
         The default acceleration is 10000.
         """
-        self.ipcon.write(self, DC.FUNCTION_SET_ACCELERATION, (acceleration,), 'H', '')
+        self.ipcon.send_request(self, DC.FUNCTION_SET_ACCELERATION, (acceleration,), 'H', '')
 
     def get_acceleration(self):
         """
         Returns the acceleration as set by :func:`SetAcceleration`.
         """
-        return self.ipcon.write(self, DC.FUNCTION_GET_ACCELERATION, (), '', 'H')
+        return self.ipcon.send_request(self, DC.FUNCTION_GET_ACCELERATION, (), '', 'H')
 
     def set_pwm_frequency(self, frequency):
         """
@@ -127,13 +127,13 @@ class DC(Device):
         
         The default frequency is 15 kHz.
         """
-        self.ipcon.write(self, DC.FUNCTION_SET_PWM_FREQUENCY, (frequency,), 'H', '')
+        self.ipcon.send_request(self, DC.FUNCTION_SET_PWM_FREQUENCY, (frequency,), 'H', '')
 
     def get_pwm_frequency(self):
         """
         Returns the PWM frequency (in Hz) as set by :func:`SetPWMFrequency`.
         """
-        return self.ipcon.write(self, DC.FUNCTION_GET_PWM_FREQUENCY, (), '', 'H')
+        return self.ipcon.send_request(self, DC.FUNCTION_GET_PWM_FREQUENCY, (), '', 'H')
 
     def full_brake(self):
         """
@@ -146,7 +146,7 @@ class DC(Device):
         
         Call :func:`SetVelocity` with 0 if you just want to stop the motor.
         """
-        self.ipcon.write(self, DC.FUNCTION_FULL_BRAKE, (), '', '')
+        self.ipcon.send_request(self, DC.FUNCTION_FULL_BRAKE, (), '', '')
 
     def get_stack_input_voltage(self):
         """
@@ -154,7 +154,7 @@ class DC(Device):
         voltage that is supplied via the stack, i.e. it is given by a 
         Step-Down or Step-Up Power Supply.
         """
-        return self.ipcon.write(self, DC.FUNCTION_GET_STACK_INPUT_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, DC.FUNCTION_GET_STACK_INPUT_VOLTAGE, (), '', 'H')
 
     def get_external_input_voltage(self):
         """
@@ -171,33 +171,33 @@ class DC(Device):
           the external connection, it will immediately be driven by the high
           stack voltage.
         """
-        return self.ipcon.write(self, DC.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, DC.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 'H')
 
     def get_current_consumption(self):
         """
         Returns the current consumption of the motor in mA.
         """
-        return self.ipcon.write(self, DC.FUNCTION_GET_CURRENT_CONSUMPTION, (), '', 'H')
+        return self.ipcon.send_request(self, DC.FUNCTION_GET_CURRENT_CONSUMPTION, (), '', 'H')
 
     def enable(self):
         """
         Enables the motor. The motor can be configured (velocity, 
         acceleration, etc) before it is enabled.
         """
-        self.ipcon.write(self, DC.FUNCTION_ENABLE, (), '', '')
+        self.ipcon.send_request(self, DC.FUNCTION_ENABLE, (), '', '')
 
     def disable(self):
         """
         Disables the motor. The configurations are kept (velocity, 
         acceleration, etc) but the motor is not driven until it is enabled again.
         """
-        self.ipcon.write(self, DC.FUNCTION_DISABLE, (), '', '')
+        self.ipcon.send_request(self, DC.FUNCTION_DISABLE, (), '', '')
 
     def is_enabled(self):
         """
         Returns true if the motor is enabled, false otherwise.
         """
-        return self.ipcon.write(self, DC.FUNCTION_IS_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, DC.FUNCTION_IS_ENABLED, (), '', '?')
 
     def set_minimum_voltage(self, voltage):
         """
@@ -209,13 +209,13 @@ class DC(Device):
         
         The default value is 5V.
         """
-        self.ipcon.write(self, DC.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
+        self.ipcon.send_request(self, DC.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
 
     def get_minimum_voltage(self):
         """
         Returns the minimum voltage as set by :func:`SetMinimumVoltage`
         """
-        return self.ipcon.write(self, DC.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, DC.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 'H')
 
     def set_drive_mode(self, mode):
         """
@@ -235,13 +235,13 @@ class DC(Device):
         
         The default value is 0 = Drive/Brake.
         """
-        self.ipcon.write(self, DC.FUNCTION_SET_DRIVE_MODE, (mode,), 'B', '')
+        self.ipcon.send_request(self, DC.FUNCTION_SET_DRIVE_MODE, (mode,), 'B', '')
 
     def get_drive_mode(self):
         """
         Returns the drive mode, as set by :func:`SetDriveMode`.
         """
-        return self.ipcon.write(self, DC.FUNCTION_GET_DRIVE_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, DC.FUNCTION_GET_DRIVE_MODE, (), '', 'B')
 
     def set_current_velocity_period(self, period):
         """
@@ -250,16 +250,16 @@ class DC(Device):
         
         The default value is 0.
         """
-        self.ipcon.write(self, DC.FUNCTION_SET_CURRENT_VELOCITY_PERIOD, (period,), 'H', '')
+        self.ipcon.send_request(self, DC.FUNCTION_SET_CURRENT_VELOCITY_PERIOD, (period,), 'H', '')
 
     def get_current_velocity_period(self):
         """
         Returns the period as set by :func:`SetCurrentVelocityPeriod`.
         """
-        return self.ipcon.write(self, DC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD, (), '', 'H')
+        return self.ipcon.send_request(self, DC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD, (), '', 'H')
 
     def register_callback(self, cb, func):
         """
         Registers a callback with ID cb to the function func.
         """
-        self.callbacks[cb] = func
+        self.registered_callbacks[cb] = func

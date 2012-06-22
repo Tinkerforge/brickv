@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-23.      #
+# This file was automatically generated on 2012-06-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -44,13 +44,13 @@ class AnalogOut(Device):
         
         The default value is 0 (with mode 1).
         """
-        self.ipcon.write(self, AnalogOut.FUNCTION_SET_VOLTAGE, (voltage,), 'H', '')
+        self.ipcon.send_request(self, AnalogOut.FUNCTION_SET_VOLTAGE, (voltage,), 'H', '')
 
     def get_voltage(self):
         """
         Returns the voltage as set by :func:`SetVoltage`.
         """
-        return self.ipcon.write(self, AnalogOut.FUNCTION_GET_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, AnalogOut.FUNCTION_GET_VOLTAGE, (), '', 'H')
 
     def set_mode(self, mode):
         """
@@ -66,10 +66,10 @@ class AnalogOut(Device):
         
         The default mode is 1.
         """
-        self.ipcon.write(self, AnalogOut.FUNCTION_SET_MODE, (mode,), 'B', '')
+        self.ipcon.send_request(self, AnalogOut.FUNCTION_SET_MODE, (mode,), 'B', '')
 
     def get_mode(self):
         """
         Returns the mode as set by :func:`SetMode`.
         """
-        return self.ipcon.write(self, AnalogOut.FUNCTION_GET_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, AnalogOut.FUNCTION_GET_MODE, (), '', 'B')

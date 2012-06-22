@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-23.      #
+# This file was automatically generated on 2012-06-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -50,10 +50,10 @@ class LinearPoti(Device):
 
         self.binding_version = [1, 0, 0]
 
-        self.callbacks_format[LinearPoti.CALLBACK_POSITION] = 'H'
-        self.callbacks_format[LinearPoti.CALLBACK_ANALOG_VALUE] = 'H'
-        self.callbacks_format[LinearPoti.CALLBACK_POSITION_REACHED] = 'H'
-        self.callbacks_format[LinearPoti.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
+        self.callback_formats[LinearPoti.CALLBACK_POSITION] = 'H'
+        self.callback_formats[LinearPoti.CALLBACK_ANALOG_VALUE] = 'H'
+        self.callback_formats[LinearPoti.CALLBACK_POSITION_REACHED] = 'H'
+        self.callback_formats[LinearPoti.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
 
     def get_position(self):
         """
@@ -64,7 +64,7 @@ class LinearPoti(Device):
         callback :func:`Position` and set the period with 
         :func:`SetPositionCallbackPeriod`.
         """
-        return self.ipcon.write(self, LinearPoti.FUNCTION_GET_POSITION, (), '', 'H')
+        return self.ipcon.send_request(self, LinearPoti.FUNCTION_GET_POSITION, (), '', 'H')
 
     def get_analog_value(self):
         """
@@ -81,7 +81,7 @@ class LinearPoti(Device):
         callback :func:`AnalogValue` and set the period with 
         :func:`SetAnalogValueCallbackPeriod`.
         """
-        return self.ipcon.write(self, LinearPoti.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
+        return self.ipcon.send_request(self, LinearPoti.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
 
     def set_position_callback_period(self, period):
         """
@@ -93,13 +93,13 @@ class LinearPoti(Device):
         
         The default value is 0.
         """
-        self.ipcon.write(self, LinearPoti.FUNCTION_SET_POSITION_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, LinearPoti.FUNCTION_SET_POSITION_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_position_callback_period(self):
         """
         Returns the period as set by :func:`SetPositionCallbackPeriod`.
         """
-        return self.ipcon.write(self, LinearPoti.FUNCTION_GET_POSITION_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, LinearPoti.FUNCTION_GET_POSITION_CALLBACK_PERIOD, (), '', 'I')
 
     def set_analog_value_callback_period(self, period):
         """
@@ -111,13 +111,13 @@ class LinearPoti(Device):
         
         The default value is 0.
         """
-        self.ipcon.write(self, LinearPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, LinearPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_analog_value_callback_period(self):
         """
         Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
         """
-        return self.ipcon.write(self, LinearPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, LinearPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_position_callback_threshold(self, option, min, max):
         """
@@ -137,13 +137,13 @@ class LinearPoti(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.write(self, LinearPoti.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, LinearPoti.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
 
     def get_position_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetPositionCallbackThreshold`.
         """
-        return GetPositionCallbackThreshold(*self.ipcon.write(self, LinearPoti.FUNCTION_GET_POSITION_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetPositionCallbackThreshold(*self.ipcon.send_request(self, LinearPoti.FUNCTION_GET_POSITION_CALLBACK_THRESHOLD, (), '', 'c h h'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
         """
@@ -163,13 +163,13 @@ class LinearPoti(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.write(self, LinearPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
+        self.ipcon.send_request(self, LinearPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
 
     def get_analog_value_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
         """
-        return GetAnalogValueCallbackThreshold(*self.ipcon.write(self, LinearPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
+        return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, LinearPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_debounce_period(self, debounce):
         """
@@ -185,16 +185,16 @@ class LinearPoti(Device):
         
         The default value is 100.
         """
-        self.ipcon.write(self, LinearPoti.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, LinearPoti.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
         """
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
-        return self.ipcon.write(self, LinearPoti.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, LinearPoti.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def register_callback(self, cb, func):
         """
         Registers a callback with ID cb to the function func.
         """
-        self.callbacks[cb] = func
+        self.registered_callbacks[cb] = func

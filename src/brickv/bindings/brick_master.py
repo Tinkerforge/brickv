@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-05-23.      #
+# This file was automatically generated on 2012-06-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -57,7 +57,7 @@ class Master(Device):
         voltage that is supplied via the stack, i.e. it is given by a 
         Step-Down or Step-Up Power Supply.
         """
-        return self.ipcon.write(self, Master.FUNCTION_GET_STACK_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_STACK_VOLTAGE, (), '', 'H')
 
     def get_stack_current(self):
         """
@@ -65,7 +65,7 @@ class Master(Device):
         current that is drawn via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
         """
-        return self.ipcon.write(self, Master.FUNCTION_GET_STACK_CURRENT, (), '', 'H')
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_STACK_CURRENT, (), '', 'H')
 
     def set_extension_type(self, extension, exttype):
         """
@@ -88,20 +88,20 @@ class Master(Device):
         The value will be saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         """
-        self.ipcon.write(self, Master.FUNCTION_SET_EXTENSION_TYPE, (extension, exttype), 'B I', '')
+        self.ipcon.send_request(self, Master.FUNCTION_SET_EXTENSION_TYPE, (extension, exttype), 'B I', '')
 
     def get_extension_type(self, extension):
         """
         Returns the extension type for a given extension as set by 
         :func:`SetExtensionType`.
         """
-        return self.ipcon.write(self, Master.FUNCTION_GET_EXTENSION_TYPE, (extension,), 'B', 'I')
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_EXTENSION_TYPE, (extension,), 'B', 'I')
 
     def is_chibi_present(self):
         """
         Returns true if a Chibi Extension is available to be used by the Master.
         """
-        return self.ipcon.write(self, Master.FUNCTION_IS_CHIBI_PRESENT, (), '', '?')
+        return self.ipcon.send_request(self, Master.FUNCTION_IS_CHIBI_PRESENT, (), '', '?')
 
     def set_chibi_address(self, address):
         """
@@ -111,13 +111,13 @@ class Master(Device):
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         """
-        self.ipcon.write(self, Master.FUNCTION_SET_CHIBI_ADDRESS, (address,), 'B', '')
+        self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_ADDRESS, (address,), 'B', '')
 
     def get_chibi_address(self):
         """
         Returns the address as set by :func:`SetChibiAddress`.
         """
-        return self.ipcon.write(self, Master.FUNCTION_GET_CHIBI_ADDRESS, (), '', 'B')
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_ADDRESS, (), '', 'B')
 
     def set_chibi_master_address(self, address):
         """
@@ -128,13 +128,13 @@ class Master(Device):
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         """
-        self.ipcon.write(self, Master.FUNCTION_SET_CHIBI_MASTER_ADDRESS, (address,), 'B', '')
+        self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_MASTER_ADDRESS, (address,), 'B', '')
 
     def get_chibi_master_address(self):
         """
         Returns the address as set by :func:`SetChibiMasterAddress`.
         """
-        return self.ipcon.write(self, Master.FUNCTION_GET_CHIBI_MASTER_ADDRESS, (), '', 'B')
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_MASTER_ADDRESS, (), '', 'B')
 
     def set_chibi_slave_address(self, num, address):
         """
@@ -148,21 +148,21 @@ class Master(Device):
         saved in the EEPROM of the Chibi Extension, they don't
         have to be set on every startup.
         """
-        self.ipcon.write(self, Master.FUNCTION_SET_CHIBI_SLAVE_ADDRESS, (num, address), 'B B', '')
+        self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_SLAVE_ADDRESS, (num, address), 'B B', '')
 
     def get_chibi_slave_address(self, num):
         """
         Returns the slave address for a given num as set by 
         :func:`SetChibiSlaveAddress`.
         """
-        return self.ipcon.write(self, Master.FUNCTION_GET_CHIBI_SLAVE_ADDRESS, (num,), 'B', 'B')
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_SLAVE_ADDRESS, (num,), 'B', 'B')
 
     def get_chibi_signal_strength(self):
         """
         Returns the signal strength in dBm. The signal strength updates every time a
         packet is received.
         """
-        return self.ipcon.write(self, Master.FUNCTION_GET_CHIBI_SIGNAL_STRENGTH, (), '', 'B')
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_SIGNAL_STRENGTH, (), '', 'B')
 
     def get_chibi_error_log(self):
         """
@@ -171,7 +171,7 @@ class Master(Device):
         distance between two Chibi stacks is becoming too big or there are
         interferences.
         """
-        return GetChibiErrorLog(*self.ipcon.write(self, Master.FUNCTION_GET_CHIBI_ERROR_LOG, (), '', 'H H H H'))
+        return GetChibiErrorLog(*self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_ERROR_LOG, (), '', 'H H H H'))
 
     def set_chibi_frequency(self, frequency):
         """
@@ -190,13 +190,13 @@ class Master(Device):
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         """
-        self.ipcon.write(self, Master.FUNCTION_SET_CHIBI_FREQUENCY, (frequency,), 'B', '')
+        self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_FREQUENCY, (frequency,), 'B', '')
 
     def get_chibi_frequency(self):
         """
         Returns the frequency value as set by :func:`SetChibiFrequency`.
         """
-        return self.ipcon.write(self, Master.FUNCTION_GET_CHIBI_FREQUENCY, (), '', 'B')
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_FREQUENCY, (), '', 'B')
 
     def set_chibi_channel(self, channel):
         """
@@ -216,10 +216,10 @@ class Master(Device):
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         """
-        self.ipcon.write(self, Master.FUNCTION_SET_CHIBI_CHANNEL, (channel,), 'B', '')
+        self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_CHANNEL, (channel,), 'B', '')
 
     def get_chibi_channel(self):
         """
         Returns the channel as set by :func:`SetChibiChannel`.
         """
-        return self.ipcon.write(self, Master.FUNCTION_GET_CHIBI_CHANNEL, (), '', 'B')
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_CHANNEL, (), '', 'B')

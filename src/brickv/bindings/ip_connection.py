@@ -5,7 +5,7 @@
 # Redistribution and use in source and binary forms of this file, 
 # with or without modification, are permitted. 
 
-from threading import Thread, BoundedSemaphore, current_thread
+from threading import Thread, Lock, current_thread
 # Queue for python 2, queue for python 3
 try:
     from Queue import Queue
@@ -104,12 +104,11 @@ class Device(DeviceConCheckerMeta):
         self.name = ''
         self.firmware_version = [0, 0, 0]
         self.binding_version = [0, 0, 0]
-        self.callbacks = {}
-        self.callbacks_format = {}
-        self.answer_function_id = -1
-        self.answer = None
-        self.answer_queue = Queue()
-        self.sem_write = BoundedSemaphore(value=1)
+        self.registered_callbacks = {}
+        self.callback_formats = {}
+        self.expected_response_function_id = -1
+        self.response_queue = Queue()
+        self.write_lock = Lock()
 
     def get_version(self):
         """
@@ -138,18 +137,17 @@ class IPConnection:
     ENUMERATE_LENGTH = 4
     GET_STACK_ID_LENGTH = 12
 
-    TIMEOUT_ADD_DEVICE = 2.5
-    TIMEOUT_ANSWER = 2.5
+    RESPONSE_TIMEOUT = 2.5
 
     PLUGIN_CHUNK_SIZE = 32
 
     callback_queue = Queue()
 
     def __init__(self, host, port):
-        self.add_dev = None
+        self.pending_add_device = None
         self.devices = {}
         self.enumerate_callback = None
-        self.recv_loop_flag = True
+        self.thread_run_flag = True
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((host, port))
@@ -163,24 +161,41 @@ class IPConnection:
         self.thread_callback.start()
 
     def recv_loop(self):
-        while self.recv_loop_flag:
+        pending_data = ''
+
+        while self.thread_run_flag:
             data = self.sock.recv(8192)
+
             if len(data) == 0:
-                if self.recv_loop_flag:
-                    sys.stderr.write("Socket disconnected by Server, destroying ipcon\n")
+                if self.thread_run_flag:
+                    sys.stderr.write("Socket disconnected by Server, destroying IPConnection\n")
                     self.destroy()
                 return
 
-            while len(data) != 0:
-                handled = self.handle_message(data)
-                data = data[handled:]
+            pending_data += data
+
+            while True:
+                if len(pending_data) < 4:
+                    # Wait for complete header
+                    break
+
+                length = get_length_from_data(pending_data)
+
+                if len(pending_data) < length:
+                    # Wait for complete packet
+                    break
+
+                packet = pending_data[0:length]
+                pending_data = pending_data[length:]
+
+                self.handle_response(packet)
 
     def callback_loop(self):
-        while self.recv_loop_flag:
+        while self.thread_run_flag:
             try:
                 data = self.callback_queue.get(True, 1.0)
             except:
-                if self.recv_loop_flag:
+                if self.thread_run_flag:
                     continue
                 else:
                     return
@@ -202,17 +217,17 @@ class IPConnection:
                 continue
 
             device = self.devices[stack_id]
-            if function_id in device.callbacks:
-                form = device.callbacks_format[function_id]
+            if function_id in device.registered_callbacks:
+                form = device.callback_formats[function_id]
                 if len(form) == 0:
-                    device.callbacks[function_id]()
+                    device.registered_callbacks[function_id]()
                 elif len(form) == 1:
-                    device.callbacks[function_id](self.data_to_return(data[4:], form))
+                    device.registered_callbacks[function_id](self.data_to_return(data[4:], form))
                 else:
-                    device.callbacks[function_id](*self.data_to_return(data[4:], form))
+                    device.registered_callbacks[function_id](*self.data_to_return(data[4:], form))
 
     def destroy(self):
-        self.recv_loop_flag = False
+        self.thread_run_flag = False
         try:
             self.sock.shutdown(socket.SHUT_RDWR)
         except socket.error:
@@ -245,152 +260,141 @@ class IPConnection:
         self.thread_recv.join()
         self.thread_callback.join()
 
-    def write(self, device, function_id, data, form, form_ret):
-        device.sem_write.acquire()
+    def send_request(self, device, function_id, data, form, form_ret):
+        device.write_lock.acquire()
        
         length = struct.pack('<H', struct.calcsize('<' + form) + 4)
         if sys.hexversion < 0x03000000:
-            write_data = chr(device.stack_id) + chr(function_id) + length
+            request = chr(device.stack_id) + chr(function_id) + length
         else:
-            write_data = bytes([device.stack_id, function_id]) + length
+            request = bytes([device.stack_id, function_id]) + length
 
         for f, d in zip(form.split(' '), data):
             if len(f) > 1 and not 's' in f:
-                write_data += struct.pack('<' + f, *d)
+                request += struct.pack('<' + f, *d)
             elif 's' in f:
                 if sys.hexversion < 0x03000000:
                     if type(d) == types.UnicodeType:
-                        write_data += struct.pack('<' + f, d.encode('ascii'))
+                        request += struct.pack('<' + f, d.encode('ascii'))
                     else:
-                        write_data += struct.pack('<' + f, d)
+                        request += struct.pack('<' + f, d)
                 else:
                     if isinstance(d, str):
-                        write_data += struct.pack('<' + f, bytes(d, 'ascii'))
+                        request += struct.pack('<' + f, bytes(d, 'ascii'))
                     else:
-                        write_data += struct.pack('<' + f, d)
+                        request += struct.pack('<' + f, d)
             else:
-                write_data += struct.pack('<' + f, d)
+                request += struct.pack('<' + f, d)
 
         if len(form_ret) != 0:
-            device.answer_function_id = function_id
+            device.expected_response_function_id = function_id
 
         try:
-            self.sock.send(write_data)
+            self.sock.send(request)
         except socket.error:
             self.destroy()
 
         if len(form_ret) == 0:
-            device.sem_write.release()
+            device.write_lock.release()
             return
         
         try:
-            answer = device.answer_queue.get(True, IPConnection.TIMEOUT_ANSWER)
+            response = device.response_queue.get(True, IPConnection.RESPONSE_TIMEOUT)
         except Empty:
-            device.sem_write.release()
-            msg = 'Did not receive answer for function ' + str(function_id) +  ' in time'
+            device.write_lock.release()
+            msg = 'Did not receive response for function ' + str(function_id) +  ' in time'
             raise Error(Error.TIMEOUT, msg)
 
         try:
-            device.sem_write.release()
+            device.write_lock.release()
         except ValueError:
-            self.recv_loop_flag = False
+            self.thread_run_flag = False
 
-        return self.data_to_return(answer, form_ret)
+        return self.data_to_return(response, form_ret)
 
-    def handle_message(self, data):
-        function_id = get_function_id_from_data(data)
+    def handle_response(self, packet):
+        function_id = get_function_id_from_data(packet)
         if function_id == IPConnection.FUNCTION_GET_STACK_ID:
-            return self.handle_add_device(data)
+            self.handle_add_device(packet)
+            return
         if function_id == IPConnection.FUNCTION_ENUMERATE_CALLBACK:
-            return self.handle_enumerate(data)
+            self.handle_enumerate(packet)
+            return
 
-        stack_id = get_stack_id_from_data(data)
-        length = get_length_from_data(data)
-
+        stack_id = get_stack_id_from_data(packet)
         if not stack_id in self.devices:
-            # Message for an unknown device, ignoring it
-            return length
+            # Response from an unknown device, ignoring it
+            return
 
         device = self.devices[stack_id]
-        if device.answer_function_id == function_id:
-            device.answer_queue.put(data[4:])
-            return length
+        if device.expected_response_function_id == function_id:
+            device.response_queue.put(packet[4:])
+            return
     
-        if function_id in device.callbacks:
-            self.callback_queue.put(data)
-            return length
+        if function_id in device.registered_callbacks:
+            self.callback_queue.put(packet)
+            return
 
-        # Message seems to be OK, but can't be handled, most likely
+        # Response seems to be OK, but can't be handled, most likely
         # a callback without registered function
-        return length
 
-    def handle_enumerate(self, data):
-        length = get_length_from_data(data)
-
-        if self.enumerate_callback == None:
-            return length
-
-        self.callback_queue.put(data) 
-        return length
-
+    def handle_enumerate(self, packet):
+        if self.enumerate_callback is not None:
+            self.callback_queue.put(packet)
 
     def enumerate(self, func):
         self.enumerate_callback = func
         if sys.hexversion < 0x03000000:
-            msg = chr(IPConnection.BROADCAST_ADDRESS) + \
-                  chr(IPConnection.FUNCTION_ENUMERATE) + \
-                  struct.pack('<H', IPConnection.ENUMERATE_LENGTH)
+            request = chr(IPConnection.BROADCAST_ADDRESS) + \
+                      chr(IPConnection.FUNCTION_ENUMERATE) + \
+                      struct.pack('<H', IPConnection.ENUMERATE_LENGTH)
         else:
-            msg = bytes([IPConnection.BROADCAST_ADDRESS, 
-                         IPConnection.FUNCTION_ENUMERATE]) + \
-                  struct.pack('<H', IPConnection.ENUMERATE_LENGTH)
+            request = bytes([IPConnection.BROADCAST_ADDRESS,
+                             IPConnection.FUNCTION_ENUMERATE]) + \
+                      struct.pack('<H', IPConnection.ENUMERATE_LENGTH)
 
-        self.sock.send(msg)
+        self.sock.send(request)
 
-    def handle_add_device(self, data):
-        length = get_length_from_data(data)
+    def handle_add_device(self, packet):
+        if self.pending_add_device == None:
+            return
 
-        if self.add_dev == None:
-            return length
+        value = struct.unpack('<BBHQ 3B 40s B', packet)
 
-        value = struct.unpack('<BBHQ 3B 40s B', data[:length])
-
-        if self.add_dev.uid == value[3]:
+        if self.pending_add_device.uid == value[3]:
             if sys.hexversion < 0x03000000:
                 name = value[7].replace(chr(0), '').decode()
             else:
                 name = value[7].decode('ascii').replace(chr(0), '')
 
             i = name.rfind(' ')
-            if i < 0 or name[0:i].replace('-', ' ') != self.add_dev.expected_name.replace('-', ' '):
-                return length
+            if i < 0 or name[0:i].replace('-', ' ') != self.pending_add_device.expected_name.replace('-', ' '):
+                return
 
-            self.add_dev.firmware_version = [value[4], value[5], value[6]]
-            self.add_dev.name = name
-            self.add_dev.stack_id = value[8]
-            self.devices[value[8]] = self.add_dev
-            self.add_dev.answer_queue.put(None)
-            self.add_dev = None
-
-        return length
+            self.pending_add_device.firmware_version = [value[4], value[5], value[6]]
+            self.pending_add_device.name = name
+            self.pending_add_device.stack_id = value[8]
+            self.devices[value[8]] = self.pending_add_device
+            self.pending_add_device.response_queue.put(None)
+            self.pending_add_device = None
 
     def add_device(self, device):
         if sys.hexversion < 0x03000000:
-            msg = chr(IPConnection.BROADCAST_ADDRESS) + \
-                  chr(IPConnection.FUNCTION_GET_STACK_ID) + \
-                  struct.pack('<H', IPConnection.GET_STACK_ID_LENGTH) + \
-                  struct.pack('<Q', device.uid)
+            request = chr(IPConnection.BROADCAST_ADDRESS) + \
+                      chr(IPConnection.FUNCTION_GET_STACK_ID) + \
+                      struct.pack('<H', IPConnection.GET_STACK_ID_LENGTH) + \
+                      struct.pack('<Q', device.uid)
         else:
-            msg = bytes([IPConnection.BROADCAST_ADDRESS,
-                         IPConnection.FUNCTION_GET_STACK_ID]) + \
-                  struct.pack('<H', IPConnection.GET_STACK_ID_LENGTH) + \
-                  struct.pack('<Q', device.uid)
+            request = bytes([IPConnection.BROADCAST_ADDRESS,
+                             IPConnection.FUNCTION_GET_STACK_ID]) + \
+                      struct.pack('<H', IPConnection.GET_STACK_ID_LENGTH) + \
+                      struct.pack('<Q', device.uid)
   
-        self.add_dev = device
-        self.sock.send(msg)
+        self.pending_add_device = device
+        self.sock.send(request)
     
         try:
-            device.answer_queue.get(True, IPConnection.TIMEOUT_ADD_DEVICE)
+            device.response_queue.get(True, IPConnection.RESPONSE_TIMEOUT)
         except Empty:
             msg = 'Could not add device ' + \
                   str(base58encode(device.uid)) + \
@@ -412,11 +416,11 @@ class IPConnection:
             plugin_chunk = plugin[:IPConnection.PLUGIN_CHUNK_SIZE]
             plugin = plugin[IPConnection.PLUGIN_CHUNK_SIZE:]
 
-            self.write(device,
-                       IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN,
-                       (port, position, plugin_chunk),
-                       'c B 32s',
-                       '')
+            self.send_request(device,
+                              IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN,
+                              (port, position, plugin_chunk),
+                              'c B 32s',
+                              '')
 
             position += 1
 
@@ -424,45 +428,44 @@ class IPConnection:
         plugin = ''
         position = 0
         while len(plugin) < length:
-            plugin += self.write(device, 
-                                 IPConnection.FUNCTION_READ_BRICKLET_PLUGIN,
-                                 (port, position), 
-                                 'c B', 
-                                 '32s')
+            plugin += self.send_request(device,
+                                        IPConnection.FUNCTION_READ_BRICKLET_PLUGIN,
+                                        (port, position),
+                                        'c B',
+                                        '32s')
             position += 1
 
         # Remove unnecessary bytes at end
         return plugin[:length]
         
     def get_adc_calibration(self, device):
-        return self.write(device, 
-                          IPConnection.FUNCTION_GET_ADC_CALIBRATION,
-                          (), 
-                          '', 
-                          'h h')
-
+        return self.send_request(device,
+                                 IPConnection.FUNCTION_GET_ADC_CALIBRATION,
+                                 (),
+                                 '',
+                                 'h h')
 
     def adc_calibrate(self, device, port):
-        self.write(device,
-                   IPConnection.FUNCTION_ADC_CALIBRATE,
-                   (port,),
-                   'c',
-                   '')
+        self.send_request(device,
+                          IPConnection.FUNCTION_ADC_CALIBRATE,
+                          (port,),
+                          'c',
+                          '')
 
     def write_bricklet_uid(self, device, port, uid):
         uid_int = base58decode(uid)
 
-        self.write(device,
-                   IPConnection.FUNCTION_WRITE_BRICKLET_UID,
-                   (port, uid_int),
-                   'c Q',
-                   '')
+        self.send_request(device,
+                          IPConnection.FUNCTION_WRITE_BRICKLET_UID,
+                          (port, uid_int),
+                          'c Q',
+                          '')
 
     def read_bricklet_uid(self, device, port):
-        uid_int = self.write(device, 
-                             IPConnection.FUNCTION_READ_BRICKLET_UID,
-                             (port,), 
-                             'c', 
-                             'Q')
+        uid_int = self.send_request(device,
+                                    IPConnection.FUNCTION_READ_BRICKLET_UID,
+                                    (port,),
+                                    'c',
+                                    'Q')
 
         return base58encode(uid_int)
