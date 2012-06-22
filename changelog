@@ -14,3 +14,7 @@
        Remove matplotlib, pylab, scipy and numpy from the dependencies list
        Add version number to window title
        Add Brick flashing support, no SAM-BA needed anymore
+1.1.1: Improve flashing error messages
+       File dialogs remember the last directory
+       "Show this message again" checkbox in error messages work
+       Store host and port information across brickv restarts
