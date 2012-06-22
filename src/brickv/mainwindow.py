@@ -42,7 +42,7 @@ class MainTableModel(QAbstractTableModel):
 
     def rowCount(self, parent): 
         return len(self.data) 
- 
+
     def columnCount(self, parent): 
         return len(self.header) 
  
@@ -59,10 +59,6 @@ class MainTableModel(QAbstractTableModel):
         return QVariant()
     
 class MainWindow(QMainWindow, Ui_MainWindow):
-    BUS_NAME = "com.tinkerforge"
-    OBJECT_PATH_START = "/com/tinkerforge"
-    INTERFACE_START = "com.tinkerforge"
-    
     callback_enumerate_signal = pyqtSignal(str, str, int, bool)
     
     def __init__(self, parent=None):
@@ -86,9 +82,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.advanced_window = None
         self.reset_view()
         self.button_advanced.setDisabled(True)
-        
+
         self.callback_enumerate_signal.connect(self.callback_enumerate)
-        
+
         self.tab_widget.currentChanged.connect(self.tab_changed)
         self.connect.pressed.connect(self.connect_pressed)
         self.button_flashing.pressed.connect(self.flashing_pressed)
@@ -104,7 +100,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
         if signl != None and frme != None:
             print "Received SIGINT or SIGTERM, shutting down."
-            sys.exit() 
+            sys.exit()
 
     def start(self):
         pass
