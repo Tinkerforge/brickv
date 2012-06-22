@@ -7,7 +7,7 @@ InstallDir $PROGRAMFILES\Tinkerforge\Brickv
 
 ; Registry key to check for directory (so if you install again, it will 
 ; overwrite the old one automatically)
-InstallDirRegKey HKLM "SOFTWARE\TINKERFORGE\BRICKV" "Install_Dir"
+InstallDirRegKey HKLM "Software\Tinkerforge\Brickv" "Install_Dir"
 
 ; Request application privileges for Windows Vista
 RequestExecutionLevel admin
@@ -22,7 +22,7 @@ RequestExecutionLevel admin
 
   ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv"
-  DeleteRegKey HKLM SOFTWARE\TINKERFORGE\BRICKV
+  DeleteRegKey HKLM "Software\Tinkerforge\Brickv"
 
 
   ; Remove directories used
@@ -62,13 +62,13 @@ Section "Install Brickv Programm"
 
 ; Check to see if already installed
   ClearErrors
-  ReadRegStr $0 HKLM SOFTWARE\TINKERFORGE\BRICKV "Version"
+  ReadRegStr $0 HKLM "Software\Tinkerforge\Brickv" "Version"
   IfErrors install ;Version not set, install
   ${VersionCompare} $0 ${BRICKV_VERSION} $1
   IntCmp $1 2 uninstall
     MessageBox MB_YESNO|MB_ICONQUESTION "Brickv version $0 seems to be already installed on your system.$\n\
     Would you like to proceed with the installation of version ${BRICKV_VERSION}?$\n\
-    Old Version will be first uninstalled." \
+    Old version will be uninstalled first." \
         IDYES uninstall IDNO quit
 
   quit:
@@ -102,7 +102,7 @@ Section "Install Brickv Programm"
   WriteRegStr HKLM SOFTWARE\TINKERFORGE\BRICKV "Version" ${BRICKV_VERSION}
   
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "DisplayName" "Brickv"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "DisplayName" "Brickv ${BRICKV_VERSION}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "Publisher" "Tinkerforge GmbH"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "UninstallString" '"$INSTDIR\uninstall.exe"'
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "NoModify" 1
