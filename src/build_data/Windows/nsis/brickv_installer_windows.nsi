@@ -21,7 +21,7 @@ RequestExecutionLevel admin
 !macro macrouninstall
 
   ; Remove registry keys
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv"
   DeleteRegKey HKLM "Software\Tinkerforge\Brickv"
 
 
@@ -58,7 +58,7 @@ UninstPage instfiles
 
 
 ; The stuff to install
-Section "Install Brickv Programm"
+Section "Install Brickv ${BRICKV_VERSION} Program"
 
 ; Check to see if already installed
   ClearErrors
@@ -98,21 +98,23 @@ Section "Install Brickv Programm"
   File /r "..\tcl\*"
 
   ; Write the installation path into the registry
-  WriteRegStr HKLM SOFTWARE\TINKERFORGE\BRICKV "Install_Dir" "$INSTDIR"
-  WriteRegStr HKLM SOFTWARE\TINKERFORGE\BRICKV "Version" ${BRICKV_VERSION}
+  WriteRegStr HKLM "Software\Tinkerforge\Brickv" "Install_Dir" "$INSTDIR"
+  WriteRegStr HKLM "Software\Tinkerforge\Brickv" "Version" ${BRICKV_VERSION}
   
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "DisplayName" "Brickv ${BRICKV_VERSION}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "Publisher" "Tinkerforge GmbH"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "UninstallString" '"$INSTDIR\uninstall.exe"'
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "NoModify" 1
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" "NoRepair" 1
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "DisplayName" "Tinkerforge Brickv ${BRICKV_VERSION}"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "DisplayIcon" '"$INSTDIR\brickv-icon.ico"'
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "DisplayVersion" "${BRICKV_VERSION}"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "Publisher" "Tinkerforge GmbH"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "NoModify" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "NoRepair" 1
   WriteUninstaller "uninstall.exe"
   
   ; Create start menu shortcut
-  SetOutPath $INSTDIR\	; set working directory for main.exe
+  SetOutPath $INSTDIR\ ; set working directory for main.exe
   createDirectory "$SMPROGRAMS\Tinkerforge"
-  createShortCut "$SMPROGRAMS\Tinkerforge\Brickv.lnk" "$INSTDIR\main.exe"
+  createShortCut "$SMPROGRAMS\Tinkerforge\Brickv ${BRICKV_VERSION}.lnk" "$INSTDIR\main.exe"
 
 SectionEnd
 ;--------------------------------
