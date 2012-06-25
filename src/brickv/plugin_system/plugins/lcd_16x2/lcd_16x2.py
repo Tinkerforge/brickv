@@ -189,6 +189,7 @@ class LCD16x2(PluginBase):
             self.lcd.set_config(cursor, not blink)
         except ip_connection.Error:
             return
+
         if blink:
             self.blink_button.setText('Blink On')
         else:
@@ -205,6 +206,6 @@ class LCD16x2(PluginBase):
         position = int(self.pos_combo.currentText())
         text = unicode(self.text_edit.text().toUtf8(), 'utf-8')
         try:
-            self.lcd.write_line(line, position, text, unicode_to_ks0066u(text))
+            self.lcd.write_line(line, position, unicode_to_ks0066u(text))
         except ip_connection.Error:
             return

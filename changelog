@@ -18,3 +18,4 @@
        File dialogs remember the last directory
        "Show this message again" checkbox in error messages work
        Store host and port information across brickv restarts
+1.1.2: Use correct write_line signature in LCD 16x2 plugin
