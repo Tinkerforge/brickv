@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-06-14.      #
+# This file was automatically generated on 2012-06-26.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -77,12 +77,12 @@ class IO16(Device):
         If the direction is configured as input, the value is either pull up or
         default (set as true or false).
         
-        For example: 
+        For example:
         
-         * ("a", 0xFF, 'i', true) will set all pins of port a as input pull up. 
-         * ("a", 128, 'i', false) will set pin 7 of port a as input default (floating if nothing is connected). 
-         * ("b", 3, 'o', false) will set pins 0 and 1 of port b as output low.
-         * ("b", 4, 'o', true) will set pin 2 of port b as output high.
+        * ("a", 0xFF, 'i', true) will set all pins of port a as input pull up.
+        * ("a", 128, 'i', false) will set pin 7 of port a as input default (floating if nothing is connected).
+        * ("b", 3, 'o', false) will set pins 0 and 1 of port b as output low.
+        * ("b", 4, 'o', true) will set pin 2 of port b as output high.
         """
         self.ipcon.send_request(self, IO16.FUNCTION_SET_PORT_CONFIGURATION, (port, port_mask, direction, value), 'c B c ?', '')
 
@@ -93,10 +93,10 @@ class IO16(Device):
         For example: A return value of 0b00001111 and 0b00110011 for
         direction and value means that:
         
-         * pins 0 and 1 are configured as input pull up, 
-         * pins 2 and 3 are configured as input default,
-         * pins 4 and 5 are configured as output high
-         * and pins 6 and 7 are configured as output low.
+        * pins 0 and 1 are configured as input pull up,
+        * pins 2 and 3 are configured as input default,
+        * pins 4 and 5 are configured as output high
+        * and pins 6 and 7 are configured as output low.
         """
         return GetPortConfiguration(*self.ipcon.send_request(self, IO16.FUNCTION_GET_PORT_CONFIGURATION, (port,), 'c', 'B B'))
 

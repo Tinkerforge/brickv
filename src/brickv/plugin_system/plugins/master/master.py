@@ -260,6 +260,16 @@ class RS485(QWidget, Ui_RS485):
         self.master = parent.master
         
         if parent.version_minor > 1:
+            speed, parity, stopbits = self.master.get_rs485_configuration()
+            self.speed_spinbox.setValue(speed)
+            if parity == 'e':
+                self.parity_combobox.setCurrentIndex(1)
+            elif parity == 'o':
+                self.parity_combobox.setCurrentIndex(2)
+            else:
+                self.parity_combobox.setCurrentIndex(0)
+            self.stopbits_spinbox.setValue(stopbits)
+            
             address = self.master.get_rs485_address()
             address_slave = []
             for i in range(32):
@@ -291,6 +301,17 @@ class RS485(QWidget, Ui_RS485):
         QMessageBox.critical(self, "Save", "Check Failed", QMessageBox.Ok)
         
     def save_pressed(self):
+        speed = self.speed_spinbox.value()
+        parity_index = self.parity_combobox.currentIndex()
+        parity = 'n'
+        if parity_index == 1:
+            parity = 'e'
+        elif parity_index == 2:
+            parity = 'o'
+        stopbits = self.stopbits_spinbox.value()
+          
+        self.master.set_rs485_configuration(speed, parity, stopbits)
+        
         type = self.rs485_type.currentIndex()
         if type == 0:
             address = self.address_spinbox.value()

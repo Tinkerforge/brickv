@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-06-14.      #
+# This file was automatically generated on 2012-06-26.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -220,8 +220,8 @@ class DC(Device):
     def set_drive_mode(self, mode):
         """
         Sets the drive mode. Possible modes are:
-         * 0 = Drive/Brake
-         * 1 = Drive/Coast
+        * 0 = Drive/Brake
+        * 1 = Drive/Coast
          
         These modes are different kinds of motor controls.
         

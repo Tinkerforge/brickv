@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-06-14.      #
+# This file was automatically generated on 2012-06-26.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -14,6 +14,7 @@ except ImportError:
 from .ip_connection import Device, IPConnection, Error
 
 GetChibiErrorLog = namedtuple('ChibiErrorLog', ['underrun', 'crc_error', 'no_ack', 'overflow'])
+GetRS485Configuration = namedtuple('RS485Configuration', ['speed', 'parity', 'stopbits'])
 
 class Master(Device):
     """
@@ -38,6 +39,14 @@ class Master(Device):
     FUNCTION_GET_CHIBI_FREQUENCY = 15
     FUNCTION_SET_CHIBI_CHANNEL = 16
     FUNCTION_GET_CHIBI_CHANNEL = 17
+    FUNCTION_IS_RS485_PRESENT = 18
+    FUNCTION_SET_RS485_ADDRESS = 19
+    FUNCTION_GET_RS485_ADDRESS = 20
+    FUNCTION_SET_RS485_SLAVE_ADDRESS = 21
+    FUNCTION_GET_RS485_SLAVE_ADDRESS = 22
+    FUNCTION_GET_RS485_ERROR_LOG = 23
+    FUNCTION_SET_RS485_CONFIGURATION = 24
+    FUNCTION_GET_RS485_CONFIGURATION = 25
 
     def __init__(self, uid):
         """
@@ -223,3 +232,77 @@ class Master(Device):
         Returns the channel as set by :func:`SetChibiChannel`.
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_CHANNEL, (), '', 'B')
+
+    def is_rs485_present(self):
+        """
+        Returns true if a RS485 Extension is available to be used by the Master.
+        """
+        return self.ipcon.send_request(self, Master.FUNCTION_IS_RS485_PRESENT, (), '', '?')
+
+    def set_rs485_address(self, address):
+        """
+        Sets the address (1-255) belonging to the RS485 Extension.
+        
+        Set to 0 if the RS485 Extension should be the RS485 Master (i.e.
+        connected to a PC via USB).
+        
+        It is possible to set the address with the Brick Viewer and it will be 
+        saved in the EEPROM of the RS485 Extension, it does not
+        have to be set on every startup.
+        """
+        self.ipcon.send_request(self, Master.FUNCTION_SET_RS485_ADDRESS, (address,), 'B', '')
+
+    def get_rs485_address(self):
+        """
+        Returns the address as set by :func:`SetRS485Address`.
+        """
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_ADDRESS, (), '', 'B')
+
+    def set_rs485_slave_address(self, num, address):
+        """
+        Sets up to 256 slave addresses. The address numeration has to be used 
+        ascending from 0. For example: If you use the RS485 Extension in Master mode
+        (i.e. the stack has an USB connection) and you want to talk to three other
+        RS485 stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
+        (1, 23) and (2, 42)".
+        
+        It is possible to set the addresses with the Brick Viewer and it will be 
+        saved in the EEPROM of the RS485 Extension, they don't
+        have to be set on every startup.
+        """
+        self.ipcon.send_request(self, Master.FUNCTION_SET_RS485_SLAVE_ADDRESS, (num, address), 'B B', '')
+
+    def get_rs485_slave_address(self, num):
+        """
+        Returns the slave address for a given num as set by 
+        :func:`SetRS485SlaveAddress`.
+        """
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_SLAVE_ADDRESS, (num,), 'B', 'B')
+
+    def get_rs485_error_log(self):
+        """
+        Returns CRC error counts of the RS485 communication.
+        If this counter starts rising, it is likely that the distance
+        between the RS485 nodes is too big or there is some kind of
+        interference.
+        """
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_ERROR_LOG, (), '', 'H')
+
+    def set_rs485_configuration(self, speed, parity, stopbits):
+        """
+        Sets the configuration of the RS485 extension. Speed is given in baud. The
+        Master Brick will try to match the given baud rate as exactly as possible.
+        The maximum recommended baud rate is 2000000 (2Mbit).
+        Possible values for parity are 'n' (none), 'e' (even) and 'o' (odd).
+        Possible values for stopbits are 1 and 2.
+        
+        The values are stored in the EEPROM and only applied on startup. That means
+        you have to restart the Master Brick after configuration.
+        """
+        self.ipcon.send_request(self, Master.FUNCTION_SET_RS485_CONFIGURATION, (speed, parity, stopbits), 'I c B', '')
+
+    def get_rs485_configuration(self):
+        """
+        Returns the configuration as set by :func:`SetRS485SlaveAddress`.
+        """
+        return GetRS485Configuration(*self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_CONFIGURATION, (), '', 'I c B'))

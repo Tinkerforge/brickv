@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-06-14.      #
+# This file was automatically generated on 2012-06-26.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -79,10 +79,10 @@ class IO4(Device):
         
         For example: 
         
-         * (15, 'i', true) will set all pins of as input pull up. 
-         * (8, 'i', false) will set pin 3 of as input default (floating if nothing is connected). 
-         * (3, 'o', false) will set pins 0 and 1 as output low.
-         * (4, 'o', true) will set pin 2 of as output high.
+        * (15, 'i', true) will set all pins of as input pull up.
+        * (8, 'i', false) will set pin 3 of as input default (floating if nothing is connected).
+        * (3, 'o', false) will set pins 0 and 1 as output low.
+        * (4, 'o', true) will set pin 2 of as output high.
         """
         self.ipcon.send_request(self, IO4.FUNCTION_SET_CONFIGURATION, (pin_mask, direction, value), 'B c ?', '')
 
@@ -93,10 +93,10 @@ class IO4(Device):
         For example: A return value of 0b0011 and 0b0101 for
         direction and value means that:
         
-         * pin 0 is configured as input pull up, 
-         * pin 1 is configured as input default,
-         * pin 2 is configured as output high
-         * and pin 3 is are configured as output low.
+        * pin 0 is configured as input pull up,
+        * pin 1 is configured as input default,
+        * pin 2 is configured as output high
+        * and pin 3 is are configured as output low.
         """
         return GetConfiguration(*self.ipcon.send_request(self, IO4.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
