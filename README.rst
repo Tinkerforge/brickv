@@ -13,11 +13,12 @@ After that you should be able to start brickv from source with
 The following libraries are required:
  * PyQt4
  * PyQwt5
- * pyopengl
+ * PyOpenGL
+ * PySerial
 
-On Debian based linux distributions try::
+On Debian based Linux distributions try::
  
- sudo apt-get install python python-qt4 python-qt4-gl python-qwt5-qt4 python-opengl
+ sudo apt-get install python python-qt4 python-qt4-gl python-qwt5-qt4 python-opengl python-serial
 
 Building Packages
 -----------------
