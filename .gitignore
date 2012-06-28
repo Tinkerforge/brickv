@@ -2,4 +2,5 @@
 ui_*.py
 src/brickv/build
 src/brickv/dist
-src/build_data/linux/brickv/usr
+src/build_data/linux/brickv/usr/share
+src/build_data/Windows/nsis/brickv_installer_windows.nsi

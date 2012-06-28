@@ -212,6 +212,13 @@ def build_windows_pkg():
 
     import py2exe
     os.system("python build_all_ui.py")
+
+    lines = []
+    for line in file('../build_data/Windows/nsis/brickv_installer_windows.nsi.template', 'rb').readlines():
+        line = line.replace('<<BRICKV_DOT_VERSION>>', config.BRICKV_VERSION)
+        line = line.replace('<<BRICKV_UNDERSCORE_VERSION>>', config.BRICKV_VERSION.replace('.', '_'))
+        lines.append(line)
+    file('../build_data/Windows/nsis/brickv_installer_windows.nsi', 'wb').writelines(lines)
     
     data_files = []
     def visitor(arg, dirname, names):
@@ -222,7 +229,7 @@ def build_windows_pkg():
                 else: # keep full path
                     data_files.append((os.path.join(dirname) , [os.path.join(dirname, n)]))
     
-    os.path.walk(os.path.normcase("../build_data/Windows/"), visitor, ('y',os.path.normcase("../build_data/Windows/")))
+    os.path.walk(os.path.normcase("../build_data/Windows/"), visitor, ('y', os.path.normcase("../build_data/Windows/")))
     os.path.walk("plugin_system", visitor, ('n',"plugin_system"))
     
     data_files.append( ( os.path.join('.') , [os.path.join('.', 'brickv-icon.png')] ) )
@@ -231,23 +238,8 @@ def build_windows_pkg():
     for f in os.listdir('bindings'):
         if f.endswith('.py'):
             additional_modules.append('bindings.' + f[:-3])
-      
-    STEXT = '!define BRICKV_VERSION'
-    RTEXT = '!define BRICKV_VERSION {0}\n'.format(config.BRICKV_VERSION)
 
-    f = open('../build_data/Windows/nsis/brickv_installer_windows.nsi', 'r')
-    lines = f.readlines()
-    f.close()
-
-    f = open('../build_data/Windows/nsis/brickv_installer_windows.nsi', 'w')
-    for line in lines:
-        if not line.find(STEXT) == -1:
-            line = RTEXT
-        f.write(line)
-    f.close()
-
-    setup(
-          name = NAME,
+    setup(name = NAME,
           description = DESCRIPTION,
           version = config.BRICKV_VERSION,
           data_files = data_files,
