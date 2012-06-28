@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-06-26.      #
+# This file was automatically generated on 2012-06-28.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -57,7 +57,7 @@ class Master(Device):
 
         self.expected_name = 'Master Brick'
 
-        self.binding_version = [1, 1, 0]
+        self.binding_version = [1, 2, 0]
 
 
     def get_stack_voltage(self):
@@ -147,7 +147,7 @@ class Master(Device):
 
     def set_chibi_slave_address(self, num, address):
         """
-        Sets up to 256 slave addresses. The address numeration has to be used 
+        Sets up to 255 slave addresses. The address numeration has to be used
         ascending from 0. For example: If you use the Chibi Extension in Master mode
         (i.e. the stack has an USB connection) and you want to talk to three other
         Chibi stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
@@ -260,7 +260,7 @@ class Master(Device):
 
     def set_rs485_slave_address(self, num, address):
         """
-        Sets up to 256 slave addresses. The address numeration has to be used 
+        Sets up to 255 slave addresses. The address numeration has to be used
         ascending from 0. For example: If you use the RS485 Extension in Master mode
         (i.e. the stack has an USB connection) and you want to talk to three other
         RS485 stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
@@ -296,6 +296,10 @@ class Master(Device):
         Possible values for parity are 'n' (none), 'e' (even) and 'o' (odd).
         Possible values for stopbits are 1 and 2.
         
+        If your RS485 is unstable (lost messages etc), the first thing you should
+        try is to decrease the speed. On very large bus (e.g. 1km), you probably
+        should use a value in the range of 100khz.
+        
         The values are stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
         """
@@ -303,6 +307,6 @@ class Master(Device):
 
     def get_rs485_configuration(self):
         """
-        Returns the configuration as set by :func:`SetRS485SlaveAddress`.
+        Returns the configuration as set by :func:`SetRS485Configuration`.
         """
         return GetRS485Configuration(*self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_CONFIGURATION, (), '', 'I c B'))
