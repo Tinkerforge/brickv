@@ -83,14 +83,8 @@ Section "Install Brickv ${BRICKV_VERSION} Program"
   SetOutPath $INSTDIR\OpenGL
   File /r "..\OpenGL\*"
 
-  SetOutPath $INSTDIR\OpenGL_accelerate
-  File /r "..\OpenGL_accelerate\*"
-
   SetOutPath $INSTDIR\plugin_system
   File /r "..\plugin_system\*"
-
-  SetOutPath $INSTDIR\tcl
-  File /r "..\tcl\*"
 
   ; Write the installation path into the registry
   WriteRegStr HKLM "Software\Tinkerforge\Brickv" "Install_Dir" "$INSTDIR"

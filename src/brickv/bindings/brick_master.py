@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-06-28.      #
+# This file was automatically generated on 2012-06-29.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -109,6 +109,8 @@ class Master(Device):
     def is_chibi_present(self):
         """
         Returns true if a Chibi Extension is available to be used by the Master.
+        
+        .. versionadded:: 1.1.0
         """
         return self.ipcon.send_request(self, Master.FUNCTION_IS_CHIBI_PRESENT, (), '', '?')
 
@@ -119,12 +121,16 @@ class Master(Device):
         It is possible to set the address with the Brick Viewer and it will be 
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
+        
+        .. versionadded:: 1.1.0
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_ADDRESS, (address,), 'B', '')
 
     def get_chibi_address(self):
         """
         Returns the address as set by :func:`SetChibiAddress`.
+        
+        .. versionadded:: 1.1.0
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_ADDRESS, (), '', 'B')
 
@@ -136,12 +142,16 @@ class Master(Device):
         It is possible to set the address with the Brick Viewer and it will be 
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
+        
+        .. versionadded:: 1.1.0
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_MASTER_ADDRESS, (address,), 'B', '')
 
     def get_chibi_master_address(self):
         """
         Returns the address as set by :func:`SetChibiMasterAddress`.
+        
+        .. versionadded:: 1.1.0
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_MASTER_ADDRESS, (), '', 'B')
 
@@ -156,6 +166,8 @@ class Master(Device):
         It is possible to set the addresses with the Brick Viewer and it will be 
         saved in the EEPROM of the Chibi Extension, they don't
         have to be set on every startup.
+        
+        .. versionadded:: 1.1.0
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_SLAVE_ADDRESS, (num, address), 'B B', '')
 
@@ -163,6 +175,8 @@ class Master(Device):
         """
         Returns the slave address for a given num as set by 
         :func:`SetChibiSlaveAddress`.
+        
+        .. versionadded:: 1.1.0
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_SLAVE_ADDRESS, (num,), 'B', 'B')
 
@@ -170,6 +184,8 @@ class Master(Device):
         """
         Returns the signal strength in dBm. The signal strength updates every time a
         packet is received.
+        
+        .. versionadded:: 1.1.0
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_SIGNAL_STRENGTH, (), '', 'B')
 
@@ -179,6 +195,8 @@ class Master(Device):
         communication. If these errors start rising, it is likely that either the
         distance between two Chibi stacks is becoming too big or there are
         interferences.
+        
+        .. versionadded:: 1.1.0
         """
         return GetChibiErrorLog(*self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_ERROR_LOG, (), '', 'H H H H'))
 
@@ -198,12 +216,16 @@ class Master(Device):
         It is possible to set the frequency with the Brick Viewer and it will be 
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
+        
+        .. versionadded:: 1.1.0
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_FREQUENCY, (frequency,), 'B', '')
 
     def get_chibi_frequency(self):
         """
         Returns the frequency value as set by :func:`SetChibiFrequency`.
+        
+        .. versionadded:: 1.1.0
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_FREQUENCY, (), '', 'B')
 
@@ -224,18 +246,24 @@ class Master(Device):
         It is possible to set the frequency with the Brick Viewer and it will be 
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
+        
+        .. versionadded:: 1.1.0
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_CHANNEL, (channel,), 'B', '')
 
     def get_chibi_channel(self):
         """
         Returns the channel as set by :func:`SetChibiChannel`.
+        
+        .. versionadded:: 1.1.0
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_CHANNEL, (), '', 'B')
 
     def is_rs485_present(self):
         """
         Returns true if a RS485 Extension is available to be used by the Master.
+        
+        .. versionadded:: 1.2.0
         """
         return self.ipcon.send_request(self, Master.FUNCTION_IS_RS485_PRESENT, (), '', '?')
 
@@ -249,12 +277,16 @@ class Master(Device):
         It is possible to set the address with the Brick Viewer and it will be 
         saved in the EEPROM of the RS485 Extension, it does not
         have to be set on every startup.
+        
+        .. versionadded:: 1.2.0
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_RS485_ADDRESS, (address,), 'B', '')
 
     def get_rs485_address(self):
         """
         Returns the address as set by :func:`SetRS485Address`.
+        
+        .. versionadded:: 1.2.0
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_ADDRESS, (), '', 'B')
 
@@ -269,6 +301,8 @@ class Master(Device):
         It is possible to set the addresses with the Brick Viewer and it will be 
         saved in the EEPROM of the RS485 Extension, they don't
         have to be set on every startup.
+        
+        .. versionadded:: 1.2.0
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_RS485_SLAVE_ADDRESS, (num, address), 'B B', '')
 
@@ -276,6 +310,8 @@ class Master(Device):
         """
         Returns the slave address for a given num as set by 
         :func:`SetRS485SlaveAddress`.
+        
+        .. versionadded:: 1.2.0
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_SLAVE_ADDRESS, (num,), 'B', 'B')
 
@@ -285,6 +321,8 @@ class Master(Device):
         If this counter starts rising, it is likely that the distance
         between the RS485 nodes is too big or there is some kind of
         interference.
+        
+        .. versionadded:: 1.2.0
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_ERROR_LOG, (), '', 'H')
 
@@ -302,11 +340,15 @@ class Master(Device):
         
         The values are stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
+        
+        .. versionadded:: 1.2.0
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_RS485_CONFIGURATION, (speed, parity, stopbits), 'I c B', '')
 
     def get_rs485_configuration(self):
         """
         Returns the configuration as set by :func:`SetRS485Configuration`.
+        
+        .. versionadded:: 1.2.0
         """
         return GetRS485Configuration(*self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_CONFIGURATION, (), '', 'I c B'))

@@ -182,12 +182,6 @@ os.environ['RESOURCEPATH'] = os.path.dirname(os.path.realpath(__file__))
         dst = os.path.join(RES_PATH, "../MacOS/plugin_system")
         shutil.copytree(src, dst)
 
-    def build_dmg():
-        if os.path.exists("Brickv.dmg"):
-            os.remove("Brickv.dmg")
-        os.system("echo $DYLIB_LIBRARY_PATH")
-        os.system("hdiutil create -fs HFS+ -volname Brickv -srcfolder dist Brickv.dmg")
-
     ACTION_CREATE = len(sys.argv) == 3 and sys.argv[-1] == "build"
 
     if ACTION_CREATE:
@@ -196,7 +190,6 @@ os.environ['RESOURCEPATH'] = os.path.dirname(os.path.realpath(__file__))
         qt_menu_patch()
         run_in_term_patch()
         data_files_patch()
-        #build_dmg()
     else:
         print "Usage: python setup.py py2app build"
 
@@ -246,19 +239,39 @@ def build_windows_pkg():
           options = {
                     "py2exe" : {
                     "dll_excludes" : ["MSVCP90.dll"],
-                    "includes" : ["PyQt4.QtSvg",
-                                  "sip",
-                                  "PyQt4.Qwt5",
+                    "includes" : ["sip",
                                   "PyQt4.QtCore",
                                   "PyQt4.QtGui",
-                                  "numpy.core.multiarray",
                                   "PyQt4.QtOpenGL",
+                                  "PyQt4.QtSvg",
+                                  "PyQt4.Qwt5",
                                   "OpenGL.GL",
-                                  "ctypes.util",
                                   "plot_widget",
+                                  "numpy.core.multiarray",
+                                  "ctypes.util",
                                   "serial",
                                   "win32com.client"] + additional_modules,
-                    "excludes" : ["_gtkagg", "_tkagg"]
+                    "excludes" : ["config_linux",
+                                  "config_macosx",
+                                  "_gtkagg",
+                                  "_tkagg",
+                                  "Tkconstants",
+                                  "Tkinter",
+                                  "tcl",
+                                  "pydoc",
+                                  "email",
+                                  "nose",
+                                  "pdb",
+                                  "inspect",
+                                  "doctest",
+                                  "difflib",
+                                  "numpy.numarray",
+                                  "numpy.oldnumeric",
+                                  "numpy.core._dotblas",
+                                  "numpy.random",
+                                  "ctypes.macholib",
+                                  "win32pdh",
+                                  "win32ui"]
                     }
                     },
           zipfile = None,
