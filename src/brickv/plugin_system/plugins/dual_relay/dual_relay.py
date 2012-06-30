@@ -55,7 +55,15 @@ class DualRelay(PluginBase, Ui_DualRelay):
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update)
         self.update_timer.setInterval(50)
-        self.update_timer.start()
+        
+        v = self.dr.get_version()[1]
+        if v[1] < 1 or (v[1] == 1 and v[2] < 1):
+            self.go1_button.setText("go (> 1.1.0 needed)")
+            self.go2_button.setText("go (> 1.1.0 needed)")
+            self.go1_button.setEnabled(False)
+            self.go2_button.setEnabled(False)
+        else:
+            self.update_timer.start()
         
         self.r1_monoflop = False
         self.r2_monoflop = False
