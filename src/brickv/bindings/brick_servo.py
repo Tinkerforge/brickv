@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-06-27.      #
+# This file was automatically generated on 2012-06-30.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -50,6 +50,8 @@ class Servo(Device):
     FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE = 23
     FUNCTION_SET_MINIMUM_VOLTAGE = 24
     FUNCTION_GET_MINIMUM_VOLTAGE = 25
+    FUNCTION_RESET = 243
+    FUNCTION_GET_CHIP_TEMPERATURE = 242
 
     def __init__(self, uid):
         """
@@ -60,7 +62,7 @@ class Servo(Device):
 
         self.expected_name = 'Servo Brick'
 
-        self.binding_version = [1, 0, 0]
+        self.binding_version = [1, 0, 1]
 
         self.callback_formats[Servo.CALLBACK_UNDER_VOLTAGE] = 'H'
         self.callback_formats[Servo.CALLBACK_POSITION_REACHED] = 'B h'
@@ -321,8 +323,29 @@ class Servo(Device):
         """
         return self.ipcon.send_request(self, Servo.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 'H')
 
-    def register_callback(self, cb, func):
+    def reset(self):
         """
-        Registers a callback with ID cb to the function func.
+        Calling this function will reset the Brick. Calling this function 
+        on a Brick inside of a stack will reset the whole stack.
+        
+        After a reset you have to create new device objects, 
+        calling functions on the existing ones will result in 
+        undefined behavior!
         """
-        self.registered_callbacks[cb] = func
+        self.ipcon.send_request(self, Servo.FUNCTION_RESET, (), '', '')
+
+    def get_chip_temperature(self):
+        """
+        Returns the temperature in °C/10 as measured inside the microcontroller. The
+        value returned is not the ambient temperature! Under normal conditions
+        the microcontroller should have a temperature of about 35-45°C
+        
+        The temperature has an accuracy of +-15%.
+        """
+        return self.ipcon.send_request(self, Servo.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+
+    def register_callback(self, id, callback):
+        """
+        Registers a callback with ID id to the function callback.
+        """
+        self.registered_callbacks[id] = callback

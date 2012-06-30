@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-06-27.      #
+# This file was automatically generated on 2012-06-30.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -44,6 +44,8 @@ class DC(Device):
     FUNCTION_GET_DRIVE_MODE = 18
     FUNCTION_SET_CURRENT_VELOCITY_PERIOD = 19
     FUNCTION_GET_CURRENT_VELOCITY_PERIOD = 20
+    FUNCTION_RESET = 243
+    FUNCTION_GET_CHIP_TEMPERATURE = 242
 
     def __init__(self, uid):
         """
@@ -54,7 +56,7 @@ class DC(Device):
 
         self.expected_name = 'DC Brick'
 
-        self.binding_version = [1, 0, 0]
+        self.binding_version = [1, 0, 1]
 
         self.callback_formats[DC.CALLBACK_UNDER_VOLTAGE] = 'H'
         self.callback_formats[DC.CALLBACK_EMERGENCY_SHUTDOWN] = ''
@@ -258,8 +260,29 @@ class DC(Device):
         """
         return self.ipcon.send_request(self, DC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD, (), '', 'H')
 
-    def register_callback(self, cb, func):
+    def reset(self):
         """
-        Registers a callback with ID cb to the function func.
+        Calling this function will reset the Brick. Calling this function 
+        on a Brick inside of a stack will reset the whole stack.
+        
+        After a reset you have to create new device objects, 
+        calling functions on the existing ones will result in 
+        undefined behavior!
         """
-        self.registered_callbacks[cb] = func
+        self.ipcon.send_request(self, DC.FUNCTION_RESET, (), '', '')
+
+    def get_chip_temperature(self):
+        """
+        Returns the temperature in °C/10 as measured inside the microcontroller. The
+        value returned is not the ambient temperature! Under normal conditions
+        the microcontroller should have a temperature of about 35-45°C
+        
+        The temperature has an accuracy of +-15%.
+        """
+        return self.ipcon.send_request(self, DC.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+
+    def register_callback(self, id, callback):
+        """
+        Registers a callback with ID id to the function callback.
+        """
+        self.registered_callbacks[id] = callback

@@ -342,8 +342,8 @@ class IPConnection:
         if self.enumerate_callback is not None:
             self.callback_queue.put(packet)
 
-    def enumerate(self, func):
-        self.enumerate_callback = func
+    def enumerate(self, callback):
+        self.enumerate_callback = callback
         if sys.hexversion < 0x03000000:
             request = chr(IPConnection.BROADCAST_ADDRESS) + \
                       chr(IPConnection.FUNCTION_ENUMERATE) + \

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-06-27.      #
+# This file was automatically generated on 2012-06-30.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -138,8 +138,8 @@ class IO16(Device):
         """
         return self.ipcon.send_request(self, IO16.FUNCTION_GET_PORT_INTERRUPT, (port,), 'c', 'B')
 
-    def register_callback(self, cb, func):
+    def register_callback(self, id, callback):
         """
-        Registers a callback with ID cb to the function func.
+        Registers a callback with ID id to the function callback.
         """
-        self.registered_callbacks[cb] = func
+        self.registered_callbacks[id] = callback

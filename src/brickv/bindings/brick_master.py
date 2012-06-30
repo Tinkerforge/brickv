@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-06-29.      #
+# This file was automatically generated on 2012-06-30.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -47,6 +47,8 @@ class Master(Device):
     FUNCTION_GET_RS485_ERROR_LOG = 23
     FUNCTION_SET_RS485_CONFIGURATION = 24
     FUNCTION_GET_RS485_CONFIGURATION = 25
+    FUNCTION_RESET = 243
+    FUNCTION_GET_CHIP_TEMPERATURE = 242
 
     def __init__(self, uid):
         """
@@ -57,7 +59,7 @@ class Master(Device):
 
         self.expected_name = 'Master Brick'
 
-        self.binding_version = [1, 2, 0]
+        self.binding_version = [1, 2, 1]
 
 
     def get_stack_voltage(self):
@@ -352,3 +354,24 @@ class Master(Device):
         .. versionadded:: 1.2.0
         """
         return GetRS485Configuration(*self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_CONFIGURATION, (), '', 'I c B'))
+
+    def reset(self):
+        """
+        Calling this function will reset the Brick. Calling this function 
+        on a Brick inside of a stack will reset the whole stack.
+        
+        After a reset you have to create new device objects, 
+        calling functions on the existing ones will result in 
+        undefined behavior!
+        """
+        self.ipcon.send_request(self, Master.FUNCTION_RESET, (), '', '')
+
+    def get_chip_temperature(self):
+        """
+        Returns the temperature in °C/10 as measured inside the microcontroller. The
+        value returned is not the ambient temperature! Under normal conditions
+        the microcontroller should have a temperature of about 35-45°C
+        
+        The temperature has an accuracy of +-15%.
+        """
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
