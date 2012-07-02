@@ -275,9 +275,14 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
     def firmware_save_pressed(self):
         port = str(self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString())
+
         try:
             samba = SAMBA(port)
         except SAMBAException, e:
+            self.serial_port_refresh()
+            self.popup_fail('Brick', 'Could not connect to Brick: {0}'.format(str(e)))
+            return
+        except SerialException, e:
             self.serial_port_refresh()
             self.popup_fail('Brick', 'Could not connect to Brick: {0}'.format(str(e)))
             return
@@ -338,6 +343,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             else:
                 self.popup_ok('Brick', 'Succesfully flashed latest {0} Brick firmware'.format(current_text))
         except SAMBAException, e:
+            progress.cancel()
+            self.serial_port_refresh()
+            self.popup_fail('Brick', 'Could not flash Brick: {0}'.format(str(e)))
+        except SerialException, e:
             progress.cancel()
             self.serial_port_refresh()
             self.popup_fail('Brick', 'Could not flash Brick: {0}'.format(str(e)))

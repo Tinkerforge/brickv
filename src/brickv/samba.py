@@ -21,7 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import os
 import sys
+import errno
 import glob
 import struct
 import math
@@ -82,6 +84,17 @@ class SAMBAException(Exception):
 
 class SAMBA:
     def __init__(self, port_name):
+        try:
+            fd = os.open(port_name, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+            os.close(fd)
+        except OSError, e:
+            if e.errno == errno.EACCES:
+                raise SAMBAException("No permission to open serial port")
+            elif e.strerror is None:
+                raise SAMBAException(str(e))
+            else:
+                raise SAMBAException(e.strerror)
+
         self.port = Serial(port_name, 115200, timeout=5)
 
         self.port.write('N#')
