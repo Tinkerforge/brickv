@@ -507,7 +507,7 @@
                 </sizepolicy>
                </property>
                <property name="minimum">
-                <number>2000</number>
+                <number>1</number>
                </property>
                <property name="maximum">
                 <number>65535</number>
@@ -544,7 +544,7 @@
               <enum>QAbstractSpinBox::NoButtons</enum>
              </property>
              <property name="minimum">
-              <number>2000</number>
+              <number>1</number>
              </property>
              <property name="maximum">
               <number>65535</number>
