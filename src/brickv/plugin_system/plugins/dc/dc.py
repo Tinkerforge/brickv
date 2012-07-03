@@ -38,13 +38,16 @@ class DC(PluginBase, Ui_DC):
     
     def __init__ (self, ipcon, uid):
         PluginBase.__init__(self, ipcon, uid)
-     
         self.setupUi(self)
         
         self.dc = brick_dc.DC(self.uid)
         self.device = self.dc
         self.ipcon.add_device(self.dc)
-        self.version = '.'.join(map(str, self.dc.get_version()[1]))
+
+        version = self.dc.get_version()
+        self.version = '.'.join(map(str, version[1]))
+        self.version_minor = version[1][1]
+        self.version_release = version[1][2]
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
@@ -113,7 +116,14 @@ class DC(PluginBase, Ui_DC):
             self.dc.set_current_velocity_period(0)
         except ip_connection.Error:
             return
-        
+
+    def has_reset_device(self):
+        return self.version_minor > 1 or (self.version_minor == 1 and self.version_release > 2)
+
+    def reset_device(self):
+        if self.has_reset_device():
+            self.dc.reset()
+
     @staticmethod
     def has_name(name):
         return 'DC Brick' in name 

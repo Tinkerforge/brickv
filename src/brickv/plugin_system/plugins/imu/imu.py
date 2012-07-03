@@ -96,7 +96,11 @@ class IMU(PluginBase, Ui_IMU):
         self.imu = brick_imu.IMU(self.uid)
         self.device = self.imu
         self.ipcon.add_device(self.imu)
-        self.version = '.'.join(map(str, self.imu.get_version()[1]))
+
+        version = self.imu.get_version()
+        self.version = '.'.join(map(str, version[1]))
+        self.version_minor = version[1][1]
+        self.version_release = version[1][2]
         
         self.acc_x = 0
         self.acc_y = 0
@@ -204,7 +208,14 @@ in the image above, then press "Save Orientation".""")
         self.imu.set_all_data_period(0)
         self.imu.set_orientation_period(0)
         self.imu.set_quaternion_period(0)
-        
+
+    def has_reset_device(self):
+        return self.version_minor > 0 or (self.version_minor == 0 and self.version_release > 6)
+
+    def reset_device(self):
+        if self.has_reset_device():
+            self.imu.reset()
+
     @staticmethod
     def has_name(name):
         return 'IMU Brick' in name 

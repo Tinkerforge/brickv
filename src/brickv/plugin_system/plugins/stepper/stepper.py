@@ -45,13 +45,16 @@ class Stepper(PluginBase, Ui_Stepper):
         self.stepper = brick_stepper.Stepper(self.uid)
         self.device = self.stepper
         self.ipcon.add_device(self.stepper)
-        self.version = '.'.join(map(str, self.stepper.get_version()[1]))
+
+        version = self.stepper.get_version()
+        self.version = '.'.join(map(str, version[1]))
+        self.version_minor = version[1][1]
+        self.version_release = version[1][2]
      
         self.endis_all(False)
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
-        
 
         self.speedometer = SpeedoMeter()
         self.vertical_layout_right.insertWidget(5, self.speedometer)
@@ -124,7 +127,14 @@ class Stepper(PluginBase, Ui_Stepper):
     def stop(self):
         self.update_timer.stop()
         self.update_data_alive = False
-        
+
+    def has_reset_device(self):
+        return self.version_minor > 1 or (self.version_minor == 1 and self.version_release > 4)
+
+    def reset_device(self):
+        if self.has_reset_device():
+            self.stepper.reset()
+
     @staticmethod
     def has_name(name):
         return 'Stepper Brick' in name 

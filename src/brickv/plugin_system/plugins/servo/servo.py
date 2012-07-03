@@ -133,7 +133,11 @@ class Servo(PluginBase, Ui_Servo):
         self.servo = brick_servo.Servo(self.uid)
         self.device = self.servo
         self.ipcon.add_device(self.servo)
-        self.version = '.'.join(map(str, self.servo.get_version()[1]))
+
+        version = self.servo.get_version()
+        self.version = '.'.join(map(str, version[1]))
+        self.version_minor = version[1][1]
+        self.version_release = version[1][2]
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_apply)
@@ -252,7 +256,14 @@ class Servo(PluginBase, Ui_Servo):
     def destroy(self):
         self.test_event.set()
         self.update_event.set()
-    
+
+    def has_reset_device(self):
+        return self.version_minor > 1 or (self.version_minor == 1 and self.version_release > 2)
+
+    def reset_device(self):
+        if self.has_reset_device():
+            self.servo.reset()
+
     @staticmethod
     def has_name(name):
         return 'Servo Brick' in name 

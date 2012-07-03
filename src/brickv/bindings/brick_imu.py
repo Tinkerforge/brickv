@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-06-30.      #
+# This file was automatically generated on 2012-07-02.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -401,10 +401,10 @@ class IMU(Device):
     def get_chip_temperature(self):
         """
         Returns the temperature in °C/10 as measured inside the microcontroller. The
-        value returned is not the ambient temperature! Under normal conditions
-        the microcontroller should have a temperature of about 35-45°C
+        value returned is not the ambient temperature! 
         
-        The temperature has an accuracy of +-15%.
+        The temperature has an accuracy of +-15%. Practically it is only usefull as
+        an indicator for temperature changes.
         """
         return self.ipcon.send_request(self, IMU.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 

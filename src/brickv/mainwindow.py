@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt
-from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon
+from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon, QPushButton
 from ui_mainwindow import Ui_MainWindow
 from plugin_system.plugin_manager import PluginManager
 from bindings.ip_connection import IPConnection, Error
@@ -84,7 +84,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.setWindowTitle("Brick Viewer " + config.BRICKV_VERSION)
         
-        self.table_view_header = ['Stack ID', 'Device Name', 'UID', 'FW Version']
+        self.table_view_header = ['Stack ID', 'Device Name', 'UID', 'FW Version', 'Reset']
 
         # Remove dummy tab
         self.tab_widget.removeTab(1)
@@ -218,10 +218,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_table_view(self):
         data = []
         for p in self.plugins[1:]:
-            data.append((p[1], p[2], p[3], p[0].version))
+            if p[0] is not None:
+                data.append((p[1], p[2], p[3], p[0].version, ''))
             
         mtm = MainTableModel(self.table_view_header, data)
         self.table_view.setModel(mtm)
+
+        for r in range(len(data)):
+            p = self.plugins[r + 1]
+            if p[0] is not None and ' Brick ' in p[2]:
+                button = QPushButton('Reset')
+                if p[0].has_reset_device():
+                    button.clicked.connect(p[0].reset_device)
+                else:
+                    button.setDisabled(True)
+                self.table_view.setIndexWidget(mtm.index(r, 4), button)
 
         self.update_flashing_window()
         self.update_advanced_window()

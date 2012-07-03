@@ -30,7 +30,7 @@ class PluginBase(QWidget, object):
         self.uid = uid
         self.version = "none"
         
-    # To be overridden by parent class
+    # To be overridden by inheriting class
     def stop(self):
         pass
     
@@ -39,7 +39,13 @@ class PluginBase(QWidget, object):
     
     def destroy(self):
         pass
-    
+
+    def has_reset_device(self):
+        return False
+
+    def reset_device(self):
+        pass
+
     @staticmethod
     def has_name(name):
         return False

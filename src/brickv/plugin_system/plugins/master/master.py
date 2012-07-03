@@ -366,13 +366,13 @@ class Master(PluginBase, Ui_Master):
         self.setupUi(self)
 
         self.master = brick_master.Master(self.uid)
-        
         self.device = self.master
         self.ipcon.add_device(self.master)
+
         version = self.master.get_version()
         self.version = '.'.join(map(str, version[1]))
         self.version_minor = version[1][1]
-        
+        self.version_release = version[1][2]
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
@@ -408,7 +408,14 @@ class Master(PluginBase, Ui_Master):
 
     def stop(self):
         self.update_timer.stop()
-    
+
+    def has_reset_device(self):
+        return self.version_minor > 2 or (self.version_minor == 2 and self.version_release > 0)
+
+    def reset_device(self):
+        if self.has_reset_device():
+            self.master.reset()
+
     @staticmethod
     def has_name(name):
         return 'Master Brick' in name

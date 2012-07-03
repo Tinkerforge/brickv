@@ -58,8 +58,8 @@ class DualRelay(PluginBase, Ui_DualRelay):
         
         v = self.dr.get_version()[1]
         if v[1] < 1 or (v[1] == 1 and v[2] < 1):
-            self.go1_button.setText("go (> 1.1.0 needed)")
-            self.go2_button.setText("go (> 1.1.0 needed)")
+            self.go1_button.setText("Go (> 1.1.0 needed)")
+            self.go2_button.setText("Go (> 1.1.0 needed)")
             self.go1_button.setEnabled(False)
             self.go2_button.setEnabled(False)
         else:
@@ -185,5 +185,3 @@ class DualRelay(PluginBase, Ui_DualRelay):
         if self.r2_monoflop:
             state, time, time_remaining = self.dr.get_monoflop(2)
             self.time2_spinbox.setValue(time_remaining)
-        
-        
