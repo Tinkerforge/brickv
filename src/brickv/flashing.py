@@ -289,7 +289,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             return
         except SerialException, e:
             self.serial_port_refresh()
-            self.popup_fail('Brick', 'Could not connect to Brick: {0}'.format(str(e)))
+            self.popup_fail('Brick', str(e)[0].upper() + str(e)[1:])
             return
         except:
             self.serial_port_refresh()

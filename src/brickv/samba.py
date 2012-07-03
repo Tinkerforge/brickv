@@ -28,7 +28,7 @@ import glob
 import struct
 import math
 from PyQt4.QtGui import QApplication
-from serial import Serial
+from serial import Serial, SerialException
 
 if sys.platform == 'linux2':
     def get_serial_ports():
@@ -85,17 +85,12 @@ class SAMBAException(Exception):
 class SAMBA:
     def __init__(self, port_name):
         try:
-            fd = os.open(port_name, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
-            os.close(fd)
-        except OSError, e:
-            if e.errno == errno.EACCES:
+            self.port = Serial(port_name, 115200, timeout=5)
+        except SerialException, e:
+            if '[Errno 13]' in str(e):
                 raise SAMBAException("No permission to open serial port")
-            elif e.strerror is None:
-                raise SAMBAException(str(e))
             else:
-                raise SAMBAException(e.strerror)
-
-        self.port = Serial(port_name, 115200, timeout=5)
+                raise e
 
         self.port.write('N#')
 

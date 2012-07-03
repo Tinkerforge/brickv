@@ -23,3 +23,5 @@
 1.1.4: Add monoflop GUI for the Dual Relay Bricklet plugin
        Improve error reporting for inaccessible serial port
        Add reset buttons for Bricks
+1.1.5: Don't change selected serial port on refresh when possible
+       Fix serial port writability check on Windows
