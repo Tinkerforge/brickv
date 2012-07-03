@@ -207,6 +207,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         QMessageBox.critical(self, title, message, QMessageBox.Ok)
 
     def serial_port_refresh(self, progress=None):
+        current_text = self.combo_serial_port.currentText()
         self.combo_serial_port.clear()
 
         if progress is None:
@@ -233,6 +234,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
             if self.combo_serial_port.count() == 0:
                 self.combo_serial_port.addItem(NO_BOOTLOADER)
+            else:
+                index = self.combo_serial_port.findText(current_text)
+                if index >= 0:
+                    self.combo_serial_port.setCurrentIndex(index)
 
             self.update_ui_state()
 
