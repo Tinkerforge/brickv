@@ -21,3 +21,5 @@
 1.1.2: Use correct write_line signature in LCD 16x2 plugin
 1.1.3: Add RS485 support to Master Brick plugin
 1.1.4: Add monoflop GUI for the Dual Relay Bricklet plugin
+       Improve error reporting for inaccessible serial port
+       Add reset buttons for Bricks
