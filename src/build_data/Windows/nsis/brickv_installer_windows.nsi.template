@@ -66,7 +66,7 @@ Section "Install Brickv ${BRICKV_VERSION} Program"
     MessageBox MB_YESNO|MB_ICONQUESTION "Brickv version $0 seems to be already installed on your system.$\n\
     Would you like to proceed with the installation of version ${BRICKV_VERSION}?$\n\
     Old version will be uninstalled first." \
-        IDYES uninstall IDNO quit
+        /SD IDYES IDYES uninstall IDNO quit
 
   quit:
     Quit
