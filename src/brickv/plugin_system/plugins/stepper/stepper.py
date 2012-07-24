@@ -289,11 +289,11 @@ class Stepper(PluginBase, Ui_Stepper):
         self.maximum_current_label.setText(cur_str)
         
     def position_update(self, pos):
-        pos_str = "%g" % pos
+        pos_str = "%d" % pos
         self.position_label.setText(pos_str)
         
     def remaining_steps_update(self, ste):
-        ste_str = "%g" % ste
+        ste_str = "%d" % ste
         self.remaining_steps_label.setText(ste_str)
         
     def mode_update(self, mod):
