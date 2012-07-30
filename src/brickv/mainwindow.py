@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt
+from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt, QTimer
 from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon, QPushButton
 from ui_mainwindow import Ui_MainWindow
 from plugin_system.plugin_manager import PluginManager
@@ -67,6 +67,11 @@ class MainTableModel(QAbstractTableModel):
             return QVariant() 
         return QVariant(self.data[index.row()][index.column()]) 
 
+    def setData(self, index, value, role):
+        if index.isValid() and role == Qt.DisplayRole:
+            self.data[index.row()][index.column()] = value
+            self.dataChanged.emit(index, index)
+
     def headerData(self, col, orientation, role):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return QVariant(self.header[col])
@@ -84,7 +89,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.setWindowTitle("Brick Viewer " + config.BRICKV_VERSION)
         
-        self.table_view_header = ['Stack ID', 'Device Name', 'UID', 'FW Version', 'Reset']
+        self.table_view_header = ['Stack ID', 'Device Name', 'UID', 'FW Version', 'Chip Temp.', 'Reset']
 
         # Remove dummy tab
         self.tab_widget.removeTab(1)
@@ -108,6 +113,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.host.setText(config.get_host())
         self.port.setValue(config.get_port())
 
+        self.mtm = None
+
+        self.chip_temp_timer = QTimer()
+        self.chip_temp_timer.timeout.connect(self.update_chip_temp)
+        self.chip_temp_timer.setInterval(2000)
+        self.chip_temp_timer.start()
+
     def closeEvent(self, event):
         self.exit_brickv()
         
@@ -123,10 +135,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             sys.exit()
 
     def start(self):
-        pass
+        self.update_chip_temp()
+        self.chip_temp_timer.start()
     
     def stop(self):
-        pass
+        self.chip_temp_timer.stop()
     
     def destroy(self):
         pass
@@ -219,10 +232,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         data = []
         for p in self.plugins[1:]:
             if p[0] is not None:
-                data.append((p[1], p[2], p[3], p[0].version, ''))
+                data.append([p[1], p[2], p[3], p[0].version, p[0].get_chip_temperature(), ''])
             
-        mtm = MainTableModel(self.table_view_header, data)
-        self.table_view.setModel(mtm)
+        self.mtm = MainTableModel(self.table_view_header, data)
+        self.table_view.setModel(self.mtm)
 
         for r in range(len(data)):
             p = self.plugins[r + 1]
@@ -232,7 +245,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     button.clicked.connect(p[0].reset_device)
                 else:
                     button.setDisabled(True)
-                self.table_view.setIndexWidget(mtm.index(r, 4), button)
+                self.table_view.setIndexWidget(self.mtm.index(r, 5), button)
 
         self.update_flashing_window()
         self.update_advanced_window()
@@ -255,3 +268,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.advanced_window is not None:
             self.advanced_window.set_devices(devices)
+
+    def update_chip_temp(self):
+        if self.mtm is None:
+            return
+
+        for r in range(len(self.plugins) - 1):
+            p = self.plugins[r + 1]
+            if p[0] is not None:
+                self.mtm.setData(self.mtm.index(r, 4), p[0].get_chip_temperature(), Qt.DisplayRole)

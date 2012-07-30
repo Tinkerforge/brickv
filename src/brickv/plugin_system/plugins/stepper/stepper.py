@@ -135,6 +135,15 @@ class Stepper(PluginBase, Ui_Stepper):
         if self.has_reset_device():
             self.stepper.reset()
 
+    def get_chip_temperature(self):
+        if self.version_minor > 1 or (self.version_minor == 1 and self.version_release > 4):
+            try:
+                return u'{0} °C'.format(self.stepper.get_chip_temperature()/10.0)
+            except:
+                return ''
+        else:
+            return '(> 1.1.4 needed)'
+
     @staticmethod
     def has_name(name):
         return 'Stepper Brick' in name 

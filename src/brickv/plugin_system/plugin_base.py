@@ -46,6 +46,9 @@ class PluginBase(QWidget, object):
     def reset_device(self):
         pass
 
+    def get_chip_temperature(self):
+        return ''
+
     @staticmethod
     def has_name(name):
         return False

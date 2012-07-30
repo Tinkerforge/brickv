@@ -416,6 +416,15 @@ class Master(PluginBase, Ui_Master):
         if self.has_reset_device():
             self.master.reset()
 
+    def get_chip_temperature(self):
+        if self.version_minor > 2 or (self.version_minor == 2 and self.version_release > 0):
+            try:
+                return u'{0} °C'.format(self.master.get_chip_temperature()/10.0)
+            except:
+                return ''
+        else:
+            return '(> 1.2.0 needed)'
+
     @staticmethod
     def has_name(name):
         return 'Master Brick' in name

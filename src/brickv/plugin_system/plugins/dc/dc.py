@@ -124,6 +124,15 @@ class DC(PluginBase, Ui_DC):
         if self.has_reset_device():
             self.dc.reset()
 
+    def get_chip_temperature(self):
+        if self.version_minor > 1 or (self.version_minor == 1 and self.version_release > 2):
+            try:
+                return u'{0} °C'.format(self.dc.get_chip_temperature()/10.0)
+            except:
+                return ''
+        else:
+            return '(> 1.1.2 needed)'
+
     @staticmethod
     def has_name(name):
         return 'DC Brick' in name 
