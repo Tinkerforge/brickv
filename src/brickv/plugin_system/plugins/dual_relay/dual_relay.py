@@ -40,7 +40,9 @@ class DualRelay(PluginBase, Ui_DualRelay):
         
         self.dr = bricklet_dual_relay.DualRelay(self.uid)
         self.ipcon.add_device(self.dr)
-        self.version = '.'.join(map(str, self.dr.get_version()[1]))
+        version = self.dr.get_version()[1]
+        self.version = '.'.join(map(str, version))
+        self.has_monoflop = version[1] > 1 or (version[1] == 1 and version[2] > 0)
         
         self.qtcb_monoflop.connect(self.cb_monoflop)
         self.dr.register_callback(self.dr.CALLBACK_MONOFLOP_DONE,
@@ -51,13 +53,50 @@ class DualRelay(PluginBase, Ui_DualRelay):
         
         self.go1_button.pressed.connect(self.go1_pressed)
         self.go2_button.pressed.connect(self.go2_pressed)
+
+        self.r1_monoflop = False
+        self.r2_monoflop = False
+
+        self.r1_timebefore = 500
+        self.r2_timebefore = 500
+
+        try:
+            dr1, dr2 = self.dr.get_state()
+            if dr1:
+                self.dr1_button.setText('On')
+            if dr2:
+                self.dr2_button.setText('On')
+
+            if self.has_monoflop:
+                state, time, time_remaining = self.dr.get_monoflop(1)
+                if time > 0:
+                    self.r1_timebefore = time
+                    self.time1_spinbox.setValue(self.r1_timebefore)
+                if time_remaining > 0:
+                    if not state:
+                        self.state1_combobox.setCurrentIndex(1)
+                    self.r1_monoflop = True
+                    self.time1_spinbox.setEnabled(False)
+                    self.state1_combobox.setEnabled(False)
+
+                state, time, time_remaining = self.dr.get_monoflop(2)
+                if time > 0:
+                    self.r2_timebefore = time
+                    self.time2_spinbox.setValue(self.r2_timebefore)
+                if time_remaining > 0:
+                    if not state:
+                        self.state2_combobox.setCurrentIndex(1)
+                    self.r2_monoflop = True
+                    self.time2_spinbox.setEnabled(False)
+                    self.state2_combobox.setEnabled(False)
+        except ip_connection.Error:
+            pass
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update)
         self.update_timer.setInterval(50)
-        
-        v = self.dr.get_version()[1]
-        if v[1] < 1 or (v[1] == 1 and v[2] < 1):
+
+        if not self.has_monoflop:
             self.go1_button.setText("Go (> 1.1.0 needed)")
             self.go2_button.setText("Go (> 1.1.0 needed)")
             self.go1_button.setEnabled(False)
@@ -65,17 +104,12 @@ class DualRelay(PluginBase, Ui_DualRelay):
         else:
             self.update_timer.start()
         
-        self.r1_monoflop = False
-        self.r2_monoflop = False
-        
-        self.r1_timebefore = 500
-        self.r2_timebefore = 500
-        
     def start(self):
-        pass
-        
+        if self.has_monoflop:
+            self.update_timer.start()
+
     def stop(self):
-        pass
+        self.update_timer.stop()
 
     @staticmethod
     def has_name(name):
@@ -84,7 +118,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
     def get_state(self):
         return (self.dr1_button.text() == 'On', self.dr2_button.text() == 'On')
     
-    def dr1_pressed(self):        
+    def dr1_pressed(self):
         if self.dr1_button.text() == 'On':
             self.dr1_button.setText('Off')
         else:
@@ -119,7 +153,6 @@ class DualRelay(PluginBase, Ui_DualRelay):
         self.time2_spinbox.setValue(self.r2_timebefore)
         self.time2_spinbox.setEnabled(True)
         self.state2_combobox.setEnabled(True)
-        
 
     def go1_pressed(self):   
         time = self.time1_spinbox.value()
@@ -138,8 +171,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.state1_combobox.setEnabled(False)
         except ip_connection.Error:
             return
-        
-        
+
     def go2_pressed(self):
         time = self.time2_spinbox.value()
         state = self.state2_combobox.currentIndex() == 0
@@ -180,8 +212,14 @@ class DualRelay(PluginBase, Ui_DualRelay):
     
     def update(self):
         if self.r1_monoflop:
-            state, time, time_remaining = self.dr.get_monoflop(1)
-            self.time1_spinbox.setValue(time_remaining)
+            try:
+                state, time, time_remaining = self.dr.get_monoflop(1)
+                self.time1_spinbox.setValue(time_remaining)
+            except ip_connection.Error:
+                pass
         if self.r2_monoflop:
-            state, time, time_remaining = self.dr.get_monoflop(2)
-            self.time2_spinbox.setValue(time_remaining)
+            try:
+                state, time, time_remaining = self.dr.get_monoflop(2)
+                self.time2_spinbox.setValue(time_remaining)
+            except ip_connection.Error:
+                pass
