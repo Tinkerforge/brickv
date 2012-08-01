@@ -25,3 +25,5 @@
        Add reset buttons for Bricks
 1.1.5: Don't change selected serial port on refresh when possible
        Fix serial port writability check on Windows
+1.1.6: Add chip temperature column to device table
+       Add monoflop GUI for the IO-4 and IO-16 Bricklet plugins
