@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-02.      #
+# This file was automatically generated on 2012-08-01.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -14,6 +14,7 @@ except ImportError:
 from .ip_connection import Device, IPConnection, Error
 
 GetPortConfiguration = namedtuple('PortConfiguration', ['direction_mask', 'value_mask'])
+GetPortMonoflop = namedtuple('PortMonoflop', ['value', 'time', 'time_remaining'])
 
 class IO16(Device):
     """
@@ -21,6 +22,7 @@ class IO16(Device):
     """
 
     CALLBACK_INTERRUPT = 9
+    CALLBACK_MONOFLOP_DONE = 12
 
     FUNCTION_SET_PORT = 1
     FUNCTION_GET_PORT = 2
@@ -30,6 +32,8 @@ class IO16(Device):
     FUNCTION_GET_DEBOUNCE_PERIOD = 6
     FUNCTION_SET_PORT_INTERRUPT = 7
     FUNCTION_GET_PORT_INTERRUPT = 8
+    FUNCTION_SET_PORT_MONOFLOP = 10
+    FUNCTION_GET_PORT_MONOFLOP = 11
 
     def __init__(self, uid):
         """
@@ -40,9 +44,10 @@ class IO16(Device):
 
         self.expected_name = 'IO-16 Bricklet'
 
-        self.binding_version = [1, 0, 0]
+        self.binding_version = [1, 0, 1]
 
         self.callback_formats[IO16.CALLBACK_INTERRUPT] = 'c B B'
+        self.callback_formats[IO16.CALLBACK_MONOFLOP_DONE] = 'c B B'
 
     def set_port(self, port, value_mask):
         """
@@ -52,9 +57,9 @@ class IO16(Device):
         For example: The value 0b00001111 will turn the pins 0-3 high and the
         pins 4-7 low for the specified port.
         
-         .. note::
-          This function does nothing for pins that are configured as input.
-          Pull up resistors can be switched on with :func:`SetPortConfiguration`.
+        .. note::
+         This function does nothing for pins that are configured as input.
+         Pull up resistors can be switched on with :func:`SetPortConfiguration`.
         """
         self.ipcon.send_request(self, IO16.FUNCTION_SET_PORT, (port, value_mask), 'c B', '')
 
@@ -66,7 +71,7 @@ class IO16(Device):
         """
         return self.ipcon.send_request(self, IO16.FUNCTION_GET_PORT, (port,), 'c', 'B')
 
-    def set_port_configuration(self, port, port_mask, direction, value):
+    def set_port_configuration(self, port, pin_mask, direction, value):
         """
         Configures the value and direction of a specified port. Possible directions
         are "i" and "o" for input and output.
@@ -84,7 +89,7 @@ class IO16(Device):
         * ("b", 3, 'o', false) will set pins 0 and 1 of port b as output low.
         * ("b", 4, 'o', true) will set pin 2 of port b as output high.
         """
-        self.ipcon.send_request(self, IO16.FUNCTION_SET_PORT_CONFIGURATION, (port, port_mask, direction, value), 'c B c ?', '')
+        self.ipcon.send_request(self, IO16.FUNCTION_SET_PORT_CONFIGURATION, (port, pin_mask, direction, value), 'c B c ?', '')
 
     def get_port_configuration(self, port):
         """
@@ -137,6 +142,44 @@ class IO16(Device):
         :func:`SetPortInterrupt`.
         """
         return self.ipcon.send_request(self, IO16.FUNCTION_GET_PORT_INTERRUPT, (port,), 'c', 'B')
+
+    def set_port_monoflop(self, port, pin_mask, value_mask, time):
+        """
+        Configures a monoflop of the pins specified by the second parameter as 4 bit
+        long bit mask. The specified pins must be configured for output. Non-output
+        pins will be ignored.
+        
+        The third parameter is a bit mask with the desired value of the specified
+        output pins (*true* means high and *false* means low).
+        
+        The forth parameter indicates the time (in ms) that the pins should hold
+        the value.
+        
+        If this function is called with the parameters ('a', (1 << 0) | (1 << 3), (1 << 0), 1500):
+        Pin 0 will get high and Pin 3 will get low on port 'a'. In 1.5s Pin 0 will get
+        low and Pin 3 will get high again.
+        
+        A monoflop can be used as a failsafe mechanism. For example: Lets assume you
+        have a RS485 bus and an IO-16 Bricklet connected to one of the slave
+        stacks. You can now call this function every second, with a time parameter
+        of two seconds and Pin 0 set to high. Pin 0 will be high all the time. If now
+        the RS485 connection is lost, then Pin 0 will get low in at most two seconds.
+        
+        .. versionadded:: 1.1.2
+        """
+        self.ipcon.send_request(self, IO16.FUNCTION_SET_PORT_MONOFLOP, (port, pin_mask, value_mask, time), 'c B B I', '')
+
+    def get_port_monoflop(self, port, pin):
+        """
+        Returns (for the given pin) the current value and the time as set by
+        func:`SetPortMonoflop` as well as the remaining time until the value flips.
+        
+        If the timer is not running currently, the remaining time will be returned
+        as 0.
+        
+        .. versionadded:: 1.1.2
+        """
+        return GetPortMonoflop(*self.ipcon.send_request(self, IO16.FUNCTION_GET_PORT_MONOFLOP, (port, pin), 'c B', 'B I I'))
 
     def register_callback(self, id, callback):
         """

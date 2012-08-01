@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-02.      #
+# This file was automatically generated on 2012-07-30.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -72,14 +72,14 @@ class Humidity(Device):
         Returns the value as read by a 12 bit analog to digital converter.
         The value is between 0 and 4095.
         
-         .. note::
-          The value returned by :func:`GetHumidity` is averaged over several samples
-          to yield less noise, while :func:`GetAnalogValue` gives back raw
-          unfiltered analog values. The returned humidity value is calibrated for
-          room temperatures, if you use the sensor in extreme cold or extreme
-          warm environments, you might want to calculate the humidity from
-          the analog value yourself. See the `HIH 5030 datasheet
-          <https://github.com/Tinkerforge/humidity-bricklet/raw/master/datasheets/hih-5030.pdf>`__.
+        .. note::
+         The value returned by :func:`GetHumidity` is averaged over several samples
+         to yield less noise, while :func:`GetAnalogValue` gives back raw
+         unfiltered analog values. The returned humidity value is calibrated for
+         room temperatures, if you use the sensor in extreme cold or extreme
+         warm environments, you might want to calculate the humidity from
+         the analog value yourself. See the `HIH 5030 datasheet
+         <https://github.com/Tinkerforge/humidity-bricklet/raw/master/datasheets/hih-5030.pdf>`__.
         
         If you want the analog value periodically, it is recommended to use the 
         callback :func:`AnalogValue` and set the period with 

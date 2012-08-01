@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-02.      #
+# This file was automatically generated on 2012-07-30.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -66,8 +66,8 @@ class DC(Device):
     def set_velocity(self, velocity):
         """
         Sets the velocity of the motor. Whereas -32767 is full speed backward,
-        0 is stop and 32767 is full speed forward. Depending on the 
-        acceleration (see :func:`SetAcceleration`), the motor is not immediately 
+        0 is stop and 32767 is full speed forward. Depending on the
+        acceleration (see :func:`SetAcceleration`), the motor is not immediately
         brought to the velocity but smoothly accelerated.
         
         The velocity describes the duty cycle of the PWM with which the motor is
@@ -139,12 +139,12 @@ class DC(Device):
 
     def full_brake(self):
         """
-        Executes an active full brake. 
-         
-         .. warning::
-          This function is for emergency purposes,
-          where an immediate brake is necessary. Depending on the current velocity and
-          the strength of the motor, a full brake can be quite violent.
+        Executes an active full brake.
+        
+        .. warning::
+         This function is for emergency purposes,
+         where an immediate brake is necessary. Depending on the current velocity and
+         the strength of the motor, a full brake can be quite violent.
         
         Call :func:`SetVelocity` with 0 if you just want to stop the motor.
         """
@@ -153,7 +153,7 @@ class DC(Device):
     def get_stack_input_voltage(self):
         """
         Returns the stack input voltage in mV. The stack input voltage is the
-        voltage that is supplied via the stack, i.e. it is given by a 
+        voltage that is supplied via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
         """
         return self.ipcon.send_request(self, DC.FUNCTION_GET_STACK_INPUT_VOLTAGE, (), '', 'H')
@@ -161,17 +161,17 @@ class DC(Device):
     def get_external_input_voltage(self):
         """
         Returns the external input voltage in mV. The external input voltage is
-        given via the black power input connector on the DC Brick. 
-         
+        given via the black power input connector on the DC Brick.
+        
         If there is an external input voltage and a stack input voltage, the motor
-        will be driven by the external input voltage. If there is only a stack 
+        will be driven by the external input voltage. If there is only a stack
         voltage present, the motor will be driven by this voltage.
         
-         .. warning:: 
-          This means, if you have a high stack voltage and a low external voltage,
-          the motor will be driven with the low external voltage. If you then remove
-          the external connection, it will immediately be driven by the high
-          stack voltage.
+        .. warning::
+         This means, if you have a high stack voltage and a low external voltage,
+         the motor will be driven with the low external voltage. If you then remove
+         the external connection, it will immediately be driven by the high
+         stack voltage.
         """
         return self.ipcon.send_request(self, DC.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 'H')
 
@@ -183,14 +183,14 @@ class DC(Device):
 
     def enable(self):
         """
-        Enables the motor. The motor can be configured (velocity, 
+        Enables the motor. The motor can be configured (velocity,
         acceleration, etc) before it is enabled.
         """
         self.ipcon.send_request(self, DC.FUNCTION_ENABLE, (), '', '')
 
     def disable(self):
         """
-        Disables the motor. The configurations are kept (velocity, 
+        Disables the motor. The configurations are kept (velocity,
         acceleration, etc) but the motor is not driven until it is enabled again.
         """
         self.ipcon.send_request(self, DC.FUNCTION_DISABLE, (), '', '')
@@ -206,7 +206,7 @@ class DC(Device):
         Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
         is triggered. The minimum possible value that works with the DC Brick is 5V.
         You can use this function to detect the discharge of a battery that is used
-        to drive the motor. If you have a fixed power supply, you likely do not need 
+        to drive the motor. If you have a fixed power supply, you likely do not need
         this functionality.
         
         The default value is 5V.
@@ -222,9 +222,10 @@ class DC(Device):
     def set_drive_mode(self, mode):
         """
         Sets the drive mode. Possible modes are:
+        
         * 0 = Drive/Brake
         * 1 = Drive/Coast
-         
+        
         These modes are different kinds of motor controls.
         
         In Drive/Brake mode, the motor is always either driving or braking. There
@@ -262,11 +263,11 @@ class DC(Device):
 
     def reset(self):
         """
-        Calling this function will reset the Brick. Calling this function 
+        Calling this function will reset the Brick. Calling this function
         on a Brick inside of a stack will reset the whole stack.
         
-        After a reset you have to create new device objects, 
-        calling functions on the existing ones will result in 
+        After a reset you have to create new device objects,
+        calling functions on the existing ones will result in
         undefined behavior!
         """
         self.ipcon.send_request(self, DC.FUNCTION_RESET, (), '', '')
@@ -274,7 +275,7 @@ class DC(Device):
     def get_chip_temperature(self):
         """
         Returns the temperature in °C/10 as measured inside the microcontroller. The
-        value returned is not the ambient temperature! 
+        value returned is not the ambient temperature!
         
         The temperature has an accuracy of +-15%. Practically it is only usefull as
         an indicator for temperature changes.

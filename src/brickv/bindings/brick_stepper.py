@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-02.      #
+# This file was automatically generated on 2012-07-30.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -14,6 +14,7 @@ except ImportError:
 from .ip_connection import Device, IPConnection, Error
 
 GetSpeedRamping = namedtuple('SpeedRamping', ['acceleration', 'deacceleration'])
+GetAllData = namedtuple('AllData', ['current_velocity', 'current_position', 'remaining_steps', 'stack_voltage', 'external_voltage', 'current_consumption'])
 
 class Stepper(Device):
     """
@@ -22,6 +23,8 @@ class Stepper(Device):
 
     CALLBACK_UNDER_VOLTAGE = 31
     CALLBACK_POSITION_REACHED = 32
+    CALLBACK_ALL_DATA = 40
+    CALLBACK_NEW_STATE = 41
 
     FUNCTION_SET_MAX_VELOCITY = 1
     FUNCTION_GET_MAX_VELOCITY = 2
@@ -55,6 +58,11 @@ class Stepper(Device):
     FUNCTION_GET_MINIMUM_VOLTAGE = 30
     FUNCTION_SET_SYNC_RECT = 33
     FUNCTION_IS_SYNC_RECT = 34
+    FUNCTION_SET_TIME_BASE = 35
+    FUNCTION_GET_TIME_BASE = 36
+    FUNCTION_GET_ALL_DATA = 37
+    FUNCTION_SET_ALL_DATA_PERIOD = 38
+    FUNCTION_GET_ALL_DATA_PERIOD = 39
     FUNCTION_RESET = 243
     FUNCTION_GET_CHIP_TEMPERATURE = 242
 
@@ -67,10 +75,12 @@ class Stepper(Device):
 
         self.expected_name = 'Stepper Brick'
 
-        self.binding_version = [1, 0, 1]
+        self.binding_version = [1, 0, 2]
 
         self.callback_formats[Stepper.CALLBACK_UNDER_VOLTAGE] = 'H'
         self.callback_formats[Stepper.CALLBACK_POSITION_REACHED] = 'i'
+        self.callback_formats[Stepper.CALLBACK_ALL_DATA] = 'H i i H H H'
+        self.callback_formats[Stepper.CALLBACK_NEW_STATE] = 'B B'
 
     def set_max_velocity(self, velocity):
         """
@@ -122,10 +132,10 @@ class Stepper(Device):
         """
         Executes an active full brake. 
          
-         .. warning::
-          This function is for emergency purposes,
-          where an immediate brake is necessary. Depending on the current velocity and
-          the strength of the motor, a full brake can be quite violent.
+        .. warning::
+         This function is for emergency purposes,
+         where an immediate brake is necessary. Depending on the current velocity and
+         the strength of the motor, a full brake can be quite violent.
         
         Call :func:`Stop` if you just want to stop the motor.
         """
@@ -255,11 +265,11 @@ class Stepper(Device):
         will be driven by the external input voltage. If there is only a stack 
         voltage present, the motor will be driven by this voltage.
         
-         .. warning:: 
-          This means, if you have a high stack voltage and a low external voltage,
-          the motor will be driven with the low external voltage. If you then remove
-          the external connection, it will immediately be driven by the high
-          stack voltage
+        .. warning::
+         This means, if you have a high stack voltage and a low external voltage,
+         the motor will be driven with the low external voltage. If you then remove
+         the external connection, it will immediately be driven by the high
+         stack voltage
         """
         return self.ipcon.send_request(self, Stepper.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 'H')
 
@@ -275,9 +285,9 @@ class Stepper(Device):
         The minimum value is 100mA, the maximum value 2291mA and the 
         default value is 800mA.
         
-         .. warning::
-          Do not set this value above the specifications of your stepper motor.
-          Otherwise it may damage your motor.
+        .. warning::
+         Do not set this value above the specifications of your stepper motor.
+         Otherwise it may damage your motor.
         """
         self.ipcon.send_request(self, Stepper.FUNCTION_SET_MOTOR_CURRENT, (current,), 'H', '')
 
@@ -330,11 +340,12 @@ class Stepper(Device):
         allow higher motor speeds.
         
         The default value is 10000.
-         .. note::
-          There is unfortunately no formula to calculate a perfect decay
-          mode for a given stepper motor. If you have problems with loud noises
-          or the maximum motor speed is too slow, you should try to tinker with
-          the decay value
+        
+        .. note::
+         There is unfortunately no formula to calculate a perfect decay
+         mode for a given stepper motor. If you have problems with loud noises
+         or the maximum motor speed is too slow, you should try to tinker with
+         the decay value
         """
         self.ipcon.send_request(self, Stepper.FUNCTION_SET_DECAY, (decay,), 'H', '')
 
@@ -389,13 +400,65 @@ class Stepper(Device):
         """
         return self.ipcon.send_request(self, Stepper.FUNCTION_IS_SYNC_RECT, (), '', '?')
 
+    def set_time_base(self, time_base):
+        """
+        Sets the time base of the velocity and the acceleration of the stepper brick
+        (in seconds).
+        
+        For example, if you want to make one step every 1.5 seconds, you can set 
+        the time base to 15 and the velocity to 10. Now the velocity is 
+        10steps/15s = 1steps/1.5s.
+        
+        The default value is 1.
+        
+        .. versionadded:: 1.1.6
+        """
+        self.ipcon.send_request(self, Stepper.FUNCTION_SET_TIME_BASE, (time_base,), 'I', '')
+
+    def get_time_base(self):
+        """
+        Returns the time base as set by :func:`SetTimeBase`.
+        
+        .. versionadded:: 1.1.6
+        """
+        return self.ipcon.send_request(self, Stepper.FUNCTION_GET_TIME_BASE, (), '', 'I')
+
+    def get_all_data(self):
+        """
+        Returns the following parameters: The current velocity,
+        the current position, the remaining steps, the stack voltage, the external
+        voltage and the current consumption of the stepper motor.
+        
+        There is also a callback for this function, see :func:`AllData`.
+        
+        .. versionadded:: 1.1.6
+        """
+        return GetAllData(*self.ipcon.send_request(self, Stepper.FUNCTION_GET_ALL_DATA, (), '', 'H i i H H H'))
+
+    def set_all_data_period(self, period):
+        """
+        Sets the period in ms with which the :func:`AllData` callback is triggered
+        periodically. A value of 0 turns the callback off.
+        
+        .. versionadded:: 1.1.6
+        """
+        self.ipcon.send_request(self, Stepper.FUNCTION_SET_ALL_DATA_PERIOD, (period,), 'I', '')
+
+    def get_all_data_period(self):
+        """
+        Returns the period as set by :func:`SetAllDataPeriod`.
+        
+        .. versionadded:: 1.1.6
+        """
+        return self.ipcon.send_request(self, Stepper.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
+
     def reset(self):
         """
-        Calling this function will reset the Brick. Calling this function 
+        Calling this function will reset the Brick. Calling this function
         on a Brick inside of a stack will reset the whole stack.
         
-        After a reset you have to create new device objects, 
-        calling functions on the existing ones will result in 
+        After a reset you have to create new device objects,
+        calling functions on the existing ones will result in
         undefined behavior!
         """
         self.ipcon.send_request(self, Stepper.FUNCTION_RESET, (), '', '')
@@ -403,7 +466,7 @@ class Stepper(Device):
     def get_chip_temperature(self):
         """
         Returns the temperature in °C/10 as measured inside the microcontroller. The
-        value returned is not the ambient temperature! 
+        value returned is not the ambient temperature!
         
         The temperature has an accuracy of +-15%. Practically it is only usefull as
         an indicator for temperature changes.

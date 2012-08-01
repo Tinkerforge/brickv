@@ -66,7 +66,7 @@ class Error(Exception):
         self.description = description
 
     def __str__(self):
-        return str(self.value) + ": " + str(self.description)
+        return str(self.value) + ': ' + str(self.description)
 
 def decorator_ipcon_check(f):
     def func(self, *args, **kwargs):
@@ -144,31 +144,43 @@ class IPConnection:
     callback_queue = Queue()
 
     def __init__(self, host, port):
+        """
+        Creates an IP connection to the Brick Daemon with the given *host*
+        and *port*. With the IP connection itself it is possible to enumerate the
+        available devices. Other then that it is only used to add Bricks and
+        Bricklets to the connection.
+        """
+
         self.pending_add_device = None
+        self.add_device_lock = Lock()
         self.devices = {}
         self.enumerate_callback = None
-        self.thread_run_flag = True
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((host, port))
 
-        self.thread_recv = Thread(target=self.recv_loop)
-        self.thread_recv.daemon = True
-        self.thread_recv.start()
+        self.thread_receive_flag = True
+        self.thread_receive = Thread(target=self.receive_loop)
+        self.thread_receive.daemon = True
+        self.thread_receive.start()
 
+        self.thread_callback_flag = True
         self.thread_callback = Thread(target=self.callback_loop)
         self.thread_callback.daemon = True
         self.thread_callback.start()
 
-    def recv_loop(self):
-        pending_data = ''
+    def receive_loop(self):
+        if sys.hexversion < 0x03000000:
+            pending_data = ''
+        else:
+            pending_data = bytes()
 
-        while self.thread_run_flag:
+        while self.thread_receive_flag:
             data = self.sock.recv(8192)
 
             if len(data) == 0:
-                if self.thread_run_flag:
-                    sys.stderr.write("Socket disconnected by Server, destroying IPConnection\n")
+                if self.thread_receive_flag:
+                    sys.stderr.write('Socket disconnected by Server, destroying IPConnection\n')
                     self.destroy()
                 return
 
@@ -191,14 +203,14 @@ class IPConnection:
                 self.handle_response(packet)
 
     def callback_loop(self):
-        while self.thread_run_flag:
-            try:
-                data = self.callback_queue.get(True, 1.0)
-            except:
-                if self.thread_run_flag:
-                    continue
-                else:
-                    return
+        while self.thread_callback_flag:
+            data = self.callback_queue.get()
+
+            if not self.thread_callback_flag:
+                return
+
+            if data is None:
+                continue
 
             stack_id = get_stack_id_from_data(data)
             function_id = get_function_id_from_data(data)
@@ -227,15 +239,28 @@ class IPConnection:
                     device.registered_callbacks[function_id](*self.data_to_return(data[4:], form))
 
     def destroy(self):
-        self.thread_run_flag = False
+        """
+        Destroys the IP connection. The socket to the Brick Daemon will be closed
+        and the threads of the IP connection terminated.
+        """
+
+        # End callback thread
+        self.thread_callback_flag = False
+        self.callback_queue.put(None) # unblock callback_loop
+
+        if current_thread() is not self.thread_callback:
+            self.thread_callback.join()
+
+        # End receive thread
+        self.thread_receive_flag = False
         try:
             self.sock.shutdown(socket.SHUT_RDWR)
         except socket.error:
             pass
         self.sock.close()
 
-        if current_thread() not in [self.thread_recv, self.thread_callback]:
-            self.join_thread()
+        if current_thread() is not self.thread_receive:
+            self.thread_receive.join()
 
     def data_to_return(self, data, form):
         ret = []
@@ -257,8 +282,16 @@ class IPConnection:
         return ret
 
     def join_thread(self):
-        self.thread_recv.join()
+        """
+        Joins the threads of the IP connection. The call will block until the
+        IP connection is :py:func:`destroyed <IPConnection.destroy>`.
+
+        This makes sense if you relies solely on callbacks for events or if
+        the IP connection was created in a threads.
+        """
+
         self.thread_callback.join()
+        self.thread_receive.join()
 
     def send_request(self, device, function_id, data, form, form_ret):
         device.write_lock.acquire()
@@ -308,7 +341,7 @@ class IPConnection:
         try:
             device.write_lock.release()
         except ValueError:
-            self.thread_run_flag = False
+            self.destroy()
 
         return self.data_to_return(response, form_ret)
 
@@ -343,6 +376,24 @@ class IPConnection:
             self.callback_queue.put(packet)
 
     def enumerate(self, callback):
+        """
+        This method registers a callback that receives four parameters:
+
+        * *uid* - str: The UID of the device.
+        * *name* - str: The name of the device (includes "Brick" or "Bricklet" and a version number).
+        * *stack_id* - int: The stack ID of the device (you can find out the position in a stack with this).
+        * *is_new* - bool: True if the device is added, false if it is removed.
+
+        There are three different possibilities for the callback to be called.
+        Firstly, the callback is called with all currently available devices in the
+        IP connection (with *is_new* true). Secondly, the callback is called if
+        a new Brick is plugged in via USB (with *is_new* true) and lastly it is
+        called if a Brick is unplugged (with *is_new* false).
+
+        It should be possible to implement "plug 'n play" functionality with this
+        (as is done in Brick Viewer).
+        """
+
         self.enumerate_callback = callback
         if sys.hexversion < 0x03000000:
             request = chr(IPConnection.BROADCAST_ADDRESS) + \
@@ -376,9 +427,14 @@ class IPConnection:
             self.pending_add_device.stack_id = value[8]
             self.devices[value[8]] = self.pending_add_device
             self.pending_add_device.response_queue.put(None)
-            self.pending_add_device = None
 
     def add_device(self, device):
+        """
+        Adds a device (Brick or Bricklet) to the IP connection. Every device
+        has to be added to an IP connection before it can be used. Examples for
+        this can be found in the API documentation for every Brick and Bricklet.
+        """
+
         if sys.hexversion < 0x03000000:
             request = chr(IPConnection.BROADCAST_ADDRESS) + \
                       chr(IPConnection.FUNCTION_GET_STACK_ID) + \
@@ -389,19 +445,24 @@ class IPConnection:
                              IPConnection.FUNCTION_GET_STACK_ID]) + \
                       struct.pack('<H', IPConnection.GET_STACK_ID_LENGTH) + \
                       struct.pack('<Q', device.uid)
-  
-        self.pending_add_device = device
-        self.sock.send(request)
-    
-        try:
-            device.response_queue.get(True, IPConnection.RESPONSE_TIMEOUT)
-        except Empty:
-            msg = 'Could not add device ' + \
-                  str(base58encode(device.uid)) + \
-                  ', timeout'
-            raise Error(Error.TIMEOUT, msg)
 
-        device.ipcon = self
+        self.add_device_lock.acquire()
+        try:
+            self.pending_add_device = device
+            self.sock.send(request)
+
+            try:
+                device.response_queue.get(True, IPConnection.RESPONSE_TIMEOUT)
+            except Empty:
+                msg = 'Could not add device ' + \
+                      str(base58encode(device.uid)) + \
+                      ', timeout'
+                raise Error(Error.TIMEOUT, msg)
+
+            device.ipcon = self
+        finally:
+            self.pending_add_device = None
+            self.add_device_lock.release()
 
     def write_bricklet_plugin(self, device, port, plugin):
         position = 0

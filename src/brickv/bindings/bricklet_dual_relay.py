@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-02.      #
+# This file was automatically generated on 2012-07-30.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -76,6 +76,8 @@ class DualRelay(Device):
         stacks. You can now call this function every second, with a time parameter
         of two seconds. The relay will be on all the time. If now the RS485 
         connection is lost, the relay will turn off in at most two seconds.
+        
+        .. versionadded:: 1.1.1
         """
         self.ipcon.send_request(self, DualRelay.FUNCTION_SET_MONOFLOP, (relay, state, time), 'B ? I', '')
 
@@ -86,6 +88,8 @@ class DualRelay(Device):
         
         If the timer is not running currently, the remaining time will be returned
         as 0.
+        
+        .. versionadded:: 1.1.1
         """
         return GetMonoflop(*self.ipcon.send_request(self, DualRelay.FUNCTION_GET_MONOFLOP, (relay,), 'B', '? I I'))
 

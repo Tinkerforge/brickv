@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-02.      #
+# This file was automatically generated on 2012-07-30.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -14,6 +14,7 @@ except ImportError:
 from .ip_connection import Device, IPConnection, Error
 
 GetConfiguration = namedtuple('Configuration', ['direction_mask', 'value_mask'])
+GetMonoflop = namedtuple('Monoflop', ['value', 'time', 'time_remaining'])
 
 class IO4(Device):
     """
@@ -21,6 +22,7 @@ class IO4(Device):
     """
 
     CALLBACK_INTERRUPT = 9
+    CALLBACK_MONOFLOP_DONE = 12
 
     FUNCTION_SET_VALUE = 1
     FUNCTION_GET_VALUE = 2
@@ -30,6 +32,8 @@ class IO4(Device):
     FUNCTION_GET_DEBOUNCE_PERIOD = 6
     FUNCTION_SET_INTERRUPT = 7
     FUNCTION_GET_INTERRUPT = 8
+    FUNCTION_SET_MONOFLOP = 10
+    FUNCTION_GET_MONOFLOP = 11
 
     def __init__(self, uid):
         """
@@ -40,9 +44,10 @@ class IO4(Device):
 
         self.expected_name = 'IO-4 Bricklet'
 
-        self.binding_version = [1, 0, 0]
+        self.binding_version = [1, 0, 1]
 
         self.callback_formats[IO4.CALLBACK_INTERRUPT] = 'B B'
+        self.callback_formats[IO4.CALLBACK_MONOFLOP_DONE] = 'B B'
 
     def set_value(self, value_mask):
         """
@@ -52,9 +57,9 @@ class IO4(Device):
         For example: The value 0b0011 will turn the pins 0-1 high and the
         pins 2-3 low.
         
-         .. note::
-          This function does nothing for pins that are configured as input.
-          Pull up resistors can be switched on with :func:`SetPortConfiguration`.
+        .. note::
+         This function does nothing for pins that are configured as input.
+         Pull up resistors can be switched on with :func:`SetConfiguration`.
         """
         self.ipcon.send_request(self, IO4.FUNCTION_SET_VALUE, (value_mask,), 'B', '')
 
@@ -77,7 +82,7 @@ class IO4(Device):
         If the direction is configured as input, the value is either pull up or
         default (set as true or false).
         
-        For example: 
+        For example:
         
         * (15, 'i', true) will set all pins of as input pull up.
         * (8, 'i', false) will set pin 3 of as input default (floating if nothing is connected).
@@ -120,11 +125,11 @@ class IO4(Device):
 
     def set_interrupt(self, interrupt_mask):
         """
-        Sets the pins on which an interrupt is activated with a bit mask. 
+        Sets the pins on which an interrupt is activated with a bit mask.
         Interrupts are triggered on changes of the voltage level of the pin,
         i.e. changes from high to low and low to high.
         
-        For example: An interrupt bit mask of 9 will enable the interrupt for 
+        For example: An interrupt bit mask of 9 will enable the interrupt for
         pins 0 and 3.
         
         The interrupt is delivered with the callback :func:`Interrupt`.
@@ -133,9 +138,47 @@ class IO4(Device):
 
     def get_interrupt(self):
         """
-        Returns the interrupt bit mask as set by :func:`SetPortInterrupt`.
+        Returns the interrupt bit mask as set by :func:`SetInterrupt`.
         """
         return self.ipcon.send_request(self, IO4.FUNCTION_GET_INTERRUPT, (), '', 'B')
+
+    def set_monoflop(self, pin_mask, value_mask, time):
+        """
+        Configures a monoflop of the pins specified by the first parameter as 4 bit
+        long bit mask. The specified pins must be configured for output. Non-output
+        pins will be ignored.
+        
+        The second parameter is a bit mask with the desired value of the specified
+        output pins (*true* means high and *false* means low).
+        
+        The third parameter indicates the time (in ms) that the pins should hold
+        the value.
+        
+        If this function is called with the parameters ((1 << 0) | (1 << 3), (1 << 0), 1500):
+        Pin 0 will get high and Pin 3 will get low. In 1.5s Pin 0 will get low and Pin
+        3 will get high again.
+        
+        A monoflop can be used as a failsafe mechanism. For example: Lets assume you
+        have a RS485 bus and an IO-4 Bricklet connected to one of the slave
+        stacks. You can now call this function every second, with a time parameter
+        of two seconds and Pin 0 set to high. Pin 0 will be high all the time. If now
+        the RS485 connection is lost, then Pin 0 will get low in at most two seconds.
+        
+        .. versionadded:: 1.1.1
+        """
+        self.ipcon.send_request(self, IO4.FUNCTION_SET_MONOFLOP, (pin_mask, value_mask, time), 'B B I', '')
+
+    def get_monoflop(self, pin):
+        """
+        Returns (for the given pin) the current value and the time as set by
+        func:`SetMonoflop` as well as the remaining time until the value flips.
+        
+        If the timer is not running currently, the remaining time will be returned
+        as 0.
+        
+        .. versionadded:: 1.1.1
+        """
+        return GetMonoflop(*self.ipcon.send_request(self, IO4.FUNCTION_GET_MONOFLOP, (pin,), 'B', 'B I I'))
 
     def register_callback(self, id, callback):
         """

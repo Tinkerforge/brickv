@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-02.      #
+# This file was automatically generated on 2012-07-30.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -165,10 +165,10 @@ class Servo(Device):
         The minimum output voltage is 5000mV and the maximum output voltage is 
         9000mV.
         
-         .. note::
-          We recommend that you set this value to the maximum voltage that is
-          specified for your servo, most servos achieve their maximum force only
-          with high voltages.
+        .. note::
+         We recommend that you set this value to the maximum voltage that is
+         specified for your servo, most servos achieve their maximum force only
+         with high voltages.
         
         The default value is 5000.
         """
@@ -297,11 +297,11 @@ class Servo(Device):
         will be driven by the external input voltage. If there is only a stack 
         voltage present, the motor will be driven by this voltage.
         
-         .. warning:: 
-          This means, if you have a high stack voltage and a low external voltage,
-          the motor will be driven with the low external voltage. If you then remove
-          the external connection, it will immediately be driven by the high
-          stack voltage
+        .. warning::
+         This means, if you have a high stack voltage and a low external voltage,
+         the motor will be driven with the low external voltage. If you then remove
+         the external connection, it will immediately be driven by the high
+         stack voltage
         """
         return self.ipcon.send_request(self, Servo.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 'H')
 
@@ -325,11 +325,11 @@ class Servo(Device):
 
     def reset(self):
         """
-        Calling this function will reset the Brick. Calling this function 
+        Calling this function will reset the Brick. Calling this function
         on a Brick inside of a stack will reset the whole stack.
         
-        After a reset you have to create new device objects, 
-        calling functions on the existing ones will result in 
+        After a reset you have to create new device objects,
+        calling functions on the existing ones will result in
         undefined behavior!
         """
         self.ipcon.send_request(self, Servo.FUNCTION_RESET, (), '', '')
@@ -337,7 +337,7 @@ class Servo(Device):
     def get_chip_temperature(self):
         """
         Returns the temperature in °C/10 as measured inside the microcontroller. The
-        value returned is not the ambient temperature! 
+        value returned is not the ambient temperature!
         
         The temperature has an accuracy of +-15%. Practically it is only usefull as
         an indicator for temperature changes.
