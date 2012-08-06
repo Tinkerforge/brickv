@@ -213,8 +213,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             plugin = self.plugin_manager.get_plugin_from_name(name, 
                                                               self.ipcon, 
                                                               uid)
-            self.tab_widget.addTab(plugin, name)
-            self.plugins.append((plugin, stack_id, name, uid))
+            if plugin is not None:
+                self.tab_widget.addTab(plugin, name)
+                self.plugins.append((plugin, stack_id, name, uid))
         else:
             for i in range(len(self.plugins)):
                 if self.plugins[i][3] == uid:
