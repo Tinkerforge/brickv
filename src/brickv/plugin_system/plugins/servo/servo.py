@@ -266,10 +266,7 @@ class Servo(PluginBase, Ui_Servo):
 
     def get_chip_temperature(self):
         if self.version_minor > 1 or (self.version_minor == 1 and self.version_release > 2):
-            try:
-                return u'{0} °C'.format(self.servo.get_chip_temperature()/10.0)
-            except:
-                return ''
+            return u'{0} °C'.format(self.servo.get_chip_temperature()/10.0)
         else:
             return '(> 1.1.2 needed)'
 

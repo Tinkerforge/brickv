@@ -232,7 +232,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         data = []
         for p in self.plugins[1:]:
             if p[0] is not None:
-                data.append([p[1], p[2], p[3], p[0].version, p[0].get_chip_temperature(), ''])
+                data.append([p[1], p[2], p[3], p[0].version, '', ''])
             
         self.mtm = MainTableModel(self.table_view_header, data)
         self.table_view.setModel(self.mtm)
@@ -276,4 +276,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for r in range(len(self.plugins) - 1):
             p = self.plugins[r + 1]
             if p[0] is not None:
-                self.mtm.setData(self.mtm.index(r, 4), p[0].get_chip_temperature(), Qt.DisplayRole)
+                try:
+                    self.mtm.setData(self.mtm.index(r, 4), p[0].get_chip_temperature(), Qt.DisplayRole)
+                except Error:
+                    # abort update here to avoid requesting chtip temp from a
+                    # whole disconnected stack
+                    return
