@@ -25,12 +25,12 @@ from config import *
 import ConfigParser
 import os
 
-CONFIG_HOME = os.getenv('XDG_CONFIG_HOME')
+XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME')
 
-if CONFIG_HOME is None or len(CONFIG_HOME) < 1:
+if XDG_CONFIG_HOME is None or len(XDG_CONFIG_HOME) < 1:
     CONFIG_FILENAME = os.path.expanduser('~/.config/Tinkerforge/brickv.conf')
 else:
-    CONFIG_FILENAME = os.path.join(CONFIG_HOME, 'Tinkerforge/brickv.conf')
+    CONFIG_FILENAME = os.path.join(XDG_CONFIG_HOME, 'Tinkerforge/brickv.conf')
 
 CONFIG_DIRNAME = os.path.dirname(CONFIG_FILENAME)
 
