@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-30.      #
+# This file was automatically generated on 2012-08-07.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -161,10 +161,10 @@ class AmbientLight(Device):
          :widths: 10, 100
         
          "'x'",    "Callback is turned off."
-         "'o'",    "Callback is triggered when the illuminance is *outside* the min and max values"
-         "'i'",    "Callback is triggered when the illuminance is *inside* the min and max values"
-         "'<'",    "Callback is triggered when the illuminance is smaller than the min value (max is ignored)"
-         "'>'",    "Callback is triggered when the illuminance is greater than the min value (max is ignored)"
+         "'o'",    "Callback is triggered when the analog value is *outside* the min and max values"
+         "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
+         "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
+         "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
         
         The default value is ('x', 0, 0).
         """

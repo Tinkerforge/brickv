@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-30.      #
+# This file was automatically generated on 2012-08-02.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -84,7 +84,7 @@ class DualRelay(Device):
     def get_monoflop(self, relay):
         """
         Returns (for the given relay) the current state and the time as set by 
-        func:`SetMonoflop` as well as the remaining time until the state flips. 
+        :func:`SetMonoflop` as well as the remaining time until the state flips.
         
         If the timer is not running currently, the remaining time will be returned
         as 0.

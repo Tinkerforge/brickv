@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-30.      #
+# This file was automatically generated on 2012-08-02.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -114,7 +114,7 @@ class Stepper(Device):
         velocity of 8000 *steps/s* in 10 seconds, you should set an acceleration
         of 800 *steps/s²*.
         
-        An acceleration/deacceleration of 0 means instantaneous 
+        An acceleration/deacceleration of 0 means instantaneous
         acceleration/deacceleration (not recommended)
         
         The default value is 1000 for both
@@ -351,7 +351,7 @@ class Stepper(Device):
 
     def get_decay(self):
         """
-        Returns the decay mode as set by :func:`SetDecay`
+        Returns the decay mode as set by :func:`SetDecay`.
         """
         return self.ipcon.send_request(self, Stepper.FUNCTION_GET_DECAY, (), '', 'H')
 

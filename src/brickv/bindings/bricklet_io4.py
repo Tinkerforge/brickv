@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-30.      #
+# This file was automatically generated on 2012-08-01.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -171,7 +171,7 @@ class IO4(Device):
     def get_monoflop(self, pin):
         """
         Returns (for the given pin) the current value and the time as set by
-        func:`SetMonoflop` as well as the remaining time until the value flips.
+        :func:`SetMonoflop` as well as the remaining time until the value flips.
         
         If the timer is not running currently, the remaining time will be returned
         as 0.

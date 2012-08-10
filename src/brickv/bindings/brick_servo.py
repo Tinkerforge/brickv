@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-30.      #
+# This file was automatically generated on 2012-08-02.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -293,13 +293,13 @@ class Servo(Device):
         Returns the external input voltage in mV. The external input voltage is
         given via the black power input connector on the Servo Brick. 
          
-        If there is an external input voltage and a stack input voltage, the motor
+        If there is an external input voltage and a stack input voltage, the motors
         will be driven by the external input voltage. If there is only a stack 
-        voltage present, the motor will be driven by this voltage.
+        voltage present, the motors will be driven by this voltage.
         
         .. warning::
          This means, if you have a high stack voltage and a low external voltage,
-         the motor will be driven with the low external voltage. If you then remove
+         the motors will be driven with the low external voltage. If you then remove
          the external connection, it will immediately be driven by the high
          stack voltage
         """

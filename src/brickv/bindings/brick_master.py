@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-30.      #
+# This file was automatically generated on 2012-08-02.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -159,10 +159,11 @@ class Master(Device):
 
     def set_chibi_slave_address(self, num, address):
         """
-        Sets up to 255 slave addresses. The address numeration has to be used
+        Sets up to 254 slave addresses. Valid addresses are in range 1-255.
+        The address numeration (via num parameter) has to be used
         ascending from 0. For example: If you use the Chibi Extension in Master mode
         (i.e. the stack has an USB connection) and you want to talk to three other
-        Chibi stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
+        Chibi stacks with the slave addresses 17, 23, and 42, you should call with "(0, 17),
         (1, 23) and (2, 42)".
         
         It is possible to set the addresses with the Brick Viewer and it will be 
@@ -245,7 +246,7 @@ class Master(Device):
          "OQPSK 780Mhz (China)",  "0, 1, 2, 3"
          "BPSK40 915Mhz",         "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
         
-        It is possible to set the frequency with the Brick Viewer and it will be 
+        It is possible to set the channel with the Brick Viewer and it will be 
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         
@@ -294,7 +295,8 @@ class Master(Device):
 
     def set_rs485_slave_address(self, num, address):
         """
-        Sets up to 255 slave addresses. The address numeration has to be used
+        Sets up to 255 slave addresses. Valid addresses are in range 1-255.
+        The address numeration (via num parameter) has to be used
         ascending from 0. For example: If you use the RS485 Extension in Master mode
         (i.e. the stack has an USB connection) and you want to talk to three other
         RS485 stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
