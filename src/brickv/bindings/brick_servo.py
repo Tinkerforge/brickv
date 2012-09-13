@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-08-02.      #
+# This file was automatically generated on 2012-08-24.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -84,7 +84,7 @@ class Servo(Device):
 
     def is_enabled(self, servo_num):
         """
-        Returns true if the specified servo is enabled, false otherwise.
+        Returns *true* if the specified servo is enabled, *false* otherwise.
         """
         return self.ipcon.send_request(self, Servo.FUNCTION_IS_ENABLED, (servo_num,), 'B', '?')
 
@@ -222,11 +222,20 @@ class Servo(Device):
         
         Possible usage:
         
-        * The datasheet of your servo specifies a range of 200° with the middle position at 110°. In this case you can set the minimum to -9000 and the maximum to 11000.
-        * You measure a range of 220° on your servo and you don't have or need a middle position. In this case you can set the minimum to 0 and the maximum to 22000.
-        * You have a linear servo with a drive length of 20cm, In this case you could set the minimum to 0 and the maximum to 20000. Now you can set the Position with :func:`SetPosition` with a resolution of cm/100. Also the velocity will have a resolution of cm/100s and the acceleration will have a resolution of cm/100s².
-        * You don't care about units and just want the highest possible resolution. In this case you should set the minimum to -32767 and the maximum to 32767.
-        * You have a brushless motor with a maximum speed of 10000 rpm and want to control it with a RC brushless motor controller. In this case you can set the minimum to 0 and the maximum to 10000. :func:`SetPosition` now controls the rpm.
+        * The datasheet of your servo specifies a range of 200° with the middle position
+          at 110°. In this case you can set the minimum to -9000 and the maximum to 11000.
+        * You measure a range of 220° on your servo and you don't have or need a middle
+          position. In this case you can set the minimum to 0 and the maximum to 22000.
+        * You have a linear servo with a drive length of 20cm, In this case you could
+          set the minimum to 0 and the maximum to 20000. Now you can set the Position
+          with :func:`SetPosition` with a resolution of cm/100. Also the velocity will
+          have a resolution of cm/100s and the acceleration will have a resolution of
+          cm/100s².
+        * You don't care about units and just want the highest possible resolution. In
+          this case you should set the minimum to -32767 and the maximum to 32767.
+        * You have a brushless motor with a maximum speed of 10000 rpm and want to
+          control it with a RC brushless motor controller. In this case you can set the
+          minimum to 0 and the maximum to 10000. :func:`SetPosition` now controls the rpm.
         
         Both values have a possible range from -32767 to 32767 
         (signed 16 bit integer). The minimum must be smaller than the maximum.
@@ -339,7 +348,7 @@ class Servo(Device):
         Returns the temperature in °C/10 as measured inside the microcontroller. The
         value returned is not the ambient temperature!
         
-        The temperature has an accuracy of +-15%. Practically it is only usefull as
+        The temperature has an accuracy of +-15%. Practically it is only useful as
         an indicator for temperature changes.
         """
         return self.ipcon.send_request(self, Servo.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')

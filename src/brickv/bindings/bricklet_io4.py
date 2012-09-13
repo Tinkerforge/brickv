@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-08-01.      #
+# This file was automatically generated on 2012-08-24.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -52,14 +52,14 @@ class IO4(Device):
     def set_value(self, value_mask):
         """
         Sets the output value (high or low) with a bit mask. The bit mask
-        is 4 bit long, "true" refers to high and "false" refers to low.
+        is 4 bit long, *true* refers to high and *false* refers to low.
         
         For example: The value 0b0011 will turn the pins 0-1 high and the
         pins 2-3 low.
         
         .. note::
          This function does nothing for pins that are configured as input.
-         Pull up resistors can be switched on with :func:`SetConfiguration`.
+         Pull-up resistors can be switched on with :func:`SetConfiguration`.
         """
         self.ipcon.send_request(self, IO4.FUNCTION_SET_VALUE, (value_mask,), 'B', '')
 
@@ -77,14 +77,14 @@ class IO4(Device):
         are "i" and "o" for input and output.
         
         If the direction is configured as output, the value is either high or low
-        (set as true or false).
+        (set as *true* or *false*).
         
-        If the direction is configured as input, the value is either pull up or
-        default (set as true or false).
+        If the direction is configured as input, the value is either pull-up or
+        default (set as *true* or *false*).
         
         For example:
         
-        * (15, 'i', true) will set all pins of as input pull up.
+        * (15, 'i', true) will set all pins of as input pull-up.
         * (8, 'i', false) will set pin 3 of as input default (floating if nothing is connected).
         * (3, 'o', false) will set pins 0 and 1 as output low.
         * (4, 'o', true) will set pin 2 of as output high.
@@ -98,7 +98,7 @@ class IO4(Device):
         For example: A return value of 0b0011 and 0b0101 for
         direction and value means that:
         
-        * pin 0 is configured as input pull up,
+        * pin 0 is configured as input pull-up,
         * pin 1 is configured as input default,
         * pin 2 is configured as output high
         * and pin 3 is are configured as output low.
@@ -155,10 +155,10 @@ class IO4(Device):
         the value.
         
         If this function is called with the parameters ((1 << 0) | (1 << 3), (1 << 0), 1500):
-        Pin 0 will get high and Pin 3 will get low. In 1.5s Pin 0 will get low and Pin
+        Pin 0 will get high and pin 3 will get low. In 1.5s pin 0 will get low and pin
         3 will get high again.
         
-        A monoflop can be used as a failsafe mechanism. For example: Lets assume you
+        A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
         have a RS485 bus and an IO-4 Bricklet connected to one of the slave
         stacks. You can now call this function every second, with a time parameter
         of two seconds and Pin 0 set to high. Pin 0 will be high all the time. If now

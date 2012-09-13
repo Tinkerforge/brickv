@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-30.      #
+# This file was automatically generated on 2012-08-24.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -89,7 +89,7 @@ class DistanceIR(Device):
     def set_sampling_point(self, position, distance):
         """
         Sets a sampling point value to a specific position of the lookup table.
-        The lookup table is comprised of 128 equidistant analog values with
+        The lookup table comprises 128 equidistant analog values with
         corresponding distances.
         
         If you measure a distance of 50cm at the analog value 2048, you
@@ -99,12 +99,12 @@ class DistanceIR(Device):
         analog values. Thus the analog value 2048 has the corresponding sampling
         point 64 = 2048/32.
         
-        Sampling points are saved on the EEPROM of the Distance-IR Bricklet and
+        Sampling points are saved on the EEPROM of the Distance IR Bricklet and
         loaded again on startup.
         
         .. note::
-         An easy way to calibrate the sampling points of the Distace-IR Bricklet is
-         implemented in brickv. If you want to calibrate your Bricklet it is
+         An easy way to calibrate the sampling points of the Distance IR Bricklet is
+         implemented in the Brick Viewer. If you want to calibrate your Bricklet it is
          highly recommended to use this implementation.
         """
         self.ipcon.send_request(self, DistanceIR.FUNCTION_SET_SAMPLING_POINT, (position, distance), 'B H', '')
@@ -162,7 +162,7 @@ class DistanceIR(Device):
          :header: "Option", "Description"
          :widths: 10, 100
         
-         "'x'",    "Callback is turned off."
+         "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the distance is *outside* the min and max values"
          "'i'",    "Callback is triggered when the distance is *inside* the min and max values"
          "'<'",    "Callback is triggered when the distance is smaller than the min value (max is ignored)"
@@ -188,11 +188,11 @@ class DistanceIR(Device):
          :header: "Option", "Description"
          :widths: 10, 100
         
-         "'x'",    "Callback is turned off."
-         "'o'",    "Callback is triggered when the distance is *outside* the min and max values"
-         "'i'",    "Callback is triggered when the distance is *inside* the min and max values"
-         "'<'",    "Callback is triggered when the distance is smaller than the min value (max is ignored)"
-         "'>'",    "Callback is triggered when the distance is greater than the min value (max is ignored)"
+         "'x'",    "Callback is turned off"
+         "'o'",    "Callback is triggered when the analog value is *outside* the min and max values"
+         "'i'",    "Callback is triggered when the analog value is *inside* the min and max values"
+         "'<'",    "Callback is triggered when the analog value is smaller than the min value (max is ignored)"
+         "'>'",    "Callback is triggered when the analog value is greater than the min value (max is ignored)"
         
         The default value is ('x', 0, 0).
         """

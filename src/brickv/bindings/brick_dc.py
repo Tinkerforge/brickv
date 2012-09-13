@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-30.      #
+# This file was automatically generated on 2012-08-24.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -197,7 +197,7 @@ class DC(Device):
 
     def is_enabled(self):
         """
-        Returns true if the motor is enabled, false otherwise.
+        Returns *true* if the motor is enabled, *false* otherwise.
         """
         return self.ipcon.send_request(self, DC.FUNCTION_IS_ENABLED, (), '', '?')
 
@@ -277,7 +277,7 @@ class DC(Device):
         Returns the temperature in °C/10 as measured inside the microcontroller. The
         value returned is not the ambient temperature!
         
-        The temperature has an accuracy of +-15%. Practically it is only usefull as
+        The temperature has an accuracy of +-15%. Practically it is only useful as
         an indicator for temperature changes.
         """
         return self.ipcon.send_request(self, DC.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')

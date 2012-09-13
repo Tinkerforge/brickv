@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-08-01.      #
+# This file was automatically generated on 2012-08-24.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -52,14 +52,14 @@ class IO16(Device):
     def set_port(self, port, value_mask):
         """
         Sets the output value (high or low) for a port ("a" or "b") with a bit mask. 
-        The bit mask is 8 bit long, "true" refers to high and "false" refers to low.
+        The bit mask is 8 bit long, *true* refers to high and *false* refers to low.
         
         For example: The value 0b00001111 will turn the pins 0-3 high and the
         pins 4-7 low for the specified port.
         
         .. note::
          This function does nothing for pins that are configured as input.
-         Pull up resistors can be switched on with :func:`SetPortConfiguration`.
+         Pull-up resistors can be switched on with :func:`SetPortConfiguration`.
         """
         self.ipcon.send_request(self, IO16.FUNCTION_SET_PORT, (port, value_mask), 'c B', '')
 
@@ -77,14 +77,14 @@ class IO16(Device):
         are "i" and "o" for input and output.
         
         If the direction is configured as output, the value is either high or low
-        (set as true or false).
+        (set as *true* or *false*).
         
-        If the direction is configured as input, the value is either pull up or
-        default (set as true or false).
+        If the direction is configured as input, the value is either pull-up or
+        default (set as *true* or *false*).
         
         For example:
         
-        * ("a", 0xFF, 'i', true) will set all pins of port a as input pull up.
+        * ("a", 0xFF, 'i', true) will set all pins of port a as input pull-up.
         * ("a", 128, 'i', false) will set pin 7 of port a as input default (floating if nothing is connected).
         * ("b", 3, 'o', false) will set pins 0 and 1 of port b as output low.
         * ("b", 4, 'o', true) will set pin 2 of port b as output high.
@@ -93,12 +93,12 @@ class IO16(Device):
 
     def get_port_configuration(self, port):
         """
-        Returns a value bit mask and a direction bit mask for the specified port.
+        Returns a direction bit mask and a value bit mask for the specified port.
         
         For example: A return value of 0b00001111 and 0b00110011 for
         direction and value means that:
         
-        * pins 0 and 1 are configured as input pull up,
+        * pins 0 and 1 are configured as input pull-up,
         * pins 2 and 3 are configured as input default,
         * pins 4 and 5 are configured as output high
         * and pins 6 and 7 are configured as output low.
@@ -145,7 +145,7 @@ class IO16(Device):
 
     def set_port_monoflop(self, port, pin_mask, value_mask, time):
         """
-        Configures a monoflop of the pins specified by the second parameter as 4 bit
+        Configures a monoflop of the pins specified by the second parameter as 8 bit
         long bit mask. The specified pins must be configured for output. Non-output
         pins will be ignored.
         
@@ -156,10 +156,10 @@ class IO16(Device):
         the value.
         
         If this function is called with the parameters ('a', (1 << 0) | (1 << 3), (1 << 0), 1500):
-        Pin 0 will get high and Pin 3 will get low on port 'a'. In 1.5s Pin 0 will get
-        low and Pin 3 will get high again.
+        Pin 0 will get high and pin 3 will get low on port 'a'. In 1.5s pin 0 will get
+        low and pin 3 will get high again.
         
-        A monoflop can be used as a failsafe mechanism. For example: Lets assume you
+        A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
         have a RS485 bus and an IO-16 Bricklet connected to one of the slave
         stacks. You can now call this function every second, with a time parameter
         of two seconds and Pin 0 set to high. Pin 0 will be high all the time. If now

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-08-10.      #
+# This file was automatically generated on 2012-08-24.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -72,7 +72,7 @@ class Barometer(Device):
     def get_altitude(self):
         """
         Returns the relative altitude of the air pressure sensor. The value is given in
-        cm and represents the different between the current altitude and the reference
+        cm and represents the difference between the current altitude and the reference
         altitude that can be set with :func:`CalibrateAltitude`.
         
         If you want to get the altitude periodically, it is recommended to use the
@@ -85,7 +85,11 @@ class Barometer(Device):
         """
         Returns the temperature of the air pressure sensor. The value
         has a range of -4000 to 8500 and is given in °C/100, i.e. a value
-        of 2007 means that an illuminance of 20.07 °C is measured.
+        of 2007 means that a temperature of 20.07 °C is measured.
+        
+        This temperature is used internally for temperature compensation of the air
+        pressure measurement. It is not as accurate as the temperature measured by the
+        :ref:`temperature_bricklet` or the :ref:`temperature_ir_bricklet`.
         """
         return self.ipcon.send_request(self, Barometer.FUNCTION_GET_TEMPERATURE, (), '', 'h')
 
@@ -94,7 +98,7 @@ class Barometer(Device):
         Sets the period in ms with which the :func:`AirPressure` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`AirPressure` is only triggered if the illuminance has changed since the
+        :func:`AirPressure` is only triggered if the air pressure has changed since the
         last triggering.
         
         The default value is 0.
@@ -135,7 +139,7 @@ class Barometer(Device):
          :header: "Option", "Description"
          :widths: 10, 100
         
-         "'x'",    "Callback is turned off."
+         "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the air pressure is *outside* the min and max values"
          "'i'",    "Callback is triggered when the air pressure is *inside* the min and max values"
          "'<'",    "Callback is triggered when the air pressure is smaller than the min value (max is ignored)"
@@ -161,7 +165,7 @@ class Barometer(Device):
          :header: "Option", "Description"
          :widths: 10, 100
         
-         "'x'",    "Callback is turned off."
+         "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the altitude is *outside* the min and max values"
          "'i'",    "Callback is triggered when the altitude is *inside* the min and max values"
          "'<'",    "Callback is triggered when the altitude is smaller than the min value (max is ignored)"
@@ -181,11 +185,11 @@ class Barometer(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-         :func:`AirPressureReached`, :func:`AltitudeReached`, :func:`TemperatureReached`
+         :func:`AirPressureReached`, :func:`AltitudeReached`
         
         are triggered, if the thresholds
         
-         :func:`SetAirPressureCallbackThreshold`, :func:`SetAltitudeCallbackThreshold`, :func:`SetTemperatureCallbackThreshold`
+         :func:`SetAirPressureCallbackThreshold`, :func:`SetAltitudeCallbackThreshold`
         
         keep being reached.
         
@@ -204,7 +208,7 @@ class Barometer(Device):
         Calibrates the altitude by setting the reference altitude to the current
         altitude.
         """
-        return self.ipcon.send_request(self, Barometer.FUNCTION_CALIBRATE_ALTITUDE, (), '', 'I')
+        self.ipcon.send_request(self, Barometer.FUNCTION_CALIBRATE_ALTITUDE, (), '', '')
 
     def register_callback(self, id, callback):
         """

@@ -70,7 +70,13 @@ class LinearPoti(PluginBase):
         
     def start(self):
         try:
+            print "before"
             self.cb_position(self.lp.get_position())
+            print "after"
+        except ip_connection.Error:
+            print "except"
+        
+        try:
             self.lp.set_position_callback_period(20)
         except ip_connection.Error:
             return

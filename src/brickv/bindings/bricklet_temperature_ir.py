@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-30.      #
+# This file was automatically generated on 2012-08-24.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -163,11 +163,11 @@ class TemperatureIR(Device):
          :header: "Option", "Description"
          :widths: 10, 100
         
-         "'x'",    "Callback is turned off."
-         "'o'",    "Callback is triggered when the temperature is *outside* the min and max values"
-         "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
-         "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
-         "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
+         "'x'",    "Callback is turned off"
+         "'o'",    "Callback is triggered when the ambient temperature is *outside* the min and max values"
+         "'i'",    "Callback is triggered when the ambient temperature is *inside* the min and max values"
+         "'<'",    "Callback is triggered when the ambient temperature is smaller than the min value (max is ignored)"
+         "'>'",    "Callback is triggered when the ambient temperature is greater than the min value (max is ignored)"
         
         The default value is ('x', 0, 0).
         """
@@ -189,11 +189,11 @@ class TemperatureIR(Device):
          :header: "Option", "Description"
          :widths: 10, 100
         
-         "'x'",    "Callback is turned off."
-         "'o'",    "Callback is triggered when the temperature is *outside* the min and max values"
-         "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
-         "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
-         "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
+         "'x'",    "Callback is turned off"
+         "'o'",    "Callback is triggered when the object temperature is *outside* the min and max values"
+         "'i'",    "Callback is triggered when the object temperature is *inside* the min and max values"
+         "'<'",    "Callback is triggered when the object temperature is smaller than the min value (max is ignored)"
+         "'>'",    "Callback is triggered when the object temperature is greater than the min value (max is ignored)"
         
         The default value is ('x', 0, 0).
         """
@@ -201,7 +201,7 @@ class TemperatureIR(Device):
 
     def get_object_temperature_callback_threshold(self):
         """
-        Returns the threshold as set by :func:`SetAmbientTemperatureCallbackThreshold`.
+        Returns the threshold as set by :func:`SetObjectTemperatureCallbackThreshold`.
         """
         return GetObjectTemperatureCallbackThreshold(*self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c h h'))
 

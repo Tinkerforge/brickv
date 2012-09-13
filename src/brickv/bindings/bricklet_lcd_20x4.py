@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-02.      #
+# This file was automatically generated on 2012-08-24.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -82,7 +82,7 @@ class LCD20x4(Device):
 
     def is_backlight_on(self):
         """
-        Returns true if the backlight is on and false otherwise.
+        Returns *true* if the backlight is on and *false* otherwise.
         """
         return self.ipcon.send_request(self, LCD20x4.FUNCTION_IS_BACKLIGHT_ON, (), '', '?')
 
@@ -105,7 +105,7 @@ class LCD20x4(Device):
 
     def is_button_pressed(self, button):
         """
-        Returns true if the button (0 to 2) is pressed. If you want to react
+        Returns *true* if the button (0 to 2) is pressed. If you want to react
         on button presses and releases it is recommended to use the
         :func:`ButtonPressed` and :func:`ButtonReleased` callbacks.
         """

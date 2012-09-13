@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-08-02.      #
+# This file was automatically generated on 2012-08-24.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -313,7 +313,7 @@ class Stepper(Device):
 
     def is_enabled(self):
         """
-        Returns true if the motor is enabled, false otherwise.
+        Returns *true* if the motor is enabled, *false* otherwise.
         """
         return self.ipcon.send_request(self, Stepper.FUNCTION_IS_ENABLED, (), '', '?')
 
@@ -390,13 +390,13 @@ class Stepper(Device):
          suggest that you disable synchronous rectification. Otherwise the
          Brick may not be able to cope with the load and overheat.
         
-        The default value is false.
+        The default value is *false*.
         """
         self.ipcon.send_request(self, Stepper.FUNCTION_SET_SYNC_RECT, (sync_rect,), '?', '')
 
     def is_sync_rect(self):
         """
-        Returns true if synchronous rectification is enabled, false otherwise.
+        Returns *true* if synchronous rectification is enabled, *false* otherwise.
         """
         return self.ipcon.send_request(self, Stepper.FUNCTION_IS_SYNC_RECT, (), '', '?')
 
@@ -468,7 +468,7 @@ class Stepper(Device):
         Returns the temperature in °C/10 as measured inside the microcontroller. The
         value returned is not the ambient temperature!
         
-        The temperature has an accuracy of +-15%. Practically it is only usefull as
+        The temperature has an accuracy of +-15%. Practically it is only useful as
         an indicator for temperature changes.
         """
         return self.ipcon.send_request(self, Stepper.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')

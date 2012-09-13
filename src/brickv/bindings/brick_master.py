@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-08-02.      #
+# This file was automatically generated on 2012-09-12.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -15,6 +15,10 @@ from .ip_connection import Device, IPConnection, Error
 
 GetChibiErrorLog = namedtuple('ChibiErrorLog', ['underrun', 'crc_error', 'no_ack', 'overflow'])
 GetRS485Configuration = namedtuple('RS485Configuration', ['speed', 'parity', 'stopbits'])
+GetWifiConfiguration = namedtuple('WifiConfiguration', ['ssid', 'connection', 'ip', 'subnet_mask', 'gateway', 'port'])
+GetWifiEncryption = namedtuple('WifiEncryption', ['encryption', 'key', 'key_index', 'eap_options', 'certificate_length'])
+GetWifiStatus = namedtuple('WifiStatus', ['mac_address', 'bssid', 'channel', 'rssi', 'ip', 'subnet_mask', 'gateway', 'rx_count', 'tx_count', 'state'])
+GetWifiCertificate = namedtuple('WifiCertificate', ['data', 'data_length'])
 
 class Master(Device):
     """
@@ -47,6 +51,15 @@ class Master(Device):
     FUNCTION_GET_RS485_ERROR_LOG = 23
     FUNCTION_SET_RS485_CONFIGURATION = 24
     FUNCTION_GET_RS485_CONFIGURATION = 25
+    FUNCTION_IS_WIFI_PRESENT = 26
+    FUNCTION_SET_WIFI_CONFIGURATION = 27
+    FUNCTION_GET_WIFI_CONFIGURATION = 28
+    FUNCTION_SET_WIFI_ENCRYPTION = 29
+    FUNCTION_GET_WIFI_ENCRYPTION = 30
+    FUNCTION_GET_WIFI_STATUS = 31
+    FUNCTION_REFRESH_WIFI_STATUS = 32
+    FUNCTION_SET_WIFI_CERTIFICATE = 33
+    FUNCTION_GET_WIFI_CERTIFICATE = 34
     FUNCTION_RESET = 243
     FUNCTION_GET_CHIP_TEMPERATURE = 242
 
@@ -59,7 +72,7 @@ class Master(Device):
 
         self.expected_name = 'Master Brick'
 
-        self.binding_version = [1, 2, 1]
+        self.binding_version = [1, 3, 0]
 
 
     def get_stack_voltage(self):
@@ -110,7 +123,7 @@ class Master(Device):
 
     def is_chibi_present(self):
         """
-        Returns true if a Chibi Extension is available to be used by the Master.
+        Returns *true* if a Chibi Extension is available to be used by the Master.
         
         .. versionadded:: 1.1.0
         """
@@ -264,7 +277,7 @@ class Master(Device):
 
     def is_rs485_present(self):
         """
-        Returns true if a RS485 Extension is available to be used by the Master.
+        Returns *true* if a RS485 Extension is available to be used by the Master.
         
         .. versionadded:: 1.2.0
         """
@@ -332,11 +345,11 @@ class Master(Device):
 
     def set_rs485_configuration(self, speed, parity, stopbits):
         """
-        Sets the configuration of the RS485 extension. Speed is given in baud. The
+        Sets the configuration of the RS485 Extension. Speed is given in baud. The
         Master Brick will try to match the given baud rate as exactly as possible.
         The maximum recommended baud rate is 2000000 (2Mbit).
         Possible values for parity are 'n' (none), 'e' (even) and 'o' (odd).
-        Possible values for stopbits are 1 and 2.
+        Possible values for stop bits are 1 and 2.
         
         If your RS485 is unstable (lost messages etc), the first thing you should
         try is to decrease the speed. On very large bus (e.g. 1km), you probably
@@ -357,6 +370,86 @@ class Master(Device):
         """
         return GetRS485Configuration(*self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_CONFIGURATION, (), '', 'I c B'))
 
+    def is_wifi_present(self):
+        """
+        Returns *true* if a WIFI Extension is available to be used by the Master.
+        
+        .. versionadded:: 1.2.0
+        """
+        return self.ipcon.send_request(self, Master.FUNCTION_IS_WIFI_PRESENT, (), '', '?')
+
+    def set_wifi_configuration(self, ssid, connection, ip, subnet_mask, gateway, port):
+        """
+        Sets the configuration of the WIFI Extension. TODO: describe configuration
+        
+        The values are stored in the EEPROM and only applied on startup. That means
+        you have to restart the Master Brick after configuration.
+        
+        
+        .. versionadded:: 1.3.0
+        """
+        self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_CONFIGURATION, (ssid, connection, ip, subnet_mask, gateway, port), '32s B 4B 4B 4B H', '')
+
+    def get_wifi_configuration(self):
+        """
+        Returns the configuration as set by :func:`SetWifiConfiguration`.
+        
+        .. versionadded:: 1.3.0
+        """
+        return GetWifiConfiguration(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_CONFIGURATION, (), '', '32s B 4B 4B 4B H'))
+
+    def set_wifi_encryption(self, encryption, key, key_index, eap_options, certificate_length):
+        """
+        Sets the encryption of the WIFI Extension. TODO: describe configuration
+        
+        The values are stored in the EEPROM and only applied on startup. That means
+        you have to restart the Master Brick after configuration.
+        
+        
+        .. versionadded:: 1.3.0
+        """
+        self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_ENCRYPTION, (encryption, key, key_index, eap_options, certificate_length), 'B 50s B B H', '')
+
+    def get_wifi_encryption(self):
+        """
+        Returns the encryption as set by :func:`SetWifiEncryption`.
+        
+        .. versionadded:: 1.3.0
+        """
+        return GetWifiEncryption(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_ENCRYPTION, (), '', 'B 50s B B H'))
+
+    def get_wifi_status(self):
+        """
+        TODO
+        
+        .. versionadded:: 1.3.0
+        """
+        return GetWifiStatus(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_STATUS, (), '', '6B 6B B h 4B 4B 4B I I B'))
+
+    def refresh_wifi_status(self):
+        """
+        TODO
+        
+        .. versionadded:: 1.3.0
+        """
+        self.ipcon.send_request(self, Master.FUNCTION_REFRESH_WIFI_STATUS, (), '', '')
+
+    def set_wifi_certificate(self, index, data, data_length):
+        """
+        TODO
+        
+        .. versionadded:: 1.3.0
+        """
+        self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_CERTIFICATE, (index, data, data_length), 'H 32s B', '')
+
+    def get_wifi_certificate(self, index):
+        """
+        TODO
+        
+        .. versionadded:: 1.3.0
+        """
+        return GetWifiCertificate(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_CERTIFICATE, (index,), 'H', '32s B'))
+
     def reset(self):
         """
         Calling this function will reset the Brick. Calling this function
@@ -373,7 +466,7 @@ class Master(Device):
         Returns the temperature in °C/10 as measured inside the microcontroller. The
         value returned is not the ambient temperature!
         
-        The temperature has an accuracy of +-15%. Practically it is only usefull as
+        The temperature has an accuracy of +-15%. Practically it is only useful as
         an indicator for temperature changes.
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')

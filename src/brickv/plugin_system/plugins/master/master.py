@@ -32,9 +32,48 @@ from PyQt4.QtCore import QTimer, Qt
 from ui_master import Ui_Master
 from ui_chibi import Ui_Chibi
 from ui_rs485 import Ui_RS485
+from ui_wifi import Ui_Wifi
 from ui_extension_type import Ui_extension_type
+from ui_wifi_status import Ui_widget_wifi_status
 
 from bindings import brick_master
+
+class WifiStatus(QFrame, Ui_widget_wifi_status):
+    def __init__(self, parent):
+        QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
+        self.setupUi(self)
+        self.parent = parent
+        
+        self.status = self.parent.master.get_wifi_status()
+        self.update_status()
+    
+    def update_status(self):
+        self.status = self.parent.master.get_wifi_status()
+        mac, bssid, channel, rssi, ip, sub, gw, rx, tx, state = self.status
+        
+        self.wifi_status_mac.setText("%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x" % mac[::-1])
+        self.wifi_status_bssid.setText("%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x" % bssid[::-1])
+        self.wifi_status_channel.setText(str(channel))
+        self.wifi_status_rssi.setText(str(rssi) + 'dB')
+        self.wifi_status_ip.setText("%d.%d.%d.%d" % ip[::-1])
+        self.wifi_status_sub.setText("%d.%d.%d.%d" % sub[::-1])
+        self.wifi_status_gw.setText("%d.%d.%d.%d" % gw[::-1])
+        self.wifi_status_rx.setText(str(rx))
+        self.wifi_status_tx.setText(str(tx))
+        
+        state_str = "None"
+        if state == 0:
+            state_str = "Disassociated"
+        elif state == 1:
+            state_str = "Associated"
+        elif state == 2:
+            state_str = "Associating"
+        elif state == 3:
+            state_str = "Startup Error"
+        elif state == 255:
+            state_str = "No Startup"
+            
+        self.wifi_status_state.setText(state_str)
 
 class ExtensionTypeWindow(QFrame, Ui_extension_type):
     def __init__(self, parent):
@@ -359,6 +398,310 @@ class RS485(QWidget, Ui_RS485):
             
     def update_data(self):
         pass
+    
+
+class Wifi(QWidget, Ui_Wifi):
+    def __init__(self, parent):
+        QWidget.__init__(self)
+        self.setupUi(self)
+        
+        self.master = parent.master
+        
+        self.update_data_counter = 0
+        if parent.version_minor > 2:
+            ssid, connection, ip, sub, gw, port = self.master.get_wifi_configuration()
+            ssid = ssid.replace('\0', '')
+            
+            username = self.master.get_wifi_certificate(0xFFFF)
+            username = username[0][:username[1]]
+            password = self.master.get_wifi_certificate(0xFFFE)
+            password = password[0][:password[1]]
+            
+            self.wifi_username.setText(username)
+            self.wifi_password.setText(password)
+            
+            self.wifi_ssid.setText(ssid);
+            self.wifi_connection.setCurrentIndex(connection)
+            self.wifi_ip1.setValue(ip[0])
+            self.wifi_ip2.setValue(ip[1])
+            self.wifi_ip3.setValue(ip[2])
+            self.wifi_ip4.setValue(ip[3])
+            self.wifi_sub1.setValue(sub[0])
+            self.wifi_sub2.setValue(sub[1])
+            self.wifi_sub3.setValue(sub[2])
+            self.wifi_sub4.setValue(sub[3])
+            self.wifi_gw1.setValue(gw[0])
+            self.wifi_gw2.setValue(gw[1])
+            self.wifi_gw3.setValue(gw[2])
+            self.wifi_gw4.setValue(gw[3])
+            self.wifi_port.setValue(port)
+            
+            encryption, key, key_index, eap_options, certificate_length = self.master.get_wifi_encryption()
+            eap_outer = eap_options & 0b00000011
+            eap_inner = (eap_options & 0b00000100) >> 2
+            eap_type  = (eap_options & 0b00011000) >> 3
+            key = key.replace('\0', '')
+            
+            self.wifi_eap_outer_auth.setCurrentIndex(eap_outer)
+            self.wifi_eap_inner_auth.setCurrentIndex(eap_inner)
+            self.wifi_eap_type.setCurrentIndex(eap_type)
+            self.wifi_encryption.setCurrentIndex(encryption)
+            self.wifi_key.setText(key)
+            self.wifi_key_index.setValue(key_index)
+            
+            self.wifi_connection.currentIndexChanged.connect(self.connection_changed)
+            self.wifi_encryption.currentIndexChanged.connect(self.encryption_changed)
+            self.wifi_save.pressed.connect(self.save_pressed)
+            self.wifi_show_status.pressed.connect(self.show_status_pressed)
+            
+            self.encryption_changed(0)
+            self.connection_changed(0)
+            
+            self.wifi_status = None
+            
+    def encryption_changed(self, index):
+        if self.wifi_encryption.currentIndex() == 0:
+            self.wifi_key.setVisible(True)
+            self.wifi_key_label.setVisible(True)
+            
+            self.wifi_key_index.setVisible(False)
+            self.wifi_key_index_label.setVisible(False)
+            
+            self.wifi_eap_inner_auth.setVisible(False)
+            self.wifi_eap_inner_auth_label.setVisible(False)
+            
+            self.wifi_eap_outer_auth.setVisible(False)
+            self.wifi_eap_outer_auth_label.setVisible(False)
+            
+            self.wifi_eap_type.setVisible(False)
+            self.wifi_eap_type_label.setVisible(False)
+            
+            self.wifi_username.setVisible(False)
+            self.wifi_username_label.setVisible(False)
+            
+            self.wifi_password.setVisible(False)
+            self.wifi_password_label.setVisible(False)
+            
+            self.wifi_certificate_url.setVisible(False)
+            self.wifi_certificate_browse.setVisible(False)
+            self.wifi_certificate_label.setVisible(False)
+        elif self.wifi_encryption.currentIndex() == 1:
+            self.wifi_key.setVisible(False)
+            self.wifi_key_label.setVisible(False)
+            
+            self.wifi_key_index.setVisible(False)
+            self.wifi_key_index_label.setVisible(False)
+            
+            self.wifi_eap_inner_auth.setVisible(True)
+            self.wifi_eap_inner_auth_label.setVisible(True)
+            
+            self.wifi_eap_outer_auth.setVisible(True)
+            self.wifi_eap_outer_auth_label.setVisible(True)
+            
+            self.wifi_eap_type.setVisible(True)
+            self.wifi_eap_type_label.setVisible(True)
+                        
+            self.wifi_username.setVisible(True)
+            self.wifi_username_label.setVisible(True)
+            
+            self.wifi_password.setVisible(True)
+            self.wifi_password_label.setVisible(True)
+            
+            self.wifi_certificate_url.setVisible(True)
+            self.wifi_certificate_browse.setVisible(True)
+            self.wifi_certificate_label.setVisible(True)
+        elif self.wifi_encryption.currentIndex() == 2:
+            self.wifi_key.setVisible(True)
+            self.wifi_key_label.setVisible(True)
+            
+            self.wifi_key_index.setVisible(True)
+            self.wifi_key_index_label.setVisible(True)
+            
+            self.wifi_eap_inner_auth.setVisible(False)
+            self.wifi_eap_inner_auth_label.setVisible(False)
+            
+            self.wifi_eap_outer_auth.setVisible(False)
+            self.wifi_eap_outer_auth_label.setVisible(False)
+            
+            self.wifi_eap_type.setVisible(False)
+            self.wifi_eap_type_label.setVisible(False)
+                        
+            self.wifi_username.setVisible(False)
+            self.wifi_username_label.setVisible(False)
+            
+            self.wifi_password.setVisible(False)
+            self.wifi_password_label.setVisible(False)
+            
+            self.wifi_certificate_url.setVisible(False)
+            self.wifi_certificate_browse.setVisible(False)
+            self.wifi_certificate_label.setVisible(False)
+        else:
+            self.wifi_key.setVisible(False)
+            self.wifi_key_label.setVisible(False)
+            
+            self.wifi_key_index.setVisible(False)
+            self.wifi_key_index_label.setVisible(False)
+            
+            self.wifi_eap_inner_auth.setVisible(False)
+            self.wifi_eap_inner_auth_label.setVisible(False)
+            
+            self.wifi_eap_outer_auth.setVisible(False)
+            self.wifi_eap_outer_auth_label.setVisible(False)
+            
+            self.wifi_eap_type.setVisible(False)
+            self.wifi_eap_type_label.setVisible(False)
+                        
+            self.wifi_username.setVisible(False)
+            self.wifi_username_label.setVisible(False)
+            
+            self.wifi_password.setVisible(False)
+            self.wifi_password_label.setVisible(False)
+            
+            self.wifi_certificate_url.setVisible(False)
+            self.wifi_certificate_browse.setVisible(False)
+            self.wifi_certificate_label.setVisible(False)
+        
+    def connection_changed(self, index):
+        if self.wifi_connection.currentIndex() == 0:
+            self.wifi_ip1.setVisible(False)
+            self.wifi_ip2.setVisible(False)
+            self.wifi_ip3.setVisible(False)
+            self.wifi_ip4.setVisible(False)
+            self.wifi_sub1.setVisible(False)
+            self.wifi_sub2.setVisible(False)
+            self.wifi_sub3.setVisible(False)
+            self.wifi_sub4.setVisible(False)
+            self.wifi_gw1.setVisible(False)
+            self.wifi_gw2.setVisible(False)
+            self.wifi_gw3.setVisible(False)
+            self.wifi_gw4.setVisible(False)
+            
+            self.wifi_port.setVisible(False)
+            self.wifi_port_label.setVisible(False)
+            
+            self.wifi_ip_label.setVisible(False)
+            self.wifi_gw_label.setVisible(False)
+            self.wifi_sub_label.setVisible(False)
+            
+            self.wifi_dot1.setVisible(False)
+            self.wifi_dot2.setVisible(False)
+            self.wifi_dot3.setVisible(False)
+            self.wifi_dot4.setVisible(False)
+            self.wifi_dot5.setVisible(False)
+            self.wifi_dot6.setVisible(False)
+            self.wifi_dot7.setVisible(False)
+            self.wifi_dot8.setVisible(False)
+            self.wifi_dot9.setVisible(False)
+        else:
+            self.wifi_ip1.setVisible(True)
+            self.wifi_ip2.setVisible(True)
+            self.wifi_ip3.setVisible(True)
+            self.wifi_ip4.setVisible(True)
+            self.wifi_sub1.setVisible(True)
+            self.wifi_sub2.setVisible(True)
+            self.wifi_sub3.setVisible(True)
+            self.wifi_sub4.setVisible(True)
+            self.wifi_gw1.setVisible(True)
+            self.wifi_gw2.setVisible(True)
+            self.wifi_gw3.setVisible(True)
+            self.wifi_gw4.setVisible(True)
+            
+            self.wifi_port.setVisible(True)
+            self.wifi_port_label.setVisible(True)
+            
+            self.wifi_ip_label.setVisible(True)
+            self.wifi_gw_label.setVisible(True)
+            self.wifi_sub_label.setVisible(True)
+            
+            self.wifi_dot1.setVisible(True)
+            self.wifi_dot2.setVisible(True)
+            self.wifi_dot3.setVisible(True)
+            self.wifi_dot4.setVisible(True)
+            self.wifi_dot5.setVisible(True)
+            self.wifi_dot6.setVisible(True)
+            self.wifi_dot7.setVisible(True)
+            self.wifi_dot8.setVisible(True)
+            self.wifi_dot9.setVisible(True)
+            
+    def popup_ok(self):
+        QMessageBox.information(self, "Save", "Check OK", QMessageBox.Ok)
+    
+    def popup_fail(self):
+        QMessageBox.critical(self, "Save", "Check Failed", QMessageBox.Ok)
+        
+    def show_status_pressed(self):
+        if self.wifi_status is None:
+            self.wifi_status = WifiStatus(self)
+            
+        self.wifi_status.show()
+
+    def save_pressed(self):
+        encryption = self.wifi_encryption.currentIndex()
+        key = str(self.wifi_key.text())
+        key_index = self.wifi_key_index.value()
+        eap_outer = self.wifi_eap_outer_auth.currentIndex()
+        eap_inner = self.wifi_eap_inner_auth.currentIndex()
+        eap_type  = self.wifi_eap_type.currentIndex()
+
+            
+        eap_options = eap_outer | (eap_inner << 2) | (eap_type << 3)
+        certificate_length = 0
+        
+        ssid = str(self.wifi_ssid.text())
+        connection = self.wifi_connection.currentIndex()
+        ip = (self.wifi_ip1.value(), self.wifi_ip2.value(),
+              self.wifi_ip3.value(), self.wifi_ip4.value())
+        sub = (self.wifi_sub1.value(), self.wifi_sub2.value(),
+               self.wifi_sub3.value(), self.wifi_sub4.value())
+        gw = (self.wifi_gw1.value(), self.wifi_gw2.value(),
+              self.wifi_gw3.value(), self.wifi_gw4.value())
+        port = self.wifi_port.value()
+        
+        self.master.set_wifi_encryption(encryption, key, key_index, eap_options, certificate_length)
+        self.master.set_wifi_configuration(ssid, connection, ip, sub, gw, port)
+
+          
+        encryption_old, key_old, key_index_old, eap_options_old, certificate_length_old = self.master.get_wifi_encryption()
+        ssid_old, connection_old, ip_old, sub_old, gw_old, port_old = self.master.get_wifi_configuration()
+        key_old = key_old.replace('\0', '')
+        ssid_old = ssid_old.replace('\0', '')
+        
+        test_ok = False
+        
+        if encryption == encryption_old and key == key_old and \
+           ssid == ssid_old and connection == connection_old and \
+           ip == ip_old and sub == sub_old and gw == gw_old and \
+           port == port_old and key_index == key_index_old and \
+           eap_options == eap_options_old and certificate_length == certificate_length_old:
+            test_ok = True
+        
+        if test_ok and encryption == 1:
+            test_ok = False
+            username = str(self.wifi_username.text())
+            password = str(self.wifi_password.text())
+            self.master.set_wifi_certificate(0xFFFF, username, len(username))
+            self.master.set_wifi_certificate(0xFFFE, password, len(password))
+            username_old = self.master.get_wifi_certificate(0xFFFF)
+            username_old = username_old[0][:username_old[1]]
+            password_old = self.master.get_wifi_certificate(0xFFFE)
+            password_old = password_old[0][:password_old[1]]
+            
+            if username == username_old and password == password_old:
+                test_ok = True
+            
+        if test_ok:
+            self.popup_ok()
+        else:
+            self.popup_fail()
+        
+    def update_data(self):
+        self.update_data_counter += 1
+        if self.wifi_status != None:
+            if self.wifi_status.isVisible():
+                if self.update_data_counter % 10 == 0:
+                    self.master.refresh_wifi_status()
+                elif self.update_data_counter % 10 == 5:
+                    self.wifi_status.update_status()
         
 class Master(PluginBase, Ui_Master):
     def __init__ (self, ipcon, uid):
@@ -397,6 +740,14 @@ class Master(PluginBase, Ui_Master):
                 rs485 = RS485(self)
                 self.extensions.append(rs485)
                 self.extension_layout.addWidget(rs485)
+                
+        # Wifi widget
+        if self.version_minor > 2:
+            if self.master.is_wifi_present():
+                num_extensions += 1
+                wifi = Wifi(self)
+                self.extensions.append(wifi)
+                self.extension_layout.addWidget(wifi)
             
         if num_extensions == 0:
             self.extension_label.setText("None Present")

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-30.      #
+# This file was automatically generated on 2012-08-24.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -161,7 +161,7 @@ class IMU(Device):
         This process is not reversible, because of the 
         `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
         
-        Converting the quaternions to an OpenGL translation matrix is
+        Converting the quaternions to an OpenGL transformation matrix is
         possible with the following formula::
         
          matrix = [[1 - 2*(y*y + z*z),     2*(x*y - w*z),     2*(x*z + w*y), 0],
@@ -196,8 +196,8 @@ class IMU(Device):
 
     def are_leds_on(self):
         """
-        Returns true if the orientation and direction LEDs of the IMU Brick
-        are on, false otherwise.
+        Returns *true* if the orientation and direction LEDs of the IMU Brick
+        are on, *false* otherwise.
         """
         return self.ipcon.send_request(self, IMU.FUNCTION_ARE_LEDS_ON, (), '', '?')
 
@@ -403,7 +403,7 @@ class IMU(Device):
         Returns the temperature in °C/10 as measured inside the microcontroller. The
         value returned is not the ambient temperature!
         
-        The temperature has an accuracy of +-15%. Practically it is only usefull as
+        The temperature has an accuracy of +-15%. Practically it is only useful as
         an indicator for temperature changes.
         """
         return self.ipcon.send_request(self, IMU.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')

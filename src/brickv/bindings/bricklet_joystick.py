@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-07-30.      #
+# This file was automatically generated on 2012-08-24.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -77,7 +77,7 @@ class Joystick(Device):
 
     def is_pressed(self):
         """
-        Returns true if the button is pressed and false otherwise.
+        Returns *true* if the button is pressed and *false* otherwise.
         
         It is recommended to use the :func:`Pressed` and :func:`Released` callbacks
         to handle the button.
@@ -135,7 +135,7 @@ class Joystick(Device):
         Sets the period in ms with which the :func:`AnalogValue` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`AnalogValue` is only triggered if the analog value has changed since the
+        :func:`AnalogValue` is only triggered if the analog values have changed since the
         last triggering.
         
         The default value is 0.
@@ -158,11 +158,11 @@ class Joystick(Device):
          :header: "Option", "Description"
          :widths: 10, 100
         
-         "'x'",    "Callback is turned off."
+         "'x'",    "Callback is turned off"
          "'o'",    "Callback is triggered when the position is *outside* the min and max values"
          "'i'",    "Callback is triggered when the position is *inside* the min and max values"
-         "'<'",    "Callback is triggered when the position is smaller than the min value (max is ignored)"
-         "'>'",    "Callback is triggered when the position is greater than the min value (max is ignored)"
+         "'<'",    "Callback is triggered when the position is smaller than the min values (max is ignored)"
+         "'>'",    "Callback is triggered when the position is greater than the min values (max is ignored)"
         
         The default value is ('x', 0, 0, 0, 0).
         """
@@ -184,11 +184,11 @@ class Joystick(Device):
          :header: "Option", "Description"
          :widths: 10, 100
         
-         "'x'",    "Callback is turned off."
-         "'o'",    "Callback is triggered when the position is *outside* the min and max values"
-         "'i'",    "Callback is triggered when the position is *inside* the min and max values"
-         "'<'",    "Callback is triggered when the position is smaller than the min value (max is ignored)"
-         "'>'",    "Callback is triggered when the position is greater than the min value (max is ignored)"
+         "'x'",    "Callback is turned off"
+         "'o'",    "Callback is triggered when the analog values are *outside* the min and max values"
+         "'i'",    "Callback is triggered when the analog values are *inside* the min and max values"
+         "'<'",    "Callback is triggered when the analog values are smaller than the min values (max is ignored)"
+         "'>'",    "Callback is triggered when the analog values are greater than the min values (max is ignored)"
         
         The default value is ('x', 0, 0, 0, 0).
         """
