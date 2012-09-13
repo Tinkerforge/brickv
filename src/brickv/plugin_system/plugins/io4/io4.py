@@ -126,7 +126,7 @@ class IO4(PluginBase, Ui_IO4):
                 self.port_direction[i].setText('Input')
                 
                 if config & (1 << i):
-                    self.port_config[i].setText('Pull Up')
+                    self.port_config[i].setText('Pull-Up')
                 else:
                     self.port_config[i].setText('Default')
             else:
@@ -173,7 +173,7 @@ class IO4(PluginBase, Ui_IO4):
             value = self.value_box.currentText() == 'High'
             self.port_value[pin].setText(self.value_box.currentText())
         else:
-            value = self.value_box.currentText() == 'Pull Up'
+            value = self.value_box.currentText() == 'Pull-Up'
             
         try:
             self.io.set_configuration(1 << pin, direction, value)
@@ -221,10 +221,10 @@ class IO4(PluginBase, Ui_IO4):
             else:
                 self.value_box.setCurrentIndex(1)
         else:
-            self.value_box.addItem('Pull Up')
+            self.value_box.addItem('Pull-Up')
             self.value_box.addItem('Default')
 
-            if str(self.port_config[pin].text()) == 'Pull Up':
+            if str(self.port_config[pin].text()) == 'Pull-Up':
                 self.value_box.setCurrentIndex(0)
             else:
                 self.value_box.setCurrentIndex(1)

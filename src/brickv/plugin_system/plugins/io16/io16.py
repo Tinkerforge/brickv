@@ -151,7 +151,7 @@ class IO16(PluginBase, Ui_IO16):
                 self.port_direction[port][i].setText('Input')
                 
                 if config & (1 << i):
-                    self.port_config[port][i].setText('Pull Up')
+                    self.port_config[port][i].setText('Pull-Up')
                 else:
                     self.port_config[port][i].setText('Default')
             else:
@@ -200,7 +200,7 @@ class IO16(PluginBase, Ui_IO16):
             value = self.value_box.currentText() == 'High'
             self.port_value[port][pin].setText(self.value_box.currentText())
         else:
-            value = self.value_box.currentText() == 'Pull Up'
+            value = self.value_box.currentText() == 'Pull-Up'
             
         try:
             self.io.set_port_configuration(port, 1 << pin, direction, value)
@@ -254,10 +254,10 @@ class IO16(PluginBase, Ui_IO16):
             else:
                 self.value_box.setCurrentIndex(1)
         else:
-            self.value_box.addItem('Pull Up')
+            self.value_box.addItem('Pull-Up')
             self.value_box.addItem('Default')
 
-            if str(self.port_config[port][pin].text()) == 'Pull Up':
+            if str(self.port_config[port][pin].text()) == 'Pull-Up':
                 self.value_box.setCurrentIndex(0)
             else:
                 self.value_box.setCurrentIndex(1)
