@@ -26,8 +26,11 @@ Boston, MA 02111-1307, USA.
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
 
-from PyQt4.QtGui import QWidget, QFrame, QMessageBox
+from PyQt4.QtGui import QWidget, QFrame, QMessageBox, QFileDialog, QProgressDialog
 from PyQt4.QtCore import QTimer, Qt
+
+import os
+import time
 
 from ui_master import Ui_Master
 from ui_chibi import Ui_Chibi
@@ -417,6 +420,10 @@ class Wifi(QWidget, Ui_Wifi):
             password = self.master.get_wifi_certificate(0xFFFE)
             password = password[0][:password[1]]
             
+            power_mode = self.master.get_wifi_power_mode()
+            
+            self.wifi_power_mode.setCurrentIndex(power_mode)
+            
             self.wifi_username.setText(username)
             self.wifi_password.setText(password)
             
@@ -439,12 +446,10 @@ class Wifi(QWidget, Ui_Wifi):
             encryption, key, key_index, eap_options, certificate_length = self.master.get_wifi_encryption()
             eap_outer = eap_options & 0b00000011
             eap_inner = (eap_options & 0b00000100) >> 2
-            eap_type  = (eap_options & 0b00011000) >> 3
             key = key.replace('\0', '')
             
             self.wifi_eap_outer_auth.setCurrentIndex(eap_outer)
             self.wifi_eap_inner_auth.setCurrentIndex(eap_inner)
-            self.wifi_eap_type.setCurrentIndex(eap_type)
             self.wifi_encryption.setCurrentIndex(encryption)
             self.wifi_key.setText(key)
             self.wifi_key_index.setValue(key_index)
@@ -453,11 +458,47 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_encryption.currentIndexChanged.connect(self.encryption_changed)
             self.wifi_save.pressed.connect(self.save_pressed)
             self.wifi_show_status.pressed.connect(self.show_status_pressed)
+            self.wifi_ca_certificate_browse.pressed.connect(self.ca_certificate_browse_pressed)
+            self.wifi_client_certificate_browse.pressed.connect(self.client_certificate_browse_pressed)
+            self.wifi_private_key_browse.pressed.connect(self.private_key_browse_pressed)
             
             self.encryption_changed(0)
             self.connection_changed(0)
             
             self.wifi_status = None
+        
+    def ca_certificate_browse_pressed(self):
+        last_dir = ''
+        if len(self.wifi_ca_certificate_url.text()) > 0:
+            last_dir = os.path.dirname(os.path.realpath(unicode(self.wifi_ca_certificate_url.text().toUtf8(), 'utf-8')))
+
+        file_name = QFileDialog.getOpenFileName(self,
+                                                'Open CA Certificate',
+                                                last_dir)
+        if len(file_name) > 0:
+            self.wifi_ca_certificate_url.setText(file_name)
+            
+    def client_certificate_browse_pressed(self):
+        last_dir = ''
+        if len(self.wifi_client_certificate_url.text()) > 0:
+            last_dir = os.path.dirname(os.path.realpath(unicode(self.wifi_client_certificate_url.text().toUtf8(), 'utf-8')))
+
+        file_name = QFileDialog.getOpenFileName(self,
+                                                'Open Client Certificate',
+                                                last_dir)
+        if len(file_name) > 0:
+            self.wifi_client_certificate_url.setText(file_name)
+
+    def private_key_browse_pressed(self):
+        last_dir = ''
+        if len(self.wifi_private_key_url.text()) > 0:
+            last_dir = os.path.dirname(os.path.realpath(unicode(self.wifi_private_key_url.text().toUtf8(), 'utf-8')))
+
+        file_name = QFileDialog.getOpenFileName(self,
+                                                'Open Private Key',
+                                                last_dir)
+        if len(file_name) > 0:
+            self.wifi_private_key_url.setText(file_name)
             
     def encryption_changed(self, index):
         if self.wifi_encryption.currentIndex() == 0:
@@ -473,18 +514,21 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_eap_outer_auth.setVisible(False)
             self.wifi_eap_outer_auth_label.setVisible(False)
             
-            self.wifi_eap_type.setVisible(False)
-            self.wifi_eap_type_label.setVisible(False)
-            
             self.wifi_username.setVisible(False)
             self.wifi_username_label.setVisible(False)
             
             self.wifi_password.setVisible(False)
             self.wifi_password_label.setVisible(False)
             
-            self.wifi_certificate_url.setVisible(False)
-            self.wifi_certificate_browse.setVisible(False)
-            self.wifi_certificate_label.setVisible(False)
+            self.wifi_ca_certificate_url.setVisible(False)
+            self.wifi_ca_certificate_browse.setVisible(False)
+            self.wifi_ca_certificate_label.setVisible(False)
+            self.wifi_client_certificate_url.setVisible(False)
+            self.wifi_client_certificate_browse.setVisible(False)
+            self.wifi_client_certificate_label.setVisible(False)
+            self.wifi_private_key_url.setVisible(False)
+            self.wifi_private_key_browse.setVisible(False)
+            self.wifi_private_key_label.setVisible(False)
         elif self.wifi_encryption.currentIndex() == 1:
             self.wifi_key.setVisible(False)
             self.wifi_key_label.setVisible(False)
@@ -497,9 +541,6 @@ class Wifi(QWidget, Ui_Wifi):
             
             self.wifi_eap_outer_auth.setVisible(True)
             self.wifi_eap_outer_auth_label.setVisible(True)
-            
-            self.wifi_eap_type.setVisible(True)
-            self.wifi_eap_type_label.setVisible(True)
                         
             self.wifi_username.setVisible(True)
             self.wifi_username_label.setVisible(True)
@@ -507,9 +548,15 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_password.setVisible(True)
             self.wifi_password_label.setVisible(True)
             
-            self.wifi_certificate_url.setVisible(True)
-            self.wifi_certificate_browse.setVisible(True)
-            self.wifi_certificate_label.setVisible(True)
+            self.wifi_ca_certificate_url.setVisible(True)
+            self.wifi_ca_certificate_browse.setVisible(True)
+            self.wifi_ca_certificate_label.setVisible(True)
+            self.wifi_client_certificate_url.setVisible(True)
+            self.wifi_client_certificate_browse.setVisible(True)
+            self.wifi_client_certificate_label.setVisible(True)
+            self.wifi_private_key_url.setVisible(True)
+            self.wifi_private_key_browse.setVisible(True)
+            self.wifi_private_key_label.setVisible(True)
         elif self.wifi_encryption.currentIndex() == 2:
             self.wifi_key.setVisible(True)
             self.wifi_key_label.setVisible(True)
@@ -522,9 +569,6 @@ class Wifi(QWidget, Ui_Wifi):
             
             self.wifi_eap_outer_auth.setVisible(False)
             self.wifi_eap_outer_auth_label.setVisible(False)
-            
-            self.wifi_eap_type.setVisible(False)
-            self.wifi_eap_type_label.setVisible(False)
                         
             self.wifi_username.setVisible(False)
             self.wifi_username_label.setVisible(False)
@@ -532,9 +576,15 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_password.setVisible(False)
             self.wifi_password_label.setVisible(False)
             
-            self.wifi_certificate_url.setVisible(False)
-            self.wifi_certificate_browse.setVisible(False)
-            self.wifi_certificate_label.setVisible(False)
+            self.wifi_ca_certificate_url.setVisible(False)
+            self.wifi_ca_certificate_browse.setVisible(False)
+            self.wifi_ca_certificate_label.setVisible(False)
+            self.wifi_client_certificate_url.setVisible(False)
+            self.wifi_client_certificate_browse.setVisible(False)
+            self.wifi_client_certificate_label.setVisible(False)
+            self.wifi_private_key_url.setVisible(False)
+            self.wifi_private_key_browse.setVisible(False)
+            self.wifi_private_key_label.setVisible(False)
         else:
             self.wifi_key.setVisible(False)
             self.wifi_key_label.setVisible(False)
@@ -547,9 +597,6 @@ class Wifi(QWidget, Ui_Wifi):
             
             self.wifi_eap_outer_auth.setVisible(False)
             self.wifi_eap_outer_auth_label.setVisible(False)
-            
-            self.wifi_eap_type.setVisible(False)
-            self.wifi_eap_type_label.setVisible(False)
                         
             self.wifi_username.setVisible(False)
             self.wifi_username_label.setVisible(False)
@@ -557,9 +604,15 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_password.setVisible(False)
             self.wifi_password_label.setVisible(False)
             
-            self.wifi_certificate_url.setVisible(False)
-            self.wifi_certificate_browse.setVisible(False)
-            self.wifi_certificate_label.setVisible(False)
+            self.wifi_ca_certificate_url.setVisible(False)
+            self.wifi_ca_certificate_browse.setVisible(False)
+            self.wifi_ca_certificate_label.setVisible(False)
+            self.wifi_client_certificate_url.setVisible(False)
+            self.wifi_client_certificate_browse.setVisible(False)
+            self.wifi_client_certificate_label.setVisible(False)
+            self.wifi_private_key_url.setVisible(False)
+            self.wifi_private_key_browse.setVisible(False)
+            self.wifi_private_key_label.setVisible(False)
         
     def connection_changed(self, index):
         if self.wifi_connection.currentIndex() == 0:
@@ -576,8 +629,8 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_gw3.setVisible(False)
             self.wifi_gw4.setVisible(False)
             
-            self.wifi_port.setVisible(False)
-            self.wifi_port_label.setVisible(False)
+            self.wifi_port.setVisible(True)
+            self.wifi_port_label.setVisible(True)
             
             self.wifi_ip_label.setVisible(False)
             self.wifi_gw_label.setVisible(False)
@@ -635,17 +688,25 @@ class Wifi(QWidget, Ui_Wifi):
             
         self.wifi_status.show()
 
+    def create_progress_bar(self, title):
+        progress = QProgressDialog(self)
+        progress.setAutoClose(False)
+        progress.setWindowTitle(title)
+        progress.setCancelButton(None)
+        progress.setWindowModality(Qt.WindowModal)
+        return progress
+
     def save_pressed(self):
         encryption = self.wifi_encryption.currentIndex()
         key = str(self.wifi_key.text())
         key_index = self.wifi_key_index.value()
         eap_outer = self.wifi_eap_outer_auth.currentIndex()
         eap_inner = self.wifi_eap_inner_auth.currentIndex()
-        eap_type  = self.wifi_eap_type.currentIndex()
-
             
-        eap_options = eap_outer | (eap_inner << 2) | (eap_type << 3)
-        certificate_length = 0
+        eap_options = eap_outer | (eap_inner << 2) 
+        ca_certificate_length = 0
+        client_certificate_length = 0
+        private_key_certificate_length = 0
         
         ssid = str(self.wifi_ssid.text())
         connection = self.wifi_connection.currentIndex()
@@ -657,10 +718,57 @@ class Wifi(QWidget, Ui_Wifi):
               self.wifi_gw3.value(), self.wifi_gw4.value())
         port = self.wifi_port.value()
         
-        self.master.set_wifi_encryption(encryption, key, key_index, eap_options, certificate_length)
+        power_mode = self.wifi_power_mode.currentIndex()
+        
+        progress = self.create_progress_bar("Configuration")
+        progress.setLabelText('Saving...')
+        progress.setMaximum(1000)
+        progress.setValue(0)
+        progress.show()
+        
+        chunks = []
+        if encryption == 1:
+            cert_path = str(self.wifi_ca_certificate_url.text())
+            try:
+                if os.path.isfile(cert_path):
+                    cert_file = open(cert_path, 'rb').read()
+                    ca_certificate_length = len(cert_file)
+                    if ca_certificate_length <= 6*1024:
+                        position = 0
+                        while len(cert_file) != 0:
+                            cert_chunk = cert_file[:32]
+                            cert_file = cert_file[32:]
+                            length = len(cert_chunk)
+                            mod = length % 32
+                            if mod != 0:
+                                cert_chunk += '\x00'*(32-mod)
+                
+                            time.sleep(0.01)
+                            self.master.set_wifi_certificate(position,
+                                                             cert_chunk,
+                                                             length)
+                            chunks.append(cert_chunk)
+                
+                            position += 1
+                            progress.setValue(900*position/(ca_certificate_length/32))
+                    else:
+                        QMessageBox.critical(self, "Save", "CA Certificate too Big. Max size: 6kB.", QMessageBox.Ok)
+                        return
+            except:
+                QMessageBox.critical(self, "Save", "Could not write CA Certificate.", QMessageBox.Ok)
+                return
+        
+        self.master.set_wifi_power_mode(power_mode)
+        progress.setValue(933)
+        
+        self.master.set_wifi_encryption(encryption, key, key_index, eap_options, ca_certificate_length)
+        progress.setValue(966)
         self.master.set_wifi_configuration(ssid, connection, ip, sub, gw, port)
+        progress.setValue(1000)
 
-          
+        progress.setLabelText('Verifying...')
+        progress.setValue(0)
+        
         encryption_old, key_old, key_index_old, eap_options_old, certificate_length_old = self.master.get_wifi_encryption()
         ssid_old, connection_old, ip_old, sub_old, gw_old, port_old = self.master.get_wifi_configuration()
         key_old = key_old.replace('\0', '')
@@ -672,9 +780,10 @@ class Wifi(QWidget, Ui_Wifi):
            ssid == ssid_old and connection == connection_old and \
            ip == ip_old and sub == sub_old and gw == gw_old and \
            port == port_old and key_index == key_index_old and \
-           eap_options == eap_options_old and certificate_length == certificate_length_old:
+           eap_options == eap_options_old and ca_certificate_length == certificate_length_old:
             test_ok = True
         
+        progress.setValue(100)
         if test_ok and encryption == 1:
             test_ok = False
             username = str(self.wifi_username.text())
@@ -688,7 +797,17 @@ class Wifi(QWidget, Ui_Wifi):
             
             if username == username_old and password == password_old:
                 test_ok = True
+                
+                chunk_length = len(chunks)
+                for i in range(chunk_length):
+                    old_chunk = self.master.get_wifi_certificate(i)[0]
+                    if old_chunk != chunks[i]:
+                        test_ok = False
+                        break
+                    progress.setValue(100 + 900*i/chunk_length)
             
+        progress.setValue(1000)
+        progress.cancel()
         if test_ok:
             self.popup_ok()
         else:

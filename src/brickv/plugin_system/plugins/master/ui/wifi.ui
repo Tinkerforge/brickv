@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>441</width>
-    <height>686</height>
+    <height>765</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -82,6 +82,27 @@
                <string>Static IP</string>
               </property>
              </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLabel" name="wifi_port_label">
+             <property name="text">
+              <string>Port:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="wifi_port">
+             <property name="maximum">
+              <number>65535</number>
+             </property>
+             <property name="value">
+              <number>4223</number>
+             </property>
             </widget>
            </item>
           </layout>
@@ -324,27 +345,6 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QLabel" name="wifi_port_label">
-             <property name="text">
-              <string>Port:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="wifi_port">
-             <property name="maximum">
-              <number>65535</number>
-             </property>
-             <property name="value">
-              <number>4223</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
           <widget class="Line" name="line">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -492,36 +492,6 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="wifi_eap_type_layout">
-           <item>
-            <widget class="QLabel" name="wifi_eap_type_label">
-             <property name="text">
-              <string>EAP type:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="wifi_eap_type">
-             <item>
-              <property name="text">
-               <string>CA Certificate</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Client Certificate</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Private Key</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_5">
            <item>
             <widget class="QLabel" name="wifi_username_label">
@@ -560,20 +530,94 @@
          <item>
           <layout class="QHBoxLayout" name="wifi_certificate_layout">
            <item>
-            <widget class="QLabel" name="wifi_certificate_label">
+            <widget class="QLabel" name="wifi_ca_certificate_label">
              <property name="text">
-              <string>Certificate:</string>
+              <string>CA Cert:</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="wifi_certificate_url"/>
+            <widget class="QLineEdit" name="wifi_ca_certificate_url"/>
            </item>
            <item>
-            <widget class="QPushButton" name="wifi_certificate_browse">
+            <widget class="QPushButton" name="wifi_ca_certificate_browse">
              <property name="text">
               <string>Browse...</string>
              </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_11">
+           <item>
+            <widget class="QLabel" name="wifi_client_certificate_label">
+             <property name="text">
+              <string>Client Cert:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="wifi_client_certificate_url"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="wifi_client_certificate_browse">
+             <property name="text">
+              <string>Browse...</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_12">
+           <item>
+            <widget class="QLabel" name="wifi_private_key_label">
+             <property name="text">
+              <string>Private Key:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="wifi_private_key_url"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="wifi_private_key_browse">
+             <property name="text">
+              <string>Browse...</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="Line" name="line_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_10">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Power Mode:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="wifi_power_mode">
+             <item>
+              <property name="text">
+               <string>Full Speed</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Low Power</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>
