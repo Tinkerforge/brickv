@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-08-24.      #
+# This file was automatically generated on 2012-09-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -183,21 +183,21 @@ class DC(Device):
 
     def enable(self):
         """
-        Enables the motor. The motor can be configured (velocity,
+        Enables the driver chip. The driver parameters can be configured (velocity,
         acceleration, etc) before it is enabled.
         """
         self.ipcon.send_request(self, DC.FUNCTION_ENABLE, (), '', '')
 
     def disable(self):
         """
-        Disables the motor. The configurations are kept (velocity,
+        Disables the driver chip. The configurations are kept (velocity,
         acceleration, etc) but the motor is not driven until it is enabled again.
         """
         self.ipcon.send_request(self, DC.FUNCTION_DISABLE, (), '', '')
 
     def is_enabled(self):
         """
-        Returns *true* if the motor is enabled, *false* otherwise.
+        Returns *true* if the driver chip is enabled, *false* otherwise.
         """
         return self.ipcon.send_request(self, DC.FUNCTION_IS_ENABLED, (), '', '?')
 
@@ -234,7 +234,8 @@ class DC(Device):
         with slower velocities.
         
         In Drive/Coast mode, the motor is always either driving or freewheeling.
-        Advantages are: Less current consumption and less demands on the motor/driver.
+        Advantages are: Less current consumption and less demands on the motor and
+        driver chip.
         
         The default value is 0 = Drive/Brake.
         """

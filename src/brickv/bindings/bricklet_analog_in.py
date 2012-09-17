@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-08-24.      #
+# This file was automatically generated on 2012-09-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -69,14 +69,14 @@ class AnalogIn(Device):
 
     def get_analog_value(self):
         """
-        Returns the value as read by a 12 bit analog to digital converter.
+        Returns the value as read by a 12-bit analog-to-digital converter.
         The value is between 0 and 4095.
         
         .. note::
          The value returned by :func:`GetVoltage` is averaged over several samples
          to yield less noise, while :func:`GetAnalogValue` gives back raw
          unfiltered analog values. The only reason to use :func:`GetAnalogValue` is,
-         if you need the full resolution of the analog to digital converter.
+         if you need the full resolution of the analog-to-digital converter.
         
         If you want the analog value periodically, it is recommended to use the 
         callback :func:`AnalogValue` and set the period with 

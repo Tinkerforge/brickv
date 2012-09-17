@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-09-12.      #
+# This file was automatically generated on 2012-09-17.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -16,7 +16,7 @@ from .ip_connection import Device, IPConnection, Error
 GetChibiErrorLog = namedtuple('ChibiErrorLog', ['underrun', 'crc_error', 'no_ack', 'overflow'])
 GetRS485Configuration = namedtuple('RS485Configuration', ['speed', 'parity', 'stopbits'])
 GetWifiConfiguration = namedtuple('WifiConfiguration', ['ssid', 'connection', 'ip', 'subnet_mask', 'gateway', 'port'])
-GetWifiEncryption = namedtuple('WifiEncryption', ['encryption', 'key', 'key_index', 'eap_options', 'certificate_length'])
+GetWifiEncryption = namedtuple('WifiEncryption', ['encryption', 'key', 'key_index', 'eap_options', 'ca_certificate_length', 'client_certificate_length', 'private_key_length'])
 GetWifiStatus = namedtuple('WifiStatus', ['mac_address', 'bssid', 'channel', 'rssi', 'ip', 'subnet_mask', 'gateway', 'rx_count', 'tx_count', 'state'])
 GetWifiCertificate = namedtuple('WifiCertificate', ['data', 'data_length'])
 
@@ -60,6 +60,8 @@ class Master(Device):
     FUNCTION_REFRESH_WIFI_STATUS = 32
     FUNCTION_SET_WIFI_CERTIFICATE = 33
     FUNCTION_GET_WIFI_CERTIFICATE = 34
+    FUNCTION_SET_WIFI_POWER_MODE = 35
+    FUNCTION_GET_WIFI_POWER_MODE = 36
     FUNCTION_RESET = 243
     FUNCTION_GET_CHIP_TEMPERATURE = 242
 
@@ -347,7 +349,7 @@ class Master(Device):
         """
         Sets the configuration of the RS485 Extension. Speed is given in baud. The
         Master Brick will try to match the given baud rate as exactly as possible.
-        The maximum recommended baud rate is 2000000 (2Mbit).
+        The maximum recommended baud rate is 2000000 (2Mbit/s).
         Possible values for parity are 'n' (none), 'e' (even) and 'o' (odd).
         Possible values for stop bits are 1 and 2.
         
@@ -380,11 +382,21 @@ class Master(Device):
 
     def set_wifi_configuration(self, ssid, connection, ip, subnet_mask, gateway, port):
         """
-        Sets the configuration of the WIFI Extension. TODO: describe configuration
+        Sets the configuration of the WIFI Extension. The ssid can have a max length
+        of 32 characters, the connection is either 0 for DHCP or 1 for static IP.
+        
+        If you set connection to 1, you have to supply ip, subnet mask and gateway
+        as an array of size 4 (first element of the array is the least significant
+        byte of the address). If connection is set to 0 ip, subnet mask and gateway
+        are ignored, you can set them to 0.
+        
+        The last parameter is the port that your program will connect to. The
+        default port, that is used by brickd, is 4223.
         
         The values are stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
         
+        It is recommended to use the Brick Viewer to set the WIFI configuration.
         
         .. versionadded:: 1.3.0
         """
@@ -398,17 +410,50 @@ class Master(Device):
         """
         return GetWifiConfiguration(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_CONFIGURATION, (), '', '32s B 4B 4B 4B H'))
 
-    def set_wifi_encryption(self, encryption, key, key_index, eap_options, certificate_length):
+    def set_wifi_encryption(self, encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length):
         """
-        Sets the encryption of the WIFI Extension. TODO: describe configuration
+        Sets the encryption of the WIFI Extension. The first parameter is the
+        type of the encryption. Possible values are:
+        
+        .. csv-table::
+         :header: "Value", "Description"
+         :widths: 10, 90
+        
+         "0", "WPA/WPA2"
+         "1", "WPA Enterprise (EAP-FAST, EAP-TLS, EAP-TTLS, PEAP)"
+         "2", "WEP"
+         "3", "Open Network"
+        
+        The key has a max length of 50 characters and is used if encryption
+        is set to 0 or 2 (WPA or WEP). Otherwise the value is ignored.
+        For WEP it is possible to set the key index (1-4). If you don't know your
+        key index, it is likely 1.
+        
+        If you choose WPA Enterprise as encryption, you have to set eap options and
+        the length of the certificates (for other encryption types these paramters
+        are ignored). The certificate length are given in byte and the certificates
+        themself can be set with  :func:`SetWifiCertificate`. Eap options consist of 
+        the outer authentification (bits 1-2), inner authentification (bit 3) and 
+        certificate type (bits 4-5):
+        
+        .. csv-table::
+         :header: "Option", "Bits", "Description"
+         :widths: 10, 10, 80
+        
+         "outer auth", "1-2", "0=EAP-FAST, 1=EAP-TLS, 2=EAP-TTLS, 3=EAP-PEAP"
+         "inner auth", "3", "0=EAP-MSCHAP, 1=EAP-GTC"
+         "cert type", "4-5", "0=CA Certificate, 1=Client Certificate, 2=Private Key"
+        
+        Example for EAP-TTLS + EAP-GTC + Private Key: option = 2 | (1 << 2) | (2 << 3).
         
         The values are stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
         
+        It is recommended to use the Brick Viewer to set the WIFI encryption.
         
         .. versionadded:: 1.3.0
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_ENCRYPTION, (encryption, key, key_index, eap_options, certificate_length), 'B 50s B B H', '')
+        self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_ENCRYPTION, (encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length), 'B 50s B B H H H', '')
 
     def get_wifi_encryption(self):
         """
@@ -416,11 +461,25 @@ class Master(Device):
         
         .. versionadded:: 1.3.0
         """
-        return GetWifiEncryption(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_ENCRYPTION, (), '', 'B 50s B B H'))
+        return GetWifiEncryption(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_ENCRYPTION, (), '', 'B 50s B B H H H'))
 
     def get_wifi_status(self):
         """
-        TODO
+        Returns the status of the WIFI Extension. The state is updated automatically,
+        all of the other parameters are updated on startup and everytime
+        :func:`RefreshWifiStatus` is called.
+        
+        Possible states are:
+        
+        .. csv-table::
+         :header: "State", "Description"
+         :widths: 10, 90
+        
+         "0", "Disassociated"
+         "1", "Associated"
+         "2", "Associating"
+         "3", "Error"
+         "255", "Not initialized yet"
         
         .. versionadded:: 1.3.0
         """
@@ -428,7 +487,12 @@ class Master(Device):
 
     def refresh_wifi_status(self):
         """
-        TODO
+        Refreshes the WIFI status (see :func:`GetWifiStatus`). To read the status
+        of the WIFI module, the Master Brick has to change from data mode to
+        command mode and back. This transation and the readout itself is
+        unfortunately time consuming. This means, that it might take some ms
+        until the stack with attached WIFI Extensions reacts again after this
+        function is called.
         
         .. versionadded:: 1.3.0
         """
@@ -436,7 +500,24 @@ class Master(Device):
 
     def set_wifi_certificate(self, index, data, data_length):
         """
-        TODO
+        This function is used to set the certificate as well as password and username
+        for WPA Enterprise. To set the username use index 0xFFFF,
+        to set the password use index 0xFFFE. The max length of username and 
+        password is 32.
+        
+        The certificate is written in chunks of size 32 and the index is used as
+        the index of the chunk. The data length should nearly always be 32. Only
+        the last chunk can have a length that is not equal to 32.
+        
+        The starting index of the CA Certificate is 0, of the Client Certificate
+        10000 and for the Private Key 20000. Maximum sizes are 1312, 1312 and
+        4320 byte respectively.
+        
+        The values are stored in the EEPROM and only applied on startup. That means
+        you have to restart the Master Brick after uploading the certificate.
+        
+        It is recommended to use the Brick Viewer to set the certificate, username
+        and password.
         
         .. versionadded:: 1.3.0
         """
@@ -444,11 +525,36 @@ class Master(Device):
 
     def get_wifi_certificate(self, index):
         """
-        TODO
+        Returns the certificate for a given index as set by :func:`SetWifiCertificate`.
         
         .. versionadded:: 1.3.0
         """
         return GetWifiCertificate(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_CERTIFICATE, (index,), 'H', '32s B'))
+
+    def set_wifi_power_mode(self, mode):
+        """
+        Sets the power mode of the WIFI Extension. Possible modes are:
+        
+        .. csv-table::
+         :header: "Mode", "Description"
+         :widths: 10, 90
+        
+         "0", "Full Speed (high power consumption, high throughput)"
+         "1", "Low Power (low power consuption, low throughput)"
+        
+        The default value is 0 (Full Speed).
+        
+        .. versionadded:: 1.3.0
+        """
+        self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_POWER_MODE, (mode,), 'B', '')
+
+    def get_wifi_power_mode(self):
+        """
+        Returns the power mode as set by :func:`SetWifiPowerMode`.
+        
+        .. versionadded:: 1.3.0
+        """
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_POWER_MODE, (), '', 'B')
 
     def reset(self):
         """

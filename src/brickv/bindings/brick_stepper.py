@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-08-24.      #
+# This file was automatically generated on 2012-09-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -299,21 +299,21 @@ class Stepper(Device):
 
     def enable(self):
         """
-        Enables the motor. The motor can be configured (maximum velocity, 
+        Enables the driver chip. The driver parameters can be configured (maximum velocity,
         acceleration, etc) before it is enabled.
         """
         self.ipcon.send_request(self, Stepper.FUNCTION_ENABLE, (), '', '')
 
     def disable(self):
         """
-        Disables the motor. The configurations are kept (maximum velocity, 
+        Disables the driver chip. The configurations are kept (maximum velocity,
         acceleration, etc) but the motor is not driven until it is enabled again.
         """
         self.ipcon.send_request(self, Stepper.FUNCTION_DISABLE, (), '', '')
 
     def is_enabled(self):
         """
-        Returns *true* if the motor is enabled, *false* otherwise.
+        Returns *true* if the driver chip is enabled, *false* otherwise.
         """
         return self.ipcon.send_request(self, Stepper.FUNCTION_IS_ENABLED, (), '', '?')
 
@@ -328,7 +328,7 @@ class Stepper(Device):
         is enabled (see :func:`SetSyncRect`).
         
         For a good explanation of the different decay modes see 
-        `this <http://robot.avayanex.com/?p=86/>`_ blog post by Avayan.
+        `this <http://ebldc.com/?p=86/>`__ blog post by Avayan.
         
         A good decay mode is unfortunately different for every motor. The best
         way to work out a good decay mode for your stepper motor, if you can't

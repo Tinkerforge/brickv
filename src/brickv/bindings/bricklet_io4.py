@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-08-24.      #
+# This file was automatically generated on 2012-09-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -51,7 +51,7 @@ class IO4(Device):
 
     def set_value(self, value_mask):
         """
-        Sets the output value (high or low) with a bit mask. The bit mask
+        Sets the output value (high or low) with a bitmask. The bitmask
         is 4 bit long, *true* refers to high and *false* refers to low.
         
         For example: The value 0b0011 will turn the pins 0-1 high and the
@@ -65,7 +65,7 @@ class IO4(Device):
 
     def get_value(self):
         """
-        Returns a bit mask of the values that are currently measured.
+        Returns a bitmask of the values that are currently measured.
         This function works if the pin is configured to input
         as well as if it is configured to output.
         """
@@ -93,7 +93,7 @@ class IO4(Device):
 
     def get_configuration(self):
         """
-        Returns a value bit mask and a direction bit mask.
+        Returns a value bitmask and a direction bitmask.
         
         For example: A return value of 0b0011 and 0b0101 for
         direction and value means that:
@@ -125,11 +125,11 @@ class IO4(Device):
 
     def set_interrupt(self, interrupt_mask):
         """
-        Sets the pins on which an interrupt is activated with a bit mask.
+        Sets the pins on which an interrupt is activated with a bitmask.
         Interrupts are triggered on changes of the voltage level of the pin,
         i.e. changes from high to low and low to high.
         
-        For example: An interrupt bit mask of 9 will enable the interrupt for
+        For example: An interrupt bitmask of 9 will enable the interrupt for
         pins 0 and 3.
         
         The interrupt is delivered with the callback :func:`Interrupt`.
@@ -138,17 +138,17 @@ class IO4(Device):
 
     def get_interrupt(self):
         """
-        Returns the interrupt bit mask as set by :func:`SetInterrupt`.
+        Returns the interrupt bitmask as set by :func:`SetInterrupt`.
         """
         return self.ipcon.send_request(self, IO4.FUNCTION_GET_INTERRUPT, (), '', 'B')
 
     def set_monoflop(self, pin_mask, value_mask, time):
         """
         Configures a monoflop of the pins specified by the first parameter as 4 bit
-        long bit mask. The specified pins must be configured for output. Non-output
+        long bitmask. The specified pins must be configured for output. Non-output
         pins will be ignored.
         
-        The second parameter is a bit mask with the desired value of the specified
+        The second parameter is a bitmask with the desired value of the specified
         output pins (*true* means high and *false* means low).
         
         The third parameter indicates the time (in ms) that the pins should hold

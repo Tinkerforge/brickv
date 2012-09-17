@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-08-24.      #
+# This file was automatically generated on 2012-09-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -185,7 +185,7 @@ class Servo(Device):
         Sets the minimum and maximum pulse width of the specified servo in µs.
         
         Usually, servos are controlled with a 
-        `PWM <http://en.wikipedia.org/wiki/Pulse-width_modulation>`_, whereby the 
+        `PWM <http://en.wikipedia.org/wiki/Pulse-width_modulation>`__, whereby the
         length of the pulse controls the position of the servo. Every servo has
         different minimum and maximum pulse widths, these can be specified with
         this function.
@@ -194,7 +194,7 @@ class Servo(Device):
         maximum pulse width, you should set the values accordingly. If your servo
         comes without any datasheet you have to find the values via trial and error.
         
-        Both values have a range from 1 to 65535 (unsigned 16 bit integer). The
+        Both values have a range from 1 to 65535 (unsigned 16-bit integer). The
         minimum must be smaller than the maximum.
         
         The default values are 1000µs (1ms) and 2000µs (2ms) for minimum and 
@@ -238,7 +238,7 @@ class Servo(Device):
           minimum to 0 and the maximum to 10000. :func:`SetPosition` now controls the rpm.
         
         Both values have a possible range from -32767 to 32767 
-        (signed 16 bit integer). The minimum must be smaller than the maximum.
+        (signed 16-bit integer). The minimum must be smaller than the maximum.
         
         The default values are -9000 and 9000 for the minimum and maximum degree.
         """
@@ -256,7 +256,7 @@ class Servo(Device):
         Sets the period of the specified servo in µs.
         
         Usually, servos are controlled with a 
-        `PWM <http://en.wikipedia.org/wiki/Pulse-width_modulation>`_. Different
+        `PWM <http://en.wikipedia.org/wiki/Pulse-width_modulation>`__. Different
         servos expect PWMs with different periods. Most servos run well with a 
         period of about 20ms.
         

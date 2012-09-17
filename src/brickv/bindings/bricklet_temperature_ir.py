@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-08-24.      #
+# This file was automatically generated on 2012-09-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -79,7 +79,7 @@ class TemperatureIR(Device):
         on the surface of the object.
         
         The temperature of different materials is dependent on their `emissivity 
-        <http://en.wikipedia.org/wiki/Emissivity>`_. The emissivity of the material
+        <http://en.wikipedia.org/wiki/Emissivity>`__. The emissivity of the material
         can be set with :func:`SetEmissivity`.
         
         If you want to get the object temperature periodically, it is recommended 
@@ -90,16 +90,16 @@ class TemperatureIR(Device):
 
     def set_emissivity(self, emissivity):
         """
-        Sets the `emissivity <http://en.wikipedia.org/wiki/Emissivity>`_ that is 
+        Sets the `emissivity <http://en.wikipedia.org/wiki/Emissivity>`__ that is
         used to calculate the surface temperature as returned by 
         :func:`GetObjectTemperature`. 
         
         The emissivity is usually given as a value between 0.0 and 1.0. A list of
         emissivities of different materials can be found 
-        `here <http://www.infrared-thermography.com/material.htm>`_.
+        `here <http://www.infrared-thermography.com/material.htm>`__.
         
         The parameter of :func:`SetEmissivity` has to be given with a factor of
-        65535 (16 bit). For example: An emissivity of 0.1 can be set with the 
+        65535 (16-bit). For example: An emissivity of 0.1 can be set with the
         value 6553, an emissivity of 0.5 with the value 32767 and so on.
         
         .. note::

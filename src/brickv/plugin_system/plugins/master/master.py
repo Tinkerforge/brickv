@@ -31,6 +31,7 @@ from PyQt4.QtCore import QTimer, Qt
 
 import os
 import time
+import sys
 
 from ui_master import Ui_Master
 from ui_chibi import Ui_Chibi
@@ -443,7 +444,7 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_gw4.setValue(gw[3])
             self.wifi_port.setValue(port)
             
-            encryption, key, key_index, eap_options, certificate_length = self.master.get_wifi_encryption()
+            encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length = self.master.get_wifi_encryption()
             eap_outer = eap_options & 0b00000011
             eap_inner = (eap_options & 0b00000100) >> 2
             key = key.replace('\0', '')
@@ -694,7 +695,76 @@ class Wifi(QWidget, Ui_Wifi):
         progress.setWindowTitle(title)
         progress.setCancelButton(None)
         progress.setWindowModality(Qt.WindowModal)
+        
         return progress
+    
+    def get_certificate(self, url_edit):
+        cert_path = url_edit.text()
+        cert_path = unicode(cert_path.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
+        try:
+            if os.path.isfile(cert_path):
+                certificate_file = open(cert_path, 'rb').read()
+                certificate_length = len(certificate_file)
+                if certificate_length > 6*1024:
+                    QMessageBox.critical(self, "Save", "Certificate too Big. Max size: 6kB.", QMessageBox.Ok)
+                    return []
+                
+                return certificate_file
+                
+        except:
+            return []
+        
+        return []
+    
+    def write_certificate(self, certificate, type):
+        try:
+            chunks = []
+            progress = self.create_progress_bar("Configuration")
+            progress.setLabelText('Saving Certificate...')
+            progress.setMaximum(1000)
+            progress.setValue(0)
+            progress.update()
+            progress.show()
+            
+            position = 0
+            length_certificate = len(certificate)
+            while len(certificate) > 0:
+                cert_chunk = certificate[:32]
+                certificate = certificate[32:]
+                length = len(cert_chunk)
+                mod = length % 32
+                if mod != 0:
+                    cert_chunk += '\x00'*(32-mod)
+    
+                time.sleep(0.01)
+                self.master.set_wifi_certificate(10000*type + position,
+                                                 cert_chunk,
+                                                 length)
+                chunks.append(cert_chunk)
+    
+                position += 1
+                progress.setValue(1000*position/(length_certificate/32))
+                
+            progress.setLabelText('Verifying Certificate...')
+            progress.setValue(0)
+            
+            time.sleep(0.1)
+    
+            chunk_length = len(chunks)
+            for i in range(chunk_length):
+                old_chunk = self.master.get_wifi_certificate(10000*type + i)[0]
+                if old_chunk != chunks[i]:
+                    progress.cancel()
+                    return False
+                progress.setValue(1000*i/chunk_length)
+                
+            progress.cancel()
+        except:
+            progress.cancel()
+            return False
+        
+        return True
+        
 
     def save_pressed(self):
         encryption = self.wifi_encryption.currentIndex()
@@ -704,9 +774,6 @@ class Wifi(QWidget, Ui_Wifi):
         eap_inner = self.wifi_eap_inner_auth.currentIndex()
             
         eap_options = eap_outer | (eap_inner << 2) 
-        ca_certificate_length = 0
-        client_certificate_length = 0
-        private_key_certificate_length = 0
         
         ssid = str(self.wifi_ssid.text())
         connection = self.wifi_connection.currentIndex()
@@ -720,56 +787,20 @@ class Wifi(QWidget, Ui_Wifi):
         
         power_mode = self.wifi_power_mode.currentIndex()
         
-        progress = self.create_progress_bar("Configuration")
-        progress.setLabelText('Saving...')
-        progress.setMaximum(1000)
-        progress.setValue(0)
-        progress.show()
-        
-        chunks = []
-        if encryption == 1:
-            cert_path = str(self.wifi_ca_certificate_url.text())
-            try:
-                if os.path.isfile(cert_path):
-                    cert_file = open(cert_path, 'rb').read()
-                    ca_certificate_length = len(cert_file)
-                    if ca_certificate_length <= 6*1024:
-                        position = 0
-                        while len(cert_file) != 0:
-                            cert_chunk = cert_file[:32]
-                            cert_file = cert_file[32:]
-                            length = len(cert_chunk)
-                            mod = length % 32
-                            if mod != 0:
-                                cert_chunk += '\x00'*(32-mod)
-                
-                            time.sleep(0.01)
-                            self.master.set_wifi_certificate(position,
-                                                             cert_chunk,
-                                                             length)
-                            chunks.append(cert_chunk)
-                
-                            position += 1
-                            progress.setValue(900*position/(ca_certificate_length/32))
-                    else:
-                        QMessageBox.critical(self, "Save", "CA Certificate too Big. Max size: 6kB.", QMessageBox.Ok)
-                        return
-            except:
-                QMessageBox.critical(self, "Save", "Could not write CA Certificate.", QMessageBox.Ok)
-                return
+        ca_cert = self.get_certificate(self.wifi_ca_certificate_url)
+        ca_certificate_length = len(ca_cert)
+        client_cert = self.get_certificate(self.wifi_client_certificate_url)
+        client_certificate_length = len(client_cert)
+        priv_key = self.get_certificate(self.wifi_private_key_url)
+        private_key_length = len(priv_key)
         
         self.master.set_wifi_power_mode(power_mode)
-        progress.setValue(933)
         
-        self.master.set_wifi_encryption(encryption, key, key_index, eap_options, ca_certificate_length)
-        progress.setValue(966)
+        self.master.set_wifi_encryption(encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length)
         self.master.set_wifi_configuration(ssid, connection, ip, sub, gw, port)
-        progress.setValue(1000)
 
-        progress.setLabelText('Verifying...')
-        progress.setValue(0)
         
-        encryption_old, key_old, key_index_old, eap_options_old, certificate_length_old = self.master.get_wifi_encryption()
+        encryption_old, key_old, key_index_old, eap_options_old, ca_certificate_length_old, client_certificate_length_old, private_key_length_old = self.master.get_wifi_encryption()
         ssid_old, connection_old, ip_old, sub_old, gw_old, port_old = self.master.get_wifi_configuration()
         key_old = key_old.replace('\0', '')
         ssid_old = ssid_old.replace('\0', '')
@@ -780,10 +811,12 @@ class Wifi(QWidget, Ui_Wifi):
            ssid == ssid_old and connection == connection_old and \
            ip == ip_old and sub == sub_old and gw == gw_old and \
            port == port_old and key_index == key_index_old and \
-           eap_options == eap_options_old and ca_certificate_length == certificate_length_old:
+           eap_options == eap_options_old and \
+           ca_certificate_length == ca_certificate_length_old and \
+           client_certificate_length == client_certificate_length_old and \
+           private_key_length == private_key_length_old:
             test_ok = True
         
-        progress.setValue(100)
         if test_ok and encryption == 1:
             test_ok = False
             username = str(self.wifi_username.text())
@@ -795,19 +828,19 @@ class Wifi(QWidget, Ui_Wifi):
             password_old = self.master.get_wifi_certificate(0xFFFE)
             password_old = password_old[0][:password_old[1]]
             
-            if username == username_old and password == password_old:
+            if username_old == username and password_old == password:
                 test_ok = True
-                
-                chunk_length = len(chunks)
-                for i in range(chunk_length):
-                    old_chunk = self.master.get_wifi_certificate(i)[0]
-                    if old_chunk != chunks[i]:
-                        test_ok = False
-                        break
-                    progress.setValue(100 + 900*i/chunk_length)
             
-        progress.setValue(1000)
-        progress.cancel()
+        if test_ok:
+            if ca_cert != []:
+                test_ok = self.write_certificate(ca_cert, 0)
+        if test_ok:
+            if client_cert != []:
+                test_ok = self.write_certificate(client_cert, 1)
+        if test_ok:
+            if priv_key != []:
+                test_ok = self.write_certificate(priv_key, 2)
+                
         if test_ok:
             self.popup_ok()
         else:
