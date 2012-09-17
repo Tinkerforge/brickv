@@ -27,3 +27,5 @@
        Fix serial port writability check on Windows
 1.1.6: Add chip temperature column to device table
        Add monoflop GUI for the IO-4 and IO-16 Bricklet plugins
+1.1.7: Check for timeout error on get_chip_temperature call
+       Add WIFI support to Master Brick plugin

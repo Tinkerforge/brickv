@@ -433,7 +433,7 @@ class Master(Device):
         the length of the certificates (for other encryption types these paramters
         are ignored). The certificate length are given in byte and the certificates
         themself can be set with  :func:`SetWifiCertificate`. Eap options consist of 
-        the outer authentification (bits 1-2), inner authentification (bit 3) and 
+        the outer authentication (bits 1-2), inner authentication (bit 3) and 
         certificate type (bits 4-5):
         
         .. csv-table::
@@ -466,7 +466,7 @@ class Master(Device):
     def get_wifi_status(self):
         """
         Returns the status of the WIFI Extension. The state is updated automatically,
-        all of the other parameters are updated on startup and everytime
+        all of the other parameters are updated on startup and every time
         :func:`RefreshWifiStatus` is called.
         
         Possible states are:
@@ -489,7 +489,7 @@ class Master(Device):
         """
         Refreshes the WIFI status (see :func:`GetWifiStatus`). To read the status
         of the WIFI module, the Master Brick has to change from data mode to
-        command mode and back. This transation and the readout itself is
+        command mode and back. This transaction and the readout itself is
         unfortunately time consuming. This means, that it might take some ms
         until the stack with attached WIFI Extensions reacts again after this
         function is called.
@@ -540,7 +540,7 @@ class Master(Device):
          :widths: 10, 90
         
          "0", "Full Speed (high power consumption, high throughput)"
-         "1", "Low Power (low power consuption, low throughput)"
+         "1", "Low Power (low power consumption, low throughput)"
         
         The default value is 0 (Full Speed).
         
