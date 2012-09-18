@@ -256,14 +256,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             devices = []
             for plugin in self.plugins[1:]:
                 if ' Brick ' in plugin[2]:
-                    devices.append((plugin[2], plugin[0].device))
+                    devices.append(('{0} [{1}]'.format(plugin[2], plugin[3]), plugin[0].device))
             self.flashing_window.set_devices(devices)
 
     def update_advanced_window(self):
         devices = []
         for plugin in self.plugins[1:]:
             if ' Brick ' in plugin[2]:
-                devices.append((plugin[2], plugin[0].device))
+                devices.append(('{0} [{1}]'.format(plugin[2], plugin[3]), plugin[0].device))
 
         self.button_advanced.setEnabled(len(devices) > 0)
 
