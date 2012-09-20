@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt, QTimer
-from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon, QPushButton
+from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon, QPushButton, QSortFilterProxyModel
 from ui_mainwindow import Ui_MainWindow
 from plugin_system.plugin_manager import PluginManager
 from bindings.ip_connection import IPConnection, Error
@@ -78,13 +78,6 @@ class MainTableModel(QAbstractTableModel):
             return QVariant(self.header[col])
         return QVariant()
 
-    def sort(self, col, order):
-        self.layoutAboutToBeChanged.emit()
-        self.data = sorted(self.data, key=operator.itemgetter(col))
-        if order == Qt.DescendingOrder:
-            self.data.reverse()
-        self.layoutChanged.emit()
-    
 class MainWindow(QMainWindow, Ui_MainWindow):
     callback_enumerate_signal = pyqtSignal(str, str, int, bool)
     
@@ -241,7 +234,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.table_view.setSortingEnabled(False)
         self.mtm = MainTableModel(self.table_view_header, data)
-        self.table_view.setModel(self.mtm)
+        sfpm = QSortFilterProxyModel()
+        sfpm.setSourceModel(self.mtm)
+        self.table_view.setModel(sfpm)
 
         for r in range(len(data)):
             p = self.plugins[r + 1]
@@ -251,7 +246,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     button.clicked.connect(p[0].reset_device)
                 else:
                     button.setDisabled(True)
-                self.table_view.setIndexWidget(self.mtm.index(r, 4), button)
+                self.table_view.setIndexWidget(sfpm.index(r, 4), button)
 
         self.table_view.setSortingEnabled(True)
         self.update_flashing_window()
