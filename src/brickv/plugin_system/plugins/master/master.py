@@ -336,6 +336,9 @@ class RS485(QWidget, Ui_RS485):
             
             self.rs485_type.setCurrentIndex(type)
             self.rs485_type_changed(type)
+
+    def destroy(self):
+        pass
         
     def popup_ok(self):
         QMessageBox.information(self, "Save", "Check OK", QMessageBox.Ok)
@@ -467,7 +470,11 @@ class Wifi(QWidget, Ui_Wifi):
             self.connection_changed(0)
             
             self.wifi_status = None
-        
+
+    def destroy(self):
+        if self.wifi_status:
+            self.wifi_status.close()
+
     def ca_certificate_browse_pressed(self):
         last_dir = ''
         if len(self.wifi_ca_certificate_url.text()) > 0:
@@ -867,7 +874,9 @@ class Master(PluginBase, Ui_Master):
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
-        
+
+        self.extension_type = None
+
         self.extensions = []
         num_extensions = 0
         # construct chibi widget
@@ -908,6 +917,13 @@ class Master(PluginBase, Ui_Master):
     def stop(self):
         self.update_timer.stop()
 
+    def destroy(self):
+        for extension in self.extensions:
+            extension.destroy()
+
+        if self.extension_type:
+            self.extension_type.close()
+
     def has_reset_device(self):
         return self.version_minor > 2 or (self.version_minor == 2 and self.version_release > 0)
 
@@ -942,6 +958,7 @@ class Master(PluginBase, Ui_Master):
         self.stack_current_label.setText(sc_str)
         
     def extension_pressed(self):
-        etw = ExtensionTypeWindow(self)
-        etw.setAttribute(Qt.WA_QuitOnClose)
-        etw.show()
+        if self.extension_type is None:
+            self.extension_type = ExtensionTypeWindow(self)
+
+        self.extension_type.show()
