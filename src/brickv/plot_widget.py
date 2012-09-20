@@ -83,22 +83,27 @@ class Plot(Qwt.QwtPlot):
             self.data_y[i] = []
             
 class PlotWidget(QWidget):
-    def __init__(self, y_axis, plot_list, parent = None):
+    def __init__(self, y_axis, plot_list, clear_button = None, parent = None):
         QWidget.__init__(self, parent)
         
         self.stop = True
         
         self.plot = Plot(y_axis, plot_list)
-        self.clear_button = QPushButton('Clear Graph')
-        
+
+        if clear_button is None:
+            self.clear_button = QPushButton('Clear Graph')
+        else:
+            self.clear_button = clear_button
+
         self.clear_button.pressed.connect(self.clear_pressed)
         
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot)
-        layout.addWidget(self.clear_button)
+
+        if clear_button is None:
+            layout.addWidget(self.clear_button)
         
         self.counter = 0
-        
         self.update_func = []
         
         for pl in plot_list:
