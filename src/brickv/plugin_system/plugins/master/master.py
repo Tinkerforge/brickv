@@ -417,9 +417,9 @@ class Wifi(QWidget, Ui_Wifi):
             ssid = ssid.replace('\0', '')
             
             username = self.master.get_wifi_certificate(0xFFFF)
-            username = username[0][:username[1]]
+            username = ''.join(map(chr, username[0][:username[1]]))
             password = self.master.get_wifi_certificate(0xFFFE)
-            password = password[0][:password[1]]
+            password = ''.join(map(chr, password[0][:password[1]]))
             
             power_mode = self.master.get_wifi_power_mode()
             
@@ -703,17 +703,16 @@ class Wifi(QWidget, Ui_Wifi):
         cert_path = unicode(cert_path.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
         try:
             if os.path.isfile(cert_path):
-                certificate_file = open(cert_path, 'rb').read()
+                certificate_file = map(ord, file(cert_path, 'rb').read()) # Convert certificate to list of bytes
                 certificate_length = len(certificate_file)
                 if certificate_length > 6*1024:
                     QMessageBox.critical(self, "Save", "Certificate too Big. Max size: 6kB.", QMessageBox.Ok)
                     return []
                 
                 return certificate_file
-                
         except:
             return []
-        
+
         return []
     
     def write_certificate(self, certificate, type):
@@ -734,7 +733,7 @@ class Wifi(QWidget, Ui_Wifi):
                 length = len(cert_chunk)
                 mod = length % 32
                 if mod != 0:
-                    cert_chunk += '\x00'*(32-mod)
+                    cert_chunk += [0] * (32 - mod)
     
                 time.sleep(0.01)
                 self.master.set_wifi_certificate(10000*type + position,
@@ -752,7 +751,7 @@ class Wifi(QWidget, Ui_Wifi):
     
             chunk_length = len(chunks)
             for i in range(chunk_length):
-                old_chunk = self.master.get_wifi_certificate(10000*type + i)[0]
+                old_chunk = list(self.master.get_wifi_certificate(10000*type + i)[0])
                 if old_chunk != chunks[i]:
                     progress.cancel()
                     return False
@@ -764,7 +763,7 @@ class Wifi(QWidget, Ui_Wifi):
             return False
         
         return True
-        
+
 
     def save_pressed(self):
         encryption = self.wifi_encryption.currentIndex()
@@ -799,12 +798,9 @@ class Wifi(QWidget, Ui_Wifi):
         self.master.set_wifi_encryption(encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length)
         self.master.set_wifi_configuration(ssid, connection, ip, sub, gw, port)
 
-        
         encryption_old, key_old, key_index_old, eap_options_old, ca_certificate_length_old, client_certificate_length_old, private_key_length_old = self.master.get_wifi_encryption()
         ssid_old, connection_old, ip_old, sub_old, gw_old, port_old = self.master.get_wifi_configuration()
-        key_old = key_old.replace('\0', '')
-        ssid_old = ssid_old.replace('\0', '')
-        
+
         test_ok = False
         
         if encryption == encryption_old and key == key_old and \
@@ -821,12 +817,12 @@ class Wifi(QWidget, Ui_Wifi):
             test_ok = False
             username = str(self.wifi_username.text())
             password = str(self.wifi_password.text())
-            self.master.set_wifi_certificate(0xFFFF, username, len(username))
-            self.master.set_wifi_certificate(0xFFFE, password, len(password))
+            self.master.set_wifi_certificate(0xFFFF, map(ord, username) + [0] * (32 - len(username)), len(username))
+            self.master.set_wifi_certificate(0xFFFE, map(ord, password) + [0] * (32 - len(password)), len(password))
             username_old = self.master.get_wifi_certificate(0xFFFF)
-            username_old = username_old[0][:username_old[1]]
+            username_old = ''.join(map(chr, username_old[0][:username_old[1]]))
             password_old = self.master.get_wifi_certificate(0xFFFE)
-            password_old = password_old[0][:password_old[1]]
+            password_old = ''.join(map(chr, password_old[0][:password_old[1]]))
             
             if username_old == username and password_old == password:
                 test_ok = True

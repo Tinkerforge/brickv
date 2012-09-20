@@ -406,7 +406,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             plugin_file_name = unicode(plugin_file_name.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
 
             try:
-                plugin = file(plugin_file_name, 'rb').read()
+                plugin = map(ord, file(plugin_file_name, 'rb').read()) # Convert plugin to list of bytes
             except IOError:
                 progress.cancel()
                 self.popup_fail('Bricklet', 'Could not read plugin file')
@@ -424,11 +424,11 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 progress.setMaximum(length)
                 progress.setValue(0)
                 QApplication.processEvents()
-                plugin = ''
+                plugin = []
                 chunk = response.read(1024)
 
                 while len(chunk) > 0:
-                    plugin += chunk
+                    plugin += map(ord, chunk) # Convert plugin to list of bytes
                     progress.setValue(len(plugin))
                     QApplication.processEvents()
                     chunk = response.read(1024)

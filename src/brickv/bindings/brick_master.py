@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-09-17.      #
+# This file was automatically generated on 2012-09-20.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -521,7 +521,7 @@ class Master(Device):
         
         .. versionadded:: 1.3.0
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_CERTIFICATE, (index, data, data_length), 'H 32s B', '')
+        self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_CERTIFICATE, (index, data, data_length), 'H 32B B', '')
 
     def get_wifi_certificate(self, index):
         """
@@ -529,7 +529,7 @@ class Master(Device):
         
         .. versionadded:: 1.3.0
         """
-        return GetWifiCertificate(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_CERTIFICATE, (index,), 'H', '32s B'))
+        return GetWifiCertificate(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_CERTIFICATE, (index,), 'H', '32B B'))
 
     def set_wifi_power_mode(self, mode):
         """
