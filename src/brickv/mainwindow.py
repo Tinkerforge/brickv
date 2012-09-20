@@ -97,7 +97,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.setWindowTitle("Brick Viewer " + config.BRICKV_VERSION)
         
-        self.table_view_header = ['Stack ID', 'Device Name', 'UID', 'FW Version', 'Chip Temp.', 'Reset']
+        self.table_view_header = ['Stack ID', 'Device Name', 'UID', 'FW Version', 'Reset']
 
         # Remove dummy tab
         self.tab_widget.removeTab(1)
@@ -122,12 +122,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.port.setValue(config.get_port())
 
         self.table_view.horizontalHeader().setSortIndicator(0, Qt.AscendingOrder)
-        self.mtm = None
 
-        self.chip_temp_timer = QTimer()
-        self.chip_temp_timer.timeout.connect(self.update_chip_temp)
-        self.chip_temp_timer.setInterval(2000)
-        self.chip_temp_timer.start()
+        self.mtm = None
 
     def closeEvent(self, event):
         self.exit_brickv()
@@ -144,11 +140,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             sys.exit()
 
     def start(self):
-        self.update_chip_temp()
-        self.chip_temp_timer.start()
+        pass
     
     def stop(self):
-        self.chip_temp_timer.stop()
+        pass
     
     def destroy(self):
         pass
@@ -242,8 +237,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         data = []
         for p in self.plugins[1:]:
             if p[0] is not None:
-                data.append([p[1], p[2], p[3], p[0].version, '', ''])
-            
+                data.append([p[1], p[2], p[3], p[0].version, ''])
+
         self.table_view.setSortingEnabled(False)
         self.mtm = MainTableModel(self.table_view_header, data)
         self.table_view.setModel(self.mtm)
@@ -256,7 +251,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     button.clicked.connect(p[0].reset_device)
                 else:
                     button.setDisabled(True)
-                self.table_view.setIndexWidget(self.mtm.index(r, 5), button)
+                self.table_view.setIndexWidget(self.mtm.index(r, 4), button)
 
         self.table_view.setSortingEnabled(True)
         self.update_flashing_window()
@@ -280,17 +275,3 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.advanced_window is not None:
             self.advanced_window.set_devices(devices)
-
-    def update_chip_temp(self):
-        if self.mtm is None:
-            return
-
-        for r in range(len(self.plugins) - 1):
-            p = self.plugins[r + 1]
-            if p[0] is not None:
-                try:
-                    self.mtm.setData(self.mtm.index(r, 4), p[0].get_chip_temperature(), Qt.DisplayRole)
-                except Error:
-                    # abort update here to avoid requesting chtip temp from a
-                    # whole disconnected stack
-                    return

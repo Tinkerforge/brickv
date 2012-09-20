@@ -216,12 +216,6 @@ in the image above, then press "Save Orientation".""")
         if self.has_reset_device():
             self.imu.reset()
 
-    def get_chip_temperature(self):
-        if self.version_minor > 0 or (self.version_minor == 0 and self.version_release > 6):
-            return u'{0} °C'.format(self.imu.get_chip_temperature()/10.0)
-        else:
-            return '(> 1.0.6 needed)'
-
     @staticmethod
     def has_name(name):
         return 'IMU Brick' in name 

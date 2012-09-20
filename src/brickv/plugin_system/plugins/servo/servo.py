@@ -264,12 +264,6 @@ class Servo(PluginBase, Ui_Servo):
         if self.has_reset_device():
             self.servo.reset()
 
-    def get_chip_temperature(self):
-        if self.version_minor > 1 or (self.version_minor == 1 and self.version_release > 2):
-            return u'{0} °C'.format(self.servo.get_chip_temperature()/10.0)
-        else:
-            return '(> 1.1.2 needed)'
-
     @staticmethod
     def has_name(name):
         return 'Servo Brick' in name 
