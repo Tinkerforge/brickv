@@ -33,6 +33,7 @@ from advanced import AdvancedWindow
 import socket
 import signal
 import sys
+import operator
 
 if sys.platform == 'linux2':
     import config_linux as config
@@ -76,6 +77,13 @@ class MainTableModel(QAbstractTableModel):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
             return QVariant(self.header[col])
         return QVariant()
+
+    def sort(self, Ncol, order):
+        self.layoutAboutToBeChanged.emit()
+        self.data = sorted(self.data, key=operator.itemgetter(Ncol))
+        if order == Qt.DescendingOrder:
+            self.data.reverse()
+        self.layoutChanged.emit()
     
 class MainWindow(QMainWindow, Ui_MainWindow):
     callback_enumerate_signal = pyqtSignal(str, str, int, bool)

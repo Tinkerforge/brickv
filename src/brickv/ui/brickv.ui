@@ -63,6 +63,9 @@
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectItems</enum>
           </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
           <attribute name="horizontalHeaderCascadingSectionResizes">
            <bool>false</bool>
           </attribute>
