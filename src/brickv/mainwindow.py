@@ -78,9 +78,9 @@ class MainTableModel(QAbstractTableModel):
             return QVariant(self.header[col])
         return QVariant()
 
-    def sort(self, Ncol, order):
+    def sort(self, col, order):
         self.layoutAboutToBeChanged.emit()
-        self.data = sorted(self.data, key=operator.itemgetter(Ncol))
+        self.data = sorted(self.data, key=operator.itemgetter(col))
         if order == Qt.DescendingOrder:
             self.data.reverse()
         self.layoutChanged.emit()
@@ -121,6 +121,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.host.setText(config.get_host())
         self.port.setValue(config.get_port())
 
+        self.table_view.horizontalHeader().setSortIndicator(0, Qt.AscendingOrder)
         self.mtm = None
 
         self.chip_temp_timer = QTimer()
@@ -243,6 +244,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if p[0] is not None:
                 data.append([p[1], p[2], p[3], p[0].version, '', ''])
             
+        self.table_view.setSortingEnabled(False)
         self.mtm = MainTableModel(self.table_view_header, data)
         self.table_view.setModel(self.mtm)
 
@@ -256,6 +258,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     button.setDisabled(True)
                 self.table_view.setIndexWidget(self.mtm.index(r, 5), button)
 
+        self.table_view.setSortingEnabled(True)
         self.update_flashing_window()
         self.update_advanced_window()
 
