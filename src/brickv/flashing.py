@@ -228,7 +228,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         else:
             for port in ports:
                 if len(port[1]) > 0 and port[0] != port[1]:
-                    self.combo_serial_port.addItem('{0} - {1}'.format(port[0], port[1]), port[0])
+                    self.combo_serial_port.addItem(u'{0} - {1}'.format(port[0], port[1]), port[0])
                 else:
                     self.combo_serial_port.addItem(port[0], port[0])
 
