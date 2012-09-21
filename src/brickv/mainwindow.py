@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt, QTimer
-from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon, QPushButton, QSortFilterProxyModel
+from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon, QPushButton, QSortFilterProxyModel, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QFrame, QSpacerItem, QSizePolicy
 from ui_mainwindow import Ui_MainWindow
 from plugin_system.plugin_manager import PluginManager
 from bindings.ip_connection import IPConnection, Error
@@ -90,7 +90,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.setWindowTitle("Brick Viewer " + config.BRICKV_VERSION)
         
-        self.table_view_header = ['Stack ID', 'Device Name', 'UID', 'FW Version', 'Reset']
+        self.table_view_header = ['Stack ID', 'Device Name', 'UID', 'FW Version']
 
         # Remove dummy tab
         self.tab_widget.removeTab(1)
@@ -200,18 +200,59 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.button_advanced.setDisabled(True)
             self.port.setDisabled(False)
             self.host.setDisabled(False)
-        
+
+    def create_plugin_container(self, plugin, stack_id, name, uid):
+        container = QWidget()
+        layout = QVBoxLayout(container)
+        info = QHBoxLayout()
+
+        info.addWidget(QLabel('Stack ID:'))
+        info.addWidget(QLabel('{0}'.format(stack_id)))
+
+        info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+
+        info.addWidget(QLabel('UID:'))
+        label = QLabel('{0}'.format(uid))
+        label.setTextInteractionFlags(Qt.TextSelectableByMouse |
+                                      Qt.TextSelectableByKeyboard)
+        info.addWidget(label)
+
+        info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+
+        info.addWidget(QLabel('FW Version:'))
+        info.addWidget(QLabel('{0}'.format(plugin.version)))
+
+        if ' Brick ' in name:
+            button = QPushButton('Reset')
+            if plugin.has_reset_device():
+                button.clicked.connect(plugin.reset_device)
+            else:
+                button.setDisabled(True)
+            info.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding))
+            info.addWidget(button)
+
+        layout.addLayout(info)
+
+        line = QFrame()
+        line.setFrameShape(QFrame.HLine)
+        line.setFrameShadow(QFrame.Sunken)
+
+        plugin.layout().setContentsMargins(0, 0, 0, 0)
+
+        layout.addWidget(line)
+        layout.addWidget(plugin)
+
+        return container
+
     def callback_enumerate(self, uid, name, stack_id, is_new):
         if is_new:
             for plugin in self.plugins:
                 # Plugin already loaded
                 if plugin[3] == uid:
                     return
-            plugin = self.plugin_manager.get_plugin_from_name(name, 
-                                                              self.ipcon, 
-                                                              uid)
+            plugin = self.plugin_manager.get_plugin_from_name(name, self.ipcon, uid)
             if plugin is not None:
-                self.tab_widget.addTab(plugin, name)
+                self.tab_widget.addTab(self.create_plugin_container(plugin, stack_id, name, uid), name)
                 self.plugins.append((plugin, stack_id, name, uid))
         else:
             for i in range(len(self.plugins)):
@@ -230,24 +271,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         data = []
         for p in self.plugins[1:]:
             if p[0] is not None:
-                data.append([p[1], p[2], p[3], p[0].version, ''])
+                data.append([p[1], p[2], p[3], p[0].version])
 
         self.table_view.setSortingEnabled(False)
         self.mtm = MainTableModel(self.table_view_header, data)
         sfpm = QSortFilterProxyModel()
         sfpm.setSourceModel(self.mtm)
         self.table_view.setModel(sfpm)
-
-        for r in range(len(data)):
-            p = self.plugins[r + 1]
-            if p[0] is not None and ' Brick ' in p[2]:
-                button = QPushButton('Reset')
-                if p[0].has_reset_device():
-                    button.clicked.connect(p[0].reset_device)
-                else:
-                    button.setDisabled(True)
-                self.table_view.setIndexWidget(sfpm.index(r, 4), button)
-
         self.table_view.setSortingEnabled(True)
         self.update_flashing_window()
         self.update_advanced_window()

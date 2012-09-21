@@ -251,7 +251,7 @@
            <item>
             <widget class="QLabel" name="label_4">
              <property name="text">
-              <string>PWM Frequency (hz)</string>
+              <string>PWM Frequency (Hz)</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
