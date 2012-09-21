@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-09-20.      #
+# This file was automatically generated on 2012-09-21.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -19,6 +19,7 @@ GetWifiConfiguration = namedtuple('WifiConfiguration', ['ssid', 'connection', 'i
 GetWifiEncryption = namedtuple('WifiEncryption', ['encryption', 'key', 'key_index', 'eap_options', 'ca_certificate_length', 'client_certificate_length', 'private_key_length'])
 GetWifiStatus = namedtuple('WifiStatus', ['mac_address', 'bssid', 'channel', 'rssi', 'ip', 'subnet_mask', 'gateway', 'rx_count', 'tx_count', 'state'])
 GetWifiCertificate = namedtuple('WifiCertificate', ['data', 'data_length'])
+GetWifiBufferInfo = namedtuple('WifiBufferInfo', ['overflow', 'low_watermark', 'used'])
 
 class Master(Device):
     """
@@ -62,6 +63,7 @@ class Master(Device):
     FUNCTION_GET_WIFI_CERTIFICATE = 34
     FUNCTION_SET_WIFI_POWER_MODE = 35
     FUNCTION_GET_WIFI_POWER_MODE = 36
+    FUNCTION_GET_WIFI_BUFFER_INFO = 37
     FUNCTION_RESET = 243
     FUNCTION_GET_CHIP_TEMPERATURE = 242
 
@@ -556,6 +558,27 @@ class Master(Device):
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_POWER_MODE, (), '', 'B')
 
+    def get_wifi_buffer_info(self):
+        """
+        Returns informations about the WIFI receive buffer. The WIFI
+        receive buffer has a max size of 1500 byte and if data is transfered
+        too fast, it might overflow.
+        
+        The return values are the number of overflows, the low watermark 
+        (e.g. the smallest number of bytes that were free in the buffer) and
+        the bytes that are currently used.
+        
+        You should always try to keep the buffer empty, otherwise you will
+        have a permanent latency. A good rule of thumb is, that you can transfer
+        1000 messages per second without problems.
+        
+        Try to not send more then 50 messages at a time without any kind of
+        break between them. 
+        
+        .. versionadded:: 1.3.2
+        """
+        return GetWifiBufferInfo(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_BUFFER_INFO, (), '', 'I H H'))
+
     def reset(self):
         """
         Calling this function will reset the Brick. Calling this function
@@ -572,7 +595,8 @@ class Master(Device):
         Returns the temperature in °C/10 as measured inside the microcontroller. The
         value returned is not the ambient temperature!
         
-        The temperature has an accuracy of +-15%. Practically it is only useful as
-        an indicator for temperature changes.
+        The temperature is only proportional to the real temperature and it has an
+        accuracy of +-15%. Practically it is only useful as an indicator for
+        temperature changes.
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
