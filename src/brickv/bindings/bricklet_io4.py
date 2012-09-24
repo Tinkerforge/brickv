@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-09-14.      #
+# This file was automatically generated on 2012-09-21.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -161,8 +161,8 @@ class IO4(Device):
         A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
         have a RS485 bus and an IO-4 Bricklet connected to one of the slave
         stacks. You can now call this function every second, with a time parameter
-        of two seconds and Pin 0 set to high. Pin 0 will be high all the time. If now
-        the RS485 connection is lost, then Pin 0 will get low in at most two seconds.
+        of two seconds and pin 0 set to high. Pin 0 will be high all the time. If now
+        the RS485 connection is lost, then pin 0 will get low in at most two seconds.
         
         .. versionadded:: 1.1.1
         """

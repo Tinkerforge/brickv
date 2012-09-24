@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-09-21.      #
+# This file was automatically generated on 2012-09-24.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -63,7 +63,7 @@ class IndustrialQuadRelay(Device):
 
     def get_value(self):
         """
-        Returns the value mask as set by :func:`SetValue`.
+        Returns the bitmask as set by :func:`SetValue`.
         """
         return self.ipcon.send_request(self, IndustrialQuadRelay.FUNCTION_GET_VALUE, (), '', 'H')
 
@@ -73,7 +73,7 @@ class IndustrialQuadRelay(Device):
         bitmask.
         
         The second parameter is a bitmask with the desired value of the specified
-        output pins (*true* means relay closed and *false* means relay open).
+        pins (*true* means relay closed and *false* means relay open).
         
         The third parameter indicates the time (in ms) that the pins should hold
         the value.
@@ -86,8 +86,8 @@ class IndustrialQuadRelay(Device):
         A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
         have a RS485 bus and a Quad Relay Bricklet connected to one of the slave
         stacks. You can now call this function every second, with a time parameter
-        of two seconds and Pin 0 closed. Pin 0 will be closed all the time. If now
-        the RS485 connection is lost, then Pin 0 will be opend in at most two seconds.
+        of two seconds and pin 0 closed. Pin 0 will be closed all the time. If now
+        the RS485 connection is lost, then pin 0 will be opened in at most two seconds.
         """
         self.ipcon.send_request(self, IndustrialQuadRelay.FUNCTION_SET_MONOFLOP, (pin_mask, value_mask, time), 'H H I', '')
 

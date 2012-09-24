@@ -29,4 +29,9 @@
        Add monoflop GUI for the IO-4 and IO-16 Bricklet plugins
 1.1.7: Check for timeout error on get_chip_temperature call
        Add WIFI support to Master Brick plugin
-1.1.8: Add AP and Ad Hoc support to Master Brick plugin
+1.1.8: Show Brick UID in Bricklet flashing dialog
+       Make device table sortable
+       Remove chip temperature column
+       Fix serial port enumeration for ports with non-ASCII names
+       Add Stack ID, UID, FW Version and Reset button to each tab
+       Add AP and Ad Hoc support to Master Brick plugin
