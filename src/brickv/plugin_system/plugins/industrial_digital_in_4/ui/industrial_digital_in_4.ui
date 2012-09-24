@@ -878,7 +878,7 @@ Group</string>
      <item>
       <widget class="QPushButton" name="debounce_go">
        <property name="text">
-        <string>Go</string>
+        <string>Set Period</string>
        </property>
       </widget>
      </item>
