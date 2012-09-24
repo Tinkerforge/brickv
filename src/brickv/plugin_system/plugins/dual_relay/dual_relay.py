@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QPixmap
 from PyQt4.QtCore import Qt, pyqtSignal, QTimer
 
 from ui_dual_relay import Ui_DualRelay
@@ -59,13 +59,24 @@ class DualRelay(PluginBase, Ui_DualRelay):
 
         self.r1_timebefore = 500
         self.r2_timebefore = 500
+        
+        self.a1_pixmap = QPixmap('plugin_system/plugins/dual_relay/relay_a1.gif')
+        self.a2_pixmap = QPixmap('plugin_system/plugins/dual_relay/relay_a2.gif')
+        self.b1_pixmap = QPixmap('plugin_system/plugins/dual_relay/relay_b1.gif')
+        self.b2_pixmap = QPixmap('plugin_system/plugins/dual_relay/relay_b2.gif')
 
         try:
             dr1, dr2 = self.dr.get_state()
             if dr1:
+                self.dr1_image.setPixmap(self.a1_pixmap)
                 self.dr1_button.setText('On')
+            else:
+                self.dr1_image.setPixmap(self.b1_pixmap)
             if dr2:
+                self.dr2_image.setPixmap(self.a2_pixmap)
                 self.dr2_button.setText('On')
+            else:
+                self.dr2_image.setPixmap(self.b2_pixmap)
 
             if self.has_monoflop:
                 state, time, time_remaining = self.dr.get_monoflop(1)
@@ -121,8 +132,10 @@ class DualRelay(PluginBase, Ui_DualRelay):
     def dr1_pressed(self):
         if self.dr1_button.text() == 'On':
             self.dr1_button.setText('Off')
+            self.dr1_image.setPixmap(self.b1_pixmap)
         else:
             self.dr1_button.setText('On')
+            self.dr1_image.setPixmap(self.a1_pixmap)
         
         dr1, dr2 = self.get_state()
         
@@ -139,8 +152,10 @@ class DualRelay(PluginBase, Ui_DualRelay):
     def dr2_pressed(self):
         if self.dr2_button.text() == 'On':
             self.dr2_button.setText('Off')
+            self.dr2_image.setPixmap(self.b2_pixmap)
         else:
             self.dr2_button.setText('On')
+            self.dr2_image.setPixmap(self.a2_pixmap)
         
         dr1, dr2 = self.get_state()
         
@@ -169,6 +184,11 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.dr1_button.setText(self.state1_combobox.currentText())
             self.time1_spinbox.setEnabled(False)
             self.state1_combobox.setEnabled(False)
+            
+            if state:
+                self.dr1_image.setPixmap(self.a1_pixmap)
+            else:
+                self.dr1_image.setPixmap(self.b1_pixmap)
         except ip_connection.Error:
             return
 
@@ -187,6 +207,11 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.dr2_button.setText(self.state2_combobox.currentText())
             self.time2_spinbox.setEnabled(False)
             self.state2_combobox.setEnabled(False)
+            
+            if state:
+                self.dr2_image.setPixmap(self.a2_pixmap)
+            else:
+                self.dr2_image.setPixmap(self.b2_pixmap)
         except ip_connection.Error:
             return
     
@@ -198,8 +223,10 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.state1_combobox.setEnabled(True)
             if state:
                 self.dr1_button.setText('On')
+                self.dr1_image.setPixmap(self.a1_pixmap)
             else:
                 self.dr1_button.setText('Off')
+                self.dr1_image.setPixmap(self.b1_pixmap)
         else:
             self.r2_monoflop = False
             self.time2_spinbox.setValue(self.r2_timebefore)
@@ -207,8 +234,10 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.state2_combobox.setEnabled(True)
             if state:
                 self.dr2_button.setText('On')
+                self.dr2_image.setPixmap(self.a2_pixmap)
             else:
                 self.dr2_button.setText('Off')
+                self.dr2_image.setPixmap(self.b2_pixmap)
     
     def update(self):
         if self.r1_monoflop:
