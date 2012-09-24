@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-  
 """
-Industrial Quad Relay Plugin
+Industrial Digital Out 4 Plugin
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
 
-industrial_quad_relay.py: Industrial Quad Relay Plugin Implementation
+industrial_digital_out_4.py: Industrial Digital Out 4 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -26,11 +26,11 @@ from bindings import ip_connection
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QPixmap
 from PyQt4.QtCore import Qt, pyqtSignal, QTimer
 
-from ui_industrial_quad_relay import Ui_IndustrialQuadRelay
+from ui_industrial_digital_out_4 import Ui_IndustrialDigitalOut4
 
-from bindings import bricklet_industrial_quad_relay
+from bindings import bricklet_industrial_digital_out_4
         
-class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
+class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
     qtcb_monoflop = pyqtSignal(int, bool)
     
     def __init__ (self, ipcon, uid):
@@ -38,37 +38,37 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         
         self.setupUi(self)
         
-        self.iqr = bricklet_industrial_quad_relay.IndustrialQuadRelay(self.uid)
-        self.ipcon.add_device(self.iqr)
-        version = self.iqr.get_version()[1]
+        self.ido4 = bricklet_industrial_digital_out_4.IndustrialDigitalOut4(self.uid)
+        self.ipcon.add_device(self.ido4)
+        version = self.ido4.get_version()[1]
         self.version = '.'.join(map(str, version))
         
-        self.open_pixmap = QPixmap('plugin_system/plugins/industrial_quad_relay/relay_open.gif')
-        self.close_pixmap = QPixmap('plugin_system/plugins/industrial_quad_relay/relay_close.gif')
+        self.gnd_pixmap = QPixmap('plugin_system/plugins/industrial_digital_out_4/dio_gnd.gif')
+        self.vcc_pixmap = QPixmap('plugin_system/plugins/industrial_digital_out_4/dio_vcc.gif')
         
-        self.relay_buttons = [self.b0, self.b1, self.b2, self.b3, self.b4, self.b5, self.b6, self.b7, self.b8, self.b9, self.b10, self.b11, self.b12, self.b13, self.b14, self.b15]
-        self.relay_button_icons = [self.b0_icon, self.b1_icon, self.b2_icon, self.b3_icon, self.b4_icon, self.b5_icon, self.b6_icon, self.b7_icon, self.b8_icon, self.b9_icon, self.b10_icon, self.b11_icon, self.b12_icon, self.b13_icon, self.b14_icon, self.b15_icon]
-        self.relay_button_labels = [self.b0_label, self.b1_label, self.b2_label, self.b3_label, self.b4_label, self.b5_label, self.b6_label, self.b7_label, self.b8_label, self.b9_label, self.b10_label, self.b11_label, self.b12_label, self.b13_label, self.b14_label, self.b15_label]
+        self.pin_buttons = [self.b0, self.b1, self.b2, self.b3, self.b4, self.b5, self.b6, self.b7, self.b8, self.b9, self.b10, self.b11, self.b12, self.b13, self.b14, self.b15]
+        self.pin_button_icons = [self.b0_icon, self.b1_icon, self.b2_icon, self.b3_icon, self.b4_icon, self.b5_icon, self.b6_icon, self.b7_icon, self.b8_icon, self.b9_icon, self.b10_icon, self.b11_icon, self.b12_icon, self.b13_icon, self.b14_icon, self.b15_icon]
+        self.pin_button_labels = [self.b0_label, self.b1_label, self.b2_label, self.b3_label, self.b4_label, self.b5_label, self.b6_label, self.b7_label, self.b8_label, self.b9_label, self.b10_label, self.b11_label, self.b12_label, self.b13_label, self.b14_label, self.b15_label]
         self.groups = [self.group0, self.group1, self.group2, self.group3]
-        for icon in self.relay_button_icons:
-            icon.setPixmap(self.open_pixmap)
+        for icon in self.pin_button_icons:
+            icon.setPixmap(self.gnd_pixmap)
             icon.show()
             
         self.line_1vs2.setVisible(False)
         self.line_2vs3.setVisible(False)
         self.line_3vs4.setVisible(False)
         
-        self.available_ports = self.iqr.get_available_for_group()
+        self.available_ports = self.ido4.get_available_for_group()
         
         
         def get_button_lambda(button):
-            return lambda: self.relay_button_pressed(button)
+            return lambda: self.pin_button_pressed(button)
         
-        for i in range(len(self.relay_buttons)):
-            self.relay_buttons[i].pressed.connect(get_button_lambda(i))
+        for i in range(len(self.pin_buttons)):
+            self.pin_buttons[i].pressed.connect(get_button_lambda(i))
         
         self.qtcb_monoflop.connect(self.cb_monoflop)
-        self.iqr.register_callback(self.iqr.CALLBACK_MONOFLOP_DONE,
+        self.ido4.register_callback(self.ido4.CALLBACK_MONOFLOP_DONE,
                                    self.qtcb_monoflop.emit)
         
         self.set_group.pressed.connect(self.set_group_pressed)
@@ -91,7 +91,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
 
     @staticmethod
     def has_name(name):
-        return 'Industrial Quad Relay Bricklet' in name 
+        return 'Industrial Digital Out 4 Bricklet' in name 
     
     def reconfigure_everything(self):
         for i in range(4):
@@ -106,7 +106,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
                     item = 'Port ' + chr(ord('A') + j)
                     self.groups[i].addItem(item)
                     
-        group = self.iqr.get_group()
+        group = self.ido4.get_group()
         
         for i in range(4):
             if group[i] == 'n':
@@ -142,21 +142,21 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
             
     def show_buttons(self, num):
         for i in range(num*4, (num+1)*4):
-            self.relay_buttons[i].setVisible(True)
-            self.relay_button_icons[i].setVisible(True)
-            self.relay_button_labels[i].setVisible(True)
+            self.pin_buttons[i].setVisible(True)
+            self.pin_button_icons[i].setVisible(True)
+            self.pin_button_labels[i].setVisible(True)
     
     def hide_buttons(self, num):
         for i in range(num*4, (num+1)*4):
-            self.relay_buttons[i].setVisible(False)
-            self.relay_button_icons[i].setVisible(False)
-            self.relay_button_labels[i].setVisible(False)
+            self.pin_buttons[i].setVisible(False)
+            self.pin_button_icons[i].setVisible(False)
+            self.pin_button_labels[i].setVisible(False)
     
     def get_current_value(self):
         value = 0
         i = 0
-        for b in self.relay_buttons:
-            if 'off' in b.text():
+        for b in self.pin_buttons:
+            if 'low' in b.text():
                 value |= (1 << i) 
             i += 1
         return value
@@ -174,21 +174,21 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
             elif 'Port D' in text:
                 group[i] = 'd'
                  
-        self.iqr.set_group(group)
+        self.ido4.set_group(group)
         self.reconfigure_everything()
     
-    def relay_button_pressed(self, button):
+    def pin_button_pressed(self, button):
         value = self.get_current_value()
-        if 'on' in self.relay_buttons[button].text():
+        if 'high' in self.pin_buttons[button].text():
             value |= (1 << button)
-            self.relay_buttons[button].setText('off')
-            self.relay_button_icons[button].setPixmap(self.close_pixmap)
+            self.pin_buttons[button].setText('low')
+            self.pin_button_icons[button].setPixmap(self.vcc_pixmap)
         else:
             value &= ~(1 << button)
-            self.relay_buttons[button].setText('on')
-            self.relay_button_icons[button].setPixmap(self.open_pixmap)
+            self.pin_buttons[button].setText('high')
+            self.pin_button_icons[button].setPixmap(self.gnd_pixmap)
             
-        self.iqr.set_value(value)
+        self.ido4.set_value(value)
         
     def cb_monoflop(self, pin_mask, value_mask):
         self.monoflop_time.setValue(self.monoflop_time_before)
@@ -198,14 +198,14 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         
         for pin in range(16):
             if (1 << pin) & pin_mask:
-                if 'on' in self.relay_buttons[pin].text():
-                    self.relay_buttons[pin].setText('off')
-                    self.relay_button_icons[pin].setPixmap(self.close_pixmap)
+                if 'high' in self.pin_buttons[pin].text():
+                    self.pin_buttons[pin].setText('low')
+                    self.pin_button_icons[pin].setPixmap(self.vcc_pixmap)
                 else:
-                    self.relay_buttons[pin].setText('on')
-                    self.relay_button_icons[pin].setPixmap(self.open_pixmap)
+                    self.pin_buttons[pin].setText('high')
+                    self.pin_button_icons[pin].setPixmap(self.gnd_pixmap)
                     
-                self.relay_buttons[pin].setEnabled(True)
+                self.pin_buttons[pin].setEnabled(True)
         
     def monoflop_go_pressed(self):
         pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
@@ -213,24 +213,24 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
             time = self.monoflop_time_before
         else:
             time = self.monoflop_time.value()
-        value = "on" in (self.relay_buttons[pin].text())
+        value = "on" in (self.pin_buttons[pin].text())
         
         self.monoflop_time.setEnabled(False)
         self.monoflop_pin.setEnabled(False)
         self.monoflop_time_before = time
-        self.iqr.set_monoflop(1 << pin, value << pin, time)
+        self.ido4.set_monoflop(1 << pin, value << pin, time)
             
         if not self.update_timer.isActive():
-            self.relay_buttons[pin].setEnabled(False)
-            if 'on' in self.relay_buttons[pin].text():
-                self.relay_buttons[pin].setText('off')
-                self.relay_button_icons[pin].setPixmap(self.close_pixmap)
+            self.pin_buttons[pin].setEnabled(False)
+            if 'high' in self.pin_buttons[pin].text():
+                self.pin_buttons[pin].setText('low')
+                self.pin_button_icons[pin].setPixmap(self.vcc_pixmap)
             else:
-                self.relay_buttons[pin].setText('on')
-                self.relay_button_icons[pin].setPixmap(self.open_pixmap)
+                self.pin_buttons[pin].setText('high')
+                self.pin_button_icons[pin].setPixmap(self.gnd_pixmap)
         self.update_timer.start()
     
     def update(self):
         pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
-        value, time, time_remaining = self.iqr.get_monoflop(pin)
+        value, time, time_remaining = self.ido4.get_monoflop(pin)
         self.monoflop_time.setValue(time_remaining)
