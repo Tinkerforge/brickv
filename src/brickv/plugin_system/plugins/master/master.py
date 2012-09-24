@@ -418,7 +418,12 @@ class Wifi(QWidget, Ui_Wifi):
         if parent.version_minor > 2:
             ssid, connection, ip, sub, gw, port = self.master.get_wifi_configuration()
             ssid = ssid.replace('\0', '')
-            
+
+            if parent.version_minor == 3 and parent.version_release < 3:
+                # AP and Ad Hoc was added in 1.3.3
+                while self.wifi_connection.count() > 2:
+                    self.wifi_connection.removeItem(self.wifi_connection.count() - 1)
+
             username = self.master.get_wifi_certificate(0xFFFF)
             username = ''.join(map(chr, username[0][:username[1]]))
             password = self.master.get_wifi_certificate(0xFFFE)
