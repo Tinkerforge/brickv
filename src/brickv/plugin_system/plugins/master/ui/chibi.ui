@@ -262,7 +262,7 @@
               </size>
              </property>
              <property name="text">
-              <string>Addresses of Slaves as comma seperated list
+              <string>Addresses of Slaves as comma separated list
 e.g. &quot;5&quot; (one slave with address 5) or &quot;1,2,42&quot; (three slaves with addresses 1, 2 and 42):</string>
              </property>
              <property name="wordWrap">
