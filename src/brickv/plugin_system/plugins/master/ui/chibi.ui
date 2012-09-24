@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>398</width>
-    <height>402</height>
+    <width>384</width>
+    <height>411</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,18 +32,6 @@
          <string>Chibi Extension</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>9</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_5">
            <item>
