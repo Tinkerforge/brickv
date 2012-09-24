@@ -418,7 +418,12 @@ class Wifi(QWidget, Ui_Wifi):
         if parent.version_minor > 2:
             ssid, connection, ip, sub, gw, port = self.master.get_wifi_configuration()
             ssid = ssid.replace('\0', '')
-            
+
+            if parent.version_minor == 3 and parent.version_release < 3:
+                # AP and Ad Hoc was added in 1.3.3
+                while self.wifi_connection.count() > 2:
+                    self.wifi_connection.removeItem(self.wifi_connection.count() - 1)
+
             username = self.master.get_wifi_certificate(0xFFFF)
             username = ''.join(map(chr, username[0][:username[1]]))
             password = self.master.get_wifi_certificate(0xFFFE)
@@ -687,21 +692,11 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_dot9.setVisible(True)
             
         if self.wifi_connection.currentIndex() in (2, 3, 4, 5):
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.clear()
             self.wifi_encryption.addItem('WEP')
             self.wifi_encryption.addItem('No Encryption')
         else:
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.clear()
             self.wifi_encryption.addItem('WPA/WPA2')
             self.wifi_encryption.addItem('WPA Enterprise')
             self.wifi_encryption.addItem('WEP')
@@ -791,6 +786,8 @@ class Wifi(QWidget, Ui_Wifi):
         except:
             progress.cancel()
             return False
+
+        return True
 
 
     def save_pressed(self):

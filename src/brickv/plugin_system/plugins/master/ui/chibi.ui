@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>398</width>
-    <height>402</height>
+    <width>384</width>
+    <height>411</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,18 +32,6 @@
          <string>Chibi Extension</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>9</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_5">
            <item>
@@ -262,7 +250,7 @@
               </size>
              </property>
              <property name="text">
-              <string>Addresses of Slaves as comma seperated list
+              <string>Addresses of Slaves as comma separated list
 e.g. &quot;5&quot; (one slave with address 5) or &quot;1,2,42&quot; (three slaves with addresses 1, 2 and 42):</string>
              </property>
              <property name="wordWrap">
