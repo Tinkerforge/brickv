@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>452</width>
-    <height>738</height>
+    <height>598</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,13 +48,6 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="wifi_show_status">
-           <property name="text">
-            <string>Show Status</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="Line" name="line_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -77,12 +70,41 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QLabel" name="wifi_port_label">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>Port:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="wifi_port">
+             <property name="maximum">
+              <number>65535</number>
+             </property>
+             <property name="value">
+              <number>4223</number>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_9">
            <item>
             <widget class="QLabel" name="label_7">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>Connection:</string>
              </property>
@@ -100,27 +122,26 @@
                <string>Static IP</string>
               </property>
              </item>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QLabel" name="wifi_port_label">
-             <property name="text">
-              <string>Port:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="wifi_port">
-             <property name="maximum">
-              <number>65535</number>
-             </property>
-             <property name="value">
-              <number>4223</number>
-             </property>
+             <item>
+              <property name="text">
+               <string>Access Point: DHCP</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Access Point: Static IP</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ad Hoc: DHCP</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Ad Hoc: Static IP</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>
@@ -426,10 +447,6 @@
              </property>
             </widget>
            </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="wifi_key_index_layout">
            <item>
             <widget class="QLabel" name="wifi_key_index_label">
              <property name="text">
@@ -482,10 +499,6 @@
              </item>
             </widget>
            </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="wifi_eap_inner_auth_layout">
            <item>
             <widget class="QLabel" name="wifi_eap_inner_auth_label">
              <property name="text">
@@ -525,10 +538,6 @@
              </property>
             </widget>
            </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_8">
            <item>
             <widget class="QLabel" name="wifi_password_label">
              <property name="text">
@@ -648,11 +657,22 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="wifi_save">
-           <property name="text">
-            <string>Save WIFI Configuration</string>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QPushButton" name="wifi_save">
+             <property name="text">
+              <string>Save WIFI Configuration</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="wifi_show_status">
+             <property name="text">
+              <string>Show Status</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>

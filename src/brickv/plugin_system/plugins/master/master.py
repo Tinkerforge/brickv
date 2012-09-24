@@ -509,7 +509,7 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_private_key_url.setText(file_name)
             
     def encryption_changed(self, index):
-        if self.wifi_encryption.currentIndex() == 0:
+        if str(self.wifi_encryption.currentText()) in 'WPA/WPA2':
             self.wifi_key.setVisible(True)
             self.wifi_key_label.setVisible(True)
             
@@ -537,7 +537,7 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_private_key_url.setVisible(False)
             self.wifi_private_key_browse.setVisible(False)
             self.wifi_private_key_label.setVisible(False)
-        elif self.wifi_encryption.currentIndex() == 1:
+        elif str(self.wifi_encryption.currentText()) in 'WPA Enterprise':
             self.wifi_key.setVisible(False)
             self.wifi_key_label.setVisible(False)
             
@@ -565,7 +565,7 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_private_key_url.setVisible(True)
             self.wifi_private_key_browse.setVisible(True)
             self.wifi_private_key_label.setVisible(True)
-        elif self.wifi_encryption.currentIndex() == 2:
+        elif str(self.wifi_encryption.currentText()) in 'WEP':
             self.wifi_key.setVisible(True)
             self.wifi_key_label.setVisible(True)
             
@@ -623,7 +623,7 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_private_key_label.setVisible(False)
         
     def connection_changed(self, index):
-        if self.wifi_connection.currentIndex() == 0:
+        if self.wifi_connection.currentIndex() in (0, 2, 4):
             self.wifi_ip1.setVisible(False)
             self.wifi_ip2.setVisible(False)
             self.wifi_ip3.setVisible(False)
@@ -683,6 +683,27 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_dot7.setVisible(True)
             self.wifi_dot8.setVisible(True)
             self.wifi_dot9.setVisible(True)
+            
+        if self.wifi_connection.currentIndex() in (2, 3, 4, 5):
+            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.addItem('WEP')
+            self.wifi_encryption.addItem('No Encryption')
+        else:
+            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.addItem('WPA/WPA2')
+            self.wifi_encryption.addItem('WPA Enterprise')
+            self.wifi_encryption.addItem('WEP')
+            self.wifi_encryption.addItem('No Encryption')
             
     def popup_ok(self):
         QMessageBox.information(self, "Save", "Check OK", QMessageBox.Ok)
