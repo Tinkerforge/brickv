@@ -208,10 +208,9 @@ class IO4(PluginBase, Ui_IO4):
         
     def direction_changed(self, direction):
         pin = int(self.pin_box.currentText())
-        
-        while self.value_box.count() != 0:
-            self.value_box.removeItem(0)
-            
+
+        self.value_box.clear()
+
         if direction == 1:
             self.value_box.addItem('High')
             self.value_box.addItem('Low')

@@ -242,8 +242,7 @@ class IO16(PluginBase, Ui_IO16):
         port = str(self.port_box.currentText()).lower()
         pin = int(self.pin_box.currentText())
         
-        while self.value_box.count() != 0:
-            self.value_box.removeItem(0)
+        self.value_box.clear()
 
         if direction == 1:
             self.value_box.addItem('High')

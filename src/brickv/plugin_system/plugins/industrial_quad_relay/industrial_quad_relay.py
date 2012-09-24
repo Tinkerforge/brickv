@@ -95,11 +95,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
     
     def reconfigure_everything(self):
         for i in range(4):
-            self.groups[i].removeItem(0)
-            self.groups[i].removeItem(0)
-            self.groups[i].removeItem(0)
-            self.groups[i].removeItem(0)
-            self.groups[i].removeItem(0)
+            self.groups[i].clear()
             self.groups[i].addItem('Off')
             for j in range(4):
                 if self.available_ports & (1 << j):
@@ -118,10 +114,9 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
                     self.groups[i].setCurrentIndex(0)
                 else:
                     self.groups[i].setCurrentIndex(index)
-                    
-        for i in range(16):
-            self.monoflop_pin.removeItem(0)
-            
+
+        self.monoflop_pin.clear()
+
         if group[0] == 'n' and group[1] == 'n' and group[2] == 'n' and group[3]:
             self.show_buttons(0)
             self.hide_buttons(1)

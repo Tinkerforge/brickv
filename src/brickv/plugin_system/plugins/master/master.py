@@ -687,21 +687,11 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_dot9.setVisible(True)
             
         if self.wifi_connection.currentIndex() in (2, 3, 4, 5):
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.clear()
             self.wifi_encryption.addItem('WEP')
             self.wifi_encryption.addItem('No Encryption')
         else:
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
-            self.wifi_encryption.removeItem(0)
+            self.wifi_encryption.clear()
             self.wifi_encryption.addItem('WPA/WPA2')
             self.wifi_encryption.addItem('WPA Enterprise')
             self.wifi_encryption.addItem('WEP')
@@ -791,6 +781,8 @@ class Wifi(QWidget, Ui_Wifi):
         except:
             progress.cancel()
             return False
+
+        return True
 
 
     def save_pressed(self):
