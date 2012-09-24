@@ -448,6 +448,8 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_port.setValue(port)
             
             encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length = self.master.get_wifi_encryption()
+            if connection in (2, 3, 4, 5):
+                encryption -= 2
             eap_outer = eap_options & 0b00000011
             eap_inner = (eap_options & 0b00000100) >> 2
             key = key.replace('\0', '')
@@ -789,8 +791,6 @@ class Wifi(QWidget, Ui_Wifi):
         except:
             progress.cancel()
             return False
-        
-        return True
 
 
     def save_pressed(self):
@@ -804,6 +804,10 @@ class Wifi(QWidget, Ui_Wifi):
         
         ssid = str(self.wifi_ssid.text())
         connection = self.wifi_connection.currentIndex()
+        
+        if connection in (2, 3, 4, 5):
+            encryption += 2
+        
         ip = (self.wifi_ip1.value(), self.wifi_ip2.value(),
               self.wifi_ip3.value(), self.wifi_ip4.value())
         sub = (self.wifi_sub1.value(), self.wifi_sub2.value(),
