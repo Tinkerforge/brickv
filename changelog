@@ -36,3 +36,4 @@
        Add Stack ID, UID, FW Version and Reset button to each tab
        Add AP and Ad Hoc support to Master Brick plugin
 1.1.9: Add configuration combobox for regulatory domain (WIFI)
+       Add API for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
