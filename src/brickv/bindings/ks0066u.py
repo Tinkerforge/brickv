@@ -64,6 +64,7 @@ def unicode_to_ks0066u(string):
                 0x2190 : byte(0x7f), # LEFTWARDS ARROW
                 0x00b0 : byte(0xdf), # DEGREE SIGN maps to KATAKANA SEMI-VOICED SOUND MARK
                 0x03b1 : byte(0xe0), # GREEK SMALL LETTER ALPHA
+                0x00c4 : byte(0xe1), # LATIN CAPITAL LETTER A WITH DIAERESIS
                 0x00e4 : byte(0xe1), # LATIN SMALL LETTER A WITH DIAERESIS
                 0x00df : byte(0xe2), # LATIN SMALL LETTER SHARP S
                 0x03b5 : byte(0xe3), # GREEK SMALL LETTER EPSILON
@@ -77,10 +78,12 @@ def unicode_to_ks0066u(string):
                 0x00a2 : byte(0xec), # CENT SIGN
                 0x2c60 : byte(0xed), # LATIN CAPITAL LETTER L WITH DOUBLE BAR
                 0x00f1 : byte(0xee), # LATIN SMALL LETTER N WITH TILDE
+                0x00d6 : byte(0xef), # LATIN CAPITAL LETTER O WITH DIAERESIS
                 0x00f6 : byte(0xef), # LATIN SMALL LETTER O WITH DIAERESIS
                 0x03f4 : byte(0xf2), # GREEK CAPITAL THETA SYMBOL
                 0x221e : byte(0xf3), # INFINITY
                 0x03a9 : byte(0xf4), # GREEK CAPITAL LETTER OMEGA
+                0x00dc : byte(0xf5), # LATIN CAPITAL LETTER U WITH DIAERESIS
                 0x00fc : byte(0xf5), # LATIN SMALL LETTER U WITH DIAERESIS
                 0x03a3 : byte(0xf6), # GREEK CAPITAL LETTER SIGMA
                 0x03c0 : byte(0xf7), # GREEK SMALL LETTER PI
