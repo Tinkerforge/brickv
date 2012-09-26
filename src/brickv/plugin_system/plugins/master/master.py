@@ -411,6 +411,7 @@ class Wifi(QWidget, Ui_Wifi):
     def __init__(self, parent):
         QWidget.__init__(self)
         self.setupUi(self)
+        self.parent = parent
         
         self.master = parent.master
         
@@ -430,6 +431,13 @@ class Wifi(QWidget, Ui_Wifi):
             password = ''.join(map(chr, password[0][:password[1]]))
             
             power_mode = self.master.get_wifi_power_mode()
+            if (parent.version_minor == 3 and parent.version_release > 3) or parent.version_minor > 3:
+                domain = self.master.get_wifi_regulatory_domain()
+                self.wifi_domain.setCurrentIndex(domain)
+            else:
+                self.wifi_domain.setEnabled(0)
+                self.wifi_domain.clear()
+                self.wifi_domain.addItem("Master Firmware >= V1.3.4 needed")
             
             self.wifi_power_mode.setCurrentIndex(power_mode)
             
@@ -855,6 +863,12 @@ class Wifi(QWidget, Ui_Wifi):
             
             if username_old == username and password_old == password:
                 test_ok = True
+                
+        if (self.parent.version_minor == 3 and self.parent.version_release > 3) or self.parent.version_minor > 3:
+            if test_ok:
+                self.master.set_wifi_regulatory_domain(self.wifi_domain.currentIndex())
+                if self.master.get_wifi_regulatory_domain() != self.wifi_domain.currentIndex():
+                    test_ok = False
             
         if test_ok:
             if ca_cert != []:

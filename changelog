@@ -35,3 +35,4 @@
        Fix serial port enumeration for ports with non-ASCII names
        Add Stack ID, UID, FW Version and Reset button to each tab
        Add AP and Ad Hoc support to Master Brick plugin
+1.1.9: Add configuration combobox for regulatory domain (WIFI)

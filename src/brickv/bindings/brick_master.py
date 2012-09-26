@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-09-21.      #
+# This file was automatically generated on 2012-09-26.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -64,6 +64,8 @@ class Master(Device):
     FUNCTION_SET_WIFI_POWER_MODE = 35
     FUNCTION_GET_WIFI_POWER_MODE = 36
     FUNCTION_GET_WIFI_BUFFER_INFO = 37
+    FUNCTION_SET_WIFI_REGULATORY_DOMAIN = 38
+    FUNCTION_GET_WIFI_REGULATORY_DOMAIN = 39
     FUNCTION_RESET = 243
     FUNCTION_GET_CHIP_TEMPERATURE = 242
 
@@ -76,7 +78,7 @@ class Master(Device):
 
         self.expected_name = 'Master Brick'
 
-        self.binding_version = [1, 3, 0]
+        self.binding_version = [1, 3, 2]
 
 
     def get_stack_voltage(self):
@@ -565,7 +567,7 @@ class Master(Device):
         too fast, it might overflow.
         
         The return values are the number of overflows, the low watermark 
-        (e.g. the smallest number of bytes that were free in the buffer) and
+        (i.e. the smallest number of bytes that were free in the buffer) and
         the bytes that are currently used.
         
         You should always try to keep the buffer empty, otherwise you will
@@ -578,6 +580,32 @@ class Master(Device):
         .. versionadded:: 1.3.2
         """
         return GetWifiBufferInfo(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_BUFFER_INFO, (), '', 'I H H'))
+
+    def set_wifi_regulatory_domain(self, domain):
+        """
+        Sets the regulatory domain of the WIFI Extension. Possible modes are:
+        
+        .. csv-table::
+         :header: "Mode", "Description"
+         :widths: 10, 90
+        
+         "0", "FCC: Channel 1-11 (N/S America, Australia, New Zealand)"
+         "1", "ETSI: Channel 1-13 (Europe, Middle East, Africa)"
+         "2", "TELEC: Channel 1-14 (Japan)"
+        
+        The default value is 1 (ETSI).
+        
+        .. versionadded:: 1.3.4
+        """
+        self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_REGULATORY_DOMAIN, (domain,), 'B', '')
+
+    def get_wifi_regulatory_domain(self):
+        """
+        Returns the regulatory domain as set by :func:`SetWifiRegulatoryDomain`.
+        
+        .. versionadded:: 1.3.4
+        """
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_REGULATORY_DOMAIN, (), '', 'B')
 
     def reset(self):
         """
