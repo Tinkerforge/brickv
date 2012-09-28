@@ -27,7 +27,7 @@ from bindings import ip_connection
 from plot_widget import PlotWidget
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QPushButton
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import pyqtSignal, Qt, QTimer
 
 from bindings import bricklet_barometer
 
@@ -41,10 +41,10 @@ class AltitudeLabel(QLabel):
         text = "Altitude: " + text + " m"
         super(AltitudeLabel, self).setText(text)
 
-class TemperatureLabel(QLabel):
+class ChipTemperatureLabel(QLabel):
     def setText(self, text):
-        text = "Temperature: " + text + " %cC" % 0xB0
-        super(TemperatureLabel, self).setText(text)
+        text = "Chip Temperature: " + text + " %cC" % 0xB0
+        super(ChipTemperatureLabel, self).setText(text)
 
 class Barometer(PluginBase):
     qtcb_air_pressure = pyqtSignal(int)
@@ -70,7 +70,8 @@ class Barometer(PluginBase):
         self.altitude_label = AltitudeLabel()
         self.cb_altitude(self.barometer.get_altitude())
 
-        self.temperature_label = TemperatureLabel()
+        self.chip_temperature_label = ChipTemperatureLabel()
+        self.chip_temperature_label.setAlignment(Qt.AlignCenter)
 
         self.current_air_pressure = 0
         self.current_altitude = 0
@@ -81,33 +82,43 @@ class Barometer(PluginBase):
         plot_list = [['', Qt.green, self.get_current_altitude]]
         self.altitude_plot_widget = PlotWidget('Altitude [m]', plot_list)
 
-        plot_list = [['', Qt.blue, self.get_current_temperature]]
-        self.temperature_plot_widget = PlotWidget('Temperature [%cC]' % 0xB0, plot_list)
-
-        self.calibrate_button = QPushButton('Calibrate')
+        self.calibrate_button = QPushButton('Calibrate Altitude')
         self.calibrate_button.pressed.connect(self.calibrate_pressed)
 
+        layout_h1 = QHBoxLayout()
+        layout_h1.addStretch()
+        layout_h1.addWidget(self.air_pressure_label)
+        layout_h1.addStretch()
+
         layout_v1 = QVBoxLayout()
-        layout_v1.addWidget(self.air_pressure_label)
+        layout_v1.addLayout(layout_h1)
         layout_v1.addWidget(self.air_pressure_plot_widget)
 
+        layout_h2 = QHBoxLayout()
+        layout_h2.addStretch()
+        layout_h2.addWidget(self.altitude_label)
+        layout_h2.addStretch()
+
         layout_v2 = QVBoxLayout()
-        layout_v2.addWidget(self.altitude_label)
+        layout_v2.addLayout(layout_h2)
         layout_v2.addWidget(self.altitude_plot_widget)
 
-        layout_v3 = QVBoxLayout()
-        layout_v3.addWidget(self.temperature_label)
-        layout_v3.addWidget(self.temperature_plot_widget)
+        layout_h3 = QHBoxLayout()
+        layout_h3.addWidget(self.chip_temperature_label)
+        layout_h3.addWidget(self.calibrate_button)
 
         layout_h1 = QHBoxLayout()
         layout_h1.addLayout(layout_v1)
         layout_h1.addLayout(layout_v2)
-        layout_h1.addLayout(layout_v3)
-
 
         layout = QVBoxLayout(self)
         layout.addLayout(layout_h1)
-        layout.addWidget(self.calibrate_button)
+        layout.addLayout(layout_h3)
+
+        self.chip_temp_timer = QTimer()
+        self.chip_temp_timer.timeout.connect(self.update_chip_temp)
+        self.chip_temp_timer.setInterval(100)
+        self.chip_temp_timer.start()
 
     def start(self):
         try:
@@ -121,7 +132,9 @@ class Barometer(PluginBase):
 
         self.air_pressure_plot_widget.stop = False
         self.altitude_plot_widget.stop = False
-        self.temperature_plot_widget.stop = False
+
+        self.update_chip_temp()
+        self.chip_temp_timer.start()
 
     def stop(self):
         try:
@@ -132,7 +145,8 @@ class Barometer(PluginBase):
 
         self.air_pressure_plot_widget.stop = True
         self.altitude_plot_widget.stop = True
-        self.temperature_plot_widget.stop = True
+
+        self.chip_temp_timer.stop()
 
     @staticmethod
     def has_name(name):
@@ -142,28 +156,24 @@ class Barometer(PluginBase):
         try:
             self.barometer.calibrate_altitude()
         except ip_connection.Error:
-            return
+            pass
 
     def get_current_air_pressure(self):
-        #return self.current_air_pressure
-        t = self.barometer.get_air_pressure()/100.0
-        self.air_pressure_label.setText(str(t))
-        return t
+        return self.current_air_pressure
 
     def get_current_altitude(self):
-        #return self.current_altitude
-        t = self.barometer.get_altitude()/100.0
-        self.altitude_label.setText(str(t))
-        return t
+        return self.current_altitude
 
-    def get_current_temperature(self):
-        t = self.barometer.get_temperature()/100.0
-        self.temperature_label.setText(str(t))
-        return t
+    def update_chip_temp(self):
+        try:
+            t = self.barometer.get_chip_temperature()/100.0
+            self.chip_temperature_label.setText(str(t))
+        except ip_connection.Error:
+            pass
 
     def cb_air_pressure(self, air_pressure):
-        self.current_air_pressure = air_pressure/100.0
-        self.air_pressure_label.setText(str(air_pressure/100.0))
+        self.current_air_pressure = air_pressure/1000.0
+        self.air_pressure_label.setText(str(air_pressure/1000.0))
 
     def cb_altitude(self, altitude):
         self.current_altitude = altitude/100.0
