@@ -437,7 +437,7 @@ class Wifi(QWidget, Ui_Wifi):
             else:
                 self.wifi_domain.setEnabled(0)
                 self.wifi_domain.clear()
-                self.wifi_domain.addItem("Master Firmware >= V1.3.4 needed")
+                self.wifi_domain.addItem("Master Firmware > 1.3.3 needed")
             
             self.wifi_power_mode.setCurrentIndex(power_mode)
             
