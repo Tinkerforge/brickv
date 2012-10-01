@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-09-26.      #
+# This file was automatically generated on 2012-10-01.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -111,6 +111,7 @@ class Master(Device):
         
          "1",    "Chibi"
          "2",    "RS485"
+         "3",    "WIFI"
         
         The extension type is already set when bought and it can be set with the 
         Brick Viewer, it is unlikely that you need this function.

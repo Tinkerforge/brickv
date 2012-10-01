@@ -39,3 +39,4 @@
        Add plugins for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
        Map ÄÖÜ to äöü in LCD Bricklet plugin
 1.1.10: Add Barometer Bricklet plugin
+1.1.11: Replace Barometer Bricklet calibate function with getter/setter for reference air pressure

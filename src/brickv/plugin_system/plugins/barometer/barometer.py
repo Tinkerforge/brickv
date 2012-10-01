@@ -26,7 +26,7 @@ from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
 from plot_widget import PlotWidget
 
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QPushButton
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QLineEdit
 from PyQt4.QtCore import pyqtSignal, Qt, QTimer
 
 from bindings import bricklet_barometer
@@ -55,7 +55,15 @@ class Barometer(PluginBase):
 
         self.barometer = bricklet_barometer.Barometer(self.uid)
         self.ipcon.add_device(self.barometer)
-        self.version = '.'.join(map(str, self.barometer.get_version()[1]))
+        version = self.barometer.get_version()
+        self.version = '.'.join(map(str, version[1]))
+        self.version_minor = version[1][1]
+        self.version_release = version[1][2]
+
+        if self.version_minor == 0 and self.version_release == 0:
+            has_calibrate = True
+        else:
+            has_calibrate = False
 
         self.qtcb_air_pressure.connect(self.cb_air_pressure)
         self.barometer.register_callback(self.barometer.CALLBACK_AIR_PRESSURE,
@@ -71,7 +79,8 @@ class Barometer(PluginBase):
         self.cb_altitude(self.barometer.get_altitude())
 
         self.chip_temperature_label = ChipTemperatureLabel()
-        self.chip_temperature_label.setAlignment(Qt.AlignCenter)
+        if has_calibrate:
+            self.chip_temperature_label.setAlignment(Qt.AlignCenter)
 
         self.current_air_pressure = 0
         self.current_altitude = 0
@@ -82,8 +91,17 @@ class Barometer(PluginBase):
         plot_list = [['', Qt.green, self.get_current_altitude]]
         self.altitude_plot_widget = PlotWidget('Altitude [m]', plot_list)
 
-        self.calibrate_button = QPushButton('Calibrate Altitude')
-        self.calibrate_button.pressed.connect(self.calibrate_pressed)
+        if has_calibrate:
+            self.calibrate_button = QPushButton('Calibrate Altitude')
+            self.calibrate_button.pressed.connect(self.calibrate_pressed)
+        else:
+            self.get_reference_button = QPushButton('Get')
+            self.get_reference_button.pressed.connect(self.get_reference_pressed)
+            self.set_reference_button = QPushButton('Set')
+            self.set_reference_button.pressed.connect(self.set_reference_pressed)
+            self.reference_label = QLabel('Air Pressure Reference:')
+            self.reference_edit = QLineEdit()
+            self.get_reference_pressed()
 
         layout_h1 = QHBoxLayout()
         layout_h1.addStretch()
@@ -103,9 +121,20 @@ class Barometer(PluginBase):
         layout_v2.addLayout(layout_h2)
         layout_v2.addWidget(self.altitude_plot_widget)
 
-        layout_h3 = QHBoxLayout()
-        layout_h3.addWidget(self.chip_temperature_label)
-        layout_h3.addWidget(self.calibrate_button)
+        if has_calibrate:
+            layout_h3 = QHBoxLayout()
+            layout_h3.addWidget(self.chip_temperature_label)
+            layout_h3.addWidget(self.calibrate_button)
+        else:
+            layout_h3 = QHBoxLayout()
+            layout_h3.addWidget(self.reference_label)
+            layout_h3.addWidget(self.reference_edit)
+            layout_h3.addWidget(self.get_reference_button)
+            layout_h3.addWidget(self.set_reference_button)
+
+            layout_v3 = QVBoxLayout()
+            layout_v3.addWidget(self.chip_temperature_label)
+            layout_v3.addLayout(layout_h3)
 
         layout_h1 = QHBoxLayout()
         layout_h1.addLayout(layout_v1)
@@ -113,7 +142,11 @@ class Barometer(PluginBase):
 
         layout = QVBoxLayout(self)
         layout.addLayout(layout_h1)
-        layout.addLayout(layout_h3)
+
+        if has_calibrate:
+            layout.addLayout(layout_h3)
+        else:
+            layout.addLayout(layout_v3)
 
         self.chip_temp_timer = QTimer()
         self.chip_temp_timer.timeout.connect(self.update_chip_temp)
@@ -154,9 +187,32 @@ class Barometer(PluginBase):
 
     def calibrate_pressed(self):
         try:
-            self.barometer.calibrate_altitude()
+            # Call set_reference_air_pressure that has the same function ID as
+            # calibrate_altitude the extra parameter will just be ignored
+            self.barometer.set_reference_air_pressure(0)
         except ip_connection.Error:
             pass
+
+    def get_reference_pressed(self):
+        try:
+            r = str(self.barometer.get_reference_air_pressure()/1000.0)
+        except ip_connection.Error:
+            r = 'Error while getting reference air pressure'
+
+        self.reference_edit.setText(r)
+
+    def set_reference_pressed(self):
+        try:
+            r = round(float(self.reference_edit.text())*1000)
+        except:
+            self.reference_edit.setText('Invalid input')
+            return
+
+        try:
+            self.barometer.set_reference_air_pressure(r)
+        except ip_connection.Error:
+            self.reference_edit.setText('Error while setting reference air pressure')
+            return
 
     def get_current_air_pressure(self):
         return self.current_air_pressure
