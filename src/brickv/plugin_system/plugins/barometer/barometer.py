@@ -99,7 +99,7 @@ class Barometer(PluginBase):
             self.get_reference_button.pressed.connect(self.get_reference_pressed)
             self.set_reference_button = QPushButton('Set')
             self.set_reference_button.pressed.connect(self.set_reference_pressed)
-            self.reference_label = QLabel('Air Pressure Reference:')
+            self.reference_label = QLabel('Reference Air Pressure:')
             self.reference_edit = QLineEdit()
             self.get_reference_pressed()
 
