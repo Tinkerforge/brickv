@@ -206,4 +206,4 @@ class GPS(PluginBase, Ui_GPS):
             date_str = "No time information yet"
         self.time.setText(date_str)
         
-        self.altitude.setText('%.2f m (accuracy: %.2f)' % (altitude/100.0, altitude_accuracy/100))
+        self.altitude.setText('%.2f m (accuracy: %.2f)' % (altitude/10.0, altitude_accuracy/10.0))
