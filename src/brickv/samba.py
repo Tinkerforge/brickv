@@ -80,6 +80,16 @@ EEFC_FCR_FCMD_CGPB = 0x0C # Clear GPNVM Bit
 EEFC_FCR_FCMD_GGPB = 0x0D # Get GPNVM Bit
 
 RSTC_CR = 0x400E1400
+RSTC_MR = 0x400E1408
+
+RSTC_CR_PROCRST = 0b0001
+RSTC_CR_EXTRST  = 0b0100
+
+RSTC_MR_URSTEN  = 0b0001
+RSTC_MR_URSTIEN = 0b1000
+
+RSTC_CR_FEY = 0xA5
+RSTC_MR_FEY = 0xA5
 
 class SAMBAException(Exception):
     pass
@@ -228,8 +238,8 @@ class SAMBA:
 
     def reset(self):
         try:
-            self.writeUInt(RSTC_CR + 0x08, 1 << 0 | 1 << 4 | 10 << 8 | 0xA5 << 24)
-            self.writeUInt(RSTC_CR, 1 << 0 | 1 << 2 | 0xA5 << 24)
+            self.writeUInt(RSTC_MR, (RSTC_MR_FEY << 24) | (10 << 8) | RSTC_MR_URSTEN | RSTC_MR_URSTIEN)
+            self.writeUInt(RSTC_CR, (RSTC_CR_FEY << 24) | RSTC_CR_PROCRST | RSTC_CR_EXTRST)
         except:
             raise SAMBAException('Reset error')
 
