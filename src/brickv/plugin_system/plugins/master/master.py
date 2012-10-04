@@ -713,8 +713,8 @@ class Wifi(QWidget, Ui_Wifi):
     def popup_ok(self):
         QMessageBox.information(self, "Save", "Check OK", QMessageBox.Ok)
     
-    def popup_fail(self):
-        QMessageBox.critical(self, "Save", "Check Failed", QMessageBox.Ok)
+    def popup_fail(self, message="Check Failed"):
+        QMessageBox.critical(self, "Upload", message, QMessageBox.Ok)
         
     def show_status_pressed(self):
         if self.wifi_status is None:
@@ -800,14 +800,31 @@ class Wifi(QWidget, Ui_Wifi):
 
     def save_pressed(self):
         encryption = self.wifi_encryption.currentIndex()
-        key = str(self.wifi_key.text())
+
+        try:
+            key = str(self.wifi_key.text()).decode('ascii')
+        except:
+            self.popup_fail('Key cannot contain non-ASCII characters')
+            return
+        if '"' in key:
+            self.popup_fail('Key cannot contain quotation mark')
+            return
+        
         key_index = self.wifi_key_index.value()
         eap_outer = self.wifi_eap_outer_auth.currentIndex()
         eap_inner = self.wifi_eap_inner_auth.currentIndex()
             
         eap_options = eap_outer | (eap_inner << 2) 
         
-        ssid = str(self.wifi_ssid.text())
+        try:
+            ssid = str(self.wifi_ssid.text()).decode('ascii')
+        except:
+            self.popup_fail('SSID cannot contain non-ASCII characters')
+            return
+        if '"' in ssid:
+            self.popup_fail('SSID cannot contain quotation mark')
+            return
+
         connection = self.wifi_connection.currentIndex()
         
         if connection in (2, 3, 4, 5):
