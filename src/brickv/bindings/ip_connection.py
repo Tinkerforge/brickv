@@ -5,7 +5,14 @@
 # Redistribution and use in source and binary forms of this file, 
 # with or without modification, are permitted. 
 
-from threading import Thread, Lock, current_thread
+from threading import Thread, Lock
+
+# current_thread for python 2.6, currentThread for python 2.5
+try:
+    from threading import current_thread
+except ImportError:
+    from threading import currentThread as current_thread
+
 # Queue for python 2, queue for python 3
 try:
     from Queue import Queue
@@ -13,6 +20,7 @@ try:
 except ImportError:
     from queue import Queue
     from queue import Empty
+
 import struct
 import socket
 import types

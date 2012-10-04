@@ -346,7 +346,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             if current_text == CUSTOM:
                 self.popup_ok('Brick', 'Succesfully flashed firmware')
             else:
-                self.popup_ok('Brick', 'Succesfully flashed latest {0} Brick firmware'.format(current_text))
+                self.popup_ok('Brick', 'Succesfully flashed latest {0} Brick firmware.\nSuccesfully restarted {0} Brick!'.format(current_text))
         except SAMBAException, e:
             progress.cancel()
             self.serial_port_refresh()

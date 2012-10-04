@@ -68,7 +68,7 @@ EEFC_FSR_FRDY   = 0b0001
 EEFC_FSR_FCMDE  = 0b0010
 EEFC_FSR_FLOCKE = 0b0100
 
-EEFC_FCR_FKEY = 0x5a
+EEFC_FCR_FKEY = 0x5A
 
 EEFC_FCR_FCMD_WP   = 0x01 # Write Page
 EEFC_FCR_FCMD_EA   = 0x05 # Erase All
@@ -78,6 +78,8 @@ EEFC_FCR_FCMD_GLB  = 0x0A # Get Lock Bit
 EEFC_FCR_FCMD_SGPB = 0x0B # Set GPNVM Bit
 EEFC_FCR_FCMD_CGPB = 0x0C # Clear GPNVM Bit
 EEFC_FCR_FCMD_GGPB = 0x0D # Get GPNVM Bit
+
+RSTC_CR = 0x400E1400
 
 class SAMBAException(Exception):
     pass
@@ -175,7 +177,7 @@ class SAMBA:
 
         self.waitForFlashReady()
 
-        # Boot from Flash
+        # Set Boot-from-Flash bit
         self.waitForFlashReady()
         self.writeFlashCommand(EEFC_FCR_FCMD_SGPB, 1)
         self.waitForFlashReady()
@@ -202,6 +204,9 @@ class SAMBA:
             progress.setValue(page_num)
             QApplication.processEvents()
 
+        # Boot
+        self.reset()
+
     def readWord(self, address):
         try:
             self.port.write('w%08X,4#' % address)
@@ -220,6 +225,19 @@ class SAMBA:
             self.port.write('W%08X,%08X#' % (address, value))
         except:
             raise SAMBAException('Write error')
+
+    def reset(self):
+        try:
+            self.writeUInt(RSTC_CR + 0x08, 1 << 0 | 1 << 4 | 10 << 8 | 0xA5 << 24)
+            self.writeUInt(RSTC_CR, 1 << 0 | 1 << 2 | 0xA5 << 24)
+        except:
+            raise SAMBAException('Reset error')
+
+    def go(self, address):
+        try:
+            self.port.write('G%08X#' % address)
+        except:
+            raise SAMBAException('Execution error')
 
     def waitForFlashReady(self):
         for i in range(1000):
