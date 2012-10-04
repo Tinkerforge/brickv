@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-09-27.      #
+# This file was automatically generated on 2012-10-04.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -14,7 +14,7 @@ except ImportError:
 from .ip_connection import Device, IPConnection, Error
 
 GetCoordinates = namedtuple('Coordinates', ['ns', 'latitude', 'ew', 'longitude', 'pdop', 'hdop', 'vdop'])
-GetStatus = namedtuple('Status', ['fix', 'satellites_view', 'satellites_used', 'speed', 'course', 'date', 'time', 'altitude', 'altitude_accuracy'])
+GetStatus = namedtuple('Status', ['fix', 'satellites_view', 'satellites_used', 'speed', 'course', 'date', 'time', 'altitude', 'geoidal_separation'])
 
 class GPS(Device):
     """
@@ -43,14 +43,14 @@ class GPS(Device):
 
         self.binding_version = [1, 0, 0]
 
-        self.callback_formats[GPS.CALLBACK_COORDINATES] = 'c 2H c 2H H H H'
+        self.callback_formats[GPS.CALLBACK_COORDINATES] = 'c I c I H H H'
         self.callback_formats[GPS.CALLBACK_STATUS] = 'B B B H H I I h h'
 
     def get_coordinates(self):
         """
         
         """
-        return GetCoordinates(*self.ipcon.send_request(self, GPS.FUNCTION_GET_COORDINATES, (), '', 'c 2H c 2H H H H'))
+        return GetCoordinates(*self.ipcon.send_request(self, GPS.FUNCTION_GET_COORDINATES, (), '', 'c I c I H H H'))
 
     def get_status(self):
         """

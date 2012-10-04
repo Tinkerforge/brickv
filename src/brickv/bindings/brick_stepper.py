@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-09-21.      #
+# This file was automatically generated on 2012-10-02.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -411,7 +411,7 @@ class Stepper(Device):
         
         The default value is 1.
         
-        .. versionadded:: 1.1.6
+        .. versionadded:: 1.1.6~(Firmware)
         """
         self.ipcon.send_request(self, Stepper.FUNCTION_SET_TIME_BASE, (time_base,), 'I', '')
 
@@ -419,7 +419,7 @@ class Stepper(Device):
         """
         Returns the time base as set by :func:`SetTimeBase`.
         
-        .. versionadded:: 1.1.6
+        .. versionadded:: 1.1.6~(Firmware)
         """
         return self.ipcon.send_request(self, Stepper.FUNCTION_GET_TIME_BASE, (), '', 'I')
 
@@ -431,7 +431,7 @@ class Stepper(Device):
         
         There is also a callback for this function, see :func:`AllData`.
         
-        .. versionadded:: 1.1.6
+        .. versionadded:: 1.1.6~(Firmware)
         """
         return GetAllData(*self.ipcon.send_request(self, Stepper.FUNCTION_GET_ALL_DATA, (), '', 'H i i H H H'))
 
@@ -440,7 +440,7 @@ class Stepper(Device):
         Sets the period in ms with which the :func:`AllData` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        .. versionadded:: 1.1.6
+        .. versionadded:: 1.1.6~(Firmware)
         """
         self.ipcon.send_request(self, Stepper.FUNCTION_SET_ALL_DATA_PERIOD, (period,), 'I', '')
 
@@ -448,7 +448,7 @@ class Stepper(Device):
         """
         Returns the period as set by :func:`SetAllDataPeriod`.
         
-        .. versionadded:: 1.1.6
+        .. versionadded:: 1.1.6~(Firmware)
         """
         return self.ipcon.send_request(self, Stepper.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
 

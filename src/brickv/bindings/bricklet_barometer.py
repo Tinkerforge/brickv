@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-01.      #
+# This file was automatically generated on 2012-10-02.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -206,7 +206,7 @@ class Barometer(Device):
         
         The default value is 1013.25mbar.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Plugin)
         """
         self.ipcon.send_request(self, Barometer.FUNCTION_SET_REFERENCE_AIR_PRESSURE, (air_pressure,), 'i', '')
 
@@ -226,7 +226,7 @@ class Barometer(Device):
         """
         Returns the reference air pressure as set by :func:`SetReferenceAirPressure`.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Plugin)
         """
         return self.ipcon.send_request(self, Barometer.FUNCTION_GET_REFERENCE_AIR_PRESSURE, (), '', 'i')
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-09-21.      #
+# This file was automatically generated on 2012-10-02.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -164,7 +164,7 @@ class IO4(Device):
         of two seconds and pin 0 set to high. Pin 0 will be high all the time. If now
         the RS485 connection is lost, then pin 0 will get low in at most two seconds.
         
-        .. versionadded:: 1.1.1
+        .. versionadded:: 1.1.1~(Plugin)
         """
         self.ipcon.send_request(self, IO4.FUNCTION_SET_MONOFLOP, (pin_mask, value_mask, time), 'B B I', '')
 
@@ -176,7 +176,7 @@ class IO4(Device):
         If the timer is not running currently, the remaining time will be returned
         as 0.
         
-        .. versionadded:: 1.1.1
+        .. versionadded:: 1.1.1~(Plugin)
         """
         return GetMonoflop(*self.ipcon.send_request(self, IO4.FUNCTION_GET_MONOFLOP, (pin,), 'B', 'B I I'))
 

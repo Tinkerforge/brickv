@@ -33,7 +33,7 @@ from bindings import bricklet_gps
 import datetime
         
 class GPS(PluginBase, Ui_GPS):
-    qtcb_coordinates = pyqtSignal('char', int, int, 'char', int, int, int, int, int)
+    qtcb_coordinates = pyqtSignal('char', int, 'char', int, int, int, int)
     qtcb_status = pyqtSignal(int, int, int, int, int, int, int, int, int)
     
     def __init__ (self, ipcon, uid):
@@ -48,7 +48,7 @@ class GPS(PluginBase, Ui_GPS):
         
         self.qtcb_coordinates.connect(self.cb_coordinates)
         self.gps.register_callback(self.gps.CALLBACK_COORDINATES,
-                                   lambda a, b, c, d, e, f, g: self.qtcb_coordinates.emit(a, b[0], b[1], c, d[0], d[1], e, f, g))
+                                   self.qtcb_coordinates.emit)
         
         self.qtcb_status.connect(self.cb_status)
         self.gps.register_callback(self.gps.CALLBACK_STATUS,
@@ -58,25 +58,23 @@ class GPS(PluginBase, Ui_GPS):
         self.show_pos.pressed.connect(self.show_pos_pressed)
         
         self.last_ns = 'U'
-        self.last_lat1 = 0
-        self.last_lat2 = 0
+        self.last_lat = 0
         self.last_ew = 'U'
-        self.last_long1 = 0
-        self.last_long2 = 0
+        self.last_long = 0
         self.last_pdop = 0
         self.last_hdop = 0
         self.last_vdop = 0
         
     def show_pos_pressed(self):
         if self.last_ns != 'U' and self.last_ew != 'U':
-            google_str = self.last_ns + self.make_ddddddd(self.last_lat1, self.last_lat2) + ' ' + self.last_ew + self.make_ddddddd(self.last_long1, self.last_long2)
+            google_str = self.last_ns + self.make_ddddddd(self.last_lat) + ' ' + self.last_ew + self.make_ddddddd(self.last_long)
             QDesktopServices.openUrl(QUrl('https://maps.google.com/maps?q=' + google_str))
         else:
             # :-)
             QDesktopServices.openUrl(QUrl('http://www.google.com/moon/'))
         
     def format_changed(self, index):
-        self.cb_coordinates(self.last_ns, self.last_lat1, self.last_lat2, self.last_ew, self.last_long1, self.last_long2, self.last_pdop, self.last_hdop, self.last_vdop)
+        self.cb_coordinates(self.last_ns, self.last_lat, self.last_ew, self.last_long, self.last_pdop, self.last_hdop, self.last_vdop)
         
     def start(self):
         self.gps.set_coordinates_callback_period(250)
@@ -89,8 +87,10 @@ class GPS(PluginBase, Ui_GPS):
     @staticmethod
     def has_name(name):
         return 'GPS Bricklet' in name
-    
-    def make_ddmmmmmm(self, time1, time2):
+
+    def make_ddmmmmmm(self, time):
+        time1 = time / 10000
+        time2 = time % 10000
         str_time2 = str(time2)
         
         while(len(str_time2) < 4):
@@ -101,9 +101,11 @@ class GPS(PluginBase, Ui_GPS):
         while(len(str_time1) < 4):
             str_time1 = '0' + str_time1
         
-        return str_time1[:2] + u'°' + str_time1[2:] + '.' + str_time2 + u'´'
-        
-    def make_ddddddd(self, time1, time2):
+        return str_time1[:2] + u'° ' + str_time1[2:] + '.' + str_time2 + u"’"
+
+    def make_ddddddd(self, time):
+        time1 = time / 10000
+        time2 = time % 10000
         dd = time1/100
         mm = (time1 % 100) + time2/10000.0
         dd += mm/60.0
@@ -112,7 +114,9 @@ class GPS(PluginBase, Ui_GPS):
         
         return dd_str + u'°'
     
-    def make_ddmmss(self, time1, time2):
+    def make_ddmmss(self, time):
+        time1 = time / 10000
+        time2 = time % 10000
         dd_rdy = str(time1/100)
         mm = (time1 % 100) + time2/10000.0
         
@@ -128,15 +132,13 @@ class GPS(PluginBase, Ui_GPS):
         while(len(ss_rdy) < 2):
             ss_rdy = '0' + ss_rdy
         
-        return dd_rdy + u'° ' + mm_rdy + u"' " + ss_rdy + u"''"
+        return dd_rdy + u'° ' + mm_rdy + u"’ " + ss_rdy + u"’’"
     
-    def cb_coordinates(self, ns, lat1, lat2, ew, long1, long2, pdop, hdop, vdop):
+    def cb_coordinates(self, ns, lat, ew, long, pdop, hdop, vdop):
         self.last_ns = ns
-        self.last_lat1 = lat1
-        self.last_lat2 = lat2
+        self.last_lat = lat
         self.last_ew = ew
-        self.last_long1 = long1
-        self.last_long2 = long2
+        self.last_long = long
         self.last_pdop = pdop
         self.last_hdop = hdop
         self.last_vdop = vdop
@@ -147,11 +149,11 @@ class GPS(PluginBase, Ui_GPS):
         else:
             self.ns.setText(ns)
             if self.format_combobox.currentIndex() == 0:
-                self.latitude.setText(self.make_ddmmss(lat1, lat2))
+                self.latitude.setText(self.make_ddmmss(lat))
             elif self.format_combobox.currentIndex() == 1:
-                self.latitude.setText(self.make_ddddddd(lat1, lat2))
+                self.latitude.setText(self.make_ddddddd(lat))
             elif self.format_combobox.currentIndex() == 2:
-                self.latitude.setText(self.make_ddmmmmmm(lat1, lat2))
+                self.latitude.setText(self.make_ddmmmmmm(lat))
                 
         if not ew in ('E', 'W'):
             self.ew.setText('U')
@@ -159,11 +161,11 @@ class GPS(PluginBase, Ui_GPS):
         else:
             self.ew.setText(ew)
             if self.format_combobox.currentIndex() == 0:
-                self.longitude.setText(self.make_ddmmss(long1, long2))
+                self.longitude.setText(self.make_ddmmss(long))
             elif self.format_combobox.currentIndex() == 1:
-                self.longitude.setText(self.make_ddddddd(long1, long2))
+                self.longitude.setText(self.make_ddddddd(long))
             elif self.format_combobox.currentIndex() == 2:
-                self.longitude.setText(self.make_ddmmmmmm(long1, long2))
+                self.longitude.setText(self.make_ddmmmmmm(long))
             
         str_pdop = '%.2f' % (pdop/100.0,)
         str_hdop = '%.2f' % (hdop/100.0,)
@@ -171,7 +173,7 @@ class GPS(PluginBase, Ui_GPS):
             
         self.dop.setText(str(str_pdop) + ' / ' + str(str_hdop) + ' / ' + str(str_vdop))
         
-    def cb_status(self, fix, satellites_view, satellites_used, speed, course, date, time, altitude, altitude_accuracy):
+    def cb_status(self, fix, satellites_view, satellites_used, speed, course, date, time, altitude, geoidal_separation):
         if fix == 1:
             self.fix.setText("No Fix")
         elif fix == 2:
@@ -180,8 +182,7 @@ class GPS(PluginBase, Ui_GPS):
             self.fix.setText("3D Fix")
         else:
             self.fix.setText("Error")
-            
-        
+
         self.satellites_view.setText(str(satellites_view))
         self.satellites_used.setText(str(satellites_used))
         
@@ -205,5 +206,4 @@ class GPS(PluginBase, Ui_GPS):
         except:
             date_str = "No time information yet"
         self.time.setText(date_str)
-        
-        self.altitude.setText('%.2f m (accuracy: %.2f)' % (altitude/10.0, altitude_accuracy/10.0))
+        self.altitude.setText('%.2f m (Geoidal Separation: %.2f m)' % (altitude/10.0, geoidal_separation/10.0))

@@ -27,17 +27,17 @@
       <widget class="QComboBox" name="format_combobox">
        <item>
         <property name="text">
-         <string>DD° MM' SS''</string>
+         <string>DD° MM’ SS’’</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>DD.DDDDD°</string>
+         <string>DD.ddddd°</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>DD°MM.MMMM´</string>
+         <string>DD° MM.mmmm’</string>
         </property>
        </item>
       </widget>
@@ -181,7 +181,7 @@
        <item>
         <widget class="QLabel" name="label_8">
          <property name="text">
-          <string>Altitude</string>
+          <string>Altitude:</string>
          </property>
         </widget>
        </item>

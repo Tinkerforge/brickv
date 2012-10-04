@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-01.      #
+# This file was automatically generated on 2012-10-02.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -132,7 +132,7 @@ class Master(Device):
         """
         Returns *true* if a Chibi Extension is available to be used by the Master.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_IS_CHIBI_PRESENT, (), '', '?')
 
@@ -144,7 +144,7 @@ class Master(Device):
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_ADDRESS, (address,), 'B', '')
 
@@ -152,7 +152,7 @@ class Master(Device):
         """
         Returns the address as set by :func:`SetChibiAddress`.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_ADDRESS, (), '', 'B')
 
@@ -165,7 +165,7 @@ class Master(Device):
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_MASTER_ADDRESS, (address,), 'B', '')
 
@@ -173,7 +173,7 @@ class Master(Device):
         """
         Returns the address as set by :func:`SetChibiMasterAddress`.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_MASTER_ADDRESS, (), '', 'B')
 
@@ -190,7 +190,7 @@ class Master(Device):
         saved in the EEPROM of the Chibi Extension, they don't
         have to be set on every startup.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_SLAVE_ADDRESS, (num, address), 'B B', '')
 
@@ -199,7 +199,7 @@ class Master(Device):
         Returns the slave address for a given num as set by 
         :func:`SetChibiSlaveAddress`.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_SLAVE_ADDRESS, (num,), 'B', 'B')
 
@@ -208,7 +208,7 @@ class Master(Device):
         Returns the signal strength in dBm. The signal strength updates every time a
         packet is received.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_SIGNAL_STRENGTH, (), '', 'B')
 
@@ -219,7 +219,7 @@ class Master(Device):
         distance between two Chibi stacks is becoming too big or there are
         interferences.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Firmware)
         """
         return GetChibiErrorLog(*self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_ERROR_LOG, (), '', 'H H H H'))
 
@@ -240,7 +240,7 @@ class Master(Device):
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_FREQUENCY, (frequency,), 'B', '')
 
@@ -248,7 +248,7 @@ class Master(Device):
         """
         Returns the frequency value as set by :func:`SetChibiFrequency`.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_FREQUENCY, (), '', 'B')
 
@@ -270,7 +270,7 @@ class Master(Device):
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_CHANNEL, (channel,), 'B', '')
 
@@ -278,7 +278,7 @@ class Master(Device):
         """
         Returns the channel as set by :func:`SetChibiChannel`.
         
-        .. versionadded:: 1.1.0
+        .. versionadded:: 1.1.0~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_CHANNEL, (), '', 'B')
 
@@ -286,7 +286,7 @@ class Master(Device):
         """
         Returns *true* if a RS485 Extension is available to be used by the Master.
         
-        .. versionadded:: 1.2.0
+        .. versionadded:: 1.2.0~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_IS_RS485_PRESENT, (), '', '?')
 
@@ -301,7 +301,7 @@ class Master(Device):
         saved in the EEPROM of the RS485 Extension, it does not
         have to be set on every startup.
         
-        .. versionadded:: 1.2.0
+        .. versionadded:: 1.2.0~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_RS485_ADDRESS, (address,), 'B', '')
 
@@ -309,7 +309,7 @@ class Master(Device):
         """
         Returns the address as set by :func:`SetRS485Address`.
         
-        .. versionadded:: 1.2.0
+        .. versionadded:: 1.2.0~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_ADDRESS, (), '', 'B')
 
@@ -326,7 +326,7 @@ class Master(Device):
         saved in the EEPROM of the RS485 Extension, they don't
         have to be set on every startup.
         
-        .. versionadded:: 1.2.0
+        .. versionadded:: 1.2.0~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_RS485_SLAVE_ADDRESS, (num, address), 'B B', '')
 
@@ -335,7 +335,7 @@ class Master(Device):
         Returns the slave address for a given num as set by 
         :func:`SetRS485SlaveAddress`.
         
-        .. versionadded:: 1.2.0
+        .. versionadded:: 1.2.0~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_SLAVE_ADDRESS, (num,), 'B', 'B')
 
@@ -346,7 +346,7 @@ class Master(Device):
         between the RS485 nodes is too big or there is some kind of
         interference.
         
-        .. versionadded:: 1.2.0
+        .. versionadded:: 1.2.0~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_ERROR_LOG, (), '', 'H')
 
@@ -365,7 +365,7 @@ class Master(Device):
         The values are stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
         
-        .. versionadded:: 1.2.0
+        .. versionadded:: 1.2.0~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_RS485_CONFIGURATION, (speed, parity, stopbits), 'I c B', '')
 
@@ -373,7 +373,7 @@ class Master(Device):
         """
         Returns the configuration as set by :func:`SetRS485Configuration`.
         
-        .. versionadded:: 1.2.0
+        .. versionadded:: 1.2.0~(Firmware)
         """
         return GetRS485Configuration(*self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_CONFIGURATION, (), '', 'I c B'))
 
@@ -381,7 +381,7 @@ class Master(Device):
         """
         Returns *true* if a WIFI Extension is available to be used by the Master.
         
-        .. versionadded:: 1.2.0
+        .. versionadded:: 1.2.0~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_IS_WIFI_PRESENT, (), '', '?')
 
@@ -403,7 +403,7 @@ class Master(Device):
         
         It is recommended to use the Brick Viewer to set the WIFI configuration.
         
-        .. versionadded:: 1.3.0
+        .. versionadded:: 1.3.0~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_CONFIGURATION, (ssid, connection, ip, subnet_mask, gateway, port), '32s B 4B 4B 4B H', '')
 
@@ -411,7 +411,7 @@ class Master(Device):
         """
         Returns the configuration as set by :func:`SetWifiConfiguration`.
         
-        .. versionadded:: 1.3.0
+        .. versionadded:: 1.3.0~(Firmware)
         """
         return GetWifiConfiguration(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_CONFIGURATION, (), '', '32s B 4B 4B 4B H'))
 
@@ -456,7 +456,7 @@ class Master(Device):
         
         It is recommended to use the Brick Viewer to set the WIFI encryption.
         
-        .. versionadded:: 1.3.0
+        .. versionadded:: 1.3.0~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_ENCRYPTION, (encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length), 'B 50s B B H H H', '')
 
@@ -464,7 +464,7 @@ class Master(Device):
         """
         Returns the encryption as set by :func:`SetWifiEncryption`.
         
-        .. versionadded:: 1.3.0
+        .. versionadded:: 1.3.0~(Firmware)
         """
         return GetWifiEncryption(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_ENCRYPTION, (), '', 'B 50s B B H H H'))
 
@@ -486,7 +486,7 @@ class Master(Device):
          "3", "Error"
          "255", "Not initialized yet"
         
-        .. versionadded:: 1.3.0
+        .. versionadded:: 1.3.0~(Firmware)
         """
         return GetWifiStatus(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_STATUS, (), '', '6B 6B B h 4B 4B 4B I I B'))
 
@@ -499,7 +499,7 @@ class Master(Device):
         until the stack with attached WIFI Extensions reacts again after this
         function is called.
         
-        .. versionadded:: 1.3.0
+        .. versionadded:: 1.3.0~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_REFRESH_WIFI_STATUS, (), '', '')
 
@@ -524,7 +524,7 @@ class Master(Device):
         It is recommended to use the Brick Viewer to set the certificate, username
         and password.
         
-        .. versionadded:: 1.3.0
+        .. versionadded:: 1.3.0~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_CERTIFICATE, (index, data, data_length), 'H 32B B', '')
 
@@ -532,7 +532,7 @@ class Master(Device):
         """
         Returns the certificate for a given index as set by :func:`SetWifiCertificate`.
         
-        .. versionadded:: 1.3.0
+        .. versionadded:: 1.3.0~(Firmware)
         """
         return GetWifiCertificate(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_CERTIFICATE, (index,), 'H', '32B B'))
 
@@ -549,7 +549,7 @@ class Master(Device):
         
         The default value is 0 (Full Speed).
         
-        .. versionadded:: 1.3.0
+        .. versionadded:: 1.3.0~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_POWER_MODE, (mode,), 'B', '')
 
@@ -557,7 +557,7 @@ class Master(Device):
         """
         Returns the power mode as set by :func:`SetWifiPowerMode`.
         
-        .. versionadded:: 1.3.0
+        .. versionadded:: 1.3.0~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_POWER_MODE, (), '', 'B')
 
@@ -578,7 +578,7 @@ class Master(Device):
         Try to not send more then 50 messages at a time without any kind of
         break between them. 
         
-        .. versionadded:: 1.3.2
+        .. versionadded:: 1.3.2~(Firmware)
         """
         return GetWifiBufferInfo(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_BUFFER_INFO, (), '', 'I H H'))
 
@@ -596,7 +596,7 @@ class Master(Device):
         
         The default value is 1 (ETSI).
         
-        .. versionadded:: 1.3.4
+        .. versionadded:: 1.3.4~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_REGULATORY_DOMAIN, (domain,), 'B', '')
 
@@ -604,7 +604,7 @@ class Master(Device):
         """
         Returns the regulatory domain as set by :func:`SetWifiRegulatoryDomain`.
         
-        .. versionadded:: 1.3.4
+        .. versionadded:: 1.3.4~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_REGULATORY_DOMAIN, (), '', 'B')
 
