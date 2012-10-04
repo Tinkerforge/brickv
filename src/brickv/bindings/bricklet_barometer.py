@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-08-24.      #
+# This file was automatically generated on 2012-10-01.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -28,18 +28,19 @@ class Barometer(Device):
 
     FUNCTION_GET_AIR_PRESSURE = 1
     FUNCTION_GET_ALTITUDE = 2
-    FUNCTION_GET_TEMPERATURE = 3
-    FUNCTION_SET_AIR_PRESSURE_CALLBACK_PERIOD = 4
-    FUNCTION_GET_AIR_PRESSURE_CALLBACK_PERIOD = 5
-    FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD = 6
-    FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD = 7
-    FUNCTION_SET_AIR_PRESSURE_CALLBACK_THRESHOLD = 8
-    FUNCTION_GET_AIR_PRESSURE_CALLBACK_THRESHOLD = 9
-    FUNCTION_SET_ALTITUDE_CALLBACK_THRESHOLD = 10
-    FUNCTION_GET_ALTITUDE_CALLBACK_THRESHOLD = 11
-    FUNCTION_SET_DEBOUNCE_PERIOD = 12
-    FUNCTION_GET_DEBOUNCE_PERIOD = 13
-    FUNCTION_CALIBRATE_ALTITUDE = 14
+    FUNCTION_SET_AIR_PRESSURE_CALLBACK_PERIOD = 3
+    FUNCTION_GET_AIR_PRESSURE_CALLBACK_PERIOD = 4
+    FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD = 5
+    FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD = 6
+    FUNCTION_SET_AIR_PRESSURE_CALLBACK_THRESHOLD = 7
+    FUNCTION_GET_AIR_PRESSURE_CALLBACK_THRESHOLD = 8
+    FUNCTION_SET_ALTITUDE_CALLBACK_THRESHOLD = 9
+    FUNCTION_GET_ALTITUDE_CALLBACK_THRESHOLD = 10
+    FUNCTION_SET_DEBOUNCE_PERIOD = 11
+    FUNCTION_GET_DEBOUNCE_PERIOD = 12
+    FUNCTION_SET_REFERENCE_AIR_PRESSURE = 13
+    FUNCTION_GET_CHIP_TEMPERATURE = 14
+    FUNCTION_GET_REFERENCE_AIR_PRESSURE = 19
 
     def __init__(self, uid):
         """
@@ -50,7 +51,7 @@ class Barometer(Device):
 
         self.expected_name = 'Barometer Bricklet'
 
-        self.binding_version = [1, 0, 0]
+        self.binding_version = [1, 1, 0]
 
         self.callback_formats[Barometer.CALLBACK_AIR_PRESSURE] = 'i'
         self.callback_formats[Barometer.CALLBACK_ALTITUDE] = 'i'
@@ -60,8 +61,8 @@ class Barometer(Device):
     def get_air_pressure(self):
         """
         Returns the air pressure of the air pressure sensor. The value
-        has a range of 1000 to 120000 and is given in mbar/100, i.e. a value
-        of 100009 means that an air pressure of 1000.09 mbar is measured.
+        has a range of 10000 to 1200000 and is given in mbar/1000, i.e. a value
+        of 1001092 means that an air pressure of 1001.092 mbar is measured.
         
         If you want to get the air pressure periodically, it is recommended to use the
         callback :func:`AirPressure` and set the period with
@@ -72,26 +73,14 @@ class Barometer(Device):
     def get_altitude(self):
         """
         Returns the relative altitude of the air pressure sensor. The value is given in
-        cm and represents the difference between the current altitude and the reference
-        altitude that can be set with :func:`CalibrateAltitude`.
+        cm and is caluclated based on the difference between the current air pressure
+        and the reference air pressure that can be set with :func:`SetReferenceAirPressure`.
         
         If you want to get the altitude periodically, it is recommended to use the
         callback :func:`Altitude` and set the period with
         :func:`SetAltitudeCallbackPeriod`.
         """
         return self.ipcon.send_request(self, Barometer.FUNCTION_GET_ALTITUDE, (), '', 'i')
-
-    def get_temperature(self):
-        """
-        Returns the temperature of the air pressure sensor. The value
-        has a range of -4000 to 8500 and is given in °C/100, i.e. a value
-        of 2007 means that a temperature of 20.07 °C is measured.
-        
-        This temperature is used internally for temperature compensation of the air
-        pressure measurement. It is not as accurate as the temperature measured by the
-        :ref:`temperature_bricklet` or the :ref:`temperature_ir_bricklet`.
-        """
-        return self.ipcon.send_request(self, Barometer.FUNCTION_GET_TEMPERATURE, (), '', 'h')
 
     def set_air_pressure_callback_period(self, period):
         """
@@ -203,12 +192,43 @@ class Barometer(Device):
         """
         return self.ipcon.send_request(self, Barometer.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
-    def calibrate_altitude(self):
+    def set_reference_air_pressure(self, air_pressure):
         """
-        Calibrates the altitude by setting the reference altitude to the current
-        altitude.
+        Sets the reference air pressure in mbar/1000 for the altitude calculation.
+        Setting the reference to the current air pressure results in a calculated
+        altitude of 0cm. Passing 0 is a shortcut for passing the current air pressure as
+        reference.
+        
+        Well known reference values are the Q codes
+        `QNH <http://en.wikipedia.org/wiki/QNH>`__ and
+        `QFE <http://en.wikipedia.org/wiki/Mean_sea_level_pressure#Mean_sea_level_pressure>`__
+        used in aviation.
+        
+        The default value is 1013.25mbar.
+        
+        .. versionadded:: 1.1.0
         """
-        self.ipcon.send_request(self, Barometer.FUNCTION_CALIBRATE_ALTITUDE, (), '', '')
+        self.ipcon.send_request(self, Barometer.FUNCTION_SET_REFERENCE_AIR_PRESSURE, (air_pressure,), 'i', '')
+
+    def get_chip_temperature(self):
+        """
+        Returns the temperature of the air pressure sensor. The value
+        has a range of -4000 to 8500 and is given in °C/100, i.e. a value
+        of 2007 means that a temperature of 20.07 °C is measured.
+        
+        This temperature is used internally for temperature compensation of the air
+        pressure measurement. It is not as accurate as the temperature measured by the
+        :ref:`temperature_bricklet` or the :ref:`temperature_ir_bricklet`.
+        """
+        return self.ipcon.send_request(self, Barometer.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+
+    def get_reference_air_pressure(self):
+        """
+        Returns the reference air pressure as set by :func:`SetReferenceAirPressure`.
+        
+        .. versionadded:: 1.1.0
+        """
+        return self.ipcon.send_request(self, Barometer.FUNCTION_GET_REFERENCE_AIR_PRESSURE, (), '', 'i')
 
     def register_callback(self, id, callback):
         """
