@@ -223,14 +223,14 @@ class Barometer(PluginBase):
     def update_chip_temp(self):
         try:
             t = self.barometer.get_chip_temperature()/100.0
-            self.chip_temperature_label.setText(str(t))
+            self.chip_temperature_label.setText('%.2f' % t)
         except ip_connection.Error:
             pass
 
     def cb_air_pressure(self, air_pressure):
         self.current_air_pressure = air_pressure/1000.0
-        self.air_pressure_label.setText(str(air_pressure/1000.0))
+        self.air_pressure_label.setText('%.3f' % (air_pressure/1000.0))
 
     def cb_altitude(self, altitude):
         self.current_altitude = altitude/100.0
-        self.altitude_label.setText(str(altitude/100.0))
+        self.altitude_label.setText('%.2f' % (altitude/100.0))
