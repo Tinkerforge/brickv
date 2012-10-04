@@ -481,8 +481,9 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_client_certificate_browse.pressed.connect(self.client_certificate_browse_pressed)
             self.wifi_private_key_browse.pressed.connect(self.private_key_browse_pressed)
             
-            self.encryption_changed(0)
             self.connection_changed(0)
+            self.encryption_changed(0)
+            self.wifi_encryption.setCurrentIndex(encryption) # ensure that the correct encryption is displayed
             
             self.wifi_status = None
 
@@ -698,7 +699,9 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_dot7.setVisible(True)
             self.wifi_dot8.setVisible(True)
             self.wifi_dot9.setVisible(True)
-            
+
+        current = str(self.wifi_encryption.currentText())
+
         if self.wifi_connection.currentIndex() in (2, 3, 4, 5):
             self.wifi_encryption.clear()
             self.wifi_encryption.addItem('WEP')
@@ -709,7 +712,11 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_encryption.addItem('WPA Enterprise')
             self.wifi_encryption.addItem('WEP')
             self.wifi_encryption.addItem('No Encryption')
-            
+
+        index = self.wifi_encryption.findText(current)
+        if index >= 0:
+            self.wifi_encryption.setCurrentIndex(index)
+
     def popup_ok(self):
         QMessageBox.information(self, "Save", "Check OK", QMessageBox.Ok)
     
