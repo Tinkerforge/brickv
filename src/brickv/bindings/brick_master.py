@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-02.      #
+# This file was automatically generated on 2012-10-05.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -66,6 +66,7 @@ class Master(Device):
     FUNCTION_GET_WIFI_BUFFER_INFO = 37
     FUNCTION_SET_WIFI_REGULATORY_DOMAIN = 38
     FUNCTION_GET_WIFI_REGULATORY_DOMAIN = 39
+    FUNCTION_GET_USB_VOLTAGE = 40
     FUNCTION_RESET = 243
     FUNCTION_GET_CHIP_TEMPERATURE = 242
 
@@ -427,7 +428,7 @@ class Master(Device):
          "0", "WPA/WPA2"
          "1", "WPA Enterprise (EAP-FAST, EAP-TLS, EAP-TTLS, PEAP)"
          "2", "WEP"
-         "3", "Open Network"
+         "3", "No Encryption"
         
         The key has a max length of 50 characters and is used if encryption
         is set to 0 or 2 (WPA or WEP). Otherwise the value is ignored.
@@ -607,6 +608,12 @@ class Master(Device):
         .. versionadded:: 1.3.4~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_REGULATORY_DOMAIN, (), '', 'B')
+
+    def get_usb_voltage(self):
+        """
+        Returns the USB voltage in mV.
+        """
+        return self.ipcon.send_request(self, Master.FUNCTION_GET_USB_VOLTAGE, (), '', 'H')
 
     def reset(self):
         """

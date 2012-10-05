@@ -32,6 +32,7 @@ from PyQt4.QtGui import QApplication, QFrame, QFileDialog, QMessageBox, QProgres
 import sys
 import os
 import urllib2
+import re
 from xml.etree.ElementTree import ElementTree
 from xml.etree.ElementTree import fromstring as etreefromstring
 from samba import SAMBA, SAMBAException, get_serial_ports
@@ -67,6 +68,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.serial_port_refresh(progress)
 
         # discover firmwares and plugins
+        self.firmwares = {}
+        self.plugins = {}
+
         available = False
         try:
             urllib2.urlopen(FIRMWARE_URL).read()
@@ -74,7 +78,35 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         except urllib2.URLError:
             self.combo_firmware.setDisabled(True)
             self.combo_plugin.setDisabled(True)
-            self.popup_fail('Bricklet', 'Could not connect to tinkerforge.com.\nFirmwares and plugins can be flashed from local files.')
+            self.popup_fail('Brick and Bricklet', 'Could not connect to tinkerforge.com.\nFirmwares and plugins can be flashed from local files.')
+
+        def get_body(url):
+            response = urllib2.urlopen(url)
+            data = response.read().replace('<hr>', '').replace('<br>', '')
+            response.close()
+            tree = etreefromstring(data)
+            return tree.find('body')
+
+        def get_firmware_versions(url, prefix):
+            body = get_body(url)
+            versions = []
+
+            for a in body.getiterator('a'):
+                url_part = a.text.replace('/', '')
+
+                if url_part == '..':
+                    continue
+
+                m = re.match(prefix + '_firmware_(\d+)_(\d+)_(\d+)\.bin', url_part)
+
+                if m is None:
+                    continue
+
+                versions.append((m.group(1), m.group(2), m.group(3)))
+
+                QApplication.processEvents()
+
+            return sorted(versions)
 
         if available:
             # discover firmwares
@@ -84,15 +116,13 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 progress.setValue(0)
                 progress.show()
 
-                response = urllib2.urlopen(FIRMWARE_URL + 'bricks/')
-                data = response.read().replace('<hr>', '').replace('<br>', '')
-                tree = etreefromstring(data)
-                body = tree.find('body')
+                body = get_body(FIRMWARE_URL + 'bricks/')
                 firmwares = []
 
                 for a in body.getiterator('a'):
                     url_part = a.text.replace('/', '')
                     name = url_part
+
                     if name == '..':
                         continue
                     elif name in ['dc', 'imu']:
@@ -104,14 +134,23 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                             parts.append(word[0].upper() + word[1:])
                         name = ' '.join(parts)
 
-                    firmwares.append((name, url_part))
+                    versions = get_firmware_versions(FIRMWARE_URL + 'bricks/' + url_part + '/', 'brick_' + url_part)
+
+                    if len(versions) < 1:
+                        continue
+
+                    firmwares.append((name, url_part, versions))
+                    self.firmwares[url_part] = (name, url_part, versions)
+
+                    QApplication.processEvents()
 
                 if len(firmwares) > 0:
                     self.combo_firmware.addItem(SELECT)
                     self.combo_firmware.insertSeparator(self.combo_firmware.count())
 
                 for firmware in firmwares:
-                    self.combo_firmware.addItem(*firmware)
+                    name = '{0} ({1}.{2}.{3})'.format(firmware[0], *firmware[2][-1])
+                    self.combo_firmware.addItem(name, firmware[1])
 
                 if self.combo_firmware.count() > 0:
                     self.combo_firmware.insertSeparator(self.combo_firmware.count())
@@ -131,10 +170,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 progress.setValue(0)
                 progress.show()
 
-                response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/')
-                data = response.read().replace('<hr>', '').replace('<br>', '')
-                tree = etreefromstring(data)
-                body = tree.find('body')
+                body = get_body(FIRMWARE_URL + 'bricklets/')
                 plugins = []
 
                 for a in body.getiterator('a'):
@@ -156,14 +192,23 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                         parts.append(word[0].upper() + word[1:])
                     name = ' '.join(parts)
 
-                    plugins.append((name, url_part))
+                    versions = get_firmware_versions(FIRMWARE_URL + 'bricklets/' + url_part + '/', 'bricklet_' + url_part)
+
+                    if len(versions) < 1:
+                        continue
+
+                    plugins.append((name, url_part, versions))
+                    self.plugins[url_part] = (name, url_part, versions)
+
+                    QApplication.processEvents()
 
                 if len(plugins) > 0:
                     self.combo_plugin.addItem(SELECT)
                     self.combo_plugin.insertSeparator(self.combo_plugin.count())
 
                 for plugin in plugins:
-                    self.combo_plugin.addItem(*plugin)
+                    name = '{0} ({1}.{2}.{3})'.format(plugin[0], *plugin[2][-1])
+                    self.combo_plugin.addItem(name, plugin[1])
 
                 if self.combo_plugin.count() > 0:
                     self.combo_plugin.insertSeparator(self.combo_plugin.count())
@@ -313,15 +358,17 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 self.popup_fail('Brick', 'Could not read firmware file')
                 return
         else:
-            url_part = self.combo_firmware.itemData(self.combo_firmware.currentIndex()).toString()
+            url_part = str(self.combo_firmware.itemData(self.combo_firmware.currentIndex()).toString())
+            name = self.firmwares[url_part][0]
+            version = self.firmwares[url_part][2][-1]
 
-            progress.setLabelText('Downloading latest {0} Brick firmware'.format(current_text))
+            progress.setLabelText('Downloading {0} Brick firmware {1}.{2}.{3}'.format(name, *version))
             progress.setMaximum(0)
             progress.setValue(0)
             progress.show()
 
             try:
-                response = urllib2.urlopen(FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_latest.bin'.format(url_part))
+                response = urllib2.urlopen(FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version))
                 length = int(response.headers['Content-Length'])
                 progress.setMaximum(length)
                 progress.setValue(0)
@@ -334,9 +381,11 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                     progress.setValue(len(firmware))
                     QApplication.processEvents()
                     chunk = response.read(1024)
+
+                response.close()
             except urllib2.URLError:
                 progress.cancel()
-                self.popup_fail('Brick', 'Could not download latest {0} Brick firmware'.format(current_text))
+                self.popup_fail('Brick', 'Could not download {0} Brick firmware {1}.{2}.{3}'.format(name, *version))
                 return
 
         # Flash firmware
@@ -346,7 +395,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             if current_text == CUSTOM:
                 self.popup_ok('Brick', 'Succesfully flashed firmware')
             else:
-                self.popup_ok('Brick', 'Succesfully flashed latest {0} Brick firmware.\nSuccesfully restarted {0} Brick!'.format(current_text))
+                self.popup_ok('Brick', 'Succesfully flashed {0} Brick firmware {1}.{2}.{3}.\nSuccesfully restarted {0} Brick!'.format(name, *version))
         except SAMBAException, e:
             progress.cancel()
             self.serial_port_refresh()
@@ -412,14 +461,16 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 self.popup_fail('Bricklet', 'Could not read plugin file')
                 return
         else:
-            url_part = self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString()
+            url_part = str(self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString())
+            name = self.plugins[url_part][0]
+            version = self.plugins[url_part][2][-1]
 
-            progress.setLabelText('Downloading latest {0} Bricklet plugin'.format(current_text))
+            progress.setLabelText('Downloading {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
             progress.setMaximum(0)
             progress.show()
 
             try:
-                response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_latest.bin'.format(url_part))
+                response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version))
                 length = int(response.headers['Content-Length'])
                 progress.setMaximum(length)
                 progress.setValue(0)
@@ -432,9 +483,11 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                     progress.setValue(len(plugin))
                     QApplication.processEvents()
                     chunk = response.read(1024)
+
+                response.close()
             except urllib2.URLError:
                 progress.cancel()
-                self.popup_fail('Bricklet', 'Could not download latest {0} Bricklet plugin'.format(current_text))
+                self.popup_fail('Bricklet', 'Could not download {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
                 return
 
         # Flash plugin
@@ -482,7 +535,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         if current_text == CUSTOM:
             self.popup_ok('Bricklet', 'Succesfully flashed plugin')
         else:
-            self.popup_ok('Bricklet', 'Succesfully flashed latest {0} Bricklet plugin'.format(current_text))
+            self.popup_ok('Bricklet', 'Succesfully flashed {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
 
     def current_device_and_port(self):
         return (self.current_device(),
