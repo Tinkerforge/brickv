@@ -27,6 +27,7 @@ from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon, QPushButton, QSortFilte
 from ui_mainwindow import Ui_MainWindow
 from plugin_system.plugin_manager import PluginManager
 from bindings.ip_connection import IPConnection, Error
+from updates import UpdatesWindow
 from flashing import FlashingWindow
 from advanced import AdvancedWindow
 
@@ -102,6 +103,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
         self.plugins = [(self, None, None, None)]
         self.ipcon = None
+        self.updates_window = None
         self.flashing_window = None
         self.advanced_window = None
         self.reset_view()
@@ -111,6 +113,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.tab_widget.currentChanged.connect(self.tab_changed)
         self.connect.pressed.connect(self.connect_pressed)
+        self.button_updates.pressed.connect(self.updates_pressed)
         self.button_flashing.pressed.connect(self.flashing_pressed)
         self.button_advanced.pressed.connect(self.advanced_pressed)
         self.plugin_manager = PluginManager()
@@ -179,6 +182,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.ipcon:
             self.ipcon.destroy()
         self.ipcon = None
+
+    def updates_pressed(self):
+        if self.updates_window is None:
+            self.updates_window = UpdatesWindow(self, config)
+
+        self.update_updates_window()
+        self.updates_window.show()
+        self.updates_window.refresh()
 
     def flashing_pressed(self):
         if self.flashing_window is None:
@@ -304,8 +315,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         sfpm.setSourceModel(self.mtm)
         self.table_view.setModel(sfpm)
         self.table_view.setSortingEnabled(True)
+        self.update_updates_window()
         self.update_flashing_window()
         self.update_advanced_window()
+
+    def update_updates_window(self):
+        devices = []
+        for plugin in self.plugins[1:]:
+            devices.append((str(plugin[2]), str(plugin[3]), plugin[0].version.split('.')))
+
+        if self.updates_window is not None:
+            self.updates_window.set_devices(devices)
 
     def update_flashing_window(self):
         if self.flashing_window is not None:

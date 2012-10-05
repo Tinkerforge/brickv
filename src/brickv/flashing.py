@@ -393,7 +393,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             samba.flash(firmware, progress)
             progress.cancel()
             if current_text == CUSTOM:
-                self.popup_ok('Brick', 'Succesfully flashed firmware')
+                self.popup_ok('Brick', 'Succesfully flashed firmware.\nSuccesfully restarted Brick!')
             else:
                 self.popup_ok('Brick', 'Succesfully flashed {0} Brick firmware {1}.{2}.{3}.\nSuccesfully restarted {0} Brick!'.format(name, *version))
         except SAMBAException, e:
