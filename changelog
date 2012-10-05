@@ -39,4 +39,10 @@
        Add plugins for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
        Map ÄÖÜ to äöü in LCD Bricklet plugin
 1.1.10: Add Barometer Bricklet plugin
-1.1.11: Replace Barometer Bricklet calibate function with getter/setter for reference air pressure
+1.1.11: Replace Barometer Bricklet calibrate function with getter/setter for reference air pressure
+1.1.12: Automatically restart Bricks after successful flashing a new firmware
+        Check for invalid characters in SSID and key for WIFI Extension
+        Show correct WIFI encryption mode
+        Show version numbers in flashing dialog
+        Remember the last 5 hosts
+        Add Check-for-Updates functionality for connected Bricks und Bricklets
