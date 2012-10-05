@@ -56,10 +56,28 @@ def get_host():
     return get_registry_value('Host', DEFAULT_HOST)
 
 def set_host(host):
-    return set_registry_value('Host', winreg.REG_SZ, host)
+    set_registry_value('Host', winreg.REG_SZ, host)
+
+def get_host_history(size):
+    history = []
+
+    for i in range(size):
+        host = get_registry_value('HostHistory{0}'.format(i), None)
+
+        if host is not None:
+            history.append(host)
+
+    return history
+
+def set_host_history(history):
+    i = 0
+
+    for host in history:
+        set_registry_value('HostHistory{0}'.format(i), winreg.REG_SZ, host)
+        i += 1
 
 def get_port():
     return int(get_registry_value('Port', DEFAULT_PORT))
 
 def set_port(port):
-    return set_registry_value('Port', winreg.REG_DWORD, port)
+    set_registry_value('Port', winreg.REG_DWORD, port)

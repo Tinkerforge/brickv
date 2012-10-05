@@ -52,10 +52,28 @@ def get_host():
     return get_plist_value('Host', DEFAULT_HOST)
 
 def set_host(host):
-    return set_plist_value('Host', host)
+    set_plist_value('Host', host)
+
+def get_host_history(size):
+    history = []
+
+    for i in range(size):
+        host = get_plist_value('HostHistory{0}'.format(i), None)
+
+        if host is not None:
+            history.append(host)
+
+    return history
+
+def set_host_history(history):
+    i = 0
+
+    for host in history:
+        set_plist_value('HostHistory{0}'.format(i), host)
+        i += 1
 
 def get_port():
     return int(get_plist_value('Port', DEFAULT_PORT))
 
 def set_port(port):
-    return set_plist_value('Port', str(port))
+    set_plist_value('Port', str(port))

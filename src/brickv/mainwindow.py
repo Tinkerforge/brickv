@@ -35,6 +35,8 @@ import signal
 import sys
 import operator
 
+HOST_HISTORY_SIZE = 5
+
 if sys.platform == 'linux2':
     import config_linux as config
 elif sys.platform == 'darwin':
@@ -46,6 +48,8 @@ else:
     import config
     def get_host(): return config.DEFAULT_HOST
     def set_host(host): pass
+    def get_host_history(size): return []
+    def set_host_history(history): pass
     def get_port(): return config.DEFAULT_PORT
     def set_port(port): pass
 
@@ -111,8 +115,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_advanced.pressed.connect(self.advanced_pressed)
         self.plugin_manager = PluginManager()
 
-        self.host.setText(config.get_host())
-        self.port.setValue(config.get_port())
+        self.combo_host.addItem(config.get_host())
+        self.combo_host.addItems(config.get_host_history(HOST_HISTORY_SIZE - 1))
+        self.spinbox_port.setValue(config.get_port())
 
         self.table_view.horizontalHeader().setSortIndicator(0, Qt.AscendingOrder)
 
@@ -122,8 +127,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.exit_brickv()
         
     def exit_brickv(self, signl=None, frme=None):
-        config.set_host(str(self.host.text()))
-        config.set_port(self.port.value())
+        host = str(self.combo_host.currentText())
+        history = []
+
+        for i in range(self.combo_host.count()):
+            h = str(self.combo_host.itemText(i))
+
+            if h != host and h not in history:
+                history.append(h)
+
+        config.set_host(host)
+        config.set_host_history(history[:HOST_HISTORY_SIZE - 1])
+        config.set_port(self.spinbox_port.value())
 
         if self.ipcon != None:
             self.reset_view()
@@ -182,11 +197,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def connect_pressed(self):
         if not self.ipcon:
             try:
-                self.ipcon = IPConnection(self.host.text(), self.port.value())
+                host = self.combo_host.currentText()
+                self.ipcon = IPConnection(host, self.spinbox_port.value())
                 self.ipcon.enumerate(self.callback_enumerate_signal.emit)
                 self.connect.setText("Disconnect")
-                self.port.setDisabled(True)
-                self.host.setDisabled(True)
+                self.combo_host.setDisabled(True)
+                self.spinbox_port.setDisabled(True)
+
+                index = self.combo_host.findText(host)
+                if index >= 0:
+                    self.combo_host.removeItem(index)
+                self.combo_host.insertItem(-1, host)
+                self.combo_host.setCurrentIndex(0)
+
+                while self.combo_host.count() > HOST_HISTORY_SIZE:
+                    self.combo_host.removeItem(self.combo_host.count() - 1)
             except (Error, socket.error):
                 self.ipcon = None
                 box_head = 'Could not connect'
@@ -198,8 +223,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             
             self.connect.setText("Connect")
             self.button_advanced.setDisabled(True)
-            self.port.setDisabled(False)
-            self.host.setDisabled(False)
+            self.combo_host.setDisabled(False)
+            self.spinbox_port.setDisabled(False)
 
     def create_plugin_container(self, plugin, stack_id, name, uid):
         container = QWidget()
