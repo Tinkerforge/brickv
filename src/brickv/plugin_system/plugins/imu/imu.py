@@ -193,7 +193,13 @@ in the image above, then press "Save Orientation".""")
         self.led_button.clicked.connect(self.led_clicked)
         self.speed_spinbox.editingFinished.connect(self.speed_finished)
         
+        self.calibrate = None
+        self.alive = True
+
     def start(self):
+        if not self.alive:
+            return
+
         self.gl_layout.activate()
         self.imu.set_all_data_period(100)
         self.imu.set_orientation_period(100)
@@ -208,6 +214,11 @@ in the image above, then press "Save Orientation".""")
         self.imu.set_all_data_period(0)
         self.imu.set_orientation_period(0)
         self.imu.set_quaternion_period(0)
+
+    def destroy(self):
+        self.alive = False
+        if self.calibrate:
+            self.calibrate.close()
 
     def has_reset_device(self):
         return self.version_minor > 0 or (self.version_minor == 0 and self.version_release > 6)
@@ -331,10 +342,11 @@ in the image above, then press "Save Orientation".""")
         
     def calibrate_pressed(self):
         self.stop()
-        aw = CalibrateWindow(self)  
-        aw.setAttribute(Qt.WA_QuitOnClose)
-        aw.show()
-        
+        if self.calibrate is None:
+            self.calibrate = CalibrateWindow(self)
+
+        self.calibrate.show()
+
     def speed_finished(self):
         speed = self.speed_spinbox.value()
         self.imu.set_convergence_speed(speed)
