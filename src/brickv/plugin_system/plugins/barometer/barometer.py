@@ -37,8 +37,8 @@ class AirPressureLabel(QLabel):
         super(AirPressureLabel, self).setText(text)
 
 class AltitudeLabel(QLabel):
-    def setText(self, text):
-        text = "Altitude: " + text + " m"
+    def setText(self, text1, text2):
+        text = "Altitude: " + text1 + " m (" + text2 + " ft)"
         super(AltitudeLabel, self).setText(text)
 
 class ChipTemperatureLabel(QLabel):
@@ -229,8 +229,9 @@ class Barometer(PluginBase):
 
     def cb_air_pressure(self, air_pressure):
         self.current_air_pressure = air_pressure/1000.0
-        self.air_pressure_label.setText('%.3f' % (air_pressure/1000.0))
+        self.air_pressure_label.setText('%.3f' % self.current_air_pressure)
 
     def cb_altitude(self, altitude):
         self.current_altitude = altitude/100.0
-        self.altitude_label.setText('%.2f' % (altitude/100.0))
+        self.altitude_label.setText('%.2f' % self.current_altitude,
+                                    '%.2f' % (self.current_altitude/0.3048))
