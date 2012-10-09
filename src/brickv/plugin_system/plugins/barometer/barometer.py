@@ -88,7 +88,7 @@ class Barometer(PluginBase):
         plot_list = [['', Qt.red, self.get_current_air_pressure]]
         self.air_pressure_plot_widget = PlotWidget('Air Pressure [mbar]', plot_list)
 
-        plot_list = [['', Qt.green, self.get_current_altitude]]
+        plot_list = [['', Qt.darkGreen, self.get_current_altitude]]
         self.altitude_plot_widget = PlotWidget('Altitude [m]', plot_list)
 
         if has_calibrate:

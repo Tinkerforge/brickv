@@ -153,15 +153,15 @@ class IMU(PluginBase, Ui_IMU):
         
         self.mag_plot = Plot("Magnetic Field [mG]",
                              [["X", Qt.red],
-                              ["Y", Qt.green],
+                              ["Y", Qt.darkGreen],
                               ["Z", Qt.blue]])
         self.acc_plot = Plot("Acceleration [mG]",
                              [["X", Qt.red],
-                              ["Y", Qt.green],
+                              ["Y", Qt.darkGreen],
                               ["Z", Qt.blue]])
         self.gyr_plot = Plot("Angular Velocity [%c/s]" % 0xB0,
                              [["X", Qt.red],
-                              ["Y", Qt.green],
+                              ["Y", Qt.darkGreen],
                               ["Z", Qt.blue]])
         
         self.tem_plot = Plot("Temperature [%cC]" % 0xB0,

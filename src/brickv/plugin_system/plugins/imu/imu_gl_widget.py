@@ -230,8 +230,8 @@ class IMUGLWidget(QGLWidget):
         glBegin(GL_LINES)
         glColor3f(1,0,0) #// X axis is red.
         glVertex3fv((0,0,0))
-        glVertex3fv((2, 0,0))
-        glColor3f(0,1,0) #// y axis is green.
+        glVertex3fv((2,0,0))
+        glColor3f(0,0.5,0) #// y axis is green.
         glVertex3fv((0,0,0))
         glVertex3fv((0,2,0))
         glColor3f(0,0,1) #// z axis is blue.
