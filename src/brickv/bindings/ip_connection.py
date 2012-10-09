@@ -150,7 +150,6 @@ class IPConnection:
 
     PLUGIN_CHUNK_SIZE = 32
 
-    callback_queue = Queue()
 
     def __init__(self, host, port):
         """
@@ -160,6 +159,7 @@ class IPConnection:
         Bricklets to the connection.
         """
 
+        self.callback_queue = Queue()
         self.pending_add_device = None
         self.add_device_lock = Lock()
         self.devices = {}
@@ -496,40 +496,19 @@ class IPConnection:
             self.pending_add_device = None
             self.add_device_lock.release()
 
-    def write_bricklet_plugin(self, device, port, plugin):
-        position = 0
+    def write_bricklet_plugin(self, device, port, position, plugin_chunk):
+        self.send_request(device,
+                          IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN,
+                          (port, position, plugin_chunk),
+                          'c B 32B',
+                          '')
 
-        # Fill last chunk with zeros
-        length = len(plugin)
-        mod = length % IPConnection.PLUGIN_CHUNK_SIZE
-        if mod != 0:
-            plugin += [0] * (IPConnection.PLUGIN_CHUNK_SIZE - mod)
-
-        while len(plugin) != 0:
-            plugin_chunk = plugin[:IPConnection.PLUGIN_CHUNK_SIZE]
-            plugin = plugin[IPConnection.PLUGIN_CHUNK_SIZE:]
-
-            self.send_request(device,
-                              IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN,
-                              (port, position, plugin_chunk),
-                              'c B 32B',
-                              '')
-
-            position += 1
-
-    def read_bricklet_plugin(self, device, port, length):
-        plugin = []
-        position = 0
-        while len(plugin) < length:
-            plugin += self.send_request(device,
-                                        IPConnection.FUNCTION_READ_BRICKLET_PLUGIN,
-                                        (port, position),
-                                        'c B',
-                                        '32B')
-            position += 1
-
-        # Remove unnecessary bytes at end
-        return plugin[:length]
+    def read_bricklet_plugin(self, device, port, position):
+        return self.send_request(device,
+                                 IPConnection.FUNCTION_READ_BRICKLET_PLUGIN,
+                                 (port, position),
+                                 'c B',
+                                 '32B')
         
     def get_adc_calibration(self, device):
         return self.send_request(device,

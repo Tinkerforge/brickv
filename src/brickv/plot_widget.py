@@ -23,8 +23,8 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtGui import QVBoxLayout, QWidget, QPushButton
 from PyQt4.QtCore import QTimer
-
 import PyQt4.Qwt5 as Qwt
+
 class Plot(Qwt.QwtPlot):
     def __init__(self, y_axis, plot_list, *args):
         Qwt.QwtPlot.__init__(self, *args)

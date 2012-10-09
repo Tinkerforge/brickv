@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-05.      #
+# This file was automatically generated on 2012-10-08.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -623,6 +623,8 @@ class Master(Device):
         After a reset you have to create new device objects,
         calling functions on the existing ones will result in
         undefined behavior!
+        
+        .. versionadded:: 1.2.1~(Firmware)
         """
         self.ipcon.send_request(self, Master.FUNCTION_RESET, (), '', '')
 
@@ -634,5 +636,7 @@ class Master(Device):
         The temperature is only proportional to the real temperature and it has an
         accuracy of +-15%. Practically it is only useful as an indicator for
         temperature changes.
+        
+        .. versionadded:: 1.2.1~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')

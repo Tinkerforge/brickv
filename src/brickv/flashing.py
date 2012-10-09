@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 
 from ui_flashing import Ui_widget_flashing
 import time
+from bindings.ip_connection import IPConnection
 
 from PyQt4.QtCore import pyqtSignal, Qt
 from PyQt4.QtGui import QApplication, QFrame, QFileDialog, QMessageBox, QProgressDialog
@@ -379,7 +380,6 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 while len(chunk) > 0:
                     firmware += chunk
                     progress.setValue(len(firmware))
-                    QApplication.processEvents()
                     chunk = response.read(1024)
 
                 response.close()
@@ -443,6 +443,42 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
     def plugin_changed(self, index):
         self.update_ui_state()
 
+    def write_bricklet_plugin(self, device, port, plugin, progress):
+        position = 0
+
+        # Fill last chunk with zeros
+        length = len(plugin)
+        mod = length % IPConnection.PLUGIN_CHUNK_SIZE
+        if mod != 0:
+            plugin += [0] * (IPConnection.PLUGIN_CHUNK_SIZE - mod)
+
+        while len(plugin) != 0:
+            plugin_chunk = plugin[:IPConnection.PLUGIN_CHUNK_SIZE]
+            plugin = plugin[IPConnection.PLUGIN_CHUNK_SIZE:]
+
+            self.parent.ipcon.write_bricklet_plugin(device, port, position, plugin_chunk)
+
+            position += 1
+            progress.setValue(length - len(plugin))
+
+            time.sleep(0.015)
+            QApplication.processEvents()
+
+    def read_bricklet_plugin(self, device, port, length, progress):
+        plugin = []
+        position = 0
+        while len(plugin) < length:
+            plugin += self.parent.ipcon.read_bricklet_plugin(device, port, position)
+
+            position += 1
+            progress.setValue(len(plugin))
+
+            time.sleep(0.015)
+            QApplication.processEvents()
+
+        # Remove unnecessary bytes at end
+        return plugin[:length]
+
     def plugin_save_pressed(self):
         progress = self.create_progress_bar('Flashing')
         current_text = self.combo_plugin.currentText()
@@ -476,13 +512,12 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 progress.setValue(0)
                 QApplication.processEvents()
                 plugin = []
-                chunk = response.read(1024)
+                chunk = response.read(256)
 
                 while len(chunk) > 0:
                     plugin += map(ord, chunk) # Convert plugin to list of bytes
                     progress.setValue(len(plugin))
-                    QApplication.processEvents()
-                    chunk = response.read(1024)
+                    chunk = response.read(256)
 
                 response.close()
             except urllib2.URLError:
@@ -495,14 +530,13 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         # Write
         progress.setLabelText('Writing plugin')
-        progress.setMaximum(0)
+        progress.setMaximum(len(plugin))
         progress.setValue(0)
         progress.show()
-        QApplication.processEvents()
 
         try:
-            self.parent.ipcon.write_bricklet_plugin(device, port, plugin)
-            time.sleep(1)
+            self.write_bricklet_plugin(device, port, plugin, progress)
+            time.sleep(0.1)
         except:
             progress.cancel()
             self.popup_fail('Bricklet', 'Could not flash Bricklet: Write error')
@@ -510,16 +544,13 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         # Verify
         progress.setLabelText('Verifying written plugin')
-        progress.setMaximum(0)
+        progress.setMaximum(len(plugin))
         progress.setValue(0)
         progress.show()
-        QApplication.processEvents()
 
         try:
-            time.sleep(1)
-            read_plugin = self.parent.ipcon.read_bricklet_plugin(device,
-                                                                 port,
-                                                                 len(plugin))
+            time.sleep(0.1)
+            read_plugin = self.read_bricklet_plugin(device, port, len(plugin), progress)
         except:
             progress.cancel()
             self.popup_fail('Bricklet', 'Could not flash Bricklet: Read error')
