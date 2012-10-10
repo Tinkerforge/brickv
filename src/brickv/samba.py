@@ -26,7 +26,6 @@ import sys
 import errno
 import glob
 import struct
-import math
 from PyQt4.QtGui import QApplication
 from serial import Serial, SerialException
 
@@ -92,6 +91,9 @@ RSTC_MR_URSTIEN = 0b1000
 
 RSTC_CR_FEY = 0xA5
 RSTC_MR_FEY = 0xA5
+
+# http://www.varsanofiev.com/inside/at91_sam_ba.htm
+# http://sourceforge.net/apps/mediawiki/lejos/index.php?title=Documentation:SAM-BA
 
 class SAMBAException(Exception):
     pass
@@ -227,12 +229,12 @@ class SAMBA:
         self.wait_for_flash_ready()
 
         # Verify firmware
-        self.verify_pages(firmware_pages, 0, 'firmware', progress)
+        self.verify_pages(firmware_pages, 0, 'firmware', imu_calibration is not None, progress)
 
         # Verify IMU calibration
         if imu_calibration is not None:
             page_num_offset = (ic_relative_address - ic_prefix_length) / self.flash_page_size
-            self.verify_pages(imu_calibration_pages, page_num_offset, 'IMU calibration', progress)
+            self.verify_pages(imu_calibration_pages, page_num_offset, 'IMU calibration', True, progress)
 
         # Boot
         self.reset()
@@ -261,7 +263,7 @@ class SAMBA:
             progress.setValue(page_num)
             QApplication.processEvents()
 
-    def verify_pages(self, pages, page_num_offset, title, progress):
+    def verify_pages(self, pages, page_num_offset, title, title_in_error, progress):
         progress.setLabelText('Verifying written ' + title)
         progress.setMaximum(len(pages))
         progress.setValue(0)
@@ -271,13 +273,14 @@ class SAMBA:
         page_num = 0
 
         for page in pages:
-            read_page = ''
-            while len(read_page) < self.flash_page_size:
-                read_page += self.read_word(self.flash_base + offset)
-                offset += 4
+            read_page = self.read_bytes(self.flash_base + offset, len(page))
+            offset += len(page)
 
             if read_page != page:
-                raise SAMBAException('Verification error ({0})'.format(title))
+                if title_in_error:
+                    raise SAMBAException('Verification error ({0})'.format(title))
+                else:
+                    raise SAMBAException('Verification error')
 
             page_num += 1
             progress.setValue(page_num)
@@ -322,6 +325,13 @@ class SAMBA:
             self.port.write('W%08X,%08X#' % (address, value))
         except:
             raise SAMBAException('Write error')
+
+    def read_bytes(self, address, length):
+        try:
+            self.port.write('R%0X,%0X#' % (address, length))
+            return self.port.read(length)
+        except:
+            raise SAMBAException('Read error')
 
     def reset(self):
         try:
