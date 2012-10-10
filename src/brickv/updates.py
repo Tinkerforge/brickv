@@ -184,7 +184,12 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
         plugin_updates = []
 
         for bricklet in self.bricklets:
-            url_part = ' '.join(bricklet[0].split(' ')[:-2]).lower().replace(' ', '_').replace('-', '')
+            name = bricklet[0]
+
+            if '-IR' in name:
+                name = name.replace('-IR', ' IR')
+
+            url_part = ' '.join(name.split(' ')[:-2]).lower().replace(' ', '_').replace('-', '')
 
             try:
                 versions = get_firmware_versions(FIRMWARE_URL + 'bricklets/' + url_part + '/', 'bricklet_' + url_part)
