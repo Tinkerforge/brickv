@@ -320,15 +320,9 @@ class SAMBA:
         except:
             raise SAMBAException('Write error')
 
-    def write_uint32(self, address, value):
-        try:
-            self.port.write('W%08X,%08X#' % (address, value))
-        except:
-            raise SAMBAException('Write error')
-
     def read_bytes(self, address, length):
         try:
-            self.port.write('R%0X,%0X#' % (address, length))
+            self.port.write('R%08X,%08X#' % (address, length))
             return self.port.read(length)
         except:
             raise SAMBAException('Read error')
