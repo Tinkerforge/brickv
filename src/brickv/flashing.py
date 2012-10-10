@@ -103,7 +103,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 if m is None:
                     continue
 
-                versions.append((m.group(1), m.group(2), m.group(3)))
+                versions.append((int(m.group(1)), int(m.group(2)), int(m.group(3))))
 
                 QApplication.processEvents()
 
