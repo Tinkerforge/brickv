@@ -393,21 +393,25 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             samba.flash(firmware, progress)
             progress.cancel()
             if current_text == CUSTOM:
-                self.popup_ok('Brick', 'Succesfully flashed firmware.\nSuccesfully restarted Brick!')
+                self.popup_ok('Brick', 'Successfully flashed firmware.\nSuccessfully restarted Brick!')
             else:
-                self.popup_ok('Brick', 'Succesfully flashed {0} Brick firmware {1}.{2}.{3}.\nSuccesfully restarted {0} Brick!'.format(name, *version))
+                self.popup_ok('Brick', 'Successfully flashed {0} Brick firmware {1}.{2}.{3}.\n'.format(name, *version) +
+                                       'Successfully restarted {0} Brick!'.format(name))
         except SAMBAException, e:
             progress.cancel()
             self.serial_port_refresh()
             self.popup_fail('Brick', 'Could not flash Brick: {0}'.format(str(e)))
+            return
         except SerialException, e:
             progress.cancel()
             self.serial_port_refresh()
             self.popup_fail('Brick', 'Could not flash Brick: {0}'.format(str(e)))
+            return
         except:
             progress.cancel()
             self.serial_port_refresh()
             self.popup_fail('Brick', 'Could not flash Brick')
+            return
 
     def uid_save_pressed(self):
         device, port = self.current_device_and_port()
@@ -425,7 +429,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             return
 
         if uid == uid_read:
-            self.popup_ok('Bricklet', 'Succesfully wrote UID')
+            self.popup_ok('Bricklet', 'Successfully wrote UID')
         else:
             self.popup_fail('Bricklet', 'Could not write UID: Verification failed')
 
@@ -564,9 +568,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         progress.cancel()
 
         if current_text == CUSTOM:
-            self.popup_ok('Bricklet', 'Succesfully flashed plugin')
+            self.popup_ok('Bricklet', 'Successfully flashed plugin')
         else:
-            self.popup_ok('Bricklet', 'Succesfully flashed {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
+            self.popup_ok('Bricklet', 'Successfully flashed {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
 
     def current_device_and_port(self):
         return (self.current_device(),
