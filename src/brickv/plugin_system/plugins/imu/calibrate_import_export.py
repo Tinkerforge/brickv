@@ -25,6 +25,28 @@ from PyQt4.QtGui import QWidget, QMessageBox
 
 from ui_calibrate_import_export import Ui_calibrate_import_export
 
+def parse_imu_calibration(text):
+    values = []
+    for line in text.split('\n'):
+        if not line.startswith('#'):
+            x = line.split(':')
+            if len(x) != 2:
+                continue
+
+            y = x[1].split(',')
+
+            if x[0] in ('0', '2', '4'):
+                a = y[0].split('/')
+                b = y[1].split('/')
+                c = y[2].split('/')
+                values.append([int(x[0]), [int(a[0]), int(b[0]), int(c[0]), int(a[1]), int(b[1]), int(c[1]), 0, 0, 0, 0]])
+            elif x[0] in ('1', '3'):
+                values.append([int(x[0]), [int(y[0]), int(y[1]), int(y[2]), 0, 0, 0, 0, 0, 0, 0]])
+            elif x[0] in ('5',):
+                values.append([int(x[0]), [int(y[0]), int(y[1]), int(y[2]), int(y[3]), int(y[4]), int(y[5]), int(y[6]), int(y[7]), 0, 0]])
+
+    return values
+
 class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
     def __init__(self, parent):
         QWidget.__init__(self)
@@ -52,28 +74,9 @@ Multiplier and Divider are written as "mul/div" """
     
     def import_pressed(self):
         text = str(self.text_edit.toPlainText())
-        
-        values = []
+
         try:
-            for line in text.split('\n'):
-                if not line.startswith('#'):
-                    x = line.split(':')
-                    if len(x) != 2:
-                        continue
-                    
-                    y = x[1].split(',')
-                    
-                    if x[0] in ('0', '2', '4'):
-                        a = y[0].split('/')
-                        b = y[1].split('/')
-                        c = y[2].split('/')
-                        values.append([int(x[0]), [int(a[0]), int(b[0]), int(c[0]), int(a[1]), int(b[1]), int(c[1]), 0, 0, 0, 0]])
-                    elif x[0] in ('1', '3'):
-                        values.append([int(x[0]), [int(y[0]), int(y[1]), int(y[2]), 0, 0, 0, 0, 0, 0, 0]])
-                    elif x[0] in ('5',):
-                        values.append([int(x[0]), [int(y[0]), int(y[1]), int(y[2]), int(y[3]), int(y[4]), int(y[5]), int(y[6]), int(y[7]), 0, 0]])
-                        
-            for value in values:
+            for value in parse_imu_calibration(text):
                 self.imu.set_calibration(value[0], value[1])
         except:
             self.popup_fail()

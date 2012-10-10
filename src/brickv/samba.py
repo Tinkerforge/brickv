@@ -78,6 +78,8 @@ EEFC_FCR_FCMD_GLB  = 0x0A # Get Lock Bit
 EEFC_FCR_FCMD_SGPB = 0x0B # Set GPNVM Bit
 EEFC_FCR_FCMD_CGPB = 0x0C # Clear GPNVM Bit
 EEFC_FCR_FCMD_GGPB = 0x0D # Get GPNVM Bit
+EEFC_FCR_FCMD_STUI = 0x0E # Start Read Unique Identifier
+EEFC_FCR_FCMD_SPUI = 0x0F # Stop Read Unique Identifier
 
 RSTC_CR = 0x400E1400
 RSTC_MR = 0x400E1408
@@ -109,7 +111,7 @@ class SAMBA:
         if self.port.read(2) != '\n\r':
             raise SAMBAException('No Brick in Bootloader found')
 
-        chipid = self.readUInt(CHIPID_CIDR)
+        chipid = self.read_uint32(CHIPID_CIDR)
         arch = (chipid >> 20) & 0b11111111
 
         if arch == ATSAM3SxB:
@@ -127,7 +129,22 @@ class SAMBA:
         else:
             raise SAMBAException('Brick with unknown SAM3S architecture: 0x%X' % arch)
 
-    def flash(self, firmware, progress):
+        self.flash_lockregion_size = self.flash_size / self.flash_lockbit_count
+        self.flash_pages_per_lockregion = self.flash_lockregion_size / self.flash_page_size
+
+    def read_uid(self):
+        self.write_flash_command(EEFC_FCR_FCMD_STUI, 0)
+        self.wait_for_flash_ready(False)
+
+        uid1 = self.read_uint32(self.flash_base + 8)
+        uid2 = self.read_uint32(self.flash_base + 12)
+
+        self.write_flash_command(EEFC_FCR_FCMD_SPUI, 0)
+        self.wait_for_flash_ready()
+
+        return uid2 << 32 | uid1
+
+    def flash(self, firmware, imu_calibration, lock_imu_calibration_pages, progress):
         # Split firmware into pages
         firmware_pages = []
         offset = 0
@@ -142,95 +159,165 @@ class SAMBA:
             offset += self.flash_page_size
 
         # Flash Programming Erata: FWS must be 6
-        self.writeUInt(EEFC_FMR, 0x06 << 8)
+        self.write_uint32(EEFC_FMR, 0x06 << 8)
 
         # Unlock
         for region in range(self.flash_lockbit_count):
-            self.waitForFlashReady()
+            self.wait_for_flash_ready()
             page_num = (region * self.flash_page_count) / self.flash_lockbit_count
-            self.writeFlashCommand(EEFC_FCR_FCMD_CLB, page_num)
+            self.write_flash_command(EEFC_FCR_FCMD_CLB, page_num)
 
         # Erase All
-        self.waitForFlashReady()
-        self.writeFlashCommand(EEFC_FCR_FCMD_EA, 0)
-        self.waitForFlashReady()
+        self.wait_for_flash_ready()
+        self.write_flash_command(EEFC_FCR_FCMD_EA, 0)
+        self.wait_for_flash_ready()
 
-        # Write
-        progress.setLabelText('Writing firmware')
-        progress.setMaximum(len(firmware_pages))
-        progress.setValue(0)
-        progress.show()
+        # Write firmware
+        self.write_pages(firmware_pages, 0, 'Writing firmware', progress)
 
-        page_num = 0
+        # Write IMU calibration
+        if imu_calibration is not None:
+            progress.setLabelText('Writing IMU calibration')
+            progress.setMaximum(0)
+            progress.setValue(0)
+            progress.show()
 
-        for page in firmware_pages:
+            ic_relative_address = self.flash_size - 0x1000 * 2 - 12 - 0x400
+            ic_prefix_length = ic_relative_address % self.flash_page_size
+            ic_prefix_address = self.flash_base + ic_relative_address - ic_prefix_length
+            ic_prefix = ''
             offset = 0
 
-            while offset < len(page):
-                addr = self.flash_base + page_num * self.flash_page_size + offset
-                self.writeWord(addr, page[offset:offset + 4])
+            while len(ic_prefix) < ic_prefix_length:
+                address = ic_prefix_address + offset
+                ic_prefix += self.read_word(ic_prefix_address + offset)
                 offset += 4
 
-            self.waitForFlashReady()
-            self.writeFlashCommand(EEFC_FCR_FCMD_WP, page_num)
-            self.waitForFlashReady()
+            prefixed_imu_calibration = ic_prefix + imu_calibration
 
-            page_num += 1
-            progress.setValue(page_num)
-            QApplication.processEvents()
+            # Split IMU calibration into pages
+            imu_calibration_pages = []
+            offset = 0
 
-        # Lock
-        for region in range(int(math.ceil((float(len(firmware_pages)) / self.flash_page_count) * self.flash_lockbit_count))):
-            self.waitForFlashReady()
-            page_num = (region * self.flash_page_count) / self.flash_lockbit_count
-            self.writeFlashCommand(EEFC_FCR_FCMD_SLB, page_num)
+            while offset < len(prefixed_imu_calibration):
+                page = prefixed_imu_calibration[offset:offset + self.flash_page_size]
 
-        self.waitForFlashReady()
+                if len(page) < self.flash_page_size:
+                    page += '\xff' * (self.flash_page_size - len(page))
+
+                imu_calibration_pages.append(page)
+                offset += self.flash_page_size
+
+            # Write IMU calibration
+            page_num_offset = (ic_relative_address - ic_prefix_length) / self.flash_page_size
+
+            self.write_pages(imu_calibration_pages, page_num_offset, 'Writing IMU calibration', progress)
+
+        # Lock firmware
+        self.lock_pages(0, len(firmware_pages))
+
+        # Lock IMU calibration
+        if imu_calibration is not None and lock_imu_calibration_pages:
+            first_page_num = (ic_relative_address - ic_prefix_length) / self.flash_page_size
+            self.lock_pages(first_page_num, len(imu_calibration_pages))
 
         # Set Boot-from-Flash bit
-        self.waitForFlashReady()
-        self.writeFlashCommand(EEFC_FCR_FCMD_SGPB, 1)
-        self.waitForFlashReady()
+        self.wait_for_flash_ready()
+        self.write_flash_command(EEFC_FCR_FCMD_SGPB, 1)
+        self.wait_for_flash_ready()
 
-        # Verify
-        progress.setLabelText('Verifying written firmware')
-        progress.setMaximum(len(firmware_pages))
-        progress.setValue(0)
-        progress.show()
+        # Verify firmware
+        self.verify_pages(firmware_pages, 0, 'firmware', progress)
 
-        offset = 0
-        page_num = 0
-
-        for page in firmware_pages:
-            read_page = ''
-            while len(read_page) < self.flash_page_size:
-                read_page += self.readWord(self.flash_base + offset)
-                offset += 4
-
-            if read_page != page:
-                raise SAMBAException('Verification error')
-
-            page_num += 1
-            progress.setValue(page_num)
-            QApplication.processEvents()
+        # Verify IMU calibration
+        if imu_calibration is not None:
+            page_num_offset = (ic_relative_address - ic_prefix_length) / self.flash_page_size
+            self.verify_pages(imu_calibration_pages, page_num_offset, 'IMU calibration', progress)
 
         # Boot
         self.reset()
 
-    def readWord(self, address):
+    def write_pages(self, pages, page_num_offset, title, progress):
+        progress.setLabelText(title)
+        progress.setMaximum(len(pages))
+        progress.setValue(0)
+        progress.show()
+
+        page_num = 0
+
+        for page in pages:
+            offset = 0
+
+            while offset < len(page):
+                address = self.flash_base + (page_num_offset + page_num) * self.flash_page_size + offset
+                self.write_word(address, page[offset:offset + 4])
+                offset += 4
+
+            self.wait_for_flash_ready()
+            self.write_flash_command(EEFC_FCR_FCMD_WP, page_num_offset + page_num)
+            self.wait_for_flash_ready()
+
+            page_num += 1
+            progress.setValue(page_num)
+            QApplication.processEvents()
+
+    def verify_pages(self, pages, page_num_offset, title, progress):
+        progress.setLabelText('Verifying written ' + title)
+        progress.setMaximum(len(pages))
+        progress.setValue(0)
+        progress.show()
+
+        offset = page_num_offset * self.flash_page_size
+        page_num = 0
+
+        for page in pages:
+            read_page = ''
+            while len(read_page) < self.flash_page_size:
+                read_page += self.read_word(self.flash_base + offset)
+                offset += 4
+
+            if read_page != page:
+                raise SAMBAException('Verification error ({0})'.format(title))
+
+            page_num += 1
+            progress.setValue(page_num)
+            QApplication.processEvents()
+
+    def lock_pages(self, page_num, page_count):
+        start_page_num = page_num - (page_num % self.flash_pages_per_lockregion)
+        end_page_num = page_num + page_count
+
+        if (end_page_num % self.flash_pages_per_lockregion) != 0:
+            end_page_num += self.flash_pages_per_lockregion - (end_page_num % self.flash_pages_per_lockregion)
+
+        for region in range(start_page_num / self.flash_pages_per_lockregion,
+                            end_page_num / self.flash_pages_per_lockregion):
+            self.wait_for_flash_ready()
+            page_num = (region * self.flash_page_count) / self.flash_lockbit_count
+            self.write_flash_command(EEFC_FCR_FCMD_SLB, page_num)
+
+        self.wait_for_flash_ready()
+
+    def read_word(self, address): # 4 bytes
         try:
             self.port.write('w%08X,4#' % address)
             return self.port.read(4)
         except:
             raise SAMBAException('Read error')
 
-    def writeWord(self, address, value):
-        self.writeUInt(address, struct.unpack('<I', value)[0])
+    def write_word(self, address, value): # 4 bytes
+        self.write_uint32(address, struct.unpack('<I', value)[0])
 
-    def readUInt(self, address):
-        return struct.unpack('<I', self.readWord(address))[0]
+    def read_uint32(self, address):
+        return struct.unpack('<I', self.read_word(address))[0]
 
-    def writeUInt(self, address, value):
+    def write_uint32(self, address, value):
+        try:
+            self.port.write('W%08X,%08X#' % (address, value))
+        except:
+            raise SAMBAException('Write error')
+
+    def write_uint32(self, address, value):
         try:
             self.port.write('W%08X,%08X#' % (address, value))
         except:
@@ -238,8 +325,8 @@ class SAMBA:
 
     def reset(self):
         try:
-            self.writeUInt(RSTC_MR, (RSTC_MR_FEY << 24) | (10 << 8) | RSTC_MR_URSTEN | RSTC_MR_URSTIEN)
-            self.writeUInt(RSTC_CR, (RSTC_CR_FEY << 24) | RSTC_CR_PROCRST | RSTC_CR_EXTRST)
+            self.write_uint32(RSTC_MR, (RSTC_MR_FEY << 24) | (10 << 8) | RSTC_MR_URSTEN | RSTC_MR_URSTIEN)
+            self.write_uint32(RSTC_CR, (RSTC_CR_FEY << 24) | RSTC_CR_PROCRST | RSTC_CR_EXTRST)
         except:
             raise SAMBAException('Reset error')
 
@@ -249,9 +336,9 @@ class SAMBA:
         except:
             raise SAMBAException('Execution error')
 
-    def waitForFlashReady(self):
+    def wait_for_flash_ready(self, ready=True):
         for i in range(1000):
-            fsr = self.readUInt(EEFC_FSR)
+            fsr = self.read_uint32(EEFC_FSR)
 
             if (fsr & EEFC_FSR_FLOCKE) != 0:
                 raise SAMBAException('Flash locking error')
@@ -259,10 +346,14 @@ class SAMBA:
             if (fsr & EEFC_FSR_FCMDE) != 0:
                 raise SAMBAException('Flash command error')
 
-            if (fsr & EEFC_FSR_FRDY) != 0:
-                break
+            if ready:
+                if (fsr & EEFC_FSR_FRDY) != 0:
+                    break
+            else:
+                if (fsr & EEFC_FSR_FRDY) == 0:
+                    break
         else:
             raise SAMBAException('Flash timeout')
 
-    def writeFlashCommand(self, command, argument):
-        self.writeUInt(EEFC_FCR, (EEFC_FCR_FKEY << 24) | (argument << 8) | command)
+    def write_flash_command(self, command, argument):
+        self.write_uint32(EEFC_FCR, (EEFC_FCR_FKEY << 24) | (argument << 8) | command)

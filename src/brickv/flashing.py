@@ -24,24 +24,26 @@ Boston, MA 02111-1307, USA.
 """
 
 from ui_flashing import Ui_widget_flashing
-import time
-from bindings.ip_connection import IPConnection
-
+from bindings.ip_connection import IPConnection, base58encode
+from plugin_system.plugins.imu.calibrate_import_export import parse_imu_calibration
 from PyQt4.QtCore import pyqtSignal, Qt
 from PyQt4.QtGui import QApplication, QFrame, QFileDialog, QMessageBox, QProgressDialog
+from samba import SAMBA, SAMBAException, get_serial_ports
 
 import sys
 import os
 import urllib2
 import re
+import time
+import struct
 from xml.etree.ElementTree import ElementTree
 from xml.etree.ElementTree import fromstring as etreefromstring
-from samba import SAMBA, SAMBAException, get_serial_ports
 from serial import SerialException
 
 SELECT = 'Select...'
 CUSTOM = 'Custom...'
 FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
+IMU_CALIBRATION_URL = 'http://download.tinkerforge.com/imu_calibration/'
 NO_BRICK = 'No Brick found'
 NO_BOOTLOADER = 'No Brick in Bootloader found'
 
@@ -346,6 +348,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         current_text = self.combo_firmware.currentText()
 
         # Get firmware
+        name = None
+        version = None
+
         if current_text == SELECT:
             return
         elif current_text == CUSTOM:
@@ -388,12 +393,100 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 self.popup_fail('Brick', 'Could not download {0} Brick firmware {1}.{2}.{3}'.format(name, *version))
                 return
 
+        # Get IMU UID
+        imu_uid = None
+        imu_calibration = None
+        lock_imu_calibration_pages = False
+
+        if name == 'IMU':
+            # IMU 1.0.9 and earlier have a bug in their flash locking that makes
+            # them unlook the wrong pages. Therefore, the calibration pages
+            # must not be locked for this versions
+            if version[1] > 0 or (version[1] == 0 and version[2] > 9):
+                lock_imu_calibration_pages = True
+
+            try:
+                imu_uid = base58encode(samba.read_uid())
+            except SerialException, e:
+                progress.cancel()
+                self.popup_fail('Brick', 'Could read UID of IMU Brick: {0}'.format(str(e)))
+                return
+            except:
+                progress.cancel()
+                self.popup_fail('Brick', 'Could read UID of IMU Brick')
+                return
+
+            result = QMessageBox.question(self, 'IMU Brick',
+                                          'Restore factory calibration for IMU Brick [{0}] from tinkerforge.com?'.format(imu_uid),
+                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+
+            # Download IMU calibration
+            if result == QMessageBox.Yes:
+                progress.setLabelText('Downloading factory calibration for IMU Brick')
+                progress.setMaximum(0)
+                progress.setValue(0)
+                progress.show()
+
+                try:
+                    imu_calibration_text = ''
+                    response = urllib2.urlopen(IMU_CALIBRATION_URL + '{0}.txt'.format(imu_uid))
+                    chunk = response.read(1024)
+
+                    while len(chunk) > 0:
+                        imu_calibration_text += chunk
+                        chunk = response.read(1024)
+
+                    response.close()
+                except urllib2.HTTPError, e:
+                    if e.code == 404:
+                        imu_calibration_text = None
+                        self.popup_ok('IMU Brick', 'No factory calibration for IMU Brick [{0}] available'.format(imu_uid))
+                    else:
+                        progress.cancel()
+                        self.popup_fail('IMU Brick', 'Could not download factory calibration for IMU Brick [{0}]'.format(imu_uid))
+                        return
+                except urllib2.URLError:
+                    progress.cancel()
+                    self.popup_fail('IMU Brick', 'Could not download factory calibration for IMU Brick [{0}]'.format(imu_uid))
+                    return
+
+                if imu_calibration_text is not None:
+                    if len(imu_calibration_text) == 0:
+                        progress.cancel()
+                        self.popup_fail('IMU Brick', 'Could not download factory calibration for IMU Brick [{0}]'.format(imu_uid))
+                        return
+
+                    try:
+                        imu_calibration_matrix = parse_imu_calibration(imu_calibration_text)
+
+                        # Ensure proper temperature relation
+                        if imu_calibration_matrix[5][1][7] <= imu_calibration_matrix[5][1][3]:
+                            imu_calibration_matrix[5][1][7] = imu_calibration_matrix[5][1][3] + 1
+
+                        imu_calibration_array = imu_calibration_matrix[0][1][:6] + \
+                                                imu_calibration_matrix[1][1][:3] + \
+                                                imu_calibration_matrix[2][1][:6] + \
+                                                imu_calibration_matrix[3][1][:3] + \
+                                                imu_calibration_matrix[4][1][:6] + \
+                                                imu_calibration_matrix[5][1][:8]
+
+                        imu_calibration = struct.pack('<32h', *imu_calibration_array)
+                    except:
+                        progress.cancel()
+                        self.popup_fail('IMU Brick', 'Could not parse factory calibration for IMU Brick [{0}]'.format(imu_uid))
+                        return
+
         # Flash firmware
         try:
-            samba.flash(firmware, progress)
+            samba.flash(firmware, imu_calibration, lock_imu_calibration_pages, progress)
             progress.cancel()
+
             if current_text == CUSTOM:
                 self.popup_ok('Brick', 'Successfully flashed firmware.\nSuccessfully restarted Brick!')
+            elif imu_calibration is not None:
+                self.popup_ok('Brick', 'Successfully flashed {0} Brick firmware {1}.{2}.{3}.\n'.format(name, *version) +
+                                       'Successfully restored factory calibration.\n' +
+                                       'Successfully restarted {0} Brick!'.format(name))
             else:
                 self.popup_ok('Brick', 'Successfully flashed {0} Brick firmware {1}.{2}.{3}.\n'.format(name, *version) +
                                        'Successfully restarted {0} Brick!'.format(name))
