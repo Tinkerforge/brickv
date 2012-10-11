@@ -189,7 +189,7 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
             if '-IR' in name:
                 name = name.replace('-IR', ' IR')
 
-            url_part = ' '.join(name.split(' ')[:-2]).lower().replace(' ', '_').replace('-', '')
+            url_part = ' '.join(name.split(' ')[:-2]).lower().replace(' ', '_').replace('/', '_').replace('-', '')
 
             try:
                 versions = get_firmware_versions(FIRMWARE_URL + 'bricklets/' + url_part + '/', 'bricklet_' + url_part)

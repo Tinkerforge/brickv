@@ -179,6 +179,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 for a in body.getiterator('a'):
                     url_part = a.text.replace('/', '')
                     name = url_part
+
                     if name == '..':
                         continue
 
@@ -191,9 +192,12 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
                     words = name.split('_')
                     parts = []
+
                     for word in words:
                         parts.append(word[0].upper() + word[1:])
+
                     name = ' '.join(parts)
+                    name = name.replace('Voltage Current', 'Voltage/Current')
 
                     versions = get_firmware_versions(FIRMWARE_URL + 'bricklets/' + url_part + '/', 'bricklet_' + url_part)
 
