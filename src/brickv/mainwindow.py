@@ -192,11 +192,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.updates_window.refresh()
 
     def flashing_pressed(self):
+        first = False
+
         if self.flashing_window is None:
+            first = True
             self.flashing_window = FlashingWindow(self)
 
         self.update_flashing_window()
         self.flashing_window.show()
+
+        if first:
+            self.flashing_window.refresh_firmwares_and_plugins()
 
     def advanced_pressed(self):
         if self.advanced_window is None:

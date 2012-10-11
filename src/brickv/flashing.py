@@ -53,7 +53,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.setupUi(self)
 
         self.parent = parent
-        self.button_serial_port_refresh.pressed.connect(self.serial_port_refresh)
+        self.button_serial_port_refresh.pressed.connect(self.refresh_serial_ports)
         self.combo_firmware.currentIndexChanged.connect(self.firmware_changed)
         self.button_firmware_save.pressed.connect(self.firmware_save_pressed)
         self.button_firmware_browse.pressed.connect(self.firmware_browse_pressed)
@@ -65,16 +65,30 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         self.set_devices([])
 
-        progress = self.create_progress_bar('Discovering')
+        self.refresh_serial_ports()
 
-        # discover serial ports
-        self.serial_port_refresh(progress)
-
-        # discover firmwares and plugins
         self.firmwares = {}
         self.plugins = {}
 
+        self.combo_firmware.addItem(CUSTOM)
+        self.firmware_changed(0)
+
+        self.combo_plugin.addItem(CUSTOM)
+        self.plugin_changed(0)
+
+        self.update_ui_state()
+
+    def refresh_firmwares_and_plugins(self):
+        progress = self.create_progress_bar('Discovering')
+
+        self.firmwares = {}
+        self.plugins = {}
+
+        self.combo_firmware.clear()
+        self.combo_plugin.clear()
+
         available = False
+
         try:
             urllib2.urlopen(FIRMWARE_URL).read()
             available = True
@@ -121,8 +135,13 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
                 body = get_body(FIRMWARE_URL + 'bricks/')
                 firmwares = []
+                elements = list(body.getiterator('a'))
 
-                for a in body.getiterator('a'):
+                progress.setMaximum(len(elements))
+
+                for a in elements:
+                    progress.setValue(progress.value() + 1)
+
                     url_part = a.text.replace('/', '')
                     name = url_part
 
@@ -146,6 +165,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                     self.firmwares[url_part] = (name, url_part, versions)
 
                     QApplication.processEvents()
+
+                progress.setValue(len(elements))
 
                 if len(firmwares) > 0:
                     self.combo_firmware.addItem(SELECT)
@@ -175,8 +196,13 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
                 body = get_body(FIRMWARE_URL + 'bricklets/')
                 plugins = []
+                elements = list(body.getiterator('a'))
 
-                for a in body.getiterator('a'):
+                progress.setMaximum(len(elements))
+
+                for a in elements:
+                    progress.setValue(progress.value() + 1)
+
                     url_part = a.text.replace('/', '')
                     name = url_part
 
@@ -208,6 +234,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                     self.plugins[url_part] = (name, url_part, versions)
 
                     QApplication.processEvents()
+
+                progress.setValue(len(elements))
 
                 if len(plugins) > 0:
                     self.combo_plugin.addItem(SELECT)
@@ -258,12 +286,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
     def popup_fail(self, title, message):
         QMessageBox.critical(self, title, message, QMessageBox.Ok)
 
-    def serial_port_refresh(self, progress=None):
+    def refresh_serial_ports(self):
+        progress = self.create_progress_bar('Discovering')
         current_text = self.combo_serial_port.currentText()
         self.combo_serial_port.clear()
-
-        if progress is None:
-            progress = self.create_progress_bar('Discovering')
 
         try:
             progress.setLabelText('Discovering serial ports')
@@ -336,15 +362,15 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         try:
             samba = SAMBA(port)
         except SAMBAException, e:
-            self.serial_port_refresh()
+            self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not connect to Brick: {0}'.format(str(e)))
             return
         except SerialException, e:
-            self.serial_port_refresh()
+            self.refresh_serial_ports()
             self.popup_fail('Brick', str(e)[0].upper() + str(e)[1:])
             return
         except:
-            self.serial_port_refresh()
+            self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not connect to Brick')
             return
 
@@ -496,17 +522,17 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                                        'Successfully restarted {0} Brick!'.format(name))
         except SAMBAException, e:
             progress.cancel()
-            self.serial_port_refresh()
+            self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not flash Brick: {0}'.format(str(e)))
             return
         except SerialException, e:
             progress.cancel()
-            self.serial_port_refresh()
+            self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not flash Brick: {0}'.format(str(e)))
             return
         except:
             progress.cancel()
-            self.serial_port_refresh()
+            self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not flash Brick')
             return
 
