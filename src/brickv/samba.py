@@ -29,7 +29,7 @@ import struct
 from PyQt4.QtGui import QApplication
 from serial import Serial, SerialException
 
-if sys.platform == 'linux2':
+if sys.platform.startswith('linux'):
     def get_serial_ports():
         ports = []
         for tty in glob.glob('/dev/ttyACM*') + glob.glob('/dev/ttyUSB*'):

@@ -38,7 +38,7 @@ import operator
 
 HOST_HISTORY_SIZE = 5
 
-if sys.platform == 'linux2':
+if sys.platform.startswith('linux') or sys.platform.startswith('freebsd'):
     import config_linux as config
 elif sys.platform == 'darwin':
     import config_macosx as config

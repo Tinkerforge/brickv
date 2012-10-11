@@ -36,12 +36,20 @@ from xml.etree.ElementTree import fromstring as etreefromstring
 
 FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
 
-if sys.platform == 'linux2':
+check_for_brickv_update = True
+
+if sys.platform.startswith('linux'):
     BRICKV_URL = 'http://download.tinkerforge.com/tools/brickv/linux/'
 elif sys.platform == 'darwin':
     BRICKV_URL = 'http://download.tinkerforge.com/tools/brickv/macos/'
 elif sys.platform == 'win32':
     BRICKV_URL = 'http://download.tinkerforge.com/tools/brickv/windows/'
+elif sys.platform.startswith('freebsd'):
+    check_for_brickv_update = False
+    BRICKV_URL = 'http://freshports.org/devel/brickv/'
+else:
+    check_for_brickv_update = False
+    BRICKV_URL = None
 
 class UpdatesWindow(QFrame, Ui_widget_updates):
     def __init__(self, parent, config):
@@ -103,7 +111,7 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
                 if url_part == '..':
                     continue
 
-                if sys.platform == 'linux2':
+                if sys.platform.startswith('linux'):
                     m = re.match(tool + '-(\d+).(\d+).(\d+)_all\.deb', url_part)
                 elif sys.platform == 'darwin':
                     m = re.match(tool + '_macos_(\d+)_(\d+)_(\d+)\.dmg', url_part)
@@ -129,17 +137,22 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
 
         tool_updates = []
 
-        try:
-            versions = get_tools_versions(BRICKV_URL, 'brickv')
+        if check_for_brickv_update:
+            try:
+                versions = get_tools_versions(BRICKV_URL, 'brickv')
 
-            if len(versions) < 1:
+                if len(versions) < 1:
+                    tool_updates.append('Could not discover latest Brick Viewer on tinkerforge.com')
+                else:
+                    latest = '.'.join(map(str, versions[-1]))
+                    if self.config.BRICKV_VERSION != latest:
+                        tool_updates.append('Brick Viewer, {0} is installed, {1} is latest'.format(self.config.BRICKV_VERSION, latest))
+            except urllib2.URLError:
                 tool_updates.append('Could not discover latest Brick Viewer on tinkerforge.com')
-            else:
-                latest = '.'.join(map(str, versions[-1]))
-                if self.config.BRICKV_VERSION != latest:
-                    tool_updates.append('Brick Viewer, {0} is installed, {1} is latest'.format(self.config.BRICKV_VERSION, latest))
-        except urllib2.URLError:
-            tool_updates.append('Could not discover latest Brick Viewer on tinkerforge.com')
+        elif BRICKV_URL is not None:
+            tool_updates.append('Brick Viewer, {0} is installed, check {1} for updates'.format(self.config.BRICKV_VERSION, BRICKV_URL))
+        else:
+            tool_updates.append('Brick Viewer, {0} is installed'.format(self.config.BRICKV_VERSION))
 
         progress.setValue(progress.value() + 1)
 
