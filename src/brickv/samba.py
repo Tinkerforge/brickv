@@ -100,6 +100,8 @@ class SAMBAException(Exception):
 
 class SAMBA:
     def __init__(self, port_name):
+        self.current_mode = None
+
         try:
             self.port = Serial(port_name, 115200, timeout=5)
         except SerialException, e:
@@ -108,9 +110,10 @@ class SAMBA:
             else:
                 raise e
 
-        self.port.write('N#')
-
-        if self.port.read(2) != '\n\r':
+        try:
+            self.change_mode('T')
+            self.change_mode('N')
+        except:
             raise SAMBAException('No Brick in Bootloader found')
 
         chipid = self.read_uint32(CHIPID_CIDR)
@@ -133,6 +136,39 @@ class SAMBA:
 
         self.flash_lockregion_size = self.flash_size / self.flash_lockbit_count
         self.flash_pages_per_lockregion = self.flash_lockregion_size / self.flash_page_size
+
+    def change_mode(self, mode):
+        if self.current_mode == mode:
+            return
+
+        try:
+            self.port.write(mode + '#')
+        except:
+            raise SAMBAException('Write error')
+
+        if mode == 'T':
+            while True:
+                try:
+                    response = self.port.read(1)
+                except:
+                    raise SAMBAException('Read error')
+
+                if len(response) == 0:
+                    raise SAMBAException('Read timeout')
+                elif response == '>':
+                    break
+        else:
+            try:
+                response = self.port.read(2)
+            except:
+                raise SAMBAException('Read error')
+
+            if len(response) == 0:
+                raise SAMBAException('Read timeout')
+            elif response != '\n\r':
+                raise SAMBAException('Protocol error')
+
+        self.current_mode = mode
 
     def read_uid(self):
         self.write_flash_command(EEFC_FCR_FCMD_STUI, 0)
@@ -302,11 +338,25 @@ class SAMBA:
         self.wait_for_flash_ready()
 
     def read_word(self, address): # 4 bytes
+        self.change_mode('N')
+
         try:
-            self.port.write('w%08X,4#' % address)
-            return self.port.read(4)
+            self.port.write('w%X,4#' % address)
         except:
-            raise SAMBAException('Read error')
+            raise SAMBAException('Serial write error')
+
+        try:
+            response = self.port.read(4)
+        except:
+            raise SAMBAException('Serial read error')
+
+        if len(response) == 0:
+            raise SAMBAException('Serial timeout')
+
+        if len(response) != 4:
+            raise SAMBAException('Protocol error')
+
+        return response
 
     def write_word(self, address, value): # 4 bytes
         self.write_uint32(address, struct.unpack('<I', value)[0])
@@ -315,30 +365,69 @@ class SAMBA:
         return struct.unpack('<I', self.read_word(address))[0]
 
     def write_uint32(self, address, value):
+        self.change_mode('N')
+
         try:
-            self.port.write('W%08X,%08X#' % (address, value))
+            self.port.write('W%X,%X#' % (address, value))
+        except:
+            raise SAMBAException('Serial write error')
+
+    def read_bytes(self, address, length):
+        self.change_mode('T')
+
+        try:
+            self.port.write('R%X,%X#' % (address, length))
+        except:
+            raise SAMBAException('Serial write error')
+
+        try:
+            response = self.port.read(length + 3)
+        except:
+            raise SAMBAException('Serial read error')
+
+        if len(response) == 0:
+            raise SAMBAException('Serial timeout')
+
+        if len(response) != length + 3:
+            raise SAMBAException('Protocol error')
+
+        return response[2:-1]
+
+    def write_bytes(self, address, bytes):
+        self.change_mode('T')
+
+        try:
+            # FIXME: writes '33337777BBBBFFFF' instead of '0123456789ABCDEF'
+            self.port.write('S%X,%X#' % (address, len(bytes)))
+            self.port.write(bytes)
         except:
             raise SAMBAException('Write error')
 
-    def read_bytes(self, address, length):
         try:
-            self.port.write('R%08X,%08X#' % (address, length))
-            return self.port.read(length)
+            response = self.port.read(3)
         except:
             raise SAMBAException('Read error')
+
+        if len(response) == 0:
+            raise SAMBAException('Serial timeout')
+
+        if response != '\n\r>':
+            raise SAMBAException('Protocol error')
 
     def reset(self):
         try:
             self.write_uint32(RSTC_MR, (RSTC_MR_FEY << 24) | (10 << 8) | RSTC_MR_URSTEN | RSTC_MR_URSTIEN)
             self.write_uint32(RSTC_CR, (RSTC_CR_FEY << 24) | RSTC_CR_PROCRST | RSTC_CR_EXTRST)
         except:
-            raise SAMBAException('Reset error')
+            raise SAMBAException('Serial write error')
 
     def go(self, address):
+        self.change_mode('N')
+
         try:
-            self.port.write('G%08X#' % address)
+            self.port.write('G%X#' % address)
         except:
-            raise SAMBAException('Execution error')
+            raise SAMBAException('Serial write error')
 
     def wait_for_flash_ready(self, ready=True):
         for i in range(1000):
