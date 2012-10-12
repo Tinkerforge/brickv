@@ -46,3 +46,13 @@
         Show version numbers in flashing dialog
         Remember the last 5 hosts
         Add Check-for-Updates functionality for connected Bricks and Bricklets
+1.1.13: Switch from green to dark green in graphs for better contrast on gray
+        Show Barometer Bricklet altitude also in feet
+        Fix progress dialog for Bricklet flashing
+        Handle old names for Temperature IR and Distance IR Bricklets in Check-for-Updates dialog
+        Automatically restore IMU factory calibration after flashing
+        Improve flashing verification speed by reading whole flash pages
+        Improve progress dialog for firmware and plugin discovery in flashing window
+        Add basic FreeBSD support
+        Add button to restore factory calibration to IMU calibration window
+        Add missing image for Dual Replay Bricklet plugin
