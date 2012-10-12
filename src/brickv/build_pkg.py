@@ -335,12 +335,16 @@ def build_linux_pkg():
     os.system('dpkg -b brickv/ brickv-' + config.BRICKV_VERSION + '_all.deb')
     
 if __name__ == "__main__":
-    if sys.argv[1] == "windows":
+    if len(sys.argv) < 2:
+        print "error: specify platform"
+    elif sys.argv[1] == "windows":
         sys.argv[1] = "py2exe" # rewrite sys.argv[1] for setup(), want to call py2exe
         build_windows_pkg()
     elif sys.argv[1] == "linux":
         build_linux_pkg()
-    elif sys.argv[1] == "macos":
+    elif sys.argv[1] == "macosx":
         sys.argv[1] = "py2app" # rewrite sys.argv[1] for setup(), want to call py2exe
         sys.argv.append("build") # rewrite sys.argv[1] for setup(), want to call py2exe
         build_macos_pkg()
+    else:
+        print "error: unknown platform: " + sys.argv[1]
