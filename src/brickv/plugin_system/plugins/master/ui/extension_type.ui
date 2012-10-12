@@ -9,84 +9,77 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>240</width>
-    <height>84</height>
+    <width>256</width>
+    <height>78</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Extension Types</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Extension:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2">
+    <widget class="QComboBox" name="combo_extension">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Extension:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="combo_extension">
-         <item>
-          <property name="text">
-           <string>0</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>1</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
+      <property name="text">
+       <string>0</string>
+      </property>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_8">
-       <item>
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Type:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="type_box">
-         <item>
-          <property name="text">
-           <string>None</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Chibi</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>RS485</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>WIFI</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="button_type_save">
-         <property name="text">
-          <string>Save</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <property name="text">
+       <string>1</string>
+      </property>
      </item>
-    </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_9">
+     <property name="text">
+      <string>Type:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="type_box">
+     <item>
+      <property name="text">
+       <string>None</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Chibi</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>RS485</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>WIFI</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ethernet</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="button_type_save">
+     <property name="text">
+      <string>Save</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

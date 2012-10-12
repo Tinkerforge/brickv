@@ -83,28 +83,27 @@ class ExtensionTypeWindow(QFrame, Ui_extension_type):
     def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
         self.setupUi(self)
-        
+
         self.setWindowTitle("Configure Extension Type")
-        
+
         self.master = parent.master
         self.button_type_save.pressed.connect(self.save_pressed)
         self.combo_extension.currentIndexChanged.connect(self.index_changed)
-        
+
         self.index_changed(0)
-        
-        
+
     def popup_ok(self):
         QMessageBox.information(self, "Upload", "Check OK", QMessageBox.Ok)
-    
+
     def popup_fail(self):
         QMessageBox.critical(self, "Upload", "Check Failed", QMessageBox.Ok)
-    
+
     def index_changed(self, index):
         ext = self.master.get_extension_type(index)
-        if ext < 0 or ext > 2:
+        if ext < 0 or ext > (self.type_box.count() - 1):
             ext = 0
         self.type_box.setCurrentIndex(ext)
-        
+
     def save_pressed(self):
         extension = self.combo_extension.currentIndex()
         type = self.type_box.currentIndex()
