@@ -345,6 +345,7 @@ in the image above, then press "Save Orientation".""")
         if self.calibrate is None:
             self.calibrate = CalibrateWindow(self)
 
+        self.calibrate.refresh_values()
         self.calibrate.show()
 
     def speed_finished(self):
