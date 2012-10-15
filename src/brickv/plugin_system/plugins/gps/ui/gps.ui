@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>358</width>
-    <height>380</height>
+    <width>398</width>
+    <height>387</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,6 +69,13 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Estimated position error:</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -76,7 +83,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QLabel" name="ns">
+          <widget class="QLabel" name="latitude">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -84,14 +91,14 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>U</string>
+            <string>0.0</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="latitude">
+          <widget class="QLabel" name="ns">
            <property name="text">
-            <string>0.0</string>
+            <string>U</string>
            </property>
           </widget>
          </item>
@@ -100,7 +107,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
-          <widget class="QLabel" name="ew">
+          <widget class="QLabel" name="longitude">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
              <horstretch>0</horstretch>
@@ -108,14 +115,14 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>U</string>
+            <string>0.0</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="longitude">
+          <widget class="QLabel" name="ew">
            <property name="text">
-            <string>0.0</string>
+            <string>U</string>
            </property>
           </widget>
          </item>
@@ -123,6 +130,13 @@
        </item>
        <item>
         <widget class="QLabel" name="dop">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="epe">
          <property name="text">
           <string>0</string>
          </property>
@@ -165,9 +179,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_6">
+        <widget class="QLabel" name="label_8">
          <property name="text">
-          <string>Speed:</string>
+          <string>Altitude:</string>
          </property>
         </widget>
        </item>
@@ -179,9 +193,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="label_8">
+        <widget class="QLabel" name="label_6">
          <property name="text">
-          <string>Altitude:</string>
+          <string>Speed:</string>
          </property>
         </widget>
        </item>
@@ -218,9 +232,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="speed">
+        <widget class="QLabel" name="altitude">
          <property name="text">
-          <string>0 km/h</string>
+          <string>0 m</string>
          </property>
         </widget>
        </item>
@@ -232,9 +246,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="altitude">
+        <widget class="QLabel" name="speed">
          <property name="text">
-          <string>0 m</string>
+          <string>0 km/h</string>
          </property>
         </widget>
        </item>
