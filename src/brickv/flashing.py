@@ -570,42 +570,6 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
     def plugin_changed(self, index):
         self.update_ui_state()
 
-    def write_bricklet_plugin(self, device, port, plugin, progress):
-        position = 0
-
-        # Fill last chunk with zeros
-        length = len(plugin)
-        mod = length % IPConnection.PLUGIN_CHUNK_SIZE
-        if mod != 0:
-            plugin += [0] * (IPConnection.PLUGIN_CHUNK_SIZE - mod)
-
-        while len(plugin) != 0:
-            plugin_chunk = plugin[:IPConnection.PLUGIN_CHUNK_SIZE]
-            plugin = plugin[IPConnection.PLUGIN_CHUNK_SIZE:]
-
-            self.parent.ipcon.write_bricklet_plugin(device, port, position, plugin_chunk)
-
-            position += 1
-            progress.setValue(length - len(plugin))
-
-            time.sleep(0.015)
-            QApplication.processEvents()
-
-    def read_bricklet_plugin(self, device, port, length, progress):
-        plugin = []
-        position = 0
-        while len(plugin) < length:
-            plugin += self.parent.ipcon.read_bricklet_plugin(device, port, position)
-
-            position += 1
-            progress.setValue(len(plugin))
-
-            time.sleep(0.015)
-            QApplication.processEvents()
-
-        # Remove unnecessary bytes at end
-        return plugin[:length]
-
     def plugin_save_pressed(self):
         progress = self.create_progress_bar('Flashing')
         current_text = self.combo_plugin.currentText()
@@ -657,12 +621,36 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         # Write
         progress.setLabelText('Writing plugin')
-        progress.setMaximum(len(plugin))
+        progress.setMaximum(0)
         progress.setValue(0)
         progress.show()
 
+        plugin_chunks = []
+        offset = 0
+
+        while offset < len(plugin):
+            chunk = plugin[offset:offset + IPConnection.PLUGIN_CHUNK_SIZE]
+
+            if len(chunk) < IPConnection.PLUGIN_CHUNK_SIZE:
+                chunk += [0] * (IPConnection.PLUGIN_CHUNK_SIZE - len(chunk))
+
+            plugin_chunks.append(chunk)
+            offset += IPConnection.PLUGIN_CHUNK_SIZE
+
+        progress.setMaximum(len(plugin_chunks))
+
         try:
-            self.write_bricklet_plugin(device, port, plugin, progress)
+            position = 0
+
+            for chunk in plugin_chunks:
+                self.parent.ipcon.write_bricklet_plugin(device, port, position, chunk)
+
+                position += 1
+                progress.setValue(position)
+
+                time.sleep(0.015)
+                QApplication.processEvents()
+
             time.sleep(0.1)
         except:
             progress.cancel()
@@ -671,21 +659,30 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         # Verify
         progress.setLabelText('Verifying written plugin')
-        progress.setMaximum(len(plugin))
+        progress.setMaximum(len(plugin_chunks))
         progress.setValue(0)
         progress.show()
 
         try:
             time.sleep(0.1)
-            read_plugin = self.read_bricklet_plugin(device, port, len(plugin), progress)
+            position = 0
+
+            for chunk in plugin_chunks:
+                read_chunk = list(self.parent.ipcon.read_bricklet_plugin(device, port, position))
+
+                if read_chunk != chunk:
+                    progress.cancel()
+                    self.popup_fail('Bricklet', 'Could not flash Bricklet: Verification error')
+                    return
+
+                position += 1
+                progress.setValue(position)
+
+                time.sleep(0.015)
+                QApplication.processEvents()
         except:
             progress.cancel()
             self.popup_fail('Bricklet', 'Could not flash Bricklet: Read error')
-            return
-
-        if plugin != read_plugin:
-            progress.cancel()
-            self.popup_fail('Bricklet', 'Could not flash Bricklet: Verification error')
             return
 
         progress.cancel()
