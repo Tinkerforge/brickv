@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-09-14.      #
+# This file was automatically generated on 2012-10-17.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -10,8 +10,15 @@
 try:
     from collections import namedtuple
 except ImportError:
-    from .ip_connection import namedtuple
-from .ip_connection import Device, IPConnection, Error
+    try:
+        from .ip_connection import namedtuple
+    except ImportError:
+        from ip_connection import namedtuple
+
+try:
+    from .ip_connection import Device, IPConnection, Error
+except ImportError:
+    from ip_connection import Device, IPConnection, Error
 
 GetPositionCallbackThreshold = namedtuple('PositionCallbackThreshold', ['option', 'min', 'max'])
 GetAnalogValueCallbackThreshold = namedtuple('AnalogValueCallbackThreshold', ['option', 'min', 'max'])

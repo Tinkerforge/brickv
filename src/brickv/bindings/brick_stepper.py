@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-08.      #
+# This file was automatically generated on 2012-10-17.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -10,8 +10,15 @@
 try:
     from collections import namedtuple
 except ImportError:
-    from .ip_connection import namedtuple
-from .ip_connection import Device, IPConnection, Error
+    try:
+        from .ip_connection import namedtuple
+    except ImportError:
+        from ip_connection import namedtuple
+
+try:
+    from .ip_connection import Device, IPConnection, Error
+except ImportError:
+    from ip_connection import Device, IPConnection, Error
 
 GetSpeedRamping = namedtuple('SpeedRamping', ['acceleration', 'deacceleration'])
 GetAllData = namedtuple('AllData', ['current_velocity', 'current_position', 'remaining_steps', 'stack_voltage', 'external_voltage', 'current_consumption'])
@@ -375,7 +382,7 @@ class Stepper(Device):
 
     def set_sync_rect(self, sync_rect):
         """
-        Turns synchronous rectification on or off (true/false).
+        Turns synchronous rectification on or off (*true* or *false*).
         
         With synchronous rectification on, the decay can be changed
         (see :func:`SetDecay`). Without synchronous rectification fast
@@ -391,12 +398,16 @@ class Stepper(Device):
          Brick may not be able to cope with the load and overheat.
         
         The default value is *false*.
+        
+        .. versionadded:: 1.1.4~(Firmware)
         """
         self.ipcon.send_request(self, Stepper.FUNCTION_SET_SYNC_RECT, (sync_rect,), '?', '')
 
     def is_sync_rect(self):
         """
         Returns *true* if synchronous rectification is enabled, *false* otherwise.
+        
+        .. versionadded:: 1.1.4~(Firmware)
         """
         return self.ipcon.send_request(self, Stepper.FUNCTION_IS_SYNC_RECT, (), '', '?')
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-08.      #
+# This file was automatically generated on 2012-10-17.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -10,8 +10,15 @@
 try:
     from collections import namedtuple
 except ImportError:
-    from .ip_connection import namedtuple
-from .ip_connection import Device, IPConnection, Error
+    try:
+        from .ip_connection import namedtuple
+    except ImportError:
+        from ip_connection import namedtuple
+
+try:
+    from .ip_connection import Device, IPConnection, Error
+except ImportError:
+    from ip_connection import Device, IPConnection, Error
 
 GetChibiErrorLog = namedtuple('ChibiErrorLog', ['underrun', 'crc_error', 'no_ack', 'overflow'])
 GetRS485Configuration = namedtuple('RS485Configuration', ['speed', 'parity', 'stopbits'])
@@ -113,6 +120,7 @@ class Master(Device):
          "1",    "Chibi"
          "2",    "RS485"
          "3",    "WIFI"
+         "4",    "Ethernet"
         
         The extension type is already set when bought and it can be set with the 
         Brick Viewer, it is unlikely that you need this function.
@@ -577,7 +585,7 @@ class Master(Device):
         1000 messages per second without problems.
         
         Try to not send more then 50 messages at a time without any kind of
-        break between them. 
+        break between them.
         
         .. versionadded:: 1.3.2~(Firmware)
         """
@@ -612,6 +620,8 @@ class Master(Device):
     def get_usb_voltage(self):
         """
         Returns the USB voltage in mV.
+        
+        .. versionadded:: 1.3.5~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_USB_VOLTAGE, (), '', 'H')
 
