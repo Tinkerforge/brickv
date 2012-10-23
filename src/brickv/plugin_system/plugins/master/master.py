@@ -93,10 +93,10 @@ class ExtensionTypeWindow(QFrame, Ui_extension_type):
         self.index_changed(0)
 
     def popup_ok(self):
-        QMessageBox.information(self, "Upload", "Check OK", QMessageBox.Ok)
+        QMessageBox.information(self, "Extension Type", "Successfully saved extension type", QMessageBox.Ok)
 
     def popup_fail(self):
-        QMessageBox.critical(self, "Upload", "Check Failed", QMessageBox.Ok)
+        QMessageBox.critical(self, "Extension Type", "Could not save extension type", QMessageBox.Ok)
 
     def index_changed(self, index):
         ext = self.master.get_extension_type(index)
@@ -166,10 +166,10 @@ class Chibi(QWidget, Ui_Chibi):
             self.new_max_count()
         
     def popup_ok(self):
-        QMessageBox.information(self, "Save", "Check OK", QMessageBox.Ok)
+        QMessageBox.information(self, "Configuration", "Successfully saved configuration", QMessageBox.Ok)
     
     def popup_fail(self):
-        QMessageBox.critical(self, "Save", "Check Failed", QMessageBox.Ok)
+        QMessageBox.critical(self, "Configuration", "Could not save configuration", QMessageBox.Ok)
         
     def new_max_count(self):
         channel = int(self.chibi_channel.currentText())
@@ -205,8 +205,7 @@ class Chibi(QWidget, Ui_Chibi):
             self.chibi_channel.addItem("3")
             if not channel in (0, 1, 2, 3):
                 channel = 0
-                
-                
+
         self.chibi_channel.setCurrentIndex(channel)
         self.chibi_channel.currentIndexChanged.connect(self.chibi_channel_changed)
             
@@ -338,13 +337,13 @@ class RS485(QWidget, Ui_RS485):
 
     def destroy(self):
         pass
-        
+
     def popup_ok(self):
-        QMessageBox.information(self, "Save", "Check OK", QMessageBox.Ok)
-    
+        QMessageBox.information(self, "Configuration", "Successfully saved configuration", QMessageBox.Ok)
+
     def popup_fail(self):
-        QMessageBox.critical(self, "Save", "Check Failed", QMessageBox.Ok)
-        
+        QMessageBox.critical(self, "Configuration", "Could not save configuration", QMessageBox.Ok)
+
     def save_pressed(self):
         speed = self.speed_spinbox.value()
         parity_index = self.parity_combobox.currentIndex()
@@ -716,12 +715,12 @@ class Wifi(QWidget, Ui_Wifi):
         if index >= 0:
             self.wifi_encryption.setCurrentIndex(index)
 
-    def popup_ok(self):
-        QMessageBox.information(self, "Save", "Check OK", QMessageBox.Ok)
+    def popup_ok(self, message="Successfully saved configuration"):
+        QMessageBox.information(self, "Configuration", message, QMessageBox.Ok)
     
-    def popup_fail(self, message="Check Failed"):
-        QMessageBox.critical(self, "Upload", message, QMessageBox.Ok)
-        
+    def popup_fail(self, message="Could not save configuration"):
+        QMessageBox.critical(self, "Configuration", message, QMessageBox.Ok)
+
     def show_status_pressed(self):
         if self.wifi_status is None:
             self.wifi_status = WifiStatus(self)
@@ -815,7 +814,7 @@ class Wifi(QWidget, Ui_Wifi):
         if '"' in key:
             self.popup_fail('Key cannot contain quotation mark')
             return
-        
+
         key_index = self.wifi_key_index.value()
         eap_outer = self.wifi_eap_outer_auth.currentIndex()
         eap_inner = self.wifi_eap_inner_auth.currentIndex()
@@ -826,6 +825,9 @@ class Wifi(QWidget, Ui_Wifi):
             ssid = str(self.wifi_ssid.text()).decode('ascii')
         except:
             self.popup_fail('SSID cannot contain non-ASCII characters')
+            return
+        if len(ssid) == 0:
+            self.popup_fail('SSID cannot be empty')
             return
         if '"' in ssid:
             self.popup_fail('SSID cannot contain quotation mark')
@@ -845,7 +847,6 @@ class Wifi(QWidget, Ui_Wifi):
         port = self.wifi_port.value()
         
         power_mode = self.wifi_power_mode.currentIndex()
-        
         ca_cert = self.get_certificate(self.wifi_ca_certificate_url)
         ca_certificate_length = len(ca_cert)
         client_cert = self.get_certificate(self.wifi_client_certificate_url)
@@ -853,17 +854,19 @@ class Wifi(QWidget, Ui_Wifi):
         priv_key = self.get_certificate(self.wifi_private_key_url)
         private_key_length = len(priv_key)
         
+        previous_power_mode = self.master.get_wifi_power_mode()
         self.master.set_wifi_power_mode(power_mode)
-        
         self.master.set_wifi_encryption(encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length)
         self.master.set_wifi_configuration(ssid, connection, ip, sub, gw, port)
 
+        power_mode_old = self.master.get_wifi_power_mode()
         encryption_old, key_old, key_index_old, eap_options_old, ca_certificate_length_old, client_certificate_length_old, private_key_length_old = self.master.get_wifi_encryption()
         ssid_old, connection_old, ip_old, sub_old, gw_old, port_old = self.master.get_wifi_configuration()
 
         test_ok = False
         
-        if encryption == encryption_old and key == key_old and \
+        if power_mode == power_mode_old and \
+           encryption == encryption_old and key == key_old and \
            ssid == ssid_old and connection == connection_old and \
            ip == ip_old and sub == sub_old and gw == gw_old and \
            port == port_old and key_index == key_index_old and \
@@ -886,13 +889,13 @@ class Wifi(QWidget, Ui_Wifi):
             
             if username_old == username and password_old == password:
                 test_ok = True
-                
+
         if (self.parent.version_minor == 3 and self.parent.version_release > 3) or self.parent.version_minor > 3:
             if test_ok:
                 self.master.set_wifi_regulatory_domain(self.wifi_domain.currentIndex())
                 if self.master.get_wifi_regulatory_domain() != self.wifi_domain.currentIndex():
                     test_ok = False
-            
+
         if test_ok:
             if ca_cert != []:
                 test_ok = self.write_certificate(ca_cert, 0)
@@ -902,12 +905,15 @@ class Wifi(QWidget, Ui_Wifi):
         if test_ok:
             if priv_key != []:
                 test_ok = self.write_certificate(priv_key, 2)
-                
+
         if test_ok:
-            self.popup_ok()
+            if previous_power_mode != power_mode and power_mode == 1:
+                self.popup_ok("Successfully saved configuration.\nPower Mode is not changed permanently, it will automatically switch back to Full Speed on reset.")
+            else:
+                self.popup_ok()
         else:
             self.popup_fail()
-        
+
     def update_data(self):
         self.update_data_counter += 1
         if self.wifi_status != None:
@@ -938,7 +944,8 @@ class Master(PluginBase, Ui_Master):
 
         self.extensions = []
         num_extensions = 0
-        # construct chibi widget
+
+        # Chibi widget
         if self.version_minor > 0:
             self.extension_type_button.pressed.connect(self.extension_pressed)
             if self.master.is_chibi_present():
