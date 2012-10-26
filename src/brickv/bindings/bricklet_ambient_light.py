@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-17.      #
+# This file was automatically generated on 2012-10-26.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -12,12 +12,12 @@ try:
 except ImportError:
     try:
         from .ip_connection import namedtuple
-    except ImportError:
+    except ValueError:
         from ip_connection import namedtuple
 
 try:
     from .ip_connection import Device, IPConnection, Error
-except ImportError:
+except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 GetIlluminanceCallbackThreshold = namedtuple('IlluminanceCallbackThreshold', ['option', 'min', 'max'])

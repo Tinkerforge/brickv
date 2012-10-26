@@ -15,11 +15,9 @@ except ImportError:
 
 # Queue for python 2, queue for python 3
 try:
-    from Queue import Queue
-    from Queue import Empty
+    from Queue import Queue, Empty
 except ImportError:
-    from queue import Queue
-    from queue import Empty
+    from queue import Queue, Empty
 
 import struct
 import socket
@@ -161,6 +159,7 @@ class IPConnection:
 
         self.callback_queue = Queue()
         self.pending_add_device = None
+        self.pending_add_device_handled = False
         self.add_device_lock = Lock()
         self.devices = {}
         self.enumerate_callback = None
@@ -443,7 +442,7 @@ class IPConnection:
         self.sock.send(request)
 
     def handle_add_device(self, packet):
-        if self.pending_add_device == None:
+        if self.pending_add_device is None or self.pending_add_device_handled:
             return
 
         _, _, _, uid, firmware_version, name, stack_id = self.deserialize_data(packet, 'B B H Q 3B 40s B')
@@ -458,6 +457,7 @@ class IPConnection:
             self.pending_add_device.name = name
             self.pending_add_device.stack_id = stack_id
             self.devices[stack_id] = self.pending_add_device
+            self.pending_add_device_handled = True
             self.pending_add_device.response_queue.put(None)
 
     def add_device(self, device):
@@ -480,6 +480,7 @@ class IPConnection:
 
         self.add_device_lock.acquire()
         try:
+            self.pending_add_device_handled = False
             self.pending_add_device = device
             self.sock.send(request)
 
