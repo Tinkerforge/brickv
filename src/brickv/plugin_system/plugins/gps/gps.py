@@ -83,7 +83,7 @@ class GPS(PluginBase, Ui_GPS):
 
     def show_pos_pressed(self):
         if self.last_ns != 'U' and self.last_ew != 'U':
-            google_str = self.last_ns + self.make_ddddddd(self.last_lat) + ' ' + self.last_ew + self.make_ddddddd(self.last_long)
+            google_str = self.last_ns + self.make_dd_dddddd(self.last_lat) + ' ' + self.last_ew + self.make_dd_dddddd(self.last_long)
             QDesktopServices.openUrl(QUrl('https://maps.google.com/maps?q=' + google_str))
         else:
             # :-)
@@ -110,51 +110,47 @@ class GPS(PluginBase, Ui_GPS):
     def has_name(name):
         return 'GPS Bricklet' in name
 
-    def make_ddmmmmmm(self, time):
-        time1 = time / 10000
-        time2 = time % 10000
-        str_time2 = str(time2)
+    def make_ddmm_mmmmm(self, degree):
+        dd = degree / 1000000
+        mm = (degree % 1000000) * 60 / 1000000.0
+        mmmmm = (mm - int(mm)) * 100000
 
-        while(len(str_time2) < 4):
-            str_time2 = '0' + str_time2
+        dd_str = str(dd)
+        mm_str = str(int(mm))
+        mmmmm_str = str(int(mmmmm + 0.5))
 
-        str_time1 = str(time1)
+        while len(mm_str) < 2:
+            mm_str = '0' + mm_str
 
-        while(len(str_time1) < 4):
-            str_time1 = '0' + str_time1
+        while len(mmmmm_str) < 5:
+            mmmmm_str = '0' + mmmmm_str
 
-        return str_time1[:2] + u'° ' + str_time1[2:] + '.' + str_time2 + u"’"
+        return u'{0}° {1}.{2}’'.format(dd_str, mm_str, mmmmm_str)
 
-    def make_ddddddd(self, time):
-        time1 = time / 10000
-        time2 = time % 10000
-        dd = time1/100
-        mm = (time1 % 100) + time2/10000.0
-        dd += mm/60.0
+    def make_dd_dddddd(self, degree):
+        return u'%2.6f°' % (degree / 1000000.0)
 
-        dd_str = '%2.5f' % (dd,)
+    def make_ddmmss_sss(self, degree):
+        dd = degree / 1000000
+        mm = (degree % 1000000) * 60 / 1000000.0
+        ss = (mm - int(mm)) * 60
+        sss = (ss - int(ss)) * 1000
 
-        return dd_str + u'°'
+        dd_str = str(dd)
+        mm_str = str(int(mm))
+        ss_str = str(int(ss))
+        sss_str = str(int(sss + 0.5))
 
-    def make_ddmmss(self, time):
-        time1 = time / 10000
-        time2 = time % 10000
-        dd_rdy = str(time1/100)
-        mm = (time1 % 100) + time2/10000.0
+        while len(mm_str) < 2:
+            mm_str = '0' + mm_str
 
-        mm_rdy = int(mm)
-        ss = (mm - mm_rdy)
-        mm_rdy = str(mm_rdy)
-        ss_rdy = str(int(ss*60 + 0.5))
+        while len(ss_str) < 2:
+            ss_str = '0' + ss_str
 
-        while(len(dd_rdy) < 2):
-            dd_rdy = '0' + dd_rdy
-        while(len(mm_rdy) < 2):
-            mm_rdy = '0' + mm_rdy
-        while(len(ss_rdy) < 2):
-            ss_rdy = '0' + ss_rdy
+        while len(sss_str) < 3:
+            sss_str = '0' + sss_str
 
-        return dd_rdy + u'° ' + mm_rdy + u"’ " + ss_rdy + u"’’"
+        return u'{0}° {1}’ {2}.{3}’’'.format(dd_str, mm_str, ss_str, sss_str)
 
     def cb_coordinates(self, lat, ns, long, ew, pdop, hdop, vdop, epe):
         self.last_lat = lat
@@ -172,11 +168,11 @@ class GPS(PluginBase, Ui_GPS):
         else:
             self.ns.setText(ns)
             if self.format_combobox.currentIndex() == 0:
-                self.latitude.setText(self.make_ddmmss(lat))
+                self.latitude.setText(self.make_ddmmss_sss(lat))
             elif self.format_combobox.currentIndex() == 1:
-                self.latitude.setText(self.make_ddddddd(lat))
+                self.latitude.setText(self.make_dd_dddddd(lat))
             elif self.format_combobox.currentIndex() == 2:
-                self.latitude.setText(self.make_ddmmmmmm(lat))
+                self.latitude.setText(self.make_ddmm_mmmmm(lat))
 
         if not ew in ('E', 'W'):
             self.longitude.setText("Unknown")
@@ -184,16 +180,16 @@ class GPS(PluginBase, Ui_GPS):
         else:
             self.ew.setText(ew)
             if self.format_combobox.currentIndex() == 0:
-                self.longitude.setText(self.make_ddmmss(long))
+                self.longitude.setText(self.make_ddmmss_sss(long))
             elif self.format_combobox.currentIndex() == 1:
-                self.longitude.setText(self.make_ddddddd(long))
+                self.longitude.setText(self.make_dd_dddddd(long))
             elif self.format_combobox.currentIndex() == 2:
-                self.longitude.setText(self.make_ddmmmmmm(long))
+                self.longitude.setText(self.make_ddmm_mmmmm(long))
 
         str_pdop = '%.2f' % (pdop/100.0,)
         str_hdop = '%.2f' % (hdop/100.0,)
         str_vdop = '%.2f' % (vdop/100.0,)
-        str_epe = '%.2f' % (epe/100.0,)
+        str_epe = '%.2f m' % (epe/100.0,)
 
         self.dop.setText(str(str_pdop) + ' / ' + str(str_hdop) + ' / ' + str(str_vdop))
         self.epe.setText(str(str_epe))
@@ -212,10 +208,10 @@ class GPS(PluginBase, Ui_GPS):
         self.satellites_used.setText(str(satellites_used))
 
     def cb_altitude(self, altitude, geoidal_separation):
-        self.altitude.setText('%.2f m (Geoidal Separation: %.2f m)' % (altitude/10.0, geoidal_separation/10.0))
+        self.altitude.setText('%.2f m (Geoidal Separation: %.2f m)' % (altitude/100.0, geoidal_separation/100.0))
 
     def cb_motion(self, course, speed):
-        self.course.setText('%.2f%c' %  (course/100.0, 0xB0))
+        self.course.setText(u'%.2f°' % (course/100.0,))
         self.speed.setText('%.2f km/h' % (speed/100.0,))
 
     def cb_date_time(self, date, time):
@@ -225,6 +221,8 @@ class GPS(PluginBase, Ui_GPS):
         mm = date % 100
         date /= 100
         dd = date
+
+        time /= 1000
         ss = time % 100
         time /= 100
         mins = time % 100

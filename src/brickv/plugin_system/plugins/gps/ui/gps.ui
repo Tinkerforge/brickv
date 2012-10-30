@@ -27,17 +27,17 @@
       <widget class="QComboBox" name="format_combobox">
        <item>
         <property name="text">
-         <string>DD° MM’ SS’’</string>
+         <string>DD° MM’ SS.sss’’</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>DD.ddddd°</string>
+         <string>DD.dddddd°</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>DD° MM.mmmm’</string>
+         <string>DD° MM.mmmmm’</string>
         </property>
        </item>
       </widget>
@@ -138,7 +138,7 @@
        <item>
         <widget class="QLabel" name="epe">
          <property name="text">
-          <string>0</string>
+          <string>0 m</string>
          </property>
         </widget>
        </item>
