@@ -84,7 +84,8 @@ RSTC_CR = 0x400E1400
 RSTC_MR = 0x400E1408
 
 RSTC_CR_PROCRST = 0b0001
-RSTC_CR_EXTRST  = 0b0100
+RSTC_CR_PERRST  = 0b0100
+RSTC_CR_EXTRST  = 0b1000
 
 RSTC_MR_URSTEN  = 0b0001
 RSTC_MR_URSTIEN = 0b1000
@@ -417,7 +418,7 @@ class SAMBA:
     def reset(self):
         try:
             self.write_uint32(RSTC_MR, (RSTC_MR_FEY << 24) | (10 << 8) | RSTC_MR_URSTEN | RSTC_MR_URSTIEN)
-            self.write_uint32(RSTC_CR, (RSTC_CR_FEY << 24) | RSTC_CR_PROCRST | RSTC_CR_EXTRST)
+            self.write_uint32(RSTC_CR, (RSTC_CR_FEY << 24) | RSTC_CR_EXTRST | RSTC_CR_PERRST | RSTC_CR_PROCRST)
         except:
             raise SAMBAException('Serial write error')
 
