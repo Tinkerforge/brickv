@@ -23,24 +23,22 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
+from bindings.bricklet_lcd_16x2 import BrickletLCD16x2
+from bindings.ks0066u import unicode_to_ks0066u
+
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QComboBox
 from PyQt4.QtCore import pyqtSignal
-        
-from bindings import bricklet_lcd_16x2
-from bindings.ks0066u import unicode_to_ks0066u
-        
+
 class LCD16x2(PluginBase):
     MAX_LINE = 2
     MAX_POSITION = 16
     qtcb_pressed = pyqtSignal(int)
     qtcb_released = pyqtSignal(int)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'LCD 16x2 Bricklet', version)
         
-        self.lcd = bricklet_lcd_16x2.LCD16x2(self.uid)
-        self.ipcon.add_device(self.lcd)
-        self.version = '.'.join(map(str, self.lcd.get_version()[1]))
+        self.lcd = BrickletLCD16x2(uid, ipcon)
         
         self.qtcb_pressed.connect(self.cb_pressed)
         self.lcd.register_callback(self.lcd.CALLBACK_BUTTON_PRESSED,
@@ -136,8 +134,8 @@ class LCD16x2(PluginBase):
         pass
 
     @staticmethod
-    def has_name(name):
-        return 'LCD 16x2 Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletLCD16x2.DEVICE_IDENTIFIER
     
     def cb_pressed(self, button):
         if button == 0:

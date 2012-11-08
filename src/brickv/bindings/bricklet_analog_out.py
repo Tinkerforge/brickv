@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-26.      #
+# This file was automatically generated on 2012-11-07.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -21,10 +21,12 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 
-class AnalogOut(Device):
+class BrickletAnalogOut(Device):
     """
     Device for output of voltage between 0 and 5V
     """
+
+    DEVICE_IDENTIFIER = 220
 
 
     FUNCTION_SET_VOLTAGE = 1
@@ -32,16 +34,14 @@ class AnalogOut(Device):
     FUNCTION_SET_MODE = 3
     FUNCTION_GET_MODE = 4
 
-    def __init__(self, uid):
+    def __init__(self, uid, ipcon):
         """
-        Creates an object with the unique device ID *uid*. This object can
-        then be added to the IP connection.
+        Creates an object with the unique device ID *uid* and adds it to
+        the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid)
+        Device.__init__(self, uid, ipcon)
 
-        self.expected_name = 'Analog Out Bricklet'
-
-        self.binding_version = [1, 0, 0]
+        self.api_version = (1, 0, 0)
 
 
     def set_voltage(self, voltage):
@@ -80,3 +80,5 @@ class AnalogOut(Device):
         Returns the mode as set by :func:`SetMode`.
         """
         return self.ipcon.send_request(self, AnalogOut.FUNCTION_GET_MODE, (), '', 'B')
+
+AnalogOut = BrickletAnalogOut # for backward compatibility

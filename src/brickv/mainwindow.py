@@ -1,14 +1,14 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
-brickv (Brick Viewer) 
+brickv (Brick Viewer)
 Copyright (C) 2009-2010 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 
-mainwindow.py: New/Removed Bricks are handled here and plugins shown if clicked 
+mainwindow.py: New/Removed Bricks are handled here and plugins shown if clicked
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -55,23 +55,23 @@ else:
     def set_port(port): pass
 
 class MainTableModel(QAbstractTableModel):
-    def __init__(self, header, data, parent=None, *args): 
-        QAbstractTableModel.__init__(self, parent, *args) 
+    def __init__(self, header, data, parent=None, *args):
+        QAbstractTableModel.__init__(self, parent, *args)
         self.header = header
         self.data = data
 
-    def rowCount(self, parent): 
-        return len(self.data) 
+    def rowCount(self, parent):
+        return len(self.data)
 
-    def columnCount(self, parent): 
-        return len(self.header) 
- 
-    def data(self, index, role): 
-        if not index.isValid(): 
-            return QVariant() 
-        elif role != Qt.DisplayRole: 
-            return QVariant() 
-        return QVariant(self.data[index.row()][index.column()]) 
+    def columnCount(self, parent):
+        return len(self.header)
+
+    def data(self, index, role):
+        if not index.isValid():
+            return QVariant()
+        elif role != Qt.DisplayRole:
+            return QVariant()
+        return QVariant(self.data[index.row()][index.column()])
 
     def setData(self, index, value, role):
         if index.isValid() and role == Qt.DisplayRole:
@@ -84,24 +84,27 @@ class MainTableModel(QAbstractTableModel):
         return QVariant()
 
 class MainWindow(QMainWindow, Ui_MainWindow):
-    callback_enumerate_signal = pyqtSignal(str, str, int, bool)
-    
+    qtcb_enumerate = pyqtSignal(str, str, 'char', type((0,)), type((0,)), int, int)
+
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
         self.setupUi(self)
         self.setWindowIcon(QIcon("brickv-icon.png"))
-        signal.signal(signal.SIGINT, self.exit_brickv) 
-        signal.signal(signal.SIGTERM, self.exit_brickv) 
-        
+        signal.signal(signal.SIGINT, self.exit_brickv)
+        signal.signal(signal.SIGTERM, self.exit_brickv)
+
         self.setWindowTitle("Brick Viewer " + config.BRICKV_VERSION)
-        
-        self.table_view_header = ['Stack ID', 'Device Name', 'UID', 'FW Version']
+
+        self.table_view_header = ['UID', 'Device Name', 'FW Version']
 
         # Remove dummy tab
         self.tab_widget.removeTab(1)
         self.last_tab = 0
-        
-        self.plugins = [(self, None, None, None)]
+
+        self.name = '<unknown>'
+        self.uid = '<unknown>'
+        self.version = [0, 0, 0]
+        self.plugins = [self]
         self.ipcon = None
         self.updates_window = None
         self.flashing_window = None
@@ -109,7 +112,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.reset_view()
         self.button_advanced.setDisabled(True)
 
-        self.callback_enumerate_signal.connect(self.callback_enumerate)
+        self.qtcb_enumerate.connect(self.cb_enumerate)
 
         self.tab_widget.currentChanged.connect(self.tab_changed)
         self.connect.pressed.connect(self.connect_pressed)
@@ -128,7 +131,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def closeEvent(self, event):
         self.exit_brickv()
-        
+
     def exit_brickv(self, signl=None, frme=None):
         host = str(self.combo_host.currentText())
         history = []
@@ -145,40 +148,40 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.ipcon != None:
             self.reset_view()
-            
+
         if signl != None and frme != None:
             print "Received SIGINT or SIGTERM, shutting down."
             sys.exit()
 
     def start(self):
         pass
-    
+
     def stop(self):
         pass
-    
+
     def destroy(self):
         pass
-        
+
     def tab_changed(self, i):
-        self.plugins[i][0].start()
-        self.plugins[self.last_tab][0].stop()
+        self.plugins[i].start()
+        self.plugins[self.last_tab].stop()
         self.last_tab = i
-        
+
     def reset_view(self):
         self.tab_widget.setCurrentIndex(0)
         for i in reversed(range(1, len(self.plugins))):
             try:
-                self.plugins[i][0].stop()
-                self.plugins[i][0].destroy()
+                self.plugins[i].stop()
+                self.plugins[i].destroy()
             except AttributeError:
                 pass
-        
+
             self.tab_widget.removeTab(i)
-            
-        self.plugins = [(self, None, None, None)]
-        
+
+        self.plugins = [self]
+
         self.update_table_view()
-        
+
         if self.ipcon:
             self.ipcon.destroy()
         self.ipcon = None
@@ -216,7 +219,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 host = self.combo_host.currentText()
                 self.ipcon = IPConnection(host, self.spinbox_port.value())
-                self.ipcon.enumerate(self.callback_enumerate_signal.emit)
+                self.ipcon.enumerate(self.qtcb_enumerate.emit)
                 self.connect.setText("Disconnect")
                 self.combo_host.setDisabled(True)
                 self.spinbox_port.setDisabled(True)
@@ -237,34 +240,53 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 QMessageBox.critical(self, box_head, box_text)
         else:
             self.reset_view()
-            
+
             self.connect.setText("Connect")
             self.button_advanced.setDisabled(True)
             self.combo_host.setDisabled(False)
             self.spinbox_port.setDisabled(False)
 
-    def create_plugin_container(self, plugin, stack_id, name, uid):
+    def create_plugin_container(self, plugin, connected_uid, position, hardware_version):
         container = QWidget()
         layout = QVBoxLayout(container)
         info = QHBoxLayout()
 
-        info.addWidget(QLabel('Stack ID:'))
-        info.addWidget(QLabel('{0}'.format(stack_id)))
-
-        info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
-
+        # uid
         info.addWidget(QLabel('UID:'))
-        label = QLabel('{0}'.format(uid))
+        label = QLabel('{0}'.format(plugin.uid))
         label.setTextInteractionFlags(Qt.TextSelectableByMouse |
                                       Qt.TextSelectableByKeyboard)
         info.addWidget(label)
 
         info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
-        info.addWidget(QLabel('FW Version:'))
-        info.addWidget(QLabel('{0}'.format(plugin.version)))
+        # connected uid
+        if connected_uid != '0':
+            info.addWidget(QLabel('Connected to UID:'))
+            label = QLabel('{0}'.format(connected_uid))
+            label.setTextInteractionFlags(Qt.TextSelectableByMouse |
+                                          Qt.TextSelectableByKeyboard)
+            info.addWidget(label)
 
-        if ' Brick ' in name:
+            info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+
+        # position
+        info.addWidget(QLabel('Position:'))
+        info.addWidget(QLabel('{0}'.format(position.upper())))
+
+        info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+
+        # firmware version
+        info.addWidget(QLabel('FW Version:'))
+        info.addWidget(QLabel('{0}'.format(plugin.version_str)))
+
+        info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+
+        # hardware version
+        info.addWidget(QLabel('HW Version:'))
+        info.addWidget(QLabel('{0}'.format('.'.join(map(str, hardware_version)))))
+
+        if plugin.is_brick():
             button = QPushButton('Reset')
             if plugin.has_reset_device():
                 button.clicked.connect(plugin.reset_device)
@@ -286,34 +308,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         return container
 
-    def callback_enumerate(self, uid, name, stack_id, is_new):
-        if is_new:
+    def cb_enumerate(self, uid, connected_uid, position,
+                     hardware_version, firmware_version,
+                     device_identifier, enumeration_type):
+        if enumeration_type in [IPConnection.ENUMERATION_AVAILABLE,
+                                IPConnection.ENUMERATION_CONNECTED]:
             for plugin in self.plugins:
                 # Plugin already loaded
-                if plugin[3] == uid:
+                if plugin.uid == uid:
                     return
-            plugin = self.plugin_manager.get_plugin_from_name(name, self.ipcon, uid)
+            plugin = self.plugin_manager.get_plugin_from_device_identifier(device_identifier, self.ipcon, uid, firmware_version)
             if plugin is not None:
-                self.tab_widget.addTab(self.create_plugin_container(plugin, stack_id, name, uid), name)
-                self.plugins.append((plugin, stack_id, name, uid))
-        else:
+                self.tab_widget.addTab(self.create_plugin_container(plugin, connected_uid, position, hardware_version), plugin.name)
+                self.plugins.append(plugin)
+        elif enumeration_type == IPConnection.ENUMERATION_DISCONNECTED:
             for i in range(len(self.plugins)):
-                if self.plugins[i][3] == uid:
+                if self.plugins[i].uid == uid:
                     self.tab_widget.setCurrentIndex(0)
-                    self.plugins[i][0].stop()
-                    self.plugins[i][0].destroy()
+                    self.plugins[i].stop()
+                    self.plugins[i].destroy()
                     self.tab_widget.removeTab(i)
                     self.plugins.remove(self.plugins[i])
                     self.update_table_view()
                     return
-                
+
         self.update_table_view()
-    
+
     def update_table_view(self):
         data = []
-        for p in self.plugins[1:]:
-            if p[0] is not None:
-                data.append([p[1], p[2], p[3], p[0].version])
+        for plugin in self.plugins[1:]:
+            data.append([plugin.uid, plugin.name, plugin.version_str])
 
         self.table_view.setSortingEnabled(False)
         self.mtm = MainTableModel(self.table_view_header, data)
@@ -328,7 +352,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_updates_window(self):
         devices = []
         for plugin in self.plugins[1:]:
-            devices.append((str(plugin[2]), str(plugin[3]), plugin[0].version.split('.')))
+            devices.append((plugin.name, plugin.uid, plugin.version_str, plugin.is_brick()))
 
         if self.updates_window is not None:
             self.updates_window.set_devices(devices)
@@ -337,15 +361,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.flashing_window is not None:
             devices = []
             for plugin in self.plugins[1:]:
-                if ' Brick ' in plugin[2]:
-                    devices.append(('{0} [{1}]'.format(plugin[2], plugin[3]), plugin[0].device))
+                if plugin.is_brick():
+                    devices.append(('{0} [{1}]'.format(plugin.name, plugin.uid), plugin.device))
             self.flashing_window.set_devices(devices)
 
     def update_advanced_window(self):
         devices = []
         for plugin in self.plugins[1:]:
-            if ' Brick ' in plugin[2]:
-                devices.append(('{0} [{1}]'.format(plugin[2], plugin[3]), plugin[0].device))
+            if plugin.is_brick():
+                devices.append(('{0} [{1}]'.format(plugin.name, plugin.uid), plugin.device))
 
         self.button_advanced.setEnabled(len(devices) > 0)
 

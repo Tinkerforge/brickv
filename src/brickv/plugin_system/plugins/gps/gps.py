@@ -23,12 +23,12 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
+from bindings.bricklet_gps import BrickletGPS
+
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QPixmap, QDesktopServices
 from PyQt4.QtCore import Qt, pyqtSignal, QTimer, QUrl
 
 from ui_gps import Ui_GPS
-
-from bindings import bricklet_gps
 
 import datetime
 
@@ -39,15 +39,12 @@ class GPS(PluginBase, Ui_GPS):
     qtcb_motion = pyqtSignal(int, int)
     qtcb_date_time = pyqtSignal(int, int)
 
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'GPS Bricklet', version)
 
         self.setupUi(self)
 
-        self.gps = bricklet_gps.GPS(self.uid)
-        self.ipcon.add_device(self.gps)
-        version = self.gps.get_version()[1]
-        self.version = '.'.join(map(str, version))
+        self.gps = BrickletGPS(uid, ipcon)
 
         self.qtcb_coordinates.connect(self.cb_coordinates)
         self.gps.register_callback(self.gps.CALLBACK_COORDINATES,
@@ -107,8 +104,8 @@ class GPS(PluginBase, Ui_GPS):
         self.gps.set_date_time_callback_period(0)
 
     @staticmethod
-    def has_name(name):
-        return 'GPS Bricklet' in name
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletGPS.DEVICE_IDENTIFIER
 
     def make_ddmm_mmmmm(self, degree):
         dd = degree / 1000000

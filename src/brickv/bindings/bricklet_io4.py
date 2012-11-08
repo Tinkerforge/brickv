@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-26.      #
+# This file was automatically generated on 2012-11-07.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -23,10 +23,12 @@ except ValueError:
 GetConfiguration = namedtuple('Configuration', ['direction_mask', 'value_mask'])
 GetMonoflop = namedtuple('Monoflop', ['value', 'time', 'time_remaining'])
 
-class IO4(Device):
+class BrickletIO4(Device):
     """
     Device for controlling up to 4 general purpose input/output pins
     """
+
+    DEVICE_IDENTIFIER = 29
 
     CALLBACK_INTERRUPT = 9
     CALLBACK_MONOFLOP_DONE = 12
@@ -42,16 +44,14 @@ class IO4(Device):
     FUNCTION_SET_MONOFLOP = 10
     FUNCTION_GET_MONOFLOP = 11
 
-    def __init__(self, uid):
+    def __init__(self, uid, ipcon):
         """
-        Creates an object with the unique device ID *uid*. This object can
-        then be added to the IP connection.
+        Creates an object with the unique device ID *uid* and adds it to
+        the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid)
+        Device.__init__(self, uid, ipcon)
 
-        self.expected_name = 'IO-4 Bricklet'
-
-        self.binding_version = [1, 0, 1]
+        self.api_version = (1, 0, 1)
 
         self.callback_formats[IO4.CALLBACK_INTERRUPT] = 'B B'
         self.callback_formats[IO4.CALLBACK_MONOFLOP_DONE] = 'B B'
@@ -192,3 +192,5 @@ class IO4(Device):
         Registers a callback with ID id to the function callback.
         """
         self.registered_callbacks[id] = callback
+
+IO4 = BrickletIO4 # for backward compatibility

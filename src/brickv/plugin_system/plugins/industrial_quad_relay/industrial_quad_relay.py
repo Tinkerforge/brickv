@@ -23,25 +23,22 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
+from bindings.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
+
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QPixmap
 from PyQt4.QtCore import Qt, pyqtSignal, QTimer
 
 from ui_industrial_quad_relay import Ui_IndustrialQuadRelay
 
-from bindings import bricklet_industrial_quad_relay
-        
 class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
     qtcb_monoflop = pyqtSignal(int, bool)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Industrial Quad Relay Bricklet', version)
         
         self.setupUi(self)
         
-        self.iqr = bricklet_industrial_quad_relay.IndustrialQuadRelay(self.uid)
-        self.ipcon.add_device(self.iqr)
-        version = self.iqr.get_version()[1]
-        self.version = '.'.join(map(str, version))
+        self.iqr = BrickletIndustrialQuadRelay(uid, ipcon)
         
         self.open_pixmap = QPixmap('plugin_system/plugins/industrial_quad_relay/relay_open.gif')
         self.close_pixmap = QPixmap('plugin_system/plugins/industrial_quad_relay/relay_close.gif')
@@ -90,8 +87,8 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         pass
 
     @staticmethod
-    def has_name(name):
-        return 'Industrial Quad Relay Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletIndustrialQuadRelay.DEVICE_IDENTIFIER
     
     def reconfigure_everything(self):
         for i in range(4):

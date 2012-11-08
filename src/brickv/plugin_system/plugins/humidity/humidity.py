@@ -22,14 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
 from plot_widget import PlotWidget
+from bindings import ip_connection
+from bindings.bricklet_humidity import BrickletHumidity
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
-        
-from bindings import bricklet_humidity
-        
+
 class HumidityLabel(QLabel):
     def setText(self, text):
         text = "Humidity: " + text + " %RH (Relative Humidity)"
@@ -38,12 +37,10 @@ class HumidityLabel(QLabel):
 class Humidity(PluginBase):
     qtcb_humidity = pyqtSignal(int)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Humidity Bricklet', version)
         
-        self.hum = bricklet_humidity.Humidity(self.uid)
-        self.ipcon.add_device(self.hum)
-        self.version = '.'.join(map(str, self.hum.get_version()[1]))
+        self.hum = BrickletHumidity(uid, ipcon)
         
         self.qtcb_humidity.connect(self.cb_humidity)
         self.hum.register_callback(self.hum.CALLBACK_HUMIDITY,
@@ -83,12 +80,12 @@ class Humidity(PluginBase):
         self.plot_widget.stop = True
 
     @staticmethod
-    def has_name(name):
-        return 'Humidity Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletHumidity.DEVICE_IDENTIFIER
     
     def get_current_value(self):
         return self.current_value
 
     def cb_humidity(self, humidity):
         self.current_value = humidity/10.0
-        self.humidity_label.setText(str(humidity/10.0)) 
+        self.humidity_label.setText(str(humidity/10.0))

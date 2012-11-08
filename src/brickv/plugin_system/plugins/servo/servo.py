@@ -23,17 +23,17 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
+from bindings.brick_servo import BrickServo
 
-#from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QVBoxLayout, QLabel, QWidget, QColor, QPainter, QSizePolicy, QInputDialog, QErrorMessage
 from PyQt4.QtCore import Qt, QRect, QTimer, pyqtSignal, QThread
 import PyQt4.Qwt5 as Qwt
-from bindings import brick_servo
+
+from ui_servo import Ui_Servo
 
 import time
 import random
 from threading import Event
-from ui_servo import Ui_Servo
 
 class ColorBar(QWidget):
     def __init__(self, orientation, *args):
@@ -121,23 +121,16 @@ class PositionKnob(Qwt.QwtKnob):
         self.setContentsMargins(0, 0, 0, 0)
         self.setReadOnly(True)
 
-
-
 class Servo(PluginBase, Ui_Servo):
     qtcb_under_voltage = pyqtSignal(int)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Servo Brick', version)
+        
         self.setupUi(self)
         
-        self.servo = brick_servo.Servo(self.uid)
+        self.servo = BrickServo(uid, ipcon)
         self.device = self.servo
-        self.ipcon.add_device(self.servo)
-
-        version = self.servo.get_version()
-        self.version = '.'.join(map(str, version[1]))
-        self.version_minor = version[1][1]
-        self.version_release = version[1][2]
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_apply)
@@ -258,15 +251,18 @@ class Servo(PluginBase, Ui_Servo):
         self.update_event.set()
 
     def has_reset_device(self):
-        return self.version_minor > 1 or (self.version_minor == 1 and self.version_release > 2)
+        return self.version >= [1, 1, 3]
 
     def reset_device(self):
         if self.has_reset_device():
             self.servo.reset()
 
+    def is_brick(self):
+        return True
+
     @staticmethod
-    def has_name(name):
-        return 'Servo Brick' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickServo.DEVICE_IDENTIFIER
     
     def update_servo_specific(self):
         i = self.selected_servo()

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-26.      #
+# This file was automatically generated on 2012-11-07.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -23,10 +23,12 @@ except ValueError:
 GetCurrentCallbackThreshold = namedtuple('CurrentCallbackThreshold', ['option', 'min', 'max'])
 GetAnalogValueCallbackThreshold = namedtuple('AnalogValueCallbackThreshold', ['option', 'min', 'max'])
 
-class Current12(Device):
+class BrickletCurrent12(Device):
     """
     Device for sensing current of up to 12.5A
     """
+
+    DEVICE_IDENTIFIER = 23
 
     CALLBACK_CURRENT = 15
     CALLBACK_ANALOG_VALUE = 16
@@ -49,16 +51,14 @@ class Current12(Device):
     FUNCTION_SET_DEBOUNCE_PERIOD = 13
     FUNCTION_GET_DEBOUNCE_PERIOD = 14
 
-    def __init__(self, uid):
+    def __init__(self, uid, ipcon):
         """
-        Creates an object with the unique device ID *uid*. This object can
-        then be added to the IP connection.
+        Creates an object with the unique device ID *uid* and adds it to
+        the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid)
+        Device.__init__(self, uid, ipcon)
 
-        self.expected_name = 'Current12 Bricklet'
-
-        self.binding_version = [1, 0, 0]
+        self.api_version = (1, 0, 0)
 
         self.callback_formats[Current12.CALLBACK_CURRENT] = 'h'
         self.callback_formats[Current12.CALLBACK_ANALOG_VALUE] = 'H'
@@ -234,3 +234,5 @@ class Current12(Device):
         Registers a callback with ID id to the function callback.
         """
         self.registered_callbacks[id] = callback
+
+Current12 = BrickletCurrent12 # for backward compatibility

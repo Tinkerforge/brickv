@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-26.      #
+# This file was automatically generated on 2012-11-07.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -23,10 +23,12 @@ except ValueError:
 GetPositionCallbackThreshold = namedtuple('PositionCallbackThreshold', ['option', 'min', 'max'])
 GetAnalogValueCallbackThreshold = namedtuple('AnalogValueCallbackThreshold', ['option', 'min', 'max'])
 
-class LinearPoti(Device):
+class BrickletLinearPoti(Device):
     """
     Device for sensing Linear Potentiometer input
     """
+
+    DEVICE_IDENTIFIER = 213
 
     CALLBACK_POSITION = 13
     CALLBACK_ANALOG_VALUE = 14
@@ -46,16 +48,14 @@ class LinearPoti(Device):
     FUNCTION_SET_DEBOUNCE_PERIOD = 11
     FUNCTION_GET_DEBOUNCE_PERIOD = 12
 
-    def __init__(self, uid):
+    def __init__(self, uid, ipcon):
         """
-        Creates an object with the unique device ID *uid*. This object can
-        then be added to the IP connection.
+        Creates an object with the unique device ID *uid* and adds it to
+        the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid)
+        Device.__init__(self, uid, ipcon)
 
-        self.expected_name = 'Linear Poti Bricklet'
-
-        self.binding_version = [1, 0, 0]
+        self.api_version = (1, 0, 0)
 
         self.callback_formats[LinearPoti.CALLBACK_POSITION] = 'H'
         self.callback_formats[LinearPoti.CALLBACK_ANALOG_VALUE] = 'H'
@@ -205,3 +205,5 @@ class LinearPoti(Device):
         Registers a callback with ID id to the function callback.
         """
         self.registered_callbacks[id] = callback
+
+LinearPoti = BrickletLinearPoti # for backward compatibility

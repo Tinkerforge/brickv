@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-26.      #
+# This file was automatically generated on 2012-11-07.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -23,10 +23,12 @@ except ValueError:
 GetPortConfiguration = namedtuple('PortConfiguration', ['direction_mask', 'value_mask'])
 GetPortMonoflop = namedtuple('PortMonoflop', ['value', 'time', 'time_remaining'])
 
-class IO16(Device):
+class BrickletIO16(Device):
     """
     Device for controlling up to 16 general purpose input/output pins
     """
+
+    DEVICE_IDENTIFIER = 28
 
     CALLBACK_INTERRUPT = 9
     CALLBACK_MONOFLOP_DONE = 12
@@ -42,16 +44,14 @@ class IO16(Device):
     FUNCTION_SET_PORT_MONOFLOP = 10
     FUNCTION_GET_PORT_MONOFLOP = 11
 
-    def __init__(self, uid):
+    def __init__(self, uid, ipcon):
         """
-        Creates an object with the unique device ID *uid*. This object can
-        then be added to the IP connection.
+        Creates an object with the unique device ID *uid* and adds it to
+        the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid)
+        Device.__init__(self, uid, ipcon)
 
-        self.expected_name = 'IO-16 Bricklet'
-
-        self.binding_version = [1, 0, 1]
+        self.api_version = (1, 0, 1)
 
         self.callback_formats[IO16.CALLBACK_INTERRUPT] = 'c B B'
         self.callback_formats[IO16.CALLBACK_MONOFLOP_DONE] = 'c B B'
@@ -193,3 +193,5 @@ class IO16(Device):
         Registers a callback with ID id to the function callback.
         """
         self.registered_callbacks[id] = callback
+
+IO16 = BrickletIO16 # for backward compatibility

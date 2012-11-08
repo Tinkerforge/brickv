@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-26.      #
+# This file was automatically generated on 2012-11-07.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -21,10 +21,12 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 
-class DC(Device):
+class BrickDC(Device):
     """
     Device for controlling DC motors
     """
+
+    DEVICE_IDENTIFIER = 11
 
     CALLBACK_UNDER_VOLTAGE = 21
     CALLBACK_EMERGENCY_SHUTDOWN = 22
@@ -54,16 +56,14 @@ class DC(Device):
     FUNCTION_RESET = 243
     FUNCTION_GET_CHIP_TEMPERATURE = 242
 
-    def __init__(self, uid):
+    def __init__(self, uid, ipcon):
         """
-        Creates an object with the unique device ID *uid*. This object can
-        then be added to the IP connection.
+        Creates an object with the unique device ID *uid* and adds it to
+        the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid)
+        Device.__init__(self, uid, ipcon)
 
-        self.expected_name = 'DC Brick'
-
-        self.binding_version = [1, 0, 1]
+        self.api_version = (1, 0, 1)
 
         self.callback_formats[DC.CALLBACK_UNDER_VOLTAGE] = 'H'
         self.callback_formats[DC.CALLBACK_EMERGENCY_SHUTDOWN] = ''
@@ -300,3 +300,5 @@ class DC(Device):
         Registers a callback with ID id to the function callback.
         """
         self.registered_callbacks[id] = callback
+
+DC = BrickDC # for backward compatibility

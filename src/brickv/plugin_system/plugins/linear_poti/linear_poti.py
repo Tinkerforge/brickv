@@ -22,13 +22,12 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
 from plot_widget import PlotWidget
+from bindings import ip_connection
+from bindings.bricklet_linear_poti import BrickletLinearPoti
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QSlider
 from PyQt4.QtCore import pyqtSignal, Qt
-
-from bindings import bricklet_linear_poti
 
 class PositionLabel(QLabel):
     def setText(self, text):
@@ -38,12 +37,10 @@ class PositionLabel(QLabel):
 class LinearPoti(PluginBase):
     qtcb_position = pyqtSignal(int)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Linear Poti Bricklet', version)
         
-        self.lp = bricklet_linear_poti.LinearPoti(self.uid)
-        self.ipcon.add_device(self.lp)
-        self.version = '.'.join(map(str, self.lp.get_version()[1]))
+        self.lp = BrickletLinearPoti(uid, ipcon)
         
         self.qtcb_position.connect(self.cb_position)
         self.lp.register_callback(self.lp.CALLBACK_POSITION,
@@ -90,8 +87,8 @@ class LinearPoti(PluginBase):
         self.plot_widget.stop = True
 
     @staticmethod
-    def has_name(name):
-        return 'Linear Poti Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletLinearPoti.DEVICE_IDENTIFIER
 
     def get_current_value(self):
         return self.current_value

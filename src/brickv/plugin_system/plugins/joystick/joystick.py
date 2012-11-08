@@ -22,13 +22,12 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
 from plot_widget import PlotWidget
+from bindings import ip_connection
+from bindings.bricklet_joystick import BrickletJoystick
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QFrame, QPainter, QPushButton, QBrush
 from PyQt4.QtCore import pyqtSignal, Qt
-
-from bindings import bricklet_joystick
 
 class PositionLabel(QLabel):
     def setText(self, text):
@@ -69,12 +68,10 @@ class Joystick(PluginBase):
     qtcb_pressed = pyqtSignal()
     qtcb_released = pyqtSignal()
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Joystick Bricklet', version)
         
-        self.js = bricklet_joystick.Joystick(self.uid)
-        self.ipcon.add_device(self.js)
-        self.version = '.'.join(map(str, self.js.get_version()[1]))
+        self.js = BrickletJoystick(uid, ipcon)
         
         self.qtcb_position.connect(self.cb_position)
         self.js.register_callback(self.js.CALLBACK_POSITION,
@@ -138,8 +135,8 @@ class Joystick(PluginBase):
         self.plot_widget.stop = True
 
     @staticmethod
-    def has_name(name):
-        return 'Joystick Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletJoystick.DEVICE_IDENTIFIER
 
     def calibration_pressed(self):
         try:

@@ -28,22 +28,20 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 from PyQt4.QtCore import pyqtSignal, QTimer
 from ui_io4 import Ui_IO4
 
-from bindings import bricklet_io4
+from bindings.bricklet_io4 import BrickletIO4
         
 class IO4(PluginBase, Ui_IO4):
     qtcb_interrupt = pyqtSignal(int, int)
     qtcb_monoflop = pyqtSignal(int, int)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'IO-4 Bricklet', version)
         
         self.setupUi(self)
         
-        self.io = bricklet_io4.IO4(self.uid)
-        self.ipcon.add_device(self.io)
-        version = self.io.get_version()[1]
-        self.version = '.'.join(map(str, version))
-        self.has_monoflop = version[1] > 1 or (version[1] == 1 and version[2] > 0)
+        self.io = BrickletIO4(uid, ipcon)
+        
+        self.has_monoflop = version >= [1, 1, 1]
         
         self.qtcb_interrupt.connect(self.cb_interrupt)
         self.io.register_callback(self.io.CALLBACK_INTERRUPT,
@@ -117,8 +115,8 @@ class IO4(PluginBase, Ui_IO4):
         self.update_timer.stop()
 
     @staticmethod
-    def has_name(name):
-        return 'IO-4 Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletIO4.DEVICE_IDENTIFIER
     
     def init_values(self, value, dir, config, time, time_remaining):
         for i in range(4):

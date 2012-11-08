@@ -22,14 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
 from plot_widget import PlotWidget
+from bindings import ip_connection
+from bindings.bricklet_ambient_light import BrickletAmbientLight
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPainter, QColor, QBrush, QFrame
 from PyQt4.QtCore import Qt, pyqtSignal
-        
-from bindings import bricklet_ambient_light
-        
+
 class AmbientLightFrame(QFrame):
     def __init__(self, parent = None):
         QFrame.__init__(self, parent)
@@ -60,12 +59,10 @@ class IlluminanceLabel(QLabel):
 class AmbientLight(PluginBase):
     qtcb_illuminance = pyqtSignal(int)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Ambient Light Bricklet', version)
         
-        self.al = bricklet_ambient_light.AmbientLight(self.uid)
-        self.ipcon.add_device(self.al)
-        self.version = '.'.join(map(str, self.al.get_version()[1]))
+        self.al = BrickletAmbientLight(uid, ipcon)
         
         self.qtcb_illuminance.connect(self.cb_illuminance)
         self.al.register_callback(self.al.CALLBACK_ILLUMINANCE,
@@ -105,8 +102,8 @@ class AmbientLight(PluginBase):
         self.plot_widget.stop = True
 
     @staticmethod
-    def has_name(name):
-        return 'Ambient Light Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletAmbientLight.DEVICE_IDENTIFIER
     
     def get_current_value(self):
         return self.current_value

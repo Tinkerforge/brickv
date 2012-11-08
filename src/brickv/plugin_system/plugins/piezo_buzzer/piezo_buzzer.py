@@ -23,21 +23,19 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
+from bindings.bricklet_piezo_buzzer import BrickletPiezoBuzzer
+
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit
 from PyQt4.QtCore import pyqtSignal
-        
-from bindings import bricklet_piezo_buzzer
-        
+
 class PiezoBuzzer(PluginBase):
     qtcb_beep_finished = pyqtSignal()
     qtcb_morse_finished = pyqtSignal()
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Piezo Buzzer Bricklet', version)
         
-        self.pb = bricklet_piezo_buzzer.PiezoBuzzer(self.uid)
-        self.ipcon.add_device(self.pb)
-        self.version = '.'.join(map(str, self.pb.get_version()[1]))
+        self.pb = BrickletPiezoBuzzer(uid, ipcon)
         
         self.qtcb_beep_finished.connect(self.cb_beep)
         self.pb.register_callback(self.pb.CALLBACK_BEEP_FINISHED,
@@ -83,8 +81,8 @@ class PiezoBuzzer(PluginBase):
         pass
 
     @staticmethod
-    def has_name(name):
-        return 'Piezo Buzzer Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletPiezoBuzzer.DEVICE_IDENTIFIER
     
     def cb_beep(self):
         self.beep_button.setDisabled(False)

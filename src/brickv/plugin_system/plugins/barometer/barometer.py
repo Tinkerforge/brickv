@@ -23,13 +23,12 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
 from plot_widget import PlotWidget
+from bindings import ip_connection
+from bindings.bricklet_barometer import BrickletBarometer
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QLineEdit
 from PyQt4.QtCore import pyqtSignal, Qt, QTimer
-
-from bindings import bricklet_barometer
 
 class AirPressureLabel(QLabel):
     def setText(self, text):
@@ -50,20 +49,12 @@ class Barometer(PluginBase):
     qtcb_air_pressure = pyqtSignal(int)
     qtcb_altitude = pyqtSignal(int)
 
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Barometer Bricklet', version)
 
-        self.barometer = bricklet_barometer.Barometer(self.uid)
-        self.ipcon.add_device(self.barometer)
-        version = self.barometer.get_version()
-        self.version = '.'.join(map(str, version[1]))
-        self.version_minor = version[1][1]
-        self.version_release = version[1][2]
+        self.barometer = BrickletBarometer(uid, ipcon)
 
-        if self.version_minor == 0 and self.version_release == 0:
-            has_calibrate = True
-        else:
-            has_calibrate = False
+        has_calibrate = version == [1, 0, 0]
 
         self.qtcb_air_pressure.connect(self.cb_air_pressure)
         self.barometer.register_callback(self.barometer.CALLBACK_AIR_PRESSURE,
@@ -182,8 +173,8 @@ class Barometer(PluginBase):
         self.chip_temp_timer.stop()
 
     @staticmethod
-    def has_name(name):
-        return 'Barometer Bricklet' in name
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletBarometer.DEVICE_IDENTIFIER
 
     def calibrate_pressed(self):
         try:

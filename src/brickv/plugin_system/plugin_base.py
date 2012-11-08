@@ -24,11 +24,13 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtGui import QWidget
 
 class PluginBase(QWidget, object):
-    def __init__ (self, ipcon, uid):
+    def __init__(self, ipcon, uid, name, version):
         QWidget.__init__(self)
         self.ipcon = ipcon
         self.uid = uid
-        self.version = "none"
+        self.name = name
+        self.version = version
+        self.version_str = '.'.join(map(str, version))
         
     # To be overridden by inheriting class
     def stop(self):
@@ -46,6 +48,9 @@ class PluginBase(QWidget, object):
     def reset_device(self):
         pass
 
+    def is_brick(self):
+        return False
+
     @staticmethod
-    def has_name(name):
+    def has_device_identifier(device_identifier):
         return False

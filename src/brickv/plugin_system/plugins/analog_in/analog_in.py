@@ -22,13 +22,12 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
 from plot_widget import PlotWidget
+from bindings import ip_connection
+from bindings.bricklet_analog_in import BrickletAnalogIn
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
-        
-from bindings import bricklet_analog_in
         
 class VoltageLabel(QLabel):
     def setText(self, text):
@@ -38,12 +37,10 @@ class VoltageLabel(QLabel):
 class AnalogIn(PluginBase):
     qtcb_voltage = pyqtSignal(int)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Analog In Bricklet', version)
         
-        self.ai = bricklet_analog_in.AnalogIn(self.uid)
-        self.ipcon.add_device(self.ai)
-        self.version = '.'.join(map(str, self.ai.get_version()[1]))
+        self.ai = BrickletAnalogIn(uid, ipcon)
         
         self.qtcb_voltage.connect(self.cb_voltage)
         self.ai.register_callback(self.ai.CALLBACK_VOLTAGE,
@@ -83,8 +80,8 @@ class AnalogIn(PluginBase):
         self.plot_widget.stop = True
 
     @staticmethod
-    def has_name(name):
-        return 'Analog In Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletAnalogIn.DEVICE_IDENTIFIER
 
     def get_current_value(self):
         return self.current_value

@@ -28,20 +28,17 @@ from PyQt4.QtCore import Qt, pyqtSignal, QTimer
 
 from ui_industrial_digital_in_4 import Ui_IndustrialDigitalIn4
 
-from bindings import bricklet_industrial_digital_in_4
+from bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
         
 class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
     qtcb_interrupt = pyqtSignal(int, int)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Industrial Digital In 4 Bricklet', version)
         
         self.setupUi(self)
         
-        self.idi4 = bricklet_industrial_digital_in_4.IndustrialDigitalIn4(self.uid)
-        self.ipcon.add_device(self.idi4)
-        version = self.idi4.get_version()[1]
-        self.version = '.'.join(map(str, version))
+        self.idi4 = BrickletIndustrialDigitalIn4(uid, ipcon)
         
         self.gnd_pixmap = QPixmap('plugin_system/plugins/industrial_digital_in_4/dio_gnd.gif')
         self.vcc_pixmap = QPixmap('plugin_system/plugins/industrial_digital_in_4/dio_vcc.gif')
@@ -84,8 +81,8 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
         self.idi4.set_interrupt(0)
 
     @staticmethod
-    def has_name(name):
-        return 'Industrial Digital In 4 Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletIndustrialDigitalIn4.DEVICE_IDENTIFIER
     
     def show_new_value(self, value):
         for i in range(16):
@@ -173,4 +170,3 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
     def debounce_go_pressed(self):
         time = self.debounce_time.value()
         self.idi4.set_debounce_period(time)
-        

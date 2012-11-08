@@ -23,26 +23,24 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
+from bindings.bricklet_dual_relay import BrickletDualRelay
+
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QPixmap
 from PyQt4.QtCore import Qt, pyqtSignal, QTimer
 
 from ui_dual_relay import Ui_DualRelay
-
-from bindings import bricklet_dual_relay
         
 class DualRelay(PluginBase, Ui_DualRelay):
     qtcb_monoflop = pyqtSignal(int, bool)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Dual Relay Bricklet', version)
         
         self.setupUi(self)
         
-        self.dr = bricklet_dual_relay.DualRelay(self.uid)
-        self.ipcon.add_device(self.dr)
-        version = self.dr.get_version()[1]
-        self.version = '.'.join(map(str, version))
-        self.has_monoflop = version[1] > 1 or (version[1] == 1 and version[2] > 0)
+        self.dr = BrickletDualRelay(uid, ipcon)
+        
+        self.has_monoflop = version >= [1, 1, 1]
         
         self.qtcb_monoflop.connect(self.cb_monoflop)
         self.dr.register_callback(self.dr.CALLBACK_MONOFLOP_DONE,
@@ -123,8 +121,8 @@ class DualRelay(PluginBase, Ui_DualRelay):
         self.update_timer.stop()
 
     @staticmethod
-    def has_name(name):
-        return 'Dual Relay Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletDualRelay.DEVICE_IDENTIFIER
     
     def get_state(self):
         return (self.dr1_button.text() == 'On', self.dr2_button.text() == 'On')

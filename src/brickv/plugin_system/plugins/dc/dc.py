@@ -21,13 +21,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from plugin_system.plugin_base import PluginBase
+from bindings import ip_connection
+from bindings.brick_dc import BrickDC
+
 from PyQt4.QtGui import QErrorMessage, QInputDialog
 from PyQt4.QtCore import QTimer, Qt, pyqtSignal
 
 from speedometer import SpeedoMeter
-from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
-from bindings import brick_dc
 
 from ui_dc import Ui_DC
 
@@ -36,23 +37,17 @@ class DC(PluginBase, Ui_DC):
     qtcb_under_voltage = pyqtSignal(int)
     qtcb_emergency_shutdown = pyqtSignal()
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'DC Brick', version)
+        
         self.setupUi(self)
         
-        self.dc = brick_dc.DC(self.uid)
+        self.dc = BrickDC(uid, ipcon)
         self.device = self.dc
-        self.ipcon.add_device(self.dc)
-
-        version = self.dc.get_version()
-        self.version = '.'.join(map(str, version[1]))
-        self.version_minor = version[1][1]
-        self.version_release = version[1][2]
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
         
-
         self.speedometer = SpeedoMeter()
         self.vertical_layout_right.insertWidget(4, self.speedometer)
         
@@ -118,15 +113,18 @@ class DC(PluginBase, Ui_DC):
             return
 
     def has_reset_device(self):
-        return self.version_minor > 1 or (self.version_minor == 1 and self.version_release > 2)
+        return self.version >= [1, 1, 3]
 
     def reset_device(self):
         if self.has_reset_device():
             self.dc.reset()
 
+    def is_brick(self):
+        return True
+
     @staticmethod
-    def has_name(name):
-        return 'DC Brick' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickDC.DEVICE_IDENTIFIER
         
     def cb_emergency_shutdown(self):
         if not self.qem.isVisible():

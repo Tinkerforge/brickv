@@ -23,13 +23,13 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
+from bindings.bricklet_current25 import BrickletCurrent25
+
 from plot_widget import PlotWidget
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QPushButton, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
-        
-from bindings import bricklet_current25
-        
+
 class CurrentLabel(QLabel):
     def setText(self, text):
         text = "Current: " + text + " A"
@@ -39,12 +39,10 @@ class Current25(PluginBase):
     qtcb_current = pyqtSignal(int)
     qtcb_over = pyqtSignal()
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Current25 Bricklet', version)
         
-        self.cur = bricklet_current25.Current25(self.uid)
-        self.ipcon.add_device(self.cur)
-        self.version = '.'.join(map(str, self.cur.get_version()[1]))
+        self.cur = BrickletCurrent25(uid, ipcon)
         
         self.qtcb_current.connect(self.cb_current)
         self.cur.register_callback(self.cur.CALLBACK_CURRENT,
@@ -98,8 +96,8 @@ class Current25(PluginBase):
         self.plot_widget.stop = True
 
     @staticmethod
-    def has_name(name):
-        return 'Current25 Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletCurrent25.DEVICE_IDENTIFIER
 
     def get_current_value(self):
         return self.current_value

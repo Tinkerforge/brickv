@@ -167,7 +167,8 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
         firmware_updates = []
 
         for brick in self.bricks:
-            url_part = ' '.join(brick[0].split(' ')[:-2]).lower()
+            name = brick[0]
+            url_part = ' '.join(name.split(' ')[:-1]).lower().replace(' ', '_').replace('/', '_').replace('-', '')
 
             try:
                 versions = get_firmware_versions(FIRMWARE_URL + 'bricks/' + url_part + '/', 'brick_' + url_part)
@@ -175,7 +176,7 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
                 if len(versions) < 1:
                     firmware_updates.append('Could not discover latest {0} Brick firmware on tinkerforge.com'.format(brick[0]))
                 else:
-                    flashed = '.'.join(brick[2])
+                    flashed = brick[2]
                     latest = '.'.join(map(str, versions[-1]))
                     if flashed != latest:
                         firmware_updates.append('{0} [{1}], {2} is flashed, {3} is latest'.format(brick[0], brick[1], flashed, latest))
@@ -198,11 +199,7 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
 
         for bricklet in self.bricklets:
             name = bricklet[0]
-
-            if '-IR' in name:
-                name = name.replace('-IR', ' IR')
-
-            url_part = ' '.join(name.split(' ')[:-2]).lower().replace(' ', '_').replace('/', '_').replace('-', '')
+            url_part = ' '.join(name.split(' ')[:-1]).lower().replace(' ', '_').replace('/', '_').replace('-', '')
 
             try:
                 versions = get_firmware_versions(FIRMWARE_URL + 'bricklets/' + url_part + '/', 'bricklet_' + url_part)
@@ -210,7 +207,7 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
                 if len(versions) < 1:
                     plugin_updates.append('Could not discover latest {0} Bricklet plugin on tinkerforge.com'.format(bricklet[0]))
                 else:
-                    flashed = '.'.join(bricklet[2])
+                    flashed = bricklet[2]
                     latest = '.'.join(map(str, versions[-1]))
                     if flashed != latest:
                         plugin_updates.append('{0} [{1}], {2} is flashed, {3} is latest'.format(bricklet[0], bricklet[1], flashed, latest))
@@ -235,7 +232,7 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
         self.bricklets = []
 
         for device in devices:
-            if ' Brick ' in device[0]:
+            if device[3]:
                 self.bricks.append(device)
             else:
                 self.bricklets.append(device)

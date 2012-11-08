@@ -24,25 +24,24 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
-from PyQt4.QtCore import pyqtSignal, QTimer
-from ui_io16 import Ui_IO16
+from bindings.bricklet_io16 import BrickletIO16
 
-from bindings import bricklet_io16
+from PyQt4.QtCore import pyqtSignal, QTimer
+
+from ui_io16 import Ui_IO16
         
 class IO16(PluginBase, Ui_IO16):
     qtcb_interrupt = pyqtSignal('char', int, int)
     qtcb_monoflop = pyqtSignal('char', int, int)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'IO-16 Bricklet', version)
         
         self.setupUi(self)
         
-        self.io = bricklet_io16.IO16(self.uid)
-        self.ipcon.add_device(self.io)
-        version = self.io.get_version()[1]
-        self.version = '.'.join(map(str, version))
-        self.has_monoflop = version[1] > 1 or (version[1] == 1 and version[2] > 1)
+        self.io = BrickletIO16(uid, ipcon)
+        
+        self.has_monoflop = version >= [1, 1, 2]
         
         self.qtcb_interrupt.connect(self.cb_interrupt)
         self.io.register_callback(self.io.CALLBACK_INTERRUPT,
@@ -142,8 +141,8 @@ class IO16(PluginBase, Ui_IO16):
         self.update_timer.stop()
 
     @staticmethod
-    def has_name(name):
-        return 'IO-16 Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletIO16.DEVICE_IDENTIFIER
     
     def init_values(self, port, value, dir, config, time, time_remaining):
         for i in range(8):

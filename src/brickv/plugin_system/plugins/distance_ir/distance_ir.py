@@ -22,8 +22,9 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
 from plot_widget import PlotWidget
+from bindings import ip_connection
+from bindings.bricklet_distance_ir import BrickletDistanceIR
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFileDialog, QApplication, QPolygonF
 from PyQt4.QtCore import pyqtSignal, Qt, QPointF
@@ -31,8 +32,6 @@ from PyQt4.Qwt5 import QwtSpline
 
 import os
 import sys
-
-from bindings import bricklet_distance_ir
         
 class AnalogLabel(QLabel):
     def setText(self, text):
@@ -51,12 +50,10 @@ class DistanceIR(PluginBase):
     qtcb_distance = pyqtSignal(int)
     qtcb_analog = pyqtSignal(int)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Distance IR Bricklet', version)
 
-        self.dist = bricklet_distance_ir.DistanceIR(self.uid)
-        self.ipcon.add_device(self.dist)
-        self.version = '.'.join(map(str, self.dist.get_version()[1]))
+        self.dist = BrickletDistanceIR(uid, ipcon)
         
         self.qtcb_distance.connect(self.cb_distance)
         self.dist.register_callback(self.dist.CALLBACK_DISTANCE,
@@ -126,8 +123,8 @@ class DistanceIR(PluginBase):
         self.plot_widget.stop = True
 
     @staticmethod
-    def has_name(name):
-        return 'Distance IR Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletDistanceIR.DEVICE_IDENTIFIER
     
     def sample_file_pressed(self):
         last_dir = ''

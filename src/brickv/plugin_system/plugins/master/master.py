@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
+from bindings.brick_master import BrickMaster
 
 from PyQt4.QtGui import QWidget, QFrame, QMessageBox, QFileDialog, QProgressDialog
 from PyQt4.QtCore import QTimer, Qt
@@ -39,8 +40,6 @@ from ui_rs485 import Ui_RS485
 from ui_wifi import Ui_Wifi
 from ui_extension_type import Ui_extension_type
 from ui_wifi_status import Ui_widget_wifi_status
-
-from bindings import brick_master
 
 class WifiStatus(QFrame, Ui_widget_wifi_status):
     def __init__(self, parent):
@@ -131,7 +130,7 @@ class Chibi(QWidget, Ui_Chibi):
         
         self.master = parent.master
         
-        if parent.version_minor > 0:
+        if parent.version >= [1, 1, 0]:
             address = self.master.get_chibi_address()
             address_slave = []
             for i in range(32):
@@ -300,7 +299,7 @@ class RS485(QWidget, Ui_RS485):
         
         self.master = parent.master
         
-        if parent.version_minor > 1:
+        if parent.version >= [1, 2, 0]:
             speed, parity, stopbits = self.master.get_rs485_configuration()
             self.speed_spinbox.setValue(speed)
             if parity == 'e':
@@ -403,7 +402,6 @@ class RS485(QWidget, Ui_RS485):
             
     def update_data(self):
         pass
-    
 
 class Wifi(QWidget, Ui_Wifi):
     def __init__(self, parent):
@@ -414,11 +412,11 @@ class Wifi(QWidget, Ui_Wifi):
         self.master = parent.master
         
         self.update_data_counter = 0
-        if parent.version_minor > 2:
+        if parent.version >= [1, 3, 0]:
             ssid, connection, ip, sub, gw, port = self.master.get_wifi_configuration()
             ssid = ssid.replace('\0', '')
 
-            if parent.version_minor == 3 and parent.version_release < 3:
+            if parent.version < [1, 3, 3]:
                 # AP and Ad Hoc was added in 1.3.3
                 while self.wifi_connection.count() > 2:
                     self.wifi_connection.removeItem(self.wifi_connection.count() - 1)
@@ -429,7 +427,7 @@ class Wifi(QWidget, Ui_Wifi):
             password = ''.join(map(chr, password[0][:password[1]]))
             
             power_mode = self.master.get_wifi_power_mode()
-            if (parent.version_minor == 3 and parent.version_release > 3) or parent.version_minor > 3:
+            if parent.version >= [1, 3, 4]:
                 domain = self.master.get_wifi_regulatory_domain()
                 self.wifi_domain.setCurrentIndex(domain)
             else:
@@ -890,7 +888,7 @@ class Wifi(QWidget, Ui_Wifi):
             if username_old == username and password_old == password:
                 test_ok = True
 
-        if (self.parent.version_minor == 3 and self.parent.version_release > 3) or self.parent.version_minor > 3:
+        if parent.version >= [1, 3, 4]:
             if test_ok:
                 self.master.set_wifi_regulatory_domain(self.wifi_domain.currentIndex())
                 if self.master.get_wifi_regulatory_domain() != self.wifi_domain.currentIndex():
@@ -924,18 +922,13 @@ class Wifi(QWidget, Ui_Wifi):
                     self.wifi_status.update_status()
         
 class Master(PluginBase, Ui_Master):
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Master Brick', version)
+        
         self.setupUi(self)
 
-        self.master = brick_master.Master(self.uid)
+        self.master = BrickMaster(uid, ipcon)
         self.device = self.master
-        self.ipcon.add_device(self.master)
-
-        version = self.master.get_version()
-        self.version = '.'.join(map(str, version[1]))
-        self.version_minor = version[1][1]
-        self.version_release = version[1][2]
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
@@ -946,7 +939,7 @@ class Master(PluginBase, Ui_Master):
         num_extensions = 0
 
         # Chibi widget
-        if self.version_minor > 0:
+        if self.version >= [1, 1, 0]:
             self.extension_type_button.pressed.connect(self.extension_pressed)
             if self.master.is_chibi_present():
                 num_extensions += 1
@@ -957,7 +950,7 @@ class Master(PluginBase, Ui_Master):
             self.extension_type_button.setEnabled(False)
             
         # RS485 widget
-        if self.version_minor > 1:
+        if self.version >= [1, 2, 0]:
             if self.master.is_rs485_present():
                 num_extensions += 1
                 rs485 = RS485(self)
@@ -965,7 +958,7 @@ class Master(PluginBase, Ui_Master):
                 self.extension_layout.addWidget(rs485)
                 
         # Wifi widget
-        if self.version_minor > 2:
+        if self.version >= [1, 3, 0]:
             if self.master.is_wifi_present():
                 num_extensions += 1
                 wifi = Wifi(self)
@@ -991,15 +984,18 @@ class Master(PluginBase, Ui_Master):
             self.extension_type.close()
 
     def has_reset_device(self):
-        return self.version_minor > 2 or (self.version_minor == 2 and self.version_release > 0)
+        return self.version >= [1, 2, 1]
 
     def reset_device(self):
         if self.has_reset_device():
             self.master.reset()
 
+    def is_brick(self):
+        return True
+
     @staticmethod
-    def has_name(name):
-        return 'Master Brick' in name
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickMaster.DEVICE_IDENTIFIER
         
     def update_data(self):
         try:

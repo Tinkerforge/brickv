@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-26.      #
+# This file was automatically generated on 2012-11-07.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -23,10 +23,12 @@ except ValueError:
 GetHumidityCallbackThreshold = namedtuple('HumidityCallbackThreshold', ['option', 'min', 'max'])
 GetAnalogValueCallbackThreshold = namedtuple('AnalogValueCallbackThreshold', ['option', 'min', 'max'])
 
-class Humidity(Device):
+class BrickletHumidity(Device):
     """
     Device for sensing Humidity
     """
+
+    DEVICE_IDENTIFIER = 27
 
     CALLBACK_HUMIDITY = 13
     CALLBACK_ANALOG_VALUE = 14
@@ -46,16 +48,14 @@ class Humidity(Device):
     FUNCTION_SET_DEBOUNCE_PERIOD = 11
     FUNCTION_GET_DEBOUNCE_PERIOD = 12
 
-    def __init__(self, uid):
+    def __init__(self, uid, ipcon):
         """
-        Creates an object with the unique device ID *uid*. This object can
-        then be added to the IP connection.
+        Creates an object with the unique device ID *uid* and adds it to
+        the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid)
+        Device.__init__(self, uid, ipcon)
 
-        self.expected_name = 'Humidity Bricklet'
-
-        self.binding_version = [1, 0, 0]
+        self.api_version = (1, 0, 0)
 
         self.callback_formats[Humidity.CALLBACK_HUMIDITY] = 'H'
         self.callback_formats[Humidity.CALLBACK_ANALOG_VALUE] = 'H'
@@ -209,3 +209,5 @@ class Humidity(Device):
         Registers a callback with ID id to the function callback.
         """
         self.registered_callbacks[id] = callback
+
+Humidity = BrickletHumidity # for backward compatibility

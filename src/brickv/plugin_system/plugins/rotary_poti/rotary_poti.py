@@ -22,14 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
 from plot_widget import PlotWidget
+from bindings import ip_connection
+from bindings.bricklet_rotary_poti import BrickletRotaryPoti
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
 import PyQt4.Qwt5 as Qwt
-
-from bindings import bricklet_rotary_poti
 
 class PositionLabel(QLabel):
     def setText(self, text):
@@ -39,12 +38,10 @@ class PositionLabel(QLabel):
 class RotaryPoti(PluginBase):
     qtcb_position = pyqtSignal(int)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Rotary Poti Bricklet', version)
         
-        self.rp = bricklet_rotary_poti.RotaryPoti(self.uid)
-        self.ipcon.add_device(self.rp)
-        self.version = '.'.join(map(str, self.rp.get_version()[1]))
+        self.rp = BrickletRotaryPoti(uid, ipcon)
         
         self.qtcb_position.connect(self.cb_position)
         self.rp.register_callback(self.rp.CALLBACK_POSITION,
@@ -99,8 +96,8 @@ class RotaryPoti(PluginBase):
         self.plot_widget.stop = True
 
     @staticmethod
-    def has_name(name):
-        return 'Rotary Poti Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletRotaryPoti.DEVICE_IDENTIFIER
 
     def get_current_value(self):
         return self.current_value

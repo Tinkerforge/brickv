@@ -23,19 +23,16 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
+from bindings.bricklet_analog_out import BrickletAnalogOut
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBox
 from PyQt4.QtCore import pyqtSignal, Qt
-        
-from bindings import bricklet_analog_out
-        
+
 class AnalogOut(PluginBase):
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Analog Out Bricklet', version)
         
-        self.ao = bricklet_analog_out.AnalogOut(self.uid)
-        self.ipcon.add_device(self.ao)
-        self.version = '.'.join(map(str, self.ao.get_version()[1]))
+        self.ao = BrickletAnalogOut(uid, ipcon)
         
         self.voltage_label = QLabel('Output Voltage (mV): ')
         self.voltage_box = QSpinBox()
@@ -82,8 +79,8 @@ class AnalogOut(PluginBase):
         pass
 
     @staticmethod
-    def has_name(name):
-        return 'Analog Out Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletAnalogOut.DEVICE_IDENTIFIER
     
     def voltage_finished(self):
         value = self.voltage_box.value()

@@ -21,6 +21,10 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from plugin_system.plugin_base import PluginBase
+from bindings import ip_connection
+from bindings.brick_stepper import BrickStepper
+
 from PyQt4.QtGui import QErrorMessage, QInputDialog
 from PyQt4.QtCore import QTimer, Qt, pyqtSignal
 
@@ -28,28 +32,19 @@ from speedometer import SpeedoMeter
 from threading import Thread
 import time
 
-from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
 from ui_stepper import Ui_Stepper
-
-from bindings import brick_stepper
 
 class Stepper(PluginBase, Ui_Stepper):
     qtcb_position_reached = pyqtSignal(int)
     qtcb_under_voltage = pyqtSignal(int)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Stepper Brick', version)
+        
         self.setupUi(self)
      
-        self.stepper = brick_stepper.Stepper(self.uid)
+        self.stepper = BrickStepper(uid, ipcon)
         self.device = self.stepper
-        self.ipcon.add_device(self.stepper)
-
-        version = self.stepper.get_version()
-        self.version = '.'.join(map(str, version[1]))
-        self.version_minor = version[1][1]
-        self.version_release = version[1][2]
      
         self.endis_all(False)
         
@@ -129,15 +124,18 @@ class Stepper(PluginBase, Ui_Stepper):
         self.update_data_alive = False
 
     def has_reset_device(self):
-        return self.version_minor > 1 or (self.version_minor == 1 and self.version_release > 4)
+        return self.version >= [1, 1, 4]
 
     def reset_device(self):
         if self.has_reset_device():
             self.stepper.reset()
 
+    def is_brick(self):
+        return True
+
     @staticmethod
-    def has_name(name):
-        return 'Stepper Brick' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickStepper.DEVICE_IDENTIFIER
     
     def cb_position_reached(self, position):
         self.position_update(position)

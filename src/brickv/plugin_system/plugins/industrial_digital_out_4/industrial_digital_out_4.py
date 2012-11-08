@@ -23,25 +23,22 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
+from bindings.bricklet_industrial_digital_out_4 import BrickletIndustrialDigitalOut4
+
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QPixmap
 from PyQt4.QtCore import Qt, pyqtSignal, QTimer
 
 from ui_industrial_digital_out_4 import Ui_IndustrialDigitalOut4
 
-from bindings import bricklet_industrial_digital_out_4
-        
 class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
     qtcb_monoflop = pyqtSignal(int, bool)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Industrial Digital Out 4 Bricklet', version)
         
         self.setupUi(self)
         
-        self.ido4 = bricklet_industrial_digital_out_4.IndustrialDigitalOut4(self.uid)
-        self.ipcon.add_device(self.ido4)
-        version = self.ido4.get_version()[1]
-        self.version = '.'.join(map(str, version))
+        self.ido4 = BrickletIndustrialDigitalOut4(uid, ipcon)
         
         self.gnd_pixmap = QPixmap('plugin_system/plugins/industrial_digital_out_4/dio_gnd.gif')
         self.vcc_pixmap = QPixmap('plugin_system/plugins/industrial_digital_out_4/dio_vcc.gif')
@@ -90,8 +87,8 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
         pass
 
     @staticmethod
-    def has_name(name):
-        return 'Industrial Digital Out 4 Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletIndustrialDigitalOut4.DEVICE_IDENTIFIER
     
     def reconfigure_everything(self):
         for i in range(4):

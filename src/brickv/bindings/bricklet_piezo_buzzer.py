@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-26.      #
+# This file was automatically generated on 2012-11-07.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -21,10 +21,12 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 
-class PiezoBuzzer(Device):
+class BrickletPiezoBuzzer(Device):
     """
     Device for controlling a piezo buzzer
     """
+
+    DEVICE_IDENTIFIER = 214
 
     CALLBACK_BEEP_FINISHED = 3
     CALLBACK_MORSE_CODE_FINISHED = 4
@@ -32,16 +34,14 @@ class PiezoBuzzer(Device):
     FUNCTION_BEEP = 1
     FUNCTION_MORSE_CODE = 2
 
-    def __init__(self, uid):
+    def __init__(self, uid, ipcon):
         """
-        Creates an object with the unique device ID *uid*. This object can
-        then be added to the IP connection.
+        Creates an object with the unique device ID *uid* and adds it to
+        the IP Connection *ipcon*.
         """
-        Device.__init__(self, uid)
+        Device.__init__(self, uid, ipcon)
 
-        self.expected_name = 'Piezo Buzzer Bricklet'
-
-        self.binding_version = [1, 0, 0]
+        self.api_version = (1, 0, 0)
 
         self.callback_formats[PiezoBuzzer.CALLBACK_BEEP_FINISHED] = ''
         self.callback_formats[PiezoBuzzer.CALLBACK_MORSE_CODE_FINISHED] = ''
@@ -72,3 +72,5 @@ class PiezoBuzzer(Device):
         Registers a callback with ID id to the function callback.
         """
         self.registered_callbacks[id] = callback
+
+PiezoBuzzer = BrickletPiezoBuzzer # for backward compatibility

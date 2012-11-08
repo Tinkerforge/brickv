@@ -22,14 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
 from plot_widget import PlotWidget
+from bindings import ip_connection
+from bindings.bricklet_temperature_ir import BrickletTemperatureIR
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton
 from PyQt4.QtCore import pyqtSignal, Qt
-        
-from bindings import bricklet_temperature_ir
-      
+
 class ObjectLabel(QLabel):
     def setText(self, text):
         text = "Object Temperature: " + text + " %cC" % 0xB0
@@ -44,12 +43,10 @@ class TemperatureIR(PluginBase):
     qtcb_ambient_temperature = pyqtSignal(int)
     qtcb_object_temperature = pyqtSignal(int)
     
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'Temperature IR Bricklet', version)
         
-        self.tem = bricklet_temperature_ir.TemperatureIR(self.uid)
-        self.ipcon.add_device(self.tem)
-        self.version = '.'.join(map(str, self.tem.get_version()[1]))
+        self.tem = BrickletTemperatureIR(uid, ipcon)
         
         self.qtcb_ambient_temperature.connect(self.cb_ambient_temperature)
         self.tem.register_callback(self.tem.CALLBACK_AMBIENT_TEMPERATURE,
@@ -117,8 +114,8 @@ class TemperatureIR(PluginBase):
         self.plot_widget.stop = True
 
     @staticmethod
-    def has_name(name):
-        return 'Temperature-IR Bricklet' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickletTemperatureIR.DEVICE_IDENTIFIER
     
     def get_current_ambient(self):
         return self.current_ambient

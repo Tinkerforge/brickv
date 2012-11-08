@@ -24,16 +24,15 @@ Boston, MA 02111-1307, USA.
 #import logging
 
 from plugin_system.plugin_base import PluginBase
-from calibrate_window import CalibrateWindow
 from bindings import ip_connection
+from bindings.brick_imu import BrickIMU
 
 from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy
 from PyQt4.QtCore import Qt, QTimer
 import PyQt4.Qwt5 as Qwt
 
 from ui_imu import Ui_IMU
-
-from bindings import brick_imu
+from calibrate_window import CalibrateWindow
 
 class Plot(Qwt.QwtPlot):
     def __init__(self, y_axis, plot_list, *args):
@@ -65,7 +64,6 @@ class Plot(Qwt.QwtPlot):
         
         self.legendChecked.connect(self.show_curve)
         
-        
     def show_curve(self, item, on):
         item.setVisible(on)
         widget = self.legend().find(item)
@@ -89,18 +87,13 @@ class Plot(Qwt.QwtPlot):
             self.data_y[i] = []
 
 class IMU(PluginBase, Ui_IMU):
-    def __init__ (self, ipcon, uid):
-        PluginBase.__init__(self, ipcon, uid)
+    def __init__(self, ipcon, uid, version):
+        PluginBase.__init__(self, ipcon, uid, 'IMU Brick', version)
+        
         self.setupUi(self)
         
-        self.imu = brick_imu.IMU(self.uid)
+        self.imu = BrickIMU(uid, ipcon)
         self.device = self.imu
-        self.ipcon.add_device(self.imu)
-
-        version = self.imu.get_version()
-        self.version = '.'.join(map(str, version[1]))
-        self.version_minor = version[1][1]
-        self.version_release = version[1][2]
         
         self.acc_x = 0
         self.acc_y = 0
@@ -221,15 +214,18 @@ in the image above, then press "Save Orientation".""")
             self.calibrate.close()
 
     def has_reset_device(self):
-        return self.version_minor > 0 or (self.version_minor == 0 and self.version_release > 6)
+        return self.version >= [1, 0, 7]
 
     def reset_device(self):
         if self.has_reset_device():
             self.imu.reset()
 
+    def is_brick(self):
+        return True
+
     @staticmethod
-    def has_name(name):
-        return 'IMU Brick' in name 
+    def has_device_identifier(device_identifier):
+        return device_identifier == BrickIMU.DEVICE_IDENTIFIER
         
     def all_data_callback(self, acc_x, acc_y, acc_z, mag_x, mag_y, mag_z, gyr_x, gyr_y, gyr_z, tem):
         self.acc_x = acc_x
