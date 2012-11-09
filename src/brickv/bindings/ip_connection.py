@@ -306,7 +306,8 @@ class IPConnection:
         device.write_lock.acquire()
 
         length = 8 + struct.calcsize('<' + form)
-        request = self.create_packet_header(device.uid, length, function_id)
+        request = self.create_packet_header(device.uid, length, function_id,
+                                            len(form_ret) != 0)
 
         for f, d in zip(form.split(' '), data):
             if len(f) > 1 and not 's' in f:
@@ -353,7 +354,8 @@ class IPConnection:
 
     def get_next_seqnum(self):
         seqnum = self.next_seqnum
-        self.next_seqnum = (self.next_seqnum + 1) % 16
+        self.next_seqnum = (self.next_seqnum + 1) % 15
+        seqnum += 1
 
         return seqnum
 
@@ -414,18 +416,23 @@ class IPConnection:
 
         self.enumerate_callback = callback
         request = self.create_packet_header(IPConnection.BROADCAST_UID, 8,
-                                            IPConnection.FUNCTION_ENUMERATE)
+                                            IPConnection.FUNCTION_ENUMERATE,
+                                            False)
 
         self.socket.send(request)
 
-    def create_packet_header(self, uid, length, function_id):
+    def create_packet_header(self, uid, length, function_id, response_expected):
         seqnum = self.get_next_seqnum()
-        auth_bit = 0
+        r_bit = 0
+        a_bit = 0
+
+        if response_expected:
+            r_bit = 1
 
         if self.auth_key is not None:
-            auth_bit = 1
+            a_bit = 1
 
-        seqnum_and_options = seqnum << 4 | auth_bit << 2
+        seqnum_and_options = (seqnum << 4) | (r_bit << 3) | (a_bit << 2)
 
         return struct.pack('<IBBBB', uid, length, function_id, seqnum_and_options, 0)
 
