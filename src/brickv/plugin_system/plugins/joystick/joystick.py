@@ -134,6 +134,9 @@ class Joystick(PluginBase):
         
         self.plot_widget.stop = True
 
+    def get_url_part(self):
+        return 'joystick'
+
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletJoystick.DEVICE_IDENTIFIER

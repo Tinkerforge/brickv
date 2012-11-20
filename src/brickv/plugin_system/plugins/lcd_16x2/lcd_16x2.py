@@ -133,6 +133,9 @@ class LCD16x2(PluginBase):
     def stop(self):
         pass
 
+    def get_url_part(self):
+        return 'lcd_16x2'
+
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletLCD16x2.DEVICE_IDENTIFIER

@@ -103,6 +103,9 @@ class GPS(PluginBase, Ui_GPS):
         self.gps.set_motion_callback_period(0)
         self.gps.set_date_time_callback_period(0)
 
+    def get_url_part(self):
+        return 'gps'
+
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletGPS.DEVICE_IDENTIFIER

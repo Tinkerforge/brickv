@@ -172,6 +172,9 @@ class Barometer(PluginBase):
 
         self.chip_temp_timer.stop()
 
+    def get_url_part(self):
+        return 'barometer'
+
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletBarometer.DEVICE_IDENTIFIER

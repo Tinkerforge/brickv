@@ -167,21 +167,17 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
         firmware_updates = []
 
         for brick in self.bricks:
-            name = brick[0]
-            url_part = ' '.join(name.split(' ')[:-1]).lower().replace(' ', '_').replace('/', '_').replace('-', '')
-
             try:
-                versions = get_firmware_versions(FIRMWARE_URL + 'bricks/' + url_part + '/', 'brick_' + url_part)
+                versions = get_firmware_versions(FIRMWARE_URL + 'bricks/' + brick['url_part'] + '/', 'brick_' + brick['url_part'])
 
                 if len(versions) < 1:
-                    firmware_updates.append('Could not discover latest {0} Brick firmware on tinkerforge.com'.format(brick[0]))
+                    firmware_updates.append('Could not discover latest {0} Brick firmware on tinkerforge.com'.format(brick['name']))
                 else:
-                    flashed = brick[2]
                     latest = '.'.join(map(str, versions[-1]))
-                    if flashed != latest:
-                        firmware_updates.append('{0} [{1}], {2} is flashed, {3} is latest'.format(brick[0], brick[1], flashed, latest))
+                    if brick['version'] != latest:
+                        firmware_updates.append('{0} [{1}], {2} is flashed, {3} is latest'.format(brick['name'], brick['uid'], brick['version'], latest))
             except urllib2.URLError:
-                firmware_updates.append('Could not discover latest {0} Brick firmware on tinkerforge.com'.format(brick[0]))
+                firmware_updates.append('Could not discover latest {0} Brick firmware on tinkerforge.com'.format(brick['name']))
 
             progress.setValue(progress.value() + 1)
 
@@ -198,21 +194,17 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
         plugin_updates = []
 
         for bricklet in self.bricklets:
-            name = bricklet[0]
-            url_part = ' '.join(name.split(' ')[:-1]).lower().replace(' ', '_').replace('/', '_').replace('-', '')
-
             try:
-                versions = get_firmware_versions(FIRMWARE_URL + 'bricklets/' + url_part + '/', 'bricklet_' + url_part)
+                versions = get_firmware_versions(FIRMWARE_URL + 'bricklets/' + bricklet['url_part'] + '/', 'bricklet_' + bricklet['url_part'])
 
                 if len(versions) < 1:
-                    plugin_updates.append('Could not discover latest {0} Bricklet plugin on tinkerforge.com'.format(bricklet[0]))
+                    plugin_updates.append('Could not discover latest {0} Bricklet plugin on tinkerforge.com'.format(bricklet['name']))
                 else:
-                    flashed = bricklet[2]
                     latest = '.'.join(map(str, versions[-1]))
-                    if flashed != latest:
-                        plugin_updates.append('{0} [{1}], {2} is flashed, {3} is latest'.format(bricklet[0], bricklet[1], flashed, latest))
+                    if bricklet['version'] != latest:
+                        plugin_updates.append('{0} [{1}], {2} is flashed, {3} is latest'.format(bricklet['name'], bricklet['uid'], bricklet['version'], latest))
             except urllib2.URLError:
-                plugin_updates.append('Could not discover latest {0} Bricklet plugin on tinkerforge.com'.format(bricklet[0]))
+                plugin_updates.append('Could not discover latest {0} Bricklet plugin on tinkerforge.com'.format(bricklet['name']))
 
             progress.setValue(progress.value() + 1)
 
@@ -232,7 +224,7 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
         self.bricklets = []
 
         for device in devices:
-            if device[3]:
+            if device['is_brick']:
                 self.bricks.append(device)
             else:
                 self.bricklets.append(device)

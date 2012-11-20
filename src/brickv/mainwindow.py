@@ -361,7 +361,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_updates_window(self):
         devices = []
         for plugin in self.plugins[1:]:
-            devices.append((plugin.name, plugin.uid, plugin.version_str, plugin.is_brick()))
+            devices.append({ 'name': plugin.name,
+                             'uid': plugin.uid,
+                             'version': plugin.version_str,
+                             'is_brick': plugin.is_brick(),
+                             'url_part': plugin.get_url_part() })
 
         if self.updates_window is not None:
             self.updates_window.set_devices(devices)

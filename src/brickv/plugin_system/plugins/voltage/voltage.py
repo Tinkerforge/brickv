@@ -79,6 +79,9 @@ class Voltage(PluginBase):
         
         self.plot_widget.stop = True
 
+    def get_url_part(self):
+        return 'voltage'
+
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletVoltage.DEVICE_IDENTIFIER
