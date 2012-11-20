@@ -243,7 +243,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.reset_view()
             self.ipcon.disconnect()
 
-    def create_plugin_container(self, plugin, connected_uid, position, hardware_version):
+    def create_plugin_container(self, plugin, connected_uid, position):
         container = QWidget()
         layout = QVBoxLayout(container)
         info = QHBoxLayout()
@@ -259,7 +259,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # connected uid
         if connected_uid != '0':
-            info.addWidget(QLabel('Connected to UID:'))
+            info.addWidget(QLabel('Connected to:'))
             label = QLabel('{0}'.format(connected_uid))
             label.setTextInteractionFlags(Qt.TextSelectableByMouse |
                                           Qt.TextSelectableByKeyboard)
@@ -276,12 +276,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # firmware version
         info.addWidget(QLabel('FW Version:'))
         info.addWidget(QLabel('{0}'.format(plugin.version_str)))
-
-        info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
-
-        # hardware version
-        info.addWidget(QLabel('HW Version:'))
-        info.addWidget(QLabel('{0}'.format('.'.join(map(str, hardware_version)))))
 
         if plugin.is_brick():
             button = QPushButton('Reset')
@@ -316,7 +310,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     return
             plugin = self.plugin_manager.get_plugin_from_device_identifier(device_identifier, self.ipcon, uid, firmware_version)
             if plugin is not None:
-                self.tab_widget.addTab(self.create_plugin_container(plugin, connected_uid, position, hardware_version), plugin.name)
+                if plugin.is_hardware_version_relevant():
+                    tab_name = '{0} {1}.{2}'.format(plugin.name, hardware_version[0], hardware_version[1])
+                else:
+                    tab_name = plugin.name
+
+                self.tab_widget.addTab(self.create_plugin_container(plugin, connected_uid, position), tab_name)
                 self.plugins.append(plugin)
         elif enumeration_type == IPConnection.ENUMERATION_DISCONNECTED:
             for i in range(len(self.plugins)):

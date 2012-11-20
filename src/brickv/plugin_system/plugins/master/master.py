@@ -993,6 +993,9 @@ class Master(PluginBase, Ui_Master):
     def is_brick(self):
         return True
 
+    def is_hardware_version_relevant(self):
+        return True
+
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickMaster.DEVICE_IDENTIFIER

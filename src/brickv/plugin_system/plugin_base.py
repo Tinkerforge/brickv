@@ -51,6 +51,9 @@ class PluginBase(QWidget, object):
     def is_brick(self):
         return False
 
+    def is_hardware_version_relevant(self):
+        return False
+
     @staticmethod
     def has_device_identifier(device_identifier):
         return False
