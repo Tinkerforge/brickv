@@ -69,6 +69,8 @@ class GPS(PluginBase, Ui_GPS):
         self.format_combobox.currentIndexChanged.connect(self.format_changed)
         self.show_pos.pressed.connect(self.show_pos_pressed)
 
+        self.had_fix = False
+
         self.last_lat = 0
         self.last_ns = 'U'
         self.last_long = 0
@@ -78,8 +80,12 @@ class GPS(PluginBase, Ui_GPS):
         self.last_vdop = 0
         self.last_epe = 0
 
+        self.voltage_timer = QTimer()
+        self.voltage_timer.timeout.connect(self.update_voltage)
+        self.voltage_timer.setInterval(10)
+
     def show_pos_pressed(self):
-        if self.last_ns != 'U' and self.last_ew != 'U':
+        if self.had_fix:
             google_str = self.last_ns + self.make_dd_dddddd(self.last_lat) + ' ' + self.last_ew + self.make_dd_dddddd(self.last_long)
             QDesktopServices.openUrl(QUrl('https://maps.google.com/maps?q=' + google_str))
         else:
@@ -96,12 +102,17 @@ class GPS(PluginBase, Ui_GPS):
         self.gps.set_motion_callback_period(250)
         self.gps.set_date_time_callback_period(250)
 
+        self.update_voltage()
+        self.voltage_timer.start()
+
     def stop(self):
         self.gps.set_coordinates_callback_period(0)
         self.gps.set_status_callback_period(0)
         self.gps.set_altitude_callback_period(0)
         self.gps.set_motion_callback_period(0)
         self.gps.set_date_time_callback_period(0)
+
+        self.voltage_timer.stop()
 
     def get_url_part(self):
         return 'gps'
@@ -153,6 +164,9 @@ class GPS(PluginBase, Ui_GPS):
         return u'{0}° {1}’ {2}.{3}’’'.format(dd_str, mm_str, ss_str, sss_str)
 
     def cb_coordinates(self, lat, ns, long, ew, pdop, hdop, vdop, epe):
+        if not self.had_fix:
+            return
+
         self.last_lat = lat
         self.last_ns = ns
         self.last_long = long
@@ -199,8 +213,10 @@ class GPS(PluginBase, Ui_GPS):
             self.fix.setText("No Fix")
         elif fix == 2:
             self.fix.setText("2D Fix")
+            self.had_fix = True
         elif fix == 3:
             self.fix.setText("3D Fix")
+            self.had_fix = True
         else:
             self.fix.setText("Error")
 
@@ -208,9 +224,15 @@ class GPS(PluginBase, Ui_GPS):
         self.satellites_used.setText(str(satellites_used))
 
     def cb_altitude(self, altitude, geoidal_separation):
+        if not self.had_fix:
+            return
+
         self.altitude.setText('%.2f m (Geoidal Separation: %.2f m)' % (altitude/100.0, geoidal_separation/100.0))
 
     def cb_motion(self, course, speed):
+        if not self.had_fix:
+            return
+
         self.course.setText(u'%.2f°' % (course/100.0,))
         self.speed.setText('%.2f km/h' % (speed/100.0,))
 
@@ -232,6 +254,13 @@ class GPS(PluginBase, Ui_GPS):
         try:
             date_str = str(datetime.datetime(yy, mm, dd, hh, mins, ss)) + " UTC"
         except:
-            date_str = "No time information yet"
+            date_str = "Unknown"
 
         self.time.setText(date_str)
+
+    def update_voltage(self):
+        try:
+            bv = self.gps.get_battery_voltage()
+            self.voltage.setText('%.2f V' % (bv/1000.0))
+        except ip_connection.Error:
+            pass
