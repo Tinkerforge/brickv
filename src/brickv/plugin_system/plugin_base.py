@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 brickv (Brick Viewer)
-Copyright (C) 2009 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 plugin_base.py: Base class for all Brick Viewer Plugins
 
@@ -26,6 +26,7 @@ from PyQt4.QtGui import QWidget
 class PluginBase(QWidget, object):
     def __init__(self, ipcon, uid, name, version):
         QWidget.__init__(self)
+        self.label_timeouts = None
         self.ipcon = ipcon
         self.uid = uid
         self.name = name
@@ -35,7 +36,8 @@ class PluginBase(QWidget, object):
         
     def increase_error_count(self):
         self.error_count += 1
-        print "error", self.error_count
+        if self.label_timeouts:
+            self.label_timeouts.setText('{0}'.format(self.error_count))
         
     # To be overridden by inheriting class
     def stop(self):

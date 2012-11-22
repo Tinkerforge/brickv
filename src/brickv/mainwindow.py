@@ -280,6 +280,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         info.addWidget(QLabel('FW Version:'))
         info.addWidget(QLabel('{0}'.format(plugin.version_str)))
 
+        info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+
+        # timeouts
+        info.addWidget(QLabel('Timeouts:'))
+        label_timeouts = QLabel('0')
+        info.addWidget(label_timeouts)
+
+        layout.addLayout(info)
+
         if plugin.is_brick():
             button = QPushButton('Reset')
             if plugin.has_reset_device():
@@ -289,12 +298,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             info.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding))
             info.addWidget(button)
 
-        layout.addLayout(info)
-
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 
+        plugin.label_timeouts = label_timeouts
         plugin.layout().setContentsMargins(0, 0, 0, 0)
 
         layout.addWidget(line)

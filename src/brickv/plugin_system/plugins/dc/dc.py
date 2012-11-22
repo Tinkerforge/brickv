@@ -99,19 +99,13 @@ class DC(PluginBase, Ui_DC):
     
     def start(self):
         self.update_timer.start(1000)
-        try:
-            self.dc.set_current_velocity_period(100)
-            self.update_start()
-            self.update_data()
-        except ip_connection.Error:
-            return
+        async_call(self.dc.set_current_velocity_period, 100, None, self.increase_error_count)
+        self.update_start()
+        self.update_data()
         
     def stop(self):
         self.update_timer.stop()
-        try:
-            self.dc.set_current_velocity_period(0)
-        except ip_connection.Error:
-            return
+        async_call(self.dc.set_current_velocity_period, 0, None, self.increase_error_count)
 
     def has_reset_device(self):
         return self.version >= [1, 1, 3]
@@ -185,10 +179,7 @@ class DC(PluginBase, Ui_DC):
         qid.setIntMinimum(5000)
         qid.setIntMaximum(0xFFFF)
         qid.setIntStep(100)
-        try:
-            qid.setIntValue(self.dc.get_minimum_voltage())
-        except ip_connection.Error:
-            return
+        async_call(self.dc.get_minimum_voltage, None, qid.setIntValue, self.increase_error_count)
         qid.intValueSelected.connect(self.minimum_voltage_selected)
         qid.setLabelText("Choose minimum motor voltage in mV.")
         qid.open()

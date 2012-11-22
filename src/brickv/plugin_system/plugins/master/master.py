@@ -21,10 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-#import logging
-
 from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
 from bindings.brick_master import BrickMaster
 
 from PyQt4.QtGui import QWidget, QFrame, QMessageBox, QFileDialog, QProgressDialog
@@ -117,21 +114,18 @@ class ExtensionTypeWindow(QFrame, Ui_extension_type):
         try:
             self.master.set_extension_type(extension, typ)
         except:
-            print "fail 1"
             self.popup_fail()
             return
         
         try:
             new_type = self.master.get_extension_type(extension)
         except:
-            print "fail 2"
             self.popup_fail()
             return
         
         if typ == new_type:
             self.popup_ok()
         else:
-            print typ, new_type
             self.popup_fail()
     
 class Chibi(QWidget, Ui_Chibi):
@@ -517,8 +511,6 @@ class Wifi(QWidget, Ui_Wifi):
 
     def get_wifi_encryption_async(self, enc):
         encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length = enc
-        
-        print encryption, key
         
         if self.connection in (2, 3, 4, 5):
             encryption -= 2
