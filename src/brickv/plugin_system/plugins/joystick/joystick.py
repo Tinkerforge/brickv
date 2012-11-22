@@ -25,6 +25,7 @@ from plugin_system.plugin_base import PluginBase
 from plot_widget import PlotWidget
 from bindings import ip_connection
 from bindings.bricklet_joystick import BrickletJoystick
+from async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QFrame, QPainter, QPushButton, QBrush
 from PyQt4.QtCore import pyqtSignal, Qt
@@ -119,18 +120,12 @@ class Joystick(PluginBase):
         layout.addWidget(self.calibration_button)
 
     def start(self):
-        try:
-            self.js.set_position_callback_period(20)
-        except ip_connection.Error:
-            return
+        async_call(self.js.set_position_callback_period, 20, None, self.increase_error_count)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        try:
-            self.js.set_position_callback_period(0)
-        except ip_connection.Error:
-            pass
+        async_call(self.js.set_position_callback_period, 0, None, self.increase_error_count)
         
         self.plot_widget.stop = True
 

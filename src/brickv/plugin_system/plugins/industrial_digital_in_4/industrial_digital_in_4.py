@@ -72,10 +72,10 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
         async_call(self.idi4.get_debounce_period, None, self.debounce_time.setValue, self.increase_error_count)
         async_call(self.idi4.get_value, None, self.show_new_value, self.increase_error_count)
         self.reconfigure_everything()
-        self.idi4.set_interrupt(0xFFFF)
+        async_call(self.idi4.set_interrupt, 0xFFFF, None, self.increase_error_count)
 
     def stop(self):
-        self.idi4.set_interrupt(0)
+        async_call(self.idi4.set_interrupt, 0, None, self.increase_error_count)
 
     def get_url_part(self):
         return 'industrial_digital_in_4'

@@ -148,21 +148,15 @@ class IO16(PluginBase, Ui_IO16):
         async_call(self.io.get_debounce_period, None, get_debounce_period_async, self.increase_error_count)
         
     def start(self):
-        try:
-            self.io.set_port_interrupt('a', 0xFF)
-            self.io.set_port_interrupt('b', 0xFF)
-        except ip_connection.Error:
-            return
+        async_call(self.io.set_port_interrupt, ('a', 0xFF), None, self.increase_error_count)
+        async_call(self.io.set_port_interrupt, ('b', 0xFF), None, self.increase_error_count)
         
         if self.has_monoflop:
             self.update_timer.start()
 
     def stop(self):
-        try:
-            self.io.set_port_interrupt('a', 0)
-            self.io.set_port_interrupt('b', 0)
-        except ip_connection.Error:
-            return
+        async_call(self.io.set_port_interrupt, ('a', 0), None, self.increase_error_count)
+        async_call(self.io.set_port_interrupt, ('b', 0), None, self.increase_error_count)
 
         self.update_timer.stop()
 

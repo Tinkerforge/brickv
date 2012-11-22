@@ -25,7 +25,9 @@ from plugin_system.plugin_base import PluginBase
 from bindings.bricklet_gps import BrickletGPS
 
 from PyQt4.QtGui import QDesktopServices
-from PyQt4.QtCore import pyqtSignal, QUrl
+from PyQt4.QtCore import pyqtSignal, QUrl, QTimer
+
+from async_call import async_call
 
 from ui_gps import Ui_GPS
 
@@ -95,21 +97,22 @@ class GPS(PluginBase, Ui_GPS):
         self.cb_coordinates(self.last_lat, self.last_ns, self.last_long, self.last_ew, self.last_pdop, self.last_hdop, self.last_vdop, self.last_epe)
 
     def start(self):
-        self.gps.set_coordinates_callback_period(250)
-        self.gps.set_status_callback_period(250)
-        self.gps.set_altitude_callback_period(250)
-        self.gps.set_motion_callback_period(250)
-        self.gps.set_date_time_callback_period(250)
+        async_call(self.gps.set_coordinates_callback_period, 250, None, self.increase_error_count)
+        async_call(self.gps.set_status_callback_period, 250, None, self.increase_error_count)
+        async_call(self.gps.set_altitude_callback_period, 250, None, self.increase_error_count)
+        async_call(self.gps.set_motion_callback_period, 250, None, self.increase_error_count)
+        async_call(self.gps.set_date_time_callback_period, 250, None, self.increase_error_count)
+        
+        async_call(self.gps.get_battery_voltage, None, self.update_voltage, self.increase_error_count)
 
-        self.update_voltage()
         self.voltage_timer.start()
 
     def stop(self):
-        self.gps.set_coordinates_callback_period(0)
-        self.gps.set_status_callback_period(0)
-        self.gps.set_altitude_callback_period(0)
-        self.gps.set_motion_callback_period(0)
-        self.gps.set_date_time_callback_period(0)
+        async_call(self.gps.set_coordinates_callback_period, 0, None, self.increase_error_count)
+        async_call(self.gps.set_status_callback_period, 0, None, self.increase_error_count)
+        async_call(self.gps.set_altitude_callback_period, 0, None, self.increase_error_count)
+        async_call(self.gps.set_motion_callback_period, 0, None, self.increase_error_count)
+        async_call(self.gps.set_date_time_callback_period, 0, None, self.increase_error_count)
 
         self.voltage_timer.stop()
 
@@ -257,9 +260,5 @@ class GPS(PluginBase, Ui_GPS):
 
         self.time.setText(date_str)
 
-    def update_voltage(self):
-        try:
-            bv = self.gps.get_battery_voltage()
-            self.voltage.setText('%.2f V' % (bv/1000.0))
-        except ip_connection.Error:
-            pass
+    def update_voltage(self, bv):
+        self.voltage.setText('%.2f V' % (bv/1000.0))

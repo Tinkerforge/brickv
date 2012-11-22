@@ -79,19 +79,12 @@ class RotaryPoti(PluginBase):
 
     def start(self):
         async_call(self.rp.get_position, None, self.cb_position, self.increase_error_count)
-        try:
-            self.rp.set_position_callback_period(20)
-        except ip_connection.Error:
-            return
+        async_call(self.rp.set_position_callback_period, 20, None, self.increase_error_count)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        try:
-            self.rp.set_position_callback_period(0)
-            self.rp.set_analog_value_callback_period(0)
-        except ip_connection.Error:
-            pass
+        async_call(self.rp.set_position_callback_period, 0, None, self.increase_error_count)
         
         self.plot_widget.stop = True
 

@@ -194,18 +194,18 @@ in the image above, then press "Save Orientation".""")
             return
 
         self.gl_layout.activate()
-        self.imu.set_all_data_period(100)
-        self.imu.set_orientation_period(100)
-        self.imu.set_quaternion_period(50)
+        async_call(self.imu.set_all_data_period, 100, None, self.increase_error_count)
+        async_call(self.imu.set_orientation_period, 100, None, self.increase_error_count)
+        async_call(self.imu.set_quaternion_period, 50, None, self.increase_error_count)
         self.update_timer.start(50)
         
         async_call(self.imu.get_convergence_speed, None, self.speed_spinbox.setValue, self.increase_error_count)
         
     def stop(self):
         self.update_timer.stop()
-        self.imu.set_all_data_period(0)
-        self.imu.set_orientation_period(0)
-        self.imu.set_quaternion_period(0)
+        async_call(self.imu.set_all_data_period, 0, None, self.increase_error_count)
+        async_call(self.imu.set_orientation_period, 0, None, self.increase_error_count)
+        async_call(self.imu.set_quaternion_period, 0, None, self.increase_error_count)
 
     def destroy(self):
         self.alive = False

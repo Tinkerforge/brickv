@@ -66,18 +66,12 @@ class Temperature(PluginBase):
 
     def start(self):
         async_call(self.tem.get_temperature, None, self.cb_temperature, self.increase_error_count)
-        try:
-            self.tem.set_temperature_callback_period(100)
-        except ip_connection.Error:
-            return
+        async_call(self.tem.set_temperature_callback_period, 100, None, self.increase_error_count)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        try:
-            self.tem.set_temperature_callback_period(0)
-        except ip_connection.Error:
-            pass
+        async_call(self.tem.set_temperature_callback_period, 0, None, self.increase_error_count)
         
         self.plot_widget.stop = True
 

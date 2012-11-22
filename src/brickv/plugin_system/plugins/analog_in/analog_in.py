@@ -65,19 +65,12 @@ class AnalogIn(PluginBase):
         
     def start(self):
         async_call(self.ai.get_voltage, None, self.cb_voltage, self.increase_error_count)
-        
-        try:
-            self.ai.set_voltage_callback_period(100)
-        except ip_connection.Error:
-            return
+        async_call(self.ai.set_voltage_callback_period, 100, None, self.increase_error_count)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        try:
-            self.ai.set_voltage_callback_period(0)
-        except ip_connection.Error:
-            pass
+        async_call(self.ai.set_voltage_callback_period, 0, None, self.increase_error_count)
         
         self.plot_widget.stop = True
 

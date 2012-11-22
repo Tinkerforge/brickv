@@ -146,11 +146,8 @@ class Barometer(PluginBase):
         async_call(self.barometer.get_air_pressure, None, self.cb_air_pressure, self.increase_error_count)
         async_call(self.barometer.get_altitude, None, self.cb_altitude, self.increase_error_count)
 
-        try:
-            self.barometer.set_air_pressure_callback_period(100)
-            self.barometer.set_altitude_callback_period(100)
-        except ip_connection.Error:
-            return
+        async_call(self.barometer.set_air_pressure_callback_period, 100, None, self.increase_error_count)
+        async_call(self.barometer.set_altitude_callback_period, 100, None, self.increase_error_count)
 
         self.air_pressure_plot_widget.stop = False
         self.altitude_plot_widget.stop = False
@@ -159,11 +156,8 @@ class Barometer(PluginBase):
         self.chip_temp_timer.start()
 
     def stop(self):
-        try:
-            self.barometer.set_air_pressure_callback_period(0)
-            self.barometer.set_altitude_callback_period(0)
-        except ip_connection.Error:
-            pass
+        async_call(self.barometer.set_air_pressure_callback_period, 0, None, self.increase_error_count)
+        async_call(self.barometer.set_altitude_callback_period, 0, None, self.increase_error_count)
 
         self.air_pressure_plot_widget.stop = True
         self.altitude_plot_widget.stop = True

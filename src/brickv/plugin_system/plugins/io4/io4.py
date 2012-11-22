@@ -122,19 +122,13 @@ class IO4(PluginBase, Ui_IO4):
         async_call(self.io.get_debounce_period, None, get_debounce_period_async, self.increase_error_count)
         
     def start(self):
-        try:
-            self.io.set_interrupt(1 | 2 | 4 | 8)
-        except ip_connection.Error:
-            return
+        async_call(self.io.set_interrupt, 1 | 2 | 4 | 8, None, self.increase_error_count)
 
         if self.has_monoflop:
             self.update_timer.start()
         
     def stop(self):
-        try:
-            self.io.set_interrupt(0)
-        except ip_connection.Error:
-            return
+        async_call(self.io.set_interrupt, 0, None, self.increase_error_count)
 
         self.update_timer.stop()
 

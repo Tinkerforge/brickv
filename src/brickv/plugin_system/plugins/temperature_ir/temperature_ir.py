@@ -98,20 +98,14 @@ class TemperatureIR(PluginBase):
         async_call(self.tem.get_object_temperature, None, self.cb_object_temperature, self.increase_error_count)
         async_call(self.tem.get_emissivity, None, self.cb_emissivity, self.increase_error_count)
         
-        try:
-            self.tem.set_ambient_temperature_callback_period(250)
-            self.tem.set_object_temperature_callback_period(250)
-        except ip_connection.Error:
-            return
+        async_call(self.tem.set_ambient_temperature_callback_period, 250, None, self.increase_error_count)
+        async_call(self.tem.set_object_temperature_callback_period, 250, None, self.increase_error_count)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        try:
-            self.tem.set_ambient_temperature_callback_period(0)
-            self.tem.set_object_temperature_callback_period(0)
-        except ip_connection.Error:
-            pass
+        async_call(self.tem.set_ambient_temperature_callback_period, 0, None, self.increase_error_count)
+        async_call(self.tem.set_object_temperature_callback_period, 0, None, self.increase_error_count)
         
         self.plot_widget.stop = True
 

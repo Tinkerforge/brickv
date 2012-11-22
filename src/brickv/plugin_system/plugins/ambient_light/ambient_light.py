@@ -88,19 +88,12 @@ class AmbientLight(PluginBase):
         
     def start(self):
         async_call(self.al.get_illuminance, None, self.cb_illuminance, self.increase_error_count)
-        
-        try:
-            self.al.set_illuminance_callback_period(100)
-        except ip_connection.Error:
-            return
+        async_call(self.al.set_illuminance_callback_period, 100, None, self.increase_error_count)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        try:
-            self.al.set_illuminance_callback_period(0)
-        except ip_connection.Error:
-            pass
+        async_call(self.al.set_illuminance_callback_period, 0, None, self.increase_error_count)
         
         self.plot_widget.stop = True
 

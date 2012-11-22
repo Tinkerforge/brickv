@@ -65,18 +65,12 @@ class Humidity(PluginBase):
 
     def start(self):
         async_call(self.hum.get_humidity, None, self.cb_humidity, self.increase_error_count)
-        try:
-            self.hum.set_humidity_callback_period(100)
-        except ip_connection.Error:
-            pass
+        async_call(self.hum.set_humidity_callback_period, 100, None, self.increase_error_count)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        try:
-            self.hum.set_humidity_callback_period(0)
-        except ip_connection.Error:
-            return
+        async_call(self.hum.set_humidity_callback_period, 0, None, self.increase_error_count)
         
         self.plot_widget.stop = True
 

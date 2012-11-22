@@ -81,19 +81,12 @@ class Current25(PluginBase):
 
     def start(self):
         async_call(self.cur.get_current, None, self.cb_current, self.increase_error_count)
-        
-        try:
-            self.cur.set_current_callback_period(100)
-        except ip_connection.Error:
-            return
+        async_call(self.cur.set_current_callback_period, 100, None, self.increase_error_count)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        try:
-            self.cur.set_current_callback_period(0)
-        except ip_connection.Error:
-            pass
+        async_call(self.cur.set_current_callback_period, 0, None, self.increase_error_count)
         
         self.plot_widget.stop = True
 
