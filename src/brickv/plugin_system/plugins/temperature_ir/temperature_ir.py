@@ -115,6 +115,9 @@ class TemperatureIR(PluginBase):
         
         self.plot_widget.stop = True
 
+    def get_url_part(self):
+        return 'temperature_ir'
+
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletTemperatureIR.DEVICE_IDENTIFIER

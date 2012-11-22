@@ -91,7 +91,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>0.0</string>
+            <string>Unknown</string>
            </property>
           </widget>
          </item>
@@ -115,7 +115,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>0.0</string>
+            <string>Unknown</string>
            </property>
           </widget>
          </item>
@@ -131,14 +131,14 @@
        <item>
         <widget class="QLabel" name="dop">
          <property name="text">
-          <string>0</string>
+          <string>Unknown</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="epe">
          <property name="text">
-          <string>0 m</string>
+          <string>Unknown</string>
          </property>
         </widget>
        </item>
@@ -206,6 +206,13 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Battery Voltage:</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
@@ -234,28 +241,35 @@
        <item>
         <widget class="QLabel" name="altitude">
          <property name="text">
-          <string>0 m</string>
+          <string>Unknown</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="course">
          <property name="text">
-          <string>0°</string>
+          <string>Unknown</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="speed">
          <property name="text">
-          <string>0 km/h</string>
+          <string>Unknown</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="time">
          <property name="text">
-          <string>00:00:00</string>
+          <string>Unknown</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="voltage">
+         <property name="text">
+          <string>0 V</string>
          </property>
         </widget>
        </item>

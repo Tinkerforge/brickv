@@ -261,6 +261,9 @@ class Servo(PluginBase, Ui_Servo):
     def is_brick(self):
         return True
 
+    def get_url_part(self):
+        return 'servo'
+
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickServo.DEVICE_IDENTIFIER

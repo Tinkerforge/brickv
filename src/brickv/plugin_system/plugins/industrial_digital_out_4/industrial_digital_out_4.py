@@ -89,6 +89,9 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
     def stop(self):
         pass
 
+    def get_url_part(self):
+        return 'industrial_digital_out_4'
+
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialDigitalOut4.DEVICE_IDENTIFIER

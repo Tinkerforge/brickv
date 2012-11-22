@@ -222,6 +222,9 @@ in the image above, then press "Save Orientation".""")
     def is_brick(self):
         return True
 
+    def get_url_part(self):
+        return 'imu'
+
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickIMU.DEVICE_IDENTIFIER

@@ -86,6 +86,7 @@ class MainTableModel(QAbstractTableModel):
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     qtcb_enumerate = pyqtSignal(str, str, 'char', type((0,)), type((0,)), int, int)
+    qtcb_disconnected = pyqtSignal(int)
 
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
@@ -116,6 +117,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_advanced.setDisabled(True)
 
         self.qtcb_enumerate.connect(self.cb_enumerate)
+        self.qtcb_disconnected.connect(self.cb_disconnected)
 
         self.tab_widget.currentChanged.connect(self.tab_changed)
         self.connect.pressed.connect(self.connect_pressed)
@@ -185,10 +187,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.update_table_view()
 
-        if self.ipcon:
-            self.ipcon.destroy()
-        self.ipcon = None
-
     def updates_pressed(self):
         if self.updates_window is None:
             self.updates_window = UpdatesWindow(self, config)
@@ -222,7 +220,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 host = self.combo_host.currentText()
                 self.ipcon = IPConnection(host, self.spinbox_port.value())
-                self.ipcon.enumerate(self.qtcb_enumerate.emit)
+                self.ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, self.qtcb_enumerate.emit)
+                self.ipcon.register_callback(IPConnection.CALLBACK_DISCONNECTED, self.qtcb_disconnected.emit)
+                self.ipcon.connect()
+                self.ipcon.enumerate()
                 self.connect.setText("Disconnect")
                 self.combo_host.setDisabled(True)
                 self.spinbox_port.setDisabled(True)
@@ -239,17 +240,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.ipcon = None
                 box_head = 'Could not connect'
                 box_text = 'Please check host, check port and ' + \
-                           'check if brickd is running.'
+                           'check if the Brick Daemon is running.'
                 QMessageBox.critical(self, box_head, box_text)
         else:
             self.reset_view()
+            self.ipcon.disconnect()
 
-            self.connect.setText("Connect")
-            self.button_advanced.setDisabled(True)
-            self.combo_host.setDisabled(False)
-            self.spinbox_port.setDisabled(False)
-
-    def create_plugin_container(self, plugin, connected_uid, position, hardware_version):
+    def create_plugin_container(self, plugin, connected_uid, position):
         container = QWidget()
         layout = QVBoxLayout(container)
         info = QHBoxLayout()
@@ -265,7 +262,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # connected uid
         if connected_uid != '0':
-            info.addWidget(QLabel('Connected to UID:'))
+            info.addWidget(QLabel('Connected to:'))
             label = QLabel('{0}'.format(connected_uid))
             label.setTextInteractionFlags(Qt.TextSelectableByMouse |
                                           Qt.TextSelectableByKeyboard)
@@ -282,12 +279,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # firmware version
         info.addWidget(QLabel('FW Version:'))
         info.addWidget(QLabel('{0}'.format(plugin.version_str)))
-
-        info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
-
-        # hardware version
-        info.addWidget(QLabel('HW Version:'))
-        info.addWidget(QLabel('{0}'.format('.'.join(map(str, hardware_version)))))
 
         if plugin.is_brick():
             button = QPushButton('Reset')
@@ -322,7 +313,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     return
             plugin = self.plugin_manager.get_plugin_from_device_identifier(device_identifier, self.ipcon, uid, firmware_version)
             if plugin is not None:
-                self.tab_widget.addTab(self.create_plugin_container(plugin, connected_uid, position, hardware_version), plugin.name)
+                if plugin.is_hardware_version_relevant():
+                    tab_name = '{0} {1}.{2}'.format(plugin.name, hardware_version[0], hardware_version[1])
+                else:
+                    tab_name = plugin.name
+
+                self.tab_widget.addTab(self.create_plugin_container(plugin, connected_uid, position), tab_name)
                 self.plugins.append(plugin)
         elif enumeration_type == IPConnection.ENUMERATION_DISCONNECTED:
             for i in range(len(self.plugins)):
@@ -336,6 +332,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     return
 
         self.update_table_view()
+
+    def cb_disconnected(self, disconnect_type):
+        self.reset_view()
+        self.connect.setText("Connect")
+        self.button_advanced.setDisabled(True)
+        self.combo_host.setDisabled(False)
+        self.spinbox_port.setDisabled(False)
+        self.ipcon = None
+
+        if disconnect_type == IPConnection.DISCONNECT_ERROR:
+            QMessageBox.critical(self, "Connection", "Connection lost, an error occured!", QMessageBox.Ok)
+        elif disconnect_type == IPConnection.DISCONNECT_SHUTDOWN:
+            QMessageBox.critical(self, "Connection", "Connection lost, socket disconnected by server!", QMessageBox.Ok)
 
     def update_table_view(self):
         data = []
@@ -355,7 +364,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_updates_window(self):
         devices = []
         for plugin in self.plugins[1:]:
-            devices.append((plugin.name, plugin.uid, plugin.version_str, plugin.is_brick()))
+            devices.append({ 'name': plugin.name,
+                             'uid': plugin.uid,
+                             'version': plugin.version_str,
+                             'is_brick': plugin.is_brick(),
+                             'url_part': plugin.get_url_part() })
 
         if self.updates_window is not None:
             self.updates_window.set_devices(devices)

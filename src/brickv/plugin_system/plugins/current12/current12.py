@@ -96,6 +96,9 @@ class Current12(PluginBase):
             
         self.plot_widget.stop = True
 
+    def get_url_part(self):
+        return 'current12'
+
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletCurrent12.DEVICE_IDENTIFIER
