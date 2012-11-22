@@ -22,9 +22,9 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QPixmap
-from PyQt4.QtCore import Qt, pyqtSignal, QTimer
+from PyQt4.QtGui import QPixmap
+from PyQt4.QtCore import Qt, pyqtSignal
+from async_call import async_call
 
 from ui_industrial_digital_in_4 import Ui_IndustrialDigitalIn4
 
@@ -52,12 +52,8 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
         self.line_2vs3.setVisible(False)
         self.line_3vs4.setVisible(False)
         
-        debounce_period = self.idi4.get_debounce_period()
-        self.debounce_time.setValue(debounce_period)
-        value = self.idi4.get_value()
-        self.show_new_value(value)
-        
-        self.available_ports = self.idi4.get_available_for_group()
+        self.available_ports = 0
+        async_call(self.idi4.get_available_for_group, None, self.get_available_for_group_aysnc, self.increase_error_count)
         
         self.qtcb_interrupt.connect(self.cb_interrupt)
         self.idi4.register_callback(self.idi4.CALLBACK_INTERRUPT,
@@ -69,11 +65,12 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
         
         self.reconfigure_everything()
         
+    def get_available_for_group_aysnc(self, available_ports):
+        self.available_ports = available_ports
+        
     def start(self):
-        debounce_period = self.idi4.get_debounce_period()
-        self.debounce_time.setValue(debounce_period)
-        value = self.idi4.get_value()
-        self.show_new_value(value)
+        async_call(self.idi4.get_debounce_period, None, self.debounce_time.setValue, self.increase_error_count)
+        async_call(self.idi4.get_value, None, self.show_new_value, self.increase_error_count)
         self.reconfigure_everything()
         self.idi4.set_interrupt(0xFFFF)
 
@@ -93,17 +90,7 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
                 self.pin_buttons[i].setText('low')
                 self.pin_button_icons[i].setPixmap(self.gnd_pixmap)
     
-    def reconfigure_everything(self):
-        for i in range(4):
-            self.groups[i].clear()
-            self.groups[i].addItem('Off')
-            for j in range(4):
-                if self.available_ports & (1 << j):
-                    item = 'Port ' + chr(ord('A') + j)
-                    self.groups[i].addItem(item)
-                    
-        group = self.idi4.get_group()
-        
+    def reconfigure_everything_async(self, group):
         for i in range(4):
             if group[i] == 'n':
                 self.groups[i].setCurrentIndex(0)
@@ -126,6 +113,17 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
                     self.hide_buttons(i)
                 else:
                     self.show_buttons(i)
+    
+    def reconfigure_everything(self):
+        for i in range(4):
+            self.groups[i].clear()
+            self.groups[i].addItem('Off')
+            for j in range(4):
+                if self.available_ports & (1 << j):
+                    item = 'Port ' + chr(ord('A') + j)
+                    self.groups[i].addItem(item)
+                    
+        async_call(self.idi4.get_group, None, self.reconfigure_everything_async, self.increase_error_count)
             
     def show_buttons(self, num):
         for i in range(num*4, (num+1)*4):

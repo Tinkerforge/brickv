@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Ambient Light Plugin
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 ambientlight.py: Ambient Light Bricklet Plugin Implementation
 
@@ -25,6 +25,7 @@ from plugin_system.plugin_base import PluginBase
 from plot_widget import PlotWidget
 from bindings import ip_connection
 from bindings.bricklet_ambient_light import BrickletAmbientLight
+from async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPainter, QColor, QBrush, QFrame
 from PyQt4.QtCore import Qt, pyqtSignal
@@ -86,11 +87,13 @@ class AmbientLight(PluginBase):
         layout.addWidget(self.plot_widget)
         
     def start(self):
+        async_call(self.al.get_illuminance, None, self.cb_illuminance, self.increase_error_count)
+        
         try:
-            self.cb_illuminance(self.al.get_illuminance())
             self.al.set_illuminance_callback_period(100)
         except ip_connection.Error:
             return
+        
         self.plot_widget.stop = False
         
     def stop(self):

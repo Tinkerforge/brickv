@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Joystick Plugin
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 joystick.py: Joystick Plugin implementation
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 brickv (Brick Viewer) 
-Copyright (C) 2009-2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 dc.py: DC Plugin implementation
 
@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
 from bindings.brick_dc import BrickDC
+from async_call import async_call
 
 from PyQt4.QtGui import QErrorMessage, QInputDialog
 from PyQt4.QtCore import QTimer, Qt, pyqtSignal
@@ -222,50 +223,43 @@ class DC(PluginBase, Ui_DC):
         if value != self.speedometer.value():
             self.speedometer.set_velocity(value)
         
+    def get_velocity_async(self, velocity):
+        if not self.velocity_slider.isSliderDown():
+            if velocity != self.velocity_slider.sliderPosition():
+                self.velocity_slider.setSliderPosition(velocity)
+                self.velocity_spin.setValue(velocity)
+        
+    def get_acceleration_async(self, acceleration):
+        if not self.acceleration_slider.isSliderDown():
+            if acceleration != self.acceleration_slider.sliderPosition():
+                self.acceleration_slider.setSliderPosition(acceleration)
+                self.acceleration_spin.setValue(acceleration)
+        
+    def get_pwm_frequency_async(self, frequency):
+        if not self.frequency_slider.isSliderDown():
+            if frequency != self.frequency_slider.sliderPosition():
+                self.frequency_slider.setSliderPosition(frequency)
+                self.frequency_spin.setValue(frequency)
+        
+    def is_enabled_async(self, enabled):
+        if enabled:
+            self.enable_checkbox.setCheckState(Qt.Checked)
+        else:
+            self.enable_checkbox.setCheckState(Qt.Unchecked)
+        
     def update_start(self):
-        try:
-            dm = self.dc.get_drive_mode()
-            self.drive_mode_update(dm)
+        async_call(self.dc.get_drive_mode, None, self.drive_mode_update, self.increase_error_count)
+        async_call(self.dc.get_velocity, None, self.get_velocity_async, self.increase_error_count)
+        async_call(self.dc.get_acceleration, None, self.get_acceleration_async, self.increase_error_count)
+        async_call(self.dc.get_pwm_frequency, None, self.get_pwm_frequency_async, self.increase_error_count)
+        async_call(self.dc.is_enabled, None, self.is_enabled_async, self.increase_error_count)
             
-            if not self.velocity_slider.isSliderDown():
-                velocity = self.dc.get_velocity()
-                if velocity != self.velocity_slider.sliderPosition():
-                    self.velocity_slider.setSliderPosition(velocity)
-                    self.velocity_spin.setValue(velocity)
-                 
-            if not self.acceleration_slider.isSliderDown():
-                acceleration = self.dc.get_acceleration()
-                if acceleration != self.acceleration_slider.sliderPosition():
-                    self.acceleration_slider.setSliderPosition(acceleration)
-                    self.acceleration_spin.setValue(acceleration)
-                    
-            if not self.frequency_slider.isSliderDown():
-                frequency = self.dc.get_pwm_frequency()
-                if frequency != self.frequency_slider.sliderPosition():
-                    self.frequency_slider.setSliderPosition(frequency)
-                    self.frequency_spin.setValue(frequency)
-    
-            enabled = self.dc.is_enabled()
-            if enabled:
-                self.enable_checkbox.setCheckState(Qt.Checked)
-            else:
-                self.enable_checkbox.setCheckState(Qt.Unchecked)
-        except ip_connection.Error:
-            return
-        
+
     def update_data(self):
-        try:
-            sv = self.dc.get_stack_input_voltage()
-            ev = self.dc.get_external_input_voltage()
-            mv = self.dc.get_minimum_voltage()
-            cc = self.dc.get_current_consumption()
-        except ip_connection.Error:
-            return
-        
-        self.stack_input_voltage_update(sv)
-        self.external_input_voltage_update(ev)
-        self.minimum_voltage_update(mv)
-        self.current_consumption_update(cc)
+        async_call(self.dc.get_stack_input_voltage, None, self.stack_input_voltage_update, self.increase_error_count)
+        async_call(self.dc.get_external_input_voltage, None, self.external_input_voltage_update, self.increase_error_count)
+        async_call(self.dc.get_minimum_voltage, None, self.minimum_voltage_update, self.increase_error_count)
+        async_call(self.dc.get_current_consumption, None, self.current_consumption_update, self.increase_error_count)
         
     def acceleration_slider_released(self):
         value = self.acceleration_slider.value()

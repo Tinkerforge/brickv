@@ -2,7 +2,7 @@
 """
 IO4 Plugin
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 humidity.py: IO4 Plugin Implementation
 
@@ -24,9 +24,9 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 from PyQt4.QtCore import pyqtSignal, QTimer
 from ui_io4 import Ui_IO4
+from async_call import async_call
 
 from bindings.bricklet_io4 import BrickletIO4
         
@@ -55,24 +55,8 @@ class IO4(PluginBase, Ui_IO4):
         self.monoflop_active = [False, False, False, False]
         self.monoflop_timebefore = [500, 500, 500, 500]
 
-        try:
-            value = self.io.get_value()
-            dir, config = self.io.get_configuration()
-            time = [0, 0, 0, 0]
-            time_remaining = [0, 0, 0, 0]
-
-            if self.has_monoflop:
-                for pin in range(4):
-                    monoflop = self.io.get_monoflop(pin)
-                    time[pin] = monoflop.time
-                    time_remaining[pin] = monoflop.time_remaining
-
-            self.init_values(value, dir, config, time, time_remaining)
-
-            debounce = self.io.get_debounce_period()
-            self.debounce_edit.setText(str(debounce))
-        except ip_connection.Error:
-            pass
+        self.init_async_generator = self.init_async()
+        self.init_async_generator.next()
         
         self.save_button.pressed.connect(self.save_pressed)
         self.pin_box.currentIndexChanged.connect(self.pin_changed)
@@ -92,10 +76,50 @@ class IO4(PluginBase, Ui_IO4):
         if not self.has_monoflop:
             self.go_button.setText("Go (> 1.1.0 needed)")
             self.go_button.setEnabled(False)
-        else:
-            self.update_timer.start()
         
         self.pin_changed(0)
+        
+        
+    def init_async(self):
+        self.init_value = 0
+        self.init_dir = 0
+        self.init_config = 0
+        self.init_monoflop = 0
+        
+        def get_port_async(value):
+            self.init_value = value
+            self.update_generator.next()
+        
+        def get_port_configuration_async(conf):
+            self.init_dir, self.init_config = conf
+            self.update_generator.next()
+            
+        def get_monoflop_async(init_monoflop):
+            self.init_monoflop = init_monoflop
+            self.update_generator.next()
+        
+        def get_debounce_period_async(debounce_period):
+            self.debounce_edit.setText(str(debounce_period))
+        
+        async_call(self.io.get_value, None, get_port_async, self.increase_error_count)
+        yield
+        async_call(self.io.get_configuration, None, get_port_async, self.increase_error_count)
+        yield
+
+        time = [0, 0, 0, 0]
+        time_remaining = [0, 0, 0, 0]
+
+        if self.has_monoflop:
+            for pin in range(4):
+                async_call(self.io.get_monoflop, pin, get_monoflop_async, self.increase_error_count)
+                yield
+   
+                time[pin] = self.init_monoflop.time
+                time_remaining[pin] = self.init_monoflop.time_remaining
+
+        self.init_values(self.init_value, self.init_dir, self.init_config, time, time_remaining)
+
+        async_call(self.io.get_debounce_period, None, get_debounce_period_async, self.increase_error_count)
         
     def start(self):
         try:
@@ -283,17 +307,21 @@ class IO4(PluginBase, Ui_IO4):
                     self.port_value[pin].setText('Low')
                     self.port_config[pin].setText('Low')
 
-    def update(self):
+    def update_async(self, pin, monoflop):
         selected_pin = int(self.pin_box.currentText())
+        
+        _, _, time_remaining = monoflop
+        print time_remaining
+        if pin == selected_pin:
+            self.time_spinbox.setValue(time_remaining)
 
+        self.port_time[pin].setText(str(time_remaining))
+
+    def update(self):
         for pin in range(4):
             if self.monoflop_active[pin]:
-                try:
-                    value, time, time_remaining = self.io.get_monoflop(pin)
-                except ip_connection.Error:
-                    continue
-
-                if pin == selected_pin:
-                    self.time_spinbox.setValue(time_remaining)
-
-                self.port_time[pin].setText(str(time_remaining))
+                def get_lambda(pin):
+                    return lambda x: self.update_async(pin, x)
+                
+                print "make async"
+                async_call(self.io.get_monoflop, pin, get_lambda(pin), self.increase_error_count)

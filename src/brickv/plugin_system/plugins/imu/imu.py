@@ -24,8 +24,8 @@ Boston, MA 02111-1307, USA.
 #import logging
 
 from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
 from bindings.brick_imu import BrickIMU
+from async_call import async_call
 
 from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy
 from PyQt4.QtCore import Qt, QTimer
@@ -199,8 +199,7 @@ in the image above, then press "Save Orientation".""")
         self.imu.set_quaternion_period(50)
         self.update_timer.start(50)
         
-        speed = self.imu.get_convergence_speed()
-        self.speed_spinbox.setValue(speed)
+        async_call(self.imu.get_convergence_speed, None, self.speed_spinbox.setValue, self.increase_error_count)
         
     def stop(self):
         self.update_timer.stop()

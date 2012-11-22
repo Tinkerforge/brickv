@@ -35,7 +35,10 @@ import config
 
 #import PyQt4
 from PyQt4.QtGui import QApplication
+from PyQt4.QtCore import QEvent
+
 from mainwindow import MainWindow
+from async_call import ASYNC_EVENT, async_event_handler
 
 logging.basicConfig( 
     level = config.LOGGING_LEVEL, 
@@ -43,8 +46,15 @@ logging.basicConfig(
     datefmt = config.LOGGING_DATEFMT
 ) 
 
+class BrickViewer(QApplication):
+    def notify(self, receiver, event):
+        if event.type() > QEvent.User:
+            if event.type() == ASYNC_EVENT:
+                async_event_handler()
+        return super(BrickViewer, self).notify(receiver, event)
+
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+    brickv = BrickViewer(sys.argv)
+    main = MainWindow()
+    main.show()
+    sys.exit(brickv.exec_())

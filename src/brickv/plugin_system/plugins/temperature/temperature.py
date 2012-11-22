@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Temperature Plugin
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 temperature.py: Temperature Plugin Implementation
 
@@ -25,6 +25,7 @@ from plugin_system.plugin_base import PluginBase
 from plot_widget import PlotWidget
 from bindings import ip_connection
 from bindings.bricklet_temperature import BrickletTemperature
+from async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
@@ -64,8 +65,8 @@ class Temperature(PluginBase):
         layout.addWidget(self.plot_widget)
 
     def start(self):
+        async_call(self.tem.get_temperature, None, self.cb_temperature, self.increase_error_count)
         try:
-            self.cb_temperature(self.tem.get_temperature())
             self.tem.set_temperature_callback_period(100)
         except ip_connection.Error:
             return

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 LCD20x4 Plugin
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 lcd_20x4.py: LCD20x4 Plugin Implementation
 
@@ -25,6 +25,7 @@ from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
 from bindings.bricklet_lcd_20x4 import BrickletLCD20x4
 from bindings.ks0066u import unicode_to_ks0066u
+from async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QComboBox
 from PyQt4.QtCore import pyqtSignal
@@ -81,25 +82,6 @@ class LCD20x4(PluginBase):
         self.bl_button = QPushButton()
         self.cursor_button = QPushButton()
         self.blink_button = QPushButton()
-        
-        try:
-            if self.lcd.is_backlight_on():
-                self.bl_button.setText('Backlight Off')
-            else:
-                self.bl_button.setText('Backlight On')
-                
-            cursor, blink = self.lcd.get_config()
-            if cursor:
-                self.cursor_button.setText('Cursor Off')
-            else:
-                self.cursor_button.setText('Cursor On')
-                
-            if blink:
-                self.blink_button.setText('Blink Off')
-            else:
-                self.blink_button.setText('Blink On')
-        except ip_connection.Error:
-            pass
             
         self.onofflayout = QHBoxLayout()
         self.onofflayout.addWidget(self.bl_button)
@@ -127,8 +109,27 @@ class LCD20x4(PluginBase):
         layout.addWidget(self.b2_label)
         layout.addStretch()
 
+    def is_backlight_on_async(self, on):
+        if on:
+            self.bl_button.setText('Backlight Off')
+        else:
+            self.bl_button.setText('Backlight On')
+            
+    def get_config_async(self, config):
+        cursor, blink = config
+        if cursor:
+            self.cursor_button.setText('Cursor Off')
+        else:
+            self.cursor_button.setText('Cursor On')
+            
+        if blink:
+            self.blink_button.setText('Blink Off')
+        else:
+            self.blink_button.setText('Blink On')
+
     def start(self):
-        pass
+        async_call(self.lcd.is_backlight_on, None, self.is_backlight_on_async, self.increase_error_count)
+        async_call(self.lcd.get_config, None, self.get_config_async, self.increase_error_count)
         
     def stop(self):
         pass

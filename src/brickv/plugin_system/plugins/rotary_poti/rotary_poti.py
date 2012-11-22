@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Rotary Poti Plugin
-Copyright (C) 2010-2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 poti.py: Rotary Poti Plugin implementation
 
@@ -25,6 +25,7 @@ from plugin_system.plugin_base import PluginBase
 from plot_widget import PlotWidget
 from bindings import ip_connection
 from bindings.bricklet_rotary_poti import BrickletRotaryPoti
+from async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
@@ -77,10 +78,9 @@ class RotaryPoti(PluginBase):
         layout.addWidget(self.plot_widget)
 
     def start(self):
+        async_call(self.rp.get_position, None, self.cb_position, self.increase_error_count)
         try:
-            self.cb_position(self.rp.get_position())
             self.rp.set_position_callback_period(20)
-            self.rp.set_analog_value_callback_period(20)
         except ip_connection.Error:
             return
         

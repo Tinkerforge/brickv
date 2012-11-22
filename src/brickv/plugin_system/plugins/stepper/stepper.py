@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 brickv (Brick Viewer) 
-Copyright (C) 2009-2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 stepper.py: Stepper Plugin implementation
 
@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
 from bindings.brick_stepper import BrickStepper
+from async_call import async_call
 
 from PyQt4.QtGui import QErrorMessage, QInputDialog
 from PyQt4.QtCore import QTimer, Qt, pyqtSignal
@@ -99,7 +100,6 @@ class Stepper(PluginBase, Ui_Stepper):
                                        self.qtcb_under_voltage.emit)
         
         self.update_data_async_thread = None
-        self.update_data_alive = False
         
         self.ste = 0
         self.pos = 0
@@ -114,14 +114,8 @@ class Stepper(PluginBase, Ui_Stepper):
         self.update_timer.start(100)
         self.update_start()
         
-        self.update_data_alive = True
-        self.update_data_async_thread = Thread(target=self.update_data_async)
-        self.update_data_async_thread.daemon = True
-        self.update_data_async_thread.start()
-    
     def stop(self):
         self.update_timer.stop()
-        self.update_data_alive = False
 
     def has_reset_device(self):
         return self.version >= [1, 1, 4]
@@ -216,10 +210,7 @@ class Stepper(PluginBase, Ui_Stepper):
         qid.setIntMinimum(0)
         qid.setIntMaximum(2500)
         qid.setIntStep(100)
-        try:
-            qid.setIntValue(self.stepper.get_motor_current())
-        except ip_connection.Error:
-            return
+        async_call(self.stepper.get_motor_current, None, qid.setIntValue, self.increase_error_count)
         qid.intValueSelected.connect(self.motor_current_selected)
         qid.setLabelText("Choose motor current in mA.")
 #                         "<font color=red>Setting this too high can destroy your Motor.</font>")
@@ -231,10 +222,7 @@ class Stepper(PluginBase, Ui_Stepper):
         qid.setIntMinimum(0)
         qid.setIntMaximum(40000)
         qid.setIntStep(100)
-        try:
-            qid.setIntValue(self.stepper.get_minimum_voltage())
-        except ip_connection.Error:
-            return
+        async_call(self.stepper.get_minimum_voltage, None, qid.setIntValue, self.increase_error_count)
         qid.intValueSelected.connect(self.minimum_motor_voltage_selected)
         qid.setLabelText("Choose minimum motor voltage in mV.")
         qid.open()
@@ -306,75 +294,50 @@ class Stepper(PluginBase, Ui_Stepper):
             
         self.mode_dropbox.setCurrentIndex(index)
         
+    def get_max_velocity_async(self, velocity):
+        if not self.velocity_slider.isSliderDown():
+            if velocity != self.velocity_slider.sliderPosition():
+                self.velocity_slider.setSliderPosition(velocity)
+                self.velocity_spin.setValue(velocity)
+        
+    def get_speed_ramping_async(self, ramp):
+        acc, dec = ramp
+        if not self.acceleration_slider.isSliderDown() and \
+           not self.deceleration_slider.isSliderDown():
+            if acc != self.acceleration_slider.sliderPosition():
+                self.acceleration_slider.setSliderPosition(acc)
+                self.acceleration_spin.setValue(acc)
+            if dec != self.deceleration_slider.sliderPosition():
+                self.deceleration_slider.setSliderPosition(dec)
+                self.deceleration_spin.setValue(dec)
+        
+    def is_enabled_async(self, enabled):
+        if enabled:
+            if self.enable_checkbox.checkState() != Qt.Checked:
+                self.endis_all(True)
+                self.enable_checkbox.setCheckState(Qt.Checked)
+        else:
+            if self.enable_checkbox.checkState() != Qt.Unchecked:
+                self.endis_all(False)
+                self.enable_checkbox.setCheckState(Qt.Unchecked)
         
     def update_start(self):
-        try:
-            if not self.velocity_slider.isSliderDown():
-                velocity = self.stepper.get_max_velocity()
-                if velocity != self.velocity_slider.sliderPosition():
-                    self.velocity_slider.setSliderPosition(velocity)
-                    self.velocity_spin.setValue(velocity)
-                 
-            if not self.acceleration_slider.isSliderDown() and \
-               not self.deceleration_slider.isSliderDown():
-                acc, dec = self.stepper.get_speed_ramping()
-                if acc != self.acceleration_slider.sliderPosition():
-                    self.acceleration_slider.setSliderPosition(acc)
-                    self.acceleration_spin.setValue(acc)
-                if dec != self.deceleration_slider.sliderPosition():
-                    self.deceleration_slider.setSliderPosition(dec)
-                    self.deceleration_spin.setValue(dec)
-                    
-#            if not self.decay_slider.isSliderDown():
-#                dec = self.stepper.get_decay()
-#                if dec != self.decay_slider.sliderPosition():
-#                    self.decay_slider.setSliderPosition(dec)
-#                    self.decay_spin.setValue(dec)
-    
-            enabled = self.stepper.is_enabled()
-            if enabled:
-                if self.enable_checkbox.checkState() != Qt.Checked:
-                    self.endis_all(True)
-                    self.enable_checkbox.setCheckState(Qt.Checked)
-            else:
-                if self.enable_checkbox.checkState() != Qt.Unchecked:
-                    self.endis_all(False)
-                    self.enable_checkbox.setCheckState(Qt.Unchecked)
-        except ip_connection.Error:
-            return
+        async_call(self.stepper.get_max_velocity, None, self.get_max_velocity_async, self.increase_error_count)
+        async_call(self.stepper.get_speed_ramping, None, self.get_speed_ramping_async, self.increase_error_count)
+        async_call(self.stepper.is_enabled, None, self.is_enabled_async, self.increase_error_count)
 
     def update_data(self):
-        self.remaining_steps_update(self.ste)
-        self.position_update(self.pos)
-            
-        if self.current_velocity != self.speedometer.value():
-            self.speedometer.set_velocity(self.current_velocity)
-        
-        self.maximum_current_update(self.cur)
-        self.stack_input_voltage_update(self.sv)
-        self.external_input_voltage_update(self.ev)
-        self.minimum_voltage_update(self.mv)
-        self.mode_update(self.mod)
-        
-    def update_data_async(self):
-        while self.update_data_alive:
-            try:
-                self.ste = self.stepper.get_remaining_steps()
-                self.pos = self.stepper.get_current_position()
-                self.current_velocity = self.stepper.get_current_velocity()
-                
-                self.update_counter += 1
-                if self.update_counter % 10 == 0:
-                    self.cur = self.stepper.get_motor_current()
-                    self.sv  = self.stepper.get_stack_input_voltage()
-                    self.ev  = self.stepper.get_external_input_voltage()
-                    self.mv  = self.stepper.get_minimum_voltage()
-                    self.mod = self.stepper.get_step_mode()
-            except:
-                pass
-            time.sleep(0.1)
-            
-            
+        async_call(self.stepper.get_remaining_steps, None, self.remaining_steps_update, self.increase_error_count)
+        async_call(self.stepper.get_current_position, None, self.position_update, self.increase_error_count)
+        async_call(self.stepper.get_current_velocity, None, self.speedometer.set_velocity, self.increase_error_count)
+
+        self.update_counter += 1
+        if self.update_counter % 10 == 0:
+            async_call(self.stepper.get_motor_current, None, self.maximum_current_update, self.increase_error_count)
+            async_call(self.stepper.get_stack_input_voltage, None, self.stack_input_voltage_update, self.increase_error_count)
+            async_call(self.stepper.get_external_input_voltage, None, self.external_input_voltage_update, self.increase_error_count)
+            async_call(self.stepper.get_minimum_voltage, None, self.minimum_voltage_update, self.increase_error_count)
+            async_call(self.stepper.get_step_mode, None, self.mode_update, self.increase_error_count)
         
     def velocity_slider_released(self):
         value = self.velocity_slider.value()

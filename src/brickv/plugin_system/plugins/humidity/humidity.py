@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Humidity Plugin
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 humidity.py: Humidity Plugin Implementation
 
@@ -25,6 +25,7 @@ from plugin_system.plugin_base import PluginBase
 from plot_widget import PlotWidget
 from bindings import ip_connection
 from bindings.bricklet_humidity import BrickletHumidity
+from async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
@@ -63,8 +64,8 @@ class Humidity(PluginBase):
         layout.addWidget(self.plot_widget)
 
     def start(self):
+        async_call(self.hum.get_humidity, None, self.cb_humidity, self.increase_error_count)
         try:
-            self.cb_humidity(self.hum.get_humidity())
             self.hum.set_humidity_callback_period(100)
         except ip_connection.Error:
             pass

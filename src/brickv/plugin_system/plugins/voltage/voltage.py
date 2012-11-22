@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Voltage Plugin
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 voltage.py: Voltage Plugin Implementation
 
@@ -25,6 +25,7 @@ from plugin_system.plugin_base import PluginBase
 from plot_widget import PlotWidget
 from bindings import ip_connection
 from bindings.bricklet_voltage import BrickletVoltage
+from async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
@@ -63,8 +64,9 @@ class Voltage(PluginBase):
         layout.addWidget(self.plot_widget)
         
     def start(self):
+        async_call(self.vol.get_voltage, None, self.cb_voltage, self.increase_error_count)
+        
         try:
-            self.cb_voltage(self.vol.get_voltage())
             self.vol.set_voltage_callback_period(100)
         except ip_connection.Error:
             return

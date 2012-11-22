@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Master Plugin
-Copyright (C) 2010 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 master.py: Master Plugin implementation
 
@@ -41,17 +41,19 @@ from ui_wifi import Ui_Wifi
 from ui_extension_type import Ui_extension_type
 from ui_wifi_status import Ui_widget_wifi_status
 
+from async_call import async_call
+
 class WifiStatus(QFrame, Ui_widget_wifi_status):
     def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
         self.setupUi(self)
         self.parent = parent
+        self.master = self.parent.master
         
-        self.status = self.parent.master.get_wifi_status()
         self.update_status()
     
-    def update_status(self):
-        self.status = self.parent.master.get_wifi_status()
+    def update_status_async(self, status):
+        self.status = status
         mac, bssid, channel, rssi, ip, sub, gw, rx, tx, state = self.status
         
         self.wifi_status_mac.setText("%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x" % mac[::-1])
@@ -77,6 +79,9 @@ class WifiStatus(QFrame, Ui_widget_wifi_status):
             state_str = "No Startup"
             
         self.wifi_status_state.setText(state_str)
+    
+    def update_status(self):
+        async_call(self.master.get_wifi_status, None, self.update_status_async, self.parent.parent.increase_error_count)
 
 class ExtensionTypeWindow(QFrame, Ui_extension_type):
     def __init__(self, parent):
@@ -85,6 +90,7 @@ class ExtensionTypeWindow(QFrame, Ui_extension_type):
 
         self.setWindowTitle("Configure Extension Type")
 
+        self.parent = parent
         self.master = parent.master
         self.button_type_save.pressed.connect(self.save_pressed)
         self.combo_extension.currentIndexChanged.connect(self.index_changed)
@@ -97,30 +103,35 @@ class ExtensionTypeWindow(QFrame, Ui_extension_type):
     def popup_fail(self):
         QMessageBox.critical(self, "Extension Type", "Could not save extension type", QMessageBox.Ok)
 
-    def index_changed(self, index):
-        ext = self.master.get_extension_type(index)
+    def index_changed_async(self, ext):
         if ext < 0 or ext > (self.type_box.count() - 1):
             ext = 0
         self.type_box.setCurrentIndex(ext)
 
+    def index_changed(self, index):
+        async_call(self.master.get_extension_type, index, self.index_changed_async, self.parent.increase_error_count)
+
     def save_pressed(self):
         extension = self.combo_extension.currentIndex()
-        type = self.type_box.currentIndex()
+        typ = self.type_box.currentIndex()
         try:
-            self.master.set_extension_type(extension, type)
+            self.master.set_extension_type(extension, typ)
         except:
+            print "fail 1"
             self.popup_fail()
             return
         
         try:
             new_type = self.master.get_extension_type(extension)
         except:
+            print "fail 2"
             self.popup_fail()
             return
         
-        if type == new_type:
+        if typ == new_type:
             self.popup_ok()
         else:
+            print typ, new_type
             self.popup_fail()
     
 class Chibi(QWidget, Ui_Chibi):
@@ -128,41 +139,80 @@ class Chibi(QWidget, Ui_Chibi):
         QWidget.__init__(self)
         self.setupUi(self)
         
+        self.parent = parent
         self.master = parent.master
         
         if parent.version >= [1, 1, 0]:
-            address = self.master.get_chibi_address()
-            address_slave = []
-            for i in range(32):
-                x = self.master.get_chibi_slave_address(i)
-                if x == 0:
-                    break
-                else:
-                    address_slave.append(str(x))
-                    
-            address_slave_text = ', '.join(address_slave)
-            address_master = self.master.get_chibi_master_address()
-            frequency = self.master.get_chibi_frequency()
-            channel = self.master.get_chibi_channel()
+            self.update_generator = self.init_update()
+            self.update_generator.next()
+        
+    def init_update(self):
+        self.update_address = 0
+        self.update_chibi_slave_address = 0
+        self.update_chibi_master_address = 0
+        self.update_chibi_frequency = 0
+        self.update_chibi_channel = 0
+        
+        def get_chibi_address_async(address_async):
+            self.update_address = address_async
+            self.update_generator.next()
+        
+        def get_chibi_slave_address_async(chibi_slave_address_async):
+            self.update_chibi_slave_address = chibi_slave_address_async
+            self.update_generator.next()
             
-            type = 0
-            if address == address_master:
-                type = 1
+        def get_chibi_master_address_async(chibi_master_address_async):
+            self.update_chibi_master_address = chibi_master_address_async
+            self.update_generator.next()
             
-            self.lineedit_slave_address.setText(address_slave_text)
-            self.address_spinbox.setValue(address)
-            self.master_address_spinbox.setValue(address_master)
-            self.chibi_frequency.setCurrentIndex(frequency)
-            self.chibi_channel.setCurrentIndex(channel)
+        def get_chibi_frequency_async(chibi_frequency_async):
+            self.update_chibi_frequency = chibi_frequency_async
+            self.update_generator.next()
             
-            self.save_button.pressed.connect(self.save_pressed)
-            self.chibi_type.currentIndexChanged.connect(self.chibi_type_changed)
-            self.chibi_frequency.currentIndexChanged.connect(self.chibi_frequency_changed)
-            self.chibi_channel.currentIndexChanged.connect(self.chibi_channel_changed)
+        def get_chibi_channel_async(chibi_channel_async):
+            self.update_chibi_channel = chibi_channel_async
+            self.update_generator.next()
+        
+        async_call(self.master.get_chibi_address, None, get_chibi_address_async, self.parent.increase_error_count)
+        yield
+        
+        address_slave = []
+        for i in range(32):
+            async_call(self.master.get_chibi_slave_address, i, get_chibi_slave_address_async, self.parent.increase_error_count)
+            yield
             
-            self.chibi_type.setCurrentIndex(type)
-            self.chibi_type_changed(type)
-            self.new_max_count()
+            if self.update_chibi_slave_address == 0:
+                break
+            else:
+                address_slave.append(str(self.update_chibi_slave_address))
+                
+        address_slave_text = ', '.join(address_slave)
+        
+        async_call(self.master.get_chibi_master_address, None, get_chibi_master_address_async, self.parent.increase_error_count)
+        yield
+        async_call(self.master.get_chibi_frequency, None, get_chibi_frequency_async, self.parent.increase_error_count)
+        yield
+        async_call(self.master.get_chibi_channel, None, get_chibi_channel_async, self.parent.increase_error_count)
+        yield
+        
+        typ = 0
+        if self.update_address == self.update_chibi_master_address:
+            typ = 1
+        
+        self.lineedit_slave_address.setText(address_slave_text)
+        self.address_spinbox.setValue(self.update_address)
+        self.master_address_spinbox.setValue(self.update_chibi_master_address)
+        self.chibi_frequency.setCurrentIndex(self.update_chibi_frequency)
+        self.chibi_channel.setCurrentIndex(self.update_chibi_channel)
+        
+        self.save_button.pressed.connect(self.save_pressed)
+        self.chibi_type.currentIndexChanged.connect(self.chibi_type_changed)
+        self.chibi_frequency.currentIndexChanged.connect(self.chibi_frequency_changed)
+        self.chibi_channel.currentIndexChanged.connect(self.chibi_channel_changed)
+        
+        self.chibi_type.setCurrentIndex(typ)
+        self.chibi_type_changed(typ)
+        self.new_max_count()
         
     def popup_ok(self):
         QMessageBox.information(self, "Configuration", "Successfully saved configuration", QMessageBox.Ok)
@@ -209,7 +259,7 @@ class Chibi(QWidget, Ui_Chibi):
         self.chibi_channel.currentIndexChanged.connect(self.chibi_channel_changed)
             
     def save_pressed(self):
-        type = self.chibi_type.currentIndex()
+        typ = self.chibi_type.currentIndex()
         frequency = self.chibi_frequency.currentIndex()
         channel = self.chibi_channel.currentIndex()
         if frequency in (1, 3):
@@ -226,7 +276,7 @@ class Chibi(QWidget, Ui_Chibi):
         self.master.set_chibi_frequency(frequency)
         self.master.set_chibi_channel(channel)
         self.master.set_chibi_address(address)
-        if type == 0:
+        if typ == 0:
             self.master.set_chibi_master_address(address_master)
         else:
             self.master.set_chibi_master_address(address)
@@ -236,7 +286,7 @@ class Chibi(QWidget, Ui_Chibi):
         new_frequency = self.master.get_chibi_frequency()
         new_channel = self.master.get_chibi_channel()
         new_address = self.master.get_chibi_address()
-        if type == 0:
+        if typ == 0:
             new_address_master = self.master.get_chibi_master_address()
             if new_frequency == frequency and \
                new_channel == channel and \
@@ -258,10 +308,12 @@ class Chibi(QWidget, Ui_Chibi):
                 self.popup_ok()
             else:
                 self.popup_fail()
+                
+    def index_changed_async(self, addr):
+        self.slave_address_spinbox.setValue(addr)
         
     def index_changed(self, index):
-        addr = self.master.get_chibi_slave_address(index)
-        self.slave_address_spinbox.setValue(addr)
+        async_call(self.master.get_chibi_slave_address, index, self.index_changed_async, self.parent.increase_error_count)
         
     def chibi_frequency_changed(self, index):
         self.new_max_count()
@@ -286,53 +338,73 @@ class Chibi(QWidget, Ui_Chibi):
         self.signal_strength_label.setText(ss_str)
         
     def update_data(self):
-        try:
-            ss = self.master.get_chibi_signal_strength()
-            self.signal_strength_update(ss)
-        except ip_connection.Error:
-            return
+        async_call(self.master.get_chibi_signal_strength, None, self.signal_strength_update, self.parent.increase_error_count)
     
 class RS485(QWidget, Ui_RS485):
     def __init__(self, parent):
         QWidget.__init__(self)
         self.setupUi(self)
         
+        self.parent = parent
         self.master = parent.master
         
         if parent.version >= [1, 2, 0]:
-            speed, parity, stopbits = self.master.get_rs485_configuration()
-            self.speed_spinbox.setValue(speed)
-            if parity == 'e':
-                self.parity_combobox.setCurrentIndex(1)
-            elif parity == 'o':
-                self.parity_combobox.setCurrentIndex(2)
+            async_call(self.master.get_rs485_configuration, None, self.get_rs485_configuration_async, self.parent.increase_error_count)
+            self.update_generator = self.update_addresses()
+            self.update_generator.next()
+
+            
+    def update_addresses(self):
+        self.update_address = 0
+        self.update_address_slave = 0
+        
+        def get_rs485_address_async(address_async):
+            self.update_address = address_async
+            self.update_generator.next()
+        
+        def get_rs485_slave_address_async(update_address_slave_async):
+            self.update_address_slave = update_address_slave_async
+            self.update_generator.next()
+        
+        async_call(self.master.get_rs485_address, None, get_rs485_address_async, self.parent.increase_error_count)
+        yield
+        
+        address_slave = []
+        for i in range(32):
+            async_call(self.master.get_rs485_slave_address, i, get_rs485_slave_address_async, self.parent.increase_error_count)
+            yield
+            
+            if self.update_address_slave == 0:
+                break
             else:
-                self.parity_combobox.setCurrentIndex(0)
-            self.stopbits_spinbox.setValue(stopbits)
+                address_slave.append(str(self.update_address_slave))
+                
+        address_slave_text = ', '.join(address_slave)
+        
+        typ = 0
+        if self.update_address == 0:
+            typ = 1
+        
+        self.lineedit_slave_address.setText(address_slave_text)
+        self.address_spinbox.setValue(self.update_address)
+        
+        self.save_button.pressed.connect(self.save_pressed)
+        self.rs485_type.currentIndexChanged.connect(self.rs485_type_changed)
+        
+        self.rs485_type.setCurrentIndex(typ)
+        self.rs485_type_changed(typ)
             
-            address = self.master.get_rs485_address()
-            address_slave = []
-            for i in range(32):
-                x = self.master.get_rs485_slave_address(i)
-                if x == 0:
-                    break
-                else:
-                    address_slave.append(str(x))
-                    
-            address_slave_text = ', '.join(address_slave)
-            
-            type = 0
-            if address == 0:
-                type = 1
-            
-            self.lineedit_slave_address.setText(address_slave_text)
-            self.address_spinbox.setValue(address)
-            
-            self.save_button.pressed.connect(self.save_pressed)
-            self.rs485_type.currentIndexChanged.connect(self.rs485_type_changed)
-            
-            self.rs485_type.setCurrentIndex(type)
-            self.rs485_type_changed(type)
+    def get_rs485_configuration_async(self, configuration):
+        speed, parity, stopbits = configuration
+        self.speed_spinbox.setValue(speed)
+        if parity == 'e':
+            self.parity_combobox.setCurrentIndex(1)
+        elif parity == 'o':
+            self.parity_combobox.setCurrentIndex(2)
+        else:
+            self.parity_combobox.setCurrentIndex(0)
+        self.stopbits_spinbox.setValue(stopbits)
+        
 
     def destroy(self):
         pass
@@ -355,8 +427,8 @@ class RS485(QWidget, Ui_RS485):
           
         self.master.set_rs485_configuration(speed, parity, stopbits)
         
-        type = self.rs485_type.currentIndex()
-        if type == 0:
+        typ = self.rs485_type.currentIndex()
+        if typ == 0:
             address = self.address_spinbox.value()
         else:
             address = 0
@@ -369,12 +441,12 @@ class RS485(QWidget, Ui_RS485):
             address_slave.append(0)
             
         self.master.set_rs485_address(address)
-        if type == 1:
+        if typ == 1:
             for i in range(len(address_slave)):
                 self.master.set_rs485_slave_address(i, address_slave[i])
                 
         new_address = self.master.get_rs485_address()
-        if type == 0:
+        if typ == 0:
             if new_address == address:
                 self.popup_ok()
             else:
@@ -408,81 +480,93 @@ class Wifi(QWidget, Ui_Wifi):
         QWidget.__init__(self)
         self.setupUi(self)
         self.parent = parent
-        
         self.master = parent.master
         
         self.update_data_counter = 0
+        self.connection = 0
         if parent.version >= [1, 3, 0]:
-            ssid, connection, ip, sub, gw, port = self.master.get_wifi_configuration()
-            ssid = ssid.replace('\0', '')
-
             if parent.version < [1, 3, 3]:
                 # AP and Ad Hoc was added in 1.3.3
                 while self.wifi_connection.count() > 2:
                     self.wifi_connection.removeItem(self.wifi_connection.count() - 1)
-
-            username = self.master.get_wifi_certificate(0xFFFF)
-            username = ''.join(map(chr, username[0][:username[1]]))
-            password = self.master.get_wifi_certificate(0xFFFE)
-            password = ''.join(map(chr, password[0][:password[1]]))
+                    
+            async_call(self.master.get_wifi_configuration, None, self.get_wifi_configuration_async, self.parent.increase_error_count)
+            async_call(self.master.get_wifi_certificate, 0xFFFF, self.update_username_async, self.parent.increase_error_count)
+            async_call(self.master.get_wifi_certificate, 0xFFFE, self.update_password_async, self.parent.increase_error_count)
+            async_call(self.master.get_wifi_power_mode, None, self.wifi_power_mode.setCurrentIndex, self.parent.increase_error_count)
             
-            power_mode = self.master.get_wifi_power_mode()
             if parent.version >= [1, 3, 4]:
-                domain = self.master.get_wifi_regulatory_domain()
-                self.wifi_domain.setCurrentIndex(domain)
+                async_call(self.master.get_wifi_regulatory_domain, None, self.wifi_domain.setCurrentIndex, self.parent.increase_error_count)
             else:
                 self.wifi_domain.setEnabled(0)
                 self.wifi_domain.clear()
                 self.wifi_domain.addItem("Master Firmware > 1.3.3 needed")
             
-            self.wifi_power_mode.setCurrentIndex(power_mode)
-            
-            self.wifi_username.setText(username)
-            self.wifi_password.setText(password)
-            
-            self.wifi_ssid.setText(ssid);
-            self.wifi_connection.setCurrentIndex(connection)
-            self.wifi_ip1.setValue(ip[0])
-            self.wifi_ip2.setValue(ip[1])
-            self.wifi_ip3.setValue(ip[2])
-            self.wifi_ip4.setValue(ip[3])
-            self.wifi_sub1.setValue(sub[0])
-            self.wifi_sub2.setValue(sub[1])
-            self.wifi_sub3.setValue(sub[2])
-            self.wifi_sub4.setValue(sub[3])
-            self.wifi_gw1.setValue(gw[0])
-            self.wifi_gw2.setValue(gw[1])
-            self.wifi_gw3.setValue(gw[2])
-            self.wifi_gw4.setValue(gw[3])
-            self.wifi_port.setValue(port)
-            
-            encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length = self.master.get_wifi_encryption()
-            if connection in (2, 3, 4, 5):
-                encryption -= 2
-            eap_outer = eap_options & 0b00000011
-            eap_inner = (eap_options & 0b00000100) >> 2
-            key = key.replace('\0', '')
-            
-            self.wifi_eap_outer_auth.setCurrentIndex(eap_outer)
-            self.wifi_eap_inner_auth.setCurrentIndex(eap_inner)
-            self.wifi_encryption.setCurrentIndex(encryption)
-            self.wifi_key.setText(key)
-            self.wifi_key_index.setValue(key_index)
-            
-            self.wifi_connection.currentIndexChanged.connect(self.connection_changed)
-            self.wifi_encryption.currentIndexChanged.connect(self.encryption_changed)
-            self.wifi_save.pressed.connect(self.save_pressed)
-            self.wifi_show_status.pressed.connect(self.show_status_pressed)
-            self.wifi_ca_certificate_browse.pressed.connect(self.ca_certificate_browse_pressed)
-            self.wifi_client_certificate_browse.pressed.connect(self.client_certificate_browse_pressed)
-            self.wifi_private_key_browse.pressed.connect(self.private_key_browse_pressed)
-            
-            self.connection_changed(0)
-            self.encryption_changed(0)
-            self.wifi_encryption.setCurrentIndex(encryption) # ensure that the correct encryption is displayed
-            
-            self.wifi_status = None
+            async_call(self.master.get_wifi_encryption, None, self.get_wifi_encryption_async, self.parent.increase_error_count)
 
+            self.wifi_status = None
+            
+            
+    def update_username_async(self, username):
+        username = ''.join(map(chr, username[0][:username[1]]))
+        self.wifi_username.setText(username)
+        
+    def update_password_async(self, password):
+        password = ''.join(map(chr, password[0][:password[1]]))
+        self.wifi_password.setText(password)
+
+    def get_wifi_encryption_async(self, enc):
+        encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length = enc
+        
+        print encryption, key
+        
+        if self.connection in (2, 3, 4, 5):
+            encryption -= 2
+            
+        eap_outer = eap_options & 0b00000011
+        eap_inner = (eap_options & 0b00000100) >> 2
+        key = key.replace('\0', '')
+        
+        self.wifi_eap_outer_auth.setCurrentIndex(eap_outer)
+        self.wifi_eap_inner_auth.setCurrentIndex(eap_inner)
+        self.wifi_encryption.setCurrentIndex(encryption)
+        self.wifi_key.setText(key)
+        self.wifi_key_index.setValue(key_index)
+        
+        self.wifi_connection.currentIndexChanged.connect(self.connection_changed)
+        self.wifi_encryption.currentIndexChanged.connect(self.encryption_changed)
+        self.wifi_save.pressed.connect(self.save_pressed)
+        self.wifi_show_status.pressed.connect(self.show_status_pressed)
+        self.wifi_ca_certificate_browse.pressed.connect(self.ca_certificate_browse_pressed)
+        self.wifi_client_certificate_browse.pressed.connect(self.client_certificate_browse_pressed)
+        self.wifi_private_key_browse.pressed.connect(self.private_key_browse_pressed)
+        
+        self.connection_changed(0)
+        self.encryption_changed(0)
+        self.wifi_encryption.setCurrentIndex(encryption) # ensure that the correct encryption is displayed
+        
+    def get_wifi_configuration_async(self, configuration):
+        ssid, connection, ip, sub, gw, port = configuration
+        
+        ssid = ssid.replace('\0', '')
+        self.connection = connection
+        
+        self.wifi_ssid.setText(ssid);
+        self.wifi_connection.setCurrentIndex(connection)
+        self.wifi_ip1.setValue(ip[0])
+        self.wifi_ip2.setValue(ip[1])
+        self.wifi_ip3.setValue(ip[2])
+        self.wifi_ip4.setValue(ip[3])
+        self.wifi_sub1.setValue(sub[0])
+        self.wifi_sub2.setValue(sub[1])
+        self.wifi_sub3.setValue(sub[2])
+        self.wifi_sub4.setValue(sub[3])
+        self.wifi_gw1.setValue(gw[0])
+        self.wifi_gw2.setValue(gw[1])
+        self.wifi_gw3.setValue(gw[2])
+        self.wifi_gw4.setValue(gw[3])
+        self.wifi_port.setValue(port)
+            
     def destroy(self):
         if self.wifi_status:
             self.wifi_status.close()
@@ -751,7 +835,7 @@ class Wifi(QWidget, Ui_Wifi):
 
         return []
     
-    def write_certificate(self, certificate, type):
+    def write_certificate(self, certificate, typ):
         try:
             chunks = []
             progress = self.create_progress_bar("Configuration")
@@ -772,7 +856,7 @@ class Wifi(QWidget, Ui_Wifi):
                     cert_chunk += [0] * (32 - mod)
     
                 time.sleep(0.01)
-                self.master.set_wifi_certificate(10000*type + position,
+                self.master.set_wifi_certificate(10000*typ + position,
                                                  cert_chunk,
                                                  length)
                 chunks.append(cert_chunk)
@@ -787,7 +871,7 @@ class Wifi(QWidget, Ui_Wifi):
     
             chunk_length = len(chunks)
             for i in range(chunk_length):
-                old_chunk = list(self.master.get_wifi_certificate(10000*type + i)[0])
+                old_chunk = list(self.master.get_wifi_certificate(10000*typ + i)[0])
                 if old_chunk != chunks[i]:
                     progress.cancel()
                     return False
@@ -888,7 +972,7 @@ class Wifi(QWidget, Ui_Wifi):
             if username_old == username and password_old == password:
                 test_ok = True
 
-        if parent.version >= [1, 3, 4]:
+        if self.parent.version >= [1, 3, 4]:
             if test_ok:
                 self.master.set_wifi_regulatory_domain(self.wifi_domain.currentIndex())
                 if self.master.get_wifi_regulatory_domain() != self.wifi_domain.currentIndex():
@@ -936,39 +1020,49 @@ class Master(PluginBase, Ui_Master):
         self.extension_type = None
 
         self.extensions = []
-        num_extensions = 0
+        self.num_extensions = 0
 
+        self.extension_label.setText("None Present")
+        
         # Chibi widget
         if self.version >= [1, 1, 0]:
             self.extension_type_button.pressed.connect(self.extension_pressed)
-            if self.master.is_chibi_present():
-                num_extensions += 1
-                chibi = Chibi(self)
-                self.extensions.append(chibi)
-                self.extension_layout.addWidget(chibi)
+            async_call(self.master.is_chibi_present, None, self.is_chibi_present_async, self.increase_error_count)
         else:
             self.extension_type_button.setEnabled(False)
             
         # RS485 widget
         if self.version >= [1, 2, 0]:
-            if self.master.is_rs485_present():
-                num_extensions += 1
-                rs485 = RS485(self)
-                self.extensions.append(rs485)
-                self.extension_layout.addWidget(rs485)
+            async_call(self.master.is_rs485_present, None, self.is_rs485_present_async, self.increase_error_count)
                 
         # Wifi widget
         if self.version >= [1, 3, 0]:
-            if self.master.is_wifi_present():
-                num_extensions += 1
-                wifi = Wifi(self)
-                self.extensions.append(wifi)
-                self.extension_layout.addWidget(wifi)
+            async_call(self.master.is_wifi_present, None, self.is_wifi_present_async, self.increase_error_count)
             
-        if num_extensions == 0:
-            self.extension_label.setText("None Present")
-        else:
-            self.extension_label.setText("" + str(num_extensions) + " Present")
+       
+    def is_wifi_present_async(self, present):
+        if present:
+            wifi = Wifi(self)
+            self.extensions.append(wifi)
+            self.extension_layout.addWidget(wifi)
+            self.num_extensions += 1
+            self.extension_label.setText("" + str(self.num_extensions) + " Present")
+            
+    def is_rs485_present_async(self, present):
+        if present:
+            rs485 = RS485(self)
+            self.extensions.append(rs485)
+            self.extension_layout.addWidget(rs485)
+            self.num_extensions += 1
+            self.extension_label.setText("" + str(self.num_extensions) + " Present")
+            
+    def is_chibi_present_async(self, present):
+        if present:
+            chibi = Chibi(self)
+            self.extensions.append(chibi)
+            self.extension_layout.addWidget(chibi)
+            self.num_extensions += 1
+            self.extension_label.setText("" + str(self.num_extensions) + " Present")
 
     def start(self):
         self.update_timer.start(100)
@@ -996,15 +1090,11 @@ class Master(PluginBase, Ui_Master):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickMaster.DEVICE_IDENTIFIER
-        
+    
     def update_data(self):
-        try:
-            sv = self.master.get_stack_voltage()
-            sc = self.master.get_stack_current()
-            self.stack_voltage_update(sv)
-            self.stack_current_update(sc)
-        except ip_connection.Error:
-            return
+        async_call(self.master.get_stack_voltage, None, self.stack_voltage_update, self.increase_error_count)
+        async_call(self.master.get_stack_current, None, self.stack_current_update, self.increase_error_count)
+        
         for extension in self.extensions:
             extension.update_data()
         

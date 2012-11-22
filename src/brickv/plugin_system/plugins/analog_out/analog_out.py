@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Analog Out Plugin
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 analog_out.py: Analog Out Plugin Implementation
 
@@ -24,9 +24,9 @@ Boston, MA 02111-1307, USA.
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
 from bindings.bricklet_analog_out import BrickletAnalogOut
+from async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBox
-from PyQt4.QtCore import pyqtSignal, Qt
 
 class AnalogOut(PluginBase):
     def __init__(self, ipcon, uid, version):
@@ -67,13 +67,8 @@ class AnalogOut(PluginBase):
         self.mode_combo.activated.connect(self.mode_changed)
         
     def start(self):
-        try:
-            voltage = self.ao.get_voltage()
-            mode = self.ao.get_mode()
-            self.voltage_box.setValue(voltage)
-            self.mode_combo.setCurrentIndex(mode)
-        except ip_connection.Error:
-            return
+        async_call(self.ao.get_voltage, None, self.voltage_box.setValue, self.increase_error_count)
+        async_call(self.ao.get_mode, None, self.mode_combo.setCurrentIndex, self.increase_error_count)
         
     def stop(self):
         pass

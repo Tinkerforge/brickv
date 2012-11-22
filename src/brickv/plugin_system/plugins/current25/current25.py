@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Current Plugin
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 current.py: Current Plugin Implementation
 
@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
 from bindings.bricklet_current25 import BrickletCurrent25
+from async_call import async_call
 
 from plot_widget import PlotWidget
 
@@ -79,8 +80,9 @@ class Current25(PluginBase):
         layout.addWidget(self.calibrate_button)
 
     def start(self):
+        async_call(self.cur.get_current, None, self.cb_current, self.increase_error_count)
+        
         try:
-            self.cb_current(self.cur.get_current())
             self.cur.set_current_callback_period(100)
         except ip_connection.Error:
             return

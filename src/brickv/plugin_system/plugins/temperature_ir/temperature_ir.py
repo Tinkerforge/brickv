@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Temperature-IR Plugin
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 temperature_ir.py: Temperature-IR Plugin Implementation
 
@@ -25,6 +25,7 @@ from plugin_system.plugin_base import PluginBase
 from plot_widget import PlotWidget
 from bindings import ip_connection
 from bindings.bricklet_temperature_ir import BrickletTemperatureIR
+from async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton
 from PyQt4.QtCore import pyqtSignal, Qt
@@ -93,10 +94,11 @@ class TemperatureIR(PluginBase):
         layout.addLayout(self.emissivity_layout)
         
     def start(self):
+        async_call(self.tem.get_ambient_temperature, None, self.cb_ambient_temperature, self.increase_error_count)
+        async_call(self.tem.get_object_temperature, None, self.cb_object_temperature, self.increase_error_count)
+        async_call(self.tem.get_emissivity, None, self.cb_emissivity, self.increase_error_count)
+        
         try:
-            self.cb_ambient_temperature(self.tem.get_ambient_temperature())
-            self.cb_object_temperature(self.tem.get_object_temperature())
-            self.emissivity_edit.setText(str(self.tem.get_emissivity()))
             self.tem.set_ambient_temperature_callback_period(250)
             self.tem.set_object_temperature_callback_period(250)
         except ip_connection.Error:
@@ -129,7 +131,10 @@ class TemperatureIR(PluginBase):
         
     def cb_ambient_temperature(self, temperature):
         self.current_ambient = temperature/10.0
-        self.ambient_label.setText(str(self.current_ambient)) 
+        self.ambient_label.setText(str(self.current_ambient))
+        
+    def cb_emissivity(self, emissivity):
+        self.emissivity_edit.setText(str(emissivity))
         
     def emissivity_pressed(self):
         value = int(self.emissivity_edit.text())

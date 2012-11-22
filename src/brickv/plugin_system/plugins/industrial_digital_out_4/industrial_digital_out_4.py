@@ -22,10 +22,10 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
 from bindings.bricklet_industrial_digital_out_4 import BrickletIndustrialDigitalOut4
+from async_call import async_call
 
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QPixmap
+from PyQt4.QtGui import QPixmap
 from PyQt4.QtCore import Qt, pyqtSignal, QTimer
 
 from ui_industrial_digital_out_4 import Ui_IndustrialDigitalOut4
@@ -55,8 +55,8 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
         self.line_2vs3.setVisible(False)
         self.line_3vs4.setVisible(False)
         
-        self.available_ports = self.ido4.get_available_for_group()
-        
+        self.available_ports = 0
+        async_call(self.ido4.get_available_for_group, None, self.get_available_for_group_aysnc, self.increase_error_count)
         
         def get_button_lambda(button):
             return lambda: self.pin_button_pressed(button)
@@ -79,6 +79,9 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
         self.update_timer.timeout.connect(self.update)
         self.update_timer.setInterval(50)
 
+    def get_available_for_group_aysnc(self, available_ports):
+        self.available_ports = available_ports
+
     def start(self):
         self.reconfigure_everything()
         pass
@@ -90,21 +93,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialDigitalOut4.DEVICE_IDENTIFIER
     
-    def reconfigure_everything(self):
-        for i in range(4):
-            self.groups[i].removeItem(0)
-            self.groups[i].removeItem(0)
-            self.groups[i].removeItem(0)
-            self.groups[i].removeItem(0)
-            self.groups[i].removeItem(0)
-            self.groups[i].addItem('Off')
-            for j in range(4):
-                if self.available_ports & (1 << j):
-                    item = 'Port ' + chr(ord('A') + j)
-                    self.groups[i].addItem(item)
-                    
-        group = self.ido4.get_group()
-        
+    def reconfigure_everything_async(self, group):
         for i in range(4):
             if group[i] == 'n':
                 self.groups[i].setCurrentIndex(0)
@@ -136,6 +125,21 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
                     for j in range(4):
                         self.monoflop_pin.addItem('Pin ' + str(i*4+j))
                     self.show_buttons(i)
+                    
+    def reconfigure_everything(self):
+        for i in range(4):
+            self.groups[i].removeItem(0)
+            self.groups[i].removeItem(0)
+            self.groups[i].removeItem(0)
+            self.groups[i].removeItem(0)
+            self.groups[i].removeItem(0)
+            self.groups[i].addItem('Off')
+            for j in range(4):
+                if self.available_ports & (1 << j):
+                    item = 'Port ' + chr(ord('A') + j)
+                    self.groups[i].addItem(item)
+                    
+        async_call(self.ido4.get_group, None, self.reconfigure_everything_async, self.increase_error_count)
             
     def show_buttons(self, num):
         for i in range(num*4, (num+1)*4):
@@ -227,7 +231,11 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
                 self.pin_button_icons[pin].setPixmap(self.gnd_pixmap)
         self.update_timer.start()
     
+    def update_async(self, monoflop):
+        _, _, time_remaining = monoflop
+        self.monoflop_time.setValue(time_remaining)
+        
     def update(self):
         pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
-        value, time, time_remaining = self.ido4.get_monoflop(pin)
-        self.monoflop_time.setValue(time_remaining)
+        async_call(self.ido4.get_monoflop, pin, self.update_async, self.increase_error_count)
+        

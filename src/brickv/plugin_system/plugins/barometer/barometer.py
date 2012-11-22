@@ -2,7 +2,7 @@
 """
 Barometer Plugin
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 barometer.py: Barometer Plugin Implementation
 
@@ -26,6 +26,7 @@ from plugin_system.plugin_base import PluginBase
 from plot_widget import PlotWidget
 from bindings import ip_connection
 from bindings.bricklet_barometer import BrickletBarometer
+from async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QLineEdit
 from PyQt4.QtCore import pyqtSignal, Qt, QTimer
@@ -64,10 +65,8 @@ class Barometer(PluginBase):
                                          self.qtcb_altitude.emit)
 
         self.air_pressure_label = AirPressureLabel()
-        self.cb_air_pressure(self.barometer.get_air_pressure())
 
         self.altitude_label = AltitudeLabel()
-        self.cb_altitude(self.barometer.get_altitude())
 
         self.chip_temperature_label = ChipTemperatureLabel()
         if has_calibrate:
@@ -142,14 +141,13 @@ class Barometer(PluginBase):
         self.chip_temp_timer = QTimer()
         self.chip_temp_timer.timeout.connect(self.update_chip_temp)
         self.chip_temp_timer.setInterval(100)
-        self.chip_temp_timer.start()
 
     def start(self):
-        try:
-            self.cb_air_pressure(self.barometer.get_air_pressure())
-            self.barometer.set_air_pressure_callback_period(100)
+        async_call(self.barometer.get_air_pressure, None, self.cb_air_pressure, self.increase_error_count)
+        async_call(self.barometer.get_altitude, None, self.cb_altitude, self.increase_error_count)
 
-            self.cb_altitude(self.barometer.get_altitude())
+        try:
+            self.barometer.set_air_pressure_callback_period(100)
             self.barometer.set_altitude_callback_period(100)
         except ip_connection.Error:
             return
@@ -184,13 +182,12 @@ class Barometer(PluginBase):
         except ip_connection.Error:
             pass
 
-    def get_reference_pressed(self):
-        try:
-            r = str(self.barometer.get_reference_air_pressure()/1000.0)
-        except ip_connection.Error:
-            r = 'Error while getting reference air pressure'
-
+    def get_reference_pressed_async(self, reference):
+        r = str(reference/1000.0)
         self.reference_edit.setText(r)
+        
+    def get_reference_pressed(self):
+        async_call(self.barometer.get_reference_air_pressure, None, self.get_reference_pressed_async, self.increase_error_count)
 
     def set_reference_pressed(self):
         try:
@@ -211,12 +208,12 @@ class Barometer(PluginBase):
     def get_current_altitude(self):
         return self.current_altitude
 
+    def update_chip_temp_async(self, temp):
+        t = temp/100.0
+        self.chip_temperature_label.setText('%.2f' % t)
+
     def update_chip_temp(self):
-        try:
-            t = self.barometer.get_chip_temperature()/100.0
-            self.chip_temperature_label.setText('%.2f' % t)
-        except ip_connection.Error:
-            pass
+        async_call(self.barometer.get_chip_temperature, None, self.update_chip_temp_async, self.increase_error_count)
 
     def cb_air_pressure(self, air_pressure):
         self.current_air_pressure = air_pressure/1000.0

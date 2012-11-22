@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Linear Poti Plugin
-Copyright (C) 2010 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 poti.py: Poti Plugin implementation
 
@@ -25,6 +25,7 @@ from plugin_system.plugin_base import PluginBase
 from plot_widget import PlotWidget
 from bindings import ip_connection
 from bindings.bricklet_linear_poti import BrickletLinearPoti
+from async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QSlider
 from PyQt4.QtCore import pyqtSignal, Qt
@@ -66,10 +67,7 @@ class LinearPoti(PluginBase):
         layout.addWidget(self.plot_widget)
         
     def start(self):
-        try:
-            self.cb_position(self.lp.get_position())
-        except ip_connection.Error:
-            pass
+        async_call(self.lp.get_position, None, self.cb_position, self.increase_error_count)
         
         try:
             self.lp.set_position_callback_period(20)

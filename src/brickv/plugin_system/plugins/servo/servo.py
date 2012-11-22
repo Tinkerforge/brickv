@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Servo Plugin
-Copyright (C) 2010-2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 servo.py: Servo Brick Plugin implementation
 
@@ -24,8 +24,9 @@ Boston, MA 02111-1307, USA.
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
 from bindings.brick_servo import BrickServo
+from async_call import async_call
 
-from PyQt4.QtGui import QVBoxLayout, QLabel, QWidget, QColor, QPainter, QSizePolicy, QInputDialog, QErrorMessage
+from PyQt4.QtGui import QLabel, QWidget, QColor, QPainter, QSizePolicy, QInputDialog, QErrorMessage
 from PyQt4.QtCore import Qt, QRect, QTimer, pyqtSignal, QThread
 import PyQt4.Qwt5 as Qwt
 
@@ -102,7 +103,7 @@ class PositionKnob(Qwt.QwtKnob):
     def __init__(self):
         Qwt.QwtKnob.__init__(self)
         class DummyScaleDraw(Qwt.QwtRoundScaleDraw):
-            def drawTick(self, painter, val, len):
+            def drawTick(self, painter, val, length):
                 pass
             
             def drawBackbone(self, painter):
@@ -264,38 +265,31 @@ class Servo(PluginBase, Ui_Servo):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickServo.DEVICE_IDENTIFIER
     
-    def update_servo_specific(self):
-        i = self.selected_servo()
-        if i == 255:
-            self.enable_checkbox.setCheckState(Qt.Unchecked)
-            return
-        
-        try:
-            pos = self.servo.get_position(i);
-            vel = self.servo.get_velocity(i);
-            acc = self.servo.get_acceleration(i);
-            per = self.servo.get_period(i)
-            ena = self.servo.is_enabled(i)
-            deg_min, deg_max = self.servo.get_degree(i)
-            pulse_min, pulse_max = self.servo.get_pulse_width(i)
-        except ip_connection.Error:
-            return
-        
-        self.position_spin.setValue(pos)
-        self.velocity_spin.setValue(vel)
-        self.acceleration_spin.setValue(acc)
+    def get_period_async(self, per):
         self.period_spin.setValue(per)
-        self.position_slider.setValue(pos)
-        self.velocity_slider.setValue(vel)
-        self.acceleration_slider.setValue(acc)
         self.period_slider.setValue(per)
+        
+    def is_enabled_async(self, ena):
         if ena:
             self.enable_checkbox.setCheckState(Qt.Checked)
         else:
             self.enable_checkbox.setCheckState(Qt.Unchecked)
+            
+    def get_position_async(self, pos):
+        self.position_spin.setValue(pos)
+        self.position_slider.setValue(pos)
     
-        self.pulse_width_min_spin.setValue(pulse_min)
-        self.pulse_width_max_spin.setValue(pulse_max)
+    def get_velocity_async(self, vel):
+        self.velocity_spin.setValue(vel)
+        self.velocity_slider.setValue(vel)
+    
+    def get_acceleration_async(self, acc):
+        self.acceleration_spin.setValue(acc)
+        self.acceleration_slider.setValue(acc)
+        
+    def get_degree_async(self, deg, i):
+        deg_min, deg_max = deg
+        
         self.degree_min_spin.setValue(deg_min)
         self.degree_max_spin.setValue(deg_max)
         
@@ -306,6 +300,28 @@ class Servo(PluginBase, Ui_Servo):
         self.position_list[i].setTotalAngle((deg_max - deg_min)/100)
         self.position_list[i].setRange(deg_min/100, deg_max/100)
         
+    def get_pulse_width_async(self, pulse):
+        pulse_min, pulse_max = pulse
+        self.pulse_width_min_spin.setValue(pulse_min)
+        self.pulse_width_max_spin.setValue(pulse_max)
+        
+    
+    def update_servo_specific(self):
+        i = self.selected_servo()
+        if i == 255:
+            self.enable_checkbox.setCheckState(Qt.Unchecked)
+            return
+    
+        async_call(self.servo.get_position, i, self.get_position_async, self.increase_error_count)
+        async_call(self.servo.get_velocity, i, self.get_velocity_async, self.increase_error_count)
+        async_call(self.servo.get_acceleration, i, self.get_acceleration_async, self.increase_error_count)
+        async_call(self.servo.get_period, i, self.get_period_async, self.increase_error_count)
+        async_call(self.servo.is_enabled, i, self.is_enabled_async, self.increase_error_count)
+        def get_lambda_deg(i):
+            return lambda x: self.get_degree_async(x, i)
+        async_call(self.servo.get_degree, i, get_lambda_deg(i), self.increase_error_count)
+        async_call(self.servo.get_pulse_width, i, self.get_pulse_width_async, self.increase_error_count)
+            
     def error_handler(self, error):
         pass
         
@@ -506,10 +522,7 @@ class Servo(PluginBase, Ui_Servo):
         qid.setIntMinimum(2000)
         qid.setIntMaximum(9000)
         qid.setIntStep(100)
-        try:
-            qid.setIntValue(self.servo.get_output_voltage())
-        except ip_connection.Error:
-            return
+        async_call(self.servo.get_output_voltage, None, qid.setIntValue, self.increase_error_count)
         qid.intValueSelected.connect(self.output_voltage_selected)
         qid.setLabelText("Choose Output Voltage in mV.")
 #                         "<font color=red>Setting this too high can destroy your servo.</font>")
@@ -630,10 +643,7 @@ class Servo(PluginBase, Ui_Servo):
         qid.setIntMinimum(5000)
         qid.setIntMaximum(0xFFFF)
         qid.setIntStep(100)
-        try:
-            qid.setIntValue(self.servo.get_minimum_voltage())
-        except ip_connection.Error:
-            return
+        async_call(self.servo.get_minimum_voltage, None, qid.setIntValue, self.increase_error_count)
         qid.intValueSelected.connect(self.minimum_voltage_selected)
         qid.setLabelText("Choose minimum servo voltage in mV.")
         qid.open()

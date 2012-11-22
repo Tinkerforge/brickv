@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Distance IR Plugin
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 distance.py: Distance IR Plugin Implementation
 
@@ -25,6 +25,7 @@ from plugin_system.plugin_base import PluginBase
 from plot_widget import PlotWidget
 from bindings import ip_connection
 from bindings.bricklet_distance_ir import BrickletDistanceIR
+from async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFileDialog, QApplication, QPolygonF
 from PyQt4.QtCore import pyqtSignal, Qt, QPointF
@@ -104,8 +105,9 @@ class DistanceIR(PluginBase):
         layout.addLayout(self.sample_layout)
 
     def start(self):
+        async_call(self.dist.get_distance, None, self.cb_distance, self.increase_error_count)
+        
         try:
-            self.cb_distance(self.dist.get_distance())
             self.dist.set_distance_callback_period(100)
             self.dist.set_analog_value_callback_period(20)
         except ip_connection.Error:

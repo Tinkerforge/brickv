@@ -2,7 +2,7 @@
 """
 IO-16 Plugin
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 io16.py: IO-16 Plugin Implementation
 
@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
 from bindings.bricklet_io16 import BrickletIO16
+from async_call import async_call
 
 from PyQt4.QtCore import pyqtSignal, QTimer
 
@@ -77,25 +78,8 @@ class IO16(PluginBase, Ui_IO16):
                                      'b': [500, 500, 500, 500,
                                            500, 500, 500, 500] }
 
-        try:
-            for port in ['a', 'b']:
-                value = self.io.get_port(port)
-                dir, config = self.io.get_port_configuration(port)
-                time = [0, 0, 0, 0, 0, 0, 0, 0]
-                time_remaining = [0, 0, 0, 0, 0, 0, 0, 0]
-
-                if self.has_monoflop:
-                    for pin in range(8):
-                        monoflop = self.io.get_port_monoflop(port, pin)
-                        time[pin] = monoflop.time
-                        time_remaining[pin] = monoflop.time_remaining
-
-                self.init_values(port, value, dir, config, time, time_remaining)
-
-            debounce = self.io.get_debounce_period()
-            self.debounce_edit.setText(str(debounce))
-        except ip_connection.Error:
-            pass
+        self.init_async_generator = self.init_async()
+        self.init_async_generator.next()
         
         self.save_button.pressed.connect(self.save_pressed)
         self.port_box.currentIndexChanged.connect(self.port_changed)
@@ -120,6 +104,48 @@ class IO16(PluginBase, Ui_IO16):
             self.update_timer.start()
 
         self.port_changed(0)
+        
+    def init_async(self):
+        self.init_value = 0
+        self.init_dir = 0
+        self.init_config = 0
+        self.init_monoflop = 0
+        
+        def get_port_async(value):
+            self.init_value = value
+            self.update_generator.next()
+        
+        def get_port_configuration_async(conf):
+            self.init_dir, self.init_config = conf
+            self.update_generator.next()
+            
+        def get_monoflop_async(init_monoflop):
+            self.init_monoflop = init_monoflop
+            self.update_generator.next()
+        
+        def get_debounce_period_async(debounce_period):
+            self.debounce_edit.setText(str(debounce_period))
+        
+        for port in ['a', 'b']:
+            async_call(self.io.get_port, port, get_port_async, self.increase_error_count)
+            yield
+            async_call(self.io.get_port_configuration, None, get_port_async, self.increase_error_count)
+            yield
+
+            time = [0, 0, 0, 0, 0, 0, 0, 0]
+            time_remaining = [0, 0, 0, 0, 0, 0, 0, 0]
+
+            if self.has_monoflop:
+                for pin in range(8):
+                    async_call(self.io.get_port_monoflop, (port, pin), get_port_async, self.increase_error_count)
+                    yield
+
+                    time[pin] = self.init_monoflop.time
+                    time_remaining[pin] = self.init_monoflop.time_remaining
+
+            self.init_values(port, self.init_value, self.init_dir, self.init_config, time, time_remaining)
+
+        async_call(self.io.get_debounce_period, None, get_debounce_period_async, self.increase_error_count)
         
     def start(self):
         try:
@@ -320,19 +346,22 @@ class IO16(PluginBase, Ui_IO16):
                     self.port_value[port][pin].setText('Low')
                     self.port_config[port][pin].setText('Low')
 
-    def update(self):
+    def update_async(self, port, pin, monoflop):
         selected_port = str(self.port_box.currentText()).lower()
         selected_pin = int(self.pin_box.currentText())
+        
+        _, _, time_remaining = monoflop
+        if port == selected_port and pin == selected_pin:
+            self.time_spinbox.setValue(time_remaining)
 
+        self.port_time[port][pin].setText(str(time_remaining))
+        
+        
+    def update(self):
         for port in ['a', 'b']:
             for pin in range(8):
                 if self.monoflop_active[port][pin]:
-                    try:
-                        value, time, time_remaining = self.io.get_port_monoflop(port, pin)
-                    except ip_connection.Error:
-                        continue
-
-                    if port == selected_port and pin == selected_pin:
-                        self.time_spinbox.setValue(time_remaining)
-
-                    self.port_time[port][pin].setText(str(time_remaining))
+                    def get_lambda(port, pin):
+                        return lambda x: self.update_async(port, pin, x)
+                    
+                    async_call(self.io.get_port_monoflop, (port, pin), get_lambda(port, pin), self.increase_error_count)

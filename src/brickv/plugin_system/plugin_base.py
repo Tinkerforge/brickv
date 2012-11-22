@@ -31,6 +31,11 @@ class PluginBase(QWidget, object):
         self.name = name
         self.version = version
         self.version_str = '.'.join(map(str, version))
+        self.error_count = 0
+        
+    def increase_error_count(self):
+        self.error_count += 1
+        print "error", self.error_count
         
     # To be overridden by inheriting class
     def stop(self):

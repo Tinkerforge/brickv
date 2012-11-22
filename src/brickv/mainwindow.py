@@ -30,6 +30,7 @@ from bindings.ip_connection import IPConnection, Error
 from updates import UpdatesWindow
 from flashing import FlashingWindow
 from advanced import AdvancedWindow
+from async_call import async_start_thread
 
 import socket
 import signal
@@ -92,6 +93,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowIcon(QIcon("brickv-icon.png"))
         signal.signal(signal.SIGINT, self.exit_brickv)
         signal.signal(signal.SIGTERM, self.exit_brickv)
+        
+        self.async_thread = async_start_thread(self)
 
         self.setWindowTitle("Brick Viewer " + config.BRICKV_VERSION)
 

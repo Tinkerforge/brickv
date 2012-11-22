@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Current Plugin
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 
 current.py: Current Plugin Implementation
 
@@ -25,6 +25,7 @@ from plugin_system.plugin_base import PluginBase
 from plot_widget import PlotWidget
 from bindings import ip_connection
 from bindings.bricklet_current12 import BrickletCurrent12
+from async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QPushButton, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
@@ -78,8 +79,9 @@ class Current12(PluginBase):
         layout.addWidget(self.calibrate_button)
 
     def start(self):
+        async_call(self.cur.get_current, None, self.cb_current, self.increase_error_count)
+        
         try:
-            self.cb_current(self.cur.get_current())
             self.cur.set_current_callback_period(100)
         except ip_connection.Error:
             return
