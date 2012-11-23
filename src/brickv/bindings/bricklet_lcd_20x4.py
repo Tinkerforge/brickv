@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-07.      #
+# This file was automatically generated on 2012-11-22.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -21,6 +21,7 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 GetConfig = namedtuple('Config', ['cursor', 'blinking'])
+GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletLCD20x4(Device):
     """
@@ -40,6 +41,7 @@ class BrickletLCD20x4(Device):
     FUNCTION_SET_CONFIG = 6
     FUNCTION_GET_CONFIG = 7
     FUNCTION_IS_BUTTON_PRESSED = 8
+    FUNCTION_GET_IDENTITY = 255
 
     def __init__(self, uid, ipcon):
         """
@@ -118,9 +120,15 @@ class BrickletLCD20x4(Device):
         """
         return self.ipcon.send_request(self, LCD20x4.FUNCTION_IS_BUTTON_PRESSED, (button,), 'B', '?')
 
+    def get_identity(self):
+        """
+        .. versionadded:: 2.0.0~(Plugin)
+        """
+        return GetIdentity(*self.ipcon.send_request(self, LCD20x4.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
     def register_callback(self, id, callback):
         """
-        Registers a callback with ID id to the function callback.
+        Registers a callback with ID *id* to the function *callback*.
         """
         self.registered_callbacks[id] = callback
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-07.      #
+# This file was automatically generated on 2012-11-22.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -22,6 +22,7 @@ except ValueError:
 
 GetState = namedtuple('State', ['relay1', 'relay2'])
 GetMonoflop = namedtuple('Monoflop', ['state', 'time', 'time_remaining'])
+GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletDualRelay(Device):
     """
@@ -36,6 +37,7 @@ class BrickletDualRelay(Device):
     FUNCTION_GET_STATE = 2
     FUNCTION_SET_MONOFLOP = 3
     FUNCTION_GET_MONOFLOP = 4
+    FUNCTION_GET_IDENTITY = 255
 
     def __init__(self, uid, ipcon):
         """
@@ -100,9 +102,15 @@ class BrickletDualRelay(Device):
         """
         return GetMonoflop(*self.ipcon.send_request(self, DualRelay.FUNCTION_GET_MONOFLOP, (relay,), 'B', '? I I'))
 
+    def get_identity(self):
+        """
+        .. versionadded:: 2.0.0~(Plugin)
+        """
+        return GetIdentity(*self.ipcon.send_request(self, DualRelay.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
     def register_callback(self, id, callback):
         """
-        Registers a callback with ID id to the function callback.
+        Registers a callback with ID *id* to the function *callback*.
         """
         self.registered_callbacks[id] = callback
 

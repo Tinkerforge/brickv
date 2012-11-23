@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-07.      #
+# This file was automatically generated on 2012-11-22.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -27,6 +27,7 @@ GetWifiEncryption = namedtuple('WifiEncryption', ['encryption', 'key', 'key_inde
 GetWifiStatus = namedtuple('WifiStatus', ['mac_address', 'bssid', 'channel', 'rssi', 'ip', 'subnet_mask', 'gateway', 'rx_count', 'tx_count', 'state'])
 GetWifiCertificate = namedtuple('WifiCertificate', ['data', 'data_length'])
 GetWifiBufferInfo = namedtuple('WifiBufferInfo', ['overflow', 'low_watermark', 'used'])
+GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickMaster(Device):
     """
@@ -76,6 +77,7 @@ class BrickMaster(Device):
     FUNCTION_SET_WIFI_REGULATORY_DOMAIN = 38
     FUNCTION_GET_WIFI_REGULATORY_DOMAIN = 39
     FUNCTION_GET_USB_VOLTAGE = 40
+    FUNCTION_GET_IDENTITY = 255
     FUNCTION_RESET = 243
     FUNCTION_GET_CHIP_TEMPERATURE = 242
 
@@ -624,6 +626,12 @@ class BrickMaster(Device):
         .. versionadded:: 1.3.5~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_USB_VOLTAGE, (), '', 'H')
+
+    def get_identity(self):
+        """
+        .. versionadded:: 2.0.0~(Firmware)
+        """
+        return GetIdentity(*self.ipcon.send_request(self, Master.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def reset(self):
         """

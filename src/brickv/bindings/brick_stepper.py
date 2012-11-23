@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-07.      #
+# This file was automatically generated on 2012-11-22.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -22,6 +22,7 @@ except ValueError:
 
 GetSpeedRamping = namedtuple('SpeedRamping', ['acceleration', 'deacceleration'])
 GetAllData = namedtuple('AllData', ['current_velocity', 'current_position', 'remaining_steps', 'stack_voltage', 'external_voltage', 'current_consumption'])
+GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickStepper(Device):
     """
@@ -72,6 +73,7 @@ class BrickStepper(Device):
     FUNCTION_GET_ALL_DATA = 37
     FUNCTION_SET_ALL_DATA_PERIOD = 38
     FUNCTION_GET_ALL_DATA_PERIOD = 39
+    FUNCTION_GET_IDENTITY = 255
     FUNCTION_RESET = 243
     FUNCTION_GET_CHIP_TEMPERATURE = 242
 
@@ -463,6 +465,12 @@ class BrickStepper(Device):
         """
         return self.ipcon.send_request(self, Stepper.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
 
+    def get_identity(self):
+        """
+        .. versionadded:: 2.0.0~(Firmware)
+        """
+        return GetIdentity(*self.ipcon.send_request(self, Stepper.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
     def reset(self):
         """
         Calling this function will reset the Brick. Calling this function
@@ -491,7 +499,7 @@ class BrickStepper(Device):
 
     def register_callback(self, id, callback):
         """
-        Registers a callback with ID id to the function callback.
+        Registers a callback with ID *id* to the function *callback*.
         """
         self.registered_callbacks[id] = callback
 

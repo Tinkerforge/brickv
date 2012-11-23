@@ -86,6 +86,7 @@ class MainTableModel(QAbstractTableModel):
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     qtcb_enumerate = pyqtSignal(str, str, 'char', type((0,)), type((0,)), int, int)
+    qtcb_connected = pyqtSignal(int)
     qtcb_disconnected = pyqtSignal(int)
 
     def __init__(self, parent=None):
@@ -109,15 +110,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.uid = '<unknown>'
         self.version = [0, 0, 0]
         self.plugins = [self]
-        self.ipcon = None
+
+        self.qtcb_enumerate.connect(self.cb_enumerate)
+        self.qtcb_connected.connect(self.cb_connected)
+        self.qtcb_disconnected.connect(self.cb_disconnected)
+
+        self.ipcon = IPConnection()
+        self.ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE,
+                                     self.qtcb_enumerate.emit)
+        self.ipcon.register_callback(IPConnection.CALLBACK_CONNECTED,
+                                     self.qtcb_connected.emit)
+        self.ipcon.register_callback(IPConnection.CALLBACK_DISCONNECTED,
+                                     self.qtcb_disconnected.emit)
+
         self.updates_window = None
         self.flashing_window = None
         self.advanced_window = None
         self.reset_view()
         self.button_advanced.setDisabled(True)
-
-        self.qtcb_enumerate.connect(self.cb_enumerate)
-        self.qtcb_disconnected.connect(self.cb_disconnected)
 
         self.tab_widget.currentChanged.connect(self.tab_changed)
         self.connect.pressed.connect(self.connect_pressed)
@@ -133,6 +143,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.table_view.horizontalHeader().setSortIndicator(0, Qt.AscendingOrder)
 
         self.mtm = None
+
+        self.last_host = self.combo_host.currentText()
+        self.last_port = self.spinbox_port.value()
 
     def closeEvent(self, event):
         self.exit_brickv()
@@ -151,8 +164,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         config.set_host_history(history[:HOST_HISTORY_SIZE - 1])
         config.set_port(self.spinbox_port.value())
 
-        if self.ipcon != None:
-            self.reset_view()
+        self.reset_view()
+
+        try:
+            self.ipcon.disconnect()
+        except:
+            pass
 
         if signl != None and frme != None:
             print "Received SIGINT or SIGTERM, shutting down."
@@ -184,7 +201,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tab_widget.removeTab(i)
 
         self.plugins = [self]
-
         self.update_table_view()
 
     def updates_pressed(self):
@@ -216,32 +232,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.advanced_window.show()
 
     def connect_pressed(self):
-        if not self.ipcon:
+        if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_DISCONNECTED:
             try:
-                host = self.combo_host.currentText()
-                self.ipcon = IPConnection(host, self.spinbox_port.value())
-                self.ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, self.qtcb_enumerate.emit)
-                self.ipcon.register_callback(IPConnection.CALLBACK_DISCONNECTED, self.qtcb_disconnected.emit)
-                self.ipcon.connect()
-                self.ipcon.enumerate()
-                self.connect.setText("Disconnect")
-                self.combo_host.setDisabled(True)
-                self.spinbox_port.setDisabled(True)
-
-                index = self.combo_host.findText(host)
-                if index >= 0:
-                    self.combo_host.removeItem(index)
-                self.combo_host.insertItem(-1, host)
-                self.combo_host.setCurrentIndex(0)
-
-                while self.combo_host.count() > HOST_HISTORY_SIZE:
-                    self.combo_host.removeItem(self.combo_host.count() - 1)
-            except (Error, socket.error):
-                self.ipcon = None
-                box_head = 'Could not connect'
-                box_text = 'Please check host, check port and ' + \
-                           'check if the Brick Daemon is running.'
-                QMessageBox.critical(self, box_head, box_text)
+                self.last_host = self.combo_host.currentText()
+                self.last_port = self.spinbox_port.value()
+                self.ipcon.connect(self.last_host, self.last_port)
+            except:
+                QMessageBox.critical(self, 'Could not connect',
+                                     'Please check host, check port and ' +
+                                     'check if the Brick Daemon is running')
         else:
             self.reset_view()
             self.ipcon.disconnect()
@@ -313,8 +312,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def cb_enumerate(self, uid, connected_uid, position,
                      hardware_version, firmware_version,
                      device_identifier, enumeration_type):
-        if enumeration_type in [IPConnection.ENUMERATION_AVAILABLE,
-                                IPConnection.ENUMERATION_CONNECTED]:
+        if enumeration_type in [IPConnection.ENUMERATION_TYPE_AVAILABLE,
+                                IPConnection.ENUMERATION_TYPE_CONNECTED]:
             for plugin in self.plugins:
                 # Plugin already loaded
                 if plugin.uid == uid:
@@ -332,7 +331,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 c = self.create_plugin_container(plugin, connected_uid, position)
                 self.tab_widget.addTab(c, tab_name)
                 self.plugins.append(plugin)
-        elif enumeration_type == IPConnection.ENUMERATION_DISCONNECTED:
+        elif enumeration_type == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
             for i in range(len(self.plugins)):
                 if self.plugins[i].uid == uid:
                     self.tab_widget.setCurrentIndex(0)
@@ -345,18 +344,47 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.update_table_view()
 
-    def cb_disconnected(self, disconnect_type):
-        self.reset_view()
-        self.connect.setText("Connect")
-        self.button_advanced.setDisabled(True)
-        self.combo_host.setDisabled(False)
-        self.spinbox_port.setDisabled(False)
-        self.ipcon = None
+    def cb_connected(self, connect_reason):
+        self.connect.setText("Disconnect")
 
-        if disconnect_type == IPConnection.DISCONNECT_ERROR:
-            QMessageBox.critical(self, "Connection", "Connection lost, an error occured!", QMessageBox.Ok)
-        elif disconnect_type == IPConnection.DISCONNECT_SHUTDOWN:
-            QMessageBox.critical(self, "Connection", "Connection lost, socket disconnected by server!", QMessageBox.Ok)
+        if connect_reason == IPConnection.CONNECT_REASON_REQUEST:
+            self.combo_host.setDisabled(True)
+            self.spinbox_port.setDisabled(True)
+
+            index = self.combo_host.findText(self.last_host)
+            if index >= 0:
+                self.combo_host.removeItem(index)
+            self.combo_host.insertItem(-1, self.last_host)
+            self.combo_host.setCurrentIndex(0)
+
+            while self.combo_host.count() > HOST_HISTORY_SIZE:
+                self.combo_host.removeItem(self.combo_host.count() - 1)
+        elif connect_reason == IPConnection.CONNECT_REASON_AUTO_RECONNECT:
+            QMessageBox.information(self, 'Connection',
+                                    'Successfully reconnected!',
+                                    QMessageBox.Ok)
+
+        self.ipcon.enumerate()
+
+    def cb_disconnected(self, disconnect_reason):
+        if disconnect_reason == IPConnection.DISCONNECT_REASON_REQUEST:
+            self.connect.setText('Connect')
+            self.button_advanced.setDisabled(True)
+            self.combo_host.setDisabled(False)
+            self.spinbox_port.setDisabled(False)
+        else:
+            self.connect.setText('Abort Automatic Reconnect')
+
+            if disconnect_reason == IPConnection.DISCONNECT_REASON_ERROR:
+                QMessageBox.critical(self, 'Connection',
+                                     'Connection lost, an error occured!\n' +
+                                     'Trying to reconnect.',
+                                     QMessageBox.Ok)
+            elif disconnect_reason == IPConnection.DISCONNECT_REASON_SHUTDOWN:
+                QMessageBox.critical(self, 'Connection',
+                                     'Connection lost, socket disconnected by server!\n' +
+                                     'Trying to reconnect.',
+                                     QMessageBox.Ok)
 
     def update_table_view(self):
         data = []

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-07.      #
+# This file was automatically generated on 2012-11-22.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -20,6 +20,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
+GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletAnalogOut(Device):
     """
@@ -33,6 +34,7 @@ class BrickletAnalogOut(Device):
     FUNCTION_GET_VOLTAGE = 2
     FUNCTION_SET_MODE = 3
     FUNCTION_GET_MODE = 4
+    FUNCTION_GET_IDENTITY = 255
 
     def __init__(self, uid, ipcon):
         """
@@ -80,5 +82,11 @@ class BrickletAnalogOut(Device):
         Returns the mode as set by :func:`SetMode`.
         """
         return self.ipcon.send_request(self, AnalogOut.FUNCTION_GET_MODE, (), '', 'B')
+
+    def get_identity(self):
+        """
+        .. versionadded:: 2.0.0~(Plugin)
+        """
+        return GetIdentity(*self.ipcon.send_request(self, AnalogOut.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
 AnalogOut = BrickletAnalogOut # for backward compatibility

@@ -80,8 +80,21 @@ class Error(Exception):
         return str(self.value) + ': ' + str(self.description)
 
 class Device:
-    def __init__(self, uid, ipcon):
-        self.uid = base58decode(uid)
+    def __init__(self, uid_str, ipcon):
+        uid = base58decode(uid_str)
+
+        if uid > 0xFFFFFFFF:
+            # convert from 64bit to 32bit
+            value1 = uid & 0xFFFFFFFF
+            value2 = (uid >> 32) & 0xFFFFFFFF
+
+            uid  = (value1 & 0x3F000000) << 2
+            uid |= (value1 & 0x000F0000) << 6
+            uid |= (value1 & 0x0000003F) << 16
+            uid |= (value2 & 0x0F000000) >> 12
+            uid |= (value2 & 0x00000FFF)
+
+        self.uid = uid
         self.ipcon = ipcon
         self.api_version = (0, 0, 0)
         self.registered_callbacks = {}
@@ -99,7 +112,6 @@ class Device:
         return self.api_version
 
 class IPConnection:
-    FUNCTION_GET_IDENTITY = 255
     FUNCTION_ENUMERATE = 254
     FUNCTION_ADC_CALIBRATE = 251
     FUNCTION_GET_ADC_CALIBRATION = 250
@@ -115,23 +127,32 @@ class IPConnection:
 
     BROADCAST_UID = 0
 
-    RESPONSE_TIMEOUT = 2.5
-
     PLUGIN_CHUNK_SIZE = 32
 
-    ENUMERATION_AVAILABLE = 0
-    ENUMERATION_CONNECTED = 1
-    ENUMERATION_DISCONNECTED = 2
+    # enumeration_type parameter to the enumerate callback
+    ENUMERATION_TYPE_AVAILABLE = 0
+    ENUMERATION_TYPE_CONNECTED = 1
+    ENUMERATION_TYPE_DISCONNECTED = 2
 
-    DISCONNECT_ERROR = 0
-    DISCONNECT_REQUEST = 1
-    DISCONNECT_SHUTDOWN = 2
+    # connect_reason parameter to the connected callback
+    CONNECT_REASON_REQUEST = 0
+    CONNECT_REASON_AUTO_RECONNECT = 1
+
+    # disconnect_reason parameter to the disconnected callback
+    DISCONNECT_REASON_REQUEST = 0
+    DISCONNECT_REASON_ERROR = 1
+    DISCONNECT_REASON_SHUTDOWN = 2
+
+    # returned by get_connection_state
+    CONNECTION_STATE_DISCONNECTED = 0
+    CONNECTION_STATE_CONNECTED = 1
+    CONNECTION_STATE_PENDING = 2 # auto-reconnect in process
 
     QUEUE_EXIT = 0
     QUEUE_META = 1
     QUEUE_PACKET = 2
 
-    def __init__(self, host, port):
+    def __init__(self):
         """
         Creates an IP connection to the Brick Daemon with the given *host*
         and *port*. With the IP connection itself it is possible to enumerate
@@ -139,8 +160,12 @@ class IPConnection:
         and Bricklets to the connection.
         """
 
-        self.host = host
-        self.port = port
+        self.host = None
+        self.port = None
+        self.timeout = 2.5
+        self.auto_reconnect = True
+        self.auto_reconnect_allowed = False
+        self.auto_reconnect_pending = False
         self.next_seqnum = 0
         self.auth_key = None
         self.devices = {}
@@ -152,92 +177,45 @@ class IPConnection:
         self.callback_queue = None
         self.callback_thread = None
 
-    def connect(self):
+    def connect(self, host, port):
         with self.socket_lock:
             if self.socket is not None:
                 raise Error(Error.ALREADY_CONNECTED,
                             'Already connected to {0}:{1}'.format(self.host, self.port))
 
-            if self.callback_thread is None:
-                try:
-                    self.callback_queue = Queue()
-                    self.callback_thread = Thread(target=self.callback_loop, args=(self.callback_queue, ))
-                    self.callback_thread.daemon = True
-                    self.callback_thread.start()
-                except:
-                    self.callback_queue = None
-                    self.callback_thread = None
-                    raise
+            self.host = host
+            self.port = port
 
-            try:
-                self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.socket.connect((self.host, self.port))
-            except:
-                self.socket = None
-                raise
-
-            try:
-                self.receive_flag = True
-                self.receive_thread = Thread(target=self.receive_loop)
-                self.receive_thread.daemon = True
-                self.receive_thread.start()
-            except:
-                def cleanup():
-                    # end receive thread
-                    self.receive_flag = False
-
-                    try:
-                        self.socket.shutdown(socket.SHUT_RDWR)
-                    except socket.error:
-                        pass
-
-                    if self.receive_thread is not None:
-                        self.receive_thread.join() # FIXME: use a timeout?
-
-                    self.receive_thread = None
-
-                    # close socket
-                    self.socket.close()
-                    self.socket = None
-
-                    # end callback thread
-                    self.callback_queue.put((IPConnection.QUEUE_EXIT, None))
-
-                    if current_thread() is not self.callback_thread:
-                        self.callback_thread.join()
-
-                    self.callback_queue = None
-                    self.callback_thread = None
-
-                cleanup()
-                raise
-
-        # do this outside the socket_lock to ensure that the callback will
-        # not be executed while the socket_lock is held
-        self.callback_queue.put((IPConnection.QUEUE_META, (IPConnection.CALLBACK_CONNECTED, None)))
+            self.connect_unlocked(False)
 
     def disconnect(self):
         with self.socket_lock:
-            if self.socket is None:
-                raise Error(Error.NOT_CONNECTED,
-                            'Not connected to {0}:{1}'.format(self.host, self.port))
+            self.auto_reconnect_allowed = False
 
-            # end receive thread
-            self.receive_flag = False
+            if self.auto_reconnect_pending:
+                # abort potentially pending auto reconnect
+                self.auto_reconnect_pending = False
+            else:
+                if self.socket is None:
+                    raise Error(Error.NOT_CONNECTED,
+                                'Not connected to {0}:{1}'.format(self.host, self.port))
 
-            try:
-                self.socket.shutdown(socket.SHUT_RDWR)
-            except socket.error:
-                pass
+                # end receive thread
+                self.receive_flag = False
 
-            if self.receive_thread is not None:
-                self.receive_thread.join() # FIXME: use a timeout?
+                try:
+                    self.socket.shutdown(socket.SHUT_RDWR)
+                except socket.error:
+                    pass
 
-            self.receive_thread = None
+                if self.receive_thread is not None:
+                    self.receive_thread.join() # FIXME: use a timeout?
 
-            # close socket
-            self.socket.close()
-            self.socket = None
+                self.receive_thread = None
+
+                # close socket
+                self.socket.close()
+                self.socket = None
 
             # end callback thread
             callback_queue = self.callback_queue
@@ -246,17 +224,50 @@ class IPConnection:
             self.callback_queue = None
             self.callback_thread = None
 
-        # do this outside of socket_lock to allow calling connect from the callback
+        # do this outside of socket_lock to allow calling (dis-)connect from
+        # the callbacks while blocking on the join call here
         callback_queue.put((IPConnection.QUEUE_META,
                             (IPConnection.CALLBACK_DISCONNECTED,
-                             IPConnection.DISCONNECT_REQUEST)))
+                             IPConnection.DISCONNECT_REASON_REQUEST)))
         callback_queue.put((IPConnection.QUEUE_EXIT, None))
 
         if current_thread() is not callback_thread:
             callback_thread.join()
 
-    def is_connected(self):
-        return self.socket is not None
+    def get_connection_state(self):
+        if self.socket is not None:
+            return IPConnection.CONNECTION_STATE_CONNECTED
+        elif self.auto_reconnect_pending:
+            return IPConnection.CONNECTION_STATE_PENDING
+        else:
+            return IPConnection.CONNECTION_STATE_DISCONNECTED
+
+    def set_auto_reconnect(self, auto_reconnect):
+        self.auto_reconnect = bool(auto_reconnect)
+
+        if not self.auto_reconnect:
+            # abort potentially pending auto reconnect
+            self.auto_reconnect_allowed = False
+
+    def get_auto_reconnect(self):
+        return self.auto_reconnect
+
+    def set_timeout(self, timeout):
+        """
+        Sets the response timeout in seconds as float.
+        """
+        timeout = float(timeout)
+
+        if timeout < 0:
+            raise ValueError('Timeout cannot be negative')
+
+        self.timeout = timeout
+
+    def get_timeout(self):
+        """
+        Returns the response timeout in seconds as float.
+        """
+        return self.timeout
 
     def enumerate(self):
         with self.socket_lock:
@@ -268,13 +279,86 @@ class IPConnection:
                                                 IPConnection.FUNCTION_ENUMERATE,
                                                 False)
 
-            self.socket.send(request)
+            try:
+                self.socket.send(request)
+            except socket.error:
+                pass
 
     def register_callback(self, id, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
         self.registered_callbacks[id] = callback
+
+    def connect_unlocked(self, is_auto_reconnect):
+        # NOTE: assumes that socket_lock is locked
+
+        if self.callback_thread is None:
+            try:
+                self.callback_queue = Queue()
+                self.callback_thread = Thread(target=self.callback_loop, args=(self.callback_queue, ))
+                self.callback_thread.daemon = True
+                self.callback_thread.start()
+            except:
+                self.callback_queue = None
+                self.callback_thread = None
+                raise
+
+        try:
+            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.socket.connect((self.host, self.port))
+        except:
+            self.socket = None
+            raise
+
+        try:
+            self.receive_flag = True
+            self.receive_thread = Thread(target=self.receive_loop)
+            self.receive_thread.daemon = True
+            self.receive_thread.start()
+        except:
+            def cleanup():
+                # end receive thread
+                self.receive_flag = False
+
+                try:
+                    self.socket.shutdown(socket.SHUT_RDWR)
+                except socket.error:
+                    pass
+
+                if self.receive_thread is not None:
+                    self.receive_thread.join() # FIXME: use a timeout?
+
+                self.receive_thread = None
+
+                # close socket
+                self.socket.close()
+                self.socket = None
+
+                # end callback thread
+                if not is_auto_reconnect:
+                    self.callback_queue.put((IPConnection.QUEUE_EXIT, None))
+
+                    if current_thread() is not self.callback_thread:
+                        self.callback_thread.join()
+
+                    self.callback_queue = None
+                    self.callback_thread = None
+
+            cleanup()
+            raise
+
+        if is_auto_reconnect:
+            connect_reason = IPConnection.CONNECT_REASON_AUTO_RECONNECT
+        else:
+            connect_reason = IPConnection.CONNECT_REASON_REQUEST
+
+        self.auto_reconnect_allowed = False
+        self.auto_reconnect_pending = False
+
+        self.callback_queue.put((IPConnection.QUEUE_META,
+                                (IPConnection.CALLBACK_CONNECTED,
+                                 connect_reason)))
 
     def receive_loop(self):
         if sys.hexversion < 0x03000000:
@@ -286,16 +370,20 @@ class IPConnection:
             try:
                 data = self.socket.recv(8192)
             except socket.error:
+                self.auto_reconnect_allowed = True
+                self.receive_flag = False
                 self.callback_queue.put((IPConnection.QUEUE_META,
                                          (IPConnection.CALLBACK_DISCONNECTED,
-                                          IPConnection.DISCONNECT_ERROR)))
+                                          IPConnection.DISCONNECT_REASON_ERROR)))
                 return
 
             if len(data) == 0:
                 if self.receive_flag:
+                    self.auto_reconnect_allowed = True
+                    self.receive_flag = False
                     self.callback_queue.put((IPConnection.QUEUE_META,
                                              (IPConnection.CALLBACK_DISCONNECTED,
-                                              IPConnection.DISCONNECT_SHUTDOWN)))
+                                              IPConnection.DISCONNECT_REASON_SHUTDOWN)))
                 return
 
             pending_data += data
@@ -328,12 +416,46 @@ class IPConnection:
                 if function_id == IPConnection.CALLBACK_CONNECTED:
                     if IPConnection.CALLBACK_CONNECTED in self.registered_callbacks and \
                        self.registered_callbacks[IPConnection.CALLBACK_CONNECTED] is not None:
-                        self.registered_callbacks[IPConnection.CALLBACK_CONNECTED]()
+                        self.registered_callbacks[IPConnection.CALLBACK_CONNECTED](parameter)
                 elif function_id == IPConnection.CALLBACK_DISCONNECTED:
+                    # need to do this here, the receive_loop is not allowed to
+                    # hold the socket_lock because this could cause a deadlock
+                    # with a concurrent call to the (dis-)connect function
+                    with self.socket_lock:
+                        if self.socket is not None:
+                            self.socket.close()
+                            self.socket = None
+
+                    # FIXME: wait a moment here, otherwise the next connect
+                    # attempt will succeed, even if there is no open server
+                    # socket. the first receive will then fail directly
+                    time.sleep(0.1)
+
                     if IPConnection.CALLBACK_DISCONNECTED in self.registered_callbacks and \
                        self.registered_callbacks[IPConnection.CALLBACK_DISCONNECTED] is not None:
                         self.registered_callbacks[IPConnection.CALLBACK_DISCONNECTED](parameter)
-            elif kind == IPConnection.QUEUE_PACKET:
+
+                    if parameter != IPConnection.DISCONNECT_REASON_REQUEST and self.auto_reconnect and self.auto_reconnect_allowed:
+                        self.auto_reconnect_pending = True
+                        retry = True
+
+                        # block here until reconnect. this is okay, there is no
+                        # callback to deliver when there is no connection
+                        while retry:
+                            retry = False
+
+                            with self.socket_lock:
+                                if self.auto_reconnect_allowed and self.socket is None:
+                                    try:
+                                        self.connect_unlocked(True)
+                                    except:
+                                        retry = True
+                                else:
+                                    self.auto_reconnect_pending = False
+
+                            if retry:
+                                time.sleep(0.1)
+            elif kind == IPConnection.QUEUE_PACKET and self.receive_flag:
                 packet = data
                 uid = get_uid_from_data(packet)
                 length = get_length_from_data(packet)
@@ -346,23 +468,27 @@ class IPConnection:
                         firmware_version, device_identifier, enumeration_type = \
                         self.deserialize_data(payload, '8s 8s c 3B 3B H B')
 
-                    self.registered_callbacks[IPConnection.CALLBACK_ENUMERATE](uid, connected_uid, position, hardware_version,
-                                                                               firmware_version, device_identifier, enumeration_type)
+                    cb = self.registered_callbacks[IPConnection.CALLBACK_ENUMERATE]
+                    cb(uid, connected_uid, position, hardware_version,
+                       firmware_version, device_identifier, enumeration_type)
                     continue
 
                 if uid not in self.devices:
                     continue
 
                 device = self.devices[uid]
+
                 if function_id in device.registered_callbacks and \
                    device.registered_callbacks[function_id] is not None:
+                    cb = device.registered_callbacks[function_id]
                     form = device.callback_formats[function_id]
+
                     if len(form) == 0:
-                        device.registered_callbacks[function_id]()
+                        cb()
                     elif len(form) == 1:
-                        device.registered_callbacks[function_id](self.deserialize_data(payload, form))
+                        cb(self.deserialize_data(payload, form))
                     else:
-                        device.registered_callbacks[function_id](*self.deserialize_data(payload, form))
+                        cb(*self.deserialize_data(payload, form))
 
     def deserialize_data(self, data, form):
         ret = []
@@ -437,7 +563,7 @@ class IPConnection:
             return
 
         try:
-            response = device.response_queue.get(True, IPConnection.RESPONSE_TIMEOUT)
+            response = device.response_queue.get(True, self.timeout)
         except Empty:
             device.write_lock.release()
             msg = 'Did not receive response for function ' + str(function_id) +  ' in time'
