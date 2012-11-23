@@ -69,8 +69,6 @@ def async_start_thread(parent):
                     else:
                         return_value = func_to_call(parameter)
                 except:
-                    traceback.print_exc()
-                    
                     if return_error != None:
                         async_event_queue.put(return_error)
                         with async_queue.mutex:
@@ -93,4 +91,3 @@ def async_start_thread(parent):
     async_thread = AsyncThread(parent)
     async_thread.start()
     return async_thread
-        
