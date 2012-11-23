@@ -52,7 +52,8 @@ class LinearPoti(PluginBase):
         
         self.position_label = PositionLabel('Position: ')
         
-        self.current_value = 0
+        self.current_value = None
+
         plot_list = [['', Qt.red, self.get_current_value]]
         self.plot_widget = PlotWidget('Position', plot_list)
         

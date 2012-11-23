@@ -118,7 +118,10 @@ class PlotWidget(QWidget):
             return
         
         for i in range(len(self.update_func)):
-            self.plot.add_data(i, self.counter/10.0, self.update_func[i]())
+            value = self.update_func[i]()
+
+            if value is not None:
+                self.plot.add_data(i, self.counter/10.0, value)
             
         self.counter += 1
             

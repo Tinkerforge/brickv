@@ -58,7 +58,7 @@ class Current25(PluginBase):
         self.calibrate_button = QPushButton('Calibrate')
         self.calibrate_button.pressed.connect(self.calibrate_pressed)
         
-        self.current_value = 0
+        self.current_value = None
         
         plot_list = [['', Qt.red, self.get_current_value]]
         self.plot_widget = PlotWidget('Current [mA]', plot_list)

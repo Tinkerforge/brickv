@@ -72,7 +72,8 @@ class AmbientLight(PluginBase):
         self.illuminance_label = IlluminanceLabel('Illuminance: ')
         self.alf = AmbientLightFrame()
         
-        self.current_value = 0
+        self.current_value = None
+
         plot_list = [['', Qt.red, self.get_current_value]]
         self.plot_widget = PlotWidget('Illuminance [lx]', plot_list)
         

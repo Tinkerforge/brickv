@@ -83,7 +83,7 @@ class DistanceIR(PluginBase):
         self.sample_layout.addWidget(self.sample_file)
         self.sample_layout.addWidget(self.sample_save)
         
-        self.current_value = 0
+        self.current_value = None
         
         plot_list = [['', Qt.red, self.get_current_value]]
         self.plot_widget = PlotWidget('Distance [cm]', plot_list)

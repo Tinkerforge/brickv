@@ -50,7 +50,7 @@ class Temperature(PluginBase):
         self.temperature_label = TemperatureLabel()
         self.cb_temperature(self.tem.get_temperature())
         
-        self.current_value = 0
+        self.current_value = None
         
         plot_list = [['', Qt.red, self.get_current_value]]
         self.plot_widget = PlotWidget('Temperature [%cC]' % 0xB0, plot_list)

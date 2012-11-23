@@ -49,7 +49,7 @@ class Humidity(PluginBase):
         
         self.humidity_label = HumidityLabel('Humidity: ')
         
-        self.current_value = 0
+        self.current_value = None
         
         plot_list = [['', Qt.red, self.get_current_value]]
         self.plot_widget = PlotWidget('Relative Humidity [%RH]', plot_list)

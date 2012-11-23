@@ -96,8 +96,8 @@ class Joystick(PluginBase):
         
         self.calibration_button.pressed.connect(self.calibration_pressed)
         
-        self.current_x = 0
-        self.current_y = 0
+        self.current_x = None
+        self.current_y = None
         
         plot_list = [['X', Qt.darkGreen, self.get_current_x],
                      ['Y', Qt.blue, self.get_current_y]]

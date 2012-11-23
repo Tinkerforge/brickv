@@ -72,8 +72,8 @@ class Barometer(PluginBase):
         if has_calibrate:
             self.chip_temperature_label.setAlignment(Qt.AlignCenter)
 
-        self.current_air_pressure = 0
-        self.current_altitude = 0
+        self.current_air_pressure = None
+        self.current_altitude = None
 
         plot_list = [['', Qt.red, self.get_current_air_pressure]]
         self.air_pressure_plot_widget = PlotWidget('Air Pressure [mbar]', plot_list)

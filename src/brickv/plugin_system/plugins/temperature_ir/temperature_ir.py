@@ -69,8 +69,8 @@ class TemperatureIR(PluginBase):
         
         self.emissivity_button.pressed.connect(self.emissivity_pressed)
         
-        self.current_ambient = 0
-        self.current_object = 0
+        self.current_ambient = None
+        self.current_object = None
         
         plot_list = [['amb', Qt.blue, self.get_current_ambient],
                      ['obj', Qt.red, self.get_current_object]]

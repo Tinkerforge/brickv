@@ -49,7 +49,7 @@ class Voltage(PluginBase):
         
         self.voltage_label = CurrentLabel('Voltage: ')
         
-        self.current_value = 0
+        self.current_value = None
         
         plot_list = [['', Qt.red, self.get_current_value]]
         self.plot_widget = PlotWidget('Voltage [mV]', plot_list)
