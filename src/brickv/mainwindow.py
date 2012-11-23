@@ -94,7 +94,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowIcon(QIcon("brickv-icon.png"))
         signal.signal(signal.SIGINT, self.exit_brickv)
         signal.signal(signal.SIGTERM, self.exit_brickv)
-        
+
         self.async_thread = async_start_thread(self)
 
         self.setWindowTitle("Brick Viewer " + config.BRICKV_VERSION)
@@ -319,14 +319,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 # Plugin already loaded
                 if plugin.uid == uid:
                     return
-            plugin = self.plugin_manager.get_plugin_from_device_identifier(device_identifier, self.ipcon, uid, firmware_version)
+            plugin = self.plugin_manager.get_plugin(device_identifier, self.ipcon,
+                                                    uid, firmware_version)
             if plugin is not None:
                 if plugin.is_hardware_version_relevant():
-                    tab_name = '{0} {1}.{2}'.format(plugin.name, hardware_version[0], hardware_version[1])
+                    tab_name = '{0} {1}.{2}'.format(plugin.name,
+                                                    hardware_version[0],
+                                                    hardware_version[1])
                 else:
                     tab_name = plugin.name
 
-                self.tab_widget.addTab(self.create_plugin_container(plugin, connected_uid, position), tab_name)
+                c = self.create_plugin_container(plugin, connected_uid, position)
+                self.tab_widget.addTab(c, tab_name)
                 self.plugins.append(plugin)
         elif enumeration_type == IPConnection.ENUMERATION_DISCONNECTED:
             for i in range(len(self.plugins)):

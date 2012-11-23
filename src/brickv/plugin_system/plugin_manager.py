@@ -50,7 +50,7 @@ class PluginManager:
                 if device_class:
                     self.plugins.append(device_class)
                 
-    def get_plugin_from_device_identifier(self, device_identifier, ipcon, uid, version):
+    def get_plugin(self, device_identifier, ipcon, uid, version):
         for plugin in self.plugins:
             if plugin.has_device_identifier(device_identifier):
                 return plugin(ipcon, uid, version)
