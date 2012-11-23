@@ -84,7 +84,6 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
 
     def start(self):
         self.reconfigure_everything()
-        pass
 
     def stop(self):
         pass

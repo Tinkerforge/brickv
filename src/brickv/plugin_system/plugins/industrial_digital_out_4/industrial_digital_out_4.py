@@ -84,7 +84,6 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
 
     def start(self):
         self.reconfigure_everything()
-        pass
 
     def stop(self):
         pass
