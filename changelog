@@ -56,3 +56,5 @@
         Add basic FreeBSD support
         Add button to restore factory calibration to IMU calibration window
         Add missing image for Dual Replay Bricklet plugin
+2.0.0: Add compatibility for 2.0.0 firmwares
+       Make Brick and Bricklet plugins asynchronous (no freezing if timeouts occur)
