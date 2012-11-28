@@ -109,7 +109,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             versions = []
 
             for a in body.getiterator('a'):
-                url_part = a.text.replace('/', '')
+                if 'href' not in a.attrib:
+                    continue
+
+                url_part = a.attrib['href'].replace('/', '')
 
                 if url_part == '..':
                     continue
@@ -142,7 +145,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 for a in elements:
                     progress.setValue(progress.value() + 1)
 
-                    url_part = a.text.replace('/', '')
+                    if 'href' not in a.attrib:
+                        continue
+
+                    url_part = a.attrib['href'].replace('/', '')
                     name = url_part
 
                     if name == '..':
@@ -203,7 +209,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 for a in elements:
                     progress.setValue(progress.value() + 1)
 
-                    url_part = a.text.replace('/', '')
+                    if 'href' not in a.attrib:
+                        continue
+
+                    url_part = a.attrib['href'].replace('/', '')
                     name = url_part
 
                     if name == '..':
