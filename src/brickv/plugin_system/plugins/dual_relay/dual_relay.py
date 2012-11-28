@@ -69,12 +69,12 @@ class DualRelay(PluginBase, Ui_DualRelay):
             dr1, dr2 = self.dr.get_state()
             if dr1:
                 self.dr1_image.setPixmap(self.a1_pixmap)
-                self.dr1_button.setText('On')
+                self.dr1_button.setText('Switch Off')
             else:
                 self.dr1_image.setPixmap(self.b1_pixmap)
             if dr2:
                 self.dr2_image.setPixmap(self.a2_pixmap)
-                self.dr2_button.setText('On')
+                self.dr2_button.setText('Switch Off')
             else:
                 self.dr2_image.setPixmap(self.b2_pixmap)
 
@@ -125,19 +125,16 @@ class DualRelay(PluginBase, Ui_DualRelay):
     @staticmethod
     def has_name(name):
         return 'Dual Relay Bricklet' in name 
-    
-    def get_state(self):
-        return (self.dr1_button.text() == 'On', self.dr2_button.text() == 'On')
-    
+
     def dr1_pressed(self):
-        if self.dr1_button.text() == 'On':
-            self.dr1_button.setText('Off')
-            self.dr1_image.setPixmap(self.b1_pixmap)
-        else:
-            self.dr1_button.setText('On')
+        if 'On' in self.dr1_button.text():
+            self.dr1_button.setText('Switch Off')
             self.dr1_image.setPixmap(self.a1_pixmap)
+        else:
+            self.dr1_button.setText('Switch On')
+            self.dr1_image.setPixmap(self.b1_pixmap)
         
-        dr1, dr2 = self.get_state()
+        dr1, dr2 = ('Off' in self.dr1_button.text(), 'Off' in self.dr2_button.text())
         
         try:
             self.dr.set_state(dr1, dr2)
@@ -150,14 +147,14 @@ class DualRelay(PluginBase, Ui_DualRelay):
         self.state1_combobox.setEnabled(True)
         
     def dr2_pressed(self):
-        if self.dr2_button.text() == 'On':
-            self.dr2_button.setText('Off')
-            self.dr2_image.setPixmap(self.b2_pixmap)
-        else:
-            self.dr2_button.setText('On')
+        if 'On' in self.dr2_button.text():
+            self.dr2_button.setText('Switch Off')
             self.dr2_image.setPixmap(self.a2_pixmap)
-        
-        dr1, dr2 = self.get_state()
+        else:
+            self.dr2_button.setText('Switch On')
+            self.dr2_image.setPixmap(self.b2_pixmap)
+
+        dr1, dr2 = ('Off' in self.dr1_button.text(), 'Off' in self.dr2_button.text())
         
         try:
             self.dr.set_state(dr1, dr2)
@@ -181,13 +178,14 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.dr.set_monoflop(1, state, time)
             
             self.r1_monoflop = True
-            self.dr1_button.setText(self.state1_combobox.currentText())
             self.time1_spinbox.setEnabled(False)
             self.state1_combobox.setEnabled(False)
             
             if state:
+                self.dr1_button.setText('Switch Off')
                 self.dr1_image.setPixmap(self.a1_pixmap)
             else:
+                self.dr1_button.setText('Switch On')
                 self.dr1_image.setPixmap(self.b1_pixmap)
         except ip_connection.Error:
             return
@@ -204,13 +202,14 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.dr.set_monoflop(2, state, time)
             
             self.r2_monoflop = True
-            self.dr2_button.setText(self.state2_combobox.currentText())
             self.time2_spinbox.setEnabled(False)
             self.state2_combobox.setEnabled(False)
             
             if state:
+                self.dr2_button.setText('Switch Off')
                 self.dr2_image.setPixmap(self.a2_pixmap)
             else:
+                self.dr2_button.setText('Switch On')
                 self.dr2_image.setPixmap(self.b2_pixmap)
         except ip_connection.Error:
             return
@@ -222,10 +221,10 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.time1_spinbox.setEnabled(True)
             self.state1_combobox.setEnabled(True)
             if state:
-                self.dr1_button.setText('On')
+                self.dr1_button.setText('Switch Off')
                 self.dr1_image.setPixmap(self.a1_pixmap)
             else:
-                self.dr1_button.setText('Off')
+                self.dr1_button.setText('Switch On')
                 self.dr1_image.setPixmap(self.b1_pixmap)
         else:
             self.r2_monoflop = False
@@ -233,10 +232,10 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.time2_spinbox.setEnabled(True)
             self.state2_combobox.setEnabled(True)
             if state:
-                self.dr2_button.setText('On')
+                self.dr2_button.setText('Switch Off')
                 self.dr2_image.setPixmap(self.a2_pixmap)
             else:
-                self.dr2_button.setText('Off')
+                self.dr2_button.setText('Switch On')
                 self.dr2_image.setPixmap(self.b2_pixmap)
     
     def update(self):
