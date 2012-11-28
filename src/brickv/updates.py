@@ -85,7 +85,10 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
             versions = []
 
             for a in body.getiterator('a'):
-                url_part = a.text.replace('/', '')
+                if 'href' not in a.attrib:
+                    continue
+
+                url_part = a.attrib['href'].replace('/', '')
 
                 if url_part == '..':
                     continue
@@ -106,7 +109,10 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
             versions = []
 
             for a in body.getiterator('a'):
-                url_part = a.text.replace('/', '')
+                if 'href' not in a.attrib:
+                    continue
+
+                url_part = a.attrib['href'].replace('/', '')
 
                 if url_part == '..':
                     continue
