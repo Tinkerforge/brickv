@@ -31,7 +31,7 @@ from ui_industrial_quad_relay import Ui_IndustrialQuadRelay
 from bindings import bricklet_industrial_quad_relay
         
 class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
-    qtcb_monoflop = pyqtSignal(int, bool)
+    qtcb_monoflop = pyqtSignal(int, int)
     
     def __init__ (self, ipcon, uid):
         PluginBase.__init__(self, ipcon, uid)
@@ -53,14 +53,13 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         for icon in self.relay_button_icons:
             icon.setPixmap(self.open_pixmap)
             icon.show()
-            
-        self.line_1vs2.setVisible(False)
-        self.line_2vs3.setVisible(False)
-        self.line_3vs4.setVisible(False)
+
+        self.lines = [self.line_0vs1, self.line_1vs2, self.line_2vs3, self.line_3vs4]
+        for line in self.lines:
+            line.setVisible(False)
         
         self.available_ports = self.iqr.get_available_for_group()
-        
-        
+
         def get_button_lambda(button):
             return lambda: self.relay_button_pressed(button)
         
@@ -73,21 +72,22 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         
         self.set_group.pressed.connect(self.set_group_pressed)
         
+        self.monoflop_pin.currentIndexChanged.connect(self.monoflop_pin_changed)
         self.monoflop_go.pressed.connect(self.monoflop_go_pressed)
-        self.monoflop_time_before = 1000
-        
-        self.reconfigure_everything()
+        self.monoflop_time_before = [1000] * 16
+        self.monoflop_pending = [False] * 16
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update)
         self.update_timer.setInterval(50)
 
+        self.reconfigure_everything()
+
     def start(self):
         self.reconfigure_everything()
-        pass
 
     def stop(self):
-        pass
+        self.update_timer.stop()
 
     @staticmethod
     def has_name(name):
@@ -117,7 +117,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
 
         self.monoflop_pin.clear()
 
-        if group[0] == 'n' and group[1] == 'n' and group[2] == 'n' and group[3]:
+        if group[0] == 'n' and group[1] == 'n' and group[2] == 'n' and group[3] == 'n':
             self.show_buttons(0)
             self.hide_buttons(1)
             self.hide_buttons(2)
@@ -134,24 +134,54 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
                     for j in range(4):
                         self.monoflop_pin.addItem('Pin ' + str(i*4+j))
                     self.show_buttons(i)
-            
+
+        value_mask = self.iqr.get_value()
+
+        for pin in range(16):
+            if value_mask & (1 << pin):
+                self.relay_buttons[pin].setText('Switch Off')
+                self.relay_button_icons[pin].setPixmap(self.close_pixmap)
+            else:
+                self.relay_buttons[pin].setText('Switch On')
+                self.relay_button_icons[pin].setPixmap(self.open_pixmap)
+
+            index = self.monoflop_pin.findText('Pin {0}'.format(pin))
+            if index >= 0:
+                value, time, time_remaining = self.iqr.get_monoflop(pin)
+
+                if time_remaining > 0:
+                    self.monoflop_pending[pin] = True
+                    self.monoflop_time_before[pin] = time
+
+                    self.monoflop_pin.setCurrentIndex(index)
+                    self.monoflop_time.setValue(time_remaining)
+                    self.monoflop_time.setEnabled(False)
+
+                    self.update_timer.start()
+                else:
+                    self.monoflop_pending[pin] = False
+
     def show_buttons(self, num):
         for i in range(num*4, (num+1)*4):
             self.relay_buttons[i].setVisible(True)
             self.relay_button_icons[i].setVisible(True)
             self.relay_button_labels[i].setVisible(True)
-    
+
+        self.lines[num].setVisible(True)
+
     def hide_buttons(self, num):
         for i in range(num*4, (num+1)*4):
             self.relay_buttons[i].setVisible(False)
             self.relay_button_icons[i].setVisible(False)
             self.relay_button_labels[i].setVisible(False)
-    
+
+        self.lines[num].setVisible(False)
+
     def get_current_value(self):
         value = 0
         i = 0
         for b in self.relay_buttons:
-            if 'off' in b.text():
+            if 'Off' in b.text():
                 value |= (1 << i) 
             i += 1
         return value
@@ -174,58 +204,83 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
     
     def relay_button_pressed(self, button):
         value = self.get_current_value()
-        if 'on' in self.relay_buttons[button].text():
+        if 'On' in self.relay_buttons[button].text():
             value |= (1 << button)
-            self.relay_buttons[button].setText('off')
+            self.relay_buttons[button].setText('Switch Off')
             self.relay_button_icons[button].setPixmap(self.close_pixmap)
         else:
             value &= ~(1 << button)
-            self.relay_buttons[button].setText('on')
+            self.relay_buttons[button].setText('Switch On')
             self.relay_button_icons[button].setPixmap(self.open_pixmap)
-            
+
         self.iqr.set_value(value)
-        
-    def cb_monoflop(self, pin_mask, value_mask):
-        self.monoflop_time.setValue(self.monoflop_time_before)
-        self.update_timer.stop()
+
+        for pin in range(16):
+            self.monoflop_pending[pin] = False
+
+        pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+        self.monoflop_time.setValue(self.monoflop_time_before[pin])
         self.monoflop_time.setEnabled(True)
-        self.monoflop_pin.setEnabled(True)
-        
+
+    def cb_monoflop(self, pin_mask, value_mask):
         for pin in range(16):
             if (1 << pin) & pin_mask:
-                if 'on' in self.relay_buttons[pin].text():
-                    self.relay_buttons[pin].setText('off')
+                self.monoflop_pending[pin] = False
+
+                if (1 << pin) & value_mask:
+                    self.relay_buttons[pin].setText('Switch Off')
                     self.relay_button_icons[pin].setPixmap(self.close_pixmap)
                 else:
-                    self.relay_buttons[pin].setText('on')
+                    self.relay_buttons[pin].setText('Switch On')
                     self.relay_button_icons[pin].setPixmap(self.open_pixmap)
-                    
-                self.relay_buttons[pin].setEnabled(True)
-        
+
+        if sum(self.monoflop_pending) == 0:
+            self.update_timer.stop()
+
+        current_pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+        if (1 << current_pin) & pin_mask:
+            self.monoflop_time.setValue(self.monoflop_time_before[current_pin])
+            self.monoflop_time.setEnabled(True)
+
+    def monoflop_pin_changed(self):
+        try:
+            pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+        except ValueError:
+            return
+
+        if self.monoflop_pending[pin]:
+            value, time, time_remaining = self.iqr.get_monoflop(pin)
+            self.monoflop_time.setValue(time_remaining)
+            self.monoflop_time.setEnabled(False)
+        else:
+            self.monoflop_time.setValue(self.monoflop_time_before[pin])
+            self.monoflop_time.setEnabled(True)
+
     def monoflop_go_pressed(self):
         pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
-        if self.update_timer.isActive():
-            time = self.monoflop_time_before
+        if self.monoflop_pending[pin]:
+            time = self.monoflop_time_before[pin]
         else:
             time = self.monoflop_time.value()
-        value = "on" in (self.relay_buttons[pin].text())
-        
+
+        value = self.monoflop_state.currentIndex() == 0
+
         self.monoflop_time.setEnabled(False)
-        self.monoflop_pin.setEnabled(False)
-        self.monoflop_time_before = time
+        self.monoflop_time_before[pin] = time
+        self.monoflop_pending[pin] = True
         self.iqr.set_monoflop(1 << pin, value << pin, time)
-            
-        if not self.update_timer.isActive():
-            self.relay_buttons[pin].setEnabled(False)
-            if 'on' in self.relay_buttons[pin].text():
-                self.relay_buttons[pin].setText('off')
-                self.relay_button_icons[pin].setPixmap(self.close_pixmap)
-            else:
-                self.relay_buttons[pin].setText('on')
-                self.relay_button_icons[pin].setPixmap(self.open_pixmap)
+
+        if value:
+            self.relay_buttons[pin].setText('Switch Off')
+            self.relay_button_icons[pin].setPixmap(self.close_pixmap)
+        else:
+            self.relay_buttons[pin].setText('Switch On')
+            self.relay_button_icons[pin].setPixmap(self.open_pixmap)
+
         self.update_timer.start()
-    
+
     def update(self):
         pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
-        value, time, time_remaining = self.iqr.get_monoflop(pin)
-        self.monoflop_time.setValue(time_remaining)
+        if self.monoflop_pending[pin]:
+            value, time, time_remaining = self.iqr.get_monoflop(pin)
+            self.monoflop_time.setValue(time_remaining)

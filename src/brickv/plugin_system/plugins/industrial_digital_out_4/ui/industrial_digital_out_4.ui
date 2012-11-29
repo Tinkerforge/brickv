@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>577</width>
-    <height>496</height>
+    <width>543</width>
+    <height>531</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -197,6 +197,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="set_group">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Set
 Group</string>
@@ -219,7 +225,7 @@ Group</string>
     </spacer>
    </item>
    <item>
-    <widget class="Line" name="line_7">
+    <widget class="Line" name="line_0vs1">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -244,12 +250,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b0">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -279,12 +288,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b1">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -314,12 +326,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b2">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -349,12 +364,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b3">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -388,6 +406,9 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
@@ -396,7 +417,7 @@ Group</string>
           <bool>true</bool>
          </property>
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -426,12 +447,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b5">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -461,12 +485,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b6">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -496,12 +523,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b7">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -535,12 +565,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b8">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -570,12 +603,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b9">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -605,12 +641,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b10">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -640,12 +679,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b11">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -679,12 +721,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b12">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -714,12 +759,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b13">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -749,12 +797,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b14">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -784,12 +835,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="b15">
          <property name="text">
-          <string>high</string>
+          <string>Switch High</string>
          </property>
         </widget>
        </item>
@@ -818,7 +872,7 @@ Group</string>
     </spacer>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,0,1,0">
      <item>
       <widget class="QLabel" name="monoflop_label1">
        <property name="text">
@@ -828,6 +882,9 @@ Group</string>
      </item>
      <item>
       <widget class="QComboBox" name="monoflop_pin">
+       <property name="sizeAdjustPolicy">
+        <enum>QComboBox::AdjustToContents</enum>
+       </property>
        <item>
         <property name="text">
          <string>Pin 0</string>
@@ -851,21 +908,50 @@ Group</string>
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="monoflop_time">
-       <property name="maximum">
-        <number>2147483647</number>
-       </property>
-       <property name="value">
-        <number>1000</number>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_23">
+       <item>
+        <widget class="QLabel" name="monoflop_label2">
+         <property name="text">
+          <string>Time [ms]:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>State:</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
-      <widget class="QLabel" name="monoflop_label2">
-       <property name="text">
-        <string>ms</string>
-       </property>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_22">
+       <item>
+        <widget class="QSpinBox" name="monoflop_time">
+         <property name="maximum">
+          <number>2147483647</number>
+         </property>
+         <property name="value">
+          <number>1000</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="monoflop_state">
+         <item>
+          <property name="text">
+           <string>High</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Low</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <widget class="QPushButton" name="monoflop_go">
