@@ -56,3 +56,9 @@
         Add basic FreeBSD support
         Add button to restore factory calibration to IMU calibration window
         Add missing image for Dual Replay Bricklet plugin
+1.1.14: Make Bricklet flashing fail early on verification error
+        Improve message for WIFI power mode changes
+        Verify UID format before writing it to a Bricklet
+        Fix discovering of plugins for Industrial Bricklets
+        Switch button text from state to action for Dual Relay Bricklet plugin
+        Improve monoflop handling for Industrial Bricklets
