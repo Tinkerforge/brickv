@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-22.      #
+# This file was automatically generated on 2012-11-29.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -90,6 +90,50 @@ class BrickMaster(Device):
 
         self.api_version = (1, 3, 2)
 
+        self.response_expected[BrickMaster.FUNCTION_GET_STACK_VOLTAGE] = 1
+        self.response_expected[BrickMaster.FUNCTION_GET_STACK_CURRENT] = 1
+        self.response_expected[BrickMaster.FUNCTION_SET_EXTENSION_TYPE] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_EXTENSION_TYPE] = 1
+        self.response_expected[BrickMaster.FUNCTION_IS_CHIBI_PRESENT] = 1
+        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_ADDRESS] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_ADDRESS] = 1
+        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_MASTER_ADDRESS] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_MASTER_ADDRESS] = 1
+        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_SLAVE_ADDRESS] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_SLAVE_ADDRESS] = 1
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_SIGNAL_STRENGTH] = 1
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_ERROR_LOG] = 1
+        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_FREQUENCY] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_FREQUENCY] = 1
+        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_CHANNEL] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_CHANNEL] = 1
+        self.response_expected[BrickMaster.FUNCTION_IS_RS485_PRESENT] = 1
+        self.response_expected[BrickMaster.FUNCTION_SET_RS485_ADDRESS] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_RS485_ADDRESS] = 1
+        self.response_expected[BrickMaster.FUNCTION_SET_RS485_SLAVE_ADDRESS] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_RS485_SLAVE_ADDRESS] = 1
+        self.response_expected[BrickMaster.FUNCTION_GET_RS485_ERROR_LOG] = 1
+        self.response_expected[BrickMaster.FUNCTION_SET_RS485_CONFIGURATION] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_RS485_CONFIGURATION] = 1
+        self.response_expected[BrickMaster.FUNCTION_IS_WIFI_PRESENT] = 1
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_CONFIGURATION] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_CONFIGURATION] = 1
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_ENCRYPTION] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_ENCRYPTION] = 1
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_STATUS] = 1
+        self.response_expected[BrickMaster.FUNCTION_REFRESH_WIFI_STATUS] = 4
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_CERTIFICATE] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_CERTIFICATE] = 1
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_POWER_MODE] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_POWER_MODE] = 1
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_BUFFER_INFO] = 1
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_REGULATORY_DOMAIN] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_REGULATORY_DOMAIN] = 1
+        self.response_expected[BrickMaster.FUNCTION_GET_USB_VOLTAGE] = 1
+        self.response_expected[BrickMaster.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickMaster.FUNCTION_RESET] = 4
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIP_TEMPERATURE] = 1
+
 
     def get_stack_voltage(self):
         """
@@ -97,7 +141,7 @@ class BrickMaster(Device):
         voltage that is supplied via the stack, i.e. it is given by a 
         Step-Down or Step-Up Power Supply.
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_STACK_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_STACK_VOLTAGE, (), '', 'H')
 
     def get_stack_current(self):
         """
@@ -105,7 +149,7 @@ class BrickMaster(Device):
         current that is drawn via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_STACK_CURRENT, (), '', 'H')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_STACK_CURRENT, (), '', 'H')
 
     def set_extension_type(self, extension, exttype):
         """
@@ -130,14 +174,14 @@ class BrickMaster(Device):
         The value will be saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_EXTENSION_TYPE, (extension, exttype), 'B I', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_EXTENSION_TYPE, (extension, exttype), 'B I', '')
 
     def get_extension_type(self, extension):
         """
         Returns the extension type for a given extension as set by 
         :func:`SetExtensionType`.
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_EXTENSION_TYPE, (extension,), 'B', 'I')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_EXTENSION_TYPE, (extension,), 'B', 'I')
 
     def is_chibi_present(self):
         """
@@ -145,7 +189,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.1.0~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_IS_CHIBI_PRESENT, (), '', '?')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_CHIBI_PRESENT, (), '', '?')
 
     def set_chibi_address(self, address):
         """
@@ -157,7 +201,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.1.0~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_ADDRESS, (address,), 'B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_CHIBI_ADDRESS, (address,), 'B', '')
 
     def get_chibi_address(self):
         """
@@ -165,7 +209,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.1.0~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_ADDRESS, (), '', 'B')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_ADDRESS, (), '', 'B')
 
     def set_chibi_master_address(self, address):
         """
@@ -178,7 +222,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.1.0~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_MASTER_ADDRESS, (address,), 'B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_CHIBI_MASTER_ADDRESS, (address,), 'B', '')
 
     def get_chibi_master_address(self):
         """
@@ -186,7 +230,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.1.0~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_MASTER_ADDRESS, (), '', 'B')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_MASTER_ADDRESS, (), '', 'B')
 
     def set_chibi_slave_address(self, num, address):
         """
@@ -203,7 +247,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.1.0~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_SLAVE_ADDRESS, (num, address), 'B B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_CHIBI_SLAVE_ADDRESS, (num, address), 'B B', '')
 
     def get_chibi_slave_address(self, num):
         """
@@ -212,7 +256,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.1.0~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_SLAVE_ADDRESS, (num,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_SLAVE_ADDRESS, (num,), 'B', 'B')
 
     def get_chibi_signal_strength(self):
         """
@@ -221,7 +265,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.1.0~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_SIGNAL_STRENGTH, (), '', 'B')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_SIGNAL_STRENGTH, (), '', 'B')
 
     def get_chibi_error_log(self):
         """
@@ -232,7 +276,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.1.0~(Firmware)
         """
-        return GetChibiErrorLog(*self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_ERROR_LOG, (), '', 'H H H H'))
+        return GetChibiErrorLog(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_ERROR_LOG, (), '', 'H H H H'))
 
     def set_chibi_frequency(self, frequency):
         """
@@ -253,7 +297,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.1.0~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_FREQUENCY, (frequency,), 'B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_CHIBI_FREQUENCY, (frequency,), 'B', '')
 
     def get_chibi_frequency(self):
         """
@@ -261,7 +305,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.1.0~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_FREQUENCY, (), '', 'B')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_FREQUENCY, (), '', 'B')
 
     def set_chibi_channel(self, channel):
         """
@@ -283,7 +327,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.1.0~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_CHIBI_CHANNEL, (channel,), 'B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_CHIBI_CHANNEL, (channel,), 'B', '')
 
     def get_chibi_channel(self):
         """
@@ -291,7 +335,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.1.0~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIBI_CHANNEL, (), '', 'B')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_CHANNEL, (), '', 'B')
 
     def is_rs485_present(self):
         """
@@ -299,7 +343,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.2.0~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_IS_RS485_PRESENT, (), '', '?')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_RS485_PRESENT, (), '', '?')
 
     def set_rs485_address(self, address):
         """
@@ -314,7 +358,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.2.0~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_RS485_ADDRESS, (address,), 'B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_RS485_ADDRESS, (address,), 'B', '')
 
     def get_rs485_address(self):
         """
@@ -322,7 +366,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.2.0~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_ADDRESS, (), '', 'B')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_RS485_ADDRESS, (), '', 'B')
 
     def set_rs485_slave_address(self, num, address):
         """
@@ -339,7 +383,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.2.0~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_RS485_SLAVE_ADDRESS, (num, address), 'B B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_RS485_SLAVE_ADDRESS, (num, address), 'B B', '')
 
     def get_rs485_slave_address(self, num):
         """
@@ -348,7 +392,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.2.0~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_SLAVE_ADDRESS, (num,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_RS485_SLAVE_ADDRESS, (num,), 'B', 'B')
 
     def get_rs485_error_log(self):
         """
@@ -359,7 +403,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.2.0~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_ERROR_LOG, (), '', 'H')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_RS485_ERROR_LOG, (), '', 'H')
 
     def set_rs485_configuration(self, speed, parity, stopbits):
         """
@@ -369,16 +413,16 @@ class BrickMaster(Device):
         Possible values for parity are 'n' (none), 'e' (even) and 'o' (odd).
         Possible values for stop bits are 1 and 2.
         
-        If your RS485 is unstable (lost messages etc), the first thing you should
+        If your RS485 is unstable (lost messages etc.), the first thing you should
         try is to decrease the speed. On very large bus (e.g. 1km), you probably
-        should use a value in the range of 100khz.
+        should use a value in the range of 100000 (100kbit/s).
         
         The values are stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
         
         .. versionadded:: 1.2.0~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_RS485_CONFIGURATION, (speed, parity, stopbits), 'I c B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_RS485_CONFIGURATION, (speed, parity, stopbits), 'I c B', '')
 
     def get_rs485_configuration(self):
         """
@@ -386,7 +430,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.2.0~(Firmware)
         """
-        return GetRS485Configuration(*self.ipcon.send_request(self, Master.FUNCTION_GET_RS485_CONFIGURATION, (), '', 'I c B'))
+        return GetRS485Configuration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_RS485_CONFIGURATION, (), '', 'I c B'))
 
     def is_wifi_present(self):
         """
@@ -394,17 +438,29 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.2.0~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_IS_WIFI_PRESENT, (), '', '?')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_WIFI_PRESENT, (), '', '?')
 
     def set_wifi_configuration(self, ssid, connection, ip, subnet_mask, gateway, port):
         """
-        Sets the configuration of the WIFI Extension. The ssid can have a max length
-        of 32 characters, the connection is either 0 for DHCP or 1 for static IP.
+        Sets the configuration of the WIFI Extension. The *ssid* can have a max length
+        of 32 characters. Possible values for *connection* are:
         
-        If you set connection to 1, you have to supply ip, subnet mask and gateway
-        as an array of size 4 (first element of the array is the least significant
-        byte of the address). If connection is set to 0 ip, subnet mask and gateway
-        are ignored, you can set them to 0.
+        .. csv-table::
+         :header: "Value", "Description"
+         :widths: 10, 90
+        
+         "0", "DHCP"
+         "1", "Static IP"
+         "2", "Access Point: DHCP"
+         "3", "Access Point: Static IP"
+         "4", "Ad Hoc: DHCP"
+         "5", "Ad Hoc: Static IP"
+        
+        If you set *connection* to one of the static IP options then you have to supply
+        *ip*, *subnet_mask* and *gateway* as an array of size 4 (first element of the
+        array is the least significant byte of the address). If *connection* is set to
+        one of the DHCP options then *ip*, *subnet_mask* and *gateway* are ignored, you
+        can set them to 0.
         
         The last parameter is the port that your program will connect to. The
         default port, that is used by brickd, is 4223.
@@ -416,7 +472,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.3.0~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_CONFIGURATION, (ssid, connection, ip, subnet_mask, gateway, port), '32s B 4B 4B 4B H', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI_CONFIGURATION, (ssid, connection, ip, subnet_mask, gateway, port), '32s B 4B 4B 4B H', '')
 
     def get_wifi_configuration(self):
         """
@@ -424,7 +480,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.3.0~(Firmware)
         """
-        return GetWifiConfiguration(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_CONFIGURATION, (), '', '32s B 4B 4B 4B H'))
+        return GetWifiConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_CONFIGURATION, (), '', '32s B 4B 4B 4B H'))
 
     def set_wifi_encryption(self, encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length):
         """
@@ -469,7 +525,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.3.0~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_ENCRYPTION, (encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length), 'B 50s B B H H H', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI_ENCRYPTION, (encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length), 'B 50s B B H H H', '')
 
     def get_wifi_encryption(self):
         """
@@ -477,7 +533,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.3.0~(Firmware)
         """
-        return GetWifiEncryption(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_ENCRYPTION, (), '', 'B 50s B B H H H'))
+        return GetWifiEncryption(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_ENCRYPTION, (), '', 'B 50s B B H H H'))
 
     def get_wifi_status(self):
         """
@@ -499,7 +555,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.3.0~(Firmware)
         """
-        return GetWifiStatus(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_STATUS, (), '', '6B 6B B h 4B 4B 4B I I B'))
+        return GetWifiStatus(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_STATUS, (), '', '6B 6B B h 4B 4B 4B I I B'))
 
     def refresh_wifi_status(self):
         """
@@ -512,7 +568,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.3.0~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_REFRESH_WIFI_STATUS, (), '', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_REFRESH_WIFI_STATUS, (), '', '')
 
     def set_wifi_certificate(self, index, data, data_length):
         """
@@ -537,7 +593,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.3.0~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_CERTIFICATE, (index, data, data_length), 'H 32B B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI_CERTIFICATE, (index, data, data_length), 'H 32B B', '')
 
     def get_wifi_certificate(self, index):
         """
@@ -545,7 +601,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.3.0~(Firmware)
         """
-        return GetWifiCertificate(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_CERTIFICATE, (index,), 'H', '32B B'))
+        return GetWifiCertificate(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_CERTIFICATE, (index,), 'H', '32B B'))
 
     def set_wifi_power_mode(self, mode):
         """
@@ -562,7 +618,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.3.0~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_POWER_MODE, (mode,), 'B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI_POWER_MODE, (mode,), 'B', '')
 
     def get_wifi_power_mode(self):
         """
@@ -570,7 +626,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.3.0~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_POWER_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_POWER_MODE, (), '', 'B')
 
     def get_wifi_buffer_info(self):
         """
@@ -591,14 +647,14 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.3.2~(Firmware)
         """
-        return GetWifiBufferInfo(*self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_BUFFER_INFO, (), '', 'I H H'))
+        return GetWifiBufferInfo(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_BUFFER_INFO, (), '', 'I H H'))
 
     def set_wifi_regulatory_domain(self, domain):
         """
-        Sets the regulatory domain of the WIFI Extension. Possible modes are:
+        Sets the regulatory domain of the WIFI Extension. Possible domains are:
         
         .. csv-table::
-         :header: "Mode", "Description"
+         :header: "Domain", "Description"
          :widths: 10, 90
         
          "0", "FCC: Channel 1-11 (N/S America, Australia, New Zealand)"
@@ -609,7 +665,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.3.4~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_SET_WIFI_REGULATORY_DOMAIN, (domain,), 'B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI_REGULATORY_DOMAIN, (domain,), 'B', '')
 
     def get_wifi_regulatory_domain(self):
         """
@@ -617,7 +673,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.3.4~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_WIFI_REGULATORY_DOMAIN, (), '', 'B')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_REGULATORY_DOMAIN, (), '', 'B')
 
     def get_usb_voltage(self):
         """
@@ -625,13 +681,13 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.3.5~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_USB_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_USB_VOLTAGE, (), '', 'H')
 
     def get_identity(self):
         """
         .. versionadded:: 2.0.0~(Firmware)
         """
-        return GetIdentity(*self.ipcon.send_request(self, Master.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def reset(self):
         """
@@ -644,7 +700,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.2.1~(Firmware)
         """
-        self.ipcon.send_request(self, Master.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_RESET, (), '', '')
 
     def get_chip_temperature(self):
         """
@@ -657,6 +713,6 @@ class BrickMaster(Device):
         
         .. versionadded:: 1.2.1~(Firmware)
         """
-        return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
 Master = BrickMaster # for backward compatibility

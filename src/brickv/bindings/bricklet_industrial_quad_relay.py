@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-22.      #
+# This file was automatically generated on 2012-11-27.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -50,7 +50,17 @@ class BrickletIndustrialQuadRelay(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.callback_formats[IndustrialQuadRelay.CALLBACK_MONOFLOP_DONE] = 'H H'
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_SET_VALUE] = 4
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_VALUE] = 1
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_SET_MONOFLOP] = 4
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_MONOFLOP] = 1
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_SET_GROUP] = 4
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_GROUP] = 1
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_AVAILABLE_FOR_GROUP] = 1
+        self.response_expected[BrickletIndustrialQuadRelay.CALLBACK_MONOFLOP_DONE] = 2
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_IDENTITY] = 1
+
+        self.callback_formats[BrickletIndustrialQuadRelay.CALLBACK_MONOFLOP_DONE] = 'H H'
 
     def set_value(self, value_mask):
         """
@@ -68,13 +78,13 @@ class BrickletIndustrialQuadRelay(Device):
         Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
         pins 8-11 and element 4 pins 12-15.
         """
-        self.ipcon.send_request(self, IndustrialQuadRelay.FUNCTION_SET_VALUE, (value_mask,), 'H', '')
+        self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_SET_VALUE, (value_mask,), 'H', '')
 
     def get_value(self):
         """
         Returns the bitmask as set by :func:`SetValue`.
         """
-        return self.ipcon.send_request(self, IndustrialQuadRelay.FUNCTION_GET_VALUE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_VALUE, (), '', 'H')
 
     def set_monoflop(self, pin_mask, value_mask, time):
         """
@@ -98,7 +108,7 @@ class BrickletIndustrialQuadRelay(Device):
         of two seconds and pin 0 closed. Pin 0 will be closed all the time. If now
         the RS485 connection is lost, then pin 0 will be opened in at most two seconds.
         """
-        self.ipcon.send_request(self, IndustrialQuadRelay.FUNCTION_SET_MONOFLOP, (pin_mask, value_mask, time), 'H H I', '')
+        self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_SET_MONOFLOP, (pin_mask, value_mask, time), 'H H I', '')
 
     def get_monoflop(self, pin):
         """
@@ -108,7 +118,7 @@ class BrickletIndustrialQuadRelay(Device):
         If the timer is not running currently, the remaining time will be returned
         as 0.
         """
-        return GetMonoflop(*self.ipcon.send_request(self, IndustrialQuadRelay.FUNCTION_GET_MONOFLOP, (pin,), 'B', 'H I I'))
+        return GetMonoflop(*self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_MONOFLOP, (pin,), 'B', 'H I I'))
 
     def set_group(self, group):
         """
@@ -128,13 +138,13 @@ class BrickletIndustrialQuadRelay(Device):
         pins on the Quad Relay on port B are assigned to 4-7. It is now possible
         to call :func:`SetValue` and control two Bricklets at the same time.
         """
-        self.ipcon.send_request(self, IndustrialQuadRelay.FUNCTION_SET_GROUP, (group,), '4c', '')
+        self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_SET_GROUP, (group,), '4c', '')
 
     def get_group(self):
         """
         Returns the group as set by :func:`SetGroup`
         """
-        return self.ipcon.send_request(self, IndustrialQuadRelay.FUNCTION_GET_GROUP, (), '', '4c')
+        return self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_GROUP, (), '', '4c')
 
     def get_available_for_group(self):
         """
@@ -142,13 +152,13 @@ class BrickletIndustrialQuadRelay(Device):
         value 0b0101 means: Port *A* and Port *C* are connected to Bricklets that
         can be grouped together.
         """
-        return self.ipcon.send_request(self, IndustrialQuadRelay.FUNCTION_GET_AVAILABLE_FOR_GROUP, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_AVAILABLE_FOR_GROUP, (), '', 'B')
 
     def get_identity(self):
         """
         .. versionadded:: 2.0.0~(Plugin)
         """
-        return GetIdentity(*self.ipcon.send_request(self, IndustrialQuadRelay.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def register_callback(self, id, callback):
         """

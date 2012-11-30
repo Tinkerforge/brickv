@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-22.      #
+# This file was automatically generated on 2012-11-27.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -50,7 +50,18 @@ class BrickletIndustrialDigitalIn4(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.callback_formats[IndustrialDigitalIn4.CALLBACK_INTERRUPT] = 'H H'
+        self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_GET_VALUE] = 1
+        self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_SET_GROUP] = 4
+        self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_GET_GROUP] = 1
+        self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_GET_AVAILABLE_FOR_GROUP] = 1
+        self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
+        self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
+        self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_SET_INTERRUPT] = 4
+        self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_GET_INTERRUPT] = 1
+        self.response_expected[BrickletIndustrialDigitalIn4.CALLBACK_INTERRUPT] = 2
+        self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_GET_IDENTITY] = 1
+
+        self.callback_formats[BrickletIndustrialDigitalIn4.CALLBACK_INTERRUPT] = 'H H'
 
     def get_value(self):
         """
@@ -68,7 +79,7 @@ class BrickletIndustrialDigitalIn4(Device):
         Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
         pins 8-11 and element 4 pins 12-15.
         """
-        return self.ipcon.send_request(self, IndustrialDigitalIn4.FUNCTION_GET_VALUE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_VALUE, (), '', 'H')
 
     def set_group(self, group):
         """
@@ -88,13 +99,13 @@ class BrickletIndustrialDigitalIn4(Device):
         pins on the Digital In 4 on port B are assigned to 4-7. It is now possible
         to call :func:`GetValue` and read out two Bricklets at the same time.
         """
-        self.ipcon.send_request(self, IndustrialDigitalIn4.FUNCTION_SET_GROUP, (group,), '4c', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_GROUP, (group,), '4c', '')
 
     def get_group(self):
         """
         Returns the group as set by :func:`SetGroup`
         """
-        return self.ipcon.send_request(self, IndustrialDigitalIn4.FUNCTION_GET_GROUP, (), '', '4c')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_GROUP, (), '', '4c')
 
     def get_available_for_group(self):
         """
@@ -102,7 +113,7 @@ class BrickletIndustrialDigitalIn4(Device):
         value 0b0101 means: Port *A* and Port *C* are connected to Bricklets that
         can be grouped together.
         """
-        return self.ipcon.send_request(self, IndustrialDigitalIn4.FUNCTION_GET_AVAILABLE_FOR_GROUP, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_AVAILABLE_FOR_GROUP, (), '', 'B')
 
     def set_debounce_period(self, debounce):
         """
@@ -114,13 +125,13 @@ class BrickletIndustrialDigitalIn4(Device):
         
         The default value is 100.
         """
-        self.ipcon.send_request(self, IndustrialDigitalIn4.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
         """
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
-        return self.ipcon.send_request(self, IndustrialDigitalIn4.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def set_interrupt(self, interrupt_mask):
         """
@@ -135,19 +146,19 @@ class BrickletIndustrialDigitalIn4(Device):
         
         The interrupt is delivered with the callback :func:`Interrupt`.
         """
-        self.ipcon.send_request(self, IndustrialDigitalIn4.FUNCTION_SET_INTERRUPT, (interrupt_mask,), 'H', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_INTERRUPT, (interrupt_mask,), 'H', '')
 
     def get_interrupt(self):
         """
         Returns the interrupt bitmask as set by :func:`SetInterrupt`.
         """
-        return self.ipcon.send_request(self, IndustrialDigitalIn4.FUNCTION_GET_INTERRUPT, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_INTERRUPT, (), '', 'H')
 
     def get_identity(self):
         """
         .. versionadded:: 2.0.0~(Plugin)
         """
-        return GetIdentity(*self.ipcon.send_request(self, IndustrialDigitalIn4.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def register_callback(self, id, callback):
         """

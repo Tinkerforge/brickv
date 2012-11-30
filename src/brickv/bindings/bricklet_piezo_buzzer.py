@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-22.      #
+# This file was automatically generated on 2012-11-27.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -45,15 +45,21 @@ class BrickletPiezoBuzzer(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.callback_formats[PiezoBuzzer.CALLBACK_BEEP_FINISHED] = ''
-        self.callback_formats[PiezoBuzzer.CALLBACK_MORSE_CODE_FINISHED] = ''
+        self.response_expected[BrickletPiezoBuzzer.FUNCTION_BEEP] = 4
+        self.response_expected[BrickletPiezoBuzzer.FUNCTION_MORSE_CODE] = 4
+        self.response_expected[BrickletPiezoBuzzer.CALLBACK_BEEP_FINISHED] = 2
+        self.response_expected[BrickletPiezoBuzzer.CALLBACK_MORSE_CODE_FINISHED] = 2
+        self.response_expected[BrickletPiezoBuzzer.FUNCTION_GET_IDENTITY] = 1
+
+        self.callback_formats[BrickletPiezoBuzzer.CALLBACK_BEEP_FINISHED] = ''
+        self.callback_formats[BrickletPiezoBuzzer.CALLBACK_MORSE_CODE_FINISHED] = ''
 
     def beep(self, duration):
         """
         Beeps with the duration in ms. For example: If you set a value of 1000,
         the piezo buzzer will beep for one second.
         """
-        self.ipcon.send_request(self, PiezoBuzzer.FUNCTION_BEEP, (duration,), 'I', '')
+        self.ipcon.send_request(self, BrickletPiezoBuzzer.FUNCTION_BEEP, (duration,), 'I', '')
 
     def morse_code(self, morse):
         """
@@ -67,13 +73,13 @@ class BrickletPiezoBuzzer(Device):
         
         The maximum string size is 60.
         """
-        self.ipcon.send_request(self, PiezoBuzzer.FUNCTION_MORSE_CODE, (morse,), '60s', '')
+        self.ipcon.send_request(self, BrickletPiezoBuzzer.FUNCTION_MORSE_CODE, (morse,), '60s', '')
 
     def get_identity(self):
         """
         .. versionadded:: 2.0.0~(Plugin)
         """
-        return GetIdentity(*self.ipcon.send_request(self, PiezoBuzzer.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletPiezoBuzzer.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def register_callback(self, id, callback):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-22.      #
+# This file was automatically generated on 2012-11-29.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -45,21 +45,27 @@ class BrickletAnalogOut(Device):
 
         self.api_version = (1, 0, 0)
 
+        self.response_expected[BrickletAnalogOut.FUNCTION_SET_VOLTAGE] = 4
+        self.response_expected[BrickletAnalogOut.FUNCTION_GET_VOLTAGE] = 1
+        self.response_expected[BrickletAnalogOut.FUNCTION_SET_MODE] = 4
+        self.response_expected[BrickletAnalogOut.FUNCTION_GET_MODE] = 1
+        self.response_expected[BrickletAnalogOut.FUNCTION_GET_IDENTITY] = 1
+
 
     def set_voltage(self, voltage):
         """
         Sets the voltage in mV. The possible range is 0V to 5V (0-5000).
-        Calling this function will set the mode to 0 (see `:func:SetMode`).
+        Calling this function will set the mode to 0 (see :func:`SetMode`).
         
         The default value is 0 (with mode 1).
         """
-        self.ipcon.send_request(self, AnalogOut.FUNCTION_SET_VOLTAGE, (voltage,), 'H', '')
+        self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_SET_VOLTAGE, (voltage,), 'H', '')
 
     def get_voltage(self):
         """
         Returns the voltage as set by :func:`SetVoltage`.
         """
-        return self.ipcon.send_request(self, AnalogOut.FUNCTION_GET_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_GET_VOLTAGE, (), '', 'H')
 
     def set_mode(self, mode):
         """
@@ -75,18 +81,18 @@ class BrickletAnalogOut(Device):
         
         The default mode is 1.
         """
-        self.ipcon.send_request(self, AnalogOut.FUNCTION_SET_MODE, (mode,), 'B', '')
+        self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_SET_MODE, (mode,), 'B', '')
 
     def get_mode(self):
         """
         Returns the mode as set by :func:`SetMode`.
         """
-        return self.ipcon.send_request(self, AnalogOut.FUNCTION_GET_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_GET_MODE, (), '', 'B')
 
     def get_identity(self):
         """
         .. versionadded:: 2.0.0~(Plugin)
         """
-        return GetIdentity(*self.ipcon.send_request(self, AnalogOut.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletAnalogOut.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
 AnalogOut = BrickletAnalogOut # for backward compatibility
