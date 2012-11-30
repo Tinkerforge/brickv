@@ -32,7 +32,7 @@ from dio_gnd_pixmap import get_dio_gnd_pixmap
 from dio_vcc_pixmap import get_dio_vcc_pixmap
 
 class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
-    qtcb_monoflop = pyqtSignal(int, bool)
+    qtcb_monoflop = pyqtSignal(int, int)
     
     def __init__(self, ipcon, uid, version):
         PluginBase.__init__(self, ipcon, uid, 'Industrial Digital Out 4 Bricklet', version)
@@ -75,14 +75,16 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
         
         self.set_group.pressed.connect(self.set_group_pressed)
         
+        self.monoflop_pin.currentIndexChanged.connect(self.monoflop_pin_changed)
         self.monoflop_go.pressed.connect(self.monoflop_go_pressed)
-        self.monoflop_time_before = 1000
-        
-        self.reconfigure_everything()
+        self.monoflop_time_before = [1000] * 16
+        self.monoflop_pending = [False] * 16
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update)
         self.update_timer.setInterval(50)
+
+        self.reconfigure_everything()
 
     def get_available_for_group_aysnc(self, available_ports):
         self.available_ports = available_ports
@@ -91,7 +93,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
         self.reconfigure_everything()
 
     def stop(self):
-        pass
+        self.update_timer.stop()
 
     def get_url_part(self):
         return 'industrial_digital_out_4'
@@ -99,8 +101,38 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialDigitalOut4.DEVICE_IDENTIFIER
-    
-    def reconfigure_everything_async(self, group):
+
+    def reconfigure_everything_async3(self, pin, value, time, time_remaining):
+        index = self.monoflop_pin.findText('Pin {0}'.format(pin))
+        if index >= 0:
+            if time_remaining > 0:
+                self.monoflop_pending[pin] = True
+                self.monoflop_time_before[pin] = time
+
+                self.monoflop_pin.setCurrentIndex(index)
+                self.monoflop_time.setValue(time_remaining)
+                self.monoflop_time.setEnabled(False)
+
+                self.update_timer.start()
+            else:
+                self.monoflop_pending[pin] = False
+
+    def reconfigure_everything_async2(self, value_mask):
+        for pin in range(16):
+            if value_mask & (1 << pin):
+                self.pin_buttons[pin].setText('Switch Low')
+                self.pin_button_icons[pin].setPixmap(self.vcc_pixmap)
+            else:
+                self.pin_buttons[pin].setText('Switch High')
+                self.pin_button_icons[pin].setPixmap(self.gnd_pixmap)
+
+            index = self.monoflop_pin.findText('Pin {0}'.format(pin))
+            if index >= 0:
+                def get_monoflop_lambda(pin):
+                    return lambda monoflop: self.reconfigure_everything_async3(pin, *monoflop)
+                async_call(self.ido4.get_monoflop, pin, get_monoflop_lambda(pin), self.increase_error_count)
+
+    def reconfigure_everything_async1(self, group):
         for i in range(4):
             if group[i] == 'n':
                 self.groups[i].setCurrentIndex(0)
@@ -131,7 +163,11 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
                     for j in range(4):
                         self.monoflop_pin.addItem('Pin ' + str(i*4+j))
                     self.show_buttons(i)
-                    
+
+        self.monoflop_pin.setCurrentIndex(0)
+
+        async_call(self.ido4.get_value, None, self.reconfigure_everything_async2, self.increase_error_count)
+
     def reconfigure_everything(self):
         for i in range(4):
             self.groups[i].clear()
@@ -141,8 +177,8 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
                     item = 'Port ' + chr(ord('A') + j)
                     self.groups[i].addItem(item)
                     
-        async_call(self.ido4.get_group, None, self.reconfigure_everything_async, self.increase_error_count)
-            
+        async_call(self.ido4.get_group, None, self.reconfigure_everything_async1, self.increase_error_count)
+
     def show_buttons(self, num):
         for i in range(num*4, (num+1)*4):
             self.pin_buttons[i].setVisible(True)
@@ -198,52 +234,79 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
             self.pin_button_icons[button].setPixmap(self.gnd_pixmap)
             
         self.ido4.set_value(value)
-        
-    def cb_monoflop(self, pin_mask, value_mask):
-        self.monoflop_time.setValue(self.monoflop_time_before)
         self.update_timer.stop()
+
+        for pin in range(16):
+            self.monoflop_pending[pin] = False
+
+        pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+        self.monoflop_time.setValue(self.monoflop_time_before[pin])
         self.monoflop_time.setEnabled(True)
-        self.monoflop_pin.setEnabled(True)
-        
+
+    def cb_monoflop(self, pin_mask, value_mask):
         for pin in range(16):
             if (1 << pin) & pin_mask:
-                if 'high' in self.pin_buttons[pin].text():
-                    self.pin_buttons[pin].setText('low')
+                self.monoflop_pending[pin] = False
+
+                if (1 << pin) & value_mask:
+                    self.pin_buttons[pin].setText('Switch Low')
                     self.pin_button_icons[pin].setPixmap(self.vcc_pixmap)
                 else:
-                    self.pin_buttons[pin].setText('high')
+                    self.pin_buttons[pin].setText('Switch High')
                     self.pin_button_icons[pin].setPixmap(self.gnd_pixmap)
-                    
-                self.pin_buttons[pin].setEnabled(True)
-        
-    def monoflop_go_pressed(self):
-        pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
-        if self.update_timer.isActive():
-            time = self.monoflop_time_before
-        else:
-            time = self.monoflop_time.value()
-        value = "on" in (self.pin_buttons[pin].text())
-        
-        self.monoflop_time.setEnabled(False)
-        self.monoflop_pin.setEnabled(False)
-        self.monoflop_time_before = time
-        self.ido4.set_monoflop(1 << pin, value << pin, time)
-            
-        if not self.update_timer.isActive():
-            self.pin_buttons[pin].setEnabled(False)
-            if 'high' in self.pin_buttons[pin].text():
-                self.pin_buttons[pin].setText('low')
-                self.pin_button_icons[pin].setPixmap(self.vcc_pixmap)
-            else:
-                self.pin_buttons[pin].setText('high')
-                self.pin_button_icons[pin].setPixmap(self.gnd_pixmap)
-        self.update_timer.start()
-    
-    def update_async(self, monoflop):
+
+        if sum(self.monoflop_pending) == 0:
+            self.update_timer.stop()
+
+        current_pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+        if (1 << current_pin) & pin_mask:
+            self.monoflop_time.setValue(self.monoflop_time_before[current_pin])
+            self.monoflop_time.setEnabled(True)
+
+    def monoflop_pin_changed_async(self, monoflop):
         _, _, time_remaining = monoflop
         self.monoflop_time.setValue(time_remaining)
-        
+
+    def monoflop_pin_changed(self):
+        try:
+            pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+        except ValueError:
+            return
+
+        if self.monoflop_pending[pin]:
+            async_call(self.ido4.get_monoflop, pin, self.monoflop_pin_changed_async, self.increase_error_count)
+            self.monoflop_time.setEnabled(False)
+        else:
+            self.monoflop_time.setValue(self.monoflop_time_before[pin])
+            self.monoflop_time.setEnabled(True)
+
+    def monoflop_go_pressed(self):
+        pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
+        if self.monoflop_pending[pin]:
+            time = self.monoflop_time_before[pin]
+        else:
+            time = self.monoflop_time.value()
+
+        value = self.monoflop_state.currentIndex() == 0
+
+        self.monoflop_time.setEnabled(False)
+        self.monoflop_time_before[pin] = time
+        self.monoflop_pending[pin] = True
+        self.ido4.set_monoflop(1 << pin, value << pin, time)
+
+        if value:
+            self.pin_buttons[pin].setText('Switch Low')
+            self.pin_button_icons[pin].setPixmap(self.vcc_pixmap)
+        else:
+            self.pin_buttons[pin].setText('Switch High')
+            self.pin_button_icons[pin].setPixmap(self.gnd_pixmap)
+
+        self.update_timer.start()
+
+    def update_async(self, pin, value, time, time_remaining):
+        if self.monoflop_pending[pin]:
+            self.monoflop_time.setValue(time_remaining)
+
     def update(self):
         pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
-        async_call(self.ido4.get_monoflop, pin, self.update_async, self.increase_error_count)
-        
+        async_call(self.ido4.get_monoflop, pin, lambda monoflop: self.update_async(pin, *monoflop), self.increase_error_count)
