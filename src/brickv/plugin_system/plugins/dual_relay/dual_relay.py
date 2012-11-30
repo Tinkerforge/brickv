@@ -23,10 +23,14 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QPixmap
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 from PyQt4.QtCore import Qt, pyqtSignal, QTimer
 
 from ui_dual_relay import Ui_DualRelay
+from relay_a1_pixmap import get_relay_a1_pixmap
+from relay_a2_pixmap import get_relay_a2_pixmap
+from relay_b1_pixmap import get_relay_b1_pixmap
+from relay_b2_pixmap import get_relay_b2_pixmap
 
 from bindings import bricklet_dual_relay
         
@@ -60,10 +64,10 @@ class DualRelay(PluginBase, Ui_DualRelay):
         self.r1_timebefore = 500
         self.r2_timebefore = 500
         
-        self.a1_pixmap = QPixmap('plugin_system/plugins/dual_relay/relay_a1.gif')
-        self.a2_pixmap = QPixmap('plugin_system/plugins/dual_relay/relay_a2.gif')
-        self.b1_pixmap = QPixmap('plugin_system/plugins/dual_relay/relay_b1.gif')
-        self.b2_pixmap = QPixmap('plugin_system/plugins/dual_relay/relay_b2.gif')
+        self.a1_pixmap = get_relay_a1_pixmap()
+        self.a2_pixmap = get_relay_a2_pixmap()
+        self.b1_pixmap = get_relay_b1_pixmap()
+        self.b2_pixmap = get_relay_b2_pixmap()
 
         try:
             dr1, dr2 = self.dr.get_state()

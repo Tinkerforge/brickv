@@ -23,10 +23,12 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QPixmap
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 from PyQt4.QtCore import Qt, pyqtSignal, QTimer
 
 from ui_industrial_quad_relay import Ui_IndustrialQuadRelay
+from relay_open_pixmap import get_relay_open_pixmap
+from relay_close_pixmap import get_relay_close_pixmap
 
 from bindings import bricklet_industrial_quad_relay
         
@@ -43,8 +45,8 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         version = self.iqr.get_version()[1]
         self.version = '.'.join(map(str, version))
         
-        self.open_pixmap = QPixmap('plugin_system/plugins/industrial_quad_relay/relay_open.gif')
-        self.close_pixmap = QPixmap('plugin_system/plugins/industrial_quad_relay/relay_close.gif')
+        self.open_pixmap = get_relay_open_pixmap()
+        self.close_pixmap = get_relay_close_pixmap()
         
         self.relay_buttons = [self.b0, self.b1, self.b2, self.b3, self.b4, self.b5, self.b6, self.b7, self.b8, self.b9, self.b10, self.b11, self.b12, self.b13, self.b14, self.b15]
         self.relay_button_icons = [self.b0_icon, self.b1_icon, self.b2_icon, self.b3_icon, self.b4_icon, self.b5_icon, self.b6_icon, self.b7_icon, self.b8_icon, self.b9_icon, self.b10_icon, self.b11_icon, self.b12_icon, self.b13_icon, self.b14_icon, self.b15_icon]

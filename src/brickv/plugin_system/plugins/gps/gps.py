@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QPixmap, QDesktopServices
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QDesktopServices
 from PyQt4.QtCore import Qt, pyqtSignal, QTimer, QUrl
 
 from ui_gps import Ui_GPS

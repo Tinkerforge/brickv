@@ -1,4 +1,5 @@
 *.pyc
+*_pixmap.py
 ui_*.py
 src/brickv/build
 src/brickv/dist
