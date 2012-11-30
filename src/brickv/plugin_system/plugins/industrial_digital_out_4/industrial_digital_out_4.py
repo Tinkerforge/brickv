@@ -51,11 +51,15 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
         for icon in self.pin_button_icons:
             icon.setPixmap(self.gnd_pixmap)
             icon.show()
-            
-        self.line_1vs2.setVisible(False)
-        self.line_2vs3.setVisible(False)
-        self.line_3vs4.setVisible(False)
-        
+
+        self.lines = [[self.line0, self.line0a, self.line0b, self.line0c],
+                      [self.line1, self.line1a, self.line1b, self.line1c],
+                      [self.line2, self.line2a, self.line2b, self.line2c],
+                      [self.line3, self.line3a, self.line3b, self.line3c]]
+        for lines in self.lines:
+            for line in lines:
+                line.setVisible(False)
+
         self.available_ports = 0
         async_call(self.ido4.get_available_for_group, None, self.get_available_for_group_aysnc, self.increase_error_count)
         
@@ -67,7 +71,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
         
         self.qtcb_monoflop.connect(self.cb_monoflop)
         self.ido4.register_callback(self.ido4.CALLBACK_MONOFLOP_DONE,
-                                   self.qtcb_monoflop.emit)
+                                    self.qtcb_monoflop.emit)
         
         self.set_group.pressed.connect(self.set_group_pressed)
         
@@ -107,11 +111,10 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
                     self.groups[i].setCurrentIndex(0)
                 else:
                     self.groups[i].setCurrentIndex(index)
-                    
-        for i in range(16):
-            self.monoflop_pin.removeItem(0)
-            
-        if group[0] == 'n' and group[1] == 'n' and group[2] == 'n' and group[3]:
+
+        self.monoflop_pin.clear()
+
+        if group[0] == 'n' and group[1] == 'n' and group[2] == 'n' and group[3] == 'n':
             self.show_buttons(0)
             self.hide_buttons(1)
             self.hide_buttons(2)
@@ -131,11 +134,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
                     
     def reconfigure_everything(self):
         for i in range(4):
-            self.groups[i].removeItem(0)
-            self.groups[i].removeItem(0)
-            self.groups[i].removeItem(0)
-            self.groups[i].removeItem(0)
-            self.groups[i].removeItem(0)
+            self.groups[i].clear()
             self.groups[i].addItem('Off')
             for j in range(4):
                 if self.available_ports & (1 << j):
@@ -149,18 +148,24 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
             self.pin_buttons[i].setVisible(True)
             self.pin_button_icons[i].setVisible(True)
             self.pin_button_labels[i].setVisible(True)
+
+        for line in self.lines[num]:
+            line.setVisible(True)
     
     def hide_buttons(self, num):
         for i in range(num*4, (num+1)*4):
             self.pin_buttons[i].setVisible(False)
             self.pin_button_icons[i].setVisible(False)
             self.pin_button_labels[i].setVisible(False)
+
+        for line in self.lines[num]:
+            line.setVisible(False)
     
     def get_current_value(self):
         value = 0
         i = 0
         for b in self.pin_buttons:
-            if 'low' in b.text():
+            if 'Low' in b.text():
                 value |= (1 << i) 
             i += 1
         return value
@@ -183,13 +188,13 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
     
     def pin_button_pressed(self, button):
         value = self.get_current_value()
-        if 'high' in self.pin_buttons[button].text():
+        if 'High' in self.pin_buttons[button].text():
             value |= (1 << button)
-            self.pin_buttons[button].setText('low')
+            self.pin_buttons[button].setText('Switch Low')
             self.pin_button_icons[button].setPixmap(self.vcc_pixmap)
         else:
             value &= ~(1 << button)
-            self.pin_buttons[button].setText('high')
+            self.pin_buttons[button].setText('Switch High')
             self.pin_button_icons[button].setPixmap(self.gnd_pixmap)
             
         self.ido4.set_value(value)

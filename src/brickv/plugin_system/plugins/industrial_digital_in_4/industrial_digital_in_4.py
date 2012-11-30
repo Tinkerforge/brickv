@@ -48,10 +48,14 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
         self.pin_button_icons = [self.b0_icon, self.b1_icon, self.b2_icon, self.b3_icon, self.b4_icon, self.b5_icon, self.b6_icon, self.b7_icon, self.b8_icon, self.b9_icon, self.b10_icon, self.b11_icon, self.b12_icon, self.b13_icon, self.b14_icon, self.b15_icon]
         self.pin_button_labels = [self.b0_label, self.b1_label, self.b2_label, self.b3_label, self.b4_label, self.b5_label, self.b6_label, self.b7_label, self.b8_label, self.b9_label, self.b10_label, self.b11_label, self.b12_label, self.b13_label, self.b14_label, self.b15_label]
         self.groups = [self.group0, self.group1, self.group2, self.group3]
-            
-        self.line_1vs2.setVisible(False)
-        self.line_2vs3.setVisible(False)
-        self.line_3vs4.setVisible(False)
+
+        self.lines = [[self.line0, self.line0a, self.line0b, self.line0c],
+                      [self.line1, self.line1a, self.line1b, self.line1c],
+                      [self.line2, self.line2a, self.line2b, self.line2c],
+                      [self.line3, self.line3a, self.line3b, self.line3c]]
+        for lines in self.lines:
+            for line in lines:
+                line.setVisible(False)
         
         self.available_ports = 0
         async_call(self.idi4.get_available_for_group, None, self.get_available_for_group_aysnc, self.increase_error_count)
@@ -88,10 +92,10 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
     def show_new_value(self, value):
         for i in range(16):
             if value & (1 << i):
-                self.pin_buttons[i].setText('high')
+                self.pin_buttons[i].setText('High')
                 self.pin_button_icons[i].setPixmap(self.vcc_pixmap)
             else:
-                self.pin_buttons[i].setText('low')
+                self.pin_buttons[i].setText('Low')
                 self.pin_button_icons[i].setPixmap(self.gnd_pixmap)
     
     def reconfigure_everything_async(self, group):
@@ -106,7 +110,7 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
                 else:
                     self.groups[i].setCurrentIndex(index)
                     
-        if group[0] == 'n' and group[1] == 'n' and group[2] == 'n' and group[3]:
+        if group[0] == 'n' and group[1] == 'n' and group[2] == 'n' and group[3] == 'n':
             self.show_buttons(0)
             self.hide_buttons(1)
             self.hide_buttons(2)
@@ -134,18 +138,24 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
             self.pin_buttons[i].setVisible(True)
             self.pin_button_icons[i].setVisible(True)
             self.pin_button_labels[i].setVisible(True)
+
+        for line in self.lines[num]:
+            line.setVisible(True)
     
     def hide_buttons(self, num):
         for i in range(num*4, (num+1)*4):
             self.pin_buttons[i].setVisible(False)
             self.pin_button_icons[i].setVisible(False)
             self.pin_button_labels[i].setVisible(False)
+
+        for line in self.lines[num]:
+            line.setVisible(False)
     
     def get_current_value(self):
         value = 0
         i = 0
         for b in self.pin_buttons:
-            if 'low' in b.text():
+            if 'Low' in b.text():
                 value |= (1 << i) 
             i += 1
         return value

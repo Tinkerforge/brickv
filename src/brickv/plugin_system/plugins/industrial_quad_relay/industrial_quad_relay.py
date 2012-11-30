@@ -51,10 +51,14 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         for icon in self.relay_button_icons:
             icon.setPixmap(self.open_pixmap)
             icon.show()
-            
-        self.line_1vs2.setVisible(False)
-        self.line_2vs3.setVisible(False)
-        self.line_3vs4.setVisible(False)
+
+        self.lines = [[self.line0, self.line0a, self.line0b, self.line0c],
+                      [self.line1, self.line1a, self.line1b, self.line1c],
+                      [self.line2, self.line2a, self.line2b, self.line2c],
+                      [self.line3, self.line3a, self.line3b, self.line3c]]
+        for lines in self.lines:
+            for line in lines:
+                line.setVisible(False)
         
         self.available_ports = 0
         async_call(self.iqr.get_available_for_group, None, self.get_available_for_group_aysnc, self.increase_error_count)
@@ -110,7 +114,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
 
         self.monoflop_pin.clear()
 
-        if group[0] == 'n' and group[1] == 'n' and group[2] == 'n' and group[3]:
+        if group[0] == 'n' and group[1] == 'n' and group[2] == 'n' and group[3] == 'n':
             self.show_buttons(0)
             self.hide_buttons(1)
             self.hide_buttons(2)
@@ -144,18 +148,24 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
             self.relay_buttons[i].setVisible(True)
             self.relay_button_icons[i].setVisible(True)
             self.relay_button_labels[i].setVisible(True)
-    
+
+        for line in self.lines[num]:
+            line.setVisible(True)
+
     def hide_buttons(self, num):
         for i in range(num*4, (num+1)*4):
             self.relay_buttons[i].setVisible(False)
             self.relay_button_icons[i].setVisible(False)
             self.relay_button_labels[i].setVisible(False)
-    
+
+        for line in self.lines[num]:
+            line.setVisible(False)
+
     def get_current_value(self):
         value = 0
         i = 0
         for b in self.relay_buttons:
-            if 'off' in b.text():
+            if 'Off' in b.text():
                 value |= (1 << i) 
             i += 1
         return value
@@ -178,13 +188,13 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
     
     def relay_button_pressed(self, button):
         value = self.get_current_value()
-        if 'on' in self.relay_buttons[button].text():
+        if 'On' in self.relay_buttons[button].text():
             value |= (1 << button)
-            self.relay_buttons[button].setText('off')
+            self.relay_buttons[button].setText('Off')
             self.relay_button_icons[button].setPixmap(self.close_pixmap)
         else:
             value &= ~(1 << button)
-            self.relay_buttons[button].setText('on')
+            self.relay_buttons[button].setText('On')
             self.relay_button_icons[button].setPixmap(self.open_pixmap)
             
         self.iqr.set_value(value)
@@ -197,11 +207,11 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         
         for pin in range(16):
             if (1 << pin) & pin_mask:
-                if 'on' in self.relay_buttons[pin].text():
-                    self.relay_buttons[pin].setText('off')
+                if 'On' in self.relay_buttons[pin].text():
+                    self.relay_buttons[pin].setText('Off')
                     self.relay_button_icons[pin].setPixmap(self.close_pixmap)
                 else:
-                    self.relay_buttons[pin].setText('on')
+                    self.relay_buttons[pin].setText('On')
                     self.relay_button_icons[pin].setPixmap(self.open_pixmap)
                     
                 self.relay_buttons[pin].setEnabled(True)
@@ -212,7 +222,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
             time = self.monoflop_time_before
         else:
             time = self.monoflop_time.value()
-        value = "on" in (self.relay_buttons[pin].text())
+        value = 'On' in (self.relay_buttons[pin].text())
         
         self.monoflop_time.setEnabled(False)
         self.monoflop_pin.setEnabled(False)
@@ -221,11 +231,11 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
             
         if not self.update_timer.isActive():
             self.relay_buttons[pin].setEnabled(False)
-            if 'on' in self.relay_buttons[pin].text():
-                self.relay_buttons[pin].setText('off')
+            if 'On' in self.relay_buttons[pin].text():
+                self.relay_buttons[pin].setText('Off')
                 self.relay_button_icons[pin].setPixmap(self.close_pixmap)
             else:
-                self.relay_buttons[pin].setText('on')
+                self.relay_buttons[pin].setText('On')
                 self.relay_button_icons[pin].setPixmap(self.open_pixmap)
         self.update_timer.start()
     

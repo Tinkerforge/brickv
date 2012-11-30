@@ -197,6 +197,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="set_group">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="text">
         <string>Set
 Group</string>
@@ -219,7 +225,7 @@ Group</string>
     </spacer>
    </item>
    <item>
-    <widget class="Line" name="line_7">
+    <widget class="Line" name="line0">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -244,12 +250,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b0">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -259,7 +268,7 @@ Group</string>
       </layout>
      </item>
      <item>
-      <widget class="Line" name="line_4">
+      <widget class="Line" name="line0a">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -282,12 +291,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b1">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -297,7 +309,7 @@ Group</string>
       </layout>
      </item>
      <item>
-      <widget class="Line" name="line_2">
+      <widget class="Line" name="line0b">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -320,12 +332,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b2">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -335,7 +350,7 @@ Group</string>
       </layout>
      </item>
      <item>
-      <widget class="Line" name="line_5">
+      <widget class="Line" name="line0c">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -358,12 +373,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b3">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -375,7 +393,7 @@ Group</string>
     </layout>
    </item>
    <item>
-    <widget class="Line" name="line_1vs2">
+    <widget class="Line" name="line1">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -400,12 +418,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b4">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -415,7 +436,7 @@ Group</string>
       </layout>
      </item>
      <item>
-      <widget class="Line" name="line">
+      <widget class="Line" name="line1a">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -438,12 +459,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b5">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -453,7 +477,7 @@ Group</string>
       </layout>
      </item>
      <item>
-      <widget class="Line" name="line_6">
+      <widget class="Line" name="line1b">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -476,12 +500,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b6">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -491,7 +518,7 @@ Group</string>
       </layout>
      </item>
      <item>
-      <widget class="Line" name="line_3">
+      <widget class="Line" name="line1c">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -514,12 +541,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b7">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -531,7 +561,7 @@ Group</string>
     </layout>
    </item>
    <item>
-    <widget class="Line" name="line_2vs3">
+    <widget class="Line" name="line2">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -556,12 +586,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b8">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -571,7 +604,7 @@ Group</string>
       </layout>
      </item>
      <item>
-      <widget class="Line" name="line_14">
+      <widget class="Line" name="line2a">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -594,12 +627,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b9">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -609,7 +645,7 @@ Group</string>
       </layout>
      </item>
      <item>
-      <widget class="Line" name="line_13">
+      <widget class="Line" name="line2b">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -632,12 +668,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b10">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -647,7 +686,7 @@ Group</string>
       </layout>
      </item>
      <item>
-      <widget class="Line" name="line_15">
+      <widget class="Line" name="line2c">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -670,12 +709,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b11">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -687,7 +729,7 @@ Group</string>
     </layout>
    </item>
    <item>
-    <widget class="Line" name="line_3vs4">
+    <widget class="Line" name="line3">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -712,12 +754,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b12">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -727,7 +772,7 @@ Group</string>
       </layout>
      </item>
      <item>
-      <widget class="Line" name="line_10">
+      <widget class="Line" name="line3a">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -750,12 +795,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b13">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -765,7 +813,7 @@ Group</string>
       </layout>
      </item>
      <item>
-      <widget class="Line" name="line_12">
+      <widget class="Line" name="line3b">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -788,12 +836,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b14">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -803,7 +854,7 @@ Group</string>
       </layout>
      </item>
      <item>
-      <widget class="Line" name="line_11">
+      <widget class="Line" name="line3c">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -826,12 +877,15 @@ Group</string>
          <property name="text">
           <string/>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="b15">
          <property name="text">
-          <string>high</string>
+          <string>High</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -850,11 +904,24 @@ Group</string>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,0">
      <item>
       <widget class="QLabel" name="debounce_label1">
        <property name="text">
-        <string>Debounce Period:</string>
+        <string>Debounce Period [ms]:</string>
        </property>
       </widget>
      </item>
@@ -869,13 +936,6 @@ Group</string>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="debounce_label2">
-       <property name="text">
-        <string>ms</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="debounce_go">
        <property name="text">
         <string>Set Period</string>
@@ -883,19 +943,6 @@ Group</string>
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>
