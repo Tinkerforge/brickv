@@ -22,11 +22,12 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-from PyQt4.QtGui import QPixmap
 from PyQt4.QtCore import Qt, pyqtSignal
 from async_call import async_call
 
 from ui_industrial_digital_in_4 import Ui_IndustrialDigitalIn4
+from dio_gnd_pixmap import get_dio_gnd_pixmap
+from dio_vcc_pixmap import get_dio_vcc_pixmap
 
 from bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
         
@@ -40,8 +41,8 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
         
         self.idi4 = BrickletIndustrialDigitalIn4(uid, ipcon)
         
-        self.gnd_pixmap = QPixmap('plugin_system/plugins/industrial_digital_in_4/dio_gnd.gif')
-        self.vcc_pixmap = QPixmap('plugin_system/plugins/industrial_digital_in_4/dio_vcc.gif')
+        self.gnd_pixmap = get_dio_gnd_pixmap()
+        self.vcc_pixmap = get_dio_vcc_pixmap()
         
         self.pin_buttons = [self.b0, self.b1, self.b2, self.b3, self.b4, self.b5, self.b6, self.b7, self.b8, self.b9, self.b10, self.b11, self.b12, self.b13, self.b14, self.b15]
         self.pin_button_icons = [self.b0_icon, self.b1_icon, self.b2_icon, self.b3_icon, self.b4_icon, self.b5_icon, self.b6_icon, self.b7_icon, self.b8_icon, self.b9_icon, self.b10_icon, self.b11_icon, self.b12_icon, self.b13_icon, self.b14_icon, self.b15_icon]

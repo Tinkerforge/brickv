@@ -38,7 +38,7 @@ Boston, MA 02111-1307, USA.
 
 import config
 
-import sys  
+import sys
 from distutils.core import setup
 import os
 import glob
@@ -98,6 +98,7 @@ def build_macos_pkg():
 
     def create_app():
         os.system("python build_all_ui.py")
+        os.system("python build_all_pixmap.py")
         apps = [
             {
                 "script" : "main.py",
@@ -220,6 +221,7 @@ def build_windows_pkg():
 
     import py2exe
     os.system("python build_all_ui.py")
+    os.system("python build_all_pixmap.py")
 
     lines = []
     for line in file('../build_data/Windows/nsis/brickv_installer_windows.nsi.template', 'rb').readlines():
@@ -304,6 +306,9 @@ def build_linux_pkg():
     if os.geteuid() != 0:
         sys.stderr.write("build_pkg for Linux has to be started as root, exiting\n")
         sys.exit(1)
+
+    os.system("python build_all_ui.py")
+    os.system("python build_all_pixmap.py")
 
     src_path = os.getcwd()
     build_dir = 'build_data/linux/brickv/usr/share/brickv'
