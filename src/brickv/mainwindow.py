@@ -321,7 +321,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             plugin = self.plugin_manager.get_plugin(device_identifier, self.ipcon,
                                                     uid, firmware_version)
             if plugin is not None:
-                if plugin.is_hardware_version_relevant():
+                if plugin.is_hardware_version_relevant(hardware_version):
                     tab_name = '{0} {1}.{2}'.format(plugin.name,
                                                     hardware_version[0],
                                                     hardware_version[1])

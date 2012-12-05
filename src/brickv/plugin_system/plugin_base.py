@@ -58,7 +58,7 @@ class PluginBase(QWidget, object):
     def is_brick(self):
         return False
 
-    def is_hardware_version_relevant(self):
+    def is_hardware_version_relevant(self, hardware_version):
         return False
 
     def get_url_part(self):

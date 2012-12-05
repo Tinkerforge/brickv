@@ -1079,7 +1079,7 @@ class Master(PluginBase, Ui_Master):
     def is_brick(self):
         return True
 
-    def is_hardware_version_relevant(self):
+    def is_hardware_version_relevant(self, hardware_version):
         return True
 
     def get_url_part(self):

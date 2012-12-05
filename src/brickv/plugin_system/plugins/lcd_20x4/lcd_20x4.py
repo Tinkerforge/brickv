@@ -91,6 +91,7 @@ class LCD20x4(PluginBase):
         self.b0_label = QLabel('Button 0: Released')
         self.b1_label = QLabel('Button 1: Released')
         self.b2_label = QLabel('Button 2: Released')
+        self.b3_label = QLabel('Button 3: Released')
         
         self.cursor_button.pressed.connect(self.cursor_pressed)
         self.blink_button.pressed.connect(self.blink_pressed)
@@ -107,6 +108,7 @@ class LCD20x4(PluginBase):
         layout.addWidget(self.b0_label)
         layout.addWidget(self.b1_label)
         layout.addWidget(self.b2_label)
+        layout.addWidget(self.b3_label)
         layout.addStretch()
 
     def is_backlight_on_async(self, on):
@@ -136,18 +138,27 @@ class LCD20x4(PluginBase):
 
     def get_url_part(self):
         return 'lcd_20x4'
+    
+    def is_hardware_version_relevant(self, hardware_version):
+        print hardware_version
+        if hardware_version <= (1, 1, 0):
+            self.b3_label.hide()
+        return True
 
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletLCD20x4.DEVICE_IDENTIFIER
     
     def cb_pressed(self, button):
+        print "pressed", button
         if button == 0:
             self.b0_label.setText('Button 0: Pressed')
         elif button == 1:
             self.b1_label.setText('Button 1: Pressed')
         elif button == 2:
             self.b2_label.setText('Button 2: Pressed')
+        elif button == 3:
+            self.b3_label.setText('Button 3: Pressed')
         
     def cb_released(self, button):
         if button == 0:
@@ -156,6 +167,8 @@ class LCD20x4(PluginBase):
             self.b1_label.setText('Button 1: Released')
         elif button == 2:
             self.b2_label.setText('Button 2: Released')
+        elif button == 3:
+            self.b3_label.setText('Button 3: Released')
     
     def bl_pressed(self):
         try:
