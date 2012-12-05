@@ -41,6 +41,7 @@ class LCD20x4(PluginBase):
         self.lcd = bricklet_lcd_20x4.LCD20x4(self.uid)
         self.ipcon.add_device(self.lcd)
         self.version = '.'.join(map(str, self.lcd.get_version()[1]))
+        self.hardware_version = self.lcd.get_version()[0][-1]
         
         self.qtcb_pressed.connect(self.cb_pressed)
         self.lcd.register_callback(self.lcd.CALLBACK_BUTTON_PRESSED,
@@ -111,6 +112,10 @@ class LCD20x4(PluginBase):
         self.b0_label = QLabel('Button 0: Released')
         self.b1_label = QLabel('Button 1: Released')
         self.b2_label = QLabel('Button 2: Released')
+        self.b3_label = QLabel('Button 3: Released')
+
+	if self.hardware_version == '0' or self.hardware_version == '1':
+		self.b3_label.hide()
         
         self.cursor_button.pressed.connect(self.cursor_pressed)
         self.blink_button.pressed.connect(self.blink_pressed)
@@ -127,6 +132,7 @@ class LCD20x4(PluginBase):
         layout.addWidget(self.b0_label)
         layout.addWidget(self.b1_label)
         layout.addWidget(self.b2_label)
+        layout.addWidget(self.b3_label)
         layout.addStretch()
 
     def start(self):
@@ -146,6 +152,8 @@ class LCD20x4(PluginBase):
             self.b1_label.setText('Button 1: Pressed')
         elif button == 2:
             self.b2_label.setText('Button 2: Pressed')
+        elif button == 3:
+            self.b3_label.setText('Button 3: Pressed')
         
     def cb_released(self, button):
         if button == 0:
@@ -154,6 +162,8 @@ class LCD20x4(PluginBase):
             self.b1_label.setText('Button 1: Released')
         elif button == 2:
             self.b2_label.setText('Button 2: Released')
+        elif button == 3:
+            self.b3_label.setText('Button 3: Released')
     
     def bl_pressed(self):
         try:
