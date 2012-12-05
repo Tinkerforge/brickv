@@ -29,6 +29,7 @@ RequestExecutionLevel admin
 
   ; Remove directories used
   RMDir /R $INSTDIR\drivers
+  RMDir /R $INSTDIR\imageformats
   RMDir /R $INSTDIR\OpenGL
   RMDir /R $INSTDIR\OpenGL_accelerate
   RMDir /R $INSTDIR\plugin_system
@@ -81,6 +82,9 @@ Section "Install Brickv ${BRICKV_VERSION} Program"
 
   SetOutPath $INSTDIR\drivers
   File /r "..\drivers\*"
+
+  SetOutPath $INSTDIR\imageformats
+  File /r "..\imageformats\*"
 
   SetOutPath $INSTDIR\OpenGL
   File /r "..\OpenGL\*"

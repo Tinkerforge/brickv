@@ -109,7 +109,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             versions = []
 
             for a in body.getiterator('a'):
-                url_part = a.text.replace('/', '')
+                if 'href' not in a.attrib:
+                    continue
+
+                url_part = a.attrib['href'].replace('/', '')
 
                 if url_part == '..':
                     continue
@@ -142,7 +145,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 for a in elements:
                     progress.setValue(progress.value() + 1)
 
-                    url_part = a.text.replace('/', '')
+                    if 'href' not in a.attrib:
+                        continue
+
+                    url_part = a.attrib['href'].replace('/', '')
                     name = url_part
 
                     if name == '..':
@@ -203,7 +209,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 for a in elements:
                     progress.setValue(progress.value() + 1)
 
-                    url_part = a.text.replace('/', '')
+                    if 'href' not in a.attrib:
+                        continue
+
+                    url_part = a.attrib['href'].replace('/', '')
                     name = url_part
 
                     if name == '..':
@@ -314,7 +323,6 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                        'AT91 USB to Serial Converter' in port[1] or \
                        'GPS Camera Detect' in port[1]:
                         preferred_index = self.combo_serial_port.count()
-                        print "prefer", preferred_index
 
                 if len(port[1]) > 0 and port[0] != port[1]:
                     self.combo_serial_port.addItem(u'{0} - {1}'.format(port[0], port[1]), port[0])

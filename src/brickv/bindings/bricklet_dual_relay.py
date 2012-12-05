@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-22.      #
+# This file was automatically generated on 2012-11-27.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -48,7 +48,14 @@ class BrickletDualRelay(Device):
 
         self.api_version = (1, 0, 1)
 
-        self.callback_formats[DualRelay.CALLBACK_MONOFLOP_DONE] = 'B ?'
+        self.response_expected[BrickletDualRelay.FUNCTION_SET_STATE] = 4
+        self.response_expected[BrickletDualRelay.FUNCTION_GET_STATE] = 1
+        self.response_expected[BrickletDualRelay.FUNCTION_SET_MONOFLOP] = 4
+        self.response_expected[BrickletDualRelay.FUNCTION_GET_MONOFLOP] = 1
+        self.response_expected[BrickletDualRelay.CALLBACK_MONOFLOP_DONE] = 2
+        self.response_expected[BrickletDualRelay.FUNCTION_GET_IDENTITY] = 1
+
+        self.callback_formats[BrickletDualRelay.CALLBACK_MONOFLOP_DONE] = 'B ?'
 
     def set_state(self, relay1, relay2):
         """
@@ -62,13 +69,13 @@ class BrickletDualRelay(Device):
         
         The default value is (*false*, *false*).
         """
-        self.ipcon.send_request(self, DualRelay.FUNCTION_SET_STATE, (relay1, relay2), '? ?', '')
+        self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_SET_STATE, (relay1, relay2), '? ?', '')
 
     def get_state(self):
         """
         Returns the state of the relays, *true* means on and *false* means off.
         """
-        return GetState(*self.ipcon.send_request(self, DualRelay.FUNCTION_GET_STATE, (), '', '? ?'))
+        return GetState(*self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_GET_STATE, (), '', '? ?'))
 
     def set_monoflop(self, relay, state, time):
         """
@@ -88,7 +95,7 @@ class BrickletDualRelay(Device):
         
         .. versionadded:: 1.1.1~(Plugin)
         """
-        self.ipcon.send_request(self, DualRelay.FUNCTION_SET_MONOFLOP, (relay, state, time), 'B ? I', '')
+        self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_SET_MONOFLOP, (relay, state, time), 'B ? I', '')
 
     def get_monoflop(self, relay):
         """
@@ -100,13 +107,13 @@ class BrickletDualRelay(Device):
         
         .. versionadded:: 1.1.1~(Plugin)
         """
-        return GetMonoflop(*self.ipcon.send_request(self, DualRelay.FUNCTION_GET_MONOFLOP, (relay,), 'B', '? I I'))
+        return GetMonoflop(*self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_GET_MONOFLOP, (relay,), 'B', '? I I'))
 
     def get_identity(self):
         """
         .. versionadded:: 2.0.0~(Plugin)
         """
-        return GetIdentity(*self.ipcon.send_request(self, DualRelay.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def register_callback(self, id, callback):
         """

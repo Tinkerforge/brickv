@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-22.      #
+# This file was automatically generated on 2012-11-27.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -67,10 +67,38 @@ class BrickDC(Device):
 
         self.api_version = (1, 0, 1)
 
-        self.callback_formats[DC.CALLBACK_UNDER_VOLTAGE] = 'H'
-        self.callback_formats[DC.CALLBACK_EMERGENCY_SHUTDOWN] = ''
-        self.callback_formats[DC.CALLBACK_VELOCITY_REACHED] = 'h'
-        self.callback_formats[DC.CALLBACK_CURRENT_VELOCITY] = 'h'
+        self.response_expected[BrickDC.FUNCTION_SET_VELOCITY] = 4
+        self.response_expected[BrickDC.FUNCTION_GET_VELOCITY] = 1
+        self.response_expected[BrickDC.FUNCTION_GET_CURRENT_VELOCITY] = 1
+        self.response_expected[BrickDC.FUNCTION_SET_ACCELERATION] = 4
+        self.response_expected[BrickDC.FUNCTION_GET_ACCELERATION] = 1
+        self.response_expected[BrickDC.FUNCTION_SET_PWM_FREQUENCY] = 4
+        self.response_expected[BrickDC.FUNCTION_GET_PWM_FREQUENCY] = 1
+        self.response_expected[BrickDC.FUNCTION_FULL_BRAKE] = 4
+        self.response_expected[BrickDC.FUNCTION_GET_STACK_INPUT_VOLTAGE] = 1
+        self.response_expected[BrickDC.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE] = 1
+        self.response_expected[BrickDC.FUNCTION_GET_CURRENT_CONSUMPTION] = 1
+        self.response_expected[BrickDC.FUNCTION_ENABLE] = 4
+        self.response_expected[BrickDC.FUNCTION_DISABLE] = 4
+        self.response_expected[BrickDC.FUNCTION_IS_ENABLED] = 1
+        self.response_expected[BrickDC.FUNCTION_SET_MINIMUM_VOLTAGE] = 4
+        self.response_expected[BrickDC.FUNCTION_GET_MINIMUM_VOLTAGE] = 1
+        self.response_expected[BrickDC.FUNCTION_SET_DRIVE_MODE] = 4
+        self.response_expected[BrickDC.FUNCTION_GET_DRIVE_MODE] = 1
+        self.response_expected[BrickDC.FUNCTION_SET_CURRENT_VELOCITY_PERIOD] = 4
+        self.response_expected[BrickDC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD] = 1
+        self.response_expected[BrickDC.CALLBACK_UNDER_VOLTAGE] = 2
+        self.response_expected[BrickDC.CALLBACK_EMERGENCY_SHUTDOWN] = 2
+        self.response_expected[BrickDC.CALLBACK_VELOCITY_REACHED] = 2
+        self.response_expected[BrickDC.CALLBACK_CURRENT_VELOCITY] = 2
+        self.response_expected[BrickDC.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickDC.FUNCTION_RESET] = 4
+        self.response_expected[BrickDC.FUNCTION_GET_CHIP_TEMPERATURE] = 1
+
+        self.callback_formats[BrickDC.CALLBACK_UNDER_VOLTAGE] = 'H'
+        self.callback_formats[BrickDC.CALLBACK_EMERGENCY_SHUTDOWN] = ''
+        self.callback_formats[BrickDC.CALLBACK_VELOCITY_REACHED] = 'h'
+        self.callback_formats[BrickDC.CALLBACK_CURRENT_VELOCITY] = 'h'
 
     def set_velocity(self, velocity):
         """
@@ -86,13 +114,13 @@ class BrickDC(Device):
         
         The default velocity is 0.
         """
-        self.ipcon.send_request(self, DC.FUNCTION_SET_VELOCITY, (velocity,), 'h', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_VELOCITY, (velocity,), 'h', '')
 
     def get_velocity(self):
         """
         Returns the velocity as set by :func:`SetVelocity`.
         """
-        return self.ipcon.send_request(self, DC.FUNCTION_GET_VELOCITY, (), '', 'h')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_VELOCITY, (), '', 'h')
 
     def get_current_velocity(self):
         """
@@ -100,7 +128,7 @@ class BrickDC(Device):
         from :func:`GetVelocity` whenever the motor is currently accelerating
         to a goal set by :func:`SetVelocity`.
         """
-        return self.ipcon.send_request(self, DC.FUNCTION_GET_CURRENT_VELOCITY, (), '', 'h')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_VELOCITY, (), '', 'h')
 
     def set_acceleration(self, acceleration):
         """
@@ -117,13 +145,13 @@ class BrickDC(Device):
         
         The default acceleration is 10000.
         """
-        self.ipcon.send_request(self, DC.FUNCTION_SET_ACCELERATION, (acceleration,), 'H', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_ACCELERATION, (acceleration,), 'H', '')
 
     def get_acceleration(self):
         """
         Returns the acceleration as set by :func:`SetAcceleration`.
         """
-        return self.ipcon.send_request(self, DC.FUNCTION_GET_ACCELERATION, (), '', 'H')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_ACCELERATION, (), '', 'H')
 
     def set_pwm_frequency(self, frequency):
         """
@@ -138,13 +166,13 @@ class BrickDC(Device):
         
         The default frequency is 15 kHz.
         """
-        self.ipcon.send_request(self, DC.FUNCTION_SET_PWM_FREQUENCY, (frequency,), 'H', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_PWM_FREQUENCY, (frequency,), 'H', '')
 
     def get_pwm_frequency(self):
         """
         Returns the PWM frequency (in Hz) as set by :func:`SetPWMFrequency`.
         """
-        return self.ipcon.send_request(self, DC.FUNCTION_GET_PWM_FREQUENCY, (), '', 'H')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_PWM_FREQUENCY, (), '', 'H')
 
     def full_brake(self):
         """
@@ -157,7 +185,7 @@ class BrickDC(Device):
         
         Call :func:`SetVelocity` with 0 if you just want to stop the motor.
         """
-        self.ipcon.send_request(self, DC.FUNCTION_FULL_BRAKE, (), '', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_FULL_BRAKE, (), '', '')
 
     def get_stack_input_voltage(self):
         """
@@ -165,7 +193,7 @@ class BrickDC(Device):
         voltage that is supplied via the stack, i.e. it is given by a
         Step-Down or Step-Up Power Supply.
         """
-        return self.ipcon.send_request(self, DC.FUNCTION_GET_STACK_INPUT_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_STACK_INPUT_VOLTAGE, (), '', 'H')
 
     def get_external_input_voltage(self):
         """
@@ -182,33 +210,33 @@ class BrickDC(Device):
          the external connection, it will immediately be driven by the high
          stack voltage.
         """
-        return self.ipcon.send_request(self, DC.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE, (), '', 'H')
 
     def get_current_consumption(self):
         """
         Returns the current consumption of the motor in mA.
         """
-        return self.ipcon.send_request(self, DC.FUNCTION_GET_CURRENT_CONSUMPTION, (), '', 'H')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_CONSUMPTION, (), '', 'H')
 
     def enable(self):
         """
         Enables the driver chip. The driver parameters can be configured (velocity,
         acceleration, etc) before it is enabled.
         """
-        self.ipcon.send_request(self, DC.FUNCTION_ENABLE, (), '', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_ENABLE, (), '', '')
 
     def disable(self):
         """
         Disables the driver chip. The configurations are kept (velocity,
         acceleration, etc) but the motor is not driven until it is enabled again.
         """
-        self.ipcon.send_request(self, DC.FUNCTION_DISABLE, (), '', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_DISABLE, (), '', '')
 
     def is_enabled(self):
         """
         Returns *true* if the driver chip is enabled, *false* otherwise.
         """
-        return self.ipcon.send_request(self, DC.FUNCTION_IS_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_IS_ENABLED, (), '', '?')
 
     def set_minimum_voltage(self, voltage):
         """
@@ -220,13 +248,13 @@ class BrickDC(Device):
         
         The default value is 5V.
         """
-        self.ipcon.send_request(self, DC.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
 
     def get_minimum_voltage(self):
         """
         Returns the minimum voltage as set by :func:`SetMinimumVoltage`
         """
-        return self.ipcon.send_request(self, DC.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 'H')
 
     def set_drive_mode(self, mode):
         """
@@ -248,13 +276,13 @@ class BrickDC(Device):
         
         The default value is 0 = Drive/Brake.
         """
-        self.ipcon.send_request(self, DC.FUNCTION_SET_DRIVE_MODE, (mode,), 'B', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_DRIVE_MODE, (mode,), 'B', '')
 
     def get_drive_mode(self):
         """
         Returns the drive mode, as set by :func:`SetDriveMode`.
         """
-        return self.ipcon.send_request(self, DC.FUNCTION_GET_DRIVE_MODE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_DRIVE_MODE, (), '', 'B')
 
     def set_current_velocity_period(self, period):
         """
@@ -263,19 +291,19 @@ class BrickDC(Device):
         
         The default value is 0.
         """
-        self.ipcon.send_request(self, DC.FUNCTION_SET_CURRENT_VELOCITY_PERIOD, (period,), 'H', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_SET_CURRENT_VELOCITY_PERIOD, (period,), 'H', '')
 
     def get_current_velocity_period(self):
         """
         Returns the period as set by :func:`SetCurrentVelocityPeriod`.
         """
-        return self.ipcon.send_request(self, DC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD, (), '', 'H')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD, (), '', 'H')
 
     def get_identity(self):
         """
         .. versionadded:: 2.0.0~(Firmware)
         """
-        return GetIdentity(*self.ipcon.send_request(self, DC.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def reset(self):
         """
@@ -288,7 +316,7 @@ class BrickDC(Device):
         
         .. versionadded:: 1.1.3~(Firmware)
         """
-        self.ipcon.send_request(self, DC.FUNCTION_RESET, (), '', '')
+        self.ipcon.send_request(self, BrickDC.FUNCTION_RESET, (), '', '')
 
     def get_chip_temperature(self):
         """
@@ -301,7 +329,7 @@ class BrickDC(Device):
         
         .. versionadded:: 1.1.3~(Firmware)
         """
-        return self.ipcon.send_request(self, DC.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def register_callback(self, id, callback):
         """

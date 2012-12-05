@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-22.      #
+# This file was automatically generated on 2012-11-27.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -55,8 +55,22 @@ class BrickletIO4(Device):
 
         self.api_version = (1, 0, 1)
 
-        self.callback_formats[IO4.CALLBACK_INTERRUPT] = 'B B'
-        self.callback_formats[IO4.CALLBACK_MONOFLOP_DONE] = 'B B'
+        self.response_expected[BrickletIO4.FUNCTION_SET_VALUE] = 4
+        self.response_expected[BrickletIO4.FUNCTION_GET_VALUE] = 1
+        self.response_expected[BrickletIO4.FUNCTION_SET_CONFIGURATION] = 4
+        self.response_expected[BrickletIO4.FUNCTION_GET_CONFIGURATION] = 1
+        self.response_expected[BrickletIO4.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
+        self.response_expected[BrickletIO4.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
+        self.response_expected[BrickletIO4.FUNCTION_SET_INTERRUPT] = 4
+        self.response_expected[BrickletIO4.FUNCTION_GET_INTERRUPT] = 1
+        self.response_expected[BrickletIO4.CALLBACK_INTERRUPT] = 2
+        self.response_expected[BrickletIO4.FUNCTION_SET_MONOFLOP] = 4
+        self.response_expected[BrickletIO4.FUNCTION_GET_MONOFLOP] = 1
+        self.response_expected[BrickletIO4.CALLBACK_MONOFLOP_DONE] = 2
+        self.response_expected[BrickletIO4.FUNCTION_GET_IDENTITY] = 1
+
+        self.callback_formats[BrickletIO4.CALLBACK_INTERRUPT] = 'B B'
+        self.callback_formats[BrickletIO4.CALLBACK_MONOFLOP_DONE] = 'B B'
 
     def set_value(self, value_mask):
         """
@@ -70,7 +84,7 @@ class BrickletIO4(Device):
          This function does nothing for pins that are configured as input.
          Pull-up resistors can be switched on with :func:`SetConfiguration`.
         """
-        self.ipcon.send_request(self, IO4.FUNCTION_SET_VALUE, (value_mask,), 'B', '')
+        self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_VALUE, (value_mask,), 'B', '')
 
     def get_value(self):
         """
@@ -78,7 +92,7 @@ class BrickletIO4(Device):
         This function works if the pin is configured to input
         as well as if it is configured to output.
         """
-        return self.ipcon.send_request(self, IO4.FUNCTION_GET_VALUE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_VALUE, (), '', 'B')
 
     def set_configuration(self, pin_mask, direction, value):
         """
@@ -98,7 +112,7 @@ class BrickletIO4(Device):
         * (3, 'o', false) will set pins 0 and 1 as output low.
         * (4, 'o', true) will set pin 2 of as output high.
         """
-        self.ipcon.send_request(self, IO4.FUNCTION_SET_CONFIGURATION, (pin_mask, direction, value), 'B c ?', '')
+        self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_CONFIGURATION, (pin_mask, direction, value), 'B c ?', '')
 
     def get_configuration(self):
         """
@@ -112,7 +126,7 @@ class BrickletIO4(Device):
         * pin 2 is configured as output high
         * and pin 3 is are configured as output low.
         """
-        return GetConfiguration(*self.ipcon.send_request(self, IO4.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
     def set_debounce_period(self, debounce):
         """
@@ -124,13 +138,13 @@ class BrickletIO4(Device):
         
         The default value is 100.
         """
-        self.ipcon.send_request(self, IO4.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
         """
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
-        return self.ipcon.send_request(self, IO4.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def set_interrupt(self, interrupt_mask):
         """
@@ -143,13 +157,13 @@ class BrickletIO4(Device):
         
         The interrupt is delivered with the callback :func:`Interrupt`.
         """
-        self.ipcon.send_request(self, IO4.FUNCTION_SET_INTERRUPT, (interrupt_mask,), 'B', '')
+        self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_INTERRUPT, (interrupt_mask,), 'B', '')
 
     def get_interrupt(self):
         """
         Returns the interrupt bitmask as set by :func:`SetInterrupt`.
         """
-        return self.ipcon.send_request(self, IO4.FUNCTION_GET_INTERRUPT, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_INTERRUPT, (), '', 'B')
 
     def set_monoflop(self, pin_mask, value_mask, time):
         """
@@ -175,7 +189,7 @@ class BrickletIO4(Device):
         
         .. versionadded:: 1.1.1~(Plugin)
         """
-        self.ipcon.send_request(self, IO4.FUNCTION_SET_MONOFLOP, (pin_mask, value_mask, time), 'B B I', '')
+        self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_MONOFLOP, (pin_mask, value_mask, time), 'B B I', '')
 
     def get_monoflop(self, pin):
         """
@@ -187,13 +201,13 @@ class BrickletIO4(Device):
         
         .. versionadded:: 1.1.1~(Plugin)
         """
-        return GetMonoflop(*self.ipcon.send_request(self, IO4.FUNCTION_GET_MONOFLOP, (pin,), 'B', 'B I I'))
+        return GetMonoflop(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_MONOFLOP, (pin,), 'B', 'B I I'))
 
     def get_identity(self):
         """
         .. versionadded:: 2.0.0~(Plugin)
         """
-        return GetIdentity(*self.ipcon.send_request(self, IO4.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def register_callback(self, id, callback):
         """

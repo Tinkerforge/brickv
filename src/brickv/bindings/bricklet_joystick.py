@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-22.      #
+# This file was automatically generated on 2012-11-27.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -65,12 +65,34 @@ class BrickletJoystick(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.callback_formats[Joystick.CALLBACK_POSITION] = 'h h'
-        self.callback_formats[Joystick.CALLBACK_ANALOG_VALUE] = 'H H'
-        self.callback_formats[Joystick.CALLBACK_POSITION_REACHED] = 'h h'
-        self.callback_formats[Joystick.CALLBACK_ANALOG_VALUE_REACHED] = 'H H'
-        self.callback_formats[Joystick.CALLBACK_PRESSED] = ''
-        self.callback_formats[Joystick.CALLBACK_RELEASED] = ''
+        self.response_expected[BrickletJoystick.FUNCTION_GET_POSITION] = 1
+        self.response_expected[BrickletJoystick.FUNCTION_IS_PRESSED] = 1
+        self.response_expected[BrickletJoystick.FUNCTION_GET_ANALOG_VALUE] = 1
+        self.response_expected[BrickletJoystick.FUNCTION_CALIBRATE] = 4
+        self.response_expected[BrickletJoystick.FUNCTION_SET_POSITION_CALLBACK_PERIOD] = 4
+        self.response_expected[BrickletJoystick.FUNCTION_GET_POSITION_CALLBACK_PERIOD] = 1
+        self.response_expected[BrickletJoystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = 4
+        self.response_expected[BrickletJoystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD] = 1
+        self.response_expected[BrickletJoystick.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD] = 4
+        self.response_expected[BrickletJoystick.FUNCTION_GET_POSITION_CALLBACK_THRESHOLD] = 1
+        self.response_expected[BrickletJoystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD] = 4
+        self.response_expected[BrickletJoystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = 1
+        self.response_expected[BrickletJoystick.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
+        self.response_expected[BrickletJoystick.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
+        self.response_expected[BrickletJoystick.CALLBACK_POSITION] = 2
+        self.response_expected[BrickletJoystick.CALLBACK_ANALOG_VALUE] = 2
+        self.response_expected[BrickletJoystick.CALLBACK_POSITION_REACHED] = 2
+        self.response_expected[BrickletJoystick.CALLBACK_ANALOG_VALUE_REACHED] = 2
+        self.response_expected[BrickletJoystick.CALLBACK_PRESSED] = 2
+        self.response_expected[BrickletJoystick.CALLBACK_RELEASED] = 2
+        self.response_expected[BrickletJoystick.FUNCTION_GET_IDENTITY] = 1
+
+        self.callback_formats[BrickletJoystick.CALLBACK_POSITION] = 'h h'
+        self.callback_formats[BrickletJoystick.CALLBACK_ANALOG_VALUE] = 'H H'
+        self.callback_formats[BrickletJoystick.CALLBACK_POSITION_REACHED] = 'h h'
+        self.callback_formats[BrickletJoystick.CALLBACK_ANALOG_VALUE_REACHED] = 'H H'
+        self.callback_formats[BrickletJoystick.CALLBACK_PRESSED] = ''
+        self.callback_formats[BrickletJoystick.CALLBACK_RELEASED] = ''
 
     def get_position(self):
         """
@@ -82,7 +104,7 @@ class BrickletJoystick(Device):
         callback :func:`Position` and set the period with 
         :func:`SetPositionCallbackPeriod`.
         """
-        return GetPosition(*self.ipcon.send_request(self, Joystick.FUNCTION_GET_POSITION, (), '', 'h h'))
+        return GetPosition(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_POSITION, (), '', 'h h'))
 
     def is_pressed(self):
         """
@@ -91,7 +113,7 @@ class BrickletJoystick(Device):
         It is recommended to use the :func:`Pressed` and :func:`Released` callbacks
         to handle the button.
         """
-        return self.ipcon.send_request(self, Joystick.FUNCTION_IS_PRESSED, (), '', '?')
+        return self.ipcon.send_request(self, BrickletJoystick.FUNCTION_IS_PRESSED, (), '', '?')
 
     def get_analog_value(self):
         """
@@ -108,7 +130,7 @@ class BrickletJoystick(Device):
         callback :func:`AnalogValue` and set the period with 
         :func:`SetAnalogValueCallbackPeriod`.
         """
-        return GetAnalogValue(*self.ipcon.send_request(self, Joystick.FUNCTION_GET_ANALOG_VALUE, (), '', 'H H'))
+        return GetAnalogValue(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_ANALOG_VALUE, (), '', 'H H'))
 
     def calibrate(self):
         """
@@ -119,7 +141,7 @@ class BrickletJoystick(Device):
         The resulting calibration will be saved on the EEPROM of the Joystick
         Bricklet, thus you only have to calibrate it once.
         """
-        self.ipcon.send_request(self, Joystick.FUNCTION_CALIBRATE, (), '', '')
+        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_CALIBRATE, (), '', '')
 
     def set_position_callback_period(self, period):
         """
@@ -131,13 +153,13 @@ class BrickletJoystick(Device):
         
         The default value is 0.
         """
-        self.ipcon.send_request(self, Joystick.FUNCTION_SET_POSITION_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_POSITION_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_position_callback_period(self):
         """
         Returns the period as set by :func:`SetPositionCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, Joystick.FUNCTION_GET_POSITION_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_POSITION_CALLBACK_PERIOD, (), '', 'I')
 
     def set_analog_value_callback_period(self, period):
         """
@@ -149,13 +171,13 @@ class BrickletJoystick(Device):
         
         The default value is 0.
         """
-        self.ipcon.send_request(self, Joystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_analog_value_callback_period(self):
         """
         Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, Joystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_position_callback_threshold(self, option, min_x, max_x, min_y, max_y):
         """
@@ -175,13 +197,13 @@ class BrickletJoystick(Device):
         
         The default value is ('x', 0, 0, 0, 0).
         """
-        self.ipcon.send_request(self, Joystick.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y), 'c h h h h', '')
+        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y), 'c h h h h', '')
 
     def get_position_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetPositionCallbackThreshold`.
         """
-        return GetPositionCallbackThreshold(*self.ipcon.send_request(self, Joystick.FUNCTION_GET_POSITION_CALLBACK_THRESHOLD, (), '', 'c h h h h'))
+        return GetPositionCallbackThreshold(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_POSITION_CALLBACK_THRESHOLD, (), '', 'c h h h h'))
 
     def set_analog_value_callback_threshold(self, option, min_x, max_x, min_y, max_y):
         """
@@ -201,13 +223,13 @@ class BrickletJoystick(Device):
         
         The default value is ('x', 0, 0, 0, 0).
         """
-        self.ipcon.send_request(self, Joystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y), 'c H H H H', '')
+        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min_x, max_x, min_y, max_y), 'c H H H H', '')
 
     def get_analog_value_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
         """
-        return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, Joystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H H H'))
+        return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H H H'))
 
     def set_debounce_period(self, debounce):
         """
@@ -223,19 +245,19 @@ class BrickletJoystick(Device):
         
         The default value is 100.
         """
-        self.ipcon.send_request(self, Joystick.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletJoystick.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
         """
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
-        return self.ipcon.send_request(self, Joystick.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def get_identity(self):
         """
         .. versionadded:: 2.0.0~(Plugin)
         """
-        return GetIdentity(*self.ipcon.send_request(self, Joystick.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletJoystick.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def register_callback(self, id, callback):
         """

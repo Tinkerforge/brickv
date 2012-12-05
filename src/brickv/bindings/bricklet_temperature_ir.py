@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-22.      #
+# This file was automatically generated on 2012-11-27.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -61,10 +61,30 @@ class BrickletTemperatureIR(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.callback_formats[TemperatureIR.CALLBACK_AMBIENT_TEMPERATURE] = 'h'
-        self.callback_formats[TemperatureIR.CALLBACK_OBJECT_TEMPERATURE] = 'h'
-        self.callback_formats[TemperatureIR.CALLBACK_AMBIENT_TEMPERATURE_REACHED] = 'h'
-        self.callback_formats[TemperatureIR.CALLBACK_OBJECT_TEMPERATURE_REACHED] = 'h'
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE] = 1
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE] = 1
+        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_EMISSIVITY] = 4
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_EMISSIVITY] = 1
+        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD] = 4
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD] = 1
+        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_PERIOD] = 4
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_PERIOD] = 1
+        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD] = 4
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD] = 1
+        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD] = 4
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD] = 1
+        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
+        self.response_expected[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE] = 2
+        self.response_expected[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE] = 2
+        self.response_expected[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE_REACHED] = 2
+        self.response_expected[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE_REACHED] = 2
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_IDENTITY] = 1
+
+        self.callback_formats[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE] = 'h'
+        self.callback_formats[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE] = 'h'
+        self.callback_formats[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE_REACHED] = 'h'
+        self.callback_formats[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE_REACHED] = 'h'
 
     def get_ambient_temperature(self):
         """
@@ -77,7 +97,7 @@ class BrickletTemperatureIR(Device):
         to use the callback :func:`AmbientTemperature` and set the period with 
         :func:`SetAmbientTemperatureCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE, (), '', 'h')
 
     def get_object_temperature(self):
         """
@@ -95,7 +115,7 @@ class BrickletTemperatureIR(Device):
         to use the callback :func:`ObjectTemperature` and set the period with 
         :func:`SetObjectTemperatureCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE, (), '', 'h')
+        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE, (), '', 'h')
 
     def set_emissivity(self, emissivity):
         """
@@ -118,13 +138,13 @@ class BrickletTemperatureIR(Device):
         The default emissivity is 1.0 (value of 65535) and the minimum emissivity the
         sensor can handle is 0.1 (value of 6553).
         """
-        self.ipcon.send_request(self, TemperatureIR.FUNCTION_SET_EMISSIVITY, (emissivity,), 'H', '')
+        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_EMISSIVITY, (emissivity,), 'H', '')
 
     def get_emissivity(self):
         """
         Returns the emissivity as set by :func:`SetEmissivity`.
         """
-        return self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_EMISSIVITY, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_EMISSIVITY, (), '', 'H')
 
     def set_ambient_temperature_callback_period(self, period):
         """
@@ -136,13 +156,13 @@ class BrickletTemperatureIR(Device):
         
         The default value is 0.
         """
-        self.ipcon.send_request(self, TemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_ambient_temperature_callback_period(self):
         """
         Returns the period as set by :func:`SetAmbientTemperatureCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_object_temperature_callback_period(self, period):
         """
@@ -154,13 +174,13 @@ class BrickletTemperatureIR(Device):
         
         The default value is 0.
         """
-        self.ipcon.send_request(self, TemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_object_temperature_callback_period(self):
         """
         Returns the period as set by :func:`SetObjectTemperatureCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_ambient_temperature_callback_threshold(self, option, min, max):
         """
@@ -180,13 +200,13 @@ class BrickletTemperatureIR(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.send_request(self, TemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
 
     def get_ambient_temperature_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetAmbientTemperatureCallbackThreshold`.
         """
-        return GetAmbientTemperatureCallbackThreshold(*self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetAmbientTemperatureCallbackThreshold(*self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c h h'))
 
     def set_object_temperature_callback_threshold(self, option, min, max):
         """
@@ -206,13 +226,13 @@ class BrickletTemperatureIR(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.send_request(self, TemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
 
     def get_object_temperature_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetObjectTemperatureCallbackThreshold`.
         """
-        return GetObjectTemperatureCallbackThreshold(*self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetObjectTemperatureCallbackThreshold(*self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD, (), '', 'c h h'))
 
     def set_debounce_period(self, debounce):
         """
@@ -228,19 +248,19 @@ class BrickletTemperatureIR(Device):
         
         The default value is 100.
         """
-        self.ipcon.send_request(self, TemperatureIR.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
         """
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
-        return self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def get_identity(self):
         """
         .. versionadded:: 2.0.0~(Plugin)
         """
-        return GetIdentity(*self.ipcon.send_request(self, TemperatureIR.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletTemperatureIR.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def register_callback(self, id, callback):
         """

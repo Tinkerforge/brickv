@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-22.      #
+# This file was automatically generated on 2012-11-27.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -52,8 +52,20 @@ class BrickletLCD20x4(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.callback_formats[LCD20x4.CALLBACK_BUTTON_PRESSED] = 'B'
-        self.callback_formats[LCD20x4.CALLBACK_BUTTON_RELEASED] = 'B'
+        self.response_expected[BrickletLCD20x4.FUNCTION_WRITE_LINE] = 4
+        self.response_expected[BrickletLCD20x4.FUNCTION_CLEAR_DISPLAY] = 4
+        self.response_expected[BrickletLCD20x4.FUNCTION_BACKLIGHT_ON] = 4
+        self.response_expected[BrickletLCD20x4.FUNCTION_BACKLIGHT_OFF] = 4
+        self.response_expected[BrickletLCD20x4.FUNCTION_IS_BACKLIGHT_ON] = 1
+        self.response_expected[BrickletLCD20x4.FUNCTION_SET_CONFIG] = 4
+        self.response_expected[BrickletLCD20x4.FUNCTION_GET_CONFIG] = 1
+        self.response_expected[BrickletLCD20x4.FUNCTION_IS_BUTTON_PRESSED] = 1
+        self.response_expected[BrickletLCD20x4.CALLBACK_BUTTON_PRESSED] = 2
+        self.response_expected[BrickletLCD20x4.CALLBACK_BUTTON_RELEASED] = 2
+        self.response_expected[BrickletLCD20x4.FUNCTION_GET_IDENTITY] = 1
+
+        self.callback_formats[BrickletLCD20x4.CALLBACK_BUTTON_PRESSED] = 'B'
+        self.callback_formats[BrickletLCD20x4.CALLBACK_BUTTON_RELEASED] = 'B'
 
     def write_line(self, line, position, text):
         """
@@ -69,31 +81,31 @@ class BrickletLCD20x4(Device):
         for details. The Unicode example above shows how to specify non-ASCII characters
         and how to translate from Unicode to the LCD charset.
         """
-        self.ipcon.send_request(self, LCD20x4.FUNCTION_WRITE_LINE, (line, position, text), 'B B 20s', '')
+        self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_WRITE_LINE, (line, position, text), 'B B 20s', '')
 
     def clear_display(self):
         """
         Deletes all characters from the display.
         """
-        self.ipcon.send_request(self, LCD20x4.FUNCTION_CLEAR_DISPLAY, (), '', '')
+        self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_CLEAR_DISPLAY, (), '', '')
 
     def backlight_on(self):
         """
         Turns the backlight on.
         """
-        self.ipcon.send_request(self, LCD20x4.FUNCTION_BACKLIGHT_ON, (), '', '')
+        self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_BACKLIGHT_ON, (), '', '')
 
     def backlight_off(self):
         """
         Turns the backlight off.
         """
-        self.ipcon.send_request(self, LCD20x4.FUNCTION_BACKLIGHT_OFF, (), '', '')
+        self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_BACKLIGHT_OFF, (), '', '')
 
     def is_backlight_on(self):
         """
         Returns *true* if the backlight is on and *false* otherwise.
         """
-        return self.ipcon.send_request(self, LCD20x4.FUNCTION_IS_BACKLIGHT_ON, (), '', '?')
+        return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_IS_BACKLIGHT_ON, (), '', '?')
 
     def set_config(self, cursor, blinking):
         """
@@ -104,13 +116,13 @@ class BrickletLCD20x4(Device):
         
         The default is (false, false).
         """
-        self.ipcon.send_request(self, LCD20x4.FUNCTION_SET_CONFIG, (cursor, blinking), '? ?', '')
+        self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_CONFIG, (cursor, blinking), '? ?', '')
 
     def get_config(self):
         """
         Returns the configuration as set by :func:`SetConfig`.
         """
-        return GetConfig(*self.ipcon.send_request(self, LCD20x4.FUNCTION_GET_CONFIG, (), '', '? ?'))
+        return GetConfig(*self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_CONFIG, (), '', '? ?'))
 
     def is_button_pressed(self, button):
         """
@@ -118,13 +130,13 @@ class BrickletLCD20x4(Device):
         on button presses and releases it is recommended to use the
         :func:`ButtonPressed` and :func:`ButtonReleased` callbacks.
         """
-        return self.ipcon.send_request(self, LCD20x4.FUNCTION_IS_BUTTON_PRESSED, (button,), 'B', '?')
+        return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_IS_BUTTON_PRESSED, (button,), 'B', '?')
 
     def get_identity(self):
         """
         .. versionadded:: 2.0.0~(Plugin)
         """
-        return GetIdentity(*self.ipcon.send_request(self, LCD20x4.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def register_callback(self, id, callback):
         """

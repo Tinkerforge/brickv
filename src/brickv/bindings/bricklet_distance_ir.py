@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-22.      #
+# This file was automatically generated on 2012-11-27.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -61,10 +61,30 @@ class BrickletDistanceIR(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.callback_formats[DistanceIR.CALLBACK_DISTANCE] = 'H'
-        self.callback_formats[DistanceIR.CALLBACK_ANALOG_VALUE] = 'H'
-        self.callback_formats[DistanceIR.CALLBACK_DISTANCE_REACHED] = 'H'
-        self.callback_formats[DistanceIR.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_DISTANCE] = 1
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE] = 1
+        self.response_expected[BrickletDistanceIR.FUNCTION_SET_SAMPLING_POINT] = 4
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_SAMPLING_POINT] = 1
+        self.response_expected[BrickletDistanceIR.FUNCTION_SET_DISTANCE_CALLBACK_PERIOD] = 4
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD] = 1
+        self.response_expected[BrickletDistanceIR.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = 4
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD] = 1
+        self.response_expected[BrickletDistanceIR.FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD] = 4
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD] = 1
+        self.response_expected[BrickletDistanceIR.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD] = 4
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = 1
+        self.response_expected[BrickletDistanceIR.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
+        self.response_expected[BrickletDistanceIR.CALLBACK_DISTANCE] = 2
+        self.response_expected[BrickletDistanceIR.CALLBACK_ANALOG_VALUE] = 2
+        self.response_expected[BrickletDistanceIR.CALLBACK_DISTANCE_REACHED] = 2
+        self.response_expected[BrickletDistanceIR.CALLBACK_ANALOG_VALUE_REACHED] = 2
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_IDENTITY] = 1
+
+        self.callback_formats[BrickletDistanceIR.CALLBACK_DISTANCE] = 'H'
+        self.callback_formats[BrickletDistanceIR.CALLBACK_ANALOG_VALUE] = 'H'
+        self.callback_formats[BrickletDistanceIR.CALLBACK_DISTANCE_REACHED] = 'H'
+        self.callback_formats[BrickletDistanceIR.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
 
     def get_distance(self):
         """
@@ -76,7 +96,7 @@ class BrickletDistanceIR(Device):
         callback :func:`Distance` and set the period with 
         :func:`SetDistanceCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, DistanceIR.FUNCTION_GET_DISTANCE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_DISTANCE, (), '', 'H')
 
     def get_analog_value(self):
         """
@@ -93,7 +113,7 @@ class BrickletDistanceIR(Device):
         callback :func:`AnalogValue` and set the period with 
         :func:`SetAnalogValueCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, DistanceIR.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
 
     def set_sampling_point(self, position, distance):
         """
@@ -116,14 +136,14 @@ class BrickletDistanceIR(Device):
          implemented in the Brick Viewer. If you want to calibrate your Bricklet it is
          highly recommended to use this implementation.
         """
-        self.ipcon.send_request(self, DistanceIR.FUNCTION_SET_SAMPLING_POINT, (position, distance), 'B H', '')
+        self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_SET_SAMPLING_POINT, (position, distance), 'B H', '')
 
     def get_sampling_point(self, position):
         """
         Returns the distance to a sampling point position as set by
         :func:`SetSamplingPoint`.
         """
-        return self.ipcon.send_request(self, DistanceIR.FUNCTION_GET_SAMPLING_POINT, (position,), 'B', 'H')
+        return self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_SAMPLING_POINT, (position,), 'B', 'H')
 
     def set_distance_callback_period(self, period):
         """
@@ -135,13 +155,13 @@ class BrickletDistanceIR(Device):
         
         The default value is 0.
         """
-        self.ipcon.send_request(self, DistanceIR.FUNCTION_SET_DISTANCE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_SET_DISTANCE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_distance_callback_period(self):
         """
         Returns the period as set by :func:`SetDistanceCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, DistanceIR.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_analog_value_callback_period(self, period):
         """
@@ -153,13 +173,13 @@ class BrickletDistanceIR(Device):
         
         The default value is 0.
         """
-        self.ipcon.send_request(self, DistanceIR.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_analog_value_callback_period(self):
         """
         Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, DistanceIR.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_distance_callback_threshold(self, option, min, max):
         """
@@ -179,13 +199,13 @@ class BrickletDistanceIR(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.send_request(self, DistanceIR.FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
 
     def get_distance_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetDistanceCallbackThreshold`.
         """
-        return GetDistanceCallbackThreshold(*self.ipcon.send_request(self, DistanceIR.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetDistanceCallbackThreshold(*self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD, (), '', 'c h h'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
         """
@@ -205,13 +225,13 @@ class BrickletDistanceIR(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.send_request(self, DistanceIR.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
+        self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
 
     def get_analog_value_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
         """
-        return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, DistanceIR.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
+        return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_debounce_period(self, debounce):
         """
@@ -227,19 +247,19 @@ class BrickletDistanceIR(Device):
         
         The default value is 100.
         """
-        self.ipcon.send_request(self, DistanceIR.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
         """
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
-        return self.ipcon.send_request(self, DistanceIR.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def get_identity(self):
         """
         .. versionadded:: 2.0.0~(Plugin)
         """
-        return GetIdentity(*self.ipcon.send_request(self, DistanceIR.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletDistanceIR.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def register_callback(self, id, callback):
         """

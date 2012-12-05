@@ -44,8 +44,11 @@ def get_length_from_data(data):
 def get_function_id_from_data(data):
     return struct.unpack('<B', data[5:6])[0]
 
-def get_seqnum_and_options_from_data(data):
-    return struct.unpack('<B', data[6:7])[0]
+def get_sequence_number_from_data(data):
+    return (struct.unpack('<B', data[6:7])[0] >> 4) & 0x0F
+
+def get_error_code_from_data(data):
+    return (struct.unpack('<B', data[7:8])[0] >> 6) & 0x03
 
 BASE58 = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
 def base58encode(value):
@@ -71,6 +74,9 @@ class Error(Exception):
     NOT_ADDED = -6 # obsolete since v2.0
     ALREADY_CONNECTED = -7
     NOT_CONNECTED = -8
+    INVALID_PARAMETER = -9
+    NOT_SUPPORTED = -10
+    UNKNOWN_ERROR_CODE = -11
 
     def __init__(self, value, description):
         self.value = value
@@ -99,9 +105,29 @@ class Device:
         self.api_version = (0, 0, 0)
         self.registered_callbacks = {}
         self.callback_formats = {}
-        self.expected_response_function_id = -1
+        self.expected_response_function_id = None
+        self.expected_response_sequence_number = None
         self.response_queue = Queue()
         self.write_lock = Lock()
+        self.auth_key = None
+
+        # 0 = invalid function ID
+        # 1 = always true (getter)
+        # 2 = always false (callback)
+        # 3 = true (setter)
+        # 4 = false (setter, default)
+        self.response_expected = [0] * 259
+        self.response_expected[IPConnection.FUNCTION_ENUMERATE] = 4
+        self.response_expected[IPConnection.FUNCTION_ADC_CALIBRATE] = 4
+        self.response_expected[IPConnection.FUNCTION_GET_ADC_CALIBRATION] = 1
+        self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_UID] = 1
+        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_UID] = 4
+        self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_PLUGIN] = 1
+        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = 4
+        self.response_expected[IPConnection.CALLBACK_ENUMERATE] = 2
+        self.response_expected[IPConnection.CALLBACK_CONNECTED] = 2
+        self.response_expected[IPConnection.CALLBACK_DISCONNECTED] = 2
+        self.response_expected[IPConnection.CALLBACK_AUTHENTICATION_ERROR] = 2
 
         ipcon.devices[self.uid] = self
 
@@ -110,6 +136,36 @@ class Device:
         Returns API version [major, minor, revision] used for this device.
         """
         return self.api_version
+
+    def set_response_expected(self, function_id, response_expected):
+        if bool(response_expected):
+            flag = 3
+        else:
+            flag = 4
+
+        if self.response_expected[function_id] == 0:
+            raise ValueError('Invalid function ID {0}'.format(function_id))
+
+        if self.response_expected[function_id] not in [3, 4]:
+            raise ValueError('Response Expected flag cannot be changed for function ID {0}'.format(function_id))
+
+        self.response_expected[function_id] = new_flag
+
+    def get_response_expected(self, function_id):
+        if self.response_expected[function_id] == 0:
+            raise ValueError('Invalid function ID {0}'.format(function_id))
+
+        return self.response_expected[function_id] in [1, 3]
+
+    def set_response_expected_all(self, response_expected):
+        if bool(response_expected):
+            flag = 3
+        else:
+            flag = 4
+
+        for i in range(256):
+            if self.response_expected[i] in [3, 4]:
+                self.response_expected[i] = flag
 
 class IPConnection:
     FUNCTION_ENUMERATE = 254
@@ -121,9 +177,9 @@ class IPConnection:
     FUNCTION_WRITE_BRICKLET_PLUGIN = 246
 
     CALLBACK_ENUMERATE = 253
-    CALLBACK_AUTHENTICATION_ERROR = 241
-    CALLBACK_CONNECTED = -1
-    CALLBACK_DISCONNECTED = -2
+    CALLBACK_CONNECTED = 256
+    CALLBACK_DISCONNECTED = 257
+    CALLBACK_AUTHENTICATION_ERROR = 258
 
     BROADCAST_UID = 0
 
@@ -166,7 +222,7 @@ class IPConnection:
         self.auto_reconnect = True
         self.auto_reconnect_allowed = False
         self.auto_reconnect_pending = False
-        self.next_seqnum = 0
+        self.next_sequence_number = 0
         self.auth_key = None
         self.devices = {}
         self.registered_callbacks = {}
@@ -197,8 +253,7 @@ class IPConnection:
                 self.auto_reconnect_pending = False
             else:
                 if self.socket is None:
-                    raise Error(Error.NOT_CONNECTED,
-                                'Not connected to {0}:{1}'.format(self.host, self.port))
+                    raise Error(Error.NOT_CONNECTED, 'Not connected')
 
                 # end receive thread
                 self.receive_flag = False
@@ -272,12 +327,9 @@ class IPConnection:
     def enumerate(self):
         with self.socket_lock:
             if self.socket is None:
-                raise Error(Error.NOT_CONNECTED,
-                            'Not connected to {0}:{1}'.format(self.host, self.port))
+                raise Error(Error.NOT_CONNECTED, 'Not connected')
 
-            request = self.create_packet_header(IPConnection.BROADCAST_UID, 8,
-                                                IPConnection.FUNCTION_ENUMERATE,
-                                                False)
+            request, _, _ = self.create_packet_header(None, 8, IPConnection.FUNCTION_ENUMERATE)
 
             try:
                 self.socket.send(request)
@@ -435,7 +487,8 @@ class IPConnection:
                        self.registered_callbacks[IPConnection.CALLBACK_DISCONNECTED] is not None:
                         self.registered_callbacks[IPConnection.CALLBACK_DISCONNECTED](parameter)
 
-                    if parameter != IPConnection.DISCONNECT_REASON_REQUEST and self.auto_reconnect and self.auto_reconnect_allowed:
+                    if parameter != IPConnection.DISCONNECT_REASON_REQUEST and \
+                       self.auto_reconnect and self.auto_reconnect_allowed:
                         self.auto_reconnect_pending = True
                         retry = True
 
@@ -524,14 +577,13 @@ class IPConnection:
     def send_request(self, device, function_id, data, form, form_ret):
         with self.socket_lock:
             if self.socket is None:
-                raise Error(Error.NOT_CONNECTED,
-                            'Not connected to {0}:{1}'.format(self.host, self.port))
+                raise Error(Error.NOT_CONNECTED, 'Not connected')
 
             device.write_lock.acquire()
 
             length = 8 + struct.calcsize('<' + form)
-            request = self.create_packet_header(device.uid, length, function_id,
-                                                len(form_ret) != 0)
+            request, response_expected, sequence_number = \
+                self.create_packet_header(device, length, function_id)
 
             for f, d in zip(form.split(' '), data):
                 if len(f) > 1 and not 's' in f:
@@ -550,39 +602,53 @@ class IPConnection:
                 else:
                     request += struct.pack('<' + f, d)
 
-            if len(form_ret) != 0:
+            if response_expected:
                 device.expected_response_function_id = function_id
+                device.expected_response_sequence_number = sequence_number
 
         try:
             self.socket.send(request)
         except socket.error:
             pass
 
-        if len(form_ret) == 0:
+        if not response_expected:
             device.write_lock.release()
             return
 
         try:
             response = device.response_queue.get(True, self.timeout)
         except Empty:
-            device.write_lock.release()
-            msg = 'Did not receive response for function ' + str(function_id) +  ' in time'
+            msg = 'Did not receive response for function {0} in time'.format(function_id)
             raise Error(Error.TIMEOUT, msg)
+        finally:
+            device.expected_response_function_id = None
+            device.expected_response_sequence_number = None
+            device.write_lock.release()
 
-        device.write_lock.release()
+        error_code = get_error_code_from_data(response)
 
-        return self.deserialize_data(response[8:], form_ret)
+        if error_code == 1:
+            msg = 'Got invalid parameter for function {0}'.format(function_id)
+            raise Error(Error.INVALID_PARAMETER, msg)
+        elif error_code == 2:
+            msg = 'Function {0} is not supported'.format(function_id)
+            raise Error(Error.NOT_SUPPORTED, msg)
+        elif error_code == 3:
+            msg = 'Function {0} returned an unknown error'.format(function_id)
+            raise Error(Error.UNKNOWN_ERROR_CODE, msg)
 
-    def get_next_seqnum(self):
-        seqnum = self.next_seqnum
-        self.next_seqnum = (self.next_seqnum + 1) % 15
-        seqnum += 1
+        if len(form_ret) > 0:
+            return self.deserialize_data(response[8:], form_ret)
 
-        return seqnum
+    def get_next_sequence_number(self):
+        sequence_number = self.next_sequence_number
+        self.next_sequence_number = (self.next_sequence_number + 1) % 15
+        return sequence_number + 1
 
     def handle_response(self, packet):
         function_id = get_function_id_from_data(packet)
-        if function_id == IPConnection.CALLBACK_ENUMERATE:
+        sequence_number = get_sequence_number_from_data(packet)
+        if function_id == IPConnection.CALLBACK_ENUMERATE and sequence_number == 0:
             self.handle_enumerate(packet)
             return
 
@@ -592,35 +658,47 @@ class IPConnection:
             return
 
         device = self.devices[uid]
-        if device.expected_response_function_id == function_id:
+        if device.expected_response_function_id == function_id and \
+           device.expected_response_sequence_number == sequence_number:
             device.response_queue.put(packet)
             return
 
-        if function_id in device.registered_callbacks:
+        if function_id in device.registered_callbacks and sequence_number == 0:
             self.callback_queue.put((IPConnection.QUEUE_PACKET, packet))
             return
 
         # Response seems to be OK, but can't be handled, most likely
         # a callback without registered function
 
-    def handle_enumerate(self, packet):
-        if IPConnection.CALLBACK_ENUMERATE in self.registered_callbacks:
-            self.callback_queue.put((IPConnection.QUEUE_PACKET, packet))
-
-    def create_packet_header(self, uid, length, function_id, response_expected):
-        seqnum = self.get_next_seqnum()
+    def create_packet_header(self, device, length, function_id):
+        uid = IPConnection.BROADCAST_UID
+        sequence_number = self.get_next_sequence_number()
         r_bit = 0
         a_bit = 0
 
-        if response_expected:
-            r_bit = 1
+        if device is not None:
+            uid = device.uid
 
-        if self.auth_key is not None:
-            a_bit = 1
+            if device.response_expected[function_id] in [1, 3]:
+                r_bit = 1
 
-        seqnum_and_options = (seqnum << 4) | (r_bit << 3) | (a_bit << 2)
+            if device.auth_key is not None:
+                a_bit = 1
+        else:
+            if self.auth_key is not None:
+                a_bit = 1
 
-        return struct.pack('<IBBBB', uid, length, function_id, seqnum_and_options, 0)
+        sequence_number_and_options = \
+            (sequence_number << 4) | (r_bit << 3) | (a_bit << 2)
+
+        return (struct.pack('<IBBBB', uid, length, function_id,
+                            sequence_number_and_options, 0),
+                bool(r_bit),
+                sequence_number)
+
+    def handle_enumerate(self, packet):
+        if IPConnection.CALLBACK_ENUMERATE in self.registered_callbacks:
+            self.callback_queue.put((IPConnection.QUEUE_PACKET, packet))
 
     def write_bricklet_plugin(self, device, port, position, plugin_chunk):
         self.send_request(device,
