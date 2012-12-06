@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
-# Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+# Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted.
@@ -86,6 +86,12 @@ class Error(Exception):
         return str(self.value) + ': ' + str(self.description)
 
 class Device:
+    RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0
+    RESPONSE_EXPECTED_ALWAYS_TRUE = 1 # getter
+    RESPONSE_EXPECTED_ALWAYS_FALSE = 2 # callback
+    RESPONSE_EXPECTED_TRUE = 3 # setter
+    RESPONSE_EXPECTED_FALSE = 4 # setter, default
+
     def __init__(self, uid_str, ipcon):
         uid = base58decode(uid_str)
 
@@ -111,23 +117,15 @@ class Device:
         self.write_lock = Lock()
         self.auth_key = None
 
-        # 0 = invalid function ID
-        # 1 = always true (getter)
-        # 2 = always false (callback)
-        # 3 = true (setter)
-        # 4 = false (setter, default)
-        self.response_expected = [0] * 259
-        self.response_expected[IPConnection.FUNCTION_ENUMERATE] = 4
-        self.response_expected[IPConnection.FUNCTION_ADC_CALIBRATE] = 4
-        self.response_expected[IPConnection.FUNCTION_GET_ADC_CALIBRATION] = 1
-        self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_UID] = 1
-        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_UID] = 4
-        self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_PLUGIN] = 1
-        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = 4
-        self.response_expected[IPConnection.CALLBACK_ENUMERATE] = 2
-        self.response_expected[IPConnection.CALLBACK_CONNECTED] = 2
-        self.response_expected[IPConnection.CALLBACK_DISCONNECTED] = 2
-        self.response_expected[IPConnection.CALLBACK_AUTHENTICATION_ERROR] = 2
+        self.response_expected = [RESPONSE_EXPECTED_INVALID_FUNCTION_ID] * 256
+        self.response_expected[IPConnection.FUNCTION_ENUMERATE] = RESPONSE_EXPECTED_FALSE
+        self.response_expected[IPConnection.FUNCTION_ADC_CALIBRATE] = RESPONSE_EXPECTED_FALSE
+        self.response_expected[IPConnection.FUNCTION_GET_ADC_CALIBRATION] = RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_UID] = RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_UID] = RESPONSE_EXPECTED_FALSE
+        self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_PLUGIN] = RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = RESPONSE_EXPECTED_FALSE
+        self.response_expected[IPConnection.CALLBACK_ENUMERATE] = RESPONSE_EXPECTED_ALWAYS_FALSE
 
         ipcon.devices[self.uid] = self
 
@@ -138,33 +136,33 @@ class Device:
         return self.api_version
 
     def set_response_expected(self, function_id, response_expected):
-        if bool(response_expected):
-            flag = 3
-        else:
-            flag = 4
-
-        if self.response_expected[function_id] == 0:
+        if self.response_expected[function_id] == RESPONSE_EXPECTED_INVALID_FUNCTION_ID or \
+           function_id >= len(self.response_expected):
             raise ValueError('Invalid function ID {0}'.format(function_id))
 
-        if self.response_expected[function_id] not in [3, 4]:
+        if self.response_expected[function_id] not in [RESPONSE_EXPECTED_TRUE, RESPONSE_EXPECTED_FALSE]:
             raise ValueError('Response Expected flag cannot be changed for function ID {0}'.format(function_id))
 
-        self.response_expected[function_id] = new_flag
+        if bool(response_expected):
+            self.response_expected[function_id] = RESPONSE_EXPECTED_TRUE
+        else:
+            self.response_expected[function_id] = RESPONSE_EXPECTED_FALSE
 
     def get_response_expected(self, function_id):
-        if self.response_expected[function_id] == 0:
+        if self.response_expected[function_id] == RESPONSE_EXPECTED_INVALID_FUNCTION_ID or \
+           function_id >= len(self.response_expected):
             raise ValueError('Invalid function ID {0}'.format(function_id))
 
-        return self.response_expected[function_id] in [1, 3]
+        return self.response_expected[function_id] in [RESPONSE_EXPECTED_ALWAYS_TRUE, RESPONSE_EXPECTED_TRUE]
 
     def set_response_expected_all(self, response_expected):
         if bool(response_expected):
-            flag = 3
+            flag = RESPONSE_EXPECTED_TRUE
         else:
-            flag = 4
+            flag = RESPONSE_EXPECTED_FALSE
 
-        for i in range(256):
-            if self.response_expected[i] in [3, 4]:
+        for i in range(len(self.response_expected)):
+            if self.response_expected[i] in [RESPONSE_EXPECTED_TRUE, RESPONSE_EXPECTED_FALSE]:
                 self.response_expected[i] = flag
 
 class IPConnection:
@@ -175,11 +173,11 @@ class IPConnection:
     FUNCTION_WRITE_BRICKLET_UID = 248
     FUNCTION_READ_BRICKLET_PLUGIN = 247
     FUNCTION_WRITE_BRICKLET_PLUGIN = 246
-
     CALLBACK_ENUMERATE = 253
-    CALLBACK_CONNECTED = 256
-    CALLBACK_DISCONNECTED = 257
-    CALLBACK_AUTHENTICATION_ERROR = 258
+
+    CALLBACK_CONNECTED = 0
+    CALLBACK_DISCONNECTED = 1
+    CALLBACK_AUTHENTICATION_ERROR = 2
 
     BROADCAST_UID = 0
 
@@ -679,7 +677,7 @@ class IPConnection:
         if device is not None:
             uid = device.uid
 
-            if device.response_expected[function_id] in [1, 3]:
+            if device.get_response_expected(function_id):
                 r_bit = 1
 
             if device.auth_key is not None:
