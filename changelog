@@ -62,3 +62,4 @@
         Fix discovering of plugins for Industrial Bricklets
         Switch button text from state to action for Dual Relay Bricklet plugin
         Improve monoflop handling for Industrial Bricklets
+1.1.15: Add support for the 4th button of the LCD 20x4 Bricklet v1.2
