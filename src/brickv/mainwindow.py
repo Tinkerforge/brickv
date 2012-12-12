@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2009-2010 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 
 mainwindow.py: New/Removed Bricks are handled here and plugins shown if clicked
@@ -22,20 +22,20 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt, QTimer
-from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon, QPushButton, QSortFilterProxyModel, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QFrame, QSpacerItem, QSizePolicy
+from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt
+from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon, QPushButton, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QFrame, QSpacerItem, QSizePolicy, QStandardItemModel, QStandardItem
 from ui_mainwindow import Ui_MainWindow
 from plugin_system.plugin_manager import PluginManager
-from bindings.ip_connection import IPConnection, Error
-from updates import UpdatesWindow
+from bindings.ip_connection import IPConnection
 from flashing import FlashingWindow
 from advanced import AdvancedWindow
 from async_call import async_start_thread
 
-import socket
+from bindings.brick_master import BrickMaster
+
+import infos
 import signal
 import sys
-import operator
 
 HOST_HISTORY_SIZE = 5
 
@@ -99,8 +99,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.async_thread = async_start_thread(self)
 
         self.setWindowTitle("Brick Viewer " + config.BRICKV_VERSION)
-
-        self.table_view_header = ['UID', 'Device Name', 'FW Version']
+        
+        self.tree_view_model_labels = ['Name', 'UID', 'FW Version']
+        self.tree_view_model = QStandardItemModel()
+        self.tree_view.setModel(self.tree_view_model)
+        self.set_tree_view_defaults()   
 
         # Remove dummy tab
         self.tab_widget.removeTab(1)
@@ -109,7 +112,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.name = '<unknown>'
         self.uid = '<unknown>'
         self.version = [0, 0, 0]
-        self.plugins = [self]
 
         self.qtcb_enumerate.connect(self.cb_enumerate)
         self.qtcb_connected.connect(self.cb_connected)
@@ -131,7 +133,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.tab_widget.currentChanged.connect(self.tab_changed)
         self.connect.pressed.connect(self.connect_pressed)
-        self.button_updates.pressed.connect(self.updates_pressed)
         self.button_flashing.pressed.connect(self.flashing_pressed)
         self.button_advanced.pressed.connect(self.advanced_pressed)
         self.plugin_manager = PluginManager()
@@ -140,13 +141,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.combo_host.addItems(config.get_host_history(HOST_HISTORY_SIZE - 1))
         self.spinbox_port.setValue(config.get_port())
 
-        self.table_view.horizontalHeader().setSortIndicator(0, Qt.AscendingOrder)
-
-        self.mtm = None
-
         self.last_host = self.combo_host.currentText()
         self.last_port = self.spinbox_port.value()
-
+        
     def closeEvent(self, event):
         self.exit_brickv()
 
@@ -185,41 +182,51 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         pass
 
     def tab_changed(self, i):
-        self.plugins[i].start()
-        self.plugins[self.last_tab].stop()
+        try:
+            uid = self.tab_widget.widget(i)._uid
+            infos.infos[uid].plugin.start()
+        except:
+            pass
+        
+        try:
+            uid = self.tab_widget.widget(self.last_tab)._uid
+            infos.infos[uid].plugin.stop()
+        except:
+            pass
+
         self.last_tab = i
 
     def reset_view(self):
         self.tab_widget.setCurrentIndex(0)
-        for i in reversed(range(1, len(self.plugins))):
+        
+        keys_to_remove = []
+        for key in infos.infos:
+            if infos.infos[key].type in ('brick', 'bricklet'):
+                infos.infos[key].plugin.stop()
+                infos.infos[key].plugin.destroy()
+                keys_to_remove.append(key)
+                
+        for key in keys_to_remove:
             try:
-                self.plugins[i].stop()
-                self.plugins[i].destroy()
-            except AttributeError:
+                infos.infos.pop(key)
+            except:
                 pass
-
+                
+        for i in reversed(range(1, self.tab_widget.count())):
             self.tab_widget.removeTab(i)
 
-        self.plugins = [self]
-        self.update_table_view()
-
-    def updates_pressed(self):
-        if self.updates_window is None:
-            self.updates_window = UpdatesWindow(self, config)
-
-        self.update_updates_window()
-        self.updates_window.show()
-        self.updates_window.refresh()
+        self.update_tree_view()
 
     def flashing_pressed(self):
         first = False
 
         if self.flashing_window is None:
             first = True
-            self.flashing_window = FlashingWindow(self)
+            self.flashing_window = FlashingWindow(self, config)
 
         self.update_flashing_window()
         self.flashing_window.show()
+        self.flashing_window.update_refresh()
 
         if first:
             self.flashing_window.refresh_firmwares_and_plugins()
@@ -247,6 +254,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def create_plugin_container(self, plugin, connected_uid, position):
         container = QWidget()
+        container._uid = plugin.uid
         layout = QVBoxLayout(container)
         info = QHBoxLayout()
 
@@ -308,41 +316,103 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         layout.addWidget(plugin)
 
         return container
+    
+    def tab_for_uid(self, uid):
+        for i in range(1, self.tab_widget.count()):
+            try:
+                widget = self.tab_widget.widget(i)
+                if widget._uid == uid:
+                    return i
+            except:
+                pass
+                
+        return -1
+            
 
     def cb_enumerate(self, uid, connected_uid, position,
                      hardware_version, firmware_version,
                      device_identifier, enumeration_type):
         if enumeration_type in [IPConnection.ENUMERATION_TYPE_AVAILABLE,
                                 IPConnection.ENUMERATION_TYPE_CONNECTED]:
-            for plugin in self.plugins:
-                # Plugin already loaded
-                if plugin.uid == uid:
-                    return
+            if device_identifier == BrickMaster.DEVICE_IDENTIFIER:
+                info = infos.BrickMasterInfo()
+            elif position in ('a', 'b', 'c', 'd', 'A', 'B', 'C', 'D'):
+                position = position.lower()
+                info = infos.BrickletInfo()
+            else:
+                info = infos.BrickInfo()
+                
+            if uid in infos.infos:
+                info = infos.infos[uid]
+            else:
+                infos.infos[uid] = info
+                
+            for device in infos.infos.values():
+                if device.type == 'brick':
+                    if info.type == 'bricklet':
+                        if device.uid == connected_uid:
+                            device.bricklets[position] = info
+                if device.type == 'bricklet':
+                    if info.type == 'brick':
+                        if uid == device.connected_uid:
+                            info.bricklets[position] = device
+                            
+            info.uid = uid
+            info.connected_uid = connected_uid
+            info.position = position
+            info.hardware_version = hardware_version
+            info.firmware_version_installed = firmware_version
+            info.device_identifier = device_identifier
+            info.protocol_version = 2
+            
+            for device in infos.infos.values():
+                if device.type in ('brick', 'bricklet'):
+                    if device.uid == uid and device.plugin != None:
+                        return
+
             plugin = self.plugin_manager.get_plugin(device_identifier, self.ipcon,
                                                     uid, firmware_version)
+            
             if plugin is not None:
+                info.plugin = plugin
                 if plugin.is_hardware_version_relevant(hardware_version):
-                    tab_name = '{0} {1}.{2}'.format(plugin.name,
-                                                    hardware_version[0],
-                                                    hardware_version[1])
+                    info.name = '{0} {1}.{2}'.format(plugin.name,
+                                                     hardware_version[0],
+                                                     hardware_version[1])
                 else:
-                    tab_name = plugin.name
-
+                    info.name = plugin.name
+                    
+                info.url_part = plugin.get_url_part()
+                    
                 c = self.create_plugin_container(plugin, connected_uid, position)
-                self.tab_widget.addTab(c, tab_name)
-                self.plugins.append(plugin)
+                info.plugin_container = c
+                self.tab_widget.addTab(c, info.name)
         elif enumeration_type == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
-            for i in range(len(self.plugins)):
-                if self.plugins[i].uid == uid:
-                    self.tab_widget.setCurrentIndex(0)
-                    self.plugins[i].stop()
-                    self.plugins[i].destroy()
-                    self.tab_widget.removeTab(i)
-                    self.plugins.remove(self.plugins[i])
-                    self.update_table_view()
-                    return
-
-        self.update_table_view()
+            for device_info in infos.infos.values():
+                if device_info.type in ('brick', 'bricklet'):
+                    if device_info.uid == uid:
+                        try:
+                            self.tab_widget.setCurrentIndex(0)
+                            if device_info.plugin:
+                                device_info.plugin.stop()
+                                device_info.plugin.destroy()
+                            i = self.tab_for_uid(device_info.uid)
+                            self.tab_widget.removeTab(i)
+                        except:
+                            pass
+                    
+                if device_info.type == 'brick':
+                    for port in device_info.bricklets:
+                        if device_info.bricklets[port]:
+                            if device_info.bricklets[port].uid == uid:
+                                device_info.bricklets[port] = None
+    
+                try:
+                    infos.infos.pop(uid)
+                except:
+                    pass
+            
+        self.update_tree_view()
 
     def cb_connected(self, connect_reason):
         self.connect.setText("Disconnect")
@@ -386,46 +456,43 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                      'Trying to reconnect.',
                                      QMessageBox.Ok)
 
-    def update_table_view(self):
-        data = []
-        for plugin in self.plugins[1:]:
-            data.append([plugin.uid, plugin.name, plugin.version_str])
+    def set_tree_view_defaults(self):
+        self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels)
+        self.tree_view.expandAll()
+        self.tree_view.setColumnWidth(0, 230)
+        self.tree_view.setColumnWidth(1, 60)
+        self.tree_view.setColumnWidth(2, 50)
+        
+    def update_tree_view(self):
+        self.tree_view_model.clear()
+        
+        for device_info in infos.infos.values():
+            if device_info.type == 'brick':
+                parent = [QStandardItem(device_info.name), 
+                          QStandardItem(device_info.uid), 
+                          QStandardItem('.'.join(map(str, device_info.firmware_version_installed)))]
 
-        self.table_view.setSortingEnabled(False)
-        self.mtm = MainTableModel(self.table_view_header, data)
-        sfpm = QSortFilterProxyModel()
-        sfpm.setSourceModel(self.mtm)
-        self.table_view.setModel(sfpm)
-        self.table_view.setSortingEnabled(True)
-        self.update_updates_window()
+                self.tree_view_model.appendRow(parent)
+                for port in device_info.bricklets:
+                    if device_info.bricklets[port] and device_info.bricklets[port].protocol_version == 2:
+                        child = [QStandardItem(port.upper() + ': ' +device_info.bricklets[port].name), 
+                                 QStandardItem(device_info.bricklets[port].uid),
+                                 QStandardItem('.'.join(map(str, device_info.bricklets[port].firmware_version_installed)))]
+                        parent[0].appendRow(child)
+
+        self.set_tree_view_defaults()        
         self.update_flashing_window()
         self.update_advanced_window()
 
-    def update_updates_window(self):
-        devices = []
-        for plugin in self.plugins[1:]:
-            devices.append({ 'name': plugin.name,
-                             'uid': plugin.uid,
-                             'version': plugin.version_str,
-                             'is_brick': plugin.is_brick(),
-                             'url_part': plugin.get_url_part() })
-
-        if self.updates_window is not None:
-            self.updates_window.set_devices(devices)
-
     def update_flashing_window(self):
         if self.flashing_window is not None:
-            devices = []
-            for plugin in self.plugins[1:]:
-                if plugin.is_brick():
-                    devices.append(('{0} [{1}]'.format(plugin.name, plugin.uid), plugin.device))
-            self.flashing_window.set_devices(devices)
+            self.flashing_window.update_flashing_devices()
 
     def update_advanced_window(self):
         devices = []
-        for plugin in self.plugins[1:]:
-            if plugin.is_brick():
-                devices.append(('{0} [{1}]'.format(plugin.name, plugin.uid), plugin.device))
+        for device_info in infos.infos.values():
+            if device_info.type == 'brick':
+                devices.append(('{0} [{1}]'.format(device_info.name, device_info.uid), device_info.plugin.device))
 
         self.button_advanced.setEnabled(len(devices) > 0)
 

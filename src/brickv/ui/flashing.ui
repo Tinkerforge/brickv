@@ -17,8 +17,46 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tab_widget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
+     <widget class="QWidget" name="tab_updates">
+      <attribute name="title">
+       <string>Updates</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QTreeView" name="update_tree_view">
+         <property name="autoExpandDelay">
+          <number>-1</number>
+         </property>
+         <property name="indentation">
+          <number>10</number>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QPushButton" name="update_button_refresh">
+           <property name="text">
+            <string>Refresh</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="update_button_bricklets">
+           <property name="text">
+            <string>Auto-Update All Bricklets</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tab_brick">
       <attribute name="title">
        <string>Brick</string>

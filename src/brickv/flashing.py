@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 
@@ -27,9 +27,12 @@ from ui_flashing import Ui_widget_flashing
 from bindings.ip_connection import IPConnection, base58encode, BASE58
 from plugin_system.plugins.imu.calibrate_import_export import parse_imu_calibration
 from PyQt4.QtCore import pyqtSignal, Qt
-from PyQt4.QtGui import QApplication, QFrame, QFileDialog, QMessageBox, QProgressDialog
+from PyQt4.QtGui import QApplication, QFrame, QFileDialog, QMessageBox, QProgressDialog, QStandardItemModel, QStandardItem, QBrush
 from samba import SAMBA, SAMBAException, get_serial_ports
 
+import infos
+
+import traceback
 import sys
 import os
 import urllib2
@@ -40,17 +43,38 @@ from xml.etree.ElementTree import ElementTree
 from xml.etree.ElementTree import fromstring as etreefromstring
 from serial import SerialException
 
+FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
+
+check_for_brickv_update = True
+
+if sys.platform.startswith('linux'):
+    BRICKV_URL = 'http://download.tinkerforge.com/tools/brickv/linux/'
+elif sys.platform == 'darwin':
+    BRICKV_URL = 'http://download.tinkerforge.com/tools/brickv/macos/'
+elif sys.platform == 'win32':
+    BRICKV_URL = 'http://download.tinkerforge.com/tools/brickv/windows/'
+elif sys.platform.startswith('freebsd'):
+    check_for_brickv_update = False
+    BRICKV_URL = 'http://freshports.org/devel/brickv/'
+else:
+    check_for_brickv_update = False
+    BRICKV_URL = None
+
 SELECT = 'Select...'
 CUSTOM = 'Custom...'
 FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
 IMU_CALIBRATION_URL = 'http://download.tinkerforge.com/imu_calibration/'
 NO_BRICK = 'No Brick found'
-NO_BOOTLOADER = 'No Brick in Bootloader found'
+NO_BOOTLOADER = 'No Brick in Bootloader found' 
 
 class FlashingWindow(QFrame, Ui_widget_flashing):
-    def __init__(self, parent):
+    def __init__(self, parent, config):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
         self.setupUi(self)
+        
+        self.firmwares = {}
+        self.plugins = {}
+        self.devices = []
 
         self.parent = parent
         self.button_serial_port_refresh.pressed.connect(self.refresh_serial_ports)
@@ -63,18 +87,23 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.button_plugin_save.pressed.connect(self.plugin_save_pressed)
         self.button_plugin_browse.pressed.connect(self.plugin_browse_pressed)
 
-        self.set_devices([])
-
         self.refresh_serial_ports()
-
-        self.firmwares = {}
-        self.plugins = {}
 
         self.combo_firmware.addItem(CUSTOM)
         self.firmware_changed(0)
 
         self.combo_plugin.addItem(CUSTOM)
         self.plugin_changed(0)
+        
+        self.update_tree_view_model_labels = ['Name', 'UID', 'Installed', 'Latest']
+        self.update_tree_view_model = QStandardItemModel()
+        self.update_tree_view.setModel(self.update_tree_view_model)
+
+        self.tool_infos = []
+        self.brick_infos = []
+        self.config = config
+        self.update_button_refresh.pressed.connect(self.update_refresh)
+        self.update_button_bricklets.pressed.connect(self.update_bricklets)
 
         self.update_ui_state()
 
@@ -268,6 +297,22 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         self.update_ui_state()
 
+    def update_flashing_devices(self):
+        self.devices = []
+        self.combo_brick.clear()
+        for info in infos.infos.values():
+            if info.type == 'brick':
+                try:
+                    self.devices.append(info.plugin.device)
+                except:
+                    self.devices.append(None)
+                self.combo_brick.addItem('{0} [{1}]'.format(info.name, info.uid))
+                
+        if self.combo_brick.count() == 0:
+            self.combo_brick.addItem(NO_BRICK)
+            
+        self.update_ui_state()
+            
     def set_devices(self, devices):
         self.devices = []
         self.combo_brick.clear()
@@ -359,7 +404,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.edit_custom_plugin.setEnabled(is_plugin_custom)
         self.button_plugin_browse.setEnabled(is_plugin_custom)
 
-        self.tab_widget.setTabEnabled(1, len(self.devices) > 0)
+        self.tab_widget.setTabEnabled(2, len(self.devices) > 0)
 
     def firmware_changed(self, index):
         self.update_ui_state()
@@ -600,58 +645,38 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
     def plugin_changed(self, index):
         self.update_ui_state()
+        
+    def download_bricklet_firmware(self, progress, url_part, name, version, popup=False):
+        progress.setLabelText('Downloading {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
+        progress.setMaximum(0)
+        progress.show()
 
-    def plugin_save_pressed(self):
-        progress = self.create_progress_bar('Flashing')
-        current_text = self.combo_plugin.currentText()
+        try:
+            response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version))
+            length = int(response.headers['Content-Length'])
+            progress.setMaximum(length)
+            progress.setValue(0)
+            QApplication.processEvents()
+            plugin = []
+            chunk = response.read(256)
 
-        # Get plugin
-        if current_text == SELECT:
-            return
-        elif current_text == CUSTOM:
-            plugin_file_name = self.edit_custom_plugin.text()
-            plugin_file_name = unicode(plugin_file_name.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
-
-            try:
-                plugin = map(ord, file(plugin_file_name, 'rb').read()) # Convert plugin to list of bytes
-            except IOError:
-                progress.cancel()
-                self.popup_fail('Bricklet', 'Could not read plugin file')
-                return
-        else:
-            url_part = str(self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString())
-            name = self.plugins[url_part][0]
-            version = self.plugins[url_part][2][-1]
-
-            progress.setLabelText('Downloading {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
-            progress.setMaximum(0)
-            progress.show()
-
-            try:
-                response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version))
-                length = int(response.headers['Content-Length'])
-                progress.setMaximum(length)
-                progress.setValue(0)
-                QApplication.processEvents()
-                plugin = []
+            while len(chunk) > 0:
+                plugin += map(ord, chunk) # Convert plugin to list of bytes
+                progress.setValue(len(plugin))
                 chunk = response.read(256)
 
-                while len(chunk) > 0:
-                    plugin += map(ord, chunk) # Convert plugin to list of bytes
-                    progress.setValue(len(plugin))
-                    chunk = response.read(256)
-
-                response.close()
-            except urllib2.URLError:
-                progress.cancel()
+            response.close()
+        except urllib2.URLError:
+            progress.cancel()
+            if popup:
                 self.popup_fail('Bricklet', 'Could not download {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
-                return
-
-        # Flash plugin
-        device, port = self.current_device_and_port()
-
+            return None
+        
+        return plugin
+    
+    def upload_bricklet_firmware(self, plugin, device, port, name, progress, popup=True):
         # Write
-        progress.setLabelText('Writing plugin')
+        progress.setLabelText('Writing plugin: ' + name)
         progress.setMaximum(0)
         progress.setValue(0)
         progress.show()
@@ -685,11 +710,12 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             time.sleep(0.1)
         except:
             progress.cancel()
-            self.popup_fail('Bricklet', 'Could not flash Bricklet: Write error')
-            return
+            if popup:
+                self.popup_fail('Bricklet', 'Could not flash Bricklet: Write error')
+            return False
 
         # Verify
-        progress.setLabelText('Verifying written plugin')
+        progress.setLabelText('Verifying written plugin: ' + name)
         progress.setMaximum(len(plugin_chunks))
         progress.setValue(0)
         progress.show()
@@ -703,8 +729,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
                 if read_chunk != chunk:
                     progress.cancel()
-                    self.popup_fail('Bricklet', 'Could not flash Bricklet: Verification error')
-                    return
+                    if popup:
+                        self.popup_fail('Bricklet', 'Could not flash Bricklet: Verification error')
+                    return False
 
                 position += 1
                 progress.setValue(position)
@@ -713,10 +740,50 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 QApplication.processEvents()
         except:
             progress.cancel()
-            self.popup_fail('Bricklet', 'Could not flash Bricklet: Read error')
-            return
+            if popup:
+                self.popup_fail('Bricklet', 'Could not flash Bricklet: Read error')
+            return False
 
         progress.cancel()
+        
+        return True
+        
+    def plugin_save_pressed(self):
+        progress = self.create_progress_bar('Flashing')
+        current_text = self.combo_plugin.currentText()
+
+        # Get plugin
+        if current_text == SELECT:
+            return
+        elif current_text == CUSTOM:
+            plugin_file_name = self.edit_custom_plugin.text()
+            plugin_file_name = unicode(plugin_file_name.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
+
+            try:
+                plugin = map(ord, file(plugin_file_name, 'rb').read()) # Convert plugin to list of bytes
+            except IOError:
+                progress.cancel()
+                self.popup_fail('Bricklet', 'Could not read plugin file')
+                return
+        else:
+            url_part = str(self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString())
+            name = self.plugins[url_part][0]
+            version = self.plugins[url_part][2][-1]
+            plugin = self.download_bricklet_firmware(progress, url_part, name, version)
+            if not plugin:
+                return
+
+        # Flash plugin
+        device, port = self.current_device_and_port()
+
+        url_part = str(self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString())
+        
+        if current_text == CUSTOM:
+            if not self.upload_bricklet_firmware(plugin, device, port, plugin_file_name, progress):
+                return
+        else:
+            if not self.upload_bricklet_firmware(plugin, device, port, name, progress):
+                return
 
         if current_text == CUSTOM:
             self.popup_ok('Bricklet', 'Successfully flashed plugin')
@@ -741,3 +808,275 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                                                 '*.bin')
         if len(file_name) > 0:
             self.edit_custom_plugin.setText(file_name)
+
+
+# Updates tab
+
+    def update_bricklets(self):
+        def brick_for_bricklet(bricklet):
+            for device_info in infos.infos.values():
+                if device_info.type == 'brick':
+                    if device_info.bricklets[bricklet.position] == bricklet:
+                        return device_info
+
+        progress = self.create_progress_bar('Flashing')
+        
+        bricks_to_reset = set()
+        
+        for device_info in infos.infos.values():
+            if device_info.type == 'bricklet':
+                if device_info.protocol_version == 2:
+                    plugin = self.download_bricklet_firmware(progress, device_info.url_part, device_info.name, device_info.firmware_version_latest)
+                    if plugin:
+                        brick = brick_for_bricklet(device_info)
+                        if self.upload_bricklet_firmware(plugin, brick.plugin.device, device_info.position, device_info.name, progress):
+                            bricks_to_reset.add(brick)
+                        else:
+                            progress.cancel()
+                            self.update_refresh()
+                            return
+                    else:
+                        progress.cancel()
+                        self.update_refresh()
+                        return
+            elif device_info.type == 'brick':
+                for port in device_info.bricklets:
+                    if device_info.bricklets[port]:
+                        if device_info.bricklets[port].protocol_version == 1:
+                            plugin = self.download_bricklet_firmware(progress, device_info.bricklets[port].url_part, device_info.bricklets[port].name, device_info.bricklets[port].firmware_version_latest)
+                            if plugin:
+                                brick = brick_for_bricklet(device_info.bricklets[port])
+                                if self.upload_bricklet_firmware(plugin, brick.plugin.device, port, device_info.bricklets[port].name, progress):
+                                    bricks_to_reset.add(brick)
+                                else:
+                                    progress.cancel()
+                                    self.update_refresh()
+                                    return
+                            else:
+                                progress.cancel()
+                                self.update_refresh()
+                                return
+                                    
+        for brick in bricks_to_reset:
+            try:
+                brick.plugin.device.reset()
+            except:
+                pass
+        
+        progress.setLabelText('Waiting for Bricks to reset')
+        progress.setMaximum(500)
+        progress.setValue(0)
+        
+        for i in range(500):
+            time.sleep(0.03)
+            progress.setValue(i)
+
+        progress.cancel()
+            
+        self.update_refresh()
+        
+    def update_refresh(self):
+        url_part_proto1_map = {
+#            'name': 'url_part'
+            'Analog In Bricklet': 'analog_in',
+            'Ambient Light Bricklet': 'ambient_light',
+            'Analog Out Bricklet': 'analog_out',
+            'Barometer Bricklet': 'barometer',
+            'Current12 Bricklet': 'current12',
+            'Current25 Bricklet': 'current25',
+            'Distance IR Bricklet': 'distance_ir',
+            'Dual Relay Bricklet': 'dual_relay',
+            'GPS Bricklet': 'gps',
+            'Humidity Bricklet': 'humidity',
+            'Industrial Digital In 4 Bricklet': 'industrial_digital_in_4',
+            'Industrial Digital Out 4 Bricklet': 'industrial_digital_out_4',
+            'Industrial Quad Relay Bricklet': 'industrial_quad_relay',
+            'IO-16 Bricklet': 'io16',
+            'IO-4 Bricklet': 'io4',
+            'Joystick Bricklet': 'joystick',
+            'LCD 16x2 Bricklet': 'lcd_16x2',
+            'LCD 20x4 Bricklet': 'lcd_20x4',
+            'Linear Poti Bricklet': 'linear_poti',
+            'Rotary Poti Bricklet': 'rotary_poti',
+            'Temperature Bricklet': 'temperature',
+            'Temperature IR Bricklet': 'temperature_ir',
+            'Voltage Bricklet': 'voltage',
+        }
+                    
+        progress = self.create_progress_bar('Discovering')
+
+        try:
+            urllib2.urlopen(FIRMWARE_URL).read()
+        except urllib2.URLError:
+            progress.cancel()
+            self.update_browser.setHtml('Could not connect to tinkerforge.com')
+            return
+                    
+        def get_body(url):
+            response = urllib2.urlopen(url)
+            data = response.read().replace('<hr>', '').replace('<br>', '')
+            response.close()
+            tree = etreefromstring(data)
+            return tree.find('body')
+
+        def get_firmware_versions(url, prefix):
+            body = get_body(url)
+            versions = []
+
+            for a in body.getiterator('a'):
+                if 'href' not in a.attrib:
+                    continue
+
+                url_part = a.attrib['href'].replace('/', '')
+
+                if url_part == '..':
+                    continue
+
+                m = re.match(prefix + '_firmware_(\d+)_(\d+)_(\d+)\.bin', url_part)
+
+                if m is None:
+                    continue
+
+                versions.append((int(m.group(1)), int(m.group(2)), int(m.group(3))))
+
+                QApplication.processEvents()
+
+            return sorted(versions)
+
+        def get_tools_versions(url, tool):
+            body = get_body(url)
+            versions = []
+
+            for a in body.getiterator('a'):
+                if 'href' not in a.attrib:
+                    continue
+
+                url_part = a.attrib['href'].replace('/', '')
+
+                if url_part == '..':
+                    continue
+
+                if sys.platform.startswith('linux'):
+                    m = re.match(tool + '-(\d+).(\d+).(\d+)_all\.deb', url_part)
+                elif sys.platform == 'darwin':
+                    m = re.match(tool + '_macos_(\d+)_(\d+)_(\d+)\.dmg', url_part)
+                elif sys.platform == 'win32':
+                    m = re.match(tool + '_windows_(\d+)_(\d+)_(\d+)\.exe', url_part)
+
+                if m is None:
+                    continue
+
+                versions.append((int(m.group(1)), int(m.group(2)), int(m.group(3))))
+
+                QApplication.processEvents()
+
+            return sorted(versions)
+        
+        def get_version_string(version_tuple):
+            return '.'.join(map(str, version_tuple))
+        
+        def get_color_for_device(device):
+            if device.firmware_version_installed >= device.firmware_version_latest:
+                return None, False
+            
+            if device.firmware_version_installed[0] <= 1:
+                return QBrush(Qt.red), True
+            
+            return QBrush(Qt.orange), True
+
+        progress.setLabelText('Checking for updates on tinkerforge.com')
+        progress.setMaximum(len(infos.infos))
+        progress.setValue(0)
+        progress.show()
+
+        brickv_info = infos.infos[infos.UID_BRICKV]
+        if check_for_brickv_update:
+            try:
+                versions = get_tools_versions(BRICKV_URL, 'brickv')
+                if len(versions) >= 1:
+                    brickv_info.firmware_version_latest = versions[-1]
+                    brickv_info.firmware_version_installed = tuple(map(int, self.config.BRICKV_VERSION.split('.')))
+            except urllib2.URLError:
+                pass
+        progress.setValue(progress.value() + 1)
+
+        for device_info in infos.infos.values():
+            if device_info.type == 'brick':
+                try:
+                    versions = get_firmware_versions(FIRMWARE_URL + 'bricks/' + device_info.url_part + '/', 'brick_' + device_info.url_part)
+                    if len(versions) >= 1:
+                        device_info.firmware_version_latest = versions[-1]
+                except urllib2.URLError:
+                    pass
+                progress.setValue(progress.value() + 1)
+                
+            elif device_info.type == 'bricklet':
+                try:
+                    versions = get_firmware_versions(FIRMWARE_URL + 'bricklets/' + device_info.url_part + '/', 'bricklet_' + device_info.url_part)
+                    if len(versions) >= 1:
+                        device_info.firmware_version_latest = versions[-1]
+                except urllib2.URLError:
+                    pass
+                progress.setValue(progress.value() + 1)
+                    
+        progress.cancel()
+        
+        self.update_tree_view_model.clear()
+        self.update_tree_view_model.setHorizontalHeaderLabels(self.update_tree_view_model_labels)
+        
+        is_update = False
+        for device_info in infos.infos.values():
+            if device_info.type == 'brick':
+                parent = [QStandardItem(device_info.name), 
+                          QStandardItem(device_info.uid), 
+                          QStandardItem(get_version_string(device_info.firmware_version_installed)), 
+                          QStandardItem(get_version_string(device_info.firmware_version_latest))]
+
+                color, update = get_color_for_device(device_info)
+                if update:
+                    is_update = True
+                for item in parent:
+                    item.setData(color, Qt.BackgroundRole)
+                self.update_tree_view_model.appendRow(parent)
+                for port in device_info.bricklets:
+                    if not device_info.bricklets[port] or device_info.bricklets[port].protocol_version == 1:
+                        protv, fw, name = device_info.plugin.device.get_protocol1_bricklet_name(port)
+                        if protv == 1:
+                            bricklet_info = infos.BrickletInfo()
+                            bricklet_info.protocol_version = 1
+                            bricklet_info.name = name
+                            bricklet_info.position = port
+                            bricklet_info.firmware_version_installed = tuple(fw)
+
+                            device_info.bricklets[port] = bricklet_info
+                            for key in url_part_proto1_map:
+                                if key in device_info.bricklets[port].name:
+                                    bricklet_info.url_part = url_part_proto1_map[key]
+                                    break
+                                
+                            try:
+                                versions = get_firmware_versions(FIRMWARE_URL + 'bricklets/' + bricklet_info.url_part + '/', 'bricklet_' + bricklet_info.url_part)
+                                if len(versions) >= 1:
+                                    bricklet_info.firmware_version_latest = versions[-1]
+                            except urllib2.URLError:
+                                pass
+                
+                    if device_info.bricklets[port]:
+                        child = [QStandardItem(port.upper() + ': ' +device_info.bricklets[port].name), 
+                                 QStandardItem(device_info.bricklets[port].uid),
+                                 QStandardItem(get_version_string(device_info.bricklets[port].firmware_version_installed)),
+                                 QStandardItem(get_version_string(device_info.bricklets[port].firmware_version_latest))]
+                        color, update = get_color_for_device(device_info.bricklets[port])
+                        if update:
+                            is_update = True
+                        for item in child:
+                            item.setData(color, Qt.BackgroundRole)
+                        parent[0].appendRow(child)
+                        
+        self.update_tree_view.expandAll()
+        self.update_tree_view.setColumnWidth(0, 200)
+
+        if is_update:
+            self.update_button_bricklets.setEnabled(True)
+        else:
+            self.update_button_bricklets.setEnabled(False)

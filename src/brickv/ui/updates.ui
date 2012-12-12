@@ -14,22 +14,19 @@
    <string>Updates</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="QTextBrowser" name="browser">
-     <property name="openExternalLinks">
-      <bool>true</bool>
-     </property>
-     <property name="openLinks">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QPushButton" name="button_refresh">
      <property name="text">
       <string>Refresh</string>
      </property>
     </widget>
+   </item>
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QTreeView" name="tree_view"/>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
