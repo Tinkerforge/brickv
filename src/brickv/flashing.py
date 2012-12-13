@@ -1036,6 +1036,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 if update:
                     is_update = True
                 for item in parent:
+                    item.setFlags(item.flags() & ~Qt.ItemIsEditable);
                     item.setData(color, Qt.BackgroundRole)
                 self.update_tree_view_model.appendRow(parent)
                 for port in device_info.bricklets:
@@ -1066,10 +1067,12 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                                  QStandardItem(device_info.bricklets[port].uid),
                                  QStandardItem(get_version_string(device_info.bricklets[port].firmware_version_installed)),
                                  QStandardItem(get_version_string(device_info.bricklets[port].firmware_version_latest))]
+                        
                         color, update = get_color_for_device(device_info.bricklets[port])
                         if update:
                             is_update = True
                         for item in child:
+                            item.setFlags(item.flags() & ~Qt.ItemIsEditable);
                             item.setData(color, Qt.BackgroundRole)
                         parent[0].appendRow(child)
                         
@@ -1086,6 +1089,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                     self.update_label.hide()
                     
                 for item in parent:
+                    item.setFlags(item.flags() & ~Qt.ItemIsEditable);
                     item.setData(color, Qt.BackgroundRole)
                 self.update_tree_view_model.appendRow(parent)
                         
