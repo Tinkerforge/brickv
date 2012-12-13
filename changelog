@@ -65,3 +65,4 @@
 1.1.15: Add support for the 4th button of the LCD 20x4 Bricklet v1.2
 2.0.0: Add compatibility for 2.0.0 firmwares
        Make Brick and Bricklet plugins asynchronous (no freezing if timeouts occur)
+       Add auto-update feature for Bricklets with backward compatability for 1.x.y Bricklets
