@@ -1073,6 +1073,19 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                             item.setData(color, Qt.BackgroundRole)
                         parent[0].appendRow(child)
                         
+            elif device_info.type == 'tool' and 'Brick Viewer' in device_info.name:
+                parent = [QStandardItem(device_info.name), 
+                          QStandardItem(''), 
+                          QStandardItem(get_version_string(device_info.firmware_version_installed)), 
+                          QStandardItem(get_version_string(device_info.firmware_version_latest))]
+
+                color, update = get_color_for_device(device_info)
+                if update:
+                    is_update = True
+                for item in parent:
+                    item.setData(color, Qt.BackgroundRole)
+                self.update_tree_view_model.appendRow(parent)
+                        
         self.update_tree_view.expandAll()
         self.update_tree_view.setColumnWidth(0, 200)
 

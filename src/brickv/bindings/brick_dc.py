@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-12.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -20,6 +20,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
+GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickDC(Device):
@@ -54,9 +55,10 @@ class BrickDC(Device):
     FUNCTION_GET_DRIVE_MODE = 18
     FUNCTION_SET_CURRENT_VELOCITY_PERIOD = 19
     FUNCTION_GET_CURRENT_VELOCITY_PERIOD = 20
-    FUNCTION_GET_IDENTITY = 255
-    FUNCTION_RESET = 243
+    FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
+    FUNCTION_RESET = 243
+    FUNCTION_GET_IDENTITY = 255
 
     def __init__(self, uid, ipcon):
         """
@@ -91,9 +93,10 @@ class BrickDC(Device):
         self.response_expected[BrickDC.CALLBACK_EMERGENCY_SHUTDOWN] = 2
         self.response_expected[BrickDC.CALLBACK_VELOCITY_REACHED] = 2
         self.response_expected[BrickDC.CALLBACK_CURRENT_VELOCITY] = 2
-        self.response_expected[BrickDC.FUNCTION_GET_IDENTITY] = 1
-        self.response_expected[BrickDC.FUNCTION_RESET] = 4
+        self.response_expected[BrickDC.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = 1
         self.response_expected[BrickDC.FUNCTION_GET_CHIP_TEMPERATURE] = 1
+        self.response_expected[BrickDC.FUNCTION_RESET] = 4
+        self.response_expected[BrickDC.FUNCTION_GET_IDENTITY] = 1
 
         self.callback_formats[BrickDC.CALLBACK_UNDER_VOLTAGE] = 'H'
         self.callback_formats[BrickDC.CALLBACK_EMERGENCY_SHUTDOWN] = ''
@@ -299,11 +302,28 @@ class BrickDC(Device):
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD, (), '', 'H')
 
-    def get_identity(self):
+    def get_protocol1_bricklet_name(self, port):
         """
+        Returns the firmware and protocol version and the name of the Bricklet for a given port.
+        
+        This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet plugins.
+        
         .. versionadded:: 2.0.0~(Firmware)
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 'B 3B 40s'))
+
+    def get_chip_temperature(self):
+        """
+        Returns the temperature in °C/10 as measured inside the microcontroller. The
+        value returned is not the ambient temperature!
+        
+        The temperature is only proportional to the real temperature and it has an
+        accuracy of +-15%. Practically it is only useful as an indicator for
+        temperature changes.
+        
+        .. versionadded:: 1.1.3~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
     def reset(self):
         """
@@ -318,18 +338,11 @@ class BrickDC(Device):
         """
         self.ipcon.send_request(self, BrickDC.FUNCTION_RESET, (), '', '')
 
-    def get_chip_temperature(self):
+    def get_identity(self):
         """
-        Returns the temperature in °C/10 as measured inside the microcontroller. The
-        value returned is not the ambient temperature!
-        
-        The temperature is only proportional to the real temperature and it has an
-        accuracy of +-15%. Practically it is only useful as an indicator for
-        temperature changes.
-        
-        .. versionadded:: 1.1.3~(Firmware)
+        .. versionadded:: 2.0.0~(Firmware)
         """
-        return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+        return GetIdentity(*self.ipcon.send_request(self, BrickDC.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def register_callback(self, id, callback):
         """

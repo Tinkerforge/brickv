@@ -117,15 +117,15 @@ class Device:
         self.write_lock = Lock()
         self.auth_key = None
 
-        self.response_expected = [RESPONSE_EXPECTED_INVALID_FUNCTION_ID] * 256
-        self.response_expected[IPConnection.FUNCTION_ENUMERATE] = RESPONSE_EXPECTED_FALSE
-        self.response_expected[IPConnection.FUNCTION_ADC_CALIBRATE] = RESPONSE_EXPECTED_FALSE
-        self.response_expected[IPConnection.FUNCTION_GET_ADC_CALIBRATION] = RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_UID] = RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_UID] = RESPONSE_EXPECTED_FALSE
-        self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_PLUGIN] = RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = RESPONSE_EXPECTED_FALSE
-        self.response_expected[IPConnection.CALLBACK_ENUMERATE] = RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected = [Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID] * 256
+        self.response_expected[IPConnection.FUNCTION_ENUMERATE] = Device.RESPONSE_EXPECTED_FALSE
+        self.response_expected[IPConnection.FUNCTION_ADC_CALIBRATE] = Device.RESPONSE_EXPECTED_FALSE
+        self.response_expected[IPConnection.FUNCTION_GET_ADC_CALIBRATION] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_UID] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_UID] = Device.RESPONSE_EXPECTED_FALSE
+        self.response_expected[IPConnection.FUNCTION_READ_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_FALSE
+        self.response_expected[IPConnection.CALLBACK_ENUMERATE] = Device.RESPONSE_EXPECTED_ALWAYS_FALSE
 
         ipcon.devices[self.uid] = self
 
@@ -136,33 +136,33 @@ class Device:
         return self.api_version
 
     def set_response_expected(self, function_id, response_expected):
-        if self.response_expected[function_id] == RESPONSE_EXPECTED_INVALID_FUNCTION_ID or \
+        if self.response_expected[function_id] == Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID or \
            function_id >= len(self.response_expected):
             raise ValueError('Invalid function ID {0}'.format(function_id))
 
-        if self.response_expected[function_id] not in [RESPONSE_EXPECTED_TRUE, RESPONSE_EXPECTED_FALSE]:
+        if self.response_expected[function_id] not in [Device.RESPONSE_EXPECTED_TRUE, Device.RESPONSE_EXPECTED_FALSE]:
             raise ValueError('Response Expected flag cannot be changed for function ID {0}'.format(function_id))
 
         if bool(response_expected):
-            self.response_expected[function_id] = RESPONSE_EXPECTED_TRUE
+            self.response_expected[function_id] = Device.RESPONSE_EXPECTED_TRUE
         else:
-            self.response_expected[function_id] = RESPONSE_EXPECTED_FALSE
+            self.response_expected[function_id] = Device.RESPONSE_EXPECTED_FALSE
 
     def get_response_expected(self, function_id):
-        if self.response_expected[function_id] == RESPONSE_EXPECTED_INVALID_FUNCTION_ID or \
+        if self.response_expected[function_id] == Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID or \
            function_id >= len(self.response_expected):
             raise ValueError('Invalid function ID {0}'.format(function_id))
 
-        return self.response_expected[function_id] in [RESPONSE_EXPECTED_ALWAYS_TRUE, RESPONSE_EXPECTED_TRUE]
+        return self.response_expected[function_id] in [Device.RESPONSE_EXPECTED_ALWAYS_TRUE, Device.RESPONSE_EXPECTED_TRUE]
 
     def set_response_expected_all(self, response_expected):
         if bool(response_expected):
-            flag = RESPONSE_EXPECTED_TRUE
+            flag = Device.RESPONSE_EXPECTED_TRUE
         else:
-            flag = RESPONSE_EXPECTED_FALSE
+            flag = Device.RESPONSE_EXPECTED_FALSE
 
         for i in range(len(self.response_expected)):
-            if self.response_expected[i] in [RESPONSE_EXPECTED_TRUE, RESPONSE_EXPECTED_FALSE]:
+            if self.response_expected[i] in [Device.RESPONSE_EXPECTED_TRUE, Device.RESPONSE_EXPECTED_FALSE]:
                 self.response_expected[i] = flag
 
 class IPConnection:
@@ -604,10 +604,10 @@ class IPConnection:
                 device.expected_response_function_id = function_id
                 device.expected_response_sequence_number = sequence_number
 
-        try:
-            self.socket.send(request)
-        except socket.error:
-            pass
+            try:
+                self.socket.send(request)
+            except socket.error:
+                pass
 
         if not response_expected:
             device.write_lock.release()
