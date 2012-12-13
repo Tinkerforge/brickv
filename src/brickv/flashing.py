@@ -86,6 +86,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.combo_plugin.currentIndexChanged.connect(self.plugin_changed)
         self.button_plugin_save.pressed.connect(self.plugin_save_pressed)
         self.button_plugin_browse.pressed.connect(self.plugin_browse_pressed)
+        
+        self.update_label.hide()
 
         self.refresh_serial_ports()
 
@@ -1081,7 +1083,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
                 color, update = get_color_for_device(device_info)
                 if update:
-                    is_update = True
+                    self.update_label.show()
+                else:
+                    self.update_label.hide()
+                    
                 for item in parent:
                     item.setData(color, Qt.BackgroundRole)
                 self.update_tree_view_model.appendRow(parent)
