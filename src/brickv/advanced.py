@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 brickv (Brick Viewer) 
-Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
 Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 
@@ -24,12 +24,9 @@ Boston, MA 02111-1307, USA.
 """
 
 from ui_advanced import Ui_widget_advanced
-import time
 
-from PyQt4.QtCore import pyqtSignal, Qt, QTimer
-from PyQt4.QtGui import QApplication, QFrame, QMessageBox
-
-import sys
+from PyQt4.QtCore import Qt, QTimer
+from PyQt4.QtGui import QFrame
 
 NO_BRICK = 'No Brick found'
 

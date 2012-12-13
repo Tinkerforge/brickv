@@ -26,20 +26,18 @@ Boston, MA 02111-1307, USA.
 from ui_flashing import Ui_widget_flashing
 from bindings.ip_connection import IPConnection, base58encode, BASE58
 from plugin_system.plugins.imu.calibrate_import_export import parse_imu_calibration
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication, QFrame, QFileDialog, QMessageBox, QProgressDialog, QStandardItemModel, QStandardItem, QBrush
 from samba import SAMBA, SAMBAException, get_serial_ports
 
 import infos
 
-import traceback
 import sys
 import os
 import urllib2
 import re
 import time
 import struct
-from xml.etree.ElementTree import ElementTree
 from xml.etree.ElementTree import fromstring as etreefromstring
 from serial import SerialException
 

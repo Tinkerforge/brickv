@@ -21,9 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import os
 import sys
-import errno
 import glob
 import struct
 from PyQt4.QtGui import QApplication
