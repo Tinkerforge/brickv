@@ -460,8 +460,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels)
         self.tree_view.expandAll()
         self.tree_view.setColumnWidth(0, 230)
-        self.tree_view.setColumnWidth(1, 60)
-        self.tree_view.setColumnWidth(2, 50)
+        self.tree_view.setColumnWidth(1, 75)
+        self.tree_view.setColumnWidth(2, 85)
         
     def update_tree_view(self):
         self.tree_view_model.clear()
