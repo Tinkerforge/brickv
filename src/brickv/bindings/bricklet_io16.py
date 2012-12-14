@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -55,19 +55,19 @@ class BrickletIO16(Device):
 
         self.api_version = (1, 0, 1)
 
-        self.response_expected[BrickletIO16.FUNCTION_SET_PORT] = 4
-        self.response_expected[BrickletIO16.FUNCTION_GET_PORT] = 1
-        self.response_expected[BrickletIO16.FUNCTION_SET_PORT_CONFIGURATION] = 4
-        self.response_expected[BrickletIO16.FUNCTION_GET_PORT_CONFIGURATION] = 1
-        self.response_expected[BrickletIO16.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
-        self.response_expected[BrickletIO16.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
-        self.response_expected[BrickletIO16.FUNCTION_SET_PORT_INTERRUPT] = 4
-        self.response_expected[BrickletIO16.FUNCTION_GET_PORT_INTERRUPT] = 1
-        self.response_expected[BrickletIO16.CALLBACK_INTERRUPT] = 2
-        self.response_expected[BrickletIO16.FUNCTION_SET_PORT_MONOFLOP] = 4
-        self.response_expected[BrickletIO16.FUNCTION_GET_PORT_MONOFLOP] = 1
-        self.response_expected[BrickletIO16.CALLBACK_MONOFLOP_DONE] = 2
-        self.response_expected[BrickletIO16.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletIO16.FUNCTION_SET_PORT] = BrickletIO16.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO16.FUNCTION_GET_PORT] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIO16.FUNCTION_SET_PORT_CONFIGURATION] = BrickletIO16.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO16.FUNCTION_GET_PORT_CONFIGURATION] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIO16.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletIO16.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO16.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIO16.FUNCTION_SET_PORT_INTERRUPT] = BrickletIO16.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO16.FUNCTION_GET_PORT_INTERRUPT] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIO16.CALLBACK_INTERRUPT] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletIO16.FUNCTION_SET_PORT_MONOFLOP] = BrickletIO16.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO16.FUNCTION_GET_PORT_MONOFLOP] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIO16.CALLBACK_MONOFLOP_DONE] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletIO16.FUNCTION_GET_IDENTITY] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletIO16.CALLBACK_INTERRUPT] = 'c B B'
         self.callback_formats[BrickletIO16.CALLBACK_MONOFLOP_DONE] = 'c B B'

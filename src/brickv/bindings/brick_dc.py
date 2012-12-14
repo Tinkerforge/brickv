@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-12-12.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -69,34 +69,34 @@ class BrickDC(Device):
 
         self.api_version = (1, 0, 1)
 
-        self.response_expected[BrickDC.FUNCTION_SET_VELOCITY] = 4
-        self.response_expected[BrickDC.FUNCTION_GET_VELOCITY] = 1
-        self.response_expected[BrickDC.FUNCTION_GET_CURRENT_VELOCITY] = 1
-        self.response_expected[BrickDC.FUNCTION_SET_ACCELERATION] = 4
-        self.response_expected[BrickDC.FUNCTION_GET_ACCELERATION] = 1
-        self.response_expected[BrickDC.FUNCTION_SET_PWM_FREQUENCY] = 4
-        self.response_expected[BrickDC.FUNCTION_GET_PWM_FREQUENCY] = 1
-        self.response_expected[BrickDC.FUNCTION_FULL_BRAKE] = 4
-        self.response_expected[BrickDC.FUNCTION_GET_STACK_INPUT_VOLTAGE] = 1
-        self.response_expected[BrickDC.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE] = 1
-        self.response_expected[BrickDC.FUNCTION_GET_CURRENT_CONSUMPTION] = 1
-        self.response_expected[BrickDC.FUNCTION_ENABLE] = 4
-        self.response_expected[BrickDC.FUNCTION_DISABLE] = 4
-        self.response_expected[BrickDC.FUNCTION_IS_ENABLED] = 1
-        self.response_expected[BrickDC.FUNCTION_SET_MINIMUM_VOLTAGE] = 4
-        self.response_expected[BrickDC.FUNCTION_GET_MINIMUM_VOLTAGE] = 1
-        self.response_expected[BrickDC.FUNCTION_SET_DRIVE_MODE] = 4
-        self.response_expected[BrickDC.FUNCTION_GET_DRIVE_MODE] = 1
-        self.response_expected[BrickDC.FUNCTION_SET_CURRENT_VELOCITY_PERIOD] = 4
-        self.response_expected[BrickDC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD] = 1
-        self.response_expected[BrickDC.CALLBACK_UNDER_VOLTAGE] = 2
-        self.response_expected[BrickDC.CALLBACK_EMERGENCY_SHUTDOWN] = 2
-        self.response_expected[BrickDC.CALLBACK_VELOCITY_REACHED] = 2
-        self.response_expected[BrickDC.CALLBACK_CURRENT_VELOCITY] = 2
-        self.response_expected[BrickDC.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = 1
-        self.response_expected[BrickDC.FUNCTION_GET_CHIP_TEMPERATURE] = 1
-        self.response_expected[BrickDC.FUNCTION_RESET] = 4
-        self.response_expected[BrickDC.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickDC.FUNCTION_SET_VELOCITY] = BrickDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickDC.FUNCTION_GET_VELOCITY] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickDC.FUNCTION_GET_CURRENT_VELOCITY] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickDC.FUNCTION_SET_ACCELERATION] = BrickDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickDC.FUNCTION_GET_ACCELERATION] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickDC.FUNCTION_SET_PWM_FREQUENCY] = BrickDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickDC.FUNCTION_GET_PWM_FREQUENCY] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickDC.FUNCTION_FULL_BRAKE] = BrickDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickDC.FUNCTION_GET_STACK_INPUT_VOLTAGE] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickDC.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickDC.FUNCTION_GET_CURRENT_CONSUMPTION] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickDC.FUNCTION_ENABLE] = BrickDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickDC.FUNCTION_DISABLE] = BrickDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickDC.FUNCTION_IS_ENABLED] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickDC.FUNCTION_SET_MINIMUM_VOLTAGE] = BrickDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickDC.FUNCTION_GET_MINIMUM_VOLTAGE] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickDC.FUNCTION_SET_DRIVE_MODE] = BrickDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickDC.FUNCTION_GET_DRIVE_MODE] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickDC.FUNCTION_SET_CURRENT_VELOCITY_PERIOD] = BrickDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickDC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickDC.CALLBACK_UNDER_VOLTAGE] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickDC.CALLBACK_EMERGENCY_SHUTDOWN] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickDC.CALLBACK_VELOCITY_REACHED] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickDC.CALLBACK_CURRENT_VELOCITY] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickDC.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickDC.FUNCTION_GET_CHIP_TEMPERATURE] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickDC.FUNCTION_RESET] = BrickDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickDC.FUNCTION_GET_IDENTITY] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickDC.CALLBACK_UNDER_VOLTAGE] = 'H'
         self.callback_formats[BrickDC.CALLBACK_EMERGENCY_SHUTDOWN] = ''

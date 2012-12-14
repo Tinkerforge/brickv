@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -59,23 +59,23 @@ class BrickletLinearPoti(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.response_expected[BrickletLinearPoti.FUNCTION_GET_POSITION] = 1
-        self.response_expected[BrickletLinearPoti.FUNCTION_GET_ANALOG_VALUE] = 1
-        self.response_expected[BrickletLinearPoti.FUNCTION_SET_POSITION_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletLinearPoti.FUNCTION_GET_POSITION_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletLinearPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletLinearPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletLinearPoti.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletLinearPoti.FUNCTION_GET_POSITION_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletLinearPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletLinearPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletLinearPoti.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
-        self.response_expected[BrickletLinearPoti.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
-        self.response_expected[BrickletLinearPoti.CALLBACK_POSITION] = 2
-        self.response_expected[BrickletLinearPoti.CALLBACK_ANALOG_VALUE] = 2
-        self.response_expected[BrickletLinearPoti.CALLBACK_POSITION_REACHED] = 2
-        self.response_expected[BrickletLinearPoti.CALLBACK_ANALOG_VALUE_REACHED] = 2
-        self.response_expected[BrickletLinearPoti.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletLinearPoti.FUNCTION_GET_POSITION] = BrickletLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLinearPoti.FUNCTION_GET_ANALOG_VALUE] = BrickletLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLinearPoti.FUNCTION_SET_POSITION_CALLBACK_PERIOD] = BrickletLinearPoti.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLinearPoti.FUNCTION_GET_POSITION_CALLBACK_PERIOD] = BrickletLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLinearPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletLinearPoti.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLinearPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLinearPoti.FUNCTION_SET_POSITION_CALLBACK_THRESHOLD] = BrickletLinearPoti.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLinearPoti.FUNCTION_GET_POSITION_CALLBACK_THRESHOLD] = BrickletLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLinearPoti.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletLinearPoti.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLinearPoti.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLinearPoti.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletLinearPoti.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLinearPoti.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLinearPoti.CALLBACK_POSITION] = BrickletLinearPoti.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletLinearPoti.CALLBACK_ANALOG_VALUE] = BrickletLinearPoti.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletLinearPoti.CALLBACK_POSITION_REACHED] = BrickletLinearPoti.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletLinearPoti.CALLBACK_ANALOG_VALUE_REACHED] = BrickletLinearPoti.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletLinearPoti.FUNCTION_GET_IDENTITY] = BrickletLinearPoti.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletLinearPoti.CALLBACK_POSITION] = 'H'
         self.callback_formats[BrickletLinearPoti.CALLBACK_ANALOG_VALUE] = 'H'

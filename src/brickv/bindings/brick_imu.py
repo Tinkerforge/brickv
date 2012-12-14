@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-12-12.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -87,46 +87,46 @@ class BrickIMU(Device):
 
         self.api_version = (1, 0, 1)
 
-        self.response_expected[BrickIMU.FUNCTION_GET_ACCELERATION] = 1
-        self.response_expected[BrickIMU.FUNCTION_GET_MAGNETIC_FIELD] = 1
-        self.response_expected[BrickIMU.FUNCTION_GET_ANGULAR_VELOCITY] = 1
-        self.response_expected[BrickIMU.FUNCTION_GET_ALL_DATA] = 1
-        self.response_expected[BrickIMU.FUNCTION_GET_ORIENTATION] = 1
-        self.response_expected[BrickIMU.FUNCTION_GET_QUATERNION] = 1
-        self.response_expected[BrickIMU.FUNCTION_GET_IMU_TEMPERATURE] = 1
-        self.response_expected[BrickIMU.FUNCTION_LEDS_ON] = 4
-        self.response_expected[BrickIMU.FUNCTION_LEDS_OFF] = 4
-        self.response_expected[BrickIMU.FUNCTION_ARE_LEDS_ON] = 1
-        self.response_expected[BrickIMU.FUNCTION_SET_ACCELERATION_RANGE] = 4
-        self.response_expected[BrickIMU.FUNCTION_GET_ACCELERATION_RANGE] = 1
-        self.response_expected[BrickIMU.FUNCTION_SET_MAGNETOMETER_RANGE] = 4
-        self.response_expected[BrickIMU.FUNCTION_GET_MAGNETOMETER_RANGE] = 1
-        self.response_expected[BrickIMU.FUNCTION_SET_CONVERGENCE_SPEED] = 4
-        self.response_expected[BrickIMU.FUNCTION_GET_CONVERGENCE_SPEED] = 1
-        self.response_expected[BrickIMU.FUNCTION_SET_CALIBRATION] = 4
-        self.response_expected[BrickIMU.FUNCTION_GET_CALIBRATION] = 1
-        self.response_expected[BrickIMU.FUNCTION_SET_ACCELERATION_PERIOD] = 4
-        self.response_expected[BrickIMU.FUNCTION_GET_ACCELERATION_PERIOD] = 1
-        self.response_expected[BrickIMU.FUNCTION_SET_MAGNETIC_FIELD_PERIOD] = 4
-        self.response_expected[BrickIMU.FUNCTION_GET_MAGNETIC_FIELD_PERIOD] = 1
-        self.response_expected[BrickIMU.FUNCTION_SET_ANGULAR_VELOCITY_PERIOD] = 4
-        self.response_expected[BrickIMU.FUNCTION_GET_ANGULAR_VELOCITY_PERIOD] = 1
-        self.response_expected[BrickIMU.FUNCTION_SET_ALL_DATA_PERIOD] = 4
-        self.response_expected[BrickIMU.FUNCTION_GET_ALL_DATA_PERIOD] = 1
-        self.response_expected[BrickIMU.FUNCTION_SET_ORIENTATION_PERIOD] = 4
-        self.response_expected[BrickIMU.FUNCTION_GET_ORIENTATION_PERIOD] = 1
-        self.response_expected[BrickIMU.FUNCTION_SET_QUATERNION_PERIOD] = 4
-        self.response_expected[BrickIMU.FUNCTION_GET_QUATERNION_PERIOD] = 1
-        self.response_expected[BrickIMU.CALLBACK_ACCELERATION] = 2
-        self.response_expected[BrickIMU.CALLBACK_MAGNETIC_FIELD] = 2
-        self.response_expected[BrickIMU.CALLBACK_ANGULAR_VELOCITY] = 2
-        self.response_expected[BrickIMU.CALLBACK_ALL_DATA] = 2
-        self.response_expected[BrickIMU.CALLBACK_ORIENTATION] = 2
-        self.response_expected[BrickIMU.CALLBACK_QUATERNION] = 2
-        self.response_expected[BrickIMU.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = 1
-        self.response_expected[BrickIMU.FUNCTION_GET_CHIP_TEMPERATURE] = 1
-        self.response_expected[BrickIMU.FUNCTION_RESET] = 4
-        self.response_expected[BrickIMU.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickIMU.FUNCTION_GET_ACCELERATION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_GET_MAGNETIC_FIELD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_GET_ANGULAR_VELOCITY] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_GET_ALL_DATA] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_GET_ORIENTATION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_GET_QUATERNION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_GET_IMU_TEMPERATURE] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_LEDS_ON] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_LEDS_OFF] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_ARE_LEDS_ON] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_SET_ACCELERATION_RANGE] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_GET_ACCELERATION_RANGE] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_SET_MAGNETOMETER_RANGE] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_GET_MAGNETOMETER_RANGE] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_SET_CONVERGENCE_SPEED] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_GET_CONVERGENCE_SPEED] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_SET_CALIBRATION] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_GET_CALIBRATION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_SET_ACCELERATION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_GET_ACCELERATION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_SET_MAGNETIC_FIELD_PERIOD] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_GET_MAGNETIC_FIELD_PERIOD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_SET_ANGULAR_VELOCITY_PERIOD] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_GET_ANGULAR_VELOCITY_PERIOD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_SET_ALL_DATA_PERIOD] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_GET_ALL_DATA_PERIOD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_SET_ORIENTATION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_GET_ORIENTATION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_SET_QUATERNION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_GET_QUATERNION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.CALLBACK_ACCELERATION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickIMU.CALLBACK_MAGNETIC_FIELD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickIMU.CALLBACK_ANGULAR_VELOCITY] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickIMU.CALLBACK_ALL_DATA] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickIMU.CALLBACK_ORIENTATION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickIMU.CALLBACK_QUATERNION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickIMU.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_GET_CHIP_TEMPERATURE] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_RESET] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_GET_IDENTITY] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickIMU.CALLBACK_ACCELERATION] = 'h h h'
         self.callback_formats[BrickIMU.CALLBACK_MAGNETIC_FIELD] = 'h h h'

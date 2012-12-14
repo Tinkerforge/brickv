@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -59,23 +59,23 @@ class BrickletAnalogIn(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.response_expected[BrickletAnalogIn.FUNCTION_GET_VOLTAGE] = 1
-        self.response_expected[BrickletAnalogIn.FUNCTION_GET_ANALOG_VALUE] = 1
-        self.response_expected[BrickletAnalogIn.FUNCTION_SET_VOLTAGE_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletAnalogIn.FUNCTION_GET_VOLTAGE_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletAnalogIn.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletAnalogIn.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletAnalogIn.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletAnalogIn.FUNCTION_GET_VOLTAGE_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletAnalogIn.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletAnalogIn.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletAnalogIn.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
-        self.response_expected[BrickletAnalogIn.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
-        self.response_expected[BrickletAnalogIn.CALLBACK_VOLTAGE] = 2
-        self.response_expected[BrickletAnalogIn.CALLBACK_ANALOG_VALUE] = 2
-        self.response_expected[BrickletAnalogIn.CALLBACK_VOLTAGE_REACHED] = 2
-        self.response_expected[BrickletAnalogIn.CALLBACK_ANALOG_VALUE_REACHED] = 2
-        self.response_expected[BrickletAnalogIn.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletAnalogIn.FUNCTION_GET_VOLTAGE] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogIn.FUNCTION_GET_ANALOG_VALUE] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogIn.FUNCTION_SET_VOLTAGE_CALLBACK_PERIOD] = BrickletAnalogIn.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAnalogIn.FUNCTION_GET_VOLTAGE_CALLBACK_PERIOD] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogIn.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletAnalogIn.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAnalogIn.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogIn.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD] = BrickletAnalogIn.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAnalogIn.FUNCTION_GET_VOLTAGE_CALLBACK_THRESHOLD] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogIn.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletAnalogIn.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAnalogIn.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogIn.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletAnalogIn.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAnalogIn.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogIn.CALLBACK_VOLTAGE] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletAnalogIn.CALLBACK_ANALOG_VALUE] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletAnalogIn.CALLBACK_VOLTAGE_REACHED] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletAnalogIn.CALLBACK_ANALOG_VALUE_REACHED] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletAnalogIn.FUNCTION_GET_IDENTITY] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletAnalogIn.CALLBACK_VOLTAGE] = 'H'
         self.callback_formats[BrickletAnalogIn.CALLBACK_ANALOG_VALUE] = 'H'

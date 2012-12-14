@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -68,29 +68,29 @@ class BrickletGPS(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.response_expected[BrickletGPS.FUNCTION_GET_COORDINATES] = 1
-        self.response_expected[BrickletGPS.FUNCTION_GET_STATUS] = 1
-        self.response_expected[BrickletGPS.FUNCTION_GET_ALTITUDE] = 1
-        self.response_expected[BrickletGPS.FUNCTION_GET_MOTION] = 1
-        self.response_expected[BrickletGPS.FUNCTION_GET_DATE_TIME] = 1
-        self.response_expected[BrickletGPS.FUNCTION_GET_BATTERY_VOLTAGE] = 1
-        self.response_expected[BrickletGPS.FUNCTION_RESTART] = 4
-        self.response_expected[BrickletGPS.FUNCTION_SET_COORDINATES_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletGPS.FUNCTION_GET_COORDINATES_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletGPS.FUNCTION_SET_STATUS_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletGPS.FUNCTION_GET_STATUS_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletGPS.FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletGPS.FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletGPS.FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletGPS.FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletGPS.FUNCTION_SET_MOTION_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletGPS.FUNCTION_GET_MOTION_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletGPS.CALLBACK_COORDINATES] = 2
-        self.response_expected[BrickletGPS.CALLBACK_STATUS] = 2
-        self.response_expected[BrickletGPS.CALLBACK_ALTITUDE] = 2
-        self.response_expected[BrickletGPS.CALLBACK_MOTION] = 2
-        self.response_expected[BrickletGPS.CALLBACK_DATE_TIME] = 2
-        self.response_expected[BrickletGPS.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletGPS.FUNCTION_GET_COORDINATES] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPS.FUNCTION_GET_STATUS] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPS.FUNCTION_GET_ALTITUDE] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPS.FUNCTION_GET_MOTION] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPS.FUNCTION_GET_DATE_TIME] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPS.FUNCTION_GET_BATTERY_VOLTAGE] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPS.FUNCTION_RESTART] = BrickletGPS.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPS.FUNCTION_SET_COORDINATES_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPS.FUNCTION_GET_COORDINATES_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPS.FUNCTION_SET_STATUS_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPS.FUNCTION_GET_STATUS_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPS.FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPS.FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPS.FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPS.FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPS.FUNCTION_SET_MOTION_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPS.FUNCTION_GET_MOTION_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPS.CALLBACK_COORDINATES] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletGPS.CALLBACK_STATUS] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletGPS.CALLBACK_ALTITUDE] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletGPS.CALLBACK_MOTION] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletGPS.CALLBACK_DATE_TIME] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletGPS.FUNCTION_GET_IDENTITY] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletGPS.CALLBACK_COORDINATES] = 'I c I c H H H H'
         self.callback_formats[BrickletGPS.CALLBACK_STATUS] = 'B B B'

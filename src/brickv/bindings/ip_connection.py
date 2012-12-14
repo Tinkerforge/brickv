@@ -127,7 +127,7 @@ class Device:
         self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_FALSE
         self.response_expected[IPConnection.CALLBACK_ENUMERATE] = Device.RESPONSE_EXPECTED_ALWAYS_FALSE
 
-        ipcon.devices[self.uid] = self
+        ipcon.devices[self.uid] = self # FIXME: should use a weakref here
 
     def get_api_version(self):
         """
@@ -398,13 +398,13 @@ class IPConnection:
             cleanup()
             raise
 
+        self.auto_reconnect_allowed = False
+        self.auto_reconnect_pending = False
+
         if is_auto_reconnect:
             connect_reason = IPConnection.CONNECT_REASON_AUTO_RECONNECT
         else:
             connect_reason = IPConnection.CONNECT_REASON_REQUEST
-
-        self.auto_reconnect_allowed = False
-        self.auto_reconnect_pending = False
 
         self.callback_queue.put((IPConnection.QUEUE_META,
                                 (IPConnection.CALLBACK_CONNECTED,
@@ -454,6 +454,85 @@ class IPConnection:
 
                 self.handle_response(packet)
 
+    def dispatch_meta(self, function_id, parameter):
+        if function_id == IPConnection.CALLBACK_CONNECTED:
+            if IPConnection.CALLBACK_CONNECTED in self.registered_callbacks and \
+               self.registered_callbacks[IPConnection.CALLBACK_CONNECTED] is not None:
+                self.registered_callbacks[IPConnection.CALLBACK_CONNECTED](parameter)
+        elif function_id == IPConnection.CALLBACK_DISCONNECTED:
+            # need to do this here, the receive_loop is not allowed to
+            # hold the socket_lock because this could cause a deadlock
+            # with a concurrent call to the (dis-)connect function
+            with self.socket_lock:
+                if self.socket is not None:
+                    self.socket.close()
+                    self.socket = None
+
+            # FIXME: wait a moment here, otherwise the next connect
+            # attempt will succeed, even if there is no open server
+            # socket. the first receive will then fail directly
+            time.sleep(0.1)
+
+            if IPConnection.CALLBACK_DISCONNECTED in self.registered_callbacks and \
+               self.registered_callbacks[IPConnection.CALLBACK_DISCONNECTED] is not None:
+                self.registered_callbacks[IPConnection.CALLBACK_DISCONNECTED](parameter)
+
+            if parameter != IPConnection.DISCONNECT_REASON_REQUEST and \
+               self.auto_reconnect and self.auto_reconnect_allowed:
+                self.auto_reconnect_pending = True
+                retry = True
+
+                # block here until reconnect. this is okay, there is no
+                # callback to deliver when there is no connection
+                while retry:
+                    retry = False
+
+                    with self.socket_lock:
+                        if self.auto_reconnect_allowed and self.socket is None:
+                            try:
+                                self.connect_unlocked(True)
+                            except:
+                                retry = True
+                        else:
+                            self.auto_reconnect_pending = False
+
+                    if retry:
+                        time.sleep(0.1)
+
+    def dispatch_packet(self, packet):
+        uid = get_uid_from_data(packet)
+        length = get_length_from_data(packet)
+        function_id = get_function_id_from_data(packet)
+        payload = packet[8:]
+
+        if function_id == IPConnection.CALLBACK_ENUMERATE and \
+           IPConnection.CALLBACK_ENUMERATE in self.registered_callbacks:
+            uid, connected_uid, position, hardware_version, \
+                firmware_version, device_identifier, enumeration_type = \
+                self.deserialize_data(payload, '8s 8s c 3B 3B H B')
+
+            cb = self.registered_callbacks[IPConnection.CALLBACK_ENUMERATE]
+            cb(uid, connected_uid, position, hardware_version,
+               firmware_version, device_identifier, enumeration_type)
+            return
+
+        if uid not in self.devices:
+            return
+
+        device = self.devices[uid]
+
+        if function_id in device.registered_callbacks and \
+           device.registered_callbacks[function_id] is not None:
+            cb = device.registered_callbacks[function_id]
+            form = device.callback_formats[function_id]
+
+            if len(form) == 0:
+                cb()
+            elif len(form) == 1:
+                cb(self.deserialize_data(payload, form))
+            else:
+                cb(*self.deserialize_data(payload, form))
+
     def callback_loop(self, callback_queue):
         while True:
             kind, data = callback_queue.get()
@@ -461,85 +540,13 @@ class IPConnection:
             if kind == IPConnection.QUEUE_EXIT:
                 return
             elif kind == IPConnection.QUEUE_META:
-                function_id, parameter = data
-
-                if function_id == IPConnection.CALLBACK_CONNECTED:
-                    if IPConnection.CALLBACK_CONNECTED in self.registered_callbacks and \
-                       self.registered_callbacks[IPConnection.CALLBACK_CONNECTED] is not None:
-                        self.registered_callbacks[IPConnection.CALLBACK_CONNECTED](parameter)
-                elif function_id == IPConnection.CALLBACK_DISCONNECTED:
-                    # need to do this here, the receive_loop is not allowed to
-                    # hold the socket_lock because this could cause a deadlock
-                    # with a concurrent call to the (dis-)connect function
-                    with self.socket_lock:
-                        if self.socket is not None:
-                            self.socket.close()
-                            self.socket = None
-
-                    # FIXME: wait a moment here, otherwise the next connect
-                    # attempt will succeed, even if there is no open server
-                    # socket. the first receive will then fail directly
-                    time.sleep(0.1)
-
-                    if IPConnection.CALLBACK_DISCONNECTED in self.registered_callbacks and \
-                       self.registered_callbacks[IPConnection.CALLBACK_DISCONNECTED] is not None:
-                        self.registered_callbacks[IPConnection.CALLBACK_DISCONNECTED](parameter)
-
-                    if parameter != IPConnection.DISCONNECT_REASON_REQUEST and \
-                       self.auto_reconnect and self.auto_reconnect_allowed:
-                        self.auto_reconnect_pending = True
-                        retry = True
-
-                        # block here until reconnect. this is okay, there is no
-                        # callback to deliver when there is no connection
-                        while retry:
-                            retry = False
-
-                            with self.socket_lock:
-                                if self.auto_reconnect_allowed and self.socket is None:
-                                    try:
-                                        self.connect_unlocked(True)
-                                    except:
-                                        retry = True
-                                else:
-                                    self.auto_reconnect_pending = False
-
-                            if retry:
-                                time.sleep(0.1)
-            elif kind == IPConnection.QUEUE_PACKET and self.receive_flag:
-                packet = data
-                uid = get_uid_from_data(packet)
-                length = get_length_from_data(packet)
-                function_id = get_function_id_from_data(packet)
-                payload = packet[8:]
-
-                if function_id == IPConnection.CALLBACK_ENUMERATE and \
-                   IPConnection.CALLBACK_ENUMERATE in self.registered_callbacks:
-                    uid, connected_uid, position, hardware_version, \
-                        firmware_version, device_identifier, enumeration_type = \
-                        self.deserialize_data(payload, '8s 8s c 3B 3B H B')
-
-                    cb = self.registered_callbacks[IPConnection.CALLBACK_ENUMERATE]
-                    cb(uid, connected_uid, position, hardware_version,
-                       firmware_version, device_identifier, enumeration_type)
+                self.dispatch_meta(*data)
+            elif kind == IPConnection.QUEUE_PACKET:
+                if not self.receive_flag:
+                    # don't dispatch callbacks when the receive thread isn't running
                     continue
 
-                if uid not in self.devices:
-                    continue
-
-                device = self.devices[uid]
-
-                if function_id in device.registered_callbacks and \
-                   device.registered_callbacks[function_id] is not None:
-                    cb = device.registered_callbacks[function_id]
-                    form = device.callback_formats[function_id]
-
-                    if len(form) == 0:
-                        cb()
-                    elif len(form) == 1:
-                        cb(self.deserialize_data(payload, form))
-                    else:
-                        cb(*self.deserialize_data(payload, form))
+                self.dispatch_packet(data)
 
     def deserialize_data(self, data, form):
         ret = []
@@ -625,13 +632,16 @@ class IPConnection:
 
         error_code = get_error_code_from_data(response)
 
-        if error_code == 1:
+        if error_code == 0:
+            # no error
+            pass
+        elif error_code == 1:
             msg = 'Got invalid parameter for function {0}'.format(function_id)
             raise Error(Error.INVALID_PARAMETER, msg)
         elif error_code == 2:
             msg = 'Function {0} is not supported'.format(function_id)
             raise Error(Error.NOT_SUPPORTED, msg)
-        elif error_code == 3:
+        else:
             msg = 'Function {0} returned an unknown error'.format(function_id)
             raise Error(Error.UNKNOWN_ERROR_CODE, msg)
 
@@ -639,6 +649,7 @@ class IPConnection:
             return self.deserialize_data(response[8:], form_ret)
 
     def get_next_sequence_number(self):
+        # NOTE: assumes that socket lock is held
         sequence_number = self.next_sequence_number
         self.next_sequence_number = (self.next_sequence_number + 1) % 15
         return sequence_number + 1
@@ -646,23 +657,28 @@ class IPConnection:
     def handle_response(self, packet):
         function_id = get_function_id_from_data(packet)
         sequence_number = get_sequence_number_from_data(packet)
-        if function_id == IPConnection.CALLBACK_ENUMERATE and sequence_number == 0:
-            self.handle_enumerate(packet)
+
+        if sequence_number == 0 and function_id == IPConnection.CALLBACK_ENUMERATE:
+            if IPConnection.CALLBACK_ENUMERATE in self.registered_callbacks:
+                self.callback_queue.put((IPConnection.QUEUE_PACKET, packet))
             return
 
         uid = get_uid_from_data(packet)
+
         if not uid in self.devices:
             # Response from an unknown device, ignoring it
             return
 
         device = self.devices[uid]
+
+        if sequence_number == 0:
+            if function_id in device.registered_callbacks:
+                self.callback_queue.put((IPConnection.QUEUE_PACKET, packet))
+            return
+
         if device.expected_response_function_id == function_id and \
            device.expected_response_sequence_number == sequence_number:
             device.response_queue.put(packet)
-            return
-
-        if function_id in device.registered_callbacks and sequence_number == 0:
-            self.callback_queue.put((IPConnection.QUEUE_PACKET, packet))
             return
 
         # Response seems to be OK, but can't be handled, most likely
@@ -693,10 +709,6 @@ class IPConnection:
                             sequence_number_and_options, 0),
                 bool(r_bit),
                 sequence_number)
-
-    def handle_enumerate(self, packet):
-        if IPConnection.CALLBACK_ENUMERATE in self.registered_callbacks:
-            self.callback_queue.put((IPConnection.QUEUE_PACKET, packet))
 
     def write_bricklet_plugin(self, device, port, position, plugin_chunk):
         self.send_request(device,

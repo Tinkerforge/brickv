@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-12-12.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -92,50 +92,50 @@ class BrickMaster(Device):
 
         self.api_version = (1, 3, 2)
 
-        self.response_expected[BrickMaster.FUNCTION_GET_STACK_VOLTAGE] = 1
-        self.response_expected[BrickMaster.FUNCTION_GET_STACK_CURRENT] = 1
-        self.response_expected[BrickMaster.FUNCTION_SET_EXTENSION_TYPE] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_EXTENSION_TYPE] = 1
-        self.response_expected[BrickMaster.FUNCTION_IS_CHIBI_PRESENT] = 1
-        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_ADDRESS] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_ADDRESS] = 1
-        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_MASTER_ADDRESS] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_MASTER_ADDRESS] = 1
-        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_SLAVE_ADDRESS] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_SLAVE_ADDRESS] = 1
-        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_SIGNAL_STRENGTH] = 1
-        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_ERROR_LOG] = 1
-        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_FREQUENCY] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_FREQUENCY] = 1
-        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_CHANNEL] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_CHANNEL] = 1
-        self.response_expected[BrickMaster.FUNCTION_IS_RS485_PRESENT] = 1
-        self.response_expected[BrickMaster.FUNCTION_SET_RS485_ADDRESS] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_RS485_ADDRESS] = 1
-        self.response_expected[BrickMaster.FUNCTION_SET_RS485_SLAVE_ADDRESS] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_RS485_SLAVE_ADDRESS] = 1
-        self.response_expected[BrickMaster.FUNCTION_GET_RS485_ERROR_LOG] = 1
-        self.response_expected[BrickMaster.FUNCTION_SET_RS485_CONFIGURATION] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_RS485_CONFIGURATION] = 1
-        self.response_expected[BrickMaster.FUNCTION_IS_WIFI_PRESENT] = 1
-        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_CONFIGURATION] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_CONFIGURATION] = 1
-        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_ENCRYPTION] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_ENCRYPTION] = 1
-        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_STATUS] = 1
-        self.response_expected[BrickMaster.FUNCTION_REFRESH_WIFI_STATUS] = 4
-        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_CERTIFICATE] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_CERTIFICATE] = 1
-        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_POWER_MODE] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_POWER_MODE] = 1
-        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_BUFFER_INFO] = 1
-        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_REGULATORY_DOMAIN] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_REGULATORY_DOMAIN] = 1
-        self.response_expected[BrickMaster.FUNCTION_GET_USB_VOLTAGE] = 1
-        self.response_expected[BrickMaster.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = 1
-        self.response_expected[BrickMaster.FUNCTION_GET_CHIP_TEMPERATURE] = 1
-        self.response_expected[BrickMaster.FUNCTION_RESET] = 4
-        self.response_expected[BrickMaster.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickMaster.FUNCTION_GET_STACK_VOLTAGE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_STACK_CURRENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_EXTENSION_TYPE] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_EXTENSION_TYPE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_IS_CHIBI_PRESENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_ADDRESS] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_ADDRESS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_MASTER_ADDRESS] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_MASTER_ADDRESS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_SLAVE_ADDRESS] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_SLAVE_ADDRESS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_SIGNAL_STRENGTH] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_ERROR_LOG] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_FREQUENCY] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_FREQUENCY] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_CHIBI_CHANNEL] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIBI_CHANNEL] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_IS_RS485_PRESENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_RS485_ADDRESS] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_RS485_ADDRESS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_RS485_SLAVE_ADDRESS] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_RS485_SLAVE_ADDRESS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_RS485_ERROR_LOG] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_RS485_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_RS485_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_IS_WIFI_PRESENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_ENCRYPTION] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_ENCRYPTION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_STATUS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_REFRESH_WIFI_STATUS] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_CERTIFICATE] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_CERTIFICATE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_POWER_MODE] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_POWER_MODE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_BUFFER_INFO] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_REGULATORY_DOMAIN] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_REGULATORY_DOMAIN] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_USB_VOLTAGE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_CHIP_TEMPERATURE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_RESET] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_IDENTITY] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
     def get_stack_voltage(self):

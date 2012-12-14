@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -48,12 +48,12 @@ class BrickletDualRelay(Device):
 
         self.api_version = (1, 0, 1)
 
-        self.response_expected[BrickletDualRelay.FUNCTION_SET_STATE] = 4
-        self.response_expected[BrickletDualRelay.FUNCTION_GET_STATE] = 1
-        self.response_expected[BrickletDualRelay.FUNCTION_SET_MONOFLOP] = 4
-        self.response_expected[BrickletDualRelay.FUNCTION_GET_MONOFLOP] = 1
-        self.response_expected[BrickletDualRelay.CALLBACK_MONOFLOP_DONE] = 2
-        self.response_expected[BrickletDualRelay.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletDualRelay.FUNCTION_SET_STATE] = BrickletDualRelay.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletDualRelay.FUNCTION_GET_STATE] = BrickletDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletDualRelay.FUNCTION_SET_MONOFLOP] = BrickletDualRelay.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletDualRelay.FUNCTION_GET_MONOFLOP] = BrickletDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletDualRelay.CALLBACK_MONOFLOP_DONE] = BrickletDualRelay.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletDualRelay.FUNCTION_GET_IDENTITY] = BrickletDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletDualRelay.CALLBACK_MONOFLOP_DONE] = 'B ?'
 

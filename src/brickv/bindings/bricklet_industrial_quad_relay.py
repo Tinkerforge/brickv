@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -50,15 +50,15 @@ class BrickletIndustrialQuadRelay(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_SET_VALUE] = 4
-        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_VALUE] = 1
-        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_SET_MONOFLOP] = 4
-        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_MONOFLOP] = 1
-        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_SET_GROUP] = 4
-        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_GROUP] = 1
-        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_AVAILABLE_FOR_GROUP] = 1
-        self.response_expected[BrickletIndustrialQuadRelay.CALLBACK_MONOFLOP_DONE] = 2
-        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_SET_VALUE] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_VALUE] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_SET_MONOFLOP] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_MONOFLOP] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_SET_GROUP] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_GROUP] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_AVAILABLE_FOR_GROUP] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialQuadRelay.CALLBACK_MONOFLOP_DONE] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_IDENTITY] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletIndustrialQuadRelay.CALLBACK_MONOFLOP_DONE] = 'H H'
 

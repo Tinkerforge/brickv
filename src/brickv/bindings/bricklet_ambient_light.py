@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -59,23 +59,23 @@ class BrickletAmbientLight(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.response_expected[BrickletAmbientLight.FUNCTION_GET_ILLUMINANCE] = 1
-        self.response_expected[BrickletAmbientLight.FUNCTION_GET_ANALOG_VALUE] = 1
-        self.response_expected[BrickletAmbientLight.FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletAmbientLight.FUNCTION_GET_ILLUMINANCE_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletAmbientLight.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletAmbientLight.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletAmbientLight.FUNCTION_SET_ILLUMINANCE_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletAmbientLight.FUNCTION_GET_ILLUMINANCE_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletAmbientLight.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletAmbientLight.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletAmbientLight.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
-        self.response_expected[BrickletAmbientLight.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
-        self.response_expected[BrickletAmbientLight.CALLBACK_ILLUMINANCE] = 2
-        self.response_expected[BrickletAmbientLight.CALLBACK_ANALOG_VALUE] = 2
-        self.response_expected[BrickletAmbientLight.CALLBACK_ILLUMINANCE_REACHED] = 2
-        self.response_expected[BrickletAmbientLight.CALLBACK_ANALOG_VALUE_REACHED] = 2
-        self.response_expected[BrickletAmbientLight.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletAmbientLight.FUNCTION_GET_ILLUMINANCE] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAmbientLight.FUNCTION_GET_ANALOG_VALUE] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAmbientLight.FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD] = BrickletAmbientLight.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAmbientLight.FUNCTION_GET_ILLUMINANCE_CALLBACK_PERIOD] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAmbientLight.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletAmbientLight.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAmbientLight.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAmbientLight.FUNCTION_SET_ILLUMINANCE_CALLBACK_THRESHOLD] = BrickletAmbientLight.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAmbientLight.FUNCTION_GET_ILLUMINANCE_CALLBACK_THRESHOLD] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAmbientLight.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletAmbientLight.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAmbientLight.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAmbientLight.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletAmbientLight.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAmbientLight.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAmbientLight.CALLBACK_ILLUMINANCE] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletAmbientLight.CALLBACK_ANALOG_VALUE] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletAmbientLight.CALLBACK_ILLUMINANCE_REACHED] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletAmbientLight.CALLBACK_ANALOG_VALUE_REACHED] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletAmbientLight.FUNCTION_GET_IDENTITY] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletAmbientLight.CALLBACK_ILLUMINANCE] = 'H'
         self.callback_formats[BrickletAmbientLight.CALLBACK_ANALOG_VALUE] = 'H'

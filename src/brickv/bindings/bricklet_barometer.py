@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -62,26 +62,26 @@ class BrickletBarometer(Device):
 
         self.api_version = (1, 1, 0)
 
-        self.response_expected[BrickletBarometer.FUNCTION_GET_AIR_PRESSURE] = 1
-        self.response_expected[BrickletBarometer.FUNCTION_GET_ALTITUDE] = 1
-        self.response_expected[BrickletBarometer.FUNCTION_SET_AIR_PRESSURE_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletBarometer.FUNCTION_GET_AIR_PRESSURE_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletBarometer.FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletBarometer.FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletBarometer.FUNCTION_SET_AIR_PRESSURE_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletBarometer.FUNCTION_GET_AIR_PRESSURE_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletBarometer.FUNCTION_SET_ALTITUDE_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletBarometer.FUNCTION_GET_ALTITUDE_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletBarometer.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
-        self.response_expected[BrickletBarometer.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
-        self.response_expected[BrickletBarometer.FUNCTION_SET_REFERENCE_AIR_PRESSURE] = 4
-        self.response_expected[BrickletBarometer.FUNCTION_GET_CHIP_TEMPERATURE] = 1
-        self.response_expected[BrickletBarometer.CALLBACK_AIR_PRESSURE] = 2
-        self.response_expected[BrickletBarometer.CALLBACK_ALTITUDE] = 2
-        self.response_expected[BrickletBarometer.CALLBACK_AIR_PRESSURE_REACHED] = 2
-        self.response_expected[BrickletBarometer.CALLBACK_ALTITUDE_REACHED] = 2
-        self.response_expected[BrickletBarometer.FUNCTION_GET_REFERENCE_AIR_PRESSURE] = 1
-        self.response_expected[BrickletBarometer.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletBarometer.FUNCTION_GET_AIR_PRESSURE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletBarometer.FUNCTION_GET_ALTITUDE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletBarometer.FUNCTION_SET_AIR_PRESSURE_CALLBACK_PERIOD] = BrickletBarometer.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletBarometer.FUNCTION_GET_AIR_PRESSURE_CALLBACK_PERIOD] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletBarometer.FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD] = BrickletBarometer.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletBarometer.FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletBarometer.FUNCTION_SET_AIR_PRESSURE_CALLBACK_THRESHOLD] = BrickletBarometer.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletBarometer.FUNCTION_GET_AIR_PRESSURE_CALLBACK_THRESHOLD] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletBarometer.FUNCTION_SET_ALTITUDE_CALLBACK_THRESHOLD] = BrickletBarometer.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletBarometer.FUNCTION_GET_ALTITUDE_CALLBACK_THRESHOLD] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletBarometer.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletBarometer.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletBarometer.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletBarometer.FUNCTION_SET_REFERENCE_AIR_PRESSURE] = BrickletBarometer.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletBarometer.FUNCTION_GET_CHIP_TEMPERATURE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletBarometer.CALLBACK_AIR_PRESSURE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletBarometer.CALLBACK_ALTITUDE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletBarometer.CALLBACK_AIR_PRESSURE_REACHED] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletBarometer.CALLBACK_ALTITUDE_REACHED] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletBarometer.FUNCTION_GET_REFERENCE_AIR_PRESSURE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletBarometer.FUNCTION_GET_IDENTITY] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletBarometer.CALLBACK_AIR_PRESSURE] = 'i'
         self.callback_formats[BrickletBarometer.CALLBACK_ALTITUDE] = 'i'

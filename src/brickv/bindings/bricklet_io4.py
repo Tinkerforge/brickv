@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -55,19 +55,19 @@ class BrickletIO4(Device):
 
         self.api_version = (1, 0, 1)
 
-        self.response_expected[BrickletIO4.FUNCTION_SET_VALUE] = 4
-        self.response_expected[BrickletIO4.FUNCTION_GET_VALUE] = 1
-        self.response_expected[BrickletIO4.FUNCTION_SET_CONFIGURATION] = 4
-        self.response_expected[BrickletIO4.FUNCTION_GET_CONFIGURATION] = 1
-        self.response_expected[BrickletIO4.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
-        self.response_expected[BrickletIO4.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
-        self.response_expected[BrickletIO4.FUNCTION_SET_INTERRUPT] = 4
-        self.response_expected[BrickletIO4.FUNCTION_GET_INTERRUPT] = 1
-        self.response_expected[BrickletIO4.CALLBACK_INTERRUPT] = 2
-        self.response_expected[BrickletIO4.FUNCTION_SET_MONOFLOP] = 4
-        self.response_expected[BrickletIO4.FUNCTION_GET_MONOFLOP] = 1
-        self.response_expected[BrickletIO4.CALLBACK_MONOFLOP_DONE] = 2
-        self.response_expected[BrickletIO4.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletIO4.FUNCTION_SET_VALUE] = BrickletIO4.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO4.FUNCTION_GET_VALUE] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIO4.FUNCTION_SET_CONFIGURATION] = BrickletIO4.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO4.FUNCTION_GET_CONFIGURATION] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIO4.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletIO4.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO4.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIO4.FUNCTION_SET_INTERRUPT] = BrickletIO4.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO4.FUNCTION_GET_INTERRUPT] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIO4.CALLBACK_INTERRUPT] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletIO4.FUNCTION_SET_MONOFLOP] = BrickletIO4.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO4.FUNCTION_GET_MONOFLOP] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIO4.CALLBACK_MONOFLOP_DONE] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletIO4.FUNCTION_GET_IDENTITY] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletIO4.CALLBACK_INTERRUPT] = 'B B'
         self.callback_formats[BrickletIO4.CALLBACK_MONOFLOP_DONE] = 'B B'

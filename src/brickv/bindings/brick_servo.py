@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-12-12.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -75,38 +75,38 @@ class BrickServo(Device):
 
         self.api_version = (1, 0, 1)
 
-        self.response_expected[BrickServo.FUNCTION_ENABLE] = 4
-        self.response_expected[BrickServo.FUNCTION_DISABLE] = 4
-        self.response_expected[BrickServo.FUNCTION_IS_ENABLED] = 1
-        self.response_expected[BrickServo.FUNCTION_SET_POSITION] = 4
-        self.response_expected[BrickServo.FUNCTION_GET_POSITION] = 1
-        self.response_expected[BrickServo.FUNCTION_GET_CURRENT_POSITION] = 1
-        self.response_expected[BrickServo.FUNCTION_SET_VELOCITY] = 4
-        self.response_expected[BrickServo.FUNCTION_GET_VELOCITY] = 1
-        self.response_expected[BrickServo.FUNCTION_GET_CURRENT_VELOCITY] = 1
-        self.response_expected[BrickServo.FUNCTION_SET_ACCELERATION] = 4
-        self.response_expected[BrickServo.FUNCTION_GET_ACCELERATION] = 1
-        self.response_expected[BrickServo.FUNCTION_SET_OUTPUT_VOLTAGE] = 4
-        self.response_expected[BrickServo.FUNCTION_GET_OUTPUT_VOLTAGE] = 1
-        self.response_expected[BrickServo.FUNCTION_SET_PULSE_WIDTH] = 4
-        self.response_expected[BrickServo.FUNCTION_GET_PULSE_WIDTH] = 1
-        self.response_expected[BrickServo.FUNCTION_SET_DEGREE] = 4
-        self.response_expected[BrickServo.FUNCTION_GET_DEGREE] = 1
-        self.response_expected[BrickServo.FUNCTION_SET_PERIOD] = 4
-        self.response_expected[BrickServo.FUNCTION_GET_PERIOD] = 1
-        self.response_expected[BrickServo.FUNCTION_GET_SERVO_CURRENT] = 1
-        self.response_expected[BrickServo.FUNCTION_GET_OVERALL_CURRENT] = 1
-        self.response_expected[BrickServo.FUNCTION_GET_STACK_INPUT_VOLTAGE] = 1
-        self.response_expected[BrickServo.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE] = 1
-        self.response_expected[BrickServo.FUNCTION_SET_MINIMUM_VOLTAGE] = 4
-        self.response_expected[BrickServo.FUNCTION_GET_MINIMUM_VOLTAGE] = 1
-        self.response_expected[BrickServo.CALLBACK_UNDER_VOLTAGE] = 2
-        self.response_expected[BrickServo.CALLBACK_POSITION_REACHED] = 2
-        self.response_expected[BrickServo.CALLBACK_VELOCITY_REACHED] = 2
-        self.response_expected[BrickServo.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = 1
-        self.response_expected[BrickServo.FUNCTION_GET_CHIP_TEMPERATURE] = 1
-        self.response_expected[BrickServo.FUNCTION_RESET] = 4
-        self.response_expected[BrickServo.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickServo.FUNCTION_ENABLE] = BrickServo.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickServo.FUNCTION_DISABLE] = BrickServo.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickServo.FUNCTION_IS_ENABLED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_SET_POSITION] = BrickServo.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickServo.FUNCTION_GET_POSITION] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_GET_CURRENT_POSITION] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_SET_VELOCITY] = BrickServo.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickServo.FUNCTION_GET_VELOCITY] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_GET_CURRENT_VELOCITY] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_SET_ACCELERATION] = BrickServo.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickServo.FUNCTION_GET_ACCELERATION] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_SET_OUTPUT_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickServo.FUNCTION_GET_OUTPUT_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_SET_PULSE_WIDTH] = BrickServo.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickServo.FUNCTION_GET_PULSE_WIDTH] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_SET_DEGREE] = BrickServo.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickServo.FUNCTION_GET_DEGREE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_SET_PERIOD] = BrickServo.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickServo.FUNCTION_GET_PERIOD] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_GET_SERVO_CURRENT] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_GET_OVERALL_CURRENT] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_GET_STACK_INPUT_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_SET_MINIMUM_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickServo.FUNCTION_GET_MINIMUM_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.CALLBACK_UNDER_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickServo.CALLBACK_POSITION_REACHED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickServo.CALLBACK_VELOCITY_REACHED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickServo.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_GET_CHIP_TEMPERATURE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_RESET] = BrickServo.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickServo.FUNCTION_GET_IDENTITY] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickServo.CALLBACK_UNDER_VOLTAGE] = 'H'
         self.callback_formats[BrickServo.CALLBACK_POSITION_REACHED] = 'B h'

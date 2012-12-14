@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -51,16 +51,16 @@ class BrickletTemperature(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.response_expected[BrickletTemperature.FUNCTION_GET_TEMPERATURE] = 1
-        self.response_expected[BrickletTemperature.FUNCTION_SET_TEMPERATURE_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletTemperature.FUNCTION_GET_TEMPERATURE_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletTemperature.FUNCTION_SET_TEMPERATURE_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletTemperature.FUNCTION_GET_TEMPERATURE_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletTemperature.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
-        self.response_expected[BrickletTemperature.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
-        self.response_expected[BrickletTemperature.CALLBACK_TEMPERATURE] = 2
-        self.response_expected[BrickletTemperature.CALLBACK_TEMPERATURE_REACHED] = 2
-        self.response_expected[BrickletTemperature.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletTemperature.FUNCTION_GET_TEMPERATURE] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletTemperature.FUNCTION_SET_TEMPERATURE_CALLBACK_PERIOD] = BrickletTemperature.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletTemperature.FUNCTION_GET_TEMPERATURE_CALLBACK_PERIOD] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletTemperature.FUNCTION_SET_TEMPERATURE_CALLBACK_THRESHOLD] = BrickletTemperature.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletTemperature.FUNCTION_GET_TEMPERATURE_CALLBACK_THRESHOLD] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletTemperature.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletTemperature.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletTemperature.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletTemperature.CALLBACK_TEMPERATURE] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletTemperature.CALLBACK_TEMPERATURE_REACHED] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletTemperature.FUNCTION_GET_IDENTITY] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletTemperature.CALLBACK_TEMPERATURE] = 'h'
         self.callback_formats[BrickletTemperature.CALLBACK_TEMPERATURE_REACHED] = 'h'

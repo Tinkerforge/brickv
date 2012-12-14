@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -50,15 +50,15 @@ class BrickletIndustrialDigitalOut4(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_SET_VALUE] = 4
-        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_VALUE] = 1
-        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_SET_MONOFLOP] = 4
-        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_MONOFLOP] = 1
-        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_SET_GROUP] = 4
-        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_GROUP] = 1
-        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_AVAILABLE_FOR_GROUP] = 1
-        self.response_expected[BrickletIndustrialDigitalOut4.CALLBACK_MONOFLOP_DONE] = 2
-        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_SET_VALUE] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_VALUE] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_SET_MONOFLOP] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_MONOFLOP] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_SET_GROUP] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_GROUP] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_AVAILABLE_FOR_GROUP] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialDigitalOut4.CALLBACK_MONOFLOP_DONE] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_IDENTITY] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletIndustrialDigitalOut4.CALLBACK_MONOFLOP_DONE] = 'H H'
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -62,26 +62,26 @@ class BrickletCurrent12(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.response_expected[BrickletCurrent12.FUNCTION_GET_CURRENT] = 1
-        self.response_expected[BrickletCurrent12.FUNCTION_CALIBRATE] = 4
-        self.response_expected[BrickletCurrent12.FUNCTION_IS_OVER_CURRENT] = 1
-        self.response_expected[BrickletCurrent12.FUNCTION_GET_ANALOG_VALUE] = 1
-        self.response_expected[BrickletCurrent12.FUNCTION_SET_CURRENT_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletCurrent12.FUNCTION_GET_CURRENT_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletCurrent12.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletCurrent12.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletCurrent12.FUNCTION_SET_CURRENT_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletCurrent12.FUNCTION_GET_CURRENT_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletCurrent12.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletCurrent12.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletCurrent12.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
-        self.response_expected[BrickletCurrent12.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
-        self.response_expected[BrickletCurrent12.CALLBACK_CURRENT] = 2
-        self.response_expected[BrickletCurrent12.CALLBACK_ANALOG_VALUE] = 2
-        self.response_expected[BrickletCurrent12.CALLBACK_CURRENT_REACHED] = 2
-        self.response_expected[BrickletCurrent12.CALLBACK_ANALOG_VALUE_REACHED] = 2
-        self.response_expected[BrickletCurrent12.CALLBACK_OVER_CURRENT] = 2
-        self.response_expected[BrickletCurrent12.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletCurrent12.FUNCTION_GET_CURRENT] = BrickletCurrent12.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCurrent12.FUNCTION_CALIBRATE] = BrickletCurrent12.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletCurrent12.FUNCTION_IS_OVER_CURRENT] = BrickletCurrent12.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCurrent12.FUNCTION_GET_ANALOG_VALUE] = BrickletCurrent12.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCurrent12.FUNCTION_SET_CURRENT_CALLBACK_PERIOD] = BrickletCurrent12.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletCurrent12.FUNCTION_GET_CURRENT_CALLBACK_PERIOD] = BrickletCurrent12.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCurrent12.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletCurrent12.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletCurrent12.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletCurrent12.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCurrent12.FUNCTION_SET_CURRENT_CALLBACK_THRESHOLD] = BrickletCurrent12.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletCurrent12.FUNCTION_GET_CURRENT_CALLBACK_THRESHOLD] = BrickletCurrent12.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCurrent12.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletCurrent12.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletCurrent12.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletCurrent12.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCurrent12.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletCurrent12.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletCurrent12.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletCurrent12.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCurrent12.CALLBACK_CURRENT] = BrickletCurrent12.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletCurrent12.CALLBACK_ANALOG_VALUE] = BrickletCurrent12.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletCurrent12.CALLBACK_CURRENT_REACHED] = BrickletCurrent12.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletCurrent12.CALLBACK_ANALOG_VALUE_REACHED] = BrickletCurrent12.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletCurrent12.CALLBACK_OVER_CURRENT] = BrickletCurrent12.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletCurrent12.FUNCTION_GET_IDENTITY] = BrickletCurrent12.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletCurrent12.CALLBACK_CURRENT] = 'h'
         self.callback_formats[BrickletCurrent12.CALLBACK_ANALOG_VALUE] = 'H'

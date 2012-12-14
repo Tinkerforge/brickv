@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-12-12.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -88,51 +88,51 @@ class BrickStepper(Device):
 
         self.api_version = (1, 0, 2)
 
-        self.response_expected[BrickStepper.FUNCTION_SET_MAX_VELOCITY] = 4
-        self.response_expected[BrickStepper.FUNCTION_GET_MAX_VELOCITY] = 1
-        self.response_expected[BrickStepper.FUNCTION_GET_CURRENT_VELOCITY] = 1
-        self.response_expected[BrickStepper.FUNCTION_SET_SPEED_RAMPING] = 4
-        self.response_expected[BrickStepper.FUNCTION_GET_SPEED_RAMPING] = 1
-        self.response_expected[BrickStepper.FUNCTION_FULL_BRAKE] = 4
-        self.response_expected[BrickStepper.FUNCTION_SET_CURRENT_POSITION] = 4
-        self.response_expected[BrickStepper.FUNCTION_GET_CURRENT_POSITION] = 1
-        self.response_expected[BrickStepper.FUNCTION_SET_TARGET_POSITION] = 4
-        self.response_expected[BrickStepper.FUNCTION_GET_TARGET_POSITION] = 1
-        self.response_expected[BrickStepper.FUNCTION_SET_STEPS] = 4
-        self.response_expected[BrickStepper.FUNCTION_GET_STEPS] = 1
-        self.response_expected[BrickStepper.FUNCTION_GET_REMAINING_STEPS] = 1
-        self.response_expected[BrickStepper.FUNCTION_SET_STEP_MODE] = 4
-        self.response_expected[BrickStepper.FUNCTION_GET_STEP_MODE] = 1
-        self.response_expected[BrickStepper.FUNCTION_DRIVE_FORWARD] = 4
-        self.response_expected[BrickStepper.FUNCTION_DRIVE_BACKWARD] = 4
-        self.response_expected[BrickStepper.FUNCTION_STOP] = 4
-        self.response_expected[BrickStepper.FUNCTION_GET_STACK_INPUT_VOLTAGE] = 1
-        self.response_expected[BrickStepper.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE] = 1
-        self.response_expected[BrickStepper.FUNCTION_GET_CURRENT_CONSUMPTION] = 1
-        self.response_expected[BrickStepper.FUNCTION_SET_MOTOR_CURRENT] = 4
-        self.response_expected[BrickStepper.FUNCTION_GET_MOTOR_CURRENT] = 1
-        self.response_expected[BrickStepper.FUNCTION_ENABLE] = 4
-        self.response_expected[BrickStepper.FUNCTION_DISABLE] = 4
-        self.response_expected[BrickStepper.FUNCTION_IS_ENABLED] = 1
-        self.response_expected[BrickStepper.FUNCTION_SET_DECAY] = 4
-        self.response_expected[BrickStepper.FUNCTION_GET_DECAY] = 1
-        self.response_expected[BrickStepper.FUNCTION_SET_MINIMUM_VOLTAGE] = 4
-        self.response_expected[BrickStepper.FUNCTION_GET_MINIMUM_VOLTAGE] = 1
-        self.response_expected[BrickStepper.CALLBACK_UNDER_VOLTAGE] = 2
-        self.response_expected[BrickStepper.CALLBACK_POSITION_REACHED] = 2
-        self.response_expected[BrickStepper.FUNCTION_SET_SYNC_RECT] = 4
-        self.response_expected[BrickStepper.FUNCTION_IS_SYNC_RECT] = 1
-        self.response_expected[BrickStepper.FUNCTION_SET_TIME_BASE] = 4
-        self.response_expected[BrickStepper.FUNCTION_GET_TIME_BASE] = 1
-        self.response_expected[BrickStepper.FUNCTION_GET_ALL_DATA] = 1
-        self.response_expected[BrickStepper.FUNCTION_SET_ALL_DATA_PERIOD] = 4
-        self.response_expected[BrickStepper.FUNCTION_GET_ALL_DATA_PERIOD] = 1
-        self.response_expected[BrickStepper.CALLBACK_ALL_DATA] = 2
-        self.response_expected[BrickStepper.CALLBACK_NEW_STATE] = 2
-        self.response_expected[BrickStepper.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = 1
-        self.response_expected[BrickStepper.FUNCTION_GET_CHIP_TEMPERATURE] = 1
-        self.response_expected[BrickStepper.FUNCTION_RESET] = 4
-        self.response_expected[BrickStepper.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickStepper.FUNCTION_SET_MAX_VELOCITY] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_MAX_VELOCITY] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_GET_CURRENT_VELOCITY] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_SET_SPEED_RAMPING] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_SPEED_RAMPING] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_FULL_BRAKE] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_SET_CURRENT_POSITION] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_CURRENT_POSITION] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_SET_TARGET_POSITION] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_TARGET_POSITION] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_SET_STEPS] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_STEPS] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_GET_REMAINING_STEPS] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_SET_STEP_MODE] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_STEP_MODE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_DRIVE_FORWARD] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_DRIVE_BACKWARD] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_STOP] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_STACK_INPUT_VOLTAGE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_GET_CURRENT_CONSUMPTION] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_SET_MOTOR_CURRENT] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_MOTOR_CURRENT] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_ENABLE] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_DISABLE] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_IS_ENABLED] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_SET_DECAY] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_DECAY] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_SET_MINIMUM_VOLTAGE] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_MINIMUM_VOLTAGE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.CALLBACK_UNDER_VOLTAGE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickStepper.CALLBACK_POSITION_REACHED] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickStepper.FUNCTION_SET_SYNC_RECT] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_IS_SYNC_RECT] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_SET_TIME_BASE] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_TIME_BASE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_GET_ALL_DATA] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_SET_ALL_DATA_PERIOD] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_ALL_DATA_PERIOD] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.CALLBACK_ALL_DATA] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickStepper.CALLBACK_NEW_STATE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_GET_CHIP_TEMPERATURE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickStepper.FUNCTION_RESET] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_GET_IDENTITY] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickStepper.CALLBACK_UNDER_VOLTAGE] = 'H'
         self.callback_formats[BrickStepper.CALLBACK_POSITION_REACHED] = 'i'

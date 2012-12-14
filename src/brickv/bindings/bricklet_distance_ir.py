@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -61,25 +61,25 @@ class BrickletDistanceIR(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.response_expected[BrickletDistanceIR.FUNCTION_GET_DISTANCE] = 1
-        self.response_expected[BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE] = 1
-        self.response_expected[BrickletDistanceIR.FUNCTION_SET_SAMPLING_POINT] = 4
-        self.response_expected[BrickletDistanceIR.FUNCTION_GET_SAMPLING_POINT] = 1
-        self.response_expected[BrickletDistanceIR.FUNCTION_SET_DISTANCE_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletDistanceIR.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletDistanceIR.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletDistanceIR.FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletDistanceIR.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletDistanceIR.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletDistanceIR.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
-        self.response_expected[BrickletDistanceIR.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
-        self.response_expected[BrickletDistanceIR.CALLBACK_DISTANCE] = 2
-        self.response_expected[BrickletDistanceIR.CALLBACK_ANALOG_VALUE] = 2
-        self.response_expected[BrickletDistanceIR.CALLBACK_DISTANCE_REACHED] = 2
-        self.response_expected[BrickletDistanceIR.CALLBACK_ANALOG_VALUE_REACHED] = 2
-        self.response_expected[BrickletDistanceIR.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_DISTANCE] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletDistanceIR.FUNCTION_SET_SAMPLING_POINT] = BrickletDistanceIR.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_SAMPLING_POINT] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletDistanceIR.FUNCTION_SET_DISTANCE_CALLBACK_PERIOD] = BrickletDistanceIR.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletDistanceIR.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletDistanceIR.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletDistanceIR.FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD] = BrickletDistanceIR.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletDistanceIR.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletDistanceIR.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletDistanceIR.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletDistanceIR.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletDistanceIR.CALLBACK_DISTANCE] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletDistanceIR.CALLBACK_ANALOG_VALUE] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletDistanceIR.CALLBACK_DISTANCE_REACHED] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletDistanceIR.CALLBACK_ANALOG_VALUE_REACHED] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletDistanceIR.FUNCTION_GET_IDENTITY] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletDistanceIR.CALLBACK_DISTANCE] = 'H'
         self.callback_formats[BrickletDistanceIR.CALLBACK_ANALOG_VALUE] = 'H'

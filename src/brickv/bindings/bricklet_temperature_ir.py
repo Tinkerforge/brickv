@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -61,25 +61,25 @@ class BrickletTemperatureIR(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE] = 1
-        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE] = 1
-        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_EMISSIVITY] = 4
-        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_EMISSIVITY] = 1
-        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_PERIOD] = 4
-        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_PERIOD] = 1
-        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD] = 4
-        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD] = 1
-        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_DEBOUNCE_PERIOD] = 4
-        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_DEBOUNCE_PERIOD] = 1
-        self.response_expected[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE] = 2
-        self.response_expected[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE] = 2
-        self.response_expected[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE_REACHED] = 2
-        self.response_expected[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE_REACHED] = 2
-        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_EMISSIVITY] = BrickletTemperatureIR.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_EMISSIVITY] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD] = BrickletTemperatureIR.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_PERIOD] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_PERIOD] = BrickletTemperatureIR.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_PERIOD] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD] = BrickletTemperatureIR.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_AMBIENT_TEMPERATURE_CALLBACK_THRESHOLD] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD] = BrickletTemperatureIR.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_OBJECT_TEMPERATURE_CALLBACK_THRESHOLD] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletTemperatureIR.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletTemperatureIR.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE_REACHED] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE_REACHED] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletTemperatureIR.FUNCTION_GET_IDENTITY] = BrickletTemperatureIR.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletTemperatureIR.CALLBACK_AMBIENT_TEMPERATURE] = 'h'
         self.callback_formats[BrickletTemperatureIR.CALLBACK_OBJECT_TEMPERATURE] = 'h'

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-29.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -45,11 +45,11 @@ class BrickletAnalogOut(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.response_expected[BrickletAnalogOut.FUNCTION_SET_VOLTAGE] = 4
-        self.response_expected[BrickletAnalogOut.FUNCTION_GET_VOLTAGE] = 1
-        self.response_expected[BrickletAnalogOut.FUNCTION_SET_MODE] = 4
-        self.response_expected[BrickletAnalogOut.FUNCTION_GET_MODE] = 1
-        self.response_expected[BrickletAnalogOut.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletAnalogOut.FUNCTION_SET_VOLTAGE] = BrickletAnalogOut.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAnalogOut.FUNCTION_GET_VOLTAGE] = BrickletAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogOut.FUNCTION_SET_MODE] = BrickletAnalogOut.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAnalogOut.FUNCTION_GET_MODE] = BrickletAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogOut.FUNCTION_GET_IDENTITY] = BrickletAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
     def set_voltage(self, voltage):

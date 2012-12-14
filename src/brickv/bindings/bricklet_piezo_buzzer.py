@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -45,11 +45,11 @@ class BrickletPiezoBuzzer(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.response_expected[BrickletPiezoBuzzer.FUNCTION_BEEP] = 4
-        self.response_expected[BrickletPiezoBuzzer.FUNCTION_MORSE_CODE] = 4
-        self.response_expected[BrickletPiezoBuzzer.CALLBACK_BEEP_FINISHED] = 2
-        self.response_expected[BrickletPiezoBuzzer.CALLBACK_MORSE_CODE_FINISHED] = 2
-        self.response_expected[BrickletPiezoBuzzer.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletPiezoBuzzer.FUNCTION_BEEP] = BrickletPiezoBuzzer.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPiezoBuzzer.FUNCTION_MORSE_CODE] = BrickletPiezoBuzzer.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletPiezoBuzzer.CALLBACK_BEEP_FINISHED] = BrickletPiezoBuzzer.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletPiezoBuzzer.CALLBACK_MORSE_CODE_FINISHED] = BrickletPiezoBuzzer.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletPiezoBuzzer.FUNCTION_GET_IDENTITY] = BrickletPiezoBuzzer.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletPiezoBuzzer.CALLBACK_BEEP_FINISHED] = ''
         self.callback_formats[BrickletPiezoBuzzer.CALLBACK_MORSE_CODE_FINISHED] = ''

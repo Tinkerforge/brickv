@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-11-27.      #
+# This file was automatically generated on 2012-12-14.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -52,17 +52,17 @@ class BrickletLCD16x2(Device):
 
         self.api_version = (1, 0, 0)
 
-        self.response_expected[BrickletLCD16x2.FUNCTION_WRITE_LINE] = 4
-        self.response_expected[BrickletLCD16x2.FUNCTION_CLEAR_DISPLAY] = 4
-        self.response_expected[BrickletLCD16x2.FUNCTION_BACKLIGHT_ON] = 4
-        self.response_expected[BrickletLCD16x2.FUNCTION_BACKLIGHT_OFF] = 4
-        self.response_expected[BrickletLCD16x2.FUNCTION_IS_BACKLIGHT_ON] = 1
-        self.response_expected[BrickletLCD16x2.FUNCTION_SET_CONFIG] = 4
-        self.response_expected[BrickletLCD16x2.FUNCTION_GET_CONFIG] = 1
-        self.response_expected[BrickletLCD16x2.FUNCTION_IS_BUTTON_PRESSED] = 1
-        self.response_expected[BrickletLCD16x2.CALLBACK_BUTTON_PRESSED] = 2
-        self.response_expected[BrickletLCD16x2.CALLBACK_BUTTON_RELEASED] = 2
-        self.response_expected[BrickletLCD16x2.FUNCTION_GET_IDENTITY] = 1
+        self.response_expected[BrickletLCD16x2.FUNCTION_WRITE_LINE] = BrickletLCD16x2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD16x2.FUNCTION_CLEAR_DISPLAY] = BrickletLCD16x2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD16x2.FUNCTION_BACKLIGHT_ON] = BrickletLCD16x2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD16x2.FUNCTION_BACKLIGHT_OFF] = BrickletLCD16x2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD16x2.FUNCTION_IS_BACKLIGHT_ON] = BrickletLCD16x2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD16x2.FUNCTION_SET_CONFIG] = BrickletLCD16x2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD16x2.FUNCTION_GET_CONFIG] = BrickletLCD16x2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD16x2.FUNCTION_IS_BUTTON_PRESSED] = BrickletLCD16x2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD16x2.CALLBACK_BUTTON_PRESSED] = BrickletLCD16x2.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletLCD16x2.CALLBACK_BUTTON_RELEASED] = BrickletLCD16x2.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletLCD16x2.FUNCTION_GET_IDENTITY] = BrickletLCD16x2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletLCD16x2.CALLBACK_BUTTON_PRESSED] = 'B'
         self.callback_formats[BrickletLCD16x2.CALLBACK_BUTTON_RELEASED] = 'B'
