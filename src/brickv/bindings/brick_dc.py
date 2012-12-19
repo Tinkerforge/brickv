@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-26.      #
+# This file was automatically generated on 2012-12-19.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -53,6 +53,7 @@ class DC(Device):
     FUNCTION_GET_CURRENT_VELOCITY_PERIOD = 20
     FUNCTION_RESET = 243
     FUNCTION_GET_CHIP_TEMPERATURE = 242
+    FUNCTION_RESET = 243
 
     def __init__(self, uid):
         """
@@ -294,6 +295,19 @@ class DC(Device):
         .. versionadded:: 1.1.3~(Firmware)
         """
         return self.ipcon.send_request(self, DC.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+
+    def reset(self):
+        """
+        Calling this function will reset the Brick. Calling this function
+        on a Brick inside of a stack will reset the whole stack.
+        
+        After a reset you have to create new device objects,
+        calling functions on the existing ones will result in
+        undefined behavior!
+        
+        .. versionadded:: 1.1.3~(Firmware)
+        """
+        self.ipcon.send_request(self, DC.FUNCTION_RESET, (), '', '')
 
     def register_callback(self, id, callback):
         """

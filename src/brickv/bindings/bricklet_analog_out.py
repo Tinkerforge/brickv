@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-26.      #
+# This file was automatically generated on 2012-12-19.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -47,7 +47,7 @@ class AnalogOut(Device):
     def set_voltage(self, voltage):
         """
         Sets the voltage in mV. The possible range is 0V to 5V (0-5000).
-        Calling this function will set the mode to 0 (see `:func:SetMode`).
+        Calling this function will set the mode to 0 (see :func:`SetMode`).
         
         The default value is 0 (with mode 1).
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-10-26.      #
+# This file was automatically generated on 2012-12-19.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -76,6 +76,7 @@ class Master(Device):
     FUNCTION_GET_USB_VOLTAGE = 40
     FUNCTION_RESET = 243
     FUNCTION_GET_CHIP_TEMPERATURE = 242
+    FUNCTION_RESET = 243
 
     def __init__(self, uid):
         """
@@ -367,9 +368,9 @@ class Master(Device):
         Possible values for parity are 'n' (none), 'e' (even) and 'o' (odd).
         Possible values for stop bits are 1 and 2.
         
-        If your RS485 is unstable (lost messages etc), the first thing you should
+        If your RS485 is unstable (lost messages etc.), the first thing you should
         try is to decrease the speed. On very large bus (e.g. 1km), you probably
-        should use a value in the range of 100khz.
+        should use a value in the range of 100000 (100kbit/s).
         
         The values are stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
@@ -396,13 +397,25 @@ class Master(Device):
 
     def set_wifi_configuration(self, ssid, connection, ip, subnet_mask, gateway, port):
         """
-        Sets the configuration of the WIFI Extension. The ssid can have a max length
-        of 32 characters, the connection is either 0 for DHCP or 1 for static IP.
+        Sets the configuration of the WIFI Extension. The *ssid* can have a max length
+        of 32 characters. Possible values for *connection* are:
         
-        If you set connection to 1, you have to supply ip, subnet mask and gateway
-        as an array of size 4 (first element of the array is the least significant
-        byte of the address). If connection is set to 0 ip, subnet mask and gateway
-        are ignored, you can set them to 0.
+        .. csv-table::
+         :header: "Value", "Description"
+         :widths: 10, 90
+        
+         "0", "DHCP"
+         "1", "Static IP"
+         "2", "Access Point: DHCP"
+         "3", "Access Point: Static IP"
+         "4", "Ad Hoc: DHCP"
+         "5", "Ad Hoc: Static IP"
+        
+        If you set *connection* to one of the static IP options then you have to supply
+        *ip*, *subnet_mask* and *gateway* as an array of size 4 (first element of the
+        array is the least significant byte of the address). If *connection* is set to
+        one of the DHCP options then *ip*, *subnet_mask* and *gateway* are ignored, you
+        can set them to 0.
         
         The last parameter is the port that your program will connect to. The
         default port, that is used by brickd, is 4223.
@@ -593,10 +606,10 @@ class Master(Device):
 
     def set_wifi_regulatory_domain(self, domain):
         """
-        Sets the regulatory domain of the WIFI Extension. Possible modes are:
+        Sets the regulatory domain of the WIFI Extension. Possible domains are:
         
         .. csv-table::
-         :header: "Mode", "Description"
+         :header: "Domain", "Description"
          :widths: 10, 90
         
          "0", "FCC: Channel 1-11 (N/S America, Australia, New Zealand)"
@@ -650,3 +663,16 @@ class Master(Device):
         .. versionadded:: 1.2.1~(Firmware)
         """
         return self.ipcon.send_request(self, Master.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
+
+    def reset(self):
+        """
+        Calling this function will reset the Brick. Calling this function
+        on a Brick inside of a stack will reset the whole stack.
+        
+        After a reset you have to create new device objects,
+        calling functions on the existing ones will result in
+        undefined behavior!
+        
+        .. versionadded:: 1.2.1~(Firmware)
+        """
+        self.ipcon.send_request(self, Master.FUNCTION_RESET, (), '', '')
