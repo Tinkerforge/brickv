@@ -103,8 +103,7 @@ class GPS(PluginBase, Ui_GPS):
         async_call(self.gps.set_motion_callback_period, 250, None, self.increase_error_count)
         async_call(self.gps.set_date_time_callback_period, 250, None, self.increase_error_count)
         
-        async_call(self.gps.get_battery_voltage, None, self.update_voltage, self.increase_error_count)
-
+        self.update_voltage()
         self.voltage_timer.start()
 
     def stop(self):
@@ -260,5 +259,8 @@ class GPS(PluginBase, Ui_GPS):
 
         self.time.setText(date_str)
 
-    def update_voltage(self, bv):
+    def update_voltage_async(self, bv):
         self.voltage.setText('%.2f V' % (bv/1000.0))
+
+    def update_voltage(self):
+        async_call(self.gps.get_battery_voltage, None, self.update_voltage_async, self.increase_error_count)
