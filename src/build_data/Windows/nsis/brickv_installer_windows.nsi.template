@@ -1,4 +1,4 @@
-Name "Brickv <<BRICKV_DOT_VERSION>>"
+Name "Brick Viewer <<BRICKV_DOT_VERSION>>"
 
 OutFile "brickv_windows_<<BRICKV_UNDERSCORE_VERSION>>.exe"
 
@@ -56,7 +56,7 @@ UninstPage instfiles
 !insertmacro VersionCompare
 
 ; The stuff to install
-Section "Install Brickv ${BRICKV_VERSION} Program"
+Section "Install Brick Viewer ${BRICKV_VERSION} Program"
 
 ; Check to see if already installed
   ClearErrors
@@ -64,7 +64,7 @@ Section "Install Brickv ${BRICKV_VERSION} Program"
   IfErrors install ;Version not set, install
   ${VersionCompare} $0 ${BRICKV_VERSION} $1
   IntCmp $1 2 uninstall
-    MessageBox MB_YESNO|MB_ICONQUESTION "Brickv version $0 seems to be already installed on your system.$\n\
+    MessageBox MB_YESNO|MB_ICONQUESTION "Brick Viewer version $0 seems to be already installed on your system.$\n\
     Would you like to proceed with the installation of version ${BRICKV_VERSION}?$\n\
     Old version will be uninstalled first." \
         /SD IDYES IDYES uninstall IDNO quit
@@ -97,7 +97,7 @@ Section "Install Brickv ${BRICKV_VERSION} Program"
   WriteRegStr HKLM "Software\Tinkerforge\Brickv" "Version" ${BRICKV_VERSION}
 
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "DisplayName" "Tinkerforge Brickv ${BRICKV_VERSION}"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "DisplayName" "Tinkerforge Brick Viewer ${BRICKV_VERSION}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "DisplayIcon" '"$INSTDIR\brickv-icon.ico"'
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "DisplayVersion" "${BRICKV_VERSION}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "Publisher" "Tinkerforge GmbH"
