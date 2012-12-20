@@ -71,6 +71,10 @@ class GPS(PluginBase, Ui_GPS):
 
         self.format_combobox.currentIndexChanged.connect(self.format_changed)
         self.show_pos.pressed.connect(self.show_pos_pressed)
+        self.hot_start.pressed.connect(lambda: self.restart_pressed(0))
+        self.warm_start.pressed.connect(lambda: self.restart_pressed(1))
+        self.cold_start.pressed.connect(lambda: self.restart_pressed(2))
+        self.factory_reset.pressed.connect(lambda: self.restart_pressed(3))
 
         self.had_fix = False
 
@@ -97,6 +101,38 @@ class GPS(PluginBase, Ui_GPS):
 
     def format_changed(self, index):
         self.cb_coordinates(self.last_lat, self.last_ns, self.last_long, self.last_ew, self.last_pdop, self.last_hdop, self.last_vdop, self.last_epe)
+
+    def restart_pressed(self, restart_type):
+        if restart_type > 0:
+            self.had_fix = False # don't show cached data
+
+            self.last_lat = 0
+            self.last_ns = 'U'
+            self.last_long = 0
+            self.last_ew = 'U'
+            self.last_pdop = 0
+            self.last_hdop = 0
+            self.last_vdop = 0
+            self.last_epe = 0
+
+            self.latitude.setText("Unknown")
+            self.ns.setText('U')
+
+            self.longitude.setText("Unknown")
+            self.ew.setText('U')
+
+            self.dop.setText("Unknown")
+            self.epe.setText("Unknown")
+
+            self.altitude.setText("Unknown")
+
+            self.course.setText("Unknown")
+            self.speed.setText("Unknown")
+
+            if restart_type > 1:
+                self.time.setText("Unknown")
+
+        self.gps.restart(restart_type)
 
     def start(self):
         self.gps.set_coordinates_callback_period(250)
