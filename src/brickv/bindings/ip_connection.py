@@ -5,7 +5,7 @@
 # Redistribution and use in source and binary forms of this file,
 # with or without modification, are permitted.
 
-from threading import Thread, Lock
+from threading import Thread, Lock, Semaphore
 
 # current_thread for python 2.6, currentThread for python 2.5
 try:
@@ -230,6 +230,7 @@ class IPConnection:
         self.receive_thread = None
         self.callback_queue = None
         self.callback_thread = None
+        self.waiter = Semaphore()
 
     def connect(self, host, port):
         with self.socket_lock:
@@ -333,6 +334,12 @@ class IPConnection:
                 self.socket.send(request)
             except socket.error:
                 pass
+
+    def wait(self):
+        self.waiter.acquire()
+
+    def unwait(self):
+        self.waiter.release()
 
     def register_callback(self, id, callback):
         """
