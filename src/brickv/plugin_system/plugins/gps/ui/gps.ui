@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>518</width>
-    <height>429</height>
+    <height>406</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -217,13 +217,6 @@
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>Battery Voltage:</string>
-         </property>
-        </widget>
-       </item>
       </layout>
      </item>
      <item>
@@ -274,13 +267,6 @@
         <widget class="QLabel" name="time">
          <property name="text">
           <string>Unknown</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="voltage">
-         <property name="text">
-          <string>0 V</string>
          </property>
         </widget>
        </item>

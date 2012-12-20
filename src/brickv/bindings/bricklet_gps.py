@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-12-19.      #
+# This file was automatically generated on 2012-12-20.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -31,29 +31,28 @@ class GPS(Device):
     Device for receiving GPS position
     """
 
-    CALLBACK_COORDINATES = 18
-    CALLBACK_STATUS = 19
-    CALLBACK_ALTITUDE = 20
-    CALLBACK_MOTION = 21
-    CALLBACK_DATE_TIME = 22
+    CALLBACK_COORDINATES = 17
+    CALLBACK_STATUS = 18
+    CALLBACK_ALTITUDE = 19
+    CALLBACK_MOTION = 20
+    CALLBACK_DATE_TIME = 21
 
     FUNCTION_GET_COORDINATES = 1
     FUNCTION_GET_STATUS = 2
     FUNCTION_GET_ALTITUDE = 3
     FUNCTION_GET_MOTION = 4
     FUNCTION_GET_DATE_TIME = 5
-    FUNCTION_GET_BATTERY_VOLTAGE = 6
-    FUNCTION_RESTART = 7
-    FUNCTION_SET_COORDINATES_CALLBACK_PERIOD = 8
-    FUNCTION_GET_COORDINATES_CALLBACK_PERIOD = 9
-    FUNCTION_SET_STATUS_CALLBACK_PERIOD = 10
-    FUNCTION_GET_STATUS_CALLBACK_PERIOD = 11
-    FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD = 12
-    FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD = 13
-    FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD = 14
-    FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD = 15
-    FUNCTION_SET_MOTION_CALLBACK_PERIOD = 16
-    FUNCTION_GET_MOTION_CALLBACK_PERIOD = 17
+    FUNCTION_RESTART = 6
+    FUNCTION_SET_COORDINATES_CALLBACK_PERIOD = 7
+    FUNCTION_GET_COORDINATES_CALLBACK_PERIOD = 8
+    FUNCTION_SET_STATUS_CALLBACK_PERIOD = 9
+    FUNCTION_GET_STATUS_CALLBACK_PERIOD = 10
+    FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD = 11
+    FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD = 12
+    FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD = 13
+    FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD = 14
+    FUNCTION_SET_MOTION_CALLBACK_PERIOD = 15
+    FUNCTION_GET_MOTION_CALLBACK_PERIOD = 16
 
     def __init__(self, uid):
         """
@@ -134,14 +133,6 @@ class GPS(Device):
         """
         return GetDateTime(*self.ipcon.send_request(self, GPS.FUNCTION_GET_DATE_TIME, (), '', 'I I'))
 
-    def get_battery_voltage(self):
-        """
-        Returns the current battery voltage in mV. If no battery is connected,
-        this returns the internal voltage of the GPS module that is derived from
-        the 3.3V rail of the Brick where the GPS Bricklet is connected to.
-        """
-        return self.ipcon.send_request(self, GPS.FUNCTION_GET_BATTERY_VOLTAGE, (), '', 'H')
-
     def restart(self, restart_type):
         """
         Restarts the GPS Bricklet, the following restart types are available:
@@ -150,7 +141,7 @@ class GPS(Device):
          :header: "Value", "Description"
          :widths: 10, 100
         
-         "0", "Hot start (use all available data in the nv store)"
+         "0", "Hot start (use all available data in the NV store)"
          "1", "Warm start (don't use ephemeris at restart)"
          "2", "Cold start (don't use time, position, almanacs and ephemeris at restart)"
          "3", "Factory reset (clear all system/user configurations at restart)"

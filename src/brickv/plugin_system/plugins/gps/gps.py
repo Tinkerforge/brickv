@@ -87,10 +87,6 @@ class GPS(PluginBase, Ui_GPS):
         self.last_vdop = 0
         self.last_epe = 0
 
-        self.voltage_timer = QTimer()
-        self.voltage_timer.timeout.connect(self.update_voltage)
-        self.voltage_timer.setInterval(10)
-
     def show_pos_pressed(self):
         if self.had_fix:
             google_str = self.last_ns + self.make_dd_dddddd(self.last_lat) + ' ' + self.last_ew + self.make_dd_dddddd(self.last_long)
@@ -141,17 +137,12 @@ class GPS(PluginBase, Ui_GPS):
         self.gps.set_motion_callback_period(250)
         self.gps.set_date_time_callback_period(250)
 
-        self.update_voltage()
-        self.voltage_timer.start()
-
     def stop(self):
         self.gps.set_coordinates_callback_period(0)
         self.gps.set_status_callback_period(0)
         self.gps.set_altitude_callback_period(0)
         self.gps.set_motion_callback_period(0)
         self.gps.set_date_time_callback_period(0)
-
-        self.voltage_timer.stop()
 
     @staticmethod
     def has_name(name):
@@ -293,10 +284,3 @@ class GPS(PluginBase, Ui_GPS):
             date_str = "Unknown"
 
         self.time.setText(date_str)
-
-    def update_voltage(self):
-        try:
-            bv = self.gps.get_battery_voltage()
-            self.voltage.setText('%.2f V' % (bv/1000.0))
-        except ip_connection.Error:
-            pass
