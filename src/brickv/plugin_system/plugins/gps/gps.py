@@ -85,10 +85,6 @@ class GPS(PluginBase, Ui_GPS):
         self.last_vdop = 0
         self.last_epe = 0
 
-        self.voltage_timer = QTimer()
-        self.voltage_timer.timeout.connect(self.update_voltage)
-        self.voltage_timer.setInterval(10)
-
     def show_pos_pressed(self):
         if self.had_fix:
             google_str = self.last_ns + self.make_dd_dddddd(self.last_lat) + ' ' + self.last_ew + self.make_dd_dddddd(self.last_long)
@@ -138,9 +134,6 @@ class GPS(PluginBase, Ui_GPS):
         async_call(self.gps.set_altitude_callback_period, 250, None, self.increase_error_count)
         async_call(self.gps.set_motion_callback_period, 250, None, self.increase_error_count)
         async_call(self.gps.set_date_time_callback_period, 250, None, self.increase_error_count)
-        
-        self.update_voltage()
-        self.voltage_timer.start()
 
     def stop(self):
         async_call(self.gps.set_coordinates_callback_period, 0, None, self.increase_error_count)
@@ -148,8 +141,6 @@ class GPS(PluginBase, Ui_GPS):
         async_call(self.gps.set_altitude_callback_period, 0, None, self.increase_error_count)
         async_call(self.gps.set_motion_callback_period, 0, None, self.increase_error_count)
         async_call(self.gps.set_date_time_callback_period, 0, None, self.increase_error_count)
-
-        self.voltage_timer.stop()
 
     def get_url_part(self):
         return 'gps'
@@ -294,9 +285,3 @@ class GPS(PluginBase, Ui_GPS):
             date_str = "Unknown"
 
         self.time.setText(date_str)
-
-    def update_voltage_async(self, bv):
-        self.voltage.setText('%.2f V' % (bv/1000.0))
-
-    def update_voltage(self):
-        async_call(self.gps.get_battery_voltage, None, self.update_voltage_async, self.increase_error_count)

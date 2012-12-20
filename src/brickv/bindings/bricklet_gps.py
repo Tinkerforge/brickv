@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-12-14.      #
+# This file was automatically generated on 2012-12-20.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -34,29 +34,28 @@ class BrickletGPS(Device):
 
     DEVICE_IDENTIFIER = 222
 
-    CALLBACK_COORDINATES = 18
-    CALLBACK_STATUS = 19
-    CALLBACK_ALTITUDE = 20
-    CALLBACK_MOTION = 21
-    CALLBACK_DATE_TIME = 22
+    CALLBACK_COORDINATES = 17
+    CALLBACK_STATUS = 18
+    CALLBACK_ALTITUDE = 19
+    CALLBACK_MOTION = 20
+    CALLBACK_DATE_TIME = 21
 
     FUNCTION_GET_COORDINATES = 1
     FUNCTION_GET_STATUS = 2
     FUNCTION_GET_ALTITUDE = 3
     FUNCTION_GET_MOTION = 4
     FUNCTION_GET_DATE_TIME = 5
-    FUNCTION_GET_BATTERY_VOLTAGE = 6
-    FUNCTION_RESTART = 7
-    FUNCTION_SET_COORDINATES_CALLBACK_PERIOD = 8
-    FUNCTION_GET_COORDINATES_CALLBACK_PERIOD = 9
-    FUNCTION_SET_STATUS_CALLBACK_PERIOD = 10
-    FUNCTION_GET_STATUS_CALLBACK_PERIOD = 11
-    FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD = 12
-    FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD = 13
-    FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD = 14
-    FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD = 15
-    FUNCTION_SET_MOTION_CALLBACK_PERIOD = 16
-    FUNCTION_GET_MOTION_CALLBACK_PERIOD = 17
+    FUNCTION_RESTART = 6
+    FUNCTION_SET_COORDINATES_CALLBACK_PERIOD = 7
+    FUNCTION_GET_COORDINATES_CALLBACK_PERIOD = 8
+    FUNCTION_SET_STATUS_CALLBACK_PERIOD = 9
+    FUNCTION_GET_STATUS_CALLBACK_PERIOD = 10
+    FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD = 11
+    FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD = 12
+    FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD = 13
+    FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD = 14
+    FUNCTION_SET_MOTION_CALLBACK_PERIOD = 15
+    FUNCTION_GET_MOTION_CALLBACK_PERIOD = 16
     FUNCTION_GET_IDENTITY = 255
 
     def __init__(self, uid, ipcon):
@@ -73,7 +72,6 @@ class BrickletGPS(Device):
         self.response_expected[BrickletGPS.FUNCTION_GET_ALTITUDE] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPS.FUNCTION_GET_MOTION] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPS.FUNCTION_GET_DATE_TIME] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletGPS.FUNCTION_GET_BATTERY_VOLTAGE] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPS.FUNCTION_RESTART] = BrickletGPS.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletGPS.FUNCTION_SET_COORDINATES_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletGPS.FUNCTION_GET_COORDINATES_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -127,12 +125,6 @@ class BrickletGPS(Device):
         
         """
         return GetDateTime(*self.ipcon.send_request(self, BrickletGPS.FUNCTION_GET_DATE_TIME, (), '', 'I I'))
-
-    def get_battery_voltage(self):
-        """
-        
-        """
-        return self.ipcon.send_request(self, BrickletGPS.FUNCTION_GET_BATTERY_VOLTAGE, (), '', 'H')
 
     def restart(self, restart_type):
         """
