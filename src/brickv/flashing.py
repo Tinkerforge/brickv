@@ -217,8 +217,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
                     if name == '..':
                         continue
-
-                    if name.startswith('lcd_'):
+                    elif name in ['gps']:
+                        name = name.upper()
+                    elif name.startswith('lcd_'):
                         name = name.replace('lcd_', 'LCD_')
                     elif name.startswith('io'):
                         name = name.replace('io', 'IO-')
