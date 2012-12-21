@@ -2,13 +2,21 @@
 
 # brickv config
 
-import logging
+import sys
+from config_common import *
 
-LOGGING_LEVEL = logging.ERROR
-LOGGING_FORMAT = "%(asctime)s <%(levelname)s> <%(filename)s:%(lineno)s> %(message)s"
-LOGGING_DATEFMT = "%Y-%m-%d %H:%M:%S"
+def get_host(): return DEFAULT_HOST
+def set_host(host): pass
+def get_host_history(size): return []
+def set_host_history(history): pass
+def get_port(): return DEFAULT_PORT
+def set_port(port): pass
 
-BRICKV_VERSION = "2.0.0"
-
-DEFAULT_HOST = "localhost"
-DEFAULT_PORT = 4223
+if sys.platform.startswith('linux') or sys.platform.startswith('freebsd'):
+    from config_linux import *
+elif sys.platform == 'darwin':
+    from config_macosx import *
+elif sys.platform == 'win32':
+    from config_windows import *
+else:
+    print "Unsupported platform: " + sys.platform

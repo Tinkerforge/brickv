@@ -33,28 +33,13 @@ from async_call import async_start_thread
 
 from bindings.brick_master import BrickMaster
 
+import config
 import infos
 import signal
 import sys
 import time
 
 HOST_HISTORY_SIZE = 5
-
-if sys.platform.startswith('linux') or sys.platform.startswith('freebsd'):
-    import config_linux as config
-elif sys.platform == 'darwin':
-    import config_macosx as config
-elif sys.platform == 'win32':
-    import config_windows as config
-else:
-    print "Unsupported platform: " + sys.platform
-    import config
-    def get_host(): return config.DEFAULT_HOST
-    def set_host(host): pass
-    def get_host_history(size): return []
-    def set_host_history(history): pass
-    def get_port(): return config.DEFAULT_PORT
-    def set_port(port): pass
 
 class MainTableModel(QAbstractTableModel):
     def __init__(self, header, data, parent=None, *args):

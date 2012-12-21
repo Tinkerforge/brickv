@@ -996,7 +996,6 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 versions = get_tools_versions(BRICKV_URL, 'brickv')
                 if len(versions) >= 1:
                     brickv_info.firmware_version_latest = versions[-1]
-                    brickv_info.firmware_version_installed = tuple(map(int, self.config.BRICKV_VERSION.split('.')))
             except urllib2.URLError:
                 pass
         progress.setValue(progress.value() + 1)

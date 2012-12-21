@@ -21,6 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import config
+
 UID_BRICKV = '$BRICKV'
 UID_BRICKD = '$BRICKD'
     
@@ -31,8 +33,7 @@ class AbstractInfo(object):
     name = ''
     firmware_version_installed = (0, 0, 0)
     firmware_version_latest = (0, 0, 0)
-    
-    
+
 class ToolInfo(AbstractInfo):
     type = 'tool'
     
@@ -118,4 +119,5 @@ class BrickMasterInfo(BrickInfo):
 if not 'infos' in globals():
     infos = {UID_BRICKV: ToolInfo(), UID_BRICKD: ToolInfo()}
     infos[UID_BRICKV].name = 'Brick Viewer'
+    infos[UID_BRICKV].firmware_version_installed = tuple(map(int, config.BRICKV_VERSION.split('.')))
     infos[UID_BRICKD].name = 'Brick Daemon'
