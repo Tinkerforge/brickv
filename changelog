@@ -64,3 +64,4 @@
         Improve monoflop handling for Industrial Bricklets
 1.1.15: Add support for the 4th button of the LCD 20x4 Bricklet v1.2
 1.1.16: Add plugin for Voltage/Current Bricklet and GPS Bricklet
+1.1.17: Downgrade packaged Qt to 4.7 on Mac OS X to fix a graph rendering problem
