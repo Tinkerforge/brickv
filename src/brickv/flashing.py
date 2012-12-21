@@ -41,16 +41,16 @@ import struct
 from xml.etree.ElementTree import fromstring as etreefromstring
 from serial import SerialException
 
-FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
+FIRMWARE_URL = 'http://download.tinkerforge.com/protocol_v2_beta/firmwares/'
 
 check_for_brickv_update = True
 
 if sys.platform.startswith('linux'):
-    BRICKV_URL = 'http://download.tinkerforge.com/tools/brickv/linux/'
+    BRICKV_URL = 'http://download.tinkerforge.com/protocol_v2_beta/tools/brickv/linux/'
 elif sys.platform == 'darwin':
-    BRICKV_URL = 'http://download.tinkerforge.com/tools/brickv/macos/'
+    BRICKV_URL = 'http://download.tinkerforge.com/protocol_v2_beta/tools/brickv/macos/'
 elif sys.platform == 'win32':
-    BRICKV_URL = 'http://download.tinkerforge.com/tools/brickv/windows/'
+    BRICKV_URL = 'http://download.tinkerforge.com/protocol_v2_beta/tools/brickv/windows/'
 elif sys.platform.startswith('freebsd'):
     check_for_brickv_update = False
     BRICKV_URL = 'http://freshports.org/devel/brickv/'
@@ -60,7 +60,7 @@ else:
 
 SELECT = 'Select...'
 CUSTOM = 'Custom...'
-FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
+FIRMWARE_URL = 'http://download.tinkerforge.com/protocol_v2_beta/firmwares/'
 IMU_CALIBRATION_URL = 'http://download.tinkerforge.com/imu_calibration/'
 NO_BRICK = 'No Brick found'
 NO_BOOTLOADER = 'No Brick in Bootloader found' 
@@ -146,7 +146,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 if url_part == '..':
                     continue
 
-                m = re.match(prefix + '_firmware_(\d+)_(\d+)_(\d+)\.bin', url_part)
+                m = re.match(prefix + '_firmware_(\d+)_(\d+)_(\d+)(?:_beta\d+)?\.bin', url_part)
 
                 if m is None:
                     continue
@@ -470,8 +470,27 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             progress.setValue(0)
             progress.show()
 
+            response = None
+
             try:
                 response = urllib2.urlopen(FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version))
+            except urllib2.URLError:
+                pass
+
+            beta = 5
+
+            while response is None and beta > 0:
+                try:
+                    response = urllib2.urlopen(FIRMWARE_URL + 'bricks/{0}/brick_{0}_firmware_{2}_{3}_{4}_beta{1}.bin'.format(url_part, beta, *version))
+                except urllib2.URLError:
+                    beta -= 1
+
+            if response is None:
+                progress.cancel()
+                self.popup_fail('Brick', 'Could not download {0} Brick firmware {1}.{2}.{3}'.format(name, *version))
+                return
+
+            try:
                 length = int(response.headers['Content-Length'])
                 progress.setMaximum(length)
                 progress.setValue(0)
@@ -652,8 +671,28 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         progress.setMaximum(0)
         progress.show()
 
+        response = None
+
         try:
             response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{1}_{2}_{3}.bin'.format(url_part, *version))
+        except urllib2.URLError:
+            pass
+
+        beta = 5
+
+        while response is None and beta > 0:
+            try:
+                response = urllib2.urlopen(FIRMWARE_URL + 'bricklets/{0}/bricklet_{0}_firmware_{2}_{3}_{4}_beta{1}.bin'.format(url_part, beta, *version))
+            except urllib2.URLError:
+                beta -= 1
+
+        if response is None:
+            progress.cancel()
+            if popup:
+                self.popup_fail('Bricklet', 'Could not download {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
+            return None
+
+        try:
             length = int(response.headers['Content-Length'])
             progress.setMaximum(length)
             progress.setValue(0)
@@ -933,7 +972,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 if url_part == '..':
                     continue
 
-                m = re.match(prefix + '_firmware_(\d+)_(\d+)_(\d+)\.bin', url_part)
+                m = re.match(prefix + '_firmware_(\d+)_(\d+)_(\d+)(?:_beta\d+)?\.bin', url_part)
 
                 if m is None:
                     continue
@@ -958,11 +997,11 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                     continue
 
                 if sys.platform.startswith('linux'):
-                    m = re.match(tool + '-(\d+).(\d+).(\d+)_all\.deb', url_part)
+                    m = re.match(tool + '-(\d+).(\d+).(\d+)(?:_beta\d+)?(?:_amd64|i386)\.deb', url_part)
                 elif sys.platform == 'darwin':
-                    m = re.match(tool + '_macos_(\d+)_(\d+)_(\d+)\.dmg', url_part)
+                    m = re.match(tool + '_macos_(\d+)_(\d+)_(\d+)(?:_beta\d+)?\.dmg', url_part)
                 elif sys.platform == 'win32':
-                    m = re.match(tool + '_windows_(\d+)_(\d+)_(\d+)\.exe', url_part)
+                    m = re.match(tool + '_windows_(\d+)_(\d+)_(\d+)(?:_beta\d+)?\.exe', url_part)
 
                 if m is None:
                     continue
