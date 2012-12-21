@@ -36,6 +36,7 @@ from bindings.brick_master import BrickMaster
 import infos
 import signal
 import sys
+import time
 
 HOST_HISTORY_SIZE = 5
 
@@ -112,6 +113,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.name = '<unknown>'
         self.uid = '<unknown>'
         self.version = [0, 0, 0]
+
+        self.disconnect_times = []
 
         self.qtcb_enumerate.connect(self.cb_enumerate)
         self.qtcb_connected.connect(self.cb_connected)
@@ -418,6 +421,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.connect.setText("Disconnect")
 
         if connect_reason == IPConnection.CONNECT_REASON_REQUEST:
+            self.ipcon.set_auto_reconnect(True)
             self.combo_host.setDisabled(True)
             self.spinbox_port.setDisabled(True)
 
@@ -429,21 +433,39 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             while self.combo_host.count() > HOST_HISTORY_SIZE:
                 self.combo_host.removeItem(self.combo_host.count() - 1)
+
+            self.ipcon.enumerate()
         elif connect_reason == IPConnection.CONNECT_REASON_AUTO_RECONNECT:
+            self.ipcon.enumerate()
+
             QMessageBox.information(self, 'Connection',
                                     'Successfully reconnected!',
                                     QMessageBox.Ok)
-
-        self.ipcon.enumerate()
+        else:
+            self.ipcon.enumerate()
 
     def cb_disconnected(self, disconnect_reason):
-        if disconnect_reason == IPConnection.DISCONNECT_REASON_REQUEST:
+        if disconnect_reason == IPConnection.DISCONNECT_REASON_REQUEST or not self.ipcon.get_auto_reconnect():
             self.connect.setText('Connect')
             self.button_advanced.setDisabled(True)
             self.combo_host.setDisabled(False)
             self.spinbox_port.setDisabled(False)
+        elif len(self.disconnect_times) >= 3 and self.disconnect_times[-3] < time.time() + 1:
+            self.disconnect_times = []
+            self.ipcon.set_auto_reconnect(False)
+
+            self.connect.setText('Connect')
+            self.button_advanced.setDisabled(True)
+            self.combo_host.setDisabled(False)
+            self.spinbox_port.setDisabled(False)
+
+            QMessageBox.critical(self, 'Connection',
+                                 'Stopped automatic reconnecting due to multiple connection errors in a row.',
+                                 QMessageBox.Ok)
         else:
-            self.connect.setText('Abort Automatic Reconnect')
+            self.disconnect_times.append(time.time())
+
+            self.connect.setText('Abort Automatic Reconnecting')
 
             if disconnect_reason == IPConnection.DISCONNECT_REASON_ERROR:
                 QMessageBox.critical(self, 'Connection',
