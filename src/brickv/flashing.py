@@ -810,14 +810,13 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         if len(file_name) > 0:
             self.edit_custom_plugin.setText(file_name)
 
-
-# Updates tab
-
+    # Updates tab
     def update_bricklets(self):
         def brick_for_bricklet(bricklet):
             for device_info in infos.infos.values():
                 if device_info.type == 'brick':
-                    if device_info.bricklets[bricklet.position] == bricklet:
+                    if bricklet.position in device_info.bricklets and \
+                       device_info.bricklets[bricklet.position] == bricklet:
                         return device_info
 
         progress = self.create_progress_bar('Flashing')
@@ -826,7 +825,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         
         for device_info in infos.infos.values():
             if device_info.type == 'bricklet':
-                if device_info.protocol_version == 2:
+                if device_info.protocol_version == 2 and device_info.firmware_version_installed < device_info.firmware_version_latest:
                     plugin = self.download_bricklet_firmware(progress, device_info.url_part, device_info.name, device_info.firmware_version_latest)
                     if plugin:
                         brick = brick_for_bricklet(device_info)
@@ -843,7 +842,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             elif device_info.type == 'brick':
                 for port in device_info.bricklets:
                     if device_info.bricklets[port]:
-                        if device_info.bricklets[port].protocol_version == 1:
+                        if device_info.bricklets[port].protocol_version == 1 and device_info.bricklets[port].firmware_version_installed < device_info.bricklets[port].firmware_version_latest:
                             plugin = self.download_bricklet_firmware(progress, device_info.bricklets[port].url_part, device_info.bricklets[port].name, device_info.bricklets[port].firmware_version_latest)
                             if plugin:
                                 brick = brick_for_bricklet(device_info.bricklets[port])
@@ -878,7 +877,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         
     def update_refresh(self):
         url_part_proto1_map = {
-#            'name': 'url_part'
+            # 'name': 'url_part'
             'Analog In Bricklet': 'analog_in',
             'Ambient Light Bricklet': 'ambient_light',
             'Analog Out Bricklet': 'analog_out',
@@ -902,8 +901,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             'Temperature Bricklet': 'temperature',
             'Temperature IR Bricklet': 'temperature_ir',
             'Voltage Bricklet': 'voltage',
+            'Voltage/Current Bricklet': 'voltage_current',
         }
-                    
+
         progress = self.create_progress_bar('Discovering')
 
         try:
