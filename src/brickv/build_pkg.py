@@ -242,7 +242,7 @@ def build_windows_pkg():
     
     data_files.append( ( os.path.join('.') , [os.path.join('.', 'brickv-icon.png')] ) )
 
-    additional_modules = []
+    additional_modules = ['bmp_to_pixmap']
     for f in os.listdir('bindings'):
         if f.endswith('.py'):
             additional_modules.append('bindings.' + f[:-3])
