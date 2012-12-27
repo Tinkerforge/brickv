@@ -27,10 +27,7 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton
 from PyQt4.QtCore import Qt, pyqtSignal, QTimer
 
 from ui_dual_relay import Ui_DualRelay
-from relay_a1_pixmap import get_relay_a1_pixmap
-from relay_a2_pixmap import get_relay_a2_pixmap
-from relay_b1_pixmap import get_relay_b1_pixmap
-from relay_b2_pixmap import get_relay_b2_pixmap
+from bmp_to_pixmap import bmp_to_pixmap
 
 from bindings import bricklet_dual_relay
         
@@ -64,10 +61,10 @@ class DualRelay(PluginBase, Ui_DualRelay):
         self.r1_timebefore = 500
         self.r2_timebefore = 500
         
-        self.a1_pixmap = get_relay_a1_pixmap()
-        self.a2_pixmap = get_relay_a2_pixmap()
-        self.b1_pixmap = get_relay_b1_pixmap()
-        self.b2_pixmap = get_relay_b2_pixmap()
+        self.a1_pixmap = bmp_to_pixmap('plugin_system/plugins/dual_relay/relay_a1.bmp')
+        self.a2_pixmap = bmp_to_pixmap('plugin_system/plugins/dual_relay/relay_a2.bmp')
+        self.b1_pixmap = bmp_to_pixmap('plugin_system/plugins/dual_relay/relay_b1.bmp')
+        self.b2_pixmap = bmp_to_pixmap('plugin_system/plugins/dual_relay/relay_b2.bmp')
 
         try:
             dr1, dr2 = self.dr.get_state()
