@@ -938,7 +938,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             'Linear Poti Bricklet': 'linear_poti',
             'Rotary Poti Bricklet': 'rotary_poti',
             'Temperature Bricklet': 'temperature',
-            'Temperature IR Bricklet': 'temperature_ir',
+            'Temperature-IR Bricklet': 'temperature_ir',
             'Voltage Bricklet': 'voltage',
             'Voltage/Current Bricklet': 'voltage_current',
         }
