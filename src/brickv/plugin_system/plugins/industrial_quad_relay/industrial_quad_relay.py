@@ -28,8 +28,7 @@ from async_call import async_call
 from PyQt4.QtCore import Qt, pyqtSignal, QTimer
 
 from ui_industrial_quad_relay import Ui_IndustrialQuadRelay
-from relay_open_pixmap import get_relay_open_pixmap
-from relay_close_pixmap import get_relay_close_pixmap
+from bmp_to_pixmap import bmp_to_pixmap
 
 class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
     qtcb_monoflop = pyqtSignal(int, int)
@@ -41,8 +40,8 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         
         self.iqr = BrickletIndustrialQuadRelay(uid, ipcon)
         
-        self.open_pixmap = get_relay_open_pixmap()
-        self.close_pixmap = get_relay_close_pixmap()
+        self.open_pixmap = bmp_to_pixmap('plugin_system/plugins/industrial_quad_relay/relay_open.bmp')
+        self.close_pixmap = bmp_to_pixmap('plugin_system/plugins/industrial_quad_relay/relay_close.bmp')
         
         self.relay_buttons = [self.b0, self.b1, self.b2, self.b3, self.b4, self.b5, self.b6, self.b7, self.b8, self.b9, self.b10, self.b11, self.b12, self.b13, self.b14, self.b15]
         self.relay_button_icons = [self.b0_icon, self.b1_icon, self.b2_icon, self.b3_icon, self.b4_icon, self.b5_icon, self.b6_icon, self.b7_icon, self.b8_icon, self.b9_icon, self.b10_icon, self.b11_icon, self.b12_icon, self.b13_icon, self.b14_icon, self.b15_icon]
