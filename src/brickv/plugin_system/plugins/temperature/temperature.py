@@ -48,7 +48,6 @@ class Temperature(PluginBase):
                                    self.qtcb_temperature.emit) 
         
         self.temperature_label = TemperatureLabel()
-        self.cb_temperature(self.tem.get_temperature())
         
         self.current_value = None
         
