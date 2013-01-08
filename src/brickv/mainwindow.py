@@ -343,7 +343,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if device.type == 'bricklet':
                     if info.type == 'brick':
                         if uid == device.connected_uid:
-                            info.bricklets[position] = device
+                            info.bricklets[device.position] = device
                             
             info.uid = uid
             info.connected_uid = connected_uid
