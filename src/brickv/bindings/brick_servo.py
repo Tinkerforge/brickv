@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-12-19.      #
+# This file was automatically generated on 2013-01-09.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -98,7 +98,7 @@ class BrickServo(Device):
         self.response_expected[BrickServo.FUNCTION_GET_OVERALL_CURRENT] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickServo.FUNCTION_GET_STACK_INPUT_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickServo.FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickServo.FUNCTION_SET_MINIMUM_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickServo.FUNCTION_SET_MINIMUM_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickServo.FUNCTION_GET_MINIMUM_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickServo.CALLBACK_UNDER_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickServo.CALLBACK_POSITION_REACHED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -423,18 +423,16 @@ class BrickServo(Device):
         The device identifiers are:
         
         .. csv-table::
-         :header: "Device Identifier", "Device"
-         :widths: 10, 100
+         :header: "Device Identifier", "Device Name"
+         :widths: 30, 100
         
          "11", "Brick DC"
-         "12", "Brick Debug"
-         "13", "Brick Master 2.0"
+         "13", "Brick Master"
          "14", "Brick Servo"
          "15", "Brick Stepper"
          "16", "Brick IMU"
          "", ""
          "21", "Bricklet Ambient Light"
-         "22", "Bricklet Breakout"
          "23", "Bricklet Current12"
          "24", "Bricklet Current25"
          "25", "Bricklet Distance IR"

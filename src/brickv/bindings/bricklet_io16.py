@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-12-19.      #
+# This file was automatically generated on 2013-01-09.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -59,9 +59,9 @@ class BrickletIO16(Device):
         self.response_expected[BrickletIO16.FUNCTION_GET_PORT] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO16.FUNCTION_SET_PORT_CONFIGURATION] = BrickletIO16.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIO16.FUNCTION_GET_PORT_CONFIGURATION] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletIO16.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletIO16.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO16.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletIO16.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletIO16.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletIO16.FUNCTION_SET_PORT_INTERRUPT] = BrickletIO16.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO16.FUNCTION_SET_PORT_INTERRUPT] = BrickletIO16.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletIO16.FUNCTION_GET_PORT_INTERRUPT] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO16.CALLBACK_INTERRUPT] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletIO16.FUNCTION_SET_PORT_MONOFLOP] = BrickletIO16.RESPONSE_EXPECTED_FALSE
@@ -215,12 +215,12 @@ class BrickletIO16(Device):
         The device identifiers are:
         
         .. csv-table::
-         :header: "Device Identifier", "Device"
-         :widths: 10, 100
+         :header: "Device Identifier", "Device Name"
+         :widths: 30, 100
         
          "11", "Brick DC"
          "12", "Brick Debug"
-         "13", "Brick Master 2.0"
+         "13", "Brick Master"
          "14", "Brick Servo"
          "15", "Brick Stepper"
          "16", "Brick IMU"

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-12-20.      #
+# This file was automatically generated on 2013-01-09.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -73,15 +73,15 @@ class BrickletGPS(Device):
         self.response_expected[BrickletGPS.FUNCTION_GET_MOTION] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPS.FUNCTION_GET_DATE_TIME] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPS.FUNCTION_RESTART] = BrickletGPS.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletGPS.FUNCTION_SET_COORDINATES_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPS.FUNCTION_SET_COORDINATES_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletGPS.FUNCTION_GET_COORDINATES_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletGPS.FUNCTION_SET_STATUS_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPS.FUNCTION_SET_STATUS_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletGPS.FUNCTION_GET_STATUS_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletGPS.FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPS.FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletGPS.FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletGPS.FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPS.FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletGPS.FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletGPS.FUNCTION_SET_MOTION_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletGPS.FUNCTION_SET_MOTION_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletGPS.FUNCTION_GET_MOTION_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPS.CALLBACK_COORDINATES] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletGPS.CALLBACK_STATUS] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -99,19 +99,23 @@ class BrickletGPS(Device):
     def get_coordinates(self):
         """
         Returns the GPS coordinates. Latitude and longitude are given in the
-        DD.dddddd° format. The parameter ns and ew are the cardinal directions for
-        latitude and logitude. Possible values for ns and ew are 'N', 'S', 'E'
+        DD.dddddd° format, the value 57123468 means 57.123468°.
+        The parameter ns and ew are the cardinal directions for
+        latitude and longitude. Possible values for ns and ew are 'N', 'S', 'E'
         and 'W' (north, south, east and west).
         
         PDOP, HDOP and VDOP are the dilution of precision (DOP) values. They specify
         the additional multiplicative effect of GPS satellite geometry on GPS 
         precision. See 
         `here <http://en.wikipedia.org/wiki/Dilution_of_precision_(GPS)>`__
-        for more information. The values are give in hundreths.
+        for more information. The values are give in hundredths.
         
         EPE is the "Estimated Position Error". The EPE is given in cm. This is not the
         absolute maximum error, it is the error with a specific confidence. See
         `here <http://www.nps.gov/gis/gps/WhatisEPE.html>`__ for more information.
+        
+        This data is only valid if there is currently a fix as indicated by
+        :func:`GetStatus`.
         """
         return GetCoordinates(*self.ipcon.send_request(self, BrickletGPS.FUNCTION_GET_COORDINATES, (), '', 'I c I c H H H H'))
 
@@ -137,16 +141,23 @@ class BrickletGPS(Device):
         Returns the current altitude and corresponding geoidal separation.
         
         Both values are given in cm.
+        
+        This data is only valid if there is currently a fix as indicated by
+        :func:`GetStatus`.
         """
         return GetAltitude(*self.ipcon.send_request(self, BrickletGPS.FUNCTION_GET_ALTITUDE, (), '', 'I I'))
 
     def get_motion(self):
         """
-        Returns the current course and speed. Course is given in hundreths degree
-        and speed is given in hundreths km/h.
+        Returns the current course and speed. Course is given in hundredths degree
+        and speed is given in hundredths km/h. A course of 0° means the Bricklet is
+        traveling north bound and 90° means it is traveling east bound.
         
         Please note that this only returns useful values if an actual movement
         is present.
+        
+        This data is only valid if there is currently a fix as indicated by
+        :func:`GetStatus`.
         """
         return GetMotion(*self.ipcon.send_request(self, BrickletGPS.FUNCTION_GET_MOTION, (), '', 'I I'))
 
@@ -154,7 +165,8 @@ class BrickletGPS(Device):
         """
         Returns the current date and time. The date is
         given in the format ddmmyy and the time is given
-        in the format hhmmss.sss
+        in the format hhmmss.sss. For example, 140713 means
+        14.05.13 as date and 195923568 means 19:59:23.568 as time.
         """
         return GetDateTime(*self.ipcon.send_request(self, BrickletGPS.FUNCTION_GET_DATE_TIME, (), '', 'I I'))
 
@@ -274,12 +286,12 @@ class BrickletGPS(Device):
         The device identifiers are:
         
         .. csv-table::
-         :header: "Device Identifier", "Device"
-         :widths: 10, 100
+         :header: "Device Identifier", "Device Name"
+         :widths: 30, 100
         
          "11", "Brick DC"
          "12", "Brick Debug"
-         "13", "Brick Master 2.0"
+         "13", "Brick Master"
          "14", "Brick Servo"
          "15", "Brick Stepper"
          "16", "Brick IMU"

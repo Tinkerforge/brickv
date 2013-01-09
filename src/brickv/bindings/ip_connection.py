@@ -92,21 +92,26 @@ class Device:
     RESPONSE_EXPECTED_TRUE = 3 # setter
     RESPONSE_EXPECTED_FALSE = 4 # setter, default
 
-    def __init__(self, uid_str, ipcon):
-        uid = base58decode(uid_str)
+    def __init__(self, uid, ipcon):
+        """
+        Creates the device object with the unique device ID *uid* and adds
+        it to the IPConnection *ipcon*.
+        """
 
-        if uid > 0xFFFFFFFF:
+        uid_ = base58decode(uid)
+
+        if uid_ > 0xFFFFFFFF:
             # convert from 64bit to 32bit
-            value1 = uid & 0xFFFFFFFF
-            value2 = (uid >> 32) & 0xFFFFFFFF
+            value1 = uid_ & 0xFFFFFFFF
+            value2 = (uid_ >> 32) & 0xFFFFFFFF
 
-            uid  = (value1 & 0x3F000000) << 2
-            uid |= (value1 & 0x000F0000) << 6
-            uid |= (value1 & 0x0000003F) << 16
-            uid |= (value2 & 0x0F000000) >> 12
-            uid |= (value2 & 0x00000FFF)
+            uid_  = (value1 & 0x00000FFF)
+            uid_ |= (value1 & 0x0F000000) >> 12
+            uid_ |= (value2 & 0x0000003F) << 16
+            uid_ |= (value2 & 0x000F0000) << 6
+            uid_ |= (value2 & 0x3F000000) << 2
 
-        self.uid = uid
+        self.uid = uid_
         self.ipcon = ipcon
         self.api_version = (0, 0, 0)
         self.registered_callbacks = {}
@@ -127,15 +132,56 @@ class Device:
         self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_FALSE
         self.response_expected[IPConnection.CALLBACK_ENUMERATE] = Device.RESPONSE_EXPECTED_ALWAYS_FALSE
 
-        ipcon.devices[self.uid] = self # FIXME: should use a weakref here
+        ipcon.devices[self.uid] = self # FIXME: use a weakref here
 
     def get_api_version(self):
         """
-        Returns API version [major, minor, revision] used for this device.
+        Returns the API version (major, minor, revision) of the bindings for
+        this device.
         """
+
         return self.api_version
 
+    def get_response_expected(self, function_id):
+        """
+        Returns the response expected flag for the function specified by the
+        *function_id* parameter. It is *true* if the function is expected to
+        send a response, *false* otherwise.
+
+        For getter functions this is enabled by default and cannot be disabled,
+        because those functions will always send a response. For callback
+        configuration functions it is enabled by default too, but can be
+        disabled via the set_response_expected function. For setter functions
+        it is disabled by default and can be enabled.
+
+        Enabling the response expected flag for a setter function allows to
+        detect timeouts and other error conditions calls of this setter as
+        well. The device will then send a response for this purpose. If this
+        flag is disabled for a setter function then no response is send and
+        errors are silently ignored, because they cannot be detected.
+        """
+
+        if self.response_expected[function_id] == Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID or \
+           function_id >= len(self.response_expected):
+            raise ValueError('Invalid function ID {0}'.format(function_id))
+
+        return self.response_expected[function_id] in [Device.RESPONSE_EXPECTED_ALWAYS_TRUE, Device.RESPONSE_EXPECTED_TRUE]
+
     def set_response_expected(self, function_id, response_expected):
+        """
+        Changes the response expected flag of the function specified by the
+        *function_id* parameter. This flag can only be changed for setter
+        (default value: *false*) and callback configuration functions
+        (default value: *true*). For getter functions it is always enabled
+        and callbacks it is always disabled.
+
+        Enabling the response expected flag for a setter function allows to
+        detect timeouts and other error conditions calls of this setter as
+        well. The device will then send a response for this purpose. If this
+        flag is disabled for a setter function then no response is send and
+        errors are silently ignored, because they cannot be detected.
+        """
+
         if self.response_expected[function_id] == Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID or \
            function_id >= len(self.response_expected):
             raise ValueError('Invalid function ID {0}'.format(function_id))
@@ -148,14 +194,12 @@ class Device:
         else:
             self.response_expected[function_id] = Device.RESPONSE_EXPECTED_FALSE
 
-    def get_response_expected(self, function_id):
-        if self.response_expected[function_id] == Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID or \
-           function_id >= len(self.response_expected):
-            raise ValueError('Invalid function ID {0}'.format(function_id))
-
-        return self.response_expected[function_id] in [Device.RESPONSE_EXPECTED_ALWAYS_TRUE, Device.RESPONSE_EXPECTED_TRUE]
-
     def set_response_expected_all(self, response_expected):
+        """
+        Changes the response expected flag for all setter and callback
+        configuration functions of this device at once.
+        """
+
         if bool(response_expected):
             flag = Device.RESPONSE_EXPECTED_TRUE
         else:
@@ -208,10 +252,8 @@ class IPConnection:
 
     def __init__(self):
         """
-        Creates an IP connection to the Brick Daemon with the given *host*
-        and *port*. With the IP connection itself it is possible to enumerate
-        the available devices. Other then that it is only used to add Bricks
-        and Bricklets to the connection.
+        Creates an IP Connection object that can be used to enumerate the available
+        devices. It is also required for the constructor of Bricks and Bricklets.
         """
 
         self.host = None
@@ -233,6 +275,18 @@ class IPConnection:
         self.waiter = Semaphore()
 
     def connect(self, host, port):
+        """
+        Creates a TCP/IP connection to the given *host* and *port*. The host
+        and port can point to a Brick Daemon or to a WIFI/Ethernet Extension.
+
+        Devices can only be controlled when the connection was established
+        successfully.
+
+        Blocks until the connection is established and throws an exception if
+        there is no Brick Daemon or WIFI/Ethernet Extension listening at the
+        given host and port.
+        """
+
         with self.socket_lock:
             if self.socket is not None:
                 raise Error(Error.ALREADY_CONNECTED,
@@ -244,6 +298,11 @@ class IPConnection:
             self.connect_unlocked(False)
 
     def disconnect(self):
+        """
+        Disconnects the TCP/IP connection from the Brick Daemon or the
+        WIFI/Ethernet Extension.
+        """
+
         with self.socket_lock:
             self.auto_reconnect_allowed = False
 
@@ -289,6 +348,16 @@ class IPConnection:
             callback_thread.join()
 
     def get_connection_state(self):
+        """
+        Can return the following states:
+
+        - CONNECTION_STATE_DISCONNECTED: No connection is established.
+        - CONNECTION_STATE_CONNECTED: A connection to the Brick Daemon or
+          the WIFI/Ethernet Extension is established.
+        - CONNECTION_STATE_PENDING: IP Connection is currently trying to
+          connect.
+        """
+
         if self.socket is not None:
             return IPConnection.CONNECTION_STATE_CONNECTED
         elif self.auto_reconnect_pending:
@@ -297,6 +366,14 @@ class IPConnection:
             return IPConnection.CONNECTION_STATE_DISCONNECTED
 
     def set_auto_reconnect(self, auto_reconnect):
+        """
+        Enables or disables auto-reconnect. If auto-reconnect is enabled,
+        the IP Connection will try to reconnect to the previously given
+        host and port, if the connection is lost.
+
+        Default value is *True*.
+        """
+
         self.auto_reconnect = bool(auto_reconnect)
 
         if not self.auto_reconnect:
@@ -304,12 +381,20 @@ class IPConnection:
             self.auto_reconnect_allowed = False
 
     def get_auto_reconnect(self):
+        """
+        Returns *true* if auto-reconnect is enabled, *false* otherwise.
+        """
+
         return self.auto_reconnect
 
     def set_timeout(self, timeout):
         """
-        Sets the response timeout in seconds as float.
+        Sets the timeout in seconds for getters and for setters for which the
+        response expected flag is activated.
+
+        Default timeout is 2.5.
         """
+
         timeout = float(timeout)
 
         if timeout < 0:
@@ -319,11 +404,17 @@ class IPConnection:
 
     def get_timeout(self):
         """
-        Returns the response timeout in seconds as float.
+        Returns the timeout as set by set_timeout.
         """
+
         return self.timeout
 
     def enumerate(self):
+        """
+        Broadcasts an enumerate request. All devices will respond with an
+        enumerate callback.
+        """
+
         with self.socket_lock:
             if self.socket is None:
                 raise Error(Error.NOT_CONNECTED, 'Not connected')
@@ -336,15 +427,32 @@ class IPConnection:
                 pass
 
     def wait(self):
+        """
+        Stops the current thread until unwait is called.
+
+        This is useful if you rely solely on callbacks for events, if you want
+        to wait for a specific callback or if the IP Connection was created in
+        a thread.
+
+        Wait and unwait act in the same way as "acquire" and "release" of a
+        semaphore.
+        """
         self.waiter.acquire()
 
     def unwait(self):
+        """
+        Unwaits the thread previously stopped by wait.
+
+        Wait and unwait act in the same way as "acquire" and "release" of
+        a semaphore.
+        """
         self.waiter.release()
 
     def register_callback(self, id, callback):
         """
         Registers a callback with ID *id* to the function *callback*.
         """
+
         self.registered_callbacks[id] = callback
 
     def connect_unlocked(self, is_auto_reconnect):

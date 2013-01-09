@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2012-12-19.      #
+# This file was automatically generated on 2013-01-09.      #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -105,17 +105,17 @@ class BrickIMU(Device):
         self.response_expected[BrickIMU.FUNCTION_GET_CONVERGENCE_SPEED] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_SET_CALIBRATION] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_GET_CALIBRATION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickIMU.FUNCTION_SET_ACCELERATION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_SET_ACCELERATION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_ACCELERATION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickIMU.FUNCTION_SET_MAGNETIC_FIELD_PERIOD] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_SET_MAGNETIC_FIELD_PERIOD] = BrickIMU.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_MAGNETIC_FIELD_PERIOD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickIMU.FUNCTION_SET_ANGULAR_VELOCITY_PERIOD] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_SET_ANGULAR_VELOCITY_PERIOD] = BrickIMU.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_ANGULAR_VELOCITY_PERIOD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickIMU.FUNCTION_SET_ALL_DATA_PERIOD] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_SET_ALL_DATA_PERIOD] = BrickIMU.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_ALL_DATA_PERIOD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickIMU.FUNCTION_SET_ORIENTATION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_SET_ORIENTATION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_ORIENTATION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickIMU.FUNCTION_SET_QUATERNION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_SET_QUATERNION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_QUATERNION_PERIOD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.CALLBACK_ACCELERATION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickIMU.CALLBACK_MAGNETIC_FIELD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -486,18 +486,16 @@ class BrickIMU(Device):
         The device identifiers are:
         
         .. csv-table::
-         :header: "Device Identifier", "Device"
-         :widths: 10, 100
+         :header: "Device Identifier", "Device Name"
+         :widths: 30, 100
         
          "11", "Brick DC"
-         "12", "Brick Debug"
-         "13", "Brick Master 2.0"
+         "13", "Brick Master"
          "14", "Brick Servo"
          "15", "Brick Stepper"
          "16", "Brick IMU"
          "", ""
          "21", "Bricklet Ambient Light"
-         "22", "Bricklet Breakout"
          "23", "Bricklet Current12"
          "24", "Bricklet Current25"
          "25", "Bricklet Distance IR"
