@@ -87,7 +87,7 @@ class GPS(PluginBase, Ui_GPS):
 
     def show_pos_pressed(self):
         if self.had_fix:
-            google_str = self.last_ns + self.make_dd_dddddd(self.last_lat) + ' ' + self.last_ew + self.make_dd_dddddd(self.last_long)
+            google_str = self.last_ns + self.make_dd_dddddd(self.last_lat, True) + '+' + self.last_ew + self.make_dd_dddddd(self.last_long, True)
             QDesktopServices.openUrl(QUrl('https://maps.google.com/maps?q=' + google_str))
         else:
             # :-)
@@ -166,8 +166,11 @@ class GPS(PluginBase, Ui_GPS):
 
         return u'{0}° {1}.{2}’'.format(dd_str, mm_str, mmmmm_str)
 
-    def make_dd_dddddd(self, degree):
-        return u'%2.6f°' % (degree / 1000000.0)
+    def make_dd_dddddd(self, degree, url=False):
+        if url:
+            return '%2.6f' % (degree / 1000000.0)
+        else:
+            return u'%2.6f°' % (degree / 1000000.0)
 
     def make_ddmmss_sss(self, degree):
         dd = degree / 1000000
