@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from ui_flashing import Ui_widget_flashing
-from bindings.ip_connection import IPConnection, base58encode, BASE58
+from bindings.ip_connection import IPConnection, base58encode, BASE58, uid64_to_uid32
 from plugin_system.plugins.imu.calibrate_import_export import parse_imu_calibration
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication, QFrame, QFileDialog, QMessageBox, QProgressDialog, QStandardItemModel, QStandardItem, QBrush
@@ -522,7 +522,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 lock_imu_calibration_pages = True
 
             try:
-                imu_uid = base58encode(samba.read_uid())
+                imu_uid = base58encode(uid64_to_uid32(samba.read_uid64()))
             except SerialException, e:
                 progress.cancel()
                 self.popup_fail('Brick', 'Could read UID of IMU Brick: {0}'.format(str(e)))

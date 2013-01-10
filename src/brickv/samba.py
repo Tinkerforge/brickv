@@ -169,7 +169,7 @@ class SAMBA:
 
         self.current_mode = mode
 
-    def read_uid(self):
+    def read_uid64(self):
         self.write_flash_command(EEFC_FCR_FCMD_STUI, 0)
         self.wait_for_flash_ready(False)
 

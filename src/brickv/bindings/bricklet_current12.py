@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-09.      #
+# This file was automatically generated on 2013-01-10.      #
+#                                                           #
+# Bindings Version 2.0.0                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -267,14 +269,12 @@ class BrickletCurrent12(Device):
          :widths: 30, 100
         
          "11", "Brick DC"
-         "12", "Brick Debug"
          "13", "Brick Master"
          "14", "Brick Servo"
          "15", "Brick Stepper"
          "16", "Brick IMU"
          "", ""
          "21", "Bricklet Ambient Light"
-         "22", "Bricklet Breakout"
          "23", "Bricklet Current12"
          "24", "Bricklet Current25"
          "25", "Bricklet Distance IR"

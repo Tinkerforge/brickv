@@ -69,6 +69,18 @@ def base58decode(encoded):
         column_multiplier *= 58
     return value
 
+def uid64_to_uid32(uid64):
+    value1 = uid64 & 0xFFFFFFFF
+    value2 = (uid64 >> 32) & 0xFFFFFFFF
+
+    uid32  = (value1 & 0x00000FFF)
+    uid32 |= (value1 & 0x0F000000) >> 12
+    uid32 |= (value2 & 0x0000003F) << 16
+    uid32 |= (value2 & 0x000F0000) << 6
+    uid32 |= (value2 & 0x3F000000) << 2
+
+    return uid32
+
 class Error(Exception):
     TIMEOUT = -1
     NOT_ADDED = -6 # obsolete since v2.0
@@ -101,15 +113,7 @@ class Device:
         uid_ = base58decode(uid)
 
         if uid_ > 0xFFFFFFFF:
-            # convert from 64bit to 32bit
-            value1 = uid_ & 0xFFFFFFFF
-            value2 = (uid_ >> 32) & 0xFFFFFFFF
-
-            uid_  = (value1 & 0x00000FFF)
-            uid_ |= (value1 & 0x0F000000) >> 12
-            uid_ |= (value2 & 0x0000003F) << 16
-            uid_ |= (value2 & 0x000F0000) << 6
-            uid_ |= (value2 & 0x3F000000) << 2
+            uid_ = uid64_to_uid32(uid_)
 
         self.uid = uid_
         self.ipcon = ipcon
