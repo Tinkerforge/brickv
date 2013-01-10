@@ -210,7 +210,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.flashing_window is None:
             first = True
-            self.flashing_window = FlashingWindow(self, config)
+            self.flashing_window = FlashingWindow(self)
 
         self.update_flashing_window()
         self.flashing_window.show()
@@ -497,15 +497,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def update_flashing_window(self):
         if self.flashing_window is not None:
-            self.flashing_window.update_flashing_devices()
+            self.flashing_window.update_bricks()
 
     def update_advanced_window(self):
-        devices = []
-        for device_info in infos.infos.values():
-            if device_info.type == 'brick':
-                devices.append(('{0} [{1}]'.format(device_info.name, device_info.uid), device_info.plugin.device))
+        has_brick = False
 
-        self.button_advanced.setEnabled(len(devices) > 0)
+        for info in infos.infos.values():
+            if info.type == 'brick':
+                has_brick = True
+
+        self.button_advanced.setEnabled(has_brick)
 
         if self.advanced_window is not None:
-            self.advanced_window.set_devices(devices)
+            self.advanced_window.update_bricks()

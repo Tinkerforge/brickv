@@ -29,7 +29,6 @@ from plugin_system.plugins.imu.calibrate_import_export import parse_imu_calibrat
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication, QFrame, QFileDialog, QMessageBox, QProgressDialog, QStandardItemModel, QStandardItem, QBrush
 from samba import SAMBA, SAMBAException, get_serial_ports
-
 import infos
 
 import sys
@@ -66,13 +65,13 @@ NO_BRICK = 'No Brick found'
 NO_BOOTLOADER = 'No Brick in Bootloader found' 
 
 class FlashingWindow(QFrame, Ui_widget_flashing):
-    def __init__(self, parent, config):
+    def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
         self.setupUi(self)
         
         self.firmwares = {}
         self.plugins = {}
-        self.devices = []
+        self.brick_infos = []
 
         self.parent = parent
         self.button_serial_port_refresh.pressed.connect(self.refresh_serial_ports)
@@ -81,6 +80,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.button_firmware_browse.pressed.connect(self.firmware_browse_pressed)
         self.button_uid_load.pressed.connect(self.uid_load_pressed)
         self.button_uid_save.pressed.connect(self.uid_save_pressed)
+        self.combo_brick.currentIndexChanged.connect(self.brick_changed)
         self.combo_plugin.currentIndexChanged.connect(self.plugin_changed)
         self.button_plugin_save.pressed.connect(self.plugin_save_pressed)
         self.button_plugin_browse.pressed.connect(self.plugin_browse_pressed)
@@ -94,14 +94,13 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         self.combo_plugin.addItem(CUSTOM)
         self.plugin_changed(0)
+
+        self.brick_changed(0)
         
         self.update_tree_view_model_labels = ['Name', 'UID', 'Installed', 'Latest']
         self.update_tree_view_model = QStandardItemModel()
         self.update_tree_view.setModel(self.update_tree_view_model)
 
-        self.tool_infos = []
-        self.brick_infos = []
-        self.config = config
         self.update_button_refresh.pressed.connect(self.update_refresh)
         self.update_button_bricklets.pressed.connect(self.update_bricklets)
 
@@ -298,29 +297,13 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         self.update_ui_state()
 
-    def update_flashing_devices(self):
-        self.devices = []
+    def update_bricks(self):
+        self.brick_infos = []
         self.combo_brick.clear()
         for info in infos.infos.values():
             if info.type == 'brick':
-                try:
-                    self.devices.append(info.plugin.device)
-                except:
-                    self.devices.append(None)
+                self.brick_infos.append(info)
                 self.combo_brick.addItem('{0} [{1}]'.format(info.name, info.uid))
-                
-        if self.combo_brick.count() == 0:
-            self.combo_brick.addItem(NO_BRICK)
-            
-        self.update_ui_state()
-            
-    def set_devices(self, devices):
-        self.devices = []
-        self.combo_brick.clear()
-
-        for device in devices:
-            self.devices.append(device[1])
-            self.combo_brick.addItem(device[0])
 
         if self.combo_brick.count() == 0:
             self.combo_brick.addItem(NO_BRICK)
@@ -405,7 +388,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.edit_custom_plugin.setEnabled(is_plugin_custom)
         self.button_plugin_browse.setEnabled(is_plugin_custom)
 
-        self.tab_widget.setTabEnabled(2, len(self.devices) > 0)
+        self.tab_widget.setTabEnabled(2, len(self.brick_infos) > 0)
 
     def firmware_changed(self, index):
         self.update_ui_state()
@@ -663,6 +646,25 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         self.edit_uid.setText(uid)
 
+    def brick_changed(self, index):
+        self.combo_port.clear()
+
+        if index < 0 or len(self.brick_infos) == 0:
+            self.combo_port.addItems(['A', 'B', 'C', 'D'])
+            return
+
+        info = self.brick_infos[index]
+
+        for key in sorted(info.bricklets.keys()):
+            if info.bricklets[key] is None:
+                self.combo_port.addItem(key.upper())
+            else:
+                self.combo_port.addItem('{0}: {1} [{2}]'.format(key.upper(),
+                                                                info.bricklets[key].name,
+                                                                info.bricklets[key].uid))
+
+        self.update_ui_state()
+
     def plugin_changed(self, index):
         self.update_ui_state()
         
@@ -831,11 +833,16 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             self.popup_ok('Bricklet', 'Successfully flashed {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
 
     def current_device_and_port(self):
+        port_names = ['a', 'b', 'c', 'd']
+
         return (self.current_device(),
-                str(self.combo_port.currentText()).lower())
+                port_names[self.combo_port.currentIndex()])
 
     def current_device(self):
-        return self.devices[self.combo_brick.currentIndex()]
+        try:
+            return self.brick_infos[self.combo_brick.currentIndex()].plugin.device
+        except:
+            return None
 
     def plugin_browse_pressed(self):
         last_dir = ''

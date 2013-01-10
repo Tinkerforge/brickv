@@ -28,6 +28,8 @@ from ui_advanced import Ui_widget_advanced
 from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QFrame
 
+import infos
+
 NO_BRICK = 'No Brick found'
 
 class AdvancedWindow(QFrame, Ui_widget_advanced):
@@ -36,21 +38,22 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
         self.setupUi(self)
 
         self.button_calibrate.setEnabled(False)
+
+        self.brick_infos = []
         
         self.parent = parent
         self.button_calibrate.pressed.connect(self.calibrate_pressed)
         self.combo_brick.currentIndexChanged.connect(self.brick_changed)
         self.check_enable_calibration.stateChanged.connect(self.enable_calibration_changed)
 
-        self.set_devices([])
-
-    def set_devices(self, devices):
-        self.devices = []
+    def update_bricks(self):
+        self.brick_infos = []
         self.combo_brick.clear()
 
-        for device in devices:
-            self.devices.append(device[1])
-            self.combo_brick.addItem(device[0])
+        for info in infos.infos.values():
+            if info.type == 'brick':
+                self.brick_infos.append(info)
+                self.combo_brick.addItem('{0} [{1}]'.format(info.name, info.uid))
 
         if self.combo_brick.count() == 0:
             self.combo_brick.addItem(NO_BRICK)
@@ -59,17 +62,18 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
         self.update_ui_state()
 
     def calibrate_pressed(self):
+        port_names = ['a', 'b', 'c', 'd']
+
         self.parent.ipcon.adc_calibrate(self.current_device(),
-                                        str(self.combo_port.currentText()).lower())
+                                        port_names[self.combo_port.currentIndex()])
         
         self.update_calibration()
 
     def current_device(self):
-        index = self.combo_brick.currentIndex()
-        if index < 0 or len(self.devices) == 0:
+        try:
+            return self.brick_infos[self.combo_brick.currentIndex()].plugin.device
+        except:
             return None
-        else:
-            return self.devices[index]
 
     def update_calibration(self):
         device = self.current_device()
@@ -85,13 +89,29 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
             QTimer.singleShot(0, slot)
         
     def brick_changed(self, index):
+        self.combo_port.clear()
+
+        if self.combo_brick.currentIndex() < 0 or len(self.brick_infos) == 0:
+            self.combo_port.addItems(['A', 'B', 'C', 'D'])
+            return
+
+        info = self.brick_infos[index]
+
+        for key in sorted(info.bricklets.keys()):
+            if info.bricklets[key] is None:
+                self.combo_port.addItem(key.upper())
+            else:
+                self.combo_port.addItem('{0}: {1} [{2}]'.format(key.upper(),
+                                                                info.bricklets[key].name,
+                                                                info.bricklets[key].uid))
+
         self.update_calibration()
 
     def enable_calibration_changed(self, state):
         self.button_calibrate.setEnabled(state == Qt.Checked)
 
     def update_ui_state(self):
-        enabled = len(self.devices) > 0
+        enabled = len(self.brick_infos) > 0
 
         self.combo_brick.setEnabled(enabled)
         self.check_enable_calibration.setEnabled(enabled)
