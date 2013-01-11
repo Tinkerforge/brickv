@@ -214,10 +214,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.update_flashing_window()
         self.flashing_window.show()
-        self.flashing_window.update_refresh()
+        self.flashing_window.refresh_updates_pressed()
 
         if first:
-            self.flashing_window.refresh_firmwares_and_plugins()
+            self.flashing_window.refresh_firmware_and_plugin_infos()
 
     def advanced_pressed(self):
         if self.advanced_window is None:
@@ -466,7 +466,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def set_tree_view_defaults(self):
         self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels)
         self.tree_view.expandAll()
-        self.tree_view.setColumnWidth(0, 250)
+        self.tree_view.setColumnWidth(0, 260)
         self.tree_view.setColumnWidth(1, 75)
         self.tree_view.setColumnWidth(2, 85)
         self.tree_view.setSortingEnabled(True)

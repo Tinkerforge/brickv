@@ -34,6 +34,12 @@ class AbstractInfo(object):
     firmware_version_installed = (0, 0, 0)
     firmware_version_latest = (0, 0, 0)
 
+class FirmwareInfo(AbstractInfo):
+    type = 'firmware'
+
+class PluginInfo(AbstractInfo):
+    type = 'plugin'
+
 class ToolInfo(AbstractInfo):
     type = 'tool'
     

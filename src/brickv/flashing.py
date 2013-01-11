@@ -69,8 +69,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
         self.setupUi(self)
         
-        self.firmwares = {}
-        self.plugins = {}
+        self.firmware_infos = {}
+        self.plugin_infos = {}
         self.brick_infos = []
 
         self.parent = parent
@@ -101,17 +101,121 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.update_tree_view_model_labels = ['Name', 'UID', 'Installed', 'Latest']
         self.update_tree_view_model = QStandardItemModel()
         self.update_tree_view.setModel(self.update_tree_view_model)
+        self.update_tree_view.setSortingEnabled(True)
+        self.update_tree_view.header().setSortIndicator(0, Qt.AscendingOrder)
 
-        self.update_button_refresh.pressed.connect(self.update_refresh)
-        self.update_button_bricklets.pressed.connect(self.update_bricklets)
+        self.update_button_refresh.pressed.connect(self.refresh_updates_pressed)
+        self.update_button_bricklets.pressed.connect(self.auto_update_bricklets_pressed)
 
         self.update_ui_state()
 
-    def refresh_firmwares_and_plugins(self):
+    def get_body(self, url):
+        response = urllib2.urlopen(url)
+        data = response.read().replace('<hr>', '').replace('<br>', '')
+        response.close()
+        tree = etreefromstring(data)
+        return tree.find('body')
+
+    def get_firmware_versions(self, url, prefix):
+        body = self.get_body(url)
+        versions = []
+
+        for a in body.getiterator('a'):
+            if 'href' not in a.attrib:
+                continue
+
+            url_part = a.attrib['href'].replace('/', '')
+
+            if url_part == '..':
+                continue
+
+            m = re.match(prefix + '_firmware_(\d+)_(\d+)_(\d+)(?:_beta\d+)?\.bin', url_part)
+
+            if m is None:
+                continue
+
+            versions.append((int(m.group(1)), int(m.group(2)), int(m.group(3))))
+
+            QApplication.processEvents()
+
+        return sorted(versions)
+
+    def refresh_firmware_info(self, url_part, update_combo_box=False):
+        name = url_part
+
+        if name in ['dc', 'imu']:
+            name = name.upper()
+        else:
+            words = name.split('_')
+            parts = []
+            for word in words:
+                parts.append(word[0].upper() + word[1:])
+            name = ' '.join(parts)
+
+        versions = self.get_firmware_versions(FIRMWARE_URL + 'bricks/' + url_part + '/', 'brick_' + url_part)
+
+        if len(versions) < 1:
+            return
+
+        firmware_info = infos.FirmwareInfo()
+        firmware_info.name = name
+        firmware_info.url_part = url_part
+        firmware_info.firmware_version_latest = versions[-1]
+
+        self.firmware_infos[url_part] = firmware_info
+
+        if update_combo_box:
+            i = self.combo_firmware.findData(url_part)
+            if i >= 0:
+                name = '{0} ({1}.{2}.{3})'.format(firmware_info.name,
+                                                  *firmware_info.firmware_version_latest)
+                self.combo_firmware.setItemText(i, name)
+
+    def refresh_plugin_info(self, url_part, update_combo_box=False):
+        name = url_part
+
+        if name in ['gps']:
+            name = name.upper()
+        elif name.startswith('lcd_'):
+            name = name.replace('lcd_', 'LCD_')
+        elif name.startswith('io'):
+            name = name.replace('io', 'IO-')
+        elif name.endswith('_ir'):
+            name = name.replace('_ir', '_IR')
+
+        words = name.split('_')
+        parts = []
+
+        for word in words:
+            parts.append(word[0].upper() + word[1:])
+
+        name = ' '.join(parts)
+        name = name.replace('Voltage Current', 'Voltage/Current')
+
+        versions = self.get_firmware_versions(FIRMWARE_URL + 'bricklets/' + url_part + '/', 'bricklet_' + url_part)
+
+        if len(versions) < 1:
+            return
+
+        plugin_info = infos.PluginInfo()
+        plugin_info.name = name
+        plugin_info.url_part = url_part
+        plugin_info.firmware_version_latest = versions[-1]
+
+        self.plugin_infos[url_part] = plugin_info
+
+        if update_combo_box:
+            i = self.combo_plugin.findData(url_part)
+            if i >= 0:
+                name = '{0} ({1}.{2}.{3})'.format(plugin_info.name,
+                                                  *plugin_info.firmware_version_latest)
+                self.combo_plugin.setItemText(i, name)
+
+    def refresh_firmware_and_plugin_infos(self):
         progress = self.create_progress_bar('Discovering')
 
-        self.firmwares = {}
-        self.plugins = {}
+        self.firmware_infos = {}
+        self.plugin_infos = {}
 
         self.combo_firmware.clear()
         self.combo_plugin.clear()
@@ -126,37 +230,6 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             self.combo_plugin.setDisabled(True)
             self.popup_fail('Brick and Bricklet', 'Could not connect to tinkerforge.com.\nFirmwares and plugins can be flashed from local files.')
 
-        def get_body(url):
-            response = urllib2.urlopen(url)
-            data = response.read().replace('<hr>', '').replace('<br>', '')
-            response.close()
-            tree = etreefromstring(data)
-            return tree.find('body')
-
-        def get_firmware_versions(url, prefix):
-            body = get_body(url)
-            versions = []
-
-            for a in body.getiterator('a'):
-                if 'href' not in a.attrib:
-                    continue
-
-                url_part = a.attrib['href'].replace('/', '')
-
-                if url_part == '..':
-                    continue
-
-                m = re.match(prefix + '_firmware_(\d+)_(\d+)_(\d+)(?:_beta\d+)?\.bin', url_part)
-
-                if m is None:
-                    continue
-
-                versions.append((int(m.group(1)), int(m.group(2)), int(m.group(3))))
-
-                QApplication.processEvents()
-
-            return sorted(versions)
-
         if available:
             # discover firmwares
             try:
@@ -165,8 +238,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 progress.setValue(0)
                 progress.show()
 
-                body = get_body(FIRMWARE_URL + 'bricks/')
-                firmwares = []
+                body = self.get_body(FIRMWARE_URL + 'bricks/')
                 elements = list(body.getiterator('a'))
 
                 progress.setMaximum(len(elements))
@@ -178,38 +250,23 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                         continue
 
                     url_part = a.attrib['href'].replace('/', '')
-                    name = url_part
 
-                    if name == '..':
-                        continue
-                    elif name in ['dc', 'imu']:
-                        name = name.upper()
-                    else:
-                        words = name.split('_')
-                        parts = []
-                        for word in words:
-                            parts.append(word[0].upper() + word[1:])
-                        name = ' '.join(parts)
-
-                    versions = get_firmware_versions(FIRMWARE_URL + 'bricks/' + url_part + '/', 'brick_' + url_part)
-
-                    if len(versions) < 1:
+                    if url_part == '..':
                         continue
 
-                    firmwares.append((name, url_part, versions))
-                    self.firmwares[url_part] = (name, url_part, versions)
+                    self.refresh_firmware_info(url_part)
 
                     QApplication.processEvents()
 
                 progress.setValue(len(elements))
 
-                if len(firmwares) > 0:
+                if len(self.firmware_infos) > 0:
                     self.combo_firmware.addItem(SELECT)
                     self.combo_firmware.insertSeparator(self.combo_firmware.count())
 
-                for firmware in firmwares:
-                    name = '{0} ({1}.{2}.{3})'.format(firmware[0], *firmware[2][-1])
-                    self.combo_firmware.addItem(name, firmware[1])
+                for firmware_info in sorted(self.firmware_infos.values(), cmp=lambda x, y: cmp(x.name, y.name)):
+                    name = '{0} ({1}.{2}.{3})'.format(firmware_info.name, *firmware_info.firmware_version_latest)
+                    self.combo_firmware.addItem(name, firmware_info.url_part)
 
                 if self.combo_firmware.count() > 0:
                     self.combo_firmware.insertSeparator(self.combo_firmware.count())
@@ -229,8 +286,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 progress.setValue(0)
                 progress.show()
 
-                body = get_body(FIRMWARE_URL + 'bricklets/')
-                plugins = []
+                body = self.get_body(FIRMWARE_URL + 'bricklets/')
                 elements = list(body.getiterator('a'))
 
                 progress.setMaximum(len(elements))
@@ -242,47 +298,23 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                         continue
 
                     url_part = a.attrib['href'].replace('/', '')
-                    name = url_part
 
-                    if name == '..':
-                        continue
-                    elif name in ['gps']:
-                        name = name.upper()
-                    elif name.startswith('lcd_'):
-                        name = name.replace('lcd_', 'LCD_')
-                    elif name.startswith('io'):
-                        name = name.replace('io', 'IO-')
-                    elif name.endswith('_ir'):
-                        name = name.replace('_ir', '_IR')
-
-                    words = name.split('_')
-                    parts = []
-
-                    for word in words:
-                        parts.append(word[0].upper() + word[1:])
-
-                    name = ' '.join(parts)
-                    name = name.replace('Voltage Current', 'Voltage/Current')
-
-                    versions = get_firmware_versions(FIRMWARE_URL + 'bricklets/' + url_part + '/', 'bricklet_' + url_part)
-
-                    if len(versions) < 1:
+                    if url_part == '..':
                         continue
 
-                    plugins.append((name, url_part, versions))
-                    self.plugins[url_part] = (name, url_part, versions)
+                    self.refresh_plugin_info(url_part)
 
                     QApplication.processEvents()
 
                 progress.setValue(len(elements))
 
-                if len(plugins) > 0:
+                if len(self.plugin_infos) > 0:
                     self.combo_plugin.addItem(SELECT)
                     self.combo_plugin.insertSeparator(self.combo_plugin.count())
 
-                for plugin in plugins:
-                    name = '{0} ({1}.{2}.{3})'.format(plugin[0], *plugin[2][-1])
-                    self.combo_plugin.addItem(name, plugin[1])
+                for plugin_info in sorted(self.plugin_infos.values(), cmp=lambda x, y: cmp(x.name, y.name)):
+                    name = '{0} ({1}.{2}.{3})'.format(plugin_info.name, *plugin_info.firmware_version_latest)
+                    self.combo_plugin.addItem(name, plugin_info.url_part)
 
                 if self.combo_plugin.count() > 0:
                     self.combo_plugin.insertSeparator(self.combo_plugin.count())
@@ -446,8 +478,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 return
         else:
             url_part = str(self.combo_firmware.itemData(self.combo_firmware.currentIndex()).toString())
-            name = self.firmwares[url_part][0]
-            version = self.firmwares[url_part][2][-1]
+            name = self.firmware_infos[url_part].name
+            version = self.firmware_infos[url_part].firmware_version_latest
 
             progress.setLabelText('Downloading {0} Brick firmware {1}.{2}.{3}'.format(name, *version))
             progress.setMaximum(0)
@@ -752,7 +784,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         
         return plugin
     
-    def upload_bricklet_firmware(self, plugin, device, port, name, progress, popup=True):
+    def write_bricklet_firmware(self, plugin, device, port, name, progress, popup=True):
         # Write
         progress.setLabelText('Writing plugin: ' + name)
         progress.setMaximum(0)
@@ -845,8 +877,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 return
         else:
             url_part = str(self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString())
-            name = self.plugins[url_part][0]
-            version = self.plugins[url_part][2][-1]
+            name = self.plugin_infos[url_part].name
+            version = self.plugin_infos[url_part].firmware_version_latest
             plugin = self.download_bricklet_firmware(progress, url_part, name, version)
             if not plugin:
                 return
@@ -857,10 +889,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         url_part = str(self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString())
         
         if current_text == CUSTOM:
-            if not self.upload_bricklet_firmware(plugin, device, port, plugin_file_name, progress):
+            if not self.write_bricklet_firmware(plugin, device, port, plugin_file_name, progress):
                 return
         else:
-            if not self.upload_bricklet_firmware(plugin, device, port, name, progress):
+            if not self.write_bricklet_firmware(plugin, device, port, name, progress):
                 return
 
         if current_text == CUSTOM:
@@ -893,7 +925,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             self.edit_custom_plugin.setText(file_name)
 
     # Updates tab
-    def update_bricklets(self):
+    def auto_update_bricklets_pressed(self):
         def brick_for_bricklet(bricklet):
             for device_info in infos.infos.values():
                 if device_info.type == 'brick':
@@ -911,7 +943,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                     plugin = self.download_bricklet_firmware(progress, device_info.url_part, device_info.name, device_info.firmware_version_latest)
                     if plugin:
                         brick = brick_for_bricklet(device_info)
-                        if self.upload_bricklet_firmware(plugin, brick.plugin.device, device_info.position, device_info.name, progress):
+                        if self.write_bricklet_firmware(plugin, brick.plugin.device, device_info.position, device_info.name, progress):
                             bricks_to_reset.add(brick)
                         else:
                             progress.cancel()
@@ -928,7 +960,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                             plugin = self.download_bricklet_firmware(progress, device_info.bricklets[port].url_part, device_info.bricklets[port].name, device_info.bricklets[port].firmware_version_latest)
                             if plugin:
                                 brick = brick_for_bricklet(device_info.bricklets[port])
-                                if self.upload_bricklet_firmware(plugin, brick.plugin.device, port, device_info.bricklets[port].name, progress):
+                                if self.write_bricklet_firmware(plugin, brick.plugin.device, port, device_info.bricklets[port].name, progress):
                                     bricks_to_reset.add(brick)
                                 else:
                                     progress.cancel()
@@ -957,7 +989,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             
         self.update_refresh()
         
-    def update_refresh(self):
+    def refresh_updates_pressed(self):
         url_part_proto1_map = {
             # 'name': 'url_part'
             'Analog In Bricklet': 'analog_in',
@@ -994,40 +1026,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             progress.cancel()
             self.update_browser.setHtml('Could not connect to tinkerforge.com')
             return
-                    
-        def get_body(url):
-            response = urllib2.urlopen(url)
-            data = response.read().replace('<hr>', '').replace('<br>', '')
-            response.close()
-            tree = etreefromstring(data)
-            return tree.find('body')
-
-        def get_firmware_versions(url, prefix):
-            body = get_body(url)
-            versions = []
-
-            for a in body.getiterator('a'):
-                if 'href' not in a.attrib:
-                    continue
-
-                url_part = a.attrib['href'].replace('/', '')
-
-                if url_part == '..':
-                    continue
-
-                m = re.match(prefix + '_firmware_(\d+)_(\d+)_(\d+)(?:_beta\d+)?\.bin', url_part)
-
-                if m is None:
-                    continue
-
-                versions.append((int(m.group(1)), int(m.group(2)), int(m.group(3))))
-
-                QApplication.processEvents()
-
-            return sorted(versions)
 
         def get_tools_versions(url, tool):
-            body = get_body(url)
+            body = self.get_body(url)
             versions = []
 
             for a in body.getiterator('a'):
@@ -1076,33 +1077,30 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         if check_for_brickv_update:
             try:
                 versions = get_tools_versions(BRICKV_URL, 'brickv')
-                if len(versions) >= 1:
+                if len(versions) > 0:
                     brickv_info.firmware_version_latest = versions[-1]
             except urllib2.URLError:
                 pass
         progress.setValue(progress.value() + 1)
 
-        for device_info in infos.infos.values():
+        for device_info in sorted(infos.infos.values(), cmp=lambda x, y: cmp(x.name, y.name)):
             if device_info.type == 'brick':
                 try:
-                    versions = get_firmware_versions(FIRMWARE_URL + 'bricks/' + device_info.url_part + '/', 'brick_' + device_info.url_part)
-                    if len(versions) >= 1:
-                        device_info.firmware_version_latest = versions[-1]
-                except urllib2.URLError:
+                    self.refresh_firmware_info(device_info.url_part, True)
+                    device_info.firmware_version_latest = self.firmware_infos[device_info.url_part].firmware_version_latest
+                except:
                     pass
                 progress.setValue(progress.value() + 1)
-                
             elif device_info.type == 'bricklet':
                 try:
-                    versions = get_firmware_versions(FIRMWARE_URL + 'bricklets/' + device_info.url_part + '/', 'bricklet_' + device_info.url_part)
-                    if len(versions) >= 1:
-                        device_info.firmware_version_latest = versions[-1]
-                except urllib2.URLError:
+                    self.refresh_plugin_info(device_info.url_part, True)
+                    device_info.firmware_version_latest = self.plugin_infos[device_info.url_part].firmware_version_latest
+                except:
                     pass
                 progress.setValue(progress.value() + 1)
-                    
+
         progress.cancel()
-        
+
         self.update_tree_view_model.clear()
         self.update_tree_view_model.setHorizontalHeaderLabels(self.update_tree_view_model_labels)
         
@@ -1138,8 +1136,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                                     break
                                 
                             try:
-                                versions = get_firmware_versions(FIRMWARE_URL + 'bricklets/' + bricklet_info.url_part + '/', 'bricklet_' + bricklet_info.url_part)
-                                if len(versions) >= 1:
+                                versions = self.get_firmware_versions(FIRMWARE_URL + 'bricklets/' + bricklet_info.url_part + '/', 'bricklet_' + bricklet_info.url_part)
+                                if len(versions) > 0:
                                     bricklet_info.firmware_version_latest = versions[-1]
                             except urllib2.URLError:
                                 pass
@@ -1176,7 +1174,12 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 self.update_tree_view_model.appendRow(parent)
                         
         self.update_tree_view.expandAll()
-        self.update_tree_view.setColumnWidth(0, 200)
+        self.update_tree_view.setColumnWidth(0, 260)
+        self.update_tree_view.setColumnWidth(1, 75)
+        self.update_tree_view.setColumnWidth(2, 75)
+        self.update_tree_view.setColumnWidth(3, 75)
+        self.update_tree_view.setSortingEnabled(True)
+        self.update_tree_view.header().setSortIndicator(0, Qt.AscendingOrder)
 
         if is_update:
             self.update_button_bricklets.setEnabled(True)
