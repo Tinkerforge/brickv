@@ -81,6 +81,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.button_uid_load.pressed.connect(self.uid_load_pressed)
         self.button_uid_save.pressed.connect(self.uid_save_pressed)
         self.combo_brick.currentIndexChanged.connect(self.brick_changed)
+        self.combo_port.currentIndexChanged.connect(self.port_changed)
         self.combo_plugin.currentIndexChanged.connect(self.plugin_changed)
         self.button_plugin_save.pressed.connect(self.plugin_save_pressed)
         self.button_plugin_browse.pressed.connect(self.plugin_browse_pressed)
@@ -659,11 +660,38 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             if info.bricklets[key] is None:
                 self.combo_port.addItem(key.upper())
             else:
+                try:
+                    url_part = info.bricklets[key].plugin.get_url_part()
+                except:
+                    url_part = ''
+
                 self.combo_port.addItem('{0}: {1} [{2}]'.format(key.upper(),
                                                                 info.bricklets[key].name,
-                                                                info.bricklets[key].uid))
+                                                                info.bricklets[key].uid),
+                                        url_part)
 
         self.update_ui_state()
+
+    def port_changed(self, index):
+        self.edit_uid.setText('')
+
+        if index < 0:
+            self.combo_plugin.setCurrentIndex(0)
+            return
+
+        url_part = str(self.combo_port.itemData(index).toString())
+
+        if len(url_part) == 0:
+            self.combo_plugin.setCurrentIndex(0)
+            return
+
+        i = self.combo_plugin.findData(url_part)
+
+        if i < 0:
+            self.combo_plugin.setCurrentIndex(0)
+            return
+
+        self.combo_plugin.setCurrentIndex(i)
 
     def plugin_changed(self, index):
         self.update_ui_state()
