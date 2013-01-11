@@ -27,7 +27,7 @@ from ui_flashing import Ui_widget_flashing
 from bindings.ip_connection import IPConnection, base58encode, BASE58, uid64_to_uid32
 from plugin_system.plugins.imu.calibrate_import_export import parse_imu_calibration
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QApplication, QFrame, QFileDialog, QMessageBox, QProgressDialog, QStandardItemModel, QStandardItem, QBrush
+from PyQt4.QtGui import QApplication, QColor, QFrame, QFileDialog, QMessageBox, QProgressDialog, QStandardItemModel, QStandardItem, QBrush
 from samba import SAMBA, SAMBAException, get_serial_ports
 import infos
 
@@ -1057,7 +1057,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             if device.firmware_version_installed[0] <= 1:
                 return QBrush(Qt.red), True
             
-            return QBrush(Qt.orange), True
+            return QBrush(QColor(255, 160, 55)), True
 
         progress.setLabelText('Checking for updates on tinkerforge.com')
         progress.setMaximum(len(infos.infos))
