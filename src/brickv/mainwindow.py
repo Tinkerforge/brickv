@@ -466,14 +466,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def set_tree_view_defaults(self):
         self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels)
         self.tree_view.expandAll()
-        self.tree_view.setColumnWidth(0, 230)
+        self.tree_view.setColumnWidth(0, 250)
         self.tree_view.setColumnWidth(1, 75)
         self.tree_view.setColumnWidth(2, 85)
+        self.tree_view.setSortingEnabled(True)
+        self.tree_view.header().setSortIndicator(0, Qt.AscendingOrder)
         
     def update_tree_view(self):
         self.tree_view_model.clear()
         
-        for device_info in infos.infos.values():
+        for device_info in sorted(infos.infos.values(), cmp=lambda x, y: cmp(x.name, y.name)):
             if device_info.type == 'brick':
                 parent = [QStandardItem(device_info.name), 
                           QStandardItem(device_info.uid), 
@@ -482,7 +484,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
 
                 self.tree_view_model.appendRow(parent)
-                for port in device_info.bricklets:
+                for port in sorted(device_info.bricklets):
                     if device_info.bricklets[port] and device_info.bricklets[port].protocol_version == 2:
                         child = [QStandardItem(port.upper() + ': ' +device_info.bricklets[port].name), 
                                  QStandardItem(device_info.bricklets[port].uid),
