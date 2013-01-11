@@ -693,6 +693,14 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         self.combo_plugin.setCurrentIndex(i)
 
+        b = self.combo_brick.currentIndex()
+        p = self.combo_port.currentIndex()
+
+        if b < 0 or p < 0:
+            return
+
+        self.edit_uid.setText(self.brick_infos[b].bricklets[('a', 'b', 'c', 'd')[p]].uid)
+
     def plugin_changed(self, index):
         self.update_ui_state()
         
