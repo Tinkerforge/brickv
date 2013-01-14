@@ -308,7 +308,6 @@ class IO4(PluginBase, Ui_IO4):
         selected_pin = int(self.pin_box.currentText())
         
         _, _, time_remaining = monoflop
-        print time_remaining
         if pin == selected_pin:
             self.time_spinbox.setValue(time_remaining)
 
@@ -319,6 +318,5 @@ class IO4(PluginBase, Ui_IO4):
             if self.monoflop_active[pin]:
                 def get_lambda(pin):
                     return lambda x: self.update_async(pin, x)
-                
-                print "make async"
+
                 async_call(self.io.get_monoflop, pin, get_lambda(pin), self.increase_error_count)

@@ -140,7 +140,6 @@ class LCD20x4(PluginBase):
         return 'lcd_20x4'
     
     def is_hardware_version_relevant(self, hardware_version):
-        print hardware_version
         if hardware_version <= (1, 1, 0):
             self.b3_label.hide()
         return True
@@ -150,7 +149,6 @@ class LCD20x4(PluginBase):
         return device_identifier == BrickletLCD20x4.DEVICE_IDENTIFIER
     
     def cb_pressed(self, button):
-        print "pressed", button
         if button == 0:
             self.b0_label.setText('Button 0: Pressed')
         elif button == 1:
