@@ -18,10 +18,11 @@ The following libraries are required:
 * python-qwt5-qt4
 * python-opengl
 * python-serial
+* pyqt4-dev-tools
 
 On Debian based Linux distributions try::
 
- sudo apt-get install python python-qt4 python-qt4-gl python-qwt5-qt4 python-opengl python-serial
+ sudo apt-get install python python-qt4 python-qt4-gl python-qwt5-qt4 python-opengl python-serial pyqt4-dev-tools
 
 Building Packages
 -----------------
