@@ -117,12 +117,12 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 if url_part == '..':
                     continue
 
-                m = re.match(prefix + '_firmware_(\d+)_(\d+)_(\d+)\.bin', url_part)
+                m = re.match(prefix + '_firmware_1_(\d+)_(\d+)\.bin', url_part)
 
                 if m is None:
                     continue
 
-                versions.append((int(m.group(1)), int(m.group(2)), int(m.group(3))))
+                versions.append((1, int(m.group(1)), int(m.group(2))))
 
                 QApplication.processEvents()
 

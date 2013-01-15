@@ -93,12 +93,12 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
                 if url_part == '..':
                     continue
 
-                m = re.match(prefix + '_firmware_(\d+)_(\d+)_(\d+)\.bin', url_part)
+                m = re.match(prefix + '_firmware_1_(\d+)_(\d+)\.bin', url_part)
 
                 if m is None:
                     continue
 
-                versions.append((int(m.group(1)), int(m.group(2)), int(m.group(3))))
+                versions.append((1, int(m.group(1)), int(m.group(2))))
 
                 QApplication.processEvents()
 
@@ -118,16 +118,16 @@ class UpdatesWindow(QFrame, Ui_widget_updates):
                     continue
 
                 if sys.platform.startswith('linux'):
-                    m = re.match(tool + '-(\d+).(\d+).(\d+)_all\.deb', url_part)
+                    m = re.match(tool + '-1.(\d+).(\d+)_all\.deb', url_part)
                 elif sys.platform == 'darwin':
-                    m = re.match(tool + '_macos_(\d+)_(\d+)_(\d+)\.dmg', url_part)
+                    m = re.match(tool + '_macos_1_(\d+)_(\d+)\.dmg', url_part)
                 elif sys.platform == 'win32':
-                    m = re.match(tool + '_windows_(\d+)_(\d+)_(\d+)\.exe', url_part)
+                    m = re.match(tool + '_windows_1_(\d+)_(\d+)\.exe', url_part)
 
                 if m is None:
                     continue
 
-                versions.append((int(m.group(1)), int(m.group(2)), int(m.group(3))))
+                versions.append((1, int(m.group(1)), int(m.group(2))))
 
                 QApplication.processEvents()
 
