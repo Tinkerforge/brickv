@@ -28,14 +28,6 @@ Building Packages
 -----------------
 
 The Python script ``src/brickv/build_pkg.py`` can build a Debian package for
-Linux, a ``setup.exe`` for Windows and a Disk Image for Mac OS X. Try::
+Linux, a ``setup.exe`` for Windows and a Disk Image for Mac OS X. Run::
 
- python build_pkg.py linux
-
-or::
-
- python build_pkg.py windows
-
-or::
-
- python build_pkg.py macosx
+ python build_pkg.py
