@@ -343,9 +343,9 @@ if __name__ == "__main__":
         sys.argv = sys.argv[:1]
 
     if sys.platform.startswith('linux'):
-        sys.argv.append('py2exe') # set sys.argv[1] for setup(), want to call py2exe
         build_linux_pkg()
     elif sys.platform == 'win32':
+        sys.argv.append('py2exe') # set sys.argv[1] for setup(), want to call py2exe
         build_windows_pkg()
     elif sys.platform == 'darwin':
         sys.argv.append('py2app') # set sys.argv[1] for setup(), want to call py2app
