@@ -335,18 +335,21 @@ def build_linux_pkg():
     os.system('chown -R root brickv/usr')
     os.system('chgrp -R root brickv/usr')
     os.system('dpkg -b brickv/ brickv-' + config.BRICKV_VERSION + '_all.deb')
-    
+
+
+# call python build_pkg.py to build the windows/linux/macosx package
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print "error: specify platform"
-    elif sys.argv[1] == "windows":
-        sys.argv[1] = "py2exe" # rewrite sys.argv[1] for setup(), want to call py2exe
-        build_windows_pkg()
-    elif sys.argv[1] == "linux":
+    if len(sys.argv) > 1:
+        sys.argv = sys.argv[:1]
+
+    if sys.platform.startswith('linux'):
+        sys.argv.append('py2exe') # set sys.argv[1] for setup(), want to call py2exe
         build_linux_pkg()
-    elif sys.argv[1] == "macosx":
-        sys.argv[1] = "py2app" # rewrite sys.argv[1] for setup(), want to call py2exe
-        sys.argv.append("build") # rewrite sys.argv[1] for setup(), want to call py2exe
-        build_macos_pkg()
+    elif sys.platform == 'win32':
+        build_windows_pkg()
+    elif sys.platform == 'darwin':
+        sys.argv.append('py2app') # set sys.argv[1] for setup(), want to call py2app
+        sys.argv.append('build')
+        build_macosx_pkg()
     else:
-        print "error: unknown platform: " + sys.argv[1]
+        print "error: unsupported platform: " + sys.platform
