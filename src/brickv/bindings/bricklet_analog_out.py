@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-10.      #
+# This file was automatically generated on 2013-01-14.      #
 #                                                           #
 # Bindings Version 2.0.0                                    #
 #                                                           #
@@ -45,7 +45,7 @@ class BrickletAnalogOut(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (1, 0, 0)
+        self.api_version = (2, 0, 0)
 
         self.response_expected[BrickletAnalogOut.FUNCTION_SET_VOLTAGE] = BrickletAnalogOut.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletAnalogOut.FUNCTION_GET_VOLTAGE] = BrickletAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE

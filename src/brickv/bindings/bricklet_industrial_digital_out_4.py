@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-10.      #
+# This file was automatically generated on 2013-01-14.      #
 #                                                           #
 # Bindings Version 2.0.0                                    #
 #                                                           #
@@ -41,6 +41,7 @@ class BrickletIndustrialDigitalOut4(Device):
     FUNCTION_SET_GROUP = 5
     FUNCTION_GET_GROUP = 6
     FUNCTION_GET_AVAILABLE_FOR_GROUP = 7
+    FUNCTION_SET_SELECTED_VALUES = 9
     FUNCTION_GET_IDENTITY = 255
 
     def __init__(self, uid, ipcon):
@@ -50,7 +51,7 @@ class BrickletIndustrialDigitalOut4(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (1, 0, 0)
+        self.api_version = (2, 0, 0)
 
         self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_SET_VALUE] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_VALUE] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -60,6 +61,7 @@ class BrickletIndustrialDigitalOut4(Device):
         self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_GROUP] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_AVAILABLE_FOR_GROUP] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDigitalOut4.CALLBACK_MONOFLOP_DONE] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_SET_SELECTED_VALUES] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialDigitalOut4.FUNCTION_GET_IDENTITY] = BrickletIndustrialDigitalOut4.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletIndustrialDigitalOut4.CALLBACK_MONOFLOP_DONE] = 'H H'
@@ -88,7 +90,7 @@ class BrickletIndustrialDigitalOut4(Device):
         """
         return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_GET_VALUE, (), '', 'H')
 
-    def set_monoflop(self, pin_mask, value_mask, time):
+    def set_monoflop(self, selection_mask, value_mask, time):
         """
         Configures a monoflop of the pins specified by the first parameter
         bitmask.
@@ -110,7 +112,7 @@ class BrickletIndustrialDigitalOut4(Device):
         of two seconds and pin 0 high. Pin 0 will be high all the time. If now
         the RS485 connection is lost, then pin 0 will turn low in at most two seconds.
         """
-        self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_SET_MONOFLOP, (pin_mask, value_mask, time), 'H H I', '')
+        self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_SET_MONOFLOP, (selection_mask, value_mask, time), 'H H I', '')
 
     def get_monoflop(self, pin):
         """
@@ -155,6 +157,26 @@ class BrickletIndustrialDigitalOut4(Device):
         can be grouped together.
         """
         return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_GET_AVAILABLE_FOR_GROUP, (), '', 'B')
+
+    def set_selected_values(self, selection_mask, value_mask):
+        """
+        Sets the output value with a bitmask, according to the selction mask.
+        The bitmask is 16 bit long, *true* refers to high and *false* refers to 
+        low.
+        
+        For example: The values 0b0000000000000011, b0000000000000001 will turn 
+        pin 0 high, pin 1 low the other pins remain untouched.
+        
+        If no groups are used (see :func:`SetGroup`), the pins correspond to the
+        markings on the Digital Out 4 Bricklet.
+        
+        If groups are used, the pins correspond to the element in the group.
+        Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
+        pins 8-11 and element 4 pins 12-15.
+        
+        .. versionadded:: 2.0.0~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_SET_SELECTED_VALUES, (selection_mask, value_mask), 'H H', '')
 
     def get_identity(self):
         """

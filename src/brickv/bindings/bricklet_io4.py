@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-10.      #
+# This file was automatically generated on 2013-01-14.      #
 #                                                           #
 # Bindings Version 2.0.0                                    #
 #                                                           #
@@ -46,6 +46,7 @@ class BrickletIO4(Device):
     FUNCTION_GET_INTERRUPT = 8
     FUNCTION_SET_MONOFLOP = 10
     FUNCTION_GET_MONOFLOP = 11
+    FUNCTION_SET_SELECTED_VALUES = 13
     FUNCTION_GET_IDENTITY = 255
 
     def __init__(self, uid, ipcon):
@@ -55,7 +56,7 @@ class BrickletIO4(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (1, 0, 1)
+        self.api_version = (2, 0, 0)
 
         self.response_expected[BrickletIO4.FUNCTION_SET_VALUE] = BrickletIO4.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIO4.FUNCTION_GET_VALUE] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -69,6 +70,7 @@ class BrickletIO4(Device):
         self.response_expected[BrickletIO4.FUNCTION_SET_MONOFLOP] = BrickletIO4.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIO4.FUNCTION_GET_MONOFLOP] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO4.CALLBACK_MONOFLOP_DONE] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletIO4.FUNCTION_SET_SELECTED_VALUES] = BrickletIO4.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIO4.FUNCTION_GET_IDENTITY] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletIO4.CALLBACK_INTERRUPT] = 'B B'
@@ -96,7 +98,7 @@ class BrickletIO4(Device):
         """
         return self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_VALUE, (), '', 'B')
 
-    def set_configuration(self, pin_mask, direction, value):
+    def set_configuration(self, selection_mask, direction, value):
         """
         Configures the value and direction of the specified pins. Possible directions
         are "i" and "o" for input and output.
@@ -114,7 +116,7 @@ class BrickletIO4(Device):
         * (3, 'o', false) will set pins 0 and 1 as output low.
         * (4, 'o', true) will set pin 2 of as output high.
         """
-        self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_CONFIGURATION, (pin_mask, direction, value), 'B c ?', '')
+        self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_CONFIGURATION, (selection_mask, direction, value), 'B c ?', '')
 
     def get_configuration(self):
         """
@@ -167,7 +169,7 @@ class BrickletIO4(Device):
         """
         return self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_INTERRUPT, (), '', 'B')
 
-    def set_monoflop(self, pin_mask, value_mask, time):
+    def set_monoflop(self, selection_mask, value_mask, time):
         """
         Configures a monoflop of the pins specified by the first parameter as 4 bit
         long bitmask. The specified pins must be configured for output. Non-output
@@ -191,7 +193,7 @@ class BrickletIO4(Device):
         
         .. versionadded:: 1.1.1~(Plugin)
         """
-        self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_MONOFLOP, (pin_mask, value_mask, time), 'B B I', '')
+        self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_MONOFLOP, (selection_mask, value_mask, time), 'B B I', '')
 
     def get_monoflop(self, pin):
         """
@@ -204,6 +206,23 @@ class BrickletIO4(Device):
         .. versionadded:: 1.1.1~(Plugin)
         """
         return GetMonoflop(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_MONOFLOP, (pin,), 'B', 'B I I'))
+
+    def set_selected_values(self, selection_mask, value_mask):
+        """
+        Sets the output value (high or low) with a bitmask, according to
+        the selction mask. The bitmask is 4 bit long, *true* refers to high 
+        and *false* refers to low.
+        
+        For example: The values 0b0110, 0b0011 will turn pin 2 high and
+        pin 1 low, pin 0 and 3 will remain untouched.
+        
+        .. note::
+         This function does nothing for pins that are configured as input.
+         Pull-up resistors can be switched on with :func:`SetConfiguration`.
+        
+        .. versionadded:: 2.0.0~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_SELECTED_VALUES, (selection_mask, value_mask), 'B B', '')
 
     def get_identity(self):
         """

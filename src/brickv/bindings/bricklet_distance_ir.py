@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-10.      #
+# This file was automatically generated on 2013-01-14.      #
 #                                                           #
 # Bindings Version 2.0.0                                    #
 #                                                           #
@@ -61,7 +61,7 @@ class BrickletDistanceIR(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (1, 0, 0)
+        self.api_version = (2, 0, 0)
 
         self.response_expected[BrickletDistanceIR.FUNCTION_GET_DISTANCE] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDistanceIR.FUNCTION_GET_ANALOG_VALUE] = BrickletDistanceIR.RESPONSE_EXPECTED_ALWAYS_TRUE

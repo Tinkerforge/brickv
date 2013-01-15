@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-10.      #
+# This file was automatically generated on 2013-01-14.      #
 #                                                           #
 # Bindings Version 2.0.0                                    #
 #                                                           #
@@ -39,6 +39,7 @@ class BrickletDualRelay(Device):
     FUNCTION_GET_STATE = 2
     FUNCTION_SET_MONOFLOP = 3
     FUNCTION_GET_MONOFLOP = 4
+    FUNCTION_SET_SELECTED_STATE = 6
     FUNCTION_GET_IDENTITY = 255
 
     def __init__(self, uid, ipcon):
@@ -48,13 +49,14 @@ class BrickletDualRelay(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (1, 0, 1)
+        self.api_version = (2, 0, 0)
 
         self.response_expected[BrickletDualRelay.FUNCTION_SET_STATE] = BrickletDualRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDualRelay.FUNCTION_GET_STATE] = BrickletDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDualRelay.FUNCTION_SET_MONOFLOP] = BrickletDualRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDualRelay.FUNCTION_GET_MONOFLOP] = BrickletDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDualRelay.CALLBACK_MONOFLOP_DONE] = BrickletDualRelay.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletDualRelay.FUNCTION_SET_SELECTED_STATE] = BrickletDualRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDualRelay.FUNCTION_GET_IDENTITY] = BrickletDualRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletDualRelay.CALLBACK_MONOFLOP_DONE] = 'B ?'
@@ -65,7 +67,8 @@ class BrickletDualRelay(Device):
         For example: (true, false) turns relay 1 on and relay 2 off.
         
         If you just want to set one of the relays and don't know the current state
-        of the other relay, you can get the state with :func:`GetState`.
+        of the other relay, you can get the state with :func:`GetState` or you
+        can use :func:`SetSelectedState`.
         
         Running monoflop timers will be overwritten if this function is called.
         
@@ -110,6 +113,16 @@ class BrickletDualRelay(Device):
         .. versionadded:: 1.1.1~(Plugin)
         """
         return GetMonoflop(*self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_GET_MONOFLOP, (relay,), 'B', '? I I'))
+
+    def set_selected_state(self, relay, state):
+        """
+        Sets the state of the selected relay (1 or 2), *true* means on and *false* means off. 
+        
+        The other relay remains untouched.
+        
+        .. versionadded:: 2.0.0~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_SET_SELECTED_STATE, (relay, state), 'B ?', '')
 
     def get_identity(self):
         """

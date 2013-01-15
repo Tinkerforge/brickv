@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-10.      #
+# This file was automatically generated on 2013-01-14.      #
 #                                                           #
 # Bindings Version 2.0.0                                    #
 #                                                           #
@@ -46,6 +46,7 @@ class BrickletIO16(Device):
     FUNCTION_GET_PORT_INTERRUPT = 8
     FUNCTION_SET_PORT_MONOFLOP = 10
     FUNCTION_GET_PORT_MONOFLOP = 11
+    FUNCTION_SET_SELECTED_VALUES = 13
     FUNCTION_GET_IDENTITY = 255
 
     def __init__(self, uid, ipcon):
@@ -55,7 +56,7 @@ class BrickletIO16(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (1, 0, 1)
+        self.api_version = (2, 0, 0)
 
         self.response_expected[BrickletIO16.FUNCTION_SET_PORT] = BrickletIO16.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIO16.FUNCTION_GET_PORT] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -69,6 +70,7 @@ class BrickletIO16(Device):
         self.response_expected[BrickletIO16.FUNCTION_SET_PORT_MONOFLOP] = BrickletIO16.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIO16.FUNCTION_GET_PORT_MONOFLOP] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO16.CALLBACK_MONOFLOP_DONE] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletIO16.FUNCTION_SET_SELECTED_VALUES] = BrickletIO16.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIO16.FUNCTION_GET_IDENTITY] = BrickletIO16.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletIO16.CALLBACK_INTERRUPT] = 'c B B'
@@ -96,7 +98,7 @@ class BrickletIO16(Device):
         """
         return self.ipcon.send_request(self, BrickletIO16.FUNCTION_GET_PORT, (port,), 'c', 'B')
 
-    def set_port_configuration(self, port, pin_mask, direction, value):
+    def set_port_configuration(self, port, selection_mask, direction, value):
         """
         Configures the value and direction of a specified port. Possible directions
         are "i" and "o" for input and output.
@@ -114,7 +116,7 @@ class BrickletIO16(Device):
         * ("b", 3, 'o', false) will set pins 0 and 1 of port b as output low.
         * ("b", 4, 'o', true) will set pin 2 of port b as output high.
         """
-        self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_PORT_CONFIGURATION, (port, pin_mask, direction, value), 'c B c ?', '')
+        self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_PORT_CONFIGURATION, (port, selection_mask, direction, value), 'c B c ?', '')
 
     def get_port_configuration(self, port):
         """
@@ -168,7 +170,7 @@ class BrickletIO16(Device):
         """
         return self.ipcon.send_request(self, BrickletIO16.FUNCTION_GET_PORT_INTERRUPT, (port,), 'c', 'B')
 
-    def set_port_monoflop(self, port, pin_mask, value_mask, time):
+    def set_port_monoflop(self, port, selection_mask, value_mask, time):
         """
         Configures a monoflop of the pins specified by the second parameter as 8 bit
         long bitmask. The specified pins must be configured for output. Non-output
@@ -192,7 +194,7 @@ class BrickletIO16(Device):
         
         .. versionadded:: 1.1.2~(Plugin)
         """
-        self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_PORT_MONOFLOP, (port, pin_mask, value_mask, time), 'c B B I', '')
+        self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_PORT_MONOFLOP, (port, selection_mask, value_mask, time), 'c B B I', '')
 
     def get_port_monoflop(self, port, pin):
         """
@@ -205,6 +207,23 @@ class BrickletIO16(Device):
         .. versionadded:: 1.1.2~(Plugin)
         """
         return GetPortMonoflop(*self.ipcon.send_request(self, BrickletIO16.FUNCTION_GET_PORT_MONOFLOP, (port, pin), 'c B', 'B I I'))
+
+    def set_selected_values(self, port, selection_mask, value_mask):
+        """
+        Sets the output value (high or low) for a port ("a" or "b" with a bitmask, 
+        according to the selction mask. The bitmask is 4 bit long, *true* refers 
+        to high and *false* refers to low.
+        
+        For example: The values 0b11000000, 0b10000000 will turn pin 7 high and
+        pin 6 low, pins 0-6 will remain untouched.
+        
+        .. note::
+         This function does nothing for pins that are configured as input.
+         Pull-up resistors can be switched on with :func:`SetConfiguration`.
+        
+        .. versionadded:: 2.0.0~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_SELECTED_VALUES, (port, selection_mask, value_mask), 'c B B', '')
 
     def get_identity(self):
         """

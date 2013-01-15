@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-10.      #
+# This file was automatically generated on 2013-01-14.      #
 #                                                           #
 # Bindings Version 2.0.0                                    #
 #                                                           #
@@ -41,6 +41,7 @@ class BrickletIndustrialQuadRelay(Device):
     FUNCTION_SET_GROUP = 5
     FUNCTION_GET_GROUP = 6
     FUNCTION_GET_AVAILABLE_FOR_GROUP = 7
+    FUNCTION_SET_SELECTED_VALUES = 9
     FUNCTION_GET_IDENTITY = 255
 
     def __init__(self, uid, ipcon):
@@ -50,7 +51,7 @@ class BrickletIndustrialQuadRelay(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (1, 0, 0)
+        self.api_version = (2, 0, 0)
 
         self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_SET_VALUE] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_VALUE] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -60,6 +61,7 @@ class BrickletIndustrialQuadRelay(Device):
         self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_GROUP] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_AVAILABLE_FOR_GROUP] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialQuadRelay.CALLBACK_MONOFLOP_DONE] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_SET_SELECTED_VALUES] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialQuadRelay.FUNCTION_GET_IDENTITY] = BrickletIndustrialQuadRelay.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletIndustrialQuadRelay.CALLBACK_MONOFLOP_DONE] = 'H H'
@@ -88,7 +90,7 @@ class BrickletIndustrialQuadRelay(Device):
         """
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_VALUE, (), '', 'H')
 
-    def set_monoflop(self, pin_mask, value_mask, time):
+    def set_monoflop(self, selection_mask, value_mask, time):
         """
         Configures a monoflop of the pins specified by the first parameter
         bitmask.
@@ -110,7 +112,7 @@ class BrickletIndustrialQuadRelay(Device):
         of two seconds and pin 0 closed. Pin 0 will be closed all the time. If now
         the RS485 connection is lost, then pin 0 will be opened in at most two seconds.
         """
-        self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_SET_MONOFLOP, (pin_mask, value_mask, time), 'H H I', '')
+        self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_SET_MONOFLOP, (selection_mask, value_mask, time), 'H H I', '')
 
     def get_monoflop(self, pin):
         """
@@ -155,6 +157,26 @@ class BrickletIndustrialQuadRelay(Device):
         can be grouped together.
         """
         return self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_GET_AVAILABLE_FOR_GROUP, (), '', 'B')
+
+    def set_selected_values(self, selection_mask, value_mask):
+        """
+        Sets the output value with a bitmask, according to the selction mask. 
+        The bitmask is 16 bit long, *true* refers to a closed relay and 
+        *false* refers to an open relay.
+        
+        For example: The values 00b0000000000000011, b0000000000000001 will close 
+        the relay of pin 0, open the relay of pin 1 and leave the others untouched.
+        
+        If no groups are used (see :func:`SetGroup`), the pins correspond to the
+        markings on the Quad Relay Bricklet.
+        
+        If groups are used, the pins correspond to the element in the group.
+        Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
+        pins 8-11 and element 4 pins 12-15.
+        
+        .. versionadded:: 2.0.0~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletIndustrialQuadRelay.FUNCTION_SET_SELECTED_VALUES, (selection_mask, value_mask), 'H H', '')
 
     def get_identity(self):
         """
