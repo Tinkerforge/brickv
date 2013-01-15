@@ -47,7 +47,7 @@ import shutil
 DESCRIPTION = 'Brick Viewer'
 NAME = 'Brickv'
 
-def build_macos_pkg():
+def build_macosx_pkg():
     from setuptools import setup, find_packages
 
     PWD = os.path.dirname(os.path.realpath(__file__))
