@@ -30,11 +30,12 @@ from bindings.ip_connection import IPConnection
 from flashing import FlashingWindow
 from advanced import AdvancedWindow
 from async_call import async_start_thread
-
 from bindings.brick_master import BrickMaster
-
+from program_path import ProgramPath
 import config
 import infos
+
+import os
 import signal
 import sys
 import time
@@ -78,7 +79,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
         self.setupUi(self)
-        self.setWindowIcon(QIcon("brickv-icon.png"))
+        self.setWindowIcon(QIcon(os.path.join(ProgramPath.program_path(), "brickv-icon.png")))
         signal.signal(signal.SIGINT, self.exit_brickv)
         signal.signal(signal.SIGTERM, self.exit_brickv)
 

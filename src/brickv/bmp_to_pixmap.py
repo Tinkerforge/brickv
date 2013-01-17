@@ -21,11 +21,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import os
+from program_path import ProgramPath
+
 from PyQt4.QtGui import QPixmap, QColor
 from PyQt4.QtCore import Qt
 
-def bmp_to_pixmap(url):
-    pixmap = QPixmap(url)
+def bmp_to_pixmap(path):
+    absolute_path = os.path.join(ProgramPath.program_path(), path)
+    pixmap = QPixmap(absolute_path)
     mask1 = pixmap.createMaskFromColor(QColor(0xFF, 0x00, 0XF0), Qt.MaskInColor)
     pixmap.setMask(mask1)
 
