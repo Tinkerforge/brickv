@@ -66,3 +66,4 @@
 1.1.16: Add plugin for Voltage/Current Bricklet and GPS Bricklet
 1.1.17: Downgrade packaged Qt to 4.7 on Mac OS X to fix a graph rendering problem
 1.1.18: Use BMPs and add alpha channel in code (instead of GIFs or pixmaps)
+1.1.19: Make updates and flashing dialog ignore firmware/tool version 2
