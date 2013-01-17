@@ -67,3 +67,4 @@
 1.1.17: Downgrade packaged Qt to 4.7 on Mac OS X to fix a graph rendering problem
 1.1.18: Use BMPs and add alpha channel in code (instead of GIFs or pixmaps)
 1.1.19: Make updates and flashing dialog ignore firmware/tool version 2
+        Ensure to load window icon and plugin bitmaps from correct directory

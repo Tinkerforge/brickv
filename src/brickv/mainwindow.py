@@ -30,7 +30,9 @@ from bindings.ip_connection import IPConnection, Error
 from updates import UpdatesWindow
 from flashing import FlashingWindow
 from advanced import AdvancedWindow
+from program_path import ProgramPath
 
+import os
 import socket
 import signal
 import sys
@@ -89,7 +91,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
         self.setupUi(self)
-        self.setWindowIcon(QIcon("brickv-icon.png"))
+        self.setWindowIcon(QIcon(os.path.join(ProgramPath.program_path(), "brickv-icon.png")))
         signal.signal(signal.SIGINT, self.exit_brickv) 
         signal.signal(signal.SIGTERM, self.exit_brickv) 
         
