@@ -947,11 +947,11 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                             bricks_to_reset.add(brick)
                         else:
                             progress.cancel()
-                            self.update_refresh()
+                            self.refresh_updates_pressed()
                             return
                     else:
                         progress.cancel()
-                        self.update_refresh()
+                        self.refresh_updates_pressed()
                         return
             elif device_info.type == 'brick':
                 for port in device_info.bricklets:
@@ -964,11 +964,11 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                                     bricks_to_reset.add(brick)
                                 else:
                                     progress.cancel()
-                                    self.update_refresh()
+                                    self.refresh_updates_pressed()
                                     return
                             else:
                                 progress.cancel()
-                                self.update_refresh()
+                                self.refresh_updates_pressed()
                                 return
                                     
         for brick in bricks_to_reset:
@@ -987,7 +987,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         progress.cancel()
             
-        self.update_refresh()
+        self.refresh_updates_pressed()
         
     def refresh_updates_pressed(self):
         url_part_proto1_map = {
@@ -1122,7 +1122,11 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 for port in device_info.bricklets:
                     if not device_info.bricklets[port] or device_info.bricklets[port].protocol_version == 1:
                         protv, fw, name = device_info.plugin.device.get_protocol1_bricklet_name(port)
+                        print protv, fw, name
                         if protv == 1:
+                            # Hack for LCD 20x4 Bricklet (name is not set early enough in firmware)
+                            if fw == (1, 1, 1) and name == '':
+                                name = 'LCD 20x4 Bricklet'
                             bricklet_info = infos.BrickletInfo()
                             bricklet_info.protocol_version = 1
                             bricklet_info.name = name
@@ -1131,6 +1135,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
                             device_info.bricklets[port] = bricklet_info
                             for key in url_part_proto1_map:
+                                print device_info.bricklets[port].name, key
                                 if key in device_info.bricklets[port].name:
                                     bricklet_info.url_part = url_part_proto1_map[key]
                                     break
