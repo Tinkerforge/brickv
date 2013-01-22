@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt
+from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt, QTimer
 from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon, QPushButton, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QFrame, QSpacerItem, QSizePolicy, QStandardItemModel, QStandardItem
 from ui_mainwindow import Ui_MainWindow
 from plugin_system.plugin_manager import PluginManager
@@ -116,6 +116,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.flashing_window = None
         self.advanced_window = None
+        self.delayed_refresh_updates_timer = QTimer()
+        self.delayed_refresh_updates_timer.timeout.connect(self.delayed_refresh_updates)
+        self.delayed_refresh_updates_timer.setInterval(500)
         self.reset_view()
         self.button_advanced.setDisabled(True)
 
@@ -496,9 +499,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.set_tree_view_defaults()        
         self.update_flashing_window()
         self.update_advanced_window()
-
-        if self.flashing_window is not None and self.flashing_window.isVisible():
-            self.flashing_window.refresh_updates_pressed()
+        self.delayed_refresh_updates_timer.start()
 
     def update_flashing_window(self):
         if self.flashing_window is not None:
@@ -515,3 +516,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.advanced_window is not None:
             self.advanced_window.update_bricks()
+
+    def delayed_refresh_updates(self):
+        self.delayed_refresh_updates_timer.stop()
+
+        if self.flashing_window is not None and self.flashing_window.isVisible():
+            self.flashing_window.refresh_updates_pressed()
