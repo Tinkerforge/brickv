@@ -1,5 +1,5 @@
 Package: brickv
-Version: 1.1.1
+Version: 2.0.0
 Section: electronics
 Maintainer: Olaf Lüke <olaf@tinkerforge.com>
 Architecture: all

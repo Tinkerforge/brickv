@@ -1041,7 +1041,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                     continue
 
                 if sys.platform.startswith('linux'):
-                    m = re.match(tool + '-(\d+).(\d+).(\d+)(?:_beta\d+)?(?:_amd64|i386)\.deb', url_part)
+                    if tool == 'brickd':
+                        m = re.match(tool + '-(\d+).(\d+).(\d+)(?:_beta\d+)?(?:_amd64|i386)\.deb', url_part)
+                    else:
+                        m = re.match(tool + '-(\d+).(\d+).(\d+)(?:_beta\d+)?_all\.deb', url_part)
                 elif sys.platform == 'darwin':
                     m = re.match(tool + '_macos_(\d+)_(\d+)_(\d+)(?:_beta\d+)?\.dmg', url_part)
                 elif sys.platform == 'win32':
