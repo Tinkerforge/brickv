@@ -114,7 +114,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ipcon.register_callback(IPConnection.CALLBACK_DISCONNECTED,
                                      self.qtcb_disconnected.emit)
 
-        self.updates_window = None
         self.flashing_window = None
         self.advanced_window = None
         self.reset_view()
@@ -497,6 +496,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.set_tree_view_defaults()        
         self.update_flashing_window()
         self.update_advanced_window()
+
+        if self.flashing_window is not None and self.flashing_window.isVisible():
+            self.flashing_window.refresh_updates_pressed()
 
     def update_flashing_window(self):
         if self.flashing_window is not None:
