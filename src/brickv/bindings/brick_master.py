@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-14.      #
+# This file was automatically generated on 2013-01-21.      #
 #                                                           #
 # Bindings Version 2.0.0                                    #
 #                                                           #
@@ -84,6 +84,47 @@ class BrickMaster(Device):
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
     FUNCTION_GET_IDENTITY = 255
+
+    EXTENSION_TYPE_CHIBI = 1
+    EXTENSION_TYPE_RS485 = 2
+    EXTENSION_TYPE_WIFI = 3
+    EXTENSION_TYPE_ETHERNET = 4
+    CHIBI_FREQUENCY_OQPSK_868_MHZ = 0
+    CHIBI_FREQUENCY_OQPSK_915_MHZ = 1
+    CHIBI_FREQUENCY_OQPSK_780_MHZ = 2
+    CHIBI_FREQUENCY_BPSK40_915_MHZ = 3
+    RS485_PARITY_NONE = 'n'
+    RS485_PARITY_EVEN = 'e'
+    RS485_PARITY_ODD = 'o'
+    WIFI_CONNECTION_DHCP = 0
+    WIFI_CONNECTION_STATIC_IP = 1
+    WIFI_CONNECTION_ACCESS_POINT_DHCP = 2
+    WIFI_CONNECTION_ACCESS_POINT_STATIC_IP = 3
+    WIFI_CONNECTION_AD_HOC_DHCP = 4
+    WIFI_CONNECTION_AD_HOC_STATIC_IP = 5
+    WIFI_ENCRYPTION_WPA_WPA2 = 0
+    WIFI_ENCRYPTION_WPA_ENTERPRISE = 1
+    WIFI_ENCRYPTION_WEP = 2
+    WIFI_ENCRYPTION_NO_ENCRYPTION = 3
+    WIFI_EAP_OPTION_OUTER_AUTH_EAP_FAST = 0
+    WIFI_EAP_OPTION_OUTER_AUTH_EAP_TLS = 1
+    WIFI_EAP_OPTION_OUTER_AUTH_EAP_TTLS = 2
+    WIFI_EAP_OPTION_OUTER_AUTH_EAP_PEAP = 3
+    WIFI_EAP_OPTION_INNER_AUTH_EAP_MSCHAP = 0
+    WIFI_EAP_OPTION_INNER_AUTH_EAP_GTC = 4
+    WIFI_EAP_OPTION_CERT_TYPE_CA_CERT = 0
+    WIFI_EAP_OPTION_CERT_TYPE_CLIENT_CERT = 8
+    WIFI_EAP_OPTION_CERT_TYPE_PRIVATE_KEY = 16
+    WIFI_STATE_DISASSOCIATED = 0
+    WIFI_STATE_ASSOCIATED = 1
+    WIFI_STATE_ASSOCIATING = 2
+    WIFI_STATE_ERROR = 3
+    WIFI_STATE_NOT_INITIALIZED_YET = 255
+    WIFI_POWER_MODE_FULL_SPEED = 0
+    WIFI_POWER_MODE_LOW_POWER = 1
+    WIFI_DOMAIN_CHANNEL_1TO11 = 0
+    WIFI_DOMAIN_CHANNEL_1TO13 = 1
+    WIFI_DOMAIN_CHANNEL_1TO14 = 2
 
     def __init__(self, uid, ipcon):
         """
@@ -291,10 +332,10 @@ class BrickMaster(Device):
          :header: "Type", "Description"
          :widths: 10, 100
         
-         "0",    "OQPSK 868Mhz (Europe)"
-         "1",    "OQPSK 915Mhz (US)"
-         "2",    "OQPSK 780Mhz (China)"
-         "3",    "BPSK40 915Mhz"
+         "0",    "OQPSK 868MHz (Europe)"
+         "1",    "OQPSK 915MHz (US)"
+         "2",    "OQPSK 780MHz (China)"
+         "3",    "BPSK40 915MHz"
         
         It is possible to set the frequency with the Brick Viewer and it will be 
         saved in the EEPROM of the Chibi Extension, it does not
@@ -732,44 +773,7 @@ class BrickMaster(Device):
         
         The position can be '0'-'8' (stack position).
         
-        The device identifiers are:
-        
-        .. csv-table::
-         :header: "Device Identifier", "Device Name"
-         :widths: 30, 100
-        
-         "11", "Brick DC"
-         "13", "Brick Master"
-         "14", "Brick Servo"
-         "15", "Brick Stepper"
-         "16", "Brick IMU"
-         "", ""
-         "21", "Bricklet Ambient Light"
-         "23", "Bricklet Current12"
-         "24", "Bricklet Current25"
-         "25", "Bricklet Distance IR"
-         "26", "Bricklet Dual Relay"
-         "27", "Bricklet Humidity"
-         "28", "Bricklet IO-16"
-         "29", "Bricklet IO-4"
-         "210", "Bricklet Joystick"
-         "211", "Bricklet LCD 16x2"
-         "212", "Bricklet LCD 20x4"
-         "213", "Bricklet Linear Poti"
-         "214", "Bricklet Piezo Buzzer"
-         "215", "Bricklet Rotary Poti"
-         "216", "Bricklet Temperature"
-         "217", "Bricklet Temperature IR"
-         "218", "Bricklet Voltage"
-         "219", "Bricklet Analog In"
-         "220", "Bricklet Analog Out"
-         "221", "Bricklet Barometer"
-         "222", "Bricklet GPS"
-         "223", "Bricklet Industrial Digital In 4"
-         "224", "Bricklet Industrial Digital Out 4"
-         "225", "Bricklet Industrial Quad Relay"
-         "226", "Bricklet PTC"
-         "227", "Bricklet Voltage/Current"
+        The device identifiers can be found :ref:`here <device_identifier>`.
         
         .. versionadded:: 2.0.0~(Firmware)
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-14.      #
+# This file was automatically generated on 2013-01-21.      #
 #                                                           #
 # Bindings Version 2.0.0                                    #
 #                                                           #
@@ -65,6 +65,20 @@ class BrickletVoltageCurrent(Device):
     FUNCTION_SET_DEBOUNCE_PERIOD = 20
     FUNCTION_GET_DEBOUNCE_PERIOD = 21
     FUNCTION_GET_IDENTITY = 255
+
+    AVERAGING_1 = 0
+    AVERAGING_4 = 1
+    AVERAGING_16 = 2
+    AVERAGING_64 = 3
+    AVERAGING_128 = 4
+    AVERAGING_256 = 5
+    AVERAGING_512 = 6
+    AVERAGING_1024 = 7
+    THRESHOLD_OPTION_OFF = 'x'
+    THRESHOLD_OPTION_OUTSIDE = 'o'
+    THRESHOLD_OPTION_INSIDE = 'i'
+    THRESHOLD_OPTION_SMALLER = '<'
+    THRESHOLD_OPTION_GREATER = '>'
 
     def __init__(self, uid, ipcon):
         """
@@ -371,44 +385,7 @@ class BrickletVoltageCurrent(Device):
         
         The position can be 'a', 'b', 'c' or 'd'.
         
-        The device identifiers are:
-        
-        .. csv-table::
-         :header: "Device Identifier", "Device Name"
-         :widths: 30, 100
-        
-         "11", "Brick DC"
-         "13", "Brick Master"
-         "14", "Brick Servo"
-         "15", "Brick Stepper"
-         "16", "Brick IMU"
-         "", ""
-         "21", "Bricklet Ambient Light"
-         "23", "Bricklet Current12"
-         "24", "Bricklet Current25"
-         "25", "Bricklet Distance IR"
-         "26", "Bricklet Dual Relay"
-         "27", "Bricklet Humidity"
-         "28", "Bricklet IO-16"
-         "29", "Bricklet IO-4"
-         "210", "Bricklet Joystick"
-         "211", "Bricklet LCD 16x2"
-         "212", "Bricklet LCD 20x4"
-         "213", "Bricklet Linear Poti"
-         "214", "Bricklet Piezo Buzzer"
-         "215", "Bricklet Rotary Poti"
-         "216", "Bricklet Temperature"
-         "217", "Bricklet Temperature IR"
-         "218", "Bricklet Voltage"
-         "219", "Bricklet Analog In"
-         "220", "Bricklet Analog Out"
-         "221", "Bricklet Barometer"
-         "222", "Bricklet GPS"
-         "223", "Bricklet Industrial Digital In 4"
-         "224", "Bricklet Industrial Digital Out 4"
-         "225", "Bricklet Industrial Quad Relay"
-         "226", "Bricklet PTC"
-         "227", "Bricklet Voltage/Current"
+        The device identifiers can be found :ref:`here <device_identifier>`.
         
         .. versionadded:: 2.0.0~(Plugin)
         """

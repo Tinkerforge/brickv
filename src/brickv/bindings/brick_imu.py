@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-14.      #
+# This file was automatically generated on 2013-01-21.      #
 #                                                           #
 # Bindings Version 2.0.0                                    #
 #                                                           #
@@ -79,6 +79,13 @@ class BrickIMU(Device):
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
     FUNCTION_GET_IDENTITY = 255
+
+    CALIBRATION_TYPE_ACCELEROMETER_GAIN = 0
+    CALIBRATION_TYPE_ACCELEROMETER_BIAS = 1
+    CALIBRATION_TYPE_MAGNETOMETER_GAIN = 2
+    CALIBRATION_TYPE_MAGNETOMETER_BIAS = 3
+    CALIBRATION_TYPE_GYROSCOPE_GAIN = 4
+    CALIBRATION_TYPE_GYROSCOPE_BIAS = 5
 
     def __init__(self, uid, ipcon):
         """
@@ -485,44 +492,7 @@ class BrickIMU(Device):
         
         The position can be '0'-'8' (stack position).
         
-        The device identifiers are:
-        
-        .. csv-table::
-         :header: "Device Identifier", "Device Name"
-         :widths: 30, 100
-        
-         "11", "Brick DC"
-         "13", "Brick Master"
-         "14", "Brick Servo"
-         "15", "Brick Stepper"
-         "16", "Brick IMU"
-         "", ""
-         "21", "Bricklet Ambient Light"
-         "23", "Bricklet Current12"
-         "24", "Bricklet Current25"
-         "25", "Bricklet Distance IR"
-         "26", "Bricklet Dual Relay"
-         "27", "Bricklet Humidity"
-         "28", "Bricklet IO-16"
-         "29", "Bricklet IO-4"
-         "210", "Bricklet Joystick"
-         "211", "Bricklet LCD 16x2"
-         "212", "Bricklet LCD 20x4"
-         "213", "Bricklet Linear Poti"
-         "214", "Bricklet Piezo Buzzer"
-         "215", "Bricklet Rotary Poti"
-         "216", "Bricklet Temperature"
-         "217", "Bricklet Temperature IR"
-         "218", "Bricklet Voltage"
-         "219", "Bricklet Analog In"
-         "220", "Bricklet Analog Out"
-         "221", "Bricklet Barometer"
-         "222", "Bricklet GPS"
-         "223", "Bricklet Industrial Digital In 4"
-         "224", "Bricklet Industrial Digital Out 4"
-         "225", "Bricklet Industrial Quad Relay"
-         "226", "Bricklet PTC"
-         "227", "Bricklet Voltage/Current"
+        The device identifiers can be found :ref:`here <device_identifier>`.
         
         .. versionadded:: 2.0.0~(Firmware)
         """
