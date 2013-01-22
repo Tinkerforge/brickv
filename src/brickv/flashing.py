@@ -933,7 +933,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                        device_info.bricklets[bricklet.position] == bricklet:
                         return device_info
 
-        progress = self.create_progress_bar('Flashing')
+        progress = self.create_progress_bar('Auto-Updating Bricklets')
         
         bricks_to_reset = set()
         
