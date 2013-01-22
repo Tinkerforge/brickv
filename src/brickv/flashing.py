@@ -40,16 +40,16 @@ import struct
 from xml.etree.ElementTree import fromstring as etreefromstring
 from serial import SerialException
 
-FIRMWARE_URL = 'http://download.tinkerforge.com/protocol_v2_beta/firmwares/'
+FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
 
 check_for_brickv_update = True
 
 if sys.platform.startswith('linux'):
-    BRICKV_URL = 'http://download.tinkerforge.com/protocol_v2_beta/tools/brickv/linux/'
+    BRICKV_URL = 'http://download.tinkerforge.com/tools/brickv/linux/'
 elif sys.platform == 'darwin':
-    BRICKV_URL = 'http://download.tinkerforge.com/protocol_v2_beta/tools/brickv/macos/'
+    BRICKV_URL = 'http://download.tinkerforge.com/tools/brickv/macos/'
 elif sys.platform == 'win32':
-    BRICKV_URL = 'http://download.tinkerforge.com/protocol_v2_beta/tools/brickv/windows/'
+    BRICKV_URL = 'http://download.tinkerforge.com/tools/brickv/windows/'
 elif sys.platform.startswith('freebsd'):
     check_for_brickv_update = False
     BRICKV_URL = 'http://freshports.org/devel/brickv/'
@@ -59,7 +59,7 @@ else:
 
 SELECT = 'Select...'
 CUSTOM = 'Custom...'
-FIRMWARE_URL = 'http://download.tinkerforge.com/protocol_v2_beta/firmwares/'
+FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
 IMU_CALIBRATION_URL = 'http://download.tinkerforge.com/imu_calibration/'
 NO_BRICK = 'No Brick found'
 NO_BOOTLOADER = 'No Brick in Bootloader found' 
