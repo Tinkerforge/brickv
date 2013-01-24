@@ -86,7 +86,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.button_plugin_save.pressed.connect(self.plugin_save_pressed)
         self.button_plugin_browse.pressed.connect(self.plugin_browse_pressed)
         
-        self.update_label.hide()
+        self.update_tool_label.hide()
+        self.no_connection_label.hide()
 
         self.refresh_serial_ports()
 
@@ -228,7 +229,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         except urllib2.URLError:
             self.combo_firmware.setDisabled(True)
             self.combo_plugin.setDisabled(True)
-            self.popup_fail('Brick and Bricklet', 'Could not connect to tinkerforge.com.\nFirmwares and plugins can be flashed from local files.')
+            self.popup_fail('Brick and Bricklet', 'Could not connect to tinkerforge.com.\nFirmwares and plugins can be flashed from local files only.')
 
         if available:
             # discover firmwares
@@ -1022,9 +1023,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         try:
             urllib2.urlopen(FIRMWARE_URL).read()
+            self.no_connection_label.hide()
         except urllib2.URLError:
             progress.cancel()
-            self.update_browser.setHtml('Could not connect to tinkerforge.com')
+            self.no_connection_label.show()
             return
 
         def get_tools_versions(url, tool):
@@ -1170,9 +1172,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
                 color, update = get_color_for_device(device_info)
                 if update:
-                    self.update_label.show()
+                    self.update_tool_label.show()
                 else:
-                    self.update_label.hide()
+                    self.update_tool_label.hide()
                     
                 for item in parent:
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
