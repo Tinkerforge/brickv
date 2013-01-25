@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from ui_flashing import Ui_widget_flashing
-from bindings.ip_connection import IPConnection, base58encode, BASE58, uid64_to_uid32
+from bindings.ip_connection import IPConnection, Error, base58encode, BASE58, uid64_to_uid32
 from plugin_system.plugins.imu.calibrate_import_export import parse_imu_calibration
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication, QColor, QFrame, QFileDialog, QMessageBox, QProgressDialog, QStandardItemModel, QStandardItem, QBrush
@@ -64,6 +64,18 @@ FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
 IMU_CALIBRATION_URL = 'http://download.tinkerforge.com/imu_calibration/'
 NO_BRICK = 'No Brick found'
 NO_BOOTLOADER = 'No Brick in Bootloader found' 
+
+def error_to_name(e):
+    if e.value == Error.TIMEOUT:
+        return 'Timeout'
+    elif e.value == Error.NOT_CONNECTED:
+        return 'No TCP/IP connection'
+    elif e.value == Error.INVALID_PARAMETER:
+        return 'Invalid parameter'
+    elif e.value == Error.NOT_SUPPORTED:
+        return 'Not supported'
+    else:
+        return e.message
 
 class FlashingWindow(QFrame, Ui_widget_flashing):
     def __init__(self, parent):
@@ -655,14 +667,14 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         try:
             self.parent.ipcon.write_bricklet_uid(device, port, uid)
-        except:
-            self.popup_fail('Bricklet', 'Could not write UID')
+        except Error as e:
+            self.popup_fail('Bricklet', 'Could not write UID: ' + error_to_name(e))
             return
 
         try:
             uid_read = self.parent.ipcon.read_bricklet_uid(device, port)
-        except:
-            self.popup_fail('Bricklet', 'Could not read written UID')
+        except Error as e:
+            self.popup_fail('Bricklet', 'Could not read written UID: ' + error_to_name(e))
             return
 
         if uid == uid_read:
@@ -674,9 +686,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         device, port = self.current_device_and_port()
         try:
             uid = self.parent.ipcon.read_bricklet_uid(device, port)
-        except:
+        except Error as e:
             self.edit_uid.setText('')
-            self.popup_fail('Bricklet', 'Could not read UID')
+            self.popup_fail('Bricklet', 'Could not read UID: ' + error_to_name(e))
             return
 
         self.edit_uid.setText(uid)
@@ -802,24 +814,24 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         progress.setMaximum(len(plugin_chunks))
 
-        try:
-            position = 0
+        position = 0
 
-            for chunk in plugin_chunks:
+        for chunk in plugin_chunks:
+            try:
                 self.parent.ipcon.write_bricklet_plugin(device, port, position, chunk)
+            except Error as e:
+                progress.cancel()
+                if popup:
+                    self.popup_fail('Bricklet', 'Could not write Bricklet plugin: ' + error_to_name(e))
+                return False
 
-                position += 1
-                progress.setValue(position)
+            position += 1
+            progress.setValue(position)
 
-                time.sleep(0.015)
-                QApplication.processEvents()
+            time.sleep(0.015)
+            QApplication.processEvents()
 
-            time.sleep(0.1)
-        except:
-            progress.cancel()
-            if popup:
-                self.popup_fail('Bricklet', 'Could not flash Bricklet: Write error')
-            return False
+        time.sleep(0.1)
 
         # Verify
         progress.setLabelText('Verifying written plugin: ' + name)
@@ -827,31 +839,29 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         progress.setValue(0)
         progress.show()
 
-        try:
-            time.sleep(0.1)
-            position = 0
+        time.sleep(0.1)
+        position = 0
 
-            for chunk in plugin_chunks:
+        for chunk in plugin_chunks:
+            try:
                 read_chunk = list(self.parent.ipcon.read_bricklet_plugin(device, port, position))
+            except Error as e:
+                progress.cancel()
+                if popup:
+                    self.popup_fail('Bricklet', 'Could not read Bricklet plugin back for verification: ' + error_to_name(e))
+                return False
 
-                if read_chunk != chunk:
-                    progress.cancel()
-                    if popup:
-                        self.popup_fail('Bricklet', 'Could not flash Bricklet: Verification error')
-                    return False
+            if read_chunk != chunk:
+                progress.cancel()
+                if popup:
+                    self.popup_fail('Bricklet', 'Could not flash Bricklet plugin: Verification error')
+                return False
 
-                position += 1
-                progress.setValue(position)
+            position += 1
+            progress.setValue(position)
 
-                time.sleep(0.015)
-                QApplication.processEvents()
-        except:
-            progress.cancel()
-            if popup:
-                self.popup_fail('Bricklet', 'Could not flash Bricklet: Read error')
-            return False
-
-        progress.cancel()
+            time.sleep(0.015)
+            QApplication.processEvents()
         
         return True
         
@@ -891,6 +901,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         else:
             if not self.write_bricklet_firmware(plugin, device, port, name, progress):
                 return
+
+        progress.cancel()
 
         if current_text == CUSTOM:
             self.popup_ok('Bricklet', 'Successfully flashed plugin')
