@@ -8,7 +8,7 @@ LOGGING_LEVEL = logging.ERROR
 LOGGING_FORMAT = "%(asctime)s <%(levelname)s> <%(filename)s:%(lineno)s> %(message)s"
 LOGGING_DATEFMT = "%Y-%m-%d %H:%M:%S"
 
-BRICKV_VERSION = "2.0.0"
+BRICKV_VERSION = "2.0.1"
 
 DEFAULT_HOST = "localhost"
 DEFAULT_PORT = 4223

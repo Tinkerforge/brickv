@@ -71,3 +71,7 @@
 2.0.0: Add compatibility for 2.0.0 firmwares
        Make Brick and Bricklet plugins asynchronous (no freezing if timeouts occur)
        Add auto-update feature for Bricklets with backward compatibility for 1.x.y Bricklets
+2.0.1: Add custom character support to LCD Bricklet plugins
+       Handle no-internet-connection case probably in updates dialog
+       Add more information to Bricklet UID and plugin writing error messages
+       Make Protocol 1.0 Bricklet auto-detection more robust
