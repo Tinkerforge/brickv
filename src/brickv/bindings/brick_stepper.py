@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-21.      #
+# This file was automatically generated on 2013-01-23.      #
 #                                                           #
 # Bindings Version 2.0.0                                    #
 #                                                           #

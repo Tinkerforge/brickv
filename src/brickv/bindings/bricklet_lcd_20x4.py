@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-21.      #
+# This file was automatically generated on 2013-01-25.      #
 #                                                           #
 # Bindings Version 2.0.0                                    #
 #                                                           #
@@ -43,6 +43,8 @@ class BrickletLCD20x4(Device):
     FUNCTION_SET_CONFIG = 6
     FUNCTION_GET_CONFIG = 7
     FUNCTION_IS_BUTTON_PRESSED = 8
+    FUNCTION_SET_CUSTOM_CHARACTER = 11
+    FUNCTION_GET_CUSTOM_CHARACTER = 12
     FUNCTION_GET_IDENTITY = 255
 
 
@@ -65,6 +67,8 @@ class BrickletLCD20x4(Device):
         self.response_expected[BrickletLCD20x4.FUNCTION_IS_BUTTON_PRESSED] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLCD20x4.CALLBACK_BUTTON_PRESSED] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLCD20x4.CALLBACK_BUTTON_RELEASED] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletLCD20x4.FUNCTION_SET_CUSTOM_CHARACTER] = BrickletLCD20x4.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD20x4.FUNCTION_GET_CUSTOM_CHARACTER] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLCD20x4.FUNCTION_GET_IDENTITY] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletLCD20x4.CALLBACK_BUTTON_PRESSED] = 'B'
@@ -129,11 +133,50 @@ class BrickletLCD20x4(Device):
 
     def is_button_pressed(self, button):
         """
-        Returns *true* if the button (0 to 2) is pressed. If you want to react
+        Returns *true* if the button (0 to 2 or 0 to 3 with hardware version >= 1.2) 
+        is pressed. If you want to react
         on button presses and releases it is recommended to use the
         :func:`ButtonPressed` and :func:`ButtonReleased` callbacks.
         """
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_IS_BUTTON_PRESSED, (button,), 'B', '?')
+
+    def set_custom_character(self, index, character):
+        """
+        The LCD 20x4 Bricklet can store up to 8 custom characters. The characters
+        consist of 5x8 pixels and can be addressed with the index 0-7. To describe
+        the pixels, the first 5 bits of 8 bytes are used. For example, to make
+        a custom character "H", you should transfer the following:
+        
+        * character[0] = 0b00010001 (decimal value 17)
+        * character[1] = 0b00010001 (decimal value 17)
+        * character[2] = 0b00010001 (decimal value 17)
+        * character[3] = 0b00011111 (decimal value 31)
+        * character[4] = 0b00010001 (decimal value 17)
+        * character[5] = 0b00010001 (decimal value 17)
+        * character[6] = 0b00010001 (decimal value 17)
+        * character[7] = 0b00000000 (decimal value 0)
+        
+        The characters can later be written with :func:`WriteLine` by using the
+        characters with the byte representation 8 to 15.
+        
+        You can play around with the custom characters in Brick Viewer version
+        >= 2.0.1.
+        
+        Custom characters are stored by the LCD in RAM, so they have to be set
+        after each startup.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_CUSTOM_CHARACTER, (index, character), 'B 8B', '')
+
+    def get_custom_character(self, index):
+        """
+        Returns the custon character for a given index, as set with 
+        :func:`SetCustomCharacter`.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_CUSTOM_CHARACTER, (index,), 'B', '8B')
 
     def get_identity(self):
         """

@@ -95,7 +95,7 @@ def unicode_to_ks0066u(string):
             try:
                 c = mapping[code_point]
             except KeyError:
-                c = byte(0xff) # BLACK SQUARE
+                c = byte(min(code_point, 0xff))
 
         # Special handling for 'x' followed by COMBINING MACRON
         if c == byte(0xf8):
