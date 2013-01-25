@@ -88,8 +88,8 @@ class LCD16x2(PluginBase):
         self.onofflayout.addWidget(self.cursor_button)
         self.onofflayout.addWidget(self.blink_button)
             
-        self.b0_label = QLabel('Button 0: Released')
-        self.b1_label = QLabel('Button 1: Released')
+        self.b0_label = QLabel('Button 0: Released,')
+        self.b1_label = QLabel('Button 1: Released,')
         self.b2_label = QLabel('Button 2: Released')
         
         self.buttonlayout = QHBoxLayout()
@@ -230,7 +230,7 @@ class LCD16x2(PluginBase):
         elif button == 1:
             self.b1_label.setText('Button 1: Pressed,')
         elif button == 2:
-            self.b2_label.setText('Button 2: Pressed,')
+            self.b2_label.setText('Button 2: Pressed')
         
     def cb_released(self, button):
         if button == 0:
@@ -238,7 +238,7 @@ class LCD16x2(PluginBase):
         elif button == 1:
             self.b1_label.setText('Button 1: Released,')
         elif button == 2:
-            self.b2_label.setText('Button 2: Released,')
+            self.b2_label.setText('Button 2: Released')
     
     def bl_pressed(self):
         try:
