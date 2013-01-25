@@ -27,7 +27,7 @@ from bindings.bricklet_lcd_20x4 import BrickletLCD20x4
 from bindings.ks0066u import unicode_to_ks0066u
 from async_call import async_call
 
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QComboBox, QFrame, QGridLayout
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QComboBox, QFrame, QGridLayout, QToolButton
 from PyQt4.QtCore import pyqtSignal
         
 class LCD20x4(PluginBase):
@@ -112,8 +112,8 @@ class LCD20x4(PluginBase):
             line.setFrameShadow(QFrame.Sunken)
             
             gridlayout = QGridLayout()
-            gridlayout.setHorizontalSpacing(0)
-            gridlayout.setVerticalSpacing(0)
+            gridlayout.setHorizontalSpacing(2)
+            gridlayout.setVerticalSpacing(2)
                     
             self.character_boxes_bool = []
             self.character_boxes = []
@@ -121,7 +121,7 @@ class LCD20x4(PluginBase):
                 self.character_boxes.append([])
                 self.character_boxes_bool.append([])
                 for j in range(8):
-                    b = QPushButton()
+                    b = QToolButton()
                     b.setAutoFillBackground(True)
                     b.setStyleSheet("background-color: rgb(255, 255, 255)")
                     b.setMaximumSize(25, 25)
