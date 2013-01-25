@@ -987,17 +987,15 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 pass
         
         progress.setLabelText('Waiting for Bricks to reset')
-        progress.setMaximum(500)
+        progress.setMaximum(400)
         progress.setValue(0)
         
-        for i in range(500):
+        for i in range(400):
             time.sleep(0.03)
             progress.setValue(i)
 
         progress.cancel()
-            
-        self.refresh_updates_pressed()
-        
+
     def refresh_updates_pressed(self):
         url_part_proto1_map = {
             # 'name': 'url_part'
@@ -1115,6 +1113,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.update_tree_view_model.setHorizontalHeaderLabels(self.update_tree_view_model_labels)
         
         is_update = False
+        has_protocol1_error = False
         for device_info in infos.infos.values():
             if device_info.type == 'brick':
                 parent = [QStandardItem(device_info.name), 
@@ -1131,7 +1130,21 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 self.update_tree_view_model.appendRow(parent)
                 for port in device_info.bricklets:
                     if not device_info.bricklets[port] or device_info.bricklets[port].protocol_version == 1:
-                        protv, fw, name = device_info.plugin.device.get_protocol1_bricklet_name(port)
+                        try:
+                            protv, fw, name = device_info.plugin.device.get_protocol1_bricklet_name(port)
+                        except:
+                            has_protocol1_error = True
+                            child = [QStandardItem(port.upper() + ': Protocol 1.0 Bricklet with Error'),
+                                     QStandardItem(''),
+                                     QStandardItem(''),
+                                     QStandardItem('')]
+
+                            for item in child:
+                                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                                item.setData(QBrush(Qt.magenta), Qt.BackgroundRole)
+                            parent[0].appendRow(child)
+                            continue
+
                         if protv == 1:
                             # Hack for LCD 20x4 Bricklet (name is not set early enough in firmware)
                             if fw == (1, 1, 1) and name == '':
@@ -1198,3 +1211,16 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             self.update_button_bricklets.setEnabled(True)
         else:
             self.update_button_bricklets.setEnabled(False)
+
+        self.brick_changed(self.combo_brick.currentIndex())
+
+        if has_protocol1_error:
+            message = """
+There was an error during the auto-detection of Bricklets with Protocol 1.0 plugins. Those cannot be updated automatically, but you can update them manually:
+
+- Disconnect the affected Bricklets from their Brick and restart the Brick without the Bricklets.
+- Ensure that the Brick shows up correctly.
+- Connect the Bricklet to the Brick again, while the Brick is already running.
+- Select the "Bricklet" tab and update the plugin manually.
+"""
+            QMessageBox.critical(self, "Bricklet with Error", message, QMessageBox.Ok)
