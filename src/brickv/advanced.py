@@ -53,7 +53,7 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
         for info in infos.infos.values():
             if info.type == 'brick':
                 self.brick_infos.append(info)
-                self.combo_brick.addItem('{0} [{1}]'.format(info.name, info.uid))
+                self.combo_brick.addItem(info.get_combo_item())
 
         if self.combo_brick.count() == 0:
             self.combo_brick.addItem(NO_BRICK)
@@ -101,9 +101,7 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
             if info.bricklets[key] is None:
                 self.combo_port.addItem(key.upper())
             else:
-                self.combo_port.addItem('{0}: {1} [{2}]'.format(key.upper(),
-                                                                info.bricklets[key].name,
-                                                                info.bricklets[key].uid))
+                self.combo_port.addItem('{0}: {1}'.format(key.upper(), info.bricklets[key].get_combo_item()))
 
         self.update_calibration()
 

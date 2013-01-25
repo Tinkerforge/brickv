@@ -48,7 +48,8 @@ class ToolInfo(AbstractInfo):
   version installed: {1}, 
   version latest: {2}, 
   url_part: {3}
-""".format(self.name, self.firmware_version_installed, self.firmware_version_latest, self.url_part)
+""".format(self.name, self.firmware_version_installed,
+           self.firmware_version_latest, self.url_part)
 
 class DeviceInfo(AbstractInfo):
     uid = ''
@@ -60,7 +61,7 @@ class DeviceInfo(AbstractInfo):
     plugin_container = None
     protocol_version = 0
     tab_index = -1
-    
+
     def __repr__(self):
         return """{0} ({1}):
   connected UID: {2}, 
@@ -73,8 +74,23 @@ class DeviceInfo(AbstractInfo):
   url_part: {9}, 
   plugin: {10}, 
   plugin_container: {11}
-""".format(self.name, self.uid, self.connected_uid, self.position, self.firmware_version_installed, self.firmware_version_latest, self.hardware_version, self.device_identifier, self.protocol_version, self.url_part, self.plugin, self.plugin_container)
-    
+""".format(self.name, self.uid, self.connected_uid, self.position,
+           self.firmware_version_installed, self.firmware_version_latest,
+           self.hardware_version, self.device_identifier,
+           self.protocol_version, self.url_part,
+           self.plugin, self.plugin_container)
+
+    def get_combo_item(self):
+        version_str = get_version_string(self.firmware_version_installed)
+
+        if type == 'brick':
+            return '{0} [{1}] ({2})'.format(self.name, self.uid, version_str)
+        else:
+            if self.protocol_version < 2:
+                return '{0} ({1})'.format(self.name, version_str)
+            else:
+                return '{0} [{1}] ({2})'.format(self.name, self.uid, version_str)
+
 class BrickletInfo(DeviceInfo):
     type = 'bricklet'
     
@@ -121,6 +137,9 @@ class BrickMasterInfo(BrickInfo):
    c: {2}
    d: {3} 
 """.format(a, b, c, d)
+
+def get_version_string(version_tuple):
+    return '.'.join(map(str, version_tuple))
 
 if not 'infos' in globals():
     infos = {UID_BRICKV: ToolInfo(), UID_BRICKD: ToolInfo()}

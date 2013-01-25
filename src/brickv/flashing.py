@@ -29,6 +29,7 @@ from plugin_system.plugins.imu.calibrate_import_export import parse_imu_calibrat
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication, QColor, QFrame, QFileDialog, QMessageBox, QProgressDialog, QStandardItemModel, QStandardItem, QBrush
 from samba import SAMBA, SAMBAException, get_serial_ports
+from infos import get_version_string
 import infos
 
 import sys
@@ -337,7 +338,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         for info in infos.infos.values():
             if info.type == 'brick':
                 self.brick_infos.append(info)
-                self.combo_brick.addItem('{0} [{1}]'.format(info.name, info.uid))
+                self.combo_brick.addItem(info.get_combo_item())
 
         if self.combo_brick.count() == 0:
             self.combo_brick.addItem(NO_BRICK)
@@ -687,21 +688,16 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             self.combo_port.addItems(['A', 'B', 'C', 'D'])
             return
 
-        info = self.brick_infos[index]
+        brick_info = self.brick_infos[index]
 
-        for key in sorted(info.bricklets.keys()):
-            if info.bricklets[key] is None:
+        for key in sorted(brick_info.bricklets.keys()):
+            bricklet_info = brick_info.bricklets[key]
+
+            if bricklet_info is None:
                 self.combo_port.addItem(key.upper())
             else:
-                try:
-                    url_part = info.bricklets[key].plugin.get_url_part()
-                except:
-                    url_part = ''
-
-                self.combo_port.addItem('{0}: {1} [{2}]'.format(key.upper(),
-                                                                info.bricklets[key].name,
-                                                                info.bricklets[key].uid),
-                                        url_part)
+                name = '{0}: {1}'.format(key.upper(), bricklet_info.get_combo_item())
+                self.combo_port.addItem(name, bricklet_info.url_part)
 
         self.update_ui_state()
 
@@ -1061,9 +1057,6 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
             return sorted(versions)
         
-        def get_version_string(version_tuple):
-            return '.'.join(map(str, version_tuple))
-        
         def get_color_for_device(device):
             if device.firmware_version_installed >= device.firmware_version_latest:
                 return None, False
@@ -1151,7 +1144,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                                 pass
                 
                     if device_info.bricklets[port]:
-                        child = [QStandardItem(port.upper() + ': ' +device_info.bricklets[port].name), 
+                        child = [QStandardItem(port.upper() + ': ' + device_info.bricklets[port].name),
                                  QStandardItem(device_info.bricklets[port].uid),
                                  QStandardItem(get_version_string(device_info.bricklets[port].firmware_version_installed)),
                                  QStandardItem(get_version_string(device_info.bricklets[port].firmware_version_latest))]
