@@ -38,7 +38,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="update_label">
+        <widget class="QLabel" name="update_tool_label">
          <property name="text">
           <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -48,6 +48,16 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="openExternalLinks">
           <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="no_connection_label">
+         <property name="styleSheet">
+          <string notr="true">color:red;</string>
+         </property>
+         <property name="text">
+          <string>Could not connect to tinkerforge.com</string>
          </property>
         </widget>
        </item>

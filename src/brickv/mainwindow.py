@@ -234,8 +234,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 self.last_host = self.combo_host.currentText()
                 self.last_port = self.spinbox_port.value()
+                self.connect.setDisabled(True)
                 self.ipcon.connect(self.last_host, self.last_port)
+
             except:
+                self.connect.setDisabled(False)
                 QMessageBox.critical(self, 'Could not connect',
                                      'Please check host, check port and ' +
                                      'check if the Brick Daemon is running')
@@ -406,12 +409,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_tree_view()
 
     def cb_connected(self, connect_reason):
-        self.connect.setText("Disconnect")
+        self.update_ui_state()
 
         if connect_reason == IPConnection.CONNECT_REASON_REQUEST:
             self.ipcon.set_auto_reconnect(True)
-            self.combo_host.setDisabled(True)
-            self.spinbox_port.setDisabled(True)
 
             index = self.combo_host.findText(self.last_host)
             if index >= 0:
@@ -422,30 +423,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             while self.combo_host.count() > HOST_HISTORY_SIZE:
                 self.combo_host.removeItem(self.combo_host.count() - 1)
 
-            self.ipcon.enumerate()
+            try:
+                self.ipcon.enumerate()
+            except:
+                self.update_ui_state()
         elif connect_reason == IPConnection.CONNECT_REASON_AUTO_RECONNECT:
-            self.ipcon.enumerate()
+            try:
+                self.ipcon.enumerate()
+            except:
+                self.update_ui_state()
 
             QMessageBox.information(self, 'Connection',
                                     'Successfully reconnected!',
                                     QMessageBox.Ok)
         else:
-            self.ipcon.enumerate()
+            try:
+                self.ipcon.enumerate()
+            except:
+                self.update_ui_state()
 
     def cb_disconnected(self, disconnect_reason):
         if disconnect_reason == IPConnection.DISCONNECT_REASON_REQUEST or not self.ipcon.get_auto_reconnect():
-            self.connect.setText('Connect')
-            self.button_advanced.setDisabled(True)
-            self.combo_host.setDisabled(False)
-            self.spinbox_port.setDisabled(False)
+            self.update_ui_state()
         elif len(self.disconnect_times) >= 3 and self.disconnect_times[-3] < time.time() + 1:
             self.disconnect_times = []
             self.ipcon.set_auto_reconnect(False)
-
-            self.connect.setText('Connect')
-            self.button_advanced.setDisabled(True)
-            self.combo_host.setDisabled(False)
-            self.spinbox_port.setDisabled(False)
+            self.update_ui_state()
+            self.reset_view()
 
             QMessageBox.critical(self, 'Connection',
                                  'Stopped automatic reconnecting due to multiple connection errors in a row.',
@@ -474,7 +478,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tree_view.setColumnWidth(2, 85)
         self.tree_view.setSortingEnabled(True)
         self.tree_view.header().setSortIndicator(0, Qt.AscendingOrder)
-        
+
+    def update_ui_state(self):
+        connection_state = self.ipcon.get_connection_state()
+
+        self.connect.setDisabled(False)
+
+        if connection_state == IPConnection.CONNECTION_STATE_DISCONNECTED:
+            self.connect.setText('Connect')
+            self.button_advanced.setDisabled(True)
+            self.combo_host.setDisabled(False)
+            self.spinbox_port.setDisabled(False)
+        elif connection_state == IPConnection.CONNECTION_STATE_CONNECTED:
+            self.connect.setText("Disconnect")
+            self.combo_host.setDisabled(True)
+            self.spinbox_port.setDisabled(True)
+
     def update_tree_view(self):
         self.tree_view_model.clear()
         
