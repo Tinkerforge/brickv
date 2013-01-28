@@ -992,9 +992,9 @@ class Wifi(QWidget, Ui_Wifi):
         self.update_data_counter += 1
         if self.wifi_status != None:
             if self.wifi_status.isVisible():
-                if self.update_data_counter % 10 == 0:
+                if self.update_data_counter % 100 == 0:
                     self.master.refresh_wifi_status()
-                elif self.update_data_counter % 10 == 5:
+                elif self.update_data_counter % 100 == 50:
                     self.wifi_status.update_status()
         
 class Master(PluginBase, Ui_Master):
