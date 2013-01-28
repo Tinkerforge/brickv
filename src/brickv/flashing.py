@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from ui_flashing import Ui_widget_flashing
-from bindings.ip_connection import IPConnection, Error, base58encode, BASE58, uid64_to_uid32
+from bindings.ip_connection import IPConnection, Error, base58encode, base58decode, BASE58, uid64_to_uid32
 from plugin_system.plugins.imu.calibrate_import_export import parse_imu_calibration
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication, QColor, QFrame, QFileDialog, QMessageBox, QProgressDialog, QStandardItemModel, QStandardItem, QBrush
@@ -664,6 +664,14 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             if c not in BASE58:
                 self.popup_fail('Bricklet', "UID cannot contain '{0}'".format(c))
                 return
+
+        try:
+            if base58decode(uid) > 0xFFFFFFFF:
+                self.popup_fail('Bricklet', 'UID is too long')
+                return
+        except:
+            self.popup_fail('Bricklet', 'UID is invalid')
+            return
 
         try:
             self.parent.ipcon.write_bricklet_uid(device, port, uid)
