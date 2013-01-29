@@ -259,11 +259,6 @@ class SAMBA:
             first_page_num = (ic_relative_address - ic_prefix_length) / self.flash_page_size
             self.lock_pages(first_page_num, len(imu_calibration_pages))
 
-        # Set Boot-from-Flash bit
-        self.wait_for_flash_ready('before setting Boot-from-Flash bit')
-        self.write_flash_command(EEFC_FCR_FCMD_SGPB, 1)
-        self.wait_for_flash_ready('after setting Boot-from-Flash bit')
-
         # Verify firmware
         self.verify_pages(firmware_pages, 0, 'firmware', imu_calibration is not None, progress)
 
@@ -271,6 +266,11 @@ class SAMBA:
         if imu_calibration is not None:
             page_num_offset = (ic_relative_address - ic_prefix_length) / self.flash_page_size
             self.verify_pages(imu_calibration_pages, page_num_offset, 'IMU calibration', True, progress)
+
+        # Set Boot-from-Flash bit
+        self.wait_for_flash_ready('before setting Boot-from-Flash bit')
+        self.write_flash_command(EEFC_FCR_FCMD_SGPB, 1)
+        self.wait_for_flash_ready('after setting Boot-from-Flash bit')
 
         # Boot
         self.reset()
