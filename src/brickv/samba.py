@@ -131,7 +131,7 @@ class SAMBA:
             self.flash_page_size = 256
             self.flash_lockbit_count = 16
         else:
-            raise SAMBAException('Brick with unknown SAM3S architecture: 0x%X' % arch)
+            raise SAMBAException('Brick with unknown SAM3S architecture: 0x%08X' % arch)
 
         self.flash_lockregion_size = self.flash_size / self.flash_lockbit_count
         self.flash_pages_per_lockregion = self.flash_lockregion_size / self.flash_page_size
@@ -143,41 +143,41 @@ class SAMBA:
         try:
             self.port.write(mode + '#')
         except:
-            raise SAMBAException('Write error')
+            raise SAMBAException('Write error during mode change')
 
         if mode == 'T':
             while True:
                 try:
                     response = self.port.read(1)
                 except:
-                    raise SAMBAException('Read error')
+                    raise SAMBAException('Read error during mode change')
 
                 if len(response) == 0:
-                    raise SAMBAException('Read timeout')
+                    raise SAMBAException('Read timeout during mode change')
                 elif response == '>':
                     break
         else:
             try:
                 response = self.port.read(2)
             except:
-                raise SAMBAException('Read error')
+                raise SAMBAException('Read error during mode change')
 
             if len(response) == 0:
-                raise SAMBAException('Read timeout')
+                raise SAMBAException('Read timeout during mode change')
             elif response != '\n\r':
-                raise SAMBAException('Protocol error')
+                raise SAMBAException('Protocol error during mode change')
 
         self.current_mode = mode
 
     def read_uid64(self):
         self.write_flash_command(EEFC_FCR_FCMD_STUI, 0)
-        self.wait_for_flash_ready(False)
+        self.wait_for_flash_ready('while reading UID', False)
 
         uid1 = self.read_uint32(self.flash_base + 8)
         uid2 = self.read_uint32(self.flash_base + 12)
 
         self.write_flash_command(EEFC_FCR_FCMD_SPUI, 0)
-        self.wait_for_flash_ready()
+        self.wait_for_flash_ready('after reading UID')
 
         return uid2 << 32 | uid1
 
@@ -200,14 +200,15 @@ class SAMBA:
 
         # Unlock
         for region in range(self.flash_lockbit_count):
-            self.wait_for_flash_ready()
+            self.wait_for_flash_ready('while unlocking flash pages')
             page_num = (region * self.flash_page_count) / self.flash_lockbit_count
             self.write_flash_command(EEFC_FCR_FCMD_CLB, page_num)
 
+        self.wait_for_flash_ready('after unlocking flash pages')
+
         # Erase All
-        self.wait_for_flash_ready()
         self.write_flash_command(EEFC_FCR_FCMD_EA, 0)
-        self.wait_for_flash_ready()
+        self.wait_for_flash_ready('while erasing flash pages')
 
         # Write firmware
         self.write_pages(firmware_pages, 0, 'Writing firmware', progress)
@@ -258,11 +259,6 @@ class SAMBA:
             first_page_num = (ic_relative_address - ic_prefix_length) / self.flash_page_size
             self.lock_pages(first_page_num, len(imu_calibration_pages))
 
-        # Set Boot-from-Flash bit
-        self.wait_for_flash_ready()
-        self.write_flash_command(EEFC_FCR_FCMD_SGPB, 1)
-        self.wait_for_flash_ready()
-
         # Verify firmware
         self.verify_pages(firmware_pages, 0, 'firmware', imu_calibration is not None, progress)
 
@@ -270,6 +266,11 @@ class SAMBA:
         if imu_calibration is not None:
             page_num_offset = (ic_relative_address - ic_prefix_length) / self.flash_page_size
             self.verify_pages(imu_calibration_pages, page_num_offset, 'IMU calibration', True, progress)
+
+        # Set Boot-from-Flash bit
+        self.wait_for_flash_ready('before setting Boot-from-Flash bit')
+        self.write_flash_command(EEFC_FCR_FCMD_SGPB, 1)
+        self.wait_for_flash_ready('after setting Boot-from-Flash bit')
 
         # Boot
         self.reset()
@@ -290,9 +291,9 @@ class SAMBA:
                 self.write_word(address, page[offset:offset + 4])
                 offset += 4
 
-            self.wait_for_flash_ready()
+            self.wait_for_flash_ready('while writing flash pages')
             self.write_flash_command(EEFC_FCR_FCMD_WP, page_num_offset + page_num)
-            self.wait_for_flash_ready()
+            self.wait_for_flash_ready('while writing flash pages')
 
             page_num += 1
             progress.setValue(page_num)
@@ -330,11 +331,11 @@ class SAMBA:
 
         for region in range(start_page_num / self.flash_pages_per_lockregion,
                             end_page_num / self.flash_pages_per_lockregion):
-            self.wait_for_flash_ready()
+            self.wait_for_flash_ready('while locking flash pages')
             page_num = (region * self.flash_page_count) / self.flash_lockbit_count
             self.write_flash_command(EEFC_FCR_FCMD_SLB, page_num)
 
-        self.wait_for_flash_ready()
+        self.wait_for_flash_ready('after locking flash pages')
 
     def read_word(self, address): # 4 bytes
         self.change_mode('N')
@@ -342,18 +343,18 @@ class SAMBA:
         try:
             self.port.write('w%X,4#' % address)
         except:
-            raise SAMBAException('Serial write error')
+            raise SAMBAException('Write error while reading from address 0x%08X' % address)
 
         try:
             response = self.port.read(4)
         except:
-            raise SAMBAException('Serial read error')
+            raise SAMBAException('Read error while reading from address 0x%08X' % address)
 
         if len(response) == 0:
-            raise SAMBAException('Serial timeout')
+            raise SAMBAException('Timeout while reading from address 0x%08X' % address)
 
         if len(response) != 4:
-            raise SAMBAException('Protocol error')
+            raise SAMBAException('Protocol error while reading from address 0x%08X' % address)
 
         return response
 
@@ -369,7 +370,7 @@ class SAMBA:
         try:
             self.port.write('W%X,%X#' % (address, value))
         except:
-            raise SAMBAException('Serial write error')
+            raise SAMBAException('Write error while writing to address 0x%08X' % address)
 
     def read_bytes(self, address, length):
         self.change_mode('T')
@@ -377,18 +378,18 @@ class SAMBA:
         try:
             self.port.write('R%X,%X#' % (address, length))
         except:
-            raise SAMBAException('Serial write error')
+            raise SAMBAException('Write error while reading from address 0x%08X' % address)
 
         try:
             response = self.port.read(length + 3)
         except:
-            raise SAMBAException('Serial read error')
+            raise SAMBAException('Read error while reading from address 0x%08X' % address)
 
         if len(response) == 0:
-            raise SAMBAException('Serial timeout')
+            raise SAMBAException('Timeout while reading from address 0x%08X' % address)
 
         if len(response) != length + 3:
-            raise SAMBAException('Protocol error')
+            raise SAMBAException('Protocol error while reading from address 0x%08X' % address)
 
         return response[2:-1]
 
@@ -400,25 +401,25 @@ class SAMBA:
             self.port.write('S%X,%X#' % (address, len(bytes)))
             self.port.write(bytes)
         except:
-            raise SAMBAException('Write error')
+            raise SAMBAException('Write error while writing to address 0x%08X' % address)
 
         try:
             response = self.port.read(3)
         except:
-            raise SAMBAException('Read error')
+            raise SAMBAException('Read error while writing to address 0x%08X' % address)
 
         if len(response) == 0:
-            raise SAMBAException('Serial timeout')
+            raise SAMBAException('Timeout while writing to address 0x%08X' % address)
 
         if response != '\n\r>':
-            raise SAMBAException('Protocol error')
+            raise SAMBAException('Protocol error while writing to address 0x%08X' % address)
 
     def reset(self):
         try:
             self.write_uint32(RSTC_MR, (RSTC_MR_FEY << 24) | (10 << 8) | RSTC_MR_URSTEN | RSTC_MR_URSTIEN)
             self.write_uint32(RSTC_CR, (RSTC_CR_FEY << 24) | RSTC_CR_EXTRST | RSTC_CR_PERRST | RSTC_CR_PROCRST)
         except:
-            raise SAMBAException('Serial write error')
+            raise SAMBAException('Write error while triggering reset')
 
     def go(self, address):
         self.change_mode('N')
@@ -426,17 +427,17 @@ class SAMBA:
         try:
             self.port.write('G%X#' % address)
         except:
-            raise SAMBAException('Serial write error')
+            raise SAMBAException('Write error while executing code at address 0x%08X' % address)
 
-    def wait_for_flash_ready(self, ready=True):
+    def wait_for_flash_ready(self, message, ready=True):
         for i in range(1000):
             fsr = self.read_uint32(EEFC_FSR)
 
             if (fsr & EEFC_FSR_FLOCKE) != 0:
-                raise SAMBAException('Flash locking error')
+                raise SAMBAException('Flash locking error ' + message)
 
             if (fsr & EEFC_FSR_FCMDE) != 0:
-                raise SAMBAException('Flash command error')
+                raise SAMBAException('Flash command error ' + message)
 
             if ready:
                 if (fsr & EEFC_FSR_FRDY) != 0:
@@ -445,7 +446,7 @@ class SAMBA:
                 if (fsr & EEFC_FSR_FRDY) == 0:
                     break
         else:
-            raise SAMBAException('Flash timeout')
+            raise SAMBAException('Flash timeout ' + message)
 
     def write_flash_command(self, command, argument):
         self.write_uint32(EEFC_FCR, (EEFC_FCR_FKEY << 24) | (argument << 8) | command)
