@@ -21,8 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QApplication 
+from PyQt4.QtGui import QApplication
 from PyQt4.QtCore import QThread, QEvent
+from threading import Lock
 
 import traceback
 
@@ -30,15 +31,18 @@ try:
     from Queue import Queue
 except ImportError:
     from queue import Queue
-    
+
 ASYNC_EVENT = 12345
 
-async_queue = Queue()
+async_call_queue = Queue()
 async_event_queue = Queue()
+async_session_lock = Lock()
+async_session_id = 1
 
 def async_call(func_to_call, parameter=None, return_ok=None, return_error=None):
-    async_queue.put((func_to_call, parameter, return_ok, return_error))
-    
+    with async_session_lock:
+        async_call_queue.put((func_to_call, parameter, return_ok, return_error, async_session_id))
+
 def async_event_handler():
     while not async_event_queue.empty():
         try:
@@ -47,8 +51,15 @@ def async_event_handler():
                 func()
         except:
             pass
-                
-                
+
+def async_next_session():
+    with async_session_lock:
+        global async_session_id
+        async_session_id += 1
+
+        with async_call_queue.mutex:
+            async_call_queue.queue.clear()
+
 def async_start_thread(parent):
     class AsyncThread(QThread):
         def __init__(self, parent=None):
@@ -56,10 +67,10 @@ def async_start_thread(parent):
 
         def run(self):
             while True:
-                func_to_call, parameter, return_ok, return_error = async_queue.get()
+                func_to_call, parameter, return_ok, return_error, session_id = async_call_queue.get()
                 if not func_to_call:
                     continue
-                
+
                 return_value = None
                 try:
                     if parameter == None:
@@ -69,25 +80,33 @@ def async_start_thread(parent):
                     else:
                         return_value = func_to_call(parameter)
                 except:
+                    with async_session_lock:
+                        if session_id != async_session_id:
+                            continue
+
                     if return_error != None:
                         async_event_queue.put(return_error)
-                        with async_queue.mutex:
-                            async_queue.queue.clear()
-                        
+                        with async_call_queue.mutex:
+                            async_call_queue.queue.clear()
+
                         QApplication.postEvent(self, QEvent(ASYNC_EVENT))
                         continue
-                    
+
                 if return_ok != None:
+                    with async_session_lock:
+                        if session_id != async_session_id:
+                            continue
+
                     if return_value == None:
                         async_event_queue.put(return_ok)
                         QApplication.postEvent(self, QEvent(ASYNC_EVENT))
                     else:
                         def return_lambda(return_ok, value):
                             return lambda: return_ok(value)
-                        
+
                         async_event_queue.put(return_lambda(return_ok, return_value))
                         QApplication.postEvent(self, QEvent(ASYNC_EVENT))
-            
+
     async_thread = AsyncThread(parent)
     async_thread.start()
     return async_thread

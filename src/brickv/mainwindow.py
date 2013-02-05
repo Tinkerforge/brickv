@@ -29,7 +29,7 @@ from plugin_system.plugin_manager import PluginManager
 from bindings.ip_connection import IPConnection
 from flashing import FlashingWindow
 from advanced import AdvancedWindow
-from async_call import async_start_thread
+from async_call import async_start_thread, async_next_session
 from bindings.brick_master import BrickMaster
 from program_path import ProgramPath
 import config
@@ -244,6 +244,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                      'check if the Brick Daemon is running')
         else:
             self.reset_view()
+            async_next_session()
             self.ipcon.disconnect()
 
     def create_plugin_container(self, plugin, connected_uid, position):
@@ -321,7 +322,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 pass
                 
         return -1
-            
 
     def cb_enumerate(self, uid, connected_uid, position,
                      hardware_version, firmware_version,
