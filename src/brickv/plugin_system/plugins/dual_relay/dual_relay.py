@@ -41,7 +41,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
         
         self.dr = BrickletDualRelay(uid, ipcon)
         
-        self.has_monoflop = version >= [1, 1, 1]
+        self.has_monoflop = version >= (1, 1, 1)
         
         self.qtcb_monoflop.connect(self.cb_monoflop)
         self.dr.register_callback(self.dr.CALLBACK_MONOFLOP_DONE,

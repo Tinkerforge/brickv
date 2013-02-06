@@ -55,7 +55,7 @@ class Barometer(PluginBase):
 
         self.barometer = BrickletBarometer(uid, ipcon)
 
-        has_calibrate = version == [1, 0, 0]
+        has_calibrate = version == (1, 0, 0)
 
         self.qtcb_air_pressure.connect(self.cb_air_pressure)
         self.barometer.register_callback(self.barometer.CALLBACK_AIR_PRESSURE,

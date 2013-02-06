@@ -118,7 +118,7 @@ class Stepper(PluginBase, Ui_Stepper):
         self.update_timer.stop()
 
     def has_reset_device(self):
-        return self.version >= [1, 1, 4]
+        return self.version >= (1, 1, 4)
 
     def reset_device(self):
         if self.has_reset_device():

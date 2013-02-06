@@ -41,7 +41,7 @@ class IO4(PluginBase, Ui_IO4):
         
         self.io = BrickletIO4(uid, ipcon)
         
-        self.has_monoflop = version >= [1, 1, 1]
+        self.has_monoflop = version >= (1, 1, 1)
         
         self.qtcb_interrupt.connect(self.cb_interrupt)
         self.io.register_callback(self.io.CALLBACK_INTERRUPT,

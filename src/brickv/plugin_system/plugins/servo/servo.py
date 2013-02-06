@@ -252,7 +252,7 @@ class Servo(PluginBase, Ui_Servo):
         self.update_event.set()
 
     def has_reset_device(self):
-        return self.version >= [1, 1, 3]
+        return self.version >= (1, 1, 3)
 
     def reset_device(self):
         if self.has_reset_device():

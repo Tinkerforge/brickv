@@ -136,7 +136,7 @@ class Chibi(QWidget, Ui_Chibi):
         self.parent = parent
         self.master = parent.master
         
-        if parent.version >= [1, 1, 0]:
+        if parent.version >= (1, 1, 0):
             self.update_generator = self.init_update()
             self.update_generator.next()
         
@@ -342,7 +342,7 @@ class RS485(QWidget, Ui_RS485):
         self.parent = parent
         self.master = parent.master
         
-        if parent.version >= [1, 2, 0]:
+        if parent.version >= (1, 2, 0):
             async_call(self.master.get_rs485_configuration, None, self.get_rs485_configuration_async, self.parent.increase_error_count)
             self.update_generator = self.update_addresses()
             self.update_generator.next()
@@ -478,8 +478,8 @@ class Wifi(QWidget, Ui_Wifi):
         
         self.update_data_counter = 0
         self.connection = 0
-        if parent.version >= [1, 3, 0]:
-            if parent.version < [1, 3, 3]:
+        if parent.version >= (1, 3, 0):
+            if parent.version < (1, 3, 3):
                 # AP and Ad Hoc was added in 1.3.3
                 while self.wifi_connection.count() > 2:
                     self.wifi_connection.removeItem(self.wifi_connection.count() - 1)
@@ -489,7 +489,7 @@ class Wifi(QWidget, Ui_Wifi):
             async_call(self.master.get_wifi_certificate, 0xFFFE, self.update_password_async, self.parent.increase_error_count)
             async_call(self.master.get_wifi_power_mode, None, self.wifi_power_mode.setCurrentIndex, self.parent.increase_error_count)
             
-            if parent.version >= [1, 3, 4]:
+            if parent.version >= (1, 3, 4):
                 async_call(self.master.get_wifi_regulatory_domain, None, self.wifi_domain.setCurrentIndex, self.parent.increase_error_count)
             else:
                 self.wifi_domain.setEnabled(0)
@@ -499,8 +499,7 @@ class Wifi(QWidget, Ui_Wifi):
             async_call(self.master.get_wifi_encryption, None, self.get_wifi_encryption_async, self.parent.increase_error_count)
 
             self.wifi_status = None
-            
-            
+
     def update_username_async(self, username):
         username = ''.join(map(chr, username[0][:username[1]]))
         self.wifi_username.setText(username)
@@ -573,7 +572,7 @@ class Wifi(QWidget, Ui_Wifi):
                                                 last_dir)
         if len(file_name) > 0:
             self.wifi_ca_certificate_url.setText(file_name)
-            
+
     def client_certificate_browse_pressed(self):
         last_dir = ''
         if len(self.wifi_client_certificate_url.text()) > 0:
@@ -595,7 +594,7 @@ class Wifi(QWidget, Ui_Wifi):
                                                 last_dir)
         if len(file_name) > 0:
             self.wifi_private_key_url.setText(file_name)
-            
+
     def encryption_changed(self, index):
         if str(self.wifi_encryption.currentText()) in 'WPA/WPA2':
             self.wifi_key.setVisible(True)
@@ -964,20 +963,20 @@ class Wifi(QWidget, Ui_Wifi):
             if username_old == username and password_old == password:
                 test_ok = True
 
-        if self.parent.version >= [1, 3, 4]:
+        if self.parent.version >= (1, 3, 4):
             if test_ok:
                 self.master.set_wifi_regulatory_domain(self.wifi_domain.currentIndex())
                 if self.master.get_wifi_regulatory_domain() != self.wifi_domain.currentIndex():
                     test_ok = False
 
         if test_ok:
-            if ca_cert != []:
+            if len(ca_cert) > 0:
                 test_ok = self.write_certificate(ca_cert, 0)
         if test_ok:
-            if client_cert != []:
+            if len(client_cert) > 0:
                 test_ok = self.write_certificate(client_cert, 1)
         if test_ok:
-            if priv_key != []:
+            if len(priv_key) > 0:
                 test_ok = self.write_certificate(priv_key, 2)
 
         if test_ok:
@@ -1017,18 +1016,18 @@ class Master(PluginBase, Ui_Master):
         self.extension_label.setText("None Present")
         
         # Chibi widget
-        if self.version >= [1, 1, 0]:
+        if self.version >= (1, 1, 0):
             self.extension_type_button.pressed.connect(self.extension_pressed)
             async_call(self.master.is_chibi_present, None, self.is_chibi_present_async, self.increase_error_count)
         else:
             self.extension_type_button.setEnabled(False)
             
         # RS485 widget
-        if self.version >= [1, 2, 0]:
+        if self.version >= (1, 2, 0):
             async_call(self.master.is_rs485_present, None, self.is_rs485_present_async, self.increase_error_count)
                 
         # Wifi widget
-        if self.version >= [1, 3, 0]:
+        if self.version >= (1, 3, 0):
             async_call(self.master.is_wifi_present, None, self.is_wifi_present_async, self.increase_error_count)
             
        
@@ -1070,7 +1069,7 @@ class Master(PluginBase, Ui_Master):
             self.extension_type.close()
 
     def has_reset_device(self):
-        return self.version >= [1, 2, 1]
+        return self.version >= (1, 2, 1)
 
     def reset_device(self):
         if self.has_reset_device():

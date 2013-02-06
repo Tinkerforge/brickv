@@ -213,7 +213,7 @@ in the image above, then press "Save Orientation".""")
             self.calibrate.close()
 
     def has_reset_device(self):
-        return self.version >= [1, 0, 7]
+        return self.version >= (1, 0, 7)
 
     def reset_device(self):
         if self.has_reset_device():
