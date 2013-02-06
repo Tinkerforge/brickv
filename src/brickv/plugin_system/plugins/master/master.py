@@ -508,6 +508,9 @@ class Wifi(QWidget, Ui_Wifi):
         password = ''.join(map(chr, password[0][:password[1]]))
         self.wifi_password.setText(password)
 
+    def get_long_wifi_key_async(self, key):
+        self.wifi_key.setText(key)
+
     def get_wifi_encryption_async(self, enc):
         encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length = enc
         
@@ -521,7 +524,12 @@ class Wifi(QWidget, Ui_Wifi):
         self.wifi_eap_outer_auth.setCurrentIndex(eap_outer)
         self.wifi_eap_inner_auth.setCurrentIndex(eap_inner)
         self.wifi_encryption.setCurrentIndex(encryption)
-        self.wifi_key.setText(key)
+
+        if key == '-' and self.parent.version >= (2, 0, 2):
+            async_call(self.master.get_long_wifi_key, None, self.get_long_wifi_key_async, self.parent.increase_error_count)
+        else:
+            self.wifi_key.setText(key)
+
         self.wifi_key_index.setValue(key_index)
         
         self.wifi_connection.currentIndexChanged.connect(self.connection_changed)
@@ -597,6 +605,11 @@ class Wifi(QWidget, Ui_Wifi):
 
     def encryption_changed(self, index):
         if str(self.wifi_encryption.currentText()) in 'WPA/WPA2':
+            if self.parent.version >= (2, 0, 2):
+                self.wifi_key.setMaxLength(64)
+            else:
+                self.wifi_key.setMaxLength(50)
+
             self.wifi_key.setVisible(True)
             self.wifi_key_label.setVisible(True)
             
@@ -653,6 +666,7 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_private_key_browse.setVisible(True)
             self.wifi_private_key_label.setVisible(True)
         elif str(self.wifi_encryption.currentText()) in 'WEP':
+            self.wifi_key.setMaxLength(26)
             self.wifi_key.setVisible(True)
             self.wifi_key_label.setVisible(True)
             
@@ -875,7 +889,6 @@ class Wifi(QWidget, Ui_Wifi):
 
         return True
 
-
     def save_pressed(self):
         encryption = self.wifi_encryption.currentIndex()
 
@@ -887,6 +900,12 @@ class Wifi(QWidget, Ui_Wifi):
         if '"' in key:
             self.popup_fail('Key cannot contain quotation mark')
             return
+
+        long_key = key
+        if str(self.wifi_encryption.currentText()) in 'WPA/WPA2' and \
+           self.parent.version >= (2, 0, 2) and \
+           len(key) > 50:
+            key = '-'
 
         key_index = self.wifi_key_index.value()
         eap_outer = self.wifi_eap_outer_auth.currentIndex()
@@ -926,15 +945,20 @@ class Wifi(QWidget, Ui_Wifi):
         client_certificate_length = len(client_cert)
         priv_key = self.get_certificate(self.wifi_private_key_url)
         private_key_length = len(priv_key)
-        
+
         previous_power_mode = self.master.get_wifi_power_mode()
         self.master.set_wifi_power_mode(power_mode)
         self.master.set_wifi_encryption(encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length)
         self.master.set_wifi_configuration(ssid, connection, ip, sub, gw, port)
+        if self.parent.version >= (2, 0, 2):
+            self.master.set_long_wifi_key(long_key)
 
         power_mode_old = self.master.get_wifi_power_mode()
         encryption_old, key_old, key_index_old, eap_options_old, ca_certificate_length_old, client_certificate_length_old, private_key_length_old = self.master.get_wifi_encryption()
         ssid_old, connection_old, ip_old, sub_old, gw_old, port_old = self.master.get_wifi_configuration()
+        long_key_old = long_key
+        if self.parent.version >= (2, 0, 2):
+            long_key_old = self.master.get_long_wifi_key()
 
         test_ok = False
         
@@ -946,7 +970,8 @@ class Wifi(QWidget, Ui_Wifi):
            eap_options == eap_options_old and \
            ca_certificate_length == ca_certificate_length_old and \
            client_certificate_length == client_certificate_length_old and \
-           private_key_length == private_key_length_old:
+           private_key_length == private_key_length_old and \
+           long_key == long_key_old:
             test_ok = True
         
         if test_ok and encryption == 1:

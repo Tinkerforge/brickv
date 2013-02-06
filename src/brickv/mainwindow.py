@@ -98,7 +98,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.name = '<unknown>'
         self.uid = '<unknown>'
-        self.version = [0, 0, 0]
+        self.version = (0, 0, 0)
 
         self.disconnect_times = []
 

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>434</width>
+    <width>529</width>
     <height>602</height>
    </rect>
   </property>
@@ -460,7 +460,7 @@
            <item>
             <widget class="QLineEdit" name="wifi_key">
              <property name="maxLength">
-              <number>50</number>
+              <number>64</number>
              </property>
             </widget>
            </item>

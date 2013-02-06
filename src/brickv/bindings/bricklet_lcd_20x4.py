@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-25.      #
+# This file was automatically generated on 2013-01-31.      #
 #                                                           #
-# Bindings Version 2.0.0                                    #
+# Bindings Version 2.0.2                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -171,7 +171,7 @@ class BrickletLCD20x4(Device):
 
     def get_custom_character(self, index):
         """
-        Returns the custon character for a given index, as set with 
+        Returns the custom character for a given index, as set with
         :func:`SetCustomCharacter`.
         
         .. versionadded:: 2.0.1~(Plugin)

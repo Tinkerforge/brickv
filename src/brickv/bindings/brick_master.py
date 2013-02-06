@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-01-21.      #
+# This file was automatically generated on 2013-02-05.      #
 #                                                           #
-# Bindings Version 2.0.0                                    #
+# Bindings Version 2.0.2                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -80,6 +80,8 @@ class BrickMaster(Device):
     FUNCTION_SET_WIFI_REGULATORY_DOMAIN = 38
     FUNCTION_GET_WIFI_REGULATORY_DOMAIN = 39
     FUNCTION_GET_USB_VOLTAGE = 40
+    FUNCTION_SET_LONG_WIFI_KEY = 41
+    FUNCTION_GET_LONG_WIFI_KEY = 42
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
@@ -175,6 +177,8 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_SET_WIFI_REGULATORY_DOMAIN] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_WIFI_REGULATORY_DOMAIN] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_USB_VOLTAGE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_LONG_WIFI_KEY] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_LONG_WIFI_KEY] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_CHIP_TEMPERATURE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_RESET] = BrickMaster.RESPONSE_EXPECTED_FALSE
@@ -545,7 +549,8 @@ class BrickMaster(Device):
         The key has a max length of 50 characters and is used if encryption
         is set to 0 or 2 (WPA or WEP). Otherwise the value is ignored.
         For WEP it is possible to set the key index (1-4). If you don't know your
-        key index, it is likely 1.
+        key index, it is likely 1. If you want to set a key with more than
+        50 characters, see :func:`SetLongWifiKey`.
         
         If you choose WPA Enterprise as encryption, you have to set eap options and
         the length of the certificates (for other encryption types these paramters
@@ -728,6 +733,27 @@ class BrickMaster(Device):
         .. versionadded:: 1.3.5~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_USB_VOLTAGE, (), '', 'H')
+
+    def set_long_wifi_key(self, key):
+        """
+        Sets a long WIFI key (up to 64 chars) for WPA encryption. This key will be used
+        if the key in :func:`SetWifiEncryption` is set to "-". In the old protocol,
+        a payload of size 64 was not possible, so the maximum key length was 50 chars.
+        
+        With the new protocol this is possible, since we didn't want to break API,
+        this function was added additionally.
+        
+        .. versionadded:: 2.0.2~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_LONG_WIFI_KEY, (key,), '64s', '')
+
+    def get_long_wifi_key(self):
+        """
+        Returns the encryption key as set by :func:`SetLongWifiKey`.
+        
+        .. versionadded:: 2.0.2~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_LONG_WIFI_KEY, (), '', '64s')
 
     def get_protocol1_bricklet_name(self, port):
         """
