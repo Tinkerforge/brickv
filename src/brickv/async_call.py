@@ -25,6 +25,7 @@ from PyQt4.QtGui import QApplication
 from PyQt4.QtCore import QThread, QEvent
 from threading import Lock
 
+import logging
 import traceback
 
 try:
@@ -49,8 +50,10 @@ def async_event_handler():
             func = async_event_queue.get(False, 0)
             if func:
                 func()
-        except:
+        except StopIteration:
             pass
+        except:
+            logging.exception('Error while delivering async call result')
 
 def async_next_session():
     with async_session_lock:
