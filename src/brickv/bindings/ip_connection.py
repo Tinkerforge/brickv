@@ -266,6 +266,7 @@ class IPConnection:
         self.auto_reconnect = True
         self.auto_reconnect_allowed = False
         self.auto_reconnect_pending = False
+        self.sequence_number_lock = Lock()
         self.next_sequence_number = 0
         self.auth_key = None
         self.devices = {}
@@ -465,7 +466,9 @@ class IPConnection:
         if self.callback_thread is None:
             try:
                 self.callback_queue = Queue()
-                self.callback_thread = Thread(target=self.callback_loop, args=(self.callback_queue, ))
+                self.callback_thread = Thread(name='Callback-Processor',
+                                              target=self.callback_loop,
+                                              args=(self.callback_queue, ))
                 self.callback_thread.daemon = True
                 self.callback_thread.start()
             except:
@@ -483,7 +486,8 @@ class IPConnection:
 
         try:
             self.receive_flag = True
-            self.receive_thread = Thread(target=self.receive_loop)
+            self.receive_thread = Thread(name='Brickd-Receiver',
+                                         target=self.receive_loop)
             self.receive_thread.daemon = True
             self.receive_thread.start()
         except:
@@ -710,20 +714,31 @@ class IPConnection:
             request, response_expected, sequence_number = \
                 self.create_packet_header(device, length, function_id)
 
+            def pack_string(f, d):
+                if sys.hexversion < 0x03000000:
+                    if type(d) == types.UnicodeType:
+                        return struct.pack('<' + f, d.encode('ascii'))
+                    else:
+                        return struct.pack('<' + f, d)
+                else:
+                    if isinstance(d, str):
+                        return struct.pack('<' + f, bytes(d, 'ascii'))
+                    else:
+                        return struct.pack('<' + f, d)
+
             for f, d in zip(form.split(' '), data):
-                if len(f) > 1 and not 's' in f:
+                if len(f) > 1 and not 's' in f and not 'c' in f:
                     request += struct.pack('<' + f, *d)
                 elif 's' in f:
-                    if sys.hexversion < 0x03000000:
-                        if type(d) == types.UnicodeType:
-                            request += struct.pack('<' + f, d.encode('ascii'))
-                        else:
-                            request += struct.pack('<' + f, d)
+                    request += pack_string(f, d)
+                elif 'c' in f:
+                    if len(f) > 1:
+                        if int(f.replace('c', '')) != len(d):
+                            raise ValueError('Incorrect char list length');
+                        for k in d:
+                            request += pack_string('c', k)
                     else:
-                        if isinstance(d, str):
-                            request += struct.pack('<' + f, bytes(d, 'ascii'))
-                        else:
-                            request += struct.pack('<' + f, d)
+                        request += pack_string(f, d)
                 else:
                     request += struct.pack('<' + f, d)
 
@@ -769,10 +784,10 @@ class IPConnection:
             return self.deserialize_data(response[8:], form_ret)
 
     def get_next_sequence_number(self):
-        # NOTE: assumes that socket lock is held
-        sequence_number = self.next_sequence_number
-        self.next_sequence_number = (self.next_sequence_number + 1) % 15
-        return sequence_number + 1
+        with self.sequence_number_lock:
+            sequence_number = self.next_sequence_number
+            self.next_sequence_number = (self.next_sequence_number + 1) % 15
+            return sequence_number + 1
 
     def handle_response(self, packet):
         function_id = get_function_id_from_data(packet)

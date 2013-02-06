@@ -75,3 +75,8 @@
        Handle no-internet-connection case probably in updates dialog
        Add more information to Bricklet UID and plugin writing error messages
        Make Protocol 1.0 Bricklet auto-detection more robust
+2.0.2: Use smaller update rate for WIFI status refresh (may timeout otherwise)
+       Check UID length before writing it to the Bricklet
+       Fix initialization of IO16 Bricklet plugin
+       Make Brick flashing error message more verbose
+       Add support for long WPA key (up to 64 chars) to Master Brick plugin
