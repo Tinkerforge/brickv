@@ -26,7 +26,7 @@ Boston, MA 02111-1307, USA.
 from ui_flashing import Ui_widget_flashing
 from bindings.ip_connection import IPConnection, Error, base58encode, base58decode, BASE58, uid64_to_uid32
 from plugin_system.plugins.imu.calibrate_import_export import parse_imu_calibration
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QApplication, QColor, QFrame, QFileDialog, QMessageBox, QProgressDialog, QStandardItemModel, QStandardItem, QBrush
 from samba import SAMBA, SAMBAException, get_serial_ports
 from infos import get_version_string
@@ -87,6 +87,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.brick_infos = []
 
         self.parent = parent
+        self.tab_widget.currentChanged.connect(self.tab_changed)
         self.button_serial_port_refresh.pressed.connect(self.refresh_serial_ports)
         self.combo_firmware.currentIndexChanged.connect(self.firmware_changed)
         self.button_firmware_save.pressed.connect(self.firmware_save_pressed)
@@ -1004,7 +1005,19 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         progress.cancel()
 
+    def tab_changed(self, i):
+        if i == 0 and self.refresh_updates_pending:
+            self.refresh_updates_pressed()
+
     def refresh_updates_pressed(self):
+        if self.tab_widget.currentIndex() != 0:
+            self.refresh_updates_pending = True
+            return
+
+        self.update_button_refresh.setDisabled(True)
+
+        self.refresh_updates_pending = False
+
         url_part_proto1_map = {
             # 'name': 'url_part'
             'Analog In Bricklet': 'analog_in',
@@ -1119,10 +1132,12 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         self.update_tree_view_model.clear()
         self.update_tree_view_model.setHorizontalHeaderLabels(self.update_tree_view_model_labels)
-        
+
         is_update = False
-        has_protocol1_error = False
-        for device_info in infos.infos.values():
+        protocol1_errors = set()
+        items = []
+
+        for device_uid, device_info in infos.infos.iteritems():
             if device_info.type == 'brick':
                 parent = [QStandardItem(device_info.name), 
                           QStandardItem(device_info.uid), 
@@ -1135,13 +1150,16 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 for item in parent:
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                     item.setData(color, Qt.BackgroundRole)
-                self.update_tree_view_model.appendRow(parent)
+                parent[0].setData(device_uid, Qt.UserRole)
+                items.append(parent)
+
+                brick_got_removed = False
                 for port in device_info.bricklets:
                     if not device_info.bricklets[port] or device_info.bricklets[port].protocol_version == 1:
                         try:
                             protv, fw, name = device_info.plugin.device.get_protocol1_bricklet_name(port)
                         except:
-                            has_protocol1_error = True
+                            protocol1_errors.add(device_uid)
                             child = [QStandardItem(port.upper() + ': Protocol 1.0 Bricklet with Error'),
                                      QStandardItem(''),
                                      QStandardItem(''),
@@ -1168,20 +1186,20 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                                 if key in device_info.bricklets[port].name:
                                     bricklet_info.url_part = url_part_proto1_map[key]
                                     break
-                                
+
                             try:
                                 versions = self.get_firmware_versions(FIRMWARE_URL + 'bricklets/' + bricklet_info.url_part + '/', 'bricklet_' + bricklet_info.url_part)
                                 if len(versions) > 0:
                                     bricklet_info.firmware_version_latest = versions[-1]
                             except urllib2.URLError:
                                 pass
-                
+
                     if device_info.bricklets[port]:
                         child = [QStandardItem(port.upper() + ': ' + device_info.bricklets[port].name),
                                  QStandardItem(device_info.bricklets[port].uid),
                                  QStandardItem(get_version_string(device_info.bricklets[port].firmware_version_installed)),
                                  QStandardItem(get_version_string(device_info.bricklets[port].firmware_version_latest))]
-                        
+
                         color, update = get_color_for_device(device_info.bricklets[port])
                         if update:
                             is_update = True
@@ -1189,7 +1207,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                             item.setData(color, Qt.BackgroundRole)
                         parent[0].appendRow(child)
-                        
+
             elif device_info.type == 'tool' and 'Brick Viewer' in device_info.name:
                 parent = [QStandardItem(device_info.name), 
                           QStandardItem(''), 
@@ -1205,8 +1223,33 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 for item in parent:
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                     item.setData(color, Qt.BackgroundRole)
-                self.update_tree_view_model.appendRow(parent)
-                        
+                items.append(parent)
+
+        t = 0
+        if len(protocol1_errors) > 0:
+            # if there were protocol1 errors give the enumerate callback a
+            # chance to update the infos to have correct information to filter
+            # out false-positive protocol1 errors that were detected due to
+            # fast USB unplug
+            t = 200
+        QTimer.singleShot(t, lambda: self.refresh_updates_pressed_second_step(is_update, items, protocol1_errors))
+
+    def refresh_updates_pressed_second_step(self, is_update, items, protocol1_errors):
+        protocol1_error_still_there = False
+
+        # filter out false-positive protocol1 errors
+        for device_uid in protocol1_errors:
+            if device_uid in infos.infos:
+                protocol1_error_still_there = True
+                continue
+            for i in range(len(items)):
+                if str(items[i][0].data(Qt.UserRole).toString()) == device_uid:
+                    del items[i]
+                    break
+
+        for item in items:
+            self.update_tree_view_model.appendRow(item)
+
         self.update_tree_view.expandAll()
         self.update_tree_view.setColumnWidth(0, 260)
         self.update_tree_view.setColumnWidth(1, 75)
@@ -1222,7 +1265,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         self.brick_changed(self.combo_brick.currentIndex())
 
-        if has_protocol1_error:
+        self.update_button_refresh.setDisabled(False)
+
+        if protocol1_error_still_there:
             message = """
 There was an error during the auto-detection of Bricklets with Protocol 1.0 plugins. Those cannot be updated automatically, but you can update them manually:
 
