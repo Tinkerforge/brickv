@@ -142,7 +142,13 @@ class Servo(PluginBase, Ui_Servo):
         self.velocity_list = []
         self.acceleration_list = []
         self.enable_list = []
-        
+
+        self.up_cur = 0
+        self.up_siv = 0
+        self.up_eiv = 0
+        self.up_opv = 0
+        self.up_mv = 0
+
         self.up_ena = [0]*7
         self.up_pos = [0]*7
         self.up_vel = [0]*7
