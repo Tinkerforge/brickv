@@ -127,17 +127,12 @@ class Servo(PluginBase, Ui_Servo):
     
     def __init__(self, ipcon, uid, version):
         PluginBase.__init__(self, ipcon, uid, 'Servo Brick', version)
-        
+
         self.setupUi(self)
-        
+
         self.servo = BrickServo(uid, ipcon)
         self.device = self.servo
-        
-        self.update_timer = QTimer()
-        self.update_timer.timeout.connect(self.update_apply)
-        self.update_timer.setInterval(50)
-        self.update_timer.start()
-        
+
         self.position_list = []
         self.velocity_list = []
         self.acceleration_list = []
@@ -153,9 +148,14 @@ class Servo(PluginBase, Ui_Servo):
         self.up_pos = [0]*7
         self.up_vel = [0]*7
         self.up_acc = [0]*7
-        
+
+        self.update_timer = QTimer()
+        self.update_timer.timeout.connect(self.update_apply)
+        self.update_timer.setInterval(50)
+        self.update_timer.start()
+
         self.alive = True
-        
+
         for i in range(1, 8):
             label = QLabel()
             label.setText('Off')
