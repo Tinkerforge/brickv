@@ -460,7 +460,7 @@
            <item>
             <widget class="QLineEdit" name="wifi_key">
              <property name="maxLength">
-              <number>64</number>
+              <number>63</number>
              </property>
             </widget>
            </item>

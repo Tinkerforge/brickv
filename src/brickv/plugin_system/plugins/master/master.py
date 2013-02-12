@@ -606,7 +606,7 @@ class Wifi(QWidget, Ui_Wifi):
     def encryption_changed(self, index):
         if str(self.wifi_encryption.currentText()) in 'WPA/WPA2':
             if self.parent.version >= (2, 0, 2):
-                self.wifi_key.setMaxLength(64)
+                self.wifi_key.setMaxLength(63)
             else:
                 self.wifi_key.setMaxLength(50)
 
@@ -897,11 +897,16 @@ class Wifi(QWidget, Ui_Wifi):
         except:
             self.popup_fail('Key cannot contain non-ASCII characters')
             return
+
         if '"' in key:
             self.popup_fail('Key cannot contain quotation mark')
             return
 
         if str(self.wifi_encryption.currentText()) in 'WEP':
+            if len(key) == 0:
+                self.popup_fail('WEP key cannot be empty')
+                return
+
             try:
                 int(key, 16)
             except:
@@ -913,10 +918,13 @@ class Wifi(QWidget, Ui_Wifi):
                 return
 
         long_key = key
-        if str(self.wifi_encryption.currentText()) in 'WPA/WPA2' and \
-           self.parent.version >= (2, 0, 2) and \
-           len(key) > 50:
-            key = '-'
+        if str(self.wifi_encryption.currentText()) in 'WPA/WPA2':
+            if len(key) < 8:
+                self.popup_fail('WPA/WPA2 key has to be at least 8 chars long')
+                return
+
+            if self.parent.version >= (2, 0, 2) and len(key) > 50:
+                key = '-'
 
         key_index = self.wifi_key_index.value()
         eap_outer = self.wifi_eap_outer_auth.currentIndex()
