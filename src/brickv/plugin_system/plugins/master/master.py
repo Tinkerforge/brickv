@@ -901,6 +901,17 @@ class Wifi(QWidget, Ui_Wifi):
             self.popup_fail('Key cannot contain quotation mark')
             return
 
+        if str(self.wifi_encryption.currentText()) in 'WEP':
+            try:
+                int(key, 16)
+            except:
+                self.popup_fail('WEP key has to be in hexadecimal notation')
+                return
+
+            if len(key) != 10 and len(key) != 26:
+                self.popup_fail('WEP key has to be either 10 or 26 hexadecimal digits long')
+                return
+
         long_key = key
         if str(self.wifi_encryption.currentText()) in 'WPA/WPA2' and \
            self.parent.version >= (2, 0, 2) and \
