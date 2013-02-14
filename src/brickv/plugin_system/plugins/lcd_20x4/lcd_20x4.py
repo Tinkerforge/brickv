@@ -185,8 +185,7 @@ class LCD20x4(PluginBase):
         if self.version >= (2, 0, 1):
             layout.addWidget(line)
             layout.addLayout(self.char_main_layoutv)
-        layout.addStretch()
-
+        layout.addStretch(1)
 
     def char_button_pressed(self, i, j):
         if self.character_boxes_bool[i][j]:
