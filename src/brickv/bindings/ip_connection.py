@@ -120,10 +120,10 @@ class Device:
         self.api_version = (0, 0, 0)
         self.registered_callbacks = {}
         self.callback_formats = {}
-        self.expected_response_function_id = None
-        self.expected_response_sequence_number = None
+        self.expected_response_function_id = None # protected by request_lock
+        self.expected_response_sequence_number = None # protected by request_lock
         self.response_queue = Queue()
-        self.write_lock = Lock()
+        self.request_lock = Lock()
         self.auth_key = None
 
         self.response_expected = [Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID] * 256
@@ -136,7 +136,7 @@ class Device:
         self.response_expected[IPConnection.FUNCTION_WRITE_BRICKLET_PLUGIN] = Device.RESPONSE_EXPECTED_TRUE
         self.response_expected[IPConnection.CALLBACK_ENUMERATE] = Device.RESPONSE_EXPECTED_ALWAYS_FALSE
 
-        ipcon.devices[self.uid] = self # FIXME: use a weakref here
+        ipcon.devices[self.uid] = self # FIXME: maybe use a weakref here
 
     def get_api_version(self):
         """
@@ -420,16 +420,9 @@ class IPConnection:
         enumerate callback.
         """
 
-        with self.socket_lock:
-            if self.socket is None:
-                raise Error(Error.NOT_CONNECTED, 'Not connected')
+        request, _, _ = self.create_packet_header(None, 8, IPConnection.FUNCTION_ENUMERATE)
 
-            request, _, _ = self.create_packet_header(None, 8, IPConnection.FUNCTION_ENUMERATE)
-
-            try:
-                self.socket.send(request)
-            except socket.error:
-                pass
+        self.send(request)
 
     def wait(self):
         """
@@ -703,91 +696,89 @@ class IPConnection:
 
         return s
 
-    def send_request(self, device, function_id, data, form, form_ret):
+    def send(self, packet):
         with self.socket_lock:
             if self.socket is None:
                 raise Error(Error.NOT_CONNECTED, 'Not connected')
 
-            device.write_lock.acquire()
-
-            length = 8 + struct.calcsize('<' + form)
-            request, response_expected, sequence_number = \
-                self.create_packet_header(device, length, function_id)
-
-            def pack_string(f, d):
-                if sys.hexversion < 0x03000000:
-                    if type(d) == types.UnicodeType:
-                        return struct.pack('<' + f, d.encode('ascii'))
-                    else:
-                        return struct.pack('<' + f, d)
-                else:
-                    if isinstance(d, str):
-                        return struct.pack('<' + f, bytes(d, 'ascii'))
-                    else:
-                        return struct.pack('<' + f, d)
-
-            for f, d in zip(form.split(' '), data):
-                if len(f) > 1 and not 's' in f and not 'c' in f:
-                    request += struct.pack('<' + f, *d)
-                elif 's' in f:
-                    request += pack_string(f, d)
-                elif 'c' in f:
-                    if len(f) > 1:
-                        if int(f.replace('c', '')) != len(d):
-                            raise ValueError('Incorrect char list length');
-                        for k in d:
-                            request += pack_string('c', k)
-                    else:
-                        request += pack_string(f, d)
-                else:
-                    request += struct.pack('<' + f, d)
-
-            if response_expected:
-                device.expected_response_function_id = function_id
-                device.expected_response_sequence_number = sequence_number
-
             try:
-                self.socket.send(request)
+                self.socket.send(packet)
             except socket.error:
                 pass
 
-        if not response_expected:
-            device.write_lock.release()
-            return
+    def send_request(self, device, function_id, data, form, form_ret):
+        length = 8 + struct.calcsize('<' + form)
+        request, response_expected, sequence_number = \
+            self.create_packet_header(device, length, function_id)
 
-        try:
-            response = device.response_queue.get(True, self.timeout)
-        except Empty:
-            msg = 'Did not receive response for function {0} in time'.format(function_id)
-            raise Error(Error.TIMEOUT, msg)
-        finally:
-            device.expected_response_function_id = None
-            device.expected_response_sequence_number = None
-            device.write_lock.release()
+        def pack_string(f, d):
+            if sys.hexversion < 0x03000000:
+                if type(d) == types.UnicodeType:
+                    return struct.pack('<' + f, d.encode('ascii'))
+                else:
+                    return struct.pack('<' + f, d)
+            else:
+                if isinstance(d, str):
+                    return struct.pack('<' + f, bytes(d, 'ascii'))
+                else:
+                    return struct.pack('<' + f, d)
 
-        error_code = get_error_code_from_data(response)
+        for f, d in zip(form.split(' '), data):
+            if len(f) > 1 and not 's' in f and not 'c' in f:
+                request += struct.pack('<' + f, *d)
+            elif 's' in f:
+                request += pack_string(f, d)
+            elif 'c' in f:
+                if len(f) > 1:
+                    if int(f.replace('c', '')) != len(d):
+                        raise ValueError('Incorrect char list length');
+                    for k in d:
+                        request += pack_string('c', k)
+                else:
+                    request += pack_string(f, d)
+            else:
+                request += struct.pack('<' + f, d)
 
-        if error_code == 0:
-            # no error
-            pass
-        elif error_code == 1:
-            msg = 'Got invalid parameter for function {0}'.format(function_id)
-            raise Error(Error.INVALID_PARAMETER, msg)
-        elif error_code == 2:
-            msg = 'Function {0} is not supported'.format(function_id)
-            raise Error(Error.NOT_SUPPORTED, msg)
+        if response_expected:
+            with device.request_lock:
+                device.expected_response_function_id = function_id
+                device.expected_response_sequence_number = sequence_number
+
+                try:
+                    self.send(request)
+                    response = device.response_queue.get(True, self.timeout)
+                except Empty:
+                    msg = 'Did not receive response for function {0} in time'.format(function_id)
+                    raise Error(Error.TIMEOUT, msg)
+                finally:
+                    device.expected_response_function_id = None
+                    device.expected_response_sequence_number = None
+
+            error_code = get_error_code_from_data(response)
+
+            if error_code == 0:
+                # no error
+                pass
+            elif error_code == 1:
+                msg = 'Got invalid parameter for function {0}'.format(function_id)
+                raise Error(Error.INVALID_PARAMETER, msg)
+            elif error_code == 2:
+                msg = 'Function {0} is not supported'.format(function_id)
+                raise Error(Error.NOT_SUPPORTED, msg)
+            else:
+                msg = 'Function {0} returned an unknown error'.format(function_id)
+                raise Error(Error.UNKNOWN_ERROR_CODE, msg)
+
+            if len(form_ret) > 0:
+                return self.deserialize_data(response[8:], form_ret)
         else:
-            msg = 'Function {0} returned an unknown error'.format(function_id)
-            raise Error(Error.UNKNOWN_ERROR_CODE, msg)
-
-        if len(form_ret) > 0:
-            return self.deserialize_data(response[8:], form_ret)
+            self.send(request)
 
     def get_next_sequence_number(self):
         with self.sequence_number_lock:
-            sequence_number = self.next_sequence_number
-            self.next_sequence_number = (self.next_sequence_number + 1) % 15
-            return sequence_number + 1
+            sequence_number = self.next_sequence_number + 1
+            self.next_sequence_number = sequence_number % 15
+            return sequence_number
 
     def handle_response(self, packet):
         function_id = get_function_id_from_data(packet)

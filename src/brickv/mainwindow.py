@@ -335,12 +335,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 info = infos.BrickletInfo()
             else:
                 info = infos.BrickInfo()
-                
+
             if uid in infos.infos:
                 info = infos.infos[uid]
             else:
                 infos.infos[uid] = info
-                
+
             for device in infos.infos.values():
                 if device.type == 'brick':
                     if info.type == 'bricklet':
@@ -358,6 +358,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             info.firmware_version_installed = firmware_version
             info.device_identifier = device_identifier
             info.protocol_version = 2
+            info.enumeration_type = enumeration_type
             
             for device in infos.infos.values():
                 if device.type in ('brick', 'bricklet'):
@@ -366,7 +367,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             plugin = self.plugin_manager.get_plugin(device_identifier, self.ipcon,
                                                     uid, firmware_version)
-            
+
             if plugin is not None:
                 info.plugin = plugin
                 if plugin.is_hardware_version_relevant(hardware_version):

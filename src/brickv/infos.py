@@ -61,6 +61,7 @@ class DeviceInfo(AbstractInfo):
     plugin_container = None
     protocol_version = 0
     tab_index = -1
+    enumeration_type = -1
 
     def __repr__(self):
         return """{0} ({1}):

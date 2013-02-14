@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from bindings.brick_master import BrickMaster
+from bindings.ip_connection import IPConnection
 
 from PyQt4.QtGui import QWidget, QFrame, QMessageBox, QFileDialog, QProgressDialog
 from PyQt4.QtCore import QTimer, Qt
@@ -39,6 +40,7 @@ from ui_extension_type import Ui_extension_type
 from ui_wifi_status import Ui_widget_wifi_status
 
 from async_call import async_call
+import infos
 
 class WifiStatus(QFrame, Ui_widget_wifi_status):
     def __init__(self, parent):
@@ -347,7 +349,6 @@ class RS485(QWidget, Ui_RS485):
             self.update_generator = self.update_addresses()
             self.update_generator.next()
 
-            
     def update_addresses(self):
         self.update_address = 0
         self.update_address_slave = 0
@@ -372,13 +373,17 @@ class RS485(QWidget, Ui_RS485):
                 break
             else:
                 address_slave.append(str(self.update_address_slave))
-                
+
         address_slave_text = ', '.join(address_slave)
-        
+
         typ = 0
         if self.update_address == 0:
             typ = 1
-        
+
+            # trigger enumerate for rs485 slaves
+            if infos.infos[self.parent.uid].enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED:
+                self.parent.ipcon.enumerate()
+
         self.lineedit_slave_address.setText(address_slave_text)
         self.address_spinbox.setValue(self.update_address)
         
@@ -1073,8 +1078,7 @@ class Master(PluginBase, Ui_Master):
         # Wifi widget
         if self.version >= (1, 3, 0):
             async_call(self.master.is_wifi_present, None, self.is_wifi_present_async, self.increase_error_count)
-            
-       
+
     def is_wifi_present_async(self, present):
         if present:
             wifi = Wifi(self)
