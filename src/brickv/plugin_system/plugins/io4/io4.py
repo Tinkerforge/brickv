@@ -88,22 +88,22 @@ class IO4(PluginBase, Ui_IO4):
         
         def get_port_async(value):
             self.init_value = value
-            self.update_generator.next()
+            self.init_async_generator.next()
         
         def get_port_configuration_async(conf):
             self.init_dir, self.init_config = conf
-            self.update_generator.next()
+            self.init_async_generator.next()
             
         def get_monoflop_async(init_monoflop):
             self.init_monoflop = init_monoflop
-            self.update_generator.next()
+            self.init_async_generator.next()
         
         def get_debounce_period_async(debounce_period):
             self.debounce_edit.setText(str(debounce_period))
         
         async_call(self.io.get_value, None, get_port_async, self.increase_error_count)
         yield
-        async_call(self.io.get_configuration, None, get_port_async, self.increase_error_count)
+        async_call(self.io.get_configuration, None, get_port_configuration_async, self.increase_error_count)
         yield
 
         time = [0, 0, 0, 0]
