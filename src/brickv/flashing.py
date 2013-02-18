@@ -1020,8 +1020,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         url_part_proto1_map = {
             # 'name': 'url_part'
-            'Analog In Bricklet': 'analog_in',
             'Ambient Light Bricklet': 'ambient_light',
+            'Analog In Bricklet': 'analog_in',
             'Analog Out Bricklet': 'analog_out',
             'Barometer Bricklet': 'barometer',
             'Current12 Bricklet': 'current12',
@@ -1039,6 +1039,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             'LCD 16x2 Bricklet': 'lcd_16x2',
             'LCD 20x4 Bricklet': 'lcd_20x4',
             'Linear Poti Bricklet': 'linear_poti',
+            'Piezo Buzzer Bricklet': 'piezo_buzzer',
             'Rotary Poti Bricklet': 'rotary_poti',
             'Temperature Bricklet': 'temperature',
             'Temperature-IR Bricklet': 'temperature_ir',
