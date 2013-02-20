@@ -220,13 +220,6 @@ def build_windows_pkg():
 
     import py2exe
     os.system("python build_all_ui.py")
-
-    lines = []
-    for line in file('../build_data/Windows/nsis/brickv_installer_windows.nsi.template', 'rb').readlines():
-        line = line.replace('<<BRICKV_DOT_VERSION>>', config.BRICKV_VERSION)
-        line = line.replace('<<BRICKV_UNDERSCORE_VERSION>>', config.BRICKV_VERSION.replace('.', '_'))
-        lines.append(line)
-    file('../build_data/Windows/nsis/brickv_installer_windows.nsi', 'wb').writelines(lines)
     
     data_files = []
     def visitor(arg, dirname, names):
@@ -294,11 +287,15 @@ def build_windows_pkg():
     )
     
     # build nsis
-    run = "\"" + os.path.join("C:\Program Files\NSIS\makensis.exe") + "\""
-    data = " dist\\nsis\\brickv_installer_windows.nsi"
-    print "run:", run
-    print "data:", data
-    os.system(run + data)
+    lines = []
+    for line in file('../build_data/Windows/nsis/brickv_installer.nsi', 'rb').readlines():
+        line = line.replace('<<BRICKV_DOT_VERSION>>', config.BRICKV_VERSION)
+        line = line.replace('<<BRICKV_UNDERSCORE_VERSION>>', config.BRICKV_VERSION.replace('.', '_'))
+        lines.append(line)
+    file('dist/nsis/brickv_installer.nsi', 'wb').writelines(lines)
+
+    os.system('"C:\\Program Files\\NSIS\\makensis.exe" dist\\nsis\\brickv_installer.nsi')
+
 
 def build_linux_pkg():
     if os.geteuid() != 0:
