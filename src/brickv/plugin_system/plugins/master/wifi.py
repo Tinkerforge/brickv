@@ -48,6 +48,7 @@ class Wifi(QWidget, Ui_Wifi):
 
         self.update_data_counter = 0
         self.connection = 0
+
         if parent.version >= (1, 3, 0):
             if parent.version < (1, 3, 3):
                 # AP and Ad Hoc was added in 1.3.3
@@ -68,7 +69,13 @@ class Wifi(QWidget, Ui_Wifi):
 
             async_call(self.master.get_wifi_encryption, None, self.get_wifi_encryption_async, self.parent.increase_error_count)
 
-            self.wifi_status = None
+            if parent.version < (2, 0, 5):
+                self.wifi_hostname.hide()
+                self.wifi_hostname_label.hide()
+            else:
+                async_call(self.master.get_wifi_hostname, None, self.get_wifi_hostname_async, self.parent.increase_error_count)
+
+        self.wifi_status = None
 
     def update_username_async(self, username):
         username = ''.join(map(chr, username[0][:username[1]]))
@@ -77,6 +84,9 @@ class Wifi(QWidget, Ui_Wifi):
     def update_password_async(self, password):
         password = ''.join(map(chr, password[0][:password[1]]))
         self.wifi_password.setText(password)
+
+    def get_wifi_hostname_async(self, hostname):
+        self.wifi_hostname.setText(hostname)
 
     def get_long_wifi_key_async(self, key):
         self.wifi_key.setText(key)
@@ -460,6 +470,7 @@ class Wifi(QWidget, Ui_Wifi):
         return True
 
     def save_pressed(self):
+        hostname = str(self.wifi_hostname.text())
         encryption = self.wifi_encryption.currentIndex()
 
         try:
@@ -541,6 +552,8 @@ class Wifi(QWidget, Ui_Wifi):
         self.master.set_wifi_configuration(ssid, connection, ip, sub, gw, port)
         if self.parent.version >= (2, 0, 2):
             self.master.set_long_wifi_key(long_key)
+        if self.parent.version >= (2, 0, 5):
+            self.master.set_wifi_hostname(hostname)
 
         power_mode_old = self.master.get_wifi_power_mode()
         encryption_old, key_old, key_index_old, eap_options_old, ca_certificate_length_old, client_certificate_length_old, private_key_length_old = self.master.get_wifi_encryption()
@@ -548,6 +561,9 @@ class Wifi(QWidget, Ui_Wifi):
         long_key_old = long_key
         if self.parent.version >= (2, 0, 2):
             long_key_old = self.master.get_long_wifi_key()
+        hostname_old = hostname
+        if self.parent.version >= (2, 0, 5):
+            hostname_old = self.master.get_wifi_hostname()
 
         test_ok = False
 
@@ -560,7 +576,8 @@ class Wifi(QWidget, Ui_Wifi):
            ca_certificate_length == ca_certificate_length_old and \
            client_certificate_length == client_certificate_length_old and \
            private_key_length == private_key_length_old and \
-           long_key == long_key_old:
+           long_key == long_key_old and \
+           hostname == hostname_old:
             test_ok = True
 
         if test_ok and encryption == 1:

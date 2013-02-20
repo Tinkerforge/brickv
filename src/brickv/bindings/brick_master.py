@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-02-12.      #
+# This file was automatically generated on 2013-02-19.      #
 #                                                           #
-# Bindings Version 2.0.3                                    #
+# Bindings Version 2.0.4                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -29,6 +29,9 @@ GetWifiEncryption = namedtuple('WifiEncryption', ['encryption', 'key', 'key_inde
 GetWifiStatus = namedtuple('WifiStatus', ['mac_address', 'bssid', 'channel', 'rssi', 'ip', 'subnet_mask', 'gateway', 'rx_count', 'tx_count', 'state'])
 GetWifiCertificate = namedtuple('WifiCertificate', ['data', 'data_length'])
 GetWifiBufferInfo = namedtuple('WifiBufferInfo', ['overflow', 'low_watermark', 'used'])
+GetStackCurrentCallbackThreshold = namedtuple('StackCurrentCallbackThreshold', ['option', 'min', 'max'])
+GetStackVoltageCallbackThreshold = namedtuple('StackVoltageCallbackThreshold', ['option', 'min', 'max'])
+GetUSBVoltageCallbackThreshold = namedtuple('USBVoltageCallbackThreshold', ['option', 'min', 'max'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -39,6 +42,12 @@ class BrickMaster(Device):
 
     DEVICE_IDENTIFIER = 13
 
+    CALLBACK_STACK_CURRENT = 59
+    CALLBACK_STACK_VOLTAGE = 60
+    CALLBACK_USB_VOLTAGE = 61
+    CALLBACK_STACK_CURRENT_REACHED = 62
+    CALLBACK_STACK_VOLTAGE_REACHED = 63
+    CALLBACK_USB_VOLTAGE_REACHED = 64
 
     FUNCTION_GET_STACK_VOLTAGE = 1
     FUNCTION_GET_STACK_CURRENT = 2
@@ -82,6 +91,22 @@ class BrickMaster(Device):
     FUNCTION_GET_USB_VOLTAGE = 40
     FUNCTION_SET_LONG_WIFI_KEY = 41
     FUNCTION_GET_LONG_WIFI_KEY = 42
+    FUNCTION_SET_WIFI_HOSTNAME = 43
+    FUNCTION_GET_WIFI_HOSTNAME = 44
+    FUNCTION_SET_STACK_CURRENT_CALLBACK_PERIOD = 45
+    FUNCTION_GET_STACK_CURRENT_CALLBACK_PERIOD = 46
+    FUNCTION_SET_STACK_VOLTAGE_CALLBACK_PERIOD = 47
+    FUNCTION_GET_STACK_VOLTAGE_CALLBACK_PERIOD = 48
+    FUNCTION_SET_USB_VOLTAGE_CALLBACK_PERIOD = 49
+    FUNCTION_GET_USB_VOLTAGE_CALLBACK_PERIOD = 50
+    FUNCTION_SET_STACK_CURRENT_CALLBACK_THRESHOLD = 51
+    FUNCTION_GET_STACK_CURRENT_CALLBACK_THRESHOLD = 52
+    FUNCTION_SET_STACK_VOLTAGE_CALLBACK_THRESHOLD = 53
+    FUNCTION_GET_STACK_VOLTAGE_CALLBACK_THRESHOLD = 54
+    FUNCTION_SET_USB_VOLTAGE_CALLBACK_THRESHOLD = 55
+    FUNCTION_GET_USB_VOLTAGE_CALLBACK_THRESHOLD = 56
+    FUNCTION_SET_DEBOUNCE_PERIOD = 57
+    FUNCTION_GET_DEBOUNCE_PERIOD = 58
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
@@ -127,6 +152,11 @@ class BrickMaster(Device):
     WIFI_DOMAIN_CHANNEL_1TO11 = 0
     WIFI_DOMAIN_CHANNEL_1TO13 = 1
     WIFI_DOMAIN_CHANNEL_1TO14 = 2
+    THRESHOLD_OPTION_OFF = 'x'
+    THRESHOLD_OPTION_OUTSIDE = 'o'
+    THRESHOLD_OPTION_INSIDE = 'i'
+    THRESHOLD_OPTION_SMALLER = '<'
+    THRESHOLD_OPTION_GREATER = '>'
 
     def __init__(self, uid, ipcon):
         """
@@ -179,11 +209,39 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_GET_USB_VOLTAGE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SET_LONG_WIFI_KEY] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_LONG_WIFI_KEY] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_HOSTNAME] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_HOSTNAME] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_STACK_CURRENT_CALLBACK_PERIOD] = BrickMaster.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_STACK_CURRENT_CALLBACK_PERIOD] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_STACK_VOLTAGE_CALLBACK_PERIOD] = BrickMaster.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_STACK_VOLTAGE_CALLBACK_PERIOD] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_USB_VOLTAGE_CALLBACK_PERIOD] = BrickMaster.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_USB_VOLTAGE_CALLBACK_PERIOD] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_STACK_CURRENT_CALLBACK_THRESHOLD] = BrickMaster.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_STACK_CURRENT_CALLBACK_THRESHOLD] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_STACK_VOLTAGE_CALLBACK_THRESHOLD] = BrickMaster.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_STACK_VOLTAGE_CALLBACK_THRESHOLD] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_USB_VOLTAGE_CALLBACK_THRESHOLD] = BrickMaster.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_USB_VOLTAGE_CALLBACK_THRESHOLD] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickMaster.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.CALLBACK_STACK_CURRENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickMaster.CALLBACK_STACK_VOLTAGE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickMaster.CALLBACK_USB_VOLTAGE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickMaster.CALLBACK_STACK_CURRENT_REACHED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickMaster.CALLBACK_STACK_VOLTAGE_REACHED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickMaster.CALLBACK_USB_VOLTAGE_REACHED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_CHIP_TEMPERATURE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_RESET] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_IDENTITY] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickMaster.CALLBACK_STACK_CURRENT] = 'H'
+        self.callback_formats[BrickMaster.CALLBACK_STACK_VOLTAGE] = 'H'
+        self.callback_formats[BrickMaster.CALLBACK_USB_VOLTAGE] = 'H'
+        self.callback_formats[BrickMaster.CALLBACK_STACK_CURRENT_REACHED] = 'H'
+        self.callback_formats[BrickMaster.CALLBACK_STACK_VOLTAGE_REACHED] = 'H'
+        self.callback_formats[BrickMaster.CALLBACK_USB_VOLTAGE_REACHED] = 'H'
 
     def get_stack_voltage(self):
         """
@@ -764,6 +822,205 @@ class BrickMaster(Device):
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_LONG_WIFI_KEY, (), '', '64s')
 
+    def set_wifi_hostname(self, hostname):
+        """
+        Sets the hostname of the WIFI Extension. The hostname will be displayed 
+        by access points as the hostname in the DHCP clients table.
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI_HOSTNAME, (hostname,), '16s', '')
+
+    def get_wifi_hostname(self):
+        """
+        Returns the hostname as set by :func:`GetWifiHostname`.
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_HOSTNAME, (), '', '16s')
+
+    def set_stack_current_callback_period(self, period):
+        """
+        Sets the period in ms with which the :func:`StackCurrent` callback is triggered
+        periodically. A value of 0 turns the callback off.
+        
+        :func:`StackCurrent` is only triggered if the current has changed since the
+        last triggering.
+        
+        The default value is 0.
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_STACK_CURRENT_CALLBACK_PERIOD, (period,), 'I', '')
+
+    def get_stack_current_callback_period(self):
+        """
+        Returns the period as set by :func:`SetCurrentCallbackPeriod`.
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_STACK_CURRENT_CALLBACK_PERIOD, (), '', 'I')
+
+    def set_stack_voltage_callback_period(self, period):
+        """
+        Sets the period in ms with which the :func:`StackVoltage` callback is triggered
+        periodically. A value of 0 turns the callback off.
+        
+        :func:`StackVoltage` is only triggered if the voltage has changed since the
+        last triggering.
+        
+        The default value is 0.
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_STACK_VOLTAGE_CALLBACK_PERIOD, (period,), 'I', '')
+
+    def get_stack_voltage_callback_period(self):
+        """
+        Returns the period as set by :func:`SetStackVoltageCallbackPeriod`.
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_STACK_VOLTAGE_CALLBACK_PERIOD, (), '', 'I')
+
+    def set_usb_voltage_callback_period(self, period):
+        """
+        Sets the period in ms with which the :func:`USBVoltage` callback is triggered
+        periodically. A value of 0 turns the callback off.
+        
+        :func:`USBVoltage` is only triggered if the voltage has changed since the
+        last triggering.
+        
+        The default value is 0.
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_USB_VOLTAGE_CALLBACK_PERIOD, (period,), 'I', '')
+
+    def get_usb_voltage_callback_period(self):
+        """
+        Returns the period as set by :func:`SetUSBVoltageCallbackPeriod`.
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_USB_VOLTAGE_CALLBACK_PERIOD, (), '', 'I')
+
+    def set_stack_current_callback_threshold(self, option, min, max):
+        """
+        Sets the thresholds for the :func:`StackCurrentReached` callback. 
+        
+        The following options are possible:
+        
+        .. csv-table::
+         :header: "Option", "Description"
+         :widths: 10, 100
+        
+         "'x'",    "Callback is turned off"
+         "'o'",    "Callback is triggered when the current is *outside* the min and max values"
+         "'i'",    "Callback is triggered when the current is *inside* the min and max values"
+         "'<'",    "Callback is triggered when the current is smaller than the min value (max is ignored)"
+         "'>'",    "Callback is triggered when the current is greater than the min value (max is ignored)"
+        
+        The default value is ('x', 0, 0).
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_STACK_CURRENT_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
+
+    def get_stack_current_callback_threshold(self):
+        """
+        Returns the threshold as set by :func:`SetStackCurrentCallbackThreshold`.
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        return GetStackCurrentCallbackThreshold(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_STACK_CURRENT_CALLBACK_THRESHOLD, (), '', 'c H H'))
+
+    def set_stack_voltage_callback_threshold(self, option, min, max):
+        """
+        Sets the thresholds for the :func:`StackStackVoltageReached` callback. 
+        
+        The following options are possible:
+        
+        .. csv-table::
+         :header: "Option", "Description"
+         :widths: 10, 100
+        
+         "'x'",    "Callback is turned off"
+         "'o'",    "Callback is triggered when the voltage is *outside* the min and max values"
+         "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
+         "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
+         "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
+        
+        The default value is ('x', 0, 0).
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_STACK_VOLTAGE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
+
+    def get_stack_voltage_callback_threshold(self):
+        """
+        Returns the threshold as set by :func:`SetStackVoltageCallbackThreshold`.
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        return GetStackVoltageCallbackThreshold(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_STACK_VOLTAGE_CALLBACK_THRESHOLD, (), '', 'c H H'))
+
+    def set_usb_voltage_callback_threshold(self, option, min, max):
+        """
+        Sets the thresholds for the :func:`USBVoltageReached` callback. 
+        
+        The following options are possible:
+        
+        .. csv-table::
+         :header: "Option", "Description"
+         :widths: 10, 100
+        
+         "'x'",    "Callback is turned off"
+         "'o'",    "Callback is triggered when the voltage is *outside* the min and max values"
+         "'i'",    "Callback is triggered when the voltage is *inside* the min and max values"
+         "'<'",    "Callback is triggered when the voltage is smaller than the min value (max is ignored)"
+         "'>'",    "Callback is triggered when the voltage is greater than the min value (max is ignored)"
+        
+        The default value is ('x', 0, 0).
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_USB_VOLTAGE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
+
+    def get_usb_voltage_callback_threshold(self):
+        """
+        Returns the threshold as set by :func:`SetUSBVoltageCallbackThreshold`.
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        return GetUSBVoltageCallbackThreshold(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_USB_VOLTAGE_CALLBACK_THRESHOLD, (), '', 'c H H'))
+
+    def set_debounce_period(self, debounce):
+        """
+        Sets the period in ms with which the threshold callbacks
+        
+         :func:`StackCurrentReached`, :func:`StackVoltageReached`, :func:`USBVoltageReached`
+        
+        are triggered, if the thresholds
+        
+         :func:`SetStackCurrentCallbackThreshold`, :func:`SetStackVoltageCallbackThreshold`, :func:`SetUSBVoltageCallbackThreshold`
+        
+        keep being reached.
+        
+        The default value is 100.
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+
+    def get_debounce_period(self):
+        """
+        Returns the debounce period as set by :func:`SetDebouncePeriod`.
+        
+        .. versionadded:: 2.0.5~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+
     def get_protocol1_bricklet_name(self, port):
         """
         Returns the firmware and protocol version and the name of the Bricklet for a given port.
@@ -813,5 +1070,11 @@ class BrickMaster(Device):
         .. versionadded:: 2.0.0~(Firmware)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def register_callback(self, id, callback):
+        """
+        Registers a callback with ID *id* to the function *callback*.
+        """
+        self.registered_callbacks[id] = callback
 
 Master = BrickMaster # for backward compatibility

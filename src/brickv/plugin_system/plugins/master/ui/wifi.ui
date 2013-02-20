@@ -113,6 +113,27 @@
           </layout>
          </item>
          <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item>
+            <widget class="QLabel" name="wifi_hostname_label">
+             <property name="text">
+              <string>Hostname:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="wifi_hostname">
+             <property name="toolTip">
+              <string>Up to 15 chars, leave empty for default</string>
+             </property>
+             <property name="maxLength">
+              <number>15</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_9">
            <item>
             <widget class="QLabel" name="label_7">
@@ -459,6 +480,10 @@
            </item>
            <item>
             <widget class="QLineEdit" name="wifi_key">
+             <property name="toolTip">
+              <string>WPA/WPA2: 8-63 chars
+WEP: 10 or 26 hexadecimal digits</string>
+             </property>
              <property name="maxLength">
               <number>63</number>
              </property>
