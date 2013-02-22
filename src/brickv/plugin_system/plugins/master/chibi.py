@@ -22,6 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from bindings.ip_connection import IPConnection
+
 from PyQt4.QtGui import QWidget
 
 from ui_chibi import Ui_Chibi
@@ -93,6 +95,10 @@ class Chibi(QWidget, Ui_Chibi):
         typ = 0
         if self.update_address == self.update_chibi_master_address:
             typ = 1
+
+            # trigger enumerate for chibi slaves
+            if infos.infos[self.parent.uid].enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED:
+                self.parent.ipcon.enumerate()
 
         self.lineedit_slave_address.setText(address_slave_text)
         self.address_spinbox.setValue(self.update_address)
