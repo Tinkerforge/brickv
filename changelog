@@ -80,3 +80,11 @@
        Fix initialization of IO16 Bricklet plugin
        Make Brick flashing error message more verbose
        Add support for long WPA key (up to 64 chars) to Master Brick plugin
+2.0.3: Filter out false-positives in Protocol 1.0 error detection
+       Check WEP key for being in hexadecimal notation and 10 or 26 digits long
+       Trigger enumeration for RS485/Chibi slaves if RS485/Chibi master enumerates itself as connected
+       Fix IO-4 Bricklet Plugin initialization
+       Fix Piezo Buzzer Bricklet Protocol 1.0 autodetection
+       NSIS installer for Windows installs bootloader driver
+       Add support for WIFI hostname configuration to Master Brick plugin
+       Add support for measurement range selection to Analog In Bricklet plugin
