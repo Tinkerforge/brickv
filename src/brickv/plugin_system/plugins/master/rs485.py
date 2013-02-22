@@ -22,17 +22,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings.brick_master import BrickMaster
 from bindings.ip_connection import IPConnection
 
-from PyQt4.QtGui import QWidget, QFrame, QMessageBox, QFileDialog, QProgressDialog
-from PyQt4.QtCore import QTimer, Qt
-
-import os
-import time
-import sys
-
+from PyQt4.QtGui import QWidget
 from ui_rs485 import Ui_RS485
 
 from async_call import async_call
