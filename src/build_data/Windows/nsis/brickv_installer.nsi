@@ -198,7 +198,7 @@ SectionEnd
 ;--------------------------------
 
 ; The stuff to install
-Section "Install Brick Viewer ${BRICKV_VERSION} Program"
+Section "Install Brick Viewer ${BRICKV_VERSION}"
   SectionIn RO
 
   DetailPrint "Install Brick Viewer..."
@@ -271,7 +271,7 @@ not_installed:
 
  ; install driver only on systems < Windows 8
 ${If} ${AtMostWin2008R2}
-  SectionSetText ${SEC_INSTALL_DRIVER} "Install Bootloader Driver" ; make item visible
+  SectionSetText ${SEC_INSTALL_DRIVER} "Install/Update Bootloader Driver" ; make item visible
   SectionSetFlags ${SEC_INSTALL_DRIVER} ${SF_SELECTED}
 ${EndIf}
 
