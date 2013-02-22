@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-02-06.      #
+# This file was automatically generated on 2013-02-22.      #
 #                                                           #
-# Bindings Version 2.0.3                                    #
+# Bindings Version 2.0.5                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -50,6 +50,8 @@ class BrickletAnalogIn(Device):
     FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD = 10
     FUNCTION_SET_DEBOUNCE_PERIOD = 11
     FUNCTION_GET_DEBOUNCE_PERIOD = 12
+    FUNCTION_SET_RANGE = 17
+    FUNCTION_GET_RANGE = 18
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -57,6 +59,11 @@ class BrickletAnalogIn(Device):
     THRESHOLD_OPTION_INSIDE = 'i'
     THRESHOLD_OPTION_SMALLER = '<'
     THRESHOLD_OPTION_GREATER = '>'
+    RANGE_AUTOMATIC = 0
+    RANGE_UP_TO_6V = 1
+    RANGE_UP_TO_10V = 2
+    RANGE_UP_TO_36V = 3
+    RANGE_UP_TO_45V = 3
 
     def __init__(self, uid, ipcon):
         """
@@ -65,7 +72,7 @@ class BrickletAnalogIn(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletAnalogIn.FUNCTION_GET_VOLTAGE] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAnalogIn.FUNCTION_GET_ANALOG_VALUE] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -83,6 +90,8 @@ class BrickletAnalogIn(Device):
         self.response_expected[BrickletAnalogIn.CALLBACK_ANALOG_VALUE] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletAnalogIn.CALLBACK_VOLTAGE_REACHED] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletAnalogIn.CALLBACK_ANALOG_VALUE_REACHED] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletAnalogIn.FUNCTION_SET_RANGE] = BrickletAnalogIn.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAnalogIn.FUNCTION_GET_RANGE] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAnalogIn.FUNCTION_GET_IDENTITY] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletAnalogIn.CALLBACK_VOLTAGE] = 'H'
@@ -228,6 +237,30 @@ class BrickletAnalogIn(Device):
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
         return self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+
+    def set_range(self, range):
+        """
+        Sets the measurement range. Possible ranges:
+        
+        * 0: Automatically switched
+        * 1: 0V - 6.05V, ~1.48mV resolution
+        * 2: 0V - 10.32V, ~2.52mV resolution
+        * 3: 0V - 36.30V, ~8.86mV resolution
+        * 3: 0V - 45.00V, ~11.25mV resolution
+        
+        The default measurement range is 0.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_RANGE, (range,), 'B', '')
+
+    def get_range(self):
+        """
+        Returns the measurement range as set by :func:`SetRange`.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_RANGE, (), '', 'B')
 
     def get_identity(self):
         """

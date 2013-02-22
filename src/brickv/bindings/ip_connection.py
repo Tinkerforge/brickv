@@ -721,12 +721,16 @@ class IPConnection:
         def pack_string(f, d):
             if sys.hexversion < 0x03000000:
                 if type(d) == types.UnicodeType:
-                    return struct.pack('<' + f, d.encode('ascii'))
+                    f = f.replace('s', 'B')
+                    l = map(ord, d)
+                    l += [0] * (int(f.replace('B', '')) - len(l))
+                    return struct.pack('<' + f, *l)
+
                 else:
                     return struct.pack('<' + f, d)
             else:
                 if isinstance(d, str):
-                    return struct.pack('<' + f, bytes(d, 'ascii'))
+                    return struct.pack('<' + f, bytes(map(ord, d)))
                 else:
                     return struct.pack('<' + f, d)
 
@@ -753,7 +757,15 @@ class IPConnection:
 
                 try:
                     self.send(request)
-                    response = device.response_queue.get(True, self.timeout)
+
+                    while True:
+                        response = device.response_queue.get(True, self.timeout)
+
+                        if function_id == get_function_id_from_data(response) and \
+                           sequence_number == get_sequence_number_from_data(response):
+                            # ignore old responses that arrived after the timeout expired, but before setting
+                            # expected_response_function_id and expected_response_sequence_number back to None
+                            break
                 except Empty:
                     msg = 'Did not receive response for function {0} in time'.format(function_id)
                     raise Error(Error.TIMEOUT, msg)

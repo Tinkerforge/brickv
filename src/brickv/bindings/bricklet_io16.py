@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-02-06.      #
+# This file was automatically generated on 2013-02-22.      #
 #                                                           #
-# Bindings Version 2.0.3                                    #
+# Bindings Version 2.0.5                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -214,7 +214,7 @@ class BrickletIO16(Device):
     def set_selected_values(self, port, selection_mask, value_mask):
         """
         Sets the output value (high or low) for a port ("a" or "b" with a bitmask, 
-        according to the selction mask. The bitmask is 4 bit long, *true* refers 
+        according to the selection mask. The bitmask is 4 bit long, *true* refers 
         to high and *false* refers to low.
         
         For example: The values 0b11000000, 0b10000000 will turn pin 7 high and

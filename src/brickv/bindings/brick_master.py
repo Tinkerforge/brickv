@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-02-19.      #
+# This file was automatically generated on 2013-02-22.      #
 #                                                           #
-# Bindings Version 2.0.4                                    #
+# Bindings Version 2.0.5                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -343,17 +343,20 @@ class BrickMaster(Device):
     def set_chibi_slave_address(self, num, address):
         """
         Sets up to 254 slave addresses. Valid addresses are in range 1-255. 0 has a
-        special meaning and is used as list terminator.
-        The address numeration (via num parameter) has to be used
+        special meaning, it is used as list terminator and not allowed as normal slave
+        address. The address numeration (via num parameter) has to be used
         ascending from 0. For example: If you use the Chibi Extension in Master mode
         (i.e. the stack has an USB connection) and you want to talk to three other
         Chibi stacks with the slave addresses 17, 23, and 42, you should call with
-        "(0, 17), (1, 23), (2, 42) and (3, 0)". The last call with "(3, 0)" indicates
-        that the RS485 slave address list contains 3 addresses in this case.
+        "(0, 17), (1, 23), (2, 42) and (3, 0)". The last call with "(3, 0)" is a list
+        terminator and indicates that the Chibi slave address list contains 3 addresses
+        in this case.
         
-        It is possible to set the addresses with the Brick Viewer and it will be 
-        saved in the EEPROM of the Chibi Extension, they don't
-        have to be set on every startup.
+        It is possible to set the addresses with the Brick Viewer, that will take care
+        of correct address numeration and list termination.
+        
+        The slave addresses will be saved in the EEPROM of the Chibi Extension, they
+        don't have to be set on every startup.
         
         .. versionadded:: 1.1.0~(Firmware)
         """
@@ -426,10 +429,10 @@ class BrickMaster(Device):
          :header: "Frequency",             "Possible Channels"
          :widths: 40, 60
         
-         "OQPSK 868Mhz (Europe)", "0"
-         "OQPSK 915Mhz (US)",     "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
-         "OQPSK 780Mhz (China)",  "0, 1, 2, 3"
-         "BPSK40 915Mhz",         "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
+         "OQPSK 868MHz (Europe)", "0"
+         "OQPSK 915MHz (US)",     "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
+         "OQPSK 780MHz (China)",  "0, 1, 2, 3"
+         "BPSK40 915MHz",         "1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
         
         It is possible to set the channel with the Brick Viewer and it will be 
         saved in the EEPROM of the Chibi Extension, it does not
@@ -481,17 +484,20 @@ class BrickMaster(Device):
     def set_rs485_slave_address(self, num, address):
         """
         Sets up to 255 slave addresses. Valid addresses are in range 1-255. 0 has a
-        special meaning and is used as list terminator.
-        The address numeration (via num parameter) has to be used
+        special meaning, it is used as list terminator and not allowed as normal slave
+        address. The address numeration (via num parameter) has to be used
         ascending from 0. For example: If you use the RS485 Extension in Master mode
         (i.e. the stack has an USB connection) and you want to talk to three other
-        RS485 stacks with the IDs 17, 23, and 42, you should call with "(0, 17),
-        (1, 23), (2, 42) and (3, 0)". The last call with "(3, 0)" indicates that the
-        RS485 slave address list contains 3 addresses in this case.
+        RS485 stacks with the addresses 17, 23, and 42, you should call with "(0, 17),
+        (1, 23), (2, 42) and (3, 0)". The last call with "(3, 0)" is a list terminator
+        and indicates that the RS485 slave address list contains 3 addresses in this
+        case.
         
-        It is possible to set the addresses with the Brick Viewer and it will be 
-        saved in the EEPROM of the RS485 Extension, they don't
-        have to be set on every startup.
+        It is possible to set the addresses with the Brick Viewer, that will take care
+        of correct address numeration and list termination.
+        
+        The slave addresses will be saved in the EEPROM of the Chibi Extension, they
+        don't have to be set on every startup.
         
         .. versionadded:: 1.2.0~(Firmware)
         """
@@ -827,6 +833,8 @@ class BrickMaster(Device):
         Sets the hostname of the WIFI Extension. The hostname will be displayed 
         by access points as the hostname in the DHCP clients table.
         
+        Setting an empty String will restore the default hostname.
+        
         .. versionadded:: 2.0.5~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI_HOSTNAME, (hostname,), '16s', '')
@@ -834,6 +842,8 @@ class BrickMaster(Device):
     def get_wifi_hostname(self):
         """
         Returns the hostname as set by :func:`GetWifiHostname`.
+        
+        An empty String means, that the default hostname is used.
         
         .. versionadded:: 2.0.5~(Firmware)
         """
