@@ -326,6 +326,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def cb_enumerate(self, uid, connected_uid, position,
                      hardware_version, firmware_version,
                      device_identifier, enumeration_type):
+        if self.ipcon.get_connection_state() != IPConnection.CONNECTION_STATE_CONNECTED:
+            # ignore enumerate callbacks that arrived after the connection got closed
+            return
+
         if enumeration_type in [IPConnection.ENUMERATION_TYPE_AVAILABLE,
                                 IPConnection.ENUMERATION_TYPE_CONNECTED]:
             if device_identifier == BrickMaster.DEVICE_IDENTIFIER:
