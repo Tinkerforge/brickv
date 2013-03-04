@@ -59,15 +59,17 @@ class Wifi(QWidget, Ui_Wifi):
             if parent.version >= (1, 3, 4):
                 async_call(self.master.get_wifi_regulatory_domain, None, self.wifi_domain.setCurrentIndex, self.parent.increase_error_count)
             else:
-                self.wifi_domain.setEnabled(0)
+                self.wifi_domain.setEnabled(False)
                 self.wifi_domain.clear()
-                self.wifi_domain.addItem("Master Firmware > 1.3.3 needed")
+                self.wifi_domain.addItem("Firmware > 1.3.3 needed")
 
             async_call(self.master.get_wifi_encryption, None, self.get_wifi_encryption_async, self.parent.increase_error_count)
 
             if parent.version < (2, 0, 5):
-                self.wifi_hostname.hide()
-                self.wifi_hostname_label.hide()
+                self.wifi_hostname.setDisabled(True)
+                self.wifi_hostname.setMaxLength(50)
+                self.wifi_hostname.setText("Firmware > 2.0.4 needed")
+                self.wifi_hostname_label.setDisabled(True)
             else:
                 async_call(self.master.get_wifi_hostname, None, self.get_wifi_hostname_async, self.parent.increase_error_count)
 

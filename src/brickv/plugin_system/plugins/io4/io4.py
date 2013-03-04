@@ -74,7 +74,7 @@ class IO4(PluginBase, Ui_IO4):
         self.update_timer.setInterval(50)
 
         if not self.has_monoflop:
-            self.go_button.setText("Go (> 1.1.0 needed)")
+            self.go_button.setText("Go (Firmware > 1.1.0 needed)")
             self.go_button.setEnabled(False)
         
         self.pin_changed(0)

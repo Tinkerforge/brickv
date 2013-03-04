@@ -69,8 +69,8 @@ class DualRelay(PluginBase, Ui_DualRelay):
         self.update_timer.setInterval(50)
 
         if not self.has_monoflop:
-            self.go1_button.setText("Go (> 1.1.0 needed)")
-            self.go2_button.setText("Go (> 1.1.0 needed)")
+            self.go1_button.setText("Go (Firmware > 1.1.0 needed)")
+            self.go2_button.setText("Go (Firmware > 1.1.0 needed)")
             self.go1_button.setEnabled(False)
             self.go2_button.setEnabled(False)
         
