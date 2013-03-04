@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 
 from bindings.ip_connection import IPConnection
 
-from PyQt4.QtGui import QWidget
+from PyQt4.QtGui import QWidget, QMessageBox
 
 from ui_chibi import Ui_Chibi
 
