@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-02-22.      #
+# This file was automatically generated on 2013-03-05.      #
 #                                                           #
 # Bindings Version 2.0.5                                    #
 #                                                           #
@@ -620,14 +620,14 @@ class BrickMaster(Device):
         For WPA/WPA2 the key has to be at least 8 characters long. If you want to set
         a key with more than 50 characters, see :func:`SetLongWifiKey`.
         
-        For WEP the key has to be either 10 or 26 hexdecimal digits long. It is
+        For WEP the key has to be either 10 or 26 hexadecimal digits long. It is
         possible to set the WEP key index (1-4). If you don't know your key index,
         it is likely 1.
         
         If you choose WPA Enterprise as encryption, you have to set eap options and
-        the length of the certificates (for other encryption types these paramters
+        the length of the certificates (for other encryption types these paramaters
         are ignored). The certificate length are given in byte and the certificates
-        themself can be set with  :func:`SetWifiCertificate`. Eap options consist of 
+        themselves can be set with :func:`SetWifiCertificate`. Eap options consist of 
         the outer authentication (bits 1-2), inner authentication (bit 3) and 
         certificate type (bits 4-5):
         

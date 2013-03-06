@@ -88,3 +88,6 @@
        NSIS installer for Windows installs bootloader driver
        Add support for WIFI hostname configuration to Master Brick plugin
        Add support for measurement range selection to Analog In Bricklet plugin
+2.0.4: Ignore enumerate callbacks that arrived after a disconnect
+       Fix Chibi and RS485 configuration handling
+       Disable instead of hide WIFI hostname edit box, if Master Brick firmware doesn't support it

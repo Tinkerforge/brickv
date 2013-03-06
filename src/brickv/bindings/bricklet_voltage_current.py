@@ -213,7 +213,7 @@ class BrickletVoltageCurrent(Device):
         
         For example, if you are expecting a measurement of 1000mA and you
         are measuring 1023mA, you can calibrate the Voltage/Current Bricklet 
-        by setting the multiplier to 1000 and the divisior to 1023.
+        by setting the multiplier to 1000 and the divisor to 1023.
         """
         self.ipcon.send_request(self, BrickletVoltageCurrent.FUNCTION_SET_CALIBRATION, (gain_multiplier, gain_divisor), 'H H', '')
 
