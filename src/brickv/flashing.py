@@ -81,21 +81,21 @@ class ProgressWrapper:
     def __init__(self, progress):
         self.progress = progress
     
-    def reset(title, length):
+    def reset(self, title, length):
         self.progress.setLabelText(title)
         self.progress.setMaximum(length)
         self.progress.setValue(0)
         self.progress.show()
             
-    def update(value):
+    def update(self, value):
         self.progress.setValue(value)
         QApplication.processEvents()
     
-    def cancel():
-        progress.cancel()
+    def cancel(self):
+        self.progress.cancel()
         
-    def setMaximum(value):
-        progress.setMaximum(value)
+    def setMaximum(self, value):
+        self.progress.setMaximum(value)
         
 class FlashingWindow(QFrame, Ui_widget_flashing):
     def __init__(self, parent):

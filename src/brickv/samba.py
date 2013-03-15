@@ -215,7 +215,7 @@ class SAMBA:
 
         # Write IMU calibration
         if imu_calibration is not None:
-            reset_progress('Writing IMU calibration', 0)
+            self.reset_progress('Writing IMU calibration', 0)
 
             ic_relative_address = self.flash_size - 0x1000 * 2 - 12 - 0x400
             ic_prefix_length = ic_relative_address % self.flash_page_size
@@ -272,16 +272,16 @@ class SAMBA:
         # Boot
         self.reset()
 
-    def reset_progress(title, length):
+    def reset_progress(self, title, length):
         if self.progress is not None:
             self.progress.reset(title, length)
             
-    def update_progress(value):
+    def update_progress(self, value):
         if self.progress is not None:
             self.progress.update(value)
         
     def write_pages(self, pages, page_num_offset, title):
-        reset_progress(title, len(pages))
+        self.reset_progress(title, len(pages))
 
         page_num = 0
 
@@ -298,10 +298,10 @@ class SAMBA:
             self.wait_for_flash_ready('while writing flash pages')
 
             page_num += 1
-            update_progress(page_num)
+            self.update_progress(page_num)
 
     def verify_pages(self, pages, page_num_offset, title, title_in_error):
-        reset_progress('Verifying written ' + title, len(pages))
+        self.reset_progress('Verifying written ' + title, len(pages))
 
         offset = page_num_offset * self.flash_page_size
         page_num = 0
@@ -317,7 +317,7 @@ class SAMBA:
                     raise SAMBAException('Verification error')
 
             page_num += 1
-            update_progress(page_num)
+            self.update_progress(page_num)
 
     def lock_pages(self, page_num, page_count):
         start_page_num = page_num - (page_num % self.flash_pages_per_lockregion)
