@@ -24,7 +24,6 @@ Boston, MA 02111-1307, USA.
 import sys
 import glob
 import struct
-from PyQt4.QtGui import QApplication
 from serial import Serial, SerialException
 
 if sys.platform.startswith('linux'):
@@ -275,15 +274,11 @@ class SAMBA:
 
     def reset_progress(title, length):
         if self.progress is not None:
-            self.progress.setLabelText(title)
-            self.progress.setMaximum(length)
-            self.progress.setValue(0)
-            self.progress.show()
+            self.progress.reset(title, length)
             
     def update_progress(value):
         if self.progress is not None:
-            self.progress.setValue(value)
-            QApplication.processEvents()
+            self.progress.update(value)
         
     def write_pages(self, pages, page_num_offset, title):
         reset_progress(title, len(pages))
