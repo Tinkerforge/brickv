@@ -215,10 +215,7 @@ class SAMBA:
 
         # Write IMU calibration
         if imu_calibration is not None:
-            progress.setLabelText('Writing IMU calibration')
-            progress.setMaximum(0)
-            progress.setValue(0)
-            progress.show()
+			reset_progress(progress, 'Writing IMU calibration', 0)
 
             ic_relative_address = self.flash_size - 0x1000 * 2 - 12 - 0x400
             ic_prefix_length = ic_relative_address % self.flash_page_size
@@ -275,11 +272,19 @@ class SAMBA:
         # Boot
         self.reset()
 
+	def reset_progress(progress, title, length):
+		if progress is not None:
+			progress.setLabelText(title)
+			progress.setMaximum(length)
+			progress.setValue(0)
+			progress.show()
+			
+	def update_progress(progress, value):
+		if progress is not None:
+			progress.setValue(value)
+		
     def write_pages(self, pages, page_num_offset, title, progress):
-        progress.setLabelText(title)
-        progress.setMaximum(len(pages))
-        progress.setValue(0)
-        progress.show()
+        reset_progress(progress, title, len(pages))
 
         page_num = 0
 
@@ -296,14 +301,11 @@ class SAMBA:
             self.wait_for_flash_ready('while writing flash pages')
 
             page_num += 1
-            progress.setValue(page_num)
+            update_progress(progress, page_num)
             QApplication.processEvents()
 
     def verify_pages(self, pages, page_num_offset, title, title_in_error, progress):
-        progress.setLabelText('Verifying written ' + title)
-        progress.setMaximum(len(pages))
-        progress.setValue(0)
-        progress.show()
+		reset_progress(progress, 'Verifying written ' + title, len(pages))
 
         offset = page_num_offset * self.flash_page_size
         page_num = 0
@@ -319,7 +321,7 @@ class SAMBA:
                     raise SAMBAException('Verification error')
 
             page_num += 1
-            progress.setValue(page_num)
+            update_progress(progress, page_num)
             QApplication.processEvents()
 
     def lock_pages(self, page_num, page_count):
