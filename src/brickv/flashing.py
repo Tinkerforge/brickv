@@ -473,6 +473,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             return
 
         progress = self.create_progress_bar('Flashing')
+        samba.progress = progress
         current_text = self.combo_firmware.currentText()
 
         # Get firmware
@@ -625,7 +626,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         # Flash firmware
         try:
-            samba.flash(firmware, imu_calibration, lock_imu_calibration_pages, progress)
+            samba.flash(firmware, imu_calibration, lock_imu_calibration_pages)
             progress.cancel()
 
             if current_text == CUSTOM:

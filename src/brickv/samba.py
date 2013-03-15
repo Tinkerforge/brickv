@@ -98,8 +98,9 @@ class SAMBAException(Exception):
     pass
 
 class SAMBA:
-    def __init__(self, port_name):
+    def __init__(self, port_name, progress = None):
         self.current_mode = None
+        self.progress = progress
 
         try:
             self.port = Serial(port_name, 115200, timeout=5)
@@ -181,7 +182,7 @@ class SAMBA:
 
         return uid2 << 32 | uid1
 
-    def flash(self, firmware, imu_calibration, lock_imu_calibration_pages, progress):
+    def flash(self, firmware, imu_calibration, lock_imu_calibration_pages):
         # Split firmware into pages
         firmware_pages = []
         offset = 0
@@ -211,11 +212,11 @@ class SAMBA:
         self.wait_for_flash_ready('while erasing flash pages')
 
         # Write firmware
-        self.write_pages(firmware_pages, 0, 'Writing firmware', progress)
+        self.write_pages(firmware_pages, 0, 'Writing firmware')
 
         # Write IMU calibration
         if imu_calibration is not None:
-			reset_progress(progress, 'Writing IMU calibration', 0)
+            reset_progress('Writing IMU calibration', 0)
 
             ic_relative_address = self.flash_size - 0x1000 * 2 - 12 - 0x400
             ic_prefix_length = ic_relative_address % self.flash_page_size
@@ -246,7 +247,7 @@ class SAMBA:
             # Write IMU calibration
             page_num_offset = (ic_relative_address - ic_prefix_length) / self.flash_page_size
 
-            self.write_pages(imu_calibration_pages, page_num_offset, 'Writing IMU calibration', progress)
+            self.write_pages(imu_calibration_pages, page_num_offset, 'Writing IMU calibration')
 
         # Lock firmware
         self.lock_pages(0, len(firmware_pages))
@@ -257,12 +258,12 @@ class SAMBA:
             self.lock_pages(first_page_num, len(imu_calibration_pages))
 
         # Verify firmware
-        self.verify_pages(firmware_pages, 0, 'firmware', imu_calibration is not None, progress)
+        self.verify_pages(firmware_pages, 0, 'firmware', imu_calibration is not None)
 
         # Verify IMU calibration
         if imu_calibration is not None:
             page_num_offset = (ic_relative_address - ic_prefix_length) / self.flash_page_size
-            self.verify_pages(imu_calibration_pages, page_num_offset, 'IMU calibration', True, progress)
+            self.verify_pages(imu_calibration_pages, page_num_offset, 'IMU calibration', True)
 
         # Set Boot-from-Flash bit
         self.wait_for_flash_ready('before setting Boot-from-Flash bit')
@@ -272,19 +273,19 @@ class SAMBA:
         # Boot
         self.reset()
 
-	def reset_progress(progress, title, length):
-		if progress is not None:
-			progress.setLabelText(title)
-			progress.setMaximum(length)
-			progress.setValue(0)
-			progress.show()
-			
-	def update_progress(progress, value):
-		if progress is not None:
-			progress.setValue(value)
-		
-    def write_pages(self, pages, page_num_offset, title, progress):
-        reset_progress(progress, title, len(pages))
+    def reset_progress(title, length):
+        if self.progress is not None:
+            self.progress.setLabelText(title)
+            self.progress.setMaximum(length)
+            self.progress.setValue(0)
+            self.progress.show()
+            
+    def update_progress(value):
+        if self.progress is not None:
+            self.progress.setValue(value)
+        
+    def write_pages(self, pages, page_num_offset, title):
+        reset_progress(title, len(pages))
 
         page_num = 0
 
@@ -301,11 +302,11 @@ class SAMBA:
             self.wait_for_flash_ready('while writing flash pages')
 
             page_num += 1
-            update_progress(progress, page_num)
+            update_progress(page_num)
             QApplication.processEvents()
 
-    def verify_pages(self, pages, page_num_offset, title, title_in_error, progress):
-		reset_progress(progress, 'Verifying written ' + title, len(pages))
+    def verify_pages(self, pages, page_num_offset, title, title_in_error):
+        reset_progress('Verifying written ' + title, len(pages))
 
         offset = page_num_offset * self.flash_page_size
         page_num = 0
@@ -321,7 +322,7 @@ class SAMBA:
                     raise SAMBAException('Verification error')
 
             page_num += 1
-            update_progress(progress, page_num)
+            update_progress(page_num)
             QApplication.processEvents()
 
     def lock_pages(self, page_num, page_count):
