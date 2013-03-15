@@ -283,6 +283,7 @@ class SAMBA:
     def update_progress(value):
         if self.progress is not None:
             self.progress.setValue(value)
+            QApplication.processEvents()
         
     def write_pages(self, pages, page_num_offset, title):
         reset_progress(title, len(pages))
@@ -303,7 +304,6 @@ class SAMBA:
 
             page_num += 1
             update_progress(page_num)
-            QApplication.processEvents()
 
     def verify_pages(self, pages, page_num_offset, title, title_in_error):
         reset_progress('Verifying written ' + title, len(pages))
@@ -323,7 +323,6 @@ class SAMBA:
 
             page_num += 1
             update_progress(page_num)
-            QApplication.processEvents()
 
     def lock_pages(self, page_num, page_count):
         start_page_num = page_num - (page_num % self.flash_pages_per_lockregion)
