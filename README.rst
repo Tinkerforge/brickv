@@ -20,6 +20,10 @@ The following libraries are required:
 * python-serial
 * pyqt4-dev-tools
 
+On Windows you will also need:
+
+* Python for Windows extensions
+
 On Debian based Linux distributions try::
 
  sudo apt-get install python python-qt4 python-qt4-gl python-qwt5-qt4 python-opengl python-serial pyqt4-dev-tools
