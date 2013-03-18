@@ -77,6 +77,26 @@ def error_to_name(e):
     else:
         return e.message
 
+class ProgressWrapper:
+    def __init__(self, progress):
+        self.progress = progress
+    
+    def reset(self, title, length):
+        self.progress.setLabelText(title)
+        self.progress.setMaximum(length)
+        self.progress.setValue(0)
+        self.progress.show()
+            
+    def update(self, value):
+        self.progress.setValue(value)
+        QApplication.processEvents()
+    
+    def cancel(self):
+        self.progress.cancel()
+        
+    def setMaximum(self, value):
+        self.progress.setMaximum(value)
+        
 class FlashingWindow(QFrame, Ui_widget_flashing):
     def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
@@ -472,7 +492,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             self.popup_fail('Brick', 'Could not connect to Brick')
             return
 
-        progress = self.create_progress_bar('Flashing')
+        progress = ProgressWrapper(self.create_progress_bar('Flashing'))
+        samba.progress = progress
         current_text = self.combo_firmware.currentText()
 
         # Get firmware
@@ -496,10 +517,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             name = self.firmware_infos[url_part].name
             version = self.firmware_infos[url_part].firmware_version_latest
 
-            progress.setLabelText('Downloading {0} Brick firmware {1}.{2}.{3}'.format(name, *version))
-            progress.setMaximum(0)
-            progress.setValue(0)
-            progress.show()
+            progress.reset('Downloading {0} Brick firmware {1}.{2}.{3}'.format(name, *version), 0)
 
             response = None
 
@@ -524,14 +542,14 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             try:
                 length = int(response.headers['Content-Length'])
                 progress.setMaximum(length)
-                progress.setValue(0)
+                progress.update(0)
                 QApplication.processEvents()
                 firmware = ''
                 chunk = response.read(1024)
 
                 while len(chunk) > 0:
                     firmware += chunk
-                    progress.setValue(len(firmware))
+                    progress.update(len(firmware))
                     chunk = response.read(1024)
 
                 response.close()
@@ -569,10 +587,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
             # Download IMU calibration
             if result == QMessageBox.Yes:
-                progress.setLabelText('Downloading factory calibration for IMU Brick')
-                progress.setMaximum(0)
-                progress.setValue(0)
-                progress.show()
+                progress.reset('Downloading factory calibration for IMU Brick', 0)
 
                 try:
                     imu_calibration_text = ''
@@ -625,7 +640,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         # Flash firmware
         try:
-            samba.flash(firmware, imu_calibration, lock_imu_calibration_pages, progress)
+            samba.flash(firmware, imu_calibration, lock_imu_calibration_pages)
             progress.cancel()
 
             if current_text == CUSTOM:
