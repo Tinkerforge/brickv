@@ -26,30 +26,7 @@ from PyQt4.QtGui import QWidget, QMessageBox, QProgressDialog
 from PyQt4.QtCore import Qt
 
 from ui_calibrate_import_export import Ui_calibrate_import_export
-
-IMU_CALIBRATION_URL = 'http://download.tinkerforge.com/imu_calibration/'
-
-def parse_imu_calibration(text):
-    values = []
-    for line in text.split('\n'):
-        if not line.startswith('#'):
-            x = line.split(':')
-            if len(x) != 2:
-                continue
-
-            y = x[1].split(',')
-
-            if x[0] in ('0', '2', '4'):
-                a = y[0].split('/')
-                b = y[1].split('/')
-                c = y[2].split('/')
-                values.append([int(x[0]), [int(a[0]), int(b[0]), int(c[0]), int(a[1]), int(b[1]), int(c[1]), 0, 0, 0, 0]])
-            elif x[0] in ('1', '3'):
-                values.append([int(x[0]), [int(y[0]), int(y[1]), int(y[2]), 0, 0, 0, 0, 0, 0, 0]])
-            elif x[0] in ('5',):
-                values.append([int(x[0]), [int(y[0]), int(y[1]), int(y[2]), int(y[3]), int(y[4]), int(y[5]), int(y[6]), int(y[7]), 0, 0]])
-
-    return values
+from imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
 
 class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
     def __init__(self, parent):

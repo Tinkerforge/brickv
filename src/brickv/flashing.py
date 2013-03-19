@@ -25,7 +25,7 @@ Boston, MA 02111-1307, USA.
 
 from ui_flashing import Ui_widget_flashing
 from bindings.ip_connection import IPConnection, Error, base58encode, base58decode, BASE58, uid64_to_uid32
-from plugin_system.plugins.imu.calibrate_import_export import parse_imu_calibration
+from imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
 from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QApplication, QColor, QFrame, QFileDialog, QMessageBox, QProgressDialog, QStandardItemModel, QStandardItem, QBrush
 from samba import SAMBA, SAMBAException, get_serial_ports
@@ -61,7 +61,6 @@ else:
 SELECT = 'Select...'
 CUSTOM = 'Custom...'
 FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
-IMU_CALIBRATION_URL = 'http://download.tinkerforge.com/imu_calibration/'
 NO_BRICK = 'No Brick found'
 NO_BOOTLOADER = 'No Brick in Bootloader found' 
 
