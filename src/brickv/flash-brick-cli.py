@@ -46,7 +46,7 @@ if __name__ == "__main__":
 	
 	try:
 		samba = SAMBA(args.port, CLIProgress())
-		samba.flash(firmware, None, None)
+		samba.flash(firmware, None, False)
 	except SerialException as e:
 		print("(Error) {0}".format(e))
 		exit(-1)
