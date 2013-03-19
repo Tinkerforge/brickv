@@ -53,4 +53,6 @@ if __name__ == "__main__":
 	except SAMBAException as e:
 		print('(Error) Could not connect to Brick: {0}'.format(e))
 		exit(-1)
+	finally:
+		samba = None
 	exit(0)
