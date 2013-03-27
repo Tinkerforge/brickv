@@ -23,7 +23,10 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt, QTimer
-from PyQt4.QtGui import QMainWindow, QMessageBox, QIcon, QPushButton, QWidget, QHBoxLayout, QVBoxLayout, QLabel, QFrame, QSpacerItem, QSizePolicy, QStandardItemModel, QStandardItem
+from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, QIcon, \
+                        QPushButton, QWidget, QHBoxLayout, QVBoxLayout, \
+                        QLabel, QFrame, QSpacerItem, QSizePolicy, \
+                        QStandardItemModel, QStandardItem
 from ui_mainwindow import Ui_MainWindow
 from plugin_system.plugin_manager import PluginManager
 from bindings.ip_connection import IPConnection
@@ -134,7 +137,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.last_host = self.combo_host.currentText()
         self.last_port = self.spinbox_port.value()
-        
+
     def closeEvent(self, event):
         self.exit_brickv()
 
@@ -235,10 +238,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.last_host = self.combo_host.currentText()
                 self.last_port = self.spinbox_port.value()
                 self.connect.setDisabled(True)
+                self.connect.setText("Connecting ...")
+                self.connect.repaint()
+                QApplication.processEvents()
                 self.ipcon.connect(self.last_host, self.last_port)
-
             except:
                 self.connect.setDisabled(False)
+                self.connect.setText("Connect")
                 QMessageBox.critical(self, 'Could not connect',
                                      'Please check host, check port and ' +
                                      'check if the Brick Daemon is running')
@@ -498,6 +504,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.connect.setText("Disconnect")
             self.combo_host.setDisabled(True)
             self.spinbox_port.setDisabled(True)
+
+        QApplication.processEvents()
 
     def update_tree_view(self):
         self.tree_view_model.clear()
