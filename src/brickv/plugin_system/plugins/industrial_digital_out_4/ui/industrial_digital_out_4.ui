@@ -929,6 +929,9 @@ Group</string>
       <layout class="QVBoxLayout" name="verticalLayout_22">
        <item>
         <widget class="QSpinBox" name="monoflop_time">
+         <property name="minimum">
+          <number>1</number>
+         </property>
          <property name="maximum">
           <number>2147483647</number>
          </property>
