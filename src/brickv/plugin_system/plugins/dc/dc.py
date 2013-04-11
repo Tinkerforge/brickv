@@ -42,6 +42,7 @@ class DC(PluginBase, Ui_DC):
         PluginBase.__init__(self, ipcon, uid, 'DC Brick', version)
         
         self.setupUi(self)
+        self.encoder_hide_all()
         
         self.dc = BrickDC(uid, ipcon)
         self.device = self.dc
@@ -95,7 +96,14 @@ class DC(PluginBase, Ui_DC):
         self.dc.register_callback(self.dc.CALLBACK_VELOCITY_REACHED,
                                   self.qtcb_position_reached.emit) 
         self.dc.register_callback(self.dc.CALLBACK_CURRENT_VELOCITY,
-                                  self.qtcb_position_reached.emit) 
+                                  self.qtcb_position_reached.emit)
+        
+#        if self.version >= (2, 0, 1):
+#            self.enable_encoder_checkbox.stateChanged.connect(self.enable_encoder_state_changed)
+#            self.encoder_show()
+#        else:
+#            self.enable_encoder_checkbox.setText('Enable Encoder (Firmware >= 2.01 required)')
+#            self.enable_encoder_checkbox.setEnabled(False)
     
     def start(self):
         self.update_timer.start(1000)
@@ -137,6 +145,47 @@ class DC(PluginBase, Ui_DC):
             self.qem.showMessage("Under Voltage: Output Voltage of " + ov_str +
                                  " is below minimum voltage of " + mv_str,
                                  "DC_UnderVoltage")
+            
+    def encoder_hide_all(self):
+        self.enable_encoder_checkbox.hide()
+        self.encoder_hide()
+            
+    def encoder_hide(self):
+        self.p_label.hide()
+        self.p_spinbox.hide()
+        self.i_label.hide()
+        self.i_spinbox.hide()
+        self.d_label.hide()
+        self.d_spinbox.hide()
+        self.st_label.hide()
+        self.st_spinbox.hide()
+        self.cpr_label.hide()
+        self.cpr_spinbox.hide()
+        self.encoder_spacer.hide()
+        
+    def encoder_show(self):
+        self.p_label.show()
+        self.p_spinbox.show()
+        self.i_label.show()
+        self.i_spinbox.show()
+        self.d_label.show()
+        self.d_spinbox.show()
+        self.st_label.show()
+        self.st_spinbox.show()
+        self.cpr_label.show()
+        self.cpr_spinbox.show()
+        self.encoder_spacer.show()          
+         
+    def enable_encoder_state_changed(self, state):
+        try:
+            if state == Qt.Checked:
+                self.dc.enable_encoder()
+                self.update_encoder()
+            elif state == Qt.Unchecked:
+                self.dc.disable_encoder()
+
+        except ip_connection.Error:
+            return
         
     def enable_state_changed(self, state):
         try:
@@ -240,6 +289,27 @@ class DC(PluginBase, Ui_DC):
             self.enable_checkbox.setCheckState(Qt.Checked)
         else:
             self.enable_checkbox.setCheckState(Qt.Unchecked)
+            
+    def is_encoder_enabled_async(self, enabled):
+        if enabled:
+            self.enable_encoder_checkbox.setCheckState(Qt.Checked)
+        else:
+            self.enable_encoder_checkbox.setCheckState(Qt.Unchecked)
+            
+    def get_encoder_config_async(self, cpr):
+        self.cpr_spinbox.setValue(cpr)
+    
+    def get_encoder_pid_config_async(self, pid_config):
+        self.p_spinbox.setValue(pid_config.p)
+        self.i_spinbox.setValue(pid_config.i)
+        self.d_spinbox.setValue(pid_config.d)
+        self.st_spinbox.setValue(pid_config.sample_time)
+        
+    def update_encoder(self):
+        async_call(self.dc.get_encoder_config, None, self.get_encoder_config_async, self.increase_error_count)
+        async_call(self.dc.get_encoder_pid_config, None, self.get_encoder_pid_config_async, self.increase_error_count)
+        async_call(self.dc.is_encoder_enabled, None, self.is_encoder_enabled_async, self.increase_error_count)
+        
         
     def update_start(self):
         async_call(self.dc.get_drive_mode, None, self.drive_mode_update, self.increase_error_count)
@@ -247,6 +317,8 @@ class DC(PluginBase, Ui_DC):
         async_call(self.dc.get_acceleration, None, self.get_acceleration_async, self.increase_error_count)
         async_call(self.dc.get_pwm_frequency, None, self.get_pwm_frequency_async, self.increase_error_count)
         async_call(self.dc.is_enabled, None, self.is_enabled_async, self.increase_error_count)
+#        if self.version >= (2, 0, 1):
+#            self.update_encoder()
             
 
     def update_data(self):
