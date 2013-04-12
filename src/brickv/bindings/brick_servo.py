@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-02-06.      #
+# This file was automatically generated on 2013-04-11.      #
 #                                                           #
-# Bindings Version 2.0.3                                    #
+# Bindings Version 2.0.6                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -63,6 +63,12 @@ class BrickServo(Device):
     FUNCTION_GET_EXTERNAL_INPUT_VOLTAGE = 23
     FUNCTION_SET_MINIMUM_VOLTAGE = 24
     FUNCTION_GET_MINIMUM_VOLTAGE = 25
+    FUNCTION_ENABLE_POSITION_REACHED_CALLBACK = 29
+    FUNCTION_DISABLE_POSITION_REACHED_CALLBACK = 30
+    FUNCTION_IS_POSITION_REACHED_CALLBACK_ENABLED = 31
+    FUNCTION_ENABLE_VELOCITY_REACHED_CALLBACK = 32
+    FUNCTION_DISABLE_VELOCITY_REACHED_CALLBACK = 33
+    FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED = 34
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
@@ -106,6 +112,12 @@ class BrickServo(Device):
         self.response_expected[BrickServo.CALLBACK_UNDER_VOLTAGE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickServo.CALLBACK_POSITION_REACHED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickServo.CALLBACK_VELOCITY_REACHED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickServo.FUNCTION_ENABLE_POSITION_REACHED_CALLBACK] = BrickServo.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickServo.FUNCTION_DISABLE_POSITION_REACHED_CALLBACK] = BrickServo.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickServo.FUNCTION_IS_POSITION_REACHED_CALLBACK_ENABLED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_ENABLE_VELOCITY_REACHED_CALLBACK] = BrickServo.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickServo.FUNCTION_DISABLE_VELOCITY_REACHED_CALLBACK] = BrickServo.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickServo.FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickServo.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickServo.FUNCTION_GET_CHIP_TEMPERATURE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickServo.FUNCTION_RESET] = BrickServo.RESPONSE_EXPECTED_FALSE
@@ -378,6 +390,62 @@ class BrickServo(Device):
         Returns the minimum voltage as set by :func:`SetMinimumVoltage`
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_MINIMUM_VOLTAGE, (), '', 'H')
+
+    def enable_position_reached_callback(self):
+        """
+        Enables the :func:`PositionReached` callback.
+        
+        Default is disabled.
+        
+        .. versionadded:: 2.0.1~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_POSITION_REACHED_CALLBACK, (), '', '')
+
+    def disable_position_reached_callback(self):
+        """
+        Disables the :func:`PositionReached` callback.
+        
+        Default is disabled.
+        
+        .. versionadded:: 2.0.1~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_POSITION_REACHED_CALLBACK, (), '', '')
+
+    def is_position_reached_callback_enabled(self):
+        """
+        Returns *true* if :func:`PositionReached` callback is enabled, *false* otherwise.
+        
+        .. versionadded:: 2.0.1~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_POSITION_REACHED_CALLBACK_ENABLED, (), '', 'B')
+
+    def enable_velocity_reached_callback(self):
+        """
+        Enables the :func:`VelocityReached` callback.
+        
+        Default is disabled.
+        
+        .. versionadded:: 2.0.1~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_VELOCITY_REACHED_CALLBACK, (), '', '')
+
+    def disable_velocity_reached_callback(self):
+        """
+        Disables the :func:`VelocityReached` callback.
+        
+        Default is disabled.
+        
+        .. versionadded:: 2.0.1~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_VELOCITY_REACHED_CALLBACK, (), '', '')
+
+    def is_velocity_reached_callback_enabled(self):
+        """
+        Returns *true* if :func:`VelocityReached` callback is enabled, *false* otherwise.
+        
+        .. versionadded:: 2.0.1~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED, (), '', 'B')
 
     def get_protocol1_bricklet_name(self, port):
         """

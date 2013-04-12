@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-03-05.      #
+# This file was automatically generated on 2013-04-12.      #
 #                                                           #
-# Bindings Version 2.0.5                                    #
+# Bindings Version 2.0.6                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -32,6 +32,8 @@ GetWifiBufferInfo = namedtuple('WifiBufferInfo', ['overflow', 'low_watermark', '
 GetStackCurrentCallbackThreshold = namedtuple('StackCurrentCallbackThreshold', ['option', 'min', 'max'])
 GetStackVoltageCallbackThreshold = namedtuple('StackVoltageCallbackThreshold', ['option', 'min', 'max'])
 GetUSBVoltageCallbackThreshold = namedtuple('USBVoltageCallbackThreshold', ['option', 'min', 'max'])
+GetEthernetConfiguration = namedtuple('EthernetConfiguration', ['connection', 'ip', 'subnet_mask', 'gateway', 'port'])
+GetEthernetStatus = namedtuple('EthernetStatus', ['mac_address', 'ip', 'subnet_mask', 'gateway', 'rx_count', 'tx_count', 'hostname'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -107,6 +109,12 @@ class BrickMaster(Device):
     FUNCTION_GET_USB_VOLTAGE_CALLBACK_THRESHOLD = 56
     FUNCTION_SET_DEBOUNCE_PERIOD = 57
     FUNCTION_GET_DEBOUNCE_PERIOD = 58
+    FUNCTION_IS_ETHERNET_PRESENT = 65
+    FUNCTION_SET_ETHERNET_CONFIGURATION = 66
+    FUNCTION_GET_ETHERNET_CONFIGURATION = 67
+    FUNCTION_GET_ETHERNET_STATUS = 68
+    FUNCTION_SET_ETHERNET_HOSTNAME = 69
+    FUNCTION_SET_ETHERNET_MAC = 70
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
@@ -157,6 +165,8 @@ class BrickMaster(Device):
     THRESHOLD_OPTION_INSIDE = 'i'
     THRESHOLD_OPTION_SMALLER = '<'
     THRESHOLD_OPTION_GREATER = '>'
+    ETHERNET_CONNECTION_DHCP = 0
+    ETHERNET_CONNECTION_STATIC_IP = 1
 
     def __init__(self, uid, ipcon):
         """
@@ -165,7 +175,7 @@ class BrickMaster(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 1)
+        self.api_version = (2, 0, 2)
 
         self.response_expected[BrickMaster.FUNCTION_GET_STACK_VOLTAGE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_STACK_CURRENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -231,6 +241,12 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.CALLBACK_STACK_CURRENT_REACHED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickMaster.CALLBACK_STACK_VOLTAGE_REACHED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickMaster.CALLBACK_USB_VOLTAGE_REACHED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickMaster.FUNCTION_IS_ETHERNET_PRESENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_ETHERNET_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_ETHERNET_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_ETHERNET_STATUS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_ETHERNET_HOSTNAME] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_SET_ETHERNET_MAC] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_CHIP_TEMPERATURE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_RESET] = BrickMaster.RESPONSE_EXPECTED_FALSE
@@ -625,9 +641,9 @@ class BrickMaster(Device):
         it is likely 1.
         
         If you choose WPA Enterprise as encryption, you have to set eap options and
-        the length of the certificates (for other encryption types these paramaters
+        the length of the certificates (for other encryption types these parameters
         are ignored). The certificate length are given in byte and the certificates
-        themselves can be set with :func:`SetWifiCertificate`. Eap options consist of 
+        themselves can be set with :func:`SetWifiCertificate`. Eap options consist of
         the outer authentication (bits 1-2), inner authentication (bit 3) and 
         certificate type (bits 4-5):
         
@@ -1030,6 +1046,84 @@ class BrickMaster(Device):
         .. versionadded:: 2.0.5~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+
+    def is_ethernet_present(self):
+        """
+        Returns *true* if a Ethernet Extension is available to be used by the Master.
+        
+        .. versionadded:: 2.1.0~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_ETHERNET_PRESENT, (), '', '?')
+
+    def set_ethernet_configuration(self, connection, ip, subnet_mask, gateway, port):
+        """
+        Sets the configuration of the WIFI Extension. Possible values for *connection* are:
+        
+        .. csv-table::
+         :header: "Value", "Description"
+         :widths: 10, 90
+        
+         "0", "DHCP"
+         "1", "Static IP"
+        
+        If you set *connection* to static IP options then you have to supply
+        *ip*, *subnet_mask* and *gateway* as an array of size 4 (first element of the
+        array is the least significant byte of the address). If *connection* is set to
+        the DHCP options then *ip*, *subnet_mask* and *gateway* are ignored, you
+        can set them to 0.
+        
+        The last parameter is the port that your program will connect to. The
+        default port, that is used by brickd, is 4223.
+        
+        The values are stored in the EEPROM and only applied on startup. That means
+        you have to restart the Master Brick after configuration.
+        
+        It is recommended to use the Brick Viewer to set the Ethernet configuration.
+        
+        .. versionadded:: 2.1.0~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_ETHERNET_CONFIGURATION, (connection, ip, subnet_mask, gateway, port), 'B 4B 4B 4B H', '')
+
+    def get_ethernet_configuration(self):
+        """
+        Returns the configuration as set by :func:`SetEthernetConfiguration`.
+        
+        .. versionadded:: 2.1.0~(Firmware)
+        """
+        return GetEthernetConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_ETHERNET_CONFIGURATION, (), '', 'B 4B 4B 4B H'))
+
+    def get_ethernet_status(self):
+        """
+        Returns the status of the Ethernet Extension. 
+        
+        .. versionadded:: 2.1.0~(Firmware)
+        """
+        return GetEthernetStatus(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_ETHERNET_STATUS, (), '', '6B 4B 4B 4B I I 32s'))
+
+    def set_ethernet_hostname(self, hostname):
+        """
+        Sets the hostname of the Ethernet Extension. The hostname will be displayed 
+        by access points as the hostname in the DHCP clients table.
+        
+        Setting an empty String will restore the default hostname.
+        
+        The current hostname can be discovered with :func:`GetEthernetStatus`.
+        
+        .. versionadded:: 2.1.0~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_ETHERNET_HOSTNAME, (hostname,), '32s', '')
+
+    def set_ethernet_mac(self, mac_address):
+        """
+        Sets the MAC address of the Ethernet Extension. The Ethernet Extension should
+        come configured with a valid MAC address, that is also written on a
+        sticker of the extension itself.
+        
+        The MAC address can be read out again with :func:`GetEthernetStatus`.
+        
+        .. versionadded:: 2.1.0~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_ETHERNET_MAC, (mac_address,), '6B', '')
 
     def get_protocol1_bricklet_name(self, port):
         """

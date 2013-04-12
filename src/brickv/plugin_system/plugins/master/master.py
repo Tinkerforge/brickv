@@ -32,6 +32,7 @@ from extension_type import ExtensionType
 from chibi import Chibi
 from rs485 import RS485
 from wifi import Wifi
+from ethernet import Ethernet
 
 from async_call import async_call
 import infos
@@ -69,6 +70,18 @@ class Master(PluginBase, Ui_Master):
         # Wifi widget
         if self.version >= (1, 3, 0):
             async_call(self.master.is_wifi_present, None, self.is_wifi_present_async, self.increase_error_count)
+        
+        # Ethernet widget
+        if self.version >= (2, 1, 0):
+            async_call(self.master.is_ethernet_present, None, self.is_ethernet_present_async, self.increase_error_count)
+
+    def is_ethernet_present_async(self, present):
+        if present:
+            ethernet = Ethernet(self)
+            self.extensions.append(ethernet)
+            self.extension_layout.addWidget(ethernet)
+            self.num_extensions += 1
+            self.extension_label.setText("" + str(self.num_extensions) + " Present")
 
     def is_wifi_present_async(self, present):
         if present:

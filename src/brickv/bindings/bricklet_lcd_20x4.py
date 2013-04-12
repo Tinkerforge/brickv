@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-02-06.      #
+# This file was automatically generated on 2013-04-11.      #
 #                                                           #
-# Bindings Version 2.0.3                                    #
+# Bindings Version 2.0.6                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -45,6 +45,10 @@ class BrickletLCD20x4(Device):
     FUNCTION_IS_BUTTON_PRESSED = 8
     FUNCTION_SET_CUSTOM_CHARACTER = 11
     FUNCTION_GET_CUSTOM_CHARACTER = 12
+    FUNCTION_SET_DEFAULT_TEXT = 13
+    FUNCTION_GET_DEFAULT_TEXT = 14
+    FUNCTION_SET_DEFAULT_TEXT_COUNTER = 15
+    FUNCTION_GET_DEFAULT_TEXT_COUNTER = 16
     FUNCTION_GET_IDENTITY = 255
 
 
@@ -69,6 +73,10 @@ class BrickletLCD20x4(Device):
         self.response_expected[BrickletLCD20x4.CALLBACK_BUTTON_RELEASED] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLCD20x4.FUNCTION_SET_CUSTOM_CHARACTER] = BrickletLCD20x4.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLCD20x4.FUNCTION_GET_CUSTOM_CHARACTER] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD20x4.FUNCTION_SET_DEFAULT_TEXT] = BrickletLCD20x4.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD20x4.FUNCTION_GET_DEFAULT_TEXT] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLCD20x4.FUNCTION_SET_DEFAULT_TEXT_COUNTER] = BrickletLCD20x4.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLCD20x4.FUNCTION_GET_DEFAULT_TEXT_COUNTER] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLCD20x4.FUNCTION_GET_IDENTITY] = BrickletLCD20x4.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletLCD20x4.CALLBACK_BUTTON_PRESSED] = 'B'
@@ -177,6 +185,57 @@ class BrickletLCD20x4(Device):
         .. versionadded:: 2.0.1~(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_CUSTOM_CHARACTER, (index,), 'B', '8B')
+
+    def set_default_text(self, line, text):
+        """
+        Sets the default text for lines 0-3. The max number of characters
+        per line is 20.
+        
+        The default text is shown on the LCD, if the default text counter
+        expires, see :func:`SetDefaultTextCounter`.
+        
+        .. versionadded:: 2.0.2~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_DEFAULT_TEXT, (line, text), 'B 20s', '')
+
+    def get_default_text(self, line):
+        """
+        Returns the default text for a given line (0-3) as set by
+        :func:`SetDefaultText`.
+        
+        .. versionadded:: 2.0.2~(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_DEFAULT_TEXT, (line,), 'B', '20s')
+
+    def set_default_text_counter(self, counter):
+        """
+        Sets the default text counter in ms. This counter is decremented each
+        ms by the LCD firmware. If the counter reaches 0, the default text
+        (see :func:`SetDefaultText`) is shown on the LCD.
+        
+        This functionality can be used to show a default text if the controlling
+        program crashes or the connection is interrupted.
+        
+        A possible approach is to call :func:`SetDefaultTextCounter` every
+        minute with the parameter 1000*60*2 (2 minutes). In this case the
+        default text will be shown no later than 2 minutes after the
+        controlling program crashes.
+        
+        A negative counter turns the default text functionality off.
+        
+        The default is -1.
+        
+        .. versionadded:: 2.0.2~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_DEFAULT_TEXT_COUNTER, (counter,), 'i', '')
+
+    def get_default_text_counter(self):
+        """
+        Returns the current value of the default text counter.
+        
+        .. versionadded:: 2.0.2~(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_DEFAULT_TEXT_COUNTER, (), '', 'i')
 
     def get_identity(self):
         """

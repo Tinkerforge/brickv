@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-02-06.      #
+# This file was automatically generated on 2013-04-11.      #
 #                                                           #
-# Bindings Version 2.0.3                                    #
+# Bindings Version 2.0.6                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -42,6 +42,8 @@ class BrickletTemperature(Device):
     FUNCTION_GET_TEMPERATURE_CALLBACK_THRESHOLD = 5
     FUNCTION_SET_DEBOUNCE_PERIOD = 6
     FUNCTION_GET_DEBOUNCE_PERIOD = 7
+    FUNCTION_SET_I2C_MODE = 10
+    FUNCTION_GET_I2C_MODE = 11
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -49,6 +51,8 @@ class BrickletTemperature(Device):
     THRESHOLD_OPTION_INSIDE = 'i'
     THRESHOLD_OPTION_SMALLER = '<'
     THRESHOLD_OPTION_GREATER = '>'
+    I2C_MODE_FAST = 0
+    I2C_MODE_SLOW = 1
 
     def __init__(self, uid, ipcon):
         """
@@ -68,6 +72,8 @@ class BrickletTemperature(Device):
         self.response_expected[BrickletTemperature.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletTemperature.CALLBACK_TEMPERATURE] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletTemperature.CALLBACK_TEMPERATURE_REACHED] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletTemperature.FUNCTION_SET_I2C_MODE] = BrickletTemperature.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletTemperature.FUNCTION_GET_I2C_MODE] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletTemperature.FUNCTION_GET_IDENTITY] = BrickletTemperature.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletTemperature.CALLBACK_TEMPERATURE] = 'h'
@@ -150,6 +156,32 @@ class BrickletTemperature(Device):
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
         return self.ipcon.send_request(self, BrickletTemperature.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+
+    def set_i2c_mode(self, mode):
+        """
+        Sets the I2C mode. Possible modes are:
+        
+        * 0: Fast (400kHz, default)
+        * 1: Slow (100kHz)
+        
+        If you have problems with obvious outliers in the
+        Temperature Bricklet measurements, they may be caused by EMI issues.
+        In this case it may be helpful to lower the I2C speed.
+        
+        It is however not recommended to lower the I2C speed in applications where
+        a high throughput needs to be achieved.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletTemperature.FUNCTION_SET_I2C_MODE, (mode,), 'B', '')
+
+    def get_i2c_mode(self):
+        """
+        Returns the I2C mode as set by :func:`SetI2CMode`.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletTemperature.FUNCTION_GET_I2C_MODE, (), '', 'B')
 
     def get_identity(self):
         """
