@@ -91,3 +91,4 @@
 2.0.4: Ignore enumerate callbacks that arrived after a disconnect
        Fix Chibi and RS485 configuration handling
        Disable instead of hide WIFI hostname edit box, if Master Brick firmware doesn't support it
+2.0.5: Add plugin for Ethernet Extension
