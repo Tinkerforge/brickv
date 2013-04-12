@@ -21,12 +21,38 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget, QMessageBox
+from PyQt4.QtGui import QWidget, QMessageBox, QSpinBox, QRegExpValidator, QLabel
+from PyQt4.QtCore import QRegExp, QString
 
 from ui_ethernet import Ui_Ethernet
 
 from async_call import async_call
 import infos
+
+class SpinBoxHex(QSpinBox):
+    def __init__(self, parent=None):
+        super(SpinBoxHex, self).__init__(parent)
+        self.validator = QRegExpValidator(QRegExp("[0-9A-Fa-f]{1,2}"), self)
+        self.setRange(0, 255)
+
+
+    def fixCase(self, text):
+        self.lineEdit().setText(text.toUpper())
+
+
+    def validate(self, text, pos):
+        return self.validator.validate(text, pos)
+
+
+    def valueFromText(self, text):
+        return text.toInt(16)[0]
+
+    def textFromValue(self, value):
+        s = QString.number(value, base=16).toUpper()
+        if len(s) == 1:
+            s = '0' + s
+            
+        return s
 
 class Ethernet(QWidget, Ui_Ethernet):
     def __init__(self, parent):
@@ -46,6 +72,23 @@ class Ethernet(QWidget, Ui_Ethernet):
             async_call(self.master.get_ethernet_status, None, self.get_ethernet_status_init_async, self.parent.increase_error_count)
             self.ethernet_connection.currentIndexChanged.connect(self.connection_changed)
             self.ethernet_save.pressed.connect(self.save_pressed)
+            self.ethernet_mac6 = SpinBoxHex()
+            self.ethernet_mac5 = SpinBoxHex()
+            self.ethernet_mac4 = SpinBoxHex()
+            self.ethernet_mac3 = SpinBoxHex()
+            self.ethernet_mac2 = SpinBoxHex()
+            self.ethernet_mac1 = SpinBoxHex()
+            self.mac_layout.addWidget(self.ethernet_mac6)
+            self.mac_layout.addWidget(QLabel(':'))
+            self.mac_layout.addWidget(self.ethernet_mac5)
+            self.mac_layout.addWidget(QLabel(':'))
+            self.mac_layout.addWidget(self.ethernet_mac4)
+            self.mac_layout.addWidget(QLabel(':'))
+            self.mac_layout.addWidget(self.ethernet_mac3)
+            self.mac_layout.addWidget(QLabel(':'))
+            self.mac_layout.addWidget(self.ethernet_mac2)
+            self.mac_layout.addWidget(QLabel(':'))
+            self.mac_layout.addWidget(self.ethernet_mac1)
             
     def connection_changed(self, index):
         if index == 0:
@@ -103,6 +146,14 @@ class Ethernet(QWidget, Ui_Ethernet):
         self.ethernet_gw2.setValue(status.gateway[2])
         self.ethernet_gw3.setValue(status.gateway[1])
         self.ethernet_gw4.setValue(status.gateway[0])
+        
+        self.ethernet_mac1.setValue(status.mac_address[5])
+        self.ethernet_mac2.setValue(status.mac_address[4])
+        self.ethernet_mac3.setValue(status.mac_address[3])
+        self.ethernet_mac4.setValue(status.mac_address[2])
+        self.ethernet_mac5.setValue(status.mac_address[1])
+        self.ethernet_mac6.setValue(status.mac_address[0])
+        
         self.ethernet_hostname.setText(status.hostname)
         
         self.get_ethernet_status_async(status)
@@ -123,14 +174,6 @@ class Ethernet(QWidget, Ui_Ethernet):
             self.ethernet_gw4.setValue(status.gateway[0])
 
         self.last_status = status
-        sl = []
-        for m in status.mac_address:
-            s = str(hex(m)).replace('0x', '')
-            if len(s) == 1:
-                s = '0' + s
-            sl.append(s)
-            
-        self.ethernet_mac.setText('MAC Address: ' + ':'.join(sl))
         
         self.ethernet_count_rx.setText('Count RX: ' + str(status.rx_count))
         self.ethernet_count_tx.setText('Count TX: ' + str(status.tx_count))
@@ -147,9 +190,12 @@ class Ethernet(QWidget, Ui_Ethernet):
             ip = (self.ethernet_ip4.value(), self.ethernet_ip3.value(), self.ethernet_ip2.value(), self.ethernet_ip1.value())
             gw = (self.ethernet_gw4.value(), self.ethernet_gw3.value(), self.ethernet_gw2.value(), self.ethernet_gw1.value())
             sub = (self.ethernet_sub4.value(), self.ethernet_sub3.value(), self.ethernet_sub2.value(), self.ethernet_sub1.value())
+        
+        mac = (self.ethernet_mac6.value(), self.ethernet_mac5.value(), self.ethernet_mac4.value(), self.ethernet_mac3.value(), self.ethernet_mac2.value(), self.ethernet_mac1.value())
             
         self.master.set_ethernet_configuration(connection, ip, sub, gw, port)
         self.master.set_ethernet_hostname(hostname)
+        self.master.set_ethernet_mac_address(mac)
         
         saved_conf = self.master.get_ethernet_configuration()
         print saved_conf

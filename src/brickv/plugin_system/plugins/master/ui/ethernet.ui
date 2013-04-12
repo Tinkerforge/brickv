@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>418</width>
-    <height>341</height>
+    <height>396</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -82,6 +82,13 @@
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="Line" name="line_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -352,6 +359,37 @@
           </layout>
          </item>
          <item>
+          <widget class="Line" name="line_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="mac_layout">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>MAC Address:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
           <widget class="Line" name="line">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -360,49 +398,6 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <spacer name="horizontalSpacer_6">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="QLabel" name="ethernet_mac">
-             <property name="text">
-              <string>MAC Address: 00:00:00:00:00:00</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="Line" name="line_3">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-            </widget>
-           </item>
            <item>
             <spacer name="horizontalSpacer_2">
              <property name="orientation">

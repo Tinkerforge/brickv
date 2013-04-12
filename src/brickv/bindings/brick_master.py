@@ -114,7 +114,7 @@ class BrickMaster(Device):
     FUNCTION_GET_ETHERNET_CONFIGURATION = 67
     FUNCTION_GET_ETHERNET_STATUS = 68
     FUNCTION_SET_ETHERNET_HOSTNAME = 69
-    FUNCTION_SET_ETHERNET_MAC = 70
+    FUNCTION_SET_ETHERNET_MAC_ADDRESS = 70
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
@@ -246,7 +246,7 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_GET_ETHERNET_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_ETHERNET_STATUS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SET_ETHERNET_HOSTNAME] = BrickMaster.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickMaster.FUNCTION_SET_ETHERNET_MAC] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_SET_ETHERNET_MAC_ADDRESS] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_CHIP_TEMPERATURE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_RESET] = BrickMaster.RESPONSE_EXPECTED_FALSE
@@ -1096,6 +1096,14 @@ class BrickMaster(Device):
         """
         Returns the status of the Ethernet Extension. 
         
+        *mac_address*, *ip*, *subnet_mask* and *gateway* are given as an array
+        (first element of the array is the least significant byte of the address). 
+        
+        *rx_count* and *tx_count* are the number of bytes that have been received/send
+        since last restart
+        
+        *hostname* is the currently used hostname.
+        
         .. versionadded:: 2.1.0~(Firmware)
         """
         return GetEthernetStatus(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_ETHERNET_STATUS, (), '', '6B 4B 4B 4B I I 32s'))
@@ -1113,7 +1121,7 @@ class BrickMaster(Device):
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_ETHERNET_HOSTNAME, (hostname,), '32s', '')
 
-    def set_ethernet_mac(self, mac_address):
+    def set_ethernet_mac_address(self, mac_address):
         """
         Sets the MAC address of the Ethernet Extension. The Ethernet Extension should
         come configured with a valid MAC address, that is also written on a
@@ -1123,7 +1131,7 @@ class BrickMaster(Device):
         
         .. versionadded:: 2.1.0~(Firmware)
         """
-        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_ETHERNET_MAC, (mac_address,), '6B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_ETHERNET_MAC_ADDRESS, (mac_address,), '6B', '')
 
     def get_protocol1_bricklet_name(self, port):
         """
