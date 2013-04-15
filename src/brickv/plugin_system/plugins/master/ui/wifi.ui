@@ -490,6 +490,13 @@ WEP: 10 or 26 hexadecimal digits</string>
             </widget>
            </item>
            <item>
+            <widget class="QCheckBox" name="wifi_key_show">
+             <property name="text">
+              <string>Show Characters</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QLabel" name="wifi_key_index_label">
              <property name="text">
               <string>Key Index:</string>
@@ -591,6 +598,13 @@ WEP: 10 or 26 hexadecimal digits</string>
             <widget class="QLineEdit" name="wifi_password">
              <property name="maxLength">
               <number>32</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="wifi_password_show">
+             <property name="text">
+              <string>Show Characters</string>
              </property>
             </widget>
            </item>
@@ -724,6 +738,43 @@ WEP: 10 or 26 hexadecimal digits</string>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>wifi_domain</tabstop>
+  <tabstop>wifi_ssid</tabstop>
+  <tabstop>wifi_port</tabstop>
+  <tabstop>wifi_hostname</tabstop>
+  <tabstop>wifi_connection</tabstop>
+  <tabstop>wifi_ip4</tabstop>
+  <tabstop>wifi_ip3</tabstop>
+  <tabstop>wifi_ip2</tabstop>
+  <tabstop>wifi_ip1</tabstop>
+  <tabstop>wifi_sub4</tabstop>
+  <tabstop>wifi_sub3</tabstop>
+  <tabstop>wifi_sub2</tabstop>
+  <tabstop>wifi_sub1</tabstop>
+  <tabstop>wifi_gw4</tabstop>
+  <tabstop>wifi_gw3</tabstop>
+  <tabstop>wifi_gw2</tabstop>
+  <tabstop>wifi_gw1</tabstop>
+  <tabstop>wifi_encryption</tabstop>
+  <tabstop>wifi_key</tabstop>
+  <tabstop>wifi_key_show</tabstop>
+  <tabstop>wifi_key_index</tabstop>
+  <tabstop>wifi_eap_outer_auth</tabstop>
+  <tabstop>wifi_eap_inner_auth</tabstop>
+  <tabstop>wifi_username</tabstop>
+  <tabstop>wifi_password</tabstop>
+  <tabstop>wifi_password_show</tabstop>
+  <tabstop>wifi_ca_certificate_url</tabstop>
+  <tabstop>wifi_ca_certificate_browse</tabstop>
+  <tabstop>wifi_client_certificate_url</tabstop>
+  <tabstop>wifi_client_certificate_browse</tabstop>
+  <tabstop>wifi_private_key_url</tabstop>
+  <tabstop>wifi_private_key_browse</tabstop>
+  <tabstop>wifi_power_mode</tabstop>
+  <tabstop>wifi_save</tabstop>
+  <tabstop>wifi_show_status</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget, QMessageBox, QFileDialog, QProgressDialog
+from PyQt4.QtGui import QWidget, QMessageBox, QFileDialog, QProgressDialog, QLineEdit
 from PyQt4.QtCore import Qt
 
 import os
@@ -44,6 +44,12 @@ class Wifi(QWidget, Ui_Wifi):
 
         self.update_data_counter = 0
         self.connection = 0
+
+        self.wifi_key.setEchoMode(QLineEdit.Password)
+        self.wifi_key_show.stateChanged.connect(self.wifi_key_show_state_changed)
+
+        self.wifi_password.setEchoMode(QLineEdit.Password)
+        self.wifi_password_show.stateChanged.connect(self.wifi_password_show_state_changed)
 
         if parent.version >= (1, 3, 0):
             if parent.version < (1, 3, 3):
@@ -148,6 +154,18 @@ class Wifi(QWidget, Ui_Wifi):
         if self.wifi_status:
             self.wifi_status.close()
 
+    def wifi_key_show_state_changed(self, state):
+        if state == Qt.Checked:
+            self.wifi_key.setEchoMode(QLineEdit.Normal)
+        else:
+            self.wifi_key.setEchoMode(QLineEdit.Password)
+
+    def wifi_password_show_state_changed(self, state):
+        if state == Qt.Checked:
+            self.wifi_password.setEchoMode(QLineEdit.Normal)
+        else:
+            self.wifi_password.setEchoMode(QLineEdit.Password)
+
     def ca_certificate_browse_pressed(self):
         last_dir = ''
         if len(self.wifi_ca_certificate_url.text()) > 0:
@@ -190,6 +208,7 @@ class Wifi(QWidget, Ui_Wifi):
 
             self.wifi_key.setVisible(True)
             self.wifi_key_label.setVisible(True)
+            self.wifi_key_show.setVisible(True)
 
             self.wifi_key_index.setVisible(False)
             self.wifi_key_index_label.setVisible(False)
@@ -205,6 +224,7 @@ class Wifi(QWidget, Ui_Wifi):
 
             self.wifi_password.setVisible(False)
             self.wifi_password_label.setVisible(False)
+            self.wifi_password_show.setVisible(False)
 
             self.wifi_ca_certificate_url.setVisible(False)
             self.wifi_ca_certificate_browse.setVisible(False)
@@ -218,6 +238,7 @@ class Wifi(QWidget, Ui_Wifi):
         elif str(self.wifi_encryption.currentText()) in 'WPA Enterprise':
             self.wifi_key.setVisible(False)
             self.wifi_key_label.setVisible(False)
+            self.wifi_key_show.setVisible(False)
 
             self.wifi_key_index.setVisible(False)
             self.wifi_key_index_label.setVisible(False)
@@ -233,6 +254,7 @@ class Wifi(QWidget, Ui_Wifi):
 
             self.wifi_password.setVisible(True)
             self.wifi_password_label.setVisible(True)
+            self.wifi_password_show.setVisible(True)
 
             self.wifi_ca_certificate_url.setVisible(True)
             self.wifi_ca_certificate_browse.setVisible(True)
@@ -247,6 +269,7 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_key.setMaxLength(26)
             self.wifi_key.setVisible(True)
             self.wifi_key_label.setVisible(True)
+            self.wifi_key_show.setVisible(True)
 
             self.wifi_key_index.setVisible(True)
             self.wifi_key_index_label.setVisible(True)
@@ -262,6 +285,7 @@ class Wifi(QWidget, Ui_Wifi):
 
             self.wifi_password.setVisible(False)
             self.wifi_password_label.setVisible(False)
+            self.wifi_password_show.setVisible(False)
 
             self.wifi_ca_certificate_url.setVisible(False)
             self.wifi_ca_certificate_browse.setVisible(False)
@@ -275,6 +299,7 @@ class Wifi(QWidget, Ui_Wifi):
         else:
             self.wifi_key.setVisible(False)
             self.wifi_key_label.setVisible(False)
+            self.wifi_key_show.setVisible(False)
 
             self.wifi_key_index.setVisible(False)
             self.wifi_key_index_label.setVisible(False)
@@ -290,6 +315,7 @@ class Wifi(QWidget, Ui_Wifi):
 
             self.wifi_password.setVisible(False)
             self.wifi_password_label.setVisible(False)
+            self.wifi_password_show.setVisible(False)
 
             self.wifi_ca_certificate_url.setVisible(False)
             self.wifi_ca_certificate_browse.setVisible(False)
