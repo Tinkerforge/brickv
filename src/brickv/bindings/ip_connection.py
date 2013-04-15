@@ -481,8 +481,19 @@ class IPConnection:
             self.socket.connect((self.host, self.port))
             self.socket_id += 1
         except:
-            # FIXME: cleanup
-            self.socket = None
+            def cleanup():
+                self.socket = None
+
+                # end callback thread
+                if not is_auto_reconnect:
+                    self.callback.queue.put((IPConnection.QUEUE_EXIT, None))
+
+                    if current_thread() is not self.callback.thread:
+                        self.callback.thread.join()
+
+                    self.callback = None
+
+            cleanup()
             raise
 
         # create disconnect probe thread
@@ -495,8 +506,23 @@ class IPConnection:
             self.disconnect_probe_thread.daemon = True
             self.disconnect_probe_thread.start()
         except:
-            # FIXME: cleanup
-            self.disconnect_probe_thread = None
+            def cleanup():
+                self.disconnect_probe_thread = None
+
+                # close socket
+                self.socket.close()
+                self.socket = None
+
+                # end callback thread
+                if not is_auto_reconnect:
+                    self.callback.queue.put((IPConnection.QUEUE_EXIT, None))
+
+                    if current_thread() is not self.callback.thread:
+                        self.callback.thread.join()
+
+                    self.callback = None
+
+            cleanup()
             raise
 
         # create receive thread
