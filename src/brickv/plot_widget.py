@@ -22,8 +22,9 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QVBoxLayout, QWidget, QPushButton
-from PyQt4.QtCore import QTimer
+from PyQt4.QtCore import QTimer, Qt
 import PyQt4.Qwt5 as Qwt
+
 
 class Plot(Qwt.QwtPlot):
     def __init__(self, y_axis, plot_list, *args):
@@ -48,6 +49,7 @@ class Plot(Qwt.QwtPlot):
         
         for x in plot_list:
             c = Qwt.QwtPlotCurve(x[0])
+#            c.setRenderHint(Qwt.QwtPlotItem.RenderAntialiased)
             self.curve.append(c)
             self.data_x.append([])
             self.data_y.append([])
@@ -71,10 +73,13 @@ class Plot(Qwt.QwtPlot):
     def add_data(self, i, data_x, data_y):
         self.data_x[i].append(data_x)
         self.data_y[i].append(data_y)
-        if len(self.data_x[i]) == 1200: # 2 minutes
+        if len(self.data_x[i]) == 200: # 30 seconds
             self.data_x[i] = self.data_x[i][10:]
             self.data_y[i] = self.data_y[i][10:]
-        
+#            self.data_x[i].pop(0)
+#            self.data_y[i].pop(0)
+            
+        self.setAxisScale(Qwt.QwtPlot.xBottom, self.data_x[i][0], self.data_x[i][0]+10) #self.data_x[i][-1])
         self.curve[i].setData(self.data_x[i], self.data_y[i])
         
     def clear_graph(self):

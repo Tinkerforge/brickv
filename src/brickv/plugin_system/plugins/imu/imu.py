@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 from plugin_system.plugin_base import PluginBase
 from bindings.brick_imu import BrickIMU
 from async_call import async_call
+from plot_widget import PlotWidget
 
 from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy
 from PyQt4.QtCore import Qt, QTimer
@@ -144,21 +145,25 @@ class IMU(PluginBase, Ui_IMU):
         self.counter = 0
         self.update_counter = 0
         
-        self.mag_plot = Plot("Magnetic Field [mG]",
-                             [["X", Qt.red],
-                              ["Y", Qt.darkGreen],
-                              ["Z", Qt.blue]])
-        self.acc_plot = Plot("Acceleration [mG]",
-                             [["X", Qt.red],
-                              ["Y", Qt.darkGreen],
-                              ["Z", Qt.blue]])
-        self.gyr_plot = Plot("Angular Velocity [%c/s]" % 0xB0,
-                             [["X", Qt.red],
-                              ["Y", Qt.darkGreen],
-                              ["Z", Qt.blue]])
+        self.mag_plot = PlotWidget("Magnetic Field [mG]",
+                             [["X", Qt.red, self.get_mag_x],
+                              ["Y", Qt.darkGreen, self.get_mag_y],
+                              ["Z", Qt.blue, self.get_mag_z]],
+                                   self.clear_graphs)
+        self.acc_plot = PlotWidget("Acceleration [mG]",
+                             [["X", Qt.red, self.get_acc_x],
+                              ["Y", Qt.darkGreen, self.get_acc_y],
+                              ["Z", Qt.blue, self.get_acc_z]],
+                                   self.clear_graphs)
+        self.gyr_plot = PlotWidget("Angular Velocity [%c/s]" % 0xB0,
+                             [["X", Qt.red, self.get_gyr_x],
+                              ["Y", Qt.darkGreen, self.get_gyr_y],
+                              ["Z", Qt.blue, self.get_gyr_z]],
+                                   self.clear_graphs)
         
-        self.tem_plot = Plot("Temperature [%cC]" % 0xB0,
-                             [["t", Qt.red]])
+        self.tem_plot = PlotWidget("Temperature [%cC]" % 0xB0,
+                             [["t", Qt.red, self.get_tem]],
+                             self.clear_graphs)
         
         self.mag_plot.setMinimumSize(250, 200)
         self.acc_plot.setMinimumSize(250, 200)
@@ -181,7 +186,7 @@ in the image above, then press "Save Orientation".""")
         self.layout_bottom.addWidget(self.tem_plot)
         
         self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
-        self.clear_graphs.clicked.connect(self.clear_graphs_clicked)
+#        self.clear_graphs.clicked.connect(self.clear_graphs_clicked)
         self.calibrate.clicked.connect(self.calibrate_pressed)
         self.led_button.clicked.connect(self.led_clicked)
         self.speed_spinbox.editingFinished.connect(self.speed_finished)
@@ -201,7 +206,17 @@ in the image above, then press "Save Orientation".""")
         
         async_call(self.imu.get_convergence_speed, None, self.speed_spinbox.setValue, self.increase_error_count)
         
+        self.mag_plot.stop = False
+        self.acc_plot.stop = False
+        self.gyr_plot.stop = False
+        self.tem_plot.stop = False
+        
     def stop(self):
+        self.mag_plot.stop = True
+        self.acc_plot.stop = True
+        self.gyr_plot.stop = True
+        self.tem_plot.stop = True
+        
         self.update_timer.stop()
         async_call(self.imu.set_all_data_period, 0, None, self.increase_error_count)
         async_call(self.imu.set_orientation_period, 0, None, self.increase_error_count)
@@ -266,6 +281,36 @@ in the image above, then press "Save Orientation".""")
         elif 'Off' in self.led_button.text():
             self.led_button.setText('Turn LEDs On')
             self.imu.leds_off()
+            
+    def get_acc_x(self):
+        return self.acc_x
+        
+    def get_acc_y(self):
+        return self.acc_y
+    
+    def get_acc_z(self):
+        return self.acc_z
+            
+    def get_mag_x(self):
+        return self.mag_x
+        
+    def get_mag_y(self):
+        return self.mag_y
+    
+    def get_mag_z(self):
+        return self.mag_z
+            
+    def get_gyr_x(self):
+        return self.gyr_x/14.375
+        
+    def get_gyr_y(self):
+        return self.gyr_y/14.375
+    
+    def get_gyr_z(self):
+        return self.gyr_z/14.375
+    
+    def get_tem(self):
+        return self.tem/100.0
         
     def update_data(self):
         self.update_counter += 1
@@ -285,19 +330,19 @@ in the image above, then press "Save Orientation".""")
             
             
             
-            self.gyr_plot.add_data(0, self.counter, gyr_x)
-            self.gyr_plot.add_data(1, self.counter, gyr_y)
-            self.gyr_plot.add_data(2, self.counter, gyr_z)
+#            self.gyr_plot.add_data(0, self.counter, gyr_x)
+#            self.gyr_plot.add_data(1, self.counter, gyr_y)
+#            self.gyr_plot.add_data(2, self.counter, gyr_z)
             
-            self.acc_plot.add_data(0, self.counter, self.acc_x)
-            self.acc_plot.add_data(1, self.counter, self.acc_y)
-            self.acc_plot.add_data(2, self.counter, self.acc_z)
+#            self.acc_plot.add_data(0, self.counter, self.acc_x)
+#            self.acc_plot.add_data(1, self.counter, self.acc_y)
+#            self.acc_plot.add_data(2, self.counter, self.acc_z)
             
-            self.mag_plot.add_data(0, self.counter, self.mag_x)
-            self.mag_plot.add_data(1, self.counter, self.mag_y)
-            self.mag_plot.add_data(2, self.counter, self.mag_z)
+#            self.mag_plot.add_data(0, self.counter, self.mag_x)
+#            self.mag_plot.add_data(1, self.counter, self.mag_y)
+#            self.mag_plot.add_data(2, self.counter, self.mag_z)
             
-            self.tem_plot.add_data(0, self.counter, self.tem/100.0)
+#            self.tem_plot.add_data(0, self.counter, self.tem/100.0)
         
             self.counter += 0.1
         

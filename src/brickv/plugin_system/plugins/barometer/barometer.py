@@ -28,7 +28,7 @@ from bindings import ip_connection
 from bindings.bricklet_barometer import BrickletBarometer
 from async_call import async_call
 
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QLineEdit
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QLineEdit, QSpinBox, QFrame
 from PyQt4.QtCore import pyqtSignal, Qt, QTimer
 
 class AirPressureLabel(QLabel):
@@ -56,6 +56,11 @@ class Barometer(PluginBase):
         self.barometer = BrickletBarometer(uid, ipcon)
 
         has_calibrate = version == (1, 0, 0)
+        has_averaging = version >= (2, 0, 1)
+        
+        self.moving_average_pressure = 25
+        self.average_pressure = 10
+        self.average_temperature = 10
 
         self.qtcb_air_pressure.connect(self.cb_air_pressure)
         self.barometer.register_callback(self.barometer.CALLBACK_AIR_PRESSURE,
@@ -92,6 +97,27 @@ class Barometer(PluginBase):
             self.reference_label = QLabel('Reference Air Pressure [mbar]:')
             self.reference_edit = QLineEdit()
             self.get_reference_pressed()
+            
+        if has_averaging:
+            self.avg_pressure_box = QSpinBox()
+            self.avg_pressure_box.setMinimum(0)
+            self.avg_pressure_box.setMaximum(10)
+            self.avg_pressure_box.setSingleStep(1)
+            self.avg_pressure_box.setValue(10)
+            self.avg_temperature_box = QSpinBox()
+            self.avg_temperature_box.setMinimum(0)
+            self.avg_temperature_box.setMaximum(255)
+            self.avg_temperature_box.setSingleStep(1)
+            self.avg_temperature_box.setValue(10)
+            self.avg_moving_pressure_box = QSpinBox()
+            self.avg_moving_pressure_box.setMinimum(0)
+            self.avg_moving_pressure_box.setMaximum(25)
+            self.avg_moving_pressure_box.setSingleStep(1)
+            self.avg_moving_pressure_box.setValue(25)
+            
+            self.avg_pressure_box.editingFinished.connect(self.avg_pressure_box_finished)
+            self.avg_temperature_box.editingFinished.connect(self.avg_temperature_box_finished)
+            self.avg_moving_pressure_box.editingFinished.connect(self.avg_moving_pressure_box_finished)
 
         layout_h1 = QHBoxLayout()
         layout_h1.addStretch()
@@ -125,6 +151,24 @@ class Barometer(PluginBase):
             layout_v3 = QVBoxLayout()
             layout_v3.addWidget(self.chip_temperature_label)
             layout_v3.addLayout(layout_h3)
+            
+        if has_averaging:
+            line1 = QFrame()
+            line1.setFrameShape(QFrame.VLine)
+            line1.setFrameShadow(QFrame.Sunken)
+            line2 = QFrame()
+            line2.setFrameShape(QFrame.VLine)
+            line2.setFrameShadow(QFrame.Sunken)
+            
+            layout_h4 = QHBoxLayout()
+            layout_h4.addWidget(QLabel('Air Pressure Moving Average Length:'))
+            layout_h4.addWidget(self.avg_moving_pressure_box)
+            layout_h4.addWidget(line1)
+            layout_h4.addWidget(QLabel('Air Pressure Average Length:'))
+            layout_h4.addWidget(self.avg_pressure_box)
+            layout_h4.addWidget(line2)
+            layout_h4.addWidget(QLabel('Temperate Average Length:'))
+            layout_h4.addWidget(self.avg_temperature_box)
 
         layout_h1 = QHBoxLayout()
         layout_h1.addLayout(layout_v1)
@@ -137,6 +181,13 @@ class Barometer(PluginBase):
             layout.addLayout(layout_h3)
         else:
             layout.addLayout(layout_v3)
+            
+        if has_averaging:
+            lineh = QFrame()
+            lineh.setFrameShape(QFrame.HLine)
+            lineh.setFrameShadow(QFrame.Sunken)
+            layout.addWidget(lineh)
+            layout.addLayout(layout_h4)
 
         self.chip_temp_timer = QTimer()
         self.chip_temp_timer.timeout.connect(self.update_chip_temp)
@@ -148,6 +199,8 @@ class Barometer(PluginBase):
 
         async_call(self.barometer.set_air_pressure_callback_period, 100, None, self.increase_error_count)
         async_call(self.barometer.set_altitude_callback_period, 100, None, self.increase_error_count)
+        
+        async_call(self.barometer.get_averaging, None, self.cb_averaging, self.increase_error_count)
 
         self.air_pressure_plot_widget.stop = False
         self.altitude_plot_widget.stop = False
@@ -170,6 +223,31 @@ class Barometer(PluginBase):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletBarometer.DEVICE_IDENTIFIER
+
+    def cb_averaging(self, avg):
+        moving_average_pressure, average_pressure, average_temperature = avg
+        self.moving_average_pressure = moving_average_pressure
+        self.average_pressure = average_pressure
+        self.average_temperature = average_temperature
+        
+        self.avg_moving_pressure_box.setValue(moving_average_pressure)
+        self.avg_pressure_box.setValue(average_pressure)
+        self.avg_temperature_box.setValue(average_temperature)
+    
+    def avg_pressure_box_finished(self):
+        self.average_pressure = self.avg_pressure_box.value()
+        self.save_new_averaging()
+    
+    def avg_temperature_box_finished(self):
+        self.temperature_pressure = self.avg_temperature_box.value()
+        self.save_new_averaging()
+    
+    def avg_moving_pressure_box_finished(self):
+        self.moving_average_pressure = self.avg_moving_pressure_box.value()
+        self.save_new_averaging()
+    
+    def save_new_averaging(self):
+        self.barometer.set_averaging(self.moving_average_pressure, self.average_pressure, self.average_temperature)
 
     def calibrate_pressed(self):
         try:

@@ -770,9 +770,13 @@ class IPConnection:
 
             x = struct.unpack(f, data[:length])
             if len(x) > 1:
+                if 'c' in f:
+                    x = tuple([self.handle_deserialized_char(c) for c in x])
                 ret.append(x)
+            elif 'c' in f:
+                ret.append(self.handle_deserialized_char(x[0]))
             elif 's' in f:
-                ret.append(self.trim_deserialized_string(x[0]))
+                ret.append(self.handle_deserialized_string(x[0]))
             else:
                 ret.append(x[0])
 
@@ -780,10 +784,16 @@ class IPConnection:
 
         if len(ret) == 1:
             return ret[0]
+        else:
+            return ret
 
-        return ret
+    def handle_deserialized_char(self, c):
+        if sys.hexversion >= 0x03000000:
+            c = c.decode('ascii')
 
-    def trim_deserialized_string(self, s):
+        return c
+
+    def handle_deserialized_string(self, s):
         if sys.hexversion >= 0x03000000:
             s = s.decode('ascii')
 
@@ -893,6 +903,8 @@ class IPConnection:
             return sequence_number
 
     def handle_response(self, packet):
+        self.disconnect_probe_flag = False
+
         function_id = get_function_id_from_data(packet)
         sequence_number = get_sequence_number_from_data(packet)
 

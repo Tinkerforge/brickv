@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-04-11.      #
+# This file was automatically generated on 2013-05-16.      #
 #                                                           #
-# Bindings Version 2.0.6                                    #
+# Bindings Version 2.0.7                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -75,6 +75,9 @@ class BrickIMU(Device):
     FUNCTION_GET_ORIENTATION_PERIOD = 28
     FUNCTION_SET_QUATERNION_PERIOD = 29
     FUNCTION_GET_QUATERNION_PERIOD = 30
+    FUNCTION_ORIENTATION_CALCULATION_ON = 37
+    FUNCTION_ORIENTATION_CALCULATION_OFF = 38
+    FUNCTION_IS_ORIENTATION_CALCULATION_ON = 39
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
@@ -94,7 +97,7 @@ class BrickIMU(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickIMU.FUNCTION_GET_ACCELERATION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_MAGNETIC_FIELD] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -132,6 +135,9 @@ class BrickIMU(Device):
         self.response_expected[BrickIMU.CALLBACK_ALL_DATA] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickIMU.CALLBACK_ORIENTATION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickIMU.CALLBACK_QUATERNION] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickIMU.FUNCTION_ORIENTATION_CALCULATION_ON] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_ORIENTATION_CALCULATION_OFF] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_IS_ORIENTATION_CALCULATION_ON] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_CHIP_TEMPERATURE] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_RESET] = BrickIMU.RESPONSE_EXPECTED_FALSE
@@ -447,6 +453,43 @@ class BrickIMU(Device):
         Returns the period as set by :func:`SetQuaternionPeriod`.
         """
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_QUATERNION_PERIOD, (), '', 'I')
+
+    def orientation_calculation_on(self):
+        """
+        Turns the orientation calculation of the IMU Brick on.
+        
+        As default the calculation is on.
+        
+        .. versionadded:: 2.0.2~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickIMU.FUNCTION_ORIENTATION_CALCULATION_ON, (), '', '')
+
+    def orientation_calculation_off(self):
+        """
+        Turns the orientation calculation of the IMU Brick off.
+        
+        If the calculation is off, :func:`GetOrientation` will return
+        the last calculated value until the calculation is turned on again.
+        
+        The trigonometric functions that are needed to calculate the orientation 
+        are very expensive. We recommend to turn the orientation calculation
+        off if the orientation is not needed, to free calculation time for the
+        sensor fusion algorithm.
+        
+        As default the calculation is on.
+        
+        .. versionadded:: 2.0.2~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickIMU.FUNCTION_ORIENTATION_CALCULATION_OFF, (), '', '')
+
+    def is_orientation_calculation_on(self):
+        """
+        Returns *true* if the orientation calculation of the IMU Brick
+        is on, *false* otherwise.
+        
+        .. versionadded:: 2.0.2~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickIMU.FUNCTION_IS_ORIENTATION_CALCULATION_ON, (), '', '?')
 
     def get_protocol1_bricklet_name(self, port):
         """

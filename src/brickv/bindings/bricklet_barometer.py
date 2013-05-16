@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-04-11.      #
+# This file was automatically generated on 2013-05-16.      #
 #                                                           #
-# Bindings Version 2.0.6                                    #
+# Bindings Version 2.0.7                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -24,6 +24,7 @@ except ValueError:
 
 GetAirPressureCallbackThreshold = namedtuple('AirPressureCallbackThreshold', ['option', 'min', 'max'])
 GetAltitudeCallbackThreshold = namedtuple('AltitudeCallbackThreshold', ['option', 'min', 'max'])
+GetAveraging = namedtuple('Averaging', ['moving_average_pressure', 'average_pressure', 'average_temperature'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletBarometer(Device):
@@ -53,6 +54,8 @@ class BrickletBarometer(Device):
     FUNCTION_SET_REFERENCE_AIR_PRESSURE = 13
     FUNCTION_GET_CHIP_TEMPERATURE = 14
     FUNCTION_GET_REFERENCE_AIR_PRESSURE = 19
+    FUNCTION_SET_AVERAGING = 20
+    FUNCTION_GET_AVERAGING = 21
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -68,7 +71,7 @@ class BrickletBarometer(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletBarometer.FUNCTION_GET_AIR_PRESSURE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletBarometer.FUNCTION_GET_ALTITUDE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -89,6 +92,8 @@ class BrickletBarometer(Device):
         self.response_expected[BrickletBarometer.CALLBACK_AIR_PRESSURE_REACHED] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletBarometer.CALLBACK_ALTITUDE_REACHED] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletBarometer.FUNCTION_GET_REFERENCE_AIR_PRESSURE] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletBarometer.FUNCTION_SET_AVERAGING] = BrickletBarometer.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletBarometer.FUNCTION_GET_AVERAGING] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletBarometer.FUNCTION_GET_IDENTITY] = BrickletBarometer.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletBarometer.CALLBACK_AIR_PRESSURE] = 'i'
@@ -267,6 +272,39 @@ class BrickletBarometer(Device):
         .. versionadded:: 1.1.0~(Plugin)
         """
         return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_REFERENCE_AIR_PRESSURE, (), '', 'i')
+
+    def set_averaging(self, moving_average_pressure, average_pressure, average_temperature):
+        """
+        Sets the different averaging parameters. It is possible to set
+        the length of a normal averaging for the temperature and pressure,
+        as well as an additional length of a 
+        `moving average <http://en.wikipedia.org/wiki/Moving_average>`__ 
+        for the pressure. The moving average is calculated from the normal 
+        averages.  There is no moving average for the temperature.
+        
+        The maximum length for the pressure average is 10, for the
+        temperature average is 255 and for the moving average is 25.
+        
+        Setting the all three parameters to 0 will turn the averaging
+        completely off. If the averaging is off, there is lots of noise
+        on the data, but the data is without delay. Thus we recommend
+        to turn the averaging off if the Barometer Bricklet data is
+        to be used for sensor fusion with other sensors.
+        
+        The default values are 10 for the normal averages and 25 for the
+        moving average.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_AVERAGING, (moving_average_pressure, average_pressure, average_temperature), 'B B B', '')
+
+    def get_averaging(self):
+        """
+        Returns the averaging configuration as set by :func:`SetAveraging`.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        return GetAveraging(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AVERAGING, (), '', 'B B B'))
 
     def get_identity(self):
         """
