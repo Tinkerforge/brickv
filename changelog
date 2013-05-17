@@ -91,4 +91,10 @@
 2.0.4: Ignore enumerate callbacks that arrived after a disconnect
        Fix Chibi and RS485 configuration handling
        Disable instead of hide WIFI hostname edit box, if Master Brick firmware doesn't support it
-2.0.5: Add plugin for Ethernet Extension
+2.0.5: Add commandline tool for flashing bricks (thanks to Jan)
+       Try to avoid UI hang during connect
+       Add plugin for Ethernet Extension
+       Show WIFI password/key with * characters by default
+       Add spin boxes for new averaging API in Barometer Bricklet plugin
+       Less jittery plot widgets
+       Make errors during Brick reset in flash process non-fatal
