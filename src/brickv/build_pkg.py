@@ -329,8 +329,7 @@ def build_linux_pkg():
         f.write(line)
     f.close()
 
-    os.system('chown -R root brickv/usr')
-    os.system('chgrp -R root brickv/usr')
+    os.system('chown -R root:root brickv/usr')
     os.system('dpkg -b brickv/ brickv-' + config.BRICKV_VERSION + '_all.deb')
 
 

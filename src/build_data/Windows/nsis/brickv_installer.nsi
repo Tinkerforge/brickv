@@ -169,7 +169,8 @@ RequestExecutionLevel admin
   RMDir /R "$INSTDIR"
 
   ; Remove menu shortcuts
-  RMDir /R "$SMPROGRAMS\Tinkerforge"
+  Delete "$SMPROGRAMS\Tinkerforge\Brickv *.lnk"
+  RMDir "$SMPROGRAMS\Tinkerforge"
 
   ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Brickv" ; Remove old key too
