@@ -96,6 +96,9 @@ RSTC_MR_FEY = 0xA5
 class SAMBAException(Exception):
     pass
 
+class SAMBARebootError(SAMBAException):
+    pass
+
 class SAMBA:
     def __init__(self, port_name, progress = None):
         self.current_mode = None
@@ -270,16 +273,19 @@ class SAMBA:
         self.wait_for_flash_ready('after setting Boot-from-Flash bit')
 
         # Boot
-        self.reset()
+        try:
+            self.reset()
+        except SAMBAException as e:
+            raise SAMBARebootError(str(e))
 
     def reset_progress(self, title, length):
         if self.progress is not None:
             self.progress.reset(title, length)
-            
+
     def update_progress(self, value):
         if self.progress is not None:
             self.progress.update(value)
-        
+
     def write_pages(self, pages, page_num_offset, title):
         self.reset_progress(title, len(pages))
 

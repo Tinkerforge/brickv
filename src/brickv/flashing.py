@@ -28,7 +28,7 @@ from bindings.ip_connection import IPConnection, Error, base58encode, base58deco
 from imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
 from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QApplication, QColor, QFrame, QFileDialog, QMessageBox, QProgressDialog, QStandardItemModel, QStandardItem, QBrush
-from samba import SAMBA, SAMBAException, get_serial_ports
+from samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_ports
 from infos import get_version_string
 import infos
 
@@ -638,25 +638,41 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                         return
 
         # Flash firmware
+        def report_result(reboot_okay):
+            if current_text == CUSTOM:
+                if reboot_okay:
+                    message = 'Successfully restarted Brick!'
+                else:
+                    message = 'Manual restart of Brick required!'
+            else:
+                if reboot_okay:
+                    message = 'Successfully restarted {0} Brick!'.format(name)
+                else:
+                    message = 'Manual restart of {0} Brick required!'.format(name)
+
+            if current_text == CUSTOM:
+                self.popup_ok('Brick', 'Successfully flashed firmware.\n' + message)
+            elif imu_calibration is not None:
+                self.popup_ok('Brick', 'Successfully flashed {0} Brick firmware {1}.{2}.{3}.\n'.format(name, *version) +
+                                       'Successfully restored factory calibration.\n' + message)
+            else:
+                self.popup_ok('Brick', 'Successfully flashed {0} Brick firmware {1}.{2}.{3}.\n'.format(name, *version) +
+                                       message)
+
         try:
             samba.flash(firmware, imu_calibration, lock_imu_calibration_pages)
             progress.cancel()
-
-            if current_text == CUSTOM:
-                self.popup_ok('Brick', 'Successfully flashed firmware.\nSuccessfully restarted Brick!')
-            elif imu_calibration is not None:
-                self.popup_ok('Brick', 'Successfully flashed {0} Brick firmware {1}.{2}.{3}.\n'.format(name, *version) +
-                                       'Successfully restored factory calibration.\n' +
-                                       'Successfully restarted {0} Brick!'.format(name))
-            else:
-                self.popup_ok('Brick', 'Successfully flashed {0} Brick firmware {1}.{2}.{3}.\n'.format(name, *version) +
-                                       'Successfully restarted {0} Brick!'.format(name))
-        except SAMBAException, e:
+            report_result(True)
+        except SAMBARebootError as e:
+            progress.cancel()
+            self.refresh_serial_ports()
+            report_result(False)
+        except SAMBAException as e:
             progress.cancel()
             self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not flash Brick: {0}'.format(str(e)))
             return
-        except SerialException, e:
+        except SerialException as e:
             progress.cancel()
             self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not flash Brick: {0}'.format(str(e)))
