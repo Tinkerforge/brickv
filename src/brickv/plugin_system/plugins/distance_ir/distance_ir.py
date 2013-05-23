@@ -65,7 +65,6 @@ class DistanceIR(PluginBase):
                                     self.qtcb_analog.emit) 
         
         self.analog_value = 0
-        self.counter = 0
         
         self.distance_label = DistanceLabel('Distance: ')
         self.analog_label = AnalogLabel('Analog value: ')
@@ -202,9 +201,5 @@ class DistanceIR(PluginBase):
         self.distance_label.setText(str(distance/10.0)) 
 
     def cb_analog(self, value):
-        self.analog_value += value
-        self.counter+=1
-        if self.counter == 100:
-            self.analog_label.setText(str(self.analog_value/100))
-            self.counter = 0
-            self.analog_value = 0 
+        self.analog_value = value
+        self.analog_label.setText(str(self.analog_value/100))
