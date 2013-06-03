@@ -100,7 +100,8 @@ class IO4(PluginBase, Ui_IO4):
         
         def get_debounce_period_async(debounce_period):
             self.debounce_edit.setText(str(debounce_period))
-        
+            self.pin_changed(0)
+
         async_call(self.io.get_value, None, get_port_async, self.increase_error_count)
         yield
         async_call(self.io.get_configuration, None, get_port_configuration_async, self.increase_error_count)
@@ -308,7 +309,7 @@ class IO4(PluginBase, Ui_IO4):
         selected_pin = int(self.pin_box.currentText())
         
         _, _, time_remaining = monoflop
-        if pin == selected_pin:
+        if pin == selected_pin and self.monoflop_active[pin]:
             self.time_spinbox.setValue(time_remaining)
 
         self.port_time[pin].setText(str(time_remaining))
