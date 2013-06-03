@@ -41,7 +41,9 @@ class LCD20x4(PluginBase):
         
         self.version = version
         self.lcd = BrickletLCD20x4(uid, ipcon)
-        
+
+        self.hardware_version = (1, 0, 0)
+
         self.qtcb_pressed.connect(self.cb_pressed)
         self.lcd.register_callback(self.lcd.CALLBACK_BUTTON_PRESSED,
                                    self.qtcb_pressed.emit)
@@ -221,9 +223,11 @@ class LCD20x4(PluginBase):
         pass
 
     def get_url_part(self):
-        return 'lcd_20x4'
+        return 'lcd_20x4_v{0}{1}'.format(self.hardware_version[0], self.hardware_version[1])
     
     def is_hardware_version_relevant(self, hardware_version):
+        # FIXME: hack to avoid passing the hardware_version to all plugins
+        self.hardware_version = hardware_version
         if hardware_version <= (1, 1, 0):
             self.b3_label.hide()
         return True

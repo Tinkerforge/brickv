@@ -212,6 +212,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             name = name.upper()
         elif name.startswith('lcd_'):
             name = name.replace('lcd_', 'LCD_')
+            if url_part.startswith('lcd_20x4_'):
+                name = name.replace('v11', '1.1').replace('v12', '1.2')
         elif name.startswith('io'):
             name = name.replace('io', 'IO-')
         elif name.endswith('_ir'):
@@ -1038,6 +1040,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
     def tab_changed(self, i):
         if i == 0 and self.refresh_updates_pending:
             self.refresh_updates_pressed()
+        elif i == 2:
+            self.brick_changed(self.combo_brick.currentIndex())
+            self.port_changed(self.combo_port.currentIndex())
 
     def refresh_updates_pressed(self):
         if self.tab_widget.currentIndex() != 0:
