@@ -624,8 +624,13 @@ class Servo(PluginBase, Ui_Servo):
         self.position_slider.setMaximum(max)
         self.position_spin.setMinimum(min)
         self.position_spin.setMaximum(max)
-        self.position_list[servo].setTotalAngle((max - min)/100)
-        self.position_list[servo].setRange(min/100, max/100)
+        if servo == 255:
+            for i in range(7):
+                self.position_list[i].setTotalAngle((max - min)/100)
+                self.position_list[i].setRange(min/100, max/100)
+        else:
+            self.position_list[servo].setTotalAngle((max - min)/100)
+            self.position_list[servo].setRange(min/100, max/100)
         
         try:
             self.servo.set_degree(servo, min, max)
