@@ -248,14 +248,22 @@ class DualRelay(PluginBase, Ui_DualRelay):
                 self.dr2_button.setText('Switch On')
                 self.dr2_image.setPixmap(self.b2_pixmap)
     
+    def update_time_remaining(self, relay, time_remaining):
+        if relay == 1:
+            if self.r1_monoflop:
+                self.time1_spinbox.setValue(time_remaining)
+        elif relay == 2:
+            if self.r2_monoflop:
+                self.time2_spinbox.setValue(time_remaining)
+
     def update(self):
         if self.r1_monoflop:
             try:
-                async_call(self.dr.get_monoflop, 1, lambda a: self.time1_spinbox.setValue(a[2]), self.increase_error_count)
+                async_call(self.dr.get_monoflop, 1, lambda a: self.update_time_remaining(1, a[2]), self.increase_error_count)
             except ip_connection.Error:
                 pass
         if self.r2_monoflop:
             try:
-                async_call(self.dr.get_monoflop, 2, lambda a: self.time2_spinbox.setValue(a[2]), self.increase_error_count)
+                async_call(self.dr.get_monoflop, 2, lambda a: self.update_time_remaining(2, a[2]), self.increase_error_count)
             except ip_connection.Error:
                 pass

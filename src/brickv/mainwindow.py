@@ -26,7 +26,7 @@ from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt, QTimer
 from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, QIcon, \
                         QPushButton, QWidget, QHBoxLayout, QVBoxLayout, \
                         QLabel, QFrame, QSpacerItem, QSizePolicy, \
-                        QStandardItemModel, QStandardItem
+                        QStandardItemModel, QStandardItem, QToolButton
 from ui_mainwindow import Ui_MainWindow
 from plugin_system.plugin_manager import PluginManager
 from bindings.ip_connection import IPConnection
@@ -93,6 +93,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tree_view_model_labels = ['Name', 'UID', 'FW Version']
         self.tree_view_model = QStandardItemModel()
         self.tree_view.setModel(self.tree_view_model)
+        self.tree_view.doubleClicked.connect(self.item_double_clicked)
         self.set_tree_view_defaults()   
 
         # Remove dummy tab
@@ -253,6 +254,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             async_next_session()
             self.ipcon.disconnect()
 
+    def item_double_clicked(self, index):
+        text = str(index.data().toString())
+        i = self.tab_for_uid(text)
+        if i > 0:
+            self.tab_widget.setCurrentIndex(i)
+
+    def connected_uid_pressed(self, connected_uid):
+        i = self.tab_for_uid(connected_uid)
+        if i > 0:
+            self.tab_widget.setCurrentIndex(i)
+
     def create_plugin_container(self, plugin, connected_uid, position):
         container = QWidget()
         container._uid = plugin.uid
@@ -271,10 +283,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # connected uid
         if connected_uid != '0':
             info.addWidget(QLabel('Connected to:'))
-            label = QLabel('{0}'.format(connected_uid))
-            label.setTextInteractionFlags(Qt.TextSelectableByMouse |
-                                          Qt.TextSelectableByKeyboard)
-            info.addWidget(label)
+            button = QToolButton()
+            button.setText(connected_uid)
+            button.pressed.connect(lambda: self.connected_uid_pressed(connected_uid))
+            info.addWidget(button)
 
             info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 

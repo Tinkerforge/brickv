@@ -125,6 +125,7 @@ class IO16(PluginBase, Ui_IO16):
         
         def get_debounce_period_async(debounce_period):
             self.debounce_edit.setText(str(debounce_period))
+            self.port_changed(0)
         
         for port in ['a', 'b']:
             async_call(self.io.get_port, port, get_port_async, self.increase_error_count)
@@ -348,12 +349,11 @@ class IO16(PluginBase, Ui_IO16):
         selected_pin = int(self.pin_box.currentText())
         
         _, _, time_remaining = monoflop
-        if port == selected_port and pin == selected_pin:
+        if port == selected_port and pin == selected_pin and self.monoflop_active[port][pin]:
             self.time_spinbox.setValue(time_remaining)
 
         self.port_time[port][pin].setText(str(time_remaining))
-        
-        
+
     def update(self):
         for port in ['a', 'b']:
             for pin in range(8):

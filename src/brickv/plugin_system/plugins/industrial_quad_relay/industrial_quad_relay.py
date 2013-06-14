@@ -225,11 +225,11 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         value = self.get_current_value()
         if 'On' in self.relay_buttons[button].text():
             value |= (1 << button)
-            self.relay_buttons[button].setText('Off')
+            self.relay_buttons[button].setText('Switch Off')
             self.relay_button_icons[button].setPixmap(self.close_pixmap)
         else:
             value &= ~(1 << button)
-            self.relay_buttons[button].setText('On')
+            self.relay_buttons[button].setText('Switch On')
             self.relay_button_icons[button].setPixmap(self.open_pixmap)
 
         self.iqr.set_value(value)
