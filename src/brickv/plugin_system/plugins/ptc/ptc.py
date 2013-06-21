@@ -64,8 +64,9 @@ class PTC(PluginBase):
         
         self.wire_label = QLabel('Wire Type:')
         self.wire_combo = QComboBox()
-        self.wire_combo.addItem('2- or 4-Wire')
+        self.wire_combo.addItem('2-Wire')
         self.wire_combo.addItem('3-Wire')
+        self.wire_combo.addItem('4-Wire')
         
         self.noise_label = QLabel('Noise Rejection Filter:')
         self.noise_combo = QComboBox()
@@ -139,7 +140,7 @@ class PTC(PluginBase):
         async_call(self.ptc.is_sensor_connected, None, self.is_sensor_connected_async, self.increase_error_count)
     
     def wire_combo_index_changed(self, index):
-        async_call(self.ptc.set_wire_mode, index, None, self.increase_error_count)
+        async_call(self.ptc.set_wire_mode, index+2, None, self.increase_error_count)
         
     def noise_combo_index_changed(self, index):
         async_call(self.ptc.set_noise_rejection_filter, index, None, self.increase_error_count)
@@ -154,7 +155,7 @@ class PTC(PluginBase):
         self.noise_combo.setCurrentIndex(filter_option)
         
     def get_wire_mode_async(self, mode):
-        self.wire_combo.setCurrentIndex(mode)
+        self.wire_combo.setCurrentIndex(mode-2)
 
     def cb_temperature(self, temperature):
         self.current_value = temperature/100.0
