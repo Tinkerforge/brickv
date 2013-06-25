@@ -1072,7 +1072,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             'IO-4 Bricklet': 'io4',
             'Joystick Bricklet': 'joystick',
             'LCD 16x2 Bricklet': 'lcd_16x2',
-            'LCD 20x4 Bricklet': 'lcd_20x4',
+            'LCD 20x4 Bricklet': 'lcd_20x4_v11',
             'Linear Poti Bricklet': 'linear_poti',
             'Piezo Buzzer Bricklet': 'piezo_buzzer',
             'Rotary Poti Bricklet': 'rotary_poti',
