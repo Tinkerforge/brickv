@@ -98,3 +98,8 @@
        Add spin boxes for new averaging API in Barometer Bricklet plugin
        Less jittery plot widgets
        Make errors during Brick reset in flash process non-fatal
+2.0.6: Remove averaging of analog value from Distance IR Bricklet plugin
+       Set min/max degree correctly if all servos are selected in Servo Brick plugin
+       Support splitted LCD 20x4 Bricklet plugin
+       Fix monoflop time update if Go button is clicked in quick succession
+       Add plugins for PTC Bricklet and Industrial Dual 0-20mA Bricklet
