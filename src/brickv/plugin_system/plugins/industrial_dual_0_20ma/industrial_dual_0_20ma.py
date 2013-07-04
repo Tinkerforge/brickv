@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-  
 """
-PTC Plugin
+Industrial Dual 0-20mA Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
 
-ptc.py: PTC Plugin Implementation
+industrial_dual_0_20ma.py: PTC Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from plugin_system.plugin_base import PluginBase
 from plot_widget import PlotWidget
-from bindings.bricklet_industrial_dual_0_20_ma import BrickletIndustrialDual020mA
+from bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
 from async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox
@@ -34,33 +34,22 @@ class CurrentLabel(QLabel):
         text = "Current: " + text + " mA"
         super(CurrentLabel, self).setText(text)
 
-#class ResistanceLabel(QLabel):
-#    def setText(self, text):
-#        text = "Resistance: " + text + " Ohm"
-#        super(ResistanceLabel, self).setText(text)
-    
 class IndustrialDual020mA(PluginBase):
     qtcb_current = pyqtSignal(int, int)
-#    qtcb_resistance = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
         PluginBase.__init__(self, ipcon, uid, 'Industrial Dual 0-20mA Bricklet', version)
         
-        self.str_connected = 'Sensor is currently <font color="green">connected</font>'
-        self.str_not_connected = 'Sensor is currently <font color="red">not connected</font>'
+        self.str_connected = 'Sensor {0} is currently <font color="green">connected</font>'
+        self.str_not_connected = 'Sensor {0} is currently <font color="red">not connected</font>'
         
         self.dual020 = BrickletIndustrialDual020mA(uid, ipcon)
         
         self.qtcb_current.connect(self.cb_current)
         self.dual020.register_callback(self.dual020.CALLBACK_CURRENT,
                                        self.qtcb_current.emit) 
-        
-#        self.qtcb_resistance.connect(self.cb_resistance)
-#        self.ptc.register_callback(self.ptc.CALLBACK_RESISTANCE,
-#                                   self.qtcb_resistance.emit) 
-        
+
         self.current_label = [CurrentLabel(), CurrentLabel()]
-#        self.resistance_label = ResistanceLabel()
         
         self.sample_rate_label1 = QLabel('Sample Rate:')
         self.sample_rate_combo = QComboBox()
@@ -70,7 +59,8 @@ class IndustrialDual020mA(PluginBase):
         self.sample_rate_combo.addItem('4')
         self.sample_rate_label2 = QLabel('Samples per second')
         
-        self.connected_label = [QLabel(self.str_not_connected), QLabel(self.str_not_connected)]
+        self.connected_label = [QLabel(self.str_not_connected.format(0)),
+                                QLabel(self.str_not_connected.format(1))]
         
         self.current_value = [None, None]
         
@@ -120,7 +110,7 @@ class IndustrialDual020mA(PluginBase):
         self.plot_widget.stop = True
 
     def get_url_part(self):
-        return 'industrial_dual_0_20_ma'
+        return 'industrial_dual_0_20ma'
 
     @staticmethod
     def has_device_identifier(device_identifier):
@@ -143,9 +133,9 @@ class IndustrialDual020mA(PluginBase):
 
     def cb_current(self, sensor, current):
         value = current/(1000*1000.0)
-        self.current_label[sensor].setText(str(round(value, 2)))
+        self.current_label[sensor].setText('%6.02f' % round(value, 2))
         self.current_value[sensor] = value
         if value < 3.9:
-            self.connected_label[sensor].setText(self.str_not_connected)
+            self.connected_label[sensor].setText(self.str_not_connected.format(sensor))
         else:
-            self.connected_label[sensor].setText(self.str_connected)
+            self.connected_label[sensor].setText(self.str_connected.format(sensor))

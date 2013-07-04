@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-  
 """
-PTC Plugin
+Industrial Dual 0-20mA Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
 
 __init__.py: package initialization
@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from industrial_dual_0_20_ma import IndustrialDual020mA
+from industrial_dual_0_20ma import IndustrialDual020mA
 
 device_class = IndustrialDual020mA

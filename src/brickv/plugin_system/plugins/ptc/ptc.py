@@ -159,7 +159,7 @@ class PTC(PluginBase):
 
     def cb_temperature(self, temperature):
         self.current_value = temperature/100.0
-        self.temperature_label.setText(str(temperature/100.0))
+        self.temperature_label.setText('%8.02f' % (temperature/100.0))
         
     def cb_resistance(self, resistance):
         resistance_str = str(round(resistance*3900.0/(1 << 15), 1))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-06-25.      #
+# This file was automatically generated on 2013-07-01.      #
 #                                                           #
 # Bindings Version 2.0.7                                    #
 #                                                           #
@@ -123,8 +123,8 @@ class BrickletPTC(Device):
         
         The value can be converted with the following formulas:
         
-        * pt100:  resistance = value*390/32768
-        * pt1000: resistance = value*3900/32768
+        * Pt100:  resistance = (value * 390) / 32768
+        * Pt1000: resistance = (value * 3900) / 32768
         
         If you want to get the resistance periodically, it is recommended 
         to use the callback :func:`Resistance` and set the period with 
@@ -246,7 +246,7 @@ class BrickletPTC(Device):
         """
         Sets the noise rejection filter to either 50Hz (0) or 60Hz (1).
         Noise from 50Hz or 60Hz power sources (including
-        harmonics of the ac power’s fundamental frequency) is
+        harmonics of the AC power's fundamental frequency) is
         attenuated by 82dB.
         
         Default value is 0 = 50Hz.
@@ -265,14 +265,14 @@ class BrickletPTC(Device):
         Returns *true* if the sensor is connected correctly. 
         
         If this function
-        returns *false*, there is either no pt100 or pt1000 sensor connected, 
+        returns *false*, there is either no Pt100 or Pt1000 sensor connected,
         the sensor is connected incorrectly or the sensor itself is faulty.
         """
         return self.ipcon.send_request(self, BrickletPTC.FUNCTION_IS_SENSOR_CONNECTED, (), '', '?')
 
     def set_wire_mode(self, mode):
         """
-        Sets the wire mode. Possible values are 2, 3 und 4.
+        Sets the wire mode. Possible values are 2, 3 and 4.
         
         The values correspond to 2-, 3- and 4-wire sensors.
         

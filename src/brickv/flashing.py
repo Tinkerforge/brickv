@@ -227,6 +227,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         name = ' '.join(parts)
         name = name.replace('Voltage Current', 'Voltage/Current')
+        name = name.replace('0 20ma', '0-20mA')
 
         versions = self.get_firmware_versions(FIRMWARE_URL + 'bricklets/' + url_part + '/', 'bricklet_' + url_part)
 
