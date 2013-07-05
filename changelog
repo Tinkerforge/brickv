@@ -103,3 +103,4 @@
        Support splitted LCD 20x4 Bricklet plugin
        Fix monoflop time update if Go button is clicked in quick succession
        Add plugins for PTC Bricklet and Industrial Dual 0-20mA Bricklet
+2.0.7: Fix naming of Industrial Dual 0-20mA Bricklet
