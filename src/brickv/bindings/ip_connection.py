@@ -620,7 +620,7 @@ class IPConnection:
 
             pending_data += data
 
-            while True:
+            while self.receive_flag:
                 if len(pending_data) < 8:
                     # Wait for complete header
                     break
