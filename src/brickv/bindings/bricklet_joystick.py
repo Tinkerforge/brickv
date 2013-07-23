@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-23.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -243,11 +243,13 @@ class BrickletJoystick(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-         :func:`PositionReached`, :func:`AnalogValueReached`
+        * :func:`PositionReached`,
+        * :func:`AnalogValueReached`
         
         are triggered, if the thresholds
         
-         :func:`SetPositionCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+        * :func:`SetPositionCallbackThreshold`,
+        * :func:`SetAnalogValueCallbackThreshold`
         
         keep being reached.
         

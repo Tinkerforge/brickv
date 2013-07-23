@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-23.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -217,11 +217,13 @@ class BrickletBarometer(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-         :func:`AirPressureReached`, :func:`AltitudeReached`
+        * :func:`AirPressureReached`,
+        * :func:`AltitudeReached`
         
         are triggered, if the thresholds
         
-         :func:`SetAirPressureCallbackThreshold`, :func:`SetAltitudeCallbackThreshold`
+        * :func:`SetAirPressureCallbackThreshold`,
+        * :func:`SetAltitudeCallbackThreshold`
         
         keep being reached.
         

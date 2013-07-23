@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-23.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -220,11 +220,13 @@ class BrickletAnalogIn(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-         :func:`VoltageReached`, :func:`AnalogValueReached`
+        * :func:`VoltageReached`,
+        * :func:`AnalogValueReached`
         
         are triggered, if the thresholds
         
-         :func:`SetVoltageCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+        * :func:`SetVoltageCallbackThreshold`,
+        * :func:`SetAnalogValueCallbackThreshold`
         
         keep being reached.
         

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-23.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -224,11 +224,13 @@ class BrickletPTC(Device):
         """
         Sets the period in ms with which the threshold callback
         
-         :func:`TemperatureReached`, :func:`ResistanceReached`
+        * :func:`TemperatureReached`,
+        * :func:`ResistanceReached`
         
         is triggered, if the threshold
         
-         :func:`SetTemperatureCallbackThreshold`, :func:`SetResistanceCallbackThreshold`
+        * :func:`SetTemperatureCallbackThreshold`,
+        * :func:`SetResistanceCallbackThreshold`
         
         keeps being reached.
         

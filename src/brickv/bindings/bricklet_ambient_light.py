@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-23.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -215,11 +215,13 @@ class BrickletAmbientLight(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-         :func:`IlluminanceReached`, :func:`AnalogValueReached`
+        * :func:`IlluminanceReached`,
+        * :func:`AnalogValueReached`
         
         are triggered, if the thresholds
         
-         :func:`SetIlluminanceCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+        * :func:`SetIlluminanceCallbackThreshold`,
+        * :func:`SetAnalogValueCallbackThreshold`
         
         keep being reached.
         

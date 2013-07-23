@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-23.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -83,7 +83,7 @@ class BrickletIndustrialDual020mA(Device):
 
     def get_current(self, sensor):
         """
-        Returns the current of the sensor. The value is in nA
+        Returns the current of the specified sensor (0 or 1). The value is in nA
         and between 0nA and 22505322nA (22.5mA).
         
         It is possible to detect if an IEC 60381-1 compatible sensor is connected
@@ -147,11 +147,11 @@ class BrickletIndustrialDual020mA(Device):
         """
         Sets the period in ms with which the threshold callback
         
-         :func:`CurrentReached`
+        * :func:`CurrentReached`
         
         is triggered, if the threshold
         
-         :func:`SetCurrentCallbackThreshold`
+        * :func:`SetCurrentCallbackThreshold`
         
         keeps being reached.
         

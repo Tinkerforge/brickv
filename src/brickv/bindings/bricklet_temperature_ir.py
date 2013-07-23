@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-23.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -246,11 +246,13 @@ class BrickletTemperatureIR(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-         :func:`AmbientTemperatureReached`, :func:`ObjectTemperatureReached`
+        * :func:`AmbientTemperatureReached`,
+        * :func:`ObjectTemperatureReached`
         
         are triggered, if the thresholds
         
-         :func:`SetAmbientTemperatureCallbackThreshold`, :func:`SetObjectTemperatureCallbackThreshold`
+        * :func:`SetAmbientTemperatureCallbackThreshold`,
+        * :func:`SetObjectTemperatureCallbackThreshold`
         
         keep being reached.
         

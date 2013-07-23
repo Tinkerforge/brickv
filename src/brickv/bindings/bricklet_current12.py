@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-23.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -242,11 +242,13 @@ class BrickletCurrent12(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-         :func:`CurrentReached`, :func:`AnalogValueReached`
+        * :func:`CurrentReached`,
+        * :func:`AnalogValueReached`
         
         are triggered, if the thresholds
         
-         :func:`SetCurrentCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+        * :func:`SetCurrentCallbackThreshold`,
+        * :func:`SetAnalogValueCallbackThreshold`
         
         keep being reached.
         

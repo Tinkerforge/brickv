@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-23.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -359,11 +359,15 @@ class BrickletVoltageCurrent(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-         :func:`CurrentReached`, :func:`VoltageReached`, :func:`PowerReached`
+        * :func:`CurrentReached`,
+        * :func:`VoltageReached`,
+        * :func:`PowerReached`
         
         are triggered, if the thresholds
         
-         :func:`SetCurrentCallbackThreshold`, :func:`SetVoltageCallbackThreshold`, :func:`SetPowerCallbackThreshold`
+        * :func:`SetCurrentCallbackThreshold`,
+        * :func:`SetVoltageCallbackThreshold`,
+        * :func:`SetPowerCallbackThreshold`
         
         keep being reached.
         

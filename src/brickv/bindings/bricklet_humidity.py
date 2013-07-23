@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-23.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -214,11 +214,13 @@ class BrickletHumidity(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-         :func:`HumidityReached`, :func:`AnalogValueReached`
+        * :func:`HumidityReached`,
+        * :func:`AnalogValueReached`
         
         are triggered, if the thresholds
         
-         :func:`SetHumidityCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+        * :func:`SetHumidityCallbackThreshold`,
+        * :func:`SetAnalogValueCallbackThreshold`
         
         keep being reached.
         

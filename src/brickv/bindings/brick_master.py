@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-23.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -1025,11 +1025,15 @@ class BrickMaster(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-         :func:`StackCurrentReached`, :func:`StackVoltageReached`, :func:`USBVoltageReached`
+        * :func:`StackCurrentReached`,
+        * :func:`StackVoltageReached`,
+        * :func:`USBVoltageReached`
         
         are triggered, if the thresholds
         
-         :func:`SetStackCurrentCallbackThreshold`, :func:`SetStackVoltageCallbackThreshold`, :func:`SetUSBVoltageCallbackThreshold`
+        * :func:`SetStackCurrentCallbackThreshold`,
+        * :func:`SetStackVoltageCallbackThreshold`,
+        * :func:`SetUSBVoltageCallbackThreshold`
         
         keep being reached.
         

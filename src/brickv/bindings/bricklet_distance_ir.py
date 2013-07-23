@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-23.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -245,11 +245,13 @@ class BrickletDistanceIR(Device):
         """
         Sets the period in ms with which the threshold callbacks
         
-         :func:`DistanceReached`, :func:`AnalogValueReached`
+        * :func:`DistanceReached`,
+        * :func:`AnalogValueReached`
         
         are triggered, if the thresholds
         
-         :func:`SetDistanceCallbackThreshold`, :func:`SetAnalogValueCallbackThreshold`
+        * :func:`SetDistanceCallbackThreshold`,
+        * :func:`SetAnalogValueCallbackThreshold`
         
         keep being reached.
         
