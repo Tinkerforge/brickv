@@ -33,7 +33,6 @@ if not __path in sys.path:
 import logging
 import config
 
-#import PyQt4
 from PyQt4.QtGui import QApplication
 from PyQt4.QtCore import QEvent
 

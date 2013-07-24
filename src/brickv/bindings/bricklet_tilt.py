@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-23.      #
+# This file was automatically generated on 2013-07-24.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -31,9 +31,13 @@ class BrickletTilt(Device):
 
     DEVICE_IDENTIFIER = 239
 
+    CALLBACK_TILT_STATE_CHANGED = 2
 
+    FUNCTION_GET_TILT_STATE = 1
     FUNCTION_GET_IDENTITY = 255
 
+    TILT_STATE_CLOSED = 0
+    TILT_STATE_OPEN = 1
 
     def __init__(self, uid, ipcon):
         """
@@ -44,8 +48,17 @@ class BrickletTilt(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletTilt.FUNCTION_GET_TILT_STATE] = BrickletTilt.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletTilt.CALLBACK_TILT_STATE_CHANGED] = BrickletTilt.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletTilt.FUNCTION_GET_IDENTITY] = BrickletTilt.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletTilt.CALLBACK_TILT_STATE_CHANGED] = 'B'
+
+    def get_tilt_state(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletTilt.FUNCTION_GET_TILT_STATE, (), '', 'B')
 
     def get_identity(self):
         """
@@ -60,5 +73,11 @@ class BrickletTilt(Device):
         .. versionadded:: 2.0.0~(Plugin)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletTilt.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def register_callback(self, id, callback):
+        """
+        Registers a callback with ID *id* to the function *callback*.
+        """
+        self.registered_callbacks[id] = callback
 
 Tilt = BrickletTilt # for backward compatibility

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-23.      #
+# This file was automatically generated on 2013-07-24.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -42,6 +42,8 @@ class BrickletMoisture(Device):
     FUNCTION_GET_MOISTURE_CALLBACK_THRESHOLD = 5
     FUNCTION_SET_DEBOUNCE_PERIOD = 6
     FUNCTION_GET_DEBOUNCE_PERIOD = 7
+    FUNCTION_SET_MOVING_AVERAGE = 10
+    FUNCTION_GET_MOVING_AVERAGE = 11
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -68,6 +70,8 @@ class BrickletMoisture(Device):
         self.response_expected[BrickletMoisture.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletMoisture.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMoisture.CALLBACK_MOISTURE] = BrickletMoisture.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletMoisture.CALLBACK_MOISTURE_REACHED] = BrickletMoisture.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletMoisture.FUNCTION_SET_MOVING_AVERAGE] = BrickletMoisture.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletMoisture.FUNCTION_GET_MOVING_AVERAGE] = BrickletMoisture.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMoisture.FUNCTION_GET_IDENTITY] = BrickletMoisture.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletMoisture.CALLBACK_MOISTURE] = 'H'
@@ -146,6 +150,20 @@ class BrickletMoisture(Device):
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
         return self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+
+    def set_moving_average(self, average):
+        """
+        TODO
+        
+        Max value: 100
+        """
+        self.ipcon.send_request(self, BrickletMoisture.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
+
+    def get_moving_average(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
 
     def get_identity(self):
         """
