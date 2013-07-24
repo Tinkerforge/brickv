@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 
 import os
 from program_path import ProgramPath
+from plugin_system.unknown import Unknown
 
 class PluginManager:
     def __init__(self):
@@ -49,8 +50,10 @@ class PluginManager:
                 print('Found plugin: ' + str(p))
                 if device_class:
                     self.plugins.append(device_class)
-                
+
     def get_plugin(self, device_identifier, ipcon, uid, version):
         for plugin in self.plugins:
             if plugin.has_device_identifier(device_identifier):
                 return plugin(ipcon, uid, version)
+
+        return Unknown(ipcon, uid, version)

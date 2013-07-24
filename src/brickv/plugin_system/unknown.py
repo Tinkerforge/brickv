@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-  
 """
-Distance US Plugin
-Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Unknown Plugin
+Copyright (C) 2013 Matthias Bolte <matthias@tinkerforge.com>
 
-distance_us.py: Distance US Plugin Implementation
+unknown.py: Unknwon Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -22,21 +22,18 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-from bindings.bricklet_distance_us import BrickletDistanceUS
-from async_call import async_call
-
+from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QLabel, QVBoxLayout
     
-class DistanceUS(PluginBase):
-    
+class Unknown(PluginBase):
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Distance US Bricklet', version)
-
-        self.dist = BrickletDistanceUS(uid, ipcon)
+        PluginBase.__init__(self, ipcon, uid, 'Unknown', version)
         
         layout = QVBoxLayout(self)
         layout.addStretch()
-        layout.addWidget(QLabel("The Bricklet is not yet supported in this version of Brickv. Please Update Brickv."))
+        label = QLabel("The Brick or Bricklet is not yet supported in this version of Brickv. Please Update Brickv.")
+        label.setAlignment(Qt.AlignHCenter)
+        layout.addWidget(label)
         layout.addStretch()
 
     def start(self):
@@ -46,8 +43,8 @@ class DistanceUS(PluginBase):
         pass
 
     def get_url_part(self):
-        return 'distance_us'
+        return 'unknown'
 
     @staticmethod
     def has_device_identifier(device_identifier):
-        return device_identifier == BrickletDistanceUS.DEVICE_IDENTIFIER
+        return False
