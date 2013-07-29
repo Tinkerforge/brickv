@@ -25,26 +25,59 @@ from plugin_system.plugin_base import PluginBase
 from bindings.bricklet_remote_switch import BrickletRemoteSwitch
 from async_call import async_call
 
-from PyQt4.QtGui import QLabel, QVBoxLayout
-    
-class RemoteSwitch(PluginBase):
+from ui_remote_switch import Ui_RemoteSwitch
+
+from PyQt4.QtCore import pyqtSignal
+
+class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
+    qtcb_switching_done = pyqtSignal()
     
     def __init__(self, ipcon, uid, version):
         PluginBase.__init__(self, ipcon, uid, 'Remote Switch Bricklet', version)
+        
+        self.setupUi(self)
 
         self.rs = BrickletRemoteSwitch(uid, ipcon)
         
-        layout = QVBoxLayout(self)
-        layout.addStretch()
-        layout.addWidget(QLabel("The Bricklet is not yet supported in this version of Brickv. Please Update Brickv."))
-        layout.addStretch()
+        self.qtcb_switching_done.connect(self.cb_switching_done)
+        self.rs.register_callback(self.rs.CALLBACK_SWITCHING_DONE,
+                                  self.qtcb_switching_done.emit)
         
+        self.h_check = (self.h_check_a, self.h_check_b, self.h_check_c, self.h_check_d, self.h_check_e)
+        self.r_check = (self.r_check_a, self.r_check_b, self.r_check_c, self.r_check_d, self.r_check_e)
+        
+        self.button_switch.pressed.connect(self.button_pressed)
 
     def start(self):
         pass
         
     def stop(self):
         pass
+    
+    def button_pressed(self):
+        self.button_switch.setEnabled(False)
+        self.button_switch.setText("Switching...")
+        
+        tries = self.spinbox_tries.value()
+        self.rs.set_tries(tries)
+        
+        house_code = 0
+        for i in range(5):
+            if self.h_check[i].isChecked():
+                house_code |= (1 << i)
+                
+        receiver_code = 0
+        for i in range(5):
+            if self.r_check[i].isChecked():
+                receiver_code |= (1 << i)
+        
+        switch_to = self.combo_onoff.currentIndex()
+        self.rs.switch_socket(house_code, receiver_code, switch_to)
+            
+    
+    def cb_switching_done(self):
+        self.button_switch.setEnabled(True)
+        self.button_switch.setText("Switch Socket")
 
     def get_url_part(self):
         return 'remote_switch'

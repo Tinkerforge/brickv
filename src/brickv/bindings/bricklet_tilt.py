@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-24.      #
+# This file was automatically generated on 2013-07-29.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -26,7 +26,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletTilt(Device):
     """
-    Device for sensing inclination
+    Device for sensing inclination changes
     """
 
     DEVICE_IDENTIFIER = 239

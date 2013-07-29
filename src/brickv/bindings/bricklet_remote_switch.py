@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-23.      #
+# This file was automatically generated on 2013-07-29.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -26,14 +26,23 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletRemoteSwitch(Device):
     """
-    TODO
+    Device that controls mains switches remotely
     """
 
     DEVICE_IDENTIFIER = 235
 
+    CALLBACK_SWITCHING_DONE = 3
 
+    FUNCTION_SWITCH_SOCKET = 1
+    FUNCTION_GET_SWITCHING_STATE = 2
+    FUNCTION_SET_TRIES = 4
+    FUNCTION_GET_TRIES = 5
     FUNCTION_GET_IDENTITY = 255
 
+    SWITCH_TO_OFF = 0
+    SWITCH_TO_ON = 1
+    SWITCHINGSTATE_READY = 0
+    SWITCHINGSTATE_BUSY = 1
 
     def __init__(self, uid, ipcon):
         """
@@ -44,8 +53,38 @@ class BrickletRemoteSwitch(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET] = BrickletRemoteSwitch.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRemoteSwitch.FUNCTION_GET_SWITCHING_STATE] = BrickletRemoteSwitch.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRemoteSwitch.CALLBACK_SWITCHING_DONE] = BrickletRemoteSwitch.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRemoteSwitch.FUNCTION_SET_TRIES] = BrickletRemoteSwitch.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRemoteSwitch.FUNCTION_GET_TRIES] = BrickletRemoteSwitch.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRemoteSwitch.FUNCTION_GET_IDENTITY] = BrickletRemoteSwitch.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletRemoteSwitch.CALLBACK_SWITCHING_DONE] = ''
+
+    def switch_socket(self, house_code, receiver_code, switch_to):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET, (house_code, receiver_code, switch_to), 'B B B', '')
+
+    def get_switching_state(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_GET_SWITCHING_STATE, (), '', 'B')
+
+    def set_tries(self, tries):
+        """
+        The default value is 5.
+        """
+        self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SET_TRIES, (tries,), 'B', '')
+
+    def get_tries(self):
+        """
+        Returns the number of tries as set by :func:`SetTries`.
+        """
+        return self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_GET_TRIES, (), '', 'B')
 
     def get_identity(self):
         """
@@ -60,5 +99,11 @@ class BrickletRemoteSwitch(Device):
         .. versionadded:: 2.0.0~(Plugin)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def register_callback(self, id, callback):
+        """
+        Registers a callback with ID *id* to the function *callback*.
+        """
+        self.registered_callbacks[id] = callback
 
 RemoteSwitch = BrickletRemoteSwitch # for backward compatibility
