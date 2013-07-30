@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-23.      #
+# This file was automatically generated on 2013-07-30.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -274,9 +274,9 @@ class BrickletPTC(Device):
 
     def set_wire_mode(self, mode):
         """
-        Sets the wire mode. Possible values are 2, 3 and 4.
-        
-        The values correspond to 2-, 3- and 4-wire sensors.
+        Sets the wire mode of the sensor. Possible values are 2, 3 and 4 which
+        correspond to 2-, 3- and 4-wire sensors. The value has to match the jumper
+        configuration on the Bricklet.
         
         The default value is 2 = 2-wire.
         """

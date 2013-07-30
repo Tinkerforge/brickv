@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-23.      #
+# This file was automatically generated on 2013-07-30.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -119,7 +119,8 @@ class BrickletIndustrialDual020mA(Device):
 
     def set_current_callback_threshold(self, sensor, option, min, max):
         """
-        Sets the thresholds for the :func:`CurrentReached` callback for the given sensor. 
+        Sets the thresholds for the :func:`CurrentReached` callback for the given
+        sensor.
         
         The following options are possible:
         

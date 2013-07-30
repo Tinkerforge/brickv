@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-30.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -109,9 +109,9 @@ class BrickletGPS(Device):
     def get_coordinates(self):
         """
         Returns the GPS coordinates. Latitude and longitude are given in the
-        DD.dddddd° format, the value 57123468 means 57.123468°.
-        The parameter ns and ew are the cardinal directions for
-        latitude and longitude. Possible values for ns and ew are 'N', 'S', 'E'
+        ``DD.dddddd°`` format, the value 57123468 means 57.123468°.
+        The parameter ``ns`` and ``ew`` are the cardinal directions for
+        latitude and longitude. Possible values for ``ns`` and ``ew`` are 'N', 'S', 'E'
         and 'W' (north, south, east and west).
         
         PDOP, HDOP and VDOP are the dilution of precision (DOP) values. They specify
@@ -174,8 +174,8 @@ class BrickletGPS(Device):
     def get_date_time(self):
         """
         Returns the current date and time. The date is
-        given in the format ddmmyy and the time is given
-        in the format hhmmss.sss. For example, 140713 means
+        given in the format ``ddmmyy`` and the time is given
+        in the format ``hhmmss.sss``. For example, 140713 means
         14.05.13 as date and 195923568 means 19:59:23.568 as time.
         """
         return GetDateTime(*self.ipcon.send_request(self, BrickletGPS.FUNCTION_GET_DATE_TIME, (), '', 'I I'))

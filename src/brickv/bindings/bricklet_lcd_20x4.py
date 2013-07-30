@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-30.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -129,7 +129,7 @@ class BrickletLCD20x4(Device):
         is one character behind the the last text written with 
         :func:`WriteLine`.
         
-        The default is (false, false).
+        The default is (*false*, *false*).
         """
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_CONFIG, (cursor, blinking), '? ?', '')
 
@@ -155,20 +155,20 @@ class BrickletLCD20x4(Device):
         the pixels, the first 5 bits of 8 bytes are used. For example, to make
         a custom character "H", you should transfer the following:
         
-        * character[0] = 0b00010001 (decimal value 17)
-        * character[1] = 0b00010001 (decimal value 17)
-        * character[2] = 0b00010001 (decimal value 17)
-        * character[3] = 0b00011111 (decimal value 31)
-        * character[4] = 0b00010001 (decimal value 17)
-        * character[5] = 0b00010001 (decimal value 17)
-        * character[6] = 0b00010001 (decimal value 17)
-        * character[7] = 0b00000000 (decimal value 0)
+        * ``character[0] = 0b00010001`` (decimal value 17)
+        * ``character[1] = 0b00010001`` (decimal value 17)
+        * ``character[2] = 0b00010001`` (decimal value 17)
+        * ``character[3] = 0b00011111`` (decimal value 31)
+        * ``character[4] = 0b00010001`` (decimal value 17)
+        * ``character[5] = 0b00010001`` (decimal value 17)
+        * ``character[6] = 0b00010001`` (decimal value 17)
+        * ``character[7] = 0b00000000`` (decimal value 0)
         
         The characters can later be written with :func:`WriteLine` by using the
         characters with the byte representation 8 to 15.
         
         You can play around with the custom characters in Brick Viewer version
-        >= 2.0.1.
+        since 2.0.1.
         
         Custom characters are stored by the LCD in RAM, so they have to be set
         after each startup.
