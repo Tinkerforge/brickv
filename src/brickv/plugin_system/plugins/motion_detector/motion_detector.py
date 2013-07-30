@@ -25,22 +25,52 @@ from plugin_system.plugin_base import PluginBase
 from bindings.bricklet_motion_detector import BrickletMotionDetector
 from async_call import async_call
 
-from PyQt4.QtGui import QLabel, QVBoxLayout
+from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout
+from PyQt4.QtCore import pyqtSignal
     
 class MotionDetector(PluginBase):
+    qtcb_motion_detected = pyqtSignal()
+    qtcb_detection_cylce_ended = pyqtSignal()
     
     def __init__(self, ipcon, uid, version):
         PluginBase.__init__(self, ipcon, uid, 'Motion Detector Bricklet', version)
 
         self.md = BrickletMotionDetector(uid, ipcon)
         
+        self.qtcb_motion_detected.connect(self.cb_motion_detected)
+        self.md.register_callback(self.md.CALLBACK_MOTION_DETECTED,
+                                  self.qtcb_motion_detected.emit)
+        
+        self.qtcb_detection_cylce_ended.connect(self.cb_detection_cycle_ended)
+        self.md.register_callback(self.md.CALLBACK_DETECTION_CYCLE_ENDED,
+                                  self.qtcb_detection_cylce_ended.emit)
+        
+        self.label = QLabel("No Motion Detected")
+        
+        layout_h = QHBoxLayout()
+        layout_h.addStretch()
+        layout_h.addWidget(self.label)
+        layout_h.addStretch()
+        
         layout = QVBoxLayout(self)
         layout.addStretch()
-        layout.addWidget(QLabel("The Bricklet is not yet supported in this version of Brickv. Please Update Brickv."))
+        layout.addLayout(layout_h)
         layout.addStretch()
         
+    def cb_motion_detected(self):
+        self.label.setText("Motion Detected")
+        
+    def cb_detection_cycle_ended(self):
+        self.label.setText("No Motion Detected")
+        
+    def get_motion_detected_async(self, motion):
+        if motion == 0:
+            self.cb_motion_detected()
+        elif motion == 1:
+            self.cb_detection_cycle_ended()
 
     def start(self):
+        async_call(self.md.get_motion_detected, None, self.get_motion_detected_async, self.increase_error_count)
         pass
         
     def stop(self):
