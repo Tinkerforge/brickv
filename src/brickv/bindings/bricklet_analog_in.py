@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-23.      #
+# This file was automatically generated on 2013-07-31.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -63,7 +63,7 @@ class BrickletAnalogIn(Device):
     RANGE_UP_TO_6V = 1
     RANGE_UP_TO_10V = 2
     RANGE_UP_TO_36V = 3
-    RANGE_UP_TO_45V = 3
+    RANGE_UP_TO_45V = 4
 
     def __init__(self, uid, ipcon):
         """
@@ -248,7 +248,7 @@ class BrickletAnalogIn(Device):
         * 1: 0V - 6.05V, ~1.48mV resolution
         * 2: 0V - 10.32V, ~2.52mV resolution
         * 3: 0V - 36.30V, ~8.86mV resolution
-        * 3: 0V - 45.00V, ~11.25mV resolution
+        * 4: 0V - 45.00V, ~11.25mV resolution
         
         The default measurement range is 0.
         

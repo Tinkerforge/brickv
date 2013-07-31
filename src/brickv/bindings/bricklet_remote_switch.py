@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-29.      #
+# This file was automatically generated on 2013-07-30.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -41,8 +41,8 @@ class BrickletRemoteSwitch(Device):
 
     SWITCH_TO_OFF = 0
     SWITCH_TO_ON = 1
-    SWITCHINGSTATE_READY = 0
-    SWITCHINGSTATE_BUSY = 1
+    SWITCHING_STATE_READY = 0
+    SWITCHING_STATE_BUSY = 1
 
     def __init__(self, uid, ipcon):
         """
