@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-31.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -114,7 +114,7 @@ class BrickletIO16(Device):
         
         For example:
         
-        * ("a", 0xFF, 'i', true) will set all pins of port a as input pull-up.
+        * ("a", 255, 'i', true) will set all pins of port a as input pull-up.
         * ("a", 128, 'i', false) will set pin 7 of port a as input default (floating if nothing is connected).
         * ("b", 3, 'o', false) will set pins 0 and 1 of port b as output low.
         * ("b", 4, 'o', true) will set pin 2 of port b as output high.

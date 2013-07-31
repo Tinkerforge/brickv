@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-23.      #
+# This file was automatically generated on 2013-07-31.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -294,22 +294,18 @@ class BrickMaster(Device):
         
         The extension type is already set when bought and it can be set with the 
         Brick Viewer, it is unlikely that you need this function.
-        
-        The value will be saved in the EEPROM of the Chibi Extension, it does not
-        have to be set on every startup.
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_EXTENSION_TYPE, (extension, exttype), 'B I', '')
 
     def get_extension_type(self, extension):
         """
-        Returns the extension type for a given extension as set by 
-        :func:`SetExtensionType`.
+        Returns the type for a given extension as set by :func:`SetExtensionType`.
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_EXTENSION_TYPE, (extension,), 'B', 'I')
 
     def is_chibi_present(self):
         """
-        Returns *true* if a Chibi Extension is available to be used by the Master.
+        Returns *true* if a Chibi Extension is available to be used by the Master Brick.
         
         .. versionadded:: 1.1.0~(Firmware)
         """
@@ -360,13 +356,13 @@ class BrickMaster(Device):
         """
         Sets up to 254 slave addresses. Valid addresses are in range 1-255. 0 has a
         special meaning, it is used as list terminator and not allowed as normal slave
-        address. The address numeration (via num parameter) has to be used
+        address. The address numeration (via ``num`` parameter) has to be used
         ascending from 0. For example: If you use the Chibi Extension in Master mode
         (i.e. the stack has an USB connection) and you want to talk to three other
         Chibi stacks with the slave addresses 17, 23, and 42, you should call with
-        "(0, 17), (1, 23), (2, 42) and (3, 0)". The last call with "(3, 0)" is a list
-        terminator and indicates that the Chibi slave address list contains 3 addresses
-        in this case.
+        ``(0, 17)``, ``(1, 23)``, ``(2, 42)`` and ``(3, 0)``. The last call with
+        ``(3, 0)`` is a list terminator and indicates that the Chibi slave address
+        list contains 3 addresses in this case.
         
         It is possible to set the addresses with the Brick Viewer, that will take care
         of correct address numeration and list termination.
@@ -380,7 +376,7 @@ class BrickMaster(Device):
 
     def get_chibi_slave_address(self, num):
         """
-        Returns the slave address for a given num as set by 
+        Returns the slave address for a given ``num`` as set by
         :func:`SetChibiSlaveAddress`.
         
         .. versionadded:: 1.1.0~(Firmware)
@@ -468,7 +464,7 @@ class BrickMaster(Device):
 
     def is_rs485_present(self):
         """
-        Returns *true* if a RS485 Extension is available to be used by the Master.
+        Returns *true* if a RS485 Extension is available to be used by the Master Brick.
         
         .. versionadded:: 1.2.0~(Firmware)
         """
@@ -501,13 +497,13 @@ class BrickMaster(Device):
         """
         Sets up to 255 slave addresses. Valid addresses are in range 1-255. 0 has a
         special meaning, it is used as list terminator and not allowed as normal slave
-        address. The address numeration (via num parameter) has to be used
+        address. The address numeration (via ``num`` parameter) has to be used
         ascending from 0. For example: If you use the RS485 Extension in Master mode
         (i.e. the stack has an USB connection) and you want to talk to three other
-        RS485 stacks with the addresses 17, 23, and 42, you should call with "(0, 17),
-        (1, 23), (2, 42) and (3, 0)". The last call with "(3, 0)" is a list terminator
-        and indicates that the RS485 slave address list contains 3 addresses in this
-        case.
+        RS485 stacks with the addresses 17, 23, and 42, you should call with
+        ``(0, 17)``, ``(1, 23)``, ``(2, 42)`` and ``(3, 0)``. The last call with
+        ``(3, 0)`` is a list terminator and indicates that the RS485 slave address list
+        contains 3 addresses in this case.
         
         It is possible to set the addresses with the Brick Viewer, that will take care
         of correct address numeration and list termination.
@@ -521,7 +517,7 @@ class BrickMaster(Device):
 
     def get_rs485_slave_address(self, num):
         """
-        Returns the slave address for a given num as set by 
+        Returns the slave address for a given ``num`` as set by
         :func:`SetRS485SlaveAddress`.
         
         .. versionadded:: 1.2.0~(Firmware)
@@ -568,7 +564,7 @@ class BrickMaster(Device):
 
     def is_wifi_present(self):
         """
-        Returns *true* if a WIFI Extension is available to be used by the Master.
+        Returns *true* if a WIFI Extension is available to be used by the Master Brick.
         
         .. versionadded:: 1.2.0~(Firmware)
         """
@@ -576,8 +572,8 @@ class BrickMaster(Device):
 
     def set_wifi_configuration(self, ssid, connection, ip, subnet_mask, gateway, port):
         """
-        Sets the configuration of the WIFI Extension. The *ssid* can have a max length
-        of 32 characters. Possible values for *connection* are:
+        Sets the configuration of the WIFI Extension. The ``ssid`` can have a max length
+        of 32 characters. Possible values for ``connection`` are:
         
         .. csv-table::
          :header: "Value", "Description"
@@ -590,11 +586,11 @@ class BrickMaster(Device):
          "4", "Ad Hoc: DHCP"
          "5", "Ad Hoc: Static IP"
         
-        If you set *connection* to one of the static IP options then you have to supply
-        *ip*, *subnet_mask* and *gateway* as an array of size 4 (first element of the
-        array is the least significant byte of the address). If *connection* is set to
-        one of the DHCP options then *ip*, *subnet_mask* and *gateway* are ignored, you
-        can set them to 0.
+        If you set ``connection`` to one of the static IP options then you have to
+        supply ``ip``, ``subnet_mask`` and ``gateway`` as an array of size 4 (first
+        element of the array is the least significant byte of the address). If
+        ``connection`` is set to one of the DHCP options then ``ip``, ``subnet_mask``
+        and ``gateway`` are ignored, you can set them to 0.
         
         The last parameter is the port that your program will connect to. The
         default port, that is used by brickd, is 4223.
@@ -630,32 +626,32 @@ class BrickMaster(Device):
          "2", "WEP"
          "3", "No Encryption"
         
-        The key has a max length of 50 characters and is used if encryption
+        The ``key`` has a max length of 50 characters and is used if ``encryption``
         is set to 0 or 2 (WPA/WPA2 or WEP). Otherwise the value is ignored.
         
         For WPA/WPA2 the key has to be at least 8 characters long. If you want to set
         a key with more than 50 characters, see :func:`SetLongWifiKey`.
         
         For WEP the key has to be either 10 or 26 hexadecimal digits long. It is
-        possible to set the WEP key index (1-4). If you don't know your key index,
-        it is likely 1.
+        possible to set the WEP ``key_index`` (1-4). If you don't know your
+        ``key_index``, it is likely 1.
         
-        If you choose WPA Enterprise as encryption, you have to set eap options and
+        If you choose WPA Enterprise as encryption, you have to set ``eap_options`` and
         the length of the certificates (for other encryption types these parameters
         are ignored). The certificate length are given in byte and the certificates
-        themselves can be set with :func:`SetWifiCertificate`. Eap options consist of
-        the outer authentication (bits 1-2), inner authentication (bit 3) and 
+        themselves can be set with :func:`SetWifiCertificate`. ``eap_options`` consist
+        of the outer authentication (bits 1-2), inner authentication (bit 3) and
         certificate type (bits 4-5):
         
         .. csv-table::
          :header: "Option", "Bits", "Description"
-         :widths: 10, 10, 80
+         :widths: 20, 10, 70
         
-         "outer auth", "1-2", "0=EAP-FAST, 1=EAP-TLS, 2=EAP-TTLS, 3=EAP-PEAP"
-         "inner auth", "3", "0=EAP-MSCHAP, 1=EAP-GTC"
-         "cert type", "4-5", "0=CA Certificate, 1=Client Certificate, 2=Private Key"
+         "outer authentication", "1-2", "0=EAP-FAST, 1=EAP-TLS, 2=EAP-TTLS, 3=EAP-PEAP"
+         "inner authentication", "3", "0=EAP-MSCHAP, 1=EAP-GTC"
+         "certificate type", "4-5", "0=CA Certificate, 1=Client Certificate, 2=Private Key"
         
-        Example for EAP-TTLS + EAP-GTC + Private Key: option = 2 | (1 << 2) | (2 << 3).
+        Example for EAP-TTLS + EAP-GTC + Private Key: ``option = 2 | (1 << 2) | (2 << 3)``.
         
         The values are stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
@@ -676,7 +672,7 @@ class BrickMaster(Device):
 
     def get_wifi_status(self):
         """
-        Returns the status of the WIFI Extension. The state is updated automatically,
+        Returns the status of the WIFI Extension. The ``state`` is updated automatically,
         all of the other parameters are updated on startup and every time
         :func:`RefreshWifiStatus` is called.
         
@@ -702,7 +698,7 @@ class BrickMaster(Device):
         of the WIFI module, the Master Brick has to change from data mode to
         command mode and back. This transaction and the readout itself is
         unfortunately time consuming. This means, that it might take some ms
-        until the stack with attached WIFI Extensions reacts again after this
+        until the stack with attached WIFI Extension reacts again after this
         function is called.
         
         .. versionadded:: 1.3.0~(Firmware)
@@ -717,7 +713,7 @@ class BrickMaster(Device):
         password is 32.
         
         The certificate is written in chunks of size 32 and the index is used as
-        the index of the chunk. The data length should nearly always be 32. Only
+        the index of the chunk. ``data_length`` should nearly always be 32. Only
         the last chunk can have a length that is not equal to 32.
         
         The starting index of the CA Certificate is 0, of the Client Certificate
@@ -1053,7 +1049,8 @@ class BrickMaster(Device):
 
     def is_ethernet_present(self):
         """
-        Returns *true* if a Ethernet Extension is available to be used by the Master.
+        Returns *true* if a Ethernet Extension is available to be used by the Master
+        Brick.
         
         .. versionadded:: 2.1.0~(Firmware)
         """
@@ -1061,7 +1058,8 @@ class BrickMaster(Device):
 
     def set_ethernet_configuration(self, connection, ip, subnet_mask, gateway, port):
         """
-        Sets the configuration of the WIFI Extension. Possible values for *connection* are:
+        Sets the configuration of the Ethernet Extension. Possible values for
+        ``connection`` are:
         
         .. csv-table::
          :header: "Value", "Description"
@@ -1070,11 +1068,11 @@ class BrickMaster(Device):
          "0", "DHCP"
          "1", "Static IP"
         
-        If you set *connection* to static IP options then you have to supply
-        *ip*, *subnet_mask* and *gateway* as an array of size 4 (first element of the
-        array is the least significant byte of the address). If *connection* is set to
-        the DHCP options then *ip*, *subnet_mask* and *gateway* are ignored, you
-        can set them to 0.
+        If you set ``connection`` to static IP options then you have to supply ``ip``,
+        ``subnet_mask`` and ``gateway`` as an array of size 4 (first element of the
+        array is the least significant byte of the address). If ``connection`` is set
+        to the DHCP options then ``ip``, ``subnet_mask`` and ``gateway`` are ignored,
+        you can set them to 0.
         
         The last parameter is the port that your program will connect to. The
         default port, that is used by brickd, is 4223.
@@ -1098,15 +1096,15 @@ class BrickMaster(Device):
 
     def get_ethernet_status(self):
         """
-        Returns the status of the Ethernet Extension. 
+        Returns the status of the Ethernet Extension.
         
-        *mac_address*, *ip*, *subnet_mask* and *gateway* are given as an array
-        (first element of the array is the least significant byte of the address). 
+        ``mac_address``, ``ip``, ``subnet_mask`` and ``gateway`` are given as an array.
+        Tthe first element of the array is the least significant byte of the address.
         
-        *rx_count* and *tx_count* are the number of bytes that have been received/send
-        since last restart
+        ``rx_count`` and ``tx_count`` are the number of bytes that have been
+        received/send since last restart.
         
-        *hostname* is the currently used hostname.
+        ``hostname`` is the currently used hostname.
         
         .. versionadded:: 2.1.0~(Firmware)
         """
@@ -1139,9 +1137,11 @@ class BrickMaster(Device):
 
     def get_protocol1_bricklet_name(self, port):
         """
-        Returns the firmware and protocol version and the name of the Bricklet for a given port.
+        Returns the firmware and protocol version and the name of the Bricklet for a
+        given port.
         
-        This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet plugins.
+        This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
+        plugins.
         
         .. versionadded:: 2.0.0~(Firmware)
         """

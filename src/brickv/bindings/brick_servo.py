@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-04.      #
+# This file was automatically generated on 2013-07-31.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -449,9 +449,11 @@ class BrickServo(Device):
 
     def get_protocol1_bricklet_name(self, port):
         """
-        Returns the firmware and protocol version and the name of the Bricklet for a given port.
+        Returns the firmware and protocol version and the name of the Bricklet for a
+        given port.
         
-        This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet plugins.
+        This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
+        plugins.
         
         .. versionadded:: 2.0.0~(Firmware)
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-09.      #
+# This file was automatically generated on 2013-07-31.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -335,15 +335,15 @@ class BrickIMU(Device):
         There are several different types that can be calibrated:
         
         .. csv-table::
-         :header: "Type", "Description",        "Values"
+         :header: "Type", "Description", "Values"
          :widths: 10, 40, 100
         
-         "0",    "Accelerometer Gain", "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
-         "1",    "Accelerometer Bias", "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
-         "2",    "Magnetometer Gain",  "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
-         "3",    "Magnetometer Bias",  "[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]"
-         "4",    "Gyroscope Gain",     "[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]"
-         "5",    "Gyroscope Bias",     "[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]"
+         "0",    "Accelerometer Gain", "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
+         "1",    "Accelerometer Bias", "``[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]``"
+         "2",    "Magnetometer Gain",  "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
+         "3",    "Magnetometer Bias",  "``[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]``"
+         "4",    "Gyroscope Gain",     "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
+         "5",    "Gyroscope Bias",     "``[bias xl, bias yl, bias zl, temp l, bias xh, bias yh, bias zh, temp h, 0, 0]``"
         
         The calibration via gain and bias is done with the following formula::
         
@@ -355,12 +355,13 @@ class BrickIMU(Device):
         to obtain a usable result in the end.
         
         The gyroscope bias is highly dependent on the temperature, so you have to
-        calibrate the bias two times with different temperatures. The values xl, yl, zl 
-        and temp l are the bias for x, y, z and the corresponding temperature for a 
-        low temperature. The values xh, yh, zh and temp h are the same for a high 
-        temperatures. The temperature difference should be at least 5°C. If you have 
-        a temperature where the IMU Brick is mostly used, you should use this 
-        temperature for one of the sampling points.
+        calibrate the bias two times with different temperatures. The values ``xl``,
+        ``yl``, ``zl `` and ``temp l`` are the bias for ``x``, ``y``, ``z`` and the
+        corresponding temperature for a low temperature. The values ``xh``, ``yh``,
+        ``zh`` and ``temp h`` are the same for a high temperatures. The temperature
+        difference should be at least 5°C. If you have a temperature where the
+        IMU Brick is mostly used, you should use this temperature for one of the
+        sampling points.
         
         .. note::
          We highly recommend that you use the Brick Viewer to calibrate your
@@ -493,9 +494,11 @@ class BrickIMU(Device):
 
     def get_protocol1_bricklet_name(self, port):
         """
-        Returns the firmware and protocol version and the name of the Bricklet for a given port.
+        Returns the firmware and protocol version and the name of the Bricklet for a
+        given port.
         
-        This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet plugins.
+        This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
+        plugins.
         
         .. versionadded:: 2.0.0~(Firmware)
         """

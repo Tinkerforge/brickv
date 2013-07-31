@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-23.      #
+# This file was automatically generated on 2013-07-31.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -26,12 +26,14 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletMultiTouch(Device):
     """
-    TODO
+    Device with 12 touch sensors
     """
 
     DEVICE_IDENTIFIER = 234
 
+    CALLBACK_TOUCH_STATE = 2
 
+    FUNCTION_GET_TOUCH_STATE = 1
     FUNCTION_GET_IDENTITY = 255
 
 
@@ -44,8 +46,17 @@ class BrickletMultiTouch(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletMultiTouch.FUNCTION_GET_TOUCH_STATE] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletMultiTouch.CALLBACK_TOUCH_STATE] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletMultiTouch.FUNCTION_GET_IDENTITY] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletMultiTouch.CALLBACK_TOUCH_STATE] = 'H'
+
+    def get_touch_state(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletMultiTouch.FUNCTION_GET_TOUCH_STATE, (), '', 'H')
 
     def get_identity(self):
         """
@@ -60,5 +71,11 @@ class BrickletMultiTouch(Device):
         .. versionadded:: 2.0.0~(Plugin)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletMultiTouch.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def register_callback(self, id, callback):
+        """
+        Registers a callback with ID *id* to the function *callback*.
+        """
+        self.registered_callbacks[id] = callback
 
 MultiTouch = BrickletMultiTouch # for backward compatibility
