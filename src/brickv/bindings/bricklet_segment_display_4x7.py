@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-23.      #
+# This file was automatically generated on 2013-08-01.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -22,6 +22,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
+GetSegments = namedtuple('Segments', ['segments', 'brightness', 'clock_points'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletSegmentDisplay4x7(Device):
@@ -32,6 +33,8 @@ class BrickletSegmentDisplay4x7(Device):
     DEVICE_IDENTIFIER = 237
 
 
+    FUNCTION_SET_SEGMENTS = 1
+    FUNCTION_GET_SEGMENTS = 2
     FUNCTION_GET_IDENTITY = 255
 
 
@@ -44,8 +47,22 @@ class BrickletSegmentDisplay4x7(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletSegmentDisplay4x7.FUNCTION_SET_SEGMENTS] = BrickletSegmentDisplay4x7.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletSegmentDisplay4x7.FUNCTION_GET_SEGMENTS] = BrickletSegmentDisplay4x7.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletSegmentDisplay4x7.FUNCTION_GET_IDENTITY] = BrickletSegmentDisplay4x7.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+
+    def set_segments(self, segments, brightness, clock_points):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_SET_SEGMENTS, (segments, brightness, clock_points), '4B B ?', '')
+
+    def get_segments(self):
+        """
+        
+        """
+        return GetSegments(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_SEGMENTS, (), '', '4B B ?'))
 
     def get_identity(self):
         """
