@@ -198,7 +198,6 @@ class Ethernet(QWidget, Ui_Ethernet):
         self.master.set_ethernet_mac_address(mac)
         
         saved_conf = self.master.get_ethernet_configuration()
-        print saved_conf
         if saved_conf.ip == ip and saved_conf.gateway == gw and saved_conf.subnet_mask == sub and saved_conf.connection == connection and saved_conf.port == port:
             self.popup_ok()
         else:
