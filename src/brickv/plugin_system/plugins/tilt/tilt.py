@@ -25,26 +25,64 @@ from plugin_system.plugin_base import PluginBase
 from bindings.bricklet_tilt import BrickletTilt
 from async_call import async_call
 
-from PyQt4.QtGui import QLabel, QVBoxLayout
+from bmp_to_pixmap import bmp_to_pixmap
+
+from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout
+from PyQt4.QtCore import pyqtSignal
     
 class Tilt(PluginBase):
+    qtcb_tilt_state = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
         PluginBase.__init__(self, ipcon, uid, 'Tilt Bricklet', version)
 
         self.tilt = BrickletTilt(uid, ipcon)
         
+        self.qtcb_tilt_state.connect(self.cb_tilt_state)
+        self.tilt.register_callback(self.tilt.CALLBACK_TILT_STATE,
+                                    self.qtcb_tilt_state.emit)
+        
+        self.label = QLabel("Closed")
+        self.closed_pixmap = bmp_to_pixmap('plugin_system/plugins/tilt/tilt_closed.bmp')
+        self.open_pixmap = bmp_to_pixmap('plugin_system/plugins/tilt/tilt_open.bmp')
+        self.closed_vibrationg_pixmap = bmp_to_pixmap('plugin_system/plugins/tilt/tilt_closed_vibrating.bmp')
+        
+        self.image_label = QLabel("")
+        self.image_label.setPixmap(self.closed_pixmap)
+        
         layout = QVBoxLayout(self)
         layout.addStretch()
-        layout.addWidget(QLabel("The Bricklet is not yet supported in this version of Brickv. Please Update Brickv."))
+        
+        h_layout1 = QHBoxLayout()
+        h_layout1.addStretch()
+        h_layout1.addWidget(self.label)
+        h_layout1.addStretch()
+        
+        h_layout2 = QHBoxLayout()
+        h_layout2.addStretch()
+        h_layout2.addWidget(self.image_label)
+        h_layout2.addStretch()
+        
+        layout.addLayout(h_layout1)
+        layout.addLayout(h_layout2)
         layout.addStretch()
         
+    def cb_tilt_state(self, state):
+        if state == 0:
+            self.label.setText("Closed")
+            self.image_label.setPixmap(self.closed_pixmap)
+        elif state == 1:
+            self.label.setText("Open")
+            self.image_label.setPixmap(self.open_pixmap)
+        elif state == 2:
+            self.label.setText("Closed Vibrating")
+            self.image_label.setPixmap(self.closed_vibrationg_pixmap)
 
     def start(self):
-        pass
+        self.tilt.enable_tilt_state_callback()
         
     def stop(self):
-        pass
+        self.tilt.disable_tilt_state_callback()
 
     def get_url_part(self):
         return 'tilt'

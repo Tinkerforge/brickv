@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-29.      #
+# This file was automatically generated on 2013-08-06.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -26,18 +26,22 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletTilt(Device):
     """
-    Device for sensing inclination changes
+    Device for sensing tilt and vibration
     """
 
     DEVICE_IDENTIFIER = 239
 
-    CALLBACK_TILT_STATE_CHANGED = 2
+    CALLBACK_TILT_STATE = 5
 
     FUNCTION_GET_TILT_STATE = 1
+    FUNCTION_ENABLE_TILT_STATE_CALLBACK = 2
+    FUNCTION_DISABLE_TILT_STATE_CALLBACK = 3
+    FUNCTION_IS_TILT_STATE_CALLBACK_ENABLED = 4
     FUNCTION_GET_IDENTITY = 255
 
     TILT_STATE_CLOSED = 0
     TILT_STATE_OPEN = 1
+    TILT_STATE_CLOSED_VIBRATING = 2
 
     def __init__(self, uid, ipcon):
         """
@@ -49,16 +53,37 @@ class BrickletTilt(Device):
         self.api_version = (2, 0, 0)
 
         self.response_expected[BrickletTilt.FUNCTION_GET_TILT_STATE] = BrickletTilt.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletTilt.CALLBACK_TILT_STATE_CHANGED] = BrickletTilt.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletTilt.FUNCTION_ENABLE_TILT_STATE_CALLBACK] = BrickletTilt.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletTilt.FUNCTION_DISABLE_TILT_STATE_CALLBACK] = BrickletTilt.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletTilt.FUNCTION_IS_TILT_STATE_CALLBACK_ENABLED] = BrickletTilt.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletTilt.CALLBACK_TILT_STATE] = BrickletTilt.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletTilt.FUNCTION_GET_IDENTITY] = BrickletTilt.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletTilt.CALLBACK_TILT_STATE_CHANGED] = 'B'
+        self.callback_formats[BrickletTilt.CALLBACK_TILT_STATE] = 'B'
 
     def get_tilt_state(self):
         """
         
         """
         return self.ipcon.send_request(self, BrickletTilt.FUNCTION_GET_TILT_STATE, (), '', 'B')
+
+    def enable_tilt_state_callback(self):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletTilt.FUNCTION_ENABLE_TILT_STATE_CALLBACK, (), '', '')
+
+    def disable_tilt_state_callback(self):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletTilt.FUNCTION_DISABLE_TILT_STATE_CALLBACK, (), '', '')
+
+    def is_tilt_state_callback_enabled(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletTilt.FUNCTION_IS_TILT_STATE_CALLBACK_ENABLED, (), '', '?')
 
     def get_identity(self):
         """

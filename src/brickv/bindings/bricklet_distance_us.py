@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-23.      #
+# This file was automatically generated on 2013-08-06.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -33,25 +33,23 @@ class BrickletDistanceUS(Device):
 
     DEVICE_IDENTIFIER = 229
 
-    CALLBACK_DISTANCE = 15
-    CALLBACK_ANALOG_VALUE = 16
-    CALLBACK_DISTANCE_REACHED = 17
-    CALLBACK_ANALOG_VALUE_REACHED = 18
+    CALLBACK_DISTANCE = 13
+    CALLBACK_ANALOG_VALUE = 14
+    CALLBACK_DISTANCE_REACHED = 15
+    CALLBACK_ANALOG_VALUE_REACHED = 16
 
     FUNCTION_GET_DISTANCE = 1
     FUNCTION_GET_ANALOG_VALUE = 2
-    FUNCTION_SET_SAMPLING_POINT = 3
-    FUNCTION_GET_SAMPLING_POINT = 4
-    FUNCTION_SET_DISTANCE_CALLBACK_PERIOD = 5
-    FUNCTION_GET_DISTANCE_CALLBACK_PERIOD = 6
-    FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD = 7
-    FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD = 8
-    FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD = 9
-    FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD = 10
-    FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD = 11
-    FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD = 12
-    FUNCTION_SET_DEBOUNCE_PERIOD = 13
-    FUNCTION_GET_DEBOUNCE_PERIOD = 14
+    FUNCTION_SET_DISTANCE_CALLBACK_PERIOD = 3
+    FUNCTION_GET_DISTANCE_CALLBACK_PERIOD = 4
+    FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD = 5
+    FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD = 6
+    FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD = 7
+    FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD = 8
+    FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD = 9
+    FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD = 10
+    FUNCTION_SET_DEBOUNCE_PERIOD = 11
+    FUNCTION_GET_DEBOUNCE_PERIOD = 12
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -71,8 +69,6 @@ class BrickletDistanceUS(Device):
 
         self.response_expected[BrickletDistanceUS.FUNCTION_GET_DISTANCE] = BrickletDistanceUS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDistanceUS.FUNCTION_GET_ANALOG_VALUE] = BrickletDistanceUS.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletDistanceUS.FUNCTION_SET_SAMPLING_POINT] = BrickletDistanceUS.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletDistanceUS.FUNCTION_GET_SAMPLING_POINT] = BrickletDistanceUS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDistanceUS.FUNCTION_SET_DISTANCE_CALLBACK_PERIOD] = BrickletDistanceUS.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletDistanceUS.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD] = BrickletDistanceUS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDistanceUS.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletDistanceUS.RESPONSE_EXPECTED_TRUE
@@ -120,36 +116,6 @@ class BrickletDistanceUS(Device):
         :func:`SetAnalogValueCallbackPeriod`.
         """
         return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
-
-    def set_sampling_point(self, position, distance):
-        """
-        Sets a sampling point value to a specific position of the lookup table.
-        The lookup table comprises 128 equidistant analog values with
-        corresponding distances.
-        
-        If you measure a distance of 50cm at the analog value 2048, you
-        should call this function with (64, 5000). The utilized analog-to-digital
-        converter has a resolution of 12 bit. With 128 sampling points on the
-        whole range, this means that every sampling point has a size of 32
-        analog values. Thus the analog value 2048 has the corresponding sampling
-        point 64 = 2048/32.
-        
-        Sampling points are saved on the EEPROM of the Distance IR Bricklet and
-        loaded again on startup.
-        
-        .. note::
-         An easy way to calibrate the sampling points of the Distance IR Bricklet is
-         implemented in the Brick Viewer. If you want to calibrate your Bricklet it is
-         highly recommended to use this implementation.
-        """
-        self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_SET_SAMPLING_POINT, (position, distance), 'B H', '')
-
-    def get_sampling_point(self, position):
-        """
-        Returns the distance to a sampling point position as set by
-        :func:`SetSamplingPoint`.
-        """
-        return self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_GET_SAMPLING_POINT, (position,), 'B', 'H')
 
     def set_distance_callback_period(self, period):
         """
