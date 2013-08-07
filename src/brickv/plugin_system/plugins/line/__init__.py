@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-  
 """
-Water Plugin
+Line Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
 
 __init__.py: package initialization
@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from water import Water
+from line import Line
 
-device_class = Water
+device_class = Line

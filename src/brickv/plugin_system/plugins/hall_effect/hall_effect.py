@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-  
 """
-Water Plugin
+Hall Effect Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
 
-water.py: Water Plugin Implementation
+hall_effect.py: Hall Effect Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -22,21 +22,21 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
-from bindings.bricklet_water import BrickletWater
+from bindings.bricklet_hall_effect import BrickletHallEffect
 from async_call import async_call
 
 from PyQt4.QtGui import QLabel, QVBoxLayout
     
-class Water(PluginBase):
+class HallEffect(PluginBase):
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Water Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Hall Effect Bricklet', version)
 
-        self.water = BrickletWater(uid, ipcon)
+        self.hf = BrickletHallEffect(uid, ipcon)
         
         layout = QVBoxLayout(self)
         layout.addStretch()
-        layout.addWidget(QLabel("The Bricklet is not yet supported in this version of Brickv. Please Update Brickv."))
+        layout.addWidget(QLabel("The Bricklet is not yet supported in this version of Brickv. Please update Brickv."))
         layout.addStretch()
         
 
@@ -47,8 +47,8 @@ class Water(PluginBase):
         pass
 
     def get_url_part(self):
-        return 'water'
+        return 'hall_effect'
 
     @staticmethod
     def has_device_identifier(device_identifier):
-        return device_identifier == BrickletWater.DEVICE_IDENTIFIER
+        return device_identifier == BrickletHallEffect.DEVICE_IDENTIFIER
