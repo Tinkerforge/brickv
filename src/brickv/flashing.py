@@ -208,7 +208,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
     def refresh_plugin_info(self, url_part, update_combo_box=False):
         name = url_part
 
-        if name in ['gps']:
+        if name in ['gps', 'ptc']:
             name = name.upper()
         elif name.startswith('lcd_'):
             name = name.replace('lcd_', 'LCD_')
@@ -218,6 +218,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             name = name.replace('io', 'IO-')
         elif name.endswith('_ir'):
             name = name.replace('_ir', '_IR')
+        elif name.endswith('_us'):
+            name = name.replace('_us', '_US')
+        elif name.startswith('led_'):
+            name = name.replace('led_', 'LED_')
 
         words = name.split('_')
         parts = []
