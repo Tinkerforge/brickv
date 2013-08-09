@@ -27,12 +27,13 @@ import PyQt4.Qwt5 as Qwt
 
 
 class Plot(Qwt.QwtPlot):
-    def __init__(self, y_axis, plot_list, *args):
+    def __init__(self, y_axis, plot_list, axis_scales, *args):
         Qwt.QwtPlot.__init__(self, *args)
      
         self.setAxisTitle(Qwt.QwtPlot.xBottom, 'Time [s]')
         self.setAxisTitle(Qwt.QwtPlot.yLeft, y_axis)
         
+        self.axis_scales = axis_scales
         self.has_legend = plot_list[0][0] != ''
         
         if self.has_legend: 
@@ -80,6 +81,8 @@ class Plot(Qwt.QwtPlot):
 #            self.data_y[i].pop(0)
             
         self.setAxisScale(Qwt.QwtPlot.xBottom, self.data_x[i][0], self.data_x[i][0]+20) #self.data_x[i][-1])
+        for x in self.axis_scales:
+            self.setAxisScale(*x)
         self.curve[i].setData(self.data_x[i], self.data_y[i])
         
     def clear_graph(self):
@@ -88,12 +91,12 @@ class Plot(Qwt.QwtPlot):
             self.data_y[i] = []
             
 class PlotWidget(QWidget):
-    def __init__(self, y_axis, plot_list, clear_button = None, parent = None):
+    def __init__(self, y_axis, plot_list, clear_button = None, parent = None, axis_scales = None):
         QWidget.__init__(self, parent)
         
         self.stop = True
         
-        self.plot = Plot(y_axis, plot_list)
+        self.plot = Plot(y_axis, plot_list, axis_scales)
 
         if clear_button is None:
             self.clear_button = QPushButton('Clear Graph')

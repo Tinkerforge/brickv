@@ -24,27 +24,69 @@ Boston, MA 02111-1307, USA.
 from plugin_system.plugin_base import PluginBase
 from bindings.bricklet_hall_effect import BrickletHallEffect
 from async_call import async_call
+from plot_widget import PlotWidget
+from ui_hall_effect import Ui_HallEffect
 
-from PyQt4.QtGui import QLabel, QVBoxLayout
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
+from PyQt4.QtCore import pyqtSignal, Qt
+import PyQt4.Qwt5 as Qwt
     
-class HallEffect(PluginBase):
+class HallEffect(PluginBase, Ui_HallEffect):
+    qtcb_edge_count = pyqtSignal(int, bool)
     
     def __init__(self, ipcon, uid, version):
         PluginBase.__init__(self, ipcon, uid, 'Hall Effect Bricklet', version)
+        
+        self.setupUi(self)
 
         self.hf = BrickletHallEffect(uid, ipcon)
         
-        layout = QVBoxLayout(self)
-        layout.addStretch()
-        layout.addWidget(QLabel("The Bricklet is not yet supported in this version of Brickv. Please update Brickv."))
-        layout.addStretch()
+        self.qtcb_edge_count.connect(self.cb_edge_count)
+        self.hf.register_callback(self.hf.CALLBACK_EDGE_COUNT,
+                                  self.qtcb_edge_count.emit) 
         
+        self.current_value = None
+
+        plot_list = [['', Qt.red, self.get_current_value]]
+        axis_scales = [(Qwt.QwtPlot.yLeft, 0, 1, 1)]
+        self.plot_widget = PlotWidget('Value', plot_list, axis_scales=axis_scales)
+
+        self.combo_edge_type.activated.connect(self.edge_changed)
+        self.spin_debounce.editingFinished.connect(self.debounce_changed)
+        
+        self.main_layout.insertWidget(1, self.plot_widget)
+        
+    def debounce_changed(self):
+        self.hf.set_edge_count_config(self.combo_edge_type.currentIndex(), self.spin_debounce.value())
+        
+    def edge_changed(self, value):
+        self.hf.set_edge_count_config(self.combo_edge_type.currentIndex(), self.spin_debounce.value())
+        
+    def cb_edge_count(self, count, value):
+        self.label_edge_count.setText(str(count))
+        if value:
+            self.current_value = 1
+        else:
+            self.current_value = 0
+    
+    def get_current_value(self):
+        return self.current_value
+
+    def cb_edge_count_config(self, conf):
+        edge_type, debounce = conf
+        self.combo_edge_type.setCurrentIndex(edge_type)
+        self.spin_debounce.setValue(debounce)
 
     def start(self):
-        pass
+        async_call(self.hf.get_edge_count_config, None, self.cb_edge_count_config, self.increase_error_count)
+        async_call(self.hf.set_edge_count_callback_period, 50, None, self.increase_error_count)
+        
+        self.plot_widget.stop = False
         
     def stop(self):
-        pass
+        async_call(self.hf.set_edge_count_callback_period, 0, None, self.increase_error_count)
+        
+        self.plot_widget.stop = True
 
     def get_url_part(self):
         return 'hall_effect'
