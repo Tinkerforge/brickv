@@ -81,8 +81,11 @@ class Plot(Qwt.QwtPlot):
 #            self.data_y[i].pop(0)
             
         self.setAxisScale(Qwt.QwtPlot.xBottom, self.data_x[i][0], self.data_x[i][0]+20) #self.data_x[i][-1])
-        for x in self.axis_scales:
-            self.setAxisScale(*x)
+
+        if self.axis_scales is not None:
+            for x in self.axis_scales:
+                self.setAxisScale(*x)
+
         self.curve[i].setData(self.data_x[i], self.data_y[i])
         
     def clear_graph(self):
