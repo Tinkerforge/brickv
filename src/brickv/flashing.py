@@ -668,27 +668,31 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         try:
             samba.flash(firmware, imu_calibration, lock_imu_calibration_pages)
+            # close serial device before showing dialog, otherwise exchanging
+            # the brick while the dialog is open will fore it to show up as ttyACM1
+            samba = None
             progress.cancel()
             report_result(True)
         except SAMBARebootError as e:
+            samba = None
             progress.cancel()
             self.refresh_serial_ports()
             report_result(False)
         except SAMBAException as e:
+            samba = None
             progress.cancel()
             self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not flash Brick: {0}'.format(str(e)))
-            return
         except SerialException as e:
+            samba = None
             progress.cancel()
             self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not flash Brick: {0}'.format(str(e)))
-            return
         except:
+            samba = None
             progress.cancel()
             self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not flash Brick')
-            return
 
     def uid_save_pressed(self):
         device, port = self.current_device_and_port()
