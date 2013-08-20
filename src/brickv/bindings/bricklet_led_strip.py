@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-23.      #
+# This file was automatically generated on 2013-08-13.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -22,6 +22,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
+GetRGBValues = namedtuple('RGBValues', ['r', 'g', 'b'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletLEDStrip(Device):
@@ -31,7 +32,13 @@ class BrickletLEDStrip(Device):
 
     DEVICE_IDENTIFIER = 231
 
+    CALLBACK_FRAME_RENDERED = 6
 
+    FUNCTION_SET_RGB_VALUES = 1
+    FUNCTION_GET_RGB_VALUES = 2
+    FUNCTION_SET_CONFIG = 3
+    FUNCTION_GET_CONFIG = 4
+    FUNCTION_GET_SUPPLY_VOLTAGE = 5
     FUNCTION_GET_IDENTITY = 255
 
 
@@ -44,8 +51,45 @@ class BrickletLEDStrip(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletLEDStrip.FUNCTION_SET_RGB_VALUES] = BrickletLEDStrip.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLEDStrip.FUNCTION_GET_RGB_VALUES] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLEDStrip.FUNCTION_SET_CONFIG] = BrickletLEDStrip.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLEDStrip.FUNCTION_GET_CONFIG] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLEDStrip.FUNCTION_GET_SUPPLY_VOLTAGE] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLEDStrip.CALLBACK_FRAME_RENDERED] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_IDENTITY] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletLEDStrip.CALLBACK_FRAME_RENDERED] = 'H'
+
+    def set_rgb_values(self, index, length, r, g, b):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_RGB_VALUES, (index, length, r, g, b), 'H B 16B 16B 16B', '')
+
+    def get_rgb_values(self, index, length):
+        """
+        
+        """
+        return GetRGBValues(*self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_RGB_VALUES, (index, length), 'H B', '16B 16B 16B'))
+
+    def set_config(self, frame_duration):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_CONFIG, (frame_duration,), 'H', '')
+
+    def get_config(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_CONFIG, (), '', 'H')
+
+    def get_supply_voltage(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_SUPPLY_VOLTAGE, (), '', 'H')
 
     def get_identity(self):
         """
@@ -60,5 +104,11 @@ class BrickletLEDStrip(Device):
         .. versionadded:: 2.0.0~(Plugin)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def register_callback(self, id, callback):
+        """
+        Registers a callback with ID *id* to the function *callback*.
+        """
+        self.registered_callbacks[id] = callback
 
 LEDStrip = BrickletLEDStrip # for backward compatibility

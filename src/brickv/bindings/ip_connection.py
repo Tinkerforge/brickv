@@ -931,8 +931,7 @@ class IPConnection:
             device.response_queue.put(packet)
             return
 
-        # Response seems to be OK, but can't be handled, most likely
-        # a callback without registered function
+        # Response seems to be OK, but can't be handled
 
     def handle_disconnect_by_peer(self, disconnect_reason, socket_id, disconnect_immediately):
         # NOTE: assumes that socket_lock is locked if disconnect_immediately is true
