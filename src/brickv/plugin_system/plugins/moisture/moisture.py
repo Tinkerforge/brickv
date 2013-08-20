@@ -22,29 +22,63 @@ Boston, MA 02111-1307, USA.
 """
 
 from plugin_system.plugin_base import PluginBase
+from plot_widget import PlotWidget
 from bindings.bricklet_moisture import BrickletMoisture
 from async_call import async_call
 
-from PyQt4.QtGui import QLabel, QVBoxLayout
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
+from PyQt4.QtCore import pyqtSignal, Qt
+
+class MoistureLabel(QLabel):
+    def setText(self, text):
+        text = "Moisture Value: " + text
+        super(MoistureLabel, self).setText(text)
     
 class Moisture(PluginBase):
+    qtcb_moisture = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
         PluginBase.__init__(self, ipcon, uid, 'Moisture Bricklet', version)
 
         self.moisture = BrickletMoisture(uid, ipcon)
         
-        layout = QVBoxLayout(self)
-        layout.addStretch()
-        layout.addWidget(QLabel("The Bricklet is not yet supported in this version of Brickv. Please Update Brickv."))
-        layout.addStretch()
+        self.qtcb_intensity.connect(self.cb_moisture)
+        self.moisture.register_callback(self.moisture.CALLBACK_MOISTURE,
+                                        self.qtcb_moisture.emit) 
         
+        self.moisture_label = MoistureLabel()
+        self.current_value = None
+        
+        plot_list = [['', Qt.red, self.get_current_value]]
+        self.plot_widget = PlotWidget('Moisture', plot_list)
+        
+        layout_h = QHBoxLayout()
+        layout_h.addStretch()
+        layout_h.addWidget(self.moisture_label)
+        layout_h.addStretch()
+
+        layout = QVBoxLayout(self)
+        layout.addLayout(layout_h)
+        layout.addWidget(self.plot_widget)
+        
+        
+    def get_current_value(self):
+        return self.current_value
+
+    def cb_moisture(self, moisture):
+        self.current_value = moisture
+        self.moisture_label.setText(str(moisture))
 
     def start(self):
-        pass
+        async_call(self.si.get_moisture_value, None, self.cb_moisture, self.increase_error_count)
+        async_call(self.si.set_moisture_callback_period, 100, None, self.increase_error_count)
+        
+        self.plot_widget.stop = False
         
     def stop(self):
-        pass
+        async_call(self.si.set_moisture_callback_period, 0, None, self.increase_error_count)
+        
+        self.plot_widget.stop = True
 
     def get_url_part(self):
         return 'moisture'
