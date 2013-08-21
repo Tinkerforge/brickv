@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-30.      #
+# This file was automatically generated on 2013-08-21.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -35,8 +35,8 @@ class BrickletRemoteSwitch(Device):
 
     FUNCTION_SWITCH_SOCKET = 1
     FUNCTION_GET_SWITCHING_STATE = 2
-    FUNCTION_SET_TRIES = 4
-    FUNCTION_GET_TRIES = 5
+    FUNCTION_SET_REPEATS = 4
+    FUNCTION_GET_REPEATS = 5
     FUNCTION_GET_IDENTITY = 255
 
     SWITCH_TO_OFF = 0
@@ -56,8 +56,8 @@ class BrickletRemoteSwitch(Device):
         self.response_expected[BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET] = BrickletRemoteSwitch.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletRemoteSwitch.FUNCTION_GET_SWITCHING_STATE] = BrickletRemoteSwitch.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRemoteSwitch.CALLBACK_SWITCHING_DONE] = BrickletRemoteSwitch.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletRemoteSwitch.FUNCTION_SET_TRIES] = BrickletRemoteSwitch.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletRemoteSwitch.FUNCTION_GET_TRIES] = BrickletRemoteSwitch.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRemoteSwitch.FUNCTION_SET_REPEATS] = BrickletRemoteSwitch.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRemoteSwitch.FUNCTION_GET_REPEATS] = BrickletRemoteSwitch.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRemoteSwitch.FUNCTION_GET_IDENTITY] = BrickletRemoteSwitch.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletRemoteSwitch.CALLBACK_SWITCHING_DONE] = ''
@@ -74,17 +74,17 @@ class BrickletRemoteSwitch(Device):
         """
         return self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_GET_SWITCHING_STATE, (), '', 'B')
 
-    def set_tries(self, tries):
+    def set_repeats(self, repeats):
         """
         The default value is 5.
         """
-        self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SET_TRIES, (tries,), 'B', '')
+        self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SET_REPEATS, (repeats,), 'B', '')
 
-    def get_tries(self):
+    def get_repeats(self):
         """
-        Returns the number of tries as set by :func:`SetTries`.
+        Returns the number of repeats as set by :func:`SetRepeats`.
         """
-        return self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_GET_TRIES, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_GET_REPEATS, (), '', 'B')
 
     def get_identity(self):
         """

@@ -58,8 +58,8 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
         self.button_switch.setEnabled(False)
         self.button_switch.setText("Switching...")
         
-        tries = self.spinbox_tries.value()
-        self.rs.set_tries(tries)
+        repeats = self.spinbox_repeats.value()
+        self.rs.set_repeats(repeats)
         
         house_code = 0
         for i in range(5):

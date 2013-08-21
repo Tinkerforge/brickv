@@ -291,12 +291,12 @@
      <item>
       <widget class="QLabel" name="label_11">
        <property name="text">
-        <string>Tries:</string>
+        <string>Repeats</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="spinbox_tries">
+      <widget class="QSpinBox" name="spinbox_repeats">
        <property name="minimum">
         <number>1</number>
        </property>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-01.      #
+# This file was automatically generated on 2013-08-21.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -22,7 +22,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
-GetSegments = namedtuple('Segments', ['segments', 'brightness', 'clock_points'])
+GetSegments = namedtuple('Segments', ['segments', 'brightness', 'colon'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletSegmentDisplay4x7(Device):
@@ -52,15 +52,28 @@ class BrickletSegmentDisplay4x7(Device):
         self.response_expected[BrickletSegmentDisplay4x7.FUNCTION_GET_IDENTITY] = BrickletSegmentDisplay4x7.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
-    def set_segments(self, segments, brightness, clock_points):
+    def set_segments(self, segments, brightness, colon):
         """
+        The 7-segment display can be set with bitmaps. Every bit controls one
+        segment:
         
+        .. image:: /Images/Bricklets/bricklet_segment_display_4x7_bit_order.png
+           :scale: 100 %
+           :alt: Bit order of one segment
+           :align: center
+        
+        For example to set a "5" you would want to activate segments 0, 2, 3, 5 and 6.
+        This is represented by the number 0b00110101 = 0x35 = 53.
+        
+        The brightness can be set between 0 (dark) and 7 (bright). The colon
+        parameter turns the colon of the display on or off.
         """
-        self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_SET_SEGMENTS, (segments, brightness, clock_points), '4B B ?', '')
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_SET_SEGMENTS, (segments, brightness, colon), '4B B ?', '')
 
     def get_segments(self):
         """
-        
+        Returns the segment, brightness and color data as set by 
+        :func:`SetSegments`.
         """
         return GetSegments(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_SEGMENTS, (), '', '4B B ?'))
 
