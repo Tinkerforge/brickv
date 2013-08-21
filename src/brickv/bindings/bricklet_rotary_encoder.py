@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-20.      #
+# This file was automatically generated on 2013-08-21.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -34,6 +34,8 @@ class BrickletRotaryEncoder(Device):
 
     CALLBACK_COUNT = 8
     CALLBACK_COUNT_REACHED = 9
+    CALLBACK_PRESSED = 11
+    CALLBACK_RELEASED = 12
 
     FUNCTION_GET_COUNT = 1
     FUNCTION_SET_COUNT_CALLBACK_PERIOD = 2
@@ -42,6 +44,7 @@ class BrickletRotaryEncoder(Device):
     FUNCTION_GET_COUNT_CALLBACK_THRESHOLD = 5
     FUNCTION_SET_DEBOUNCE_PERIOD = 6
     FUNCTION_GET_DEBOUNCE_PERIOD = 7
+    FUNCTION_IS_PRESSED = 10
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -68,10 +71,15 @@ class BrickletRotaryEncoder(Device):
         self.response_expected[BrickletRotaryEncoder.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRotaryEncoder.CALLBACK_COUNT] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRotaryEncoder.CALLBACK_COUNT_REACHED] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRotaryEncoder.FUNCTION_IS_PRESSED] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRotaryEncoder.CALLBACK_PRESSED] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRotaryEncoder.CALLBACK_RELEASED] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRotaryEncoder.FUNCTION_GET_IDENTITY] = BrickletRotaryEncoder.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletRotaryEncoder.CALLBACK_COUNT] = 'i'
         self.callback_formats[BrickletRotaryEncoder.CALLBACK_COUNT_REACHED] = 'i'
+        self.callback_formats[BrickletRotaryEncoder.CALLBACK_PRESSED] = ''
+        self.callback_formats[BrickletRotaryEncoder.CALLBACK_RELEASED] = ''
 
     def get_count(self, reset):
         """
@@ -144,6 +152,15 @@ class BrickletRotaryEncoder(Device):
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
         return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+
+    def is_pressed(self):
+        """
+        Returns *true* if the button is pressed and *false* otherwise.
+        
+        It is recommended to use the :func:`Pressed` and :func:`Released` callbacks
+        to handle the button.
+        """
+        return self.ipcon.send_request(self, BrickletRotaryEncoder.FUNCTION_IS_PRESSED, (), '', '?')
 
     def get_identity(self):
         """

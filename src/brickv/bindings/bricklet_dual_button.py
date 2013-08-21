@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-23.      #
+# This file was automatically generated on 2013-08-21.      #
 #                                                           #
 # Bindings Version 2.0.8                                    #
 #                                                           #
@@ -42,8 +42,8 @@ class BrickletDualButton(Device):
 
     LED_STATE_AUTO_TOGGLE_ON = 0
     LED_STATE_AUTO_TOGGLE_OFF = 1
-    LED_STATE_ON = 3
-    LED_STATE_OFF = 4
+    LED_STATE_ON = 2
+    LED_STATE_OFF = 3
     BUTTON_STATE_PRESSED = 0
     BUTTON_STATE_RELEASED = 1
 
