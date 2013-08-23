@@ -374,10 +374,16 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
     def update_bricks(self):
         self.brick_infos = []
         self.combo_brick.clear()
+        items = {}
         for info in infos.infos.values():
             if info.type == 'brick':
-                self.brick_infos.append(info)
-                self.combo_brick.addItem(info.get_combo_item())
+                #self.brick_infos.append(info)
+                #self.combo_brick.addItem(info.get_combo_item())
+                items[info.get_combo_item()] = info
+
+        for item in sorted(items.keys()):
+            self.brick_infos.append(items[item])
+            self.combo_brick.addItem(item)
 
         if self.combo_brick.count() == 0:
             self.combo_brick.addItem(NO_BRICK)
