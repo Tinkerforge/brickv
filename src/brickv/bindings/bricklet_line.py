@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-08.      #
+# This file was automatically generated on 2013-08-23.      #
 #                                                           #
-# Bindings Version 2.0.8                                    #
+# Bindings Version 2.0.9                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -75,7 +75,11 @@ class BrickletLine(Device):
 
     def get_reflectivity(self):
         """
-        TODO: Description
+        Returns the currently measured reflectivity. The reflectivity is
+        a value between 0 (not reflective) and 4095 (very reflective).
+        
+        Usually black has a low reflectivity while white has a high
+        reflectivity.
         
         If you want to get the reflectivity periodically, it is recommended 
         to use the callback :func:`Reflectivity` and set the period with 

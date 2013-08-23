@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-31.      #
+# This file was automatically generated on 2013-08-23.      #
 #                                                           #
-# Bindings Version 2.0.8                                    #
+# Bindings Version 2.0.9                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -1099,7 +1099,7 @@ class BrickMaster(Device):
         Returns the status of the Ethernet Extension.
         
         ``mac_address``, ``ip``, ``subnet_mask`` and ``gateway`` are given as an array.
-        Tthe first element of the array is the least significant byte of the address.
+        The first element of the array is the least significant byte of the address.
         
         ``rx_count`` and ``tx_count`` are the number of bytes that have been
         received/send since last restart.

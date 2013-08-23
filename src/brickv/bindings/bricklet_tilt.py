@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-06.      #
+# This file was automatically generated on 2013-08-23.      #
 #                                                           #
-# Bindings Version 2.0.8                                    #
+# Bindings Version 2.0.9                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -63,25 +63,29 @@ class BrickletTilt(Device):
 
     def get_tilt_state(self):
         """
+        Returns the current tilt state. The state can either be
         
+        * Closed: The ball in the tilt switch closes the circuit.
+        * Open: The ball in the tilt switch does not close the circuit.
+        * Closed Vibrating: The tilt switch is in motion (rapid change between open and close).
         """
         return self.ipcon.send_request(self, BrickletTilt.FUNCTION_GET_TILT_STATE, (), '', 'B')
 
     def enable_tilt_state_callback(self):
         """
-        
+        Enables the :func:`TiltState` callback.
         """
         self.ipcon.send_request(self, BrickletTilt.FUNCTION_ENABLE_TILT_STATE_CALLBACK, (), '', '')
 
     def disable_tilt_state_callback(self):
         """
-        
+        Disables the :func:`TiltState` callback.
         """
         self.ipcon.send_request(self, BrickletTilt.FUNCTION_DISABLE_TILT_STATE_CALLBACK, (), '', '')
 
     def is_tilt_state_callback_enabled(self):
         """
-        
+        Returns *true* if the :func:`TiltState` callback is enabled.
         """
         return self.ipcon.send_request(self, BrickletTilt.FUNCTION_IS_TILT_STATE_CALLBACK_ENABLED, (), '', '?')
 

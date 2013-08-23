@@ -291,6 +291,7 @@ class IPConnection:
         self.socket = None # protected by socket_lock
         self.socket_id = 0 # protected by socket_lock
         self.socket_lock = Lock()
+        self.socket_send_lock = Lock()
         self.receive_flag = False
         self.receive_thread = None
         self.callback = None
@@ -741,6 +742,8 @@ class IPConnection:
                     if callback.packet_dispatch_allowed:
                         self.dispatch_packet(data)
 
+    # NOTE: the disconnect probe thread is not allowed to hold the socket_lock at any
+    #       time because it is created and joined while the socket_lock is locked
     def disconnect_probe_loop(self, disconnect_probe_queue):
         request, _, _ = self.create_packet_header(None, 8, IPConnection.FUNCTION_DISCONNECT_PROBE)
 
@@ -752,13 +755,13 @@ class IPConnection:
                 pass
 
             if self.disconnect_probe_flag:
-                with self.socket_lock:
-                    try:
+                try:
+                    with self.socket_send_lock:
                         self.socket.send(request)
-                    except socket.error:
-                        self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR,
-                                                       self.socket_id, False)
-                        break
+                except socket.error:
+                    self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR,
+                                                   self.socket_id, False)
+                    break
             else:
                 self.disconnect_probe_flag = True
 
@@ -809,7 +812,8 @@ class IPConnection:
                 raise Error(Error.NOT_CONNECTED, 'Not connected')
 
             try:
-                self.socket.send(packet)
+                with self.socket_send_lock:
+                    self.socket.send(packet)
             except socket.error:
                 self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR, None, True)
                 raise Error(Error.NOT_CONNECTED, 'Not connected')

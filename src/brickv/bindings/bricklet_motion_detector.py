@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-07-30.      #
+# This file was automatically generated on 2013-08-23.      #
 #                                                           #
-# Bindings Version 2.0.8                                    #
+# Bindings Version 2.0.9                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -59,7 +59,9 @@ class BrickletMotionDetector(Device):
 
     def get_motion_detected(self):
         """
-        
+        Returns 0 if a motion was detected. How long this returns 0 after a motion
+        was detected can be adjusted with one of the small potentiometers on the
+        Motion Detector Bricklet, see here. TODO: ADD LINK
         """
         return self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_MOTION_DETECTED, (), '', 'B')
 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-21.      #
+# This file was automatically generated on 2013-08-23.      #
 #                                                           #
-# Bindings Version 2.0.8                                    #
+# Bindings Version 2.0.9                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -64,18 +64,34 @@ class BrickletRemoteSwitch(Device):
 
     def switch_socket(self, house_code, receiver_code, switch_to):
         """
+        To switch a socket you have to give the house code, receiver code and the
+        state (on or off) you want to switch to.
         
+        A detailed description on how you can find the house and receiver code
+        can be found here. TODO: ADD LINK
         """
         self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET, (house_code, receiver_code, switch_to), 'B B B', '')
 
     def get_switching_state(self):
         """
+        Returns the current switching state. If the current state is busy, the
+        Bricklet is currently sending a code to switch a socket. It will not
+        accept any calls of :func:`SwitchSocket` until the state changes to ready.
         
+        How long the switching takes is dependent on the number of repeats, see
+        :func:`SetRepeats`.
         """
         return self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_GET_SWITCHING_STATE, (), '', 'B')
 
     def set_repeats(self, repeats):
         """
+        Sets the number of times the code is send when :func:`SwitchSocket` is called.
+        The repeats basically correspond to the amount of time that a button of the
+        remote is pressed. 
+        
+        Some dimmers are controlled by the length of a button pressed,
+        this can be simulated by increasing the repeats.
+        
         The default value is 5.
         """
         self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SET_REPEATS, (repeats,), 'B', '')
