@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>411</width>
-    <height>150</height>
+    <height>141</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>Button 1</string>
+          <string>Button L</string>
          </property>
         </widget>
        </item>
@@ -35,7 +35,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_status_b1">
+          <widget class="QLabel" name="label_status_button_r">
            <property name="text">
             <string>Released, LED Off</string>
            </property>
@@ -59,14 +59,14 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="QPushButton" name="button_led_on_b1">
+          <widget class="QPushButton" name="button_led_on_button_r">
            <property name="text">
             <string>LED On</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="button_led_off_b1">
+          <widget class="QPushButton" name="button_led_off_button_r">
            <property name="text">
             <string>LED Off</string>
            </property>
@@ -75,7 +75,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="button_toggle_b1">
+        <widget class="QPushButton" name="button_toggle_button_r">
          <property name="text">
           <string>Auto Toggle</string>
          </property>
@@ -95,7 +95,7 @@
        <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Button 2</string>
+          <string>Button R</string>
          </property>
         </widget>
        </item>
@@ -109,7 +109,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_status_b2">
+          <widget class="QLabel" name="label_status_button_l">
            <property name="text">
             <string>Released, LED Off</string>
            </property>
@@ -133,14 +133,14 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QPushButton" name="button_led_on_b2">
+          <widget class="QPushButton" name="button_led_on_button_l">
            <property name="text">
             <string>LED On</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="button_led_off_b2">
+          <widget class="QPushButton" name="button_led_off_button_l">
            <property name="text">
             <string>LED Off</string>
            </property>
@@ -149,7 +149,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QPushButton" name="button_toggle_b2">
+        <widget class="QPushButton" name="button_toggle_button_l">
          <property name="text">
           <string>Auto Toggle</string>
          </property>

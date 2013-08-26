@@ -50,108 +50,111 @@ class DualButton(PluginBase, Ui_DualButton):
         self.button.register_callback(self.button.CALLBACK_STATE_CHANGED,
                                       self.qtcb_state_changed.emit)
         
-        self.led1 = DualButton.OFF
-        self.led2 = DualButton.OFF
-        self.button1 = DualButton.RELEASED
-        self.button2 = DualButton.RELEASED
+        self.led_r = DualButton.OFF
+        self.led_l = DualButton.OFF
+        self.button_r = DualButton.RELEASED
+        self.button_l = DualButton.RELEASED
         
-        self.button_led_on_b1.pressed.connect(self.on_b1_pressed)
-        self.button_led_on_b2.pressed.connect(self.on_b2_pressed)
-        self.button_led_off_b1.pressed.connect(self.off_b1_pressed)
-        self.button_led_off_b2.pressed.connect(self.off_b2_pressed)
-        self.button_toggle_b1.pressed.connect(self.toggle_b1_pressed)
-        self.button_toggle_b2.pressed.connect(self.toggle_b2_pressed)
+        self.button_led_on_button_r.pressed.connect(self.on_button_r_pressed)
+        self.button_led_on_button_l.pressed.connect(self.on_button_l_pressed)
+        self.button_led_off_button_r.pressed.connect(self.off_button_r_pressed)
+        self.button_led_off_button_l.pressed.connect(self.off_button_l_pressed)
+        self.button_toggle_button_r.pressed.connect(self.toggle_button_r_pressed)
+        self.button_toggle_button_l.pressed.connect(self.toggle_button_l_pressed)
         
-    def on_b1_pressed(self):
-        self.led1 = DualButton.ON
-        self.button.set_led_state(DualButton.ON, self.led2)
+        self.count = 0
+        
+    def on_button_l_pressed(self):
+        self.led_l = DualButton.ON
+        self.button.set_led_state(DualButton.ON, self.led_r)
+        self.update_buttons()
+        
+    def on_button_r_pressed(self):
+        self.led_r = DualButton.ON
+        self.button.set_led_state(self.led_l, DualButton.ON)
+        self.update_buttons()
+        
+    def off_button_l_pressed(self):
+        self.led_l = DualButton.OFF
+        self.button.set_led_state(DualButton.OFF, self.led_r)
         self.update_buttons()
     
-    def on_b2_pressed(self):
-        self.led2 = DualButton.ON
-        self.button.set_led_state(self.led1, DualButton.ON)
+    def off_button_r_pressed(self):
+        self.led_r = DualButton.OFF
+        self.button.set_led_state(self.led_l, DualButton.OFF)
+        self.update_buttons()
+        
+    def toggle_button_l_pressed(self):
+        self.led_l = DualButton.AT_OFF
+        self.button.set_led_state(DualButton.AT_OFF, self.led_r)
         self.update_buttons()
     
-    def off_b1_pressed(self):
-        self.led1 = DualButton.OFF
-        self.button.set_led_state(DualButton.OFF, self.led2)
-        self.update_buttons()
-    
-    def off_b2_pressed(self):
-        self.led2 = DualButton.OFF
-        self.button.set_led_state(self.led1, DualButton.OFF)
-        self.update_buttons()
-    
-    def toggle_b1_pressed(self):
-        self.led1 = DualButton.AT_OFF
-        self.button.set_led_state(DualButton.AT_OFF, self.led2)
-        self.update_buttons()
-    
-    def toggle_b2_pressed(self):
-        self.led2 = DualButton.AT_OFF
-        self.button.set_led_state(self.led1, DualButton.AT_OFF)
+    def toggle_button_r_pressed(self):
+        self.led_r = DualButton.AT_OFF
+        self.button.set_led_state(self.led_l, DualButton.AT_OFF)
         self.update_buttons()
         
     def update_buttons(self):
-        if self.led1 == DualButton.ON:
-            self.button_toggle_b1.setEnabled(True)
-            self.button_led_on_b1.setEnabled(False)
-            self.button_led_off_b1.setEnabled(True)
-        elif self.led1 == DualButton.OFF:
-            self.button_toggle_b1.setEnabled(True)
-            self.button_led_on_b1.setEnabled(True)
-            self.button_led_off_b1.setEnabled(False)
-        elif self.led1 == DualButton.AT_OFF:
-            self.button_toggle_b1.setEnabled(False)
-            self.button_led_on_b1.setEnabled(True)
-            self.button_led_off_b1.setEnabled(True)
+        if self.led_r == DualButton.ON:
+            self.button_toggle_button_r.setEnabled(True)
+            self.button_led_on_button_r.setEnabled(False)
+            self.button_led_off_button_r.setEnabled(True)
+        elif self.led_r == DualButton.OFF:
+            self.button_toggle_button_r.setEnabled(True)
+            self.button_led_on_button_r.setEnabled(True)
+            self.button_led_off_button_r.setEnabled(False)
+        elif self.led_r in (DualButton.AT_OFF, DualButton.AT_ON):
+            self.button_toggle_button_r.setEnabled(False)
+            self.button_led_on_button_r.setEnabled(True)
+            self.button_led_off_button_r.setEnabled(True)
             
-        if self.led2 == DualButton.ON:
-            self.button_toggle_b2.setEnabled(True)
-            self.button_led_on_b2.setEnabled(False)
-            self.button_led_off_b2.setEnabled(True)
-        elif self.led2 == DualButton.OFF:
-            self.button_toggle_b2.setEnabled(True)
-            self.button_led_on_b2.setEnabled(True)
-            self.button_led_off_b2.setEnabled(False)
-        elif self.led2 == DualButton.AT_OFF:
-            self.button_toggle_b2.setEnabled(False)
-            self.button_led_on_b2.setEnabled(True)
-            self.button_led_off_b2.setEnabled(True)
+        if self.led_l == DualButton.ON:
+            self.button_toggle_button_l.setEnabled(True)
+            self.button_led_on_button_l.setEnabled(False)
+            self.button_led_off_button_l.setEnabled(True)
+        elif self.led_l == DualButton.OFF:
+            self.button_toggle_button_l.setEnabled(True)
+            self.button_led_on_button_l.setEnabled(True)
+            self.button_led_off_button_l.setEnabled(False)
+        elif self.led_l in (DualButton.AT_OFF, DualButton.AT_ON):
+            self.button_toggle_button_l.setEnabled(False)
+            self.button_led_on_button_l.setEnabled(True)
+            self.button_led_off_button_l.setEnabled(True)
             
-    def cb_state_changed(self, button1, button2, led1, led2):
-        self.get_led_state_async((led1, led2))
-        self.get_button_state_async((button1, button2))
+    def cb_state_changed(self, button_l, button_r, led_l, led_r):
+        self.count += 1
+        self.get_led_state_async((led_l, led_r))
+        self.get_button_state_async((button_l, button_r))
+    
+    def get_led_state_async(self, led):
+        self.led_l, self.led_r = led
         
         self.update_buttons()
     
-    def get_led_state_async(self, led):
-        self.led1, self.led2 = led
-    
     def get_button_state_async(self, button):
-        self.button1, self.button2 = button
-        led_text_b1 = ''
-        led_text_b2 = ''
+        self.button_l, self.button_r = button
+        led_text_button_l = ''
+        led_text_button_r = ''
         
-        if self.led1 in (DualButton.ON, DualButton.AT_ON):
-            led_text_b1 = ', LED On'
+        if self.led_l in (DualButton.ON, DualButton.AT_ON):
+            led_text_button_l = ', LED On'
         else:
-            led_text_b1 = ', LED Off'
+            led_text_button_l = ', LED Off'
             
-        if self.led2 in (DualButton.ON, DualButton.AT_ON):
-            led_text_b2 = ', LED On'
+        if self.led_r in (DualButton.ON, DualButton.AT_ON):
+            led_text_button_r = ', LED On'
         else:
-            led_text_b2 = ', LED Off'
+            led_text_button_r = ', LED Off'
             
-        if self.button1 == DualButton.RELEASED:
-            self.label_status_b1.setText('Released' + led_text_b1)
+        if self.button_l == DualButton.RELEASED:
+            self.label_status_button_l.setText('Released' + led_text_button_l)
         else:
-            self.label_status_b1.setText('Pressed' + led_text_b1)
+            self.label_status_button_l.setText('Pressed' + led_text_button_l)
             
-        if self.button2 == DualButton.RELEASED:
-            self.label_status_b2.setText('Released' + led_text_b2)
+        if self.button_r == DualButton.RELEASED:
+            self.label_status_button_r.setText('Released' + led_text_button_r)
         else:
-            self.label_status_b2.setText('Pressed' + led_text_b2)
+            self.label_status_button_r.setText('Pressed' + led_text_button_r)
 
     def start(self):
         async_call(self.button.get_led_state, None, self.get_led_state_async, self.increase_error_count)
