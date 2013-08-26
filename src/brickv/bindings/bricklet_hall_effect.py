@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-23.      #
+# This file was automatically generated on 2013-08-26.      #
 #                                                           #
 # Bindings Version 2.0.9                                    #
 #                                                           #
@@ -46,6 +46,9 @@ class BrickletHallEffect(Device):
     FUNCTION_EDGE_INTERRUPT = 9
     FUNCTION_GET_IDENTITY = 255
 
+    EDGE_TYPE_RISING = 0
+    EDGE_TYPE_FALLING = 1
+    EDGE_TYPE_BOTH = 2
 
     def __init__(self, uid, ipcon):
         """
@@ -72,37 +75,62 @@ class BrickletHallEffect(Device):
 
     def get_value(self):
         """
-        
+        Returns *true* if a magnetic field of 40 Gauss (4mT) or greater is detected.
         """
         return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_VALUE, (), '', '?')
 
     def get_edge_count(self, reset_counter):
         """
+        Returns the current count of the edge counter. You can configure
+        the edges that are counted with :func:`SetEdgeCountConfig`.
         
+        If you set the reset counter to *true*, the count is set back to 0
+        directly after it is read.
         """
         return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT, (reset_counter,), '?', 'I')
 
     def set_edge_count_config(self, edge_type, debounce):
         """
+        The edge type parameter configures if rising edges, falling edges or 
+        both are counted.
         
+        A magnetic field of 40 Gauss (4mT) or greater causes a falling edge and a
+        magnetic field of 30 Gauss (3mT) or smaller causes a rising edge.
+        
+        If a magnet comes near the Bricklet the signal goes low (falling edge), if
+        a magnet is removed from the vicinity the signal goes high (rising edge).
+        
+        The debounce time is given in ms.
+        
+        If you don't know what any of this means, just leave it at default. The
+        default configuration is very likely OK for you.
+        
+        Default values: 0 (edge type) and 100ms (debounce time)
         """
         self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_COUNT_CONFIG, (edge_type, debounce), 'B B', '')
 
     def get_edge_count_config(self):
         """
-        
+        Returns the edge type and debounce time as set by :func:`SetEdgeCountConfig`.
         """
         return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_COUNT_CONFIG, (), '', 'B B'))
 
-    def set_edge_interrupt(self, count):
+    def set_edge_interrupt(self, edges):
         """
-        Interrupt every count edges
+        Sets the number of edges until an interrupt is invoked.
+        
+        If edges is set to n, an interrupt is invoked for every nth detected
+        edge.
+        
+        If edges is set to 0, the interrupt is disabled.
+        
+        Default value is 0.
         """
-        self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_INTERRUPT, (count,), 'I', '')
+        self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_SET_EDGE_INTERRUPT, (edges,), 'I', '')
 
     def get_edge_interrupt(self):
         """
-        
+        Returns the edges as set by :func:`SetEdgeInterrupt`.
         """
         return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_EDGE_INTERRUPT, (), '', 'I')
 
@@ -126,7 +154,9 @@ class BrickletHallEffect(Device):
 
     def edge_interrupt(self):
         """
-        
+        This callback is triggered every nth count, as configured with
+        :func:`SetEdgeInterrupt`. The parameters are the
+        current count and the current value (see :func:`GetValue` and :func:`GetEdgeCount`).
         """
         return EdgeInterrupt(*self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_EDGE_INTERRUPT, (), '', 'I ?'))
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-23.      #
+# This file was automatically generated on 2013-08-26.      #
 #                                                           #
 # Bindings Version 2.0.9                                    #
 #                                                           #
@@ -22,8 +22,8 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
-GetLEDState = namedtuple('LEDState', ['led1', 'led2'])
-GetButtonState = namedtuple('ButtonState', ['button1', 'button2'])
+GetLEDState = namedtuple('LEDState', ['led_l', 'led_r'])
+GetButtonState = namedtuple('ButtonState', ['button_l', 'button_r'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletDualButton(Device):
@@ -64,21 +64,30 @@ class BrickletDualButton(Device):
 
         self.callback_formats[BrickletDualButton.CALLBACK_STATE_CHANGED] = 'B B B B'
 
-    def set_led_state(self, led1, led2):
+    def set_led_state(self, led_l, led_r):
         """
+        Sets the state of the LEDs. Possible states are:
         
+        * AutoToggleOn: Enables auto toggle with enabled LED.
+        * AutoToggleOff: Activates auto toggle with disabled LED.
+        * On: Enables LED (auto toggle is disabled).
+        * Off: Disables LED (auto toggle is disabled).
+        
+        In auto toggle mode the LED is toggled automatically whenever the
+        button is pressed.
         """
-        self.ipcon.send_request(self, BrickletDualButton.FUNCTION_SET_LED_STATE, (led1, led2), 'B B', '')
+        self.ipcon.send_request(self, BrickletDualButton.FUNCTION_SET_LED_STATE, (led_l, led_r), 'B B', '')
 
     def get_led_state(self):
         """
-        
+        Returns the current state of the LEDs, as set by :func:`SetLEDState`.
         """
         return GetLEDState(*self.ipcon.send_request(self, BrickletDualButton.FUNCTION_GET_LED_STATE, (), '', 'B B'))
 
     def get_button_state(self):
         """
-        
+        Returns the current state for both buttons. Possible states are
+        pressed and released.
         """
         return GetButtonState(*self.ipcon.send_request(self, BrickletDualButton.FUNCTION_GET_BUTTON_STATE, (), '', 'B B'))
 
