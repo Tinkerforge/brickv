@@ -42,7 +42,7 @@ class Moisture(PluginBase):
 
         self.moisture = BrickletMoisture(uid, ipcon)
         
-        self.qtcb_intensity.connect(self.cb_moisture)
+        self.qtcb_moisture.connect(self.cb_moisture)
         self.moisture.register_callback(self.moisture.CALLBACK_MOISTURE,
                                         self.qtcb_moisture.emit) 
         
@@ -66,17 +66,18 @@ class Moisture(PluginBase):
         return self.current_value
 
     def cb_moisture(self, moisture):
+        print moisture
         self.current_value = moisture
         self.moisture_label.setText(str(moisture))
 
     def start(self):
-        async_call(self.si.get_moisture_value, None, self.cb_moisture, self.increase_error_count)
-        async_call(self.si.set_moisture_callback_period, 100, None, self.increase_error_count)
+        async_call(self.moisture.get_moisture_value, None, self.cb_moisture, self.increase_error_count)
+        async_call(self.moisture.set_moisture_callback_period, 100, None, self.increase_error_count)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.si.set_moisture_callback_period, 0, None, self.increase_error_count)
+        async_call(self.moisture.set_moisture_callback_period, 0, None, self.increase_error_count)
         
         self.plot_widget.stop = True
 

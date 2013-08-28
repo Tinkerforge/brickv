@@ -26,8 +26,33 @@ from plot_widget import PlotWidget
 from bindings.bricklet_sound_intensity import BrickletSoundIntensity
 from async_call import async_call
 
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QWidget, QGradient, QColor, QLinearGradient, QBrush
 from PyQt4.QtCore import pyqtSignal, Qt
+
+import PyQt4.Qwt5 as Qwt
+
+class TuningThermo(QWidget):
+    def __init__(self, *args):
+        QWidget.__init__(self, *args)
+
+        self.thermo = Qwt.QwtThermo(self)
+        self.thermo.setOrientation(Qt.Horizontal, Qwt.QwtThermo.NoScale)
+        self.thermo.setRange(0, 3200)
+        
+        gradient = QLinearGradient(0, 0, 300, 0)
+        gradient.setColorAt(0, Qt.green)
+        gradient.setColorAt(1, Qt.red)
+        
+        self.thermo.setFillBrush(QBrush(gradient))
+        
+        self.setFixedWidth(300)
+
+        layout = QVBoxLayout(self)
+        layout.setMargin(0)
+        layout.addWidget(self.thermo)
+
+    def setValue(self, value):
+        self.thermo.setValue(value)
 
 class IntensityLabel(QLabel):
     def setText(self, text):
@@ -48,36 +73,46 @@ class SoundIntensity(PluginBase):
         
         self.intensity_label = IntensityLabel()
         self.current_value = None
+        self.thermo = TuningThermo()
         
-        plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Intensity', plot_list)
+#        plot_list = [['', Qt.red, self.get_current_value]]
+#        self.plot_widget = PlotWidget('Intensity', plot_list)
+        
         
         layout_h = QHBoxLayout()
         layout_h.addStretch()
         layout_h.addWidget(self.intensity_label)
         layout_h.addStretch()
+        
+        layout_h2 = QHBoxLayout()
+        layout_h2.addStretch()
+        layout_h2.addWidget(self.thermo)
+        layout_h2.addStretch()
 
         layout = QVBoxLayout(self)
         layout.addLayout(layout_h)
-        layout.addWidget(self.plot_widget)
+        layout.addLayout(layout_h2)
+        layout.addStretch()
+#        layout.addWidget(self.plot_widget)
         
-    def get_current_value(self):
-        return self.current_value
+#    def get_current_value(self):
+#        return self.current_value
 
     def cb_intensity(self, intensity):
-        self.current_value = intensity
+        self.thermo.setValue(intensity)
+#        self.current_value = intensity
         self.intensity_label.setText(str(intensity))
 
     def start(self):
         async_call(self.si.get_intensity, None, self.cb_intensity, self.increase_error_count)
-        async_call(self.si.set_intensity_callback_period, 100, None, self.increase_error_count)
+        async_call(self.si.set_intensity_callback_period, 10, None, self.increase_error_count)
         
-        self.plot_widget.stop = False
+#        self.plot_widget.stop = False
         
     def stop(self):
         async_call(self.si.set_intensity_callback_period, 0, None, self.increase_error_count)
         
-        self.plot_widget.stop = True
+#        self.plot_widget.stop = True
 
     def get_url_part(self):
         return 'sound_intensity'
