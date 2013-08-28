@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-23.      #
+# This file was automatically generated on 2013-08-27.      #
 #                                                           #
 # Bindings Version 2.0.9                                    #
 #                                                           #
@@ -52,6 +52,8 @@ class BrickletAnalogIn(Device):
     FUNCTION_GET_DEBOUNCE_PERIOD = 12
     FUNCTION_SET_RANGE = 17
     FUNCTION_GET_RANGE = 18
+    FUNCTION_SET_AVERAGING = 19
+    FUNCTION_GET_AVERAGING = 20
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -64,6 +66,7 @@ class BrickletAnalogIn(Device):
     RANGE_UP_TO_10V = 2
     RANGE_UP_TO_36V = 3
     RANGE_UP_TO_45V = 4
+    RANGE_UP_TO_3V = 5
 
     def __init__(self, uid, ipcon):
         """
@@ -72,7 +75,7 @@ class BrickletAnalogIn(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 1)
+        self.api_version = (2, 0, 2)
 
         self.response_expected[BrickletAnalogIn.FUNCTION_GET_VOLTAGE] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAnalogIn.FUNCTION_GET_ANALOG_VALUE] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -92,6 +95,8 @@ class BrickletAnalogIn(Device):
         self.response_expected[BrickletAnalogIn.CALLBACK_ANALOG_VALUE_REACHED] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletAnalogIn.FUNCTION_SET_RANGE] = BrickletAnalogIn.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletAnalogIn.FUNCTION_GET_RANGE] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogIn.FUNCTION_SET_AVERAGING] = BrickletAnalogIn.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAnalogIn.FUNCTION_GET_AVERAGING] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAnalogIn.FUNCTION_GET_IDENTITY] = BrickletAnalogIn.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletAnalogIn.CALLBACK_VOLTAGE] = 'H'
@@ -249,6 +254,7 @@ class BrickletAnalogIn(Device):
         * 2: 0V - 10.32V, ~2.52mV resolution
         * 3: 0V - 36.30V, ~8.86mV resolution
         * 4: 0V - 45.00V, ~11.25mV resolution
+        * 5: 0V - 3.3V, ~0.81mV resolution, new in version 2.0.3 (Plugin)
         
         The default measurement range is 0.
         
@@ -263,6 +269,28 @@ class BrickletAnalogIn(Device):
         .. versionadded:: 2.0.1~(Plugin)
         """
         return self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_RANGE, (), '', 'B')
+
+    def set_averaging(self, length):
+        """
+        Set the length of a averaging for the voltage value.
+        
+        Setting the length to 0 will turn the averaging completely off. If the
+        averaging is off, there is more noise on the data, but the data is without
+        delay.
+        
+        The default value is 50.
+        
+        .. versionadded:: 2.0.3~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_AVERAGING, (length,), 'B', '')
+
+    def get_averaging(self):
+        """
+        Returns the averaging configuration as set by :func:`SetAveraging`.
+        
+        .. versionadded:: 2.0.3~(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_AVERAGING, (), '', 'B')
 
     def get_identity(self):
         """
