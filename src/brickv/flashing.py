@@ -675,7 +675,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         try:
             samba.flash(firmware, imu_calibration, lock_imu_calibration_pages)
             # close serial device before showing dialog, otherwise exchanging
-            # the brick while the dialog is open will fore it to show up as ttyACM1
+            # the brick while the dialog is open will force it to show up as ttyACM1
             samba = None
             progress.cancel()
             report_result(True)
@@ -952,7 +952,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         url_part = str(self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString())
         
         if current_text == CUSTOM:
-            if not self.write_bricklet_firmware(plugin, device, port, plugin_file_name, progress):
+            if not self.write_bricklet_firmware(plugin, device, port, os.path.split(plugin_file_name)[-1], progress):
                 return
         else:
             if not self.write_bricklet_firmware(plugin, device, port, name, progress):
