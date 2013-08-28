@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-23.      #
+# This file was automatically generated on 2013-08-28.      #
 #                                                           #
-# Bindings Version 2.0.9                                    #
+# Bindings Version 2.0.10                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -36,8 +36,8 @@ class BrickletLEDStrip(Device):
 
     FUNCTION_SET_RGB_VALUES = 1
     FUNCTION_GET_RGB_VALUES = 2
-    FUNCTION_SET_CONFIG = 3
-    FUNCTION_GET_CONFIG = 4
+    FUNCTION_SET_FRAME_DURATION = 3
+    FUNCTION_GET_FRAME_DURATION = 4
     FUNCTION_GET_SUPPLY_VOLTAGE = 5
     FUNCTION_GET_IDENTITY = 255
 
@@ -53,8 +53,8 @@ class BrickletLEDStrip(Device):
 
         self.response_expected[BrickletLEDStrip.FUNCTION_SET_RGB_VALUES] = BrickletLEDStrip.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_RGB_VALUES] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletLEDStrip.FUNCTION_SET_CONFIG] = BrickletLEDStrip.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletLEDStrip.FUNCTION_GET_CONFIG] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLEDStrip.FUNCTION_SET_FRAME_DURATION] = BrickletLEDStrip.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLEDStrip.FUNCTION_GET_FRAME_DURATION] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_SUPPLY_VOLTAGE] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLEDStrip.CALLBACK_FRAME_RENDERED] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_IDENTITY] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -73,17 +73,17 @@ class BrickletLEDStrip(Device):
         """
         return GetRGBValues(*self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_RGB_VALUES, (index, length), 'H B', '16B 16B 16B'))
 
-    def set_config(self, frame_duration):
+    def set_frame_duration(self, duration):
         """
         
         """
-        self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_CONFIG, (frame_duration,), 'H', '')
+        self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_FRAME_DURATION, (duration,), 'H', '')
 
-    def get_config(self):
+    def get_frame_duration(self):
         """
         
         """
-        return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_CONFIG, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_FRAME_DURATION, (), '', 'H')
 
     def get_supply_voltage(self):
         """

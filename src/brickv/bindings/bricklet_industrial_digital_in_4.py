@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-23.      #
+# This file was automatically generated on 2013-08-28.      #
 #                                                           #
-# Bindings Version 2.0.9                                    #
+# Bindings Version 2.0.10                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -22,6 +22,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
+GetEdgeCountConfig = namedtuple('EdgeCountConfig', ['edge_type', 'debounce'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletIndustrialDigitalIn4(Device):
@@ -41,8 +42,14 @@ class BrickletIndustrialDigitalIn4(Device):
     FUNCTION_GET_DEBOUNCE_PERIOD = 6
     FUNCTION_SET_INTERRUPT = 7
     FUNCTION_GET_INTERRUPT = 8
+    FUNCTION_GET_EDGE_COUNT = 10
+    FUNCTION_SET_EDGE_COUNT_CONFIG = 11
+    FUNCTION_GET_EDGE_COUNT_CONFIG = 12
     FUNCTION_GET_IDENTITY = 255
 
+    EDGE_TYPE_RISING = 0
+    EDGE_TYPE_FALLING = 1
+    EDGE_TYPE_BOTH = 2
 
     def __init__(self, uid, ipcon):
         """
@@ -51,7 +58,7 @@ class BrickletIndustrialDigitalIn4(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_GET_VALUE] = BrickletIndustrialDigitalIn4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_SET_GROUP] = BrickletIndustrialDigitalIn4.RESPONSE_EXPECTED_FALSE
@@ -62,6 +69,9 @@ class BrickletIndustrialDigitalIn4(Device):
         self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_SET_INTERRUPT] = BrickletIndustrialDigitalIn4.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_GET_INTERRUPT] = BrickletIndustrialDigitalIn4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDigitalIn4.CALLBACK_INTERRUPT] = BrickletIndustrialDigitalIn4.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_GET_EDGE_COUNT] = BrickletIndustrialDigitalIn4.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_SET_EDGE_COUNT_CONFIG] = BrickletIndustrialDigitalIn4.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_GET_EDGE_COUNT_CONFIG] = BrickletIndustrialDigitalIn4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialDigitalIn4.FUNCTION_GET_IDENTITY] = BrickletIndustrialDigitalIn4.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletIndustrialDigitalIn4.CALLBACK_INTERRUPT] = 'H H'
@@ -101,6 +111,9 @@ class BrickletIndustrialDigitalIn4(Device):
         Now the pins on the Digital In 4 on port A are assigned to 0-3 and the
         pins on the Digital In 4 on port B are assigned to 4-7. It is now possible
         to call :func:`GetValue` and read out two Bricklets at the same time.
+        
+        Changing the group configuration resets the alle edge counter configurations
+        and values.
         """
         self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_GROUP, (group,), '4c', '')
 
@@ -156,6 +169,45 @@ class BrickletIndustrialDigitalIn4(Device):
         Returns the interrupt bitmask as set by :func:`SetInterrupt`.
         """
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_INTERRUPT, (), '', 'H')
+
+    def get_edge_count(self, pin, reset_counter):
+        """
+        Returns the current value of the edge counter for the selected pin. You can
+        configure the edges that are counted with :func:`SetEdgeCountConfig`.
+        
+        If you set the reset counter to *true*, the count is set back to 0
+        directly after it is read.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_EDGE_COUNT, (pin, reset_counter), 'B ?', 'I')
+
+    def set_edge_count_config(self, selection_mask, edge_type, debounce):
+        """
+        Configures the edge counter for the selected pins.
+        
+        The edge type parameter configures if rising edges, falling edges or
+        both are counted if the pin is configured for input.
+        
+        The debounce time is given in ms.
+        
+        If you don't know what any of this means, just leave it at default. The
+        default configuration is very likely OK for you.
+        
+        Default values: 0 (edge type) and 100ms (debounce time)
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_EDGE_COUNT_CONFIG, (selection_mask, edge_type, debounce), 'H B B', '')
+
+    def get_edge_count_config(self, pin):
+        """
+        Returns the edge type and debounce time for the selected pin as set by
+        :func:`SetEdgeCountConfig`.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_EDGE_COUNT_CONFIG, (pin,), 'B', 'B B'))
 
     def get_identity(self):
         """

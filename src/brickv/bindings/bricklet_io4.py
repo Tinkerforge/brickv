@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-23.      #
+# This file was automatically generated on 2013-08-28.      #
 #                                                           #
-# Bindings Version 2.0.9                                    #
+# Bindings Version 2.0.10                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -24,6 +24,7 @@ except ValueError:
 
 GetConfiguration = namedtuple('Configuration', ['direction_mask', 'value_mask'])
 GetMonoflop = namedtuple('Monoflop', ['value', 'time', 'time_remaining'])
+GetEdgeCountConfig = namedtuple('EdgeCountConfig', ['edge_type', 'debounce'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletIO4(Device):
@@ -47,10 +48,16 @@ class BrickletIO4(Device):
     FUNCTION_SET_MONOFLOP = 10
     FUNCTION_GET_MONOFLOP = 11
     FUNCTION_SET_SELECTED_VALUES = 13
+    FUNCTION_GET_EDGE_COUNT = 14
+    FUNCTION_SET_EDGE_COUNT_CONFIG = 15
+    FUNCTION_GET_EDGE_COUNT_CONFIG = 16
     FUNCTION_GET_IDENTITY = 255
 
     DIRECTION_IN = 'i'
     DIRECTION_OUT = 'o'
+    EDGE_TYPE_RISING = 0
+    EDGE_TYPE_FALLING = 1
+    EDGE_TYPE_BOTH = 2
 
     def __init__(self, uid, ipcon):
         """
@@ -59,7 +66,7 @@ class BrickletIO4(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletIO4.FUNCTION_SET_VALUE] = BrickletIO4.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIO4.FUNCTION_GET_VALUE] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -74,6 +81,9 @@ class BrickletIO4(Device):
         self.response_expected[BrickletIO4.FUNCTION_GET_MONOFLOP] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO4.CALLBACK_MONOFLOP_DONE] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletIO4.FUNCTION_SET_SELECTED_VALUES] = BrickletIO4.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO4.FUNCTION_GET_EDGE_COUNT] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIO4.FUNCTION_SET_EDGE_COUNT_CONFIG] = BrickletIO4.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIO4.FUNCTION_GET_EDGE_COUNT_CONFIG] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIO4.FUNCTION_GET_IDENTITY] = BrickletIO4.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletIO4.CALLBACK_INTERRUPT] = 'B B'
@@ -226,6 +236,45 @@ class BrickletIO4(Device):
         .. versionadded:: 2.0.0~(Plugin)
         """
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_SELECTED_VALUES, (selection_mask, value_mask), 'B B', '')
+
+    def get_edge_count(self, pin, reset_counter):
+        """
+        Returns the current value of the edge counter for the selected pin. You can
+        configure the edges that are counted with :func:`SetEdgeCountConfig`.
+        
+        If you set the reset counter to *true*, the count is set back to 0
+        directly after it is read.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_EDGE_COUNT, (pin, reset_counter), 'B ?', 'I')
+
+    def set_edge_count_config(self, selection_mask, edge_type, debounce):
+        """
+        Configures the edge counter for the selected pins.
+        
+        The edge type parameter configures if rising edges, falling edges or
+        both are counted if the pin is configured for input.
+        
+        The debounce time is given in ms.
+        
+        If you don't know what any of this means, just leave it at default. The
+        default configuration is very likely OK for you.
+        
+        Default values: 0 (edge type) and 100ms (debounce time)
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_EDGE_COUNT_CONFIG, (selection_mask, edge_type, debounce), 'B B B', '')
+
+    def get_edge_count_config(self, pin):
+        """
+        Returns the edge type and debounce time for the selected pin as set by
+        :func:`SetEdgeCountConfig`.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_EDGE_COUNT_CONFIG, (pin,), 'B', 'B B'))
 
     def get_identity(self):
         """
