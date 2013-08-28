@@ -27,8 +27,7 @@ from async_call import async_call
 
 from ui_led_strip import Ui_LEDStrip
 
-from PyQt4.QtGui import QDesktopServices
-from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import pyqtSignal, QTimer
 
 import colorsys
 
@@ -58,6 +57,17 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         
         self.gradient_counter = 0
         
+        self.voltage = 0
+        
+        self.voltage_timer = QTimer()
+        self.voltage_timer.timeout.connect(self.update_voltage)
+        self.voltage_timer.setInterval(1000)
+        
+    def update_voltage(self):
+        async_call(self.led_strip.get_supply_voltage, None, self.cb_voltage, self.increase_error_count)
+        
+    def cb_voltage(self, voltage):
+        self.label_voltage.setText(str(voltage/1000.0) + 'V')
         
     def cb_frame_rendered(self):
         if self.state == self.STATE_COLOR_GRADIENT:
@@ -66,7 +76,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             self.render_color_single()
             
     def frame_duration_changed(self, duration):
-        self.led_strip.set_config(duration)
+        self.led_strip.set_frame_duration(duration)
             
     def color_pressed(self):
         print "color_pressed"
@@ -148,10 +158,11 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             i += leds
             
     def start(self):
-        pass
+        async_call(self.led_strip.get_supply_voltage, None, self.cb_voltage, self.increase_error_count)
+        self.voltage_timer.start()
         
     def stop(self):
-        pass
+        self.voltage_timer.stop()
 
     def get_url_part(self):
         return 'led_strip'

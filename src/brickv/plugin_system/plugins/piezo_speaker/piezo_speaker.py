@@ -44,11 +44,11 @@ class PiezoSpeaker(PluginBase):
         self.ps.register_callback(self.ps.CALLBACK_MORSE_CODE_FINISHED,
                                   self.qtcb_morse_finished.emit)
         
-        self.frequency_label = QLabel('Frequency (460-7000Hz): ')
+        self.frequency_label = QLabel('Frequency Value (0-513): ')
         self.frequency_box = QSpinBox()
-        self.frequency_box.setMinimum(450)
-        self.frequency_box.setMaximum(7000)
-        self.frequency_box.setValue(1000)
+        self.frequency_box.setMinimum(0)
+        self.frequency_box.setMaximum(513)
+        self.frequency_box.setValue(100)
         self.frequency_layout = QHBoxLayout()
         self.frequency_layout.addWidget(self.frequency_label)
         self.frequency_layout.addWidget(self.frequency_box)
