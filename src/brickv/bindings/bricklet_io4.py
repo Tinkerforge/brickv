@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-27.      #
+# This file was automatically generated on 2013-08-30.      #
 #                                                           #
 # Bindings Version 2.0.10                                    #
 #                                                           #
@@ -254,7 +254,11 @@ class BrickletIO4(Device):
         Configures the edge counter for the selected pins.
         
         The edge type parameter configures if rising edges, falling edges or
-        both are counted if the pin is configured for input.
+        both are counted if the pin is configured for input. Possible edge types are:
+        
+        * 0 = rising (default)
+        * 1 = falling
+        * 2 = both
         
         The debounce time is given in ms.
         

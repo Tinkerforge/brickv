@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-28.      #
+# This file was automatically generated on 2013-08-30.      #
 #                                                           #
 # Bindings Version 2.0.10                                    #
 #                                                           #
@@ -31,9 +31,12 @@ class BrickletMultiTouch(Device):
 
     DEVICE_IDENTIFIER = 234
 
-    CALLBACK_TOUCH_STATE = 2
+    CALLBACK_TOUCH_STATE = 5
 
     FUNCTION_GET_TOUCH_STATE = 1
+    FUNCTION_RECALIBRATE = 2
+    FUNCTION_SET_ELECTRODE_CONFIG = 3
+    FUNCTION_GET_ELECTRODE_CONFIG = 4
     FUNCTION_GET_IDENTITY = 255
 
 
@@ -47,6 +50,9 @@ class BrickletMultiTouch(Device):
         self.api_version = (2, 0, 0)
 
         self.response_expected[BrickletMultiTouch.FUNCTION_GET_TOUCH_STATE] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletMultiTouch.FUNCTION_RECALIBRATE] = BrickletMultiTouch.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletMultiTouch.FUNCTION_SET_ELECTRODE_CONFIG] = BrickletMultiTouch.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletMultiTouch.FUNCTION_GET_ELECTRODE_CONFIG] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMultiTouch.CALLBACK_TOUCH_STATE] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletMultiTouch.FUNCTION_GET_IDENTITY] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_TRUE
 
@@ -57,6 +63,24 @@ class BrickletMultiTouch(Device):
         
         """
         return self.ipcon.send_request(self, BrickletMultiTouch.FUNCTION_GET_TOUCH_STATE, (), '', 'H')
+
+    def recalibrate(self):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletMultiTouch.FUNCTION_RECALIBRATE, (), '', '')
+
+    def set_electrode_config(self, enabled_electrodes):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletMultiTouch.FUNCTION_SET_ELECTRODE_CONFIG, (enabled_electrodes,), 'H', '')
+
+    def get_electrode_config(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletMultiTouch.FUNCTION_GET_ELECTRODE_CONFIG, (), '', 'H')
 
     def get_identity(self):
         """

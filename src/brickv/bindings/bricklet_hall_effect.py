@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-27.      #
+# This file was automatically generated on 2013-08-30.      #
 #                                                           #
 # Bindings Version 2.0.10                                    #
 #                                                           #
@@ -92,7 +92,11 @@ class BrickletHallEffect(Device):
     def set_edge_count_config(self, edge_type, debounce):
         """
         The edge type parameter configures if rising edges, falling edges or 
-        both are counted.
+        both are counted. Possible edge types are:
+        
+        * 0 = rising (default)
+        * 1 = falling
+        * 2 = both
         
         A magnetic field of 40 Gauss (4mT) or greater causes a falling edge and a
         magnetic field of 30 Gauss (3mT) or smaller causes a rising edge.

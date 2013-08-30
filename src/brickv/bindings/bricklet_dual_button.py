@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-27.      #
+# This file was automatically generated on 2013-08-30.      #
 #                                                           #
 # Bindings Version 2.0.10                                    #
 #                                                           #
@@ -68,10 +68,10 @@ class BrickletDualButton(Device):
         """
         Sets the state of the LEDs. Possible states are:
         
-        * AutoToggleOn: Enables auto toggle with enabled LED.
-        * AutoToggleOff: Activates auto toggle with disabled LED.
-        * On: Enables LED (auto toggle is disabled).
-        * Off: Disables LED (auto toggle is disabled).
+        * 0 = AutoToggleOn: Enables auto toggle with enabled LED.
+        * 1 = AutoToggleOff: Activates auto toggle with disabled LED.
+        * 2 = On: Enables LED (auto toggle is disabled).
+        * 3 = Off: Disables LED (auto toggle is disabled).
         
         In auto toggle mode the LED is toggled automatically whenever the
         button is pressed.
@@ -86,8 +86,10 @@ class BrickletDualButton(Device):
 
     def get_button_state(self):
         """
-        Returns the current state for both buttons. Possible states are
-        pressed and released.
+        Returns the current state for both buttons. Possible states are:
+        
+        * 0 = pressed
+        * 1 = released
         """
         return GetButtonState(*self.ipcon.send_request(self, BrickletDualButton.FUNCTION_GET_BUTTON_STATE, (), '', 'B B'))
 

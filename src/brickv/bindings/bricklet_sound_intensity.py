@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-28.      #
+# This file was automatically generated on 2013-08-30.      #
 #                                                           #
 # Bindings Version 2.0.10                                    #
 #                                                           #
@@ -75,7 +75,17 @@ class BrickletSoundIntensity(Device):
 
     def get_intensity(self):
         """
-        TODO
+        Returns the current sound intensity. The value has a range of
+        0 to 4095.
+        
+        The value corresponds to the `upper envelop <http://en.wikipedia.org/wiki/Envelope_(waves)>`__
+        of the signal of the microphone capsule. The sensitivity of this
+        signal can be configured with the small potentiometer on the
+        Sound Intensity Bricklet.
+        
+        If you want to get the intensity periodically, it is recommended to use the
+        callback :func:`Intensity` and set the period with 
+        :func:`SetIntensityCallbackPeriod`.
         """
         return self.ipcon.send_request(self, BrickletSoundIntensity.FUNCTION_GET_INTENSITY, (), '', 'H')
 

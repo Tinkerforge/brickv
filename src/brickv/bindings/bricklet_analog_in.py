@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-27.      #
+# This file was automatically generated on 2013-08-30.      #
 #                                                           #
 # Bindings Version 2.0.10                                    #
 #                                                           #
@@ -270,7 +270,7 @@ class BrickletAnalogIn(Device):
         """
         return self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_GET_RANGE, (), '', 'B')
 
-    def set_averaging(self, length):
+    def set_averaging(self, average):
         """
         Set the length of a averaging for the voltage value.
         
@@ -282,7 +282,7 @@ class BrickletAnalogIn(Device):
         
         .. versionadded:: 2.0.3~(Plugin)
         """
-        self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_AVERAGING, (length,), 'B', '')
+        self.ipcon.send_request(self, BrickletAnalogIn.FUNCTION_SET_AVERAGING, (average,), 'B', '')
 
     def get_averaging(self):
         """
