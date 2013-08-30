@@ -97,8 +97,8 @@ class AnalogIn(PluginBase):
     def get_range_async(self, range):
         self.combo_range.setCurrentIndex(self.combo_range.findData(range))
 
-    def get_averaging_async(self, length):
-        self.spin_average.setValue(length)
+    def get_averaging_async(self, average):
+        self.spin_average.setValue(average)
 
     def start(self):
         if self.version >= (2, 0, 1):
