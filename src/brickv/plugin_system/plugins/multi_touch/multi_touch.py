@@ -57,21 +57,60 @@ class MultiTouch(PluginBase, Ui_MultiTouch):
             self.mt_label_9, 
             self.mt_label_10, 
             self.mt_label_11, 
+            self.mt_label_12, 
         ]
         
         for label in self.mt_labels:
             label.setStyleSheet("QLabel { background-color : black; }");
         
+        self.cbs = [
+            self.cb_0, 
+            self.cb_1, 
+            self.cb_2, 
+            self.cb_3, 
+            self.cb_4, 
+            self.cb_5, 
+            self.cb_6, 
+            self.cb_7, 
+            self.cb_8, 
+            self.cb_9, 
+            self.cb_10, 
+            self.cb_11, 
+            self.cb_12,  
+        ]
+        
+        for cb in self.cbs:
+            cb.stateChanged.connect(self.state_changed)
+            
+        self.button_recalibrate.pressed.connect(self.recalibrate_pressed)
+        
+    def recalibrate_pressed(self):
+        self.mt.recalibrate()
+        
+    def state_changed(self, state):
+        enabled_electrodes = 0
+        for i in range(13):
+            if self.cbs[i].isChecked():
+                enabled_electrodes |= 1 << i
+        
+        self.mt.set_electrode_config(enabled_electrodes)
+        
     def cb_touch_state(self, state):
-        for i in range(12):
+        for i in range(13):
             if state & (1 << i):
                 self.mt_labels[i].setStyleSheet("QLabel { background-color : green; }");
             else:
                 self.mt_labels[i].setStyleSheet("QLabel { background-color : black; }");
-        print bin(state)
+                
+    def cb_electrode_config(self, enabled_electrodes):
+        for i in range(13):
+            if enabled_electrodes & (1 << i):
+                self.cbs[i].setChecked(True)
+            else:
+                self.cbs[i].setChecked(False)
 
     def start(self):
-        pass
+        async_call(self.mt.get_electrode_config, None, self.cb_electrode_config, self.increase_error_count)
         
     def stop(self):
         pass
