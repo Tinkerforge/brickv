@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>685</width>
-    <height>298</height>
+    <height>344</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -888,6 +888,13 @@
     </layout>
    </item>
    <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QLabel" name="label">
@@ -951,6 +958,107 @@
      </item>
      <item>
       <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Counter From:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="box_from">
+       <property name="minimum">
+        <number>-999</number>
+       </property>
+       <property name="maximum">
+        <number>9999</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>To:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="box_to">
+       <property name="minimum">
+        <number>-999</number>
+       </property>
+       <property name="maximum">
+        <number>9999</number>
+       </property>
+       <property name="value">
+        <number>1000</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Increment:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="box_increment">
+       <property name="minimum">
+        <number>-999</number>
+       </property>
+       <property name="maximum">
+        <number>9999</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>1</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Length (ms):</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="box_length">
+       <property name="maximum">
+        <number>65535</number>
+       </property>
+       <property name="value">
+        <number>100</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_start">
+       <property name="text">
+        <string>Start</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>

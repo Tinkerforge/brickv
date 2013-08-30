@@ -27,9 +27,10 @@ from async_call import async_call
 
 from ui_segment_display_4x7 import Ui_SegmentDisplay4x7
 
-from PyQt4.QtGui import QLabel, QVBoxLayout
+from PyQt4.QtCore import QTimer, pyqtSignal
     
 class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
+    qtcb_finished = pyqtSignal()
     STYLE_OFF = "QPushButton { background-color: grey; color: grey; }"
     STYLE_ON  = ["QPushButton { background-color: #880000; color: #880000; }",
                  "QPushButton { background-color: #990000; color: #990000; }",
@@ -46,6 +47,10 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
         self.setupUi(self)
 
         self.sd4x7 = BrickletSegmentDisplay4x7(uid, ipcon)
+        
+        self.qtcb_finished.connect(self.cb_counter_finished)
+        self.sd4x7.register_callback(self.sd4x7.CALLBACK_COUNTER_FINISHED,
+                                     self.qtcb_finished.emit)
         
         self.digit0 = [self.digit0_segment0, self.digit0_segment1, self.digit0_segment2, self.digit0_segment3, self.digit0_segment4, self.digit0_segment5, self.digit0_segment6]
         self.digit1 = [self.digit1_segment0, self.digit1_segment1, self.digit1_segment2, self.digit1_segment3, self.digit1_segment4, self.digit1_segment5, self.digit1_segment6]
@@ -65,6 +70,7 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
         
         self.brightness = 7
         self.box_brightness.currentIndexChanged.connect(self.brightness_changed)
+        self.button_start.pressed.connect(self.start_pressed)
         
         def get_pressed_func(digit, segment):
             return lambda: self.button_pressed(digit, segment)
@@ -79,6 +85,31 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
             button = self.points[i]
             button.setStyleSheet(self.STYLE_OFF);
             button.pressed.connect(get_pressed_func(4, i))
+            
+            
+        self.counter_timer = QTimer()
+        self.counter_timer.timeout.connect(self.update_counter)
+        self.counter_timer.setInterval(100)
+            
+    def cb_counter_finished(self):
+        self.counter_timer.stop()
+        async_call(self.sd4x7.get_segments, None, self.cb_get_segments, self.increase_error_count)
+            
+    def update_counter(self):
+        async_call(self.sd4x7.get_segments, None, self.cb_get_segments, self.increase_error_count)
+            
+    def start_pressed(self):
+        fr = self.box_from.value()
+        to = self.box_to.value()
+        increment = self.box_increment.value()
+        length = self.box_length.value()
+        
+        self.counter_timer.start()
+        
+        if ((length == 0) or (increment == 0) or (increment > 0 and fr > to) or (increment < 0 and fr < to)):
+            return
+        
+        self.sd4x7.start_counter(fr, to, increment, length)
             
     def brightness_changed(self, brightness):
         if self.brightness != brightness:
@@ -98,6 +129,7 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
                     self.digits[d][s].setStyleSheet(self.STYLE_ON[self.brightness])
 
     def button_pressed(self, digit, segment):
+        self.counter_timer.stop()
         if digit == 4:
             if self.digit_state[4][0]:
                 self.digits[4][0].setStyleSheet(self.STYLE_OFF)
@@ -127,15 +159,16 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
                 if self.digit_state[d][s]:
                     segments[3-d] |= (1 << s)
                     
+                    
         self.sd4x7.set_segments(segments, self.brightness, self.digit_state[4][0])
         
     def cb_get_segments(self, value):
-        segments, brightness, clock_points = value
+        segments, brightness, colon = value
         
         self.brightness = brightness
         self.box_brightness.setCurrentIndex(self.brightness)
         
-        if clock_points:
+        if colon:
             self.digit_state[4][0] = True
             self.digits[4][0].setStyleSheet(self.STYLE_ON[self.brightness])
             self.digit_state[4][0] = True
@@ -149,11 +182,11 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
         for d in range(4):
             for s in range(7):
                 if segments[d] & (1 << s):
-                    self.digit_state[d][s] = True
-                    self.digits[d][s].setStyleSheet(self.STYLE_ON[self.brightness])
+                    self.digit_state[3-d][s] = True
+                    self.digits[3-d][s].setStyleSheet(self.STYLE_ON[self.brightness])
                 else:
-                    self.digit_state[d][s] = False
-                    self.digits[d][s].setStyleSheet(self.STYLE_OFF)
+                    self.digit_state[3-d][s] = False
+                    self.digits[3-d][s].setStyleSheet(self.STYLE_OFF)
 
     def start(self):
         async_call(self.sd4x7.get_segments, None, self.cb_get_segments, self.increase_error_count)
