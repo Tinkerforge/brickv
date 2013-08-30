@@ -44,10 +44,10 @@ class PiezoSpeaker(PluginBase):
         self.ps.register_callback(self.ps.CALLBACK_MORSE_CODE_FINISHED,
                                   self.qtcb_morse_finished.emit)
         
-        self.frequency_label = QLabel('Frequency Value (0-513): ')
+        self.frequency_label = QLabel('Frequency Value (0-512): ')
         self.frequency_box = QSpinBox()
         self.frequency_box.setMinimum(0)
-        self.frequency_box.setMaximum(513)
+        self.frequency_box.setMaximum(512)
         self.frequency_box.setValue(100)
         self.frequency_layout = QHBoxLayout()
         self.frequency_layout.addWidget(self.frequency_label)
@@ -128,13 +128,14 @@ class PiezoSpeaker(PluginBase):
             self.ps.beep(40, self.scale_time)
         except ip_connection.Error:
             return
-        self.scale_time += 25
-        if self.scale_time > 7000:
-            self.scale_time = 460
+        
+        self.scale_time += 1
+        if self.scale_time > 512:
+            self.scale_time = 0
             self.scale_timer.stop()
         
     def scale_pressed(self):
-        self.scale_time = 460
+        self.scale_time = 0
         self.scale_timeout()
         self.scale_timer.start()
         self.beep_button.setDisabled(True)
