@@ -63,31 +63,71 @@ class BrickletLEDStrip(Device):
 
     def set_rgb_values(self, index, length, r, g, b):
         """
+        Sets the *rgb* values for the LEDs with the given *length* starting 
+        from *index*.
         
+        The maximum length is 16, the index goes from 0 to 319 and the rgb values
+        have 8 bits each.
+        
+        Example: If you set index to 5, length to 3, r to [255, 0, 0], 
+        g to [0, 255, 0] and b to [0, 0, 255] the LEDs with index 5, 6
+        and 7 will get the color red, green and blue respectively.
+        
+        The colors will be transfered to actual LEDs when the next
+        frame duration ends, see :func:`SetFrameDuration`.
+        
+        Generic approach: 
+        
+        * Set the frame duration to a value that represents
+          the number of frames per second you want to achieve. 
+        
+        * Set all of the LED colors for one frame.
+        
+        * Wait for the :func:`FrameRendered` callback.
+        
+        * Set all of the LED colors for next frame.
+        
+        * Wait for the :func:`FrameRendered` callback.
+        
+        * and so on.
+        
+        This approach ensures that you can change the LED colors with
+        a fixed frame rate.
         """
         self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_RGB_VALUES, (index, length, r, g, b), 'H B 16B 16B 16B', '')
 
     def get_rgb_values(self, index, length):
         """
+        Returns the rgb with the given *length* starting from the
+        given *index*.
         
+        The values are the last values that were set by :func:`SetRGBValues`.
         """
         return GetRGBValues(*self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_RGB_VALUES, (index, length), 'H B', '16B 16B 16B'))
 
     def set_frame_duration(self, duration):
         """
+        Sets the frame duration in ms.
         
+        Example: If you want to achieve 20 frames per second, you should
+        set the frame duration to 50ms (50ms * 20 = 1 second). 
+        
+        For an explanation of the general approach see :func:`SetRGBValues`.
+        
+        Default value: 100ms (10 frames per second).
         """
         self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_FRAME_DURATION, (duration,), 'H', '')
 
     def get_frame_duration(self):
         """
-        
+        Returns the frame duration as set by :func:`SetFrameDuration`.
         """
         return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_FRAME_DURATION, (), '', 'H')
 
     def get_supply_voltage(self):
         """
-        
+        Returns the current supply voltage of the LEDs. The voltage is given
+        in mv.
         """
         return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_SUPPLY_VOLTAGE, (), '', 'H')
 

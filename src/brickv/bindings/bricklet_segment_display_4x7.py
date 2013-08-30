@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-28.      #
+# This file was automatically generated on 2013-08-30.      #
 #                                                           #
 # Bindings Version 2.0.10                                    #
 #                                                           #
@@ -32,9 +32,12 @@ class BrickletSegmentDisplay4x7(Device):
 
     DEVICE_IDENTIFIER = 237
 
+    CALLBACK_COUNTER_FINISHED = 5
 
     FUNCTION_SET_SEGMENTS = 1
     FUNCTION_GET_SEGMENTS = 2
+    FUNCTION_START_COUNTER = 3
+    FUNCTION_GET_COUNTER_VALUE = 4
     FUNCTION_GET_IDENTITY = 255
 
 
@@ -49,8 +52,12 @@ class BrickletSegmentDisplay4x7(Device):
 
         self.response_expected[BrickletSegmentDisplay4x7.FUNCTION_SET_SEGMENTS] = BrickletSegmentDisplay4x7.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletSegmentDisplay4x7.FUNCTION_GET_SEGMENTS] = BrickletSegmentDisplay4x7.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletSegmentDisplay4x7.FUNCTION_START_COUNTER] = BrickletSegmentDisplay4x7.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletSegmentDisplay4x7.FUNCTION_GET_COUNTER_VALUE] = BrickletSegmentDisplay4x7.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletSegmentDisplay4x7.CALLBACK_COUNTER_FINISHED] = BrickletSegmentDisplay4x7.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletSegmentDisplay4x7.FUNCTION_GET_IDENTITY] = BrickletSegmentDisplay4x7.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+        self.callback_formats[BrickletSegmentDisplay4x7.CALLBACK_COUNTER_FINISHED] = ''
 
     def set_segments(self, segments, brightness, colon):
         """
@@ -77,6 +84,31 @@ class BrickletSegmentDisplay4x7(Device):
         """
         return GetSegments(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_SEGMENTS, (), '', '4B B ?'))
 
+    def start_counter(self, value_from, value_to, increment, length):
+        """
+        Starts a counter with the *from* value that counts to the *to*
+        value with the each step incremented by *increment*.
+        The *length* of the increment is given in ms.
+        
+        Example: If you set *from* to 0, *to* to 100, *increment* to 1 and
+        *length* to 1000, a counter that goes from 0 to 100 with 1 second
+        pause between each increment will be started.
+        
+        The maximum values for *from*, *to* and *increment* is 9999, 
+        the minimum value is -999.
+        
+        You can stop the counter at every time by calling :func:`SetSegments`.
+        """
+        self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_START_COUNTER, (value_from, value_to, increment, length), 'h h h I', '')
+
+    def get_counter_value(self):
+        """
+        Returns the counter value that is currently shown on the display.
+        
+        If there is no counter running a 0 will be returned.
+        """
+        return self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_COUNTER_VALUE, (), '', 'H')
+
     def get_identity(self):
         """
         Returns the UID, the UID where the Bricklet is connected to, 
@@ -90,5 +122,11 @@ class BrickletSegmentDisplay4x7(Device):
         .. versionadded:: 2.0.0~(Plugin)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletSegmentDisplay4x7.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+
+    def register_callback(self, id, callback):
+        """
+        Registers a callback with ID *id* to the function *callback*.
+        """
+        self.registered_callbacks[id] = callback
 
 SegmentDisplay4x7 = BrickletSegmentDisplay4x7 # for backward compatibility

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-28.      #
+# This file was automatically generated on 2013-08-30.      #
 #                                                           #
 # Bindings Version 2.0.10                                    #
 #                                                           #
@@ -79,6 +79,10 @@ class BrickletMoisture(Device):
 
     def get_moisture_value(self):
         """
+        Returns the current moisture value. The value has a range of
+        0 to 4095. A small value corresponds to little moisture, a big
+        value corresponds to much moisture.
+        
         If you want to get the moisture value periodically, it is recommended 
         to use the callback :func:`Moisture` and set the period with 
         :func:`SetMoistureCallbackPeriod`.
@@ -153,15 +157,21 @@ class BrickletMoisture(Device):
 
     def set_moving_average(self, average):
         """
-        TODO
+        Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
+        for the moisture value.
         
-        Max value: 100
+        Setting the length to 0 will turn the averaging completely off. With less
+        averaging,  there is more noise on the data.
+        
+        The range for the averaging is 0-100.
+        
+        The default value is 100.
         """
         self.ipcon.send_request(self, BrickletMoisture.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
 
     def get_moving_average(self):
         """
-        
+        Returns the length moving average as set by :func:`SetMovingAverage`.
         """
         return self.ipcon.send_request(self, BrickletMoisture.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
 

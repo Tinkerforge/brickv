@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-28.      #
+# This file was automatically generated on 2013-08-30.      #
 #                                                           #
 # Bindings Version 2.0.10                                    #
 #                                                           #
@@ -60,7 +60,7 @@ class BrickletPiezoSpeaker(Device):
     def beep(self, duration, frequency):
         """
         Beeps with the given frequency value for the duration in ms. For example: 
-        If you set a duration of 1000, with a frequency value of 100
+        If you set a duration of 1000, with a frequency value of 220
         the piezo buzzer will beep for one second with a frequency of
         approximately 2 kHz.
         
