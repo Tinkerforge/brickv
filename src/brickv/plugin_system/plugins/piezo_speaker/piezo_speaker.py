@@ -25,7 +25,7 @@ from plugin_system.plugin_base import PluginBase
 from bindings import ip_connection
 from bindings.bricklet_piezo_speaker import BrickletPiezoSpeaker
 
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QSpinBox
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QSpinBox, QApplication
 from PyQt4.QtCore import pyqtSignal, QTimer
 
 class PiezoSpeaker(PluginBase):
@@ -44,11 +44,11 @@ class PiezoSpeaker(PluginBase):
         self.ps.register_callback(self.ps.CALLBACK_MORSE_CODE_FINISHED,
                                   self.qtcb_morse_finished.emit)
         
-        self.frequency_label = QLabel('Frequency Value (0-512): ')
+        self.frequency_label = QLabel('Frequency (585Hz-7100Hz): ')
         self.frequency_box = QSpinBox()
-        self.frequency_box.setMinimum(0)
-        self.frequency_box.setMaximum(512)
-        self.frequency_box.setValue(100)
+        self.frequency_box.setMinimum(585)
+        self.frequency_box.setMaximum(7100)
+        self.frequency_box.setValue(1000)
         self.frequency_layout = QHBoxLayout()
         self.frequency_layout.addWidget(self.frequency_label)
         self.frequency_layout.addWidget(self.frequency_box)
@@ -73,14 +73,19 @@ class PiezoSpeaker(PluginBase):
         self.morse_layout.addWidget(self.morse_edit)
         self.morse_layout.addWidget(self.morse_button)
         
+        self.calibrate_button = QPushButton('Calibrate')
         self.scale_button = QPushButton('Play Scale')
         self.scale_layout = QHBoxLayout()
         self.scale_layout.addWidget(self.scale_button)
+        self.scale_layout.addWidget(self.calibrate_button)
         self.scale_layout.addStretch()
+        
+        self.calibrate_layout = QHBoxLayout()
+        self.calibrate_layout.addStretch()
         
         self.scale_timer = QTimer()
         self.scale_timer.setInterval(25)
-        self.scale_time = 460
+        self.scale_time = 585
         
         self.status_label = QLabel('')
         
@@ -88,6 +93,7 @@ class PiezoSpeaker(PluginBase):
         self.morse_button.pressed.connect(self.morse_pressed)
         self.scale_button.pressed.connect(self.scale_pressed)
         self.scale_timer.timeout.connect(self.scale_timeout)
+        self.calibrate_button.pressed.connect(self.calibrate_pressed)
         
         layout = QVBoxLayout(self)
         layout.addLayout(self.frequency_layout)
@@ -95,6 +101,7 @@ class PiezoSpeaker(PluginBase):
         layout.addLayout(self.morse_layout)
         layout.addLayout(self.scale_layout)
         layout.addWidget(self.status_label)
+#        layout.addLayout(self.calibrate_layout)
         layout.addStretch()
 
     def start(self):
@@ -122,6 +129,13 @@ class PiezoSpeaker(PluginBase):
         self.scale_button.setDisabled(False)
         self.status_label.setText('')
         
+    def calibrate_pressed(self):
+        self.status_label.setText('Calibrating')
+        self.status_label.repaint()
+        QApplication.processEvents()
+        self.ps.calibrate()
+        self.status_label.setText('New calibration stored in EEPROM')
+        
     def scale_timeout(self):
         try:
             self.status_label.setText(str(self.scale_time) + 'Hz')
@@ -129,13 +143,13 @@ class PiezoSpeaker(PluginBase):
         except ip_connection.Error:
             return
         
-        self.scale_time += 1
-        if self.scale_time > 512:
-            self.scale_time = 0
+        self.scale_time += 50
+        if self.scale_time > 7100:
+            self.scale_time = 585
             self.scale_timer.stop()
         
     def scale_pressed(self):
-        self.scale_time = 0
+        self.scale_time = 585
         self.scale_timeout()
         self.scale_timer.start()
         self.beep_button.setDisabled(True)
