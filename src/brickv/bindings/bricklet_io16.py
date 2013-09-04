@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-30.      #
+# This file was automatically generated on 2013-09-02.      #
 #                                                           #
 # Bindings Version 2.0.10                                    #
 #                                                           #
@@ -238,9 +238,9 @@ class BrickletIO16(Device):
         """
         self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_SELECTED_VALUES, (port, selection_mask, value_mask), 'c B B', '')
 
-    def get_edge_count(self, port, reset_counter):
+    def get_edge_count(self, pin, reset_counter):
         """
-        Returns the current value of the edge counter for pin 0 of the selected port.
+        Returns the current value of the edge counter for the selected pin on port A.
         You can configure the edges that are counted with :func:`SetEdgeCountConfig`.
         
         If you set the reset counter to *true*, the count is set back to 0
@@ -248,12 +248,12 @@ class BrickletIO16(Device):
         
         .. versionadded:: 2.0.3~(Plugin)
         """
-        return self.ipcon.send_request(self, BrickletIO16.FUNCTION_GET_EDGE_COUNT, (port, reset_counter), 'c ?', 'I')
+        return self.ipcon.send_request(self, BrickletIO16.FUNCTION_GET_EDGE_COUNT, (pin, reset_counter), 'B ?', 'I')
 
-    def set_edge_count_config(self, port, edge_type, debounce):
+    def set_edge_count_config(self, pin, edge_type, debounce):
         """
-        Configures the edge counter for pin 0 of the selected port. Pin 1-7 don't
-        support edge counting.
+        Configures the edge counter for the selected pin of port A. Pins 0 and 1
+        are available for edge counting.
         
         The edge type parameter configures if rising edges, falling edges or
         both are counted if the pin is configured for input. Possible edge types are:
@@ -271,16 +271,16 @@ class BrickletIO16(Device):
         
         .. versionadded:: 2.0.3~(Plugin)
         """
-        self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_EDGE_COUNT_CONFIG, (port, edge_type, debounce), 'c B B', '')
+        self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_EDGE_COUNT_CONFIG, (pin, edge_type, debounce), 'B B B', '')
 
-    def get_edge_count_config(self, port):
+    def get_edge_count_config(self, pin):
         """
-        Returns the edge type and debounce time for pin 0 of the selected port as set by
+        Returns the edge type and debounce time for the selected pin of port A as set by
         :func:`SetEdgeCountConfig`.
         
         .. versionadded:: 2.0.3~(Plugin)
         """
-        return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletIO16.FUNCTION_GET_EDGE_COUNT_CONFIG, (port,), 'c', 'B B'))
+        return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletIO16.FUNCTION_GET_EDGE_COUNT_CONFIG, (pin,), 'B', 'B B'))
 
     def get_identity(self):
         """
