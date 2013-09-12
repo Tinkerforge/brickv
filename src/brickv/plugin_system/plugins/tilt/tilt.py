@@ -79,10 +79,10 @@ class Tilt(PluginBase):
             self.image_label.setPixmap(self.closed_vibrationg_pixmap)
 
     def start(self):
-        self.tilt.enable_tilt_state_callback()
+        async_call(self.tilt.enable_tilt_state_callback, None, None, self.increase_error_count)
         
     def stop(self):
-        self.tilt.disable_tilt_state_callback()
+        async_call(self.tilt.disable_tilt_state_callback, None, None, self.increase_error_count)
 
     def get_url_part(self):
         return 'tilt'
