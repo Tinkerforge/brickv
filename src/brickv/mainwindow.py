@@ -197,8 +197,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         keys_to_remove = []
         for key in infos.infos:
             if infos.infos[key].type in ('brick', 'bricklet'):
-                infos.infos[key].plugin.stop()
-                infos.infos[key].plugin.destroy()
+                try:
+                    infos.infos[key].plugin.stop()
+                except:
+                    pass
+                
+                try:
+                    infos.infos[key].plugin.destroy()
+                except:
+                    pass
                 keys_to_remove.append(key)
                 
         for key in keys_to_remove:
@@ -411,8 +418,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         try:
                             self.tab_widget.setCurrentIndex(0)
                             if device_info.plugin:
-                                device_info.plugin.stop()
-                                device_info.plugin.destroy()
+                                try:
+                                    device_info.plugin.stop()
+                                except:
+                                    pass
+                                
+                                try:
+                                    device_info.plugin.destroy()
+                                except:
+                                    pass
+
                             i = self.tab_for_uid(device_info.uid)
                             self.tab_widget.removeTab(i)
                         except:
