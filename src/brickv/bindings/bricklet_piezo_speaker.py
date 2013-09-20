@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-04.      #
+# This file was automatically generated on 2013-09-19.      #
 #                                                           #
-# Bindings Version 2.0.10                                    #
+# Bindings Version 2.0.11                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -90,7 +90,7 @@ class BrickletPiezoSpeaker(Device):
 
     def calibrate(self):
         """
-        The Pizeo Speaker Bricklet can play 512 different tones. This function
+        The Piezo Speaker Bricklet can play 512 different tones. This function
         plays each tone and measures the exact frequency back. The result is a
         mapping between setting value and frequency. This mapping is stored
         in the EEPROM and loaded on startup.

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-28.      #
+# This file was automatically generated on 2013-09-19.      #
 #                                                           #
-# Bindings Version 2.0.10                                    #
+# Bindings Version 2.0.11                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -128,7 +128,7 @@ class BrickletVoltageCurrent(Device):
     def get_current(self):
         """
         Returns the current. The value is in mA
-        and between 0mA and 20000mA.
+        and between -20000mA and 20000mA.
         
         If you want to get the current periodically, it is recommended to use the
         callback :func:`Current` and set the period with 

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-08-30.      #
+# This file was automatically generated on 2013-09-19.      #
 #                                                           #
-# Bindings Version 2.0.10                                    #
+# Bindings Version 2.0.11                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -112,7 +112,7 @@ class BrickletIndustrialDigitalIn4(Device):
         pins on the Digital In 4 on port B are assigned to 4-7. It is now possible
         to call :func:`GetValue` and read out two Bricklets at the same time.
         
-        Changing the group configuration resets the alle edge counter configurations
+        Changing the group configuration resets all edge counter configurations
         and values.
         """
         self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_SET_GROUP, (group,), '4c', '')
