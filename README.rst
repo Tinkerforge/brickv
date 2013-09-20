@@ -13,6 +13,7 @@ After that you should be able to start brickv from source with
 
 The following libraries are required:
 
+* python
 * python-qt4
 * python-qt4-gl
 * python-qwt5-qt4
