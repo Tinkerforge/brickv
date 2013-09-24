@@ -30,7 +30,6 @@ from PyQt4.QtGui import QErrorMessage, QInputDialog
 from PyQt4.QtCore import QTimer, Qt, pyqtSignal
 
 from speedometer import SpeedoMeter
-from threading import Thread
 import time
 
 from ui_stepper import Ui_Stepper
@@ -98,9 +97,7 @@ class Stepper(PluginBase, Ui_Stepper):
         self.qtcb_under_voltage.connect(self.cb_under_voltage)
         self.stepper.register_callback(self.stepper.CALLBACK_UNDER_VOLTAGE, 
                                        self.qtcb_under_voltage.emit)
-        
-        self.update_data_async_thread = None
-        
+
         self.ste = 0
         self.pos = 0
         self.current_velocity = 0
