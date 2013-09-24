@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-11.      #
+# This file was automatically generated on 2013-09-24.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -68,13 +68,12 @@ class BrickletDualButton(Device):
         """
         Sets the state of the LEDs. Possible states are:
         
-        * 0 = AutoToggleOn: Enables auto toggle with enabled LED.
-        * 1 = AutoToggleOff: Activates auto toggle with disabled LED.
+        * 0 = AutoToggleOn: Enables auto toggle with initially enabled LED.
+        * 1 = AutoToggleOff: Activates auto toggle with initially disabled LED.
         * 2 = On: Enables LED (auto toggle is disabled).
         * 3 = Off: Disables LED (auto toggle is disabled).
         
-        In auto toggle mode the LED is toggled automatically whenever the
-        button is pressed.
+        In auto toggle mode the LED is toggled automatically at each press of a button.
         """
         self.ipcon.send_request(self, BrickletDualButton.FUNCTION_SET_LED_STATE, (led_l, led_r), 'B B', '')
 

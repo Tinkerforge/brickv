@@ -64,10 +64,9 @@ class MotionDetector(PluginBase):
         self.label.setText("No Motion Detected")
         
     def get_motion_detected_async(self, motion):
-        print "get_motion_detected_async", motion
-        if motion == 0:
+        if motion == self.md.MOTION_DETECTED:
             self.cb_motion_detected()
-        elif motion == 1:
+        elif motion == self.md.MOTION_NOT_DETECTED:
             self.cb_detection_cycle_ended()
 
     def start(self):

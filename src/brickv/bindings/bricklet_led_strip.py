@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-11.      #
+# This file was automatically generated on 2013-09-24.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -80,15 +80,10 @@ class BrickletLEDStrip(Device):
         
         * Set the frame duration to a value that represents
           the number of frames per second you want to achieve. 
-        
         * Set all of the LED colors for one frame.
-        
         * Wait for the :func:`FrameRendered` callback.
-        
         * Set all of the LED colors for next frame.
-        
         * Wait for the :func:`FrameRendered` callback.
-        
         * and so on.
         
         This approach ensures that you can change the LED colors with
@@ -126,8 +121,7 @@ class BrickletLEDStrip(Device):
 
     def get_supply_voltage(self):
         """
-        Returns the current supply voltage of the LEDs. The voltage is given
-        in mv.
+        Returns the current supply voltage of the LEDs. The voltage is given in mv.
         """
         return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_SUPPLY_VOLTAGE, (), '', 'H')
 

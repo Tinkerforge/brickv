@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-11.      #
+# This file was automatically generated on 2013-09-24.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -123,10 +123,9 @@ class BrickletHallEffect(Device):
         """
         Sets the number of edges until an interrupt is invoked.
         
-        If edges is set to n, an interrupt is invoked for every nth detected
-        edge.
+        If *edges* is set to n, an interrupt is invoked for every n-th detected edge.
         
-        If edges is set to 0, the interrupt is disabled.
+        If *edges* is set to 0, the interrupt is disabled.
         
         Default value is 0.
         """
@@ -158,7 +157,7 @@ class BrickletHallEffect(Device):
 
     def edge_interrupt(self):
         """
-        This callback is triggered every nth count, as configured with
+        This callback is triggered every n-th count, as configured with
         :func:`SetEdgeInterrupt`. The parameters are the
         current count and the current value (see :func:`GetValue` and :func:`GetEdgeCount`).
         """

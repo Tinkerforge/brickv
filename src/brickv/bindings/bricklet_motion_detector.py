@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-11.      #
+# This file was automatically generated on 2013-09-24.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -37,8 +37,8 @@ class BrickletMotionDetector(Device):
     FUNCTION_GET_MOTION_DETECTED = 1
     FUNCTION_GET_IDENTITY = 255
 
-    MOTION_DETECTED = 0
-    MOTION_NOT_DETECTED = 1
+    MOTION_NOT_DETECTED = 0
+    MOTION_DETECTED = 1
 
     def __init__(self, uid, ipcon):
         """
@@ -59,7 +59,7 @@ class BrickletMotionDetector(Device):
 
     def get_motion_detected(self):
         """
-        Returns 0 if a motion was detected. How long this returns 0 after a motion
+        Returns 1 if a motion was detected. How long this returns 1 after a motion
         was detected can be adjusted with one of the small potentiometers on the
         Motion Detector Bricklet, see here. TODO: ADD LINK
         """
