@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 
 samba.py: Atmel SAM-BA flash protocol implementation
 
@@ -40,12 +40,52 @@ elif sys.platform == 'darwin':
         return ports
 elif sys.platform == 'win32':
     import win32com.client
+    import win32con
+    import winerror
+    import pywintypes
+    from win32file import CreateFile
+    from win32api import CloseHandle
+
+    wmi = None
+
     def get_serial_ports():
-        wmi = win32com.client.GetObject('winmgmts:')
+        success = False
         ports = []
-        for port in wmi.InstancesOf('Win32_SerialPort'):
-            ports.append((port.DeviceID, port.Name, ''))
+        global wmi
+
+        # try WMI first
+        try:
+            if wmi is None:
+                wmi = win32com.client.GetObject('winmgmts:')
+
+            for port in wmi.InstancesOf('Win32_SerialPort'):
+                ports.append((port.DeviceID, port.Name, ''))
+
+            success = True
+        except:
+            pass
+
+        if success:
+            return ports
+
+        ports = []
+
+        # fallback to simple filename probing, if WMI fails
+        for i in range(1, 256):
+            # FIXME: get friendly names
+            name = 'COM%u' % i
+            try:
+                hFile = CreateFile('\\\\.\\' + name, win32con.GENERIC_READ | win32con.GENERIC_WRITE,
+                                   0, None, win32con.OPEN_EXISTING, 0, None)
+                CloseHandle(hFile)
+                ports.append((name, name, name))
+            except pywintypes.error as e:
+                if e[0] in [winerror.ERROR_ACCESS_DENIED, winerror.ERROR_GEN_FAILURE,
+                            winerror.ERROR_SHARING_VIOLATION, winerror.ERROR_SEM_TIMEOUT]:
+                    ports.append((name, name, name))
+
         return ports
+
 else:
     def get_serial_ports():
         return []
