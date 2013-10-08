@@ -62,7 +62,7 @@ SELECT = 'Select...'
 CUSTOM = 'Custom...'
 FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
 NO_BRICK = 'No Brick found'
-NO_BOOTLOADER = 'No Brick in Bootloader found' 
+NO_BOOTLOADER = 'No Brick in Bootloader found'
 
 def error_to_name(e):
     if e.value == Error.TIMEOUT:
@@ -79,28 +79,28 @@ def error_to_name(e):
 class ProgressWrapper:
     def __init__(self, progress):
         self.progress = progress
-    
+
     def reset(self, title, length):
         self.progress.setLabelText(title)
         self.progress.setMaximum(length)
         self.progress.setValue(0)
         self.progress.show()
-            
+
     def update(self, value):
         self.progress.setValue(value)
         QApplication.processEvents()
-    
+
     def cancel(self):
         self.progress.cancel()
-        
+
     def setMaximum(self, value):
         self.progress.setMaximum(value)
-        
+
 class FlashingWindow(QFrame, Ui_widget_flashing):
     def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
         self.setupUi(self)
-        
+
         self.firmware_infos = {}
         self.plugin_infos = {}
         self.brick_infos = []
@@ -118,7 +118,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.combo_plugin.currentIndexChanged.connect(self.plugin_changed)
         self.button_plugin_save.pressed.connect(self.plugin_save_pressed)
         self.button_plugin_browse.pressed.connect(self.plugin_browse_pressed)
-        
+
         self.update_tool_label.hide()
         self.no_connection_label.hide()
 
@@ -131,7 +131,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.plugin_changed(0)
 
         self.brick_changed(0)
-        
+
         self.update_tree_view_model_labels = ['Name', 'UID', 'Installed', 'Latest']
         self.update_tree_view_model = QStandardItemModel()
         self.update_tree_view.setModel(self.update_tree_view_model)
@@ -377,8 +377,6 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         items = {}
         for info in infos.infos.values():
             if info.type == 'brick':
-                #self.brick_infos.append(info)
-                #self.combo_brick.addItem(info.get_combo_item())
                 items[info.get_combo_item()] = info
 
         for item in sorted(items.keys()):
@@ -800,8 +798,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
     def plugin_changed(self, index):
         self.update_ui_state()
-        
-    def download_bricklet_firmware(self, progress, url_part, name, version, popup=False):
+
+    def download_bricklet_plugin(self, progress, url_part, name, version, popup=False):
         progress.setLabelText('Downloading {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
         progress.setMaximum(0)
         progress.show()
@@ -846,10 +844,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             if popup:
                 self.popup_fail('Bricklet', 'Could not download {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
             return None
-        
+
         return plugin
-    
-    def write_bricklet_firmware(self, plugin, device, port, name, progress, popup=True):
+
+    def write_bricklet_plugin(self, plugin, device, port, name, progress, popup=True):
         # Write
         progress.setLabelText('Writing plugin: ' + name)
         progress.setMaximum(0)
@@ -918,9 +916,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
             time.sleep(0.015)
             QApplication.processEvents()
-        
+
         return True
-        
+
     def plugin_save_pressed(self):
         progress = self.create_progress_bar('Flashing')
         current_text = self.combo_plugin.currentText()
@@ -942,7 +940,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             url_part = str(self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString())
             name = self.plugin_infos[url_part].name
             version = self.plugin_infos[url_part].firmware_version_latest
-            plugin = self.download_bricklet_firmware(progress, url_part, name, version)
+            plugin = self.download_bricklet_plugin(progress, url_part, name, version)
             if not plugin:
                 return
 
@@ -950,12 +948,12 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         device, port = self.current_device_and_port()
 
         url_part = str(self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString())
-        
+
         if current_text == CUSTOM:
-            if not self.write_bricklet_firmware(plugin, device, port, os.path.split(plugin_file_name)[-1], progress):
+            if not self.write_bricklet_plugin(plugin, device, port, os.path.split(plugin_file_name)[-1], progress):
                 return
         else:
-            if not self.write_bricklet_firmware(plugin, device, port, name, progress):
+            if not self.write_bricklet_plugin(plugin, device, port, name, progress):
                 return
 
         progress.cancel()
@@ -999,53 +997,60 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                         return device_info
 
         progress = self.create_progress_bar('Auto-Updating Bricklets')
-        
+
         bricks_to_reset = set()
-        
+
         for device_info in infos.infos.values():
             if device_info.type == 'bricklet':
                 if device_info.protocol_version == 2 and device_info.firmware_version_installed < device_info.firmware_version_latest:
-                    plugin = self.download_bricklet_firmware(progress, device_info.url_part, device_info.name, device_info.firmware_version_latest)
-                    if plugin:
-                        brick = brick_for_bricklet(device_info)
-                        if self.write_bricklet_firmware(plugin, brick.plugin.device, device_info.position, device_info.name, progress):
-                            bricks_to_reset.add(brick)
-                        else:
-                            progress.cancel()
-                            self.refresh_updates_pressed()
-                            return
+                    plugin = self.download_bricklet_plugin(progress, device_info.url_part, device_info.name, device_info.firmware_version_latest)
+
+                    if not plugin:
+                        progress.cancel()
+                        self.refresh_updates_pressed()
+                        return
+
+                    brick = brick_for_bricklet(device_info)
+                    if self.write_bricklet_plugin(plugin, brick.plugin.device, device_info.position, device_info.name, progress):
+                        bricks_to_reset.add(brick)
                     else:
                         progress.cancel()
                         self.refresh_updates_pressed()
                         return
             elif device_info.type == 'brick':
                 for port in device_info.bricklets:
-                    if device_info.bricklets[port]:
-                        if device_info.bricklets[port].protocol_version == 1 and device_info.bricklets[port].firmware_version_installed < device_info.bricklets[port].firmware_version_latest:
-                            plugin = self.download_bricklet_firmware(progress, device_info.bricklets[port].url_part, device_info.bricklets[port].name, device_info.bricklets[port].firmware_version_latest)
-                            if plugin:
-                                brick = brick_for_bricklet(device_info.bricklets[port])
-                                if self.write_bricklet_firmware(plugin, brick.plugin.device, port, device_info.bricklets[port].name, progress):
-                                    bricks_to_reset.add(brick)
-                                else:
-                                    progress.cancel()
-                                    self.refresh_updates_pressed()
-                                    return
-                            else:
-                                progress.cancel()
-                                self.refresh_updates_pressed()
-                                return
-                                    
+                    if not device_info.bricklets[port]:
+                        continue
+
+                    if device_info.bricklets[port].protocol_version == 1 and \
+                       device_info.bricklets[port].firmware_version_installed < device_info.bricklets[port].firmware_version_latest:
+                        plugin = self.download_bricklet_plugin(progress, device_info.bricklets[port].url_part,
+                                                               device_info.bricklets[port].name,
+                                                               device_info.bricklets[port].firmware_version_latest)
+
+                        if not plugin:
+                            progress.cancel()
+                            self.refresh_updates_pressed()
+                            return
+
+                        brick = brick_for_bricklet(device_info.bricklets[port])
+                        if self.write_bricklet_plugin(plugin, brick.plugin.device, port, device_info.bricklets[port].name, progress):
+                            bricks_to_reset.add(brick)
+                        else:
+                            progress.cancel()
+                            self.refresh_updates_pressed()
+                            return
+
         for brick in bricks_to_reset:
             try:
                 brick.plugin.device.reset()
             except:
                 pass
-        
+
         progress.setLabelText('Waiting for Bricks to reset')
         progress.setMaximum(400)
         progress.setValue(0)
-        
+
         for i in range(400):
             time.sleep(0.03)
             progress.setValue(i)
@@ -1138,14 +1143,14 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 QApplication.processEvents()
 
             return sorted(versions)
-        
+
         def get_color_for_device(device):
             if device.firmware_version_installed >= device.firmware_version_latest:
                 return None, False
-            
+
             if device.firmware_version_installed[0] <= 1:
                 return QBrush(Qt.red), True
-            
+
             return QBrush(QColor(255, 160, 55)), True
 
         progress.setLabelText('Checking for updates on tinkerforge.com')
@@ -1190,9 +1195,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         for device_uid, device_info in infos.infos.iteritems():
             if device_info.type == 'brick':
-                parent = [QStandardItem(device_info.name), 
-                          QStandardItem(device_info.uid), 
-                          QStandardItem(get_version_string(device_info.firmware_version_installed)), 
+                parent = [QStandardItem(device_info.name),
+                          QStandardItem(device_info.uid),
+                          QStandardItem(get_version_string(device_info.firmware_version_installed)),
                           QStandardItem(get_version_string(device_info.firmware_version_latest))]
 
                 color, update = get_color_for_device(device_info)
@@ -1260,9 +1265,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                         parent[0].appendRow(child)
 
             elif device_info.type == 'tool' and 'Brick Viewer' in device_info.name:
-                parent = [QStandardItem(device_info.name), 
-                          QStandardItem(''), 
-                          QStandardItem(get_version_string(device_info.firmware_version_installed)), 
+                parent = [QStandardItem(device_info.name),
+                          QStandardItem(''),
+                          QStandardItem(get_version_string(device_info.firmware_version_installed)),
                           QStandardItem(get_version_string(device_info.firmware_version_latest))]
 
                 color, update = get_color_for_device(device_info)
@@ -1270,7 +1275,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                     self.update_tool_label.show()
                 else:
                     self.update_tool_label.hide()
-                    
+
                 for item in parent:
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                     item.setData(color, Qt.BackgroundRole)
