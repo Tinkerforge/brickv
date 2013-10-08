@@ -2,7 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 
 mainwindow.py: New/Removed Bricks are handled here and plugins shown if clicked
 
@@ -229,9 +229,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_flashing_window()
         self.flashing_window.show()
         self.flashing_window.refresh_updates_pressed()
-
-        if first:
-            self.flashing_window.refresh_firmware_and_plugin_infos()
 
     def advanced_pressed(self):
         if self.advanced_window is None:
