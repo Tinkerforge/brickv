@@ -784,9 +784,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         if i < 0:
             self.combo_plugin.setCurrentIndex(0)
-            return
-
-        self.combo_plugin.setCurrentIndex(i)
+        else:
+            self.combo_plugin.setCurrentIndex(i)
 
         b = self.combo_brick.currentIndex()
         p = self.combo_port.currentIndex()
