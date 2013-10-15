@@ -27,7 +27,7 @@ from bindings import ip_connection
 from bindings.bricklet_distance_ir import BrickletDistanceIR
 from async_call import async_call
 
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFileDialog, QApplication, QPolygonF
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFileDialog, QApplication, QPolygonF, QMessageBox
 from PyQt4.QtCore import pyqtSignal, Qt, QPointF
 from PyQt4.Qwt5 import QwtSpline
 
@@ -71,7 +71,7 @@ class DistanceIR(PluginBase):
         self.sample_layout = QHBoxLayout()
         self.sample_label = QLabel('Sample Points:')
         self.sample_edit = QLineEdit();
-        self.sample_file = QPushButton("File..");
+        self.sample_file = QPushButton("File...");
         self.sample_save = QPushButton("Save");
         
         self.sample_file.pressed.connect(self.sample_file_pressed)
@@ -169,10 +169,11 @@ class DistanceIR(PluginBase):
                 self.dist.set_sampling_point(i, value)
                 set_value = self.dist.get_sampling_point(i)
                 if set_value != value:
-                    self.sample_edit.setText("Error while writing sample point " + str(i))
-                    
-                self.sample_edit.setText("writing sample point, value: " +  str((i, value)))
-                    
+                    QMessageBox.critical(self, "Sample points", "Error while writing sample point " + str(i), QMessageBox.Ok)
+                    break
+
+                self.sample_edit.setText("Writing sample point, value: " +  str((i, value)))
+
                 QApplication.processEvents()
             self.sample_edit.setText(old_text)
         except ip_connection.Error:
@@ -184,15 +185,35 @@ class DistanceIR(PluginBase):
         text = self.sample_edit.text()
         text = unicode(text.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
 
-        with open(text) as f:
+        with open(text, 'rb') as f:
             for line in f:
-                if line[0] != '#':
-                    s = line[:-1].split(": ")
+                c = line.find('#')
+                if c != -1:
+                    line = line[:c]
+
+                line = line.strip()
+
+                if len(line) == 0:
+                    continue
+
+                if ':' not in line:
+                   QMessageBox.critical(self, "Sample points", "Sample points file is malformed (error code 1)", QMessageBox.Ok)
+                   return
+
+                s = line.split(':')
+
+                if len(s) != 2:
+                   QMessageBox.critical(self, "Sample points", "Sample points file is malformed (error code 2)", QMessageBox.Ok)
+                   return
+
+                try:
                     x.append(int(s[1]))
                     y.append(int(s[0]))
-                    
+                except:
+                   QMessageBox.critical(self, "Sample points", "Sample points file is malformed (error code 3)", QMessageBox.Ok)
+                   return
+
         self.sample_interpolate(x, y)
-        
     def get_current_value(self):
         return self.current_value
 
