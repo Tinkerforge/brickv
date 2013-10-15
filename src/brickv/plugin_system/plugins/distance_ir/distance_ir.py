@@ -167,11 +167,6 @@ class DistanceIR(PluginBase):
             for i in range(DistanceIR.NUM_VALUES):
                 value = int(round(py[i]*100))
                 self.dist.set_sampling_point(i, value)
-                set_value = self.dist.get_sampling_point(i)
-                if set_value != value:
-                    QMessageBox.critical(self, "Sample points", "Error while writing sample point " + str(i), QMessageBox.Ok)
-                    break
-
                 self.sample_edit.setText("Writing sample point, value: " +  str((i, value)))
 
                 QApplication.processEvents()
