@@ -193,6 +193,9 @@ class DistanceIR(PluginBase):
 
                 line = line.strip()
 
+                if line.startswith('\xEF\xBB\xBF'): # strip UTF-8 BOM, Internet Explorer adds it to text files
+                    line = line[3:]
+
                 if len(line) == 0:
                     continue
 
@@ -214,6 +217,7 @@ class DistanceIR(PluginBase):
                    return
 
         self.sample_interpolate(x, y)
+
     def get_current_value(self):
         return self.current_value
 
