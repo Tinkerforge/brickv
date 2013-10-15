@@ -202,4 +202,4 @@ class DistanceIR(PluginBase):
 
     def cb_analog(self, value):
         self.analog_value = value
-        self.analog_label.setText(str(self.analog_value/100))
+        self.analog_label.setText(str(self.analog_value))
