@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-11.      #
+# This file was automatically generated on 2013-10-16.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -221,7 +221,7 @@ class BrickServo(Device):
     def set_output_voltage(self, voltage):
         """
         Sets the output voltages with which the servos are driven in mV.
-        The minimum output voltage is 5000mV and the maximum output voltage is 
+        The minimum output voltage is 2000mV and the maximum output voltage is 
         9000mV.
         
         .. note::

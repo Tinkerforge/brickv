@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-24.      #
+# This file was automatically generated on 2013-10-16.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -75,7 +75,7 @@ class BrickletHallEffect(Device):
 
     def get_value(self):
         """
-        Returns *true* if a magnetic field of 40 Gauss (4mT) or greater is detected.
+        Returns *true* if a magnetic field of 35 Gauss (3.5mT) or greater is detected.
         """
         return self.ipcon.send_request(self, BrickletHallEffect.FUNCTION_GET_VALUE, (), '', '?')
 
@@ -98,8 +98,8 @@ class BrickletHallEffect(Device):
         * 1 = falling
         * 2 = both
         
-        A magnetic field of 40 Gauss (4mT) or greater causes a falling edge and a
-        magnetic field of 30 Gauss (3mT) or smaller causes a rising edge.
+        A magnetic field of 35 Gauss (3.5mT) or greater causes a falling edge and a
+        magnetic field of 25 Gauss (2.5mT) or smaller causes a rising edge.
         
         If a magnet comes near the Bricklet the signal goes low (falling edge), if
         a magnet is removed from the vicinity the signal goes high (rising edge).

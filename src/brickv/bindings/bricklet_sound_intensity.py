@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-11.      #
+# This file was automatically generated on 2013-10-16.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -79,9 +79,7 @@ class BrickletSoundIntensity(Device):
         0 to 4095.
         
         The value corresponds to the `upper envelop <http://en.wikipedia.org/wiki/Envelope_(waves)>`__
-        of the signal of the microphone capsule. The sensitivity of this
-        signal can be configured with the small potentiometer on the
-        Sound Intensity Bricklet.
+        of the signal of the microphone capsule.
         
         If you want to get the intensity periodically, it is recommended to use the
         callback :func:`Intensity` and set the period with 

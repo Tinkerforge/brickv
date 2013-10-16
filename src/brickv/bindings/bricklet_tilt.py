@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-11.      #
+# This file was automatically generated on 2013-10-16.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -68,6 +68,11 @@ class BrickletTilt(Device):
         * 0 = Closed: The ball in the tilt switch closes the circuit.
         * 1 = Open: The ball in the tilt switch does not close the circuit.
         * 2 = Closed Vibrating: The tilt switch is in motion (rapid change between open and close).
+        
+        .. image:: /Images/Bricklets/bricklet_tilt_mechanics.jpg
+           :scale: 100 %
+           :alt: Tilt states
+           :align: center
         """
         return self.ipcon.send_request(self, BrickletTilt.FUNCTION_GET_TILT_STATE, (), '', 'B')
 
