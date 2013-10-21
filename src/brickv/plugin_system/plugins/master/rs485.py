@@ -103,10 +103,10 @@ class RS485(QWidget, Ui_RS485):
         pass
 
     def popup_ok(self):
-        QMessageBox.information(self, "Configuration", "Successfully saved configuration", QMessageBox.Ok)
+        QMessageBox.information(self, 'Configuration', 'Successfully saved configuration.\nNew configuration will be used after reset of the Master Brick.', QMessageBox.Ok)
 
     def popup_fail(self):
-        QMessageBox.critical(self, "Configuration", "Could not save configuration", QMessageBox.Ok)
+        QMessageBox.critical(self, 'Configuration', 'Could not save configuration.', QMessageBox.Ok)
 
     def save_pressed(self):
         speed = self.speed_spinbox.value()

@@ -406,11 +406,11 @@ class Wifi(QWidget, Ui_Wifi):
         if index >= 0:
             self.wifi_encryption.setCurrentIndex(index)
 
-    def popup_ok(self, message="Successfully saved configuration"):
-        QMessageBox.information(self, "Configuration", message, QMessageBox.Ok)
+    def popup_ok(self, message='Successfully saved configuration.\nNew configuration will be used after reset of the Master Brick.'):
+        QMessageBox.information(self, 'Configuration', message, QMessageBox.Ok)
 
-    def popup_fail(self, message="Could not save configuration"):
-        QMessageBox.critical(self, "Configuration", message, QMessageBox.Ok)
+    def popup_fail(self, message='Could not save configuration.'):
+        QMessageBox.critical(self, 'Configuration', message, QMessageBox.Ok)
 
     def show_status_pressed(self):
         if self.wifi_status is None:
@@ -636,7 +636,7 @@ class Wifi(QWidget, Ui_Wifi):
 
         if test_ok:
             if previous_power_mode != power_mode and power_mode == 1:
-                self.popup_ok("Successfully saved configuration.\nPower Mode is not changed permanently, it will automatically switch back to Full Speed on reset.")
+                self.popup_ok('Successfully saved configuration.\nPower Mode is not changed permanently, it will automatically switch back to Full Speed on reset.')
             else:
                 self.popup_ok()
         else:

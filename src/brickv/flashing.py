@@ -650,7 +650,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             return
 
         if uid == uid_read:
-            self.popup_ok('Bricklet', 'Successfully wrote UID')
+            self.popup_ok('Bricklet', 'Successfully wrote UID.\nNew UID will be used after reset of the connected Brick.')
         else:
             self.popup_fail('Bricklet', 'Could not write UID: Verification failed')
 
@@ -876,9 +876,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         progress.cancel()
 
         if current_text == CUSTOM:
-            self.popup_ok('Bricklet', 'Successfully flashed plugin')
+            self.popup_ok('Bricklet', 'Successfully flashed plugin.\nNew plugin will be used after reset of the connected Brick.')
         else:
-            self.popup_ok('Bricklet', 'Successfully flashed {0} Bricklet plugin {1}.{2}.{3}'.format(name, *version))
+            self.popup_ok('Bricklet', 'Successfully flashed {0} Bricklet plugin {1}.{2}.{3}.\nNew plugin will be used after reset of the connected Brick.'.format(name, *version))
 
     def current_device_and_port(self):
         port_names = ['a', 'b', 'c', 'd']

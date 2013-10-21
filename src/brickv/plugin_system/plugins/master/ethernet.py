@@ -210,8 +210,8 @@ class Ethernet(QWidget, Ui_Ethernet):
             self.update_data_counter = 0
             async_call(self.master.get_ethernet_status, None, self.get_ethernet_status_async, self.parent.increase_error_count)
             
-    def popup_ok(self, message="Successfully saved configuration"):
+    def popup_ok(self, message='Successfully saved configuration.\nNew configuration will be used after reset of the Master Brick.'):
         QMessageBox.information(self, "Configuration", message, QMessageBox.Ok)
 
-    def popup_fail(self, message="Could not save configuration"):
+    def popup_fail(self, message='Could not save configuration'):
         QMessageBox.critical(self, "Configuration", message, QMessageBox.Ok)

@@ -116,10 +116,10 @@ class Chibi(QWidget, Ui_Chibi):
         self.new_max_count()
 
     def popup_ok(self):
-        QMessageBox.information(self, "Configuration", "Successfully saved configuration", QMessageBox.Ok)
+        QMessageBox.information(self, "Configuration", 'Successfully saved configuration.\nNew configuration will be used after reset of the Master Brick.', QMessageBox.Ok)
 
     def popup_fail(self):
-        QMessageBox.critical(self, "Configuration", "Could not save configuration", QMessageBox.Ok)
+        QMessageBox.critical(self, "Configuration", "Could not save configuration.", QMessageBox.Ok)
 
     def new_max_count(self):
         channel = int(self.chibi_channel.currentText())
