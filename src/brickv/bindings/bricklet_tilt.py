@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-10-16.      #
+# This file was automatically generated on 2013-10-23.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -73,6 +73,7 @@ class BrickletTilt(Device):
            :scale: 100 %
            :alt: Tilt states
            :align: center
+           :target: ../../_images/Bricklets/bricklet_tilt_mechanics.jpg
         """
         return self.ipcon.send_request(self, BrickletTilt.FUNCTION_GET_TILT_STATE, (), '', 'B')
 

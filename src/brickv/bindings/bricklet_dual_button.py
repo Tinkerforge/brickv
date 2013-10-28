@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-24.      #
+# This file was automatically generated on 2013-10-23.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -38,6 +38,7 @@ class BrickletDualButton(Device):
     FUNCTION_SET_LED_STATE = 1
     FUNCTION_GET_LED_STATE = 2
     FUNCTION_GET_BUTTON_STATE = 3
+    FUNCTION_SET_SELECTED_LED_STATE = 5
     FUNCTION_GET_IDENTITY = 255
 
     LED_STATE_AUTO_TOGGLE_ON = 0
@@ -46,6 +47,8 @@ class BrickletDualButton(Device):
     LED_STATE_OFF = 3
     BUTTON_STATE_PRESSED = 0
     BUTTON_STATE_RELEASED = 1
+    LED_LEFT = 0
+    LED_RIGHT = 1
 
     def __init__(self, uid, ipcon):
         """
@@ -60,6 +63,7 @@ class BrickletDualButton(Device):
         self.response_expected[BrickletDualButton.FUNCTION_GET_LED_STATE] = BrickletDualButton.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDualButton.FUNCTION_GET_BUTTON_STATE] = BrickletDualButton.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletDualButton.CALLBACK_STATE_CHANGED] = BrickletDualButton.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletDualButton.FUNCTION_SET_SELECTED_LED_STATE] = BrickletDualButton.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletDualButton.FUNCTION_GET_IDENTITY] = BrickletDualButton.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletDualButton.CALLBACK_STATE_CHANGED] = 'B B B B'
@@ -74,6 +78,12 @@ class BrickletDualButton(Device):
         * 3 = Off: Disables LED (auto toggle is disabled).
         
         In auto toggle mode the LED is toggled automatically at each press of a button.
+        
+        If you just want to set one of the LEDs and don't know the current state
+        of the other LED, you can get the state with :func:`GetLEDState` or you
+        can use :func:`SetSelectedLEDState`.
+        
+        The default value is (1, 1).
         """
         self.ipcon.send_request(self, BrickletDualButton.FUNCTION_SET_LED_STATE, (led_l, led_r), 'B B', '')
 
@@ -91,6 +101,16 @@ class BrickletDualButton(Device):
         * 1 = released
         """
         return GetButtonState(*self.ipcon.send_request(self, BrickletDualButton.FUNCTION_GET_BUTTON_STATE, (), '', 'B B'))
+
+    def set_selected_led_state(self, led, state):
+        """
+        Sets the state of the selected LED (0 or 1). 
+        
+        The other LED remains untouched.
+        
+        .. versionadded:: 2.0.0~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletDualButton.FUNCTION_SET_SELECTED_LED_STATE, (led, state), 'B B', '')
 
     def get_identity(self):
         """
