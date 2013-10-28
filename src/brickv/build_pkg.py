@@ -1,14 +1,15 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
-brickv (Brick Viewer) 
+brickv (Brick Viewer)
+Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
-              2011 Bastian Nordmeyer <bastian@tinkerforge.com>
+Copyright (C) 2011 Bastian Nordmeyer <bastian@tinkerforge.com>
 
 build_pkg.py: Package builder for Brick Viewer
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -28,7 +29,7 @@ Boston, MA 02111-1307, USA.
 #       py2exe
 #       nsis
 #       win redistributables vcredist under winxp
-#   
+#
 #   run build scripts in all folders
 #   run python build_pkg.py win to build the windows exe
 #   final data is stored in folder "dist"
@@ -43,7 +44,7 @@ from distutils.core import setup
 import os
 import glob
 import shutil
- 
+
 DESCRIPTION = 'Brick Viewer'
 NAME = 'Brickv'
 
@@ -77,10 +78,10 @@ def build_macosx_pkg():
                     additional_data_files.append((os.path.join(dirname.replace(arg[1],"")) , [os.path.join(dirname, n)]))
                 else: # keep full path
                     additional_data_files.append((os.path.join(dirname), [os.path.join(dirname, n)]))
-    
+
     os.path.walk(os.path.normcase("../build_data/macos/"), visitor, ('y',os.path.normcase("../build_data/macos/")))
     os.path.walk("plugin_system", visitor, ('n',"plugin_system"))
-    
+
     additional_data_files.append((os.path.join('.'), [os.path.join('.', 'brickv-icon.png')]))
 
     additional_modules = ['bmp_to_pixmap']
@@ -221,7 +222,7 @@ def build_windows_pkg():
 
     import py2exe
     os.system("python build_all_ui.py")
-    
+
     data_files = []
     def visitor(arg, dirname, names):
         for n in names:
@@ -230,10 +231,10 @@ def build_windows_pkg():
                     data_files.append((os.path.join(dirname.replace(arg[1],"")) , [os.path.join(dirname, n)]))
                 else: # keep full path
                     data_files.append((os.path.join(dirname) , [os.path.join(dirname, n)]))
-    
+
     os.path.walk(os.path.normcase("../build_data/Windows/"), visitor, ('y', os.path.normcase("../build_data/Windows/")))
     os.path.walk("plugin_system", visitor, ('n',"plugin_system"))
-    
+
     data_files.append( ( os.path.join('.') , [os.path.join('.', 'brickv-icon.png')] ) )
 
     additional_modules = ['bmp_to_pixmap']
@@ -292,7 +293,7 @@ def build_windows_pkg():
           zipfile = None,
           windows = [{'script' : 'main.py', 'icon_resources' : [(0, os.path.normcase("../build_data/Windows/brickv-icon.ico"))]}]
     )
-    
+
     # build nsis
     lines = []
     for line in file('../build_data/Windows/nsis/brickv_installer.nsi', 'rb').readlines():
@@ -318,7 +319,7 @@ def build_linux_pkg():
         shutil.rmtree(dest_path)
 
     shutil.copytree(src_path, dest_path)
-    
+
     build_data_path = os.path.join(os.path.split(src_path)[0], 'build_data/linux')
     os.chdir(build_data_path)
 
