@@ -54,7 +54,7 @@ def build_macosx_pkg():
     PWD = os.path.dirname(os.path.realpath(__file__))
     RES_PATH = os.path.join(PWD, 'dist', '%s.app' % 'brickv', 'Contents', 'Resources')
     data_files = [
-        ("../build_data/macos/", glob.glob(os.path.join(PWD, "../build_data/macos/", "*.nib"))),
+        ("../build_data/macosx/", glob.glob(os.path.join(PWD, "../build_data/macosx/", "*.nib"))),
         #('/usr/share/applications',['foo.desktop']),
     ]
     packages = find_packages()
@@ -79,7 +79,7 @@ def build_macosx_pkg():
                 else: # keep full path
                     additional_data_files.append((os.path.join(dirname), [os.path.join(dirname, n)]))
 
-    os.path.walk(os.path.normcase("../build_data/macos/"), visitor, ('y',os.path.normcase("../build_data/macos/")))
+    os.path.walk(os.path.normcase("../build_data/macosx/"), visitor, ('y', os.path.normcase("../build_data/macosx/")))
     os.path.walk("plugin_system", visitor, ('n',"plugin_system"))
 
     additional_data_files.append((os.path.join('.'), [os.path.join('.', 'brickv-icon.png')]))
@@ -107,7 +107,7 @@ def build_macosx_pkg():
         ]
 
         OPTIONS = {'argv_emulation' : True,
-                   'iconfile' : '../build_data/macos/brickv-icon.icns',
+                   'iconfile' : '../build_data/macosx/brickv-icon.icns',
                    'site_packages' : True,
                    'includes' : ["atexit",
                                  "sip",
@@ -160,7 +160,7 @@ def build_macosx_pkg():
         )
 
     def qt_menu_patch():
-        src = os.path.join(PWD, '../build_data/macos/', 'qt_menu.nib')
+        src = os.path.join(PWD, '..', 'build_data', 'macosx', 'qt_menu.nib')
         dst = os.path.join(RES_PATH, 'qt_menu.nib')
         if not os.path.exists(dst):
             shutil.copytree(src, dst)
@@ -196,7 +196,7 @@ os.environ['RESOURCEPATH'] = os.path.dirname(os.path.realpath(__file__))
 
         # HACK: fix wrong position of plugin_system
         src = os.path.join(RES_PATH, "plugin_system")
-        dst = os.path.join(RES_PATH, "../MacOS/plugin_system")
+        dst = os.path.join(RES_PATH, '..', 'MacOS', 'plugin_system')
         shutil.copytree(src, dst)
 
     ACTION_CREATE = len(sys.argv) == 3 and sys.argv[-1] == "build"
