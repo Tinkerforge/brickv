@@ -143,6 +143,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.exit_brickv()
 
     def exit_brickv(self, signl=None, frme=None):
+        try:
+            uid = self.tab_widget.widget(self.last_tab)._uid
+            infos.infos[uid].plugin.stop()
+        except:
+            pass
+
         host = str(self.combo_host.currentText())
         history = []
 
