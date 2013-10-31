@@ -85,6 +85,8 @@ class MultiTouch(PluginBase, Ui_MultiTouch):
         self.button_recalibrate.pressed.connect(self.recalibrate_pressed)
         
     def recalibrate_pressed(self):
+        value = self.sensitivity_spinbox.value()
+        self.mt.set_electrode_sensitivity(value)
         self.mt.recalibrate()
         
     def state_changed(self, state):
@@ -108,8 +110,12 @@ class MultiTouch(PluginBase, Ui_MultiTouch):
                 self.cbs[i].setChecked(True)
             else:
                 self.cbs[i].setChecked(False)
+                
+    def cb_electrode_sensitivity(self, sensitivity):
+        self.sensitivity_spinbox.setValue(sensitivity)
 
     def start(self):
+        async_call(self.mt.get_electrode_sensitivity, None, self.cb_electrode_sensitivity, self.increase_error_count)
         async_call(self.mt.get_electrode_config, None, self.cb_electrode_config, self.increase_error_count)
         
     def stop(self):

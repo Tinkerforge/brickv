@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-11.      #
+# This file was automatically generated on 2013-10-31.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -37,6 +37,8 @@ class BrickletMultiTouch(Device):
     FUNCTION_RECALIBRATE = 2
     FUNCTION_SET_ELECTRODE_CONFIG = 3
     FUNCTION_GET_ELECTRODE_CONFIG = 4
+    FUNCTION_SET_ELECTRODE_SENSITIVITY = 6
+    FUNCTION_GET_ELECTRODE_SENSITIVITY = 7
     FUNCTION_GET_IDENTITY = 255
 
 
@@ -54,6 +56,8 @@ class BrickletMultiTouch(Device):
         self.response_expected[BrickletMultiTouch.FUNCTION_SET_ELECTRODE_CONFIG] = BrickletMultiTouch.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletMultiTouch.FUNCTION_GET_ELECTRODE_CONFIG] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMultiTouch.CALLBACK_TOUCH_STATE] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletMultiTouch.FUNCTION_SET_ELECTRODE_SENSITIVITY] = BrickletMultiTouch.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletMultiTouch.FUNCTION_GET_ELECTRODE_SENSITIVITY] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletMultiTouch.FUNCTION_GET_IDENTITY] = BrickletMultiTouch.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletMultiTouch.CALLBACK_TOUCH_STATE] = 'H'
@@ -112,6 +116,30 @@ class BrickletMultiTouch(Device):
         Returns the electrode configuration, as set by :func:`SetElectrodeConfig`.
         """
         return self.ipcon.send_request(self, BrickletMultiTouch.FUNCTION_GET_ELECTRODE_CONFIG, (), '', 'H')
+
+    def set_electrode_sensitivity(self, sensitivity):
+        """
+        Sets the sensitivity of the electrodes. An electrode with a high sensitivity
+        will register a touch earlier then an electrode with a low sensitivity.
+        
+        If you build a big electrode you might need to decrease the sensitivity, since
+        the area that can be charged will get bigger. If you want to be able to
+        activate an electrode from further away you need to increase the sensitivity.
+        
+        After a new sensitivity is set, you likely want to call :func:`Recalibrate`
+        to calibrate the electrodes with the newly defined sensitivity.
+        
+        The valid sensitivity value range is 5-201.
+        
+        The default sensitivity value is 181.
+        """
+        self.ipcon.send_request(self, BrickletMultiTouch.FUNCTION_SET_ELECTRODE_SENSITIVITY, (sensitivity,), 'B', '')
+
+    def get_electrode_sensitivity(self):
+        """
+        Returns the current sensitivity, as set by :func:`SetElectrodeSensitivity`.
+        """
+        return self.ipcon.send_request(self, BrickletMultiTouch.FUNCTION_GET_ELECTRODE_SENSITIVITY, (), '', 'B')
 
     def get_identity(self):
         """
