@@ -157,7 +157,7 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
         for d in range(4):
             for s in range(7):
                 if self.digit_state[d][s]:
-                    segments[3-d] |= (1 << s)
+                    segments[d] |= (1 << s)
                     
                     
         self.sd4x7.set_segments(segments, self.brightness, self.digit_state[4][0])
@@ -182,18 +182,17 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
         for d in range(4):
             for s in range(7):
                 if segments[d] & (1 << s):
-                    self.digit_state[3-d][s] = True
-                    self.digits[3-d][s].setStyleSheet(self.STYLE_ON[self.brightness])
+                    self.digit_state[d][s] = True
+                    self.digits[d][s].setStyleSheet(self.STYLE_ON[self.brightness])
                 else:
-                    self.digit_state[3-d][s] = False
-                    self.digits[3-d][s].setStyleSheet(self.STYLE_OFF)
+                    self.digit_state[d][s] = False
+                    self.digits[d][s].setStyleSheet(self.STYLE_OFF)
 
     def start(self):
         async_call(self.sd4x7.get_segments, None, self.cb_get_segments, self.increase_error_count)
-        pass
         
     def stop(self):
-        pass
+        self.counter_timer.stop()
 
     def get_url_part(self):
         return 'segment_display_4x7'
