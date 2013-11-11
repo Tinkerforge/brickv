@@ -22,13 +22,13 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings import ip_connection
 from PyQt4.QtCore import pyqtSignal, QTimer
-from ui_io4 import Ui_IO4
-from async_call import async_call
+from brickv.plugin_system.plugins.io4.ui_io4 import Ui_IO4
+from brickv.async_call import async_call
 
-from bindings.bricklet_io4 import BrickletIO4
+from brickv.bindings.bricklet_io4 import BrickletIO4
         
 class IO4(PluginBase, Ui_IO4):
     qtcb_interrupt = pyqtSignal(int, int)

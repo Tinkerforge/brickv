@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from distance_ir import DistanceIR
+from brickv.plugin_system.plugins.distance_ir.distance_ir import DistanceIR
 
 device_class = DistanceIR

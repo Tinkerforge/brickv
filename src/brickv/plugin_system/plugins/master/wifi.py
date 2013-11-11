@@ -29,11 +29,10 @@ import os
 import time
 import sys
 
-from ui_wifi import Ui_Wifi
+from brickv.plugin_system.plugins.master.ui_wifi import Ui_Wifi
 
-from wifi_status import WifiStatus
-from async_call import async_call
-import infos
+from brickv.plugin_system.plugins.master.wifi_status import WifiStatus
+from brickv.async_call import async_call
 
 class Wifi(QWidget, Ui_Wifi):
     def __init__(self, parent):

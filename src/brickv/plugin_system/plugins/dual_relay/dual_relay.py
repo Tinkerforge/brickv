@@ -21,15 +21,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
-from bindings.bricklet_dual_relay import BrickletDualRelay
-from async_call import async_call
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings import ip_connection
+from brickv.bindings.bricklet_dual_relay import BrickletDualRelay
+from brickv.async_call import async_call
 
 from PyQt4.QtCore import pyqtSignal, QTimer
 
-from ui_dual_relay import Ui_DualRelay
-from bmp_to_pixmap import bmp_to_pixmap
+from brickv.plugin_system.plugins.dual_relay.ui_dual_relay import Ui_DualRelay
+from brickv.bmp_to_pixmap import bmp_to_pixmap
 
 class DualRelay(PluginBase, Ui_DualRelay):
     qtcb_monoflop = pyqtSignal(int, bool)

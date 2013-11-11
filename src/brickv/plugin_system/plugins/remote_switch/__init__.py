@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from remote_switch import RemoteSwitch
+from brickv.plugin_system.plugins.remote_switch.remote_switch import RemoteSwitch
 
 device_class = RemoteSwitch

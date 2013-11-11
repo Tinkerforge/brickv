@@ -21,11 +21,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings.bricklet_hall_effect import BrickletHallEffect
-from async_call import async_call
-from plot_widget import PlotWidget
-from ui_hall_effect import Ui_HallEffect
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
+from brickv.async_call import async_call
+from brickv.plot_widget import PlotWidget
+from brickv.plugin_system.plugins.hall_effect.ui_hall_effect import Ui_HallEffect
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt

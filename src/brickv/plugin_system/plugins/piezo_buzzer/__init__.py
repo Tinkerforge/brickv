@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from piezo_buzzer import PiezoBuzzer
+from brickv.plugin_system.plugins.piezo_buzzer.piezo_buzzer import PiezoBuzzer
 
 device_class = PiezoBuzzer

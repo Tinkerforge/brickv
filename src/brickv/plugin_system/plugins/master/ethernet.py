@@ -24,10 +24,9 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtGui import QWidget, QMessageBox, QSpinBox, QRegExpValidator, QLabel
 from PyQt4.QtCore import QRegExp, QString
 
-from ui_ethernet import Ui_Ethernet
+from brickv.plugin_system.plugins.master.ui_ethernet import Ui_Ethernet
 
-from async_call import async_call
-import infos
+from brickv.async_call import async_call
 
 class SpinBoxHex(QSpinBox):
     def __init__(self, parent=None):

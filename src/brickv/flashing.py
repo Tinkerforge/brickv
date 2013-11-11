@@ -23,14 +23,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from ui_flashing import Ui_widget_flashing
-from bindings.ip_connection import IPConnection, Error, base58encode, base58decode, BASE58, uid64_to_uid32
-from imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
+from brickv.ui_flashing import Ui_widget_flashing
+from brickv.bindings.ip_connection import IPConnection, Error, base58encode, base58decode, BASE58, uid64_to_uid32
+from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
 from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QApplication, QColor, QFrame, QFileDialog, QMessageBox, QProgressDialog, QStandardItemModel, QStandardItem, QBrush
-from samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_ports
-from infos import get_version_string
-import infos
+from brickv.samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_ports
+from brickv.infos import get_version_string
+from brickv import infos
 
 import sys
 import os

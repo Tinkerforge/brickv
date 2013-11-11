@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from industrial_digital_in_4 import IndustrialDigitalIn4
+from brickv.plugin_system.plugins.industrial_digital_in_4.industrial_digital_in_4 import IndustrialDigitalIn4
 
 device_class = IndustrialDigitalIn4

@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from industrial_dual_0_20ma import IndustrialDual020mA
+from brickv.plugin_system.plugins.industrial_dual_0_20ma.industrial_dual_0_20ma import IndustrialDual020mA
 
 device_class = IndustrialDual020mA

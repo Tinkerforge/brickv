@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import pyqtSignal
 
-from ui_calibrate_accelerometer import Ui_calibrate_accelerometer
+from brickv.plugin_system.plugins.imu.ui_calibrate_accelerometer import Ui_calibrate_accelerometer
 
 import time
 

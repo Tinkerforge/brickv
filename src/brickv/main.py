@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-  
 """
 brickv (Brick Viewer) 
-Copyright (C) 2009-2010 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2009-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 main.py: Entry file for Brick Viewer
 
@@ -23,21 +23,30 @@ Boston, MA 02111-1307, USA.
 """
 
 import sys
-from program_path import ProgramPath
+import logging
+
+# Allow brickv to be directly started by calling "main.py"
+# without "brickv" beeing in the path already
+if not 'brickv' in sys.modules:
+    import os.path
+    head, tail = os.path.split(os.path.dirname(os.path.realpath(__file__)))
+    print head
+    if not head in sys.path:
+        sys.path.append(head)
+
+from brickv.program_path import ProgramPath
 
 # Append path to sys.path (such that plugins can import ip_connection)
 __path = ProgramPath.program_path()
 if not __path in sys.path:
     sys.path.insert(0, __path)
 
-import logging
-import config
-
 from PyQt4.QtGui import QApplication
 from PyQt4.QtCore import QEvent
 
-from mainwindow import MainWindow
-from async_call import ASYNC_EVENT, async_event_handler
+from brickv import config
+from brickv.mainwindow import MainWindow
+from brickv.async_call import ASYNC_EVENT, async_event_handler
 
 logging.basicConfig( 
     level = config.LOGGING_LEVEL, 
@@ -52,8 +61,11 @@ class BrickViewer(QApplication):
                 async_event_handler()
         return super(BrickViewer, self).notify(receiver, event)
 
-if __name__ == "__main__":
+def main():
     brickv = BrickViewer(sys.argv)
     main = MainWindow()
     main.show()
     sys.exit(brickv.exec_())
+
+if __name__ == "__main__":
+    main()

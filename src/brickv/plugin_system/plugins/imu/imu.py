@@ -23,17 +23,17 @@ Boston, MA 02111-1307, USA.
 
 #import logging
 
-from plugin_system.plugin_base import PluginBase
-from bindings.brick_imu import BrickIMU
-from async_call import async_call
-from plot_widget import PlotWidget
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.brick_imu import BrickIMU
+from brickv.async_call import async_call
+from brickv.plot_widget import PlotWidget
 
 from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy
 from PyQt4.QtCore import Qt, QTimer
 import PyQt4.Qwt5 as Qwt
 
-from ui_imu import Ui_IMU
-from calibrate_window import CalibrateWindow
+from brickv.plugin_system.plugins.imu.ui_imu import Ui_IMU
+from brickv.plugin_system.plugins.imu.calibrate_window import CalibrateWindow
 
 class Plot(Qwt.QwtPlot):
     def __init__(self, y_axis, plot_list, *args):

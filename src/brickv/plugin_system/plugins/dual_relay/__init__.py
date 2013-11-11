@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from dual_relay import DualRelay
+from brickv.plugin_system.plugins.dual_relay.dual_relay import DualRelay
 
 device_class = DualRelay

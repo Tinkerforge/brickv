@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from current25 import Current25
+from brickv.plugin_system.plugins.current25.current25 import Current25
 
 device_class = Current25

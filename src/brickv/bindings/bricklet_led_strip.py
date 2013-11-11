@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-24.      #
+# This file was automatically generated on 2013-11-07.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -88,6 +88,11 @@ class BrickletLEDStrip(Device):
         
         This approach ensures that you can change the LED colors with
         a fixed frame rate.
+        
+        The actual number of controllable LEDs depends on the number of free
+        Bricklet ports. See :ref:`here <led_strip_ram_constraints>` for more 
+        information. A call of :func:`SetRGBValues` with index + length above the
+        bounds is ignored completely.
         """
         self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_RGB_VALUES, (index, length, r, g, b), 'H B 16B 16B 16B', '')
 
@@ -121,7 +126,7 @@ class BrickletLEDStrip(Device):
 
     def get_supply_voltage(self):
         """
-        Returns the current supply voltage of the LEDs. The voltage is given in mv.
+        Returns the current supply voltage of the LEDs. The voltage is given in mV.
         """
         return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_SUPPLY_VOLTAGE, (), '', 'H')
 

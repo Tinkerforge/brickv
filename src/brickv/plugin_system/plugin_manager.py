@@ -22,8 +22,9 @@ Boston, MA 02111-1307, USA.
 """
 
 import os
-from program_path import ProgramPath
-from plugin_system.unknown import Unknown
+from brickv.program_path import ProgramPath
+from brickv.plugin_system.unknown import Unknown
+import traceback
 
 class PluginManager:
     def __init__(self):
@@ -36,6 +37,7 @@ class PluginManager:
                 try:
                     m = __import__('plugins', globals(), locals(), [p], -1)
                 except ImportError:
+                    traceback.print_exc()
                     print('Exception in plugin: ' + str(p))
                     continue
                     

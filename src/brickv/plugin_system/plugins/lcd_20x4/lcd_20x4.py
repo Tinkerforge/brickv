@@ -21,11 +21,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
-from bindings.bricklet_lcd_20x4 import BrickletLCD20x4
-from bindings.ks0066u import unicode_to_ks0066u
-from async_call import async_call
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings import ip_connection
+from brickv.bindings.bricklet_lcd_20x4 import BrickletLCD20x4
+from brickv.bindings.ks0066u import unicode_to_ks0066u
+from brickv.async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QComboBox, QFrame, QGridLayout, QToolButton
 from PyQt4.QtCore import pyqtSignal

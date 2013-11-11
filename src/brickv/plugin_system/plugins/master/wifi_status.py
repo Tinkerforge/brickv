@@ -22,21 +22,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings.brick_master import BrickMaster
-from bindings.ip_connection import IPConnection
+from PyQt4.QtGui import QFrame
+from PyQt4.QtCore import Qt
 
-from PyQt4.QtGui import QWidget, QFrame, QMessageBox, QFileDialog, QProgressDialog
-from PyQt4.QtCore import QTimer, Qt
-
-import os
-import time
-import sys
-
-from ui_wifi_status import Ui_wifi_status
-
-from async_call import async_call
-import infos
+from brickv.plugin_system.plugins.master.ui_wifi_status import Ui_wifi_status
+from brickv.async_call import async_call
 
 class WifiStatus(QFrame, Ui_wifi_status):
     def __init__(self, parent):

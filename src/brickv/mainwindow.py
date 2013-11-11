@@ -27,16 +27,16 @@ from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, QIcon, \
                         QPushButton, QWidget, QHBoxLayout, QVBoxLayout, \
                         QLabel, QFrame, QSpacerItem, QSizePolicy, \
                         QStandardItemModel, QStandardItem, QToolButton
-from ui_mainwindow import Ui_MainWindow
-from plugin_system.plugin_manager import PluginManager
-from bindings.ip_connection import IPConnection
-from flashing import FlashingWindow
-from advanced import AdvancedWindow
-from async_call import async_start_thread, async_next_session
-from bindings.brick_master import BrickMaster
-from program_path import ProgramPath
-import config
-import infos
+from brickv.ui_mainwindow import Ui_MainWindow
+from brickv.plugin_system.plugin_manager import PluginManager
+from brickv.bindings.ip_connection import IPConnection
+from brickv.flashing import FlashingWindow
+from brickv.advanced import AdvancedWindow
+from brickv.async_call import async_start_thread, async_next_session
+from brickv.bindings.brick_master import BrickMaster
+from brickv.program_path import ProgramPath
+from brickv import config
+from brickv import infos
 
 import os
 import signal

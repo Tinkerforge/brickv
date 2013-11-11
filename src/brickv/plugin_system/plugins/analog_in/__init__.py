@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from analog_in import AnalogIn
+from brickv.plugin_system.plugins.analog_in.analog_in import AnalogIn
 
 device_class = AnalogIn

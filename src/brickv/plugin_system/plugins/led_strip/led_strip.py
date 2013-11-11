@@ -21,11 +21,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings.bricklet_led_strip import BrickletLEDStrip
-from async_call import async_call
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
+from brickv.async_call import async_call
 
-from ui_led_strip import Ui_LEDStrip
+from brickv.plugin_system.plugins.led_strip.ui_led_strip import Ui_LEDStrip
 
 from PyQt4.QtCore import pyqtSignal, QTimer
 

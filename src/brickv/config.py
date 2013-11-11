@@ -3,7 +3,7 @@
 # brickv config
 
 import sys
-from config_common import *
+from brickv.config_common import *
 
 def get_host(): return DEFAULT_HOST
 def set_host(host): pass

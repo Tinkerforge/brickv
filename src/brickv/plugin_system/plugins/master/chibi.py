@@ -22,14 +22,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from bindings.ip_connection import IPConnection
+from brickv.bindings.ip_connection import IPConnection
 
 from PyQt4.QtGui import QWidget, QMessageBox
 
-from ui_chibi import Ui_Chibi
+from brickv.plugin_system.plugins.master.ui_chibi import Ui_Chibi
 
-from async_call import async_call
-import infos
+from brickv.async_call import async_call
+from brickv import infos
 
 class Chibi(QWidget, Ui_Chibi):
     def __init__(self, parent):

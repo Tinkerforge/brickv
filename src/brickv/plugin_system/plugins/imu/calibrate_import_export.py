@@ -25,8 +25,8 @@ import urllib2
 from PyQt4.QtGui import QWidget, QMessageBox, QProgressDialog
 from PyQt4.QtCore import Qt
 
-from ui_calibrate_import_export import Ui_calibrate_import_export
-from imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
+from brickv.plugin_system.plugins.imu.ui_calibrate_import_export import Ui_calibrate_import_export
+from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
 
 class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
     def __init__(self, parent):

@@ -22,6 +22,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from barometer import Barometer
+from brickv.plugin_system.plugins.barometer.barometer import Barometer
 
 device_class = Barometer

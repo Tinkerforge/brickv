@@ -1,9 +1,10 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-  
 """
 brickv (Brick Viewer) 
-Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
 
-__init__.py: package initialization
+brickv: Brick Viewer startup
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -21,6 +22,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugins.industrial_digital_out_4.industrial_digital_out_4 import IndustrialDigitalOut4
-
-device_class = IndustrialDigitalOut4
+try:
+    from brickv.main import main
+    if __name__ == "__main__":
+        main()
+except:
+    print('Could not import brickv. Please make sure that brickv is installed properly. If you want to start brickv from source, you should direclty call "python main.py".')

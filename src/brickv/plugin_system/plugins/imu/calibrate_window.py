@@ -21,17 +21,17 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from ui_calibrate import Ui_widget_calibrate
+from brickv.plugin_system.plugins.imu.ui_calibrate import Ui_widget_calibrate
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QFrame, QTabWidget
 
-from calibrate_accelerometer import CalibrateAccelerometer
-from calibrate_magnetometer import CalibrateMagnetometer
-from calibrate_gyroscope_bias import CalibrateGyroscopeBias
-from calibrate_gyroscope_gain import CalibrateGyroscopeGain
-from calibrate_temperature import CalibrateTemperature
-from calibrate_import_export import CalibrateImportExport
+from brickv.plugin_system.plugins.imu.calibrate_accelerometer import CalibrateAccelerometer
+from brickv.plugin_system.plugins.imu.calibrate_magnetometer import CalibrateMagnetometer
+from brickv.plugin_system.plugins.imu.calibrate_gyroscope_bias import CalibrateGyroscopeBias
+from brickv.plugin_system.plugins.imu.calibrate_gyroscope_gain import CalibrateGyroscopeGain
+from brickv.plugin_system.plugins.imu.calibrate_temperature import CalibrateTemperature
+from brickv.plugin_system.plugins.imu.calibrate_import_export import CalibrateImportExport
 
 class CalibrateWindow(QFrame, Ui_widget_calibrate):
     TYPE_ACC_GAIN = 0

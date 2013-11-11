@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from motion_detector import MotionDetector
+from brickv.plugin_system.plugins.motion_detector.motion_detector import MotionDetector
 
 device_class = MotionDetector

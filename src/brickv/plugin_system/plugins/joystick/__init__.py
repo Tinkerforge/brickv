@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from joystick import Joystick
+from brickv.plugin_system.plugins.joystick.joystick import Joystick
 
 device_class = Joystick

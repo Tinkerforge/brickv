@@ -21,21 +21,20 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings.brick_master import BrickMaster
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.brick_master import BrickMaster
 
 from PyQt4.QtCore import QTimer
 
-from ui_master import Ui_Master
+from brickv.plugin_system.plugins.master.ui_master import Ui_Master
 
-from extension_type import ExtensionType
-from chibi import Chibi
-from rs485 import RS485
-from wifi import Wifi
-from ethernet import Ethernet
+from brickv.plugin_system.plugins.master.extension_type import ExtensionType
+from brickv.plugin_system.plugins.master.chibi import Chibi
+from brickv.plugin_system.plugins.master.rs485 import RS485
+from brickv.plugin_system.plugins.master.wifi import Wifi
+from brickv.plugin_system.plugins.master.ethernet import Ethernet
 
-from async_call import async_call
-import infos
+from brickv.async_call import async_call
         
 class Master(PluginBase, Ui_Master):
     def __init__(self, ipcon, uid, version):

@@ -21,17 +21,16 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
-from bindings.brick_dc import BrickDC
-from async_call import async_call
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings import ip_connection
+from brickv.bindings.brick_dc import BrickDC
+from brickv.async_call import async_call
 
 from PyQt4.QtGui import QErrorMessage, QInputDialog
 from PyQt4.QtCore import QTimer, Qt, pyqtSignal
 
-from speedometer import SpeedoMeter
-
-from ui_dc import Ui_DC
+from brickv.plugin_system.plugins.dc.speedometer import SpeedoMeter
+from brickv.plugin_system.plugins.dc.ui_dc import Ui_DC
 
 class DC(PluginBase, Ui_DC):
     qtcb_position_reached = pyqtSignal(int)

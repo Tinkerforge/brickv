@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from rotary_poti import RotaryPoti
+from brickv.plugin_system.plugins.rotary_poti.rotary_poti import RotaryPoti
 
 device_class = RotaryPoti

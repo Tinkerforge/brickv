@@ -22,6 +22,6 @@ Boston, MA 02111-1307, USA.
 """
 
 
-from dc import DC
+from brickv.plugin_system.plugins.dc.dc import DC
 
 device_class = DC

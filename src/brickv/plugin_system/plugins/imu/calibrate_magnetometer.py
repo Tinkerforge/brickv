@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import pyqtSignal
 
-from ui_calibrate_magnetometer import Ui_calibrate_magnetometer
+from brickv.plugin_system.plugins.imu.ui_calibrate_magnetometer import Ui_calibrate_magnetometer
 
 class CalibrateMagnetometer(QWidget, Ui_calibrate_magnetometer):
     TYPE_MAG_GAIN = 2

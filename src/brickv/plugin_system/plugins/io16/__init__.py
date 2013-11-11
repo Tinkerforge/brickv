@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from io16 import IO16
+from brickv.plugin_system.plugins.io16.io16 import IO16
 
 device_class = IO16

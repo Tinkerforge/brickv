@@ -22,21 +22,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings.brick_master import BrickMaster
-from bindings.ip_connection import IPConnection
+from PyQt4.QtGui import QFrame, QMessageBox
+from PyQt4.QtCore import Qt
 
-from PyQt4.QtGui import QWidget, QFrame, QMessageBox, QFileDialog, QProgressDialog
-from PyQt4.QtCore import QTimer, Qt
+from brickv.plugin_system.plugins.master.ui_extension_type import Ui_extension_type
 
-import os
-import time
-import sys
-
-from ui_extension_type import Ui_extension_type
-
-from async_call import async_call
-import infos
+from brickv.async_call import async_call
 
 class ExtensionType(QFrame, Ui_extension_type):
     def __init__(self, parent):

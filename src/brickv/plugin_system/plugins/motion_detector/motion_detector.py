@@ -21,9 +21,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings.bricklet_motion_detector import BrickletMotionDetector
-from async_call import async_call
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.bricklet_motion_detector import BrickletMotionDetector
+from brickv.async_call import async_call
 
 from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal

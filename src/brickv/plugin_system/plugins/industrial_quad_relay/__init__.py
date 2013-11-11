@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from industrial_quad_relay import IndustrialQuadRelay
+from brickv.plugin_system.plugins.industrial_quad_relay.industrial_quad_relay import IndustrialQuadRelay
 
 device_class = IndustrialQuadRelay

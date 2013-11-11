@@ -23,12 +23,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from ui_advanced import Ui_widget_advanced
+from brickv.ui_advanced import Ui_widget_advanced
 
 from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QFrame
 
-import infos
+from brickv import infos
 
 NO_BRICK = 'No Brick found'
 

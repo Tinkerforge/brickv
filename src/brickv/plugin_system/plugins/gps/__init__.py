@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from gps import GPS
+from brickv.plugin_system.plugins.gps.gps import GPS
 
 device_class = GPS

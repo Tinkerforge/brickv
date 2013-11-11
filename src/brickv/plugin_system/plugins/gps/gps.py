@@ -21,15 +21,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings.bricklet_gps import BrickletGPS
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.bricklet_gps import BrickletGPS
 
 from PyQt4.QtGui import QDesktopServices
 from PyQt4.QtCore import pyqtSignal, QUrl, QTimer
 
-from async_call import async_call
+from brickv.async_call import async_call
 
-from ui_gps import Ui_GPS
+from brickv.plugin_system.plugins.gps.ui_gps import Ui_GPS
 
 import datetime
 

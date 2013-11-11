@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from hall_effect import HallEffect
+from brickv.plugin_system.plugins.hall_effect.hall_effect import HallEffect
 
 device_class = HallEffect

@@ -21,10 +21,10 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from plot_widget import PlotWidget
-from bindings.bricklet_ptc import BrickletPTC
-from async_call import async_call
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.plot_widget import PlotWidget
+from brickv.bindings.bricklet_ptc import BrickletPTC
+from brickv.async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox
 from PyQt4.QtCore import pyqtSignal, Qt, QTimer

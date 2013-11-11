@@ -21,14 +21,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
+from brickv.plugin_system.plugin_base import PluginBase
 from PyQt4.QtCore import Qt, pyqtSignal
-from async_call import async_call
+from brickv.async_call import async_call
 
-from ui_industrial_digital_in_4 import Ui_IndustrialDigitalIn4
+from brickv.plugin_system.plugins.industrial_digital_in_4.ui_industrial_digital_in_4 import Ui_IndustrialDigitalIn4
 
-from bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
-from bmp_to_pixmap import bmp_to_pixmap
+from brickv.bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
+from brickv.bmp_to_pixmap import bmp_to_pixmap
         
 class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
     qtcb_interrupt = pyqtSignal(int, int)

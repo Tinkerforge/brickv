@@ -21,12 +21,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from plot_widget import PlotWidget
-from bindings.bricklet_sound_intensity import BrickletSoundIntensity
-from async_call import async_call
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
+from brickv.async_call import async_call
 
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QWidget, QGradient, QColor, QLinearGradient, QBrush
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QWidget, QLinearGradient, QBrush
 from PyQt4.QtCore import pyqtSignal, Qt
 
 import PyQt4.Qwt5 as Qwt

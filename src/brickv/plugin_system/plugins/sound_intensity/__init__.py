@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from sound_intensity import SoundIntensity
+from brickv.plugin_system.plugins.sound_intensity.sound_intensity import SoundIntensity
 
 device_class = SoundIntensity

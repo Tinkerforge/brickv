@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from lcd_20x4 import LCD20x4
+from brickv.plugin_system.plugins.lcd_20x4.lcd_20x4 import LCD20x4
 
 device_class = LCD20x4

@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 import os
-from program_path import ProgramPath
+from brickv.program_path import ProgramPath
 
 from PyQt4.QtGui import QPixmap, QColor
 from PyQt4.QtCore import Qt

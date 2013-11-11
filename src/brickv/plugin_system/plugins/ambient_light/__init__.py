@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from ambient_light import AmbientLight
+from brickv.plugin_system.plugins.ambient_light.ambient_light import AmbientLight
 
 device_class = AmbientLight

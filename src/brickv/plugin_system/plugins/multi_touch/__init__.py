@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from multi_touch import MultiTouch
+from brickv.plugin_system.plugins.multi_touch.multi_touch import MultiTouch
 
 device_class = MultiTouch

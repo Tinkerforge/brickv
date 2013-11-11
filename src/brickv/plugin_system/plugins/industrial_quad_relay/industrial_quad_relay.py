@@ -21,14 +21,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
-from async_call import async_call
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
+from brickv.async_call import async_call
 
 from PyQt4.QtCore import Qt, pyqtSignal, QTimer
 
-from ui_industrial_quad_relay import Ui_IndustrialQuadRelay
-from bmp_to_pixmap import bmp_to_pixmap
+from brickv.plugin_system.plugins.industrial_quad_relay.ui_industrial_quad_relay import Ui_IndustrialQuadRelay
+from brickv.bmp_to_pixmap import bmp_to_pixmap
 
 class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
     qtcb_monoflop = pyqtSignal(int, int)

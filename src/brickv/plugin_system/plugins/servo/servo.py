@@ -21,16 +21,16 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings import ip_connection
-from bindings.brick_servo import BrickServo
-from async_call import async_call
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings import ip_connection
+from brickv.bindings.brick_servo import BrickServo
+from brickv.async_call import async_call
 
 from PyQt4.QtGui import QLabel, QWidget, QColor, QPainter, QSizePolicy, QInputDialog, QErrorMessage
 from PyQt4.QtCore import Qt, QRect, QTimer, pyqtSignal, QThread
 import PyQt4.Qwt5 as Qwt
 
-from ui_servo import Ui_Servo
+from brickv.plugin_system.plugins.servo.ui_servo import Ui_Servo
 
 import time
 import random

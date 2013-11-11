@@ -21,11 +21,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from plugin_system.plugin_base import PluginBase
-from bindings.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
-from async_call import async_call
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
+from brickv.async_call import async_call
 
-from ui_segment_display_4x7 import Ui_SegmentDisplay4x7
+from brickv.plugin_system.plugins.segment_display_4x7.ui_segment_display_4x7 import Ui_SegmentDisplay4x7
 
 from PyQt4.QtCore import QTimer, pyqtSignal
     

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-10-16.      #
+# This file was automatically generated on 2013-11-07.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -82,7 +82,8 @@ class BrickletHallEffect(Device):
     def get_edge_count(self, reset_counter):
         """
         Returns the current value of the edge counter. You can configure
-        the edges that are counted with :func:`SetEdgeCountConfig`.
+        edge type (rising, falling, both) that is counted with
+        :func:`SetEdgeCountConfig`.
         
         If you set the reset counter to *true*, the count is set back to 0
         directly after it is read.

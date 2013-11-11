@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtGui import QWidget
 from PyQt4.QtCore import pyqtSignal
 
-from ui_calibrate_temperature import Ui_calibrate_temperature
+from brickv.plugin_system.plugins.imu.ui_calibrate_temperature import Ui_calibrate_temperature
 
 class CalibrateTemperature(QWidget, Ui_calibrate_temperature):
     def __init__(self, parent):
