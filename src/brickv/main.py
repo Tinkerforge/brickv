@@ -30,7 +30,6 @@ import logging
 if not 'brickv' in sys.modules:
     import os.path
     head, tail = os.path.split(os.path.dirname(os.path.realpath(__file__)))
-    print head
     if not head in sys.path:
         sys.path.append(head)
 
