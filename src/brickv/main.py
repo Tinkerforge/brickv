@@ -26,7 +26,7 @@ import sys
 import logging
 
 # Allow brickv to be directly started by calling "main.py"
-# without "brickv" beeing in the path already
+# without "brickv" being in the path already
 if not 'brickv' in sys.modules:
     import os.path
     head, tail = os.path.split(os.path.dirname(os.path.realpath(__file__)))
