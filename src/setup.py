@@ -18,6 +18,9 @@
 from distutils.core import setup 
 from pkgutil import walk_packages
 
+import os
+import glob
+
 import brickv
 
 def find_packages(path, prefix):
@@ -27,6 +30,19 @@ def find_packages(path, prefix):
         if ispkg:
             yield name
 
+packages = list(find_packages(brickv.__path__, brickv.__name__))
+
+# Add images to package_data
+package_data = {}
+for package in packages:
+    package_path = os.path.join(*package.split('.'))
+    images = []
+    images.extend(glob.glob(os.path.join(package_path, '*.bmp')))
+    images.extend(glob.glob(os.path.join(package_path, '*.png')))
+    images.extend(glob.glob(os.path.join(package_path, '*.jpg')))
+    if images != []:
+        package_data[package] = [os.path.basename(d) for d in images]
+
 setup(
       name="brickv",
       version="2.0.7",
@@ -35,7 +51,10 @@ setup(
       url="http://www.tinkerforge.com",
       license="GPL v2",
       description="Brick Viewer",
-      long_description="""Brick Viewer is a small Qt GUI with which one can control and test all Bricks and Bricklets from Tinkerforge""",
-      packages=list(find_packages(brickv.__path__, brickv.__name__)),
+      long_description="""Brick Viewer is a small Qt GUI with which one can control and test Bricks and Bricklets from Tinkerforge""",
+      packages=packages,
+      package_data = package_data,
+      data_files=[('/usr/share/pixmaps/', ['brickv/brickv-icon.png']),
+                  ('/usr/share/applications/', ['brickv/brickv.desktop'])],
       scripts=['brickv/brickv'],
       )
