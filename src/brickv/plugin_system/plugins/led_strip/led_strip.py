@@ -79,14 +79,12 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.led_strip.set_frame_duration(duration)
             
     def color_pressed(self):
-        print "color_pressed"
         old_state = self.state
         self.state = self.STATE_COLOR_SINGLE
         if old_state == self.STATE_IDLE:
             self.render_color_single()
         
     def gradient_pressed(self):
-        print "gradient_pressed"
         old_state = self.state
         self.state = self.STATE_COLOR_GRADIENT
         if old_state == self.STATE_IDLE:
@@ -94,7 +92,6 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             
             
     def render_color_single(self):
-        print "render_color_single"
         num_leds = self.box_num_led.value()
         
         r = self.box_r.value()
