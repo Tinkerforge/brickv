@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-11-07.      #
+# This file was automatically generated on 2013-11-14.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -90,7 +90,7 @@ class BrickletLEDStrip(Device):
         a fixed frame rate.
         
         The actual number of controllable LEDs depends on the number of free
-        Bricklet ports. See :ref:`here <led_strip_ram_constraints>` for more 
+        Bricklet ports. See :ref:`here <led_strip_bricklet_ram_constraints>` for more
         information. A call of :func:`SetRGBValues` with index + length above the
         bounds is ignored completely.
         """
