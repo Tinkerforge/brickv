@@ -232,7 +232,7 @@ def build_windows_pkg():
                 else: # keep full path
                     data_files.append((os.path.join(dirname) , [os.path.join(dirname, n)]))
 
-    os.path.walk(os.path.normcase("../build_data/Windows/"), visitor, ('y', os.path.normcase("../build_data/Windows/")))
+    os.path.walk(os.path.normcase("../build_data/windows/"), visitor, ('y', os.path.normcase("../build_data/windows/")))
     os.path.walk("plugin_system", visitor, ('n',"plugin_system"))
 
     data_files.append( ( os.path.join('.') , [os.path.join('.', 'brickv-icon.png')] ) )
@@ -291,12 +291,12 @@ def build_windows_pkg():
                     }
                     },
           zipfile = None,
-          windows = [{'script' : 'main.py', 'icon_resources' : [(0, os.path.normcase("../build_data/Windows/brickv-icon.ico"))]}]
+          windows = [{'script' : 'main.py', 'icon_resources' : [(0, os.path.normcase("../build_data/windows/brickv-icon.ico"))]}]
     )
 
     # build nsis
     lines = []
-    for line in file('../build_data/Windows/nsis/brickv_installer.nsi', 'rb').readlines():
+    for line in file('../build_data/windows/nsis/brickv_installer.nsi', 'rb').readlines():
         line = line.replace('<<BRICKV_DOT_VERSION>>', config.BRICKV_VERSION)
         line = line.replace('<<BRICKV_UNDERSCORE_VERSION>>', config.BRICKV_VERSION.replace('.', '_'))
         lines.append(line)
