@@ -339,6 +339,7 @@ def build_linux_pkg():
 
     os.system('chown -R root:root brickv/usr')
     os.system('dpkg -b brickv/ brickv-' + config.BRICKV_VERSION + '_all.deb')
+    os.system('chown -R `logname`:`logname` brickv/usr')
 
 
 # call python build_pkg.py to build the windows/linux/macosx package
