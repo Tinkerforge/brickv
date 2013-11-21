@@ -31,7 +31,7 @@ from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout
         
 class DistanceLabel(QLabel):
     def setText(self, text):
-        text = "Distance: " + text + " cm"
+        text = "Distance Value: " + text
         super(DistanceLabel, self).setText(text)
     
 class DistanceUS(PluginBase):
@@ -46,11 +46,11 @@ class DistanceUS(PluginBase):
         self.dist.register_callback(self.dist.CALLBACK_DISTANCE,
                                     self.qtcb_distance.emit) 
         
-        self.distance_label = DistanceLabel('Distance: ')
+        self.distance_label = DistanceLabel('Distance Value: ')
         self.current_value = None
         
         plot_list = [['', Qt.red, self.get_current_value]]
-        self.plot_widget = PlotWidget('Distance [cm]', plot_list)
+        self.plot_widget = PlotWidget('Distance', plot_list)
         
         layout_h1 = QHBoxLayout()
         layout_h1.addStretch()
@@ -63,7 +63,7 @@ class DistanceUS(PluginBase):
         layout.addStretch()
 
     def start(self):
-        async_call(self.dist.get_distance, None, self.cb_distance, self.increase_error_count)
+        async_call(self.dist.get_distance_value, None, self.cb_distance, self.increase_error_count)
         async_call(self.dist.set_distance_callback_period, 100, None, self.increase_error_count)
             
         self.plot_widget.stop = False

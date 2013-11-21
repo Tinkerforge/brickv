@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-11.      #
+# This file was automatically generated on 2013-11-21.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -161,7 +161,7 @@ class BrickletMoisture(Device):
         for the moisture value.
         
         Setting the length to 0 will turn the averaging completely off. With less
-        averaging,  there is more noise on the data.
+        averaging, there is more noise on the data.
         
         The range for the averaging is 0-100.
         
