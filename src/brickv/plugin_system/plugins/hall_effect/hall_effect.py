@@ -77,9 +77,20 @@ class HallEffect(PluginBase, Ui_HallEffect):
         self.combo_edge_type.setCurrentIndex(edge_type)
         self.spin_debounce.setValue(debounce)
 
+    def get_edge_count_async(self, count):
+        self.label_edge_count.setText(str(count))
+
+    def get_value_async(self, value):
+        if value:
+            self.current_value = 1
+        else:
+            self.current_value = 0
+
     def start(self):
         async_call(self.hf.get_edge_count_config, None, self.cb_edge_count_config, self.increase_error_count)
         async_call(self.hf.set_edge_count_callback_period, 50, None, self.increase_error_count)
+        async_call(self.hf.get_edge_count, False, self.get_edge_count_async, self.increase_error_count)
+        async_call(self.hf.get_value, None, self.get_value_async, self.increase_error_count)
         
         self.plot_widget.stop = False
         
