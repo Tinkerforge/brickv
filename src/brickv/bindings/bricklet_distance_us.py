@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-11-21.      #
+# This file was automatically generated on 2013-11-26.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -80,8 +80,11 @@ class BrickletDistanceUS(Device):
     def get_distance_value(self):
         """
         Returns the current distance value measured by the sensor. The value has a
-        range of 0 to 4095. A small value corresponds to small distance, a big
-        value corresponds to a big distance.
+        range of 0 to 4095. A small value corresponds to a small distance, a big
+        value corresponds to a big distance. The relation between the measured distance
+        value and the actual distance is affected by the 5V supply voltage (deviations
+        in the supply voltage result in deviations in the distance values) and is
+        non-linear (resolution is bigger at close range).
         
         If you want to get the distance value periodically, it is recommended to
         use the callback :func:`Distance` and set the period with 
@@ -165,7 +168,7 @@ class BrickletDistanceUS(Device):
         
         The range for the averaging is 0-100.
         
-        The default value is 50.
+        The default value is 20.
         """
         self.ipcon.send_request(self, BrickletDistanceUS.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
 
