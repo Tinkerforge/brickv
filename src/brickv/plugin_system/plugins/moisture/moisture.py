@@ -66,7 +66,6 @@ class Moisture(PluginBase):
         return self.current_value
 
     def cb_moisture(self, moisture):
-        print moisture
         self.current_value = moisture
         self.moisture_label.setText(str(moisture))
 
