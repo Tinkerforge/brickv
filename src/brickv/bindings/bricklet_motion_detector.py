@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-24.      #
+# This file was automatically generated on 2013-11-27.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -61,7 +61,7 @@ class BrickletMotionDetector(Device):
         """
         Returns 1 if a motion was detected. How long this returns 1 after a motion
         was detected can be adjusted with one of the small potentiometers on the
-        Motion Detector Bricklet, see here. TODO: ADD LINK
+        Motion Detector Bricklet, see :ref:`here <motion_detector_bricklet_sensitivity_delay_block_time>`.
         """
         return self.ipcon.send_request(self, BrickletMotionDetector.FUNCTION_GET_MOTION_DETECTED, (), '', 'B')
 

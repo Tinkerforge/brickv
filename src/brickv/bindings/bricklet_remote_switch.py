@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-09-11.      #
+# This file was automatically generated on 2013-11-27.      #
 #                                                           #
 # Bindings Version 2.0.11                                    #
 #                                                           #
@@ -68,7 +68,7 @@ class BrickletRemoteSwitch(Device):
         state (on or off) you want to switch to.
         
         A detailed description on how you can find the house and receiver code
-        can be found here. TODO: ADD LINK
+        can be found :ref:`here <remote_switch_bricklet_house_and_receiver_code>`.
         """
         self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET, (house_code, receiver_code, switch_to), 'B B B', '')
 
