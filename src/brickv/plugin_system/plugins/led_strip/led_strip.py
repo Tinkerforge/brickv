@@ -46,8 +46,6 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.led_strip = BrickletLEDStrip(uid, ipcon)
         
         self.qtcb_frame_rendered.connect(self.cb_frame_rendered)
-        self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_RENDERED,
-                                         self.qtcb_frame_rendered.emit)
         
         self.button_gradient.pressed.connect(self.gradient_pressed)
         self.button_color.pressed.connect(self.color_pressed)
@@ -157,9 +155,13 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
     def start(self):
         async_call(self.led_strip.get_supply_voltage, None, self.cb_voltage, self.increase_error_count)
         self.voltage_timer.start()
+        self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_RENDERED,
+                                         self.qtcb_frame_rendered.emit)
         
     def stop(self):
         self.voltage_timer.stop()
+        self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_RENDERED,
+                                         None)
 
     def get_url_part(self):
         return 'led_strip'
