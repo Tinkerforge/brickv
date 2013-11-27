@@ -37,11 +37,19 @@ Boston, MA 02111-1307, USA.
 #   script copies OpenGL, special libs and plugin_system
 #   in dist folder
 
-import config
-
-import sys
-from distutils.core import setup
 import os
+import sys
+
+# Allow to import brickv from within the package
+if not 'brickv' in sys.modules:
+    import os.path
+    head, tail = os.path.split(os.path.dirname(os.path.realpath(__file__)))
+    if not head in sys.path:
+        sys.path.append(head)
+
+import brickv.config
+
+from distutils.core import setup
 import glob
 import shutil
 
@@ -61,8 +69,8 @@ def build_macosx_pkg():
 
     plist = dict(
         CFBundleName = 'Brickv',
-        CFBundleShortVersionString = config.BRICKV_VERSION,
-        CFBundleGetInfoString = ' '.join(['Brickv', config.BRICKV_VERSION]),
+        CFBundleShortVersionString = brickv.config.BRICKV_VERSION,
+        CFBundleGetInfoString = ' '.join(['Brickv', brickv.config.BRICKV_VERSION]),
         CFBundleExecutable = 'main',
         CFBundleIdentifier = 'com.tinkerforge.brickv',
         CFBundleIconFile = 'brickv-icon.icns',
@@ -144,7 +152,7 @@ def build_macosx_pkg():
 
         setup(
             name = 'brickv',
-            version = config.BRICKV_VERSION,
+            version = brickv.config.BRICKV_VERSION,
             description = 'Brick Viewer Software',
             author = 'Tinkerforge',
             author_email = 'info@tinkerforge.com',
@@ -244,7 +252,7 @@ def build_windows_pkg():
 
     setup(name = NAME,
           description = DESCRIPTION,
-          version = config.BRICKV_VERSION,
+          version = brickv.config.BRICKV_VERSION,
           data_files = data_files,
           options = {
                     "py2exe" : {
@@ -297,8 +305,8 @@ def build_windows_pkg():
     # build nsis
     lines = []
     for line in file('../build_data/windows/nsis/brickv_installer.nsi', 'rb').readlines():
-        line = line.replace('<<BRICKV_DOT_VERSION>>', config.BRICKV_VERSION)
-        line = line.replace('<<BRICKV_UNDERSCORE_VERSION>>', config.BRICKV_VERSION.replace('.', '_'))
+        line = line.replace('<<BRICKV_DOT_VERSION>>', brickv.config.BRICKV_VERSION)
+        line = line.replace('<<BRICKV_UNDERSCORE_VERSION>>', brickv.config.BRICKV_VERSION.replace('.', '_'))
         lines.append(line)
     file('dist/nsis/brickv_installer.nsi', 'wb').writelines(lines)
 
@@ -324,7 +332,7 @@ def build_linux_pkg():
     os.chdir(build_data_path)
 
     STEXT = 'Version:'
-    RTEXT = 'Version: {0}\n'.format(config.BRICKV_VERSION)
+    RTEXT = 'Version: {0}\n'.format(brickv.config.BRICKV_VERSION)
 
     f = open('brickv/DEBIAN/control', 'r')
     lines = f.readlines()
@@ -338,7 +346,7 @@ def build_linux_pkg():
     f.close()
 
     os.system('chown -R root:root brickv/usr')
-    os.system('dpkg -b brickv/ brickv-' + config.BRICKV_VERSION + '_all.deb')
+    os.system('dpkg -b brickv/ brickv-' + brickv.config.BRICKV_VERSION + '_all.deb')
     os.system('chown -R `logname`:`logname` brickv/usr')
 
 
