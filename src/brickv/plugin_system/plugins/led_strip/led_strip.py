@@ -145,8 +145,12 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             g_val.extend([0]*(16-leds))
             b_val = ba[:leds]
             b_val.extend([0]*(16-leds))
-                
-            self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
+
+            try:
+                self.led_strip.set_rgb_values(i, leds, r_val, g_val, b_val)
+            except:
+                pass
+
             ra = ra[leds:]
             ga = ga[leds:]
             ba = ba[leds:]
