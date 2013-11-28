@@ -3,8 +3,8 @@
 
 import os
 
-file_url = os.path.abspath( __file__ ).replace(__file__, '')
-for f in os.walk(file_url):
+brickv = os.path.join(os.path.abspath(__file__).replace(__file__, ''), 'brickv')
+for f in os.walk(brickv):
     if 'build_ui.py' in f[2]:
         print 'building ' + f[0]
         os.chdir(f[0])

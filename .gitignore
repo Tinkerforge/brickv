@@ -1,5 +1,6 @@
 *.pyc
 ui_*.py
-src/brickv/build
-src/brickv/dist
+src/build
+src/dist
+src/brickv/plugin_images.py
 src/build_data/linux/brickv/usr/share/brickv

@@ -34,38 +34,48 @@ Boston, MA 02111-1307, USA.
 #   run python build_pkg.py win to build the windows exe
 #   final data is stored in folder "dist"
 #
-#   script copies OpenGL, special libs and plugin_system
-#   in dist folder
+#   script copies OpenGL, special libs in dist folder
 
 import os
 import sys
 import base64
-
-# Allow to import brickv from within the package
-if not 'brickv' in sys.modules:
-    import os.path
-    head, tail = os.path.split(os.path.dirname(os.path.realpath(__file__)))
-    if not head in sys.path:
-        sys.path.append(head)
-
-import brickv.config
-
 from distutils.core import setup
 import glob
 import shutil
+import brickv.config
 
 DESCRIPTION = 'Brick Viewer'
 NAME = 'Brickv'
+
+def generate_plugin_images():
+    image_files = []
+    def image_visitor(arg, dirname, names):
+        for name in names:
+            if os.path.isfile(os.path.join(dirname, name)):
+                _, ext = os.path.splitext(name)
+                ext = ext[1:]
+
+                if ext in ['bmp', 'png', 'jpg']:
+                    image_files.append([os.path.join(dirname, name).replace('\\', '/').replace('brickv/', ''), ext])
+
+    os.path.walk(os.path.join('brickv', 'plugin_system'), image_visitor, None)
+
+    images = open(os.path.join('brickv', 'plugin_images.py'), 'wb')
+    images.write('image_data = {\n')
+
+    for image_file in image_files:
+        image_data = base64.b64encode(file(os.path.join('brickv', image_file[0]), 'rb').read())
+        images.write("'{0}': ['{1}', '{2}'],\n".format(image_file[0], image_file[1], image_data))
+
+    images.write('}\n')
+    images.close()
 
 def build_macosx_pkg():
     from setuptools import setup, find_packages
 
     PWD = os.path.dirname(os.path.realpath(__file__))
-    RES_PATH = os.path.join(PWD, 'dist', '%s.app' % 'brickv', 'Contents', 'Resources')
-    data_files = [
-        ("../build_data/macosx/", glob.glob(os.path.join(PWD, "../build_data/macosx/", "*.nib"))),
-        #('/usr/share/applications',['foo.desktop']),
-    ]
+    RES_PATH = os.path.join(PWD, 'dist', 'brickv.app', 'Contents', 'Resources')
+    data_files = [("build_data/macosx/", glob.glob(os.path.join(PWD, "build_data/macosx/", "*.nib")))]
     packages = find_packages()
 
     plist = dict(
@@ -75,28 +85,18 @@ def build_macosx_pkg():
         CFBundleExecutable = 'main',
         CFBundleIdentifier = 'com.tinkerforge.brickv',
         CFBundleIconFile = 'brickv-icon.icns',
-        # hide dock icon
-    #    LSUIElement = True,
     )
 
-    additional_data_files = []
     def visitor(arg, dirname, names):
         for n in names:
             if os.path.isfile(os.path.join(dirname, n)):
-                if arg[0] == 'y': # replace first folder name
-                    additional_data_files.append((os.path.join(dirname.replace(arg[1],"")) , [os.path.join(dirname, n)]))
+                if arg[0]: # replace first folder name
+                    data_files.append((os.path.join(dirname.replace(arg[1],"")) , [os.path.join(dirname, n)]))
                 else: # keep full path
-                    additional_data_files.append((os.path.join(dirname), [os.path.join(dirname, n)]))
+                    data_files.append((os.path.join(dirname), [os.path.join(dirname, n)]))
 
-    os.path.walk(os.path.normcase("../build_data/macosx/"), visitor, ('y', os.path.normcase("../build_data/macosx/")))
-    os.path.walk("plugin_system", visitor, ('n',"plugin_system"))
-
-    additional_data_files.append((os.path.join('.'), [os.path.join('.', 'brickv-icon.png')]))
-
-    additional_modules = ['bmp_to_pixmap']
-    for f in os.listdir('bindings'):
-        if f.endswith('.py'):
-            additional_modules.append('bindings.' + f[:-3])
+    os.path.walk(os.path.normcase("build_data/macosx/"), visitor, (True, os.path.normcase("build_data/macosx/")))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'brickv-icon.png')]))
 
     def delete_old():
         BUILD_PATH = os.path.join(PWD, "build")
@@ -108,15 +108,13 @@ def build_macosx_pkg():
 
     def create_app():
         os.system("python build_all_ui.py")
-        apps = [
-            {
-                "script" : "main.py",
-                "plist" : plist,
-            }
-        ]
+
+        generate_plugin_images()
+
+        apps = [{"script": "brickv/main.py", "plist": plist}]
 
         OPTIONS = {'argv_emulation' : True,
-                   'iconfile' : '../build_data/macosx/brickv-icon.icns',
+                   'iconfile' : 'build_data/macosx/brickv-icon.icns',
                    'site_packages' : True,
                    'includes' : ["atexit",
                                  "sip",
@@ -128,10 +126,9 @@ def build_macosx_pkg():
                                  "OpenGL.GL",
                                  "numpy.core.multiarray",
                                  "ctypes.util",
-                                 "plot_widget",
                                  "serial",
                                  "colorsys",
-                                ] + additional_modules,
+                                ],
                    'excludes' : ['scipy',
                                  'distutils',
                                  'setuptools',
@@ -149,8 +146,6 @@ def build_macosx_pkg():
                                  'PyQt4.QtXml',
                                  'PyQt4.QtXmlPatterns']}
 
-        data = data_files + additional_data_files
-
         setup(
             name = 'brickv',
             version = brickv.config.BRICKV_VERSION,
@@ -160,16 +155,15 @@ def build_macosx_pkg():
             platforms = ["Mac OSX"],
             license = "GPL v2",
             url = "http://www.tinkerforge.com",
-            scripts = ['main.py'],
+            scripts = ['brickv/main.py'],
             app = apps,
             options = {'py2app': OPTIONS},
-            # setup_requires = ['py2app'],
-            data_files = data,
+            data_files = data_files,
             packages = packages,
         )
 
     def qt_menu_patch():
-        src = os.path.join(PWD, '..', 'build_data', 'macosx', 'qt_menu.nib')
+        src = os.path.join(PWD, 'build_data', 'macosx', 'qt_menu.nib')
         dst = os.path.join(RES_PATH, 'qt_menu.nib')
         if not os.path.exists(dst):
             shutil.copytree(src, dst)
@@ -203,11 +197,6 @@ os.environ['RESOURCEPATH'] = os.path.dirname(os.path.realpath(__file__))
             if not os.path.exists(dst):
                 shutil.copytree(src, dst)
 
-        # HACK: fix wrong position of plugin_system
-        src = os.path.join(RES_PATH, "plugin_system")
-        dst = os.path.join(RES_PATH, '..', 'MacOS', 'plugin_system')
-        shutil.copytree(src, dst)
-
     ACTION_CREATE = len(sys.argv) == 3 and sys.argv[-1] == "build"
 
     if ACTION_CREATE:
@@ -236,38 +225,15 @@ def build_windows_pkg():
     def visitor(arg, dirname, names):
         for n in names:
             if os.path.isfile(os.path.join(dirname, n)):
-                if arg[0] == 'y': # replace first folder name
+                if arg[0]: # replace first folder name
                     data_files.append((os.path.join(dirname.replace(arg[1],"")), [os.path.join(dirname, n)]))
                 else: # keep full path
                     data_files.append((os.path.join(dirname), [os.path.join(dirname, n)]))
 
-    os.path.walk(os.path.normcase("../build_data/windows/"), visitor, ('y', os.path.normcase("../build_data/windows/")))
+    os.path.walk(os.path.normcase("build_data/windows/"), visitor, (True, os.path.normcase("build_data/windows/")))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'brickv-icon.png')]))
 
-    image_files = []
-    def image_visitor(arg, dirname, names):
-        for name in names:
-            if os.path.isfile(os.path.join(dirname, name)):
-                _, ext = os.path.splitext(name)
-                ext = ext[1:]
-
-                if ext in ['bmp', 'png', 'jpg']:
-                    image_files.append([os.path.join(dirname, name).replace('\\', '/'), ext])
-
-    os.path.walk("plugin_system", image_visitor, None)
-
-    images = open('plugin_images.py', 'wb')
-    images.write('image_data = {\n')
-
-    for image_file in image_files:
-        image_data = base64.b64encode(file(image_file[0], 'rb').read())
-        images.write("'{0}': ['{1}', '{2}'],\n".format(image_file[0], image_file[1], image_data))
-
-    images.write('}\n')
-    images.close()
-
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv-icon.png')]))
-
-    additional_modules = []
+    generate_plugin_images()
 
     setup(name = NAME,
           description = DESCRIPTION,
@@ -283,7 +249,6 @@ def build_windows_pkg():
                                   "PyQt4.QtSvg",
                                   "PyQt4.Qwt5",
                                   "OpenGL.GL",
-                                  "plot_widget",
                                   "numpy.core.multiarray",
                                   "ctypes.util",
                                   "serial",
@@ -293,7 +258,7 @@ def build_windows_pkg():
                                   "winerror",
                                   "pywintypes",
                                   "win32file",
-                                  "win32api"] + additional_modules,
+                                  "win32api"],
                     "excludes" : ["config_linux",
                                   "config_macosx",
                                   "_gtkagg",
@@ -318,12 +283,12 @@ def build_windows_pkg():
                     }
                     },
           zipfile = None,
-          windows = [{'script' : 'main.py', 'icon_resources' : [(0, os.path.normcase("../build_data/windows/brickv-icon.ico"))]}]
+          windows = [{'script' : 'brickv/main.py', 'icon_resources' : [(0, os.path.normcase("build_data/windows/brickv-icon.ico"))]}]
     )
 
     # build nsis
     lines = []
-    for line in file('../build_data/windows/nsis/brickv_installer.nsi', 'rb').readlines():
+    for line in file('build_data/windows/nsis/brickv_installer.nsi', 'rb').readlines():
         line = line.replace('<<BRICKV_DOT_VERSION>>', brickv.config.BRICKV_VERSION)
         line = line.replace('<<BRICKV_UNDERSCORE_VERSION>>', brickv.config.BRICKV_VERSION.replace('.', '_'))
         lines.append(line)
@@ -339,25 +304,27 @@ def build_linux_pkg():
 
     os.system("python build_all_ui.py")
 
-    src_path = os.getcwd()
-    build_dir = 'build_data/linux/brickv/usr/share/brickv'
-    dest_path = os.path.join(os.path.split(src_path)[0], build_dir)
+    generate_plugin_images()
+
+    src_path = os.path.join(os.getcwd(), 'brickv')
+    build_dir = os.path.join('build_data', 'linux', 'brickv', 'usr', 'share', 'brickv')
+    dest_path = os.path.join(os.getcwd(), build_dir)
     if os.path.isdir(dest_path):
         shutil.rmtree(dest_path)
 
     shutil.copytree(src_path, dest_path)
 
-    build_data_path = os.path.join(os.path.split(src_path)[0], 'build_data/linux')
+    build_data_path = os.path.join(os.getcwd(), 'build_data', 'linux')
     os.chdir(build_data_path)
 
     STEXT = 'Version:'
     RTEXT = 'Version: {0}\n'.format(brickv.config.BRICKV_VERSION)
 
-    f = open('brickv/DEBIAN/control', 'r')
+    f = open(os.path.join('brickv', 'DEBIAN', 'control'), 'rb')
     lines = f.readlines()
     f.close()
 
-    f = open('brickv/DEBIAN/control', 'w')
+    f = open(os.path.join('brickv', 'DEBIAN', 'control'), 'wb')
     for line in lines:
         if not line.find(STEXT) == -1:
             line = RTEXT
