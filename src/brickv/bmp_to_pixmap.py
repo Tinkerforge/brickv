@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
+Copyright (C) 2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
 
 bmp_to_pixmap.py: Function to read bmp and convert it to alpha channel pixmap
@@ -22,15 +23,27 @@ Boston, MA 02111-1307, USA.
 """
 
 import os
-from brickv.program_path import ProgramPath
+import sys
+from brickv.program_path import get_program_path
 
 from PyQt4.QtGui import QPixmap, QColor
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, QByteArray
+
+if hasattr(sys, 'frozen'):
+    from brickv.plugin_images import image_data
+else:
+    image_data = None
 
 def bmp_to_pixmap(path):
-    absolute_path = os.path.join(ProgramPath.program_path(), path)
-    pixmap = QPixmap(absolute_path)
-    mask1 = pixmap.createMaskFromColor(QColor(0xFF, 0x00, 0XF0), Qt.MaskInColor)
+    if image_data is not None:
+        data = QByteArray.fromBase64(image_data[path][1])
+        pixmap = QPixmap()
+        pixmap.loadFromData(data, image_data[path][0])
+    else:
+        absolute_path = os.path.join(get_program_path(), path)
+        pixmap = QPixmap(absolute_path)
+
+    mask1 = pixmap.createMaskFromColor(QColor(0xFF, 0x00, 0xF0), Qt.MaskInColor)
     pixmap.setMask(mask1)
 
     return pixmap

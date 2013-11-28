@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-  
 """
 brickv (Brick Viewer) 
+Copyright (C) 2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Bastian Nordmeyer <bastian@tinkerforge.com>
 
-helper.py:  helper class with tools
+program_path.py: Helper to figure out where the program is located
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -21,22 +22,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-
-# from http://www.py2exe.org/index.cgi/WhereAmI to replace
+# from http://www.py2exe.org/index.cgi/WhereAmI
 
 import os
 import sys
 
-class ProgramPath:
-    @staticmethod
-    def we_are_frozen():
-        return hasattr(sys, "frozen")
+def get_program_path():
+    if hasattr(sys, 'frozen'):
+        path = sys.executable
+    else:
+        path = __file__
 
-    @staticmethod
-    def program_path():
-        if ProgramPath.we_are_frozen():
-            return str(os.path.dirname(unicode(sys.executable, 
-                                               sys.getfilesystemencoding())))
-
-        return str(os.path.dirname(unicode(__file__, 
-                                   sys.getfilesystemencoding())))
+    return str(os.path.dirname(os.path.realpath(unicode(path, sys.getfilesystemencoding()))))

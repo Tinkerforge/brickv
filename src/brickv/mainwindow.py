@@ -34,7 +34,7 @@ from brickv.flashing import FlashingWindow
 from brickv.advanced import AdvancedWindow
 from brickv.async_call import async_start_thread, async_next_session
 from brickv.bindings.brick_master import BrickMaster
-from brickv.program_path import ProgramPath
+from brickv.program_path import get_program_path
 from brickv import config
 from brickv import infos
 
@@ -82,7 +82,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
         self.setupUi(self)
-        self.setWindowIcon(QIcon(os.path.join(ProgramPath.program_path(), "brickv-icon.png")))
+        self.setWindowIcon(QIcon(os.path.join(get_program_path(), "brickv-icon.png")))
         signal.signal(signal.SIGINT, self.exit_brickv)
         signal.signal(signal.SIGTERM, self.exit_brickv)
 

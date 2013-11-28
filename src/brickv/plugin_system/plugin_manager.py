@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
-brickv (Brick Viewer) 
+brickv (Brick Viewer)
+Copyright (C) 2013 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2009 Olaf Lüke <olaf@tinkerforge.com>
 
 plugin_manager.py: Plugins register themselves here
@@ -21,37 +22,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import os
-from brickv.program_path import ProgramPath
 from brickv.plugin_system.unknown import Unknown
-import traceback
+from brickv.plugin_system.plugins import device_classes
 
 class PluginManager:
     def __init__(self):
-        self.plugins = []
-        
-        d = os.path.join(ProgramPath.program_path(), 'plugin_system/plugins/')
-
-        for p in os.listdir(d):
-            if os.path.isdir(os.path.join(d, p)):
-                try:
-                    m = __import__('plugins', globals(), locals(), [p], -1)
-                except ImportError:
-                    traceback.print_exc()
-                    print('Exception in plugin: ' + str(p))
-                    continue
-                    
-                module = getattr(m, p)
-                
-                try:
-                    device_class = module.device_class
-                except AttributeError:
-                    print('Exception in plugin: ' + str(p))
-                    device_class = None
-
-                print('Found plugin: ' + str(p))
-                if device_class:
-                    self.plugins.append(device_class)
+        self.plugins = device_classes
 
     def get_plugin(self, device_identifier, ipcon, uid, version):
         for plugin in self.plugins:

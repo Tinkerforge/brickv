@@ -29,7 +29,7 @@ from brickv.bmp_to_pixmap import bmp_to_pixmap
 
 from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal
-    
+
 class Tilt(PluginBase):
     qtcb_tilt_state = pyqtSignal(int)
     

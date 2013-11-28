@@ -39,6 +39,7 @@ Boston, MA 02111-1307, USA.
 
 import os
 import sys
+import base64
 
 # Allow to import brickv from within the package
 if not 'brickv' in sys.modules:
@@ -236,19 +237,37 @@ def build_windows_pkg():
         for n in names:
             if os.path.isfile(os.path.join(dirname, n)):
                 if arg[0] == 'y': # replace first folder name
-                    data_files.append((os.path.join(dirname.replace(arg[1],"")) , [os.path.join(dirname, n)]))
+                    data_files.append((os.path.join(dirname.replace(arg[1],"")), [os.path.join(dirname, n)]))
                 else: # keep full path
-                    data_files.append((os.path.join(dirname) , [os.path.join(dirname, n)]))
+                    data_files.append((os.path.join(dirname), [os.path.join(dirname, n)]))
 
     os.path.walk(os.path.normcase("../build_data/windows/"), visitor, ('y', os.path.normcase("../build_data/windows/")))
-    os.path.walk("plugin_system", visitor, ('n',"plugin_system"))
 
-    data_files.append( ( os.path.join('.') , [os.path.join('.', 'brickv-icon.png')] ) )
+    image_files = []
+    def image_visitor(arg, dirname, names):
+        for name in names:
+            if os.path.isfile(os.path.join(dirname, name)):
+                _, ext = os.path.splitext(name)
+                ext = ext[1:]
 
-    additional_modules = ['bmp_to_pixmap']
-    for f in os.listdir('bindings'):
-        if f.endswith('.py'):
-            additional_modules.append('bindings.' + f[:-3])
+                if ext in ['bmp', 'png', 'jpg']:
+                    image_files.append([os.path.join(dirname, name).replace('\\', '/'), ext])
+
+    os.path.walk("plugin_system", image_visitor, None)
+
+    images = open('plugin_images.py', 'wb')
+    images.write('image_data = {\n')
+
+    for image_file in image_files:
+        image_data = base64.b64encode(file(image_file[0], 'rb').read())
+        images.write("'{0}': ['{1}', '{2}'],\n".format(image_file[0], image_file[1], image_data))
+
+    images.write('}\n')
+    images.close()
+
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv-icon.png')]))
+
+    additional_modules = []
 
     setup(name = NAME,
           description = DESCRIPTION,

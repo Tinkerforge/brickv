@@ -216,9 +216,6 @@ Section "Install Brick Viewer ${BRICKV_VERSION}"
   SetOutPath "$INSTDIR\OpenGL"
   File /r "..\OpenGL\*"
 
-  SetOutPath "$INSTDIR\plugin_system"
-  File /r "..\plugin_system\*"
-
   ; Write the installation path into the registry
   WriteRegStr HKLM "Software\Tinkerforge\Brickv" "Install_Dir" "$INSTDIR"
   WriteRegStr HKLM "Software\Tinkerforge\Brickv" "Version" ${BRICKV_VERSION}
