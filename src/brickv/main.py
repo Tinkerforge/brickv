@@ -33,6 +33,9 @@ if hasattr(sys, "frozen"):
 else:
     program_path = str(os.path.dirname(os.path.realpath(unicode(__file__, sys.getfilesystemencoding()))))
 
+# add program_path so OpenGL is properly imported
+sys.path.insert(0, program_path)
+
 # Allow brickv to be directly started by calling "main.py"
 # without "brickv" being in the path already
 if not 'brickv' in sys.modules:
