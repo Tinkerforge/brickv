@@ -104,3 +104,9 @@
        Fix monoflop time update if Go button is clicked in quick succession
        Add plugins for PTC Bricklet and Industrial Dual 0-20mA Bricklet
 2.0.7: Fix naming of Industrial Dual 0-20mA Bricklet
+2.0.8: Add support for Distance US, Dual Button, Hall Effect, LED Strip, Line, Moisture, Motion Detector, Multi Touch, Piezo Speaker, Remote Switch, Rotary Encoder, Segment Display 4x7, Sound Intensity and Tilt Bricklet
+       Don't crash on unknown Bricklets
+       Support 3.3V range and averaging configuration for Analog In Bricklet
+       Make serial port detection more robust on Windows
+       Speed up firmware version information discovery
+       Make sample point file parsing more robust for Distance IR Bricklet
