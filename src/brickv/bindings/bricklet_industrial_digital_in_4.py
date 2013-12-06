@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-11-27.      #
+# This file was automatically generated on 2013-12-06.      #
 #                                                           #
 # Bindings Version 2.0.12                                    #
 #                                                           #
@@ -78,12 +78,11 @@ class BrickletIndustrialDigitalIn4(Device):
 
     def get_value(self):
         """
-        Returns the input value with a bitmask. The bitmask
-        is 16 bit long, *true* refers to high and *false* refers to 
-        low.
+        Returns the input value with a bitmask. The bitmask is 16bit long, *true*
+        refers to high and *false* refers to low.
         
-        For example: The value 0b0000000000000011 means that pins 0-1 
-        are high and the other pins are low.
+        For example: The value 3 or 0b0011 means that pins 0-1 are high and the other
+        pins are low.
         
         If no groups are used (see :func:`SetGroup`), the pins correspond to the
         markings on the Digital In 4 Bricklet.
@@ -106,7 +105,7 @@ class BrickletIndustrialDigitalIn4(Device):
         not be used.
         
         For example: If you have two Digital In 4 Bricklets connected to port A and
-        port B respectively, you could call with "['a', 'b', 'n', 'n']".
+        port B respectively, you could call with ``['a', 'b', 'n', 'n']``.
         
         Now the pins on the Digital In 4 on port A are assigned to 0-3 and the
         pins on the Digital In 4 on port B are assigned to 4-7. It is now possible
@@ -126,7 +125,7 @@ class BrickletIndustrialDigitalIn4(Device):
     def get_available_for_group(self):
         """
         Returns a bitmask of ports that are available for grouping. For example the
-        value 0b0101 means: Port *A* and Port *C* are connected to Bricklets that
+        value 5 or 0b0101 means: Port A and port C are connected to Bricklets that
         can be grouped together.
         """
         return self.ipcon.send_request(self, BrickletIndustrialDigitalIn4.FUNCTION_GET_AVAILABLE_FOR_GROUP, (), '', 'B')
@@ -155,8 +154,8 @@ class BrickletIndustrialDigitalIn4(Device):
         Interrupts are triggered on changes of the voltage level of the pin,
         i.e. changes from high to low and low to high.
         
-        For example: An interrupt bitmask of 9 (0b0000000000001001) will 
-        enable the interrupt for pins 0 and 3.
+        For example: An interrupt bitmask of 9 or 0b1001 will enable the interrupt for
+        pins 0 and 3.
         
         The interrupts use the grouping as set by :func:`SetGroup`.
         

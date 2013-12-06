@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-11-27.      #
+# This file was automatically generated on 2013-12-06.      #
 #                                                           #
 # Bindings Version 2.0.12                                    #
 #                                                           #
@@ -73,8 +73,8 @@ class BrickletIndustrialDigitalOut4(Device):
         is 16 bit long, *true* refers to high and *false* refers to 
         low.
         
-        For example: The value 0b0000000000000011 will turn pins 0-1 
-        high and the other pins low.
+        For example: The value 3 or 0b0011 will turn pins 0-1 high and the other pins
+        low.
         
         If no groups are used (see :func:`SetGroup`), the pins correspond to the
         markings on the Digital Out 4 Bricklet.
@@ -102,10 +102,9 @@ class BrickletIndustrialDigitalOut4(Device):
         The third parameter indicates the time (in ms) that the pins should hold
         the value.
         
-        If this function is called with the parameters 
-        ((1 << 0) | (1 << 3), (1 << 0), 1500):
-        Pin 0 will get high and pin 3 will get low. In 1.5s pin 0 will get low and
-        pin 3 will get high again.
+        If this function is called with the parameters (9, 1, 1500) or
+        (0b1001, 0b0001, 1500): Pin 0 will get high and pin 3 will get low. In 1.5s
+        pin 0 will get low and pin 3 will get high again.
         
         A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
         have a RS485 bus and a Digital Out 4 Bricklet connected to one of the slave
@@ -137,7 +136,7 @@ class BrickletIndustrialDigitalOut4(Device):
         not be used.
         
         For example: If you have two Digital Out 4 Bricklets connected to port A and
-        port B respectively, you could call with "['a', 'b', 'n', 'n']".
+        port B respectively, you could call with ``['a', 'b', 'n', 'n']``.
         
         Now the pins on the Digital Out 4 on port A are assigned to 0-3 and the
         pins on the Digital Out 4 on port B are assigned to 4-7. It is now possible
@@ -154,7 +153,7 @@ class BrickletIndustrialDigitalOut4(Device):
     def get_available_for_group(self):
         """
         Returns a bitmask of ports that are available for grouping. For example the
-        value 0b0101 means: Port *A* and Port *C* are connected to Bricklets that
+        value 5 or 0b0101 means: Port A and port C are connected to Bricklets that
         can be grouped together.
         """
         return self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_GET_AVAILABLE_FOR_GROUP, (), '', 'B')
@@ -165,8 +164,8 @@ class BrickletIndustrialDigitalOut4(Device):
         The bitmask is 16 bit long, *true* refers to high and *false* refers to 
         low.
         
-        For example: The values 0b0000000000000011, b0000000000000001 will turn 
-        pin 0 high, pin 1 low the other pins remain untouched.
+        For example: The values (3, 1) or (0b0011, 0b0001) will turn pin 0 high, pin 1
+        low the other pins remain untouched.
         
         If no groups are used (see :func:`SetGroup`), the pins correspond to the
         markings on the Digital Out 4 Bricklet.

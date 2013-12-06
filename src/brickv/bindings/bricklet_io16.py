@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-11-27.      #
+# This file was automatically generated on 2013-12-06.      #
 #                                                           #
 # Bindings Version 2.0.12                                    #
 #                                                           #
@@ -114,7 +114,7 @@ class BrickletIO16(Device):
     def set_port_configuration(self, port, selection_mask, direction, value):
         """
         Configures the value and direction of a specified port. Possible directions
-        are "i" and "o" for input and output.
+        are 'i' and 'o' for input and output.
         
         If the direction is configured as output, the value is either high or low
         (set as *true* or *false*).
@@ -124,10 +124,10 @@ class BrickletIO16(Device):
         
         For example:
         
-        * ("a", 255, 'i', true) will set all pins of port a as input pull-up.
-        * ("a", 128, 'i', false) will set pin 7 of port a as input default (floating if nothing is connected).
-        * ("b", 3, 'o', false) will set pins 0 and 1 of port b as output low.
-        * ("b", 4, 'o', true) will set pin 2 of port b as output high.
+        * ('a', 255, 'i', true) or ('a', 0b11111111, 'i', true) will set all pins of port A as input pull-up.
+        * ('a', 128, 'i', false) or ('a', 0b10000000, 'i', false) will set pin 7 of port A as input default (floating if nothing is connected).
+        * ('b', 3, 'o', false) or ('b', 0b00000011, 'o', false) will set pins 0 and 1 of port B as output low.
+        * ('b', 4, 'o', true) or ('b', 0b00000100, 'o', true) will set pin 2 of port B as output high.
         """
         self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_PORT_CONFIGURATION, (port, selection_mask, direction, value), 'c B c ?', '')
 
@@ -135,7 +135,7 @@ class BrickletIO16(Device):
         """
         Returns a direction bitmask and a value bitmask for the specified port.
         
-        For example: A return value of 0b00001111 and 0b00110011 for
+        For example: A return value of (15, 51) or (0b00001111, 0b00110011) for
         direction and value means that:
         
         * pins 0 and 1 are configured as input pull-up,
@@ -169,8 +169,8 @@ class BrickletIO16(Device):
         Interrupts are triggered on changes of the voltage level of the pin,
         i.e. changes from high to low and low to high.
         
-        For example: ('a', 129) will enable the interrupt for pins 0 and 7 of
-        port a.
+        For example: ('a', 129) or (a, 0b10000001) will enable the interrupt for
+        pins 0 and 7 of port a.
         
         The interrupt is delivered with the callback :func:`Interrupt`.
         """
@@ -195,9 +195,9 @@ class BrickletIO16(Device):
         The forth parameter indicates the time (in ms) that the pins should hold
         the value.
         
-        If this function is called with the parameters ('a', (1 << 0) | (1 << 3), (1 << 0), 1500):
-        Pin 0 will get high and pin 3 will get low on port 'a'. In 1.5s pin 0 will get
-        low and pin 3 will get high again.
+        If this function is called with the parameters ('a', 9, 1, 1500) or
+        ('a', 0b00001001, 0b00000001, 1500): Pin 0 will get high and pin 3 will get
+        low on port 'a'. In 1.5s pin 0 will get low and pin 3 will get high again.
         
         A monoflop can be used as a fail-safe mechanism. For example: Lets assume you
         have a RS485 bus and an IO-16 Bricklet connected to one of the slave
@@ -227,8 +227,8 @@ class BrickletIO16(Device):
         according to the selection mask. The bitmask is 8 bit long, *true* refers 
         to high and *false* refers to low.
         
-        For example: The values 0b11000000, 0b10000000 will turn pin 7 high and
-        pin 6 low, pins 0-6 will remain untouched.
+        For example: The parameters ('a', 192, 128) or ('a', 0b11000000, 0b10000000)
+        will turn pin 7 high and pin 6 low on port A, pins 0-6 will remain untouched.
         
         .. note::
          This function does nothing for pins that are configured as input.

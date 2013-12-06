@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-11-27.      #
+# This file was automatically generated on 2013-12-06.      #
 #                                                           #
 # Bindings Version 2.0.12                                    #
 #                                                           #
@@ -39,6 +39,8 @@ class BrickletLEDStrip(Device):
     FUNCTION_SET_FRAME_DURATION = 3
     FUNCTION_GET_FRAME_DURATION = 4
     FUNCTION_GET_SUPPLY_VOLTAGE = 5
+    FUNCTION_SET_CLOCK_FREQUENCY = 7
+    FUNCTION_GET_CLOCK_FREQUENCY = 8
     FUNCTION_GET_IDENTITY = 255
 
 
@@ -49,7 +51,7 @@ class BrickletLEDStrip(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletLEDStrip.FUNCTION_SET_RGB_VALUES] = BrickletLEDStrip.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_RGB_VALUES] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -57,6 +59,8 @@ class BrickletLEDStrip(Device):
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_FRAME_DURATION] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_SUPPLY_VOLTAGE] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLEDStrip.CALLBACK_FRAME_RENDERED] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletLEDStrip.FUNCTION_SET_CLOCK_FREQUENCY] = BrickletLEDStrip.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLEDStrip.FUNCTION_GET_CLOCK_FREQUENCY] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_IDENTITY] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletLEDStrip.CALLBACK_FRAME_RENDERED] = 'H'
@@ -69,9 +73,15 @@ class BrickletLEDStrip(Device):
         The maximum length is 16, the index goes from 0 to 319 and the rgb values
         have 8 bits each.
         
-        Example: If you set index to 5, length to 3, r to [255, 0, 0], 
-        g to [0, 255, 0] and b to [0, 0, 255] the LEDs with index 5, 6
-        and 7 will get the color red, green and blue respectively.
+        Example: If you set
+        
+        * index to 5,
+        * length to 3,
+        * r to [255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        * g to [0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] and
+        * b to [0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        
+        the LED with index 5 will be red, 6 will be green and 7 will be blue.
         
         The colors will be transfered to actual LEDs when the next
         frame duration ends, see :func:`SetFrameDuration`.
@@ -129,6 +139,39 @@ class BrickletLEDStrip(Device):
         Returns the current supply voltage of the LEDs. The voltage is given in mV.
         """
         return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_SUPPLY_VOLTAGE, (), '', 'H')
+
+    def set_clock_frequency(self, frequency):
+        """
+        Sets the frequency of the clock in Hz. The range is 10000Hz (10kHz) up to
+        2000000Hz (2MHz).
+        
+        The Bricklet will choose the nearest achievable frequency, which may
+        be off by a few Hz. You can get the exact frequency that is used by
+        calling :func:`GetClockFrequency`.
+        
+        If you have problems with flickering LEDs, they may be bits flipping. You
+        can fix this by either making the connection between the LEDs and the
+        Bricklet shorter or by reducing the frequency.
+        
+        With a decreasing frequency your maximum frames per second will decrease
+        too.
+        
+        The default value is 1.66MHz.
+        
+        .. note::
+         The frequency in firmware version 2.0.0 is fixed at 2MHz.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_CLOCK_FREQUENCY, (frequency,), 'I', '')
+
+    def get_clock_frequency(self):
+        """
+        Returns the currently used clock frequency.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_CLOCK_FREQUENCY, (), '', 'I')
 
     def get_identity(self):
         """
