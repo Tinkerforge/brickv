@@ -42,6 +42,8 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         PluginBase.__init__(self, ipcon, uid, 'LED Strip Bricklet', version)
         
         self.setupUi(self)
+        
+        self.has_clock_frequency = version >= (2, 0, 1)
 
         self.led_strip = BrickletLEDStrip(uid, ipcon)
         
@@ -50,6 +52,8 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.button_gradient.pressed.connect(self.gradient_pressed)
         self.button_color.pressed.connect(self.color_pressed)
         self.box_frame_duration.valueChanged.connect(self.frame_duration_changed)
+        if self.has_clock_frequency:
+            self.box_clock_frequency.valueChanged.connect(self.clock_frequency_changed)
         
         self.state = self.STATE_IDLE
         
@@ -64,6 +68,9 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
     def update_voltage(self):
         async_call(self.led_strip.get_supply_voltage, None, self.cb_voltage, self.increase_error_count)
         
+    def cb_frequency(self, frequency):
+        self.box_clock_frequency.setValue(frequency)
+        
     def cb_voltage(self, voltage):
         self.label_voltage.setText(str(voltage/1000.0) + 'V')
         
@@ -72,6 +79,9 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             self.render_color_gradient()
         elif self.state == self.STATE_COLOR_SINGLE:
             self.render_color_single()
+            
+    def clock_frequency_changed(self, frequency):
+        self.led_strip.set_clock_frequency(frequency)
             
     def frame_duration_changed(self, duration):
         self.led_strip.set_frame_duration(duration)
@@ -157,6 +167,8 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             i += leds
             
     def start(self):
+        if self.has_clock_frequency:
+            async_call(self.led_strip.get_clock_frequency, None, self.cb_frequency, self.increase_error_count)
         async_call(self.led_strip.get_supply_voltage, None, self.cb_voltage, self.increase_error_count)
         self.voltage_timer.start()
         self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_RENDERED,
