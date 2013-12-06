@@ -54,6 +54,9 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.box_frame_duration.valueChanged.connect(self.frame_duration_changed)
         if self.has_clock_frequency:
             self.box_clock_frequency.valueChanged.connect(self.clock_frequency_changed)
+        else:
+            self.box_clock_frequency.setValue(20000000)
+            self.box_clock_frequency.setEnabled(False)
         
         self.state = self.STATE_IDLE
         
