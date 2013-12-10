@@ -129,14 +129,14 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             i += leds
         
     def render_color_gradient(self):
-        self.gradient_counter += self.box_speed.value()
         num_leds = self.box_num_led.value()
+        self.gradient_counter += num_leds * self.box_speed.value() / 100.0 / 4.0
         ra = []
         ga = []
         ba = []
         
         range_leds = range(num_leds)
-        range_leds = range_leds[self.gradient_counter % num_leds:] + range_leds[:self.gradient_counter % num_leds]
+        range_leds = range_leds[int(self.gradient_counter) % num_leds:] + range_leds[:int(self.gradient_counter) % num_leds]
         
         for i in range_leds:
             r, g, b = colorsys.hsv_to_rgb(1.0*i/num_leds, 1, 0.1)
