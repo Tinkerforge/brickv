@@ -58,7 +58,7 @@ class MotionDetector(PluginBase):
         layout.addStretch()
         
     def cb_motion_detected(self):
-        self.label.setText("Motion Detected")
+        self.label.setText("<font color='red'>Motion Detected</font>")
         
     def cb_detection_cycle_ended(self):
         self.label.setText("No Motion Detected")
