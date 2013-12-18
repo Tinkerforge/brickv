@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-11-27.      #
+# This file was automatically generated on 2013-12-13.      #
 #                                                           #
 # Bindings Version 2.0.12                                    #
 #                                                           #
@@ -37,6 +37,9 @@ class BrickletRemoteSwitch(Device):
     FUNCTION_GET_SWITCHING_STATE = 2
     FUNCTION_SET_REPEATS = 4
     FUNCTION_GET_REPEATS = 5
+    FUNCTION_SWITCH_SOCKET_A = 6
+    FUNCTION_SWITCH_SOCKET_B = 7
+    FUNCTION_DIM_SOCKET_B = 8
     FUNCTION_GET_IDENTITY = 255
 
     SWITCH_TO_OFF = 0
@@ -58,6 +61,9 @@ class BrickletRemoteSwitch(Device):
         self.response_expected[BrickletRemoteSwitch.CALLBACK_SWITCHING_DONE] = BrickletRemoteSwitch.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRemoteSwitch.FUNCTION_SET_REPEATS] = BrickletRemoteSwitch.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletRemoteSwitch.FUNCTION_GET_REPEATS] = BrickletRemoteSwitch.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET_A] = BrickletRemoteSwitch.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET_B] = BrickletRemoteSwitch.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRemoteSwitch.FUNCTION_DIM_SOCKET_B] = BrickletRemoteSwitch.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletRemoteSwitch.FUNCTION_GET_IDENTITY] = BrickletRemoteSwitch.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletRemoteSwitch.CALLBACK_SWITCHING_DONE] = ''
@@ -101,6 +107,30 @@ class BrickletRemoteSwitch(Device):
         Returns the number of repeats as set by :func:`SetRepeats`.
         """
         return self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_GET_REPEATS, (), '', 'B')
+
+    def switch_socket_a(self, house_code, receiver_code, switch_to):
+        """
+        To switch a socket you have to give the house code, receiver code and the
+        state (on or off) you want to switch to.
+        
+        A detailed description on how you can find the house and receiver code
+        can be found :ref:`here <remote_switch_bricklet_house_and_receiver_code>`.
+        
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET_A, (house_code, receiver_code, switch_to), 'B B B', '')
+
+    def switch_socket_b(self, address, unit, switch_to):
+        """
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET_B, (address, unit, switch_to), 'I B B', '')
+
+    def dim_socket_b(self, address, unit, dim_value):
+        """
+        .. versionadded:: 2.0.1~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_DIM_SOCKET_B, (address, unit, dim_value), 'I B B', '')
 
     def get_identity(self):
         """

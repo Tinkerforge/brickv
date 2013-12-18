@@ -44,39 +44,135 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
         
         self.h_check = (self.h_check_a, self.h_check_b, self.h_check_c, self.h_check_d, self.h_check_e)
         self.r_check = (self.r_check_a, self.r_check_b, self.r_check_c, self.r_check_d, self.r_check_e)
+        for h in self.h_check:
+            h.stateChanged.connect(self.h_check_state_changed)
+            
+        for r in self.r_check:
+            r.stateChanged.connect(self.r_check_state_changed)
+            
+        self.checkbox_switchall.stateChanged.connect(self.switchall_state_changed)
+        self.spinbox_house.valueChanged.connect(self.house_value_changed)
+        self.spinbox_receiver.valueChanged.connect(self.receiver_value_changed)
+        self.combo_type.currentIndexChanged.connect(self.onoff_index_changed)
         
-        self.button_switch.pressed.connect(self.button_pressed)
-
+        self.spinbox_dim_value.valueChanged.connect(self.spinbox_dim_value_changed)
+        self.slider_dim_value.valueChanged.connect(self.slider_dim_value_changed)
+        
+        self.button_switch_on.pressed.connect(lambda: self.button_pressed(1))
+        self.button_switch_off.pressed.connect(lambda: self.button_pressed(0))
+        self.button_dim.pressed.connect(self.dim_pressed)
+        
+        self.type_a_widgets = [self.groupbox_house, self.groupbox_receiver, self.button_switch_on, self.button_switch_off]
+        self.type_b_widgets = [self.widget_address, self.widget_unit, self.button_switch_on, self.button_switch_off]
+        self.type_b_dim_widgets = [self.widget_dim_value, self.widget_address, self.widget_unit, self.button_dim]
+        self.type_widgets = (self.type_a_widgets, self.type_b_widgets, self.type_b_dim_widgets)
+        
+        self.onoff_index_changed(0)
+        
+    def spinbox_dim_value_changed(self, value):
+        self.slider_dim_value.setValue(value)
+        
+    def slider_dim_value_changed(self, value):
+        self.spinbox_dim_value.setValue(value)
+        
+    def onoff_index_changed(self, index):
+        for i in range(len(self.type_widgets)):
+            if i != index:
+                for w in self.type_widgets[i]:
+                    w.setVisible(False)
+                    
+        for w in self.type_widgets[index]:
+            w.setVisible(True)
+        
+        
+    def house_value_changed(self, state):
+        for i in range(5):
+            if state & (1 << i):
+                self.h_check[i].setChecked(True)
+            else:
+                self.h_check[i].setChecked(False)
+            
+    def receiver_value_changed(self, state):
+        for i in range(5):
+            if state & (1 << i):
+                self.r_check[i].setChecked(True)
+            else:
+                self.r_check[i].setChecked(False)
+    
+    def switchall_state_changed(self, state):
+        if self.checkbox_switchall.isChecked():
+            self.spinbox_unit.setEnabled(False)
+        else:
+            self.spinbox_unit.setEnabled(True)
+        
+    def h_check_state_changed(self, state):
+        house_code = 0
+        for i in range(5):
+            if self.h_check[i].isChecked():
+                house_code |= (1 << i)
+                
+        self.spinbox_house.setValue(house_code)
+        
+    def r_check_state_changed(self, state):
+        receiver_code = 0
+        for i in range(5):
+            if self.r_check[i].isChecked():
+                receiver_code |= (1 << i)
+            
+        self.spinbox_receiver.setValue(receiver_code)
+                    
     def start(self):
         pass
         
     def stop(self):
         pass
     
-    def button_pressed(self):
-        self.button_switch.setEnabled(False)
-        self.button_switch.setText("Switching...")
+    def dim_pressed(self):
+        self.button_dim.setEnabled(False)
+        self.button_dim.setText("Dimming...")
         
         repeats = self.spinbox_repeats.value()
         self.rs.set_repeats(repeats)
         
-        house_code = 0
-        for i in range(5):
-            if self.h_check[i].isChecked():
-                house_code |= (1 << i)
+        if self.combo_type.currentIndex() == 2:
+            address = self.spinbox_address.value()
+            unit = self.spinbox_unit.value()
+            if self.checkbox_switchall.isChecked():
+                unit = 255
                 
-        receiver_code = 0
-        for i in range(5):
-            if self.r_check[i].isChecked():
-                receiver_code |= (1 << i)
+            dim_value = self.spinbox_dim_value.value()
+                
+            self.rs.dim_socket_b(address, unit, dim_value)
+    
+    def button_pressed(self, switch_to):
+        self.button_switch_on.setEnabled(False)
+        self.button_switch_on.setText("Switching...")
+        self.button_switch_off.setEnabled(False)
+        self.button_switch_off.setText("Switching...")
         
-        switch_to = self.combo_onoff.currentIndex()
-        self.rs.switch_socket(house_code, receiver_code, switch_to)
+        repeats = self.spinbox_repeats.value()
+        self.rs.set_repeats(repeats)
+        
+        if self.combo_type.currentIndex() == 0:
+            house_code = self.spinbox_house.value()
+            receiver_code = self.spinbox_receiver.value()
+            self.rs.switch_socket(house_code, receiver_code, switch_to)
+        elif self.combo_type.currentIndex() == 1:
+            address = self.spinbox_address.value()
+            unit = self.spinbox_unit.value()
+            if self.checkbox_switchall.isChecked():
+                unit = 255
+                
+            self.rs.switch_socket_b(address, unit, switch_to)
             
     
     def cb_switching_done(self):
-        self.button_switch.setEnabled(True)
-        self.button_switch.setText("Switch Socket")
+        self.button_switch_on.setEnabled(True)
+        self.button_switch_on.setText("Switch On")
+        self.button_switch_off.setEnabled(True)
+        self.button_switch_off.setText("Switch Off")
+        self.button_dim.setEnabled(True)
+        self.button_dim.setText("Dim")
 
     def get_url_part(self):
         return 'remote_switch'
