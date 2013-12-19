@@ -109,4 +109,7 @@
        Support 3.3V range and averaging configuration for Analog In Bricklet
        Make serial port detection more robust on Windows
        Speed up firmware version information discovery
-       Make sample point file parsing more robust for Distance IR Bricklet
+       Make sample point file parsing more robust in Distance IR Bricklet plugin
+2.0.9: Support Get/SetClockFrequency in LED Strip Bricklet plugin
+       Show "motion detected" in red in Motion Detector Bricklet plugin
+       Support Intertechno and ELRO Home Easy addressing types in Remote Switch Bricklet plugin
