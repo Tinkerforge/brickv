@@ -40,6 +40,18 @@
          <string>B Dimmer</string>
         </property>
        </item>
+       <item>
+        <property name="text">
+         <string>C Switch</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_hint">
+       <property name="text">
+        <string>More Types in FW Version 2.0.1</string>
+       </property>
       </widget>
      </item>
      <item>
@@ -486,6 +498,166 @@
         </item>
         <item>
          <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_system_code" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
+      <property name="margin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_12">
+        <item>
+         <widget class="QLabel" name="label_13">
+          <property name="text">
+           <string>System Code</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="combo_system_code">
+          <item>
+           <property name="text">
+            <string>A</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>B</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>C</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>D</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>E</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>F</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>G</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>H</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>I</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>J</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>K</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>L</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>M</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>N</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>O</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>P</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_5">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_device_code" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_13">
+      <property name="margin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <item>
+         <widget class="QLabel" name="label_15">
+          <property name="text">
+           <string>Device Code</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinbox_device_code">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>16</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_6">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>

@@ -36,6 +36,8 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
         
         self.setupUi(self)
 
+        self.has_more_types = version >= (2, 0, 1)
+
         self.rs = BrickletRemoteSwitch(uid, ipcon)
         
         self.qtcb_switching_done.connect(self.cb_switching_done)
@@ -53,7 +55,7 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
         self.checkbox_switchall.stateChanged.connect(self.switchall_state_changed)
         self.spinbox_house.valueChanged.connect(self.house_value_changed)
         self.spinbox_receiver.valueChanged.connect(self.receiver_value_changed)
-        self.combo_type.currentIndexChanged.connect(self.onoff_index_changed)
+        self.combo_type.currentIndexChanged.connect(self.type_index_changed)
         
         self.spinbox_dim_value.valueChanged.connect(self.spinbox_dim_value_changed)
         self.slider_dim_value.valueChanged.connect(self.slider_dim_value_changed)
@@ -65,17 +67,24 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
         self.type_a_widgets = [self.groupbox_house, self.groupbox_receiver, self.button_switch_on, self.button_switch_off]
         self.type_b_widgets = [self.widget_address, self.widget_unit, self.button_switch_on, self.button_switch_off]
         self.type_b_dim_widgets = [self.widget_dim_value, self.widget_address, self.widget_unit, self.button_dim]
-        self.type_widgets = (self.type_a_widgets, self.type_b_widgets, self.type_b_dim_widgets)
-        
-        self.onoff_index_changed(0)
+        self.type_c_widgets = [self.widget_system_code, self.widget_device_code, self.button_switch_on, self.button_switch_off]
+        self.type_widgets = (self.type_a_widgets, self.type_b_widgets, self.type_b_dim_widgets, self.type_c_widgets)
+
+        if self.has_more_types:
+            self.label_hint.setVisible(False)
+        else:
+            self.combo_type.clear()
+            self.combo_type.addItem('A Switch')
+
+        self.type_index_changed(0)
         
     def spinbox_dim_value_changed(self, value):
         self.slider_dim_value.setValue(value)
         
     def slider_dim_value_changed(self, value):
         self.spinbox_dim_value.setValue(value)
-        
-    def onoff_index_changed(self, index):
+
+    def type_index_changed(self, index):
         for i in range(len(self.type_widgets)):
             if i != index:
                 for w in self.type_widgets[i]:
@@ -83,15 +92,14 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
                     
         for w in self.type_widgets[index]:
             w.setVisible(True)
-        
-        
+
     def house_value_changed(self, state):
         for i in range(5):
             if state & (1 << i):
                 self.h_check[i].setChecked(True)
             else:
                 self.h_check[i].setChecked(False)
-            
+
     def receiver_value_changed(self, state):
         for i in range(5):
             if state & (1 << i):
@@ -153,19 +161,22 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
         repeats = self.spinbox_repeats.value()
         self.rs.set_repeats(repeats)
         
-        if self.combo_type.currentIndex() == 0:
+        if self.combo_type.currentText() == 'A Switch':
             house_code = self.spinbox_house.value()
             receiver_code = self.spinbox_receiver.value()
             self.rs.switch_socket(house_code, receiver_code, switch_to)
-        elif self.combo_type.currentIndex() == 1:
+        elif self.combo_type.currentText() == 'B Switch':
             address = self.spinbox_address.value()
             unit = self.spinbox_unit.value()
             if self.checkbox_switchall.isChecked():
                 unit = 255
-                
+
             self.rs.switch_socket_b(address, unit, switch_to)
-            
-    
+        elif self.combo_type.currentText() == 'C Switch':
+            system_code = str(self.combo_system_code.currentText())[0]
+            device_code = self.spinbox_device_code.value()
+            self.rs.switch_socket_c(system_code, device_code, switch_to)
+
     def cb_switching_done(self):
         self.button_switch_on.setEnabled(True)
         self.button_switch_on.setText("Switch On")
