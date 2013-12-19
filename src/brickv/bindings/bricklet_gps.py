@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-11-27.      #
+# This file was automatically generated on 2013-12-19.      #
 #                                                           #
-# Bindings Version 2.0.12                                    #
+# Bindings Version 2.0.13                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -54,10 +54,10 @@ class BrickletGPS(Device):
     FUNCTION_GET_STATUS_CALLBACK_PERIOD = 10
     FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD = 11
     FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD = 12
-    FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD = 13
-    FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD = 14
-    FUNCTION_SET_MOTION_CALLBACK_PERIOD = 15
-    FUNCTION_GET_MOTION_CALLBACK_PERIOD = 16
+    FUNCTION_SET_MOTION_CALLBACK_PERIOD = 13
+    FUNCTION_GET_MOTION_CALLBACK_PERIOD = 14
+    FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD = 15
+    FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD = 16
     FUNCTION_GET_IDENTITY = 255
 
     FIX_NO_FIX = 1
@@ -89,10 +89,10 @@ class BrickletGPS(Device):
         self.response_expected[BrickletGPS.FUNCTION_GET_STATUS_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPS.FUNCTION_SET_ALTITUDE_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletGPS.FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletGPS.FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletGPS.FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPS.FUNCTION_SET_MOTION_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletGPS.FUNCTION_GET_MOTION_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletGPS.FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletGPS.FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPS.CALLBACK_COORDINATES] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletGPS.CALLBACK_STATUS] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletGPS.CALLBACK_ALTITUDE] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -140,9 +140,12 @@ class BrickletGPS(Device):
          :header: "Value", "Description"
          :widths: 10, 100
         
-         "1", "No Fix"
-         "2", "2D Fix"
-         "3", "3D Fix"
+         "1", "No Fix, :func:`GetCoordinates` and :func:`GetAltitude` return invalid data"
+         "2", "2D Fix, only :func:`GetCoordinates` returns valid data"
+         "3", "3D Fix, :func:`GetCoordinates` and :func:`GetAltitude` return valid data"
+        
+        There is also a :ref:`blue LED <gps_bricklet_fix_led>` on the Bricklet that
+        indicates the fix status.
         """
         return GetStatus(*self.ipcon.send_request(self, BrickletGPS.FUNCTION_GET_STATUS, (), '', 'B B B'))
 
@@ -249,24 +252,6 @@ class BrickletGPS(Device):
         """
         return self.ipcon.send_request(self, BrickletGPS.FUNCTION_GET_ALTITUDE_CALLBACK_PERIOD, (), '', 'I')
 
-    def set_date_time_callback_period(self, period):
-        """
-        Sets the period in ms with which the :func:`DateTime` callback is triggered
-        periodically. A value of 0 turns the callback off.
-        
-        :func:`DateTime` is only triggered if the date or time changed since the
-        last triggering.
-        
-        The default value is 0.
-        """
-        self.ipcon.send_request(self, BrickletGPS.FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD, (period,), 'I', '')
-
-    def get_date_time_callback_period(self):
-        """
-        Returns the period as set by :func:`SetDateTimeCallbackPeriod`.
-        """
-        return self.ipcon.send_request(self, BrickletGPS.FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD, (), '', 'I')
-
     def set_motion_callback_period(self, period):
         """
         Sets the period in ms with which the :func:`Motion` callback is triggered
@@ -284,6 +269,24 @@ class BrickletGPS(Device):
         Returns the period as set by :func:`SetMotionCallbackPeriod`.
         """
         return self.ipcon.send_request(self, BrickletGPS.FUNCTION_GET_MOTION_CALLBACK_PERIOD, (), '', 'I')
+
+    def set_date_time_callback_period(self, period):
+        """
+        Sets the period in ms with which the :func:`DateTime` callback is triggered
+        periodically. A value of 0 turns the callback off.
+        
+        :func:`DateTime` is only triggered if the date or time changed since the
+        last triggering.
+        
+        The default value is 0.
+        """
+        self.ipcon.send_request(self, BrickletGPS.FUNCTION_SET_DATE_TIME_CALLBACK_PERIOD, (period,), 'I', '')
+
+    def get_date_time_callback_period(self):
+        """
+        Returns the period as set by :func:`SetDateTimeCallbackPeriod`.
+        """
+        return self.ipcon.send_request(self, BrickletGPS.FUNCTION_GET_DATE_TIME_CALLBACK_PERIOD, (), '', 'I')
 
     def get_identity(self):
         """
