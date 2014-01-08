@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-12-19.      #
+# This file was automatically generated on 2014-01-07.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -69,9 +69,8 @@ class BrickletIndustrialDigitalOut4(Device):
 
     def set_value(self, value_mask):
         """
-        Sets the output value with a bitmask. The bitmask
-        is 16 bit long, *true* refers to high and *false* refers to 
-        low.
+        Sets the output value with a bitmask (16bit). A 1 in the bitmask means high
+        and a 0 in the bitmask means low.
         
         For example: The value 3 or 0b0011 will turn pins 0-1 high and the other pins
         low.
@@ -97,7 +96,7 @@ class BrickletIndustrialDigitalOut4(Device):
         bitmask.
         
         The second parameter is a bitmask with the desired value of the specified
-        pins (*true* means high and *false* means low).
+        pins. A 1 in the bitmask means high and a 0 in the bitmask means low.
         
         The third parameter indicates the time (in ms) that the pins should hold
         the value.

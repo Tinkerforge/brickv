@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-12-19.      #
+# This file was automatically generated on 2014-01-07.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -69,12 +69,11 @@ class BrickletIndustrialQuadRelay(Device):
 
     def set_value(self, value_mask):
         """
-        Sets the output value with a bitmask. The bitmask
-        is 16 bit long, *true* refers to a closed relay and *false* refers to 
-        an open relay.
+        Sets the output value with a bitmask (16bit). A 1 in the bitmask means relay
+        closed and a 0 means relay open.
         
-        For example: The value 0b0011 will close the relay of pins 0-1 and open the
-        other pins.
+        For example: The value 3 or 0b0011 will close the relay of pins 0-1 and open
+        the other pins.
         
         If no groups are used (see :func:`SetGroup`), the pins correspond to the
         markings on the Quad Relay Bricklet.
@@ -97,7 +96,7 @@ class BrickletIndustrialQuadRelay(Device):
         bitmask.
         
         The second parameter is a bitmask with the desired value of the specified
-        pins (*true* means relay closed and *false* means relay open).
+        pins. A 1 in the bitmask means relay closed and a 0 means relay open.
         
         The third parameter indicates the time (in ms) that the pins should hold
         the value.

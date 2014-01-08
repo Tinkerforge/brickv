@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-12-19.      #
+# This file was automatically generated on 2014-01-07.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -70,7 +70,7 @@ class BrickletSegmentDisplay4x7(Device):
            :align: center
         
         For example to set a "5" you would want to activate segments 0, 2, 3, 5 and 6.
-        This is represented by the number 0b00110101 = 0x35 = 53.
+        This is represented by the number 0b01101101 = 0x6d = 109.
         
         The brightness can be set between 0 (dark) and 7 (bright). The colon
         parameter turns the colon of the display on or off.

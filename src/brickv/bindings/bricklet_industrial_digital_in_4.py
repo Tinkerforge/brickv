@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-12-19.      #
+# This file was automatically generated on 2014-01-07.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -183,7 +183,8 @@ class BrickletIndustrialDigitalIn4(Device):
 
     def set_edge_count_config(self, selection_mask, edge_type, debounce):
         """
-        Configures the edge counter for the selected pins.
+        Configures the edge counter for the selected pins. A bitmask of 9 or 0b1001 will
+        enable the edge counter for pins 0 and 3.
         
         The edge type parameter configures if rising edges, falling edges or
         both are counted if the pin is configured for input. Possible edge types are:

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-12-19.      #
+# This file was automatically generated on 2014-01-07.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -91,10 +91,10 @@ class BrickletIO16(Device):
 
     def set_port(self, port, value_mask):
         """
-        Sets the output value (high or low) for a port ("a" or "b") with a bitmask.
-        The bitmask is 8 bit long, *true* refers to high and *false* refers to low.
+        Sets the output value (high or low) for a port ("a" or "b") with a bitmask
+        (8bit). A 1 in the bitmask means high and a 0 in the bitmask means low.
         
-        For example: The value 0b00001111 will turn the pins 0-3 high and the
+        For example: The value 15 or 0b00001111 will turn the pins 0-3 high and the
         pins 4-7 low for the specified port.
         
         .. note::
@@ -169,7 +169,7 @@ class BrickletIO16(Device):
         Interrupts are triggered on changes of the voltage level of the pin,
         i.e. changes from high to low and low to high.
         
-        For example: ('a', 129) or (a, 0b10000001) will enable the interrupt for
+        For example: ('a', 129) or ('a', 0b10000001) will enable the interrupt for
         pins 0 and 7 of port a.
         
         The interrupt is delivered with the callback :func:`Interrupt`.
@@ -190,7 +190,7 @@ class BrickletIO16(Device):
         pins will be ignored.
         
         The third parameter is a bitmask with the desired value of the specified
-        output pins (*true* means high and *false* means low).
+        output pins. A 1 in the bitmask means high and a 0 in the bitmask means low.
         
         The forth parameter indicates the time (in ms) that the pins should hold
         the value.

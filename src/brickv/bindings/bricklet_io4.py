@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-12-19.      #
+# This file was automatically generated on 2014-01-07.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -91,8 +91,8 @@ class BrickletIO4(Device):
 
     def set_value(self, value_mask):
         """
-        Sets the output value (high or low) with a bitmask. The bitmask
-        is 4bit long, *true* refers to high and *false* refers to low.
+        Sets the output value (high or low) with a bitmask (4bit). A 1 in the bitmask
+        means high and a 0 in the bitmask means low.
         
         For example: The value 3 or 0b0011 will turn the pins 0-1 high and the
         pins 2-3 low.
@@ -189,7 +189,7 @@ class BrickletIO4(Device):
         pins will be ignored.
         
         The second parameter is a bitmask with the desired value of the specified
-        output pins (*true* means high and *false* means low).
+        output pins. A 1 in the bitmask means high and a 0 in the bitmask means low.
         
         The third parameter indicates the time (in ms) that the pins should hold
         the value.
