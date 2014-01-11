@@ -239,7 +239,7 @@ class Barometer(PluginBase):
         self.save_new_averaging()
     
     def avg_temperature_box_finished(self):
-        self.temperature_pressure = self.avg_temperature_box.value()
+        self.average_temperature = self.avg_temperature_box.value()
         self.save_new_averaging()
     
     def avg_moving_pressure_box_finished(self):
