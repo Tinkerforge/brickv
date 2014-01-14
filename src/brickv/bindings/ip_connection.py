@@ -3,7 +3,8 @@
 # Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
-# with or without modification, are permitted.
+# with or without modification, are permitted. See the Creative
+# Commons Zero (CC0 1.0) License for more details.
 
 from threading import Thread, Lock, Semaphore
 
