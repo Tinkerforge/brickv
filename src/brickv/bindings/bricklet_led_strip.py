@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-12-19.      #
+# This file was automatically generated on 2014-01-30.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -82,6 +82,8 @@ class BrickletLEDStrip(Device):
         * b to [0, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         
         the LED with index 5 will be red, 6 will be green and 7 will be blue.
+        
+        .. note:: Depending on the LED circuitry colors can be permuted.
         
         The colors will be transfered to actual LEDs when the next
         frame duration ends, see :func:`SetFrameDuration`.
@@ -181,7 +183,8 @@ class BrickletLEDStrip(Device):
         
         The position can be 'a', 'b', 'c' or 'd'.
         
-        The device identifiers can be found :ref:`here <device_identifier>`.
+        The device identifier numbers can be found :ref:`here <device_identifier>`.
+        |device_identifier_constant|
         
         .. versionadded:: 2.0.0~(Plugin)
         """

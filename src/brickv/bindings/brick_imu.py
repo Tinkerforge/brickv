@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2013-12-19.      #
+# This file was automatically generated on 2014-01-30.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -175,7 +175,7 @@ class BrickIMU(Device):
     def get_angular_velocity(self):
         """
         Returns the calibrated angular velocity from the gyroscope for the 
-        x, y and z axis in °/17.5s (you have to divide by 17.5 to
+        x, y and z axis in °/14.375s (you have to divide by 14.375 to
         get the value in °/s).
         
         If you want to get the angular velocity periodically, it is recommended 
@@ -336,7 +336,7 @@ class BrickIMU(Device):
         
         .. csv-table::
          :header: "Type", "Description", "Values"
-         :widths: 10, 40, 100
+         :widths: 10, 30, 110
         
          "0",    "Accelerometer Gain", "``[mul x, mul y, mul z, div x, div y, div z, 0, 0, 0, 0]``"
          "1",    "Accelerometer Bias", "``[bias x, bias y, bias z, 0, 0, 0, 0, 0, 0, 0]``"
@@ -538,7 +538,8 @@ class BrickIMU(Device):
         
         The position can be '0'-'8' (stack position).
         
-        The device identifiers can be found :ref:`here <device_identifier>`.
+        The device identifier numbers can be found :ref:`here <device_identifier>`.
+        |device_identifier_constant|
         
         .. versionadded:: 2.0.0~(Firmware)
         """

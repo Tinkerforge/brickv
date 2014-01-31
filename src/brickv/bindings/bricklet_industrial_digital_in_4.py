@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-01-07.      #
+# This file was automatically generated on 2014-01-30.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -221,7 +221,8 @@ class BrickletIndustrialDigitalIn4(Device):
         
         The position can be 'a', 'b', 'c' or 'd'.
         
-        The device identifiers can be found :ref:`here <device_identifier>`.
+        The device identifier numbers can be found :ref:`here <device_identifier>`.
+        |device_identifier_constant|
         
         .. versionadded:: 2.0.0~(Plugin)
         """
