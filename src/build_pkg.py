@@ -331,6 +331,9 @@ def build_linux_pkg():
         f.write(line)
     f.close()
 
+    os.system('find brickv/usr -type f -path *.pyc -exec rm {} \;')
+    os.system('find brickv/usr -type d -exec chmod 0755 {} \;')
+
     os.system('chown -R root:root brickv/usr')
     os.system('dpkg -b brickv/ brickv-' + brickv.config.BRICKV_VERSION + '_all.deb')
     os.system('chown -R `logname`:`logname` brickv/usr')
