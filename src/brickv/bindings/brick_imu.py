@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-01-30.      #
+# This file was automatically generated on 2014-02-05.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -356,7 +356,7 @@ class BrickIMU(Device):
         
         The gyroscope bias is highly dependent on the temperature, so you have to
         calibrate the bias two times with different temperatures. The values ``xl``,
-        ``yl``, ``zl `` and ``temp l`` are the bias for ``x``, ``y``, ``z`` and the
+        ``yl``, ``zl`` and ``temp l`` are the bias for ``x``, ``y``, ``z`` and the
         corresponding temperature for a low temperature. The values ``xh``, ``yh``,
         ``zh`` and ``temp h`` are the same for a high temperatures. The temperature
         difference should be at least 5°C. If you have a temperature where the
