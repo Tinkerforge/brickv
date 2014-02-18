@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-01-30.      #
+# This file was automatically generated on 2014-02-18.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -261,6 +261,8 @@ class BrickletIO4(Device):
         * 2 = both
         
         The debounce time is given in ms.
+        
+        Configuring an edge counter resets its value to 0.
         
         If you don't know what any of this means, just leave it at default. The
         default configuration is very likely OK for you.
