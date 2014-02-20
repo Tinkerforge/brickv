@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-02-18.      #
+# This file was automatically generated on 2014-02-20.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -133,7 +133,8 @@ class BrickletIO16(Device):
 
     def get_port_configuration(self, port):
         """
-        Returns a direction bitmask and a value bitmask for the specified port.
+        Returns a direction bitmask and a value bitmask for the specified port. A 1 in
+        the direction bitmask means input and a 0 in the bitmask means output.
         
         For example: A return value of (15, 51) or (0b00001111, 0b00110011) for
         direction and value means that:
@@ -224,8 +225,8 @@ class BrickletIO16(Device):
     def set_selected_values(self, port, selection_mask, value_mask):
         """
         Sets the output value (high or low) for a port ("a" or "b" with a bitmask, 
-        according to the selection mask. The bitmask is 8 bit long, *true* refers 
-        to high and *false* refers to low.
+        according to the selection mask. The bitmask is 8 bit long and a 1 in the
+        bitmask means high and a 0 in the bitmask means low.
         
         For example: The parameters ('a', 192, 128) or ('a', 0b11000000, 0b10000000)
         will turn pin 7 high and pin 6 low on port A, pins 0-6 will remain untouched.

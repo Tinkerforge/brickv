@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-02-18.      #
+# This file was automatically generated on 2014-02-20.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -133,7 +133,8 @@ class BrickletIO4(Device):
 
     def get_configuration(self):
         """
-        Returns a value bitmask and a direction bitmask.
+        Returns a value bitmask and a direction bitmask. A 1 in the direction bitmask
+        means input and a 0 in the bitmask means output.
         
         For example: A return value of (3, 5) or (0b0011, 0b0101) for direction and
         value means that:
