@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-03-06.      #
+# This file was automatically generated on 2014-03-07.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -36,6 +36,8 @@ class BrickletColor(Device):
 
     CALLBACK_COLOR = 8
     CALLBACK_COLOR_REACHED = 9
+    CALLBACK_ILLUMINANCE = 21
+    CALLBACK_COLOR_TEMPERATURE = 22
 
     FUNCTION_GET_COLOR = 1
     FUNCTION_SET_COLOR_CALLBACK_PERIOD = 2
@@ -49,6 +51,12 @@ class BrickletColor(Device):
     FUNCTION_IS_LIGHT_ON = 12
     FUNCTION_SET_CONFIG = 13
     FUNCTION_GET_CONFIG = 14
+    FUNCTION_GET_ILLUMINANCE = 15
+    FUNCTION_GET_COLOR_TEMPERATURE = 16
+    FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD = 17
+    FUNCTION_GET_ILLUMINANCE_CALLBACK_PERIOD = 18
+    FUNCTION_SET_COLOR_TEMPERATURE_CALLBACK_PERIOD = 19
+    FUNCTION_GET_COLOR_TEMPERATURE_CALLBACK_PERIOD = 20
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -62,11 +70,11 @@ class BrickletColor(Device):
     GAIN_4X = 1
     GAIN_16X = 2
     GAIN_60X = 3
-    INTEGRATION_TIME_2MS = 255
-    INTEGRATION_TIME_24MS = 246
-    INTEGRATION_TIME_101MS = 213
-    INTEGRATION_TIME_154MS = 192
-    INTEGRATION_TIME_700MS = 0
+    INTEGRATION_TIME_2MS = 0
+    INTEGRATION_TIME_24MS = 1
+    INTEGRATION_TIME_101MS = 2
+    INTEGRATION_TIME_154MS = 3
+    INTEGRATION_TIME_700MS = 4
 
     def __init__(self, uid, ipcon):
         """
@@ -91,50 +99,95 @@ class BrickletColor(Device):
         self.response_expected[BrickletColor.FUNCTION_IS_LIGHT_ON] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletColor.FUNCTION_SET_CONFIG] = BrickletColor.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletColor.FUNCTION_GET_CONFIG] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletColor.FUNCTION_GET_ILLUMINANCE] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletColor.FUNCTION_GET_COLOR_TEMPERATURE] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletColor.FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD] = BrickletColor.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletColor.FUNCTION_GET_ILLUMINANCE_CALLBACK_PERIOD] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletColor.FUNCTION_SET_COLOR_TEMPERATURE_CALLBACK_PERIOD] = BrickletColor.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletColor.FUNCTION_GET_COLOR_TEMPERATURE_CALLBACK_PERIOD] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletColor.CALLBACK_ILLUMINANCE] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletColor.CALLBACK_COLOR_TEMPERATURE] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletColor.FUNCTION_GET_IDENTITY] = BrickletColor.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletColor.CALLBACK_COLOR] = 'H H H H'
         self.callback_formats[BrickletColor.CALLBACK_COLOR_REACHED] = 'H H H H'
+        self.callback_formats[BrickletColor.CALLBACK_ILLUMINANCE] = 'I'
+        self.callback_formats[BrickletColor.CALLBACK_COLOR_TEMPERATURE] = 'H'
 
     def get_color(self):
         """
+        Returns the color of the sensor. The value
+        has a range of 0 to 65535.
         
+        If you want to get the color periodically, it is recommended 
+        to use the callback :func:`Color` and set the period with 
+        :func:`SetColorCallbackPeriod`.
         """
         return GetColor(*self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_COLOR, (), '', 'H H H H'))
 
     def set_color_callback_period(self, period):
         """
+        Sets the period in ms with which the :func:`Color` callback is triggered
+        periodically. A value of 0 turns the callback off.
         
+        :func:`Color` is only triggered if the color has changed since the
+        last triggering.
+        
+        The default value is 0.
         """
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_COLOR_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_color_callback_period(self):
         """
-        
+        Returns the period as set by :func:`SetColorCallbackPeriod`.
         """
         return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_COLOR_CALLBACK_PERIOD, (), '', 'I')
 
     def set_color_callback_threshold(self, option, min_r, max_r, min_g, max_g, min_b, max_b, min_c, max_c):
         """
+        Sets the thresholds for the :func:`ColorReached` callback. 
         
+        The following options are possible:
+        
+        .. csv-table::
+         :header: "Option", "Description"
+         :widths: 10, 100
+        
+         "'x'",    "Callback is turned off"
+         "'o'",    "Callback is triggered when the temperature is *outside* the min and max values"
+         "'i'",    "Callback is triggered when the temperature is *inside* the min and max values"
+         "'<'",    "Callback is triggered when the temperature is smaller than the min value (max is ignored)"
+         "'>'",    "Callback is triggered when the temperature is greater than the min value (max is ignored)"
+        
+        The default value is ('x', 0, 0, 0, 0, 0, 0, 0, 0).
         """
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_COLOR_CALLBACK_THRESHOLD, (option, min_r, max_r, min_g, max_g, min_b, max_b, min_c, max_c), 'c H H H H H H H H', '')
 
     def get_color_callback_threshold(self):
         """
-        
+        Returns the threshold as set by :func:`SetColorCallbackThreshold`.
         """
         return GetColorCallbackThreshold(*self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_COLOR_CALLBACK_THRESHOLD, (), '', 'c H H H H H H H H'))
 
     def set_debounce_period(self, debounce):
         """
+        Sets the period in ms with which the threshold callback
         
+        * :func:`ColorReached`
+        
+        is triggered, if the threshold
+        
+        * :func:`SetColorCallbackThreshold`
+        
+        keeps being reached.
+        
+        The default value is 100.
         """
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
         """
-        
+        Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
         return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
@@ -158,15 +211,89 @@ class BrickletColor(Device):
 
     def set_config(self, gain, integration_time):
         """
+        Sets the configuration of the sensor. Gain and itegration time
+        can be configured in this way.
         
+        For confguring the gain:
+        
+        * 0: 1x Gain
+        * 1: 4x Gain
+        * 2: 16x Gain
+        * 3: 60x Gain
+        
+        For configuring the integration time:
+        
+        * 0: 2ms
+        * 1: 24ms
+        * 2: 101ms
+        * 3: 154ms
+        * 4: 700ms
+        
+        Increasing the gain makes the sensor be able to detect a
+        color from a higher distance.
+        
+        The integration time provdes a trade-off between conversion time
+        and accuracy. With a longer integration time  the values read will
+        be more accurate but it will take longer time to get the conversion
+        results.
+        
+        The default values are 16x gain and 153ms integration time.
         """
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_CONFIG, (gain, integration_time), 'B B', '')
 
     def get_config(self):
         """
-        
+        Returns the configuration as set by :func:`SetConfig`.
         """
         return GetConfig(*self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_CONFIG, (), '', 'B B'))
+
+    def get_illuminance(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_ILLUMINANCE, (), '', 'I')
+
+    def get_color_temperature(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_COLOR_TEMPERATURE, (), '', 'H')
+
+    def set_illuminance_callback_period(self, period):
+        """
+        Sets the period in ms with which the :func:`Illuminance` callback is triggered
+        periodically. A value of 0 turns the callback off.
+        
+        :func:`Illuminance` is only triggered if the illuminance has changed since the
+        last triggering.
+        
+        The default value is 0.
+        """
+        self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD, (period,), 'I', '')
+
+    def get_illuminance_callback_period(self):
+        """
+        Returns the period as set by :func:`SetIlluminanceCallbackPeriod`.
+        """
+        return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_ILLUMINANCE_CALLBACK_PERIOD, (), '', 'I')
+
+    def set_color_temperature_callback_period(self, period):
+        """
+        Sets the period in ms with which the :func:`ColorTemperature` callback is triggered
+        periodically. A value of 0 turns the callback off.
+        
+        :func:`ColorTemperature` is only triggered if the color temperature has changed since the
+        last triggering.
+        
+        The default value is 0.
+        """
+        self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_COLOR_TEMPERATURE_CALLBACK_PERIOD, (period,), 'I', '')
+
+    def get_color_temperature_callback_period(self):
+        """
+        Returns the period as set by :func:`SetColorTemperatureCallbackPeriod`.
+        """
+        return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_COLOR_TEMPERATURE_CALLBACK_PERIOD, (), '', 'I')
 
     def get_identity(self):
         """
