@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-01-30.      #
+# This file was automatically generated on 2014-02-27.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -324,7 +324,7 @@ class BrickServo(Device):
         what the correct period is, the default value (19.5ms) will most likely
         work fine. 
         
-        The minimum possible period is 2000µs and the maximum is 65535µs.
+        The minimum possible period is 1µs and the maximum is 65535µs.
         
         The default value is 19.5ms (19500µs).
         """

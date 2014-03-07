@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-01-30.      #
+# This file was automatically generated on 2014-02-21.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -34,6 +34,7 @@ GetStackVoltageCallbackThreshold = namedtuple('StackVoltageCallbackThreshold', [
 GetUSBVoltageCallbackThreshold = namedtuple('USBVoltageCallbackThreshold', ['option', 'min', 'max'])
 GetEthernetConfiguration = namedtuple('EthernetConfiguration', ['connection', 'ip', 'subnet_mask', 'gateway', 'port'])
 GetEthernetStatus = namedtuple('EthernetStatus', ['mac_address', 'ip', 'subnet_mask', 'gateway', 'rx_count', 'tx_count', 'hostname'])
+GetEthernetWebsocketConfiguration = namedtuple('EthernetWebsocketConfiguration', ['sockets', 'port'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -115,6 +116,8 @@ class BrickMaster(Device):
     FUNCTION_GET_ETHERNET_STATUS = 68
     FUNCTION_SET_ETHERNET_HOSTNAME = 69
     FUNCTION_SET_ETHERNET_MAC_ADDRESS = 70
+    FUNCTION_SET_ETHERNET_WEBSOCKET_CONFIGURATION = 71
+    FUNCTION_GET_ETHERNET_WEBSOCKET_CONFIGURATION = 72
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
@@ -175,7 +178,7 @@ class BrickMaster(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 2)
+        self.api_version = (2, 0, 3)
 
         self.response_expected[BrickMaster.FUNCTION_GET_STACK_VOLTAGE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_STACK_CURRENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -247,6 +250,8 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_GET_ETHERNET_STATUS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SET_ETHERNET_HOSTNAME] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_SET_ETHERNET_MAC_ADDRESS] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_SET_ETHERNET_WEBSOCKET_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_ETHERNET_WEBSOCKET_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_CHIP_TEMPERATURE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_RESET] = BrickMaster.RESPONSE_EXPECTED_FALSE
@@ -1134,6 +1139,35 @@ class BrickMaster(Device):
         .. versionadded:: 2.1.0~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_ETHERNET_MAC_ADDRESS, (mac_address,), '6B', '')
+
+    def set_ethernet_websocket_configuration(self, sockets, port):
+        """
+        Sets the Ethernet Websocket configuration. The first parameter sets the number of socket
+        connections that are reserved for websockets. The range is 0-7. The connections
+        are shared with the plain sockets. Example: If you set the connections to 3,
+        there will be 3 websocket and 4 plain socket connections available.
+        
+        The second parameter is the port for the websocket connections. The port can
+        not be the same as the port for the plain socket connections.
+        
+        The values are stored in the EEPROM and only applied on startup. That means
+        you have to restart the Master Brick after configuration.
+        
+        It is recommended to use the Brick Viewer to set the Ethernet configuration.
+        
+        The default values are 3 for the socket connections and 4280 for the port.
+        
+        .. versionadded:: 2.2.0~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_ETHERNET_WEBSOCKET_CONFIGURATION, (sockets, port), 'B H', '')
+
+    def get_ethernet_websocket_configuration(self):
+        """
+        Returns the configuration as set by :func:`SetEthernetConfiguration`.
+        
+        .. versionadded:: 2.2.0~(Firmware)
+        """
+        return GetEthernetWebsocketConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_ETHERNET_WEBSOCKET_CONFIGURATION, (), '', 'B H'))
 
     def get_protocol1_bricklet_name(self, port):
         """
