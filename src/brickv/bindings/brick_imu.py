@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-02-05.      #
+# This file was automatically generated on 2014-03-10.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -499,8 +499,6 @@ class BrickIMU(Device):
         
         This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
         plugins.
-        
-        .. versionadded:: 2.0.0~(Firmware)
         """
         return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 'B 3B 40s'))
 
@@ -512,8 +510,6 @@ class BrickIMU(Device):
         The temperature is only proportional to the real temperature and it has an
         accuracy of +-15%. Practically it is only useful as an indicator for
         temperature changes.
-        
-        .. versionadded:: 1.0.7~(Firmware)
         """
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
@@ -525,8 +521,6 @@ class BrickIMU(Device):
         After a reset you have to create new device objects,
         calling functions on the existing ones will result in
         undefined behavior!
-        
-        .. versionadded:: 1.0.7~(Firmware)
         """
         self.ipcon.send_request(self, BrickIMU.FUNCTION_RESET, (), '', '')
 
@@ -540,8 +534,6 @@ class BrickIMU(Device):
         
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
-        
-        .. versionadded:: 2.0.0~(Firmware)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickIMU.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 

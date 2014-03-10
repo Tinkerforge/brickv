@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-02-20.      #
+# This file was automatically generated on 2014-03-10.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -205,8 +205,6 @@ class BrickletIO16(Device):
         stacks. You can now call this function every second, with a time parameter
         of two seconds and pin 0 set to high. Pin 0 will be high all the time. If now
         the RS485 connection is lost, then pin 0 will get low in at most two seconds.
-        
-        .. versionadded:: 1.1.2~(Plugin)
         """
         self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_PORT_MONOFLOP, (port, selection_mask, value_mask, time), 'c B B I', '')
 
@@ -217,8 +215,6 @@ class BrickletIO16(Device):
         
         If the timer is not running currently, the remaining time will be returned
         as 0.
-        
-        .. versionadded:: 1.1.2~(Plugin)
         """
         return GetPortMonoflop(*self.ipcon.send_request(self, BrickletIO16.FUNCTION_GET_PORT_MONOFLOP, (port, pin), 'c B', 'B I I'))
 
@@ -234,8 +230,6 @@ class BrickletIO16(Device):
         .. note::
          This function does nothing for pins that are configured as input.
          Pull-up resistors can be switched on with :func:`SetConfiguration`.
-        
-        .. versionadded:: 2.0.0~(Plugin)
         """
         self.ipcon.send_request(self, BrickletIO16.FUNCTION_SET_SELECTED_VALUES, (port, selection_mask, value_mask), 'c B B', '')
 
@@ -295,8 +289,6 @@ class BrickletIO16(Device):
         
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
-        
-        .. versionadded:: 2.0.0~(Plugin)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletIO16.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 

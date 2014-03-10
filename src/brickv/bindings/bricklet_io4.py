@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-02-20.      #
+# This file was automatically generated on 2014-03-10.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -204,8 +204,6 @@ class BrickletIO4(Device):
         stacks. You can now call this function every second, with a time parameter
         of two seconds and pin 0 set to high. Pin 0 will be high all the time. If now
         the RS485 connection is lost, then pin 0 will get low in at most two seconds.
-        
-        .. versionadded:: 1.1.1~(Plugin)
         """
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_MONOFLOP, (selection_mask, value_mask, time), 'B B I', '')
 
@@ -216,8 +214,6 @@ class BrickletIO4(Device):
         
         If the timer is not running currently, the remaining time will be returned
         as 0.
-        
-        .. versionadded:: 1.1.1~(Plugin)
         """
         return GetMonoflop(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_MONOFLOP, (pin,), 'B', 'B I I'))
 
@@ -233,8 +229,6 @@ class BrickletIO4(Device):
         .. note::
          This function does nothing for pins that are configured as input.
          Pull-up resistors can be switched on with :func:`SetConfiguration`.
-        
-        .. versionadded:: 2.0.0~(Plugin)
         """
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_SELECTED_VALUES, (selection_mask, value_mask), 'B B', '')
 
@@ -293,8 +287,6 @@ class BrickletIO4(Device):
         
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
-        
-        .. versionadded:: 2.0.0~(Plugin)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 

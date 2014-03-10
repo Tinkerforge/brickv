@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-01-30.      #
+# This file was automatically generated on 2014-03-10.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -200,8 +200,6 @@ class BrickletIndustrialDual020mA(Device):
         
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
-        
-        .. versionadded:: 2.0.0~(Plugin)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
