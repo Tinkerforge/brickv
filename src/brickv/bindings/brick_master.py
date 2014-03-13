@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-03-10.      #
+# This file was automatically generated on 2014-03-13.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -1070,12 +1070,12 @@ class BrickMaster(Device):
 
     def set_ethernet_websocket_configuration(self, sockets, port):
         """
-        Sets the Ethernet Websocket configuration. The first parameter sets the number of socket
-        connections that are reserved for websockets. The range is 0-7. The connections
+        Sets the Ethernet WebSocket configuration. The first parameter sets the number of socket
+        connections that are reserved for WebSockets. The range is 0-7. The connections
         are shared with the plain sockets. Example: If you set the connections to 3,
-        there will be 3 websocket and 4 plain socket connections available.
+        there will be 3 WebSocket and 4 plain socket connections available.
         
-        The second parameter is the port for the websocket connections. The port can
+        The second parameter is the port for the WebSocket connections. The port can
         not be the same as the port for the plain socket connections.
         
         The values are stored in the EEPROM and only applied on startup. That means
