@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 config_windows.py: Config Handling for Windows
 
@@ -56,7 +56,7 @@ def get_host():
     return get_registry_value('Host', DEFAULT_HOST)
 
 def set_host(host):
-    set_registry_value('Host', winreg.REG_SZ, host)
+    set_registry_value('Host', winreg.REG_SZ, str(host))
 
 def get_host_history(size):
     history = []
@@ -65,7 +65,7 @@ def get_host_history(size):
         host = get_registry_value('HostHistory{0}'.format(i), None)
 
         if host is not None:
-            history.append(host)
+            history.append(str(host))
 
     return history
 
@@ -73,11 +73,53 @@ def set_host_history(history):
     i = 0
 
     for host in history:
-        set_registry_value('HostHistory{0}'.format(i), winreg.REG_SZ, host)
+        set_registry_value('HostHistory{0}'.format(i), winreg.REG_SZ, str(host))
         i += 1
 
 def get_port():
     return int(get_registry_value('Port', DEFAULT_PORT))
 
 def set_port(port):
-    set_registry_value('Port', winreg.REG_DWORD, port)
+    set_registry_value('Port', winreg.REG_DWORD, int(port))
+
+def get_use_authentication():
+    if DEFAULT_USE_AUTHENTICATION:
+        default = 1
+    else:
+        default = 0
+
+    value = get_registry_value('UseAuthentication', default)
+
+    if value == 1:
+        return True
+    elif value == 0:
+        return False
+    else:
+        return default
+
+def set_use_authentication(use):
+    set_registry_value('UseAuthentication', winreg.REG_DWORD, int(bool(use)))
+
+def get_secret():
+    return get_registry_value('Secret', DEFAULT_SECRET)
+
+def set_secret(secret):
+    set_registry_value('Secret', winreg.REG_SZ, str(secret))
+
+def get_remember_secret():
+    if DEFAULT_REMEMBER_SECRET:
+        default = 1
+    else:
+        default = 0
+
+    value = get_registry_value('RememberSecret', default)
+
+    if value == 1:
+        return True
+    elif value == 0:
+        return False
+    else:
+        return default
+
+def set_remember_secret(remember):
+    set_registry_value('RememberSecret', winreg.REG_DWORD, int(bool(remember)))

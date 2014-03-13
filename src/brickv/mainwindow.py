@@ -2,7 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
 mainwindow.py: New/Removed Bricks are handled here and plugins shown if clicked
 
@@ -26,7 +26,8 @@ from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt, QTimer
 from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, QIcon, \
                         QPushButton, QWidget, QHBoxLayout, QVBoxLayout, \
                         QLabel, QFrame, QSpacerItem, QSizePolicy, \
-                        QStandardItemModel, QStandardItem, QToolButton
+                        QStandardItemModel, QStandardItem, QToolButton, \
+                        QLineEdit
 from brickv.ui_mainwindow import Ui_MainWindow
 from brickv.plugin_system.plugin_manager import PluginManager
 from brickv.bindings.ip_connection import IPConnection
@@ -111,6 +112,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qtcb_disconnected.connect(self.cb_disconnected)
 
         self.ipcon = IPConnection()
+        self.ipcon.set_auto_reauthenticate(False)
         self.ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE,
                                      self.qtcb_enumerate.emit)
         self.ipcon.register_callback(IPConnection.CALLBACK_CONNECTED,
@@ -139,6 +141,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.last_host = self.combo_host.currentText()
         self.last_port = self.spinbox_port.value()
 
+        self.checkbox_authentication.stateChanged.connect(self.authentication_state_changed)
+
+        self.label_secret.hide()
+
+        self.edit_secret.hide()
+        self.edit_secret.setEchoMode(QLineEdit.Password)
+
+        self.checkbox_secret_show.hide()
+        self.checkbox_secret_show.stateChanged.connect(self.secret_show_state_changed)
+
+        self.checkbox_remember_secret.hide()
+
+        if config.get_use_authentication():
+            self.checkbox_authentication.setCheckState(Qt.Checked)
+
+        if config.get_remember_secret():
+            self.edit_secret.setText(config.get_secret())
+            self.checkbox_remember_secret.setCheckState(Qt.Checked)
+
+        self.label_auto_reconnects.hide()
+        self.auto_reconnects = 0
+
     def closeEvent(self, event):
         self.exit_brickv()
 
@@ -161,6 +185,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         config.set_host(host)
         config.set_host_history(history[:HOST_HISTORY_SIZE - 1])
         config.set_port(self.spinbox_port.value())
+        config.set_use_authentication(self.checkbox_authentication.isChecked())
+
+        remember_secret = self.checkbox_remember_secret.isChecked()
+
+        config.set_remember_secret(remember_secret)
+
+        if remember_secret:
+            config.set_secret(str(self.edit_secret.text()))
+        else:
+            config.set_secret(config.DEFAULT_SECRET)
 
         self.reset_view()
 
@@ -182,13 +216,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def destroy(self):
         pass
 
+    def authentication_state_changed(self, state):
+        visible = state == Qt.Checked
+
+        self.label_secret.setVisible(visible)
+        self.edit_secret.setVisible(visible)
+        self.checkbox_secret_show.setVisible(visible)
+        self.checkbox_remember_secret.setVisible(visible)
+
+    def secret_show_state_changed(self, state):
+        if state == Qt.Checked:
+            self.edit_secret.setEchoMode(QLineEdit.Normal)
+        else:
+            self.edit_secret.setEchoMode(QLineEdit.Password)
+
     def tab_changed(self, i):
         try:
             uid = self.tab_widget.widget(i)._uid
             infos.infos[uid].plugin.start()
         except:
             pass
-        
+
         try:
             uid = self.tab_widget.widget(self.last_tab)._uid
             infos.infos[uid].plugin.stop()
@@ -199,7 +247,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def reset_view(self):
         self.tab_widget.setCurrentIndex(0)
-        
+
         keys_to_remove = []
         for key in infos.infos:
             if infos.infos[key].type in ('brick', 'bricklet'):
@@ -207,23 +255,71 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     infos.infos[key].plugin.stop()
                 except:
                     pass
-                
+
                 try:
                     infos.infos[key].plugin.destroy()
                 except:
                     pass
                 keys_to_remove.append(key)
-                
+
         for key in keys_to_remove:
             try:
                 infos.infos.pop(key)
             except:
                 pass
-                
+
         for i in reversed(range(1, self.tab_widget.count())):
             self.tab_widget.removeTab(i)
 
         self.update_tree_view()
+
+    def do_disconnect(self):
+        self.auto_reconnects = 0
+        self.label_auto_reconnects.hide()
+
+        self.reset_view()
+        async_next_session()
+
+        try:
+            self.ipcon.disconnect()
+        except:
+            pass
+
+    def do_authenticate(self, is_auto_reconnect):
+        if not self.checkbox_authentication.isChecked():
+            return True
+
+        try:
+            secret = str(self.edit_secret.text()).encode('ascii')
+        except:
+            self.do_disconnect()
+
+            QMessageBox.critical(self, 'Connection',
+                                 'Authentication secret cannot contain non-ASCII characters.',
+                                 QMessageBox.Ok)
+            return False
+
+        self.ipcon.set_auto_reconnect(False) # don't auto-reconnect on authentication error
+
+        try:
+            self.ipcon.authenticate(secret)
+        except:
+            self.do_disconnect()
+
+            if is_auto_reconnect:
+                extra = ' after auto-reconnect'
+            else:
+                extra = ''
+
+            QMessageBox.critical(self, 'Connection',
+                                 'Could not authenticate' + extra + '. Check secret and ensure ' +
+                                 'authentication for Brick Daemon is enabled.',
+                                 QMessageBox.Ok)
+            return False
+
+        self.ipcon.set_auto_reconnect(True)
+
+        return True
 
     def flashing_pressed(self):
         first = False
@@ -260,9 +356,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                      'Could not connect. Please check host, check ' +
                                      'port and ensure that Brick Daemon is running.')
         else:
-            self.reset_view()
-            async_next_session()
-            self.ipcon.disconnect()
+            self.do_disconnect()
 
     def item_double_clicked(self, index):
         text = str(index.data().toString())
@@ -450,9 +544,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_tree_view()
 
     def cb_connected(self, connect_reason):
+        self.disconnect_times = []
+
         self.update_ui_state()
 
         if connect_reason == IPConnection.CONNECT_REASON_REQUEST:
+            self.auto_reconnects = 0
+            self.label_auto_reconnects.hide()
+
             self.ipcon.set_auto_reconnect(True)
 
             index = self.combo_host.findText(self.last_host)
@@ -464,19 +563,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             while self.combo_host.count() > HOST_HISTORY_SIZE:
                 self.combo_host.removeItem(self.combo_host.count() - 1)
 
+            if not self.do_authenticate(False):
+                return
+
             try:
                 self.ipcon.enumerate()
             except:
                 self.update_ui_state()
         elif connect_reason == IPConnection.CONNECT_REASON_AUTO_RECONNECT:
+            self.auto_reconnects += 1
+            self.label_auto_reconnects.setText('Auto-Reconnect Count: {0}'.format(self.auto_reconnects))
+            self.label_auto_reconnects.show()
+
+            if not self.do_authenticate(True):
+                return
+
             try:
                 self.ipcon.enumerate()
             except:
                 self.update_ui_state()
-
-            QMessageBox.information(self, 'Connection',
-                                    'Successfully reconnected!',
-                                    QMessageBox.Ok)
         else:
             try:
                 self.ipcon.enumerate()
@@ -484,6 +589,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.update_ui_state()
 
     def cb_disconnected(self, disconnect_reason):
+        if disconnect_reason == IPConnection.DISCONNECT_REASON_REQUEST:
+            self.auto_reconnects = 0
+            self.label_auto_reconnects.hide()
+
         if disconnect_reason == IPConnection.DISCONNECT_REASON_REQUEST or not self.ipcon.get_auto_reconnect():
             self.update_ui_state()
         elif len(self.disconnect_times) >= 3 and self.disconnect_times[-3] < time.time() + 1:
@@ -497,18 +606,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                  QMessageBox.Ok)
         else:
             self.disconnect_times.append(time.time())
-            self.button_connect.setText('Abort Automatic Reconnecting')
-
-            if disconnect_reason == IPConnection.DISCONNECT_REASON_ERROR:
-                QMessageBox.critical(self, 'Connection',
-                                     'Connection lost, an error occured!\n' +
-                                     'Trying to reconnect.',
-                                     QMessageBox.Ok)
-            elif disconnect_reason == IPConnection.DISCONNECT_REASON_SHUTDOWN:
-                QMessageBox.critical(self, 'Connection',
-                                     'Connection lost, socket disconnected by server!\n' +
-                                     'Trying to reconnect.',
-                                     QMessageBox.Ok)
+            self.update_ui_state(IPConnection.CONNECTION_STATE_PENDING)
 
     def set_tree_view_defaults(self):
         self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels)
@@ -519,20 +617,43 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tree_view.setSortingEnabled(True)
         self.tree_view.header().setSortIndicator(0, Qt.AscendingOrder)
 
-    def update_ui_state(self):
-        connection_state = self.ipcon.get_connection_state()
+    def update_ui_state(self, connection_state=None):
+        # FIXME: need to call processEvents() otherwise get_connection_state()
+        #        might return the wrong value
+        QApplication.processEvents()
+
+        if connection_state is None:
+            connection_state = self.ipcon.get_connection_state()
 
         self.button_connect.setDisabled(False)
+        self.button_flashing.setDisabled(False)
 
         if connection_state == IPConnection.CONNECTION_STATE_DISCONNECTED:
             self.button_connect.setText('Connect')
-            self.button_advanced.setDisabled(True)
             self.combo_host.setDisabled(False)
             self.spinbox_port.setDisabled(False)
+            self.checkbox_authentication.setDisabled(False)
+            self.edit_secret.setDisabled(False)
+            self.button_advanced.setDisabled(True)
         elif connection_state == IPConnection.CONNECTION_STATE_CONNECTED:
             self.button_connect.setText("Disconnect")
             self.combo_host.setDisabled(True)
             self.spinbox_port.setDisabled(True)
+            self.checkbox_authentication.setDisabled(True)
+            self.edit_secret.setDisabled(True)
+            self.update_advanced_window(False)
+        elif connection_state == IPConnection.CONNECTION_STATE_PENDING:
+            self.button_connect.setText('Abort Pending Automatic Reconnect')
+            self.combo_host.setDisabled(True)
+            self.spinbox_port.setDisabled(True)
+            self.checkbox_authentication.setDisabled(True)
+            self.edit_secret.setDisabled(True)
+            self.button_advanced.setDisabled(True)
+            self.button_flashing.setDisabled(True)
+
+        enable = connection_state == IPConnection.CONNECTION_STATE_CONNECTED
+        for i in range(1, self.tab_widget.count()):
+            self.tab_widget.setTabEnabled(i, enable)
 
         QApplication.processEvents()
 
@@ -566,7 +687,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.flashing_window is not None:
             self.flashing_window.update_bricks()
 
-    def update_advanced_window(self):
+    def update_advanced_window(self, update_window=True):
         has_brick = False
 
         for info in infos.infos.values():
@@ -575,7 +696,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.button_advanced.setEnabled(has_brick)
 
-        if self.advanced_window is not None:
+        if self.advanced_window is not None and update_window:
             self.advanced_window.update_bricks()
 
     def delayed_refresh_updates(self):

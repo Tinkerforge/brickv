@@ -34,14 +34,14 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="0" colspan="2">
+          <item row="10" column="0" colspan="2">
            <widget class="QPushButton" name="button_advanced">
             <property name="text">
              <string>Advanced Functions</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="0" colspan="2">
+          <item row="9" column="0" colspan="2">
            <widget class="QPushButton" name="button_flashing">
             <property name="text">
              <string>Updates / Flashing</string>
@@ -87,7 +87,7 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="0" colspan="2">
+          <item row="7" column="0" colspan="2">
            <spacer name="verticalSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -113,10 +113,61 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="2" rowspan="5">
+          <item row="1" column="2" rowspan="10">
            <widget class="QTreeView" name="tree_view">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="indentation">
              <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_secret">
+            <property name="text">
+             <string>Secret:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="edit_secret">
+            <property name="maxLength">
+             <number>64</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QCheckBox" name="checkbox_authentication">
+            <property name="text">
+             <string>Use Authentication</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QCheckBox" name="checkbox_secret_show">
+            <property name="text">
+             <string>Show Characters</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QCheckBox" name="checkbox_remember_secret">
+            <property name="toolTip">
+             <string>Warning: Secret is stored in plain text without any protection!</string>
+            </property>
+            <property name="text">
+             <string>Remember Secret</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0" colspan="2">
+           <widget class="QLabel" name="label_auto_reconnects">
+            <property name="text">
+             <string>Auto-Reconnect Count: 0</string>
             </property>
            </widget>
           </item>

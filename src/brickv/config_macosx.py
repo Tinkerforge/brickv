@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 config_macosx.py: Config Handling for Mac OSX
 
@@ -61,7 +61,7 @@ def get_host_history(size):
         host = get_plist_value('HostHistory{0}'.format(i), None)
 
         if host is not None:
-            history.append(host)
+            history.append(str(host))
 
     return history
 
@@ -69,7 +69,7 @@ def set_host_history(history):
     i = 0
 
     for host in history:
-        set_plist_value('HostHistory{0}'.format(i), host)
+        set_plist_value('HostHistory{0}'.format(i), str(host))
         i += 1
 
 def get_port():
@@ -77,3 +77,35 @@ def get_port():
 
 def set_port(port):
     set_plist_value('Port', str(port))
+
+def get_use_authentication():
+    value = get_plist_value('UseAuthentication', str(DEFAULT_USE_AUTHENTICATION)).lower()
+
+    if value == 'true':
+        return True
+    elif value == 'false':
+        return False
+    else:
+        return DEFAULT_USE_AUTHENTICATION
+
+def set_use_authentication(use):
+    set_plist_value('UseAuthentication', str(bool(use)))
+
+def get_secret():
+    return get_plist_value('Secret', DEFAULT_SECRET)
+
+def set_secret(secret):
+    set_plist_value('Secret', str(secret))
+
+def get_remember_secret():
+    value = get_plist_value('RememberSecret', str(DEFAULT_REMEMBER_SECRET)).lower()
+
+    if value == 'true':
+        return True
+    elif value == 'false':
+        return False
+    else:
+        return DEFAULT_REMEMBER_SECRET
+
+def set_remember_secret(remember):
+    set_plist_value('RememberSecret', str(bool(remember)))

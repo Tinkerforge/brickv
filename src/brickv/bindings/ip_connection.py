@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 # Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
@@ -25,6 +25,10 @@ import socket
 import types
 import sys
 import time
+import os
+import math
+import hmac
+import hashlib
 
 # use normal tuples instead of namedtuples in python version below 2.6
 if sys.hexversion < 0x02060000:
@@ -125,7 +129,6 @@ class Device:
         self.expected_response_sequence_number = None # protected by request_lock
         self.response_queue = Queue()
         self.request_lock = Lock()
-        self.auth_key = None
 
         self.response_expected = [Device.RESPONSE_EXPECTED_INVALID_FUNCTION_ID] * 256
         self.response_expected[IPConnection.FUNCTION_ENUMERATE] = Device.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -222,6 +225,24 @@ class Device:
             if self.response_expected[i] in [Device.RESPONSE_EXPECTED_TRUE, Device.RESPONSE_EXPECTED_FALSE]:
                 self.response_expected[i] = flag
 
+class BrickDaemon(Device):
+    FUNCTION_GET_AUTHENTICATION_NONCE = 1
+    FUNCTION_AUTHENTICATE = 2
+
+    def __init__(self, uid, ipcon):
+        Device.__init__(self, uid, ipcon)
+
+        self.api_version = (2, 0, 0)
+
+        self.response_expected[BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE] = BrickDaemon.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickDaemon.FUNCTION_AUTHENTICATE] = BrickDaemon.RESPONSE_EXPECTED_TRUE
+
+    def get_authentication_nonce(self):
+        return self.ipcon.send_request(self, BrickDaemon.FUNCTION_GET_AUTHENTICATION_NONCE, (), '', '4B')
+
+    def authenticate(self, client_nonce, digest):
+        self.ipcon.send_request(self, BrickDaemon.FUNCTION_AUTHENTICATE, (client_nonce, digest), '4B 20B', '')
+
 class IPConnection:
     FUNCTION_ENUMERATE = 254
     FUNCTION_ADC_CALIBRATE = 251
@@ -280,13 +301,15 @@ class IPConnection:
 
         self.host = None
         self.port = None
+        self.secret = None # protected by socket_lock
         self.timeout = 2.5
         self.auto_reconnect = True
         self.auto_reconnect_allowed = False
         self.auto_reconnect_pending = False
+        self.auto_reauthenticate = True
         self.sequence_number_lock = Lock()
         self.next_sequence_number = 0 # protected by sequence_number_lock
-        self.auth_key = None
+        self.next_authenticate_nonce = 0 # protected by sequence_number_lock
         self.devices = {}
         self.registered_callbacks = {}
         self.socket = None # protected by socket_lock
@@ -300,6 +323,7 @@ class IPConnection:
         self.disconnect_probe_queue = None
         self.disconnect_probe_thread = None
         self.waiter = Semaphore()
+        self.brickd = BrickDaemon("2", self)
 
     def connect(self, host, port):
         """
@@ -321,6 +345,7 @@ class IPConnection:
 
             self.host = host
             self.port = port
+            self.secret = None
 
             self.connect_unlocked(False)
 
@@ -355,6 +380,38 @@ class IPConnection:
 
         if current_thread() is not callback.thread:
             callback.thread.join()
+
+    def authenticate(self, secret):
+        secret_bytes = secret.encode('ascii')
+
+        with self.sequence_number_lock:
+            if self.next_authenticate_nonce == 0:
+                try:
+                    self.next_authenticate_nonce = struct.unpack('<I', os.urandom(4))[0]
+                except NotImplementedError:
+                    subseconds, seconds = math.modf(time.time())
+                    seconds = int(seconds)
+                    subseconds = int(subseconds * 1000000)
+                    self.next_authenticate_nonce = ((seconds << 26 | seconds >> 6) & 0xFFFFFFFF) + subseconds + os.getpid()
+
+        server_nonce = self.brickd.get_authentication_nonce()
+
+        with self.sequence_number_lock:
+            client_nonce = struct.unpack('<4B', struct.pack('<I', self.next_authenticate_nonce))
+            self.next_authenticate_nonce = (self.next_authenticate_nonce + 1) % (1 << 32)
+
+        h = hmac.new(secret_bytes, digestmod=hashlib.sha1)
+
+        h.update(struct.pack('<4B', *server_nonce))
+        h.update(struct.pack('<4B', *client_nonce))
+
+        digest = struct.unpack('<20B', h.digest())
+        h = None
+
+        self.brickd.authenticate(client_nonce, digest)
+
+        with self.socket_lock:
+            self.secret = secret
 
     def get_connection_state(self):
         """
@@ -395,6 +452,24 @@ class IPConnection:
         """
 
         return self.auto_reconnect
+
+    def set_auto_reauthenticate(self, auto_reauthenticate):
+        """
+        Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
+        the IP Connection will try to reauthenticate with the previously given
+        secret after an auto-reconnect.
+
+        Default value is *True*.
+        """
+
+        self.auto_reauthenticate = bool(auto_reauthenticate)
+
+    def get_auto_reauthenticate(self):
+        """
+        Returns *true* if auto-reauthenticate is enabled, *false* otherwise.
+        """
+
+        return self.auto_reauthenticate
 
     def set_timeout(self, timeout):
         """
@@ -601,6 +676,9 @@ class IPConnection:
         self.socket.close()
         self.socket = None
 
+        # clear secret
+        self.secret = None
+
     def receive_loop(self, socket_id):
         if sys.hexversion < 0x03000000:
             pending_data = ''
@@ -678,12 +756,14 @@ class IPConnection:
                 # block here until reconnect. this is okay, there is no
                 # callback to deliver when there is no connection
                 while retry:
+                    local_secret = None
                     retry = False
 
                     with self.socket_lock:
                         if self.auto_reconnect_allowed and self.socket is None:
                             try:
                                 self.connect_unlocked(True)
+                                local_secret = self.secret
                             except:
                                 retry = True
                         else:
@@ -691,6 +771,12 @@ class IPConnection:
 
                     if retry:
                         time.sleep(0.1)
+                    elif self.auto_reauthenticate and local_secret is not None:
+                        try:
+                            self.authenticate(local_secret)
+                        except:
+                            # FIXME: how to handle errors here?
+                            pass
 
     def dispatch_packet(self, packet):
         uid = get_uid_from_data(packet)
@@ -954,7 +1040,6 @@ class IPConnection:
         uid = IPConnection.BROADCAST_UID
         sequence_number = self.get_next_sequence_number()
         r_bit = 0
-        a_bit = 0
 
         if device is not None:
             uid = device.uid
@@ -962,14 +1047,7 @@ class IPConnection:
             if device.get_response_expected(function_id):
                 r_bit = 1
 
-            if device.auth_key is not None:
-                a_bit = 1
-        else:
-            if self.auth_key is not None:
-                a_bit = 1
-
-        sequence_number_and_options = \
-            (sequence_number << 4) | (r_bit << 3) | (a_bit << 2)
+        sequence_number_and_options = (sequence_number << 4) | (r_bit << 3)
 
         return (struct.pack('<IBBBB', uid, length, function_id,
                             sequence_number_and_options, 0),

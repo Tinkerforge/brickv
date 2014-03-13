@@ -11,6 +11,12 @@ def get_host_history(size): return []
 def set_host_history(history): pass
 def get_port(): return DEFAULT_PORT
 def set_port(port): pass
+def get_use_authentication(): return DEFAULT_USE_AUTHENTICATION
+def set_use_authentication(use): pass
+def get_secret(): return DEFAULT_SECRET
+def set_secret(secret): pass
+def get_remember_secret(): return DEFAULT_REMEMBER_SECRET
+def set_remember_secret(remember): pass
 
 if sys.platform.startswith('linux') or sys.platform.startswith('freebsd'):
     from config_linux import *
