@@ -9,3 +9,8 @@ for f in os.walk(brickv):
         print 'building ' + f[0]
         os.chdir(f[0])
         os.system('python build_ui.py')
+
+p = os.path.join(brickv, 'plugin_system', 'plugins')
+print 'calling ' +  p + '/generate.py'
+os.chdir(p)
+os.system('python generate.py')
