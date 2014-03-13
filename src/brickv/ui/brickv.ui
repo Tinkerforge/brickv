@@ -28,7 +28,7 @@
         <item>
          <layout class="QGridLayout" name="gridLayout">
           <item row="0" column="0" colspan="3">
-           <widget class="QPushButton" name="connect">
+           <widget class="QPushButton" name="button_connect">
             <property name="text">
              <string>Connect</string>
             </property>

@@ -89,12 +89,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.async_thread = async_start_thread(self)
 
         self.setWindowTitle("Brick Viewer " + config.BRICKV_VERSION)
-        
+
         self.tree_view_model_labels = ['Name', 'UID', 'FW Version']
         self.tree_view_model = QStandardItemModel()
         self.tree_view.setModel(self.tree_view_model)
         self.tree_view.doubleClicked.connect(self.item_double_clicked)
-        self.set_tree_view_defaults()   
+        self.set_tree_view_defaults()
 
         # Remove dummy tab
         self.tab_widget.removeTab(1)
@@ -127,7 +127,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_advanced.setDisabled(True)
 
         self.tab_widget.currentChanged.connect(self.tab_changed)
-        self.connect.pressed.connect(self.connect_pressed)
+        self.button_connect.pressed.connect(self.connect_pressed)
         self.button_flashing.pressed.connect(self.flashing_pressed)
         self.button_advanced.pressed.connect(self.advanced_pressed)
         self.plugin_manager = PluginManager()
@@ -248,17 +248,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             try:
                 self.last_host = self.combo_host.currentText()
                 self.last_port = self.spinbox_port.value()
-                self.connect.setDisabled(True)
-                self.connect.setText("Connecting ...")
-                self.connect.repaint()
+                self.button_connect.setDisabled(True)
+                self.button_connect.setText("Connecting ...")
+                self.button_connect.repaint()
                 QApplication.processEvents()
                 self.ipcon.connect(self.last_host, self.last_port)
             except:
-                self.connect.setDisabled(False)
-                self.connect.setText("Connect")
-                QMessageBox.critical(self, 'Could not connect',
-                                     'Please check host, check port and ' +
-                                     'check if the Brick Daemon is running')
+                self.button_connect.setDisabled(False)
+                self.button_connect.setText("Connect")
+                QMessageBox.critical(self, 'Connection',
+                                     'Could not connect. Please check host, check ' +
+                                     'port and ensure that Brick Daemon is running.')
         else:
             self.reset_view()
             async_next_session()
@@ -339,7 +339,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         layout.addWidget(plugin)
 
         return container
-    
+
     def tab_for_uid(self, uid):
         for i in range(1, self.tab_widget.count()):
             try:
@@ -348,7 +348,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     return i
             except:
                 pass
-                
+
         return -1
 
     def cb_enumerate(self, uid, connected_uid, position,
@@ -382,7 +382,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     if info.type == 'brick':
                         if uid == device.connected_uid:
                             info.bricklets[device.position] = device
-                            
+
             info.uid = uid
             info.connected_uid = connected_uid
             info.position = position
@@ -391,7 +391,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             info.device_identifier = device_identifier
             info.protocol_version = 2
             info.enumeration_type = enumeration_type
-            
+
             for device in infos.infos.values():
                 if device.type in ('brick', 'bricklet'):
                     if device.uid == uid and device.plugin != None:
@@ -408,9 +408,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                                      hardware_version[1])
                 else:
                     info.name = plugin.name
-                    
+
                 info.url_part = plugin.get_url_part()
-                    
+
                 c = self.create_plugin_container(plugin, connected_uid, position)
                 info.plugin_container = c
                 self.tab_widget.addTab(c, info.name)
@@ -425,7 +425,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                     device_info.plugin.stop()
                                 except:
                                     pass
-                                
+
                                 try:
                                     device_info.plugin.destroy()
                                 except:
@@ -435,18 +435,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                             self.tab_widget.removeTab(i)
                         except:
                             pass
-                    
+
                 if device_info.type == 'brick':
                     for port in device_info.bricklets:
                         if device_info.bricklets[port]:
                             if device_info.bricklets[port].uid == uid:
                                 device_info.bricklets[port] = None
-    
+
                 try:
                     infos.infos.pop(uid)
                 except:
                     pass
-            
+
         self.update_tree_view()
 
     def cb_connected(self, connect_reason):
@@ -497,8 +497,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                  QMessageBox.Ok)
         else:
             self.disconnect_times.append(time.time())
-
-            self.connect.setText('Abort Automatic Reconnecting')
+            self.button_connect.setText('Abort Automatic Reconnecting')
 
             if disconnect_reason == IPConnection.DISCONNECT_REASON_ERROR:
                 QMessageBox.critical(self, 'Connection',
@@ -523,15 +522,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_ui_state(self):
         connection_state = self.ipcon.get_connection_state()
 
-        self.connect.setDisabled(False)
+        self.button_connect.setDisabled(False)
 
         if connection_state == IPConnection.CONNECTION_STATE_DISCONNECTED:
-            self.connect.setText('Connect')
+            self.button_connect.setText('Connect')
             self.button_advanced.setDisabled(True)
             self.combo_host.setDisabled(False)
             self.spinbox_port.setDisabled(False)
         elif connection_state == IPConnection.CONNECTION_STATE_CONNECTED:
-            self.connect.setText("Disconnect")
+            self.button_connect.setText("Disconnect")
             self.combo_host.setDisabled(True)
             self.spinbox_port.setDisabled(True)
 
@@ -539,11 +538,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def update_tree_view(self):
         self.tree_view_model.clear()
-        
+
         for device_info in sorted(infos.infos.values(), cmp=lambda x, y: cmp(x.name, y.name)):
             if device_info.type == 'brick':
-                parent = [QStandardItem(device_info.name), 
-                          QStandardItem(device_info.uid), 
+                parent = [QStandardItem(device_info.name),
+                          QStandardItem(device_info.uid),
                           QStandardItem('.'.join(map(str, device_info.firmware_version_installed)))]
                 for item in parent:
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
@@ -551,14 +550,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.tree_view_model.appendRow(parent)
                 for port in sorted(device_info.bricklets):
                     if device_info.bricklets[port] and device_info.bricklets[port].protocol_version == 2:
-                        child = [QStandardItem(port.upper() + ': ' +device_info.bricklets[port].name), 
+                        child = [QStandardItem(port.upper() + ': ' +device_info.bricklets[port].name),
                                  QStandardItem(device_info.bricklets[port].uid),
                                  QStandardItem('.'.join(map(str, device_info.bricklets[port].firmware_version_installed)))]
                         for item in child:
                             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                         parent[0].appendRow(child)
 
-        self.set_tree_view_defaults()        
+        self.set_tree_view_defaults()
         self.update_flashing_window()
         self.update_advanced_window()
         self.delayed_refresh_updates_timer.start()
