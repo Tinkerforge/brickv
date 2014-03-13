@@ -3,7 +3,7 @@ import os
 imports = []
 device_classes = []
 
-for plugin in os.listdir('.'):
+for plugin in sorted(os.listdir('.')):
     if not os.path.isdir(os.path.join('.', plugin)):
         continue
 
