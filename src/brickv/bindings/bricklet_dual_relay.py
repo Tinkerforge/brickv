@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-01-30.      #
+# This file was automatically generated on 2014-03-10.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -98,8 +98,6 @@ class BrickletDualRelay(Device):
         stacks. You can now call this function every second, with a time parameter
         of two seconds. The relay will be on all the time. If now the RS485 
         connection is lost, the relay will turn off in at most two seconds.
-        
-        .. versionadded:: 1.1.1~(Plugin)
         """
         self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_SET_MONOFLOP, (relay, state, time), 'B ? I', '')
 
@@ -110,8 +108,6 @@ class BrickletDualRelay(Device):
         
         If the timer is not running currently, the remaining time will be returned
         as 0.
-        
-        .. versionadded:: 1.1.1~(Plugin)
         """
         return GetMonoflop(*self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_GET_MONOFLOP, (relay,), 'B', '? I I'))
 
@@ -120,8 +116,6 @@ class BrickletDualRelay(Device):
         Sets the state of the selected relay (1 or 2), *true* means on and *false* means off. 
         
         The other relay remains untouched.
-        
-        .. versionadded:: 2.0.0~(Plugin)
         """
         self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_SET_SELECTED_STATE, (relay, state), 'B ?', '')
 
@@ -135,8 +129,6 @@ class BrickletDualRelay(Device):
         
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
-        
-        .. versionadded:: 2.0.0~(Plugin)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletDualRelay.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 

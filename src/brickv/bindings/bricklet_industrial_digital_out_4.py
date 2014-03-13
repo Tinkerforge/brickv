@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-01-30.      #
+# This file was automatically generated on 2014-03-10.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -172,8 +172,6 @@ class BrickletIndustrialDigitalOut4(Device):
         If groups are used, the pins correspond to the element in the group.
         Element 1 in the group will get pins 0-3, element 2 pins 4-7, element 3
         pins 8-11 and element 4 pins 12-15.
-        
-        .. versionadded:: 2.0.0~(Plugin)
         """
         self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_SET_SELECTED_VALUES, (selection_mask, value_mask), 'H H', '')
 
@@ -187,8 +185,6 @@ class BrickletIndustrialDigitalOut4(Device):
         
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
-        
-        .. versionadded:: 2.0.0~(Plugin)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletIndustrialDigitalOut4.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 

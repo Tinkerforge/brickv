@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-01-30.      #
+# This file was automatically generated on 2014-03-10.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -461,16 +461,12 @@ class BrickStepper(Device):
          Brick may not be able to cope with the load and overheat.
         
         The default value is *false*.
-        
-        .. versionadded:: 1.1.4~(Firmware)
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_SYNC_RECT, (sync_rect,), '?', '')
 
     def is_sync_rect(self):
         """
         Returns *true* if synchronous rectification is enabled, *false* otherwise.
-        
-        .. versionadded:: 1.1.4~(Firmware)
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_IS_SYNC_RECT, (), '', '?')
 
@@ -484,16 +480,12 @@ class BrickStepper(Device):
         10steps/15s = 1steps/1.5s.
         
         The default value is 1.
-        
-        .. versionadded:: 1.1.6~(Firmware)
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_TIME_BASE, (time_base,), 'I', '')
 
     def get_time_base(self):
         """
         Returns the time base as set by :func:`SetTimeBase`.
-        
-        .. versionadded:: 1.1.6~(Firmware)
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_TIME_BASE, (), '', 'I')
 
@@ -504,8 +496,6 @@ class BrickStepper(Device):
         voltage and the current consumption of the stepper motor.
         
         There is also a callback for this function, see :func:`AllData`.
-        
-        .. versionadded:: 1.1.6~(Firmware)
         """
         return GetAllData(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_ALL_DATA, (), '', 'H i i H H H'))
 
@@ -513,16 +503,12 @@ class BrickStepper(Device):
         """
         Sets the period in ms with which the :func:`AllData` callback is triggered
         periodically. A value of 0 turns the callback off.
-        
-        .. versionadded:: 1.1.6~(Firmware)
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_SET_ALL_DATA_PERIOD, (period,), 'I', '')
 
     def get_all_data_period(self):
         """
         Returns the period as set by :func:`SetAllDataPeriod`.
-        
-        .. versionadded:: 1.1.6~(Firmware)
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
 
@@ -533,8 +519,6 @@ class BrickStepper(Device):
         
         This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
         plugins.
-        
-        .. versionadded:: 2.0.0~(Firmware)
         """
         return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 'B 3B 40s'))
 
@@ -546,8 +530,6 @@ class BrickStepper(Device):
         The temperature is only proportional to the real temperature and it has an
         accuracy of +-15%. Practically it is only useful as an indicator for
         temperature changes.
-        
-        .. versionadded:: 1.1.4~(Firmware)
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
@@ -559,8 +541,6 @@ class BrickStepper(Device):
         After a reset you have to create new device objects,
         calling functions on the existing ones will result in
         undefined behavior!
-        
-        .. versionadded:: 1.1.4~(Firmware)
         """
         self.ipcon.send_request(self, BrickStepper.FUNCTION_RESET, (), '', '')
 
@@ -574,8 +554,6 @@ class BrickStepper(Device):
         
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
-        
-        .. versionadded:: 2.0.0~(Firmware)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 

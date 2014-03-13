@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-02-27.      #
+# This file was automatically generated on 2014-03-10.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -454,8 +454,6 @@ class BrickServo(Device):
         
         This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
         plugins.
-        
-        .. versionadded:: 2.0.0~(Firmware)
         """
         return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 'B 3B 40s'))
 
@@ -467,8 +465,6 @@ class BrickServo(Device):
         The temperature is only proportional to the real temperature and it has an
         accuracy of +-15%. Practically it is only useful as an indicator for
         temperature changes.
-        
-        .. versionadded:: 1.1.3~(Firmware)
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
@@ -480,8 +476,6 @@ class BrickServo(Device):
         After a reset you have to create new device objects,
         calling functions on the existing ones will result in
         undefined behavior!
-        
-        .. versionadded:: 1.1.3~(Firmware)
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_RESET, (), '', '')
 
@@ -495,8 +489,6 @@ class BrickServo(Device):
         
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
-        
-        .. versionadded:: 2.0.0~(Firmware)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickServo.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 

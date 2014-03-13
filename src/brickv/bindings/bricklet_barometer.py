@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-01-30.      #
+# This file was automatically generated on 2014-03-10.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -250,8 +250,6 @@ class BrickletBarometer(Device):
         used in aviation.
         
         The default value is 1013.25mbar.
-        
-        .. versionadded:: 1.1.0~(Plugin)
         """
         self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_REFERENCE_AIR_PRESSURE, (air_pressure,), 'i', '')
 
@@ -270,8 +268,6 @@ class BrickletBarometer(Device):
     def get_reference_air_pressure(self):
         """
         Returns the reference air pressure as set by :func:`SetReferenceAirPressure`.
-        
-        .. versionadded:: 1.1.0~(Plugin)
         """
         return self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_REFERENCE_AIR_PRESSURE, (), '', 'i')
 
@@ -318,8 +314,6 @@ class BrickletBarometer(Device):
         
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
-        
-        .. versionadded:: 2.0.0~(Plugin)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 

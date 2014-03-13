@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-02-21.      #
+# This file was automatically generated on 2014-03-10.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -311,8 +311,6 @@ class BrickMaster(Device):
     def is_chibi_present(self):
         """
         Returns *true* if a Chibi Extension is available to be used by the Master Brick.
-        
-        .. versionadded:: 1.1.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_CHIBI_PRESENT, (), '', '?')
 
@@ -323,16 +321,12 @@ class BrickMaster(Device):
         It is possible to set the address with the Brick Viewer and it will be 
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
-        
-        .. versionadded:: 1.1.0~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_CHIBI_ADDRESS, (address,), 'B', '')
 
     def get_chibi_address(self):
         """
         Returns the address as set by :func:`SetChibiAddress`.
-        
-        .. versionadded:: 1.1.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_ADDRESS, (), '', 'B')
 
@@ -344,16 +338,12 @@ class BrickMaster(Device):
         It is possible to set the address with the Brick Viewer and it will be 
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
-        
-        .. versionadded:: 1.1.0~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_CHIBI_MASTER_ADDRESS, (address,), 'B', '')
 
     def get_chibi_master_address(self):
         """
         Returns the address as set by :func:`SetChibiMasterAddress`.
-        
-        .. versionadded:: 1.1.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_MASTER_ADDRESS, (), '', 'B')
 
@@ -374,8 +364,6 @@ class BrickMaster(Device):
         
         The slave addresses will be saved in the EEPROM of the Chibi Extension, they
         don't have to be set on every startup.
-        
-        .. versionadded:: 1.1.0~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_CHIBI_SLAVE_ADDRESS, (num, address), 'B B', '')
 
@@ -383,8 +371,6 @@ class BrickMaster(Device):
         """
         Returns the slave address for a given ``num`` as set by
         :func:`SetChibiSlaveAddress`.
-        
-        .. versionadded:: 1.1.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_SLAVE_ADDRESS, (num,), 'B', 'B')
 
@@ -392,8 +378,6 @@ class BrickMaster(Device):
         """
         Returns the signal strength in dBm. The signal strength updates every time a
         packet is received.
-        
-        .. versionadded:: 1.1.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_SIGNAL_STRENGTH, (), '', 'B')
 
@@ -403,8 +387,6 @@ class BrickMaster(Device):
         communication. If these errors start rising, it is likely that either the
         distance between two Chibi stacks is becoming too big or there are
         interferences.
-        
-        .. versionadded:: 1.1.0~(Firmware)
         """
         return GetChibiErrorLog(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_ERROR_LOG, (), '', 'H H H H'))
 
@@ -424,16 +406,12 @@ class BrickMaster(Device):
         It is possible to set the frequency with the Brick Viewer and it will be 
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
-        
-        .. versionadded:: 1.1.0~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_CHIBI_FREQUENCY, (frequency,), 'B', '')
 
     def get_chibi_frequency(self):
         """
         Returns the frequency value as set by :func:`SetChibiFrequency`.
-        
-        .. versionadded:: 1.1.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_FREQUENCY, (), '', 'B')
 
@@ -454,24 +432,18 @@ class BrickMaster(Device):
         It is possible to set the channel with the Brick Viewer and it will be 
         saved in the EEPROM of the Chibi Extension, it does not
         have to be set on every startup.
-        
-        .. versionadded:: 1.1.0~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_CHIBI_CHANNEL, (channel,), 'B', '')
 
     def get_chibi_channel(self):
         """
         Returns the channel as set by :func:`SetChibiChannel`.
-        
-        .. versionadded:: 1.1.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIBI_CHANNEL, (), '', 'B')
 
     def is_rs485_present(self):
         """
         Returns *true* if a RS485 Extension is available to be used by the Master Brick.
-        
-        .. versionadded:: 1.2.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_RS485_PRESENT, (), '', '?')
 
@@ -485,16 +457,12 @@ class BrickMaster(Device):
         It is possible to set the address with the Brick Viewer and it will be 
         saved in the EEPROM of the RS485 Extension, it does not
         have to be set on every startup.
-        
-        .. versionadded:: 1.2.0~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_RS485_ADDRESS, (address,), 'B', '')
 
     def get_rs485_address(self):
         """
         Returns the address as set by :func:`SetRS485Address`.
-        
-        .. versionadded:: 1.2.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_RS485_ADDRESS, (), '', 'B')
 
@@ -515,8 +483,6 @@ class BrickMaster(Device):
         
         The slave addresses will be saved in the EEPROM of the Chibi Extension, they
         don't have to be set on every startup.
-        
-        .. versionadded:: 1.2.0~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_RS485_SLAVE_ADDRESS, (num, address), 'B B', '')
 
@@ -524,8 +490,6 @@ class BrickMaster(Device):
         """
         Returns the slave address for a given ``num`` as set by
         :func:`SetRS485SlaveAddress`.
-        
-        .. versionadded:: 1.2.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_RS485_SLAVE_ADDRESS, (num,), 'B', 'B')
 
@@ -535,8 +499,6 @@ class BrickMaster(Device):
         If this counter starts rising, it is likely that the distance
         between the RS485 nodes is too big or there is some kind of
         interference.
-        
-        .. versionadded:: 1.2.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_RS485_ERROR_LOG, (), '', 'H')
 
@@ -554,24 +516,18 @@ class BrickMaster(Device):
         
         The values are stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
-        
-        .. versionadded:: 1.2.0~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_RS485_CONFIGURATION, (speed, parity, stopbits), 'I c B', '')
 
     def get_rs485_configuration(self):
         """
         Returns the configuration as set by :func:`SetRS485Configuration`.
-        
-        .. versionadded:: 1.2.0~(Firmware)
         """
         return GetRS485Configuration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_RS485_CONFIGURATION, (), '', 'I c B'))
 
     def is_wifi_present(self):
         """
         Returns *true* if a WIFI Extension is available to be used by the Master Brick.
-        
-        .. versionadded:: 1.2.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_WIFI_PRESENT, (), '', '?')
 
@@ -604,16 +560,12 @@ class BrickMaster(Device):
         you have to restart the Master Brick after configuration.
         
         It is recommended to use the Brick Viewer to set the WIFI configuration.
-        
-        .. versionadded:: 1.3.0~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI_CONFIGURATION, (ssid, connection, ip, subnet_mask, gateway, port), '32s B 4B 4B 4B H', '')
 
     def get_wifi_configuration(self):
         """
         Returns the configuration as set by :func:`SetWifiConfiguration`.
-        
-        .. versionadded:: 1.3.0~(Firmware)
         """
         return GetWifiConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_CONFIGURATION, (), '', '32s B 4B 4B 4B H'))
 
@@ -662,16 +614,12 @@ class BrickMaster(Device):
         you have to restart the Master Brick after configuration.
         
         It is recommended to use the Brick Viewer to set the WIFI encryption.
-        
-        .. versionadded:: 1.3.0~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI_ENCRYPTION, (encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length), 'B 50s B B H H H', '')
 
     def get_wifi_encryption(self):
         """
         Returns the encryption as set by :func:`SetWifiEncryption`.
-        
-        .. versionadded:: 1.3.0~(Firmware)
         """
         return GetWifiEncryption(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_ENCRYPTION, (), '', 'B 50s B B H H H'))
 
@@ -692,8 +640,6 @@ class BrickMaster(Device):
          "2", "Associating"
          "3", "Error"
          "255", "Not initialized yet"
-        
-        .. versionadded:: 1.3.0~(Firmware)
         """
         return GetWifiStatus(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_STATUS, (), '', '6B 6B B h 4B 4B 4B I I B'))
 
@@ -705,8 +651,6 @@ class BrickMaster(Device):
         unfortunately time consuming. This means, that it might take some ms
         until the stack with attached WIFI Extension reacts again after this
         function is called.
-        
-        .. versionadded:: 1.3.0~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_REFRESH_WIFI_STATUS, (), '', '')
 
@@ -730,16 +674,12 @@ class BrickMaster(Device):
         
         It is recommended to use the Brick Viewer to set the certificate, username
         and password.
-        
-        .. versionadded:: 1.3.0~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI_CERTIFICATE, (index, data, data_length), 'H 32B B', '')
 
     def get_wifi_certificate(self, index):
         """
         Returns the certificate for a given index as set by :func:`SetWifiCertificate`.
-        
-        .. versionadded:: 1.3.0~(Firmware)
         """
         return GetWifiCertificate(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_CERTIFICATE, (index,), 'H', '32B B'))
 
@@ -755,16 +695,12 @@ class BrickMaster(Device):
          "1", "Low Power (low power consumption, low throughput)"
         
         The default value is 0 (Full Speed).
-        
-        .. versionadded:: 1.3.0~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI_POWER_MODE, (mode,), 'B', '')
 
     def get_wifi_power_mode(self):
         """
         Returns the power mode as set by :func:`SetWifiPowerMode`.
-        
-        .. versionadded:: 1.3.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_POWER_MODE, (), '', 'B')
 
@@ -784,8 +720,6 @@ class BrickMaster(Device):
         
         Try to not send more then 50 messages at a time without any kind of
         break between them.
-        
-        .. versionadded:: 1.3.2~(Firmware)
         """
         return GetWifiBufferInfo(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_BUFFER_INFO, (), '', 'I H H'))
 
@@ -802,24 +736,18 @@ class BrickMaster(Device):
          "2", "TELEC: Channel 1-14 (Japan)"
         
         The default value is 1 (ETSI).
-        
-        .. versionadded:: 1.3.4~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI_REGULATORY_DOMAIN, (domain,), 'B', '')
 
     def get_wifi_regulatory_domain(self):
         """
         Returns the regulatory domain as set by :func:`SetWifiRegulatoryDomain`.
-        
-        .. versionadded:: 1.3.4~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_REGULATORY_DOMAIN, (), '', 'B')
 
     def get_usb_voltage(self):
         """
         Returns the USB voltage in mV.
-        
-        .. versionadded:: 1.3.5~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_USB_VOLTAGE, (), '', 'H')
 
@@ -1176,8 +1104,6 @@ class BrickMaster(Device):
         
         This functions sole purpose is to allow automatic flashing of v1.x.y Bricklet
         plugins.
-        
-        .. versionadded:: 2.0.0~(Firmware)
         """
         return GetProtocol1BrickletName(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME, (port,), 'c', 'B 3B 40s'))
 
@@ -1189,8 +1115,6 @@ class BrickMaster(Device):
         The temperature is only proportional to the real temperature and it has an
         accuracy of +-15%. Practically it is only useful as an indicator for
         temperature changes.
-        
-        .. versionadded:: 1.2.1~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CHIP_TEMPERATURE, (), '', 'h')
 
@@ -1202,8 +1126,6 @@ class BrickMaster(Device):
         After a reset you have to create new device objects,
         calling functions on the existing ones will result in
         undefined behavior!
-        
-        .. versionadded:: 1.2.1~(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_RESET, (), '', '')
 
@@ -1217,8 +1139,6 @@ class BrickMaster(Device):
         
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
-        
-        .. versionadded:: 2.0.0~(Firmware)
         """
         return GetIdentity(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
