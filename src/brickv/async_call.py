@@ -83,6 +83,7 @@ def async_start_thread(parent):
                     else:
                         return_value = func_to_call(parameter)
                 except:
+                    traceback.print_exc()
                     with async_session_lock:
                         if session_id != async_session_id:
                             continue

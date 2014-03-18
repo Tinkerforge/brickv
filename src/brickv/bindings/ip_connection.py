@@ -382,6 +382,10 @@ class IPConnection:
             callback.thread.join()
 
     def authenticate(self, secret):
+        """
+        FIXME
+        """
+
         secret_bytes = secret.encode('ascii')
 
         with self.sequence_number_lock:

@@ -107,7 +107,7 @@ class Master(PluginBase, Ui_Master):
             self.extension_label.setText("" + str(self.num_extensions) + " Present")
 
     def start(self):
-        self.update_timer.start(100)
+        self.update_timer.start(1000)
 
     def stop(self):
         self.update_timer.stop()
