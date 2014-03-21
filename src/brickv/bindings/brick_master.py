@@ -120,6 +120,8 @@ class BrickMaster(Device):
     FUNCTION_GET_ETHERNET_WEBSOCKET_CONFIGURATION = 72
     FUNCTION_SET_ETHERNET_AUTHENTICATION_SECRET = 73
     FUNCTION_GET_ETHERNET_AUTHENTICATION_SECRET = 74
+    FUNCTION_SET_WIFI_AUTHENTICATION_SECRET = 75
+    FUNCTION_GET_WIFI_AUTHENTICATION_SECRET = 76
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
@@ -256,6 +258,8 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_GET_ETHERNET_WEBSOCKET_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SET_ETHERNET_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_ETHERNET_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_CHIP_TEMPERATURE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_RESET] = BrickMaster.RESPONSE_EXPECTED_FALSE
@@ -1116,6 +1120,22 @@ class BrickMaster(Device):
         .. versionadded:: 2.2.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_ETHERNET_AUTHENTICATION_SECRET, (), '', '64s')
+
+    def set_wifi_authentication_secret(self, secret):
+        """
+        TODO
+        
+        .. versionadded:: 2.2.0~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI_AUTHENTICATION_SECRET, (secret,), '64s', '')
+
+    def get_wifi_authentication_secret(self):
+        """
+        TODO
+        
+        .. versionadded:: 2.2.0~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_AUTHENTICATION_SECRET, (), '', '64s')
 
     def get_protocol1_bricklet_name(self, port):
         """

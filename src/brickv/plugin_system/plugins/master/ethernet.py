@@ -290,11 +290,8 @@ class Ethernet(QWidget, Ui_Ethernet):
         
     def save_pressed(self):
         port = self.ethernet_port.value()
-        port_websocket = self.ethernet_websocket_port.value()
-        websocket_connections = self.ethernet_websocket_connections.value()
         hostname = str(self.ethernet_hostname.text())
         connection = self.ethernet_connection.currentIndex()
-        secret = self.ethernet_secret.text()
         
         if connection == 0:
             ip = (0, 0, 0, 0)
@@ -311,9 +308,13 @@ class Ethernet(QWidget, Ui_Ethernet):
         self.master.set_ethernet_hostname(hostname)
         self.master.set_ethernet_mac_address(mac)
         
-        self.master.set_ethernet_websocket_configuration(websocket_connections, port_websocket)
-        
-        self.master.set_ethernet_authentication_secret(str(secret))
+        if self.parent.version >= (2, 2, 0):
+            port_websocket = self.ethernet_websocket_port.value()
+            websocket_connections = self.ethernet_websocket_connections.value()
+            secret = self.ethernet_secret.text()
+            self.master.set_ethernet_authentication_secret(str(secret))
+            
+            self.master.set_ethernet_websocket_configuration(websocket_connections, port_websocket)
         
         saved_conf = self.master.get_ethernet_configuration()
         if saved_conf.ip == ip and saved_conf.gateway == gw and saved_conf.subnet_mask == sub and saved_conf.connection == connection and saved_conf.port == port:

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>529</width>
-    <height>637</height>
+    <width>526</width>
+    <height>716</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -130,6 +130,42 @@
               <number>15</number>
              </property>
             </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_16">
+             <item>
+              <widget class="QCheckBox" name="wifi_use_auth">
+               <property name="text">
+                <string>Use Authentication</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="wifi_show_characters">
+               <property name="text">
+                <string>Show Characters</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_14">
+             <item>
+              <widget class="QLabel" name="wifi_secret_label">
+               <property name="text">
+                <string>Secret:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="wifi_secret"/>
+             </item>
+            </layout>
            </item>
           </layout>
          </item>

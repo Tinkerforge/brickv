@@ -77,8 +77,62 @@ class Wifi(QWidget, Ui_Wifi):
                 self.wifi_hostname_label.setDisabled(True)
             else:
                 async_call(self.master.get_wifi_hostname, None, self.get_wifi_hostname_async, self.parent.increase_error_count)
+                
+        if parent.version >= (2, 2, 0):
+            self.wifi_use_auth.stateChanged.connect(self.wifi_auth_changed)
+            self.wifi_show_characters.stateChanged.connect(self.wifi_show_characters_changed)
+            
+            self.wifi_show_characters.hide()
+            self.wifi_secret_label.hide()
+            self.wifi_secret.hide()
+            
+            async_call(self.master.get_wifi_authentication_secret, None, self.get_wifi_authentication_secret_async, self.parent.increase_error_count)
+        else:
+            self.wifi_use_auth.setText("Use Authentication (FW Version >=2.2.0 needed)")
+            self.wifi_use_auth.setDisabled(True)
+            self.wifi_show_characters.hide()
+            self.wifi_secret_label.hide()
+            self.wifi_secret.hide()
 
         self.wifi_status = None
+        
+    def get_wifi_authentication_secret_async(self, secret):
+        self.wifi_secret.setText(secret)
+        if secret == '':
+            self.wifi_show_characters.hide()
+            self.wifi_secret_label.hide()
+            self.wifi_secret.hide()
+            self.wifi_use_auth.setChecked(Qt.Unchecked)
+        else:
+            self.wifi_show_characters.show()
+            self.wifi_secret_label.show()
+            self.wifi_secret.show()
+            self.wifi_use_auth.setChecked(Qt.Checked)
+            if self.wifi_show_characters.isChecked():
+                self.wifi_secret.setEchoMode(QLineEdit.Normal)
+            else:
+                self.wifi_secret.setEchoMode(QLineEdit.Password)
+            
+    def wifi_auth_changed(self, state):
+        if state == Qt.Checked:
+            self.wifi_show_characters.show()
+            self.wifi_secret_label.show()
+            self.wifi_secret.show()
+            if self.wifi_show_characters.isChecked():
+                self.wifi_secret.setEchoMode(QLineEdit.Normal)
+            else:
+                self.wifi_secret.setEchoMode(QLineEdit.Password)
+        else:
+            self.wifi_show_characters.hide()
+            self.wifi_secret_label.hide()
+            self.wifi_secret.hide()
+            self.wifi_secret.setText('')
+        
+    def wifi_show_characters_changed(self, state):
+        if state == Qt.Checked:
+            self.wifi_secret.setEchoMode(QLineEdit.Normal)
+        else:
+            self.wifi_secret.setEchoMode(QLineEdit.Password)
 
     def update_username_async(self, username):
         username = ''.join(map(chr, username[0][:username[1]]))
@@ -587,6 +641,11 @@ class Wifi(QWidget, Ui_Wifi):
         hostname_old = hostname
         if self.parent.version >= (2, 0, 5):
             hostname_old = self.master.get_wifi_hostname()
+            
+            
+        if self.parent.version >= (2, 2, 0):
+            secret = self.wifi_secret.text()
+            self.master.set_wifi_authentication_secret(str(secret))
 
         test_ok = False
 
