@@ -2,6 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 plugin_base.py: Base class for all Brick Viewer Plugins
 
@@ -37,7 +38,14 @@ class PluginBase(QWidget, object):
     def increase_error_count(self):
         self.error_count += 1
         if self.label_timeouts:
-            self.label_timeouts.setText('{0}'.format(self.error_count))
+            try:
+                # as this method might be called after the plugin tab
+                # is already done this can raise a
+                #
+                # RuntimeError: underlying C/C++ object has been deleted
+                self.label_timeouts.setText('{0}'.format(self.error_count))
+            except:
+                pass
         
     # To be overridden by inheriting class
     def stop(self):
