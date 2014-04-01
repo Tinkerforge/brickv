@@ -95,6 +95,10 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_secret.hide()
 
         self.wifi_status = None
+
+    def destroy(self):
+        if self.wifi_status:
+            self.wifi_status.close()
         
     def get_wifi_authentication_secret_async(self, secret):
         self.wifi_secret.setText(secret)
@@ -202,10 +206,6 @@ class Wifi(QWidget, Ui_Wifi):
         self.wifi_gw3.setValue(gw[2])
         self.wifi_gw4.setValue(gw[3])
         self.wifi_port.setValue(port)
-
-    def destroy(self):
-        if self.wifi_status:
-            self.wifi_status.close()
 
     def wifi_key_show_state_changed(self, state):
         if state == Qt.Checked:

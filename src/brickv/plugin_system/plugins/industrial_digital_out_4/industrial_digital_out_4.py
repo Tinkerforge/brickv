@@ -94,6 +94,9 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
     def stop(self):
         self.update_timer.stop()
 
+    def destroy(self):
+        self.destroy_ui()
+
     def get_url_part(self):
         return 'industrial_digital_out_4'
 

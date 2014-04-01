@@ -115,9 +115,15 @@ class Master(PluginBase, Ui_Master):
     def destroy(self):
         for extension in self.extensions:
             extension.destroy()
+            extension.hide()
+            extension.setParent(None)
+
+        self.extensions = []
 
         if self.extension_type:
             self.extension_type.close()
+
+        self.destroy_ui()
 
     def has_reset_device(self):
         return self.version >= (1, 2, 1)

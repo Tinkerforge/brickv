@@ -43,6 +43,9 @@ class RS485(QWidget, Ui_RS485):
             self.update_generator = self.update_addresses()
             self.update_generator.next()
 
+    def destroy(self):
+        pass
+
     def update_addresses(self):
         self.update_address = 0
         self.update_address_slave = 0
@@ -97,10 +100,6 @@ class RS485(QWidget, Ui_RS485):
         else:
             self.parity_combobox.setCurrentIndex(0)
         self.stopbits_spinbox.setValue(stopbits)
-
-
-    def destroy(self):
-        pass
 
     def popup_ok(self):
         QMessageBox.information(self, 'Configuration', 'Successfully saved configuration.\nNew configuration will be used after reset of the Master Brick.', QMessageBox.Ok)

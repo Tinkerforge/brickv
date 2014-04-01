@@ -110,6 +110,9 @@ class PiezoSpeaker(PluginBase):
     def stop(self):
         pass
 
+    def destroy(self):
+        self.destroy_ui()
+
     def get_url_part(self):
         return 'piezo_speaker'
 

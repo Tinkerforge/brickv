@@ -76,8 +76,7 @@ class SoundIntensity(PluginBase):
         
 #        plot_list = [['', Qt.red, self.get_current_value]]
 #        self.plot_widget = PlotWidget('Intensity', plot_list)
-        
-        
+
         layout_h = QHBoxLayout()
         layout_h.addStretch()
         layout_h.addWidget(self.intensity_label)
@@ -112,6 +111,9 @@ class SoundIntensity(PluginBase):
         async_call(self.si.set_intensity_callback_period, 0, None, self.increase_error_count)
         
 #        self.plot_widget.stop = True
+
+    def destroy(self):
+        self.destroy_ui()
 
     def get_url_part(self):
         return 'sound_intensity'

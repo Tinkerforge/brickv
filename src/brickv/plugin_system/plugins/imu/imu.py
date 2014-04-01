@@ -169,8 +169,7 @@ class IMU(PluginBase, Ui_IMU):
         self.acc_plot.setMinimumSize(250, 200)
         self.gyr_plot.setMinimumSize(250, 200)
         self.tem_plot.setMinimumSize(250, 200)
-        
-        
+
         self.orientation_label = QLabel("""Position your IMU Brick as shown \
 in the image above, then press "Save Orientation".""")
         self.orientation_label.setWordWrap(True)
@@ -226,6 +225,7 @@ in the image above, then press "Save Orientation".""")
         self.alive = False
         if self.calibrate:
             self.calibrate.close()
+        self.destroy_ui()
 
     def has_reset_device(self):
         return self.version >= (1, 0, 7)
@@ -327,9 +327,7 @@ in the image above, then press "Save Orientation".""")
             self.gyroscope_update(gyr_x, gyr_y, gyr_z)
             self.orientation_update(self.roll, self.pitch, self.yaw)
             self.temperature_update(self.tem)
-            
-            
-            
+
 #            self.gyr_plot.add_data(0, self.counter, gyr_x)
 #            self.gyr_plot.add_data(1, self.counter, gyr_y)
 #            self.gyr_plot.add_data(2, self.counter, gyr_z)

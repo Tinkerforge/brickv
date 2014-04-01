@@ -114,6 +114,9 @@ class DC(PluginBase, Ui_DC):
         self.update_timer.stop()
         async_call(self.dc.set_current_velocity_period, 0, None, self.increase_error_count)
 
+    def destroy(self):
+        self.destroy_ui()
+
     def has_reset_device(self):
         return self.version >= (1, 1, 3)
 

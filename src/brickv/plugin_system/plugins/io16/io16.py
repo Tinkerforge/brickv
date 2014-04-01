@@ -161,6 +161,9 @@ class IO16(PluginBase, Ui_IO16):
 
         self.update_timer.stop()
 
+    def destroy(self):
+        self.destroy_ui()
+
     def get_url_part(self):
         return 'io16'
 

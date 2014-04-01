@@ -154,6 +154,9 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
         self.plot_widget_voltage.stop = True
         self.plot_widget_power.stop = True
 
+    def destroy(self):
+        self.destroy_ui()
+
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == bricklet_voltage_current.BrickletVoltageCurrent.DEVICE_IDENTIFIER

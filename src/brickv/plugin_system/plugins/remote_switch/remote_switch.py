@@ -134,6 +134,9 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
         
     def stop(self):
         pass
+
+    def destroy(self):
+        self.destroy_ui()
     
     def dim_pressed(self):
         self.button_dim.setEnabled(False)

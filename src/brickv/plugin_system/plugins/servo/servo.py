@@ -231,13 +231,6 @@ class Servo(PluginBase, Ui_Servo):
         
         self.update_done_event = Event()
         self.update_done_event.set()
-
-    def stop(self):
-        if self.test_button.text() == "Stop Test":
-            self.test_button_clicked()
-        self.update_event.clear()
-        self.alive = False
-        self.update_done_event.wait()
         
     def start(self):
         self.alive = True
@@ -252,10 +245,18 @@ class Servo(PluginBase, Ui_Servo):
             self.update_thread_object.start() 
             
         self.update_servo_specific()
+
+    def stop(self):
+        if self.test_button.text() == "Stop Test":
+            self.test_button_clicked()
+        self.update_event.clear()
+        self.alive = False
+        self.update_done_event.wait()
         
     def destroy(self):
         self.test_event.set()
         self.update_event.set()
+        self.destroy_ui()
 
     def has_reset_device(self):
         return self.version >= (1, 1, 3)

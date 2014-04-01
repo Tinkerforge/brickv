@@ -179,8 +179,10 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         
     def stop(self):
         self.voltage_timer.stop()
-        self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_RENDERED,
-                                         None)
+        self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_RENDERED, None)
+
+    def destroy(self):
+        self.destroy_ui()
 
     def get_url_part(self):
         return 'led_strip'

@@ -222,6 +222,9 @@ class LCD20x4(PluginBase):
     def stop(self):
         pass
 
+    def destroy(self):
+        self.destroy_ui()
+
     def get_url_part(self):
         return 'lcd_20x4_v{0}{1}'.format(self.hardware_version[0], self.hardware_version[1])
     

@@ -98,7 +98,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.set_tree_view_defaults()
 
         # Remove dummy tab
-        self.tab_widget.removeTab(1)
+        self.remove_tab(1)
         self.last_tab = 0
 
         self.name = '<unknown>'
@@ -245,6 +245,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.last_tab = i
 
+    def remove_tab(self, i):
+        widget = self.tab_widget.widget(i)
+        self.tab_widget.removeTab(i)
+
+        # ensure that the widget gets correctly destroyed
+        widget.hide()
+        widget.setParent(None)
+        widget = None
+
     def reset_view(self):
         self.tab_widget.setCurrentIndex(0)
 
@@ -269,7 +278,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 pass
 
         for i in reversed(range(1, self.tab_widget.count())):
-            self.tab_widget.removeTab(i)
+            self.remove_tab(i)
 
         self.update_tree_view()
 
@@ -526,7 +535,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                     pass
 
                             i = self.tab_for_uid(device_info.uid)
-                            self.tab_widget.removeTab(i)
+                            if i > 0:
+                                self.remove_tab(i)
                         except:
                             pass
 

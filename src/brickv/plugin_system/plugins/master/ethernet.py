@@ -107,7 +107,7 @@ class Ethernet(QWidget, Ui_Ethernet):
             
             async_call(self.master.get_ethernet_authentication_secret, None, self.get_ethernet_authentication_secret_async, self.parent.increase_error_count)
         else:
-            self.ethernet_use_auth.setText("Use Authentication (FW Version >=2.2.0 needed)")
+            self.ethernet_use_auth.setText("Use Authentication (FW Version >= 2.2.0 needed)")
             self.ethernet_use_auth.setDisabled(True)
             self.ethernet_show_characters.hide()
             self.ethernet_secret_label.hide()
@@ -115,6 +115,9 @@ class Ethernet(QWidget, Ui_Ethernet):
             self.ethernet_websocket_port.setEnabled(False)
             self.ethernet_socket_connections.setEnabled(False)
             self.ethernet_websocket_connections.setEnabled(False)
+
+    def destroy(self):
+        pass
         
     def get_ethernet_authentication_secret_async(self, secret):
         self.ethernet_secret.setText(secret)

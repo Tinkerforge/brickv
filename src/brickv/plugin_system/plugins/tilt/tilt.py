@@ -84,6 +84,9 @@ class Tilt(PluginBase):
     def stop(self):
         async_call(self.tilt.disable_tilt_state_callback, None, None, self.increase_error_count)
 
+    def destroy(self):
+        self.destroy_ui()
+
     def get_url_part(self):
         return 'tilt'
 

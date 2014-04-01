@@ -43,6 +43,9 @@ class Chibi(QWidget, Ui_Chibi):
             self.update_generator = self.init_update()
             self.update_generator.next()
 
+    def destroy(self):
+        pass
+
     def init_update(self):
         self.update_address = 0
         self.update_chibi_slave_address = 0

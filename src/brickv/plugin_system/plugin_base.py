@@ -34,7 +34,18 @@ class PluginBase(QWidget, object):
         self.version = version
         self.version_str = '.'.join(map(str, version))
         self.error_count = 0
-        
+
+    def destroy_ui(self):
+        # ensure that the widgets gets correctly destroyed
+        for member in dir(self):
+            obj = getattr(self, member)
+
+            if isinstance(obj, QWidget):
+                obj.hide()
+                obj.setParent(None)
+
+                setattr(self, member, None)
+
     def increase_error_count(self):
         self.error_count += 1
         if self.label_timeouts:

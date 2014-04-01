@@ -120,6 +120,9 @@ class MultiTouch(PluginBase, Ui_MultiTouch):
     def stop(self):
         pass
 
+    def destroy(self):
+        self.destroy_ui()
+
     def get_url_part(self):
         return 'multi_touch'
 

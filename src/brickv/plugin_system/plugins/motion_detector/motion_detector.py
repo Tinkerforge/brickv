@@ -71,10 +71,12 @@ class MotionDetector(PluginBase):
 
     def start(self):
         async_call(self.md.get_motion_detected, None, self.get_motion_detected_async, self.increase_error_count)
-        pass
         
     def stop(self):
         pass
+
+    def destroy(self):
+        self.destroy_ui()
 
     def get_url_part(self):
         return 'motion_detector'

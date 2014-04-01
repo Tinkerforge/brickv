@@ -138,6 +138,9 @@ class RotaryEncoder(PluginBase):
     def stop(self):
         async_call(self.re.set_count_callback_period, 0, None, self.increase_error_count)
 
+    def destroy(self):
+        self.destroy_ui()
+
     def get_url_part(self):
         return 'rotary_encoder'
 

@@ -31,8 +31,7 @@ class IMUGLWidget(QGLWidget):
         QGLWidget.__init__(self, parent, name)
         self.parent = parent
         
-        col = parent.palette().background().color()
-        
+#        col = parent.palette().background().color()
 #        self.color_background = (col.redF(), col.greenF(), col.blueF(), 1.0)
         self.color_background = (0.85, 0.85, 0.85, 1.0)
         self.color_led_red = (1.0, 0.0, 0.0)
@@ -226,13 +225,13 @@ class IMUGLWidget(QGLWidget):
         glLineWidth(5.0)
         
         glBegin(GL_LINES)
-        glColor3f(1,0,0) #// X axis is red.
+        glColor3f(1,0,0) # x axis is red
         glVertex3fv((0,0,0))
         glVertex3fv((2,0,0))
-        glColor3f(0,0.5,0) #// y axis is green.
+        glColor3f(0,0.5,0) # y axis is green
         glVertex3fv((0,0,0))
         glVertex3fv((0,2,0))
-        glColor3f(0,0,1) #// z axis is blue.
+        glColor3f(0,0,1) # z axis is blue
         glVertex3fv((0,0,0))
         glVertex3fv((0,0,2))
         glEnd()

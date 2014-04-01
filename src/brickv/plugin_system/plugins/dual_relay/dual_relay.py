@@ -123,6 +123,9 @@ class DualRelay(PluginBase, Ui_DualRelay):
     def stop(self):
         self.update_timer.stop()
 
+    def destroy(self):
+        self.destroy_ui()
+
     def get_url_part(self):
         return 'dual_relay'
 
