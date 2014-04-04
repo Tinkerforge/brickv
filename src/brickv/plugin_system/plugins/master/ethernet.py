@@ -64,7 +64,7 @@ class Ethernet(QWidget, Ui_Ethernet):
         self.last_status = None
         self.last_configuration = None
         self.last_port = 4223
-        self.last_websocket_port = 4225
+        self.last_websocket_port = 4280
 
         if parent.version >= (2, 1, 0):
             async_call(self.master.get_ethernet_configuration, None, self.get_ethernet_configuration_async, self.parent.increase_error_count)
