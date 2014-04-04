@@ -66,18 +66,18 @@ class Wifi(QWidget, Ui_Wifi):
             else:
                 self.wifi_domain.setEnabled(False)
                 self.wifi_domain.clear()
-                self.wifi_domain.addItem("Firmware > 1.3.3 needed")
+                self.wifi_domain.addItem("FW Version >= 1.3.4 required")
 
             async_call(self.master.get_wifi_encryption, None, self.get_wifi_encryption_async, self.parent.increase_error_count)
 
             if parent.version < (2, 0, 5):
                 self.wifi_hostname.setDisabled(True)
                 self.wifi_hostname.setMaxLength(50)
-                self.wifi_hostname.setText("Firmware > 2.0.4 needed")
+                self.wifi_hostname.setText("FW Version >= 2.0.5 required")
                 self.wifi_hostname_label.setDisabled(True)
             else:
                 async_call(self.master.get_wifi_hostname, None, self.get_wifi_hostname_async, self.parent.increase_error_count)
-                
+
         if parent.version >= (2, 2, 0):
             self.wifi_use_auth.stateChanged.connect(self.wifi_auth_changed)
             self.wifi_show_characters.stateChanged.connect(self.wifi_show_characters_changed)
@@ -88,7 +88,7 @@ class Wifi(QWidget, Ui_Wifi):
             
             async_call(self.master.get_wifi_authentication_secret, None, self.get_wifi_authentication_secret_async, self.parent.increase_error_count)
         else:
-            self.wifi_use_auth.setText("Use Authentication (FW Version >=2.2.0 needed)")
+            self.wifi_use_auth.setText("Use Authentication (FW Version >= 2.2.0 required)")
             self.wifi_use_auth.setDisabled(True)
             self.wifi_show_characters.hide()
             self.wifi_secret_label.hide()
@@ -488,7 +488,7 @@ class Wifi(QWidget, Ui_Wifi):
                 certificate_file = map(ord, file(cert_path, 'rb').read()) # Convert certificate to list of bytes
                 certificate_length = len(certificate_file)
                 if certificate_length > 6*1024:
-                    QMessageBox.critical(self, "Save", "Certificate too Big. Max size: 6kB.", QMessageBox.Ok)
+                    QMessageBox.critical(self, "Save", "Certificate too big (max size: 6kB).", QMessageBox.Ok)
                     return []
 
                 return certificate_file
@@ -641,8 +641,7 @@ class Wifi(QWidget, Ui_Wifi):
         hostname_old = hostname
         if self.parent.version >= (2, 0, 5):
             hostname_old = self.master.get_wifi_hostname()
-            
-            
+
         if self.parent.version >= (2, 2, 0):
             secret = self.wifi_secret.text()
             self.master.set_wifi_authentication_secret(str(secret))

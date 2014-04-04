@@ -98,7 +98,7 @@ class IO16(PluginBase, Ui_IO16):
         self.update_timer.setInterval(50)
 
         if not self.has_monoflop:
-            self.go_button.setText("Go (Firmware > 1.1.1 needed)")
+            self.go_button.setText("Go (FW Versiom >= 1.1.2 required)")
             self.go_button.setEnabled(False)
         else:
             self.update_timer.start()

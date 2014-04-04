@@ -74,12 +74,11 @@ class IO4(PluginBase, Ui_IO4):
         self.update_timer.setInterval(50)
 
         if not self.has_monoflop:
-            self.go_button.setText("Go (Firmware > 1.1.0 needed)")
+            self.go_button.setText("Go (FW Versiom >= 1.1.1 required)")
             self.go_button.setEnabled(False)
         
         self.pin_changed(0)
-        
-        
+
     def init_async(self):
         self.init_value = 0
         self.init_dir = 0

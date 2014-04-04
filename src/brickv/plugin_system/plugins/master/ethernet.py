@@ -34,14 +34,12 @@ class SpinBoxHex(QSpinBox):
         self.validator = QRegExpValidator(QRegExp("[0-9A-Fa-f]{1,2}"), self)
         self.setRange(0, 255)
 
-
     def fixCase(self, text):
         self.lineEdit().setText(text.toUpper())
 
 
     def validate(self, text, pos):
         return self.validator.validate(text, pos)
-
 
     def valueFromText(self, text):
         return text.toInt(16)[0]
@@ -94,20 +92,20 @@ class Ethernet(QWidget, Ui_Ethernet):
             async_call(self.master.get_ethernet_websocket_configuration, None, self.get_ethernet_websocket_configuration_async, self.parent.increase_error_count)
             self.ethernet_socket_connections.valueChanged.connect(self.socket_connections_changed)
             self.ethernet_websocket_connections.valueChanged.connect(self.websocket_connections_changed)
-            
+
             self.ethernet_port.valueChanged.connect(self.ethernet_port_changed)
             self.ethernet_websocket_port.valueChanged.connect(self.ethernet_websocket_port_changed)
-            
+
             self.ethernet_use_auth.stateChanged.connect(self.ethernet_auth_changed)
             self.ethernet_show_characters.stateChanged.connect(self.ethernet_show_characters_changed)
-            
+
             self.ethernet_show_characters.hide()
             self.ethernet_secret_label.hide()
             self.ethernet_secret.hide()
-            
+
             async_call(self.master.get_ethernet_authentication_secret, None, self.get_ethernet_authentication_secret_async, self.parent.increase_error_count)
         else:
-            self.ethernet_use_auth.setText("Use Authentication (FW Version >= 2.2.0 needed)")
+            self.ethernet_use_auth.setText("Use Authentication (FW Version >= 2.2.0 required)")
             self.ethernet_use_auth.setDisabled(True)
             self.ethernet_show_characters.hide()
             self.ethernet_secret_label.hide()
@@ -118,7 +116,7 @@ class Ethernet(QWidget, Ui_Ethernet):
 
     def destroy(self):
         pass
-        
+
     def get_ethernet_authentication_secret_async(self, secret):
         self.ethernet_secret.setText(secret)
         if secret == '':
@@ -287,10 +285,10 @@ class Ethernet(QWidget, Ui_Ethernet):
             self.ethernet_gw4.setValue(status.gateway[0])
 
         self.last_status = status
-        
+
         self.ethernet_count_rx.setText('Count RX: ' + str(status.rx_count))
         self.ethernet_count_tx.setText('Count TX: ' + str(status.tx_count))
-        
+
     def save_pressed(self):
         port = self.ethernet_port.value()
         hostname = str(self.ethernet_hostname.text())

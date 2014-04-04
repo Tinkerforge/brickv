@@ -101,7 +101,7 @@ class DC(PluginBase, Ui_DC):
 #            self.enable_encoder_checkbox.stateChanged.connect(self.enable_encoder_state_changed)
 #            self.encoder_show()
 #        else:
-#            self.enable_encoder_checkbox.setText('Enable Encoder (Firmware >= 2.01 required)')
+#            self.enable_encoder_checkbox.setText('Enable Encoder (FW Version >= 2.0.1 required)')
 #            self.enable_encoder_checkbox.setEnabled(False)
     
     def start(self):
