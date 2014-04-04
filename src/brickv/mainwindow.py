@@ -112,7 +112,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.qtcb_disconnected.connect(self.cb_disconnected)
 
         self.ipcon = IPConnection()
-        self.ipcon.set_auto_reauthenticate(False)
         self.ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE,
                                      self.qtcb_enumerate.emit)
         self.ipcon.register_callback(IPConnection.CALLBACK_CONNECTED,

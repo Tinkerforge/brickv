@@ -301,15 +301,14 @@ class IPConnection:
 
         self.host = None
         self.port = None
-        self.secret = None # protected by socket_lock
         self.timeout = 2.5
         self.auto_reconnect = True
         self.auto_reconnect_allowed = False
         self.auto_reconnect_pending = False
-        self.auto_reauthenticate = True
         self.sequence_number_lock = Lock()
         self.next_sequence_number = 0 # protected by sequence_number_lock
-        self.next_authenticate_nonce = 0 # protected by sequence_number_lock
+        self.authentication_lock = Lock() # protects authentication handshake
+        self.next_authentication_nonce = 0 # protected by authentication_lock
         self.devices = {}
         self.registered_callbacks = {}
         self.socket = None # protected by socket_lock
@@ -345,7 +344,6 @@ class IPConnection:
 
             self.host = host
             self.port = port
-            self.secret = None
 
             self.connect_unlocked(False)
 
@@ -388,34 +386,29 @@ class IPConnection:
 
         secret_bytes = secret.encode('ascii')
 
-        with self.sequence_number_lock:
-            if self.next_authenticate_nonce == 0:
+        with self.authentication_lock:
+            if self.next_authentication_nonce == 0:
                 try:
-                    self.next_authenticate_nonce = struct.unpack('<I', os.urandom(4))[0]
+                    self.next_authentication_nonce = struct.unpack('<I', os.urandom(4))[0]
                 except NotImplementedError:
                     subseconds, seconds = math.modf(time.time())
                     seconds = int(seconds)
                     subseconds = int(subseconds * 1000000)
-                    self.next_authenticate_nonce = ((seconds << 26 | seconds >> 6) & 0xFFFFFFFF) + subseconds + os.getpid()
+                    self.next_authentication_nonce = ((seconds << 26 | seconds >> 6) & 0xFFFFFFFF) + subseconds + os.getpid()
 
-        server_nonce = self.brickd.get_authentication_nonce()
+            server_nonce = self.brickd.get_authentication_nonce()
+            client_nonce = struct.unpack('<4B', struct.pack('<I', self.next_authentication_nonce))
+            self.next_authentication_nonce = (self.next_authentication_nonce + 1) % (1 << 32)
 
-        with self.sequence_number_lock:
-            client_nonce = struct.unpack('<4B', struct.pack('<I', self.next_authenticate_nonce))
-            self.next_authenticate_nonce = (self.next_authenticate_nonce + 1) % (1 << 32)
+            h = hmac.new(secret_bytes, digestmod=hashlib.sha1)
 
-        h = hmac.new(secret_bytes, digestmod=hashlib.sha1)
+            h.update(struct.pack('<4B', *server_nonce))
+            h.update(struct.pack('<4B', *client_nonce))
 
-        h.update(struct.pack('<4B', *server_nonce))
-        h.update(struct.pack('<4B', *client_nonce))
+            digest = struct.unpack('<20B', h.digest())
+            h = None
 
-        digest = struct.unpack('<20B', h.digest())
-        h = None
-
-        self.brickd.authenticate(client_nonce, digest)
-
-        with self.socket_lock:
-            self.secret = secret
+            self.brickd.authenticate(client_nonce, digest)
 
     def get_connection_state(self):
         """
@@ -456,24 +449,6 @@ class IPConnection:
         """
 
         return self.auto_reconnect
-
-    def set_auto_reauthenticate(self, auto_reauthenticate):
-        """
-        Enables or disables auto-reauthenticate. If auto-reauthenticate is enabled,
-        the IP Connection will try to reauthenticate with the previously given
-        secret after an auto-reconnect.
-
-        Default value is *True*.
-        """
-
-        self.auto_reauthenticate = bool(auto_reauthenticate)
-
-    def get_auto_reauthenticate(self):
-        """
-        Returns *true* if auto-reauthenticate is enabled, *false* otherwise.
-        """
-
-        return self.auto_reauthenticate
 
     def set_timeout(self, timeout):
         """
@@ -618,6 +593,7 @@ class IPConnection:
             self.receive_thread.start()
         except:
             def cleanup():
+                # close socket
                 self.disconnect_unlocked()
 
                 # end callback thread
@@ -679,9 +655,6 @@ class IPConnection:
         # close socket
         self.socket.close()
         self.socket = None
-
-        # clear secret
-        self.secret = None
 
     def receive_loop(self, socket_id):
         if sys.hexversion < 0x03000000:
@@ -760,14 +733,12 @@ class IPConnection:
                 # block here until reconnect. this is okay, there is no
                 # callback to deliver when there is no connection
                 while retry:
-                    local_secret = None
                     retry = False
 
                     with self.socket_lock:
                         if self.auto_reconnect_allowed and self.socket is None:
                             try:
                                 self.connect_unlocked(True)
-                                local_secret = self.secret
                             except:
                                 retry = True
                         else:
@@ -775,12 +746,6 @@ class IPConnection:
 
                     if retry:
                         time.sleep(0.1)
-                    elif self.auto_reauthenticate and local_secret is not None:
-                        try:
-                            self.authenticate(local_secret)
-                        except:
-                            # FIXME: how to handle errors here?
-                            pass
 
     def dispatch_packet(self, packet):
         uid = get_uid_from_data(packet)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-03-10.      #
+# This file was automatically generated on 2014-04-02.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -221,12 +221,20 @@ class BrickIMU(Device):
         
         You can go from quaternions to Euler angles with the following formula::
         
-         roll  = atan2(2*y*w - 2*x*z, 1 - 2*y*y - 2*z*z)
-         pitch = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
-         yaw   =  asin(2*x*y + 2*z*w)
+         xAngle = atan2(2*y*w - 2*x*z, 1 - 2*y*y - 2*z*z)
+         yAngle = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
+         zAngle =  asin(2*x*y + 2*z*w)
         
         This process is not reversible, because of the 
         `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
+        
+        It is also possible to calculate independent angles. You can calculate 
+        yaw, pitch and roll in a right-handed vehicle coordinate system according to DIN70000
+        with::
+        
+         yaw   =  atan2(2*x*y + 2*w*z, w*w + x*x - y*y - z*z)
+         pitch = -asin(2*w*y - 2*x*z)
+         roll  = -atan2(2*y*z + 2*w*x, -w*w + x*x + y*y - z*z))
         
         Converting the quaternions to an OpenGL transformation matrix is
         possible with the following formula::

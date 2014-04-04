@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-03-18.      #
+# This file was automatically generated on 2014-04-04.      #
 #                                                           #
 # Bindings Version 2.0.13                                    #
 #                                                           #
@@ -1107,7 +1107,17 @@ class BrickMaster(Device):
 
     def set_ethernet_authentication_secret(self, secret):
         """
-        TODO
+        Sets the Ethernet authentication secret. The secret can be a string of up to 64
+        characters. An empty string disables the authentication
+        
+        For more information about authentication see TODO.
+        
+        The secret is stored in the EEPROM and only applied on startup. That means
+        you have to restart the Master Brick after configuration.
+        
+        It is recommended to use the Brick Viewer to set the Ethernet authentication secret.
+        
+        The default value is an empty string (authentication disabled).
         
         .. versionadded:: 2.2.0~(Firmware)
         """
@@ -1115,7 +1125,7 @@ class BrickMaster(Device):
 
     def get_ethernet_authentication_secret(self):
         """
-        TODO
+        Returns the authentication secret as set by :func:`SetEthernetAuthenticationSecret`.
         
         .. versionadded:: 2.2.0~(Firmware)
         """
@@ -1123,7 +1133,17 @@ class BrickMaster(Device):
 
     def set_wifi_authentication_secret(self, secret):
         """
-        TODO
+        Sets the WIFI authentication secret. The secret can be a string of up to 64
+        characters. An empty string disables the authentication
+        
+        For more information about authentication see TODO.
+        
+        The secret is stored in the EEPROM and only applied on startup. That means
+        you have to restart the Master Brick after configuration.
+        
+        It is recommended to use the Brick Viewer to set the WIFI authentication secret.
+        
+        The default value is an empty string (authentication disabled).
         
         .. versionadded:: 2.2.0~(Firmware)
         """
@@ -1131,7 +1151,7 @@ class BrickMaster(Device):
 
     def get_wifi_authentication_secret(self):
         """
-        TODO
+        Returns the authentication secret as set by :func:`SetWifiAuthenticationSecret`.
         
         .. versionadded:: 2.2.0~(Firmware)
         """
