@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>425</width>
+    <width>434</width>
     <height>501</height>
    </rect>
   </property>
@@ -51,9 +51,6 @@
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>Up to 15 chars, leave empty for default</string>
              </property>
              <property name="maxLength">
               <number>32</number>

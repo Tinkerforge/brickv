@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>363</width>
+    <width>406</width>
     <height>368</height>
    </rect>
   </property>
@@ -154,18 +154,24 @@
           </layout>
          </item>
          <item>
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QLabel" name="label_slave_address">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>60</height>
-              </size>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
              <property name="text">
-              <string>Addresses of Slaves as comma separated list
-e.g. &quot;5&quot; (one slave with address 5) or &quot;1,2,42&quot; (three slaves with addresses 1, 2 and 42):</string>
+              <string>Addresses of Slaves as comma separated list, e.g. &quot;5&quot; (one slave with address 5) or &quot;1,2,42&quot; (three slaves with addresses 1, 2 and 42):</string>
              </property>
              <property name="wordWrap">
               <bool>true</bool>

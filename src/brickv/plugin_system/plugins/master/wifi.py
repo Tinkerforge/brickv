@@ -547,11 +547,22 @@ class Wifi(QWidget, Ui_Wifi):
         return True
 
     def save_pressed(self):
-        hostname = str(self.wifi_hostname.text())
         encryption = self.wifi_encryption.currentIndex()
 
         try:
-            key = str(self.wifi_key.text()).decode('ascii')
+            secret = str(self.wifi_secret.text()).encode('ascii')
+        except:
+            self.popup_fail('Secret cannot contain non-ASCII characters')
+            return
+
+        try:
+            hostname = str(self.wifi_hostname.text()).encode('ascii')
+        except:
+            self.popup_fail('Hostname cannot contain non-ASCII characters')
+            return
+
+        try:
+            key = str(self.wifi_key.text()).encode('ascii')
         except:
             self.popup_fail('Key cannot contain non-ASCII characters')
             return
@@ -591,7 +602,7 @@ class Wifi(QWidget, Ui_Wifi):
         eap_options = eap_outer | (eap_inner << 2)
 
         try:
-            ssid = str(self.wifi_ssid.text()).decode('ascii')
+            ssid = str(self.wifi_ssid.text()).encode('ascii')
         except:
             self.popup_fail('SSID cannot contain non-ASCII characters')
             return
@@ -631,6 +642,8 @@ class Wifi(QWidget, Ui_Wifi):
             self.master.set_long_wifi_key(long_key)
         if self.parent.version >= (2, 0, 5):
             self.master.set_wifi_hostname(hostname)
+        if self.parent.version >= (2, 2, 0):
+            self.master.set_wifi_authentication_secret(secret)
 
         power_mode_old = self.master.get_wifi_power_mode()
         encryption_old, key_old, key_index_old, eap_options_old, ca_certificate_length_old, client_certificate_length_old, private_key_length_old = self.master.get_wifi_encryption()
@@ -641,10 +654,9 @@ class Wifi(QWidget, Ui_Wifi):
         hostname_old = hostname
         if self.parent.version >= (2, 0, 5):
             hostname_old = self.master.get_wifi_hostname()
-
+        secret_old = secret
         if self.parent.version >= (2, 2, 0):
-            secret = self.wifi_secret.text()
-            self.master.set_wifi_authentication_secret(str(secret))
+            secret_old = self.master.get_wifi_authentication_secret()
 
         test_ok = False
 
@@ -658,7 +670,8 @@ class Wifi(QWidget, Ui_Wifi):
            client_certificate_length == client_certificate_length_old and \
            private_key_length == private_key_length_old and \
            long_key == long_key_old and \
-           hostname == hostname_old:
+           hostname == hostname_old and \
+           secret == secret_old:
             test_ok = True
 
         if test_ok and encryption == 1:
@@ -675,11 +688,10 @@ class Wifi(QWidget, Ui_Wifi):
             if username_old == username and password_old == password:
                 test_ok = True
 
-        if self.parent.version >= (1, 3, 4):
-            if test_ok:
-                self.master.set_wifi_regulatory_domain(self.wifi_domain.currentIndex())
-                if self.master.get_wifi_regulatory_domain() != self.wifi_domain.currentIndex():
-                    test_ok = False
+        if self.parent.version >= (1, 3, 4) and test_ok:
+            self.master.set_wifi_regulatory_domain(self.wifi_domain.currentIndex())
+            if self.master.get_wifi_regulatory_domain() != self.wifi_domain.currentIndex():
+                test_ok = False
 
         if test_ok:
             if len(ca_cert) > 0:

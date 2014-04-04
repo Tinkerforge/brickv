@@ -291,8 +291,19 @@ class Ethernet(QWidget, Ui_Ethernet):
 
     def save_pressed(self):
         port = self.ethernet_port.value()
-        hostname = str(self.ethernet_hostname.text())
         connection = self.ethernet_connection.currentIndex()
+
+        try:
+            secret = str(self.ethernet_secret.text()).encode('ascii')
+        except:
+            self.popup_fail('Secret cannot contain non-ASCII characters')
+            return
+
+        try:
+            hostname = str(self.ethernet_hostname.text()).encode('ascii')
+        except:
+            self.popup_fail('Hostname cannot contain non-ASCII characters')
+            return
         
         if connection == 0:
             ip = (0, 0, 0, 0)
@@ -303,7 +314,8 @@ class Ethernet(QWidget, Ui_Ethernet):
             gw = (self.ethernet_gw4.value(), self.ethernet_gw3.value(), self.ethernet_gw2.value(), self.ethernet_gw1.value())
             sub = (self.ethernet_sub4.value(), self.ethernet_sub3.value(), self.ethernet_sub2.value(), self.ethernet_sub1.value())
         
-        mac = (self.ethernet_mac6.value(), self.ethernet_mac5.value(), self.ethernet_mac4.value(), self.ethernet_mac3.value(), self.ethernet_mac2.value(), self.ethernet_mac1.value())
+        mac = (self.ethernet_mac6.value(), self.ethernet_mac5.value(), self.ethernet_mac4.value(),
+               self.ethernet_mac3.value(), self.ethernet_mac2.value(), self.ethernet_mac1.value())
             
         self.master.set_ethernet_configuration(connection, ip, sub, gw, port)
         self.master.set_ethernet_hostname(hostname)
@@ -312,17 +324,28 @@ class Ethernet(QWidget, Ui_Ethernet):
         if self.parent.version >= (2, 2, 0):
             port_websocket = self.ethernet_websocket_port.value()
             websocket_connections = self.ethernet_websocket_connections.value()
-            secret = self.ethernet_secret.text()
-            self.master.set_ethernet_authentication_secret(str(secret))
-            
+            self.master.set_ethernet_authentication_secret(secret)
             self.master.set_ethernet_websocket_configuration(websocket_connections, port_websocket)
-        
+
+        secret_old = secret
+        websocket_connections_old = websocket_connections
+        port_websocket_old = port_websocket
+        if self.parent.version >= (2, 2, 0):
+            secret_old = self.master.get_ethernet_authentication_secret()
+            websocket_connections, port_websocket = self.master.get_ethernet_websocket_configuration()
+
         saved_conf = self.master.get_ethernet_configuration()
-        if saved_conf.ip == ip and saved_conf.gateway == gw and saved_conf.subnet_mask == sub and saved_conf.connection == connection and saved_conf.port == port:
+        if saved_conf.ip == ip and \
+           saved_conf.gateway == gw and \
+           saved_conf.subnet_mask == sub and \
+           saved_conf.connection == connection and \
+           saved_conf.port == port and \
+           secret_old == secret and \
+           websocket_connections_old == websocket_connections and \
+           port_websocket_old == port_websocket:
             self.popup_ok()
         else:
             self.popup_fail()
-        
 
     def update_data(self):
         self.update_data_counter += 1
