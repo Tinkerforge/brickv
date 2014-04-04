@@ -113,3 +113,9 @@
 2.0.9: Support Get/SetClockFrequency in LED Strip Bricklet plugin
        Show "motion detected" in red in Motion Detector Bricklet plugin
        Support Intertechno and ELRO Home Easy addressing types in Remote Switch Bricklet plugin
+2.1.0: Add authentication support
+       Add authentication configuration for Ethernet and WIFI Extension to Master Brick plugin
+       Add WebSocket configuration for Ethernet extension to Master Brick plugin
+       Fix temperature averaging bug in Barometer Bricklet plugin
+       Fix Dual Button Bricklet left/right permutation
+       Reduce long-term memory usage by properly removing widgets on device disconnect
