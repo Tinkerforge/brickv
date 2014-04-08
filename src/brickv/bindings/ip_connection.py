@@ -381,7 +381,15 @@ class IPConnection:
 
     def authenticate(self, secret):
         """
-        FIXME
+        Performs an authentication handshake with the connected Brick Daemon or
+        WIFI/Ethernet Extension. If the handshake succeeds the connection switches
+        from non-authenticated to authenticated state and communication can
+        continue as normal. If the handshake fails then the connection gets closed.
+        Authentication can fail if the wrong secret was used or if authentication
+        is not enabled at all on the Brick Daemon or the WIFI/Ethernet Extension.
+
+        For more information about authentication see
+        http://www.tinkerforge.com/en/doc/Tutorials/Tutorial_Authentication/Tutorial.html
         """
 
         secret_bytes = secret.encode('ascii')

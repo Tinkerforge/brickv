@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-04-04.      #
+# This file was automatically generated on 2014-04-07.      #
 #                                                           #
-# Bindings Version 2.0.13                                    #
+# Bindings Version 2.1.0                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -1108,9 +1108,10 @@ class BrickMaster(Device):
     def set_ethernet_authentication_secret(self, secret):
         """
         Sets the Ethernet authentication secret. The secret can be a string of up to 64
-        characters. An empty string disables the authentication
+        characters. An empty string disables the authentication.
         
-        For more information about authentication see TODO.
+        See the :ref:`authentication tutorial <tutorial_authentication>` for more
+        information.
         
         The secret is stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
@@ -1134,9 +1135,10 @@ class BrickMaster(Device):
     def set_wifi_authentication_secret(self, secret):
         """
         Sets the WIFI authentication secret. The secret can be a string of up to 64
-        characters. An empty string disables the authentication
+        characters. An empty string disables the authentication.
         
-        For more information about authentication see TODO.
+        See the :ref:`authentication tutorial <tutorial_authentication>` for more
+        information.
         
         The secret is stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
