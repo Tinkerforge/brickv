@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-  
 """
 brickv (Brick Viewer) 
-Copyright (C) 2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2013-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2009-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 main.py: Entry file for Brick Viewer
@@ -64,7 +64,12 @@ class BrickViewer(QApplication):
         return super(BrickViewer, self).notify(receiver, event)
 
 def main():
-    brick_viewer = BrickViewer(sys.argv)
+    argv = sys.argv
+
+    if sys.platform == 'win32':
+        argv += ['-style', 'windowsxp']
+
+    brick_viewer = BrickViewer(argv)
     main_window = MainWindow()
     main_window.show()
     sys.exit(brick_viewer.exec_())
