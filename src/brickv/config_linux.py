@@ -52,13 +52,31 @@ def set_config_value(section, option, value):
         os.makedirs(CONFIG_DIRNAME)
     scp.write(file(CONFIG_FILENAME, 'wb'))
 
-def get_host():
+def get_host_info_strings(count):
+    host_info_strings = []
+
+    for i in range(count):
+        host_info_string = get_config_value('Connection', 'HostInfo{0}'.format(i), None)
+
+        if host_info_string is not None:
+            host_info_strings.append(str(host_info_string))
+
+    return host_info_strings
+
+def set_host_info_strings(host_info_strings):
+    i = 0
+
+    for host_info_string in host_info_strings:
+        set_config_value('Connection', 'HostInfo{0}'.format(i), str(host_info_string))
+        i += 1
+
+def legacy_get_host():
     return get_config_value('Connection', 'Host', DEFAULT_HOST)
 
-def set_host(host):
-    set_config_value('Connection', 'Host', host)
+def legacy_set_host(host):
+    set_config_value('Connection', 'Host', str(host))
 
-def get_host_history(size):
+def legacy_get_host_history(size):
     history = []
 
     for i in range(size):
@@ -69,20 +87,20 @@ def get_host_history(size):
 
     return history
 
-def set_host_history(history):
+def legacy_set_host_history(history):
     i = 0
 
     for host in history:
         set_config_value('Connection', 'HostHistory{0}'.format(i), str(host))
         i += 1
 
-def get_port():
+def legacy_get_port():
     return int(get_config_value('Connection', 'Port', str(DEFAULT_PORT)))
 
-def set_port(port):
+def legacy_set_port(port):
     set_config_value('Connection', 'Port', str(int(port)))
 
-def get_use_authentication():
+def legacy_get_use_authentication():
     value = get_config_value('Authentication', 'UseAuthentication', str(DEFAULT_USE_AUTHENTICATION)).lower()
 
     if value == 'true':
@@ -92,16 +110,16 @@ def get_use_authentication():
     else:
         return DEFAULT_USE_AUTHENTICATION
 
-def set_use_authentication(use):
+def legacy_set_use_authentication(use):
     set_config_value('Authentication', 'UseAuthentication', str(bool(use)))
 
-def get_secret():
+def legacy_get_secret():
     return get_config_value('Authentication', 'Secret', DEFAULT_SECRET)
 
-def set_secret(secret):
+def legacy_set_secret(secret):
     set_config_value('Authentication', 'Secret', str(secret))
 
-def get_remember_secret():
+def legacy_get_remember_secret():
     value = get_config_value('Authentication', 'RememberSecret', str(DEFAULT_REMEMBER_SECRET)).lower()
 
     if value == 'true':
@@ -111,5 +129,5 @@ def get_remember_secret():
     else:
         return DEFAULT_REMEMBER_SECRET
 
-def set_remember_secret(remember):
+def legacy_set_remember_secret(remember):
     set_config_value('Authentication', 'RememberSecret', str(bool(remember)))
