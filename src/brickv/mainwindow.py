@@ -44,7 +44,7 @@ import signal
 import sys
 import time
 
-HOST_HISTORY_SIZE = 5
+HOST_HISTORY_SIZE = 10
 
 class MainTableModel(QAbstractTableModel):
     def __init__(self, header, data, parent=None, *args):
