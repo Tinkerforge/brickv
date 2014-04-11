@@ -4,3 +4,4 @@ src/build
 src/dist
 src/brickv/plugin_images.py
 src/build_data/linux/brickv/usr/share/brickv
+src/build_data/linux/brick-flash-cmd/usr/bin

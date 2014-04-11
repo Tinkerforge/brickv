@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2011 Bastian Nordmeyer <bastian@tinkerforge.com>
 
@@ -302,6 +302,8 @@ def build_linux_pkg():
         sys.stderr.write("build_pkg for Linux has to be started as root, exiting\n")
         sys.exit(1)
 
+    print('building brickv package')
+
     os.system("python build_all_ui.py")
 
     generate_plugin_images()
@@ -339,13 +341,77 @@ def build_linux_pkg():
     os.system('chown -R `logname`:`logname` brickv/usr')
 
 
+BRICK_FLASH_CMD_VERSION = '1.0.0'
+
+def build_linux_cmd_pkg():
+    if os.geteuid() != 0:
+        sys.stderr.write("build_pkg for Linux has to be started as root, exiting\n")
+        sys.exit(1)
+
+    print('building brick-flash-cmd package')
+
+    src_path = os.path.join(os.getcwd(), 'brickv')
+    dest_path = os.path.join(os.getcwd(), 'build_data', 'linux', 'brick-flash-cmd', 'usr', 'bin')
+
+    if os.path.exists(dest_path):
+        shutil.rmtree(dest_path)
+    os.makedirs(dest_path)
+
+    f = open(os.path.join(src_path, 'brick-flash-cmd.template'), 'rb')
+    template = f.read()
+    f.close()
+
+    f = open(os.path.join(src_path, 'samba.py'), 'rb')
+    samba_lines = f.readlines()
+    f.close()
+
+    while len(samba_lines) > 0 and not samba_lines[0].startswith('#### skip here for brick-flash-cmd ####'):
+        del samba_lines[0]
+
+    if len(samba_lines) > 0 and samba_lines[0].startswith('#### skip here for brick-flash-cmd ####'):
+        del samba_lines[0]
+
+    template = template.replace('#### insert samba module here ####', ''.join(samba_lines))
+
+    f = open(os.path.join(dest_path, 'brick-flash-cmd'), 'wb')
+    f.write(template)
+    f.close()
+
+    build_data_path = os.path.join(os.getcwd(), 'build_data', 'linux')
+    os.chdir(build_data_path)
+
+    STEXT = 'Version:'
+    RTEXT = 'Version: {0}\n'.format(BRICK_FLASH_CMD_VERSION)
+
+    f = open(os.path.join('brick-flash-cmd', 'DEBIAN', 'control'), 'rb')
+    lines = f.readlines()
+    f.close()
+
+    f = open(os.path.join('brick-flash-cmd', 'DEBIAN', 'control'), 'wb')
+    for line in lines:
+        if not line.find(STEXT) == -1:
+            line = RTEXT
+        f.write(line)
+    f.close()
+
+    os.system('chmod 0755 brick-flash-cmd/usr/bin/brick-flash-cmd')
+    os.system('find brick-flash-cmd/usr -type d -exec chmod 0755 {} \;')
+    os.system('chown -R root:root brick-flash-cmd/usr')
+    os.system('dpkg -b brick-flash-cmd/ brick-flash-cmd-' + BRICK_FLASH_CMD_VERSION + '_all.deb')
+    os.system('chown -R `logname`:`logname` brick-flash-cmd/usr')
+
+
 # call python build_pkg.py to build the windows/linux/macosx package
 if __name__ == "__main__":
+    full_argv = sys.argv[:]
     if len(sys.argv) > 1:
         sys.argv = sys.argv[:1]
 
     if sys.platform.startswith('linux'):
-        build_linux_pkg()
+        if len(full_argv) > 1 and full_argv[1] == 'cmd':
+            build_linux_cmd_pkg()
+        else:
+            build_linux_pkg()
     elif sys.platform == 'win32':
         sys.argv.append('py2exe') # set sys.argv[1] for setup(), want to call py2exe
         build_windows_pkg()
