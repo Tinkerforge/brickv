@@ -42,6 +42,9 @@ if not 'brickv' in sys.modules:
     head, tail = os.path.split(program_path)
     if not head in sys.path:
         sys.path.insert(0, head)
+    # load and inject in modules list, this allows to have the source in a
+    # directory named differently than 'brickv'
+    sys.modules['brickv'] = __import__(tail, globals(), locals(), [], -1)
 
 from PyQt4.QtGui import QApplication
 from PyQt4.QtCore import QEvent
