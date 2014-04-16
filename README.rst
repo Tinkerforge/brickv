@@ -24,9 +24,10 @@ On Debian based Linux distributions try::
 
  sudo apt-get install python python-qt4 python-qt4-gl python-qwt5-qt4 python-opengl python-serial pyqt4-dev-tools
 
-First you have to build the Qt .ui files, you can do this with
-``python build_all_ui.py`` in ``src/``. After that you should be able to start
-brickv from source with ``python main.py`` in the ``src/brickv/`` directory.
+First you have to build the Qt .ui files (you'll need ``pyuic4`` for that), you
+can do this with ``python build_all_ui.py`` in ``src/``. After that you should
+be able to start brickv from source with ``python main.py`` in the
+``src/brickv/`` directory.
 
 Building Packages
 -----------------
