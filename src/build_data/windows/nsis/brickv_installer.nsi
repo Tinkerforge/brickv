@@ -239,7 +239,7 @@ SectionEnd
 
 ;--------------------------------
 
-Section /o "-install driver" SEC_INSTALL_DRIVER
+Section "Install/Update Brick Bootloader Driver"
 
   Push "Bootloader"
   Push "$INSTDIR\drivers\bootloader"
@@ -266,12 +266,6 @@ Function .onInit
   SectionSetFlags ${SEC_UNINSTALL_OLD} $0
 
 not_installed:
-
- ; install driver only on systems < Windows 8
-${If} ${AtMostWin2008R2}
-  SectionSetText ${SEC_INSTALL_DRIVER} "Install/Update Bootloader Driver" ; make item visible
-  SectionSetFlags ${SEC_INSTALL_DRIVER} ${SF_SELECTED}
-${EndIf}
 
 FunctionEnd
 
