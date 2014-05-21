@@ -31,6 +31,7 @@ from brickv.plugin_system.plugins.master import device_class as master
 from brickv.plugin_system.plugins.moisture import device_class as moisture
 from brickv.plugin_system.plugins.motion_detector import device_class as motion_detector
 from brickv.plugin_system.plugins.multi_touch import device_class as multi_touch
+from brickv.plugin_system.plugins.nfc_rfid import device_class as nfc_rfid
 from brickv.plugin_system.plugins.piezo_buzzer import device_class as piezo_buzzer
 from brickv.plugin_system.plugins.piezo_speaker import device_class as piezo_speaker
 from brickv.plugin_system.plugins.ptc import device_class as ptc
@@ -81,6 +82,7 @@ device_classes = [
     moisture,
     motion_detector,
     multi_touch,
+    nfc_rfid,
     piezo_buzzer,
     piezo_speaker,
     ptc,
