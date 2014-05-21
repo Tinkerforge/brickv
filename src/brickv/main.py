@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-  
 """
 brickv (Brick Viewer) 
-Copyright (C) 2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2013-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2009-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 main.py: Entry file for Brick Viewer
@@ -42,6 +42,9 @@ if not 'brickv' in sys.modules:
     head, tail = os.path.split(program_path)
     if not head in sys.path:
         sys.path.insert(0, head)
+    # load and inject in modules list, this allows to have the source in a
+    # directory named differently than 'brickv'
+    sys.modules['brickv'] = __import__(tail, globals(), locals(), [], -1)
 
 from PyQt4.QtGui import QApplication
 from PyQt4.QtCore import QEvent
@@ -64,7 +67,12 @@ class BrickViewer(QApplication):
         return super(BrickViewer, self).notify(receiver, event)
 
 def main():
-    brick_viewer = BrickViewer(sys.argv)
+    argv = sys.argv
+
+    if sys.platform == 'win32':
+        argv += ['-style', 'windowsxp']
+
+    brick_viewer = BrickViewer(argv)
     main_window = MainWindow()
     main_window.show()
     sys.exit(brick_viewer.exec_())

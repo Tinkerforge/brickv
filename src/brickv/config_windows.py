@@ -52,13 +52,31 @@ def set_registry_value(name, type, value):
         finally:
             winreg.CloseKey(reg)
 
-def get_host():
+def get_host_info_strings(count):
+    host_info_strings = []
+
+    for i in range(count):
+        host_info_string = get_registry_value('HostInfo{0}'.format(i), None)
+
+        if host_info_string is not None:
+            host_info_strings.append(str(host_info_string))
+
+    return host_info_strings
+
+def set_host_info_strings(host_info_strings):
+    i = 0
+
+    for host_info_string in host_info_strings:
+        set_registry_value('HostInfo{0}'.format(i), winreg.REG_SZ, str(host_info_string))
+        i += 1
+
+def legacy_get_host():
     return get_registry_value('Host', DEFAULT_HOST)
 
-def set_host(host):
+def legacy_set_host(host):
     set_registry_value('Host', winreg.REG_SZ, str(host))
 
-def get_host_history(size):
+def legacy_get_host_history(size):
     history = []
 
     for i in range(size):
@@ -69,20 +87,20 @@ def get_host_history(size):
 
     return history
 
-def set_host_history(history):
+def legacy_set_host_history(history):
     i = 0
 
     for host in history:
         set_registry_value('HostHistory{0}'.format(i), winreg.REG_SZ, str(host))
         i += 1
 
-def get_port():
+def legacy_get_port():
     return int(get_registry_value('Port', DEFAULT_PORT))
 
-def set_port(port):
+def legacy_set_port(port):
     set_registry_value('Port', winreg.REG_DWORD, int(port))
 
-def get_use_authentication():
+def legacy_get_use_authentication():
     if DEFAULT_USE_AUTHENTICATION:
         default = 1
     else:
@@ -97,16 +115,16 @@ def get_use_authentication():
     else:
         return default
 
-def set_use_authentication(use):
+def legacy_set_use_authentication(use):
     set_registry_value('UseAuthentication', winreg.REG_DWORD, int(bool(use)))
 
-def get_secret():
+def legacy_get_secret():
     return get_registry_value('Secret', DEFAULT_SECRET)
 
-def set_secret(secret):
+def legacy_set_secret(secret):
     set_registry_value('Secret', winreg.REG_SZ, str(secret))
 
-def get_remember_secret():
+def legacy_get_remember_secret():
     if DEFAULT_REMEMBER_SECRET:
         default = 1
     else:
@@ -121,5 +139,5 @@ def get_remember_secret():
     else:
         return default
 
-def set_remember_secret(remember):
+def legacy_set_remember_secret(remember):
     set_registry_value('RememberSecret', winreg.REG_DWORD, int(bool(remember)))

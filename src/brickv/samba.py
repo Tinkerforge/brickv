@@ -90,6 +90,8 @@ else:
     def get_serial_ports():
         return []
 
+#### skip here for brick-flash-cmd ####
+
 CHIPID_CIDR = 0x400e0740
 
 ATSAM3SxB = 0x89

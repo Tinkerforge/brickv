@@ -44,8 +44,6 @@ import signal
 import sys
 import time
 
-HOST_HISTORY_SIZE = 5
-
 class MainTableModel(QAbstractTableModel):
     def __init__(self, header, data, parent=None, *args):
         QAbstractTableModel.__init__(self, parent, *args)
@@ -133,32 +131,43 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_advanced.pressed.connect(self.advanced_pressed)
         self.plugin_manager = PluginManager()
 
-        self.combo_host.addItem(config.get_host())
-        self.combo_host.addItems(config.get_host_history(HOST_HISTORY_SIZE - 1))
-        self.spinbox_port.setValue(config.get_port())
+        # host info
+        self.host_infos = config.get_host_infos(config.HOST_INFO_COUNT)
+        self.host_index_changing = True
 
-        self.last_host = self.combo_host.currentText()
-        self.last_port = self.spinbox_port.value()
+        for host_info in self.host_infos:
+            self.combo_host.addItem(host_info.host)
+
+        self.last_host = None
+        self.combo_host.currentIndexChanged.connect(self.host_index_changed)
+
+        self.spinbox_port.setValue(self.host_infos[0].port)
+        self.spinbox_port.valueChanged.connect(self.port_changed)
 
         self.checkbox_authentication.stateChanged.connect(self.authentication_state_changed)
 
         self.label_secret.hide()
-
         self.edit_secret.hide()
         self.edit_secret.setEchoMode(QLineEdit.Password)
+        self.edit_secret.textEdited.connect(self.secret_changed)
 
         self.checkbox_secret_show.hide()
         self.checkbox_secret_show.stateChanged.connect(self.secret_show_state_changed)
 
         self.checkbox_remember_secret.hide()
+        self.checkbox_remember_secret.stateChanged.connect(self.remember_secret_state_changed)
 
-        if config.get_use_authentication():
+        if self.host_infos[0].use_authentication:
             self.checkbox_authentication.setCheckState(Qt.Checked)
 
-        if config.get_remember_secret():
-            self.edit_secret.setText(config.get_secret())
+        self.edit_secret.setText(self.host_infos[0].secret)
+
+        if self.host_infos[0].remember_secret:
             self.checkbox_remember_secret.setCheckState(Qt.Checked)
 
+        self.host_index_changing = False
+
+        # auto-reconnect
         self.label_auto_reconnects.hide()
         self.auto_reconnects = 0
 
@@ -172,28 +181,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except:
             pass
 
-        host = str(self.combo_host.currentText())
-        history = []
-
-        for i in range(self.combo_host.count()):
-            h = str(self.combo_host.itemText(i))
-
-            if h != host and h not in history:
-                history.append(h)
-
-        config.set_host(host)
-        config.set_host_history(history[:HOST_HISTORY_SIZE - 1])
-        config.set_port(self.spinbox_port.value())
-        config.set_use_authentication(self.checkbox_authentication.isChecked())
-
-        remember_secret = self.checkbox_remember_secret.isChecked()
-
-        config.set_remember_secret(remember_secret)
-
-        if remember_secret:
-            config.set_secret(str(self.edit_secret.text()))
-        else:
-            config.set_secret(config.DEFAULT_SECRET)
+        self.update_current_host_info()
+        config.set_host_infos(self.host_infos)
 
         self.reset_view()
 
@@ -215,6 +204,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def destroy(self):
         pass
 
+    def host_index_changed(self, i):
+        if i < 0:
+            return
+
+        self.host_index_changing = True
+
+        self.spinbox_port.setValue(self.host_infos[i].port)
+
+        if self.host_infos[i].use_authentication:
+            self.checkbox_authentication.setCheckState(Qt.Checked)
+        else:
+            self.checkbox_authentication.setCheckState(Qt.Unchecked)
+
+        self.edit_secret.setText(self.host_infos[i].secret)
+
+        if self.host_infos[i].remember_secret:
+            self.checkbox_remember_secret.setCheckState(Qt.Checked)
+        else:
+            self.checkbox_remember_secret.setCheckState(Qt.Unchecked)
+
+        self.host_index_changing = False
+
+    def port_changed(self, value):
+        self.update_current_host_info()
+
     def authentication_state_changed(self, state):
         visible = state == Qt.Checked
 
@@ -223,11 +237,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.checkbox_secret_show.setVisible(visible)
         self.checkbox_remember_secret.setVisible(visible)
 
+        self.update_current_host_info()
+
+    def secret_changed(self):
+        self.update_current_host_info()
+
     def secret_show_state_changed(self, state):
         if state == Qt.Checked:
             self.edit_secret.setEchoMode(QLineEdit.Normal)
         else:
             self.edit_secret.setEchoMode(QLineEdit.Password)
+
+        self.update_current_host_info()
+
+    def remember_secret_state_changed(self, state):
+        self.update_current_host_info()
 
     def tab_changed(self, i):
         try:
@@ -243,6 +267,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             pass
 
         self.last_tab = i
+
+    def update_current_host_info(self):
+        if self.host_index_changing:
+            return
+
+        i = self.combo_host.currentIndex()
+
+        if i < 0:
+            return
+
+        #self.host_infos[i].host = str(self.combo_host.currentText())
+        self.host_infos[i].port = self.spinbox_port.value()
+        self.host_infos[i].use_authentication = self.checkbox_authentication.isChecked()
+        self.host_infos[i].secret = str(self.edit_secret.text())
+        self.host_infos[i].remember_secret = self.checkbox_remember_secret.isChecked()
 
     def remove_tab(self, i):
         widget = self.tab_widget.widget(i)
@@ -350,13 +389,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def connect_pressed(self):
         if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_DISCONNECTED:
             try:
-                self.last_host = self.combo_host.currentText()
-                self.last_port = self.spinbox_port.value()
+                self.last_host = str(self.combo_host.currentText())
                 self.button_connect.setDisabled(True)
                 self.button_connect.setText("Connecting ...")
                 self.button_connect.repaint()
                 QApplication.processEvents()
-                self.ipcon.connect(self.last_host, self.last_port)
+                self.ipcon.connect(self.last_host, self.spinbox_port.value())
             except:
                 self.button_connect.setDisabled(False)
                 self.button_connect.setText("Connect")
@@ -564,12 +602,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.ipcon.set_auto_reconnect(True)
 
             index = self.combo_host.findText(self.last_host)
+
             if index >= 0:
                 self.combo_host.removeItem(index)
+
+                host_info = self.host_infos[index]
+
+                del self.host_infos[index]
+                self.host_infos.insert(0, host_info)
+            else:
+                index = self.combo_host.currentIndex()
+
+                host_info = self.host_infos[index].duplicate()
+                host_info.host = self.last_host
+
+                self.host_infos.insert(0, host_info)
+
             self.combo_host.insertItem(-1, self.last_host)
             self.combo_host.setCurrentIndex(0)
 
-            while self.combo_host.count() > HOST_HISTORY_SIZE:
+            while self.combo_host.count() > config.HOST_INFO_COUNT:
                 self.combo_host.removeItem(self.combo_host.count() - 1)
 
             if not self.do_authenticate(False):
