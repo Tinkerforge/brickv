@@ -22,7 +22,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
-GetTagID = namedtuple('TagID', ['target_type', 'tid_length', 'tid'])
+GetTagID = namedtuple('TagID', ['tag_type', 'tid_length', 'tid'])
 GetState = namedtuple('State', ['state', 'idle'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -44,9 +44,9 @@ class BrickletNFCRFID(Device):
     FUNCTION_GET_PAGE = 7
     FUNCTION_GET_IDENTITY = 255
 
-    TARGET_TYPE_MIFARE_CLASSIC = 0
-    TARGET_TYPE_TYPE1 = 1
-    TARGET_TYPE_TYPE2 = 2
+    TAG_TYPE_MIFARE_CLASSIC = 0
+    TAG_TYPE_TYPE1 = 1
+    TAG_TYPE_TYPE2 = 2
     STATE_INITIALIZATION = 0
     STATE_IDLE = 128
     STATE_ERROR = 192
@@ -86,11 +86,11 @@ class BrickletNFCRFID(Device):
 
         self.callback_formats[BrickletNFCRFID.CALLBACK_STATE_CHANGED] = 'B ?'
 
-    def request_tag_id(self, target_type):
+    def request_tag_id(self, tag_type):
         """
         
         """
-        self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_TAG_ID, (target_type,), 'B', '')
+        self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_TAG_ID, (tag_type,), 'B', '')
 
     def get_tag_id(self):
         """
