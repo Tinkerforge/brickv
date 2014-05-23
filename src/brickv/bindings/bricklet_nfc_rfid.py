@@ -88,43 +88,135 @@ class BrickletNFCRFID(Device):
 
     def request_tag_id(self, tag_type):
         """
+        To read or write a tag that is in proximity of the NFC/RFID Bricklet you 
+        first have to call this function with the expected tag type as parameter.
+        It is no problem if you don't know the tag type. You can cycle through 
+        the available tag types until the tag gives an answer to the request.
         
+        After you call this function the NFC/RFID Bricklet will try to read the tag 
+        ID from the tag. After this process is done the state will change. You can 
+        either register the :func:`StateChanged` callback or you can poll
+        :func:`GetState` to find out about the state change.
+        
+        If the state changes to *RequestTagIDError* it means that either there was 
+        no tag present or that the tag is of an incompatible type. If the state 
+        changes to *RequestTagIDReady* it means that a compatible tag was found 
+        and that the tag ID could be read out. You can now get the tag ID by
+        calling :func:`GetTagID`.
+        
+        If two tags are in the proximity of the NFC/RFID Bricklet, this
+        function will cycle through the tags. To select a specific tag you have
+        to call :func:`RequestTagID` until the correct tag id is found.
+        
+        In case of any error state the selection is lost and you have to
+        start again by calling :func:`RequestTagID`.
         """
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_TAG_ID, (tag_type,), 'B', '')
 
     def get_tag_id(self):
         """
+        Returns the tag type, tag ID and the length of the tag ID 
+        (4 or 7 bytes are possible length). This function can only be called if the
+        NFC/RFID is currently in one of the *ready* states. The returned ID
+        is the ID that was saved through the last call of :func:`RequestTagID`.
         
+        To get the tag ID of a tag the approach is as follows:
+        
+        * Call :func:`RequestTagID`
+        * Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or :func:`StateChanged`)
+        * Call :func:`GetTagID`
         """
-        return GetTagID(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_TAG_ID, (), '', 'B H 7B'))
+        return GetTagID(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_TAG_ID, (), '', 'B B 7B'))
 
     def get_state(self):
         """
+        Returns the current state of the NFC/RFID Bricklet.
         
+        On startup the Bricklet will be in the *Initialization* state. The initialization
+        will only take about 20ms. After that it changes to *Idle*.
+        
+        The functions of this Bricklet can be called in the *Idle* state and all of
+        the *Ready* and *Error* states.
+        
+        Example: If you call :func:`RequestPage`, the state will change to 
+        *RequestPage* until the reading of the page is finished. Then it will change
+        to either *RequestPageReady* if it worked or to *RequestPageError* if it
+        didn't. If the request worked you can get the page by calling :func:`GetPage`.
+        
+        The same approach is used analogously for the other API functions.
         """
         return GetState(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_STATE, (), '', 'B ?'))
 
     def authenticate_mifare_classic_page(self, page, key_number, key):
         """
+        Mifare Classic tags use authentication. If you want to read from or write to
+        a Mifare Classic page you have to authenticate it in beforehand.
+        Each page can be authenticated with two keys (A and B). A new Mifare Classic
+        tag that has not yet been written to can can be accessed with key number A
+        and the default key *[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]*.
         
+        The approach to read or write a Mifare Classic page is as follows:
+        
+        * Call :func:`RequestTagID`
+        * Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or :func:`StateChanged`)
+        * Call :func:`GetTagID` and check if tag ID is correct
+        * Call :func:`AuthenticateMifareClassicPage` with page and key for the page
+        * Wait for state to change to *AuthenticatingMifareClassicPageReady*
+        * Call :func:`RequestPage` or :func`WritePage` to read/write page
         """
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_AUTHENTICATE_MIFARE_CLASSIC_PAGE, (page, key_number, key), 'H B 6B', '')
 
     def write_page(self, page, data):
         """
+        Writes 16 bytes starting from the given page. How many pages are written
+        depends on the tag type. The page sizes are as follows:
         
+        * Mifare Classic page size: 16 byte (1 page is written)
+        * NFC Forum Type 1 page size: 8 byte (2 pages are written)
+        * NFC Forum Type 2 page size: 4 byte (4 pages are written)
+        
+        The general approach for writing to a tag is as follows:
+        
+        * Call :func:`RequestTagID`
+        * Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or :func:`StateChanged`)
+        * Call :func:`GetTagID` and check if tag ID is correct
+        * Call :func:`WritePage` with page number and data
+        * Wait for state to change to *WritePageReady*
+        
+        If you use a Mifare Classic tag you have to authenticate a page before you
+        can write to it. See :func:`AuthenticateMifareClassicPage`.
         """
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_WRITE_PAGE, (page, data), 'H 16B', '')
 
     def request_page(self, page):
         """
+        Reads 16 bytes starting from the given page and stores them into a buffer. 
+        The buffer can then be read out with :func:`GetPage`.
+        How many pages are read depends on the tag type. The page sizes are 
+        as follows:
         
+        * Mifare Classic page size: 16 byte (1 page is read)
+        * NFC Forum Type 1 page size: 8 byte (2 pages are read)
+        * NFC Forum Type 2 page size: 4 byte (4 pages are read)
+        
+        The general approach for reading a tag is as follows:
+        
+        * Call :func:`RequestTagID`
+        * Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or :func:`StateChanged`)
+        * Call :func:`GetTagID` and check if tag ID is correct
+        * Call :func:`ReadPage` with page number
+        * Wait for state to change to *ReadPageReady*
+        * Call :func:`GetPage` to retrieve the page from the buffer
+        
+        If you use a Mifare Classic tag you have to authenticate a page before you
+        can read it. See :func:`AuthenticateMifareClassicPage`.
         """
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_PAGE, (page,), 'H', '')
 
     def get_page(self):
         """
-        
+        Returns 16 bytes of data from an internal buffer. To fill the buffer
+        you have to call :func:`RequestPage`.
         """
         return self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_PAGE, (), '', '16B')
 
