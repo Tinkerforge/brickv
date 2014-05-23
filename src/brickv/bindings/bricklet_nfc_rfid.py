@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-05-21.      #
+# This file was automatically generated on 2014-05-23.      #
 #                                                           #
 # Bindings Version 2.1.0                                    #
 #                                                           #
@@ -44,6 +44,26 @@ class BrickletNFCRFID(Device):
     FUNCTION_GET_PAGE = 7
     FUNCTION_GET_IDENTITY = 255
 
+    TARGET_TYPE_MIFARE_CLASSIC = 0
+    TARGET_TYPE_TYPE1 = 1
+    TARGET_TYPE_TYPE2 = 2
+    STATE_INITIALIZATION = 0
+    STATE_IDLE = 128
+    STATE_ERROR = 192
+    STATE_REQUEST_TAG_ID = 2
+    STATE_REQUEST_TAG_ID_READY = 130
+    STATE_REQUEST_TAG_ID_ERROR = 194
+    STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE = 3
+    STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE_READY = 131
+    STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE_ERROR = 195
+    STATE_WRITE_PAGE = 4
+    STATE_WRITE_PAGE_READY = 132
+    STATE_WRITE_PAGE_ERROR = 196
+    STATE_REQUEST_PAGE = 5
+    STATE_REQUEST_PAGE_READY = 133
+    STATE_REQUEST_PAGE_ERROR = 197
+    KEY_A = 0
+    KEY_B = 1
 
     def __init__(self, uid, ipcon):
         """
