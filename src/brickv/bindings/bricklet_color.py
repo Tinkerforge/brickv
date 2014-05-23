@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-04-07.      #
+# This file was automatically generated on 2014-05-23.      #
 #                                                           #
 # Bindings Version 2.1.0                                    #
 #                                                           #
@@ -29,7 +29,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletColor(Device):
     """
-    Device for measuring color(RGB value) of objects
+    Device for measuring color (RGB value) of objects
     """
 
     DEVICE_IDENTIFIER = 243
