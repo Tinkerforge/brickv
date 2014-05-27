@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-05-23.      #
+# This file was automatically generated on 2014-05-26.      #
 #                                                           #
 # Bindings Version 2.1.0                                    #
 #                                                           #
@@ -29,7 +29,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletColor(Device):
     """
-    Device for measuring color (RGB value) of objects
+    Device for measuring color (RGB value), illuminance and color temperature
     """
 
     DEVICE_IDENTIFIER = 243
@@ -116,8 +116,18 @@ class BrickletColor(Device):
 
     def get_color(self):
         """
-        Returns the color of the sensor. The value
-        has a range of 0 to 65535.
+        Returns the color of the sensor. The values
+        have a range of 0 to 65535.
+        
+        The red (r), green (g), blue (b) and clear (c) colors are measured
+        with four different photodiodes that are responsive at different
+        wavelengths:
+        
+        .. image:: /Images/Bricklets/bricklet_color_wavelength_chart_600.jpg
+           :scale: 100 %
+           :alt: Chart Responsivity / Wavelength
+           :align: center
+           :target: ../../_images/Bricklets/bricklet_color_wavelength_chart_600.jpg
         
         If you want to get the color periodically, it is recommended 
         to use the callback :func:`Color` and set the period with 
@@ -229,15 +239,15 @@ class BrickletColor(Device):
         * 3: 154ms
         * 4: 700ms
         
-        Increasing the gain makes the sensor be able to detect a
+        Increasing the gain enables the sensor to detect a
         color from a higher distance.
         
-        The integration time provdes a trade-off between conversion time
-        and accuracy. With a longer integration time  the values read will
+        The integration time provides a trade-off between conversion time
+        and accuracy. With a longer integration time the values read will
         be more accurate but it will take longer time to get the conversion
         results.
         
-        The default values are 16x gain and 153ms integration time.
+        The default values are 60x gain and 154ms integration time.
         """
         self.ipcon.send_request(self, BrickletColor.FUNCTION_SET_CONFIG, (gain, integration_time), 'B B', '')
 
@@ -249,13 +259,19 @@ class BrickletColor(Device):
 
     def get_illuminance(self):
         """
-        
+        Returns the illuminance in Lux multiplied by the gain as set by 
+        :func:`SetConfig`.
         """
         return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_ILLUMINANCE, (), '', 'I')
 
     def get_color_temperature(self):
         """
+        Returns the color temperature in Kelvin. 
         
+        Make sure that the color
+        values themself are not saturated. The color value (R, G or B)
+        is saturated if it is equal to the maximum value of 65535.
+        In that case you have to reduce the gain, see :func:`SetConfig`.
         """
         return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_COLOR_TEMPERATURE, (), '', 'H')
 

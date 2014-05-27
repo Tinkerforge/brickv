@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-05-23.      #
+# This file was automatically generated on 2014-05-26.      #
 #                                                           #
 # Bindings Version 2.1.0                                    #
 #                                                           #
@@ -93,9 +93,15 @@ class BrickletNFCRFID(Device):
         It is no problem if you don't know the tag type. You can cycle through 
         the available tag types until the tag gives an answer to the request.
         
-        After you call this function the NFC/RFID Bricklet will try to read the tag 
-        ID from the tag. After this process is done the state will change. You can 
-        either register the :func:`StateChanged` callback or you can poll
+        Current the following tag types are supported:
+        
+        * Mifare Classic
+        * NFC Forum Type 1
+        * NFC Forum Type 2
+        
+        After you call :func:`RequestTagID` the NFC/RFID Bricklet will try to read 
+        the tag ID from the tag. After this process is done the state will change.
+        You can either register the :func:`StateChanged` callback or you can poll
         :func:`GetState` to find out about the state change.
         
         If the state changes to *RequestTagIDError* it means that either there was 
@@ -108,7 +114,7 @@ class BrickletNFCRFID(Device):
         function will cycle through the tags. To select a specific tag you have
         to call :func:`RequestTagID` until the correct tag id is found.
         
-        In case of any error state the selection is lost and you have to
+        In case of any *Error* state the selection is lost and you have to
         start again by calling :func:`RequestTagID`.
         """
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_REQUEST_TAG_ID, (tag_type,), 'B', '')
@@ -117,7 +123,7 @@ class BrickletNFCRFID(Device):
         """
         Returns the tag type, tag ID and the length of the tag ID 
         (4 or 7 bytes are possible length). This function can only be called if the
-        NFC/RFID is currently in one of the *ready* states. The returned ID
+        NFC/RFID is currently in one of the *Ready* states. The returned ID
         is the ID that was saved through the last call of :func:`RequestTagID`.
         
         To get the tag ID of a tag the approach is as follows:
@@ -150,7 +156,7 @@ class BrickletNFCRFID(Device):
     def authenticate_mifare_classic_page(self, page, key_number, key):
         """
         Mifare Classic tags use authentication. If you want to read from or write to
-        a Mifare Classic page you have to authenticate it in beforehand.
+        a Mifare Classic page you have to authenticate it beforehand.
         Each page can be authenticated with two keys (A and B). A new Mifare Classic
         tag that has not yet been written to can can be accessed with key number A
         and the default key *[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]*.
@@ -216,7 +222,7 @@ class BrickletNFCRFID(Device):
     def get_page(self):
         """
         Returns 16 bytes of data from an internal buffer. To fill the buffer
-        you have to call :func:`RequestPage`.
+        with specific pages you have to call :func:`RequestPage` beforehand.
         """
         return self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_PAGE, (), '', '16B')
 
