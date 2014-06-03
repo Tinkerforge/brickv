@@ -41,6 +41,7 @@ from brickv.plugin_system.plugins.rotary_encoder import device_class as rotary_e
 from brickv.plugin_system.plugins.rotary_poti import device_class as rotary_poti
 from brickv.plugin_system.plugins.segment_display_4x7 import device_class as segment_display_4x7
 from brickv.plugin_system.plugins.servo import device_class as servo
+from brickv.plugin_system.plugins.solid_state_relay import device_class as solid_state_relay
 from brickv.plugin_system.plugins.sound_intensity import device_class as sound_intensity
 from brickv.plugin_system.plugins.stepper import device_class as stepper
 from brickv.plugin_system.plugins.temperature import device_class as temperature
@@ -93,6 +94,7 @@ device_classes = [
     rotary_poti,
     segment_display_4x7,
     servo,
+    solid_state_relay,
     sound_intensity,
     stepper,
     temperature,
