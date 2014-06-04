@@ -37,10 +37,9 @@ class LCD20x4(PluginBase):
     qtcb_released = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'LCD 20x4 Bricklet', version)
-        
-        self.version = version
-        self.lcd = BrickletLCD20x4(uid, ipcon)
+        PluginBase.__init__(self, ipcon, uid, 'LCD 20x4 Bricklet', version, BrickletLCD20x4)
+
+        self.lcd = self.device
 
         self.hardware_version = (1, 0, 0)
 
@@ -58,7 +57,7 @@ class LCD20x4(PluginBase):
         
         self.pos_label = QLabel('Position: ')
         self.pos_combo = QComboBox()
-        for i  in range(LCD20x4.MAX_POSITION):
+        for i in range(LCD20x4.MAX_POSITION):
             self.pos_combo.addItem(str(i))
         
         self.pos_layout = QHBoxLayout()

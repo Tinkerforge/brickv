@@ -61,9 +61,9 @@ class AmbientLight(PluginBase):
     qtcb_illuminance = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Ambient Light Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Ambient Light Bricklet', version, BrickletAmbientLight)
         
-        self.al = BrickletAmbientLight(uid, ipcon)
+        self.al = self.device
         
         self.qtcb_illuminance.connect(self.cb_illuminance)
         self.al.register_callback(self.al.CALLBACK_ILLUMINANCE,

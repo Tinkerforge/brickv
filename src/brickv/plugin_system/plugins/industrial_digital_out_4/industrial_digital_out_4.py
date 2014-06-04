@@ -34,11 +34,11 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
     qtcb_monoflop = pyqtSignal(int, int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Industrial Digital Out 4 Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Industrial Digital Out 4 Bricklet', version, BrickletIndustrialDigitalOut4)
         
         self.setupUi(self)
         
-        self.ido4 = BrickletIndustrialDigitalOut4(uid, ipcon)
+        self.ido4 = self.device
         
         self.gnd_pixmap = bmp_to_pixmap('plugin_system/plugins/industrial_digital_out_4/dio_gnd.bmp')
         self.vcc_pixmap = bmp_to_pixmap('plugin_system/plugins/industrial_digital_out_4/dio_vcc.bmp')

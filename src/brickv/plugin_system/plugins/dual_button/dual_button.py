@@ -40,11 +40,11 @@ class DualButton(PluginBase, Ui_DualButton):
     RELEASED = 1
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Dual Button Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Dual Button Bricklet', version, BrickletDualButton)
         
         self.setupUi(self)
 
-        self.button = BrickletDualButton(uid, ipcon)
+        self.button = self.device
         
         self.qtcb_state_changed.connect(self.cb_state_changed)
         self.button.register_callback(self.button.CALLBACK_STATE_CHANGED,

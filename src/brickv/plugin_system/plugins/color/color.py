@@ -72,9 +72,9 @@ class Color(PluginBase):
     qtcb_color_temperature = pyqtSignal(int)
 
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Color Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Color Bricklet', version, BrickletColor)
 
-        self.color = BrickletColor(uid, ipcon)
+        self.color = self.device
 
         self.qtcb_color.connect(self.cb_color)
         self.color.register_callback(self.color.CALLBACK_COLOR,

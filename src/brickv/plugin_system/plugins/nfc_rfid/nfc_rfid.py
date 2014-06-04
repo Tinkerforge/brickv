@@ -28,7 +28,7 @@ from brickv.async_call import async_call
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QRegExpValidator
 from PyQt4.QtCore import pyqtSignal, Qt, QRegExp, QString
         
-from brickv.bindings import bricklet_nfc_rfid
+from brickv.bindings.bricklet_nfc_rfid import BrickletNFCRFID
 
 from brickv.plugin_system.plugins.nfc_rfid.ui_nfc_rfid import Ui_NFCRFID
 
@@ -59,11 +59,11 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
     qtcb_state = pyqtSignal(int, bool)
     
     def __init__ (self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'NFC/RFID Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'NFC/RFID Bricklet', version, BrickletNFCRFID)
         
         self.setupUi(self)
         
-        self.nfc = bricklet_nfc_rfid.NFCRFID(uid, ipcon)
+        self.nfc = self.device
         
         self.qtcb_state.connect(self.cb_state)
         self.nfc.register_callback(self.nfc.CALLBACK_STATE_CHANGED,
@@ -271,7 +271,7 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
 
     @staticmethod
     def has_device_identifier(device_identifier):
-        return device_identifier == bricklet_nfc_rfid.BrickletNFCRFID.DEVICE_IDENTIFIER
+        return device_identifier == BrickletNFCRFID.DEVICE_IDENTIFIER
     
     @staticmethod
     def has_name(name):

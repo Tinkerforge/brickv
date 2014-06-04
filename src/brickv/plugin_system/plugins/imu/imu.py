@@ -89,13 +89,12 @@ class Plot(Qwt.QwtPlot):
 
 class IMU(PluginBase, Ui_IMU):
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'IMU Brick', version)
+        PluginBase.__init__(self, ipcon, uid, 'IMU Brick', version, BrickIMU)
         
         self.setupUi(self)
-        
-        self.imu = BrickIMU(uid, ipcon)
-        self.device = self.imu
-        
+
+        self.imu = self.device
+
         self.acc_x = 0
         self.acc_y = 0
         self.acc_z = 0

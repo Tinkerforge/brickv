@@ -38,12 +38,11 @@ from brickv.async_call import async_call
         
 class Master(PluginBase, Ui_Master):
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Master Brick', version)
+        PluginBase.__init__(self, ipcon, uid, 'Master Brick', version, BrickMaster)
         
         self.setupUi(self)
 
-        self.master = BrickMaster(uid, ipcon)
-        self.device = self.master
+        self.master = self.device
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)

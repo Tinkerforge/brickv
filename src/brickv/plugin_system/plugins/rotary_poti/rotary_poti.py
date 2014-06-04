@@ -39,9 +39,9 @@ class RotaryPoti(PluginBase):
     qtcb_position = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Rotary Poti Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Rotary Poti Bricklet', version, BrickletRotaryPoti)
         
-        self.rp = BrickletRotaryPoti(uid, ipcon)
+        self.rp = self.device
         
         self.qtcb_position.connect(self.cb_position)
         self.rp.register_callback(self.rp.CALLBACK_POSITION,

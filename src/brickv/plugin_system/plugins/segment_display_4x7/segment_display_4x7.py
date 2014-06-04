@@ -42,11 +42,11 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
                  "QPushButton { background-color: #FF0000; color: #FF0000; }"]
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Segment Display 4x7 Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Segment Display 4x7 Bricklet', version, BrickletSegmentDisplay4x7)
         
         self.setupUi(self)
 
-        self.sd4x7 = BrickletSegmentDisplay4x7(uid, ipcon)
+        self.sd4x7 = self.device
         
         self.qtcb_finished.connect(self.cb_counter_finished)
         self.sd4x7.register_callback(self.sd4x7.CALLBACK_COUNTER_FINISHED,

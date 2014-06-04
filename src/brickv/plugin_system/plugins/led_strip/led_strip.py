@@ -39,13 +39,13 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
     STATE_COLOR_SINGLE = 2
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'LED Strip Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'LED Strip Bricklet', version, BrickletLEDStrip)
         
         self.setupUi(self)
+
+        self.led_strip = self.device
         
         self.has_clock_frequency = version >= (2, 0, 1)
-
-        self.led_strip = BrickletLEDStrip(uid, ipcon)
         
         self.qtcb_frame_rendered.connect(self.cb_frame_rendered)
         

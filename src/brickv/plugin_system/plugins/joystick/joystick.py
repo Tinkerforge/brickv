@@ -70,9 +70,9 @@ class Joystick(PluginBase):
     qtcb_released = pyqtSignal()
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Joystick Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Joystick Bricklet', version, BrickletJoystick)
         
-        self.js = BrickletJoystick(uid, ipcon)
+        self.js = self.device
         
         self.qtcb_position.connect(self.cb_position)
         self.js.register_callback(self.js.CALLBACK_POSITION,

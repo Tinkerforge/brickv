@@ -67,9 +67,9 @@ class Line(PluginBase):
     qtcb_reflectivity = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Line Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Line Bricklet', version, BrickletLine)
 
-        self.line = BrickletLine(uid, ipcon)
+        self.line = self.device
         
         self.qtcb_reflectivity.connect(self.cb_reflectivity)
         self.line.register_callback(self.line.CALLBACK_REFLECTIVITY,

@@ -37,9 +37,9 @@ class LCD16x2(PluginBase):
     qtcb_released = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'LCD 16x2 Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'LCD 16x2 Bricklet', version, BrickletLCD16x2)
         
-        self.lcd = BrickletLCD16x2(uid, ipcon)
+        self.lcd = self.device
         
         self.qtcb_pressed.connect(self.cb_pressed)
         self.lcd.register_callback(self.lcd.CALLBACK_BUTTON_PRESSED,

@@ -34,11 +34,11 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
     qtcb_interrupt = pyqtSignal(int, int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Industrial Digital In 4 Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Industrial Digital In 4 Bricklet', version, BrickletIndustrialDigitalIn4)
         
         self.setupUi(self)
         
-        self.idi4 = BrickletIndustrialDigitalIn4(uid, ipcon)
+        self.idi4 = self.device
         
         self.gnd_pixmap = bmp_to_pixmap('plugin_system/plugins/industrial_digital_in_4/dio_gnd.bmp')
         self.vcc_pixmap = bmp_to_pixmap('plugin_system/plugins/industrial_digital_in_4/dio_vcc.bmp')

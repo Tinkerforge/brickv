@@ -28,7 +28,7 @@ from brickv.async_call import async_call
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
         
-from brickv.bindings import bricklet_voltage_current
+from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent
 
 from brickv.plugin_system.plugins.voltage_current.ui_voltage_current import Ui_VoltageCurrent
         
@@ -53,11 +53,11 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
     qtcb_power = pyqtSignal(int)
     
     def __init__ (self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Voltage/Current Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Voltage/Current Bricklet', version, BrickletVoltageCurrent)
         
         self.setupUi(self)
         
-        self.vc = bricklet_voltage_current.VoltageCurrent(uid, ipcon)
+        self.vc = self.device
         
         self.qtcb_current.connect(self.cb_current)
         self.vc.register_callback(self.vc.CALLBACK_CURRENT,
@@ -159,7 +159,7 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
 
     @staticmethod
     def has_device_identifier(device_identifier):
-        return device_identifier == bricklet_voltage_current.BrickletVoltageCurrent.DEVICE_IDENTIFIER
+        return device_identifier == BrickletVoltageCurrent.DEVICE_IDENTIFIER
     
     @staticmethod
     def has_name(name):

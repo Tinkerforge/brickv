@@ -45,9 +45,9 @@ class TemperatureIR(PluginBase):
     qtcb_object_temperature = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Temperature IR Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Temperature IR Bricklet', version, BrickletTemperatureIR)
         
-        self.tem = BrickletTemperatureIR(uid, ipcon)
+        self.tem = self.device
         
         self.qtcb_ambient_temperature.connect(self.cb_ambient_temperature)
         self.tem.register_callback(self.tem.CALLBACK_AMBIENT_TEMPERATURE,

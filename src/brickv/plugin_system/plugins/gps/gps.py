@@ -41,11 +41,11 @@ class GPS(PluginBase, Ui_GPS):
     qtcb_date_time = pyqtSignal(int, int)
 
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'GPS Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'GPS Bricklet', version, BrickletGPS)
 
         self.setupUi(self)
 
-        self.gps = BrickletGPS(uid, ipcon)
+        self.gps = self.device
 
         self.qtcb_coordinates.connect(self.cb_coordinates)
         self.gps.register_callback(self.gps.CALLBACK_COORDINATES,

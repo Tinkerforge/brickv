@@ -30,9 +30,9 @@ from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBox
 
 class AnalogOut(PluginBase):
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Analog Out Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Analog Out Bricklet', version, BrickletAnalogOut)
         
-        self.ao = BrickletAnalogOut(uid, ipcon)
+        self.ao = self.device
         
         self.voltage_label = QLabel('Output Voltage (mV): ')
         self.voltage_box = QSpinBox()

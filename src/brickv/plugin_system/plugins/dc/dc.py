@@ -38,13 +38,13 @@ class DC(PluginBase, Ui_DC):
     qtcb_emergency_shutdown = pyqtSignal()
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'DC Brick', version)
+        PluginBase.__init__(self, ipcon, uid, 'DC Brick', version, BrickDC)
         
         self.setupUi(self)
-        self.encoder_hide_all()
         
-        self.dc = BrickDC(uid, ipcon)
-        self.device = self.dc
+        self.dc = self.device
+
+        self.encoder_hide_all()
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)

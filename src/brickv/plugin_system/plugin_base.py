@@ -25,7 +25,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtGui import QWidget
 
 class PluginBase(QWidget, object):
-    def __init__(self, ipcon, uid, name, version):
+    def __init__(self, ipcon, uid, name, version, device_class):
         QWidget.__init__(self)
         self.label_timeouts = None
         self.ipcon = ipcon
@@ -34,8 +34,16 @@ class PluginBase(QWidget, object):
         self.version = version
         self.version_str = '.'.join(map(str, version))
         self.error_count = 0
+        self.device = device_class(uid, ipcon)
 
     def destroy_ui(self):
+        # before destroying the widgets ensure that all callbacks are
+        # unregistered. callbacks a typically bound to Qt slots. the plugin
+        # tab might already be gone but the actual device object might still
+        # be alive as gets callbacks delivered to it. this callback will then
+        # try to call non-existing Qt slots and trigger a segfault
+        self.device.registered_callbacks = {}
+
         # ensure that the widgets gets correctly destroyed
         for member in dir(self):
             obj = getattr(self, member)

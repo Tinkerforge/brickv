@@ -39,9 +39,9 @@ class Humidity(PluginBase):
     qtcb_humidity = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Humidity Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Humidity Bricklet', version, BrickletHumidity)
         
-        self.hum = BrickletHumidity(uid, ipcon)
+        self.hum = self.device
         
         self.qtcb_humidity.connect(self.cb_humidity)
         self.hum.register_callback(self.hum.CALLBACK_HUMIDITY,

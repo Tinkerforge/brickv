@@ -33,9 +33,9 @@ class PiezoSpeaker(PluginBase):
     qtcb_morse_finished = pyqtSignal()
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Piezo Speaker Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Piezo Speaker Bricklet', version, BrickletPiezoSpeaker)
         
-        self.ps = BrickletPiezoSpeaker(uid, ipcon)
+        self.ps = self.device
         
         self.qtcb_beep_finished.connect(self.cb_beep)
         self.ps.register_callback(self.ps.CALLBACK_BEEP_FINISHED,

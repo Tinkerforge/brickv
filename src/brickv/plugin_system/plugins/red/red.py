@@ -29,12 +29,11 @@ from brickv.plugin_system.plugins.red.ui_red import Ui_RED
 
 class RED(PluginBase, Ui_RED):
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'RED Brick', version)
+        PluginBase.__init__(self, ipcon, uid, 'RED Brick', version, BrickRED)
 
         self.setupUi(self)
 
-        self.red = BrickRED(uid, ipcon)
-        self.device = self.red
+        self.red = self.device
 
     def start(self):
         pass

@@ -34,11 +34,11 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
     qtcb_monoflop = pyqtSignal(int, int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Industrial Quad Relay Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Industrial Quad Relay Bricklet', version, BrickletIndustrialQuadRelay)
         
         self.setupUi(self)
         
-        self.iqr = BrickletIndustrialQuadRelay(uid, ipcon)
+        self.iqr = self.device
         
         self.open_pixmap = bmp_to_pixmap('plugin_system/plugins/industrial_quad_relay/relay_open.bmp')
         self.close_pixmap = bmp_to_pixmap('plugin_system/plugins/industrial_quad_relay/relay_close.bmp')

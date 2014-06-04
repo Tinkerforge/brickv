@@ -71,9 +71,9 @@ class RotaryEncoder(PluginBase):
     qtcb_released = pyqtSignal()
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Rotary Encoder Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Rotary Encoder Bricklet', version, BrickletRotaryEncoder)
 
-        self.re = BrickletRotaryEncoder(uid, ipcon)
+        self.re = self.device
         
         self.qtcb_count.connect(self.cb_count)
         self.re.register_callback(self.re.CALLBACK_COUNT,

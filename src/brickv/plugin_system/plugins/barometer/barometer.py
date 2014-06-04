@@ -51,9 +51,9 @@ class Barometer(PluginBase):
     qtcb_altitude = pyqtSignal(int)
 
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Barometer Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Barometer Bricklet', version, BrickletBarometer)
 
-        self.barometer = BrickletBarometer(uid, ipcon)
+        self.barometer = self.device
 
         has_calibrate = version == (1, 0, 0)
         has_averaging = version >= (2, 0, 1)

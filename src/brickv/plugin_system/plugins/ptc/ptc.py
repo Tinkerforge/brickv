@@ -44,12 +44,12 @@ class PTC(PluginBase):
 #    qtcb_resistance = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'PTC Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'PTC Bricklet', version, BrickletPTC)
+
+        self.ptc = self.device
         
         self.str_connected = 'Sensor is currently <font color="green">connected</font>'
         self.str_not_connected = 'Sensor is currently <font color="red">not connected</font>'
-        
-        self.ptc = BrickletPTC(uid, ipcon)
         
         self.qtcb_temperature.connect(self.cb_temperature)
         self.ptc.register_callback(self.ptc.CALLBACK_TEMPERATURE,

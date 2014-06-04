@@ -38,9 +38,9 @@ class Moisture(PluginBase):
     qtcb_moisture = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Moisture Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Moisture Bricklet', version, BrickletMoisture)
 
-        self.moisture = BrickletMoisture(uid, ipcon)
+        self.moisture = self.device
         
         self.qtcb_moisture.connect(self.cb_moisture)
         self.moisture.register_callback(self.moisture.CALLBACK_MOISTURE,

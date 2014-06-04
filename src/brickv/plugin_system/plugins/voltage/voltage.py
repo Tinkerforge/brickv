@@ -38,9 +38,9 @@ class Voltage(PluginBase):
     qtcb_voltage = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Voltage Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Voltage Bricklet', version, BrickletVoltage)
         
-        self.vol = BrickletVoltage(uid, ipcon)
+        self.vol = self.device
         
         self.qtcb_voltage.connect(self.cb_voltage)
         self.vol.register_callback(self.vol.CALLBACK_VOLTAGE,

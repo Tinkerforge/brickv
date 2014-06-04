@@ -34,9 +34,9 @@ class Tilt(PluginBase):
     qtcb_tilt_state = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Tilt Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Tilt Bricklet', version, BrickletTilt)
 
-        self.tilt = BrickletTilt(uid, ipcon)
+        self.tilt = self.device
         
         self.qtcb_tilt_state.connect(self.cb_tilt_state)
         self.tilt.register_callback(self.tilt.CALLBACK_TILT_STATE,

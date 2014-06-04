@@ -35,11 +35,11 @@ class HallEffect(PluginBase, Ui_HallEffect):
     qtcb_edge_count = pyqtSignal(int, bool)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Hall Effect Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Hall Effect Bricklet', version, BrickletHallEffect)
         
         self.setupUi(self)
 
-        self.hf = BrickletHallEffect(uid, ipcon)
+        self.hf = self.device
         
         self.qtcb_edge_count.connect(self.cb_edge_count)
         self.hf.register_callback(self.hf.CALLBACK_EDGE_COUNT,

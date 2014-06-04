@@ -40,9 +40,9 @@ class Current12(PluginBase):
     qtcb_over = pyqtSignal()
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Current12 Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Current12 Bricklet', version, BrickletCurrent12)
         
-        self.cur = BrickletCurrent12(uid, ipcon)
+        self.cur = self.device
         
         self.qtcb_current.connect(self.cb_current)
         self.cur.register_callback(self.cur.CALLBACK_CURRENT,

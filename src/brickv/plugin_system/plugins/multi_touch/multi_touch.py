@@ -33,11 +33,11 @@ class MultiTouch(PluginBase, Ui_MultiTouch):
     qtcb_touch_state = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Multi Touch Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Multi Touch Bricklet', version, BrickletMultiTouch)
         
         self.setupUi(self)
 
-        self.mt = BrickletMultiTouch(uid, ipcon)
+        self.mt = self.device
         
         self.qtcb_touch_state.connect(self.cb_touch_state)
         self.mt.register_callback(self.mt.CALLBACK_TOUCH_STATE,

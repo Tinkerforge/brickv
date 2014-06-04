@@ -35,11 +35,11 @@ class DualRelay(PluginBase, Ui_DualRelay):
     qtcb_monoflop = pyqtSignal(int, bool)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Dual Relay Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Dual Relay Bricklet', version, BrickletDualRelay)
         
         self.setupUi(self)
         
-        self.dr = BrickletDualRelay(uid, ipcon)
+        self.dr = self.device
         
         self.has_monoflop = version >= (1, 1, 1)
         

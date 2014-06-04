@@ -38,9 +38,9 @@ class DistanceUS(PluginBase):
     qtcb_distance = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Distance US Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Distance US Bricklet', version, BrickletDistanceUS)
 
-        self.dist = BrickletDistanceUS(uid, ipcon)
+        self.dist = self.device
         
         self.qtcb_distance.connect(self.cb_distance)
         self.dist.register_callback(self.dist.CALLBACK_DISTANCE,

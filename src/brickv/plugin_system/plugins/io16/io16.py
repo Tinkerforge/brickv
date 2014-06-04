@@ -36,11 +36,11 @@ class IO16(PluginBase, Ui_IO16):
     qtcb_monoflop = pyqtSignal('char', int, int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'IO-16 Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'IO-16 Bricklet', version, BrickletIO16)
         
         self.setupUi(self)
         
-        self.io = BrickletIO16(uid, ipcon)
+        self.io = self.device
         
         self.has_monoflop = version >= (1, 1, 2)
         

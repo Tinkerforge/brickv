@@ -37,12 +37,11 @@ class Stepper(PluginBase, Ui_Stepper):
     qtcb_under_voltage = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Stepper Brick', version)
+        PluginBase.__init__(self, ipcon, uid, 'Stepper Brick', version, BrickStepper)
         
         self.setupUi(self)
      
-        self.stepper = BrickStepper(uid, ipcon)
-        self.device = self.stepper
+        self.stepper = self.device
      
         self.endis_all(False)
         

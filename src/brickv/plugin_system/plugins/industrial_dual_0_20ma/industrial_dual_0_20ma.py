@@ -38,12 +38,12 @@ class IndustrialDual020mA(PluginBase):
     qtcb_current = pyqtSignal(int, int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Industrial Dual 0-20mA Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Industrial Dual 0-20mA Bricklet', version, BrickletIndustrialDual020mA)
+
+        self.dual020 = self.device
         
         self.str_connected = 'Sensor {0} is currently <font color="green">connected</font>'
         self.str_not_connected = 'Sensor {0} is currently <font color="red">not connected</font>'
-        
-        self.dual020 = BrickletIndustrialDual020mA(uid, ipcon)
         
         self.qtcb_current.connect(self.cb_current)
         self.dual020.register_callback(self.dual020.CALLBACK_CURRENT,

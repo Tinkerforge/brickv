@@ -126,12 +126,11 @@ class Servo(PluginBase, Ui_Servo):
     qtcb_under_voltage = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Servo Brick', version)
+        PluginBase.__init__(self, ipcon, uid, 'Servo Brick', version, BrickServo)
 
         self.setupUi(self)
 
-        self.servo = BrickServo(uid, ipcon)
-        self.device = self.servo
+        self.servo = self.device
 
         self.position_list = []
         self.velocity_list = []

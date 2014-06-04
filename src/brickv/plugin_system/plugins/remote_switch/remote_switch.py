@@ -32,14 +32,14 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
     qtcb_switching_done = pyqtSignal()
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Remote Switch Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Remote Switch Bricklet', version, BrickletRemoteSwitch)
         
         self.setupUi(self)
 
+        self.rs = self.device
+
         self.has_more_types = version >= (2, 0, 1)
 
-        self.rs = BrickletRemoteSwitch(uid, ipcon)
-        
         self.qtcb_switching_done.connect(self.cb_switching_done)
         self.rs.register_callback(self.rs.CALLBACK_SWITCHING_DONE,
                                   self.qtcb_switching_done.emit)

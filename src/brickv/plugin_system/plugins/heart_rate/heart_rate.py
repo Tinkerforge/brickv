@@ -40,9 +40,9 @@ class HeartRate(PluginBase):
     qtcb_beat_state_changed = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Heart Rate Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Heart Rate Bricklet', version, BrickletHeartRate)
         
-        self.hr = BrickletHeartRate(uid, ipcon)
+        self.hr = self.device
         
         self.qtcb_heart_rate.connect(self.cb_heart_rate)
         self.hr.register_callback(self.hr.CALLBACK_HEART_RATE,

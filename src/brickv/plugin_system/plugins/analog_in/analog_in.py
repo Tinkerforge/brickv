@@ -39,9 +39,9 @@ class AnalogIn(PluginBase):
     qtcb_voltage = pyqtSignal(int)
     
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Analog In Bricklet', version)
+        PluginBase.__init__(self, ipcon, uid, 'Analog In Bricklet', version, BrickletAnalogIn)
         
-        self.ai = BrickletAnalogIn(uid, ipcon)
+        self.ai = self.device
         
         self.qtcb_voltage.connect(self.cb_voltage)
         self.ai.register_callback(self.ai.CALLBACK_VOLTAGE,
