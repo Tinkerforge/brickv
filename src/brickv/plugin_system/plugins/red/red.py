@@ -35,6 +35,11 @@ class RED(PluginBase, Ui_RED):
 
         self.red = self.device
 
+        # FIXME: RED Brick doesn't do enumerate-connected callback correctly yet
+        #        for Brick(let)s connected to it. Trigger a enumerate to pick up
+        #        all devices connected to a RED Brick properly
+        ipcon.enumerate()
+
     def start(self):
         pass
 
