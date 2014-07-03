@@ -119,3 +119,7 @@
        Fix temperature averaging bug in Barometer Bricklet plugin
        Fix Dual Button Bricklet left/right permutation
        Reduce long-term memory usage by properly removing widgets on device disconnect
+2.1.1: Force Qt to use a more recent UI style on Windows
+       Store port, authentiation options and secret per host and double host history length
+       Use a signed Brick bootloader driver on Windows
+       Add support for WS2811 and WS2812 to LED Strip Bricklet plugin
