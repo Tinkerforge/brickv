@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-07-02.      #
+# This file was automatically generated on 2014-07-03.      #
 #                                                           #
-# Bindings Version 2.1.0                                    #
+# Bindings Version 2.1.1                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -26,16 +26,21 @@ GetNextObjectTableEntry = namedtuple('NextObjectTableEntry', ['error_code', 'obj
 AllocateString = namedtuple('AllocateString', ['error_code', 'string_id'])
 GetStringLength = namedtuple('StringLength', ['error_code', 'length'])
 GetStringChunk = namedtuple('StringChunk', ['error_code', 'buffer'])
+AllocateList = namedtuple('AllocateList', ['error_code', 'list_id'])
+GetListLength = namedtuple('ListLength', ['error_code', 'length'])
+GetListItem = namedtuple('ListItem', ['error_code', 'item_object_id'])
 OpenFile = namedtuple('OpenFile', ['error_code', 'file_id'])
 GetFileName = namedtuple('FileName', ['error_code', 'name_string_id'])
+GetFileType = namedtuple('FileType', ['error_code', 'type'])
 WriteFile = namedtuple('WriteFile', ['error_code', 'length_written'])
 ReadFile = namedtuple('ReadFile', ['error_code', 'buffer', 'length_read'])
 SetFilePosition = namedtuple('SetFilePosition', ['error_code', 'position'])
 GetFilePosition = namedtuple('FilePosition', ['error_code', 'position'])
 GetFileInfo = namedtuple('FileInfo', ['error_code', 'type', 'permissions', 'user_id', 'group_id', 'length', 'access_time', 'modification_time', 'status_change_time'])
+GetSymlinkTarget = namedtuple('SymlinkTarget', ['error_code', 'target_string_id'])
 OpenDirectory = namedtuple('OpenDirectory', ['error_code', 'directory_id'])
 GetDirectoryName = namedtuple('DirectoryName', ['error_code', 'name_string_id'])
-GetNextDirectoryEntry = namedtuple('NextDirectoryEntry', ['error_code', 'name_string_id'])
+GetNextDirectoryEntry = namedtuple('NextDirectoryEntry', ['error_code', 'name_string_id', 'type'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickRED(Device):
@@ -45,8 +50,8 @@ class BrickRED(Device):
 
     DEVICE_IDENTIFIER = 17
 
-    CALLBACK_ASYNC_FILE_WRITE = 19
-    CALLBACK_ASYNC_FILE_READ = 20
+    CALLBACK_ASYNC_FILE_WRITE = 25
+    CALLBACK_ASYNC_FILE_READ = 26
 
     FUNCTION_RELEASE_OBJECT = 1
     FUNCTION_GET_NEXT_OBJECT_TABLE_ENTRY = 2
@@ -56,23 +61,36 @@ class BrickRED(Device):
     FUNCTION_GET_STRING_LENGTH = 6
     FUNCTION_SET_STRING_CHUNK = 7
     FUNCTION_GET_STRING_CHUNK = 8
-    FUNCTION_OPEN_FILE = 9
-    FUNCTION_GET_FILE_NAME = 10
-    FUNCTION_WRITE_FILE = 11
-    FUNCTION_WRITE_FILE_UNCHECKED = 12
-    FUNCTION_WRITE_FILE_ASYNC = 13
-    FUNCTION_READ_FILE = 14
-    FUNCTION_READ_FILE_ASYNC = 15
-    FUNCTION_ABORT_ASYNC_FILE_READ = 16
-    FUNCTION_SET_FILE_POSITION = 17
-    FUNCTION_GET_FILE_POSITION = 18
-    FUNCTION_GET_FILE_INFO = 21
-    FUNCTION_OPEN_DIRECTORY = 22
-    FUNCTION_GET_DIRECTORY_NAME = 23
-    FUNCTION_GET_NEXT_DIRECTORY_ENTRY = 24
-    FUNCTION_REWIND_DIRECTORY = 25
+    FUNCTION_ALLOCATE_LIST = 9
+    FUNCTION_GET_LIST_LENGTH = 10
+    FUNCTION_GET_LIST_ITEM = 11
+    FUNCTION_APPEND_TO_LIST = 12
+    FUNCTION_REMOVE_FROM_LIST = 13
+    FUNCTION_OPEN_FILE = 14
+    FUNCTION_GET_FILE_NAME = 15
+    FUNCTION_GET_FILE_TYPE = 16
+    FUNCTION_WRITE_FILE = 17
+    FUNCTION_WRITE_FILE_UNCHECKED = 18
+    FUNCTION_WRITE_FILE_ASYNC = 19
+    FUNCTION_READ_FILE = 20
+    FUNCTION_READ_FILE_ASYNC = 21
+    FUNCTION_ABORT_ASYNC_FILE_READ = 22
+    FUNCTION_SET_FILE_POSITION = 23
+    FUNCTION_GET_FILE_POSITION = 24
+    FUNCTION_GET_FILE_INFO = 27
+    FUNCTION_GET_SYMLINK_TARGET = 28
+    FUNCTION_OPEN_DIRECTORY = 29
+    FUNCTION_GET_DIRECTORY_NAME = 30
+    FUNCTION_GET_NEXT_DIRECTORY_ENTRY = 31
+    FUNCTION_REWIND_DIRECTORY = 32
     FUNCTION_GET_IDENTITY = 255
 
+    OBJECT_TYPE_STRING = 0
+    OBJECT_TYPE_LIST = 1
+    OBJECT_TYPE_FILE = 2
+    OBJECT_TYPE_DIRECTORY = 3
+    OBJECT_TYPE_PROCESS = 4
+    OBJECT_TYPE_PROGRAM = 5
     FILE_FLAG_READ_ONLY = 1
     FILE_FLAG_WRITE_ONLY = 2
     FILE_FLAG_READ_WRITE = 4
@@ -91,9 +109,6 @@ class BrickRED(Device):
     FILE_PERMISSION_OTHERS_READ = 4
     FILE_PERMISSION_OTHERS_WRITE = 2
     FILE_PERMISSION_OTHERS_EXECUTE = 1
-    FILE_ORIGIN_SET = 0
-    FILE_ORIGIN_CURRENT = 1
-    FILE_ORIGIN_END = 2
     FILE_TYPE_UNKNOWN = 0
     FILE_TYPE_REGULAR = 1
     FILE_TYPE_DIRECTORY = 2
@@ -102,6 +117,9 @@ class BrickRED(Device):
     FILE_TYPE_FIFO = 5
     FILE_TYPE_SYMLINK = 6
     FILE_TYPE_SOCKET = 7
+    FILE_ORIGIN_SET = 0
+    FILE_ORIGIN_CURRENT = 1
+    FILE_ORIGIN_END = 2
 
     def __init__(self, uid, ipcon):
         """
@@ -120,8 +138,14 @@ class BrickRED(Device):
         self.response_expected[BrickRED.FUNCTION_GET_STRING_LENGTH] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_SET_STRING_CHUNK] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_STRING_CHUNK] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_ALLOCATE_LIST] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_LIST_LENGTH] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_LIST_ITEM] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_APPEND_TO_LIST] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_REMOVE_FROM_LIST] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_OPEN_FILE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_FILE_NAME] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_FILE_TYPE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_WRITE_FILE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_WRITE_FILE_UNCHECKED] = BrickRED.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickRED.FUNCTION_WRITE_FILE_ASYNC] = BrickRED.RESPONSE_EXPECTED_FALSE
@@ -133,6 +157,7 @@ class BrickRED(Device):
         self.response_expected[BrickRED.CALLBACK_ASYNC_FILE_WRITE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickRED.CALLBACK_ASYNC_FILE_READ] = BrickRED.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickRED.FUNCTION_GET_FILE_INFO] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_SYMLINK_TARGET] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_OPEN_DIRECTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_DIRECTORY_NAME] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_NEXT_DIRECTORY_ENTRY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -148,17 +173,17 @@ class BrickRED(Device):
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_RELEASE_OBJECT, (object_id,), 'H', 'B')
 
-    def get_next_object_table_entry(self, object_type):
+    def get_next_object_table_entry(self, type):
         """
         
         """
-        return GetNextObjectTableEntry(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_NEXT_OBJECT_TABLE_ENTRY, (object_type,), 'B', 'B H'))
+        return GetNextObjectTableEntry(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_NEXT_OBJECT_TABLE_ENTRY, (type,), 'B', 'B H'))
 
-    def rewind_object_table(self, object_type):
+    def rewind_object_table(self, type):
         """
         
         """
-        return self.ipcon.send_request(self, BrickRED.FUNCTION_REWIND_OBJECT_TABLE, (object_type,), 'B', 'B')
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_REWIND_OBJECT_TABLE, (type,), 'B', 'B')
 
     def allocate_string(self, length_to_reserve):
         """
@@ -190,6 +215,36 @@ class BrickRED(Device):
         """
         return GetStringChunk(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_STRING_CHUNK, (string_id, offset), 'H I', 'B 63s'))
 
+    def allocate_list(self, length_to_reserve):
+        """
+        
+        """
+        return AllocateList(*self.ipcon.send_request(self, BrickRED.FUNCTION_ALLOCATE_LIST, (length_to_reserve,), 'H', 'B H'))
+
+    def get_list_length(self, list_id):
+        """
+        
+        """
+        return GetListLength(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LIST_LENGTH, (list_id,), 'H', 'B H'))
+
+    def get_list_item(self, list_id, index):
+        """
+        
+        """
+        return GetListItem(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LIST_ITEM, (list_id, index), 'H H', 'B H'))
+
+    def append_to_list(self, list_id, item_object_id):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_APPEND_TO_LIST, (list_id, item_object_id), 'H H', 'B')
+
+    def remove_from_list(self, list_id, index):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_REMOVE_FROM_LIST, (list_id, index), 'H H', 'B')
+
     def open_file(self, name_string_id, flags, permissions):
         """
         
@@ -201,6 +256,12 @@ class BrickRED(Device):
         
         """
         return GetFileName(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_NAME, (file_id,), 'H', 'B H'))
+
+    def get_file_type(self, file_id):
+        """
+        
+        """
+        return GetFileType(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_TYPE, (file_id,), 'H', 'B B'))
 
     def write_file(self, file_id, buffer, length_to_write):
         """
@@ -256,6 +317,12 @@ class BrickRED(Device):
         """
         return GetFileInfo(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_INFO, (name_string_id, follow_symlink), 'H ?', 'B B H I I Q Q Q Q'))
 
+    def get_symlink_target(self, name_string_id, canonicalize):
+        """
+        
+        """
+        return GetSymlinkTarget(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_SYMLINK_TARGET, (name_string_id, canonicalize), 'H ?', 'B H'))
+
     def open_directory(self, name_string_id):
         """
         
@@ -272,7 +339,7 @@ class BrickRED(Device):
         """
         
         """
-        return GetNextDirectoryEntry(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_NEXT_DIRECTORY_ENTRY, (directory_id,), 'H', 'B H'))
+        return GetNextDirectoryEntry(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_NEXT_DIRECTORY_ENTRY, (directory_id,), 'H', 'B H B'))
 
     def rewind_directory(self, directory_id):
         """
