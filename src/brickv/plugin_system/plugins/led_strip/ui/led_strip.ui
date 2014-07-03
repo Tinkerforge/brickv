@@ -6,14 +6,64 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>624</width>
-    <height>175</height>
+    <width>615</width>
+    <height>204</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_6">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QLabel" name="chip_type_label">
+       <property name="text">
+        <string>Chip Type:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="chip_type_combobox">
+       <item>
+        <property name="text">
+         <string>WS2801</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>WS2811</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>WS2812</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_5">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="Line" name="line_5">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -68,7 +118,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_7">
+      <widget class="QLabel" name="label_clock_frequency">
        <property name="text">
         <string>Clock Frequency:</string>
        </property>
@@ -104,13 +154,6 @@
       </spacer>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">

@@ -46,6 +46,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.led_strip = self.device
         
         self.has_clock_frequency = version >= (2, 0, 1)
+        self.has_chip_type =version >= (2, 0, 2)
         
         self.qtcb_frame_rendered.connect(self.cb_frame_rendered)
         
@@ -57,7 +58,14 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         else:
             self.box_clock_frequency.setValue(20000000)
             self.box_clock_frequency.setEnabled(False)
-        
+            
+        if self.has_chip_type:
+            self.chip_type_combobox.currentIndexChanged.connect(self.chip_type_index_changed)
+        else:
+            self.chip_type_label.setText("Chip Type (needs FW >= 2.0.2)")
+            self.chip_type_combobox.setCurrentIndex(0)
+            self.chip_type_combobox.setEnabled(False)
+
         self.state = self.STATE_IDLE
         
         self.gradient_counter = 0
@@ -68,8 +76,37 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.voltage_timer.timeout.connect(self.update_voltage)
         self.voltage_timer.setInterval(1000)
         
+    def chip_type_index_changed(self, index, only_config = False):
+        chip = 2801
+        if index == 0:
+            chip = 2801
+            self.box_clock_frequency.show()
+            self.label_clock_frequency.show()
+        elif index == 1:
+            chip = 2811
+            self.box_clock_frequency.hide()
+            self.label_clock_frequency.hide()
+        elif index == 2:
+            chip = 2812
+            self.box_clock_frequency.hide()
+            self.label_clock_frequency.hide()
+            
+        if not only_config:
+            self.led_strip.set_chip_type(chip)
+        
     def update_voltage(self):
         async_call(self.led_strip.get_supply_voltage, None, self.cb_voltage, self.increase_error_count)
+        
+    def cb_chip_type(self, chip):
+        if chip == 2801:
+            self.chip_type_combobox.setCurrentIndex(0)
+            self.chip_type_index_changed(0, True)
+        elif chip == 2811:
+            self.chip_type_combobox.setCurrentIndex(1)
+            self.chip_type_index_changed(1, True)
+        elif chip == 2812:
+            self.chip_type_combobox.setCurrentIndex(2)
+            self.chip_type_index_changed(2, True)
         
     def cb_frequency(self, frequency):
         self.box_clock_frequency.setValue(frequency)
@@ -170,6 +207,8 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
             i += leds
             
     def start(self):
+        if self.has_chip_type:
+            async_call(self.led_strip.get_chip_type, None, self.cb_chip_type, self.increase_error_count)
         if self.has_clock_frequency:
             async_call(self.led_strip.get_clock_frequency, None, self.cb_frequency, self.increase_error_count)
         async_call(self.led_strip.get_supply_voltage, None, self.cb_voltage, self.increase_error_count)

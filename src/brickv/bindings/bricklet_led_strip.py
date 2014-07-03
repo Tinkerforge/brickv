@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-04-07.      #
+# This file was automatically generated on 2014-07-02.      #
 #                                                           #
 # Bindings Version 2.1.0                                    #
 #                                                           #
@@ -41,8 +41,13 @@ class BrickletLEDStrip(Device):
     FUNCTION_GET_SUPPLY_VOLTAGE = 5
     FUNCTION_SET_CLOCK_FREQUENCY = 7
     FUNCTION_GET_CLOCK_FREQUENCY = 8
+    FUNCTION_SET_CHIP_TYPE = 9
+    FUNCTION_GET_CHIP_TYPE = 10
     FUNCTION_GET_IDENTITY = 255
 
+    CHIP_TYPE_WS2801 = 2801
+    CHIP_TYPE_WS2811 = 2811
+    CHIP_TYPE_WS2812 = 2812
 
     def __init__(self, uid, ipcon):
         """
@@ -61,6 +66,8 @@ class BrickletLEDStrip(Device):
         self.response_expected[BrickletLEDStrip.CALLBACK_FRAME_RENDERED] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLEDStrip.FUNCTION_SET_CLOCK_FREQUENCY] = BrickletLEDStrip.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_CLOCK_FREQUENCY] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLEDStrip.FUNCTION_SET_CHIP_TYPE] = BrickletLEDStrip.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLEDStrip.FUNCTION_GET_CHIP_TYPE] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLEDStrip.FUNCTION_GET_IDENTITY] = BrickletLEDStrip.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletLEDStrip.CALLBACK_FRAME_RENDERED] = 'H'
@@ -169,11 +176,37 @@ class BrickletLEDStrip(Device):
 
     def get_clock_frequency(self):
         """
-        Returns the currently used clock frequency.
+        Returns the currently used clock frequency as set by :func:`SetClockFrequency`.
         
         .. versionadded:: 2.0.1~(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_CLOCK_FREQUENCY, (), '', 'I')
+
+    def set_chip_type(self, chip):
+        """
+        Sets the type of the led driver chip. We currently support
+        the chips
+        
+        * WS2801,
+        * WS2811 and
+        * WS2812.
+        
+        The WS2812 is sometimes also called "NeoPixel", a name coined by
+        Adafruit.
+        
+        The default value is WS2801 = 2801.
+        
+        .. versionadded:: 2.0.2~(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_CHIP_TYPE, (chip,), 'H', '')
+
+    def get_chip_type(self):
+        """
+        Returns the currently used chip type as set by :func:`SetChipType`.
+        
+        .. versionadded:: 2.0.2~(Plugin)
+        """
+        return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_CHIP_TYPE, (), '', 'H')
 
     def get_identity(self):
         """

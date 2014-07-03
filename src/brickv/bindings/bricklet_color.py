@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-05-26.      #
+# This file was automatically generated on 2014-07-02.      #
 #                                                           #
 # Bindings Version 2.1.0                                    #
 #                                                           #
@@ -116,7 +116,7 @@ class BrickletColor(Device):
 
     def get_color(self):
         """
-        Returns the color of the sensor. The values
+        Returns the measured color of the sensor. The values
         have a range of 0 to 65535.
         
         The red (r), green (g), blue (b) and clear (c) colors are measured
@@ -221,10 +221,10 @@ class BrickletColor(Device):
 
     def set_config(self, gain, integration_time):
         """
-        Sets the configuration of the sensor. Gain and itegration time
+        Sets the configuration of the sensor. Gain and integration time
         can be configured in this way.
         
-        For confguring the gain:
+        For configuring the gain:
         
         * 0: 1x Gain
         * 1: 4x Gain
