@@ -231,9 +231,9 @@ Section "Install Brick Viewer ${BRICKV_VERSION}"
   WriteUninstaller "uninstall.exe"
 
   ; Create start menu shortcut
-  SetOutPath $INSTDIR\ ; set working directory for main.exe
+  SetOutPath $INSTDIR\ ; set working directory for brickv.exe
   createDirectory "$SMPROGRAMS\Tinkerforge"
-  createShortCut "$SMPROGRAMS\Tinkerforge\Brickv ${BRICKV_VERSION}.lnk" "$INSTDIR\main.exe"
+  createShortCut "$SMPROGRAMS\Tinkerforge\Brickv ${BRICKV_VERSION}.lnk" "$INSTDIR\brickv.exe"
 
 SectionEnd
 

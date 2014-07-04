@@ -283,7 +283,10 @@ def build_windows_pkg():
                     }
                     },
           zipfile = None,
-          windows = [{'script' : 'brickv/main.py', 'icon_resources' : [(0, os.path.normcase("build_data/windows/brickv-icon.ico"))]}]
+          windows = [{'script' : 'brickv/main.py',
+                      'icon_resources' : [(0, os.path.normcase("build_data/windows/brickv-icon.ico"))],
+                      'dest_base' : 'brickv'
+                     }]
     )
 
     # build nsis
