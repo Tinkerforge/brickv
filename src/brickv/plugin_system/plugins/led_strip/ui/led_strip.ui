@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>615</width>
+    <width>636</width>
     <height>204</height>
    </rect>
   </property>
@@ -210,6 +210,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="button_black">
+       <property name="text">
+        <string>Show Black</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -247,6 +254,13 @@
       <widget class="QPushButton" name="button_gradient">
        <property name="text">
         <string>Show Moving Color Gradient</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_dot">
+       <property name="text">
+        <string>Show Moving Color Dot</string>
        </property>
       </widget>
      </item>
