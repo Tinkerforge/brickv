@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, QAbstractTableModel, QVariant, Qt, QTimer
+from PyQt4.QtCore import pyqtSignal, QVariant, Qt, QTimer
 from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, QIcon, \
                         QPushButton, QWidget, QHBoxLayout, QVBoxLayout, \
                         QLabel, QFrame, QSpacerItem, QSizePolicy, \
@@ -43,35 +43,6 @@ import os
 import signal
 import sys
 import time
-
-class MainTableModel(QAbstractTableModel):
-    def __init__(self, header, data, parent=None, *args):
-        QAbstractTableModel.__init__(self, parent, *args)
-        self.header = header
-        self.data = data
-
-    def rowCount(self, parent):
-        return len(self.data)
-
-    def columnCount(self, parent):
-        return len(self.header)
-
-    def data(self, index, role):
-        if not index.isValid():
-            return QVariant()
-        elif role != Qt.DisplayRole:
-            return QVariant()
-        return QVariant(self.data[index.row()][index.column()])
-
-    def setData(self, index, value, role):
-        if index.isValid() and role == Qt.DisplayRole:
-            self.data[index.row()][index.column()] = value
-            self.dataChanged.emit(index, index)
-
-    def headerData(self, col, orientation, role):
-        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            return QVariant(self.header[col])
-        return QVariant()
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     qtcb_enumerate = pyqtSignal(str, str, 'char', type((0,)), type((0,)), int, int)
