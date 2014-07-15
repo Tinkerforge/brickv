@@ -376,10 +376,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.do_disconnect()
 
     def item_double_clicked(self, index):
-        text = str(index.data().toString())
-        i = self.tab_for_uid(text)
-        if i > 0:
-            self.tab_widget.setCurrentIndex(i)
+        uid_index = index.sibling(index.row(), 1)
+
+        if uid_index.isValid():
+            text = str(uid_index.data().toString())
+            i = self.tab_for_uid(text)
+
+            if i > 0:
+                self.tab_widget.setCurrentIndex(i)
 
     def connected_uid_pressed(self, connected_uid):
         i = self.tab_for_uid(connected_uid)
@@ -646,6 +650,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tree_view.setColumnWidth(0, 260)
         self.tree_view.setColumnWidth(1, 75)
         self.tree_view.setColumnWidth(2, 85)
+        self.tree_view.setExpandsOnDoubleClick(False)
         self.tree_view.setSortingEnabled(True)
         self.tree_view.header().setSortIndicator(0, Qt.AscendingOrder)
 
