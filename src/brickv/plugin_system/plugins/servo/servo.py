@@ -248,6 +248,9 @@ class Servo(PluginBase, Ui_Servo):
     def stop(self):
         if self.test_button.text() == "Stop Test":
             self.test_button_clicked()
+            
+        self.update_timer.stop()
+
         self.update_event.clear()
         self.alive = False
         self.update_done_event.wait()
