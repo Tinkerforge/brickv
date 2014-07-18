@@ -151,7 +151,6 @@ class Servo(PluginBase, Ui_Servo):
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_apply)
         self.update_timer.setInterval(50)
-        self.update_timer.start()
 
         self.alive = True
 
@@ -244,6 +243,8 @@ class Servo(PluginBase, Ui_Servo):
             self.update_thread_object.start() 
             
         self.update_servo_specific()
+
+        self.update_timer.start()
 
     def stop(self):
         if self.test_button.text() == "Stop Test":
