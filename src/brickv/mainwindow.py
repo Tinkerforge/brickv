@@ -382,7 +382,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             text = str(uid_index.data().toString())
             i = self.tab_for_uid(text)
 
-            if i > 0:
+            if i > 0 and self.tab_widget.isTabEnabled(i):
                 self.tab_widget.setCurrentIndex(i)
 
     def connected_uid_pressed(self, connected_uid):
