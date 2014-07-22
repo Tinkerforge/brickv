@@ -212,7 +212,7 @@
      <item>
       <widget class="QPushButton" name="button_black">
        <property name="text">
-        <string>Show Black</string>
+        <string>Clear Color</string>
        </property>
       </widget>
      </item>
