@@ -23,7 +23,7 @@
          <item>
           <widget class="QPushButton" name="ssr_button">
            <property name="text">
-            <string>Switch On</string>
+            <string>Switch Off</string>
            </property>
           </widget>
          </item>

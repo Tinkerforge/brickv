@@ -75,6 +75,14 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.go2_button.setEnabled(False)
         
     def get_state_async(self, state):
+        width = self.dr1_button.width()
+        if self.dr1_button.minimumWidth() < width:
+            self.dr1_button.setMinimumWidth(width)
+
+        width = self.dr2_button.width()
+        if self.dr2_button.minimumWidth() < width:
+            self.dr2_button.setMinimumWidth(width)
+        
         dr1, dr2 = state
         if dr1:
             self.dr1_button.setText('Switch Off')
@@ -147,6 +155,10 @@ class DualRelay(PluginBase, Ui_DualRelay):
         self.state1_combobox.setEnabled(True)
         
     def dr1_pressed(self):
+        width = self.dr1_button.width()
+        if self.dr1_button.minimumWidth() < width:
+            self.dr1_button.setMinimumWidth(width)
+
         if 'On' in self.dr1_button.text():
             self.dr1_button.setText('Switch Off')
             self.dr1_image.setPixmap(self.a1_pixmap)
@@ -170,6 +182,10 @@ class DualRelay(PluginBase, Ui_DualRelay):
         self.state2_combobox.setEnabled(True)
         
     def dr2_pressed(self):
+        width = self.dr2_button.width()
+        if self.dr2_button.minimumWidth() < width:
+            self.dr2_button.setMinimumWidth(width)
+
         if 'On' in self.dr2_button.text():
             self.dr2_button.setText('Switch Off')
             self.dr2_image.setPixmap(self.a2_pixmap)

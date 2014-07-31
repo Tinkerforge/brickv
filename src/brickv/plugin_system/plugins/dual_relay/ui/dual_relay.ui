@@ -36,7 +36,7 @@
          <item>
           <widget class="QPushButton" name="dr1_button">
            <property name="text">
-            <string>Switch On</string>
+            <string>Switch Off</string>
            </property>
           </widget>
          </item>
@@ -196,7 +196,7 @@
          <item>
           <widget class="QPushButton" name="dr2_button">
            <property name="text">
-            <string>Switch On</string>
+            <string>Switch Off</string>
            </property>
           </widget>
          </item>

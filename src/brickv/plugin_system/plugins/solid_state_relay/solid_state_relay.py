@@ -59,6 +59,10 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
         self.update_timer.setInterval(50)
 
     def get_state_async(self, state):
+        width = self.ssr_button.width()
+        if self.ssr_button.minimumWidth() < width:
+            self.ssr_button.setMinimumWidth(width)
+            
         s = state
         if s:
             self.ssr_button.setText('Switch Off')
@@ -97,26 +101,28 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletSolidStateRelay.DEVICE_IDENTIFIER
 
-    def get_state_ssr_pressed(self, state):
-        try:
-            self.ssr.set_state(state)
-        except ip_connection.Error:
-            return
-        
-        self.monoflop = False
-        self.time_spinbox.setValue(self.timebefore)
-        self.time_spinbox.setEnabled(True)
-        self.state_combobox.setEnabled(True)
-        
     def ssr_pressed(self):
+        width = self.ssr_button.width()
+        if self.ssr_button.minimumWidth() < width:
+            self.ssr_button.setMinimumWidth(width)
+            
         if 'On' in self.ssr_button.text():
             self.ssr_button.setText('Switch Off')
             self.ssr_image.setPixmap(self.a_pixmap)
         else:
             self.ssr_button.setText('Switch On')
-            self.ssr_image.setPixmap(self.b_pixmap)
-
-        async_call(self.ssr.get_state, None, self.get_state_ssr_pressed, self.increase_error_count)
+            self.ssr_image.setPixmap(self.b_pixmap)       
+            
+        state = not 'On' in self.ssr_button.text()
+        try:
+            self.ssr.set_state(state)
+        except ip_connection.Error:
+            return
+                
+        self.monoflop = False
+        self.time_spinbox.setValue(self.timebefore)
+        self.time_spinbox.setEnabled(True)
+        self.state_combobox.setEnabled(True)
 
     def go_pressed(self):   
         time = self.time_spinbox.value()
