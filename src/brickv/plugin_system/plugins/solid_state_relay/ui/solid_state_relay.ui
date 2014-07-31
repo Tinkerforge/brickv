@@ -21,7 +21,7 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <widget class="QPushButton" name="dr_button">
+          <widget class="QPushButton" name="ssr_button">
            <property name="text">
             <string>Switch On</string>
            </property>
@@ -43,7 +43,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="dr_image">
+        <widget class="QLabel" name="ssr_image">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
