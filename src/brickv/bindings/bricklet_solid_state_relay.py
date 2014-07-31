@@ -30,7 +30,7 @@ class BrickletSolidStateRelay(Device):
     Device for controlling AC and DC Solid State Relays
     """
 
-    DEVICE_IDENTIFIER = 44
+    DEVICE_IDENTIFIER = 244
 
     CALLBACK_MONOFLOP_DONE = 5
 

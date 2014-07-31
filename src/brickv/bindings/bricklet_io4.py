@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-07-03.      #
+# This file was automatically generated on 2014-07-31.      #
 #                                                           #
 # Bindings Version 2.1.1                                    #
 #                                                           #
@@ -128,6 +128,8 @@ class BrickletIO4(Device):
         * (8, 'i', false) or (0b1000, 'i', false) will set pin 3 of as input default (floating if nothing is connected).
         * (3, 'o', false) or (0b0011, 'o', false) will set pins 0 and 1 as output low.
         * (4, 'o', true) or (0b0100, 'o', true) will set pin 2 of as output high.
+        
+        The default configuration is input with pull-up.
         """
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_CONFIGURATION, (selection_mask, direction, value), 'B c ?', '')
 
