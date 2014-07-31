@@ -34,8 +34,11 @@ class PluginBase(QWidget, object):
         self.version = version
         self.version_str = '.'.join(map(str, version))
         self.error_count = 0
-        if device_class != None:
+
+        if device_class is not None:
             self.device = device_class(uid, ipcon)
+        else:
+            self.device = None
 
     def destroy_ui(self):
         # before destroying the widgets ensure that all callbacks are
@@ -43,7 +46,8 @@ class PluginBase(QWidget, object):
         # tab might already be gone but the actual device object might still
         # be alive as gets callbacks delivered to it. this callback will then
         # try to call non-existing Qt slots and trigger a segfault
-        self.device.registered_callbacks = {}
+        if self.device is not None:
+            self.device.registered_callbacks = {}
 
         # ensure that the widgets gets correctly destroyed
         for member in dir(self):
