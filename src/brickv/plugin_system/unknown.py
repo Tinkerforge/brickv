@@ -27,7 +27,7 @@ from PyQt4.QtGui import QLabel, QVBoxLayout
     
 class Unknown(PluginBase):
     def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Unknown', version)
+        PluginBase.__init__(self, ipcon, uid, 'Unknown', version, None)
         
         layout = QVBoxLayout(self)
         layout.addStretch()

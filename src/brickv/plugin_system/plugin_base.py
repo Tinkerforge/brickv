@@ -34,7 +34,8 @@ class PluginBase(QWidget, object):
         self.version = version
         self.version_str = '.'.join(map(str, version))
         self.error_count = 0
-        self.device = device_class(uid, ipcon)
+        if device_class != None:
+            self.device = device_class(uid, ipcon)
 
     def destroy_ui(self):
         # before destroying the widgets ensure that all callbacks are

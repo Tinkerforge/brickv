@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-07-03.      #
+# This file was automatically generated on 2014-07-31.      #
 #                                                           #
 # Bindings Version 2.1.1                                    #
 #                                                           #
@@ -41,6 +41,7 @@ GetSymlinkTarget = namedtuple('SymlinkTarget', ['error_code', 'target_string_id'
 OpenDirectory = namedtuple('OpenDirectory', ['error_code', 'directory_id'])
 GetDirectoryName = namedtuple('DirectoryName', ['error_code', 'name_string_id'])
 GetNextDirectoryEntry = namedtuple('NextDirectoryEntry', ['error_code', 'name_string_id', 'type'])
+StartProcess = namedtuple('StartProcess', ['error_code', 'process_id'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickRED(Device):
@@ -83,6 +84,7 @@ class BrickRED(Device):
     FUNCTION_GET_DIRECTORY_NAME = 30
     FUNCTION_GET_NEXT_DIRECTORY_ENTRY = 31
     FUNCTION_REWIND_DIRECTORY = 32
+    FUNCTION_START_PROCESS = 33
     FUNCTION_GET_IDENTITY = 255
 
     OBJECT_TYPE_STRING = 0
@@ -96,7 +98,8 @@ class BrickRED(Device):
     FILE_FLAG_READ_WRITE = 4
     FILE_FLAG_APPEND = 8
     FILE_FLAG_CREATE = 16
-    FILE_FLAG_TRUNCATE = 32
+    FILE_FLAG_EXCLUSIVE = 32
+    FILE_FLAG_TRUNCATE = 64
     FILE_PERMISSION_USER_ALL = 448
     FILE_PERMISSION_USER_READ = 256
     FILE_PERMISSION_USER_WRITE = 128
@@ -162,6 +165,7 @@ class BrickRED(Device):
         self.response_expected[BrickRED.FUNCTION_GET_DIRECTORY_NAME] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_NEXT_DIRECTORY_ENTRY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_REWIND_DIRECTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_START_PROCESS] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_IDENTITY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickRED.CALLBACK_ASYNC_FILE_WRITE] = 'H B B'
@@ -245,11 +249,11 @@ class BrickRED(Device):
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_REMOVE_FROM_LIST, (list_id, index), 'H H', 'B')
 
-    def open_file(self, name_string_id, flags, permissions):
+    def open_file(self, name_string_id, flags, permissions, user_id, group_id):
         """
         
         """
-        return OpenFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_FILE, (name_string_id, flags, permissions), 'H H H', 'B H'))
+        return OpenFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_FILE, (name_string_id, flags, permissions, user_id, group_id), 'H H H I I', 'B H'))
 
     def get_file_name(self, file_id):
         """
@@ -346,6 +350,12 @@ class BrickRED(Device):
         
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_REWIND_DIRECTORY, (directory_id,), 'H', 'B')
+
+    def start_process(self, command_string_id, argument_string_ids, argument_count, environment_string_ids, environment_count, merge_stdout_and_stderr):
+        """
+        
+        """
+        return StartProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_START_PROCESS, (command_string_id, argument_string_ids, argument_count, environment_string_ids, environment_count, merge_stdout_and_stderr), 'H 20H B 8H B ?', 'B H'))
 
     def get_identity(self):
         """

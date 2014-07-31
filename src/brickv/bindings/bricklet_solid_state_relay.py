@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-07-03.      #
+# This file was automatically generated on 2014-07-31.      #
 #                                                           #
 # Bindings Version 2.1.1                                    #
 #                                                           #
@@ -30,7 +30,7 @@ class BrickletSolidStateRelay(Device):
     Device for controlling AC and DC Solid State Relays
     """
 
-    DEVICE_IDENTIFIER = 244
+    DEVICE_IDENTIFIER = 44
 
     CALLBACK_MONOFLOP_DONE = 5
 
