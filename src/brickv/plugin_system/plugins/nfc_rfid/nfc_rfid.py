@@ -52,7 +52,7 @@ class SpinBoxHex(QSpinBox):
         s = QString.number(value, base=16).toUpper()
         if len(s) == 1:
             s = '0' + s
-            
+
         return s
 
 class NFCRFID(PluginBase, Ui_NFCRFID):
@@ -149,8 +149,8 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
             text_read = 'Read Page {0}-{1}'.format(page, page+1)
             text_write = 'Write Page {0}-{1}'.format(page, page+1)
         elif tt == self.nfc.TAG_TYPE_TYPE2:
-            text_read = 'Read Page {0}-{1}'.format(page, page+4)
-            text_write = 'Write Page {0}-{1}'.format(page, page+4)
+            text_read = 'Read Page {0}-{1}'.format(page, page+3)
+            text_write = 'Write Page {0}-{1}'.format(page, page+3)
             
         self.button_read_page.setText(text_read)
         self.button_write_page.setText(text_write)
