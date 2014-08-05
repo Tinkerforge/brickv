@@ -229,21 +229,21 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
     def cb_get_page(self, page):
         if self.scan_pressed_type == self.nfc.TAG_TYPE_TYPE2:
             s  = 'Page {0}: '.format(self.read_page_pressed_page)
-            s += '{0:02x} {1:02x} {2:02x} {3:02x}\n'.format(*page[0:4])
+            s += '{0:02X} {1:02X} {2:02X} {3:02X}\n'.format(*page[0:4])
             s += 'Page {0}: '.format(self.read_page_pressed_page+1)
-            s += '{0:02x} {1:02x} {2:02x} {3:02x}\n'.format(*page[4:8])
+            s += '{0:02X} {1:02X} {2:02X} {3:02X}\n'.format(*page[4:8])
             s += 'Page {0}: '.format(self.read_page_pressed_page+2)
-            s += '{0:02x} {1:02x} {2:02x} {3:02x}\n'.format(*page[8:12])
+            s += '{0:02X} {1:02X} {2:02X} {3:02X}\n'.format(*page[8:12])
             s += 'Page {0}: '.format(self.read_page_pressed_page+3)
-            s += '{0:02x} {1:02x} {2:02x} {3:02x}\n'.format(*page[12:16])
+            s += '{0:02X} {1:02X} {2:02X} {3:02X}'.format(*page[12:16])
         elif self.scan_pressed_type == self.nfc.TAG_TYPE_TYPE1:
             s  = 'Page {0}: '.format(self.read_page_pressed_page)
-            s += '{0:02x} {1:02x} {2:02x} {3:02x} {4:02x} {5:02x} {6:02x} {7:02x}\n'.format(*page[0:8])
+            s += '{0:02X} {1:02X} {2:02X} {3:02X} {4:02X} {5:02X} {6:02X} {7:02X}\n'.format(*page[0:8])
             s += 'Page {0}: '.format(self.read_page_pressed_page+1)
-            s += '{0:02x} {1:02x} {2:02x} {3:02x} {4:02x} {5:02x} {6:02x} {7:02x}\n'.format(*page[8:16])
+            s += '{0:02X} {1:02X} {2:02X} {3:02X} {4:02X} {5:02X} {6:02X} {7:02X}'.format(*page[8:16])
         elif self.scan_pressed_type == self.nfc.TAG_TYPE_MIFARE_CLASSIC:
             s  = 'Page {0}: '.format(self.read_page_pressed_page)
-            s += '{0:02x} {1:02x} {2:02x} {3:02x} {4:02x} {5:02x} {6:02x} {7:02x} {8:02x} {9:02x} {10:02x} {11:02x} {12:02x} {13:02x} {14:02x} {15:02x}\n'.format(*page[0:16])
+            s += '{0:02X} {1:02X} {2:02X} {3:02X} {4:02X} {5:02X} {6:02X} {7:02X} {8:02X} {9:02X} {10:02X} {11:02X} {12:02X} {13:02X} {14:02X} {15:02X}'.format(*page[0:16])
         
         self.textedit_read_page.setPlainText(s)
         
@@ -252,9 +252,9 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
 
     def cb_get_tag_id(self, ret):
         if ret.tid_length == 4:
-            s = 'Found tag with ID <b>{0:02x} {1:02x} {2:02x} {3:02x}</b>'.format(*ret.tid)
+            s = 'Found tag with ID <b>{0:02X} {1:02X} {2:02X} {3:02X}</b>'.format(*ret.tid)
         elif ret.tid_length == 7:
-            s = 'Found tag with ID <b>{0:02x} {1:02x} {2:02x} {3:02x} {4:02x} {5:02x} {6:02x}</b>'.format(*ret.tid)
+            s = 'Found tag with ID <b>{0:02X} {1:02X} {2:02X} {3:02X} {4:02X} {5:02X} {6:02X}</b>'.format(*ret.tid)
         else:
             s = 'Found tag with unsupported ID length ({0})'.format(ret.tid_length)
         
