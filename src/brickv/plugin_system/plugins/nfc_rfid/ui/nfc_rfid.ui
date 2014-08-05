@@ -49,7 +49,7 @@
      <item>
       <widget class="QLabel" name="label_id">
        <property name="text">
-        <string> </string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -147,6 +147,12 @@
          <width>16777215</width>
          <height>100</height>
         </size>
+       </property>
+       <property name="undoRedoEnabled">
+        <bool>false</bool>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
