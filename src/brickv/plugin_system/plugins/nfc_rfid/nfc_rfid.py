@@ -92,7 +92,7 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
             else:
                 self.layout_write4.addWidget(sb)
         
-        self.scan_pressed_type = 0
+        self.scan_pressed_type = -1
         self.read_page_pressed_page = 0
         self.write_page_pressed_page = 0
         self.write_page_pressed_data = []
@@ -244,13 +244,18 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
         elif self.scan_pressed_type == self.nfc.TAG_TYPE_MIFARE_CLASSIC:
             s  = 'Page {0}: '.format(self.read_page_pressed_page)
             s += '{0:02X} {1:02X} {2:02X} {3:02X} {4:02X} {5:02X} {6:02X} {7:02X} {8:02X} {9:02X} {10:02X} {11:02X} {12:02X} {13:02X} {14:02X} {15:02X}'.format(*page[0:16])
-        
+        else:
+            return
+
         self.textedit_read_page.setPlainText(s)
         
         for i, sp in enumerate(self.key_write_spinbox):
             sp.setValue(page[i])
 
     def cb_get_tag_id(self, ret):
+        if self.scan_pressed_type != ret.tag_type:
+            return
+
         if ret.tid_length == 4:
             s = 'Found tag with ID <b>{0:02X} {1:02X} {2:02X} {3:02X}</b>'.format(*ret.tid)
         elif ret.tid_length == 7:
