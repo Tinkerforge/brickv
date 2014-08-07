@@ -35,6 +35,7 @@ from brickv.flashing import FlashingWindow
 from brickv.advanced import AdvancedWindow
 from brickv.async_call import async_start_thread, async_next_session
 from brickv.bindings.brick_master import BrickMaster
+from brickv.bindings.brick_red import BrickRED
 from brickv.program_path import get_program_path
 from brickv import config
 from brickv import infos
@@ -477,6 +478,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                 IPConnection.ENUMERATION_TYPE_CONNECTED]:
             if device_identifier == BrickMaster.DEVICE_IDENTIFIER:
                 info = infos.BrickMasterInfo()
+            elif device_identifier == BrickRED.DEVICE_IDENTIFIER:
+                info = infos.BrickREDInfo()
             elif position in ('a', 'b', 'c', 'd', 'A', 'B', 'C', 'D'):
                 position = position.lower()
                 info = infos.BrickletInfo()

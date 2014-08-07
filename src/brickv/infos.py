@@ -2,6 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 infos.py: Common information structures for Tools/Bricks/Bricklets
 
@@ -113,7 +114,7 @@ class BrickInfo(DeviceInfo):
    a: {0}
    b: {1}
 """.format(a, b)
-    
+
 class BrickMasterInfo(BrickInfo):
     def __init__(self):
         self.bricklets = {'a': None, 'b': None, 'c': None, 'd': None}
@@ -138,6 +139,10 @@ class BrickMasterInfo(BrickInfo):
    c: {2}
    d: {3} 
 """.format(a, b, c, d)
+
+class BrickREDInfo(BrickInfo):
+    def __init__(self):
+        self.bricklets = {}
 
 def get_version_string(version_tuple):
     return '.'.join(map(str, version_tuple))
