@@ -280,6 +280,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         name = ' '.join(parts)
         name = name.replace('Voltage Current', 'Voltage/Current')
+        name = name.replace('Nfc Rfid', 'NFC/RFID')
         name = name.replace('0 20ma', '0-20mA')
 
         plugin_info = infos.PluginInfo()
