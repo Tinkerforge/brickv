@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-07-03.      #
+# This file was automatically generated on 2014-08-05.      #
 #                                                           #
-# Bindings Version 2.1.1                                    #
+# Bindings Version 2.1.2                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -233,7 +233,7 @@ class BrickletColor(Device):
         
         For configuring the integration time:
         
-        * 0: 2ms
+        * 0: 2.4ms
         * 1: 24ms
         * 2: 101ms
         * 3: 154ms
@@ -259,16 +259,23 @@ class BrickletColor(Device):
 
     def get_illuminance(self):
         """
-        Returns the illuminance in Lux multiplied by the gain as set by 
-        :func:`SetConfig`.
+        Returns the illuminance affected by the gain and integration time as
+        set by :func:`SetConfig`. To get the illuminance in Lux apply this formula::
+        
+         lux = illuminance * 700 / gain / integration_time
+        
+        To get a correct illuminance measurement make sure that the color
+        values themself are not saturated. The color value (R, G or B)
+        is saturated if it is equal to the maximum value of 65535.
+        In that case you have to reduce the gain, see :func:`SetConfig`.
         """
         return self.ipcon.send_request(self, BrickletColor.FUNCTION_GET_ILLUMINANCE, (), '', 'I')
 
     def get_color_temperature(self):
         """
-        Returns the color temperature in Kelvin. 
+        Returns the color temperature in Kelvin.
         
-        Make sure that the color
+        To get a correct color temperature measurement make sure that the color
         values themself are not saturated. The color value (R, G or B)
         is saturated if it is equal to the maximum value of 65535.
         In that case you have to reduce the gain, see :func:`SetConfig`.

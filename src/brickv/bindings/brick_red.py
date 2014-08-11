@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-07-31.      #
+# This file was automatically generated on 2014-08-11.      #
 #                                                           #
-# Bindings Version 2.1.1                                    #
+# Bindings Version 2.1.2                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -173,189 +173,261 @@ class BrickRED(Device):
 
     def release_object(self, object_id):
         """
-        
+        Decreases the reference count of an object by one and returns the resulting
+        error code. If the reference count reaches zero the object is destroyed.
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_RELEASE_OBJECT, (object_id,), 'H', 'B')
 
     def get_next_object_table_entry(self, type):
         """
-        
+        Returns the object ID of the next ``type`` object in the object table and the
+        resulting error code. If there is not next ``type`` object then error code
+        ``API_E_NO_MORE_DATA`` is returned. To rewind the table call
+        :func:`RewindObjectTable`.
         """
         return GetNextObjectTableEntry(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_NEXT_OBJECT_TABLE_ENTRY, (type,), 'B', 'B H'))
 
     def rewind_object_table(self, type):
         """
-        
+        Rewinds the object table for ``type`` and returns the resulting error code.
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_REWIND_OBJECT_TABLE, (type,), 'B', 'B')
 
     def allocate_string(self, length_to_reserve):
         """
+        Allocates a new string object and reserves ``length_to_reserve`` bytes memory
+        for it. Set ``length_to_reserve`` to the length of the string that should be
+        stored in the string object.
         
+        Returns the object ID of the new string object and the resulting error code.
         """
         return AllocateString(*self.ipcon.send_request(self, BrickRED.FUNCTION_ALLOCATE_STRING, (length_to_reserve,), 'I', 'B H'))
 
     def truncate_string(self, string_id, length):
         """
-        
+        Truncates a string object to ``length`` bytes and returns the resulting
+        error code.
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_TRUNCATE_STRING, (string_id, length), 'H I', 'B')
 
     def get_string_length(self, string_id):
         """
-        
+        Returns the length of a string object in bytes and the resulting error code.
         """
         return GetStringLength(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_STRING_LENGTH, (string_id,), 'H', 'B I'))
 
     def set_string_chunk(self, string_id, offset, buffer):
         """
+        Sets a chunk of up to 58 bytes in a string object beginning at ``offset``.
         
+        Returns the resulting error code.
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_STRING_CHUNK, (string_id, offset, buffer), 'H I 58s', 'B')
 
     def get_string_chunk(self, string_id, offset):
         """
-        
+        Returns a chunk up to 63 bytes from a string object beginning at ``offset`` and
+        returns the resulting error code.
         """
         return GetStringChunk(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_STRING_CHUNK, (string_id, offset), 'H I', 'B 63s'))
 
     def allocate_list(self, length_to_reserve):
         """
+        Allocates a new list object and reserves memory for ``length_to_reserve`` items.
+        Set ``length_to_reserve`` to the number of items that should be stored in the
+        list object.
         
+        Returns the object ID of the new list object and the resulting error code.
         """
         return AllocateList(*self.ipcon.send_request(self, BrickRED.FUNCTION_ALLOCATE_LIST, (length_to_reserve,), 'H', 'B H'))
 
     def get_list_length(self, list_id):
         """
-        
+        Returns the length of a list object in items and the resulting error code.
         """
         return GetListLength(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LIST_LENGTH, (list_id,), 'H', 'B H'))
 
     def get_list_item(self, list_id, index):
         """
-        
+        Returns the object ID of the object stored at ``index`` in a list object and
+        returns the resulting error code.
         """
         return GetListItem(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LIST_ITEM, (list_id, index), 'H H', 'B H'))
 
     def append_to_list(self, list_id, item_object_id):
         """
+        Appends an object to a list object and increases the reference count of the
+        appended object by one.
         
+        Returns the resulting error code.
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_APPEND_TO_LIST, (list_id, item_object_id), 'H H', 'B')
 
     def remove_from_list(self, list_id, index):
         """
+        Removes the object stored at ``index`` from a list object and decreases the
+        reference count of the removed object by one.
         
+        Returns the resulting error code.
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_REMOVE_FROM_LIST, (list_id, index), 'H H', 'B')
 
     def open_file(self, name_string_id, flags, permissions, user_id, group_id):
         """
+        Opens an existing file or creates a new file and creates a file object for it.
         
+        The reference count of the name string object is increased by one. When the
+        file object is destroyed then the reference count of the name string object is
+        decreased by one. Also the name string object is locked and cannot be modified
+        while the file object holds a reference to it.
+        
+        Returns the object ID of the new file object and the resulting error code.
         """
         return OpenFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_FILE, (name_string_id, flags, permissions, user_id, group_id), 'H H H I I', 'B H'))
 
     def get_file_name(self, file_id):
         """
-        
+        Returns the name of a file object and the resulting error code.
         """
         return GetFileName(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_NAME, (file_id,), 'H', 'B H'))
 
     def get_file_type(self, file_id):
         """
-        
+        Returns the type of a file object and the resulting error code.
         """
         return GetFileType(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_TYPE, (file_id,), 'H', 'B B'))
 
     def write_file(self, file_id, buffer, length_to_write):
         """
+        Writes up to 61 bytes to a file object.
         
+        Returns the actual number of bytes written and the resulting error code.
         """
         return WriteFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE, (file_id, buffer, length_to_write), 'H 61B B', 'B B'))
 
     def write_file_unchecked(self, file_id, buffer, length_to_write):
         """
+        Writes up to 61 bytes to a file object.
         
+        Does neither report the actual number of bytes written nor the resulting error
+        code.
         """
         self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE_UNCHECKED, (file_id, buffer, length_to_write), 'H 61B B', '')
 
     def write_file_async(self, file_id, buffer, length_to_write):
         """
+        Writes up to 61 bytes to a file object.
         
+        Reports the actual number of bytes written and the resulting error code via the
+        :func:`AsyncFileWrite` callback.
         """
         self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE_ASYNC, (file_id, buffer, length_to_write), 'H 61B B', '')
 
     def read_file(self, file_id, length_to_read):
         """
+        Reads up to 62 bytes from a file object.
         
+        Returns the read bytes and the resulting error code.
         """
-        return ReadFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_READ_FILE, (file_id, length_to_read), 'H B', 'B 62B b'))
+        return ReadFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_READ_FILE, (file_id, length_to_read), 'H B', 'B 62B B'))
 
     def read_file_async(self, file_id, length_to_read):
         """
+        Reads up to 2\ :sup:`63`\  - 1 bytes from a file object.
         
+        Returns the resulting error code.
+        
+        Reports the read bytes in 60 byte chunks and the resulting error code of the
+        read operation via the :func:`AsyncFileRead` callback.
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_READ_FILE_ASYNC, (file_id, length_to_read), 'H Q', 'B')
 
     def abort_async_file_read(self, file_id):
         """
+        Aborts a :func:`ReadFileAsync` operation in progress.
         
+        Returns the resulting error code.
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_ABORT_ASYNC_FILE_READ, (file_id,), 'H', 'B')
 
     def set_file_position(self, file_id, offset, origin):
         """
+        Set the current seek position of a file object in bytes.
         
+        Returns the resulting seek position and error code.
         """
         return SetFilePosition(*self.ipcon.send_request(self, BrickRED.FUNCTION_SET_FILE_POSITION, (file_id, offset, origin), 'H q B', 'B Q'))
 
     def get_file_position(self, file_id):
         """
-        
+        Returns the current seek position of a file object in bytes and returns the
+        resulting error code.
         """
         return GetFilePosition(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_POSITION, (file_id,), 'H', 'B Q'))
 
     def get_file_info(self, name_string_id, follow_symlink):
         """
+        Returns various information about a file and the resulting error code.
         
+        The information is obtained via the
+        `stat() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html>`__
+        function. If ``follow_symlink`` is *false* then the
+        `lstat() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html>`__
+        function is used instead.
         """
         return GetFileInfo(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_INFO, (name_string_id, follow_symlink), 'H ?', 'B B H I I Q Q Q Q'))
 
     def get_symlink_target(self, name_string_id, canonicalize):
         """
+        Returns the target of a symlink and the resulting error code.
         
+        If ``canonicalize`` is *false* then the target of the symlink is resolved one
+        level via the
+        `readlink() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/readlink.html>`__
+        function, otherwise it is fully resolved using the
+        `realpath() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/realpath.html>`__
+        function.
         """
         return GetSymlinkTarget(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_SYMLINK_TARGET, (name_string_id, canonicalize), 'H ?', 'B H'))
 
     def open_directory(self, name_string_id):
         """
+        Opens an existing directory and creates a directory object for it.
         
+        The reference count of the name string object is increased by one. When the
+        directory object is destroyed then the reference count of the name string
+        object is decreased by one. Also the name string object is locked and cannot be
+        modified while the directory object holds a reference to it.
+        
+        Returns the object ID of the new directory object and the resulting error code.
         """
         return OpenDirectory(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_DIRECTORY, (name_string_id,), 'H', 'B H'))
 
     def get_directory_name(self, directory_id):
         """
-        
+        Returns the name of a directory object and the resulting error code.
         """
         return GetDirectoryName(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_DIRECTORY_NAME, (directory_id,), 'H', 'B H'))
 
     def get_next_directory_entry(self, directory_id):
         """
-        
+        Returns the next entry in the directory object and the resulting error code.
+        If there is not next entry then error code ``API_E_NO_MORE_DATA`` is returned.
+        To rewind the directory object call :func:`RewindDirectory`.
         """
         return GetNextDirectoryEntry(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_NEXT_DIRECTORY_ENTRY, (directory_id,), 'H', 'B H B'))
 
     def rewind_directory(self, directory_id):
         """
-        
+        Rewinds the directory object and returns the resulting error code.
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_REWIND_DIRECTORY, (directory_id,), 'H', 'B')
 
-    def start_process(self, command_string_id, argument_string_ids, argument_count, environment_string_ids, environment_count, merge_stdout_and_stderr):
+    def start_process(self, command_string_id, arguments_list_id, environment_list_id, working_directory_string_id, user_id, group_id, stdin_file_id, stdout_file_id, stderr_file_id):
         """
         
         """
-        return StartProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_START_PROCESS, (command_string_id, argument_string_ids, argument_count, environment_string_ids, environment_count, merge_stdout_and_stderr), 'H 20H B 8H B ?', 'B H'))
+        return StartProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_START_PROCESS, (command_string_id, arguments_list_id, environment_list_id, working_directory_string_id, user_id, group_id, stdin_file_id, stdout_file_id, stderr_file_id), 'H H H H I I H H H', 'B H'))
 
     def get_identity(self):
         """

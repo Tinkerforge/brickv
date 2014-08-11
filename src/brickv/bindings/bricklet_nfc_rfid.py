@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-07-03.      #
+# This file was automatically generated on 2014-08-06.      #
 #                                                           #
-# Bindings Version 2.1.1                                    #
+# Bindings Version 2.1.2                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -201,17 +201,17 @@ class BrickletNFCRFID(Device):
         How many pages are read depends on the tag type. The page sizes are 
         as follows:
         
-        * Mifare Classic page size: 16 byte (1 page is read)
-        * NFC Forum Type 1 page size: 8 byte (2 pages are read)
-        * NFC Forum Type 2 page size: 4 byte (4 pages are read)
+        * Mifare Classic page size: 16 byte (one page is read)
+        * NFC Forum Type 1 page size: 8 byte (two pages are read)
+        * NFC Forum Type 2 page size: 4 byte (four pages are read)
         
         The general approach for reading a tag is as follows:
         
         * Call :func:`RequestTagID`
         * Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or :func:`StateChanged`)
         * Call :func:`GetTagID` and check if tag ID is correct
-        * Call :func:`ReadPage` with page number
-        * Wait for state to change to *ReadPageReady*
+        * Call :func:`RequestPage` with page number
+        * Wait for state to change to *RequestPageReady*
         * Call :func:`GetPage` to retrieve the page from the buffer
         
         If you use a Mifare Classic tag you have to authenticate a page before you
