@@ -170,8 +170,7 @@ class Color(PluginBase):
 
         self.conversion_combo.activated.connect(self.conversion_changed)
 
-        self.light_label = QLabel("Enable Light")
-        self.light_checkbox = QCheckBox()
+        self.light_checkbox = QCheckBox("Enable Light")
 
         self.light_checkbox.stateChanged.connect(self.light_state_changed)
 
@@ -182,7 +181,6 @@ class Color(PluginBase):
         layout_config.addWidget(self.conversion_combo)
         layout_config.addStretch()
         layout_config.addWidget(self.light_checkbox)
-        layout_config.addWidget(self.light_label)
 
         layout_ht1 = QHBoxLayout()
         layout_ht1.addStretch()
