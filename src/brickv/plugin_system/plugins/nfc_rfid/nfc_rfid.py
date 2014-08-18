@@ -209,7 +209,7 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
                 self.textedit_read_page.setPlainText(s)
             elif (state & 0xF) == self.nfc.STATE_WRITE_PAGE:    
                 self.write_page_was_pressed = False
-                s  = 'Could write page {0}'.format(self.write_page_pressed_page)
+                s  = 'Could not write page {0}'.format(self.write_page_pressed_page)
                 self.textedit_read_page.setPlainText(s)
             elif (state & 0xF) == self.nfc.STATE_REQUEST_PAGE:
                 s  = 'Could not read page {0}'.format(self.read_page_pressed_page)
