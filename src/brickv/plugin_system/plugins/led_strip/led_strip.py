@@ -48,7 +48,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.led_strip = self.device
 
         self.has_clock_frequency = version >= (2, 0, 1)
-        self.has_chip_type =version >= (2, 0, 2)
+        self.has_chip_type = version >= (2, 0, 2)
 
         self.qtcb_frame_rendered.connect(self.cb_frame_rendered)
 
