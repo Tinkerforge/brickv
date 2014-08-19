@@ -2,6 +2,7 @@
 """
 Piezo Speaker Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 humidity.py: Piezo Speaker Plugin Implementation
 
@@ -25,7 +26,7 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_piezo_speaker import BrickletPiezoSpeaker
 
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QSpinBox, QApplication
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QSpinBox, QApplication, QSizePolicy
 from PyQt4.QtCore import pyqtSignal, QTimer
 
 class PiezoSpeaker(PluginBase):
@@ -44,6 +45,8 @@ class PiezoSpeaker(PluginBase):
         self.ps.register_callback(self.ps.CALLBACK_MORSE_CODE_FINISHED,
                                   self.qtcb_morse_finished.emit)
         
+        self.has_stoppable_beep = version >= (2, 0, 2)
+        
         self.frequency_label = QLabel('Frequency (585Hz-7100Hz): ')
         self.frequency_box = QSpinBox()
         self.frequency_box.setMinimum(585)
@@ -54,13 +57,16 @@ class PiezoSpeaker(PluginBase):
         self.frequency_layout.addWidget(self.frequency_box)
         self.frequency_layout.addStretch()
         
-        self.beep_edit = QLineEdit()
-        self.beep_edit.setText(str(1000))
+        self.beep_box = QSpinBox()
+        self.beep_box.setMinimum(0)
+        self.beep_box.setMaximum(2147483647)
+        self.beep_box.setValue(1000)
+        self.beep_box.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.beep_label = QLabel('Duration (ms): ')
         self.beep_button = QPushButton('Send Beep')
         self.beep_layout = QHBoxLayout()
         self.beep_layout.addWidget(self.beep_label)
-        self.beep_layout.addWidget(self.beep_edit)
+        self.beep_layout.addWidget(self.beep_box)
         self.beep_layout.addWidget(self.beep_button)
         
         self.morse_edit = QLineEdit()
@@ -159,20 +165,21 @@ class PiezoSpeaker(PluginBase):
         self.morse_button.setDisabled(True)
         self.scale_button.setDisabled(True)
 
-    
     def beep_pressed(self):
         freq = self.frequency_box.value()
-        duration = int(self.beep_edit.text())
+        duration = self.beep_box.value()
+
         try:
             self.ps.beep(duration, freq)
         except ip_connection.Error:
             return
-        
-        self.beep_button.setDisabled(True)
-        self.morse_button.setDisabled(True)
-        self.scale_button.setDisabled(True)
-        self.status_label.setText('Beeping...')        
-        
+
+        if duration > 0 or not self.has_stoppable_beep:
+            self.beep_button.setDisabled(True)
+            self.morse_button.setDisabled(True)
+            self.scale_button.setDisabled(True)
+            self.status_label.setText('Beeping...')
+
     def morse_pressed(self):
         freq = self.frequency_box.value()
         morse = str(self.morse_edit.text())
