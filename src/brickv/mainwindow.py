@@ -295,6 +295,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         widget = self.plugins[uid]
         # ensure that the widget gets correctly destroyed
         widget.hide()
+        #widget.close()
         widget.setParent(None)
         widget = None
 
@@ -579,9 +580,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 info.plugin_container = c
                 #pk-
                 self.plugins[plugin.uid] = c
-                #c.show()
+                c.setWindowFlags(Qt.Window)
+                c.show()
+                plugin.start()
                 #-pk
-                self.tab_widget.addTab(c, info.name)
+                #self.tab_widget.addTab(c, info.name)
         elif enumeration_type == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
             for device_info in infos.infos.values():
                 if device_info.type in ('brick', 'bricklet'):
