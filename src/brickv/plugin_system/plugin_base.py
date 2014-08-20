@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
 Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 plugin_base.py: Base class for all Brick Viewer Plugins
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -57,7 +57,10 @@ class PluginBase(QWidget, object):
                 obj.hide()
                 obj.setParent(None)
 
-                setattr(self, member, None)
+                # Though the registered_callbacks are checked, plugins in their own
+                # window still receive callbacks (maybe issued later..?).
+                # The following line results in an error then.
+                #setattr(self, member, None)
 
     def increase_error_count(self):
         self.error_count += 1
@@ -70,14 +73,14 @@ class PluginBase(QWidget, object):
                 self.label_timeouts.setText('{0}'.format(self.error_count))
             except:
                 pass
-        
+
     # To be overridden by inheriting class
     def stop(self):
         pass
-    
+
     def start(self):
         pass
-    
+
     def destroy(self):
         pass
 
