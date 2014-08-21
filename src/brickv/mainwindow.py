@@ -441,11 +441,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         uid_index = index.sibling(index.row(), 1)
 
         if uid_index.isValid():
-            text = str(uid_index.data().toString())
-            i = self.tab_for_uid(text)
-
-            if i > 0 and self.tab_widget.isTabEnabled(i):
-                self.tab_widget.setCurrentIndex(i)
+            uid_text = str(uid_index.data().toString())
+            self.show_plugin(uid_text)
 
     def connected_uid_pressed(self, connected_uid):
         i = self.tab_for_uid(connected_uid)
@@ -559,6 +556,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         return -1
 
+    def show_plugin(self, uid):
+        i = self.tab_for_uid(uid)
+
+        if i > 0:
+            if self.tab_widget.isTabEnabled(i):
+                self.tab_widget.setCurrentIndex(i)
+        else:
+            widget = self.plugins[uid]
+            QApplication.setActiveWindow(widget)
+            widget.show()
+            widget.activateWindow()
+            widget.raise_()
+
+
     def cb_enumerate(self, uid, connected_uid, position,
                      hardware_version, firmware_version,
                      device_identifier, enumeration_type):
@@ -623,7 +634,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 c = self.create_plugin_container(plugin, connected_uid, position)
                 info.plugin_container = c
-                self.plugins[plugin.uid] = c
+                self.plugins[str(plugin.uid)] = c
                 c.setWindowFlags(Qt.Widget)
                 #c.show()
                 #plugin.start()
