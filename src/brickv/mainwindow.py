@@ -295,7 +295,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for uid in self.plugins:
             plugs[uid] = self.tab_for_uid(uid)
 
-        #print "Remove all: %s" % plugs
         for key in sorted(plugs, key = plugs.get, reverse = True):
             if not self.remove_tab(plugs[key]):
                 break
@@ -445,9 +444,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.show_plugin(uid_text)
 
     def connected_uid_pressed(self, connected_uid):
-        i = self.tab_for_uid(connected_uid)
-        if i > 0:
-            self.tab_widget.setCurrentIndex(i)
+        self.show_plugin(str(connected_uid))
 
     def create_plugin_container(self, plugin, connected_uid, position):
         container = PluginWindow(self.tab_widget, plugin.name)
@@ -558,16 +555,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def show_plugin(self, uid):
         i = self.tab_for_uid(uid)
+        widget = self.plugins[uid]
 
         if i > 0:
             if self.tab_widget.isTabEnabled(i):
                 self.tab_widget.setCurrentIndex(i)
-        else:
-            widget = self.plugins[uid]
-            QApplication.setActiveWindow(widget)
-            widget.show()
-            widget.activateWindow()
-            widget.raise_()
+
+        QApplication.setActiveWindow(widget)
+        widget.show()
+        widget.activateWindow()
+        widget.raise_()
 
 
     def cb_enumerate(self, uid, connected_uid, position,
