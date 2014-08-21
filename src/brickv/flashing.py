@@ -120,7 +120,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.brick_changed(0)
 
         self.update_tree_view_model_labels = ['Name', 'UID', 'Installed', 'Latest']
-        self.update_tree_view_model = QStandardItemModel()
+        self.update_tree_view_model = QStandardItemModel(self)
         self.update_tree_view.setModel(self.update_tree_view_model)
         self.update_tree_view.setSortingEnabled(True)
         self.update_tree_view.header().setSortIndicator(0, Qt.AscendingOrder)
