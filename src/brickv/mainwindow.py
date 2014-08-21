@@ -45,7 +45,6 @@ import signal
 import sys
 import time
 
-#pk-
 class PluginWindow(QWidget):
     untab = pyqtSignal(QWidget)
 
@@ -71,7 +70,6 @@ class PluginWindow(QWidget):
             self.tab_widget.addTab(self, self.name)
             self.setWindowFlags(Qt.Widget)
 
-#-pk
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -119,10 +117,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ipcon.register_callback(IPConnection.CALLBACK_DISCONNECTED,
                                      self.qtcb_disconnected.emit)
 
-        #pk-
         # plugins, dictionary, uid:instance
         self.plugins = {}
-        #-pk
 
         self.flashing_window = None
         self.advanced_window = None
@@ -133,10 +129,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_advanced.setDisabled(True)
 
         self.tab_widget.currentChanged.connect(self.tab_changed)
-        #pk-
         self.tab_widget.setMovable(True)
         self.tab_widget.tabBar().installEventFilter(self)
-        #-pk
 
         self.button_connect.pressed.connect(self.connect_pressed)
         self.button_flashing.pressed.connect(self.flashing_pressed)
@@ -294,7 +288,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.host_infos[i].use_authentication = self.checkbox_authentication.isChecked()
         self.host_infos[i].secret = str(self.edit_secret.text())
         self.host_infos[i].remember_secret = self.checkbox_remember_secret.isChecked()
-#pk-
+
     def remove_all_plugs(self):
         # first remove all tabs in reverse order
         plugs = {}
@@ -333,16 +327,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         widget.setParent(None)
         widget = None
 
-#    def remove_tab(self, i):
-#        widget = self.tab_widget.widget(i)
-#        self.tab_widget.removeTab(i)
-#
-#        # ensure that the widget gets correctly destroyed
-#        widget.hide()
-#        widget.setParent(None)
-#        widget = None
-#-pk
-
     def reset_view(self):
         self.tab_widget.setCurrentIndex(0)
 
@@ -366,11 +350,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             except:
                 pass
 
-#pk-
         self.remove_all_plugs()
-        #for i in reversed(range(1, self.tab_widget.count())):
-        #    self.remove_tab(i)
-#-pk
         self.update_tree_view()
 
     def do_disconnect(self):
@@ -473,10 +453,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tab_widget.setCurrentIndex(i)
 
     def create_plugin_container(self, plugin, connected_uid, position):
-        #pk-
-        #container = QWidget()
         container = PluginWindow(self.tab_widget, plugin.name)
-        #-pk
         container._uid = plugin.uid
         layout = QVBoxLayout(container)
         info = QHBoxLayout()
@@ -540,7 +517,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         return container
 
-#pk-
     def tabStateChange(self, event):
         tw = self.tab_widget
         index = tw.currentIndex()
@@ -571,7 +547,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return self.tabStateChange(event)
 
         return False
-#-pk
 
     def tab_for_uid(self, uid):
         for i in range(1, self.tab_widget.count()):
@@ -648,12 +623,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 c = self.create_plugin_container(plugin, connected_uid, position)
                 info.plugin_container = c
-                #pk-
                 self.plugins[plugin.uid] = c
                 c.setWindowFlags(Qt.Widget)
                 #c.show()
                 #plugin.start()
-                #-pk
                 self.tab_widget.addTab(c, info.name)
                 #c.untab()
         elif enumeration_type == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
@@ -673,12 +646,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                 except:
                                     pass
 
-                            #pk-
                             remove_plug(device_info.uid)
-                            #i = self.tab_for_uid(device_info.uid)
-                            #if i > 0:
-                            #    self.remove_tab(i)
-                            #-pk
                         except:
                             pass
 
