@@ -90,7 +90,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle("Brick Viewer " + config.BRICKV_VERSION)
 
         self.tree_view_model_labels = ['Name', 'UID', 'FW Version']
-        self.tree_view_model = QStandardItemModel()
+        self.tree_view_model = QStandardItemModel(self)
         self.tree_view.setModel(self.tree_view_model)
         self.tree_view.doubleClicked.connect(self.item_double_clicked)
         self.set_tree_view_defaults()
