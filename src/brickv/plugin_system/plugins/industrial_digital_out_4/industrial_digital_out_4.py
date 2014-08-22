@@ -2,6 +2,7 @@
 """
 Industrial Digital Out 4 Plugin
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 industrial_digital_out_4.py: Industrial Digital Out 4 Plugin Implementation
 
@@ -33,9 +34,9 @@ from brickv.bmp_to_pixmap import bmp_to_pixmap
 class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
     qtcb_monoflop = pyqtSignal(int, int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Industrial Digital Out 4 Bricklet', version, BrickletIndustrialDigitalOut4)
-        
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Industrial Digital Out 4 Bricklet', BrickletIndustrialDigitalOut4, *args)
+
         self.setupUi(self)
         
         self.ido4 = self.device

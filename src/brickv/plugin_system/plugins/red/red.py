@@ -28,17 +28,18 @@ from brickv.async_call import async_call
 from brickv.plugin_system.plugins.red.ui_red import Ui_RED
 
 class RED(PluginBase, Ui_RED):
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'RED Brick', version, BrickRED)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'RED Brick', BrickRED, *args)
 
         self.setupUi(self)
+        self.adjustSize()
 
         self.red = self.device
 
         # FIXME: RED Brick doesn't do enumerate-connected callback correctly yet
         #        for Brick(let)s connected to it. Trigger a enumerate to pick up
         #        all devices connected to a RED Brick properly
-        ipcon.enumerate()
+        self.ipcon.enumerate()
 
     def start(self):
         pass

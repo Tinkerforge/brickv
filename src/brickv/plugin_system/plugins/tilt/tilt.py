@@ -2,6 +2,7 @@
 """
 Tilt Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 tilt.py: Tilt Plugin Implementation
 
@@ -33,8 +34,8 @@ from PyQt4.QtCore import pyqtSignal
 class Tilt(PluginBase):
     qtcb_tilt_state = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Tilt Bricklet', version, BrickletTilt)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Tilt Bricklet', BrickletTilt, *args)
 
         self.tilt = self.device
         

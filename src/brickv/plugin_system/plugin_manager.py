@@ -29,9 +29,9 @@ class PluginManager:
     def __init__(self):
         self.plugins = device_classes
 
-    def get_plugin(self, device_identifier, ipcon, uid, version):
+    def get_plugin(self, device_identifier, ipcon, uid, hardware_version, firmware_version):
         for plugin in self.plugins:
             if plugin.has_device_identifier(device_identifier):
-                return plugin(ipcon, uid, version)
+                return plugin(ipcon, uid, hardware_version, firmware_version)
 
-        return Unknown(ipcon, uid, version)
+        return Unknown(ipcon, uid, hardware_version, firmware_version)

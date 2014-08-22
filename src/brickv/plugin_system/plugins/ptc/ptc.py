@@ -2,6 +2,7 @@
 """
 PTC Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 ptc.py: PTC Plugin Implementation
 
@@ -43,8 +44,8 @@ class PTC(PluginBase):
     qtcb_temperature = pyqtSignal(int)
 #    qtcb_resistance = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'PTC Bricklet', version, BrickletPTC)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'PTC Bricklet', BrickletPTC, *args)
 
         self.ptc = self.device
         

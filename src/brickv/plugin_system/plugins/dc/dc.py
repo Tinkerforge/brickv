@@ -2,6 +2,7 @@
 """
 brickv (Brick Viewer) 
 Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 dc.py: DC Plugin implementation
 
@@ -37,9 +38,9 @@ class DC(PluginBase, Ui_DC):
     qtcb_under_voltage = pyqtSignal(int)
     qtcb_emergency_shutdown = pyqtSignal()
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'DC Brick', version, BrickDC)
-        
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'DC Brick', BrickDC, *args)
+
         self.setupUi(self)
         
         self.dc = self.device
@@ -97,7 +98,7 @@ class DC(PluginBase, Ui_DC):
         self.dc.register_callback(self.dc.CALLBACK_CURRENT_VELOCITY,
                                   self.qtcb_position_reached.emit)
         
-#        if self.version >= (2, 0, 1):
+#        if self.firmware_version >= (2, 0, 1):
 #            self.enable_encoder_checkbox.stateChanged.connect(self.enable_encoder_state_changed)
 #            self.encoder_show()
 #        else:
@@ -118,7 +119,7 @@ class DC(PluginBase, Ui_DC):
         self.destroy_ui()
 
     def has_reset_device(self):
-        return self.version >= (1, 1, 3)
+        return self.firmware_version >= (1, 1, 3)
 
     def reset_device(self):
         if self.has_reset_device():
@@ -319,9 +320,8 @@ class DC(PluginBase, Ui_DC):
         async_call(self.dc.get_acceleration, None, self.get_acceleration_async, self.increase_error_count)
         async_call(self.dc.get_pwm_frequency, None, self.get_pwm_frequency_async, self.increase_error_count)
         async_call(self.dc.is_enabled, None, self.is_enabled_async, self.increase_error_count)
-#        if self.version >= (2, 0, 1):
+#        if self.firmware_version >= (2, 0, 1):
 #            self.update_encoder()
-            
 
     def update_data(self):
         async_call(self.dc.get_stack_input_voltage, None, self.stack_input_voltage_update, self.increase_error_count)

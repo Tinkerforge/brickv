@@ -48,7 +48,7 @@ import time
 class PluginWindow(QWidget):
     untab = pyqtSignal(QWidget)
 
-    def __init__(self, tab_widget, name, parent = None):
+    def __init__(self, tab_widget, name, parent=None):
         super(PluginWindow, self).__init__(parent)
         self.tab_widget = tab_widget
         self.name = name
@@ -69,8 +69,6 @@ class PluginWindow(QWidget):
         if self.windowFlags() & Qt.Window:
             self.tab_widget.addTab(self, self.name)
             self.setWindowFlags(Qt.Widget)
-
-
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     qtcb_enumerate = pyqtSignal(str, str, 'char', type((0,)), type((0,)), int, int)
@@ -477,7 +475,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # firmware version
         info.addWidget(QLabel('FW Version:'))
-        info.addWidget(QLabel('{0}'.format(plugin.version_str)))
+        info.addWidget(QLabel(infos.get_version_string(plugin.firmware_version)))
 
         info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
@@ -617,17 +615,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         return
 
             plugin = self.plugin_manager.get_plugin(device_identifier, self.ipcon,
-                                                    uid, firmware_version)
+                                                    uid, hardware_version, firmware_version)
 
             if plugin is not None:
                 info.plugin = plugin
-                if plugin.is_hardware_version_relevant(hardware_version):
-                    info.name = '{0} {1}.{2}'.format(plugin.name,
-                                                     hardware_version[0],
-                                                     hardware_version[1])
-                else:
-                    info.name = plugin.name
-
+                info.name = plugin.name
                 info.url_part = plugin.get_url_part()
 
                 c = self.create_plugin_container(plugin, connected_uid, position)

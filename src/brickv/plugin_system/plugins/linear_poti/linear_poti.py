@@ -2,6 +2,7 @@
 """
 Linear Poti Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 poti.py: Poti Plugin implementation
 
@@ -38,8 +39,8 @@ class PositionLabel(QLabel):
 class LinearPoti(PluginBase):
     qtcb_position = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Linear Poti Bricklet', version, BrickletLinearPoti)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Linear Poti Bricklet', BrickletLinearPoti, *args)
         
         self.lp = self.device
         

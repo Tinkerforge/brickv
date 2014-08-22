@@ -2,6 +2,7 @@
 """
 Distance US Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 distance_us.py: Distance US Plugin Implementation
 
@@ -36,9 +37,9 @@ class DistanceLabel(QLabel):
     
 class DistanceUS(PluginBase):
     qtcb_distance = pyqtSignal(int)
-    
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Distance US Bricklet', version, BrickletDistanceUS)
+
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Distance US Bricklet', BrickletDistanceUS, *args)
 
         self.dist = self.device
         

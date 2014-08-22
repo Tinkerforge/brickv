@@ -2,6 +2,7 @@
 """
 Sound Intensity Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 sound_intensity.py: Sound Intensity Plugin Implementation
 
@@ -61,8 +62,8 @@ class IntensityLabel(QLabel):
 class SoundIntensity(PluginBase):
     qtcb_intensity = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Sound Intensity Bricklet', version, BrickletSoundIntensity)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Sound Intensity Bricklet', BrickletSoundIntensity, *args)
 
         self.si = self.device
         

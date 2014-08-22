@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-  
 """
-Temperature-IR Plugin
+Temperature IR Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 temperature_ir.py: Temperature-IR Plugin Implementation
 
@@ -44,8 +45,8 @@ class TemperatureIR(PluginBase):
     qtcb_ambient_temperature = pyqtSignal(int)
     qtcb_object_temperature = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Temperature IR Bricklet', version, BrickletTemperatureIR)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Temperature IR Bricklet', BrickletTemperatureIR, *args)
         
         self.tem = self.device
         

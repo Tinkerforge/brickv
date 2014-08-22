@@ -2,6 +2,7 @@
 """
 Industrial Digital In 4 Plugin
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 industrial_digital_in_4.py: Industrial Digital In 4 Plugin Implementation
 
@@ -33,9 +34,9 @@ from brickv.bmp_to_pixmap import bmp_to_pixmap
 class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
     qtcb_interrupt = pyqtSignal(int, int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Industrial Digital In 4 Bricklet', version, BrickletIndustrialDigitalIn4)
-        
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Industrial Digital In 4 Bricklet', BrickletIndustrialDigitalIn4, *args)
+
         self.setupUi(self)
         
         self.idi4 = self.device

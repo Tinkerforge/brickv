@@ -2,8 +2,9 @@
 """
 LCD20x4 Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-lcd_20x4.py: LCD20x4 Plugin Implementation
+lcd_20x4.py: LCD 20x4 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -36,12 +37,10 @@ class LCD20x4(PluginBase):
     qtcb_pressed = pyqtSignal(int)
     qtcb_released = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'LCD 20x4 Bricklet', version, BrickletLCD20x4)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'LCD 20x4 Bricklet', BrickletLCD20x4, *args)
 
         self.lcd = self.device
-
-        self.hardware_version = (1, 0, 0)
 
         self.qtcb_pressed.connect(self.cb_pressed)
         self.lcd.register_callback(self.lcd.CALLBACK_BUTTON_PRESSED,
@@ -107,7 +106,7 @@ class LCD20x4(PluginBase):
         self.bl_button.pressed.connect(self.bl_pressed)
         self.text_button.pressed.connect(self.text_pressed)
         
-        if self.version >= (2, 0, 1):
+        if self.firmware_version >= (2, 0, 1):
             line = QFrame()
             line.setFrameShape(QFrame.HLine)
             line.setFrameShadow(QFrame.Sunken)
@@ -182,10 +181,14 @@ class LCD20x4(PluginBase):
         layout.addWidget(self.clear_button)
         layout.addLayout(self.onofflayout)
         layout.addLayout(self.buttonlayout)
-        
-        if self.version >= (2, 0, 1):
+
+        if self.hardware_version <= (1, 1, 0):
+            self.b3_label.hide()
+
+        if self.firmware_version >= (2, 0, 1):
             layout.addWidget(line)
             layout.addLayout(self.char_main_layoutv)
+
         layout.addStretch(1)
 
     def char_button_pressed(self, i, j):
@@ -227,11 +230,7 @@ class LCD20x4(PluginBase):
     def get_url_part(self):
         return 'lcd_20x4_v{0}{1}'.format(self.hardware_version[0], self.hardware_version[1])
     
-    def is_hardware_version_relevant(self, hardware_version):
-        # FIXME: hack to avoid passing the hardware_version to all plugins
-        self.hardware_version = hardware_version
-        if hardware_version <= (1, 1, 0):
-            self.b3_label.hide()
+    def is_hardware_version_relevant(self):
         return True
 
     @staticmethod
@@ -308,7 +307,7 @@ class LCD20x4(PluginBase):
         line = int(self.line_combo.currentText())
         position = int(self.pos_combo.currentText())
         text = unicode(self.text_edit.text().toUtf8(), 'utf-8')
-        if self.version >= (2, 0, 1):
+        if self.firmware_version >= (2, 0, 1):
             for i in range(8):
                 text = text.replace('\\' + str(i), chr(i+8))
         try:

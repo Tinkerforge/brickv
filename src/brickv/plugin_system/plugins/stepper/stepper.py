@@ -2,6 +2,7 @@
 """
 brickv (Brick Viewer) 
 Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 stepper.py: Stepper Plugin implementation
 
@@ -36,9 +37,9 @@ class Stepper(PluginBase, Ui_Stepper):
     qtcb_position_reached = pyqtSignal(int)
     qtcb_under_voltage = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Stepper Brick', version, BrickStepper)
-        
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Stepper Brick', BrickStepper, *args)
+
         self.setupUi(self)
      
         self.stepper = self.device
@@ -115,7 +116,7 @@ class Stepper(PluginBase, Ui_Stepper):
         self.destroy_ui()
 
     def has_reset_device(self):
-        return self.version >= (1, 1, 4)
+        return self.firmware_version >= (1, 1, 4)
 
     def reset_device(self):
         if self.has_reset_device():

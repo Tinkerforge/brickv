@@ -2,6 +2,7 @@
 """
 Industrial Quad Relay Plugin
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 industrial_quad_relay.py: Industrial Quad Relay Plugin Implementation
 
@@ -33,9 +34,9 @@ from brickv.bmp_to_pixmap import bmp_to_pixmap
 class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
     qtcb_monoflop = pyqtSignal(int, int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Industrial Quad Relay Bricklet', version, BrickletIndustrialQuadRelay)
-        
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Industrial Quad Relay Bricklet', BrickletIndustrialQuadRelay, *args)
+
         self.setupUi(self)
         
         self.iqr = self.device

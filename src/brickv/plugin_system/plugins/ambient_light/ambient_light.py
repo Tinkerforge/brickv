@@ -2,6 +2,7 @@
 """
 Ambient Light Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 ambientlight.py: Ambient Light Bricklet Plugin Implementation
 
@@ -60,8 +61,8 @@ class IlluminanceLabel(QLabel):
 class AmbientLight(PluginBase):
     qtcb_illuminance = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Ambient Light Bricklet', version, BrickletAmbientLight)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Ambient Light Bricklet', BrickletAmbientLight, *args)
         
         self.al = self.device
         

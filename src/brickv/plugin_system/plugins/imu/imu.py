@@ -2,6 +2,7 @@
 """
 IMU Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 imu.py: IMU Plugin implementation
 
@@ -88,8 +89,8 @@ class Plot(Qwt.QwtPlot):
             self.data_y[i] = []
 
 class IMU(PluginBase, Ui_IMU):
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'IMU Brick', version, BrickIMU)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'IMU Brick', BrickIMU, *args)
         
         self.setupUi(self)
 
@@ -227,7 +228,7 @@ in the image above, then press "Save Orientation".""")
         self.destroy_ui()
 
     def has_reset_device(self):
-        return self.version >= (1, 0, 7)
+        return self.firmware_version >= (1, 0, 7)
 
     def reset_device(self):
         if self.has_reset_device():

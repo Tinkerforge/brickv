@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 Unknown Plugin
-Copyright (C) 2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2013-2014 Matthias Bolte <matthias@tinkerforge.com>
 
 unknown.py: Unknwon Plugin Implementation
 
@@ -26,8 +26,8 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QLabel, QVBoxLayout
     
 class Unknown(PluginBase):
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Unknown', version, None)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Unknown', None, *args)
         
         layout = QVBoxLayout(self)
         layout.addStretch()

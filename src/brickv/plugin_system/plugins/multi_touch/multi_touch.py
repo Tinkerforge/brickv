@@ -2,6 +2,7 @@
 """
 Multi Touch Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 multi_touch.py: Multi Touch Plugin Implementation
 
@@ -32,9 +33,9 @@ from PyQt4.QtCore import pyqtSignal
 class MultiTouch(PluginBase, Ui_MultiTouch):
     qtcb_touch_state = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Multi Touch Bricklet', version, BrickletMultiTouch)
-        
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Multi Touch Bricklet', BrickletMultiTouch, *args)
+
         self.setupUi(self)
 
         self.mt = self.device

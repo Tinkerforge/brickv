@@ -35,8 +35,9 @@ class CalibrateGyroscopeBias(QWidget, Ui_calibrate_gyroscope_bias):
     
     def __init__(self, parent):
         QWidget.__init__(self)
+
         self.setupUi(self)
-        
+
         self.parent = parent
         self.imu = parent.parent.imu
         

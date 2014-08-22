@@ -2,6 +2,7 @@
 """
 Rotary Poti Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 poti.py: Rotary Poti Plugin implementation
 
@@ -38,8 +39,8 @@ class PositionLabel(QLabel):
 class RotaryPoti(PluginBase):
     qtcb_position = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Rotary Poti Bricklet', version, BrickletRotaryPoti)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Rotary Poti Bricklet', BrickletRotaryPoti, *args)
         
         self.rp = self.device
         

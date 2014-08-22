@@ -2,6 +2,7 @@
 """
 Analog Out Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 analog_out.py: Analog Out Plugin Implementation
 
@@ -29,8 +30,8 @@ from brickv.async_call import async_call
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBox
 
 class AnalogOut(PluginBase):
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Analog Out Bricklet', version, BrickletAnalogOut)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Analog Out Bricklet', BrickletAnalogOut, *args)
         
         self.ao = self.device
         

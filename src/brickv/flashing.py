@@ -83,6 +83,7 @@ class ProgressWrapper:
 class FlashingWindow(QFrame, Ui_widget_flashing):
     def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
+
         self.setupUi(self)
 
         self.tool_infos = {}

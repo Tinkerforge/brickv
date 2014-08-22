@@ -29,8 +29,9 @@ from brickv.plugin_system.plugins.imu.ui_calibrate_temperature import Ui_calibra
 class CalibrateTemperature(QWidget, Ui_calibrate_temperature):
     def __init__(self, parent):
         QWidget.__init__(self)
+
         self.setupUi(self)
-        
+
         self.parent = parent
         
     def start(self):

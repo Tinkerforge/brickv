@@ -2,6 +2,7 @@
 """
 Distance IR Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 distance.py: Distance IR Plugin Implementation
 
@@ -51,8 +52,8 @@ class DistanceIR(PluginBase):
     qtcb_distance = pyqtSignal(int)
     qtcb_analog = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Distance IR Bricklet', version, BrickletDistanceIR)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Distance IR Bricklet', BrickletDistanceIR, *args)
 
         self.dist = self.device
         

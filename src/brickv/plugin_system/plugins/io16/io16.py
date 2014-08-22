@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-  
 """
 IO-16 Plugin
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 io16.py: IO-16 Plugin Implementation
 
@@ -35,14 +35,14 @@ class IO16(PluginBase, Ui_IO16):
     qtcb_interrupt = pyqtSignal('char', int, int)
     qtcb_monoflop = pyqtSignal('char', int, int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'IO-16 Bricklet', version, BrickletIO16)
-        
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'IO-16 Bricklet', BrickletIO16, *args)
+
         self.setupUi(self)
         
         self.io = self.device
         
-        self.has_monoflop = version >= (1, 1, 2)
+        self.has_monoflop = self.firmware_version >= (1, 1, 2)
         
         self.qtcb_interrupt.connect(self.cb_interrupt)
         self.io.register_callback(self.io.CALLBACK_INTERRUPT,

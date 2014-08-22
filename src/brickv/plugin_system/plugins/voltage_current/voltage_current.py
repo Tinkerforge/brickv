@@ -2,6 +2,7 @@
 """
 Voltage/Current Plugin
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 voltage_current.py: Voltage/Current Plugin Implementation
 
@@ -52,8 +53,8 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
     qtcb_voltage = pyqtSignal(int)
     qtcb_power = pyqtSignal(int)
     
-    def __init__ (self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Voltage/Current Bricklet', version, BrickletVoltageCurrent)
+    def __init__ (self, *args):
+        PluginBase.__init__(self, 'Voltage/Current Bricklet', BrickletVoltageCurrent, *args)
         
         self.setupUi(self)
         

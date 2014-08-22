@@ -2,6 +2,7 @@
 """
 Piezo Buzzer Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 humidity.py: Piezo Buzzer Plugin Implementation
 
@@ -32,8 +33,8 @@ class PiezoBuzzer(PluginBase):
     qtcb_beep_finished = pyqtSignal()
     qtcb_morse_finished = pyqtSignal()
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Piezo Buzzer Bricklet', version, BrickletPiezoBuzzer)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Piezo Buzzer Bricklet', BrickletPiezoBuzzer, *args)
         
         self.pb = self.device
         

@@ -2,6 +2,7 @@
 """
 Temperature Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 temperature.py: Temperature Plugin Implementation
 
@@ -37,8 +38,8 @@ class TemperatureLabel(QLabel):
 class Temperature(PluginBase):
     qtcb_temperature = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Temperature Bricklet', version, BrickletTemperature)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Temperature Bricklet', BrickletTemperature, *args)
         
         self.tem = self.device
         

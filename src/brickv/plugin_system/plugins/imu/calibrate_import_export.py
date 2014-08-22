@@ -31,6 +31,7 @@ from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
 class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
     def __init__(self, parent):
         QWidget.__init__(self)
+
         self.setupUi(self)
 
         self.parent = parent

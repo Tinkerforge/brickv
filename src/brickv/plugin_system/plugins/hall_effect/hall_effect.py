@@ -2,6 +2,7 @@
 """
 Hall Effect Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 hall_effect.py: Hall Effect Plugin Implementation
 
@@ -34,9 +35,9 @@ import PyQt4.Qwt5 as Qwt
 class HallEffect(PluginBase, Ui_HallEffect):
     qtcb_edge_count = pyqtSignal(int, bool)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Hall Effect Bricklet', version, BrickletHallEffect)
-        
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Hall Effect Bricklet', BrickletHallEffect, *args)
+
         self.setupUi(self)
 
         self.hf = self.device

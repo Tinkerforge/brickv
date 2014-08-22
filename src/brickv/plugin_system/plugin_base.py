@@ -25,20 +25,27 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtGui import QWidget
 
 class PluginBase(QWidget, object):
-    def __init__(self, ipcon, uid, name, version, device_class):
+    def __init__(self, base_name, device_class, ipcon, uid, hardware_version, firmware_version):
         QWidget.__init__(self)
         self.label_timeouts = None
+        self.base_name = base_name
         self.ipcon = ipcon
         self.uid = uid
-        self.name = name
-        self.version = version
-        self.version_str = '.'.join(map(str, version))
+        self.hardware_version = hardware_version
+        self.firmware_version = firmware_version
         self.error_count = 0
 
         if device_class is not None:
             self.device = device_class(uid, ipcon)
         else:
             self.device = None
+
+        if self.is_hardware_version_relevant():
+            self.name = '{0} {1}.{2}'.format(self.base_name,
+                                             self.hardware_version[0],
+                                             self.hardware_version[1])
+        else:
+            self.name = self.base_name
 
     def destroy_ui(self):
         # before destroying the widgets ensure that all callbacks are
@@ -94,7 +101,7 @@ class PluginBase(QWidget, object):
     def is_brick(self):
         return False
 
-    def is_hardware_version_relevant(self, hardware_version):
+    def is_hardware_version_relevant(self):
         return False
 
     def get_url_part(self):

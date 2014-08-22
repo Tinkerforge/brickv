@@ -2,7 +2,7 @@
 """
 Master Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
 rs485.py: RS485 for Master Plugin implementation
 
@@ -33,12 +33,13 @@ from brickv import infos
 class RS485(QWidget, Ui_RS485):
     def __init__(self, parent):
         QWidget.__init__(self)
+
         self.setupUi(self)
 
         self.parent = parent
         self.master = parent.master
 
-        if parent.version >= (1, 2, 0):
+        if parent.firmware_version >= (1, 2, 0):
             async_call(self.master.get_rs485_configuration, None, self.get_rs485_configuration_async, self.parent.increase_error_count)
             self.update_generator = self.update_addresses()
             self.update_generator.next()

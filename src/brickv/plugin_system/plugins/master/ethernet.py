@@ -2,6 +2,7 @@
 """
 Master Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 ethernet.py: Ethernet for Master Plugin implementation
 
@@ -54,7 +55,9 @@ class SpinBoxHex(QSpinBox):
 class Ethernet(QWidget, Ui_Ethernet):
     def __init__(self, parent):
         QWidget.__init__(self)
+
         self.setupUi(self)
+
         self.parent = parent
         self.master = parent.master
 
@@ -66,7 +69,7 @@ class Ethernet(QWidget, Ui_Ethernet):
         self.last_port = 4223
         self.last_websocket_port = 4280
 
-        if parent.version >= (2, 1, 0):
+        if parent.firmware_version >= (2, 1, 0):
             async_call(self.master.get_ethernet_configuration, None, self.get_ethernet_configuration_async, self.parent.increase_error_count)
             async_call(self.master.get_ethernet_status, None, self.get_ethernet_status_init_async, self.parent.increase_error_count)
             self.ethernet_connection.currentIndexChanged.connect(self.connection_changed)
@@ -88,7 +91,8 @@ class Ethernet(QWidget, Ui_Ethernet):
             self.mac_layout.addWidget(self.ethernet_mac2)
             self.mac_layout.addWidget(QLabel(':'))
             self.mac_layout.addWidget(self.ethernet_mac1)
-        if parent.version >= (2, 2, 0):
+
+        if parent.firmware_version >= (2, 2, 0):
             async_call(self.master.get_ethernet_websocket_configuration, None, self.get_ethernet_websocket_configuration_async, self.parent.increase_error_count)
             self.ethernet_socket_connections.valueChanged.connect(self.socket_connections_changed)
             self.ethernet_websocket_connections.valueChanged.connect(self.websocket_connections_changed)
@@ -156,7 +160,7 @@ class Ethernet(QWidget, Ui_Ethernet):
             self.ethernet_secret.setEchoMode(QLineEdit.Password)
             
     def ethernet_port_changed(self, value):
-        if self.parent.version < (2, 2, 0):
+        if self.parent.firmware_version < (2, 2, 0):
             return
         
         if self.ethernet_websocket_port.value() == value:
@@ -321,7 +325,7 @@ class Ethernet(QWidget, Ui_Ethernet):
         self.master.set_ethernet_hostname(hostname)
         self.master.set_ethernet_mac_address(mac)
         
-        if self.parent.version >= (2, 2, 0):
+        if self.parent.firmware_version >= (2, 2, 0):
             port_websocket = self.ethernet_websocket_port.value()
             websocket_connections = self.ethernet_websocket_connections.value()
             self.master.set_ethernet_authentication_secret(secret)
@@ -330,7 +334,7 @@ class Ethernet(QWidget, Ui_Ethernet):
         secret_old = secret
         websocket_connections_old = websocket_connections
         port_websocket_old = port_websocket
-        if self.parent.version >= (2, 2, 0):
+        if self.parent.firmware_version >= (2, 2, 0):
             secret_old = self.master.get_ethernet_authentication_secret()
             websocket_connections, port_websocket = self.master.get_ethernet_websocket_configuration()
 

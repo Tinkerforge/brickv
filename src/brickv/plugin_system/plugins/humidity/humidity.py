@@ -2,6 +2,7 @@
 """
 Humidity Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 humidity.py: Humidity Plugin Implementation
 
@@ -38,8 +39,8 @@ class HumidityLabel(QLabel):
 class Humidity(PluginBase):
     qtcb_humidity = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Humidity Bricklet', version, BrickletHumidity)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Humidity Bricklet', BrickletHumidity, *args)
         
         self.hum = self.device
         

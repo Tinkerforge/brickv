@@ -2,8 +2,9 @@
 """
 LCD16x2 Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-humidity.py: LCD16x2 Plugin Implementation
+humidity.py: LCD 16x2 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License 
@@ -36,8 +37,8 @@ class LCD16x2(PluginBase):
     qtcb_pressed = pyqtSignal(int)
     qtcb_released = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'LCD 16x2 Bricklet', version, BrickletLCD16x2)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'LCD 16x2 Bricklet', BrickletLCD16x2, *args)
         
         self.lcd = self.device
         
@@ -103,7 +104,7 @@ class LCD16x2(PluginBase):
         self.bl_button.pressed.connect(self.bl_pressed)
         self.text_button.pressed.connect(self.text_pressed)
         
-        if self.version >= (2, 0, 1):
+        if self.firmware_version >= (2, 0, 1):
             line = QFrame()
             line.setFrameShape(QFrame.HLine)
             line.setFrameShadow(QFrame.Sunken)
@@ -179,7 +180,7 @@ class LCD16x2(PluginBase):
         layout.addLayout(self.onofflayout)
         layout.addLayout(self.buttonlayout)
         
-        if self.version >= (2, 0, 1):
+        if self.firmware_version >= (2, 0, 1):
             layout.addWidget(line)
             layout.addLayout(self.char_main_layoutv)
         layout.addStretch(1)
@@ -293,7 +294,7 @@ class LCD16x2(PluginBase):
         line = int(self.line_combo.currentText())
         position = int(self.pos_combo.currentText())
         text = unicode(self.text_edit.text().toUtf8(), 'utf-8')
-        if self.version >= (2, 0, 1):
+        if self.firmware_version >= (2, 0, 1):
             for i in range(8):
                 text = text.replace('\\' + str(i), chr(i+8))
         try:

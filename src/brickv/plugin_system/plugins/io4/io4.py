@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-  
 """
 IO4 Plugin
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 humidity.py: IO4 Plugin Implementation
 
@@ -34,14 +34,14 @@ class IO4(PluginBase, Ui_IO4):
     qtcb_interrupt = pyqtSignal(int, int)
     qtcb_monoflop = pyqtSignal(int, int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'IO-4 Bricklet', version, BrickletIO4)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'IO-4 Bricklet', BrickletIO4, *args)
         
         self.setupUi(self)
         
         self.io = self.device
         
-        self.has_monoflop = version >= (1, 1, 1)
+        self.has_monoflop = self.firmware_version >= (1, 1, 1)
         
         self.qtcb_interrupt.connect(self.cb_interrupt)
         self.io.register_callback(self.io.CALLBACK_INTERRUPT,

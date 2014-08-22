@@ -2,7 +2,7 @@
 """
 Master Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
 wifi_status.py: WifiStatus for Master Plugin implementation
 
@@ -31,7 +31,9 @@ from brickv.async_call import async_call
 class WifiStatus(QFrame, Ui_wifi_status):
     def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
+
         self.setupUi(self)
+
         self.parent = parent
         self.master = self.parent.master
 

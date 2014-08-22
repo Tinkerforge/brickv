@@ -2,6 +2,7 @@
 """
 Rotary Encoder Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 rotary_encoder.py: Rotary Encoder Plugin Implementation
 
@@ -70,8 +71,8 @@ class RotaryEncoder(PluginBase):
     qtcb_pressed = pyqtSignal()
     qtcb_released = pyqtSignal()
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Rotary Encoder Bricklet', version, BrickletRotaryEncoder)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Rotary Encoder Bricklet', BrickletRotaryEncoder, *args)
 
         self.re = self.device
         

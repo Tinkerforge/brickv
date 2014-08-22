@@ -36,6 +36,7 @@ class CalibrateAccelerometer(QWidget, Ui_calibrate_accelerometer):
     
     def __init__(self, parent):
         QWidget.__init__(self)
+
         self.setupUi(self)
         
         self.parent = parent

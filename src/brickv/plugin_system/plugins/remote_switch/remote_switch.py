@@ -2,6 +2,7 @@
 """
 Remote Switch Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 remote_switch.py: Remote Switch Plugin Implementation
 
@@ -31,14 +32,15 @@ from PyQt4.QtCore import pyqtSignal
 class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
     qtcb_switching_done = pyqtSignal()
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Remote Switch Bricklet', version, BrickletRemoteSwitch)
-        
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Remote Switch Bricklet', BrickletRemoteSwitch, *args)
+
         self.setupUi(self)
+        self.adjustSize()
 
         self.rs = self.device
 
-        self.has_more_types = version >= (2, 0, 1)
+        self.has_more_types = self.firmware_version >= (2, 0, 1)
 
         self.qtcb_switching_done.connect(self.cb_switching_done)
         self.rs.register_callback(self.rs.CALLBACK_SWITCHING_DONE,

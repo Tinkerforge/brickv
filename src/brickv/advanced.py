@@ -35,6 +35,7 @@ NO_BRICK = 'No Brick found'
 class AdvancedWindow(QFrame, Ui_widget_advanced):
     def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
+
         self.setupUi(self)
 
         self.button_calibrate.setEnabled(False)

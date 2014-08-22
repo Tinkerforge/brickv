@@ -33,8 +33,8 @@ class PiezoSpeaker(PluginBase):
     qtcb_beep_finished = pyqtSignal()
     qtcb_morse_finished = pyqtSignal()
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Piezo Speaker Bricklet', version, BrickletPiezoSpeaker)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Piezo Speaker Bricklet', BrickletPiezoSpeaker, *args)
         
         self.ps = self.device
         
@@ -45,7 +45,7 @@ class PiezoSpeaker(PluginBase):
         self.ps.register_callback(self.ps.CALLBACK_MORSE_CODE_FINISHED,
                                   self.qtcb_morse_finished.emit)
         
-        self.has_stoppable_beep = version >= (2, 0, 2)
+        self.has_stoppable_beep = self.firmware_version >= (2, 0, 2)
         
         self.frequency_label = QLabel('Frequency (585Hz-7100Hz): ')
         self.frequency_box = QSpinBox()

@@ -2,6 +2,7 @@
 """
 LED Strip Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 led_strip.py: LED Strip Plugin Implementation
 
@@ -40,15 +41,15 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
     STATE_COLOR_GRADIENT = 3
     STATE_COLOR_DOT = 4
 
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'LED Strip Bricklet', version, BrickletLEDStrip)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'LED Strip Bricklet', BrickletLEDStrip, *args)
 
         self.setupUi(self)
 
         self.led_strip = self.device
 
-        self.has_clock_frequency = version >= (2, 0, 1)
-        self.has_chip_type = version >= (2, 0, 2)
+        self.has_clock_frequency = self.firmware_version >= (2, 0, 1)
+        self.has_chip_type = self.firmware_version >= (2, 0, 2)
 
         self.qtcb_frame_rendered.connect(self.cb_frame_rendered)
 

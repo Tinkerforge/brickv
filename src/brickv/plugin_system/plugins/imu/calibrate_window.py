@@ -43,8 +43,9 @@ class CalibrateWindow(QFrame, Ui_widget_calibrate):
 
     def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
+
         self.setupUi(self)
-        
+
         self.setWindowTitle("IMU Calibration")
         
         self.parent = parent

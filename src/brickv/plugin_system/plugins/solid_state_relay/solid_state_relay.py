@@ -2,6 +2,7 @@
 """
 Solid State Relay Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 solid_state_relay.py: Solid State Relay Plugin Implementation
 
@@ -34,9 +35,9 @@ from brickv.bmp_to_pixmap import bmp_to_pixmap
 class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
     qtcb_monoflop = pyqtSignal(bool)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Solid State Relay Bricklet', version, BrickletSolidStateRelay)
-        
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Solid State Relay Bricklet', BrickletSolidStateRelay, *args)
+
         self.setupUi(self)
         
         self.ssr = self.device

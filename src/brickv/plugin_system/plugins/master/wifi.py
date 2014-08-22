@@ -2,7 +2,7 @@
 """
 Master Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
 wifi.py: Wifi for Master Plugin implementation
 
@@ -37,7 +37,9 @@ from brickv.async_call import async_call
 class Wifi(QWidget, Ui_Wifi):
     def __init__(self, parent):
         QWidget.__init__(self)
+
         self.setupUi(self)
+
         self.parent = parent
         self.master = parent.master
 
@@ -50,8 +52,8 @@ class Wifi(QWidget, Ui_Wifi):
         self.wifi_password.setEchoMode(QLineEdit.Password)
         self.wifi_password_show.stateChanged.connect(self.wifi_password_show_state_changed)
 
-        if parent.version >= (1, 3, 0):
-            if parent.version < (1, 3, 3):
+        if parent.firmware_version >= (1, 3, 0):
+            if parent.firmware_version < (1, 3, 3):
                 # AP and Ad Hoc was added in 1.3.3
                 while self.wifi_connection.count() > 2:
                     self.wifi_connection.removeItem(self.wifi_connection.count() - 1)
@@ -61,7 +63,7 @@ class Wifi(QWidget, Ui_Wifi):
             async_call(self.master.get_wifi_certificate, 0xFFFE, self.update_password_async, self.parent.increase_error_count)
             async_call(self.master.get_wifi_power_mode, None, self.wifi_power_mode.setCurrentIndex, self.parent.increase_error_count)
 
-            if parent.version >= (1, 3, 4):
+            if parent.firmware_version >= (1, 3, 4):
                 async_call(self.master.get_wifi_regulatory_domain, None, self.wifi_domain.setCurrentIndex, self.parent.increase_error_count)
             else:
                 self.wifi_domain.setEnabled(False)
@@ -70,7 +72,7 @@ class Wifi(QWidget, Ui_Wifi):
 
             async_call(self.master.get_wifi_encryption, None, self.get_wifi_encryption_async, self.parent.increase_error_count)
 
-            if parent.version < (2, 0, 5):
+            if parent.firmware_version < (2, 0, 5):
                 self.wifi_hostname.setDisabled(True)
                 self.wifi_hostname.setMaxLength(50)
                 self.wifi_hostname.setText("FW Version >= 2.0.5 required")
@@ -78,7 +80,7 @@ class Wifi(QWidget, Ui_Wifi):
             else:
                 async_call(self.master.get_wifi_hostname, None, self.get_wifi_hostname_async, self.parent.increase_error_count)
 
-        if parent.version >= (2, 2, 0):
+        if parent.firmware_version >= (2, 2, 0):
             self.wifi_use_auth.stateChanged.connect(self.wifi_auth_changed)
             self.wifi_show_characters.stateChanged.connect(self.wifi_show_characters_changed)
             
@@ -166,7 +168,7 @@ class Wifi(QWidget, Ui_Wifi):
         self.wifi_eap_inner_auth.setCurrentIndex(eap_inner)
         self.wifi_encryption.setCurrentIndex(encryption)
 
-        if key == '-' and self.parent.version >= (2, 0, 2):
+        if key == '-' and self.parent.firmware_version >= (2, 0, 2):
             async_call(self.master.get_long_wifi_key, None, self.get_long_wifi_key_async, self.parent.increase_error_count)
         else:
             self.wifi_key.setText(key)
@@ -254,7 +256,7 @@ class Wifi(QWidget, Ui_Wifi):
 
     def encryption_changed(self, index):
         if str(self.wifi_encryption.currentText()) in 'WPA/WPA2':
-            if self.parent.version >= (2, 0, 2):
+            if self.parent.firmware_version >= (2, 0, 2):
                 self.wifi_key.setMaxLength(63)
             else:
                 self.wifi_key.setMaxLength(50)
@@ -592,7 +594,7 @@ class Wifi(QWidget, Ui_Wifi):
                 self.popup_fail('WPA/WPA2 key has to be at least 8 chars long')
                 return
 
-            if self.parent.version >= (2, 0, 2) and len(key) > 50:
+            if self.parent.firmware_version >= (2, 0, 2) and len(key) > 50:
                 key = '-'
 
         key_index = self.wifi_key_index.value()
@@ -638,24 +640,24 @@ class Wifi(QWidget, Ui_Wifi):
         self.master.set_wifi_power_mode(power_mode)
         self.master.set_wifi_encryption(encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length)
         self.master.set_wifi_configuration(ssid, connection, ip, sub, gw, port)
-        if self.parent.version >= (2, 0, 2):
+        if self.parent.firmware_version >= (2, 0, 2):
             self.master.set_long_wifi_key(long_key)
-        if self.parent.version >= (2, 0, 5):
+        if self.parent.firmware_version >= (2, 0, 5):
             self.master.set_wifi_hostname(hostname)
-        if self.parent.version >= (2, 2, 0):
+        if self.parent.firmware_version >= (2, 2, 0):
             self.master.set_wifi_authentication_secret(secret)
 
         power_mode_old = self.master.get_wifi_power_mode()
         encryption_old, key_old, key_index_old, eap_options_old, ca_certificate_length_old, client_certificate_length_old, private_key_length_old = self.master.get_wifi_encryption()
         ssid_old, connection_old, ip_old, sub_old, gw_old, port_old = self.master.get_wifi_configuration()
         long_key_old = long_key
-        if self.parent.version >= (2, 0, 2):
+        if self.parent.firmware_version >= (2, 0, 2):
             long_key_old = self.master.get_long_wifi_key()
         hostname_old = hostname
-        if self.parent.version >= (2, 0, 5):
+        if self.parent.firmware_version >= (2, 0, 5):
             hostname_old = self.master.get_wifi_hostname()
         secret_old = secret
-        if self.parent.version >= (2, 2, 0):
+        if self.parent.firmware_version >= (2, 2, 0):
             secret_old = self.master.get_wifi_authentication_secret()
 
         test_ok = False
@@ -688,7 +690,7 @@ class Wifi(QWidget, Ui_Wifi):
             if username_old == username and password_old == password:
                 test_ok = True
 
-        if self.parent.version >= (1, 3, 4) and test_ok:
+        if self.parent.firmware_version >= (1, 3, 4) and test_ok:
             self.master.set_wifi_regulatory_domain(self.wifi_domain.currentIndex())
             if self.master.get_wifi_regulatory_domain() != self.wifi_domain.currentIndex():
                 test_ok = False

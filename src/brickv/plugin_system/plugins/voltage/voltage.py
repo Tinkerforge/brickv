@@ -2,6 +2,7 @@
 """
 Voltage Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 voltage.py: Voltage Plugin Implementation
 
@@ -37,8 +38,8 @@ class CurrentLabel(QLabel):
 class Voltage(PluginBase):
     qtcb_voltage = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Voltage Bricklet', version, BrickletVoltage)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Voltage Bricklet', BrickletVoltage, *args)
         
         self.vol = self.device
         

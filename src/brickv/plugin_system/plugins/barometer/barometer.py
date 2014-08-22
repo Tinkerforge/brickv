@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Barometer Plugin
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 barometer.py: Barometer Plugin Implementation
 
@@ -50,13 +50,13 @@ class Barometer(PluginBase):
     qtcb_air_pressure = pyqtSignal(int)
     qtcb_altitude = pyqtSignal(int)
 
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Barometer Bricklet', version, BrickletBarometer)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Barometer Bricklet', BrickletBarometer, *args)
 
         self.barometer = self.device
 
-        has_calibrate = version == (1, 0, 0)
-        has_averaging = version >= (2, 0, 1)
+        has_calibrate = self.firmware_version == (1, 0, 0)
+        has_averaging = self.firmware_version >= (2, 0, 1)
         
         self.moving_average_pressure = 25
         self.average_pressure = 10

@@ -2,7 +2,7 @@
 """
 Master Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
 chibi.py: Chibi for Master Plugin implementation
 
@@ -34,12 +34,13 @@ from brickv import infos
 class Chibi(QWidget, Ui_Chibi):
     def __init__(self, parent):
         QWidget.__init__(self)
+
         self.setupUi(self)
 
         self.parent = parent
         self.master = parent.master
 
-        if parent.version >= (1, 1, 0):
+        if parent.firmware_version >= (1, 1, 0):
             self.update_generator = self.init_update()
             self.update_generator.next()
 

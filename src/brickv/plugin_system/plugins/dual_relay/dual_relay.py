@@ -2,6 +2,7 @@
 """
 Dual Relay Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 dual_relay.py: Dual Relay Plugin Implementation
 
@@ -34,14 +35,14 @@ from brickv.bmp_to_pixmap import bmp_to_pixmap
 class DualRelay(PluginBase, Ui_DualRelay):
     qtcb_monoflop = pyqtSignal(int, bool)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Dual Relay Bricklet', version, BrickletDualRelay)
-        
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Dual Relay Bricklet', BrickletDualRelay, *args)
+
         self.setupUi(self)
         
         self.dr = self.device
-        
-        self.has_monoflop = version >= (1, 1, 1)
+
+        self.has_monoflop = self.firmware_version >= (1, 1, 1)
         
         self.qtcb_monoflop.connect(self.cb_monoflop)
         self.dr.register_callback(self.dr.CALLBACK_MONOFLOP_DONE,

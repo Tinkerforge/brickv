@@ -2,6 +2,7 @@
 """
 Current Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 current.py: Current Plugin Implementation
 
@@ -39,8 +40,8 @@ class Current12(PluginBase):
     qtcb_current = pyqtSignal(int)
     qtcb_over = pyqtSignal()
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Current12 Bricklet', version, BrickletCurrent12)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Current12 Bricklet', BrickletCurrent12, *args)
         
         self.cur = self.device
         

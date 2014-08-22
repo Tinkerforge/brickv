@@ -2,6 +2,7 @@
 """
 Segment Display 4x7 Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 segment_display_4x7.py: Segment Display 4x7 Plugin Implementation
 
@@ -41,9 +42,9 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
                  "QPushButton { background-color: #EE0000; color: #EE0000; }",
                  "QPushButton { background-color: #FF0000; color: #FF0000; }"]
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Segment Display 4x7 Bricklet', version, BrickletSegmentDisplay4x7)
-        
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Segment Display 4x7 Bricklet', BrickletSegmentDisplay4x7, *args)
+
         self.setupUi(self)
 
         self.sd4x7 = self.device

@@ -2,6 +2,7 @@
 """
 Motion Detector Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 motion_detector.py: Motion Detector Plugin Implementation
 
@@ -32,8 +33,8 @@ class MotionDetector(PluginBase):
     qtcb_motion_detected = pyqtSignal()
     qtcb_detection_cylce_ended = pyqtSignal()
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Motion Detector Bricklet', version, BrickletMotionDetector)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Motion Detector Bricklet', BrickletMotionDetector, *args)
 
         self.md = self.device
         

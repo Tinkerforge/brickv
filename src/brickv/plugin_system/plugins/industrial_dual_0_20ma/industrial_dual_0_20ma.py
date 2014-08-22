@@ -2,6 +2,7 @@
 """
 Industrial Dual 0-20mA Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 industrial_dual_0_20ma.py: PTC Plugin Implementation
 
@@ -37,8 +38,8 @@ class CurrentLabel(QLabel):
 class IndustrialDual020mA(PluginBase):
     qtcb_current = pyqtSignal(int, int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Industrial Dual 0-20mA Bricklet', version, BrickletIndustrialDual020mA)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Industrial Dual 0-20mA Bricklet', BrickletIndustrialDual020mA, *args)
 
         self.dual020 = self.device
         

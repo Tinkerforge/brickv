@@ -2,6 +2,7 @@
 """
 Dual Button Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 dual_button.py: Dual Button Plugin Implementation
 
@@ -39,9 +40,9 @@ class DualButton(PluginBase, Ui_DualButton):
     PRESSED = 0
     RELEASED = 1
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Dual Button Bricklet', version, BrickletDualButton)
-        
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Dual Button Bricklet', BrickletDualButton, *args)
+
         self.setupUi(self)
 
         self.button = self.device

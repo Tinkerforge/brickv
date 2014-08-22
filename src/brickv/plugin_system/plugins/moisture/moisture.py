@@ -2,6 +2,7 @@
 """
 Moisture Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 moisture.py: Moisture Plugin Implementation
 
@@ -37,8 +38,8 @@ class MoistureLabel(QLabel):
 class Moisture(PluginBase):
     qtcb_moisture = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Moisture Bricklet', version, BrickletMoisture)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Moisture Bricklet', BrickletMoisture, *args)
 
         self.moisture = self.device
         

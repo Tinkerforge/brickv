@@ -2,6 +2,7 @@
 """
 Joystick Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 joystick.py: Joystick Plugin implementation
 
@@ -69,8 +70,8 @@ class Joystick(PluginBase):
     qtcb_pressed = pyqtSignal()
     qtcb_released = pyqtSignal()
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Joystick Bricklet', version, BrickletJoystick)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Joystick Bricklet', BrickletJoystick, *args)
         
         self.js = self.device
         

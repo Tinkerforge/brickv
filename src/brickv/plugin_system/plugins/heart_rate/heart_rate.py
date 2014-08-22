@@ -2,6 +2,7 @@
 """
 Heart Rate Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 heart_rate.py: Heart Rate Plugin Implementation
 
@@ -39,8 +40,8 @@ class HeartRate(PluginBase):
     qtcb_heart_rate = pyqtSignal(int)
     qtcb_beat_state_changed = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Heart Rate Bricklet', version, BrickletHeartRate)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Heart Rate Bricklet', BrickletHeartRate, *args)
         
         self.hr = self.device
         

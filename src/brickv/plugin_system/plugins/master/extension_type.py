@@ -2,7 +2,7 @@
 """
 Master Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
 
 extension_type.py: ExtensionType for Master Plugin implementation
 
@@ -32,6 +32,7 @@ from brickv.async_call import async_call
 class ExtensionType(QFrame, Ui_extension_type):
     def __init__(self, parent):
         QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
+
         self.setupUi(self)
 
         self.setWindowTitle("Configure Extension Type")

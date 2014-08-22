@@ -2,6 +2,7 @@
 """
 NFC/RFID Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 nfc_rfid.py: NFC/RFID Plugin Implementation
 
@@ -58,8 +59,8 @@ class SpinBoxHex(QSpinBox):
 class NFCRFID(PluginBase, Ui_NFCRFID):
     qtcb_state = pyqtSignal(int, bool)
     
-    def __init__ (self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'NFC/RFID Bricklet', version, BrickletNFCRFID)
+    def __init__ (self, *args):
+        PluginBase.__init__(self, 'NFC/RFID Bricklet', BrickletNFCRFID, *args)
         
         self.setupUi(self)
         

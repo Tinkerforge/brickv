@@ -2,6 +2,7 @@
 """
 Servo Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 servo.py: Servo Brick Plugin implementation
 
@@ -125,8 +126,8 @@ class PositionKnob(Qwt.QwtKnob):
 class Servo(PluginBase, Ui_Servo):
     qtcb_under_voltage = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Servo Brick', version, BrickServo)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Servo Brick', BrickServo, *args)
 
         self.setupUi(self)
 
@@ -262,7 +263,7 @@ class Servo(PluginBase, Ui_Servo):
         self.destroy_ui()
 
     def has_reset_device(self):
-        return self.version >= (1, 1, 3)
+        return self.firmware_version >= (1, 1, 3)
 
     def reset_device(self):
         if self.has_reset_device():

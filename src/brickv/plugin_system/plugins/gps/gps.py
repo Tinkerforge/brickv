@@ -2,6 +2,7 @@
 """
 GPS Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 gps.py: GPS Plugin Implementation
 
@@ -40,8 +41,8 @@ class GPS(PluginBase, Ui_GPS):
     qtcb_motion = pyqtSignal(int, int)
     qtcb_date_time = pyqtSignal(int, int)
 
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'GPS Bricklet', version, BrickletGPS)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'GPS Bricklet', BrickletGPS, *args)
 
         self.setupUi(self)
 

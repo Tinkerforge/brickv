@@ -33,6 +33,7 @@ class CalibrateMagnetometer(QWidget, Ui_calibrate_magnetometer):
     
     def __init__(self, parent):
         QWidget.__init__(self)
+
         self.setupUi(self)
         
         self.parent = parent

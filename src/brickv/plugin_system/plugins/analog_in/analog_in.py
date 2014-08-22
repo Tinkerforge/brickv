@@ -2,6 +2,7 @@
 """
 Analog In Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 analog_in.py: Analog In Plugin Implementation
 
@@ -38,8 +39,8 @@ class VoltageLabel(QLabel):
 class AnalogIn(PluginBase):
     qtcb_voltage = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Analog In Bricklet', version, BrickletAnalogIn)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Analog In Bricklet', BrickletAnalogIn, *args)
         
         self.ai = self.device
         
@@ -63,10 +64,10 @@ class AnalogIn(PluginBase):
         layout.addLayout(layout_h2)
         layout.addWidget(self.plot_widget)
 
-        if self.version >= (2, 0, 1):
+        if self.firmware_version >= (2, 0, 1):
             self.combo_range = QComboBox()
             self.combo_range.addItem('Automatic', BrickletAnalogIn.RANGE_AUTOMATIC)
-            if self.version >= (2, 0, 3):
+            if self.firmware_version >= (2, 0, 3):
                 self.combo_range.addItem('0V - 3.30V', BrickletAnalogIn.RANGE_UP_TO_3V)
             self.combo_range.addItem('0V - 6.05V', BrickletAnalogIn.RANGE_UP_TO_6V)
             self.combo_range.addItem('0V - 10.32V', BrickletAnalogIn.RANGE_UP_TO_10V)
@@ -79,7 +80,7 @@ class AnalogIn(PluginBase):
             layout_h1.addWidget(QLabel('Range:'))
             layout_h1.addWidget(self.combo_range)
 
-            if self.version >= (2, 0, 3):
+            if self.firmware_version >= (2, 0, 3):
                 self.spin_average = QSpinBox()
                 self.spin_average.setMinimum(0)
                 self.spin_average.setMaximum(255)
@@ -101,9 +102,9 @@ class AnalogIn(PluginBase):
         self.spin_average.setValue(average)
 
     def start(self):
-        if self.version >= (2, 0, 1):
+        if self.firmware_version >= (2, 0, 1):
             async_call(self.ai.get_range, None, self.get_range_async, self.increase_error_count)
-        if self.version >= (2, 0, 3):
+        if self.firmware_version >= (2, 0, 3):
             async_call(self.ai.get_averaging, None, self.get_averaging_async, self.increase_error_count)
         async_call(self.ai.get_voltage, None, self.cb_voltage, self.increase_error_count)
         async_call(self.ai.set_voltage_callback_period, 100, None, self.increase_error_count)
@@ -133,7 +134,7 @@ class AnalogIn(PluginBase):
         self.voltage_label.setText(str(voltage/1000.0))
 
     def range_changed(self, index):
-        if index >= 0 and self.version >= (2, 0, 1):
+        if index >= 0 and self.firmware_version >= (2, 0, 1):
             range = self.combo_range.itemData(index).toInt()[0]
             async_call(self.ai.set_range, range, None, self.increase_error_count)
 

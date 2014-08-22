@@ -2,6 +2,7 @@
 """
 Master Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 master.py: Master Plugin implementation
 
@@ -37,9 +38,9 @@ from brickv.plugin_system.plugins.master.ethernet import Ethernet
 from brickv.async_call import async_call
         
 class Master(PluginBase, Ui_Master):
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Master Brick', version, BrickMaster)
-        
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Master Brick', BrickMaster, *args)
+
         self.setupUi(self)
 
         self.master = self.device
@@ -55,22 +56,22 @@ class Master(PluginBase, Ui_Master):
         self.extension_label.setText("None Present")
         
         # Chibi widget
-        if self.version >= (1, 1, 0):
+        if self.firmware_version >= (1, 1, 0):
             self.extension_type_button.pressed.connect(self.extension_pressed)
             async_call(self.master.is_chibi_present, None, self.is_chibi_present_async, self.increase_error_count)
         else:
             self.extension_type_button.setEnabled(False)
             
         # RS485 widget
-        if self.version >= (1, 2, 0):
+        if self.firmware_version >= (1, 2, 0):
             async_call(self.master.is_rs485_present, None, self.is_rs485_present_async, self.increase_error_count)
                 
         # Wifi widget
-        if self.version >= (1, 3, 0):
+        if self.firmware_version >= (1, 3, 0):
             async_call(self.master.is_wifi_present, None, self.is_wifi_present_async, self.increase_error_count)
         
         # Ethernet widget
-        if self.version >= (2, 1, 0):
+        if self.firmware_version >= (2, 1, 0):
             async_call(self.master.is_ethernet_present, None, self.is_ethernet_present_async, self.increase_error_count)
 
     def is_ethernet_present_async(self, present):
@@ -125,7 +126,7 @@ class Master(PluginBase, Ui_Master):
         self.destroy_ui()
 
     def has_reset_device(self):
-        return self.version >= (1, 2, 1)
+        return self.firmware_version >= (1, 2, 1)
 
     def reset_device(self):
         if self.has_reset_device():
@@ -134,7 +135,7 @@ class Master(PluginBase, Ui_Master):
     def is_brick(self):
         return True
 
-    def is_hardware_version_relevant(self, hardware_version):
+    def is_hardware_version_relevant(self):
         return True
 
     def get_url_part(self):

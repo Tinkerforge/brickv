@@ -2,6 +2,7 @@
 """
 Line Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 line.py: Line Plugin Implementation
 
@@ -66,8 +67,8 @@ class ReflectivityFrame(QFrame):
 class Line(PluginBase):
     qtcb_reflectivity = pyqtSignal(int)
     
-    def __init__(self, ipcon, uid, version):
-        PluginBase.__init__(self, ipcon, uid, 'Line Bricklet', version, BrickletLine)
+    def __init__(self, *args):
+        PluginBase.__init__(self, 'Line Bricklet', BrickletLine, *args)
 
         self.line = self.device
         
