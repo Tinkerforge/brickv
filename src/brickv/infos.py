@@ -26,6 +26,10 @@ from brickv import config
 
 UID_BRICKV = '$BRICKV'
 UID_BRICKD = '$BRICKD'
+
+PLUGIN_STATE_STOPPED = 0
+PLUGIN_STATE_RUNNING = 1
+PLUGIN_STATE_PAUSED = 2
     
 class AbstractInfo(object):
     type = 'abstract'
@@ -59,6 +63,7 @@ class DeviceInfo(AbstractInfo):
     hardware_version = (0, 0, 0)
     device_identifier = 0
     plugin = None
+    plugin_state = False
     plugin_container = None
     protocol_version = 0
     tab_index = -1

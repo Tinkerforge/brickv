@@ -46,12 +46,13 @@ import sys
 import time
 
 class PluginWindow(QWidget):
-    untab = pyqtSignal(QWidget)
-
-    def __init__(self, tab_widget, name, parent=None):
+    def __init__(self, tab_widget, ipcon, name, icon, parent=None):
         super(PluginWindow, self).__init__(parent)
         self.tab_widget = tab_widget
+        self.ipcon = ipcon
         self.name = name
+
+        self.setWindowIcon(icon)
 
     def closeEvent(self, event):
         self.tab()
@@ -68,8 +69,11 @@ class PluginWindow(QWidget):
 
     def tab(self):
         if self.windowFlags() & Qt.Window:
-            self.tab_widget.addTab(self, self.name)
+            index = self.tab_widget.addTab(self, self.name)
             self.setWindowFlags(Qt.Widget)
+
+            if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING:
+                self.tab_widget.setTabEnabled(index, False)
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     qtcb_enumerate = pyqtSignal(str, str, 'char', type((0,)), type((0,)), int, int)
@@ -80,7 +84,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QMainWindow.__init__(self, parent)
 
         self.setupUi(self)
-        self.setWindowIcon(QIcon(os.path.join(get_program_path(), "brickv-icon.png")))
+
+        self.icon = QIcon(os.path.join(get_program_path(), "brickv-icon.png"))
+        self.setWindowIcon(self.icon)
+
         signal.signal(signal.SIGINT, self.exit_brickv)
         signal.signal(signal.SIGTERM, self.exit_brickv)
 
@@ -96,7 +103,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Remove dummy tab
         self.remove_tab(1)
-        self.last_tab = 0
+        self.current_tab_info = None
 
         self.name = '<unknown>'
         self.uid = '<unknown>'
@@ -116,8 +123,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.ipcon.register_callback(IPConnection.CALLBACK_DISCONNECTED,
                                      self.qtcb_disconnected.emit)
 
-        # plugins, dictionary, uid:instance
-        self.plugins = {}
+        self.plugins = {} # uid:plugin_container
+        self.current_tab_info = None
 
         self.flashing_window = None
         self.advanced_window = None
@@ -180,11 +187,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.exit_brickv()
 
     def exit_brickv(self, signl=None, frme=None):
-        try:
-            uid = self.tab_widget.widget(self.last_tab)._uid
-            infos.infos[uid].plugin.stop()
-        except:
-            pass
+        if self.current_tab_info is not None and \
+           self.current_tab_info.plugin_state == infos.PLUGIN_STATE_RUNNING:
+            try:
+                self.current_tab_info.plugin.stop()
+            except:
+                pass
 
         self.update_current_host_info()
         config.set_host_infos(self.host_infos)
@@ -259,19 +267,40 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_current_host_info()
 
     def tab_changed(self, i):
-        try:
-            uid = self.tab_widget.widget(i)._uid
-            infos.infos[uid].plugin.start()
-        except:
-            pass
+        if not hasattr(self.tab_widget.widget(i), '_info'):
+            new_current_tab_info = None
+        else:
+            new_current_tab_info = self.tab_widget.widget(i)._info
 
-        try:
-            uid = self.tab_widget.widget(self.last_tab)._uid
-            infos.infos[uid].plugin.stop()
-        except:
-            pass
+            # only consider starting the now selected plugin, if it's stopped
+            if new_current_tab_info.plugin_state == infos.PLUGIN_STATE_STOPPED:
+                if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING:
+                    # if connection is pending, the just mark it as paused. it'll
+                    # started later then
+                    new_current_tab_info.plugin_state = infos.PLUGIN_STATE_PAUSED
+                else:
+                    # otherwise start it now
+                    try:
+                        new_current_tab_info.plugin.start()
+                    except:
+                        pass
 
-        self.last_tab = i
+                    new_current_tab_info.plugin_state = infos.PLUGIN_STATE_RUNNING
+
+        # stop the now deselected plugin, if there is one that's running
+        if self.current_tab_info is not None:
+            if self.current_tab_info.plugin_state == infos.PLUGIN_STATE_RUNNING:
+                try:
+                    self.current_tab_info.plugin.stop()
+                except:
+                    pass
+
+            # set the state to stopped even it the plugin was not actually
+            # running. this stops a paused plugin from being restarted after it
+            # got deselected
+            self.current_tab_info.plugin_state = infos.PLUGIN_STATE_STOPPED
+
+        self.current_tab_info = new_current_tab_info
 
     def update_current_host_info(self):
         if self.host_index_changing:
@@ -328,18 +357,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tab_widget.setCurrentIndex(0)
 
         keys_to_remove = []
-        for key in infos.infos:
-            if infos.infos[key].type in ('brick', 'bricklet'):
+        for info in infos.infos.values():
+            if info.type in ('brick', 'bricklet'):
+                if info.plugin_state == infos.PLUGIN_STATE_RUNNING:
+                    try:
+                        info.plugin.stop()
+                    except:
+                        pass
+
                 try:
-                    infos.infos[key].plugin.stop()
+                    info.plugin.destroy()
                 except:
                     pass
 
-                try:
-                    infos.infos[key].plugin.destroy()
-                except:
-                    pass
-                keys_to_remove.append(key)
+                keys_to_remove.append(info.uid)
 
         for key in keys_to_remove:
             try:
@@ -441,77 +472,74 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             uid_text = str(uid_index.data().toString())
             self.show_plugin(uid_text)
 
-    def create_plugin_container(self, plugin, connected_uid, position):
-        container = PluginWindow(self.tab_widget, plugin.name)
-        container._uid = plugin.uid
+    def create_plugin_container(self, info, connected_uid, position):
+        container = PluginWindow(self.tab_widget, self.ipcon, info.name, self.icon)
+        container._info = info
         layout = QVBoxLayout(container)
-        info = QHBoxLayout()
+        info_bar = QHBoxLayout()
 
         # uid
-        info.addWidget(QLabel('UID:'))
+        info_bar.addWidget(QLabel('UID:'))
 
-        label = QLabel('{0}'.format(plugin.uid))
+        label = QLabel('{0}'.format(info.uid))
         label.setTextInteractionFlags(Qt.TextSelectableByMouse |
                                       Qt.TextSelectableByKeyboard)
 
-        info.addWidget(label)
-        info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+        info_bar.addWidget(label)
+        info_bar.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
         # connected uid
         if connected_uid != '0':
-            info.addWidget(QLabel('Connected to:'))
+            info_bar.addWidget(QLabel('Connected to:'))
 
             button = QToolButton()
             button.setText(connected_uid)
             button.pressed.connect(lambda: self.show_plugin(connected_uid))
 
-            info.addWidget(button)
-            info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+            info_bar.addWidget(button)
+            info_bar.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
         # position
-        info.addWidget(QLabel('Position:'))
-        info.addWidget(QLabel('{0}'.format(position.upper())))
+        info_bar.addWidget(QLabel('Position:'))
+        info_bar.addWidget(QLabel('{0}'.format(position.upper())))
 
-        info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+        info_bar.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
         # firmware version
-        info.addWidget(QLabel('FW Version:'))
-        info.addWidget(QLabel(infos.get_version_string(plugin.firmware_version)))
+        info_bar.addWidget(QLabel('FW Version:'))
+        info_bar.addWidget(QLabel(infos.get_version_string(info.plugin.firmware_version)))
 
-        info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
+        info_bar.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
         # timeouts
-        info.addWidget(QLabel('Timeouts:'))
+        info_bar.addWidget(QLabel('Timeouts:'))
         label_timeouts = QLabel('0')
-        info.addWidget(label_timeouts)
+        info_bar.addWidget(label_timeouts)
 
-        layout.addLayout(info)
+        layout.addLayout(info_bar)
 
-        if plugin.is_brick():
+        if info.plugin.is_brick():
             button = QPushButton('Reset')
-            if plugin.has_reset_device():
-                button.clicked.connect(plugin.reset_device)
+            if info.plugin.has_reset_device():
+                button.clicked.connect(info.plugin.reset_device)
             else:
                 button.setDisabled(True)
-            info.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding))
-            info.addWidget(button)
+            info_bar.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding))
+            info_bar.addWidget(button)
 
         line = QFrame()
         line.setFrameShape(QFrame.HLine)
         line.setFrameShadow(QFrame.Sunken)
 
-        plugin.label_timeouts = label_timeouts
-        plugin.layout().setContentsMargins(0, 0, 0, 0)
+        info.plugin.label_timeouts = label_timeouts
+        info.plugin.layout().setContentsMargins(0, 0, 0, 0)
 
         layout.addWidget(line)
-        layout.addWidget(plugin)
+        layout.addWidget(info.plugin)
 
         return container
 
     def tab_state_change(self, event):
-        tw = self.tab_widget
-        index = tw.currentIndex()
-
         # allow rearranging of tabs
         if event.type() == QEvent.MouseButtonPress and event.button() & Qt.LeftButton:
             QApplication.setOverrideCursor(QCursor(Qt.SizeHorCursor))
@@ -521,16 +549,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QApplication.restoreOverrideCursor()
             return False
 
-        # untab tab on double click
+        # detach tab on double click
         elif event.type() == QEvent.MouseButtonDblClick:
-            tab = tw.widget(index)
-            if tw.tabText(index) == "Setup":
+            index = self.tab_widget.currentIndex()
+            tab = self.tab_widget.widget(index)
+
+            if self.tab_widget.tabText(index) == "Setup":
                 return False
+
             tab.untab()
-            uid = tab._uid
-            infos.infos[uid].plugin.start()
-            tw.setCurrentIndex(0)
+
+            # only consider starting the now detached plugin, if it's stopped
+            if tab._info.plugin_state == infos.PLUGIN_STATE_STOPPED:
+                if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING:
+                    # if connection is pending, the just mark it as paused. it'll
+                    # started later then
+                    tab._info.plugin_state = infos.PLUGIN_STATE_PAUSED
+                else:
+                    # otherwise start it now
+                    try:
+                        tab._info.plugin.start()
+                    except:
+                        pass
+
+                    tab._info.plugin_state = infos.PLUGIN_STATE_RUNNING
+
+            self.tab_widget.setCurrentIndex(0)
             QApplication.restoreOverrideCursor()
+
         return False
 
     def eventFilter(self, source, event):
@@ -543,7 +589,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for i in range(1, self.tab_widget.count()):
             try:
                 widget = self.tab_widget.widget(i)
-                if widget._uid == uid:
+                if widget._info.uid == uid:
                     return i
             except:
                 pass
@@ -623,32 +669,35 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 info.name = plugin.name
                 info.url_part = plugin.get_url_part()
 
-                c = self.create_plugin_container(plugin, connected_uid, position)
+                c = self.create_plugin_container(info, connected_uid, position)
                 info.plugin_container = c
                 self.plugins[plugin.uid] = c
                 c.setWindowFlags(Qt.Widget)
                 self.tab_widget.addTab(c, info.name)
         elif enumeration_type == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
-            for device_info in infos.infos.values():
-                if device_info.type in ('brick', 'bricklet') and device_info.uid == uid:
+            for info in infos.infos.values():
+                if info.type in ('brick', 'bricklet') and device_info.uid == uid:
                     self.tab_widget.setCurrentIndex(0)
-                    if device_info.plugin:
+
+                    if info.plugin_state == infos.PLUGIN_STATE_RUNNING:
                         try:
-                            device_info.plugin.stop()
+                            info.plugin.stop()
                         except:
                             pass
 
-                        try:
-                            device_info.plugin.destroy()
-                        except:
-                            pass
+                    info.plugin_state = infos.PLUGIN_STATE_STOPPED
 
-                    self.remove_plug(device_info.uid)
+                    try:
+                        info.plugin.destroy()
+                    except:
+                        pass
 
-                if device_info.type == 'brick':
-                    for port in device_info.bricklets:
-                        if device_info.bricklets[port] and device_info.bricklets[port].uid == uid:
-                            device_info.bricklets[port] = None
+                    self.remove_plug(info.uid)
+
+                if info.type == 'brick':
+                    for port in info.bricklets:
+                        if info.bricklets[port] and info.bricklets[port].uid == uid:
+                            info.bricklets[port] = None
 
                 try:
                     infos.infos.pop(uid)
@@ -771,6 +820,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.checkbox_authentication.setDisabled(True)
             self.edit_secret.setDisabled(True)
             self.update_advanced_window(False)
+
+            # restart all pause plugins
+            for info in infos.infos.values():
+                if info.type in ('brick', 'bricklet'):
+                    if info.plugin_state == infos.PLUGIN_STATE_PAUSED:
+                        try:
+                            info.plugin.start()
+                        except:
+                            pass
+
+                        info.plugin_state == infos.PLUGIN_STATE_RUNNING
         elif connection_state == IPConnection.CONNECTION_STATE_PENDING:
             self.button_connect.setText('Abort Pending Automatic Reconnect')
             self.combo_host.setDisabled(True)
@@ -780,9 +840,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.button_advanced.setDisabled(True)
             self.button_flashing.setDisabled(True)
 
+            # pause all running plugins
+            for info in infos.infos.values():
+                if info.type in ('brick', 'bricklet'):
+                    if info.plugin_state == infos.PLUGIN_STATE_RUNNING:
+                        try:
+                            info.plugin.stop()
+                        except:
+                            pass
+
+                        info.plugin_state = infos.PLUGIN_STATE_PAUSED
+
         enable = connection_state == IPConnection.CONNECTION_STATE_CONNECTED
         for i in range(1, self.tab_widget.count()):
             self.tab_widget.setTabEnabled(i, enable)
+
+        for plugin in self.plugins.values():
+            plugin.setEnabled(enable)
 
         QApplication.processEvents()
 
