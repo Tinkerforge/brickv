@@ -116,6 +116,10 @@ class PluginBase(QWidget, object):
         if self.device is not None:
             self.device.registered_callbacks = {}
 
+        # disconnect all signals to ensure that callbacks that already emitted
+        # a signal don't get delivered anymore after this point
+        self.disconnect()
+
         # ensure that the widgets gets correctly destroyed. otherwise QWidgets
         # tend to leak as Python is not able to collect their PyQt object
         for member in dir(self):
@@ -125,10 +129,7 @@ class PluginBase(QWidget, object):
                 obj.hide()
                 obj.setParent(None)
 
-                # Though the registered_callbacks are checked, plugins in their own
-                # window still receive callbacks (maybe issued later..?).
-                # The following line results in an error then.
-                #setattr(self, member, None)
+                setattr(self, member, None)
 
     def increase_error_count(self):
         self.error_count += 1
