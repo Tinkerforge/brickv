@@ -63,6 +63,7 @@ class PluginWindow(QWidget):
             self.tab_widget.removeTab(index)
             self.setWindowFlags(Qt.Window)
             self.setWindowTitle(self.name)
+            self.adjustSize()
             self.show()
 
     def tab(self):
