@@ -443,9 +443,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             uid_text = str(uid_index.data().toString())
             self.show_plugin(uid_text)
 
-    def connected_uid_pressed(self, connected_uid):
-        self.show_plugin(str(connected_uid))
-
     def create_plugin_container(self, plugin, connected_uid, position):
         container = PluginWindow(self.tab_widget, plugin.name)
         container._uid = plugin.uid
@@ -454,21 +451,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # uid
         info.addWidget(QLabel('UID:'))
+
         label = QLabel('{0}'.format(plugin.uid))
         label.setTextInteractionFlags(Qt.TextSelectableByMouse |
                                       Qt.TextSelectableByKeyboard)
-        info.addWidget(label)
 
+        info.addWidget(label)
         info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
         # connected uid
         if connected_uid != '0':
             info.addWidget(QLabel('Connected to:'))
+
             button = QToolButton()
             button.setText(connected_uid)
-            button.pressed.connect(lambda: self.connected_uid_pressed(connected_uid))
-            info.addWidget(button)
+            button.pressed.connect(lambda: self.show_plugin(str(connected_uid)))
 
+            info.addWidget(button)
             info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
         # position
