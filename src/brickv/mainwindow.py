@@ -652,7 +652,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                 except:
                                     pass
 
-                            remove_plug(device_info.uid)
+                            self.remove_plug(device_info.uid)
                         except:
                             pass
 
