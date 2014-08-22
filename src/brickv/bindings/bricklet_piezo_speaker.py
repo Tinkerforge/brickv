@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-08-19.      #
+# This file was automatically generated on 2014-08-21.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -72,7 +72,7 @@ class BrickletPiezoSpeaker(Device):
            A duration of 0 stops the current beep if any, the frequency parameter is
            ignored. A duration of 4294967295 results in an infinite beep.
         
-        *frequency* can be set between 585 and 7100.
+        The *frequency* parameter can be set between 585 and 7100.
         
         The Piezo Speaker Bricklet can only approximate the frequency, it will play
         the best possible match by applying the calibration (see :func:`Calibrate`).
