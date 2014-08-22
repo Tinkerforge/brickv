@@ -49,7 +49,8 @@ class PluginBase(QWidget, object):
         if self.device is not None:
             self.device.registered_callbacks = {}
 
-        # ensure that the widgets gets correctly destroyed
+        # ensure that the widgets gets correctly destroyed. otherwise QWidgets
+        # tend to leak as Python is not able to collect their PyQt object
         for member in dir(self):
             obj = getattr(self, member)
 

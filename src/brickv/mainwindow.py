@@ -320,9 +320,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def remove_widget(self, uid):
         #print "Removing widget %s" % str(uid)
         widget = self.plugins[uid]
-        # ensure that the widget gets correctly destroyed
+        # ensure that the widget gets correctly destroyed. otherwise QWidgets
+        # tend to leak as Python is not able to collect their PyQt object
         widget.hide()
-        #widget.close()
         widget.setParent(None)
         widget = None
 
@@ -633,10 +633,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 info.plugin_container = c
                 self.plugins[str(plugin.uid)] = c
                 c.setWindowFlags(Qt.Widget)
-                #c.show()
-                #plugin.start()
                 self.tab_widget.addTab(c, info.name)
-                #c.untab()
         elif enumeration_type == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
             for device_info in infos.infos.values():
                 if device_info.type in ('brick', 'bricklet'):
