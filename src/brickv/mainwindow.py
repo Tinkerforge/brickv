@@ -639,22 +639,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             for device_info in infos.infos.values():
                 if device_info.type in ('brick', 'bricklet'):
                     if device_info.uid == uid:
-                        try:
-                            self.tab_widget.setCurrentIndex(0)
-                            if device_info.plugin:
-                                try:
-                                    device_info.plugin.stop()
-                                except:
-                                    pass
+                        self.tab_widget.setCurrentIndex(0)
+                        if device_info.plugin:
+                            try:
+                                device_info.plugin.stop()
+                            except:
+                                pass
 
-                                try:
-                                    device_info.plugin.destroy()
-                                except:
-                                    pass
+                            try:
+                                device_info.plugin.destroy()
+                            except:
+                                pass
 
-                            self.remove_plug(device_info.uid)
-                        except:
-                            pass
+                        self.remove_plug(device_info.uid)
 
                 if device_info.type == 'brick':
                     for port in device_info.bricklets:
