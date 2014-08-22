@@ -3,7 +3,7 @@
 brickv (Brick Viewer) 
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 advanced.py: GUI for advanced features
 
@@ -88,7 +88,7 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
                 self.label_offset.setText(str(offset))
                 self.label_gain.setText(str(gain))
             QTimer.singleShot(0, slot)
-        
+
     def brick_changed(self, index):
         self.combo_port.clear()
 
@@ -104,7 +104,12 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
             else:
                 self.combo_port.addItem('{0}: {1}'.format(key.upper(), info.bricklets[key].get_combo_item()))
 
-        self.update_calibration()
+        self.update_ui_state()
+
+        if self.combo_port.count() > 0:
+            self.update_calibration()
+        else:
+            self.check_enable_calibration.setChecked(Qt.Unchecked)
 
     def enable_calibration_changed(self, state):
         self.button_calibrate.setEnabled(state == Qt.Checked)
@@ -113,5 +118,5 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
         enabled = len(self.brick_infos) > 0
 
         self.combo_brick.setEnabled(enabled)
-        self.check_enable_calibration.setEnabled(enabled)
-        self.button_calibrate.setEnabled(enabled and self.check_enable_calibration.isChecked())
+        self.check_enable_calibration.setEnabled(enabled and self.combo_port.count() > 0)
+        self.button_calibrate.setEnabled(enabled and self.combo_port.count() > 0 and self.check_enable_calibration.isChecked())
