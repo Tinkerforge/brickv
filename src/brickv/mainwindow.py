@@ -318,7 +318,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.plugins[uid] = None
 
     def remove_widget(self, uid):
-        #print "Removing widget %s" % str(uid)
         widget = self.plugins[uid]
         # ensure that the widget gets correctly destroyed. otherwise QWidgets
         # tend to leak as Python is not able to collect their PyQt object
@@ -465,7 +464,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             button = QToolButton()
             button.setText(connected_uid)
-            button.pressed.connect(lambda: self.show_plugin(str(connected_uid)))
+            button.pressed.connect(lambda: self.show_plugin(connected_uid))
 
             info.addWidget(button)
             info.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
@@ -569,6 +568,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def cb_enumerate(self, uid, connected_uid, position,
                      hardware_version, firmware_version,
                      device_identifier, enumeration_type):
+        # because the enumerate callback is decoupled by a signal/slot, strings
+        # arrive here as QStrings, convert them back to normal Python strings
+        uid = str(uid)
+        connected_uid = str(connected_uid)
+
         if self.ipcon.get_connection_state() != IPConnection.CONNECTION_STATE_CONNECTED:
             # ignore enumerate callbacks that arrived after the connection got closed
             return
@@ -630,7 +634,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 c = self.create_plugin_container(plugin, connected_uid, position)
                 info.plugin_container = c
-                self.plugins[str(plugin.uid)] = c
+                self.plugins[plugin.uid] = c
                 c.setWindowFlags(Qt.Widget)
                 self.tab_widget.addTab(c, info.name)
         elif enumeration_type == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
