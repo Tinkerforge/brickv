@@ -597,7 +597,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     if info.type == 'bricklet':
                         if device.uid == connected_uid:
                             device.bricklets[position] = info
-                if device.type == 'bricklet':
+                elif device.type == 'bricklet':
                     if info.type == 'brick':
                         if uid == device.connected_uid:
                             info.bricklets[device.position] = device
@@ -637,27 +637,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.tab_widget.addTab(c, info.name)
         elif enumeration_type == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
             for device_info in infos.infos.values():
-                if device_info.type in ('brick', 'bricklet'):
-                    if device_info.uid == uid:
-                        self.tab_widget.setCurrentIndex(0)
-                        if device_info.plugin:
-                            try:
-                                device_info.plugin.stop()
-                            except:
-                                pass
+                if device_info.type in ('brick', 'bricklet') and device_info.uid == uid:
+                    self.tab_widget.setCurrentIndex(0)
+                    if device_info.plugin:
+                        try:
+                            device_info.plugin.stop()
+                        except:
+                            pass
 
-                            try:
-                                device_info.plugin.destroy()
-                            except:
-                                pass
+                        try:
+                            device_info.plugin.destroy()
+                        except:
+                            pass
 
-                        self.remove_plug(device_info.uid)
+                    self.remove_plug(device_info.uid)
 
                 if device_info.type == 'brick':
                     for port in device_info.bricklets:
-                        if device_info.bricklets[port]:
-                            if device_info.bricklets[port].uid == uid:
-                                device_info.bricklets[port] = None
+                        if device_info.bricklets[port] and device_info.bricklets[port].uid == uid:
+                            device_info.bricklets[port] = None
 
                 try:
                     infos.infos.pop(uid)
