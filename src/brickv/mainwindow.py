@@ -509,7 +509,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         return container
 
-    def tabStateChange(self, event):
+    def tab_state_change(self, event):
         tw = self.tab_widget
         index = tw.currentIndex()
 
@@ -536,7 +536,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def eventFilter(self, source, event):
         if source is self.tab_widget.tabBar():
-            return self.tabStateChange(event)
+            return self.tab_state_change(event)
 
         return False
 
@@ -555,15 +555,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         i = self.tab_for_uid(uid)
         widget = self.plugins[uid]
 
-        if i > 0:
-            if self.tab_widget.isTabEnabled(i):
-                self.tab_widget.setCurrentIndex(i)
+        if i > 0 and self.tab_widget.isTabEnabled(i):
+             self.tab_widget.setCurrentIndex(i)
 
         QApplication.setActiveWindow(widget)
         widget.show()
         widget.activateWindow()
         widget.raise_()
-
 
     def cb_enumerate(self, uid, connected_uid, position,
                      hardware_version, firmware_version,
