@@ -373,10 +373,16 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         is_firmware_select = self.combo_firmware.currentText() == SELECT
         is_firmware_custom = self.combo_firmware.currentText() == CUSTOM
         is_no_bootloader = self.combo_serial_port.currentText() == NO_BOOTLOADER
+        has_bricklet_ports = self.combo_port.count() > 0
         self.combo_serial_port.setEnabled(not is_no_bootloader)
+        self.combo_port.setEnabled(has_bricklet_ports)
+        self.combo_plugin.setEnabled(has_bricklet_ports)
         self.button_firmware_save.setEnabled(not is_firmware_select and not is_no_bootloader)
         self.edit_custom_firmware.setEnabled(is_firmware_custom)
         self.button_firmware_browse.setEnabled(is_firmware_custom)
+        self.edit_uid.setEnabled(has_bricklet_ports)
+        self.button_uid_load.setEnabled(has_bricklet_ports)
+        self.button_uid_save.setEnabled(has_bricklet_ports)
 
         is_plugin_select = self.combo_plugin.currentText() == SELECT
         is_plugin_custom = self.combo_plugin.currentText() == CUSTOM
