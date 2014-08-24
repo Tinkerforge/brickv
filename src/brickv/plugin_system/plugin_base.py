@@ -23,10 +23,17 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWidget
+from brickv.bindings.ip_connection import IPConnection
 
 class PluginBase(QWidget, object):
+    PLUGIN_STATE_STOPPED = 0
+    PLUGIN_STATE_RUNNING = 1
+    PLUGIN_STATE_PAUSED = 2
+
     def __init__(self, base_name, device_class, ipcon, uid, hardware_version, firmware_version):
         QWidget.__init__(self)
+
+        self.plugin_state = PluginBase.PLUGIN_STATE_STOPPED
         self.label_timeouts = None
         self.base_name = base_name
         self.ipcon = ipcon
@@ -46,6 +53,53 @@ class PluginBase(QWidget, object):
                                              self.hardware_version[1])
         else:
             self.name = self.base_name
+
+    def start_plugin(self):
+        # only consider starting the plugin, if it's stopped
+        if self.plugin_state == PluginBase.PLUGIN_STATE_STOPPED:
+            if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING:
+                # if connection is pending, the just mark it as paused. it'll
+                # started later then
+                self.plugin_state = PluginBase.PLUGIN_STATE_PAUSED
+            else:
+                # otherwise start now
+                try:
+                    self.start()
+                except:
+                    pass
+
+                self.plugin_state = PluginBase.PLUGIN_STATE_RUNNING
+
+    def stop_plugin(self):
+        # only stop the plugin, if it's running
+        if self.plugin_state == PluginBase.PLUGIN_STATE_RUNNING:
+            try:
+                self.stop()
+            except:
+                pass
+
+        # set the state to stopped even it the plugin was not actually
+        # running. this stops a paused plugin from being restarted after
+        # it got stopped
+        self.plugin_state = PluginBase.PLUGIN_STATE_STOPPED
+
+    def pause_plugin(self):
+        if self.plugin_state == PluginBase.PLUGIN_STATE_RUNNING:
+            try:
+                self.stop()
+            except:
+                pass
+
+            self.plugin_state = PluginBase.PLUGIN_STATE_PAUSED
+
+    def resume_plugin(self):
+        if self.plugin_state == PluginBase.PLUGIN_STATE_PAUSED:
+            try:
+                self.start()
+            except:
+                pass
+
+            self.plugin_state == PluginBase.PLUGIN_STATE_RUNNING
 
     def destroy_plugin(self):
         # destroy plugin first, then cleanup the UI stuff

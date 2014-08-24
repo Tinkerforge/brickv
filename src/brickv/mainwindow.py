@@ -187,12 +187,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.exit_brickv()
 
     def exit_brickv(self, signl=None, frme=None):
-        if self.current_tab_info is not None and \
-           self.current_tab_info.plugin_state == infos.PLUGIN_STATE_RUNNING:
-            try:
-                self.current_tab_info.plugin.stop()
-            except:
-                pass
+        if self.current_tab_info is not None:
+            self.current_tab_info.plugin.stop_plugin()
+            self.current_tab_info.plugin.destroy_plugin()
 
         self.update_current_host_info()
         config.set_host_infos(self.host_infos)
@@ -207,15 +204,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if signl != None and frme != None:
             print "Received SIGINT or SIGTERM, shutting down."
             sys.exit()
-
-    def start(self):
-        pass
-
-    def stop(self):
-        pass
-
-    def destroy(self):
-        pass
 
     def host_index_changed(self, i):
         if i < 0:
@@ -271,34 +259,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             new_current_tab_info = None
         else:
             new_current_tab_info = self.tab_widget.widget(i)._info
-
-            # only consider starting the now selected plugin, if it's stopped
-            if new_current_tab_info.plugin_state == infos.PLUGIN_STATE_STOPPED:
-                if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING:
-                    # if connection is pending, the just mark it as paused. it'll
-                    # started later then
-                    new_current_tab_info.plugin_state = infos.PLUGIN_STATE_PAUSED
-                else:
-                    # otherwise start it now
-                    try:
-                        new_current_tab_info.plugin.start()
-                    except:
-                        pass
-
-                    new_current_tab_info.plugin_state = infos.PLUGIN_STATE_RUNNING
+            new_current_tab_info.plugin.start_plugin()
 
         # stop the now deselected plugin, if there is one that's running
         if self.current_tab_info is not None:
-            if self.current_tab_info.plugin_state == infos.PLUGIN_STATE_RUNNING:
-                try:
-                    self.current_tab_info.plugin.stop()
-                except:
-                    pass
-
-            # set the state to stopped even it the plugin was not actually
-            # running. this stops a paused plugin from being restarted after it
-            # got deselected
-            self.current_tab_info.plugin_state = infos.PLUGIN_STATE_STOPPED
+            self.current_tab_info.plugin.stop_plugin()
 
         self.current_tab_info = new_current_tab_info
 
@@ -359,12 +324,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         keys_to_remove = []
         for info in infos.infos.values():
             if info.type in ('brick', 'bricklet'):
-                if info.plugin_state == infos.PLUGIN_STATE_RUNNING:
-                    try:
-                        info.plugin.stop()
-                    except:
-                        pass
-
+                info.plugin.stop_plugin()
                 info.plugin.destroy_plugin()
 
                 keys_to_remove.append(info.uid)
@@ -555,21 +515,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 return False
 
             tab.untab()
-
-            # only consider starting the now detached plugin, if it's stopped
-            if tab._info.plugin_state == infos.PLUGIN_STATE_STOPPED:
-                if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING:
-                    # if connection is pending, the just mark it as paused. it'll
-                    # started later then
-                    tab._info.plugin_state = infos.PLUGIN_STATE_PAUSED
-                else:
-                    # otherwise start it now
-                    try:
-                        tab._info.plugin.start()
-                    except:
-                        pass
-
-                    tab._info.plugin_state = infos.PLUGIN_STATE_RUNNING
+            tab._info.plugin.start_plugin()
 
             self.tab_widget.setCurrentIndex(0)
             QApplication.restoreOverrideCursor()
@@ -676,14 +622,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if info.type in ('brick', 'bricklet') and device_info.uid == uid:
                     self.tab_widget.setCurrentIndex(0)
 
-                    if info.plugin_state == infos.PLUGIN_STATE_RUNNING:
-                        try:
-                            info.plugin.stop()
-                        except:
-                            pass
-
-                    info.plugin_state = infos.PLUGIN_STATE_STOPPED
-
+                    info.plugin.stop_plugin()
                     info.plugin.destroy_plugin()
 
                     self.remove_plug(info.uid)
@@ -818,13 +757,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # restart all pause plugins
             for info in infos.infos.values():
                 if info.type in ('brick', 'bricklet'):
-                    if info.plugin_state == infos.PLUGIN_STATE_PAUSED:
-                        try:
-                            info.plugin.start()
-                        except:
-                            pass
-
-                        info.plugin_state == infos.PLUGIN_STATE_RUNNING
+                    info.plugin.resume_plugin()
         elif connection_state == IPConnection.CONNECTION_STATE_PENDING:
             self.button_connect.setText('Abort Pending Automatic Reconnect')
             self.combo_host.setDisabled(True)
@@ -837,13 +770,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # pause all running plugins
             for info in infos.infos.values():
                 if info.type in ('brick', 'bricklet'):
-                    if info.plugin_state == infos.PLUGIN_STATE_RUNNING:
-                        try:
-                            info.plugin.stop()
-                        except:
-                            pass
-
-                        info.plugin_state = infos.PLUGIN_STATE_PAUSED
+                    info.plugin.pause_plugin()
 
         enable = connection_state == IPConnection.CONNECTION_STATE_CONNECTED
         for i in range(1, self.tab_widget.count()):
