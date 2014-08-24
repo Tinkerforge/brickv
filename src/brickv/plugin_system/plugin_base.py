@@ -47,7 +47,13 @@ class PluginBase(QWidget, object):
         else:
             self.name = self.base_name
 
-    def destroy_ui(self):
+    def destroy_plugin(self):
+        # destroy plugin first, then cleanup the UI stuff
+        try:
+            self.destroy()
+        except:
+            pass
+
         # before destroying the widgets ensure that all callbacks are
         # unregistered. callbacks a typically bound to Qt slots. the plugin
         # tab might already be gone but the actual device object might still

@@ -144,7 +144,7 @@ class GPS(PluginBase, Ui_GPS):
         async_call(self.gps.set_date_time_callback_period, 0, None, self.increase_error_count)
 
     def destroy(self):
-        self.destroy_ui()
+        pass
 
     def get_url_part(self):
         return 'gps'

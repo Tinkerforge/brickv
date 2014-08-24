@@ -123,8 +123,6 @@ class Master(PluginBase, Ui_Master):
         if self.extension_type:
             self.extension_type.close()
 
-        self.destroy_ui()
-
     def has_reset_device(self):
         return self.firmware_version >= (1, 2, 1)
 

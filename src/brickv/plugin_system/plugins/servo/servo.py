@@ -260,7 +260,6 @@ class Servo(PluginBase, Ui_Servo):
     def destroy(self):
         self.test_event.set()
         self.update_event.set()
-        self.destroy_ui()
 
     def has_reset_device(self):
         return self.firmware_version >= (1, 1, 3)

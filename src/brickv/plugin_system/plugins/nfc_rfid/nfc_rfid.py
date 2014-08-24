@@ -273,7 +273,7 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
             disable.setEnabled(True)
 
     def destroy(self):
-        self.destroy_ui()
+        pass
 
     @staticmethod
     def has_device_identifier(device_identifier):

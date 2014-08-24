@@ -77,7 +77,7 @@ class MotionDetector(PluginBase):
         pass
 
     def destroy(self):
-        self.destroy_ui()
+        pass
 
     def get_url_part(self):
         return 'motion_detector'

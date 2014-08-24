@@ -48,7 +48,7 @@ class RED(PluginBase, Ui_RED):
         pass
 
     def destroy(self):
-        self.destroy_ui()
+        pass
 
     def has_reset_device(self):
         return False # FIXME: will have reboot, instead of reset

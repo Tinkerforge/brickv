@@ -316,7 +316,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.led_strip.register_callback(self.led_strip.CALLBACK_FRAME_RENDERED, None)
 
     def destroy(self):
-        self.destroy_ui()
+        pass
 
     def get_url_part(self):
         return 'led_strip'

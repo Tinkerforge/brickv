@@ -196,7 +196,7 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
         self.counter_timer.stop()
 
     def destroy(self):
-        self.destroy_ui()
+        pass
 
     def get_url_part(self):
         return 'segment_display_4x7'

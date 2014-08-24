@@ -218,7 +218,7 @@ class Barometer(PluginBase):
         self.chip_temp_timer.stop()
 
     def destroy(self):
-        self.destroy_ui()
+        pass
 
     def get_url_part(self):
         return 'barometer'

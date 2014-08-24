@@ -96,7 +96,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
         self.update_timer.stop()
 
     def destroy(self):
-        self.destroy_ui()
+        pass
 
     def get_url_part(self):
         return 'industrial_quad_relay'

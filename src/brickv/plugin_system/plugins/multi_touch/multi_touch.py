@@ -122,7 +122,7 @@ class MultiTouch(PluginBase, Ui_MultiTouch):
         pass
 
     def destroy(self):
-        self.destroy_ui()
+        pass
 
     def get_url_part(self):
         return 'multi_touch'

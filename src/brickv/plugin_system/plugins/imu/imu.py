@@ -225,7 +225,6 @@ in the image above, then press "Save Orientation".""")
         self.alive = False
         if self.calibrate:
             self.calibrate.close()
-        self.destroy_ui()
 
     def has_reset_device(self):
         return self.firmware_version >= (1, 0, 7)

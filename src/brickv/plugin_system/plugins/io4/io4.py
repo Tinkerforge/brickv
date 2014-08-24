@@ -133,7 +133,7 @@ class IO4(PluginBase, Ui_IO4):
         self.update_timer.stop()
 
     def destroy(self):
-        self.destroy_ui()
+        pass
 
     def get_url_part(self):
         return 'io4'

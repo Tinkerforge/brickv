@@ -76,7 +76,7 @@ class Humidity(PluginBase):
         self.plot_widget.stop = True
 
     def destroy(self):
-        self.destroy_ui()
+        pass
 
     def get_url_part(self):
         return 'humidity'

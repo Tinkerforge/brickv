@@ -365,10 +365,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     except:
                         pass
 
-                try:
-                    info.plugin.destroy()
-                except:
-                    pass
+                info.plugin.destroy_plugin()
 
                 keys_to_remove.append(info.uid)
 
@@ -687,10 +684,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                     info.plugin_state = infos.PLUGIN_STATE_STOPPED
 
-                    try:
-                        info.plugin.destroy()
-                    except:
-                        pass
+                    info.plugin.destroy_plugin()
 
                     self.remove_plug(info.uid)
 

@@ -244,7 +244,7 @@ class Color(PluginBase):
         self.plot_widget_color_temperature.stop = True
 
     def destroy(self):
-        self.destroy_ui()
+        pass
 
     def get_url_part(self):
         return 'color'

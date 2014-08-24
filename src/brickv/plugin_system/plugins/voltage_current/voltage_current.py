@@ -156,7 +156,7 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
         self.plot_widget_power.stop = True
 
     def destroy(self):
-        self.destroy_ui()
+        pass
 
     @staticmethod
     def has_device_identifier(device_identifier):

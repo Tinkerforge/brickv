@@ -83,7 +83,7 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
         async_call(self.idi4.set_interrupt, 0, None, self.increase_error_count)
 
     def destroy(self):
-        self.destroy_ui()
+        pass
 
     def get_url_part(self):
         return 'industrial_digital_in_4'
