@@ -161,10 +161,6 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletVoltageCurrent.DEVICE_IDENTIFIER
-    
-    @staticmethod
-    def has_name(name):
-        return 'Voltage/Current Bricklet' in name 
 
     def get_url_part(self):
         return 'voltage_current'

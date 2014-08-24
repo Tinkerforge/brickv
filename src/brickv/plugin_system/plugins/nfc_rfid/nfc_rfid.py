@@ -278,10 +278,6 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletNFCRFID.DEVICE_IDENTIFIER
-    
-    @staticmethod
-    def has_name(name):
-        return 'NFC/RFID Bricklet' in name 
 
     def get_url_part(self):
         return 'nfc_rfid'
