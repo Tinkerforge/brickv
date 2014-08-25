@@ -58,17 +58,14 @@ class LCD20x4(PluginBase):
         self.pos_combo = QComboBox()
         for i in range(LCD20x4.MAX_POSITION):
             self.pos_combo.addItem(str(i))
-        
-        self.pos_layout = QHBoxLayout()
-        self.pos_layout.addWidget(self.pos_label)
-        self.pos_layout.addWidget(self.pos_combo) 
-        self.pos_layout.addStretch()
-        
-        self.line_layout = QHBoxLayout()
-        self.line_layout.addWidget(self.line_label)
-        self.line_layout.addWidget(self.line_combo)
-        self.line_layout.addStretch()
-        
+
+        self.line_pos_layout = QHBoxLayout()
+        self.line_pos_layout.addWidget(self.line_label)
+        self.line_pos_layout.addWidget(self.line_combo)
+        self.line_pos_layout.addWidget(self.pos_label)
+        self.line_pos_layout.addWidget(self.pos_combo)
+        self.line_pos_layout.addStretch()
+
         self.text_label = QLabel('Text: ')
         self.text_edit = QLineEdit();
         self.text_edit.setMaxLength(LCD20x4.MAX_POSITION)
@@ -156,9 +153,13 @@ class LCD20x4(PluginBase):
             self.char_save_layout.addLayout(self.char_index_layout)
             self.char_save_layout.addWidget(self.char_index_save)
             self.char_save_layout.addWidget(self.char_show)
+
+            help_label = QLabel('Use "\\0, \\1, ..., \\7" in text field to show custom characters.')
+            help_label.setWordWrap(True)
+
+            self.char_save_layout.addWidget(help_label)
             self.char_save_layout.addStretch()
-            
-            
+
             grid_stretch_layout = QHBoxLayout()
             grid_stretch_layout.addWidget(QLabel('Custom Character: '))
             grid_stretch_layout.addLayout(gridlayout)
@@ -169,14 +170,9 @@ class LCD20x4(PluginBase):
             self.char_main_layout.addStretch()
             self.char_main_layout.addLayout(grid_stretch_layout)
             self.char_main_layout.addStretch()
-            
-            self.char_main_layoutv = QVBoxLayout()
-            self.char_main_layoutv.addLayout(self.char_main_layout)
-            self.char_main_layoutv.addWidget(QLabel('Use "\\0, \\1, ..., \\7" in text field to show custom characters.'))
-        
+
         layout = QVBoxLayout(self)
-        layout.addLayout(self.line_layout)
-        layout.addLayout(self.pos_layout)
+        layout.addLayout(self.line_pos_layout)
         layout.addLayout(self.text_layout)
         layout.addWidget(self.clear_button)
         layout.addLayout(self.onofflayout)
@@ -187,7 +183,7 @@ class LCD20x4(PluginBase):
 
         if self.firmware_version >= (2, 0, 1):
             layout.addWidget(line)
-            layout.addLayout(self.char_main_layoutv)
+            layout.addLayout(self.char_main_layout)
 
         layout.addStretch(1)
 
