@@ -118,7 +118,18 @@ class PluginBase(QWidget, object):
 
         # disconnect all signals to ensure that callbacks that already emitted
         # a signal don't get delivered anymore after this point
-        self.disconnect()
+        try:
+            self.disconnect()
+        except TypeError:
+            # fallback for PyQt versions that miss parameterless disconnect()
+            for member in dir(self):
+                # FIXME: filtering by name prefix is not so robust
+                if member.startswith('qtcb_'):
+                    obj = getattr(self, member)
+
+                    # FIXME: checking type by display name of type is not so robust
+                    if str(type(obj)) == "<type 'PyQt4.QtCore.pyqtBoundSignal'>":
+                        obj.disconnect()
 
         # ensure that the widgets gets correctly destroyed. otherwise QWidgets
         # tend to leak as Python is not able to collect their PyQt object
