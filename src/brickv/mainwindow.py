@@ -69,8 +69,8 @@ class PluginWindow(QWidget):
 
     def tab(self):
         if self.windowFlags() & Qt.Window:
-            index = self.tab_widget.addTab(self, self.name)
             self.setWindowFlags(Qt.Widget)
+            index = self.tab_widget.addTab(self, self.name)
 
             if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING:
                 self.tab_widget.setTabEnabled(index, False)
