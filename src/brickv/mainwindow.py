@@ -497,28 +497,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return container
 
     def tab_state_change(self, event):
-        # allow rearranging of tabs
-        if event.type() == QEvent.MouseButtonPress and event.button() & Qt.LeftButton:
-            QApplication.setOverrideCursor(QCursor(Qt.SizeHorCursor))
-            return False
+        # visualize rearranging of tabs (if allowed by tab_widget)
+        if self.tab_widget.isMovable():
+            if event.type() == QEvent.MouseButtonPress and event.button() & Qt.LeftButton:
+                QApplication.setOverrideCursor(QCursor(Qt.SizeHorCursor))
 
-        elif event.type() == QEvent.MouseButtonRelease and event.button() & Qt.LeftButton:
-            QApplication.restoreOverrideCursor()
-            return False
+            elif event.type() == QEvent.MouseButtonRelease and event.button() & Qt.LeftButton:
+                QApplication.restoreOverrideCursor()
 
         # detach tab on double click
-        elif event.type() == QEvent.MouseButtonDblClick:
+        if event.type() == QEvent.MouseButtonDblClick:
             index = self.tab_widget.currentIndex()
             tab = self.tab_widget.widget(index)
 
-            if self.tab_widget.tabText(index) == "Setup":
-                return False
+            if self.tab_widget.tabText(index) != "Setup":
+                tab.untab()
+                tab._info.plugin.start_plugin()
 
-            tab.untab()
-            tab._info.plugin.start_plugin()
-
-            self.tab_widget.setCurrentIndex(0)
-            QApplication.restoreOverrideCursor()
+                self.tab_widget.setCurrentIndex(0)
 
         return False
 
