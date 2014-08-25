@@ -619,7 +619,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.tab_widget.addTab(c, info.name)
         elif enumeration_type == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
             for info in infos.infos.values():
-                if info.type in ('brick', 'bricklet') and device_info.uid == uid:
+                if info.type in ('brick', 'bricklet') and info.uid == uid:
                     self.tab_widget.setCurrentIndex(0)
 
                     info.plugin.stop_plugin()
@@ -784,20 +784,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_tree_view(self):
         self.tree_view_model.clear()
 
-        for device_info in sorted(infos.infos.values(), cmp=lambda x, y: cmp(x.name, y.name)):
-            if device_info.type == 'brick':
-                parent = [QStandardItem(device_info.name),
-                          QStandardItem(device_info.uid),
-                          QStandardItem('.'.join(map(str, device_info.firmware_version_installed)))]
+        for info in sorted(infos.infos.values(), cmp=lambda x, y: cmp(x.name, y.name)):
+            if info.type == 'brick':
+                parent = [QStandardItem(info.name),
+                          QStandardItem(info.uid),
+                          QStandardItem('.'.join(map(str, info.firmware_version_installed)))]
                 for item in parent:
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
 
                 self.tree_view_model.appendRow(parent)
-                for port in sorted(device_info.bricklets):
-                    if device_info.bricklets[port] and device_info.bricklets[port].protocol_version == 2:
-                        child = [QStandardItem(port.upper() + ': ' +device_info.bricklets[port].name),
-                                 QStandardItem(device_info.bricklets[port].uid),
-                                 QStandardItem('.'.join(map(str, device_info.bricklets[port].firmware_version_installed)))]
+                for port in sorted(info.bricklets):
+                    if info.bricklets[port] and info.bricklets[port].protocol_version == 2:
+                        child = [QStandardItem(port.upper() + ': ' + info.bricklets[port].name),
+                                 QStandardItem(info.bricklets[port].uid),
+                                 QStandardItem('.'.join(map(str, info.bricklets[port].firmware_version_installed)))]
                         for item in child:
                             item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                         parent[0].appendRow(child)
