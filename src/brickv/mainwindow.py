@@ -282,14 +282,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.host_infos[i].secret = str(self.edit_secret.text())
         self.host_infos[i].remember_secret = self.checkbox_remember_secret.isChecked()
 
-    def remove_all_plugs(self):
+    def remove_all_plugins(self):
         # first remove all tabs in reverse order
-        plugs = {}
+        uid_tabid = {}
         for uid in self.plugins:
-            plugs[uid] = self.tab_for_uid(uid)
+            uid_tabid[uid] = self.tab_for_uid(uid)
 
-        for key in sorted(plugs, key = plugs.get, reverse = True):
-            if not self.remove_tab(plugs[key]):
+        for uid in sorted(uid_tabid, key = uid_tabid.get, reverse = True):
+            if not self.remove_tab(uid_tabid[uid]):
                 break
 
         # then remove all widgets
@@ -303,7 +303,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.tab_widget.removeTab(tab_id)
         return exists
 
-    def remove_plug(self, uid):
+    def remove_plugin(self, uid):
         tab_id = self.tab_for_uid(uid)
         self.remove_tab(tab_id)
         self.remove_widget(uid)
@@ -335,7 +335,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             except:
                 pass
 
-        self.remove_all_plugs()
+        self.remove_all_plugins()
         self.update_tree_view()
 
     def do_disconnect(self):
@@ -625,7 +625,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     info.plugin.stop_plugin()
                     info.plugin.destroy_plugin()
 
-                    self.remove_plug(info.uid)
+                    self.remove_plugin(info.uid)
 
                 if info.type == 'brick':
                     for port in info.bricklets:
