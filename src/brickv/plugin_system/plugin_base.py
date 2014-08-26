@@ -129,7 +129,10 @@ class PluginBase(QWidget, object):
 
                     # FIXME: checking type by display name of type is not so robust
                     if str(type(obj)) == "<type 'PyQt4.QtCore.pyqtBoundSignal'>":
-                        obj.disconnect()
+                        try:
+                            obj.disconnect()
+                        except:
+                            pass
 
         # ensure that the widgets gets correctly destroyed. otherwise QWidgets
         # tend to leak as Python is not able to collect their PyQt object
