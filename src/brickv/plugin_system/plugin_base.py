@@ -99,7 +99,7 @@ class PluginBase(QWidget, object):
             except:
                 pass
 
-            self.plugin_state == PluginBase.PLUGIN_STATE_RUNNING
+            self.plugin_state = PluginBase.PLUGIN_STATE_RUNNING
 
     def destroy_plugin(self):
         # destroy plugin first, then cleanup the UI stuff
