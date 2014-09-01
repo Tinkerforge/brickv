@@ -22,13 +22,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, QVariant, Qt, QTimer, QEvent, QSize
-from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, QIcon, \
+from PyQt4.QtCore import pyqtSignal, QVariant, Qt, QTimer, QEvent
+from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, \
                         QPushButton, QWidget, QHBoxLayout, QVBoxLayout, \
                         QLabel, QFrame, QSpacerItem, QSizePolicy, \
                         QStandardItemModel, QStandardItem, QToolButton, \
-                        QLineEdit, QCursor, QAbstractButton, QTabBar, \
-                        QPainter, QSizePolicy
+                        QLineEdit, QCursor, QIcon
 from brickv.ui_mainwindow import Ui_MainWindow
 from brickv.plugin_system.plugin_manager import PluginManager
 from brickv.bindings.ip_connection import IPConnection
@@ -40,88 +39,13 @@ from brickv.bindings.brick_red import BrickRED
 from brickv.program_path import get_program_path
 from brickv import config
 from brickv import infos
+from brickv.tab_window import TabWindow
 
 import os
 import signal
 import sys
 import time
 
-class TabButton(QAbstractButton):
-    clicked = pyqtSignal(int) # emitting index of tab
-
-    def __init__(self, tab, default_icon, mouse_over_icon = None, parent=None):
-        super(TabButton, self).__init__(parent)
-        self.tab = tab
-        self.default_icon = default_icon
-        self.mouse_over_icon = mouse_over_icon if mouse_over_icon else default_icon
-        self.setIcon(default_icon)
-        self.sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        self.setMouseTracking(True)
-
-    def paintEvent(self, event):
-        self.icon().paint(QPainter(self), event.rect())
-
-    def sizeHint(self):
-        return self.iconSize()
-
-    def enterEvent(self, event):
-        self.set_mouse_over_icon()
-
-    def leaveEvent(self, event):
-        self.set_default_icon()
-
-    def mousePressEvent(self, event):
-        self.clicked.emit(self.tab.tab_widget.indexOf(self.tab))
-
-    def set_mouse_over_icon(self):
-        self.setIcon(self.mouse_over_icon)
-
-    def set_default_icon(self):
-        self.setIcon(self.default_icon)
-
-class PluginWindow(QWidget):
-
-    def __init__(self, tab_widget, ipcon, name, icon, button_handler, parent=None):
-        super(PluginWindow, self).__init__(parent)
-        self.tab_widget = tab_widget
-        self.ipcon = ipcon
-        self.name = name
-        self.setWindowIcon(icon)
-
-        self.button = None # see tab()
-        self.button_handler = button_handler
-        self.button_icon_default = \
-            QIcon(os.path.join(get_program_path(), "tabicon-default.png"))
-        self.button_icon_mouse_over = \
-            QIcon(os.path.join(get_program_path(), "tabicon-mouse-over.png"))
-
-    def closeEvent(self, event):
-        self.tab()
-        event.accept()
-
-    def untab(self):
-        index = self.tab_widget.indexOf(self)
-        if index > -1:
-            self.tab_widget.removeTab(index)
-            self.setWindowFlags(Qt.Window)
-            self.setWindowTitle(self.name)
-            self.adjustSize()
-            self.show()
-
-    def tab(self):
-        if self.windowFlags() & Qt.Window:
-            self.setWindowFlags(Qt.Widget)
-            index = self.tab_widget.addTab(self, self.name)
-
-            if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING:
-                self.tab_widget.setTabEnabled(index, False)
-
-            # (re-)instantiating button here because the TabBar takes ownership and
-            # destroys it when this PluginWindow is untabbed
-            self.button = \
-                TabButton(self, self.button_icon_default, self.button_icon_mouse_over)
-            self.tab_widget.tabBar().setTabButton(index, QTabBar.LeftSide, self.button)
-            self.button.clicked.connect(self.button_handler)
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     qtcb_enumerate = pyqtSignal(str, str, 'char', type((0,)), type((0,)), int, int)
@@ -477,8 +401,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.show_plugin(uid_text)
 
     def create_plugin_container(self, info, connected_uid, position):
-        container = PluginWindow(self.tab_widget, self.ipcon, info.name, self.icon, self.untab)
+        container = TabWindow(self.tab_widget, info.name, self.icon, self.untab)
         container._info = info
+        container.set_callback_on_tab(lambda index:
+            self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING and \
+                self.tab_widget.setTabEnabled(index, False))
+
         layout = QVBoxLayout(container)
         info_bar = QHBoxLayout()
 
