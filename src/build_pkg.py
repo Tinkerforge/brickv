@@ -97,6 +97,8 @@ def build_macosx_pkg():
 
     os.path.walk(os.path.normcase("build_data/macosx/"), visitor, (True, os.path.normcase("build_data/macosx/")))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'brickv-icon.png')]))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tabicon-default.png')]))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tabicon-mouse-over.png')]))
 
     def delete_old():
         BUILD_PATH = os.path.join(PWD, "build")
@@ -232,6 +234,8 @@ def build_windows_pkg():
 
     os.path.walk(os.path.normcase("build_data/windows/"), visitor, (True, os.path.normcase("build_data/windows/")))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'brickv-icon.png')]))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tabicon-default.png')]))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tabicon-mouse-over.png')]))
 
     generate_plugin_images()
 
