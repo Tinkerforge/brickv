@@ -65,7 +65,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QSpinBox" name="spinbox_read_page"/>
+      <widget class="QSpinBox" name="spinbox_read_page">
+       <property name="value">
+        <number>5</number>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer name="horizontalSpacer">
