@@ -113,7 +113,7 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
         self.index1_hide = [self.widget_read_spinbox, self.label_read_key, self.combobox_read_key]
         self.index2_hide = [self.widget_read_spinbox, self.label_read_key, self.combobox_read_key]
         
-        self.disable = [self.widget_read_spinbox, self.label_read_key, self.combobox_read_key, self.label_read_page, self.spinbox_read_page, self.button_read_page, self.textedit_read_page, self.button_write_page]
+        self.disable = [self.widget_read_spinbox, self.label_read_key, self.combobox_read_key, self.label_read_page, self.spinbox_read_page, self.button_read_page, self.button_write_page]
         
         self.tag_type_changed(0)
         
