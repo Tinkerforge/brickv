@@ -94,8 +94,10 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
                 self.layout_write4.addWidget(sb)
         
         self.scan_pressed_type = -1
-        self.read_page_pressed_page = 0
-        self.write_page_pressed_page = 0
+        self.read_page_pressed_first_page = 0
+        self.read_page_pressed_page_range = ''
+        self.write_page_pressed_first_page = 0
+        self.write_page_pressed_page_range = ''
         self.write_page_pressed_data = []
         
         doc = self.textedit_read_page.document()
@@ -117,6 +119,20 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
         
         self.tag_type_changed(0)
         
+    def get_current_page_range(self):
+        tt = self.combo_box_tag_type.currentIndex()
+        page = self.spinbox_read_page.value()
+        page_range = ''
+
+        if tt == self.nfc.TAG_TYPE_MIFARE_CLASSIC:
+            page_range = '{0}'.format(page)
+        elif tt == self.nfc.TAG_TYPE_TYPE1:
+            page_range = '{0}-{1}'.format(page, page+1)
+        elif tt == self.nfc.TAG_TYPE_TYPE2:
+            page_range = '{0}-{1}'.format(page, page+3)
+
+        return page_range
+
     def tag_type_changed(self, index):
         s  = ''
         self.label_id.setText(s)
@@ -138,21 +154,9 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
         self.page_changed(self.spinbox_read_page.value())
         
     def page_changed(self, page):
-        tt = self.combo_box_tag_type.currentIndex()
-        
-        text_read = 'Read Page'
-        text_write = 'Write Page'
-        
-        if tt == self.nfc.TAG_TYPE_MIFARE_CLASSIC:
-            text_read = 'Read Page {0}'.format(page)
-            text_write = 'Write Page {0}'.format(page)
-        elif tt == self.nfc.TAG_TYPE_TYPE1:
-            text_read = 'Read Page {0}-{1}'.format(page, page+1)
-            text_write = 'Write Page {0}-{1}'.format(page, page+1)
-        elif tt == self.nfc.TAG_TYPE_TYPE2:
-            text_read = 'Read Page {0}-{1}'.format(page, page+3)
-            text_write = 'Write Page {0}-{1}'.format(page, page+3)
-            
+        text_read = 'Read Page ' + self.get_current_page_range()
+        text_write = 'Write Page ' + self.get_current_page_range()
+
         self.button_read_page.setText(text_read)
         self.button_write_page.setText(text_write)
         
@@ -163,7 +167,8 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
         
     def read_page_pressed(self):
         page = self.spinbox_read_page.value()
-        self.read_page_pressed_page = page
+        self.read_page_pressed_first_page = page
+        self.read_page_pressed_page_range = self.get_current_page_range()
         if self.scan_pressed_type == self.nfc.TAG_TYPE_MIFARE_CLASSIC:
             key_number = self.combobox_read_key.currentIndex()
             key = []
@@ -177,7 +182,8 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
     def write_page_pressed(self):
         self.write_page_was_pressed = True
         page = self.spinbox_read_page.value()
-        self.write_page_pressed_page = page
+        self.write_page_pressed_first_page = page
+        self.write_page_pressed_page_range = self.get_current_page_range()
         self.write_page_pressed_data = []
 
         for sp in self.key_write_spinbox:
@@ -203,17 +209,17 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
         if state & (self.nfc.STATE_ERROR & ~self.nfc.STATE_IDLE):
             self.tag_type_changed(self.combo_box_tag_type.currentIndex())
             if (state & 0xF) == self.nfc.STATE_REQUEST_TAG_ID:
-                s = 'Could not find tag'
+                s = 'Could not find {0} tag'.format(self.combo_box_tag_type.currentText())
                 self.label_id.setText(s)
             elif (state & 0xF) == self.nfc.STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE:
-                s  = 'Could not authenticate page {0}'.format(self.read_page_pressed_page)
+                s = 'Error: Could not authenticate page {0}'.format(self.read_page_pressed_page_range)
                 self.textedit_read_page.setPlainText(s)
-            elif (state & 0xF) == self.nfc.STATE_WRITE_PAGE:    
+            elif (state & 0xF) == self.nfc.STATE_WRITE_PAGE:
                 self.write_page_was_pressed = False
-                s  = 'Could not write page {0}'.format(self.write_page_pressed_page)
+                s = 'Error: Could not write page {0}'.format(self.write_page_pressed_page_range)
                 self.textedit_read_page.setPlainText(s)
             elif (state & 0xF) == self.nfc.STATE_REQUEST_PAGE:
-                s  = 'Could not read page {0}'.format(self.read_page_pressed_page)
+                s = 'Error: Could not read page {0}'.format(self.read_page_pressed_page_range)
                 self.textedit_read_page.setPlainText(s)
         elif state & self.nfc.STATE_IDLE:
             if (state & 0xF) == self.nfc.STATE_REQUEST_TAG_ID:
@@ -221,29 +227,33 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
             elif (state & 0xF) == self.nfc.STATE_AUTHENTICATING_MIFARE_CLASSIC_PAGE:
                 if self.write_page_was_pressed:
                     self.write_page_was_pressed = False
-                    self.nfc.write_page(self.write_page_pressed_page, self.write_page_pressed_data)
+                    self.nfc.write_page(self.write_page_pressed_first_page, self.write_page_pressed_data)
                 else:
-                    self.nfc.request_page(self.read_page_pressed_page)
+                    self.nfc.request_page(self.read_page_pressed_first_page)
             elif (state & 0xF) == self.nfc.STATE_REQUEST_PAGE:
                 async_call(self.nfc.get_page, None, self.cb_get_page, self.increase_error_count)
-            
+            elif (state & 0xF) == self.nfc.STATE_WRITE_PAGE:
+                self.write_page_was_pressed = False
+                s = 'Successfully wrote page {0}'.format(self.write_page_pressed_page_range)
+                self.textedit_read_page.setPlainText(s)
+
     def cb_get_page(self, page):
         if self.scan_pressed_type == self.nfc.TAG_TYPE_TYPE2:
-            s  = 'Page {0}: '.format(self.read_page_pressed_page)
+            s  = 'Page {0}: '.format(self.read_page_pressed_first_page)
             s += '{0:02X} {1:02X} {2:02X} {3:02X}\n'.format(*page[0:4])
-            s += 'Page {0}: '.format(self.read_page_pressed_page+1)
+            s += 'Page {0}: '.format(self.read_page_pressed_first_page+1)
             s += '{0:02X} {1:02X} {2:02X} {3:02X}\n'.format(*page[4:8])
-            s += 'Page {0}: '.format(self.read_page_pressed_page+2)
+            s += 'Page {0}: '.format(self.read_page_pressed_first_page+2)
             s += '{0:02X} {1:02X} {2:02X} {3:02X}\n'.format(*page[8:12])
-            s += 'Page {0}: '.format(self.read_page_pressed_page+3)
+            s += 'Page {0}: '.format(self.read_page_pressed_first_page+3)
             s += '{0:02X} {1:02X} {2:02X} {3:02X}'.format(*page[12:16])
         elif self.scan_pressed_type == self.nfc.TAG_TYPE_TYPE1:
-            s  = 'Page {0}: '.format(self.read_page_pressed_page)
+            s  = 'Page {0}: '.format(self.read_page_pressed_first_page)
             s += '{0:02X} {1:02X} {2:02X} {3:02X} {4:02X} {5:02X} {6:02X} {7:02X}\n'.format(*page[0:8])
-            s += 'Page {0}: '.format(self.read_page_pressed_page+1)
+            s += 'Page {0}: '.format(self.read_page_pressed_first_page+1)
             s += '{0:02X} {1:02X} {2:02X} {3:02X} {4:02X} {5:02X} {6:02X} {7:02X}'.format(*page[8:16])
         elif self.scan_pressed_type == self.nfc.TAG_TYPE_MIFARE_CLASSIC:
-            s  = 'Page {0}: '.format(self.read_page_pressed_page)
+            s  = 'Page {0}: '.format(self.read_page_pressed_first_page)
             s += '{0:02X} {1:02X} {2:02X} {3:02X} {4:02X} {5:02X} {6:02X} {7:02X} {8:02X} {9:02X} {10:02X} {11:02X} {12:02X} {13:02X} {14:02X} {15:02X}'.format(*page[0:16])
         else:
             return
