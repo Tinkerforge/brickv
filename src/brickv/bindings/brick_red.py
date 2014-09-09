@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-08-21.      #
+# This file was automatically generated on 2014-09-09.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -33,28 +33,27 @@ GetListLength = namedtuple('ListLength', ['error_code', 'length'])
 GetListItem = namedtuple('ListItem', ['error_code', 'item_object_id'])
 OpenFile = namedtuple('OpenFile', ['error_code', 'file_id'])
 CreatePipe = namedtuple('CreatePipe', ['error_code', 'file_id'])
-GetFileName = namedtuple('FileName', ['error_code', 'name_string_id'])
-GetFileType = namedtuple('FileType', ['error_code', 'type'])
-WriteFile = namedtuple('WriteFile', ['error_code', 'length_written'])
+GetFileInfo = namedtuple('FileInfo', ['error_code', 'type', 'name_string_id', 'flags', 'permissions', 'user_id', 'group_id', 'length', 'access_time', 'modification_time', 'status_change_time'])
 ReadFile = namedtuple('ReadFile', ['error_code', 'buffer', 'length_read'])
+WriteFile = namedtuple('WriteFile', ['error_code', 'length_written'])
 SetFilePosition = namedtuple('SetFilePosition', ['error_code', 'position'])
 GetFilePosition = namedtuple('FilePosition', ['error_code', 'position'])
-GetFileInfo = namedtuple('FileInfo', ['error_code', 'type', 'permissions', 'user_id', 'group_id', 'length', 'access_time', 'modification_time', 'status_change_time'])
-GetSymlinkTarget = namedtuple('SymlinkTarget', ['error_code', 'target_string_id'])
+LookupFileInfo = namedtuple('LookupFileInfo', ['error_code', 'type', 'permissions', 'user_id', 'group_id', 'length', 'access_time', 'modification_time', 'status_change_time'])
+LookupSymlinkTarget = namedtuple('LookupSymlinkTarget', ['error_code', 'target_string_id'])
 OpenDirectory = namedtuple('OpenDirectory', ['error_code', 'directory_id'])
 GetDirectoryName = namedtuple('DirectoryName', ['error_code', 'name_string_id'])
 GetNextDirectoryEntry = namedtuple('NextDirectoryEntry', ['error_code', 'name_string_id', 'type'])
 SpawnProcess = namedtuple('SpawnProcess', ['error_code', 'process_id'])
-GetProcessCommand = namedtuple('ProcessCommand', ['error_code', 'command_string_id'])
-GetProcessArguments = namedtuple('ProcessArguments', ['error_code', 'arguments_list_id'])
-GetProcessEnvironment = namedtuple('ProcessEnvironment', ['error_code', 'environment_list_id'])
-GetProcessWorkingDirectory = namedtuple('ProcessWorkingDirectory', ['error_code', 'working_directory_string_id'])
-GetProcessUserID = namedtuple('ProcessUserID', ['error_code', 'user_id'])
-GetProcessGroupID = namedtuple('ProcessGroupID', ['error_code', 'group_id'])
-GetProcessStdin = namedtuple('ProcessStdin', ['error_code', 'stdin_file_id'])
-GetProcessStdout = namedtuple('ProcessStdout', ['error_code', 'stdout_file_id'])
-GetProcessStderr = namedtuple('ProcessStderr', ['error_code', 'stderr_file_id'])
+GetProcessCommand = namedtuple('ProcessCommand', ['error_code', 'executable_string_id', 'arguments_list_id', 'environment_list_id', 'working_directory_string_id'])
+GetProcessIdentity = namedtuple('ProcessIdentity', ['error_code', 'user_id', 'group_id'])
+GetProcessStdio = namedtuple('ProcessStdio', ['error_code', 'stdin_file_id', 'stdout_file_id', 'stderr_file_id'])
 GetProcessState = namedtuple('ProcessState', ['error_code', 'state', 'exit_code'])
+DefineProgram = namedtuple('DefineProgram', ['error_code', 'program_id'])
+GetProgramIdentifier = namedtuple('ProgramIdentifier', ['error_code', 'identifier_string_id'])
+GetProgramDirectory = namedtuple('ProgramDirectory', ['error_code', 'directory_string_id'])
+GetProgramCommand = namedtuple('ProgramCommand', ['error_code', 'executable_string_id', 'arguments_list_id', 'environment_list_id'])
+GetProgramStdioRedirection = namedtuple('ProgramStdioRedirection', ['error_code', 'stdin_redirection', 'stdin_file_name_string_id', 'stdout_redirection', 'stdout_file_name_string_id', 'stderr_redirection', 'stderr_file_name_string_id'])
+GetProgramSchedule = namedtuple('ProgramSchedule', ['error_code', 'start_condition', 'start_time', 'start_delay', 'repeat_mode', 'repeat_interval', 'repeat_second_mask', 'repeat_minute_mask', 'repeat_hour_mask', 'repeat_day_mask', 'repeat_month_mask', 'repeat_weekday_mask'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickRED(Device):
@@ -64,9 +63,9 @@ class BrickRED(Device):
 
     DEVICE_IDENTIFIER = 17
 
+    CALLBACK_ASYNC_FILE_READ = 27
     CALLBACK_ASYNC_FILE_WRITE = 28
-    CALLBACK_ASYNC_FILE_READ = 29
-    CALLBACK_PROCESS_STATE_CHANGED = 48
+    CALLBACK_PROCESS_STATE_CHANGED = 42
 
     FUNCTION_RELEASE_OBJECT = 1
     FUNCTION_OPEN_INVENTORY = 2
@@ -85,34 +84,38 @@ class BrickRED(Device):
     FUNCTION_REMOVE_FROM_LIST = 15
     FUNCTION_OPEN_FILE = 16
     FUNCTION_CREATE_PIPE = 17
-    FUNCTION_GET_FILE_NAME = 18
-    FUNCTION_GET_FILE_TYPE = 19
-    FUNCTION_WRITE_FILE = 20
-    FUNCTION_WRITE_FILE_UNCHECKED = 21
-    FUNCTION_WRITE_FILE_ASYNC = 22
-    FUNCTION_READ_FILE = 23
-    FUNCTION_READ_FILE_ASYNC = 24
-    FUNCTION_ABORT_ASYNC_FILE_READ = 25
-    FUNCTION_SET_FILE_POSITION = 26
-    FUNCTION_GET_FILE_POSITION = 27
-    FUNCTION_GET_FILE_INFO = 30
-    FUNCTION_GET_SYMLINK_TARGET = 31
-    FUNCTION_OPEN_DIRECTORY = 32
-    FUNCTION_GET_DIRECTORY_NAME = 33
-    FUNCTION_GET_NEXT_DIRECTORY_ENTRY = 34
-    FUNCTION_REWIND_DIRECTORY = 35
+    FUNCTION_GET_FILE_INFO = 18
+    FUNCTION_READ_FILE = 19
+    FUNCTION_READ_FILE_ASYNC = 20
+    FUNCTION_ABORT_ASYNC_FILE_READ = 21
+    FUNCTION_WRITE_FILE = 22
+    FUNCTION_WRITE_FILE_UNCHECKED = 23
+    FUNCTION_WRITE_FILE_ASYNC = 24
+    FUNCTION_SET_FILE_POSITION = 25
+    FUNCTION_GET_FILE_POSITION = 26
+    FUNCTION_LOOKUP_FILE_INFO = 29
+    FUNCTION_LOOKUP_SYMLINK_TARGET = 30
+    FUNCTION_OPEN_DIRECTORY = 31
+    FUNCTION_GET_DIRECTORY_NAME = 32
+    FUNCTION_GET_NEXT_DIRECTORY_ENTRY = 33
+    FUNCTION_REWIND_DIRECTORY = 34
+    FUNCTION_CREATE_DIRECTORY = 35
     FUNCTION_SPAWN_PROCESS = 36
     FUNCTION_KILL_PROCESS = 37
     FUNCTION_GET_PROCESS_COMMAND = 38
-    FUNCTION_GET_PROCESS_ARGUMENTS = 39
-    FUNCTION_GET_PROCESS_ENVIRONMENT = 40
-    FUNCTION_GET_PROCESS_WORKING_DIRECTORY = 41
-    FUNCTION_GET_PROCESS_USER_ID = 42
-    FUNCTION_GET_PROCESS_GROUP_ID = 43
-    FUNCTION_GET_PROCESS_STDIN = 44
-    FUNCTION_GET_PROCESS_STDOUT = 45
-    FUNCTION_GET_PROCESS_STDERR = 46
-    FUNCTION_GET_PROCESS_STATE = 47
+    FUNCTION_GET_PROCESS_IDENTITY = 39
+    FUNCTION_GET_PROCESS_STDIO = 40
+    FUNCTION_GET_PROCESS_STATE = 41
+    FUNCTION_DEFINE_PROGRAM = 43
+    FUNCTION_UNDEFINE_PROGRAM = 44
+    FUNCTION_GET_PROGRAM_IDENTIFIER = 45
+    FUNCTION_GET_PROGRAM_DIRECTORY = 46
+    FUNCTION_SET_PROGRAM_COMMAND = 47
+    FUNCTION_GET_PROGRAM_COMMAND = 48
+    FUNCTION_SET_PROGRAM_STDIO_REDIRECTION = 49
+    FUNCTION_GET_PROGRAM_STDIO_REDIRECTION = 50
+    FUNCTION_SET_PROGRAM_SCHEDULE = 51
+    FUNCTION_GET_PROGRAM_SCHEDULE = 52
     FUNCTION_GET_IDENTITY = 255
 
     OBJECT_TYPE_INVENTORY = 0
@@ -128,9 +131,9 @@ class BrickRED(Device):
     FILE_FLAG_APPEND = 8
     FILE_FLAG_CREATE = 16
     FILE_FLAG_EXCLUSIVE = 32
-    FILE_FLAG_NO_ACCESS_TIME = 64
-    FILE_FLAG_NO_FOLLOW = 128
-    FILE_FLAG_TRUNCATE = 256
+    FILE_FLAG_NON_BLOCKING = 64
+    FILE_FLAG_TRUNCATE = 128
+    FILE_FLAG_TEMPORARY = 256
     FILE_PERMISSION_USER_ALL = 448
     FILE_PERMISSION_USER_READ = 256
     FILE_PERMISSION_USER_WRITE = 128
@@ -143,6 +146,8 @@ class BrickRED(Device):
     FILE_PERMISSION_OTHERS_READ = 4
     FILE_PERMISSION_OTHERS_WRITE = 2
     FILE_PERMISSION_OTHERS_EXECUTE = 1
+    PIPE_FLAG_NON_BLOCKING_READ = 1
+    PIPE_FLAG_NON_BLOCKING_WRITE = 2
     FILE_TYPE_UNKNOWN = 0
     FILE_TYPE_REGULAR = 1
     FILE_TYPE_DIRECTORY = 2
@@ -169,6 +174,16 @@ class BrickRED(Device):
     PROCESS_STATE_EXITED = 2
     PROCESS_STATE_KILLED = 3
     PROCESS_STATE_STOPPED = 4
+    PROGRAM_STDIO_REDIRECTION_DEV_NULL = 0
+    PROGRAM_STDIO_REDIRECTION_PIPE = 1
+    PROGRAM_STDIO_REDIRECTION_FILE = 2
+    PROGRAM_SCHEDULE_START_CONDITION_NEVER = 0
+    PROGRAM_SCHEDULE_START_CONDITION_NOW = 1
+    PROGRAM_SCHEDULE_START_CONDITION_BOOT = 2
+    PROGRAM_SCHEDULE_START_CONDITION_TIME = 2
+    PROGRAM_SCHEDULE_REPEAT_MODE_NEVER = 0
+    PROGRAM_SCHEDULE_REPEAT_MODE_RELATIVE = 1
+    PROGRAM_SCHEDULE_REPEAT_MODE_ABSOLUTE = 2
 
     def __init__(self, uid, ipcon):
         """
@@ -196,47 +211,51 @@ class BrickRED(Device):
         self.response_expected[BrickRED.FUNCTION_REMOVE_FROM_LIST] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_OPEN_FILE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_CREATE_PIPE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_GET_FILE_NAME] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_GET_FILE_TYPE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_WRITE_FILE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_WRITE_FILE_UNCHECKED] = BrickRED.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickRED.FUNCTION_WRITE_FILE_ASYNC] = BrickRED.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickRED.FUNCTION_GET_FILE_INFO] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_READ_FILE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_READ_FILE_ASYNC] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_ABORT_ASYNC_FILE_READ] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_WRITE_FILE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_WRITE_FILE_UNCHECKED] = BrickRED.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickRED.FUNCTION_WRITE_FILE_ASYNC] = BrickRED.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickRED.FUNCTION_SET_FILE_POSITION] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_FILE_POSITION] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.CALLBACK_ASYNC_FILE_WRITE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickRED.CALLBACK_ASYNC_FILE_READ] = BrickRED.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickRED.FUNCTION_GET_FILE_INFO] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_GET_SYMLINK_TARGET] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.CALLBACK_ASYNC_FILE_WRITE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickRED.FUNCTION_LOOKUP_FILE_INFO] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_LOOKUP_SYMLINK_TARGET] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_OPEN_DIRECTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_DIRECTORY_NAME] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_NEXT_DIRECTORY_ENTRY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_REWIND_DIRECTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_CREATE_DIRECTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_SPAWN_PROCESS] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_KILL_PROCESS] = BrickRED.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickRED.FUNCTION_KILL_PROCESS] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_PROCESS_COMMAND] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_GET_PROCESS_ARGUMENTS] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_GET_PROCESS_ENVIRONMENT] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_GET_PROCESS_WORKING_DIRECTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_GET_PROCESS_USER_ID] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_GET_PROCESS_GROUP_ID] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_GET_PROCESS_STDIN] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_GET_PROCESS_STDOUT] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_GET_PROCESS_STDERR] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_PROCESS_IDENTITY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_PROCESS_STDIO] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_PROCESS_STATE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.CALLBACK_PROCESS_STATE_CHANGED] = BrickRED.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickRED.FUNCTION_DEFINE_PROGRAM] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_UNDEFINE_PROGRAM] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_PROGRAM_IDENTIFIER] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_PROGRAM_DIRECTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_SET_PROGRAM_COMMAND] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_PROGRAM_COMMAND] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_SET_PROGRAM_STDIO_REDIRECTION] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_PROGRAM_STDIO_REDIRECTION] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_SET_PROGRAM_SCHEDULE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_PROGRAM_SCHEDULE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_IDENTITY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickRED.CALLBACK_ASYNC_FILE_WRITE] = 'H B B'
         self.callback_formats[BrickRED.CALLBACK_ASYNC_FILE_READ] = 'H B 60B B'
+        self.callback_formats[BrickRED.CALLBACK_ASYNC_FILE_WRITE] = 'H B B'
         self.callback_formats[BrickRED.CALLBACK_PROCESS_STATE_CHANGED] = 'H B B'
 
     def release_object(self, object_id):
         """
         Decreases the reference count of an object by one and returns the resulting
-        error code. If the reference count reaches zero the object is destroyed.
+        error code. If the reference count reaches zero the object gets destroyed.
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_RELEASE_OBJECT, (object_id,), 'H', 'B')
 
@@ -245,22 +264,36 @@ class BrickRED(Device):
         Opens the inventory for a specific object type and allocates a new inventory
         object for it.
         
+        Possible object types are:
+        
+        * Inventory = 0
+        * String = 1
+        * List = 2
+        * File = 3
+        * Directory = 4
+        * Process = 5
+        * Program = 6
+        
         Returns the object ID of the new directory object and the resulting error code.
         """
         return OpenInventory(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_INVENTORY, (type,), 'B', 'B H'))
 
     def get_inventory_type(self, inventory_id):
         """
-        Returns the object type of a inventory object and the resulting error code.
+        Returns the object type of a inventory object, as passed to
+        :func:`OpenInventory`, and the resulting error code.
+        
+        See :func:`OpenInventory` for possible object types.
         """
         return GetInventoryType(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_INVENTORY_TYPE, (inventory_id,), 'H', 'B B'))
 
     def get_next_inventory_entry(self, inventory_id):
         """
         Returns the object ID of the next object in an inventory object and the
-        resulting error code. If there is not next object then error code
-        ``API_E_NO_MORE_DATA`` is returned. To rewind an inventory object call
-        :func:`RewindInventory`.
+        resulting error code.
+        
+        If there is not next object then error code *NoMoreData* is returned. To rewind
+        an inventory object call :func:`RewindInventory`.
         """
         return GetNextInventoryEntry(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_NEXT_INVENTORY_ENTRY, (inventory_id,), 'H', 'B H'))
 
@@ -310,11 +343,14 @@ class BrickRED(Device):
 
     def allocate_list(self, length_to_reserve):
         """
-        Allocates a new list object and reserves memory for ``length_to_reserve`` items.
-        Set ``length_to_reserve`` to the number of items that should be stored in the
-        list object.
+        Allocates a new list object and reserves memory for ``length_to_reserve``
+        items. Set ``length_to_reserve`` to the number of items that should be stored
+        in the list object.
         
         Returns the object ID of the new list object and the resulting error code.
+        
+        When a list object gets destroyed then the reference count of each object in
+        the list object is decreased by one.
         """
         return AllocateList(*self.ipcon.send_request(self, BrickRED.FUNCTION_ALLOCATE_LIST, (length_to_reserve,), 'H', 'B H'))
 
@@ -354,77 +390,112 @@ class BrickRED(Device):
         Opens an existing file or creates a new file and allocates a new file object
         for it.
         
+        FIXME: name has to be absolute
+        
         The reference count of the name string object is increased by one. When the
-        file object is destroyed then the reference count of the name string object is
+        file object gets destroyed then the reference count of the name string object is
         decreased by one. Also the name string object is locked and cannot be modified
         while the file object holds a reference to it.
+        
+        The ``flags`` parameter takes a ORed combination of the following possible file
+        flags (in hexadecimal notation):
+        
+        * ReadOnly = 0x0001 (O_RDONLY)
+        * WriteOnly = 0x0002 (O_WRONLY)
+        * ReadWrite = 0x0004 (O_RDWR)
+        * Append = 0x0008 (O_APPEND)
+        * Create = 0x0010 (O_CREAT)
+        * Exclusive = 0x0020 (O_EXCL)
+        * NonBlocking = 0x0040 (O_NONBLOCK)
+        * Truncate = 0x0080 (O_TRUNC)
+        * Temporary = 0x0100
+        
+        FIXME: explain *Temporary* flag
+        
+        The ``permissions`` parameter takes a ORed combination of the following
+        possible file permissions (in octal notation) that match the common UNIX
+        permission bits:
+        
+        * UserRead = 00400
+        * UserWrite = 00200
+        * UserExecute = 00100
+        * GroupRead = 00040
+        * GroupWrite = 00020
+        * GroupExecute = 00010
+        * OthersRead = 00004
+        * OthersWrite = 00002
+        * OthersExecute = 00001
         
         Returns the object ID of the new file object and the resulting error code.
         """
         return OpenFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_FILE, (name_string_id, flags, permissions, user_id, group_id), 'H H H I I', 'B H'))
 
-    def create_pipe(self):
+    def create_pipe(self, flags):
         """
         Creates a new pipe and allocates a new file object for it.
         
+        The ``flags`` parameter takes a ORed combination of the following possible
+        pipe flags (in hexadecimal notation):
+        
+        * NonBlockingRead = 0x0001
+        * NonBlockingWrite = 0x0002
+        
         Returns the object ID of the new file object and the resulting error code.
         """
-        return CreatePipe(*self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_PIPE, (), '', 'B H'))
+        return CreatePipe(*self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_PIPE, (flags,), 'H', 'B H'))
 
-    def get_file_name(self, file_id):
+    def get_file_info(self, file_id):
         """
-        Returns the name of a file object and the resulting error code.
-        """
-        return GetFileName(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_NAME, (file_id,), 'H', 'B H'))
-
-    def get_file_type(self, file_id):
-        """
-        Returns the type of a file object and the resulting error code.
-        """
-        return GetFileType(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_TYPE, (file_id,), 'H', 'B B'))
-
-    def write_file(self, file_id, buffer, length_to_write):
-        """
-        Writes up to 61 bytes to a file object.
+        Returns various information about a file and the resulting error code.
         
-        Returns the actual number of bytes written and the resulting error code.
-        """
-        return WriteFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE, (file_id, buffer, length_to_write), 'H 61B B', 'B B'))
-
-    def write_file_unchecked(self, file_id, buffer, length_to_write):
-        """
-        Writes up to 61 bytes to a file object.
+        Possible file types are:
         
-        Does neither report the actual number of bytes written nor the resulting error
-        code.
-        """
-        self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE_UNCHECKED, (file_id, buffer, length_to_write), 'H 61B B', '')
-
-    def write_file_async(self, file_id, buffer, length_to_write):
-        """
-        Writes up to 61 bytes to a file object.
+        * Unknown = 0
+        * Regular = 1
+        * Directory = 2
+        * Character = 3
+        * Block = 4
+        * FIFO = 5
+        * Symlink = 6
+        * Socket = 7
+        * Pipe = 8
         
-        Reports the actual number of bytes written and the resulting error code via the
-        :func:`AsyncFileWrite` callback.
+        If the file type is *Pipe* then the returned name string object is invalid,
+        because a pipe has no name. Otherwise the returned name string object was used
+        to open or create the file object, as passed to :func:`OpenFile`.
+        
+        The returned flags were used to open or create the file object, as passed to
+        :func:`OpenFile` or :func:`CreatePipe`. See the respective function for a list
+        of possible file and pipe flags.
+        
+        FIXME: everything except flags is invalid if file type is *Pipe*
         """
-        self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE_ASYNC, (file_id, buffer, length_to_write), 'H 61B B', '')
+        return GetFileInfo(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_INFO, (file_id,), 'H', 'B B H H H I I Q Q Q Q'))
 
     def read_file(self, file_id, length_to_read):
         """
         Reads up to 62 bytes from a file object.
         
         Returns the read bytes and the resulting error code.
+        
+        If the file object was created by :func:`OpenFile` without the *NonBlocking*
+        flag or by :func:`CreatePipe` without the *NonBlockingRead* flag then the
+        error code *NotSupported* is returned.
         """
         return ReadFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_READ_FILE, (file_id, length_to_read), 'H B', 'B 62B B'))
 
     def read_file_async(self, file_id, length_to_read):
         """
-        Reads up to 2\ :sup:`63`\  - 1 bytes from a file object.
+        Reads up to 2\ :sup:`63`\  - 1 bytes from a file object asynchronously.
         
         Returns the resulting error code.
         
-        Reports the read bytes in 60 byte chunks and the resulting error code of the
-        read operation via the :func:`AsyncFileRead` callback.
+        The read bytes in 60 byte chunks and the resulting error codes of the read
+        operations are reported via the :func:`AsyncFileRead` callback.
+        
+        If the file object was created by :func:`OpenFile` without the *NonBlocking*
+        flag or by :func:`CreatePipe` without the *NonBlockingRead* flag then the error
+        code *NotSupported* is reported via the :func:`AsyncFileRead` callback.
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_READ_FILE_ASYNC, (file_id, length_to_read), 'H Q', 'B')
 
@@ -436,11 +507,58 @@ class BrickRED(Device):
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_ABORT_ASYNC_FILE_READ, (file_id,), 'H', 'B')
 
+    def write_file(self, file_id, buffer, length_to_write):
+        """
+        Writes up to 61 bytes to a file object.
+        
+        Returns the actual number of bytes written and the resulting error code.
+        
+        If the file object was created by :func:`OpenFile` without the *NonBlocking*
+        flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag then the
+        error code *NotSupported* is returned.
+        """
+        return WriteFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE, (file_id, buffer, length_to_write), 'H 61B B', 'B B'))
+
+    def write_file_unchecked(self, file_id, buffer, length_to_write):
+        """
+        Writes up to 61 bytes to a file object.
+        
+        Does neither report the actual number of bytes written nor the resulting error
+        code.
+        
+        If the file object was created by :func:`OpenFile` without the *NonBlocking*
+        flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag then the
+        write operation will fail silently.
+        """
+        self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE_UNCHECKED, (file_id, buffer, length_to_write), 'H 61B B', '')
+
+    def write_file_async(self, file_id, buffer, length_to_write):
+        """
+        Writes up to 61 bytes to a file object.
+        
+        Reports the actual number of bytes written and the resulting error code via the
+        :func:`AsyncFileWrite` callback.
+        
+        If the file object was created by :func:`OpenFile` without the *NonBlocking*
+        flag or by :func:`CreatePipe` without the *NonBlockingWrite* flag then the
+        error code *NotSupported* is reported via the :func:`AsyncFileWrite` callback.
+        """
+        self.ipcon.send_request(self, BrickRED.FUNCTION_WRITE_FILE_ASYNC, (file_id, buffer, length_to_write), 'H 61B B', '')
+
     def set_file_position(self, file_id, offset, origin):
         """
         Set the current seek position of a file object in bytes relative to ``origin``.
         
+        Possible file origins are:
+        
+        * Beginning = 0
+        * Current = 1
+        * End = 2
+        
         Returns the resulting absolute seek position and error code.
+        
+        If the file object was created by :func:`CreatePipe` then it has no seek
+        position and the error code *InvalidSeek* is returned.
         """
         return SetFilePosition(*self.ipcon.send_request(self, BrickRED.FUNCTION_SET_FILE_POSITION, (file_id, offset, origin), 'H q B', 'B Q'))
 
@@ -448,37 +566,49 @@ class BrickRED(Device):
         """
         Returns the current seek position of a file object in bytes and returns the
         resulting error code.
+        
+        If the file object was created by :func:`CreatePipe` then it has no seek
+        position and the error code *InvalidSeek* is returned.
         """
         return GetFilePosition(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_POSITION, (file_id,), 'H', 'B Q'))
 
-    def get_file_info(self, name_string_id, follow_symlink):
+    def lookup_file_info(self, name_string_id, follow_symlink):
         """
         Returns various information about a file and the resulting error code.
+        
+        FIXME: name has to be absolute
         
         The information is obtained via the
         `stat() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html>`__
         function. If ``follow_symlink`` is *false* then the
         `lstat() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html>`__
         function is used instead.
-        """
-        return GetFileInfo(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_INFO, (name_string_id, follow_symlink), 'H ?', 'B B H I I Q Q Q Q'))
-
-    def get_symlink_target(self, name_string_id, canonicalize):
-        """
-        Returns the target of a symlink and the resulting error code.
         
-        If ``canonicalize`` is *false* then the target of the symlink is resolved one
-        level via the
+        See :func:`GetFileInfo` for a list of possible file types and see
+        :func:`OpenFile` for a list of possible file permissions.
+        """
+        return LookupFileInfo(*self.ipcon.send_request(self, BrickRED.FUNCTION_LOOKUP_FILE_INFO, (name_string_id, follow_symlink), 'H ?', 'B B H I I Q Q Q Q'))
+
+    def lookup_symlink_target(self, name_string_id, canonicalize):
+        """
+        Returns the target of a symbolic link and the resulting error code.
+        
+        FIXME: name has to be absolute
+        
+        If ``canonicalize`` is *false* then the target of the symbolic link is resolved
+        one level via the
         `readlink() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/readlink.html>`__
         function, otherwise it is fully resolved using the
         `realpath() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/realpath.html>`__
         function.
         """
-        return GetSymlinkTarget(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_SYMLINK_TARGET, (name_string_id, canonicalize), 'H ?', 'B H'))
+        return LookupSymlinkTarget(*self.ipcon.send_request(self, BrickRED.FUNCTION_LOOKUP_SYMLINK_TARGET, (name_string_id, canonicalize), 'H ?', 'B H'))
 
     def open_directory(self, name_string_id):
         """
         Opens an existing directory and allocates a new directory object for it.
+        
+        FIXME: name has to be absolute
         
         The reference count of the name string object is increased by one. When the
         directory object is destroyed then the reference count of the name string
@@ -491,15 +621,19 @@ class BrickRED(Device):
 
     def get_directory_name(self, directory_id):
         """
-        Returns the name of a directory object and the resulting error code.
+        Returns the name of a directory object, as passed to :func:`OpenDirectory`, and
+        the resulting error code.
         """
         return GetDirectoryName(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_DIRECTORY_NAME, (directory_id,), 'H', 'B H'))
 
     def get_next_directory_entry(self, directory_id):
         """
         Returns the next entry in a directory object and the resulting error code.
-        If there is not next entry then error code ``API_E_NO_MORE_DATA`` is returned.
-        To rewind a directory object call :func:`RewindDirectory`.
+        
+        If there is not next entry then error code *NoMoreData* is returned. To rewind
+        a directory object call :func:`RewindDirectory`.
+        
+        See :func:`GetFileType` for a list of possible file types.
         """
         return GetNextDirectoryEntry(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_NEXT_DIRECTORY_ENTRY, (directory_id,), 'H', 'B H B'))
 
@@ -509,77 +643,139 @@ class BrickRED(Device):
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_REWIND_DIRECTORY, (directory_id,), 'H', 'B')
 
-    def spawn_process(self, command_string_id, arguments_list_id, environment_list_id, working_directory_string_id, user_id, group_id, stdin_file_id, stdout_file_id, stderr_file_id):
+    def create_directory(self, name_string_id, recursive, permissions, user_id, group_id):
+        """
+        FIXME: name has to be absolute
+        """
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_DIRECTORY, (name_string_id, recursive, permissions, user_id, group_id), 'H ? H I I', 'B')
+
+    def spawn_process(self, executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id, user_id, group_id, stdin_file_id, stdout_file_id, stderr_file_id):
         """
         
         """
-        return SpawnProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_SPAWN_PROCESS, (command_string_id, arguments_list_id, environment_list_id, working_directory_string_id, user_id, group_id, stdin_file_id, stdout_file_id, stderr_file_id), 'H H H H I I H H H', 'B H'))
+        return SpawnProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_SPAWN_PROCESS, (executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id, user_id, group_id, stdin_file_id, stdout_file_id, stderr_file_id), 'H H H H I I H H H', 'B H'))
 
     def kill_process(self, process_id, signal):
         """
+        Sends a UNIX signal to a process object and returns the resulting error code.
         
+        Possible UNIX signals are:
+        
+        * Interrupt = 2
+        * Quit = 3
+        * Abort = 6
+        * Kill = 9
+        * User1 = 10
+        * User2 = 12
+        * Terminate = 15
+        * Continue =  18
+        * Stop = 19
         """
-        self.ipcon.send_request(self, BrickRED.FUNCTION_KILL_PROCESS, (process_id, signal), 'H B', '')
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_KILL_PROCESS, (process_id, signal), 'H B', 'B')
 
     def get_process_command(self, process_id):
         """
-        
+        Returns the executable, arguments, environment and working directory used to
+        spawn a process object, as passed to :func:`SpawnProcess`, and the resulting
+        error code.
         """
-        return GetProcessCommand(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_COMMAND, (process_id,), 'H', 'B H'))
+        return GetProcessCommand(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_COMMAND, (process_id,), 'H', 'B H H H H'))
 
-    def get_process_arguments(self, process_id):
+    def get_process_identity(self, process_id):
         """
-        
+        Returns the user and group ID used to spawn a process object, as passed to
+        :func:`SpawnProcess`, and the resulting error code.
         """
-        return GetProcessArguments(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_ARGUMENTS, (process_id,), 'H', 'B H'))
+        return GetProcessIdentity(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_IDENTITY, (process_id,), 'H', 'B I I'))
 
-    def get_process_environment(self, process_id):
+    def get_process_stdio(self, process_id):
         """
-        
+        Returns the stdin, stdout and stderr files used to spawn a process object, as
+        passed to :func:`SpawnProcess`, and the resulting error code.
         """
-        return GetProcessEnvironment(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_ENVIRONMENT, (process_id,), 'H', 'B H'))
-
-    def get_process_working_directory(self, process_id):
-        """
-        
-        """
-        return GetProcessWorkingDirectory(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_WORKING_DIRECTORY, (process_id,), 'H', 'B H'))
-
-    def get_process_user_id(self, process_id):
-        """
-        
-        """
-        return GetProcessUserID(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_USER_ID, (process_id,), 'H', 'B I'))
-
-    def get_process_group_id(self, process_id):
-        """
-        
-        """
-        return GetProcessGroupID(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_GROUP_ID, (process_id,), 'H', 'B I'))
-
-    def get_process_stdin(self, process_id):
-        """
-        
-        """
-        return GetProcessStdin(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STDIN, (process_id,), 'H', 'B H'))
-
-    def get_process_stdout(self, process_id):
-        """
-        
-        """
-        return GetProcessStdout(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STDOUT, (process_id,), 'H', 'B H'))
-
-    def get_process_stderr(self, process_id):
-        """
-        
-        """
-        return GetProcessStderr(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STDERR, (process_id,), 'H', 'B H'))
+        return GetProcessStdio(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STDIO, (process_id,), 'H', 'B H H H'))
 
     def get_process_state(self, process_id):
         """
+        Returns the current state and exit code of a process object, and the resulting
+        error code.
         
+        Possible process states are:
+        
+        * Unknown = 0
+        * Running = 1
+        * Exited = 2
+        * Killed = 3
+        * Stopped = 4
+        
+        The exit code is only valid if the state is *Exited*, *Killed* or *Stopped* and
+        has different meanings depending on the state:
+        
+        * Exited: exit status of the process
+        * Killed: UNIX signal number used to kill the process
+        * Stopped: UNIX signal number used to stop the process
         """
         return GetProcessState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STATE, (process_id,), 'H', 'B B B'))
+
+    def define_program(self, identifier_string_id):
+        """
+        
+        """
+        return DefineProgram(*self.ipcon.send_request(self, BrickRED.FUNCTION_DEFINE_PROGRAM, (identifier_string_id,), 'H', 'B H'))
+
+    def undefine_program(self, program_id):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_UNDEFINE_PROGRAM, (program_id,), 'H', 'B')
+
+    def get_program_identifier(self, program_id):
+        """
+        
+        """
+        return GetProgramIdentifier(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_IDENTIFIER, (program_id,), 'H', 'B H'))
+
+    def get_program_directory(self, program_id):
+        """
+        
+        """
+        return GetProgramDirectory(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_DIRECTORY, (program_id,), 'H', 'B H'))
+
+    def set_program_command(self, program_id, executable_string_id, arguments_list_id, environment_list_id):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_COMMAND, (program_id, executable_string_id, arguments_list_id, environment_list_id), 'H H H H', 'B')
+
+    def get_program_command(self, program_id):
+        """
+        
+        """
+        return GetProgramCommand(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_COMMAND, (program_id,), 'H', 'B H H H'))
+
+    def set_program_stdio_redirection(self, program_id, stdin_redirection, stdin_file_name_string_id, stdout_redirection, stdout_file_name_string_id, stderr_redirection, stderr_file_name_string_id):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_STDIO_REDIRECTION, (program_id, stdin_redirection, stdin_file_name_string_id, stdout_redirection, stdout_file_name_string_id, stderr_redirection, stderr_file_name_string_id), 'H B H B H B H', 'B')
+
+    def get_program_stdio_redirection(self, program_id):
+        """
+        
+        """
+        return GetProgramStdioRedirection(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_STDIO_REDIRECTION, (program_id,), 'H', 'B B H B H B H'))
+
+    def set_program_schedule(self, program_id, start_condition, start_time, start_delay, repeat_mode, repeat_interval, repeat_second_mask, repeat_minute_mask, repeat_hour_mask, repeat_day_mask, repeat_month_mask, repeat_weekday_mask):
+        """
+        FIXME: week starts on monday
+        """
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_SCHEDULE, (program_id, start_condition, start_time, start_delay, repeat_mode, repeat_interval, repeat_second_mask, repeat_minute_mask, repeat_hour_mask, repeat_day_mask, repeat_month_mask, repeat_weekday_mask), 'H B Q I B I Q Q I I H B', 'B')
+
+    def get_program_schedule(self, program_id):
+        """
+        FIXME: week starts on monday
+        """
+        return GetProgramSchedule(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_SCHEDULE, (program_id,), 'H', 'B B Q I B I Q Q I I H B'))
 
     def get_identity(self):
         """

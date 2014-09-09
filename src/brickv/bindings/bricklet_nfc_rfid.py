@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-08-21.      #
+# This file was automatically generated on 2014-09-09.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -159,7 +159,7 @@ class BrickletNFCRFID(Device):
         a Mifare Classic page you have to authenticate it beforehand.
         Each page can be authenticated with two keys: A (``key_number`` = 0) and B
         (``key_number`` = 1). A new Mifare Classic
-        tag that has not yet been written to can can be accessed with key number A
+        tag that has not yet been written to can can be accessed with key A
         and the default key ``[0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF]``.
         
         The approach to read or write a Mifare Classic page is as follows:

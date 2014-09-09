@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-08-05.      #
+# This file was automatically generated on 2014-09-09.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -249,12 +249,12 @@ class BrickDC(Device):
     def set_minimum_voltage(self, voltage):
         """
         Sets the minimum voltage in mV, below which the :func:`UnderVoltage` callback
-        is triggered. The minimum possible value that works with the DC Brick is 5V.
+        is triggered. The minimum possible value that works with the DC Brick is 6V.
         You can use this function to detect the discharge of a battery that is used
         to drive the motor. If you have a fixed power supply, you likely do not need
         this functionality.
         
-        The default value is 5V.
+        The default value is 6V.
         """
         self.ipcon.send_request(self, BrickDC.FUNCTION_SET_MINIMUM_VOLTAGE, (voltage,), 'H', '')
 
