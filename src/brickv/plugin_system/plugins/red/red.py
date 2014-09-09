@@ -26,6 +26,7 @@ from brickv.bindings.brick_red import BrickRED
 from brickv.async_call import async_call
 
 from brickv.plugin_system.plugins.red.ui_red import Ui_RED
+from brickv.plugin_system.plugins.red.api import REDError, REDString, REDFile
 
 class RED(PluginBase, Ui_RED):
     def __init__(self, *args):
