@@ -279,7 +279,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.remove_tab(tab_id)
         self.remove_widget(uid)
 
-        self.plugins[uid] = None
+        self.plugins.pop(uid)
 
     def remove_widget(self, uid):
         widget = self.plugins[uid]
