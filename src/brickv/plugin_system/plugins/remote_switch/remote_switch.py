@@ -36,7 +36,6 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
         PluginBase.__init__(self, 'Remote Switch Bricklet', BrickletRemoteSwitch, *args)
 
         self.setupUi(self)
-        self.adjustSize()
 
         self.rs = self.device
 

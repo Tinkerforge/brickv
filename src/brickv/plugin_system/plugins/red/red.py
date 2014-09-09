@@ -32,7 +32,6 @@ class RED(PluginBase, Ui_RED):
         PluginBase.__init__(self, 'RED Brick', BrickRED, *args)
 
         self.setupUi(self)
-        self.adjustSize()
 
         self.red = self.device
 
