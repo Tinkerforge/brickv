@@ -295,7 +295,7 @@ def build_windows_pkg():
 
     # build nsis
     lines = []
-    for line in file('build_data/windows/nsis/brickv_installer.nsi', 'rb').readlines():
+    for line in file('build_data/windows/nsis/brickv_installer.nsi.template', 'rb').readlines():
         line = line.replace('<<BRICKV_DOT_VERSION>>', brickv.config.BRICKV_VERSION)
         line = line.replace('<<BRICKV_UNDERSCORE_VERSION>>', brickv.config.BRICKV_VERSION.replace('.', '_'))
         lines.append(line)
