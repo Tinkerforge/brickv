@@ -190,7 +190,7 @@ UninstPage instfiles
 
 ;--------------------------------
 
-Section /o "-uninstall old brickv" SEC_UNINSTALL_OLD
+Section /o "-Uninstall Brick Viewer" SEC_UNINSTALL_OLD
 
   !insertmacro macrouninstall
 
