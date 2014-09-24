@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-09-09.      #
+# This file was automatically generated on 2014-09-24.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -177,13 +177,13 @@ class BrickRED(Device):
     PROGRAM_STDIO_REDIRECTION_DEV_NULL = 0
     PROGRAM_STDIO_REDIRECTION_PIPE = 1
     PROGRAM_STDIO_REDIRECTION_FILE = 2
-    PROGRAM_SCHEDULE_START_CONDITION_NEVER = 0
-    PROGRAM_SCHEDULE_START_CONDITION_NOW = 1
-    PROGRAM_SCHEDULE_START_CONDITION_BOOT = 2
-    PROGRAM_SCHEDULE_START_CONDITION_TIME = 2
-    PROGRAM_SCHEDULE_REPEAT_MODE_NEVER = 0
-    PROGRAM_SCHEDULE_REPEAT_MODE_RELATIVE = 1
-    PROGRAM_SCHEDULE_REPEAT_MODE_ABSOLUTE = 2
+    PROGRAM_START_CONDITION_NEVER = 0
+    PROGRAM_START_CONDITION_NOW = 1
+    PROGRAM_START_CONDITION_BOOT = 2
+    PROGRAM_START_CONDITION_TIME = 2
+    PROGRAM_REPEAT_MODE_NEVER = 0
+    PROGRAM_REPEAT_MODE_INTERVAL = 1
+    PROGRAM_REPEAT_MODE_SELECTION = 2
 
     def __init__(self, uid, ipcon):
         """

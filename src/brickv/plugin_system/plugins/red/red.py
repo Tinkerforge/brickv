@@ -26,7 +26,7 @@ from brickv.bindings.brick_red import BrickRED
 from brickv.async_call import async_call
 
 from brickv.plugin_system.plugins.red.ui_red import Ui_RED
-from brickv.plugin_system.plugins.red.api import REDError, REDString, REDFile
+from brickv.plugin_system.plugins.red.api import REDError, REDString, REDFile, REDProcess
 
 class RED(PluginBase, Ui_RED):
     def __init__(self, *args):
@@ -40,6 +40,26 @@ class RED(PluginBase, Ui_RED):
         #        for Brick(let)s connected to it. Trigger a enumerate to pick up
         #        all devices connected to a RED Brick properly
         self.ipcon.enumerate()
+
+        """
+        f1 = REDFile(self.red).open('/tmp/blubb123', REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0755, 0, 0)
+        f1.write('foobar1 foobar2 foobar3 foobar4 foobar5 foobar6')
+        f1.release()
+
+        f2 = REDFile(self.red).open('/tmp/blubb123', REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0)
+        print 'READ: ' + f2.read(256)
+        f2.release()
+
+        sin = REDFile(self.red).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0)
+        sout = REDFile(self.red).open('/dev/null', REDFile.FLAG_WRITE_ONLY, 0, 0, 0)
+        self.p = REDProcess(self.red)
+        self.p.state_changed_callback = self.foobar
+        self.p.spawn('touch', ['/tmp/fffffffffffffffffffffffffffff'], [], '/', 0, 0, sin, sout, sout)
+        print self.p.arguments.items[0].data
+
+    def foobar(self, p):
+        print 'foobar', p.state, p.exit_code
+        """
 
     def start(self):
         pass
