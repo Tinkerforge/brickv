@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-09-24.      #
+# This file was automatically generated on 2014-09-25.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -33,12 +33,12 @@ GetListLength = namedtuple('ListLength', ['error_code', 'length'])
 GetListItem = namedtuple('ListItem', ['error_code', 'item_object_id'])
 OpenFile = namedtuple('OpenFile', ['error_code', 'file_id'])
 CreatePipe = namedtuple('CreatePipe', ['error_code', 'file_id'])
-GetFileInfo = namedtuple('FileInfo', ['error_code', 'type', 'name_string_id', 'flags', 'permissions', 'user_id', 'group_id', 'length', 'access_time', 'modification_time', 'status_change_time'])
+GetFileInfo = namedtuple('FileInfo', ['error_code', 'type', 'name_string_id', 'flags', 'permissions', 'user_id', 'group_id', 'length', 'access_timestamp', 'modification_timestamp', 'status_change_timestamp'])
 ReadFile = namedtuple('ReadFile', ['error_code', 'buffer', 'length_read'])
 WriteFile = namedtuple('WriteFile', ['error_code', 'length_written'])
 SetFilePosition = namedtuple('SetFilePosition', ['error_code', 'position'])
 GetFilePosition = namedtuple('FilePosition', ['error_code', 'position'])
-LookupFileInfo = namedtuple('LookupFileInfo', ['error_code', 'type', 'permissions', 'user_id', 'group_id', 'length', 'access_time', 'modification_time', 'status_change_time'])
+LookupFileInfo = namedtuple('LookupFileInfo', ['error_code', 'type', 'permissions', 'user_id', 'group_id', 'length', 'access_timestamp', 'modification_timestamp', 'status_change_timestamp'])
 LookupSymlinkTarget = namedtuple('LookupSymlinkTarget', ['error_code', 'target_string_id'])
 OpenDirectory = namedtuple('OpenDirectory', ['error_code', 'directory_id'])
 GetDirectoryName = namedtuple('DirectoryName', ['error_code', 'name_string_id'])
@@ -53,7 +53,7 @@ GetProgramIdentifier = namedtuple('ProgramIdentifier', ['error_code', 'identifie
 GetProgramDirectory = namedtuple('ProgramDirectory', ['error_code', 'directory_string_id'])
 GetProgramCommand = namedtuple('ProgramCommand', ['error_code', 'executable_string_id', 'arguments_list_id', 'environment_list_id'])
 GetProgramStdioRedirection = namedtuple('ProgramStdioRedirection', ['error_code', 'stdin_redirection', 'stdin_file_name_string_id', 'stdout_redirection', 'stdout_file_name_string_id', 'stderr_redirection', 'stderr_file_name_string_id'])
-GetProgramSchedule = namedtuple('ProgramSchedule', ['error_code', 'start_condition', 'start_time', 'start_delay', 'repeat_mode', 'repeat_interval', 'repeat_second_mask', 'repeat_minute_mask', 'repeat_hour_mask', 'repeat_day_mask', 'repeat_month_mask', 'repeat_weekday_mask'])
+GetProgramSchedule = namedtuple('ProgramSchedule', ['error_code', 'start_condition', 'start_timestamp', 'start_delay', 'repeat_mode', 'repeat_interval', 'repeat_second_mask', 'repeat_minute_mask', 'repeat_hour_mask', 'repeat_day_mask', 'repeat_month_mask', 'repeat_weekday_mask'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickRED(Device):
@@ -171,16 +171,19 @@ class BrickRED(Device):
     PROCESS_SIGNAL_STOP = 19
     PROCESS_STATE_UNKNOWN = 0
     PROCESS_STATE_RUNNING = 1
-    PROCESS_STATE_EXITED = 2
-    PROCESS_STATE_KILLED = 3
-    PROCESS_STATE_STOPPED = 4
+    PROCESS_STATE_ERROR = 2
+    PROCESS_STATE_EXITED = 3
+    PROCESS_STATE_KILLED = 4
+    PROCESS_STATE_STOPPED = 5
     PROGRAM_STDIO_REDIRECTION_DEV_NULL = 0
     PROGRAM_STDIO_REDIRECTION_PIPE = 1
     PROGRAM_STDIO_REDIRECTION_FILE = 2
+    PROGRAM_STDIO_REDIRECTION_STDOUT = 3
+    PROGRAM_STDIO_REDIRECTION_LOG = 4
     PROGRAM_START_CONDITION_NEVER = 0
     PROGRAM_START_CONDITION_NOW = 1
-    PROGRAM_START_CONDITION_BOOT = 2
-    PROGRAM_START_CONDITION_TIME = 2
+    PROGRAM_START_CONDITION_REBOOT = 2
+    PROGRAM_START_CONDITION_TIMESTAMP = 3
     PROGRAM_REPEAT_MODE_NEVER = 0
     PROGRAM_REPEAT_MODE_INTERVAL = 1
     PROGRAM_REPEAT_MODE_SELECTION = 2
@@ -704,16 +707,24 @@ class BrickRED(Device):
         
         * Unknown = 0
         * Running = 1
-        * Exited = 2
-        * Killed = 3
-        * Stopped = 4
+        * Error = 2
+        * Exited = 3
+        * Killed = 4
+        * Stopped = 5
         
-        The exit code is only valid if the state is *Exited*, *Killed* or *Stopped* and
-        has different meanings depending on the state:
+        The exit code is only valid if the state is *Error*, *Exited*, *Killed* or
+        *Stopped* and has different meanings depending on the state:
         
+        * Error: error code (see below)
         * Exited: exit status of the process
         * Killed: UNIX signal number used to kill the process
         * Stopped: UNIX signal number used to stop the process
+        
+        Possible exit/error codes in *Error* state are:
+        
+        * InternalError = 125
+        * CannotExecute = 126
+        * DoesNotExist = 127
         """
         return GetProcessState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STATE, (process_id,), 'H', 'B B B'))
 
@@ -765,11 +776,11 @@ class BrickRED(Device):
         """
         return GetProgramStdioRedirection(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_STDIO_REDIRECTION, (program_id,), 'H', 'B B H B H B H'))
 
-    def set_program_schedule(self, program_id, start_condition, start_time, start_delay, repeat_mode, repeat_interval, repeat_second_mask, repeat_minute_mask, repeat_hour_mask, repeat_day_mask, repeat_month_mask, repeat_weekday_mask):
+    def set_program_schedule(self, program_id, start_condition, start_timestamp, start_delay, repeat_mode, repeat_interval, repeat_second_mask, repeat_minute_mask, repeat_hour_mask, repeat_day_mask, repeat_month_mask, repeat_weekday_mask):
         """
         FIXME: week starts on monday
         """
-        return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_SCHEDULE, (program_id, start_condition, start_time, start_delay, repeat_mode, repeat_interval, repeat_second_mask, repeat_minute_mask, repeat_hour_mask, repeat_day_mask, repeat_month_mask, repeat_weekday_mask), 'H B Q I B I Q Q I I H B', 'B')
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_SCHEDULE, (program_id, start_condition, start_timestamp, start_delay, repeat_mode, repeat_interval, repeat_second_mask, repeat_minute_mask, repeat_hour_mask, repeat_day_mask, repeat_month_mask, repeat_weekday_mask), 'H B Q I B I Q Q I I H B', 'B')
 
     def get_program_schedule(self, program_id):
         """
