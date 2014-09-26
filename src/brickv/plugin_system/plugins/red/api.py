@@ -304,8 +304,8 @@ class REDFile(REDObject):
         self._name = None
         self._flags = None
         self._permissions = None
-        self._user_id = None
-        self._group_id = None
+        self._uid = None
+        self._gid = None
         self._length = None
         self._access_time = None
         self._modification_time = None
@@ -315,7 +315,7 @@ class REDFile(REDObject):
         if self._object_id is None:
             raise RuntimeError('Cannot update unattached file object')
 
-        error_code, type, name_string_id, flags, permissions, user_id, group_id, \
+        error_code, type, name_string_id, flags, permissions, uid, gid, \
         length, access_time, modification_time, status_change_time = self._red.get_file_info(self._object_id)
 
         if error_code != E_SUCCESS:
@@ -325,8 +325,8 @@ class REDFile(REDObject):
         self._name = attach_or_release(self._red, REDString, name_string_id)
         self._flags = flags
         self._permissions = permissions
-        self._user_id = user_id
-        self._group_id = group_id
+        self._uid = uid
+        self._gid = gid
         self._length = length
         self._access_time = access_time
         self._modification_time = modification_time
@@ -341,13 +341,13 @@ class REDFile(REDObject):
 
         return self
 
-    def open(self, name, flags, permissions, user_id, group_id):
+    def open(self, name, flags, permissions, uid, gid):
         self.release()
 
         if not isinstance(name, REDString):
             name = REDString(self._red).allocate(name)
 
-        error_code, object_id = self._red.open_file(name.object_id, flags, permissions, user_id, group_id)
+        error_code, object_id = self._red.open_file(name.object_id, flags, permissions, uid, gid)
 
         if error_code != E_SUCCESS:
             raise REDError('Could not open file object', error_code)
@@ -417,12 +417,12 @@ class REDFile(REDObject):
         return self._permissions
 
     @property
-    def user_id(self):
-        return self._user_id
+    def uid(self):
+        return self._uid
 
     @property
-    def group_id(self):
-        return self._group_id
+    def gid(self):
+        return self._gid
 
     @property
     def length(self):
@@ -464,7 +464,7 @@ class REDProcess(REDObject):
     ERROR_CODE_CANNOT_EXECUTE = 126
     ERROR_CODE_DOES_NOT_EXIST = 127
 
-    _qtcb_state_changed = pyqtSignal(int, int, int)
+    _qtcb_state_changed = pyqtSignal(int, int, int, int)
 
     def __init__(self, *args):
         REDObject.__init__(self, *args)
@@ -478,20 +478,22 @@ class REDProcess(REDObject):
         self._arguments = None
         self._environment = None
         self._working_directory = None
-        self._user_id = None
-        self._group_id = None
+        self._uid = None
+        self._gid = None
         self._stdin = None
         self._stdout = None
         self._stderr = None
         self._state = None
+        self._pid = None
         self._exit_code = None
         self.state_changed_callback = None
 
-    def _cb_state_changed(self, process_id, state, exit_code):
+    def _cb_state_changed(self, process_id, state, pid, exit_code):
         if self._object_id != process_id:
             return
 
         self._state = state
+        self._pid = pid
         self._exit_code = exit_code
 
         state_changed_callback = self.state_changed_callback
@@ -516,13 +518,13 @@ class REDProcess(REDObject):
         self._working_directory = attach_or_release(self._red, REDString, working_directory_string_id)
 
         # identity
-        error_code, user_id, group_id = self._red.get_process_identity(self._object_id)
+        error_code, uid, gid = self._red.get_process_identity(self._object_id)
 
         if error_code != E_SUCCESS:
             raise REDError('Could not get identity of process object {0}'.format(self._object_id), error_code)
 
-        self._user_id = user_id
-        self._group_id = group_id
+        self._uid = uid
+        self._gid = gid
 
         # stdio
         error_code, stdin_file_id, stdout_file_id, stderr_file_id = self._red.get_process_stdio(self._object_id)
@@ -535,12 +537,13 @@ class REDProcess(REDObject):
         self._stderr = attach_or_release(self._red, REDFile, stderr_file_id)
 
         # state
-        error_code, state, exit_code = self._red.get_process_state(self._object_id)
+        error_code, state, pid, exit_code = self._red.get_process_state(self._object_id)
 
         if error_code != E_SUCCESS:
             raise REDError('Could not get state of process object {0}'.format(self._object_id), error_code)
 
         self._state = state
+        self._pid = pid
         self._exit_code = exit_code
 
     def attach(self, object_id):
@@ -553,7 +556,7 @@ class REDProcess(REDObject):
         return self
 
     def spawn(self, executable, arguments, environment, working_directory,
-              user_id, group_id, stdin_file, stdout_file, stderr_file):
+              uid, gid, stdin_file, stdout_file, stderr_file):
         self.release()
 
         if not isinstance(executable, REDString):
@@ -572,8 +575,7 @@ class REDProcess(REDObject):
                                                         arguments.object_id,
                                                         environment.object_id,
                                                         working_directory.object_id,
-                                                        user_id,
-                                                        group_id,
+                                                        uid, gid,
                                                         stdin_file.object_id,
                                                         stdout_file.object_id,
                                                         stderr_file.object_id)
@@ -613,12 +615,12 @@ class REDProcess(REDObject):
         return self._working_directory
 
     @property
-    def user_id(self):
-        return self._user_id
+    def uid(self):
+        return self._uid
 
     @property
-    def group_id(self):
-        return self._group_id
+    def gid(self):
+        return self._gid
 
     @property
     def stdin(self):
@@ -635,6 +637,10 @@ class REDProcess(REDObject):
     @property
     def state(self):
         return self._state
+
+    @property
+    def pid(self):
+        return self._pid
 
     @property
     def exit_code(self):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-09-25.      #
+# This file was automatically generated on 2014-09-26.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -33,21 +33,21 @@ GetListLength = namedtuple('ListLength', ['error_code', 'length'])
 GetListItem = namedtuple('ListItem', ['error_code', 'item_object_id'])
 OpenFile = namedtuple('OpenFile', ['error_code', 'file_id'])
 CreatePipe = namedtuple('CreatePipe', ['error_code', 'file_id'])
-GetFileInfo = namedtuple('FileInfo', ['error_code', 'type', 'name_string_id', 'flags', 'permissions', 'user_id', 'group_id', 'length', 'access_timestamp', 'modification_timestamp', 'status_change_timestamp'])
+GetFileInfo = namedtuple('FileInfo', ['error_code', 'type', 'name_string_id', 'flags', 'permissions', 'uid', 'gid', 'length', 'access_timestamp', 'modification_timestamp', 'status_change_timestamp'])
 ReadFile = namedtuple('ReadFile', ['error_code', 'buffer', 'length_read'])
 WriteFile = namedtuple('WriteFile', ['error_code', 'length_written'])
 SetFilePosition = namedtuple('SetFilePosition', ['error_code', 'position'])
 GetFilePosition = namedtuple('FilePosition', ['error_code', 'position'])
-LookupFileInfo = namedtuple('LookupFileInfo', ['error_code', 'type', 'permissions', 'user_id', 'group_id', 'length', 'access_timestamp', 'modification_timestamp', 'status_change_timestamp'])
+LookupFileInfo = namedtuple('LookupFileInfo', ['error_code', 'type', 'permissions', 'uid', 'gid', 'length', 'access_timestamp', 'modification_timestamp', 'status_change_timestamp'])
 LookupSymlinkTarget = namedtuple('LookupSymlinkTarget', ['error_code', 'target_string_id'])
 OpenDirectory = namedtuple('OpenDirectory', ['error_code', 'directory_id'])
 GetDirectoryName = namedtuple('DirectoryName', ['error_code', 'name_string_id'])
 GetNextDirectoryEntry = namedtuple('NextDirectoryEntry', ['error_code', 'name_string_id', 'type'])
 SpawnProcess = namedtuple('SpawnProcess', ['error_code', 'process_id'])
 GetProcessCommand = namedtuple('ProcessCommand', ['error_code', 'executable_string_id', 'arguments_list_id', 'environment_list_id', 'working_directory_string_id'])
-GetProcessIdentity = namedtuple('ProcessIdentity', ['error_code', 'user_id', 'group_id'])
+GetProcessIdentity = namedtuple('ProcessIdentity', ['error_code', 'uid', 'gid'])
 GetProcessStdio = namedtuple('ProcessStdio', ['error_code', 'stdin_file_id', 'stdout_file_id', 'stderr_file_id'])
-GetProcessState = namedtuple('ProcessState', ['error_code', 'state', 'exit_code'])
+GetProcessState = namedtuple('ProcessState', ['error_code', 'state', 'pid', 'exit_code'])
 DefineProgram = namedtuple('DefineProgram', ['error_code', 'program_id'])
 GetProgramIdentifier = namedtuple('ProgramIdentifier', ['error_code', 'identifier_string_id'])
 GetProgramDirectory = namedtuple('ProgramDirectory', ['error_code', 'directory_string_id'])
@@ -253,7 +253,7 @@ class BrickRED(Device):
 
         self.callback_formats[BrickRED.CALLBACK_ASYNC_FILE_READ] = 'H B 60B B'
         self.callback_formats[BrickRED.CALLBACK_ASYNC_FILE_WRITE] = 'H B B'
-        self.callback_formats[BrickRED.CALLBACK_PROCESS_STATE_CHANGED] = 'H B B'
+        self.callback_formats[BrickRED.CALLBACK_PROCESS_STATE_CHANGED] = 'H B I B'
 
     def release_object(self, object_id):
         """
@@ -388,7 +388,7 @@ class BrickRED(Device):
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_REMOVE_FROM_LIST, (list_id, index), 'H H', 'B')
 
-    def open_file(self, name_string_id, flags, permissions, user_id, group_id):
+    def open_file(self, name_string_id, flags, permissions, uid, gid):
         """
         Opens an existing file or creates a new file and allocates a new file object
         for it.
@@ -431,7 +431,7 @@ class BrickRED(Device):
         
         Returns the object ID of the new file object and the resulting error code.
         """
-        return OpenFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_FILE, (name_string_id, flags, permissions, user_id, group_id), 'H H H I I', 'B H'))
+        return OpenFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_FILE, (name_string_id, flags, permissions, uid, gid), 'H H H I I', 'B H'))
 
     def create_pipe(self, flags):
         """
@@ -646,17 +646,17 @@ class BrickRED(Device):
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_REWIND_DIRECTORY, (directory_id,), 'H', 'B')
 
-    def create_directory(self, name_string_id, recursive, permissions, user_id, group_id):
+    def create_directory(self, name_string_id, recursive, permissions, uid, gid):
         """
         FIXME: name has to be absolute
         """
-        return self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_DIRECTORY, (name_string_id, recursive, permissions, user_id, group_id), 'H ? H I I', 'B')
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_DIRECTORY, (name_string_id, recursive, permissions, uid, gid), 'H ? H I I', 'B')
 
-    def spawn_process(self, executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id, user_id, group_id, stdin_file_id, stdout_file_id, stderr_file_id):
+    def spawn_process(self, executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id, uid, gid, stdin_file_id, stdout_file_id, stderr_file_id):
         """
         
         """
-        return SpawnProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_SPAWN_PROCESS, (executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id, user_id, group_id, stdin_file_id, stdout_file_id, stderr_file_id), 'H H H H I I H H H', 'B H'))
+        return SpawnProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_SPAWN_PROCESS, (executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id, uid, gid, stdin_file_id, stdout_file_id, stderr_file_id), 'H H H H I I H H H', 'B H'))
 
     def kill_process(self, process_id, signal):
         """
@@ -700,8 +700,8 @@ class BrickRED(Device):
 
     def get_process_state(self, process_id):
         """
-        Returns the current state and exit code of a process object, and the resulting
-        error code.
+        Returns the current state, process ID and exit code of a process object, and
+        the resulting error code.
         
         Possible process states are:
         
@@ -712,10 +712,12 @@ class BrickRED(Device):
         * Killed = 4
         * Stopped = 5
         
+        The process ID is only valid if the state is *Running* or *Stopped*.
+        
         The exit code is only valid if the state is *Error*, *Exited*, *Killed* or
         *Stopped* and has different meanings depending on the state:
         
-        * Error: error code (see below)
+        * Error: error code for error occurred while spawning the process (see below)
         * Exited: exit status of the process
         * Killed: UNIX signal number used to kill the process
         * Stopped: UNIX signal number used to stop the process
@@ -726,7 +728,7 @@ class BrickRED(Device):
         * CannotExecute = 126
         * DoesNotExist = 127
         """
-        return GetProcessState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STATE, (process_id,), 'H', 'B B B'))
+        return GetProcessState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STATE, (process_id,), 'H', 'B B I B'))
 
     def define_program(self, identifier_string_id):
         """

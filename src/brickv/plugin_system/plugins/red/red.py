@@ -58,7 +58,7 @@ class RED(PluginBase, Ui_RED):
         print self.p.arguments.items[0].data
 
     def foobar(self, p):
-        print 'foobar', p.state, p.exit_code
+        print 'foobar', p.state, p.pid, p.exit_code
         """
 
     def start(self):
