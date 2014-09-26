@@ -155,6 +155,9 @@ class REDString(REDObject):
     MAX_SET_CHUNK_BUFFER_LENGTH = 58
     MAX_GET_CHUNK_BUFFER_LENGTH = 63
 
+    def __str__(self):
+        return self._data
+
     def _initialize(self):
         self._data = None
 
@@ -191,19 +194,22 @@ class REDString(REDObject):
     def allocate(self, data):
         self.release()
 
-        error_code, object_id = self._red.allocate_string(len(data), '') # FIXME: don't waste first buffer
+        chunk = data[0:REDString.MAX_ALLOCATE_BUFFER_LENGTH]
+        remaining_data = data[REDString.MAX_ALLOCATE_BUFFER_LENGTH:]
+
+        error_code, object_id = self._red.allocate_string(len(data), chunk)
 
         if error_code != E_SUCCESS:
             raise REDError('Could not allocate string object', error_code)
 
         self._object_id = object_id
 
-        remaining_data = data
         offset = 0
 
         while len(remaining_data) > 0:
             chunk = remaining_data[0:REDString.MAX_SET_CHUNK_BUFFER_LENGTH]
             remaining_data = remaining_data[REDString.MAX_SET_CHUNK_BUFFER_LENGTH:]
+
             error_code = self._red.set_string_chunk(self._object_id, offset, chunk)
 
             if error_code != E_SUCCESS:

@@ -42,6 +42,9 @@ class RED(PluginBase, Ui_RED):
         self.ipcon.enumerate()
 
         """
+        s1 = REDString(self.red).allocate('a23456789_b23456789_c23456789_d23456789_e23456789_f23456789_g23456789_h23456789_i23456789_j23456789_k')
+        print s1
+
         f1 = REDFile(self.red).open('/tmp/blubb123', REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0755, 0, 0)
         f1.write('foobar1 foobar2 foobar3 foobar4 foobar5 foobar6')
         f1.release()
