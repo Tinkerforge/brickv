@@ -61,7 +61,7 @@ class RED(PluginBase, Ui_RED):
         self.p.spawn('/tmp/print', ['fffffffffffffffffffffffffffff'], [], '/', 0, 0, sin, sout, sout)
 
     def foobar(self, p):
-        print 'foobar', p.state, p.pid, p.exit_code
+        print 'foobar', p.state, p.timestamp, p.pid, p.exit_code
         print 'echo: ' + self.p.stdout.read(256)
         self.p = None
         """

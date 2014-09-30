@@ -517,7 +517,7 @@ class REDProcess(REDObject):
     ERROR_CODE_CANNOT_EXECUTE = 126
     ERROR_CODE_DOES_NOT_EXIST = 127
 
-    _qtcb_state_changed = pyqtSignal(int, int, int, int)
+    _qtcb_state_changed = pyqtSignal(int, int, int, int, int)
 
     def __init__(self, *args):
         REDObject.__init__(self, *args)
@@ -537,15 +537,17 @@ class REDProcess(REDObject):
         self._stdout = None
         self._stderr = None
         self._state = None
+        self._timestamp = None
         self._pid = None
         self._exit_code = None
         self.state_changed_callback = None
 
-    def _cb_state_changed(self, process_id, state, pid, exit_code):
+    def _cb_state_changed(self, process_id, state, timestamp, pid, exit_code):
         if self._object_id != process_id:
             return
 
         self._state = state
+        self._timestamp = timestamp
         self._pid = pid
         self._exit_code = exit_code
 
@@ -590,12 +592,13 @@ class REDProcess(REDObject):
         self._stderr = attach_or_release(self._red, REDFile, stderr_file_id)
 
         # state
-        error_code, state, pid, exit_code = self._red.get_process_state(self._object_id)
+        error_code, state, timestamp, pid, exit_code = self._red.get_process_state(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get state of process object {0}'.format(self._object_id), error_code)
 
         self._state = state
+        self._timestamp = timestamp
         self._pid = pid
         self._exit_code = exit_code
 
@@ -690,6 +693,10 @@ class REDProcess(REDObject):
     @property
     def state(self):
         return self._state
+
+    @property
+    def timestamp(self):
+        return self._timestamp
 
     @property
     def pid(self):
