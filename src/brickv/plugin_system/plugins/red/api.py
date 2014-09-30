@@ -242,7 +242,7 @@ class REDStringList(REDObject):
         items = []
 
         for i in range(length):
-            error_code, item_id = self._red.get_list_item(self._object_id, i)
+            error_code, item_id, type = self._red.get_list_item(self._object_id, i)
 
             if error_code != E_SUCCESS:
                 raise REDError('Could not get item at index {0} of list object {0}'.format(i, self._object_id), error_code)

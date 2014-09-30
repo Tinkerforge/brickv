@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-09-26.      #
+# This file was automatically generated on 2014-09-29.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -30,7 +30,7 @@ GetStringLength = namedtuple('StringLength', ['error_code', 'length'])
 GetStringChunk = namedtuple('StringChunk', ['error_code', 'buffer'])
 AllocateList = namedtuple('AllocateList', ['error_code', 'list_id'])
 GetListLength = namedtuple('ListLength', ['error_code', 'length'])
-GetListItem = namedtuple('ListItem', ['error_code', 'item_object_id'])
+GetListItem = namedtuple('ListItem', ['error_code', 'item_object_id', 'type'])
 OpenFile = namedtuple('OpenFile', ['error_code', 'file_id'])
 CreatePipe = namedtuple('CreatePipe', ['error_code', 'file_id'])
 GetFileInfo = namedtuple('FileInfo', ['error_code', 'type', 'name_string_id', 'flags', 'permissions', 'uid', 'gid', 'length', 'access_timestamp', 'modification_timestamp', 'status_change_timestamp'])
@@ -365,10 +365,10 @@ class BrickRED(Device):
 
     def get_list_item(self, list_id, index):
         """
-        Returns the object ID of the object stored at ``index`` in a list object and
-        returns the resulting error code.
+        Returns the object ID and type of the object stored at ``index`` in a list
+        object and returns the resulting error code.
         """
-        return GetListItem(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LIST_ITEM, (list_id, index), 'H H', 'B H'))
+        return GetListItem(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LIST_ITEM, (list_id, index), 'H H', 'B H B'))
 
     def append_to_list(self, list_id, item_object_id):
         """

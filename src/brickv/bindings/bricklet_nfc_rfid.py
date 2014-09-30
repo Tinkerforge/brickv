@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-09-09.      #
+# This file was automatically generated on 2014-09-29.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -150,6 +150,24 @@ class BrickletNFCRFID(Device):
         didn't. If the request worked you can get the page by calling :func:`GetPage`.
         
         The same approach is used analogously for the other API functions.
+        
+        Possible states are:
+        
+        * Initialization = 0
+        * Idle = 128
+        * Error = 192
+        * RequestTagID = 2
+        * RequestTagIDReady = 130
+        * RequestTagIDError = 194
+        * AuthenticatingMifareClassicPage = 3
+        * AuthenticatingMifareClassicPageReady = 131
+        * AuthenticatingMifareClassicPageError = 195
+        * WritePage = 4
+        * WritePageReady = 132
+        * WritePageError = 196
+        * RequestPage = 5
+        * RequestPageReady = 133
+        * RequestPageError = 197
         """
         return GetState(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_STATE, (), '', 'B ?'))
 
