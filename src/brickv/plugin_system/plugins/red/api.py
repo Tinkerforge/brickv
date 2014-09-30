@@ -294,22 +294,22 @@ class REDStringList(REDObject):
         return self._items
 
 
-class REDFile(REDObject):
+class REDFileBase(REDObject):
     MAX_READ_BUFFER_LENGTH            = 62
     MAX_ASYNC_READ_BUFFER_LENGTH      = 60
     MAX_WRITE_BUFFER_LENGTH           = 61
     MAX_WRITE_UNCHECKED_BUFFER_LENGTH = 61
     MAX_WRITE_ASYNC_BUFFER_LENGTH     = 61
 
-    FLAG_READ_ONLY    = BrickRED.FILE_FLAG_READ_ONLY
-    FLAG_WRITE_ONLY   = BrickRED.FILE_FLAG_WRITE_ONLY
-    FLAG_READ_WRITE   = BrickRED.FILE_FLAG_READ_WRITE
-    FLAG_APPEND       = BrickRED.FILE_FLAG_APPEND
-    FLAG_CREATE       = BrickRED.FILE_FLAG_CREATE
-    FLAG_EXCLUSIVE    = BrickRED.FILE_FLAG_EXCLUSIVE
-    FLAG_NON_BLOCKING = BrickRED.FILE_FLAG_NON_BLOCKING
-    FLAG_TRUNCATE     = BrickRED.FILE_FLAG_TRUNCATE
-    FLAG_TEMPORARY    = BrickRED.FILE_FLAG_TEMPORARY
+    TYPE_UNKNOWN   = BrickRED.FILE_TYPE_UNKNOWN
+    TYPE_REGULAR   = BrickRED.FILE_TYPE_REGULAR
+    TYPE_DIRECTORY = BrickRED.FILE_TYPE_DIRECTORY
+    TYPE_CHARACTER = BrickRED.FILE_TYPE_CHARACTER
+    TYPE_BLOCK     = BrickRED.FILE_TYPE_BLOCK
+    TYPE_FIFO      = BrickRED.FILE_TYPE_FIFO
+    TYPE_SYMLINK   = BrickRED.FILE_TYPE_SYMLINK
+    TYPE_SOCKET    = BrickRED.FILE_TYPE_SOCKET
+    TYPE_PIPE      = BrickRED.FILE_TYPE_PIPE
 
     def _initialize(self):
         self._type = None
@@ -334,7 +334,12 @@ class REDFile(REDObject):
             raise REDError('Could not get information for file object {0}'.format(self._object_id), error_code)
 
         self._type = type
-        self._name = attach_or_release(self._red, REDString, name_string_id)
+
+        if type == REDFile.TYPE_PIPE:
+            self._name = None
+        else:
+            self._name = attach_or_release(self._red, REDString, name_string_id)
+
         self._flags = flags
         self._permissions = permissions
         self._uid = uid
@@ -346,23 +351,6 @@ class REDFile(REDObject):
 
     def attach(self, object_id):
         self.release()
-
-        self._object_id = object_id
-
-        self.update()
-
-        return self
-
-    def open(self, name, flags, permissions, uid, gid):
-        self.release()
-
-        if not isinstance(name, REDString):
-            name = REDString(self._red).allocate(name)
-
-        error_code, object_id = self._red.open_file(name.object_id, flags, permissions, uid, gid)
-
-        if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not open file object', error_code)
 
         self._object_id = object_id
 
@@ -399,6 +387,11 @@ class REDFile(REDObject):
             length_to_read = min(length, REDFile.MAX_READ_BUFFER_LENGTH)
 
             error_code, chunk, length_read = self._red.read_file(self._object_id, length_to_read)
+
+            if error_code == REDError.E_WOULD_BLOCK and len(data) > 0:
+                # this call failed but the previous read_file call succeed.
+                # so the overall result is a success and this error is ignored
+                break
 
             if error_code != REDError.E_SUCCESS:
                 # FIXME: recover seek position on error after successful call?
@@ -451,6 +444,54 @@ class REDFile(REDObject):
     @property
     def status_change_time(self):
         return self._status_change_time
+
+
+class REDFile(REDFileBase):
+    FLAG_READ_ONLY    = BrickRED.FILE_FLAG_READ_ONLY
+    FLAG_WRITE_ONLY   = BrickRED.FILE_FLAG_WRITE_ONLY
+    FLAG_READ_WRITE   = BrickRED.FILE_FLAG_READ_WRITE
+    FLAG_APPEND       = BrickRED.FILE_FLAG_APPEND
+    FLAG_CREATE       = BrickRED.FILE_FLAG_CREATE
+    FLAG_EXCLUSIVE    = BrickRED.FILE_FLAG_EXCLUSIVE
+    FLAG_NON_BLOCKING = BrickRED.FILE_FLAG_NON_BLOCKING
+    FLAG_TRUNCATE     = BrickRED.FILE_FLAG_TRUNCATE
+    FLAG_TEMPORARY    = BrickRED.FILE_FLAG_TEMPORARY
+
+    def open(self, name, flags, permissions, uid, gid):
+        self.release()
+
+        if not isinstance(name, REDString):
+            name = REDString(self._red).allocate(name)
+
+        error_code, object_id = self._red.open_file(name.object_id, flags, permissions, uid, gid)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not open file object', error_code)
+
+        self._object_id = object_id
+
+        self.update()
+
+        return self
+
+
+class REDPipe(REDFileBase):
+    FLAG_NON_BLOCKING_READ  = BrickRED.PIPE_FLAG_NON_BLOCKING_READ
+    FLAG_NON_BLOCKING_WRITE = BrickRED.PIPE_FLAG_NON_BLOCKING_WRITE
+
+    def create(self, flags):
+        self.release()
+
+        error_code, object_id = self._red.create_pipe(flags)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not create file object', error_code)
+
+        self._object_id = object_id
+
+        self.update()
+
+        return self
 
 
 class REDProcess(REDObject):
