@@ -24,76 +24,82 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtCore import QObject, pyqtSignal
 from brickv.bindings.brick_red import BrickRED
 
-E_SUCCESS                  = 0
-E_UNKNOWN_ERROR            = 1
-E_INVALID_OPERATION        = 2
-E_OPERATION_ABORTED        = 3
-E_INTERNAL_ERROR           = 4
-E_UNKNOWN_OBJECT_ID        = 5
-E_NO_FREE_OBJECT_ID        = 6
-E_OBJECT_IN_USE            = 7
-E_NO_MORE_DATA             = 8
-E_WRONG_LIST_ITEM_TYPE     = 9
-E_MALFORMED_PROGRAM_CONFIG = 10
-E_INVALID_PARAMETER        = 128
-E_NO_FREE_MEMORY           = 129
-E_NO_FREE_SPACE            = 130
-E_ACCESS_DENIED            = 131
-E_ALREADY_EXISTS           = 132
-E_DOES_NOT_EXIST           = 133
-E_INTERRUPTED              = 134
-E_IS_DIRECTORY             = 135
-E_NOT_A_DIRECTORY          = 136
-E_WOULD_BLOCK              = 137
-E_OVERFLOW                 = 138
-E_BAD_FILE_DESCRIPTOR      = 139
-E_OUT_OF_RANGE             = 140
-E_NAME_TOO_LONG            = 141
-E_INVALID_SEEK             = 142
-E_NOT_SUPPORTED            = 143
-
-error_code_names = {
-    E_SUCCESS                  : 'E_SUCCESS',
-    E_UNKNOWN_ERROR            : 'E_UNKNOWN_ERROR',
-    E_INVALID_OPERATION        : 'E_INVALID_OPERATION',
-    E_OPERATION_ABORTED        : 'E_OPERATION_ABORTED',
-    E_INTERNAL_ERROR           : 'E_INTERNAL_ERROR',
-    E_UNKNOWN_OBJECT_ID        : 'E_UNKNOWN_OBJECT_ID',
-    E_NO_FREE_OBJECT_ID        : 'E_NO_FREE_OBJECT_ID',
-    E_OBJECT_IN_USE            : 'E_OBJECT_IN_USE',
-    E_NO_MORE_DATA             : 'E_NO_MORE_DATA',
-    E_WRONG_LIST_ITEM_TYPE     : 'E_WRONG_LIST_ITEM_TYPE',
-    E_MALFORMED_PROGRAM_CONFIG : 'E_MALFORMED_PROGRAM_CONFIG',
-    E_INVALID_PARAMETER        : 'E_INVALID_PARAMETER',
-    E_NO_FREE_MEMORY           : 'E_NO_FREE_MEMORY',
-    E_NO_FREE_SPACE            : 'E_NO_FREE_SPACE',
-    E_ACCESS_DENIED            : 'E_ACCESS_DENIED',
-    E_ALREADY_EXISTS           : 'E_ALREADY_EXISTS',
-    E_DOES_NOT_EXIST           : 'E_DOES_NOT_EXIST',
-    E_INTERRUPTED              : 'E_INTERRUPTED',
-    E_IS_DIRECTORY             : 'E_IS_DIRECTORY',
-    E_NOT_A_DIRECTORY          : 'E_NOT_A_DIRECTORY',
-    E_WOULD_BLOCK              : 'E_WOULD_BLOCK',
-    E_OVERFLOW                 : 'E_OVERFLOW',
-    E_BAD_FILE_DESCRIPTOR      : 'E_BAD_FILE_DESCRIPTOR',
-    E_OUT_OF_RANGE             : 'E_OUT_OF_RANGE',
-    E_NAME_TOO_LONG            : 'E_NAME_TOO_LONG',
-    E_INVALID_SEEK             : 'E_INVALID_SEEK',
-    E_NOT_SUPPORTED            : 'E_NOT_SUPPORTED'
-}
-
-
 class REDError(Exception):
+    E_SUCCESS                  = 0
+    E_UNKNOWN_ERROR            = 1
+    E_INVALID_OPERATION        = 2
+    E_OPERATION_ABORTED        = 3
+    E_INTERNAL_ERROR           = 4
+    E_UNKNOWN_OBJECT_ID        = 5
+    E_NO_FREE_OBJECT_ID        = 6
+    E_OBJECT_IN_USE            = 7
+    E_NO_MORE_DATA             = 8
+    E_WRONG_LIST_ITEM_TYPE     = 9
+    E_MALFORMED_PROGRAM_CONFIG = 10
+    E_INVALID_PARAMETER        = 128
+    E_NO_FREE_MEMORY           = 129
+    E_NO_FREE_SPACE            = 130
+    E_ACCESS_DENIED            = 131
+    E_ALREADY_EXISTS           = 132
+    E_DOES_NOT_EXIST           = 133
+    E_INTERRUPTED              = 134
+    E_IS_DIRECTORY             = 135
+    E_NOT_A_DIRECTORY          = 136
+    E_WOULD_BLOCK              = 137
+    E_OVERFLOW                 = 138
+    E_BAD_FILE_DESCRIPTOR      = 139
+    E_OUT_OF_RANGE             = 140
+    E_NAME_TOO_LONG            = 141
+    E_INVALID_SEEK             = 142
+    E_NOT_SUPPORTED            = 143
+
+    _error_code_names = {
+        E_SUCCESS                  : 'E_SUCCESS',
+        E_UNKNOWN_ERROR            : 'E_UNKNOWN_ERROR',
+        E_INVALID_OPERATION        : 'E_INVALID_OPERATION',
+        E_OPERATION_ABORTED        : 'E_OPERATION_ABORTED',
+        E_INTERNAL_ERROR           : 'E_INTERNAL_ERROR',
+        E_UNKNOWN_OBJECT_ID        : 'E_UNKNOWN_OBJECT_ID',
+        E_NO_FREE_OBJECT_ID        : 'E_NO_FREE_OBJECT_ID',
+        E_OBJECT_IN_USE            : 'E_OBJECT_IN_USE',
+        E_NO_MORE_DATA             : 'E_NO_MORE_DATA',
+        E_WRONG_LIST_ITEM_TYPE     : 'E_WRONG_LIST_ITEM_TYPE',
+        E_MALFORMED_PROGRAM_CONFIG : 'E_MALFORMED_PROGRAM_CONFIG',
+        E_INVALID_PARAMETER        : 'E_INVALID_PARAMETER',
+        E_NO_FREE_MEMORY           : 'E_NO_FREE_MEMORY',
+        E_NO_FREE_SPACE            : 'E_NO_FREE_SPACE',
+        E_ACCESS_DENIED            : 'E_ACCESS_DENIED',
+        E_ALREADY_EXISTS           : 'E_ALREADY_EXISTS',
+        E_DOES_NOT_EXIST           : 'E_DOES_NOT_EXIST',
+        E_INTERRUPTED              : 'E_INTERRUPTED',
+        E_IS_DIRECTORY             : 'E_IS_DIRECTORY',
+        E_NOT_A_DIRECTORY          : 'E_NOT_A_DIRECTORY',
+        E_WOULD_BLOCK              : 'E_WOULD_BLOCK',
+        E_OVERFLOW                 : 'E_OVERFLOW',
+        E_BAD_FILE_DESCRIPTOR      : 'E_BAD_FILE_DESCRIPTOR',
+        E_OUT_OF_RANGE             : 'E_OUT_OF_RANGE',
+        E_NAME_TOO_LONG            : 'E_NAME_TOO_LONG',
+        E_INVALID_SEEK             : 'E_INVALID_SEEK',
+        E_NOT_SUPPORTED            : 'E_NOT_SUPPORTED'
+    }
+
     def __init__(self, message, error_code):
         Exception.__init__(self, message)
 
-        self.message = message
-        self.error_code = error_code
+        self._message = message
+        self._error_code = error_code
 
     def __str__(self):
-        return '{0}: {1} ({2})'.format(self.message,
-                                       error_code_names[self.error_code],
-                                       self.error_code)
+        return '{0}: {1} ({2})'.format(self._message,
+                                       REDError._error_code_names[self.error_code],
+                                       self._error_code)
+    @property
+    def message(self):
+        return self._message
+
+    @property
+    def error_code(self):
+        return self._error_code
 
 
 def attach_or_release(red, object_class, object_id, extra_object_ids_to_release_on_error=[]):
@@ -167,7 +173,7 @@ class REDString(REDObject):
 
         error_code, length = self._red.get_string_length(self._object_id)
 
-        if error_code != E_SUCCESS:
+        if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get length of string object {0}'.format(self._object_id), error_code)
 
         data = ''
@@ -175,7 +181,7 @@ class REDString(REDObject):
         while len(data) < length:
             error_code, chunk = self._red.get_string_chunk(self._object_id, len(data))
 
-            if error_code != E_SUCCESS:
+            if error_code != REDError.E_SUCCESS:
                 raise REDError('Could not get chunk of string object {0}'.format(self._object_id), error_code)
 
             data += chunk
@@ -199,7 +205,7 @@ class REDString(REDObject):
 
         error_code, object_id = self._red.allocate_string(len(data), chunk)
 
-        if error_code != E_SUCCESS:
+        if error_code != REDError.E_SUCCESS:
             raise REDError('Could not allocate string object', error_code)
 
         self._object_id = object_id
@@ -212,7 +218,7 @@ class REDString(REDObject):
 
             error_code = self._red.set_string_chunk(self._object_id, offset, chunk)
 
-            if error_code != E_SUCCESS:
+            if error_code != REDError.E_SUCCESS:
                 raise REDError('Could not set chunk of string object {0}'.format(self._object_id), error_code)
 
             offset += len(chunk)
@@ -236,7 +242,7 @@ class REDStringList(REDObject):
 
         error_code, length = self._red.get_list_length(self._object_id)
 
-        if error_code != E_SUCCESS:
+        if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get length of list object {0}'.format(self._object_id), error_code)
 
         items = []
@@ -244,7 +250,7 @@ class REDStringList(REDObject):
         for i in range(length):
             error_code, item_id, type = self._red.get_list_item(self._object_id, i)
 
-            if error_code != E_SUCCESS:
+            if error_code != REDError.E_SUCCESS:
                 raise REDError('Could not get item at index {0} of list object {0}'.format(i, self._object_id), error_code)
 
             items.append(attach_or_release(self._red, REDString, item_id))
@@ -265,7 +271,7 @@ class REDStringList(REDObject):
 
         error_code, object_id = self._red.allocate_list(len(items))
 
-        if error_code != E_SUCCESS:
+        if error_code != REDError.E_SUCCESS:
             raise REDError('Could not allocate list object', error_code)
 
         self._object_id = object_id
@@ -276,7 +282,7 @@ class REDStringList(REDObject):
 
             error_code = self._red.append_to_list(self._object_id, item.object_id)
 
-            if error_code != E_SUCCESS:
+            if error_code != REDError.E_SUCCESS:
                 raise REDError('Could not append item {0} to list object {0}'.format(item.object_id, self._object_id), error_code)
 
         self._items = items
@@ -324,7 +330,7 @@ class REDFile(REDObject):
         error_code, type, name_string_id, flags, permissions, uid, gid, \
         length, access_time, modification_time, status_change_time = self._red.get_file_info(self._object_id)
 
-        if error_code != E_SUCCESS:
+        if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get information for file object {0}'.format(self._object_id), error_code)
 
         self._type = type
@@ -355,7 +361,7 @@ class REDFile(REDObject):
 
         error_code, object_id = self._red.open_file(name.object_id, flags, permissions, uid, gid)
 
-        if error_code != E_SUCCESS:
+        if error_code != REDError.E_SUCCESS:
             raise REDError('Could not open file object', error_code)
 
         self._object_id = object_id
@@ -377,7 +383,7 @@ class REDFile(REDObject):
 
             error_code, length_written = self._red.write_file(self._object_id, chunk, length_to_write)
 
-            if error_code != E_SUCCESS:
+            if error_code != REDError.E_SUCCESS:
                 # FIXME: recover seek position on error after successful call?
                 raise REDError('Could not write to file object', error_code)
 
@@ -394,7 +400,7 @@ class REDFile(REDObject):
 
             error_code, chunk, length_read = self._red.read_file(self._object_id, length_to_read)
 
-            if error_code != E_SUCCESS:
+            if error_code != REDError.E_SUCCESS:
                 # FIXME: recover seek position on error after successful call?
                 raise REDError('Could not read from file object', error_code)
 
@@ -515,7 +521,7 @@ class REDProcess(REDObject):
         error_code, executable_string_id, arguments_list_id, \
         environment_list_id, working_directory_string_id = self._red.get_process_command(self._object_id)
 
-        if error_code != E_SUCCESS:
+        if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get command of process object {0}'.format(self._object_id), error_code)
 
         self._executable = attach_or_release(self._red, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
@@ -526,7 +532,7 @@ class REDProcess(REDObject):
         # identity
         error_code, uid, gid = self._red.get_process_identity(self._object_id)
 
-        if error_code != E_SUCCESS:
+        if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get identity of process object {0}'.format(self._object_id), error_code)
 
         self._uid = uid
@@ -535,7 +541,7 @@ class REDProcess(REDObject):
         # stdio
         error_code, stdin_file_id, stdout_file_id, stderr_file_id = self._red.get_process_stdio(self._object_id)
 
-        if error_code != E_SUCCESS:
+        if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get stdio of process object {0}'.format(self._object_id), error_code)
 
         self._stdin = attach_or_release(self._red, REDFile, stdin_file_id, [stdout_file_id, stderr_file_id])
@@ -545,7 +551,7 @@ class REDProcess(REDObject):
         # state
         error_code, state, pid, exit_code = self._red.get_process_state(self._object_id)
 
-        if error_code != E_SUCCESS:
+        if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get state of process object {0}'.format(self._object_id), error_code)
 
         self._state = state
@@ -586,7 +592,7 @@ class REDProcess(REDObject):
                                                         stdout_file.object_id,
                                                         stderr_file.object_id)
 
-        if error_code != E_SUCCESS:
+        if error_code != REDError.E_SUCCESS:
             raise REDError('Could not spawn process object', error_code)
 
         self._object_id = object_id
@@ -601,7 +607,7 @@ class REDProcess(REDObject):
 
         error_code = self._red.kill_process(self._object_id, signal)
 
-        if error_code != E_SUCCESS:
+        if error_code != REDError.E_SUCCESS:
             raise REDError('Could not kill process object {0}'.format(self._object_id), error_code)
 
     @property
