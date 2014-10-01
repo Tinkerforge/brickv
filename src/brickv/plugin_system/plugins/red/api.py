@@ -156,6 +156,95 @@ class REDObject(QObject):
         return self._object_id
 
 
+class REDInventory(REDObject):
+    TYPE_INVENTORY = BrickRED.OBJECT_TYPE_INVENTORY
+    TYPE_STRING    = BrickRED.OBJECT_TYPE_STRING
+    TYPE_LIST      = BrickRED.OBJECT_TYPE_LIST
+    TYPE_FILE      = BrickRED.OBJECT_TYPE_FILE
+    TYPE_DIRECTORY = BrickRED.OBJECT_TYPE_DIRECTORY
+    TYPE_PROCESS   = BrickRED.OBJECT_TYPE_PROCESS
+    TYPE_PROGRAM   = BrickRED.OBJECT_TYPE_PROGRAM
+
+    _wrapper_classes = {}
+
+    def __repr__(self):
+        return '<REDInventory object_id: {0}>'.format(self._object_id)
+
+    def _initialize(self):
+        self._entries = None
+        self._type = None
+
+    def update(self):
+        if self._object_id is None:
+            raise RuntimeError('Cannot update unattached inventory object')
+
+        # get type
+        error_code, type = self._red.get_inventory_type(self._object_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get type of inventory object {0}'.format(self._object_id), error_code)
+
+        self._type = type
+
+        try:
+            wrapper_class = REDInventory._wrapper_classes[type]
+        except KeyError:
+            raise TypeError('Inventory object {0} has unknown type {1}'.format(self._object_id, type))
+
+        # rewind
+        error_code = self._red.rewind_inventory(self._object_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not rewind inventory object {0}'.format(self._object_id), error_code)
+
+        # get entries
+        entries = []
+
+        while True:
+            error_code, entry_object_id = self._red.get_next_inventory_entry(self._object_id)
+
+            if error_code == REDError.E_NO_MORE_DATA:
+                break
+
+            if error_code != REDError.E_SUCCESS:
+                raise REDError('Could not get next entry of inventory object {0}'.format(self._object_id), error_code)
+
+            entries.append(attach_or_release(self._red, wrapper_class, entry_object_id))
+
+        self._entries = entries
+
+    def attach(self, object_id):
+        self.release()
+
+        self._object_id = object_id
+
+        self.update()
+
+        return self
+
+    def open(self, type):
+        self.release()
+
+        error_code, object_id = self._red.open_inventory(type)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not open inventory object for type {0}'.format(type), error_code)
+
+        self._object_id = object_id
+
+        self.update()
+
+        return self
+
+    @property
+    def entries(self):
+        return self._entries
+
+    @property
+    def type(self):
+        return self._type
+
+
 class REDString(REDObject):
     MAX_ALLOCATE_BUFFER_LENGTH  = 60
     MAX_SET_CHUNK_BUFFER_LENGTH = 58
@@ -232,7 +321,7 @@ class REDString(REDObject):
         return self._data
 
 
-class REDStringList(REDObject):
+class REDList(REDObject):
     def _initialize(self):
         self._items = None
 
@@ -248,12 +337,17 @@ class REDStringList(REDObject):
         items = []
 
         for i in range(length):
-            error_code, item_id, type = self._red.get_list_item(self._object_id, i)
+            error_code, item_object_id, type = self._red.get_list_item(self._object_id, i)
 
             if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not get item at index {0} of list object {0}'.format(i, self._object_id), error_code)
+                raise REDError('Could not get item at index {0} of list object {1}'.format(i, self._object_id), error_code)
 
-            items.append(attach_or_release(self._red, REDString, item_id))
+            try:
+                wrapper_class = REDInventory._wrapper_classes[type]
+            except KeyError:
+                raise TypeError('List object {0} contains item with unknown type {1} at index {2}'.format(self._object_id, type, i))
+
+            items.append(attach_or_release(self._red, wrapper_class, item_object_id))
 
         self._items = items
 
@@ -277,8 +371,10 @@ class REDStringList(REDObject):
         self._object_id = object_id
 
         for item in items:
-            if not isinstance(item, REDString):
+            if isinstance(item, str):
                 item = REDString(self._red).allocate(item)
+            elif not isinstance(item, REDObject):
+                raise TypeError('Cannot append {0} item to list object {0}'.format(type(item), self._object_id))
 
             error_code = self._red.append_to_list(self._object_id, item.object_id)
 
@@ -513,9 +609,9 @@ class REDProcess(REDObject):
     STATE_STOPPED = BrickRED.PROCESS_STATE_STOPPED
 
     # possible exit code values for error state
-    ERROR_CODE_INTERNAL_ERROR = 125
-    ERROR_CODE_CANNOT_EXECUTE = 126
-    ERROR_CODE_DOES_NOT_EXIST = 127
+    E_INTERNAL_ERROR = 125
+    E_CANNOT_EXECUTE = 126
+    E_DOES_NOT_EXIST = 127
 
     _qtcb_state_changed = pyqtSignal(int, int, int, int, int)
 
@@ -560,7 +656,7 @@ class REDProcess(REDObject):
         if self._object_id is None:
             raise RuntimeError('Cannot update unattached process object')
 
-        # command
+        # get command
         error_code, executable_string_id, arguments_list_id, \
         environment_list_id, working_directory_string_id = self._red.get_process_command(self._object_id)
 
@@ -568,11 +664,11 @@ class REDProcess(REDObject):
             raise REDError('Could not get command of process object {0}'.format(self._object_id), error_code)
 
         self._executable = attach_or_release(self._red, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
-        self._arguments = attach_or_release(self._red, REDStringList, arguments_list_id, [environment_list_id, working_directory_string_id])
-        self._environment = attach_or_release(self._red, REDStringList, environment_list_id, [working_directory_string_id])
+        self._arguments = attach_or_release(self._red, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
+        self._environment = attach_or_release(self._red, REDList, environment_list_id, [working_directory_string_id])
         self._working_directory = attach_or_release(self._red, REDString, working_directory_string_id)
 
-        # identity
+        # get identity
         error_code, uid, gid = self._red.get_process_identity(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
@@ -581,7 +677,7 @@ class REDProcess(REDObject):
         self._uid = uid
         self._gid = gid
 
-        # stdio
+        # get stdio
         error_code, stdin_file_id, stdout_file_id, stderr_file_id = self._red.get_process_stdio(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
@@ -591,7 +687,7 @@ class REDProcess(REDObject):
         self._stdout = attach_or_release(self._red, REDFile, stdout_file_id, [stderr_file_id])
         self._stderr = attach_or_release(self._red, REDFile, stderr_file_id)
 
-        # state
+        # get state
         error_code, state, timestamp, pid, exit_code = self._red.get_process_state(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
@@ -618,11 +714,11 @@ class REDProcess(REDObject):
         if not isinstance(executable, REDString):
             executable = REDString(self._red).allocate(executable)
 
-        if not isinstance(arguments, REDStringList):
-            arguments = REDStringList(self._red).allocate(arguments)
+        if not isinstance(arguments, REDList):
+            arguments = REDList(self._red).allocate(arguments)
 
-        if not isinstance(environment, REDStringList):
-            environment = REDStringList(self._red).allocate(environment)
+        if not isinstance(environment, REDList):
+            environment = REDList(self._red).allocate(environment)
 
         if not isinstance(working_directory, REDString):
             working_directory = REDString(self._red).allocate(working_directory)
@@ -705,3 +801,11 @@ class REDProcess(REDObject):
     @property
     def exit_code(self):
         return self._exit_code
+
+
+REDInventory._wrapper_classes = {
+    REDInventory.TYPE_INVENTORY: REDInventory,
+    REDInventory.TYPE_STRING:    REDString,
+    REDInventory.TYPE_LIST:      REDList,
+    REDInventory.TYPE_PROCESS:   REDProcess,
+}

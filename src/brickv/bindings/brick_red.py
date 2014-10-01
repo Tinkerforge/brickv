@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-09-30.      #
+# This file was automatically generated on 2014-10-01.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -24,7 +24,7 @@ except ValueError:
 
 OpenInventory = namedtuple('OpenInventory', ['error_code', 'inventory_id'])
 GetInventoryType = namedtuple('InventoryType', ['error_code', 'type'])
-GetNextInventoryEntry = namedtuple('NextInventoryEntry', ['error_code', 'object_id'])
+GetNextInventoryEntry = namedtuple('NextInventoryEntry', ['error_code', 'entry_object_id'])
 AllocateString = namedtuple('AllocateString', ['error_code', 'string_id'])
 GetStringLength = namedtuple('StringLength', ['error_code', 'length'])
 GetStringChunk = namedtuple('StringChunk', ['error_code', 'buffer'])
