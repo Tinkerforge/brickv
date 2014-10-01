@@ -271,7 +271,7 @@ class REDString(REDObject):
             error_code, chunk = self._red.get_string_chunk(self._object_id, len(data))
 
             if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not get chunk of string object {0}'.format(self._object_id), error_code)
+                raise REDError('Could not get chunk of string object {0} at offset {1}'.format(self._object_id, len(data)), error_code)
 
             data += chunk
 
@@ -308,7 +308,7 @@ class REDString(REDObject):
             error_code = self._red.set_string_chunk(self._object_id, offset, chunk)
 
             if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not set chunk of string object {0}'.format(self._object_id), error_code)
+                raise REDError('Could not set chunk of string object {0} at offset {1}'.format(self._object_id, offset), error_code)
 
             offset += len(chunk)
 
@@ -469,7 +469,7 @@ class REDFileBase(REDObject):
 
             if error_code != REDError.E_SUCCESS:
                 # FIXME: recover seek position on error after successful call?
-                raise REDError('Could not write to file object', error_code)
+                raise REDError('Could not write to file object {0}'.format(self._object_id), error_code)
 
             remaining_data = remaining_data[length_written:]
 
@@ -491,7 +491,7 @@ class REDFileBase(REDObject):
 
             if error_code != REDError.E_SUCCESS:
                 # FIXME: recover seek position on error after successful call?
-                raise REDError('Could not read from file object', error_code)
+                raise REDError('Could not read from file object {0}'.format(self._object_id), error_code)
 
             if length_read == 0:
                 break
