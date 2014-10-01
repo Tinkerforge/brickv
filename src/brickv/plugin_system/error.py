@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Unknown Plugin
-Copyright (C) 2013-2014 Matthias Bolte <matthias@tinkerforge.com>
+Error Plugin
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-unknown.py: Unknwon Plugin Implementation
+error.py: Error Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -25,13 +25,13 @@ from brickv.plugin_system.plugin_base import PluginBase
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QLabel, QVBoxLayout
 
-class Unknown(PluginBase):
+class Error(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Unknown', None, *args)
+        PluginBase.__init__(self, 'Error', None, *args)
 
         layout = QVBoxLayout(self)
         layout.addStretch()
-        label = QLabel("The Brick or Bricklet is not yet supported in this version of Brickv. Please Update Brickv.")
+        label = QLabel("An error occured while the tab for this Brick or Bricklet was created.")
         label.setAlignment(Qt.AlignHCenter)
         layout.addWidget(label)
         layout.addStretch()
@@ -43,7 +43,7 @@ class Unknown(PluginBase):
         pass
 
     def get_url_part(self):
-        return 'unknown'
+        return 'error'
 
     @staticmethod
     def has_device_identifier(device_identifier):

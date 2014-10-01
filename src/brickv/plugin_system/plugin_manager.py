@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 brickv (Brick Viewer)
-Copyright (C) 2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2013-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2009 Olaf Lüke <olaf@tinkerforge.com>
 
 plugin_manager.py: Plugins register themselves here
@@ -22,8 +22,10 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from brickv.plugin_system.error import Error
 from brickv.plugin_system.unknown import Unknown
 from brickv.plugin_system.plugins import device_classes
+import traceback
 
 class PluginManager:
     def __init__(self):
@@ -32,6 +34,10 @@ class PluginManager:
     def get_plugin(self, device_identifier, ipcon, uid, hardware_version, firmware_version):
         for plugin in self.plugins:
             if plugin.has_device_identifier(device_identifier):
-                return plugin(ipcon, uid, hardware_version, firmware_version)
+                try:
+                    return plugin(ipcon, uid, hardware_version, firmware_version)
+                except:
+                    traceback.print_exc()
+                    return Error(ipcon, uid, hardware_version, firmware_version)
 
         return Unknown(ipcon, uid, hardware_version, firmware_version)

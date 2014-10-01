@@ -573,16 +573,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             plugin = self.plugin_manager.get_plugin(device_identifier, self.ipcon,
                                                     uid, hardware_version, firmware_version)
 
-            if plugin is not None:
-                info.plugin = plugin
-                info.name = plugin.name
-                info.url_part = plugin.get_url_part()
+            info.plugin = plugin
+            info.name = plugin.name
+            info.url_part = plugin.get_url_part()
 
-                c = self.create_plugin_container(info, connected_uid, position)
-                info.plugin_container = c
-                self.plugins[plugin.uid] = c
-                c.setWindowFlags(Qt.Widget)
-                c.tab()
+            c = self.create_plugin_container(info, connected_uid, position)
+            info.plugin_container = c
+            self.plugins[plugin.uid] = c
+            c.setWindowFlags(Qt.Widget)
+            c.tab()
         elif enumeration_type == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
             for info in infos.infos.values():
                 if info.type in ('brick', 'bricklet') and info.uid == uid:
