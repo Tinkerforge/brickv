@@ -253,6 +253,9 @@ class REDString(REDObject):
     def __str__(self):
         return self._data
 
+    def __repr__(self):
+        return '<REDString object_id: {0}, data: {1}>'.format(self._object_id, repr(self._data))
+
     def _initialize(self):
         self._data = None
 
@@ -322,6 +325,9 @@ class REDString(REDObject):
 
 
 class REDList(REDObject):
+    def __repr__(self):
+        return '<REDList object_id: {0}>'.format(self._object_id)
+
     def _initialize(self):
         self._items = None
 
@@ -553,6 +559,9 @@ class REDFile(REDFileBase):
     FLAG_TRUNCATE     = BrickRED.FILE_FLAG_TRUNCATE
     FLAG_TEMPORARY    = BrickRED.FILE_FLAG_TEMPORARY
 
+    def __repr__(self):
+        return '<REDFile object_id: {0}, name: {1}>'.format(self._object_id, repr(self._name))
+
     def open(self, name, flags, permissions, uid, gid):
         self.release()
 
@@ -574,6 +583,9 @@ class REDFile(REDFileBase):
 class REDPipe(REDFileBase):
     FLAG_NON_BLOCKING_READ  = BrickRED.PIPE_FLAG_NON_BLOCKING_READ
     FLAG_NON_BLOCKING_WRITE = BrickRED.PIPE_FLAG_NON_BLOCKING_WRITE
+
+    def __repr__(self):
+        return '<REDPipe object_id: {0}>'.format(self._object_id)
 
     def create(self, flags):
         self.release()
@@ -600,6 +612,9 @@ class REDDirectory(REDObject):
     TYPE_SYMLINK   = BrickRED.FILE_TYPE_SYMLINK
     TYPE_SOCKET    = BrickRED.FILE_TYPE_SOCKET
     TYPE_PIPE      = BrickRED.FILE_TYPE_PIPE
+
+    def __repr__(self):
+        return '<REDDirectory object_id: {0}, name: {1}>'.format(self._object_id, repr(self._name))
 
     def _initialize(self):
         self._name = None
@@ -705,6 +720,9 @@ class REDProcess(REDObject):
         self._qtcb_state_changed.connect(self._cb_state_changed)
         self._red.register_callback(BrickRED.CALLBACK_PROCESS_STATE_CHANGED,
                                     self._qtcb_state_changed.emit)
+
+    def __repr__(self):
+        return '<REDProcess object_id: {0}>'.format(self._object_id)
 
     def _initialize(self):
         self._executable = None
