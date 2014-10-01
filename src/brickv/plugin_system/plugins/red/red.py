@@ -26,7 +26,7 @@ from brickv.bindings.brick_red import BrickRED
 from brickv.async_call import async_call
 
 from brickv.plugin_system.plugins.red.ui_red import Ui_RED
-from brickv.plugin_system.plugins.red.api import REDError, REDString, REDFile, REDPipe, REDProcess
+from brickv.plugin_system.plugins.red.api import REDError, REDInventory, REDString, REDFile, REDPipe, REDDirectory, REDProcess
 
 class RED(PluginBase, Ui_RED):
     def __init__(self, *args):
@@ -57,8 +57,14 @@ class RED(PluginBase, Ui_RED):
         sout = REDPipe(self.red).create(REDPipe.FLAG_NON_BLOCKING_READ)
         #sout = REDFile(self.red).open('/tmp/fffffffffffffffffffffffffffff.log', REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_TRUNCATE , 0755, 0, 0)
         self.p = REDProcess(self.red)
+
         self.p.state_changed_callback = self.foobar
         self.p.spawn('/tmp/print', ['fffffffffffffffffffffffffffff'], [], '/', 0, 0, sin, sout, sout)
+
+        tmp = REDDirectory(self.red).open('/tmp')
+
+        for entry in tmp.entries:
+            print entry
 
     def foobar(self, p):
         print 'foobar', p.state, p.timestamp, p.pid, p.exit_code

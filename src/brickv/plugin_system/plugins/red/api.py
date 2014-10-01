@@ -590,6 +590,90 @@ class REDPipe(REDFileBase):
         return self
 
 
+class REDDirectory(REDObject):
+    TYPE_UNKNOWN   = BrickRED.FILE_TYPE_UNKNOWN
+    TYPE_REGULAR   = BrickRED.FILE_TYPE_REGULAR
+    TYPE_DIRECTORY = BrickRED.FILE_TYPE_DIRECTORY
+    TYPE_CHARACTER = BrickRED.FILE_TYPE_CHARACTER
+    TYPE_BLOCK     = BrickRED.FILE_TYPE_BLOCK
+    TYPE_FIFO      = BrickRED.FILE_TYPE_FIFO
+    TYPE_SYMLINK   = BrickRED.FILE_TYPE_SYMLINK
+    TYPE_SOCKET    = BrickRED.FILE_TYPE_SOCKET
+    TYPE_PIPE      = BrickRED.FILE_TYPE_PIPE
+
+    def _initialize(self):
+        self._name = None
+        self._entries = None
+
+    def update(self):
+        if self._object_id is None:
+            raise RuntimeError('Cannot update unattached directory object')
+
+        # get name
+        error_code, name_string_id = self._red.get_directory_name(self._object_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get name of directory object {0}'.format(self._object_id), error_code)
+
+        self._name = attach_or_release(self._red, REDString, name_string_id)
+
+        # rewind
+        error_code = self._red.rewind_directory(self._object_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not rewind directory object {0}'.format(self._object_id), error_code)
+
+        # get entries
+        entries = []
+
+        while True:
+            error_code, name_string_id, type = self._red.get_next_directory_entry(self._object_id)
+
+            if error_code == REDError.E_NO_MORE_DATA:
+                break
+
+            if error_code != REDError.E_SUCCESS:
+                raise REDError('Could not get next entry of directory object {0}'.format(self._object_id), error_code)
+
+            entries.append((attach_or_release(self._red, REDString, name_string_id), type))
+
+        self._entries = entries
+
+    def attach(self, object_id):
+        self.release()
+
+        self._object_id = object_id
+
+        self.update()
+
+        return self
+
+    def open(self, name):
+        self.release()
+
+        if not isinstance(name, REDString):
+            name = REDString(self._red).allocate(name)
+
+        error_code, object_id = self._red.open_directory(name.object_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not open directory object', error_code)
+
+        self._object_id = object_id
+
+        self.update()
+
+        return self
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def entries(self):
+        return self._entries
+
+
 class REDProcess(REDObject):
     SIGNAL_INTERRUPT = BrickRED.PROCESS_SIGNAL_INTERRUPT
     SIGNAL_QUIT      = BrickRED.PROCESS_SIGNAL_QUIT
@@ -807,5 +891,6 @@ REDInventory._wrapper_classes = {
     REDInventory.TYPE_INVENTORY: REDInventory,
     REDInventory.TYPE_STRING:    REDString,
     REDInventory.TYPE_LIST:      REDList,
+    REDInventory.TYPE_DIRECTORY: REDDirectory,
     REDInventory.TYPE_PROCESS:   REDProcess,
 }
