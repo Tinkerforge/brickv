@@ -32,7 +32,7 @@ class REDError(Exception):
     E_INTERNAL_ERROR           = 4
     E_UNKNOWN_OBJECT_ID        = 5
     E_NO_FREE_OBJECT_ID        = 6
-    E_OBJECT_IN_USE            = 7
+    E_OBJECT_IS_LOCKED         = 7
     E_NO_MORE_DATA             = 8
     E_WRONG_LIST_ITEM_TYPE     = 9
     E_MALFORMED_PROGRAM_CONFIG = 10
@@ -61,7 +61,7 @@ class REDError(Exception):
         E_INTERNAL_ERROR           : 'E_INTERNAL_ERROR',
         E_UNKNOWN_OBJECT_ID        : 'E_UNKNOWN_OBJECT_ID',
         E_NO_FREE_OBJECT_ID        : 'E_NO_FREE_OBJECT_ID',
-        E_OBJECT_IN_USE            : 'E_OBJECT_IN_USE',
+        E_OBJECT_IS_LOCKED         : 'E_OBJECT_IS_LOCKED',
         E_NO_MORE_DATA             : 'E_NO_MORE_DATA',
         E_WRONG_LIST_ITEM_TYPE     : 'E_WRONG_LIST_ITEM_TYPE',
         E_MALFORMED_PROGRAM_CONFIG : 'E_MALFORMED_PROGRAM_CONFIG',
@@ -91,7 +91,7 @@ class REDError(Exception):
 
     def __str__(self):
         return '{0}: {1} ({2})'.format(self._message,
-                                       REDError._error_code_names[self.error_code],
+                                       REDError._error_code_names.get(self.error_code, '<unknown>'),
                                        self._error_code)
     @property
     def message(self):
