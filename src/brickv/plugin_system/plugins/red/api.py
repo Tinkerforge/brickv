@@ -137,14 +137,34 @@ class REDObject(QObject):
     def _initialize(self):
         raise NotImplementedError()
 
-    def release(self):
+    def update(self):
+        raise NotImplementedError()
+
+    def attach(self, object_id):
+        self.release()
+
+        self._object_id = object_id
+
+        self.update()
+
+        return self
+
+    def detach(self):
         if self._object_id is None:
-            return
+            raise RuntimeError('Cannot detach unattached object')
 
         object_id = self._object_id
         self._object_id = None
 
         self._initialize()
+
+        return object_id
+
+    def release(self):
+        if self._object_id is None:
+            return
+
+        object_id = self.detach()
 
         try:
             self._red.release_object(object_id) # FIXME: error handling
@@ -213,15 +233,6 @@ class REDInventory(REDObject):
 
         self._entries = entries
 
-    def attach(self, object_id):
-        self.release()
-
-        self._object_id = object_id
-
-        self.update()
-
-        return self
-
     def open(self, type):
         self.release()
 
@@ -279,15 +290,6 @@ class REDString(REDObject):
             data += chunk
 
         self._data = data
-
-    def attach(self, object_id):
-        self.release()
-
-        self._object_id = object_id
-
-        self.update()
-
-        return self
 
     def allocate(self, data):
         self.release()
@@ -356,15 +358,6 @@ class REDList(REDObject):
             items.append(attach_or_release(self._red, wrapper_class, item_object_id))
 
         self._items = items
-
-    def attach(self, object_id):
-        self.release()
-
-        self._object_id = object_id
-
-        self.update()
-
-        return self
 
     def allocate(self, items):
         self.release()
@@ -450,15 +443,6 @@ class REDFileBase(REDObject):
         self._access_time = access_time
         self._modification_time = modification_time
         self._status_change_time = status_change_time
-
-    def attach(self, object_id):
-        self.release()
-
-        self._object_id = object_id
-
-        self.update()
-
-        return self
 
     def write(self, data):
         if self._object_id is None:
@@ -654,15 +638,6 @@ class REDDirectory(REDObject):
 
         self._entries = entries
 
-    def attach(self, object_id):
-        self.release()
-
-        self._object_id = object_id
-
-        self.update()
-
-        return self
-
     def open(self, name):
         self.release()
 
@@ -799,15 +774,6 @@ class REDProcess(REDObject):
         self._timestamp = timestamp
         self._pid = pid
         self._exit_code = exit_code
-
-    def attach(self, object_id):
-        self.release()
-
-        self._object_id = object_id
-
-        self.update()
-
-        return self
 
     def spawn(self, executable, arguments, environment, working_directory,
               uid, gid, stdin_file, stdout_file, stderr_file):
