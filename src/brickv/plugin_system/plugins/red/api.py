@@ -586,6 +586,38 @@ class REDPipe(REDFileBase):
         return self
 
 
+class REDFileOrPipeAttacher:
+    def __repr__(self):
+        return '<REDFileOrPipeAttacher object_id: {0}>'.format(self._object_id)
+
+    def _initialize(self):
+        pass
+
+    def attach(self, object_id):
+        self.release()
+
+        self._object_id = object_id
+
+        error_code, type, name_string_id, _, _, _, _, _, _, _, _ = self._red.get_file_info(self._object_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get information for file object {0}'.format(self._object_id), error_code)
+
+        try:
+            self._red.release_object(name_string_id) # FIXME: error handling
+        except:
+            pass
+
+        if type == REDFile.TYPE_PIPE:
+            obj = attach_or_release(self._red, REDPipe, self._object_id)
+        else:
+            obj = attach_or_release(self._red, REDFile, self._object_id)
+
+        self.detach()
+
+        return obj
+
+
 class REDDirectory(REDObject):
     TYPE_UNKNOWN   = BrickRED.FILE_TYPE_UNKNOWN
     TYPE_REGULAR   = BrickRED.FILE_TYPE_REGULAR
@@ -875,6 +907,7 @@ REDInventory._wrapper_classes = {
     REDInventory.TYPE_INVENTORY: REDInventory,
     REDInventory.TYPE_STRING:    REDString,
     REDInventory.TYPE_LIST:      REDList,
+    REDInventory.TYPE_FILE:      REDFileOrPipeAttacher,
     REDInventory.TYPE_DIRECTORY: REDDirectory,
     REDInventory.TYPE_PROCESS:   REDProcess,
 }
