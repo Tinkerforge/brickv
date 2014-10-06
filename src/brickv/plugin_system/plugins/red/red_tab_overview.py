@@ -21,7 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import os
 from PyQt4 import Qt, QtCore, QtGui
 from brickv.program_path import get_program_path
 from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOverview
@@ -76,10 +75,8 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.red = 0
 
         self.refresh_timer = Qt.QTimer(self)
-        self.pbutton_refresh.setIcon(QtGui.QIcon(os.path.join(get_program_path(), "red_tab_overview_refresh.png")))
 
         # connecting signals to slots
-        self.pbutton_refresh.pressed.connect(self.cb_refresh)
         self.refresh_timer.timeout.connect(self.cb_refresh)
 
     def tab_on_focus(self):
