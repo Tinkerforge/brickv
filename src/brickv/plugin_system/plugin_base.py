@@ -136,14 +136,15 @@ class PluginBase(QWidget, object):
 
         # ensure that the widgets gets correctly destroyed. otherwise QWidgets
         # tend to leak as Python is not able to collect their PyQt object
-        for member in dir(self):
+        """for member in dir(self):
+            print "Current member = " + member
             obj = getattr(self, member)
 
             if isinstance(obj, QWidget):
                 obj.hide()
                 obj.setParent(None)
 
-                setattr(self, member, None)
+                setattr(self, member, None)"""
 
     def increase_error_count(self):
         self.error_count += 1

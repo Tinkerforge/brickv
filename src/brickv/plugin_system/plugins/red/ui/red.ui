@@ -11,21 +11,78 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>RED</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>It works!</string>
+    <widget class="QTabWidget" name="red_tab_widget">
+     <property name="tabPosition">
+      <enum>QTabWidget::West</enum>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
+     <property name="currentIndex">
+      <number>0</number>
      </property>
+     <widget class="REDTabOverview" name="tab_overview">
+      <attribute name="title">
+       <string>Overview</string>
+      </attribute>
+     </widget>
+     <widget class="REDTabSettings" name="tab_settings">
+      <attribute name="title">
+       <string>Settings</string>
+      </attribute>
+     </widget>
+     <widget class="REDTabProgram" name="tab_program">
+      <attribute name="title">
+       <string>Program</string>
+      </attribute>
+     </widget>
+     <widget class="REDTabConsole" name="tab_console">
+      <attribute name="title">
+       <string>Console</string>
+      </attribute>
+     </widget>
+     <widget class="REDTabVersions" name="tab_versions">
+      <attribute name="title">
+       <string>Versions</string>
+      </attribute>
+     </widget>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>REDTabOverview</class>
+   <extends>QWidget</extends>
+   <header location="global">brickv.plugin_system.plugins.red.red_tab_overview</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>REDTabSettings</class>
+   <extends>QWidget</extends>
+   <header location="global">brickv.plugin_system.plugins.red.red_tab_settings</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>REDTabProgram</class>
+   <extends>QWidget</extends>
+   <header location="global">brickv.plugin_system.plugins.red.red_tab_program</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>REDTabConsole</class>
+   <extends>QWidget</extends>
+   <header location="global">brickv.plugin_system.plugins.red.red_tab_console</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>REDTabVersions</class>
+   <extends>QWidget</extends>
+   <header location="global">brickv.plugin_system.plugins.red.red_tab_versions</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
