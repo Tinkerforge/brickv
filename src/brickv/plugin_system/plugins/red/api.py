@@ -304,7 +304,7 @@ class REDString(REDObject):
 
         self._object_id = object_id
 
-        offset = 0
+        offset = len(chunk)
 
         while len(remaining_data) > 0:
             chunk = remaining_data[0:REDString.MAX_SET_CHUNK_BUFFER_LENGTH]
