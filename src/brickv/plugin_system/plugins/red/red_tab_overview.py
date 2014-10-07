@@ -27,39 +27,30 @@ from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOvervi
 from brickv.plugin_system.plugins.red.api import *
 
 # constants
-REFRESH_TIMEOUT = 4000 # 4 seconds
+REFRESH_TIMEOUT = 2000 # 4 seconds
 BIN = '/usr/bin/python'
 PARAM1 = '-c'
 PARAM2 = '''
 import psutil
-"""
-symbols = ('K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
+
 def bytes2human(n):
+    symbols = ('K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
     prefix = {}
     for i, s in enumerate(symbols):
         prefix[s] = 1 << (i + 1) * 10
     for s in reversed(symbols):
         if n >= prefix[s]:
             value = float(n) / prefix[s]
-            return '%.1f%s' % (value, s)
-    return "%sB" % n
-"""
-cpu_pcnt = psutil.cpu_percent(2)
+            return "%.2f" % value
+    return "%.2f" % n
 
+cpu_pcnt = psutil.cpu_percent(1)
 memory_pcnt = psutil.phymem_usage().percent
-memory_used = psutil.used_phymem() / 1048576
-memory_total = psutil.TOTAL_PHYMEM / 1048576
-
+memory_used = bytes2human(psutil.used_phymem())
+memory_total = bytes2human(psutil.TOTAL_PHYMEM)
 storage_pcnt = psutil.disk_usage("/").percent
-storage_used = psutil.disk_usage("/").used / 1073741824
-storage_total = psutil.disk_usage("/").total / 1073741824
-
-"""
-for s in symbols:
-    memory_used = memory_used.strip(s)
-    memory_total = memory_total.strip(s)
-    storage_used = storage_used.strip(s)
-    storage_total = storage_total.strip(s)"""
+storage_used = bytes2human(psutil.disk_usage("/").used)
+storage_total = bytes2human(psutil.disk_usage("/").total)
 
 output = str(cpu_pcnt) + "," + str(memory_pcnt) + "," + \
 str(memory_used) + "," + str(memory_total) + "," + str(storage_pcnt) + \
@@ -123,6 +114,8 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
 
     def cb_rp_state_changed(self, p):
         #print 'cb_spawn: ', p.state, p.timestamp, p.pid, p.exit_code
+        #print "GOT = ", self.sout.read(256).strip().split(',')
+        
         csv_tokens = self.sout.read(256).strip().split(',')
         cpu_pcnt = csv_tokens[0].split('.')[0]
         memory_pcnt = csv_tokens[1].split('.')[0]
@@ -142,16 +135,13 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         
         print "---------------------------------"
         
-        if(cpu_pcnt != ""):
-            self.pbar_cpu.setFormat(Qt.QString("%v%"))
-            self.pbar_cpu.setValue(int(cpu_pcnt))
+        self.pbar_cpu.setFormat(Qt.QString("%v%"))
+        self.pbar_cpu.setValue(int(cpu_pcnt))
         
-        if(memory_pcnt != "" and memory_used != "" and memory_total != ""):
-            self.pbar_memory.setFormat(Qt.QString("%v% [%1 of %2 MB]").arg(memory_used, memory_total))
-            self.pbar_memory.setValue(int(memory_pcnt))
+        self.pbar_memory.setFormat(Qt.QString("%v% [%1 of %2 MB]").arg(memory_used, memory_total))
+        self.pbar_memory.setValue(int(memory_pcnt))
         
-        if(storage_pcnt != "" and storage_used != "" and storage_total != ""):
-            self.pbar_storage.setFormat(Qt.QString("%v% [%1 of %2 GB]").arg(storage_used, storage_total))
-            self.pbar_storage.setValue(int(storage_pcnt))
+        self.pbar_storage.setFormat(Qt.QString("%v% [%1 of %2 GB]").arg(storage_used, storage_total))
+        self.pbar_storage.setValue(int(storage_pcnt))
         
         self.rp.release()

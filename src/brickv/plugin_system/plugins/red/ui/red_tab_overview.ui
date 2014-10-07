@@ -14,22 +14,6 @@
    <string>REDTabOverview</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0" colspan="2">
-    <widget class="QGroupBox" name="gbox_running_processes">
-     <property name="title">
-      <string>Running Processes</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
-      <item>
-       <layout class="QGridLayout" name="glayout_running_processes">
-        <item row="0" column="0">
-         <widget class="QListView" name="lview_running_processes"/>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="1" column="0" colspan="2">
     <widget class="QGroupBox" name="gbox_status">
      <property name="title">
@@ -92,6 +76,21 @@
        </layout>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QGroupBox" name="gbox_network">
+     <property name="title">
+      <string>Network</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2"/>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QGroupBox" name="gbox_processes">
+     <property name="title">
+      <string>Processes</string>
+     </property>
     </widget>
    </item>
   </layout>
