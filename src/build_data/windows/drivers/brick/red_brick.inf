@@ -1,20 +1,20 @@
-; brick.inf
+; red_brick.inf
 ; Copyright (c) 2010 libusb (GNU LGPL)
 
 [Strings]
-DeviceName  = "Tinkerforge Brick"
+DeviceName  = "Tinkerforge RED Brick"
 VendorName  = "Tinkerforge GmbH"
-DisplayName = "Brick Driver"
-SourceName  = "Tinkerforge Brick Install Disk"
-DeviceID    = "VID_16D0&PID_063D"
-DeviceGUID  = "{870013DD-FB1D-4BD7-A96C-1F0B7D31AF41}"
+DisplayName = "RED Brick Driver"
+SourceName  = "Tinkerforge RED Brick Install Disk"
+DeviceID    = "VID_16D0&PID_09E5&MI_00"
+DeviceGUID  = "{9536B3B1-6077-4A3B-9BAC-7C2CFA8A2BF3}"
 
 [Version]
 Signature                = "$Windows NT$"
 Class                    = "libusb (WinUSB) devices"
 ClassGuid                = {78a1c341-4539-11d3-b88d-00c04fad5171}
 Provider                 = "libusb.org"
-CatalogFile              = brick.cat
+CatalogFile              = red_brick.cat
 DriverVer                = 01/04/2013,6.1.7600.16385
 DriverPackageDisplayName = %DisplayName%
 
