@@ -63,7 +63,11 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        self.red = 0
+        self.red = None
+        self.sin = None
+        self.sout = None
+        self.serr = None
+        self.rp = None
 
         self.refresh_timer = Qt.QTimer(self)
 
@@ -71,7 +75,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.refresh_timer.timeout.connect(self.cb_refresh)
 
     def tab_on_focus(self):
-        self.sin  = REDFile(self.red).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0)
+        self.sin = REDFile(self.red).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0)
         self.sout = REDPipe(self.red).create(REDPipe.FLAG_NON_BLOCKING_READ)
         self.serr = self.sout
         self.rp = REDProcess(self.red)
