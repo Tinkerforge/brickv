@@ -27,7 +27,7 @@ from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOvervi
 from brickv.plugin_system.plugins.red.api import *
 
 # constants
-REFRESH_TIMEOUT = 2000 # 4 seconds
+REFRESH_TIMEOUT = 2000 # 2 seconds
 BIN = '/usr/bin/python'
 PARAM1 = '-c'
 PARAM2 = '''
@@ -44,6 +44,13 @@ def bytes2human(n):
             return "%.2f" % value
     return "%.2f" % n
 
+with open("/proc/uptime", "r") as utf:
+    _uptime = utf.readline().split()[0].split(".")[0]
+    hrs, hrs_remainder = divmod(int(_uptime), 60 * 60)
+    min, ignore = divmod(hrs_remainder, 60)
+    uptime = str(hrs) + " hour " + str(min) + " minutes"
+    utf.close()
+
 cpu_pcnt = psutil.cpu_percent(1)
 memory_pcnt = (float(psutil.phymem_usage().used) / float(psutil.phymem_usage().total)) * 100
 memory_used = bytes2human(psutil.used_phymem())
@@ -52,7 +59,7 @@ storage_pcnt = psutil.disk_usage("/").percent
 storage_used = bytes2human(psutil.disk_usage("/").used)
 storage_total = bytes2human(psutil.disk_usage("/").total)
 
-output = str(cpu_pcnt) + "," + str(memory_pcnt) + "," + \
+output = str(uptime) + "," + str(cpu_pcnt) + "," + str(memory_pcnt) + "," + \
 str(memory_used) + "," + str(memory_total) + "," + str(storage_pcnt) + \
 "," + str(storage_used) + "," + str(storage_total)
 print output
@@ -122,14 +129,16 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         
         if p.state == REDProcess.STATE_EXITED:
             csv_tokens = self.sout.read(256).strip().split(',')
-            cpu_pcnt = csv_tokens[0].split('.')[0]
-            memory_pcnt = csv_tokens[1].split('.')[0]
-            memory_used = csv_tokens[2]
-            memory_total = csv_tokens[3]
-            storage_pcnt = csv_tokens[4].split('.')[0]
-            storage_used = csv_tokens[5]
-            storage_total = csv_tokens[6]
+            uptime = csv_tokens[0]
+            cpu_pcnt = csv_tokens[1].split('.')[0]
+            memory_pcnt = csv_tokens[2].split('.')[0]
+            memory_used = csv_tokens[3]
+            memory_total = csv_tokens[4]
+            storage_pcnt = csv_tokens[5].split('.')[0]
+            storage_used = csv_tokens[6]
+            storage_total = csv_tokens[7]
 
+            print "uptime  = ", uptime
             print "cpu_pcnt = ", cpu_pcnt
             print "memory_pcnt = ", memory_pcnt
             print "memory_used = ", memory_used
@@ -140,6 +149,8 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         
             print "---------------------------------"
         
+            self.label_uptime_value.setText(str(uptime))
+
             self.pbar_cpu.setFormat(Qt.QString("%v%"))
             self.pbar_cpu.setValue(int(cpu_pcnt))
         
