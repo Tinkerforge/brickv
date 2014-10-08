@@ -123,6 +123,15 @@ def attach_or_release(red, object_class, object_id, extra_object_ids_to_release_
 
 
 class REDObject(QObject):
+    TYPE_STRING    = BrickRED.OBJECT_TYPE_STRING
+    TYPE_LIST      = BrickRED.OBJECT_TYPE_LIST
+    TYPE_FILE      = BrickRED.OBJECT_TYPE_FILE
+    TYPE_DIRECTORY = BrickRED.OBJECT_TYPE_DIRECTORY
+    TYPE_PROCESS   = BrickRED.OBJECT_TYPE_PROCESS
+    TYPE_PROGRAM   = BrickRED.OBJECT_TYPE_PROGRAM
+
+    _subclasses = {}
+
     def __init__(self, red):
         QObject.__init__(self)
 
@@ -174,86 +183,6 @@ class REDObject(QObject):
     @property
     def object_id(self):
         return self._object_id
-
-
-class REDInventory(REDObject):
-    TYPE_INVENTORY = BrickRED.OBJECT_TYPE_INVENTORY
-    TYPE_STRING    = BrickRED.OBJECT_TYPE_STRING
-    TYPE_LIST      = BrickRED.OBJECT_TYPE_LIST
-    TYPE_FILE      = BrickRED.OBJECT_TYPE_FILE
-    TYPE_DIRECTORY = BrickRED.OBJECT_TYPE_DIRECTORY
-    TYPE_PROCESS   = BrickRED.OBJECT_TYPE_PROCESS
-    TYPE_PROGRAM   = BrickRED.OBJECT_TYPE_PROGRAM
-
-    _wrapper_classes = {}
-
-    def __repr__(self):
-        return '<REDInventory object_id: {0}>'.format(self._object_id)
-
-    def _initialize(self):
-        self._entries = None
-        self._type = None
-
-    def update(self):
-        if self._object_id is None:
-            raise RuntimeError('Cannot update unattached inventory object')
-
-        # get type
-        error_code, type = self._red.get_inventory_type(self._object_id)
-
-        if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get type of inventory object {0}'.format(self._object_id), error_code)
-
-        self._type = type
-
-        try:
-            wrapper_class = REDInventory._wrapper_classes[type]
-        except KeyError:
-            raise TypeError('Inventory object {0} has unknown type {1}'.format(self._object_id, type))
-
-        # rewind
-        error_code = self._red.rewind_inventory(self._object_id)
-
-        if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not rewind inventory object {0}'.format(self._object_id), error_code)
-
-        # get entries
-        entries = []
-
-        while True:
-            error_code, entry_object_id = self._red.get_next_inventory_entry(self._object_id)
-
-            if error_code == REDError.E_NO_MORE_DATA:
-                break
-
-            if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not get next entry of inventory object {0}'.format(self._object_id), error_code)
-
-            entries.append(attach_or_release(self._red, wrapper_class, entry_object_id))
-
-        self._entries = entries
-
-    def open(self, type):
-        self.release()
-
-        error_code, object_id = self._red.open_inventory(type)
-
-        if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not open inventory object for type {0}'.format(type), error_code)
-
-        self._object_id = object_id
-
-        self.update()
-
-        return self
-
-    @property
-    def entries(self):
-        return self._entries
-
-    @property
-    def type(self):
-        return self._type
 
 
 class REDString(REDObject):
@@ -351,7 +280,7 @@ class REDList(REDObject):
                 raise REDError('Could not get item at index {0} of list object {1}'.format(i, self._object_id), error_code)
 
             try:
-                wrapper_class = REDInventory._wrapper_classes[type]
+                wrapper_class = REDObject._subclasses[type]
             except KeyError:
                 raise TypeError('List object {0} contains item with unknown type {1} at index {2}'.format(self._object_id, type, i))
 
@@ -577,7 +506,7 @@ class REDPipe(REDFileBase):
         error_code, object_id = self._red.create_pipe(flags)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not create file object', error_code)
+            raise REDError('Could not create pipe object', error_code)
 
         self._object_id = object_id
 
@@ -903,11 +832,19 @@ class REDProcess(REDObject):
         return self._exit_code
 
 
-REDInventory._wrapper_classes = {
-    REDInventory.TYPE_INVENTORY: REDInventory,
-    REDInventory.TYPE_STRING:    REDString,
-    REDInventory.TYPE_LIST:      REDList,
-    REDInventory.TYPE_FILE:      REDFileOrPipeAttacher,
-    REDInventory.TYPE_DIRECTORY: REDDirectory,
-    REDInventory.TYPE_PROCESS:   REDProcess,
+def get_processes(red):
+    error_code, processes_list_id = self._red.get_processes()
+
+    if error_code != REDError.E_SUCCESS:
+        raise REDError('Could not get processes list object', error_code)
+
+    return attach_or_release(red, REDList, processes_list_id)
+
+
+REDObject._subclasses = {
+    REDObject.TYPE_STRING:    REDString,
+    REDObject.TYPE_LIST:      REDList,
+    REDObject.TYPE_FILE:      REDFileOrPipeAttacher,
+    REDObject.TYPE_DIRECTORY: REDDirectory,
+    REDObject.TYPE_PROCESS:   REDProcess,
 }

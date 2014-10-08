@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-10-02.      #
+# This file was automatically generated on 2014-10-07.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -22,9 +22,6 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
-OpenInventory = namedtuple('OpenInventory', ['error_code', 'inventory_id'])
-GetInventoryType = namedtuple('InventoryType', ['error_code', 'type'])
-GetNextInventoryEntry = namedtuple('NextInventoryEntry', ['error_code', 'entry_object_id'])
 AllocateString = namedtuple('AllocateString', ['error_code', 'string_id'])
 GetStringLength = namedtuple('StringLength', ['error_code', 'length'])
 GetStringChunk = namedtuple('StringChunk', ['error_code', 'buffer'])
@@ -43,11 +40,13 @@ LookupSymlinkTarget = namedtuple('LookupSymlinkTarget', ['error_code', 'target_s
 OpenDirectory = namedtuple('OpenDirectory', ['error_code', 'directory_id'])
 GetDirectoryName = namedtuple('DirectoryName', ['error_code', 'name_string_id'])
 GetNextDirectoryEntry = namedtuple('NextDirectoryEntry', ['error_code', 'name_string_id', 'type'])
+GetProcesses = namedtuple('Processes', ['error_code', 'processes_list_id'])
 SpawnProcess = namedtuple('SpawnProcess', ['error_code', 'process_id'])
 GetProcessCommand = namedtuple('ProcessCommand', ['error_code', 'executable_string_id', 'arguments_list_id', 'environment_list_id', 'working_directory_string_id'])
 GetProcessIdentity = namedtuple('ProcessIdentity', ['error_code', 'uid', 'gid'])
 GetProcessStdio = namedtuple('ProcessStdio', ['error_code', 'stdin_file_id', 'stdout_file_id', 'stderr_file_id'])
 GetProcessState = namedtuple('ProcessState', ['error_code', 'state', 'timestamp', 'pid', 'exit_code'])
+GetDefinedPrograms = namedtuple('DefinedPrograms', ['error_code', 'programs_list_id'])
 DefineProgram = namedtuple('DefineProgram', ['error_code', 'program_id'])
 GetProgramIdentifier = namedtuple('ProgramIdentifier', ['error_code', 'identifier_string_id'])
 GetProgramDirectory = namedtuple('ProgramDirectory', ['error_code', 'directory_string_id'])
@@ -56,6 +55,8 @@ GetProgramStdioRedirection = namedtuple('ProgramStdioRedirection', ['error_code'
 GetProgramSchedule = namedtuple('ProgramSchedule', ['error_code', 'start_condition', 'start_timestamp', 'start_delay', 'repeat_mode', 'repeat_interval', 'repeat_second_mask', 'repeat_minute_mask', 'repeat_hour_mask', 'repeat_day_mask', 'repeat_month_mask', 'repeat_weekday_mask'])
 GetLastSpawnedProgramProcess = namedtuple('LastSpawnedProgramProcess', ['error_code', 'process_id'])
 GetLastProgramSchedulerError = namedtuple('LastProgramSchedulerError', ['error_code', 'timestamp', 'message_string_id'])
+GetCustomProgramOptionNames = namedtuple('CustomProgramOptionNames', ['error_code', 'names_list_id'])
+GetCustomProgramOptionValue = namedtuple('CustomProgramOptionValue', ['error_code', 'value_string_id'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickRED(Device):
@@ -65,72 +66,73 @@ class BrickRED(Device):
 
     DEVICE_IDENTIFIER = 17
 
-    CALLBACK_ASYNC_FILE_READ = 27
-    CALLBACK_ASYNC_FILE_WRITE = 28
-    CALLBACK_PROCESS_STATE_CHANGED = 42
-    CALLBACK_PROGRAM_PROCESS_SPAWNED = 55
-    CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED = 56
+    CALLBACK_ASYNC_FILE_READ = 23
+    CALLBACK_ASYNC_FILE_WRITE = 24
+    CALLBACK_PROCESS_STATE_CHANGED = 39
+    CALLBACK_PROGRAM_PROCESS_SPAWNED = 57
+    CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED = 58
 
     FUNCTION_RELEASE_OBJECT = 1
-    FUNCTION_OPEN_INVENTORY = 2
-    FUNCTION_GET_INVENTORY_TYPE = 3
-    FUNCTION_GET_NEXT_INVENTORY_ENTRY = 4
-    FUNCTION_REWIND_INVENTORY = 5
-    FUNCTION_ALLOCATE_STRING = 6
-    FUNCTION_TRUNCATE_STRING = 7
-    FUNCTION_GET_STRING_LENGTH = 8
-    FUNCTION_SET_STRING_CHUNK = 9
-    FUNCTION_GET_STRING_CHUNK = 10
-    FUNCTION_ALLOCATE_LIST = 11
-    FUNCTION_GET_LIST_LENGTH = 12
-    FUNCTION_GET_LIST_ITEM = 13
-    FUNCTION_APPEND_TO_LIST = 14
-    FUNCTION_REMOVE_FROM_LIST = 15
-    FUNCTION_OPEN_FILE = 16
-    FUNCTION_CREATE_PIPE = 17
-    FUNCTION_GET_FILE_INFO = 18
-    FUNCTION_READ_FILE = 19
-    FUNCTION_READ_FILE_ASYNC = 20
-    FUNCTION_ABORT_ASYNC_FILE_READ = 21
-    FUNCTION_WRITE_FILE = 22
-    FUNCTION_WRITE_FILE_UNCHECKED = 23
-    FUNCTION_WRITE_FILE_ASYNC = 24
-    FUNCTION_SET_FILE_POSITION = 25
-    FUNCTION_GET_FILE_POSITION = 26
-    FUNCTION_LOOKUP_FILE_INFO = 29
-    FUNCTION_LOOKUP_SYMLINK_TARGET = 30
-    FUNCTION_OPEN_DIRECTORY = 31
-    FUNCTION_GET_DIRECTORY_NAME = 32
-    FUNCTION_GET_NEXT_DIRECTORY_ENTRY = 33
-    FUNCTION_REWIND_DIRECTORY = 34
-    FUNCTION_CREATE_DIRECTORY = 35
-    FUNCTION_SPAWN_PROCESS = 36
-    FUNCTION_KILL_PROCESS = 37
-    FUNCTION_GET_PROCESS_COMMAND = 38
-    FUNCTION_GET_PROCESS_IDENTITY = 39
-    FUNCTION_GET_PROCESS_STDIO = 40
-    FUNCTION_GET_PROCESS_STATE = 41
-    FUNCTION_DEFINE_PROGRAM = 43
-    FUNCTION_UNDEFINE_PROGRAM = 44
-    FUNCTION_GET_PROGRAM_IDENTIFIER = 45
-    FUNCTION_GET_PROGRAM_DIRECTORY = 46
-    FUNCTION_SET_PROGRAM_COMMAND = 47
-    FUNCTION_GET_PROGRAM_COMMAND = 48
-    FUNCTION_SET_PROGRAM_STDIO_REDIRECTION = 49
-    FUNCTION_GET_PROGRAM_STDIO_REDIRECTION = 50
-    FUNCTION_SET_PROGRAM_SCHEDULE = 51
-    FUNCTION_GET_PROGRAM_SCHEDULE = 52
-    FUNCTION_GET_LAST_SPAWNED_PROGRAM_PROCESS = 53
-    FUNCTION_GET_LAST_PROGRAM_SCHEDULER_ERROR = 54
+    FUNCTION_ALLOCATE_STRING = 2
+    FUNCTION_TRUNCATE_STRING = 3
+    FUNCTION_GET_STRING_LENGTH = 4
+    FUNCTION_SET_STRING_CHUNK = 5
+    FUNCTION_GET_STRING_CHUNK = 6
+    FUNCTION_ALLOCATE_LIST = 7
+    FUNCTION_GET_LIST_LENGTH = 8
+    FUNCTION_GET_LIST_ITEM = 9
+    FUNCTION_APPEND_TO_LIST = 10
+    FUNCTION_REMOVE_FROM_LIST = 11
+    FUNCTION_OPEN_FILE = 12
+    FUNCTION_CREATE_PIPE = 13
+    FUNCTION_GET_FILE_INFO = 14
+    FUNCTION_READ_FILE = 15
+    FUNCTION_READ_FILE_ASYNC = 16
+    FUNCTION_ABORT_ASYNC_FILE_READ = 17
+    FUNCTION_WRITE_FILE = 18
+    FUNCTION_WRITE_FILE_UNCHECKED = 19
+    FUNCTION_WRITE_FILE_ASYNC = 20
+    FUNCTION_SET_FILE_POSITION = 21
+    FUNCTION_GET_FILE_POSITION = 22
+    FUNCTION_LOOKUP_FILE_INFO = 25
+    FUNCTION_LOOKUP_SYMLINK_TARGET = 26
+    FUNCTION_OPEN_DIRECTORY = 27
+    FUNCTION_GET_DIRECTORY_NAME = 28
+    FUNCTION_GET_NEXT_DIRECTORY_ENTRY = 29
+    FUNCTION_REWIND_DIRECTORY = 30
+    FUNCTION_CREATE_DIRECTORY = 31
+    FUNCTION_GET_PROCESSES = 32
+    FUNCTION_SPAWN_PROCESS = 33
+    FUNCTION_KILL_PROCESS = 34
+    FUNCTION_GET_PROCESS_COMMAND = 35
+    FUNCTION_GET_PROCESS_IDENTITY = 36
+    FUNCTION_GET_PROCESS_STDIO = 37
+    FUNCTION_GET_PROCESS_STATE = 38
+    FUNCTION_GET_DEFINED_PROGRAMS = 40
+    FUNCTION_DEFINE_PROGRAM = 41
+    FUNCTION_UNDEFINE_PROGRAM = 42
+    FUNCTION_GET_PROGRAM_IDENTIFIER = 43
+    FUNCTION_GET_PROGRAM_DIRECTORY = 44
+    FUNCTION_SET_PROGRAM_COMMAND = 45
+    FUNCTION_GET_PROGRAM_COMMAND = 46
+    FUNCTION_SET_PROGRAM_STDIO_REDIRECTION = 47
+    FUNCTION_GET_PROGRAM_STDIO_REDIRECTION = 48
+    FUNCTION_SET_PROGRAM_SCHEDULE = 49
+    FUNCTION_GET_PROGRAM_SCHEDULE = 50
+    FUNCTION_GET_LAST_SPAWNED_PROGRAM_PROCESS = 51
+    FUNCTION_GET_LAST_PROGRAM_SCHEDULER_ERROR = 52
+    FUNCTION_GET_CUSTOM_PROGRAM_OPTION_NAMES = 53
+    FUNCTION_SET_CUSTOM_PROGRAM_OPTION_VALUE = 54
+    FUNCTION_GET_CUSTOM_PROGRAM_OPTION_VALUE = 55
+    FUNCTION_REMOVE_CUSTOM_PROGRAM_OPTION = 56
     FUNCTION_GET_IDENTITY = 255
 
-    OBJECT_TYPE_INVENTORY = 0
-    OBJECT_TYPE_STRING = 1
-    OBJECT_TYPE_LIST = 2
-    OBJECT_TYPE_FILE = 3
-    OBJECT_TYPE_DIRECTORY = 4
-    OBJECT_TYPE_PROCESS = 5
-    OBJECT_TYPE_PROGRAM = 6
+    OBJECT_TYPE_STRING = 0
+    OBJECT_TYPE_LIST = 1
+    OBJECT_TYPE_FILE = 2
+    OBJECT_TYPE_DIRECTORY = 3
+    OBJECT_TYPE_PROCESS = 4
+    OBJECT_TYPE_PROGRAM = 5
     FILE_FLAG_READ_ONLY = 1
     FILE_FLAG_WRITE_ONLY = 2
     FILE_FLAG_READ_WRITE = 4
@@ -206,10 +208,6 @@ class BrickRED(Device):
         self.api_version = (2, 0, 0)
 
         self.response_expected[BrickRED.FUNCTION_RELEASE_OBJECT] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_OPEN_INVENTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_GET_INVENTORY_TYPE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_GET_NEXT_INVENTORY_ENTRY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_REWIND_INVENTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_ALLOCATE_STRING] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_TRUNCATE_STRING] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_STRING_LENGTH] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -240,6 +238,7 @@ class BrickRED(Device):
         self.response_expected[BrickRED.FUNCTION_GET_NEXT_DIRECTORY_ENTRY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_REWIND_DIRECTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_CREATE_DIRECTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_PROCESSES] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_SPAWN_PROCESS] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_KILL_PROCESS] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_PROCESS_COMMAND] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -247,6 +246,7 @@ class BrickRED(Device):
         self.response_expected[BrickRED.FUNCTION_GET_PROCESS_STDIO] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_PROCESS_STATE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.CALLBACK_PROCESS_STATE_CHANGED] = BrickRED.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickRED.FUNCTION_GET_DEFINED_PROGRAMS] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_DEFINE_PROGRAM] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_UNDEFINE_PROGRAM] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_PROGRAM_IDENTIFIER] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -259,6 +259,10 @@ class BrickRED(Device):
         self.response_expected[BrickRED.FUNCTION_GET_PROGRAM_SCHEDULE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_LAST_SPAWNED_PROGRAM_PROCESS] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_LAST_PROGRAM_SCHEDULER_ERROR] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_CUSTOM_PROGRAM_OPTION_NAMES] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_SET_CUSTOM_PROGRAM_OPTION_VALUE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_CUSTOM_PROGRAM_OPTION_VALUE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_REMOVE_CUSTOM_PROGRAM_OPTION] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED] = BrickRED.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickRED.CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED] = BrickRED.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickRED.FUNCTION_GET_IDENTITY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -275,50 +279,6 @@ class BrickRED(Device):
         error code. If the reference count reaches zero the object gets destroyed.
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_RELEASE_OBJECT, (object_id,), 'H', 'B')
-
-    def open_inventory(self, type):
-        """
-        Opens the inventory for a specific object type and allocates a new inventory
-        object for it.
-        
-        Possible object types are:
-        
-        * Inventory = 0
-        * String = 1
-        * List = 2
-        * File = 3
-        * Directory = 4
-        * Process = 5
-        * Program = 6
-        
-        Returns the object ID of the new directory object and the resulting error code.
-        """
-        return OpenInventory(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_INVENTORY, (type,), 'B', 'B H'))
-
-    def get_inventory_type(self, inventory_id):
-        """
-        Returns the object type of a inventory object, as passed to
-        :func:`OpenInventory`, and the resulting error code.
-        
-        See :func:`OpenInventory` for possible object types.
-        """
-        return GetInventoryType(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_INVENTORY_TYPE, (inventory_id,), 'H', 'B B'))
-
-    def get_next_inventory_entry(self, inventory_id):
-        """
-        Returns the object ID of the next object in an inventory object and the
-        resulting error code.
-        
-        If there is not next object then error code *NoMoreData* is returned. To rewind
-        an inventory object call :func:`RewindInventory`.
-        """
-        return GetNextInventoryEntry(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_NEXT_INVENTORY_ENTRY, (inventory_id,), 'H', 'B H'))
-
-    def rewind_inventory(self, inventory_id):
-        """
-        Rewinds an inventory object and returns the resulting error code.
-        """
-        return self.ipcon.send_request(self, BrickRED.FUNCTION_REWIND_INVENTORY, (inventory_id,), 'H', 'B')
 
     def allocate_string(self, length_to_reserve, buffer):
         """
@@ -381,6 +341,15 @@ class BrickRED(Device):
         """
         Returns the object ID and type of the object stored at ``index`` in a list
         object and returns the resulting error code.
+        
+        Possible object types are:
+        
+        * String = 0
+        * List = 1
+        * File = 2
+        * Directory = 3
+        * Process = 4
+        * Program = 5
         """
         return GetListItem(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LIST_ITEM, (list_id, index), 'H H', 'B H B'))
 
@@ -503,7 +472,8 @@ class BrickRED(Device):
 
     def read_file_async(self, file_id, length_to_read):
         """
-        Reads up to 2\ :sup:`63`\  - 1 bytes from a file object asynchronously.
+        Reads up to 2\ :sup:`63`\  - 1 bytes from a file object asynchronously. The
+        minimum asynchronous read length is 1 byte.
         
         Returns the resulting error code.
         
@@ -666,6 +636,12 @@ class BrickRED(Device):
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_DIRECTORY, (name_string_id, flags, permissions, uid, gid), 'H H H I I', 'B')
 
+    def get_processes(self):
+        """
+        
+        """
+        return GetProcesses(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESSES, (), '', 'B H'))
+
     def spawn_process(self, executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id, uid, gid, stdin_file_id, stdout_file_id, stderr_file_id):
         """
         
@@ -747,6 +723,12 @@ class BrickRED(Device):
         """
         return GetProcessState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STATE, (process_id,), 'H', 'B B Q I B'))
 
+    def get_defined_programs(self):
+        """
+        
+        """
+        return GetDefinedPrograms(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_DEFINED_PROGRAMS, (), '', 'B H'))
+
     def define_program(self, identifier_string_id):
         """
         
@@ -818,6 +800,30 @@ class BrickRED(Device):
         
         """
         return GetLastProgramSchedulerError(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LAST_PROGRAM_SCHEDULER_ERROR, (program_id,), 'H', 'B Q H'))
+
+    def get_custom_program_option_names(self, program_id):
+        """
+        
+        """
+        return GetCustomProgramOptionNames(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_CUSTOM_PROGRAM_OPTION_NAMES, (program_id,), 'H', 'B H'))
+
+    def set_custom_program_option_value(self, program_id, name_string_id, value_string_id):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_CUSTOM_PROGRAM_OPTION_VALUE, (program_id, name_string_id, value_string_id), 'H H H', 'B')
+
+    def get_custom_program_option_value(self, program_id, name_string_id):
+        """
+        
+        """
+        return GetCustomProgramOptionValue(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_CUSTOM_PROGRAM_OPTION_VALUE, (program_id, name_string_id), 'H H', 'B H'))
+
+    def remove_custom_program_option(self, program_id, name_string_id):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_REMOVE_CUSTOM_PROGRAM_OPTION, (program_id, name_string_id), 'H H', 'B')
 
     def get_identity(self):
         """
