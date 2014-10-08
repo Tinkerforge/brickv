@@ -45,7 +45,7 @@ def bytes2human(n):
     return "%.2f" % n
 
 cpu_pcnt = psutil.cpu_percent(1)
-memory_pcnt = psutil.phymem_usage().percent
+memory_pcnt = (float(psutil.phymem_usage().used) / float(psutil.phymem_usage().total)) * 100
 memory_used = bytes2human(psutil.used_phymem())
 memory_total = bytes2human(psutil.TOTAL_PHYMEM)
 storage_pcnt = psutil.disk_usage("/").percent
@@ -120,32 +120,33 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         #print 'cb_spawn: ', p.state, p.timestamp, p.pid, p.exit_code
         #print "GOT = ", self.sout.read(256).strip().split(',')
         
-        csv_tokens = self.sout.read(256).strip().split(',')
-        cpu_pcnt = csv_tokens[0].split('.')[0]
-        memory_pcnt = csv_tokens[1].split('.')[0]
-        memory_used = csv_tokens[2]
-        memory_total = csv_tokens[3]
-        storage_pcnt = csv_tokens[4].split('.')[0]
-        storage_used = csv_tokens[5]
-        storage_total = csv_tokens[6]
+        if p.state == REDProcess.STATE_EXITED:
+            csv_tokens = self.sout.read(256).strip().split(',')
+            cpu_pcnt = csv_tokens[0].split('.')[0]
+            memory_pcnt = csv_tokens[1].split('.')[0]
+            memory_used = csv_tokens[2]
+            memory_total = csv_tokens[3]
+            storage_pcnt = csv_tokens[4].split('.')[0]
+            storage_used = csv_tokens[5]
+            storage_total = csv_tokens[6]
 
-        print "cpu_pcnt = ", cpu_pcnt
-        print "memory_pcnt = ", memory_pcnt
-        print "memory_used = ", memory_used
-        print "memory_total = ", memory_total
-        print "storage_pcnt = ", storage_pcnt
-        print "storage_used = ", storage_used
-        print "storage_total = ", storage_total
+            print "cpu_pcnt = ", cpu_pcnt
+            print "memory_pcnt = ", memory_pcnt
+            print "memory_used = ", memory_used
+            print "memory_total = ", memory_total
+            print "storage_pcnt = ", storage_pcnt
+            print "storage_used = ", storage_used
+            print "storage_total = ", storage_total
         
-        print "---------------------------------"
+            print "---------------------------------"
         
-        self.pbar_cpu.setFormat(Qt.QString("%v%"))
-        self.pbar_cpu.setValue(int(cpu_pcnt))
+            self.pbar_cpu.setFormat(Qt.QString("%v%"))
+            self.pbar_cpu.setValue(int(cpu_pcnt))
         
-        self.pbar_memory.setFormat(Qt.QString("%v% [%1 of %2 MB]").arg(memory_used, memory_total))
-        self.pbar_memory.setValue(int(memory_pcnt))
+            self.pbar_memory.setFormat(Qt.QString("%v% [%1 of %2 MiB]").arg(memory_used, memory_total))
+            self.pbar_memory.setValue(int(memory_pcnt))
         
-        self.pbar_storage.setFormat(Qt.QString("%v% [%1 of %2 GB]").arg(storage_used, storage_total))
-        self.pbar_storage.setValue(int(storage_pcnt))
+            self.pbar_storage.setFormat(Qt.QString("%v% [%1 of %2 GiB]").arg(storage_used, storage_total))
+            self.pbar_storage.setValue(int(storage_pcnt))
         
         self.rp.release()
