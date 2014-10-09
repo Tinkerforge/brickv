@@ -47,6 +47,11 @@
        <string>Versions</string>
       </attribute>
      </widget>
+     <widget class="REDTabExtension" name="tab_extension">
+      <attribute name="title">
+       <string>Extension</string>
+      </attribute>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -80,6 +85,12 @@
    <class>REDTabVersions</class>
    <extends>QWidget</extends>
    <header location="global">brickv.plugin_system.plugins.red.red_tab_versions</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>REDTabExtension</class>
+   <extends>QWidget</extends>
+   <header location="global">brickv.plugin_system.plugins.red.red_tab_extension</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

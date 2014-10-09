@@ -29,10 +29,13 @@ from brickv.async_call import async_call
 from brickv.plugin_system.plugins.red.ui_red import Ui_RED
 from brickv.plugin_system.plugins.red.red_tab_overview import REDTabOverview
 from brickv.plugin_system.plugins.red.api import REDError, REDString, REDFile, REDPipe, REDDirectory, REDProcess, get_processes
+from brickv.plugin_system.plugins.red.script_manager import ScriptManager 
 
 class RED(PluginBase, Ui_RED):
     def __init__(self, *args):
         PluginBase.__init__(self, 'RED Brick', BrickRED, *args)
+        ScriptManager.red = self.device
+
         self.setupUi(self)
 
         self.red = self.device
