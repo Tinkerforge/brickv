@@ -690,8 +690,8 @@ class BrickRED(Device):
 
     def get_process_state(self, process_id):
         """
-        Returns the current state, timestamp, process ID and exit code of a process
-        object, and the resulting error code.
+        Returns the current state, timestamp (UNIX time) of the last state change,
+        process ID and exit code of a process object, and the resulting error code.
         
         Possible process states are:
         
@@ -701,9 +701,6 @@ class BrickRED(Device):
         * Exited = 3
         * Killed = 4
         * Stopped = 5
-        
-        The timestamp represents the UNIX time since the process is in its current
-        state.
         
         The process ID is only valid if the state is *Running* or *Stopped*.
         
