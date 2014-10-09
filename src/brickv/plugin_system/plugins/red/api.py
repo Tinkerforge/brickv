@@ -910,6 +910,7 @@ class REDProcess(REDObject):
         self._stdout = stdout
         self._stderr = stderr
 
+        # FIXME Matthias: What does this do? There seems to be some API mismatch or similar if it is called 
         #self.update_identity()
         self.update_state()
 
