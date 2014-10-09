@@ -180,8 +180,9 @@ class REDObject(QObject):
         object_id = self.detach()
 
         try:
-            self._red.release_object(object_id) # FIXME: error handling
+            self._red.release_object(object_id)
         except:
+            # FIXME: error handling
             pass
 
     @property
@@ -363,7 +364,7 @@ class REDFileBase(REDObject):
 
         self._type = type
 
-        if type == REDFile.TYPE_PIPE:
+        if type == REDFileBase.TYPE_PIPE:
             self._name = None
         else:
             self._name = _attach_or_release(self._red, REDString, name_string_id)
@@ -536,14 +537,15 @@ class REDFileOrPipeAttacher:
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get information for file object {0}'.format(self._object_id), error_code)
 
-        try:
-            self._red.release_object(name_string_id) # FIXME: error handling
-        except:
-            pass
-
-        if type == REDFile.TYPE_PIPE:
+        if type == REDFileBase.TYPE_PIPE:
             obj = _attach_or_release(self._red, REDPipe, self._object_id)
         else:
+            try:
+                self._red.release_object(name_string_id)
+            except:
+                # FIXME: error handling
+                pass
+
             obj = _attach_or_release(self._red, REDFile, self._object_id)
 
         self.detach()
