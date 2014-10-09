@@ -27,42 +27,21 @@ from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOvervi
 from brickv.plugin_system.plugins.red.api import *
 
 # constants
-REFRESH_TIMEOUT = 2000 # 2 seconds
+REFRESH_TIMEOUT = 4000 # 4 seconds
 BIN = '/usr/bin/python'
 PARAM1 = '-c'
 PARAM2 = '''
 import psutil
 
-def bytes2human(n):
-    symbols = ('K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
-    prefix = {}
-    for i, s in enumerate(symbols):
-        prefix[s] = 1 << (i + 1) * 10
-    for s in reversed(symbols):
-        if n >= prefix[s]:
-            value = float(n) / prefix[s]
-            return "%.2f" % value
-    return "%.2f" % n
-
 with open("/proc/uptime", "r") as utf:
-    _uptime = utf.readline().split()[0].split(".")[0]
-    hrs, hrs_remainder = divmod(int(_uptime), 60 * 60)
-    min, ignore = divmod(hrs_remainder, 60)
-    uptime = str(hrs) + " hour " + str(min) + " minutes"
-    utf.close()
+    print utf.readline().split(".")[0]
 
-cpu_pcnt = psutil.cpu_percent(1)
-memory_pcnt = (float(psutil.phymem_usage().used) / float(psutil.phymem_usage().total)) * 100
-memory_used = bytes2human(psutil.used_phymem())
-memory_total = bytes2human(psutil.TOTAL_PHYMEM)
-storage_pcnt = psutil.disk_usage("/").percent
-storage_used = bytes2human(psutil.disk_usage("/").used)
-storage_total = bytes2human(psutil.disk_usage("/").total)
-
-output = str(uptime) + "," + str(cpu_pcnt) + "," + str(memory_pcnt) + "," + \
-str(memory_used) + "," + str(memory_total) + "," + str(storage_pcnt) + \
-"," + str(storage_used) + "," + str(storage_total)
-print output
+du = psutil.disk_usage("/")
+print psutil.cpu_percent(2)
+print psutil.used_phymem()
+print psutil.TOTAL_PHYMEM
+print du.used
+print du.total
 '''
 
 class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
@@ -82,13 +61,19 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.refresh_timer.timeout.connect(self.cb_refresh)
 
     def tab_on_focus(self):
-        self.sin = REDFile(self.red).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0)
-        self.sout = REDPipe(self.red).create(REDPipe.FLAG_NON_BLOCKING_READ)
-        self.serr = self.sout
-        self.rp = REDProcess(self.red)
+        self.refresh_timer.stop()
 
-        self.rp.state_changed_callback = self.cb_rp_state_changed
-        self.rp.spawn(BIN, [PARAM1, PARAM2], [], '/', 0, 0, self.sin, self.sout, self.serr)
+        try:
+            self.sin = REDFile(self.red).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0)
+            self.sout = REDPipe(self.red).create(REDPipe.FLAG_NON_BLOCKING_READ)
+            self.serr = self.sout
+            self.rp = REDProcess(self.red)
+
+            self.rp.state_changed_callback = self.cb_rp_state_changed
+            self.rp.spawn(BIN, [PARAM1, PARAM2], [], '/', 0, 0, self.sin, self.sout, self.serr)
+        except REDError:
+            self.refresh_timer.start(REFRESH_TIMEOUT)
+            return
 
         self.refresh_timer.start(REFRESH_TIMEOUT)
 
@@ -112,52 +97,72 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
             self.serr.release()
             self.serr = None
 
+    def bytes2human(self, n):
+        symbols = ('K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
+        prefix = {}
+        for i, s in enumerate(symbols):
+            prefix[s] = 1 << (i + 1) * 10
+        for s in reversed(symbols):
+            if n >= prefix[s]:
+                value = float(n) / prefix[s]
+                return "%.2f" % value
+        return "%.2f" % n
+
     # the callbacks
     def cb_refresh(self):
         self.refresh_timer.stop()
 
-        self.rp = REDProcess(self.red)
-        self.rp.state_changed_callback = self.cb_rp_state_changed
-
-        self.rp.spawn(BIN, [PARAM1, PARAM2], [], '/', 0, 0, self.sin, self.sout, self.serr)
+        try:
+            self.rp = REDProcess(self.red)
+            self.rp.state_changed_callback = self.cb_rp_state_changed
+            self.rp.spawn(BIN, [PARAM1, PARAM2], [], '/', 0, 0, self.sin, self.sout, self.serr)
+        except REDError:
+            self.refresh_timer.start(REFRESH_TIMEOUT)
+            return
 
         self.refresh_timer.start(REFRESH_TIMEOUT)
 
     def cb_rp_state_changed(self, p):
-        #print 'cb_spawn: ', p.state, p.timestamp, p.pid, p.exit_code
-        #print "GOT = ", self.sout.read(256).strip().split(',')
-        
         if p.state == REDProcess.STATE_EXITED:
-            csv_tokens = self.sout.read(256).strip().split(',')
-            uptime = csv_tokens[0]
-            cpu_pcnt = csv_tokens[1].split('.')[0]
-            memory_pcnt = csv_tokens[2].split('.')[0]
-            memory_used = csv_tokens[3]
-            memory_total = csv_tokens[4]
-            storage_pcnt = csv_tokens[5].split('.')[0]
-            storage_used = csv_tokens[6]
-            storage_total = csv_tokens[7]
+            try:
+                csv_tokens = self.sout.read(256).split('\n')
+            except REDError:
+                print REDError.message()
+                self.rp.release()
+                return
 
-            print "uptime  = ", uptime
-            print "cpu_pcnt = ", cpu_pcnt
-            print "memory_pcnt = ", memory_pcnt
-            print "memory_used = ", memory_used
-            print "memory_total = ", memory_total
-            print "storage_pcnt = ", storage_pcnt
-            print "storage_used = ", storage_used
-            print "storage_total = ", storage_total
-        
-            print "---------------------------------"
-        
+            for i, t in enumerate(csv_tokens):
+                if t == "" and i < len(csv_tokens) - 1:
+                    self.rp.release()
+                    return
+
+            _uptime = csv_tokens[0]
+            hrs, hrs_remainder = divmod(int(_uptime), 60 * 60)
+            mins, ignore = divmod(hrs_remainder, 60)
+            uptime = str(hrs) + " hour " + str(mins) + " minutes"
+    
+            cpu_percent = csv_tokens[1]
+            cpu_percent_v = int(csv_tokens[1].split('.')[0])
+
+            memory_used = self.bytes2human(int(csv_tokens[2]))
+            memory_total = self.bytes2human(int(csv_tokens[3]))
+            memory_percent = str("%.1f" % ((float(memory_used) / float(memory_total)) * 100))
+            memory_percent_v = int(memory_percent.split('.')[0])
+
+            storage_used = self.bytes2human(int(csv_tokens[4]))
+            storage_total = self.bytes2human(int(csv_tokens[5]))
+            storage_percent = str("%.1f" % ((float(storage_used) / float(storage_total)) * 100))
+            storage_percent_v = int(storage_percent.split('.')[0])
+
             self.label_uptime_value.setText(str(uptime))
 
-            self.pbar_cpu.setFormat(Qt.QString("%v%"))
-            self.pbar_cpu.setValue(int(cpu_pcnt))
+            self.pbar_cpu.setFormat(Qt.QString("%1%").arg(cpu_percent))
+            self.pbar_cpu.setValue(cpu_percent_v)
         
-            self.pbar_memory.setFormat(Qt.QString("%v% [%1 of %2 MiB]").arg(memory_used, memory_total))
-            self.pbar_memory.setValue(int(memory_pcnt))
+            self.pbar_memory.setFormat(Qt.QString("%1% [%2 of %3 MiB]").arg(memory_percent, memory_used, memory_total))
+            self.pbar_memory.setValue(memory_percent_v)
         
-            self.pbar_storage.setFormat(Qt.QString("%v% [%1 of %2 GiB]").arg(storage_used, storage_total))
-            self.pbar_storage.setValue(int(storage_pcnt))
-        
+            self.pbar_storage.setFormat(Qt.QString("%1% [%2 of %3 GiB]").arg(storage_percent, storage_used, storage_total))
+            self.pbar_storage.setValue(storage_percent_v)
+
         self.rp.release()
