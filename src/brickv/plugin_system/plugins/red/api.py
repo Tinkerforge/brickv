@@ -92,7 +92,7 @@ class REDError(Exception):
 
     def __str__(self):
         return '{0}: {1} ({2})'.format(self._message,
-                                       REDError._error_code_names.get(self.error_code, '<unknown>'),
+                                       REDError._error_code_names.get(self._error_code, '<unknown>'),
                                        self._error_code)
     @property
     def message(self):
@@ -108,14 +108,16 @@ def _attach_or_release(red, object_class, object_id, extra_object_ids_to_release
         obj = object_class(red).attach(object_id)
     except Exception as e:
         try:
-            red.release_object(object_id) # FIXME: error handling
+            red.release_object(object_id)
         except:
+            # FIXME: error handling
             pass
 
         for extra_object_id in extra_object_ids_to_release_on_error:
             try:
-                red.release_object(extra_object_id) # FIXME: error handling
+                red.release_object(extra_object_id)
             except:
+                # FIXME: error handling
                 pass
 
         raise e
@@ -172,6 +174,7 @@ class REDObject(QObject):
 
     def release(self):
         if self._object_id is None:
+            # releasing an unattached object is allowed and does nothing
             return
 
         object_id = self.detach()
@@ -733,10 +736,15 @@ class REDProcess(REDObject):
             state_changed_callback(self)
 
     def update(self):
+        self.update_command()
+        self.update_identity()
+        self.update_stdio()
+        self.update_state()
+
+    def update_command(self):
         if self._object_id is None:
             raise RuntimeError('Cannot update unattached process object')
 
-        # get command
         error_code, executable_string_id, arguments_list_id, \
         environment_list_id, working_directory_string_id = self._red.get_process_command(self._object_id)
 
@@ -748,7 +756,10 @@ class REDProcess(REDObject):
         self._environment = _attach_or_release(self._red, REDList, environment_list_id, [working_directory_string_id])
         self._working_directory = _attach_or_release(self._red, REDString, working_directory_string_id)
 
-        # get identity
+    def update_identity(self):
+        if self._object_id is None:
+            raise RuntimeError('Cannot update unattached process object')
+
         error_code, uid, gid = self._red.get_process_identity(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
@@ -757,7 +768,10 @@ class REDProcess(REDObject):
         self._uid = uid
         self._gid = gid
 
-        # get stdio
+    def update_stdio(self):
+        if self._object_id is None:
+            raise RuntimeError('Cannot update unattached process object')
+
         error_code, stdin_file_id, stdout_file_id, stderr_file_id = self._red.get_process_stdio(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
@@ -767,7 +781,10 @@ class REDProcess(REDObject):
         self._stdout = _attach_or_release(self._red, REDFile, stdout_file_id, [stderr_file_id])
         self._stderr = _attach_or_release(self._red, REDFile, stderr_file_id)
 
-        # get state
+    def update_state(self):
+        if self._object_id is None:
+            raise RuntimeError('Cannot update unattached process object')
+
         error_code, state, timestamp, pid, exit_code = self._red.get_process_state(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
@@ -779,7 +796,7 @@ class REDProcess(REDObject):
         self._exit_code = exit_code
 
     def spawn(self, executable, arguments, environment, working_directory,
-              uid, gid, stdin_file, stdout_file, stderr_file):
+              uid, gid, stdin, stdout, stderr):
         self.release()
 
         if not isinstance(executable, REDString):
@@ -799,16 +816,25 @@ class REDProcess(REDObject):
                                                         environment.object_id,
                                                         working_directory.object_id,
                                                         uid, gid,
-                                                        stdin_file.object_id,
-                                                        stdout_file.object_id,
-                                                        stderr_file.object_id)
+                                                        stdin.object_id,
+                                                        stdout.object_id,
+                                                        stderr.object_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not spawn process object', error_code)
 
         self._object_id = object_id
+        self._executable = executable
+        self._arguments = arguments
+        self._environment = environment
+        self._working_directory = working_directory
+        self._uid = uid
+        self._gid = gid
+        self._stdin = stdin
+        self._stdout = stdout
+        self._stderr = stderr
 
-        self.update()
+        self.update_state()
 
         return self
 
