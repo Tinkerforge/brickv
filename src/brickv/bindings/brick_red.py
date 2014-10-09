@@ -168,6 +168,14 @@ class BrickRED(Device):
     FILE_ORIGIN_BEGINNING = 0
     FILE_ORIGIN_CURRENT = 1
     FILE_ORIGIN_END = 2
+    DIRECTORY_ENTRY_TYPE_UNKNOWN = 0
+    DIRECTORY_ENTRY_TYPE_REGULAR = 1
+    DIRECTORY_ENTRY_TYPE_DIRECTORY = 2
+    DIRECTORY_ENTRY_TYPE_CHARACTER = 3
+    DIRECTORY_ENTRY_TYPE_BLOCK = 4
+    DIRECTORY_ENTRY_TYPE_FIFO = 5
+    DIRECTORY_ENTRY_TYPE_SYMLINK = 6
+    DIRECTORY_ENTRY_TYPE_SOCKET = 7
     DIRECTORY_FLAG_RECURSIVE = 1
     DIRECTORY_FLAG_EXCLUSIVE = 2
     PROCESS_SIGNAL_INTERRUPT = 2
@@ -620,7 +628,16 @@ class BrickRED(Device):
         If there is not next entry then error code *NoMoreData* is returned. To rewind
         a directory object call :func:`RewindDirectory`.
         
-        See :func:`GetFileType` for a list of possible file types.
+        Possible directory entry types are:
+        
+        * Unknown = 0
+        * Regular = 1
+        * Directory = 2
+        * Character = 3
+        * Block = 4
+        * FIFO = 5
+        * Symlink = 6
+        * Socket = 7
         """
         return GetNextDirectoryEntry(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_NEXT_DIRECTORY_ENTRY, (directory_id,), 'H', 'B H B'))
 
