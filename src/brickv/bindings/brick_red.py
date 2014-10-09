@@ -43,9 +43,9 @@ GetNextDirectoryEntry = namedtuple('NextDirectoryEntry', ['error_code', 'name_st
 GetProcesses = namedtuple('Processes', ['error_code', 'processes_list_id'])
 SpawnProcess = namedtuple('SpawnProcess', ['error_code', 'process_id'])
 GetProcessCommand = namedtuple('ProcessCommand', ['error_code', 'executable_string_id', 'arguments_list_id', 'environment_list_id', 'working_directory_string_id'])
-GetProcessIdentity = namedtuple('ProcessIdentity', ['error_code', 'uid', 'gid'])
+GetProcessIdentity = namedtuple('ProcessIdentity', ['error_code', 'pid', 'uid', 'gid'])
 GetProcessStdio = namedtuple('ProcessStdio', ['error_code', 'stdin_file_id', 'stdout_file_id', 'stderr_file_id'])
-GetProcessState = namedtuple('ProcessState', ['error_code', 'state', 'timestamp', 'pid', 'exit_code'])
+GetProcessState = namedtuple('ProcessState', ['error_code', 'state', 'exit_code'])
 GetDefinedPrograms = namedtuple('DefinedPrograms', ['error_code', 'programs_list_id'])
 DefineProgram = namedtuple('DefineProgram', ['error_code', 'program_id'])
 GetProgramIdentifier = namedtuple('ProgramIdentifier', ['error_code', 'identifier_string_id'])
@@ -277,7 +277,7 @@ class BrickRED(Device):
 
         self.callback_formats[BrickRED.CALLBACK_ASYNC_FILE_READ] = 'H B 60B B'
         self.callback_formats[BrickRED.CALLBACK_ASYNC_FILE_WRITE] = 'H B B'
-        self.callback_formats[BrickRED.CALLBACK_PROCESS_STATE_CHANGED] = 'H B Q I B'
+        self.callback_formats[BrickRED.CALLBACK_PROCESS_STATE_CHANGED] = 'H B B'
         self.callback_formats[BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED] = 'H'
         self.callback_formats[BrickRED.CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED] = 'H'
 
@@ -693,10 +693,13 @@ class BrickRED(Device):
 
     def get_process_identity(self, process_id):
         """
-        Returns the user and group ID used to spawn a process object, as passed to
-        :func:`SpawnProcess`, and the resulting error code.
+        Returns the process ID and the user and group ID used to spawn a process object,
+        as passed to :func:`SpawnProcess`, and the resulting error code.
+        
+        The process ID is only valid if the state is *Running* or *Stopped*, see
+        :func:`GetProcessState`.
         """
-        return GetProcessIdentity(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_IDENTITY, (process_id,), 'H', 'B I I'))
+        return GetProcessIdentity(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_IDENTITY, (process_id,), 'H', 'B I I I'))
 
     def get_process_stdio(self, process_id):
         """
@@ -707,8 +710,8 @@ class BrickRED(Device):
 
     def get_process_state(self, process_id):
         """
-        Returns the current state, timestamp (UNIX time) of the last state change,
-        process ID and exit code of a process object, and the resulting error code.
+        Returns the current state and exit code of a process object, and the resulting
+        error code.
         
         Possible process states are:
         
@@ -718,8 +721,6 @@ class BrickRED(Device):
         * Exited = 3
         * Killed = 4
         * Stopped = 5
-        
-        The process ID is only valid if the state is *Running* or *Stopped*.
         
         The exit code is only valid if the state is *Error*, *Exited*, *Killed* or
         *Stopped* and has different meanings depending on the state:
@@ -735,7 +736,7 @@ class BrickRED(Device):
         * CannotExecute = 126
         * DoesNotExist = 127
         """
-        return GetProcessState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STATE, (process_id,), 'H', 'B B Q I B'))
+        return GetProcessState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STATE, (process_id,), 'H', 'B B B'))
 
     def get_defined_programs(self):
         """

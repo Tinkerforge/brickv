@@ -560,7 +560,6 @@ def lookup_file_info(red, name, follow_symlink):
         name = REDString(red).allocate(name)
 
     result = red.lookup_file_info(name, follow_symlink)
-
     error_code = result[0]
 
     if error_code != REDError.E_SUCCESS:
@@ -694,7 +693,7 @@ class REDProcess(REDObject):
     E_CANNOT_EXECUTE = 126
     E_DOES_NOT_EXIST = 127
 
-    _qtcb_state_changed = pyqtSignal(int, int, int, int, int)
+    _qtcb_state_changed = pyqtSignal(int, int, int)
 
     def __init__(self, *args):
         REDObject.__init__(self, *args)
@@ -711,25 +710,25 @@ class REDProcess(REDObject):
         self._arguments = None
         self._environment = None
         self._working_directory = None
+        self._pid = None
         self._uid = None
         self._gid = None
         self._stdin = None
         self._stdout = None
         self._stderr = None
         self._state = None
-        self._state_change_timestamp = None
-        self._pid = None
         self._exit_code = None
         self.state_changed_callback = None
 
-    def _cb_state_changed(self, process_id, state, timestamp, pid, exit_code):
+    def _cb_state_changed(self, process_id, state, exit_code):
         if self._object_id != process_id:
             return
 
         self._state = state
-        self._state_change_timestamp = timestamp
-        self._pid = pid
         self._exit_code = exit_code
+
+        if state != REDProcess.STATE_RUNNING and state != REDProcess.STATE_STOPPED:
+            self._pid = None
 
         state_changed_callback = self.state_changed_callback
 
@@ -761,11 +760,12 @@ class REDProcess(REDObject):
         if self._object_id is None:
             raise RuntimeError('Cannot update unattached process object')
 
-        error_code, uid, gid = self._red.get_process_identity(self._object_id)
+        error_code, pid, uid, gid = self._red.get_process_identity(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get identity of process object {0}'.format(self._object_id), error_code)
 
+        self._pid = pid
         self._uid = uid
         self._gid = gid
 
@@ -786,14 +786,12 @@ class REDProcess(REDObject):
         if self._object_id is None:
             raise RuntimeError('Cannot update unattached process object')
 
-        error_code, state, timestamp, pid, exit_code = self._red.get_process_state(self._object_id)
+        error_code, state, exit_code = self._red.get_process_state(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get state of process object {0}'.format(self._object_id), error_code)
 
         self._state = state
-        self._state_change_timestamp = timestamp
-        self._pid = pid
         self._exit_code = exit_code
 
     def spawn(self, executable, arguments, environment, working_directory,
@@ -835,6 +833,7 @@ class REDProcess(REDObject):
         self._stdout = stdout
         self._stderr = stderr
 
+        self.update_identity()
         self.update_state()
 
         return self
@@ -865,6 +864,10 @@ class REDProcess(REDObject):
         return self._working_directory
 
     @property
+    def pid(self):
+        return self._pid
+
+    @property
     def uid(self):
         return self._uid
 
@@ -887,14 +890,6 @@ class REDProcess(REDObject):
     @property
     def state(self):
         return self._state
-
-    @property
-    def state_change_timestamp(self):
-        return self._state_change_timestamp
-
-    @property
-    def pid(self):
-        return self._pid
 
     @property
     def exit_code(self):
