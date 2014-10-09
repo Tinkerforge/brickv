@@ -21,6 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from collections import namedtuple
 from PyQt4.QtCore import QObject, pyqtSignal
 from brickv.bindings.brick_red import BrickRED
 
@@ -102,7 +103,7 @@ class REDError(Exception):
         return self._error_code
 
 
-def attach_or_release(red, object_class, object_id, extra_object_ids_to_release_on_error=[]):
+def _attach_or_release(red, object_class, object_id, extra_object_ids_to_release_on_error=[]):
     try:
         obj = object_class(red).attach(object_id)
     except Exception as e:
@@ -284,7 +285,7 @@ class REDList(REDObject):
             except KeyError:
                 raise TypeError('List object {0} contains item with unknown type {1} at index {2}'.format(self._object_id, type, i))
 
-            items.append(attach_or_release(self._red, wrapper_class, item_object_id))
+            items.append(_attach_or_release(self._red, wrapper_class, item_object_id))
 
         self._items = items
 
@@ -362,7 +363,7 @@ class REDFileBase(REDObject):
         if type == REDFile.TYPE_PIPE:
             self._name = None
         else:
-            self._name = attach_or_release(self._red, REDString, name_string_id)
+            self._name = _attach_or_release(self._red, REDString, name_string_id)
 
         self._flags = flags
         self._permissions = permissions
@@ -538,13 +539,41 @@ class REDFileOrPipeAttacher:
             pass
 
         if type == REDFile.TYPE_PIPE:
-            obj = attach_or_release(self._red, REDPipe, self._object_id)
+            obj = _attach_or_release(self._red, REDPipe, self._object_id)
         else:
-            obj = attach_or_release(self._red, REDFile, self._object_id)
+            obj = _attach_or_release(self._red, REDFile, self._object_id)
 
         self.detach()
 
         return obj
+
+
+REDFileInfo = namedtuple('REDFileInfo', ['type', 'permissions', 'uid', 'gid', 'length', 'access_timestamp', 'modification_timestamp', 'status_change_timestamp'])
+
+def lookup_file_info(red, name, follow_symlink):
+    if not isinstance(name, REDString):
+        name = REDString(red).allocate(name)
+
+    result = red.lookup_file_info(name, follow_symlink)
+
+    error_code = result[0]
+
+    if error_code != REDError.E_SUCCESS:
+        raise REDError('Could not lookup file info', error_code)
+
+    return REDFileInfo(result[1:])
+
+
+def lookup_symlink_target(red, name, canonicalize):
+    if not isinstance(name, REDString):
+        name = REDString(red).allocate(name)
+
+    error_code, target_string_id = red.lookup_symlink_target(name, canonicalize)
+
+    if error_code != REDError.E_SUCCESS:
+        raise REDError('Could not lookup symlink target', error_code)
+
+    return _attach_or_release(red, REDString, target_string_id)
 
 
 class REDDirectory(REDObject):
@@ -575,7 +604,7 @@ class REDDirectory(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get name of directory object {0}'.format(self._object_id), error_code)
 
-        self._name = attach_or_release(self._red, REDString, name_string_id)
+        self._name = _attach_or_release(self._red, REDString, name_string_id)
 
         # rewind
         error_code = self._red.rewind_directory(self._object_id)
@@ -595,7 +624,7 @@ class REDDirectory(REDObject):
             if error_code != REDError.E_SUCCESS:
                 raise REDError('Could not get next entry of directory object {0}'.format(self._object_id), error_code)
 
-            entries.append((attach_or_release(self._red, REDString, name_string_id), type))
+            entries.append((_attach_or_release(self._red, REDString, name_string_id), type))
 
         self._entries = entries
 
@@ -623,6 +652,19 @@ class REDDirectory(REDObject):
     @property
     def entries(self):
         return self._entries
+
+
+DIRECTORY_FLAG_RECURSIVE = BrickRED.DIRECTORY_FLAG_RECURSIVE
+DIRECTORY_FLAG_EXCLUSIVE = BrickRED.DIRECTORY_FLAG_EXCLUSIVE
+
+def create_directory(red, name, flags, permissions, uid, gid):
+    if not isinstance(name, REDString):
+        name = REDString(red).allocate(name)
+
+    error_code = red.create_directory(name, flags, permissions, uid, gid)
+
+    if error_code != REDError.E_SUCCESS:
+        raise REDError('Could not create directory', error_code)
 
 
 class REDProcess(REDObject):
@@ -701,10 +743,10 @@ class REDProcess(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get command of process object {0}'.format(self._object_id), error_code)
 
-        self._executable = attach_or_release(self._red, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
-        self._arguments = attach_or_release(self._red, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
-        self._environment = attach_or_release(self._red, REDList, environment_list_id, [working_directory_string_id])
-        self._working_directory = attach_or_release(self._red, REDString, working_directory_string_id)
+        self._executable = _attach_or_release(self._red, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
+        self._arguments = _attach_or_release(self._red, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
+        self._environment = _attach_or_release(self._red, REDList, environment_list_id, [working_directory_string_id])
+        self._working_directory = _attach_or_release(self._red, REDString, working_directory_string_id)
 
         # get identity
         error_code, uid, gid = self._red.get_process_identity(self._object_id)
@@ -721,9 +763,9 @@ class REDProcess(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get stdio of process object {0}'.format(self._object_id), error_code)
 
-        self._stdin = attach_or_release(self._red, REDFile, stdin_file_id, [stdout_file_id, stderr_file_id])
-        self._stdout = attach_or_release(self._red, REDFile, stdout_file_id, [stderr_file_id])
-        self._stderr = attach_or_release(self._red, REDFile, stderr_file_id)
+        self._stdin = _attach_or_release(self._red, REDFile, stdin_file_id, [stdout_file_id, stderr_file_id])
+        self._stdout = _attach_or_release(self._red, REDFile, stdout_file_id, [stderr_file_id])
+        self._stderr = _attach_or_release(self._red, REDFile, stderr_file_id)
 
         # get state
         error_code, state, timestamp, pid, exit_code = self._red.get_process_state(self._object_id)
@@ -833,12 +875,12 @@ class REDProcess(REDObject):
 
 
 def get_processes(red):
-    error_code, processes_list_id = self._red.get_processes()
+    error_code, processes_list_id = red.get_processes()
 
     if error_code != REDError.E_SUCCESS:
         raise REDError('Could not get processes list object', error_code)
 
-    return attach_or_release(red, REDList, processes_list_id)
+    return _attach_or_release(red, REDList, processes_list_id)
 
 
 REDObject._subclasses = {

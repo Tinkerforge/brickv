@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-10-07.      #
+# This file was automatically generated on 2014-10-09.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -49,7 +49,7 @@ GetProcessState = namedtuple('ProcessState', ['error_code', 'state', 'timestamp'
 GetDefinedPrograms = namedtuple('DefinedPrograms', ['error_code', 'programs_list_id'])
 DefineProgram = namedtuple('DefineProgram', ['error_code', 'program_id'])
 GetProgramIdentifier = namedtuple('ProgramIdentifier', ['error_code', 'identifier_string_id'])
-GetProgramDirectory = namedtuple('ProgramDirectory', ['error_code', 'directory_string_id'])
+GetProgramRootDirectory = namedtuple('ProgramRootDirectory', ['error_code', 'root_directory_string_id'])
 GetProgramCommand = namedtuple('ProgramCommand', ['error_code', 'executable_string_id', 'arguments_list_id', 'environment_list_id'])
 GetProgramStdioRedirection = namedtuple('ProgramStdioRedirection', ['error_code', 'stdin_redirection', 'stdin_file_name_string_id', 'stdout_redirection', 'stdout_file_name_string_id', 'stderr_redirection', 'stderr_file_name_string_id'])
 GetProgramSchedule = namedtuple('ProgramSchedule', ['error_code', 'start_condition', 'start_timestamp', 'start_delay', 'repeat_mode', 'repeat_interval', 'repeat_second_mask', 'repeat_minute_mask', 'repeat_hour_mask', 'repeat_day_mask', 'repeat_month_mask', 'repeat_weekday_mask'])
@@ -112,7 +112,7 @@ class BrickRED(Device):
     FUNCTION_DEFINE_PROGRAM = 41
     FUNCTION_UNDEFINE_PROGRAM = 42
     FUNCTION_GET_PROGRAM_IDENTIFIER = 43
-    FUNCTION_GET_PROGRAM_DIRECTORY = 44
+    FUNCTION_GET_PROGRAM_ROOT_DIRECTORY = 44
     FUNCTION_SET_PROGRAM_COMMAND = 45
     FUNCTION_GET_PROGRAM_COMMAND = 46
     FUNCTION_SET_PROGRAM_STDIO_REDIRECTION = 47
@@ -250,7 +250,7 @@ class BrickRED(Device):
         self.response_expected[BrickRED.FUNCTION_DEFINE_PROGRAM] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_UNDEFINE_PROGRAM] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_PROGRAM_IDENTIFIER] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_GET_PROGRAM_DIRECTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_PROGRAM_ROOT_DIRECTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_SET_PROGRAM_COMMAND] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_PROGRAM_COMMAND] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_SET_PROGRAM_STDIO_REDIRECTION] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -747,11 +747,11 @@ class BrickRED(Device):
         """
         return GetProgramIdentifier(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_IDENTIFIER, (program_id,), 'H', 'B H'))
 
-    def get_program_directory(self, program_id):
+    def get_program_root_directory(self, program_id):
         """
         
         """
-        return GetProgramDirectory(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_DIRECTORY, (program_id,), 'H', 'B H'))
+        return GetProgramRootDirectory(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_ROOT_DIRECTORY, (program_id,), 'H', 'B H'))
 
     def set_program_command(self, program_id, executable_string_id, arguments_list_id, environment_list_id):
         """
