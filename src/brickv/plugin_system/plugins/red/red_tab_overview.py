@@ -52,6 +52,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.refresh_timer.timeout.connect(self.cb_refresh)
         self.qtcb_state_changed.connect(self.cb_state_changed)
         self.tview_nic_horizontal_header.sortIndicatorChanged.connect(self.cb_tview_nic_sort_indicator_changed)
+        self.tview_process_horizontal_header.sortIndicatorChanged.connect(self.cb_tview_process_sort_indicator_changed)
 
     def tab_on_focus(self):
         self.script_manager.execute_script('overview', self.qtcb_state_changed.emit, ["0.1"])
@@ -94,6 +95,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         storage_percent_v = int(storage_percent.split('.')[0])
 
         nic_data_dict = json.loads(csv_tokens[6])
+        processes_data_list = json.loads(csv_tokens[7])
 
         self.label_uptime_value.setText(str(uptime))
 
@@ -107,6 +109,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.pbar_storage.setValue(storage_percent_v)
 
         self.nic_item_model.removeRows(0, self.nic_item_model.rowCount())
+        self.tview_nic.clearSpans()
 
         for i, key in enumerate(nic_data_dict):
             if key not in self.nic_previous_bytes:
@@ -131,8 +134,24 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.tview_nic.horizontalHeader().setSortIndicator(self.tview_nic_previous_sort['column_index'],\
         self.tview_nic_previous_sort['order'])
 
+        self.process_item_model.removeRows(0, self.nic_item_model.rowCount())
+        self.tview_process.clearSpans()
+        
+        for i, p in enumerate(processes_data_list):
+            self.process_item_model.setItem(i, 0, Qt.QStandardItem(str(processes_data_list[i]['pid'])))
+            self.process_item_model.setItem(i, 1, Qt.QStandardItem(str(processes_data_list[i]['user'])))
+            self.process_item_model.setItem(i, 2, Qt.QStandardItem(str(processes_data_list[i]['command'])))
+            self.process_item_model.setItem(i, 3, Qt.QStandardItem(str(processes_data_list[i]['cpu'])))
+            self.process_item_model.setItem(i, 4, Qt.QStandardItem(str(processes_data_list[i]['memory'])))
+
+        self.tview_process.horizontalHeader().setSortIndicator(self.tview_process_previous_sort['column_index'],\
+        self.tview_process_previous_sort['order'])
+
     def cb_tview_nic_sort_indicator_changed(self, column_index, order):
         self.tview_nic_previous_sort = {'column_index': column_index, 'order': order}
+        
+    def cb_tview_process_sort_indicator_changed(self, column_index, order):
+        self.tview_process_previous_sort = {'column_index': column_index, 'order': order}
 
     #tab specific functions
     def bytes2human(self, n):
