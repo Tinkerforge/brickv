@@ -25,6 +25,7 @@ from brickv.plugin_system.plugins.red.api import REDFile, REDPipe, REDError, RED
 
 import traceback
 import os
+import copy
 
 from collections import namedtuple
 
@@ -41,7 +42,7 @@ class ScriptManager:
         self.devnull = REDFile(self.red).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0)
 
         from brickv.plugin_system.plugins.red._scripts import scripts
-        self.scripts = scripts.copy()
+        self.scripts = copy.deepcopy(scripts)
     
     # Call with a script name from the scripts/ folder.
     # The stdout and stderr from the script will be given back to callback.
