@@ -268,6 +268,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for uid in self.plugins:
             self.remove_widget(uid)
 
+        # ensure to get rid of all references to the removed plugins
+        self.plugins = {}
+
     def remove_tab(self, tab_id):
         exists = tab_id is not -1
         if exists:
