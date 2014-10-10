@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-08-05.      #
+# This file was automatically generated on 2014-10-10.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -187,14 +187,14 @@ class BrickletLEDStrip(Device):
         Sets the type of the led driver chip. We currently support
         the chips
         
-        * WS2801,
-        * WS2811 and
-        * WS2812.
+        * WS2801 (``chip`` = 2801),
+        * WS2811 (``chip`` = 2811) and
+        * WS2812 (``chip`` = 2812).
         
         The WS2812 is sometimes also called "NeoPixel", a name coined by
         Adafruit.
         
-        The default value is WS2801 = 2801.
+        The default value is WS2801 (``chip`` = 2801).
         
         .. versionadded:: 2.0.2~(Plugin)
         """

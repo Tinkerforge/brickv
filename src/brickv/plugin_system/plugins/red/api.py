@@ -328,7 +328,7 @@ class REDList(REDObject):
 
 class REDFileBase(REDObject):
     MAX_READ_BUFFER_LENGTH            = 62
-    MAX_ASYNC_READ_BUFFER_LENGTH      = 60
+    MAX_READ_ASYNC_BUFFER_LENGTH      = 60
     MAX_WRITE_BUFFER_LENGTH           = 61
     MAX_WRITE_UNCHECKED_BUFFER_LENGTH = 61
     MAX_WRITE_ASYNC_BUFFER_LENGTH     = 61
@@ -342,7 +342,7 @@ class REDFileBase(REDObject):
     TYPE_SYMLINK   = BrickRED.FILE_TYPE_SYMLINK
     TYPE_SOCKET    = BrickRED.FILE_TYPE_SOCKET
     TYPE_PIPE      = BrickRED.FILE_TYPE_PIPE
-    
+
     def __init__(self, red):
         REDObject.__init__(self, red)
         self._red.register_callback(BrickRED.CALLBACK_ASYNC_FILE_WRITE, self._cb_async_file_write)
@@ -373,31 +373,30 @@ class REDFileBase(REDObject):
         self._write_async_callback_status = None
         self._write_async_callback_error = None
         self._write_async_length = None
-        
-  
+
     def _cb_async_file_write(self, file_id, error_code, length_written):
         if error_code != REDError.E_SUCCESS:
             # FIXME: recover seek position on error after successful call?
             self._send_write_async_callback_error(REDError('Could not write to file object {0}'.format(self._object_id), error_code))
             return
-        
+
         # Remove data of async call.
         # Data of unchecked writes has been removed already.
         self._write_async_remaining_data = self._write_async_remaining_data[length_written:]
 
         if self._write_async_callback_status != None:
             self._write_async_callback_status(self._write_async_length - len(self._write_async_remaining_data), self._write_async_length)
-        
+
         # If there is no data remaining we are done.
         if len(self._write_async_remaining_data) == 0:
             self._send_write_async_callback_error(None)
             return
-        
+
         for i in range(ASYNC_BURST_CHUNKS):
             chunk = self._write_async_remaining_data[0:REDFile.MAX_WRITE_BUFFER_LENGTH]
             length_to_write = len(chunk)
             chunk += [0]*(REDFile.MAX_WRITE_BUFFER_LENGTH - length_to_write)
-            
+
             if (len(self._write_async_remaining_data) - length_to_write <= 0) or i == (ASYNC_BURST_CHUNKS - 1):
                 # FIXME: Do we need a timeout here for the case that no callback comes?
                 self._red.write_file_async(self._object_id, chunk, length_to_write)
@@ -450,11 +449,11 @@ class REDFileBase(REDObject):
                 raise REDError('Could not write to file object {0}'.format(self._object_id), error_code)
 
             remaining_data = remaining_data[length_written:]
-            
+
     def write_async(self, data, callback_error = None, callback_status = None):
         if self._object_id is None:
             raise RuntimeError('Cannot write to unattached file object')
-        
+
         self._write_async_callback_error = callback_error
         self._write_async_callback_status = callback_status
         self._write_async_remaining_data = [ord(x) for x in data]
@@ -464,7 +463,7 @@ class REDFileBase(REDObject):
             chunk = self._write_async_remaining_data[0:REDFile.MAX_WRITE_BUFFER_LENGTH]
             length_to_write = len(chunk)
             chunk += [0]*(REDFile.MAX_WRITE_BUFFER_LENGTH - length_to_write)
-            
+
             if (len(self._write_async_remaining_data) - length_to_write <= 0) or i == (ASYNC_BURST_CHUNKS - 1):
                 # FIXME: Do we need a timeout here for the case that no callback comes?
                 self._red.write_file_async(self._object_id, chunk, length_to_write)
@@ -472,8 +471,7 @@ class REDFileBase(REDObject):
             else:
                 self._red.write_file_unchecked(self._object_id, chunk, length_to_write)
                 self._write_async_remaining_data = self._write_async_remaining_data[length_to_write:]
-        
-        
+
     def read(self, length):
         if self._object_id is None:
             raise RuntimeError('Cannot read from unattached file object')
@@ -484,11 +482,6 @@ class REDFileBase(REDObject):
             length_to_read = min(length, REDFile.MAX_READ_BUFFER_LENGTH)
 
             error_code, chunk, length_read = self._red.read_file(self._object_id, length_to_read)
-
-            if error_code == REDError.E_WOULD_BLOCK and len(data) > 0:
-                # this call failed but the previous read_file call succeed.
-                # so the overall result is a success and this error is ignored
-                break
 
             if error_code != REDError.E_SUCCESS:
                 # FIXME: recover seek position on error after successful call?
@@ -910,8 +903,7 @@ class REDProcess(REDObject):
         self._stdout = stdout
         self._stderr = stderr
 
-        # FIXME Matthias: What does this do? There seems to be some API mismatch or similar if it is called 
-        #self.update_identity()
+        self.update_identity()
         self.update_state()
 
         return self

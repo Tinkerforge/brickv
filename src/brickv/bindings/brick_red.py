@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-10-09.      #
+# This file was automatically generated on 2014-10-10.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -470,7 +470,12 @@ class BrickRED(Device):
         """
         Reads up to 62 bytes from a file object.
         
-        Returns the read bytes and the resulting error code.
+        Returns the bytes read, the actual number of bytes read and the resulting
+        error code.
+        
+        If there is not data to be read, either because the file position reached
+        end-of-file or because there is not data in the pipe, then zero bytes are
+        returned.
         
         If the file object was created by :func:`OpenFile` without the *NonBlocking*
         flag or by :func:`CreatePipe` without the *NonBlockingRead* flag then the
@@ -480,25 +485,28 @@ class BrickRED(Device):
 
     def read_file_async(self, file_id, length_to_read):
         """
-        Reads up to 2\ :sup:`63`\  - 1 bytes from a file object asynchronously. The
-        minimum asynchronous read length is 1 byte.
+        Reads up to 2\ :sup:`63`\  - 1 bytes from a file object asynchronously.
         
-        Returns the resulting error code.
+        Reports the bytes read (in 60 byte chunks), the actual number of bytes read and
+        the resulting error code via the :func:`AsyncFileRead` callback.
         
-        The read bytes in 60 byte chunks and the resulting error codes of the read
-        operations are reported via the :func:`AsyncFileRead` callback.
+        If there is not data to be read, either because the file position reached
+        end-of-file or because there is not data in the pipe, then zero bytes are
+        reported.
         
         If the file object was created by :func:`OpenFile` without the *NonBlocking*
         flag or by :func:`CreatePipe` without the *NonBlockingRead* flag then the error
         code *NotSupported* is reported via the :func:`AsyncFileRead` callback.
         """
-        return self.ipcon.send_request(self, BrickRED.FUNCTION_READ_FILE_ASYNC, (file_id, length_to_read), 'H Q', 'B')
+        self.ipcon.send_request(self, BrickRED.FUNCTION_READ_FILE_ASYNC, (file_id, length_to_read), 'H Q', '')
 
     def abort_async_file_read(self, file_id):
         """
         Aborts a :func:`ReadFileAsync` operation in progress.
         
         Returns the resulting error code.
+        
+        On success the :func:`AsyncFileRead` callback will report *OperationAborted*.
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_ABORT_ASYNC_FILE_READ, (file_id,), 'H', 'B')
 
