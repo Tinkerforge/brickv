@@ -30,7 +30,7 @@ class REDTabProgram(QtGui.QWidget, Ui_REDTabProgram):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        self.red = 0
+        self.red = None
 
     def tab_on_focus(self):
         pass
