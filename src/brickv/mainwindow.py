@@ -45,6 +45,7 @@ import os
 import signal
 import sys
 import time
+import gc
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -166,12 +167,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_current_host_info()
         config.set_host_infos(self.host_infos)
 
-        self.reset_view()
-
-        try:
-            self.ipcon.disconnect()
-        except:
-            pass
+        self.do_disconnect()
 
         if signl != None and frme != None:
             print "Received SIGINT or SIGTERM, shutting down."
@@ -318,6 +314,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.reset_view()
         async_next_session()
+
+        # force garbage collection, to ensure that all plugin related objects
+        # got destroyed before disconnect is called. this is especially
+        # important for the RED Brick plugin because its relies on releasing
+        # the the RED Brick API objects in the __del__ method as a last resort
+        # to avoid leaking object references. but this only works if garbage
+        # collection is done before disconnect is called
+        gc.collect()
 
         try:
             self.ipcon.disconnect()
