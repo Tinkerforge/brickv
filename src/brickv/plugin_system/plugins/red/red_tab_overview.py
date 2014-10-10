@@ -31,6 +31,7 @@ from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 
 # constants
 REFRESH_TIMEOUT = 2000 # 2 seconds
+DEFAULT_TVIEW_NIC_HEADER_WIDTH = 210 # 210px
 
 class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
     qtcb_state_changed = pyqtSignal(ScriptManager.ScriptResult)
@@ -41,31 +42,21 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        self.nic_item_model = Qt.QStandardItemModel(0, 3, self)
-        self.nic_item_model.setHorizontalHeaderItem(0, Qt.QStandardItem(Qt.QString("Interface")))
-        self.nic_item_model.setHorizontalHeaderItem(1, Qt.QStandardItem(Qt.QString("Download")))
-        self.nic_item_model.setHorizontalHeaderItem(2, Qt.QStandardItem(Qt.QString("Upload")))
-        default_item = Qt.QStandardItem(Qt.QString("Please wait..."))
-        self.tview_nic.setSpan(0, 0, 1, 3)
-        self.tview_nic.verticalHeader().hide()
-        self.nic_item_model.setItem(0, 0, default_item)
-        self.tview_nic.setModel(self.nic_item_model)
-        self.tview_nic.horizontalHeader().setResizeMode(QtGui.QHeaderView.ResizeToContents)
-
-        self.nic_previous_bytes = {}
+        self.setup_tview_nic()
 
         self.refresh_timer = Qt.QTimer(self)
 
         # connecting signals to slots
         self.refresh_timer.timeout.connect(self.cb_refresh)
         self.qtcb_state_changed.connect(self.cb_state_changed)
+        self.tview_nic_horizontal_header.sortIndicatorChanged.connect(self.cb_tview_nic_sort_indicator_changed)
 
     def tab_on_focus(self):
         self.script_manager.execute_script('overview', self.qtcb_state_changed.emit, ["0.1"])
+        self.reset_tview_nic()
 
     def tab_off_focus(self):
         self.refresh_timer.stop()
-        self.reset_tview_nic()
 
     # the callbacks
     def cb_refresh(self):
@@ -104,22 +95,22 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
 
         self.label_uptime_value.setText(str(uptime))
 
-        self.pbar_cpu.setFormat(Qt.QString("%1%").arg(cpu_percent))
+        self.pbar_cpu.setFormat("{0}%".format(cpu_percent))
         self.pbar_cpu.setValue(cpu_percent_v)
     
-        self.pbar_memory.setFormat(Qt.QString("%1% [%2 of %3 MiB]").arg(memory_percent, memory_used, memory_total))
+        self.pbar_memory.setFormat("{0}% [{1} of {2} MiB]".format(memory_percent, memory_used, memory_total))
         self.pbar_memory.setValue(memory_percent_v)
     
-        self.pbar_storage.setFormat(Qt.QString("%1% [%2 of %3 GiB]").arg(storage_percent, storage_used, storage_total))
+        self.pbar_storage.setFormat("{0}% [{1} of {2} GiB]".format(storage_percent, storage_used, storage_total))
         self.pbar_storage.setValue(storage_percent_v)
 
         self.nic_item_model.removeRows(0, self.nic_item_model.rowCount())
 
         for i, key in enumerate(nic_data_dict):
             if key not in self.nic_previous_bytes:
-                self.nic_item_model.setItem(i, 0, Qt.QStandardItem(Qt.QString(key)))
-                self.nic_item_model.setItem(i, 1, Qt.QStandardItem(Qt.QString("Please wait...")))
-                self.nic_item_model.setItem(i, 2, Qt.QStandardItem(Qt.QString("Please wait...")))
+                self.nic_item_model.setItem(i, 0, Qt.QStandardItem(key))
+                self.nic_item_model.setItem(i, 1, Qt.QStandardItem("Please wait..."))
+                self.nic_item_model.setItem(i, 2, Qt.QStandardItem("Please wait..."))
             else:
                 #download
                 download_rate = str(float(((nic_data_dict[key][1] - \
@@ -129,12 +120,18 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
                 upload_rate = str(float(((nic_data_dict[key][0] - \
                 self.nic_previous_bytes[key]['sent']) / (REFRESH_TIMEOUT/1000)) /1000))
 
-                self.nic_item_model.setItem(i, 0, Qt.QStandardItem(Qt.QString(key)))
-                self.nic_item_model.setItem(i, 1, Qt.QStandardItem(Qt.QString(download_rate + " KB/s")))
-                self.nic_item_model.setItem(i, 2, Qt.QStandardItem(Qt.QString(upload_rate + " KB/s")))
+                self.nic_item_model.setItem(i, 0, Qt.QStandardItem(key))
+                self.nic_item_model.setItem(i, 1, Qt.QStandardItem(download_rate + " KB/s"))
+                self.nic_item_model.setItem(i, 2, Qt.QStandardItem(upload_rate + " KB/s"))
 
             self.nic_previous_bytes[str(key)] = {'sent': nic_data_dict[key][0], 'received': nic_data_dict[key][1]}
 
+        self.tview_nic.horizontalHeader().setSortIndicator(self.tview_nic_previous_sort['column_index'], self.tview_nic_previous_sort['order'])
+
+    def cb_tview_nic_sort_indicator_changed(self, column_index, order):
+        self.tview_nic_previous_sort = {'column_index': column_index, 'order': order}
+
+    #tab specific functions
     def bytes2human(self, n):
         symbols = ('K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
         prefix = {}
@@ -146,11 +143,31 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
                 return "%.2f" % value
         return "%.2f" % n
 
+    def setup_tview_nic(self):
+        self.nic_item_model = Qt.QStandardItemModel(0, 3, self)
+        self.nic_item_model.setHorizontalHeaderItem(0, Qt.QStandardItem("Interface"))
+        self.nic_item_model.setHorizontalHeaderItem(1, Qt.QStandardItem("Download"))
+        self.nic_item_model.setHorizontalHeaderItem(2, Qt.QStandardItem("Upload"))
+        self.tview_nic.setSpan(0, 0, 1, 3)
+        self.nic_item_model.setItem(0, 0, Qt.QStandardItem("Please wait..."))
+        self.tview_nic.setModel(self.nic_item_model)
+        self.tview_nic.setColumnWidth(0, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
+        self.tview_nic.setColumnWidth(1, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
+        self.tview_nic.setColumnWidth(2, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
+        self.tview_nic.horizontalHeader().setSortIndicator(0, QtCore.Qt.AscendingOrder)
+        self.tview_nic_previous_sort = {'column_index': 0, 'order': QtCore.Qt.AscendingOrder}
+        self.tview_nic_horizontal_header = self.tview_nic.horizontalHeader()
+        self.nic_previous_bytes = {}
+
     def reset_tview_nic(self):
         self.nic_item_model.clear()
         self.nic_previous_bytes.clear()
-        self.nic_item_model.setHorizontalHeaderItem(0, Qt.QStandardItem(Qt.QString("Interface")))
-        self.nic_item_model.setHorizontalHeaderItem(1, Qt.QStandardItem(Qt.QString("Download")))
-        self.nic_item_model.setHorizontalHeaderItem(2, Qt.QStandardItem(Qt.QString("Upload")))
-        self.nic_item_model.setItem(0, 0, Qt.QStandardItem(Qt.QString("Please wait...")))
+        self.nic_item_model.setHorizontalHeaderItem(0, Qt.QStandardItem("Interface"))
+        self.nic_item_model.setHorizontalHeaderItem(1, Qt.QStandardItem("Download"))
+        self.nic_item_model.setHorizontalHeaderItem(2, Qt.QStandardItem("Upload"))
+        self.nic_item_model.setItem(0, 0, Qt.QStandardItem("Please wait..."))
+        self.tview_nic.setColumnWidth(0, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
+        self.tview_nic.setColumnWidth(1, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
+        self.tview_nic.setColumnWidth(2, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setSpan(0, 0, 1, 3)
+        self.tview_nic.horizontalHeader().setSortIndicator(self.tview_nic_previous_sort['column_index'], self.tview_nic_previous_sort['order'])
