@@ -42,8 +42,6 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        self.red = None
-
         self.setup_tview_nic()
 
         self.refresh_timer = Qt.QTimer(self)
