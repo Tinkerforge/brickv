@@ -106,6 +106,9 @@
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
         </property>
+        <property name="alternatingRowColors">
+         <bool>true</bool>
+        </property>
         <property name="selectionBehavior">
          <enum>QAbstractItemView::SelectRows</enum>
         </property>
@@ -128,8 +131,24 @@
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <layout class="QGridLayout" name="glayout_process">
-        <item row="0" column="2">
-         <widget class="QLineEdit" name="ledit_number_of_process"/>
+        <item row="2" column="0" colspan="6">
+         <widget class="QTableView" name="tview_process">
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderHighlightSections">
+           <bool>true</bool>
+          </attribute>
+         </widget>
         </item>
         <item row="0" column="0">
          <spacer name="horizontalSpacer">
@@ -164,29 +183,6 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="0" colspan="6">
-         <widget class="QTableView" name="tview_process">
-          <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectRows</enum>
-          </property>
-          <property name="sortingEnabled">
-           <bool>true</bool>
-          </property>
-          <attribute name="verticalHeaderVisible">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="verticalHeaderHighlightSections">
-           <bool>true</bool>
-          </attribute>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="6">
-         <widget class="Line" name="line">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="1">
          <widget class="QLabel" name="label_top">
           <property name="text">
@@ -194,10 +190,16 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="4" colspan="2">
-         <widget class="QPushButton" name="pbutton_process_update">
-          <property name="text">
-           <string>Update</string>
+        <item row="0" column="2">
+         <widget class="QSpinBox" name="sbox_number_of_process">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>9999</number>
+          </property>
+          <property name="value">
+           <number>5</number>
           </property>
          </widget>
         </item>
