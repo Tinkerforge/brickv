@@ -348,6 +348,8 @@ class REDFileBase(REDObject):
     TYPE_SOCKET    = BrickRED.FILE_TYPE_SOCKET
     TYPE_PIPE      = BrickRED.FILE_TYPE_PIPE
 
+    AsyncReadResult = namedtuple("AsyncReadResult", "data error")
+
     # Number of chunks written in one async read/write burst
     ASYNC_BURST_CHUNKS = 100
 
@@ -356,6 +358,9 @@ class REDFileBase(REDObject):
 
         self._red.register_callback(BrickRED.CALLBACK_ASYNC_FILE_WRITE,
                                     self._cb_async_file_write)
+
+        self._red.register_callback(BrickRED.CALLBACK_ASYNC_FILE_READ,
+                                    self._cb_async_file_read)
 
     def _initialize(self):
         self._type = None
@@ -373,6 +378,11 @@ class REDFileBase(REDObject):
         self._write_async_length = None
         self._write_async_callback_status = None
         self._write_async_callback_error = None
+
+        self._read_async_data = None
+        self._read_async_max_length = None
+        self._read_async_callback_status = None
+        self._read_async_callback = None
 
     # Unset all of the temporary async data in case of error.
     def _report_write_async_error(self, error):
@@ -432,6 +442,37 @@ class REDFileBase(REDObject):
             self._red.write_file_async(self._object_id, chunk, length_to_write)
         except Exception as e:
             self._report_write_async_error(e)
+
+    def _report_read_async_error(self, error):
+        if self._read_async_callback is not None:
+            self._read_async_callback(REDFileBase.AsyncReadResult(self._read_async_data, error))
+
+        self._read_async_data = None
+        self._read_async_max_length = None
+        self._read_async_callback_status = None
+        self._read_async_callback = None
+
+    def _cb_async_file_read(self, file_id, error_code, buf, length_read):
+        if self._object_id != file_id:
+            return
+
+        if error_code != REDError.E_SUCCESS:
+            self._report_read_async_error(REDError('Could not read file object {0}'.format(self._object_id), error_code))
+            return
+
+        if length_read > 0:
+            self._read_async_data.extend(buf[:length_read])
+            if self._read_async_callback_status is not None:
+                self._read_async_callback_status(len(self._read_async_data), self._read_async_max_length)
+        else:
+            # Return data if length is 0 (i.e. the given length was greater then the file length)
+            self._report_read_async_error(None)
+            return
+
+        # And also return data if we read all of the data the user asked for
+        if len(self._read_async_data) == self._read_async_max_length:
+            self._report_read_async_error(None)
+
 
     def update(self):
         if self._object_id is None:
@@ -513,6 +554,21 @@ class REDFileBase(REDObject):
             length -= length_read
 
         return data
+
+    # calls "callback" with data of length min("length_max", "length_of_file")
+    def read_async(self, length_max, callback, callback_status = None):
+        if self._object_id is None:
+            raise RuntimeError('Cannot write to unattached file object')
+
+        if self._write_async_remaining_data is not None:
+            raise RuntimeError('Another asynchronous write is already in progress')
+
+        self._read_async_data = []
+        self._read_async_max_length = length_max
+        self._read_async_callback_status = callback_status
+        self._read_async_callback = callback
+
+        self._red.read_file_async(self._object_id, length_max)
 
     @property
     def type(self):
