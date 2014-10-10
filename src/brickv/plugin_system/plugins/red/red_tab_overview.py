@@ -32,6 +32,7 @@ from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 # constants
 REFRESH_TIMEOUT = 2000 # 2 seconds
 DEFAULT_TVIEW_NIC_HEADER_WIDTH = 210 # 210px
+DEFAULT_TVIEW_PROCESS_HEADER_WIDTH = 210 # 210px
 
 class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
     qtcb_state_changed = pyqtSignal(ScriptManager.ScriptResult)
@@ -43,7 +44,8 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.setupUi(self)
 
         self.setup_tview_nic()
-
+        self.setup_tview_process()
+        
         self.refresh_timer = Qt.QTimer(self)
 
         # connecting signals to slots
@@ -126,7 +128,8 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
 
             self.nic_previous_bytes[str(key)] = {'sent': nic_data_dict[key][0], 'received': nic_data_dict[key][1]}
 
-        self.tview_nic.horizontalHeader().setSortIndicator(self.tview_nic_previous_sort['column_index'], self.tview_nic_previous_sort['order'])
+        self.tview_nic.horizontalHeader().setSortIndicator(self.tview_nic_previous_sort['column_index'],\
+        self.tview_nic_previous_sort['order'])
 
     def cb_tview_nic_sort_indicator_changed(self, column_index, order):
         self.tview_nic_previous_sort = {'column_index': column_index, 'order': order}
@@ -159,6 +162,29 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.tview_nic_horizontal_header = self.tview_nic.horizontalHeader()
         self.nic_previous_bytes = {}
 
+    def setup_tview_process(self):
+        #PID USER NAME CPU MEM
+        self.process_item_model = Qt.QStandardItemModel(0, 5, self)
+        self.process_item_model.setHorizontalHeaderItem(0, Qt.QStandardItem("PID"))
+        self.process_item_model.setHorizontalHeaderItem(1, Qt.QStandardItem("User"))
+        self.process_item_model.setHorizontalHeaderItem(2, Qt.QStandardItem("Command"))
+        self.process_item_model.setHorizontalHeaderItem(3, Qt.QStandardItem("CPU"))
+        self.process_item_model.setHorizontalHeaderItem(4, Qt.QStandardItem("Memory"))
+        self.tview_process.setSpan(0, 0, 1, 5)
+        self.process_item_model.setItem(0, 0, Qt.QStandardItem("Please wait..."))
+        self.tview_process.setModel(self.process_item_model)
+        self.tview_process.setColumnWidth(0, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
+        self.tview_process.setColumnWidth(1, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
+        self.tview_process.setColumnWidth(2, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
+        self.tview_process.setColumnWidth(3, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
+        self.tview_process.setColumnWidth(4, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
+        self.tview_process.horizontalHeader().setSortIndicator(0, QtCore.Qt.AscendingOrder)
+        self.tview_process_previous_sort = {'column_index': 0, 'order': QtCore.Qt.AscendingOrder}
+        self.tview_process_horizontal_header = self.tview_process.horizontalHeader()
+        self.cbox_based_on.addItem("CPU")
+        self.cbox_based_on.addItem("Memory")
+        self.ledit_number_of_process.setValidator(Qt.QIntValidator(0, 9999, self))
+
     def reset_tview_nic(self):
         self.nic_item_model.clear()
         self.nic_previous_bytes.clear()
@@ -170,4 +196,22 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.tview_nic.setColumnWidth(1, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(2, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setSpan(0, 0, 1, 3)
-        self.tview_nic.horizontalHeader().setSortIndicator(self.tview_nic_previous_sort['column_index'], self.tview_nic_previous_sort['order'])
+        self.tview_nic.horizontalHeader().setSortIndicator(self.tview_nic_previous_sort['column_index'],\
+        self.tview_nic_previous_sort['order'])
+
+    def reset_tview_process(self):
+        self.process_item_model.clear()
+        self.process_item_model.setHorizontalHeaderItem(0, Qt.QStandardItem("PID"))
+        self.process_item_model.setHorizontalHeaderItem(1, Qt.QStandardItem("User"))
+        self.process_item_model.setHorizontalHeaderItem(2, Qt.QStandardItem("Command"))
+        self.process_item_model.setHorizontalHeaderItem(3, Qt.QStandardItem("CPU"))
+        self.process_item_model.setHorizontalHeaderItem(4, Qt.QStandardItem("Memory"))
+        self.process_item_model.setItem(0, 0, Qt.QStandardItem("Please wait..."))
+        self.tview_process.setColumnWidth(0, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
+        self.tview_process.setColumnWidth(1, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
+        self.tview_process.setColumnWidth(2, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
+        self.tview_process.setColumnWidth(3, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
+        self.tview_process.setColumnWidth(4, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
+        self.tview_nic.setSpan(0, 0, 1, 5)
+        self.tview_process.horizontalHeader().setSortIndicator(self.tview_process_previous_sort['column_index'],\
+        self.tview_process_previous_sort['order'])

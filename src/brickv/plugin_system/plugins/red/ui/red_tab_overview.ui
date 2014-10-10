@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>609</width>
-    <height>439</height>
+    <height>483</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -121,73 +121,87 @@
     </widget>
    </item>
    <item row="3" column="0" colspan="2">
-    <widget class="QGroupBox" name="gbox_processes">
+    <widget class="QGroupBox" name="gbox_process">
      <property name="title">
       <string>Processes</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="3">
-       <widget class="QLabel" name="label_based_on">
-        <property name="text">
-         <string>processes based on </string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QLineEdit" name="ledit_number_of_process"/>
-      </item>
-      <item row="0" column="4">
-       <widget class="QComboBox" name="cbox_based_on"/>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="label_top">
-        <property name="text">
-         <string>Top </string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="5">
-       <widget class="QLabel" name="label_usage">
-        <property name="text">
-         <string>usage</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" colspan="6">
-       <widget class="QTableView" name="tview_processes">
-        <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
-        </property>
-        <property name="selectionBehavior">
-         <enum>QAbstractItemView::SelectRows</enum>
-        </property>
-        <property name="sortingEnabled">
-         <bool>true</bool>
-        </property>
-        <attribute name="verticalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="6">
-       <widget class="Line" name="line">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QGridLayout" name="glayout_process">
+        <item row="0" column="2">
+         <widget class="QLineEdit" name="ledit_number_of_process"/>
+        </item>
+        <item row="0" column="0">
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="4">
+         <widget class="QComboBox" name="cbox_based_on"/>
+        </item>
+        <item row="0" column="5">
+         <widget class="QLabel" name="label_usage">
+          <property name="text">
+           <string>usage</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QLabel" name="label_based_on">
+          <property name="text">
+           <string>processes based on</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0" colspan="6">
+         <widget class="QTableView" name="tview_process">
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderHighlightSections">
+           <bool>true</bool>
+          </attribute>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="6">
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_top">
+          <property name="text">
+           <string>Top</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="4" colspan="2">
+         <widget class="QPushButton" name="pbutton_process_update">
+          <property name="text">
+           <string>Update</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
