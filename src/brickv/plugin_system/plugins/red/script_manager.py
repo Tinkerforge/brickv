@@ -92,22 +92,8 @@ class ScriptManager:
             #       but it may not be necessary.
             if p.state == REDProcess.STATE_EXITED:
                 try:
-                    try:
-                        out = self.scripts[script_name].stdout.read(max_len)
-                    except REDError as e:
-                        if e.error_code == REDError.E_WOULD_BLOCK:
-                            out = ''
-                        else:
-                            raise e
-                            
-                    try:
-                        err = self.scripts[script_name].stderr.read(max_len)
-                    except REDError as e:
-                        if e.error_code == REDError.E_WOULD_BLOCK:
-                            err = ''
-                        else:
-                            raise e
-                        
+                    out = self.scripts[script_name].stdout.read(max_len)
+                    err = self.scripts[script_name].stderr.read(max_len)
                 except REDError:
                     traceback.print_exc()
                     self.scripts[script_name].copied = False
