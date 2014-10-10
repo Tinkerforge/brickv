@@ -48,7 +48,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.refresh_timer.timeout.connect(self.cb_refresh)
 
     def tab_on_focus(self):
-        ScriptManager.execute_script('overview', self.qtcb_state_changed.emit)
+        ScriptManager.execute_script('overview', self.qtcb_state_changed.emit, ["0.1"])
 
     def tab_off_focus(self):
         self.refresh_timer.stop()
