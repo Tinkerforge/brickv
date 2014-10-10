@@ -1,5 +1,7 @@
 *.pyc
 ui_*.py
+_scripts.py
+*.py_minified
 src/build
 src/dist
 src/brickv/plugin_images.py
