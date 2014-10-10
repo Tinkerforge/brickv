@@ -34,7 +34,7 @@ from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 class RED(PluginBase, Ui_RED):
     def __init__(self, *args):
         PluginBase.__init__(self, 'RED Brick', BrickRED, *args)
-        ScriptManager.red = self.device
+        self.script_manager = ScriptManager(self.device)
 
         self.setupUi(self)
 
@@ -44,6 +44,7 @@ class RED(PluginBase, Ui_RED):
         for index in range(0, self.red_tab_widget.count()):
             self.tabs_list.append(self.red_tab_widget.widget(index))
             self.tabs_list[index].red = self.red
+            self.tabs_list[index].script_manager = self.script_manager
 
         # signals and slots
         self.red_tab_widget.currentChanged.connect(self.cb_red_tab_widget_current_changed)

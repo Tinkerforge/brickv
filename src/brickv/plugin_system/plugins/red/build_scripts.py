@@ -41,26 +41,30 @@ try:
             print('----> I will use the non-minified versions for now.')
             use_minified = False
             break
+        
+    scripts.extend(glob.glob(build_script_path + '/scripts/*.sh'))
 
     for i, script in enumerate(scripts):
-        if use_minified:
+        if use_minified and script.endswith(".py"):
             path = script + '_minified'
         else:
             path = script
         with open(path) as f:
             name = os.path.split(script)[-1][0:-3]
+            file_ending = script[-3:]
             content = f.read()
             class Script:
-                def __init__(self, script, copied = False, stdout = None, stderr = None):
+                def __init__(self, script, file_ending, copied = False, stdout = None, stderr = None):
+                    self.file_ending = file_ending 
                     self.script = script
                     self.copied = copied
                     self.stdout = stdout
                     self.stderr = stderr
                     
                 def __repr__(self):
-                    return 'Script(' + repr(self.script) + ')'
+                    return 'Script(' + repr(self.script) + ', "' + str(self.file_ending) + '")'
 
-            script_content[name] = Script(content)
+            script_content[name] = Script(content, file_ending)
             print(" " + str(i) + ") " + name)
 
     with open(os.path.join(build_script_path, '_scripts.py'), 'w') as f:
@@ -68,8 +72,9 @@ try:
         f.write('# This file is generated, don\'t edit it. Edit the files in the scripts/ folder.\n')
         f.write('\n')
         f.write('class Script:\n')
-        f.write('    def __init__(self, script, copied = False, stdout = None, stderr = None):\n')
+        f.write('    def __init__(self, script, file_ending, copied = False, stdout = None, stderr = None):\n')
         f.write('        self.script = script\n')
+        f.write('        self.file_ending = file_ending\n')
         f.write('        self.copied = copied\n')
         f.write('        self.stdout = stdout\n')
         f.write('        self.stderr = stderr\n\n')

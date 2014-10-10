@@ -34,12 +34,12 @@ REFRESH_TIMEOUT = 2000 # 2 seconds
 
 class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
     qtcb_state_changed = pyqtSignal(ScriptManager.ScriptResult)
+    red = None
+    script_manager = None
     
     def __init__(self):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
-
-        self.red = None
 
         self.nic_item_model = Qt.QStandardItemModel(0, 3, self)
         self.nic_item_model.setHorizontalHeaderItem(0, Qt.QStandardItem(Qt.QString("Interface")))
@@ -61,7 +61,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.qtcb_state_changed.connect(self.cb_state_changed)
 
     def tab_on_focus(self):
-        ScriptManager.execute_script('overview', self.qtcb_state_changed.emit, ["0.1"])
+        self.script_manager.execute_script('overview', self.qtcb_state_changed.emit, ["0.1"])
 
     def tab_off_focus(self):
         self.refresh_timer.stop()
@@ -70,7 +70,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
     # the callbacks
     def cb_refresh(self):
         self.refresh_timer.stop()
-        ScriptManager.execute_script('overview', self.qtcb_state_changed.emit)
+        self.script_manager.execute_script('overview', self.qtcb_state_changed.emit)
 
     def cb_state_changed(self, result):
         self.refresh_timer.start(REFRESH_TIMEOUT)
