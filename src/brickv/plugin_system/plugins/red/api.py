@@ -25,9 +25,6 @@ from collections import namedtuple
 from PyQt4.QtCore import QObject, pyqtSignal
 from brickv.bindings.brick_red import BrickRED
 
-# Number of chunks written in one async read/write burst
-ASYNC_BURST_CHUNKS = 100
-
 class REDError(Exception):
     E_SUCCESS                  = 0
     E_UNKNOWN_ERROR            = 1
@@ -326,6 +323,14 @@ class REDList(REDObject):
         return self._items
 
 
+def _get_zero_padded_chunk(data, max_chunk_length):
+    chunk = data[:max_chunk_length]
+    chunk_length = len(chunk)
+    chunk += [0]*(max_chunk_length - chunk_length)
+
+    return chunk, chunk_length
+
+
 class REDFileBase(REDObject):
     MAX_READ_BUFFER_LENGTH            = 62
     MAX_READ_ASYNC_BUFFER_LENGTH      = 60
@@ -342,6 +347,9 @@ class REDFileBase(REDObject):
     TYPE_SYMLINK   = BrickRED.FILE_TYPE_SYMLINK
     TYPE_SOCKET    = BrickRED.FILE_TYPE_SOCKET
     TYPE_PIPE      = BrickRED.FILE_TYPE_PIPE
+
+    # Number of chunks written in one async read/write burst
+    ASYNC_BURST_CHUNKS = 100
 
     def __init__(self, *args):
         REDObject.__init__(self, *args)
@@ -385,8 +393,7 @@ class REDFileBase(REDObject):
             self._report_write_async_error(REDError('Could not write to file object {0}'.format(self._object_id), error_code))
             return
 
-        # Remove data of async call.
-        # Data of unchecked writes has been removed already.
+        # Remove data of async call. Data of unchecked writes has been removed already.
         self._write_async_remaining_data = self._write_async_remaining_data[length_written:]
 
         if self._write_async_callback_status is not None:
@@ -397,36 +404,34 @@ class REDFileBase(REDObject):
             self._report_write_async_error(None)
             return
 
-        self._write_next_async_burst()
+        self._next_write_async_burst()
 
-    def _write_next_async_burst(self):
-        # write_file_async and write_file_unchecked could have different buffer
-        # lengths. currently they are the same as for write_file. so we can use
-        # the write_file buffer length and a simpler logic here. ensure that
-        # this conditions are true
-        assert REDFile.MAX_WRITE_BUFFER_LENGTH == REDFile.MAX_WRITE_UNCHECKED_BUFFER_LENGTH
-        assert REDFile.MAX_WRITE_BUFFER_LENGTH == REDFile.MAX_WRITE_ASYNC_BUFFER_LENGTH
+    def _next_write_async_burst(self):
+        unchecked_writes = 0
 
-        for i in range(ASYNC_BURST_CHUNKS):
-            chunk = self._write_async_remaining_data[:REDFile.MAX_WRITE_BUFFER_LENGTH]
-            length_to_write = len(chunk)
-            chunk += [0]*(REDFile.MAX_WRITE_BUFFER_LENGTH - length_to_write)
+        # do at most ASYNC_BURST_CHUNKS - 1 unchecked writes before the final async write per burst
+        while unchecked_writes < REDFileBase.ASYNC_BURST_CHUNKS - 1 and \
+              len(self._write_async_remaining_data) > REDFileBase.MAX_WRITE_ASYNC_BUFFER_LENGTH:
+            chunk, length_to_write = _get_zero_padded_chunk(self._write_async_remaining_data,
+                                                            REDFileBase.MAX_WRITE_UNCHECKED_BUFFER_LENGTH)
 
-            if len(self._write_async_remaining_data) < REDFile.MAX_WRITE_BUFFER_LENGTH or i == (ASYNC_BURST_CHUNKS - 1):
-                # FIXME: Do we need a timeout here for the case that no callback comes?
-                try:
-                    self._red.write_file_async(self._object_id, chunk, length_to_write)
-                except Exception as e:
-                    self._report_write_async_error(e)
+            try:
+                self._red.write_file_unchecked(self._object_id, chunk, length_to_write)
+            except Exception as e:
+                self._report_write_async_error(e)
+                return
 
-                break
-            else:
-                try:
-                    self._red.write_file_unchecked(self._object_id, chunk, length_to_write)
-                except Exception as e:
-                    self._report_write_async_error(e)
+            self._write_async_remaining_data = self._write_async_remaining_data[length_to_write:]
+            unchecked_writes += 1
 
-                self._write_async_remaining_data = self._write_async_remaining_data[length_to_write:]
+        chunk, length_to_write = _get_zero_padded_chunk(self._write_async_remaining_data,
+                                                        REDFileBase.MAX_WRITE_ASYNC_BUFFER_LENGTH)
+
+        try:
+            # FIXME: Do we need a timeout here for the case that no callback comes?
+            self._red.write_file_async(self._object_id, chunk, length_to_write)
+        except Exception as e:
+            self._report_write_async_error(e)
 
     def update(self):
         if self._object_id is None:
@@ -461,9 +466,8 @@ class REDFileBase(REDObject):
         remaining_data = [ord(x) for x in data]
 
         while len(remaining_data) > 0:
-            chunk = remaining_data[:REDFile.MAX_WRITE_BUFFER_LENGTH]
-            length_to_write = len(chunk)
-            chunk += [0]*(REDFile.MAX_WRITE_BUFFER_LENGTH - length_to_write)
+            chunk, length_to_write = _get_zero_padded_chunk(remaining_data,
+                                                            REDFileBase.MAX_WRITE_BUFFER_LENGTH)
 
             error_code, length_written = self._red.write_file(self._object_id, chunk, length_to_write)
 
@@ -485,7 +489,7 @@ class REDFileBase(REDObject):
         self._write_async_callback_error = callback_error
         self._write_async_callback_status = callback_status
 
-        self._write_next_async_burst()
+        self._next_write_async_burst()
 
     def read(self, length):
         if self._object_id is None:
@@ -494,7 +498,7 @@ class REDFileBase(REDObject):
         data = ''
 
         while length > 0:
-            length_to_read = min(length, REDFile.MAX_READ_BUFFER_LENGTH)
+            length_to_read = min(length, REDFileBase.MAX_READ_BUFFER_LENGTH)
 
             error_code, chunk, length_read = self._red.read_file(self._object_id, length_to_read)
 
