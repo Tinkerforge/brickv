@@ -130,8 +130,8 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         for i, key in enumerate(nic_data_dict):
             if key not in self.nic_previous_bytes:
                 self.nic_item_model.setItem(i, 0, Qt.QStandardItem(key))
-                self.nic_item_model.setItem(i, 1, Qt.QStandardItem("Please wait..."))
-                self.nic_item_model.setItem(i, 2, Qt.QStandardItem("Please wait..."))
+                self.nic_item_model.setItem(i, 1, Qt.QStandardItem("Collecting data..."))
+                self.nic_item_model.setItem(i, 2, Qt.QStandardItem("Collecting data..."))
             else:
                 #download
                 download_rate = str(float(((nic_data_dict[key][1] - \
@@ -203,13 +203,13 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.nic_item_model.setHorizontalHeaderItem(1, Qt.QStandardItem("Download"))
         self.nic_item_model.setHorizontalHeaderItem(2, Qt.QStandardItem("Upload"))
         self.tview_nic.setSpan(0, 0, 1, 3)
-        self.nic_item_model.setItem(0, 0, Qt.QStandardItem("Please wait..."))
+        self.nic_item_model.setItem(0, 0, Qt.QStandardItem("Collecting data..."))
         self.tview_nic.setModel(self.nic_item_model)
         self.tview_nic.setColumnWidth(0, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(1, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(2, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
-        self.tview_nic.horizontalHeader().setSortIndicator(0, QtCore.Qt.AscendingOrder)
-        self.tview_nic_previous_sort = {'column_index': 0, 'order': QtCore.Qt.AscendingOrder}
+        self.tview_nic.horizontalHeader().setSortIndicator(1, QtCore.Qt.DescendingOrder)
+        self.tview_nic_previous_sort = {'column_index': 1, 'order': QtCore.Qt.DescendingOrder}
         self.tview_nic_horizontal_header = self.tview_nic.horizontalHeader()
         self.nic_previous_bytes = {}
 
@@ -221,15 +221,15 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.process_item_model.setHorizontalHeaderItem(3, Qt.QStandardItem("CPU"))
         self.process_item_model.setHorizontalHeaderItem(4, Qt.QStandardItem("Memory"))
         self.tview_process.setSpan(0, 0, 1, 5)
-        self.process_item_model.setItem(0, 0, Qt.QStandardItem("Please wait..."))
+        self.process_item_model.setItem(0, 0, Qt.QStandardItem("Collecting data..."))
         self.tview_process.setModel(self.process_item_model)
         self.tview_process.setColumnWidth(0, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
         self.tview_process.setColumnWidth(1, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
         self.tview_process.setColumnWidth(2, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
         self.tview_process.setColumnWidth(3, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
         self.tview_process.setColumnWidth(4, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
-        self.tview_process.horizontalHeader().setSortIndicator(0, QtCore.Qt.AscendingOrder)
-        self.tview_process_previous_sort = {'column_index': 0, 'order': QtCore.Qt.AscendingOrder}
+        self.tview_process.horizontalHeader().setSortIndicator(3, QtCore.Qt.DescendingOrder)
+        self.tview_process_previous_sort = {'column_index': 3, 'order': QtCore.Qt.DescendingOrder}
         self.tview_process_horizontal_header = self.tview_process.horizontalHeader()
         self.cbox_based_on.addItem("CPU")
         self.cbox_based_on.addItem("Memory")
@@ -240,7 +240,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.nic_item_model.setHorizontalHeaderItem(0, Qt.QStandardItem("Interface"))
         self.nic_item_model.setHorizontalHeaderItem(1, Qt.QStandardItem("Download"))
         self.nic_item_model.setHorizontalHeaderItem(2, Qt.QStandardItem("Upload"))
-        self.nic_item_model.setItem(0, 0, Qt.QStandardItem("Please wait..."))
+        self.nic_item_model.setItem(0, 0, Qt.QStandardItem("Collecting data..."))
         self.tview_nic.setColumnWidth(0, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(1, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(2, DEFAULT_TVIEW_NIC_HEADER_WIDTH)

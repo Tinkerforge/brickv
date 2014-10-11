@@ -42,7 +42,7 @@
            <number>0</number>
           </property>
           <property name="format">
-           <string>Please wait...</string>
+           <string>Collecting data...</string>
           </property>
          </widget>
         </item>
@@ -52,7 +52,7 @@
            <number>0</number>
           </property>
           <property name="format">
-           <string>Please wait...</string>
+           <string>Collecting data...</string>
           </property>
          </widget>
         </item>
@@ -76,14 +76,14 @@
            <number>0</number>
           </property>
           <property name="format">
-           <string>Please wait...</string>
+           <string>Collecting data...</string>
           </property>
          </widget>
         </item>
         <item row="0" column="1">
          <widget class="QLabel" name="label_uptime_value">
           <property name="text">
-           <string>Please wait...</string>
+           <string>Collecting data...</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -131,25 +131,6 @@
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <layout class="QGridLayout" name="glayout_process">
-        <item row="2" column="0" colspan="6">
-         <widget class="QTableView" name="tview_process">
-          <property name="alternatingRowColors">
-           <bool>true</bool>
-          </property>
-          <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectRows</enum>
-          </property>
-          <property name="sortingEnabled">
-           <bool>true</bool>
-          </property>
-          <attribute name="verticalHeaderVisible">
-           <bool>false</bool>
-          </attribute>
-          <attribute name="verticalHeaderHighlightSections">
-           <bool>true</bool>
-          </attribute>
-         </widget>
-        </item>
         <item row="0" column="0">
          <spacer name="horizontalSpacer">
           <property name="orientation">
@@ -201,6 +182,25 @@
           <property name="value">
            <number>5</number>
           </property>
+         </widget>
+        </item>
+        <item row="1" column="0" rowspan="2" colspan="6">
+         <widget class="QTableView" name="tview_process">
+          <property name="alternatingRowColors">
+           <bool>true</bool>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderHighlightSections">
+           <bool>true</bool>
+          </attribute>
          </widget>
         </item>
        </layout>
