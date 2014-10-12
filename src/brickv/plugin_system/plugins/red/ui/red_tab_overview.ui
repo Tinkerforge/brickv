@@ -41,6 +41,9 @@
           <property name="value">
            <number>0</number>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
           <property name="format">
            <string>Collecting data...</string>
           </property>
@@ -50,6 +53,9 @@
          <widget class="QProgressBar" name="pbar_memory">
           <property name="value">
            <number>0</number>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="format">
            <string>Collecting data...</string>
@@ -74,6 +80,9 @@
          <widget class="QProgressBar" name="pbar_cpu">
           <property name="value">
            <number>0</number>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
           <property name="format">
            <string>Collecting data...</string>
