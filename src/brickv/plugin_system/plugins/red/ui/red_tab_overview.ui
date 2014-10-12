@@ -195,6 +195,9 @@
         </item>
         <item row="1" column="0" rowspan="2" colspan="6">
          <widget class="QTableView" name="tview_process">
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
           <property name="alternatingRowColors">
            <bool>true</bool>
           </property>
