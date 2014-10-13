@@ -147,7 +147,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.tview_nic.clearSpans()
 
         def _get_nic_transfer_rate(bytes_now, bytes_previous, delta_time):
-            return str(int(((bytes_now - bytes_previous) / (delta_time / 1000)) / 1000))
+            return "%.1f" % float(((bytes_now - bytes_previous) / delta_time) / 1000)
 
         new_time = time.time()
         delta = new_time - self.nic_time
