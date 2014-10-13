@@ -22,13 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 import json
-from PyQt4 import Qt, QtCore, QtGui
-from brickv.program_path import get_program_path
-from brickv.plugin_system.plugins.red.ui_red_tab_overview\
-import Ui_REDTabOverview
-from brickv.plugin_system.plugins.red.api import *
 from operator import itemgetter
 
+from PyQt4 import QtCore, Qt, QtGui
+
+from brickv.program_path import get_program_path
+from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOverview
+from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 
 # constants
@@ -56,14 +56,15 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.refresh_timer.timeout.connect(self.cb_refresh)
         self.qtcb_state_changed.connect(self.cb_state_changed)
         self.tview_nic_horizontal_header.sortIndicatorChanged.connect\
-        (self.cb_tview_nic_sort_indicator_changed)
+            (self.cb_tview_nic_sort_indicator_changed)
         self.tview_process_horizontal_header.sortIndicatorChanged.connect\
-        (self.cb_tview_process_sort_indicator_changed)
+            (self.cb_tview_process_sort_indicator_changed)
 
     def tab_on_focus(self):
         self.is_tab_on_focus = True
-        self.script_manager.execute_script\
-        ('overview', self.qtcb_state_changed.emit, ["0.1"])
+        self.script_manager.execute_script('overview',
+                                           self.qtcb_state_changed.emit,
+                                           ["0.1"])
         self.reset_tview_nic()
 
     def tab_off_focus(self):
@@ -73,7 +74,8 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
     # the callbacks
     def cb_refresh(self):
         self.refresh_timer.stop()
-        self.script_manager.execute_script('overview', self.qtcb_state_changed.emit)
+        self.script_manager.execute_script('overview',
+                                           self.qtcb_state_changed.emit)
 
     def cb_state_changed(self, result):
         #check if the tab is still on view or not
@@ -116,16 +118,17 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.pbar_cpu.setFormat("{0}%".format(cpu_percent))
         self.pbar_cpu.setValue(cpu_percent_v)
     
-        self.pbar_memory.setFormat\
-        ("{0}% [{1} of {2} MiB]".format(memory_percent, memory_used, memory_total))
+        self.pbar_memory.setFormat("{0}% [{1} of {2} MiB]".format(memory_percent, memory_used, memory_total))
         self.pbar_memory.setValue(memory_percent_v)
     
-        self.pbar_storage.setFormat\
-        ("{0}% [{1} of {2} GiB]".format(storage_percent, storage_used, storage_total))
+        self.pbar_storage.setFormat("{0}% [{1} of {2} GiB]".format(storage_percent, storage_used, storage_total))
         self.pbar_storage.setValue(storage_percent_v)
 
         self.nic_item_model.removeRows(0, self.nic_item_model.rowCount())
         self.tview_nic.clearSpans()
+
+        def _get_nic_transfer_rate(bytes_now, bytes_previous):
+            return str(((bytes_now - bytes_previous) / (REFRESH_TIMEOUT / 1000)) / 1000)
 
         for i, key in enumerate(nic_data_dict):
             if key not in self.nic_previous_bytes:
@@ -133,51 +136,54 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
                 self.nic_item_model.setItem(i, 1, Qt.QStandardItem("Collecting data..."))
                 self.nic_item_model.setItem(i, 2, Qt.QStandardItem("Collecting data..."))
             else:
-                #download
-                download_rate = str(float(((nic_data_dict[key][1] - \
-                self.nic_previous_bytes[key]['received']) / (REFRESH_TIMEOUT/1000))/1000))
+                download_rate = _get_nic_transfer_rate(nic_data_dict[key][1],
+                                                       self.nic_previous_bytes[key]['received'])
 
-                #upload
-                upload_rate = str(float(((nic_data_dict[key][0] - \
-                self.nic_previous_bytes[key]['sent']) / (REFRESH_TIMEOUT/1000)) /1000))
+                upload_rate = _get_nic_transfer_rate(nic_data_dict[key][0],
+                                                     self.nic_previous_bytes[key]['sent'])
 
                 self.nic_item_model.setItem(i, 0, Qt.QStandardItem(key))
                 self.nic_item_model.setItem(i, 1, Qt.QStandardItem(download_rate + " KB/s"))
                 self.nic_item_model.setItem(i, 2, Qt.QStandardItem(upload_rate + " KB/s"))
 
-            self.nic_previous_bytes[str(key)] =\
-            {'sent': nic_data_dict[key][0], 'received': nic_data_dict[key][1]}
+            self.nic_previous_bytes[str(key)] = {'sent': nic_data_dict[key][0],
+                                                 'received': nic_data_dict[key][1]}
 
-        self.tview_nic.horizontalHeader().setSortIndicator\
-        (self.tview_nic_previous_sort['column_index'],self.tview_nic_previous_sort['order'])
+        self.tview_nic.horizontalHeader().setSortIndicator(self.tview_nic_previous_sort['column_index'],
+                                                           self.tview_nic_previous_sort['order'])
 
         self.process_item_model.removeRows(0, self.nic_item_model.rowCount())
         self.tview_process.clearSpans()
 
         if self.cbox_based_on.currentIndex() == 0:
-            processes_data_list_sorted = sorted(processes_data_list,\
-            key=itemgetter('cpu'), reverse=True)
+            processes_data_list_sorted = sorted(processes_data_list,
+                                                key = itemgetter('cpu'),
+                                                reverse = True)
         elif self.cbox_based_on.currentIndex() == 1:
-            processes_data_list_sorted = sorted(processes_data_list,\
-            key=itemgetter('memory'), reverse=True)
+            processes_data_list_sorted = sorted(processes_data_list,
+                                                key = itemgetter('memory'),
+                                                reverse = True)
 
         processes_data_list_sorted = processes_data_list_sorted[:self.sbox_number_of_process.value()]
 
         for i, p in enumerate(processes_data_list_sorted):
-            self.process_item_model.setItem(i, 0,\
-            Qt.QStandardItem(str(processes_data_list_sorted[i]['command'])))
-            self.process_item_model.setItem(i, 1,\
-            Qt.QStandardItem(str(processes_data_list_sorted[i]['pid'])))
-            self.process_item_model.setItem(i, 2,\
-            Qt.QStandardItem(str(processes_data_list_sorted[i]['user'])))
-            self.process_item_model.setItem(i, 3,\
-            Qt.QStandardItem(str(processes_data_list_sorted[i]['cpu'])+'%'))
-            self.process_item_model.setItem(i, 4,\
-            Qt.QStandardItem(str(processes_data_list_sorted[i]['memory'])+'%'))
+            _item_command = Qt.QStandardItem(str(processes_data_list_sorted[i]['command']))
+            self.process_item_model.setItem(i, 0,_item_command)
 
-        self.tview_process.horizontalHeader().\
-        setSortIndicator(self.tview_process_previous_sort['column_index'],\
-        self.tview_process_previous_sort['order'])
+            _item_pid = Qt.QStandardItem(str(processes_data_list_sorted[i]['pid']))
+            self.process_item_model.setItem(i, 1, _item_pid)
+
+            _item_user = Qt.QStandardItem(str(processes_data_list_sorted[i]['user']))
+            self.process_item_model.setItem(i, 2, _item_user)
+
+            _item_cpu = Qt.QStandardItem(str(processes_data_list_sorted[i]['cpu'])+'%')
+            self.process_item_model.setItem(i, 3, _item_cpu)
+
+            _item_memory = Qt.QStandardItem(str(processes_data_list_sorted[i]['memory'])+'%')
+            self.process_item_model.setItem(i, 4, _item_memory)
+
+        self.tview_process.horizontalHeader().setSortIndicator(self.tview_process_previous_sort['column_index'],
+                                                               self.tview_process_previous_sort['order'])
 
     def cb_tview_nic_sort_indicator_changed(self, column_index, order):
         self.tview_nic_previous_sort = {'column_index': column_index, 'order': order}
@@ -245,6 +251,5 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.tview_nic.setColumnWidth(1, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(2, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setSpan(0, 0, 1, 3)
-        self.tview_nic.horizontalHeader().setSortIndicator\
-        (self.tview_nic_previous_sort['column_index'],\
-        self.tview_nic_previous_sort['order'])
+        self.tview_nic.horizontalHeader().setSortIndicator(self.tview_nic_previous_sort['column_index'],
+                                                           self.tview_nic_previous_sort['order'])
