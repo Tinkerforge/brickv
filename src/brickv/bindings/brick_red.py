@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-10-10.      #
+# This file was automatically generated on 2014-10-13.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -53,8 +53,8 @@ GetProgramRootDirectory = namedtuple('ProgramRootDirectory', ['error_code', 'roo
 GetProgramCommand = namedtuple('ProgramCommand', ['error_code', 'executable_string_id', 'arguments_list_id', 'environment_list_id'])
 GetProgramStdioRedirection = namedtuple('ProgramStdioRedirection', ['error_code', 'stdin_redirection', 'stdin_file_name_string_id', 'stdout_redirection', 'stdout_file_name_string_id', 'stderr_redirection', 'stderr_file_name_string_id'])
 GetProgramSchedule = namedtuple('ProgramSchedule', ['error_code', 'start_condition', 'start_timestamp', 'start_delay', 'repeat_mode', 'repeat_interval', 'repeat_second_mask', 'repeat_minute_mask', 'repeat_hour_mask', 'repeat_day_mask', 'repeat_month_mask', 'repeat_weekday_mask'])
-GetLastSpawnedProgramProcess = namedtuple('LastSpawnedProgramProcess', ['error_code', 'process_id'])
-GetLastProgramSchedulerError = namedtuple('LastProgramSchedulerError', ['error_code', 'timestamp', 'message_string_id'])
+GetLastSpawnedProgramProcess = namedtuple('LastSpawnedProgramProcess', ['error_code', 'process_id', 'timestamp'])
+GetLastProgramSchedulerError = namedtuple('LastProgramSchedulerError', ['error_code', 'message_string_id', 'timestamp'])
 GetCustomProgramOptionNames = namedtuple('CustomProgramOptionNames', ['error_code', 'names_list_id'])
 GetCustomProgramOptionValue = namedtuple('CustomProgramOptionValue', ['error_code', 'value_string_id'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -743,6 +743,9 @@ class BrickRED(Device):
         * InternalError = 125
         * CannotExecute = 126
         * DoesNotExist = 127
+        
+        The *CannotExecute* error can be caused by the executable being opened for
+        writing.
         """
         return GetProcessState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STATE, (process_id,), 'H', 'B B B'))
 
@@ -816,13 +819,13 @@ class BrickRED(Device):
         """
         
         """
-        return GetLastSpawnedProgramProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LAST_SPAWNED_PROGRAM_PROCESS, (program_id,), 'H', 'B H'))
+        return GetLastSpawnedProgramProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LAST_SPAWNED_PROGRAM_PROCESS, (program_id,), 'H', 'B H Q'))
 
     def get_last_program_scheduler_error(self, program_id):
         """
         
         """
-        return GetLastProgramSchedulerError(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LAST_PROGRAM_SCHEDULER_ERROR, (program_id,), 'H', 'B Q H'))
+        return GetLastProgramSchedulerError(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LAST_PROGRAM_SCHEDULER_ERROR, (program_id,), 'H', 'B H Q'))
 
     def get_custom_program_option_names(self, program_id):
         """
