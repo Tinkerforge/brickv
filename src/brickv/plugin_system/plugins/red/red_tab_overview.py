@@ -37,7 +37,7 @@ DEFAULT_TVIEW_NIC_HEADER_WIDTH = 210 # 210px
 DEFAULT_TVIEW_PROCESS_HEADER_WIDTH = 210 # 210px
 
 class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
-    qtcb_state_changed = pyqtSignal(ScriptManager.ScriptResult)
+    qtcb_state_changed = pyqtSignal(object)
     red = None
     script_manager = None
 
