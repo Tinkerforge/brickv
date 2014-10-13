@@ -21,6 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+#spinBox.setDisplayIntegerBase(16)
+
 from PyQt4 import Qt, QtCore, QtGui
 from brickv.plugin_system.plugins.red.ui_red_tab_settings import Ui_REDTabSettings
 from brickv.plugin_system.plugins.red.api import *
