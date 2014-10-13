@@ -59,7 +59,7 @@ class DeviceInfo(AbstractInfo):
     hardware_version = (0, 0, 0)
     device_identifier = 0
     plugin = None
-    plugin_container = None
+    tab_window = None
     protocol_version = 0
     tab_index = -1
     enumeration_type = -1
@@ -75,12 +75,12 @@ class DeviceInfo(AbstractInfo):
   protocol version: {8}, 
   url_part: {9}, 
   plugin: {10}, 
-  plugin_container: {11}
+  tab_window: {11}
 """.format(self.name, self.uid, self.connected_uid, self.position,
            self.firmware_version_installed, self.firmware_version_latest,
            self.hardware_version, self.device_identifier,
            self.protocol_version, self.url_part,
-           self.plugin, self.plugin_container)
+           self.plugin, self.tab_window)
 
     def get_combo_item(self):
         version_str = get_version_string(self.firmware_version_installed)
@@ -152,3 +152,12 @@ if not 'infos' in globals():
     infos[UID_BRICKV].name = 'Brick Viewer'
     infos[UID_BRICKV].firmware_version_installed = tuple(map(int, config.BRICKV_VERSION.split('.')))
     infos[UID_BRICKD].name = 'Brick Daemon'
+
+def get_device_infos():
+    return [info for info in infos.values() if info.type == 'brick' or info.type == 'bricklet']
+
+def get_brick_infos():
+    return [info for info in infos.values() if info.type == 'brick']
+
+def get_bricklet_infos():
+    return [info for info in infos.values() if info.type == 'bricklet']

@@ -58,7 +58,7 @@ class ScriptManager:
         from brickv.plugin_system.plugins.red._scripts import scripts, Script
         for key, value in scripts.items():
             self.scripts[key] = Script(value.script, value.file_ending)
-    
+
     # Call with a script name from the scripts/ folder.
     # The stdout and stderr from the script will be given back to callback.
     # If there is an error, callback will return None.
