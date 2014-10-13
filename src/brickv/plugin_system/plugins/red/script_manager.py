@@ -47,17 +47,24 @@ class ScriptManager:
     # Call with a script name from the scripts/ folder.
     # The stdout and stderr from the script will be given back to callback.
     # If there is an error, callback will return None.
-    def execute_script(self, script_name, callback, params = [], max_len = 10000):
+    def execute_script(self, script_name, callback, params = [], max_len = 65536):
         if not script_name in self.scripts:
             callback(None)
             
+        # The script is currently being executed, this should be the only case
+        # were we don't call the callback
+        if self.scripts[script_name].is_executing:
+            return
+
         # We just let all exceptions fall through to here and give up.
         # There is nothing we can do anyway.
         try:
+            self.scripts[script_name].is_executing = True
             self._init_script(script_name, callback, params, max_len)
         except:
             traceback.print_exc()
             self.scripts[script_name].copied = False
+            self.scripts[script_name].is_executing = False
             callback(None)
 
 
@@ -77,29 +84,39 @@ class ScriptManager:
                 self.scripts[script_name].stderr = REDPipe(self.red).create(REDPipe.FLAG_NON_BLOCKING_READ)
             except:
                 traceback.print_exc()
+                self.scripts[script_name].is_executing = False
                 self.scripts[script_name].copied = False
                 callback(None)
             else:
+                self.scripts[script_name].is_executing = False
                 self.scripts[script_name].copied = True
                 self._execute_after_init(script_name, callback, params, max_len)
         else:
             print str(async_write_error)
+            self.scripts[script_name].is_executing = False
             self.scripts[script_name].copied = False
             callback(None)
             
     def _execute_after_init(self, script_name, callback, params, max_len):
         def state_changed(p):
-            # TODO: If we want to support returns > 4kb we need to do more work here,
+            # TODO: If we want to support returns > 65kb we need to do more work here,
             #       but it may not be necessary.
-            if p.state == REDProcess.STATE_EXITED:
+            if p.state == REDProcess.STATE_ERROR:
+                self.scripts[script_name].is_executing = False
+                self.scripts[script_name].copied = False
+                callback(None)
+                red_process.release()
+            elif p.state == REDProcess.STATE_EXITED:
                 try:
                     out = self.scripts[script_name].stdout.read(max_len)
                     err = self.scripts[script_name].stderr.read(max_len)
                 except REDError:
                     traceback.print_exc()
+                    self.scripts[script_name].is_executing = False
                     self.scripts[script_name].copied = False
                     callback(None)
                 else:
+                    self.scripts[script_name].is_executing = False
                     callback(self.ScriptResult(out, err))
                 finally:
                     red_process.release()

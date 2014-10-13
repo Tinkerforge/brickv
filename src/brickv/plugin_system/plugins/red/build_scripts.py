@@ -54,10 +54,11 @@ try:
             file_ending = script[-3:]
             content = f.read()
             class Script:
-                def __init__(self, script, file_ending, copied = False, stdout = None, stderr = None):
+                def __init__(self, script, file_ending, copied = False, is_executing = False, stdout = None, stderr = None):
                     self.file_ending = file_ending 
                     self.script = script
                     self.copied = copied
+                    self.is_executing = is_executing
                     self.stdout = stdout
                     self.stderr = stderr
                     
@@ -72,10 +73,11 @@ try:
         f.write('# This file is generated, don\'t edit it. Edit the files in the scripts/ folder.\n')
         f.write('\n')
         f.write('class Script:\n')
-        f.write('    def __init__(self, script, file_ending, copied = False, stdout = None, stderr = None):\n')
+        f.write('    def __init__(self, script, file_ending, copied = False, is_executing = False, stdout = None, stderr = None):\n')
         f.write('        self.script = script\n')
         f.write('        self.file_ending = file_ending\n')
         f.write('        self.copied = copied\n')
+        f.write('        self.is_executing = is_executing\n')
         f.write('        self.stdout = stdout\n')
         f.write('        self.stderr = stderr\n\n')
         f.write('scripts = ')
