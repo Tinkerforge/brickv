@@ -353,14 +353,15 @@ class REDFileBase(REDObject):
     # Number of chunks written in one async read/write burst
     ASYNC_BURST_CHUNKS = 100
 
+    callback_async_file_write_registry = {}
+    callback_async_file_read_registry = {}
+
+
     def __init__(self, *args):
         REDObject.__init__(self, *args)
 
-        self._red.register_callback(BrickRED.CALLBACK_ASYNC_FILE_WRITE,
-                                    self._cb_async_file_write)
-
-        self._red.register_callback(BrickRED.CALLBACK_ASYNC_FILE_READ,
-                                    self._cb_async_file_read)
+        self.register_callback_async_file_write(self._cb_async_file_write)
+        self.register_callback_async_file_read(self._cb_async_file_read)
 
     def _initialize(self):
         self._type = None
@@ -383,6 +384,30 @@ class REDFileBase(REDObject):
         self._read_async_max_length = None
         self._read_async_callback_status = None
         self._read_async_callback = None
+
+    def register_callback_async_file_write(self, func):
+        if not self._red in REDFileBase.callback_async_file_write_registry:
+            REDFileBase.callback_async_file_write_registry[self._red] = [func]
+            self._red.register_callback(BrickRED.CALLBACK_ASYNC_FILE_WRITE,
+                                        self._cb_async_file_write_caller)
+        else:
+            REDFileBase.callback_async_file_write_registry[self._red].append(func)
+
+    def _cb_async_file_write_caller(self, *args, **kwargs):
+        for cb in REDFileBase.callback_async_file_write_registry[self._red]:
+            cb(*args, **kwargs)
+
+    def register_callback_async_file_read(self, func):
+        if not self._red in REDFileBase.callback_async_file_read_registry:
+            REDFileBase.callback_async_file_read_registry[self._red] = [func]
+            self._red.register_callback(BrickRED.CALLBACK_ASYNC_FILE_READ,
+                                        self._cb_async_file_read_caller)
+        else:
+            REDFileBase.callback_async_file_read_registry[self._red].append(func)
+
+    def _cb_async_file_read_caller(self, *args, **kwargs):
+        for cb in REDFileBase.callback_async_file_read_registry[self._red]:
+            cb(*args, **kwargs)
 
     # Unset all of the temporary async data in case of error.
     def _report_write_async_error(self, error):
