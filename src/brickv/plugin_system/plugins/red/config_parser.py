@@ -45,7 +45,7 @@ class FakeSectionHeadAndFile(object):
             while len(self.lines) > 0:
                 line = self.lines[0]
                 self.lines = self.lines[1:]
-                if line.startswith('#'):
+                if line.strip().startswith('#'):
                     continue
                 
                 return line
