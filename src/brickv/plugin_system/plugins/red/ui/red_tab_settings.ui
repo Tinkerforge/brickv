@@ -242,7 +242,32 @@
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_10">
                 <item>
-                 <layout class="QGridLayout" name="gridLayout_5"/>
+                 <layout class="QHBoxLayout" name="horizontalLayout_2">
+                  <item>
+                   <widget class="QLabel" name="label_21">
+                    <property name="text">
+                     <string>Category</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="comboBox_7"/>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_3">
+                  <item>
+                   <widget class="QLabel" name="label_22">
+                    <property name="text">
+                     <string>Level</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="comboBox_8"/>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </widget>
@@ -542,7 +567,6 @@
         </widget>
        </item>
       </layout>
-      <zorder>frame</zorder>
       <zorder>gbox_cron</zorder>
       <zorder>gbox_brickd</zorder>
       <zorder>gbox_locales</zorder>
