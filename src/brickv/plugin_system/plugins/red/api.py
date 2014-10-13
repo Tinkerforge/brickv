@@ -356,12 +356,11 @@ class REDFileBase(REDObject):
     callback_async_file_write_registry = {}
     callback_async_file_read_registry = {}
 
-
     def __init__(self, *args):
         REDObject.__init__(self, *args)
 
-        self.register_callback_async_file_write(self._cb_async_file_write)
-        self.register_callback_async_file_read(self._cb_async_file_read)
+        self._register_callback_async_file_write(self._cb_async_file_write)
+        self._register_callback_async_file_read(self._cb_async_file_read)
 
     def _initialize(self):
         self._type = None
@@ -385,7 +384,7 @@ class REDFileBase(REDObject):
         self._read_async_callback_status = None
         self._read_async_callback = None
 
-    def register_callback_async_file_write(self, func):
+    def _register_callback_async_file_write(self, func):
         if not self._red in REDFileBase.callback_async_file_write_registry:
             REDFileBase.callback_async_file_write_registry[self._red] = [func]
             self._red.register_callback(BrickRED.CALLBACK_ASYNC_FILE_WRITE,
@@ -397,7 +396,7 @@ class REDFileBase(REDObject):
         for cb in REDFileBase.callback_async_file_write_registry[self._red]:
             cb(*args, **kwargs)
 
-    def register_callback_async_file_read(self, func):
+    def _register_callback_async_file_read(self, func):
         if not self._red in REDFileBase.callback_async_file_read_registry:
             REDFileBase.callback_async_file_read_registry[self._red] = [func]
             self._red.register_callback(BrickRED.CALLBACK_ASYNC_FILE_READ,
