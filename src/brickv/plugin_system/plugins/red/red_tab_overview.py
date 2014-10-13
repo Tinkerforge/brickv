@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 
 import json
 from operator import itemgetter
+import time
 
 from PyQt4 import QtCore, Qt, QtGui
 
@@ -32,7 +33,8 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 
 # constants
-REFRESH_TIMEOUT = 2000 # 2 seconds
+REFRESH_TIME = 3000 #2s
+REFRESH_TIMEOUT = 500 # 500ms
 DEFAULT_TVIEW_NIC_HEADER_WIDTH = 210 # 210px
 DEFAULT_TVIEW_PROCESS_HEADER_WIDTH = 210 # 210px
 
@@ -50,9 +52,12 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.setup_tview_process()
         
         self.refresh_timer = Qt.QTimer(self)
+        self.refresh_counter = 0
+        self.nic_time = 0
 
         # connecting signals to slots
         self.refresh_timer.timeout.connect(self.cb_refresh)
+        self.button_refresh.clicked.connect(self.refresh_clicked)
         self.tview_nic_horizontal_header.sortIndicatorChanged.connect\
             (self.cb_tview_nic_sort_indicator_changed)
         self.tview_process_horizontal_header.sortIndicatorChanged.connect\
@@ -69,11 +74,24 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.is_tab_on_focus = False
         self.refresh_timer.stop()
 
+    def refresh_clicked(self):
+        self.refresh_timer.stop()
+        self.refresh_counter = REFRESH_TIME/REFRESH_TIMEOUT
+        self.cb_refresh()
+
     # the callbacks
     def cb_refresh(self):
-        self.refresh_timer.stop()
-        self.script_manager.execute_script('overview',
-                                           self.cb_state_changed)
+        self.refresh_counter += 1
+        if self.refresh_counter >= REFRESH_TIME/REFRESH_TIMEOUT:
+            self.refresh_counter = 0
+            self.refresh_timer.stop()
+            self.button_refresh.setText('Gathering data...')
+            self.button_refresh.setDisabled(True)
+            self.script_manager.execute_script('overview',
+                                               self.cb_state_changed)
+        else:
+            self.button_refresh.setDisabled(False)
+            self.button_refresh.setText('Refresh in ' + str((REFRESH_TIME/REFRESH_TIMEOUT - self.refresh_counter)/2.0) + "...")
 
     def cb_state_changed(self, result):
         #check if the tab is still on view or not
@@ -81,6 +99,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
             self.refresh_timer.stop()
             return
 
+        self.refresh_counter = 0
         self.refresh_timer.start(REFRESH_TIMEOUT)
         if result == None:
             return
@@ -125,20 +144,28 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.nic_item_model.removeRows(0, self.nic_item_model.rowCount())
         self.tview_nic.clearSpans()
 
-        def _get_nic_transfer_rate(bytes_now, bytes_previous):
-            return str(((bytes_now - bytes_previous) / (REFRESH_TIMEOUT / 1000)) / 1000)
+        def _get_nic_transfer_rate(bytes_now, bytes_previous, delta_time):
+            return str(int(((bytes_now - bytes_previous) / (delta_time / 1000)) / 1000))
+
+        new_time = time.time()
+        delta = new_time - self.nic_time
+        self.nic_time = new_time
 
         for i, key in enumerate(nic_data_dict):
             if key not in self.nic_previous_bytes:
+                self.nic_time = time.time()
                 self.nic_item_model.setItem(i, 0, Qt.QStandardItem(key))
                 self.nic_item_model.setItem(i, 1, Qt.QStandardItem("Collecting data..."))
                 self.nic_item_model.setItem(i, 2, Qt.QStandardItem("Collecting data..."))
             else:
+
                 download_rate = _get_nic_transfer_rate(nic_data_dict[key][1],
-                                                       self.nic_previous_bytes[key]['received'])
+                                                       self.nic_previous_bytes[key]['received'],
+                                                       delta)
 
                 upload_rate = _get_nic_transfer_rate(nic_data_dict[key][0],
-                                                     self.nic_previous_bytes[key]['sent'])
+                                                     self.nic_previous_bytes[key]['sent'],
+                                                     delta)
 
                 self.nic_item_model.setItem(i, 0, Qt.QStandardItem(key))
                 self.nic_item_model.setItem(i, 1, Qt.QStandardItem(download_rate + " KB/s"))
