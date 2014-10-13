@@ -37,7 +37,6 @@ DEFAULT_TVIEW_NIC_HEADER_WIDTH = 210 # 210px
 DEFAULT_TVIEW_PROCESS_HEADER_WIDTH = 210 # 210px
 
 class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
-    qtcb_state_changed = pyqtSignal(object)
     red = None
     script_manager = None
 
@@ -54,7 +53,6 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
 
         # connecting signals to slots
         self.refresh_timer.timeout.connect(self.cb_refresh)
-        self.qtcb_state_changed.connect(self.cb_state_changed)
         self.tview_nic_horizontal_header.sortIndicatorChanged.connect\
             (self.cb_tview_nic_sort_indicator_changed)
         self.tview_process_horizontal_header.sortIndicatorChanged.connect\
@@ -63,7 +61,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
     def tab_on_focus(self):
         self.is_tab_on_focus = True
         self.script_manager.execute_script('overview',
-                                           self.qtcb_state_changed.emit,
+                                           self.cb_state_changed,
                                            ["0.1"])
         self.reset_tview_nic()
 
@@ -75,7 +73,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
     def cb_refresh(self):
         self.refresh_timer.stop()
         self.script_manager.execute_script('overview',
-                                           self.qtcb_state_changed.emit)
+                                           self.cb_state_changed)
 
     def cb_state_changed(self, result):
         #check if the tab is still on view or not

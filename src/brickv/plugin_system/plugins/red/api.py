@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from collections import namedtuple
-from PyQt4.QtCore import QObject, pyqtSignal
+from PyQt4 import QtCore
 from brickv.bindings.brick_red import BrickRED
 
 class REDError(Exception):
@@ -125,7 +125,7 @@ def _attach_or_release(red, object_class, object_id, extra_object_ids_to_release
     return obj
 
 
-class REDObject(QObject):
+class REDObject(QtCore.QObject):
     TYPE_STRING    = BrickRED.OBJECT_TYPE_STRING
     TYPE_LIST      = BrickRED.OBJECT_TYPE_LIST
     TYPE_FILE      = BrickRED.OBJECT_TYPE_FILE
@@ -136,7 +136,7 @@ class REDObject(QObject):
     _subclasses = {}
 
     def __init__(self, red):
-        QObject.__init__(self)
+        QtCore.QObject.__init__(self)
 
         self._red = red
         self._object_id = None
@@ -356,6 +356,12 @@ class REDFileBase(REDObject):
     callback_async_file_write_registry = {}
     callback_async_file_read_registry = {}
 
+    read_async_signal_status  = QtCore.pyqtSignal(int, int)
+    read_async_signal         = QtCore.pyqtSignal(object)
+
+    write_async_signal_status = QtCore.pyqtSignal(int, int)
+    write_async_signal_error  = QtCore.pyqtSignal(object)
+
     def __init__(self, *args):
         REDObject.__init__(self, *args)
 
@@ -411,7 +417,12 @@ class REDFileBase(REDObject):
     # Unset all of the temporary async data in case of error.
     def _report_write_async_error(self, error):
         if self._write_async_callback_error is not None:
-            self._write_async_callback_error(error)
+            self.write_async_signal_error.emit(error)
+
+        if self._write_async_callback_status is not None:
+            self.write_async_signal_status.disconnect(self._write_async_callback_status)
+        if self._write_async_callback_error is not None:
+            self.write_async_signal_error.disconnect(self._write_async_callback_error)
 
         self._write_async_remaining_data = None
         self._write_async_length = None
@@ -469,12 +480,17 @@ class REDFileBase(REDObject):
 
     def _report_read_async_error(self, error):
         if self._read_async_callback is not None:
-            self._read_async_callback(REDFileBase.AsyncReadResult(self._read_async_data, error))
+            self.read_async_signal.emit(REDFileBase.AsyncReadResult(self._read_async_data, error))
+
+        if self._read_async_callback_status is not None:
+            self.read_async_signal_status.disconnect(self._read_async_callback_status)
+        if self._read_async_callback is not None:
+            self.read_async_signal.disconnect(self._read_async_callback)
 
         self._read_async_data = None
         self._read_async_max_length = None
-        self._read_async_callback_status = None
         self._read_async_callback = None
+        self._read_async_callback_status = None
 
     def _cb_async_file_read(self, file_id, error_code, buf, length_read):
         if self._object_id != file_id:
@@ -487,7 +503,7 @@ class REDFileBase(REDObject):
         if length_read > 0:
             self._read_async_data.extend(buf[:length_read])
             if self._read_async_callback_status is not None:
-                self._read_async_callback_status(len(self._read_async_data), self._read_async_max_length)
+                self.read_async_signal_status.emit(len(self._read_async_data), self._read_async_max_length)
         else:
             # Return data if length is 0 (i.e. the given length was greater then the file length)
             self._report_read_async_error(None)
@@ -551,8 +567,15 @@ class REDFileBase(REDObject):
 
         self._write_async_remaining_data = [ord(x) for x in data]
         self._write_async_length = len(self._write_async_remaining_data)
-        self._write_async_callback_error = callback_error
-        self._write_async_callback_status = callback_status
+
+        # We need to use a BlockingQueuedConnection, otherwise we can't disconnect the slot, since
+        # we can never be sure if the emit-queue is empty...
+        if callback_error is not None:
+            self._write_async_callback_error = callback_error
+            self.write_async_signal_error.connect(callback_error, QtCore.Qt.BlockingQueuedConnection)
+        if callback_status is not None:
+            self._write_async_callback_status = callback_status
+            self.write_async_signal.connect(callback_status, QtCore.Qt.BlockingQueuedConnection)
 
         self._next_write_async_burst()
 
@@ -589,8 +612,15 @@ class REDFileBase(REDObject):
 
         self._read_async_data = []
         self._read_async_max_length = length_max
-        self._read_async_callback_status = callback_status
-        self._read_async_callback = callback
+
+        # We need to use a BlockingQueuedConnection, otherwise we can't disconnect the slot, since
+        # we can never be sure if the emit-queue is empty...
+        if callback_status is not None:
+            self._read_async_callback_status = callback_status
+            self.read_async_signal_status.connect(callback_status, QtCore.Qt.BlockingQueuedConnection)
+        if callback is not None:
+            self._read_async_callback = callback
+            self.read_async_signal.connect(callback, QtCore.Qt.BlockingQueuedConnection)
 
         self._red.read_file_async(self._object_id, length_max)
 
@@ -862,7 +892,7 @@ class REDProcess(REDObject):
     E_CANNOT_EXECUTE = 126
     E_DOES_NOT_EXIST = 127
 
-    _qtcb_state_changed = pyqtSignal(int, int, int)
+    _qtcb_state_changed = QtCore.pyqtSignal(int, int, int)
 
     def __init__(self, *args):
         REDObject.__init__(self, *args)
