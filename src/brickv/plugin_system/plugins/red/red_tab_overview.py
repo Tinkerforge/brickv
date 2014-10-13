@@ -64,6 +64,8 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
             (self.cb_tview_process_sort_indicator_changed)
 
     def tab_on_focus(self):
+        self.button_refresh.setText('Gathering data...')
+        self.button_refresh.setDisabled(True)
         self.is_tab_on_focus = True
         self.script_manager.execute_script('overview',
                                            self.cb_state_changed,
