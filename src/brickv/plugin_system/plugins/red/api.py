@@ -149,13 +149,19 @@ class REDObject(QtCore.QObject):
     def _initialize(self):
         raise NotImplementedError()
 
+    def _set_object_id(self, object_id):
+        if self._object_id is not None:
+            raise RuntimeError('Cannot overwrite object ID')
+
+        self._object_id = object_id
+
     def update(self):
         raise NotImplementedError()
 
     def attach(self, object_id):
         self.release()
 
-        self._object_id = object_id
+        self._set_object_id(object_id)
 
         self.update()
 
@@ -236,7 +242,7 @@ class REDString(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not allocate string object', error_code)
 
-        self._object_id = object_id
+        self._set_object_id(object_id)
 
         offset = len(chunk)
 
@@ -301,7 +307,7 @@ class REDList(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not allocate list object', error_code)
 
-        self._object_id = object_id
+        self._set_object_id(object_id)
 
         for item in items:
             if isinstance(item, str):
@@ -690,7 +696,7 @@ class REDFile(REDFileBase):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not open file object', error_code)
 
-        self._object_id = object_id
+        self._set_object_id(object_id)
 
         self.update()
 
@@ -712,7 +718,7 @@ class REDPipe(REDFileBase):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not create pipe object', error_code)
 
-        self._object_id = object_id
+        self._set_object_id(object_id)
 
         self.update()
 
@@ -729,7 +735,7 @@ class REDFileOrPipeAttacher:
     def attach(self, object_id):
         self.release()
 
-        self._object_id = object_id
+        self._set_object_id(object_id)
 
         error_code, type, name_string_id, _, _, _, _, _, _, _, _ = self._red.get_file_info(self._object_id)
 
@@ -841,7 +847,7 @@ class REDDirectory(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not open directory object', error_code)
 
-        self._object_id = object_id
+        self._set_object_id(object_id)
 
         self.update()
 
@@ -1021,7 +1027,7 @@ class REDProcess(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not spawn process object', error_code)
 
-        self._object_id = object_id
+        self._set_object_id(object_id)
         self._executable = executable
         self._arguments = arguments
         self._environment = environment
