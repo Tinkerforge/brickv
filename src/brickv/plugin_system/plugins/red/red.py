@@ -67,6 +67,7 @@ class RED(PluginBase, Ui_RED):
             tab.tab_off_focus()
 
     def destroy(self):
+        self.script_manager.destroy()
         self.session.expire()
 
     def has_reset_device(self):

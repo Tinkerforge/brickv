@@ -34,9 +34,6 @@ SCRIPT_FOLDER = '/usr/local/scripts'
 
 class ScriptManager:
     ScriptResult = namedtuple('ReturnValue', 'stdout stderr')
-    session = None
-    devnull = None
-    scripts = {}
 
     @staticmethod
     def _call(script, callback, data):
@@ -46,10 +43,11 @@ class ScriptManager:
 
         script.script_signal.emit(data)
         script.script_signal.disconnect(callback)
-    
+
     def __init__(self, session):
         self.session = session
         self.devnull = REDFile(self.session).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0)
+        self.scripts = {}
 
         # We can't use copy.deepycopy directly on scripts, since deep-copy does not work on QObject.
         # Instead we create a new Script/QObjects here.
@@ -58,6 +56,11 @@ class ScriptManager:
         from brickv.plugin_system.plugins.red._scripts import scripts, Script
         for key, value in scripts.items():
             self.scripts[key] = Script(value.script, value.file_ending)
+
+    def destroy(self):
+        # ensure to release of REDObjects
+        self.devnull.release()
+        self.scripts = {}
 
     # Call with a script name from the scripts/ folder.
     # The stdout and stderr from the script will be given back to callback.
