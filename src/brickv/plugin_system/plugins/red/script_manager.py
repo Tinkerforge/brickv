@@ -137,8 +137,5 @@ class ScriptManager:
         red_process = REDProcess(self.red)
         red_process.state_changed_callback = state_changed
 
-        script_params = [os.path.join(SCRIPT_FOLDER, script_name + self.scripts[script_name].file_ending)]
-        script_params.extend(params)
-
         # FIXME: Do we need a timeout here in case that the state_changed callback never comes?
         red_process.spawn(os.path.join(SCRIPT_FOLDER, script_name + self.scripts[script_name].file_ending), params, [], '/', 0, 0, self.devnull, self.scripts[script_name].stdout, self.scripts[script_name].stderr)
