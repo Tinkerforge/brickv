@@ -34,7 +34,7 @@ SCRIPT_FOLDER = '/usr/local/scripts'
 
 class ScriptManager:
     ScriptResult = namedtuple('ReturnValue', 'stdout stderr')
-    red = None
+    session = None
     devnull = None
     scripts = {}
 
@@ -47,9 +47,9 @@ class ScriptManager:
         script.script_signal.emit(data)
         script.script_signal.disconnect(callback)
     
-    def __init__(self, red):
-        self.red = red
-        self.devnull = REDFile(self.red).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0)
+    def __init__(self, session):
+        self.session = session
+        self.devnull = REDFile(self.session).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0)
 
         # We can't use copy.deepycopy directly on scripts, since deep-copy does not work on QObject.
         # Instead we create a new Script/QObjects here.
@@ -90,7 +90,7 @@ class ScriptManager:
         if self.scripts[script_name].copied:
             return self._execute_after_init(script_name, callback, params, max_len)
         
-        red_file = REDFile(self.red)
+        red_file = REDFile(self.session)
         async_call(red_file.open, (os.path.join(SCRIPT_FOLDER, script_name + self.scripts[script_name].file_ending), REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0755, 0, 0), lambda x: self._init_script_open_file(script_name, callback, params, max_len, x), lambda: self._init_script_open_file_error(script_name, callback, params, max_len))
 
     def _init_script_open_file_error(self, script_name, callback, params, max_len):
@@ -104,8 +104,8 @@ class ScriptManager:
 
         if async_write_error == None:
             try:
-                self.scripts[script_name].stdout = REDPipe(self.red).create(REDPipe.FLAG_NON_BLOCKING_READ)
-                self.scripts[script_name].stderr = REDPipe(self.red).create(REDPipe.FLAG_NON_BLOCKING_READ)
+                self.scripts[script_name].stdout = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ)
+                self.scripts[script_name].stderr = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ)
             except:
                 traceback.print_exc()
                 ScriptManager._call(self.scripts[script_name], callback, None)
@@ -134,7 +134,7 @@ class ScriptManager:
                     red_process.release()
     
                 
-        red_process = REDProcess(self.red)
+        red_process = REDProcess(self.session)
         red_process.state_changed_callback = state_changed
 
         # FIXME: Do we need a timeout here in case that the state_changed callback never comes?

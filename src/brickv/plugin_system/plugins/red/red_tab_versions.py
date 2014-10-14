@@ -30,7 +30,7 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        self.red = None
+        self.session = None
 
     def tab_on_focus(self):
         pass

@@ -28,22 +28,23 @@ from brickv.async_call import async_call
 
 from brickv.plugin_system.plugins.red.ui_red import Ui_RED
 from brickv.plugin_system.plugins.red.red_tab_overview import REDTabOverview
-from brickv.plugin_system.plugins.red.api import REDError, REDString, REDFile, REDPipe, REDDirectory, REDProcess, get_processes
-from brickv.plugin_system.plugins.red.script_manager import ScriptManager 
+from brickv.plugin_system.plugins.red.api import REDError, REDSession, REDString, REDFile, REDPipe, REDDirectory, REDProcess, get_processes
+from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 
 class RED(PluginBase, Ui_RED):
     def __init__(self, *args):
         PluginBase.__init__(self, 'RED Brick', BrickRED, *args)
-        self.script_manager = ScriptManager(self.device)
-
-        self.setupUi(self)
 
         self.red = self.device
+        self.session = REDSession(self.red).create()
+        self.script_manager = ScriptManager(self.session)
+
+        self.setupUi(self)
 
         self.tabs_list = []
         for index in range(0, self.red_tab_widget.count()):
             self.tabs_list.append(self.red_tab_widget.widget(index))
-            self.tabs_list[index].red = self.red
+            self.tabs_list[index].session = self.session
             self.tabs_list[index].script_manager = self.script_manager
 
         # signals and slots
@@ -53,32 +54,6 @@ class RED(PluginBase, Ui_RED):
         #        for Brick(let)s connected to it. Trigger a enumerate to pick up
         #        all devices connected to a RED Brick properly
         self.ipcon.enumerate()
-
-        """
-        s1 = REDString(self.red).allocate('a23456789_b23456789_c23456789_d23456789_e23456789_f23456789_g23456789_h23456789_i23456789_j23456789_k')
-        print s1
-
-        f1 = REDFile(self.red).open('/tmp/blubb123', REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0755, 0, 0)
-        f1.write('foobar1 foobar2 foobar3 foobar4 foobar5 foobar6')
-        f1.release()
-
-        f2 = REDFile(self.red).open('/tmp/blubb123', REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0)
-        print 'READ: ' + f2.read(256)
-        f2.release()
-
-        sin = REDFile(self.red).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0)
-        sout = REDPipe(self.red).create(REDPipe.FLAG_NON_BLOCKING_READ)
-        #sout = REDFile(self.red).open('/tmp/fffffffffffffffffffffffffffff.log', REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_TRUNCATE , 0755, 0, 0)
-        self.p = REDProcess(self.red)
-
-        self.p.state_changed_callback = self.cb_foobar
-        self.p.spawn('/tmp/print', ['fffffffffffffffffffffffffffff'], [], '/', 0, 0, sin, sout, sout)
-
-        tmp = REDDirectory(self.red).open('/tmp')
-
-        for entry in tmp.entries:
-            print entry
-        """
 
     def start(self):
         for index, tab in enumerate(self.tabs_list):
@@ -92,7 +67,7 @@ class RED(PluginBase, Ui_RED):
             tab.tab_off_focus()
 
     def destroy(self):
-        pass
+        self.session.expire()
 
     def has_reset_device(self):
         return False # FIXME: will have reboot, instead of reset

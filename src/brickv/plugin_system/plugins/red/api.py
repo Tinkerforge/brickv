@@ -31,12 +31,14 @@ class REDError(Exception):
     E_INVALID_OPERATION        = 2
     E_OPERATION_ABORTED        = 3
     E_INTERNAL_ERROR           = 4
-    E_UNKNOWN_OBJECT_ID        = 5
-    E_NO_FREE_OBJECT_ID        = 6
-    E_OBJECT_IS_LOCKED         = 7
-    E_NO_MORE_DATA             = 8
-    E_WRONG_LIST_ITEM_TYPE     = 9
-    E_MALFORMED_PROGRAM_CONFIG = 10
+    E_UNKNOWN_SESSION_ID       = 5
+    E_NO_FREE_SESSION_ID       = 6
+    E_UNKNOWN_OBJECT_ID        = 7
+    E_NO_FREE_OBJECT_ID        = 8
+    E_OBJECT_IS_LOCKED         = 9
+    E_NO_MORE_DATA             = 10
+    E_WRONG_LIST_ITEM_TYPE     = 11
+    E_MALFORMED_PROGRAM_CONFIG = 12
     E_INVALID_PARAMETER        = 128
     E_NO_FREE_MEMORY           = 129
     E_NO_FREE_SPACE            = 130
@@ -60,6 +62,8 @@ class REDError(Exception):
         E_INVALID_OPERATION        : 'E_INVALID_OPERATION',
         E_OPERATION_ABORTED        : 'E_OPERATION_ABORTED',
         E_INTERNAL_ERROR           : 'E_INTERNAL_ERROR',
+        E_UNKNOWN_SESSION_ID       : 'E_UNKNOWN_SESSION_ID',
+        E_NO_FREE_SESSION_ID       : 'E_NO_FREE_SESSION_ID',
         E_UNKNOWN_OBJECT_ID        : 'E_UNKNOWN_OBJECT_ID',
         E_NO_FREE_OBJECT_ID        : 'E_NO_FREE_OBJECT_ID',
         E_OBJECT_IS_LOCKED         : 'E_OBJECT_IS_LOCKED',
@@ -103,19 +107,79 @@ class REDError(Exception):
         return self._error_code
 
 
-def _attach_or_release(red, object_class, object_id, extra_object_ids_to_release_on_error=[]):
+class REDSession(QtCore.QObject):
+    KEEP_ALIVE_INTERVAL = 10 # seconds
+    LIFETIME = int(KEEP_ALIVE_INTERVAL * 3.5)
+
+    def __init__(self, red):
+        QtCore.QObject.__init__(self)
+
+        self._red = red
+        self._session_id = None
+        self._keep_alive_timer = QtCore.QTimer(self)
+        self._keep_alive_timer.timeout.connect(self._keep_session_alive)
+
+    def __del__(self):
+        self.expire()
+
+    def __repr__(self):
+        return '<REDSession session_id: {0}>'.format(self._session_id)
+
+    def _keep_session_alive(self):
+        try:
+            error_code = self._red.keep_session_alive(self._session_id, REDSession.LIFETIME)
+        except:
+            # FIXME: error handling
+            pass
+
+    def create(self):
+        self.expire()
+
+        error_code, session_id = self._red.create_session(REDSession.LIFETIME)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not create session', error_code)
+
+        self._session_id = session_id
+
+        self._keep_alive_timer.start(REDSession.KEEP_ALIVE_INTERVAL * 1000)
+
+        return self
+
+    def expire(self):
+        if self._session_id is None:
+            # expiring an unattached session is allowed and does nothing
+            return
+
+        self._keep_alive_timer.stop()
+
+        session_id = self._session_id
+        self._session_id = None
+
+        try:
+            session._red.expire_session(session_id)
+        except:
+            # FIXME: error handling
+            pass
+
+    @property
+    def session_id(self):
+        return self._session_id
+
+
+def _attach_or_release(session, object_class, object_id, extra_object_ids_to_release_on_error=[]):
     try:
-        obj = object_class(red).attach(object_id)
+        obj = object_class(session).attach(object_id)
     except Exception as e:
         try:
-            red.release_object(object_id)
+            session._red.release_object(object_id, session._session_id)
         except:
             # FIXME: error handling
             pass
 
         for extra_object_id in extra_object_ids_to_release_on_error:
             try:
-                red.release_object(extra_object_id)
+                session._red.release_object(extra_object_id, session._session_id)
             except:
                 # FIXME: error handling
                 pass
@@ -135,16 +199,19 @@ class REDObject(QtCore.QObject):
 
     _subclasses = {}
 
-    def __init__(self, red):
+    def __init__(self, session):
         QtCore.QObject.__init__(self)
 
-        self._red = red
+        self._session = session
         self._object_id = None
 
         self._initialize()
 
     def __del__(self):
         self.release()
+
+    def __repr__(self):
+        return '<REDObject object_id: {0}>'.format(self._object_id)
 
     def _initialize(self):
         raise NotImplementedError()
@@ -186,10 +253,14 @@ class REDObject(QtCore.QObject):
         object_id = self.detach()
 
         try:
-            self._red.release_object(object_id)
+            self._session._red.release_object(object_id, self._session._session_id)
         except:
             # FIXME: error handling
             pass
+
+    @property
+    def session(self):
+        return self._session
 
     @property
     def object_id(self):
@@ -197,7 +268,7 @@ class REDObject(QtCore.QObject):
 
 
 class REDString(REDObject):
-    MAX_ALLOCATE_BUFFER_LENGTH  = 60
+    MAX_ALLOCATE_BUFFER_LENGTH  = 58
     MAX_SET_CHUNK_BUFFER_LENGTH = 58
     MAX_GET_CHUNK_BUFFER_LENGTH = 63
 
@@ -214,7 +285,7 @@ class REDString(REDObject):
         if self._object_id is None:
             raise RuntimeError('Cannot update unattached string object')
 
-        error_code, length = self._red.get_string_length(self._object_id)
+        error_code, length = self._session._red.get_string_length(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get length of string object {0}'.format(self._object_id), error_code)
@@ -222,7 +293,7 @@ class REDString(REDObject):
         data = ''
 
         while len(data) < length:
-            error_code, chunk = self._red.get_string_chunk(self._object_id, len(data))
+            error_code, chunk = self._session._red.get_string_chunk(self._object_id, len(data))
 
             if error_code != REDError.E_SUCCESS:
                 raise REDError('Could not get chunk of string object {0} at offset {1}'.format(self._object_id, len(data)), error_code)
@@ -237,7 +308,7 @@ class REDString(REDObject):
         chunk = data[:REDString.MAX_ALLOCATE_BUFFER_LENGTH]
         remaining_data = data[REDString.MAX_ALLOCATE_BUFFER_LENGTH:]
 
-        error_code, object_id = self._red.allocate_string(len(data), chunk)
+        error_code, object_id = self._session._red.allocate_string(len(data), chunk, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not allocate string object', error_code)
@@ -250,7 +321,7 @@ class REDString(REDObject):
             chunk = remaining_data[:REDString.MAX_SET_CHUNK_BUFFER_LENGTH]
             remaining_data = remaining_data[REDString.MAX_SET_CHUNK_BUFFER_LENGTH:]
 
-            error_code = self._red.set_string_chunk(self._object_id, offset, chunk)
+            error_code = self._session._red.set_string_chunk(self._object_id, offset, chunk)
 
             if error_code != REDError.E_SUCCESS:
                 raise REDError('Could not set chunk of string object {0} at offset {1}'.format(self._object_id, offset), error_code)
@@ -277,7 +348,7 @@ class REDList(REDObject):
         if self._object_id is None:
             raise RuntimeError('Cannot update unattached list object')
 
-        error_code, length = self._red.get_list_length(self._object_id)
+        error_code, length = self._session._red.get_list_length(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get length of list object {0}'.format(self._object_id), error_code)
@@ -285,7 +356,7 @@ class REDList(REDObject):
         items = []
 
         for i in range(length):
-            error_code, item_object_id, type = self._red.get_list_item(self._object_id, i)
+            error_code, item_object_id, type = self._session._red.get_list_item(self._object_id, i, self._session._session_id)
 
             if error_code != REDError.E_SUCCESS:
                 raise REDError('Could not get item at index {0} of list object {1}'.format(i, self._object_id), error_code)
@@ -295,14 +366,14 @@ class REDList(REDObject):
             except KeyError:
                 raise TypeError('List object {0} contains item with unknown type {1} at index {2}'.format(self._object_id, type, i))
 
-            items.append(_attach_or_release(self._red, wrapper_class, item_object_id))
+            items.append(_attach_or_release(self._session, wrapper_class, item_object_id))
 
         self._items = items
 
     def allocate(self, items):
         self.release()
 
-        error_code, object_id = self._red.allocate_list(len(items))
+        error_code, object_id = self._session._red.allocate_list(len(items), self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not allocate list object', error_code)
@@ -311,14 +382,14 @@ class REDList(REDObject):
 
         for item in items:
             if isinstance(item, str):
-                item = REDString(self._red).allocate(item)
+                item = REDString(self._session).allocate(item)
             elif not isinstance(item, REDObject):
                 raise TypeError('Cannot append {0} item to list object {0}'.format(type(item), self._object_id))
 
-            error_code = self._red.append_to_list(self._object_id, item.object_id)
+            error_code = self._session._red.append_to_list(self._object_id, item._object_id)
 
             if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not append item {0} to list object {0}'.format(item.object_id, self._object_id), error_code)
+                raise REDError('Could not append item {0} to list object {0}'.format(item._object_id, self._object_id), error_code)
 
         self._items = items
 
@@ -397,27 +468,27 @@ class REDFileBase(REDObject):
         self._read_async_callback = None
 
     def _register_callback_async_file_write(self, func):
-        if not self._red in REDFileBase.callback_async_file_write_registry:
-            REDFileBase.callback_async_file_write_registry[self._red] = [func]
-            self._red.register_callback(BrickRED.CALLBACK_ASYNC_FILE_WRITE,
-                                        self._cb_async_file_write_caller)
+        if not self._session._red in REDFileBase.callback_async_file_write_registry:
+            REDFileBase.callback_async_file_write_registry[self._session._red] = [func]
+            self._session._red.register_callback(BrickRED.CALLBACK_ASYNC_FILE_WRITE,
+                                                 self._cb_async_file_write_caller)
         else:
-            REDFileBase.callback_async_file_write_registry[self._red].append(func)
+            REDFileBase.callback_async_file_write_registry[self._session._red].append(func)
 
     def _cb_async_file_write_caller(self, *args, **kwargs):
-        for cb in REDFileBase.callback_async_file_write_registry[self._red]:
+        for cb in REDFileBase.callback_async_file_write_registry[self._session._red]:
             cb(*args, **kwargs)
 
     def _register_callback_async_file_read(self, func):
-        if not self._red in REDFileBase.callback_async_file_read_registry:
-            REDFileBase.callback_async_file_read_registry[self._red] = [func]
-            self._red.register_callback(BrickRED.CALLBACK_ASYNC_FILE_READ,
-                                        self._cb_async_file_read_caller)
+        if not self._session._red in REDFileBase.callback_async_file_read_registry:
+            REDFileBase.callback_async_file_read_registry[self._session._red] = [func]
+            self._session._red.register_callback(BrickRED.CALLBACK_ASYNC_FILE_READ,
+                                                 self._cb_async_file_read_caller)
         else:
-            REDFileBase.callback_async_file_read_registry[self._red].append(func)
+            REDFileBase.callback_async_file_read_registry[self._session._red].append(func)
 
     def _cb_async_file_read_caller(self, *args, **kwargs):
-        for cb in REDFileBase.callback_async_file_read_registry[self._red]:
+        for cb in REDFileBase.callback_async_file_read_registry[self._session._red]:
             cb(*args, **kwargs)
 
     # Unset all of the temporary async data in case of error.
@@ -467,7 +538,7 @@ class REDFileBase(REDObject):
                                                             REDFileBase.MAX_WRITE_UNCHECKED_BUFFER_LENGTH)
 
             try:
-                self._red.write_file_unchecked(self._object_id, chunk, length_to_write)
+                self._session._red.write_file_unchecked(self._object_id, chunk, length_to_write)
             except Exception as e:
                 self._report_write_async_error(e)
                 return
@@ -480,7 +551,7 @@ class REDFileBase(REDObject):
 
         try:
             # FIXME: Do we need a timeout here for the case that no callback comes?
-            self._red.write_file_async(self._object_id, chunk, length_to_write)
+            self._session._red.write_file_async(self._object_id, chunk, length_to_write)
         except Exception as e:
             self._report_write_async_error(e)
 
@@ -525,7 +596,7 @@ class REDFileBase(REDObject):
             raise RuntimeError('Cannot update unattached file object')
 
         error_code, type, name_string_id, flags, permissions, uid, gid, \
-        length, access_time, modification_time, status_change_time = self._red.get_file_info(self._object_id)
+        length, access_time, modification_time, status_change_time = self._session._red.get_file_info(self._object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get information for file object {0}'.format(self._object_id), error_code)
@@ -535,7 +606,7 @@ class REDFileBase(REDObject):
         if type == REDFileBase.TYPE_PIPE:
             self._name = None
         else:
-            self._name = _attach_or_release(self._red, REDString, name_string_id)
+            self._name = _attach_or_release(self._session, REDString, name_string_id)
 
         self._flags = flags
         self._permissions = permissions
@@ -556,7 +627,7 @@ class REDFileBase(REDObject):
             chunk, length_to_write = _get_zero_padded_chunk(remaining_data,
                                                             REDFileBase.MAX_WRITE_BUFFER_LENGTH)
 
-            error_code, length_written = self._red.write_file(self._object_id, chunk, length_to_write)
+            error_code, length_written = self._session._red.write_file(self._object_id, chunk, length_to_write)
 
             if error_code != REDError.E_SUCCESS:
                 # FIXME: recover seek position on error after successful call?
@@ -594,7 +665,7 @@ class REDFileBase(REDObject):
         while length > 0:
             length_to_read = min(length, REDFileBase.MAX_READ_BUFFER_LENGTH)
 
-            error_code, chunk, length_read = self._red.read_file(self._object_id, length_to_read)
+            error_code, chunk, length_read = self._session._red.read_file(self._object_id, length_to_read)
 
             if error_code != REDError.E_SUCCESS:
                 # FIXME: recover seek position on error after successful call?
@@ -628,7 +699,7 @@ class REDFileBase(REDObject):
             self._read_async_callback = callback
             self.read_async_signal.connect(callback, QtCore.Qt.BlockingQueuedConnection)
 
-        self._red.read_file_async(self._object_id, length_max)
+        self._session._red.read_file_async(self._object_id, length_max)
 
     @property
     def type(self):
@@ -689,9 +760,9 @@ class REDFile(REDFileBase):
         self.release()
 
         if not isinstance(name, REDString):
-            name = REDString(self._red).allocate(name)
+            name = REDString(self._session).allocate(name)
 
-        error_code, object_id = self._red.open_file(name.object_id, flags, permissions, uid, gid)
+        error_code, object_id = self._session._red.open_file(name._object_id, flags, permissions, uid, gid, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not open file object', error_code)
@@ -713,7 +784,7 @@ class REDPipe(REDFileBase):
     def create(self, flags):
         self.release()
 
-        error_code, object_id = self._red.create_pipe(flags)
+        error_code, object_id = self._session._red.create_pipe(flags, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not create pipe object', error_code)
@@ -737,21 +808,21 @@ class REDFileOrPipeAttacher:
 
         self._set_object_id(object_id)
 
-        error_code, type, name_string_id, _, _, _, _, _, _, _, _ = self._red.get_file_info(self._object_id)
+        error_code, type, name_string_id, _, _, _, _, _, _, _, _ = self._session._red.get_file_info(self._object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get information for file object {0}'.format(self._object_id), error_code)
 
         if type == REDFileBase.TYPE_PIPE:
-            obj = _attach_or_release(self._red, REDPipe, self._object_id)
+            obj = _attach_or_release(self._session, REDPipe, self._object_id)
         else:
             try:
-                self._red.release_object(name_string_id)
+                self._session._red.release_object(name_string_id, self._session._session_id)
             except:
                 # FIXME: error handling
                 pass
 
-            obj = _attach_or_release(self._red, REDFile, self._object_id)
+            obj = _attach_or_release(self._session, REDFile, self._object_id)
 
         self.detach()
 
@@ -760,11 +831,11 @@ class REDFileOrPipeAttacher:
 
 REDFileInfo = namedtuple('REDFileInfo', ['type', 'permissions', 'uid', 'gid', 'length', 'access_timestamp', 'modification_timestamp', 'status_change_timestamp'])
 
-def lookup_file_info(red, name, follow_symlink):
+def lookup_file_info(session, name, follow_symlink):
     if not isinstance(name, REDString):
-        name = REDString(red).allocate(name)
+        name = REDString(session).allocate(name)
 
-    result = red.lookup_file_info(name, follow_symlink)
+    result = session._red.lookup_file_info(name, follow_symlink, session._session_id)
     error_code = result[0]
 
     if error_code != REDError.E_SUCCESS:
@@ -773,16 +844,16 @@ def lookup_file_info(red, name, follow_symlink):
     return REDFileInfo(result[1:])
 
 
-def lookup_symlink_target(red, name, canonicalize):
+def lookup_symlink_target(session, name, canonicalize):
     if not isinstance(name, REDString):
         name = REDString(red).allocate(name)
 
-    error_code, target_string_id = red.lookup_symlink_target(name, canonicalize)
+    error_code, target_string_id = session._red.lookup_symlink_target(name, canonicalize, session._session_id)
 
     if error_code != REDError.E_SUCCESS:
         raise REDError('Could not lookup symlink target', error_code)
 
-    return _attach_or_release(red, REDString, target_string_id)
+    return _attach_or_release(session, REDString, target_string_id)
 
 
 class REDDirectory(REDObject):
@@ -807,15 +878,15 @@ class REDDirectory(REDObject):
             raise RuntimeError('Cannot update unattached directory object')
 
         # get name
-        error_code, name_string_id = self._red.get_directory_name(self._object_id)
+        error_code, name_string_id = self._session._red.get_directory_name(self._object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get name of directory object {0}'.format(self._object_id), error_code)
 
-        self._name = _attach_or_release(self._red, REDString, name_string_id)
+        self._name = _attach_or_release(self._session, REDString, name_string_id)
 
         # rewind
-        error_code = self._red.rewind_directory(self._object_id)
+        error_code = self._session._red.rewind_directory(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not rewind directory object {0}'.format(self._object_id), error_code)
@@ -824,7 +895,7 @@ class REDDirectory(REDObject):
         entries = []
 
         while True:
-            error_code, name_string_id, type = self._red.get_next_directory_entry(self._object_id)
+            error_code, name_string_id, type = self._session._red.get_next_directory_entry(self._object_id, self._session._session_id)
 
             if error_code == REDError.E_NO_MORE_DATA:
                 break
@@ -832,7 +903,7 @@ class REDDirectory(REDObject):
             if error_code != REDError.E_SUCCESS:
                 raise REDError('Could not get next entry of directory object {0}'.format(self._object_id), error_code)
 
-            entries.append((_attach_or_release(self._red, REDString, name_string_id), type))
+            entries.append((_attach_or_release(self._session, REDString, name_string_id), type))
 
         self._entries = entries
 
@@ -840,9 +911,9 @@ class REDDirectory(REDObject):
         self.release()
 
         if not isinstance(name, REDString):
-            name = REDString(self._red).allocate(name)
+            name = REDString(self._session).allocate(name)
 
-        error_code, object_id = self._red.open_directory(name.object_id)
+        error_code, object_id = self._session._red.open_directory(name._object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not open directory object', error_code)
@@ -865,11 +936,11 @@ class REDDirectory(REDObject):
 DIRECTORY_FLAG_RECURSIVE = BrickRED.DIRECTORY_FLAG_RECURSIVE
 DIRECTORY_FLAG_EXCLUSIVE = BrickRED.DIRECTORY_FLAG_EXCLUSIVE
 
-def create_directory(red, name, flags, permissions, uid, gid):
+def create_directory(session, name, flags, permissions, uid, gid):
     if not isinstance(name, REDString):
         name = REDString(red).allocate(name)
 
-    error_code = red.create_directory(name, flags, permissions, uid, gid)
+    error_code = session._red.create_directory(name, flags, permissions, uid, gid)
 
     if error_code != REDError.E_SUCCESS:
         raise REDError('Could not create directory', error_code)
@@ -904,8 +975,8 @@ class REDProcess(REDObject):
         REDObject.__init__(self, *args)
 
         self._qtcb_state_changed.connect(self._cb_state_changed)
-        self._red.register_callback(BrickRED.CALLBACK_PROCESS_STATE_CHANGED,
-                                    self._qtcb_state_changed.emit)
+        self._session._red.register_callback(BrickRED.CALLBACK_PROCESS_STATE_CHANGED,
+                                             self._qtcb_state_changed.emit)
 
     def __repr__(self):
         return '<REDProcess object_id: {0}>'.format(self._object_id)
@@ -951,21 +1022,21 @@ class REDProcess(REDObject):
             raise RuntimeError('Cannot update unattached process object')
 
         error_code, executable_string_id, arguments_list_id, \
-        environment_list_id, working_directory_string_id = self._red.get_process_command(self._object_id)
+        environment_list_id, working_directory_string_id = self._session._red.get_process_command(self._object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get command of process object {0}'.format(self._object_id), error_code)
 
-        self._executable = _attach_or_release(self._red, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
-        self._arguments = _attach_or_release(self._red, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
-        self._environment = _attach_or_release(self._red, REDList, environment_list_id, [working_directory_string_id])
-        self._working_directory = _attach_or_release(self._red, REDString, working_directory_string_id)
+        self._executable = _attach_or_release(self._session, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
+        self._arguments = _attach_or_release(self._session, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
+        self._environment = _attach_or_release(self._session, REDList, environment_list_id, [working_directory_string_id])
+        self._working_directory = _attach_or_release(self._session, REDString, working_directory_string_id)
 
     def update_identity(self):
         if self._object_id is None:
             raise RuntimeError('Cannot update unattached process object')
 
-        error_code, pid, uid, gid = self._red.get_process_identity(self._object_id)
+        error_code, pid, uid, gid = self._session._red.get_process_identity(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get identity of process object {0}'.format(self._object_id), error_code)
@@ -978,20 +1049,20 @@ class REDProcess(REDObject):
         if self._object_id is None:
             raise RuntimeError('Cannot update unattached process object')
 
-        error_code, stdin_file_id, stdout_file_id, stderr_file_id = self._red.get_process_stdio(self._object_id)
+        error_code, stdin_file_id, stdout_file_id, stderr_file_id = self._session._red.get_process_stdio(self._object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get stdio of process object {0}'.format(self._object_id), error_code)
 
-        self._stdin = _attach_or_release(self._red, REDFile, stdin_file_id, [stdout_file_id, stderr_file_id])
-        self._stdout = _attach_or_release(self._red, REDFile, stdout_file_id, [stderr_file_id])
-        self._stderr = _attach_or_release(self._red, REDFile, stderr_file_id)
+        self._stdin = _attach_or_release(self._session, REDFile, stdin_file_id, [stdout_file_id, stderr_file_id])
+        self._stdout = _attach_or_release(self._session, REDFile, stdout_file_id, [stderr_file_id])
+        self._stderr = _attach_or_release(self._session, REDFile, stderr_file_id)
 
     def update_state(self):
         if self._object_id is None:
             raise RuntimeError('Cannot update unattached process object')
 
-        error_code, state, exit_code = self._red.get_process_state(self._object_id)
+        error_code, state, exit_code = self._session._red.get_process_state(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get state of process object {0}'.format(self._object_id), error_code)
@@ -1004,25 +1075,26 @@ class REDProcess(REDObject):
         self.release()
 
         if not isinstance(executable, REDString):
-            executable = REDString(self._red).allocate(executable)
+            executable = REDString(self._session).allocate(executable)
 
         if not isinstance(arguments, REDList):
-            arguments = REDList(self._red).allocate(arguments)
+            arguments = REDList(self._session).allocate(arguments)
 
         if not isinstance(environment, REDList):
-            environment = REDList(self._red).allocate(environment)
+            environment = REDList(self._session).allocate(environment)
 
         if not isinstance(working_directory, REDString):
-            working_directory = REDString(self._red).allocate(working_directory)
+            working_directory = REDString(self._session).allocate(working_directory)
 
-        error_code, object_id = self._red.spawn_process(executable.object_id,
-                                                        arguments.object_id,
-                                                        environment.object_id,
-                                                        working_directory.object_id,
-                                                        uid, gid,
-                                                        stdin.object_id,
-                                                        stdout.object_id,
-                                                        stderr.object_id)
+        error_code, object_id = self._session._red.spawn_process(executable._object_id,
+                                                                 arguments._object_id,
+                                                                 environment._object_id,
+                                                                 working_directory._object_id,
+                                                                 uid, gid,
+                                                                 stdin._object_id,
+                                                                 stdout._object_id,
+                                                                 stderr._object_id,
+                                                                 self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not spawn process object', error_code)
@@ -1047,7 +1119,7 @@ class REDProcess(REDObject):
         if self._object_id is None:
             raise RuntimeError('Cannot kill unattached process object')
 
-        error_code = self._red.kill_process(self._object_id, signal)
+        error_code = self._session._red.kill_process(self._object_id, signal)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not kill process object {0}'.format(self._object_id), error_code)
@@ -1101,13 +1173,13 @@ class REDProcess(REDObject):
         return self._exit_code
 
 
-def get_processes(red):
-    error_code, processes_list_id = red.get_processes()
+def get_processes(session):
+    error_code, processes_list_id = session._red.get_processes(session._session_id)
 
     if error_code != REDError.E_SUCCESS:
         raise REDError('Could not get processes list object', error_code)
 
-    return _attach_or_release(red, REDList, processes_list_id)
+    return _attach_or_release(session, REDList, processes_list_id)
 
 
 REDObject._subclasses = {

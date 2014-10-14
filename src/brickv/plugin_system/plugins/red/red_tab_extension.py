@@ -33,7 +33,7 @@ class REDTabExtension(QtGui.QWidget, Ui_REDTabExtension):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        self.red = None
+        self.session = None
         self.red_file = [None, None]
         
     def status(self, i, j):
@@ -62,14 +62,14 @@ class REDTabExtension(QtGui.QWidget, Ui_REDTabExtension):
         self.red_file[extension].read_async(self.red_file[extension].length, lambda x: self.cb_file_read(0, x), self.status)
         
     def tab_on_focus(self):
-        self.red_file[0] = REDFile(self.red)
+        self.red_file[0] = REDFile(self.session)
         async_call(self.red_file[0].open, ("/tmp/extension_position_0.conf", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0), lambda x: self.cb_file_open(0, x), lambda: self.cb_file_open_error(0))
 #        self.red_file0.read_async(self.red_file0.length, lambda x: self.cb(0, x), self.status)
 
-        self.red_file[1] = REDFile(self.red)
+        self.red_file[1] = REDFile(self.session)
         async_call(self.red_file[1].open, ("/tmp/extension_position_1.conf", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0), lambda x: self.cb_file_open(1, x), lambda: self.cb_file_open_error(1))
         
-#        self.red_file1 = REDFile(self.red).open("/tmp/extension_position_1.conf", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0)
+#        self.red_file1 = REDFile(self.session).open("/tmp/extension_position_1.conf", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0)
 #        self.red_file1.read_async(self.red_file1.length, lambda x: self.cb(0, x), self.status)
 
     def tab_off_focus(self):

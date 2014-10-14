@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-10-13.      #
+# This file was automatically generated on 2014-10-14.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -22,6 +22,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
+CreateSession = namedtuple('CreateSession', ['error_code', 'session_id'])
 AllocateString = namedtuple('AllocateString', ['error_code', 'string_id'])
 GetStringLength = namedtuple('StringLength', ['error_code', 'length'])
 GetStringChunk = namedtuple('StringChunk', ['error_code', 'buffer'])
@@ -66,65 +67,68 @@ class BrickRED(Device):
 
     DEVICE_IDENTIFIER = 17
 
-    CALLBACK_ASYNC_FILE_READ = 23
-    CALLBACK_ASYNC_FILE_WRITE = 24
-    CALLBACK_PROCESS_STATE_CHANGED = 39
-    CALLBACK_PROGRAM_PROCESS_SPAWNED = 57
-    CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED = 58
+    CALLBACK_ASYNC_FILE_READ = 26
+    CALLBACK_ASYNC_FILE_WRITE = 27
+    CALLBACK_PROCESS_STATE_CHANGED = 42
+    CALLBACK_PROGRAM_PROCESS_SPAWNED = 60
+    CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED = 61
 
-    FUNCTION_RELEASE_OBJECT = 1
-    FUNCTION_ALLOCATE_STRING = 2
-    FUNCTION_TRUNCATE_STRING = 3
-    FUNCTION_GET_STRING_LENGTH = 4
-    FUNCTION_SET_STRING_CHUNK = 5
-    FUNCTION_GET_STRING_CHUNK = 6
-    FUNCTION_ALLOCATE_LIST = 7
-    FUNCTION_GET_LIST_LENGTH = 8
-    FUNCTION_GET_LIST_ITEM = 9
-    FUNCTION_APPEND_TO_LIST = 10
-    FUNCTION_REMOVE_FROM_LIST = 11
-    FUNCTION_OPEN_FILE = 12
-    FUNCTION_CREATE_PIPE = 13
-    FUNCTION_GET_FILE_INFO = 14
-    FUNCTION_READ_FILE = 15
-    FUNCTION_READ_FILE_ASYNC = 16
-    FUNCTION_ABORT_ASYNC_FILE_READ = 17
-    FUNCTION_WRITE_FILE = 18
-    FUNCTION_WRITE_FILE_UNCHECKED = 19
-    FUNCTION_WRITE_FILE_ASYNC = 20
-    FUNCTION_SET_FILE_POSITION = 21
-    FUNCTION_GET_FILE_POSITION = 22
-    FUNCTION_LOOKUP_FILE_INFO = 25
-    FUNCTION_LOOKUP_SYMLINK_TARGET = 26
-    FUNCTION_OPEN_DIRECTORY = 27
-    FUNCTION_GET_DIRECTORY_NAME = 28
-    FUNCTION_GET_NEXT_DIRECTORY_ENTRY = 29
-    FUNCTION_REWIND_DIRECTORY = 30
-    FUNCTION_CREATE_DIRECTORY = 31
-    FUNCTION_GET_PROCESSES = 32
-    FUNCTION_SPAWN_PROCESS = 33
-    FUNCTION_KILL_PROCESS = 34
-    FUNCTION_GET_PROCESS_COMMAND = 35
-    FUNCTION_GET_PROCESS_IDENTITY = 36
-    FUNCTION_GET_PROCESS_STDIO = 37
-    FUNCTION_GET_PROCESS_STATE = 38
-    FUNCTION_GET_DEFINED_PROGRAMS = 40
-    FUNCTION_DEFINE_PROGRAM = 41
-    FUNCTION_UNDEFINE_PROGRAM = 42
-    FUNCTION_GET_PROGRAM_IDENTIFIER = 43
-    FUNCTION_GET_PROGRAM_ROOT_DIRECTORY = 44
-    FUNCTION_SET_PROGRAM_COMMAND = 45
-    FUNCTION_GET_PROGRAM_COMMAND = 46
-    FUNCTION_SET_PROGRAM_STDIO_REDIRECTION = 47
-    FUNCTION_GET_PROGRAM_STDIO_REDIRECTION = 48
-    FUNCTION_SET_PROGRAM_SCHEDULE = 49
-    FUNCTION_GET_PROGRAM_SCHEDULE = 50
-    FUNCTION_GET_LAST_SPAWNED_PROGRAM_PROCESS = 51
-    FUNCTION_GET_LAST_PROGRAM_SCHEDULER_ERROR = 52
-    FUNCTION_GET_CUSTOM_PROGRAM_OPTION_NAMES = 53
-    FUNCTION_SET_CUSTOM_PROGRAM_OPTION_VALUE = 54
-    FUNCTION_GET_CUSTOM_PROGRAM_OPTION_VALUE = 55
-    FUNCTION_REMOVE_CUSTOM_PROGRAM_OPTION = 56
+    FUNCTION_CREATE_SESSION = 1
+    FUNCTION_EXPIRE_SESSION = 2
+    FUNCTION_KEEP_SESSION_ALIVE = 3
+    FUNCTION_RELEASE_OBJECT = 4
+    FUNCTION_ALLOCATE_STRING = 5
+    FUNCTION_TRUNCATE_STRING = 6
+    FUNCTION_GET_STRING_LENGTH = 7
+    FUNCTION_SET_STRING_CHUNK = 8
+    FUNCTION_GET_STRING_CHUNK = 9
+    FUNCTION_ALLOCATE_LIST = 10
+    FUNCTION_GET_LIST_LENGTH = 11
+    FUNCTION_GET_LIST_ITEM = 12
+    FUNCTION_APPEND_TO_LIST = 13
+    FUNCTION_REMOVE_FROM_LIST = 14
+    FUNCTION_OPEN_FILE = 15
+    FUNCTION_CREATE_PIPE = 16
+    FUNCTION_GET_FILE_INFO = 17
+    FUNCTION_READ_FILE = 18
+    FUNCTION_READ_FILE_ASYNC = 19
+    FUNCTION_ABORT_ASYNC_FILE_READ = 20
+    FUNCTION_WRITE_FILE = 21
+    FUNCTION_WRITE_FILE_UNCHECKED = 22
+    FUNCTION_WRITE_FILE_ASYNC = 23
+    FUNCTION_SET_FILE_POSITION = 24
+    FUNCTION_GET_FILE_POSITION = 25
+    FUNCTION_LOOKUP_FILE_INFO = 28
+    FUNCTION_LOOKUP_SYMLINK_TARGET = 29
+    FUNCTION_OPEN_DIRECTORY = 30
+    FUNCTION_GET_DIRECTORY_NAME = 31
+    FUNCTION_GET_NEXT_DIRECTORY_ENTRY = 32
+    FUNCTION_REWIND_DIRECTORY = 33
+    FUNCTION_CREATE_DIRECTORY = 34
+    FUNCTION_GET_PROCESSES = 35
+    FUNCTION_SPAWN_PROCESS = 36
+    FUNCTION_KILL_PROCESS = 37
+    FUNCTION_GET_PROCESS_COMMAND = 38
+    FUNCTION_GET_PROCESS_IDENTITY = 39
+    FUNCTION_GET_PROCESS_STDIO = 40
+    FUNCTION_GET_PROCESS_STATE = 41
+    FUNCTION_GET_DEFINED_PROGRAMS = 43
+    FUNCTION_DEFINE_PROGRAM = 44
+    FUNCTION_UNDEFINE_PROGRAM = 45
+    FUNCTION_GET_PROGRAM_IDENTIFIER = 46
+    FUNCTION_GET_PROGRAM_ROOT_DIRECTORY = 47
+    FUNCTION_SET_PROGRAM_COMMAND = 48
+    FUNCTION_GET_PROGRAM_COMMAND = 49
+    FUNCTION_SET_PROGRAM_STDIO_REDIRECTION = 50
+    FUNCTION_GET_PROGRAM_STDIO_REDIRECTION = 51
+    FUNCTION_SET_PROGRAM_SCHEDULE = 52
+    FUNCTION_GET_PROGRAM_SCHEDULE = 53
+    FUNCTION_GET_LAST_SPAWNED_PROGRAM_PROCESS = 54
+    FUNCTION_GET_LAST_PROGRAM_SCHEDULER_ERROR = 55
+    FUNCTION_GET_CUSTOM_PROGRAM_OPTION_NAMES = 56
+    FUNCTION_SET_CUSTOM_PROGRAM_OPTION_VALUE = 57
+    FUNCTION_GET_CUSTOM_PROGRAM_OPTION_VALUE = 58
+    FUNCTION_REMOVE_CUSTOM_PROGRAM_OPTION = 59
     FUNCTION_GET_IDENTITY = 255
 
     OBJECT_TYPE_STRING = 0
@@ -215,6 +219,9 @@ class BrickRED(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickRED.FUNCTION_CREATE_SESSION] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_EXPIRE_SESSION] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_KEEP_SESSION_ALIVE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_RELEASE_OBJECT] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_ALLOCATE_STRING] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_TRUNCATE_STRING] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -281,14 +288,32 @@ class BrickRED(Device):
         self.callback_formats[BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED] = 'H'
         self.callback_formats[BrickRED.CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED] = 'H'
 
-    def release_object(self, object_id):
+    def create_session(self, lifetime):
+        """
+        
+        """
+        return CreateSession(*self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_SESSION, (lifetime,), 'I', 'B H'))
+
+    def expire_session(self, session_id):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_EXPIRE_SESSION, (session_id,), 'H', 'B')
+
+    def keep_session_alive(self, session_id, lifetime):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_KEEP_SESSION_ALIVE, (session_id, lifetime), 'H I', 'B')
+
+    def release_object(self, object_id, session_id):
         """
         Decreases the reference count of an object by one and returns the resulting
         error code. If the reference count reaches zero the object gets destroyed.
         """
-        return self.ipcon.send_request(self, BrickRED.FUNCTION_RELEASE_OBJECT, (object_id,), 'H', 'B')
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_RELEASE_OBJECT, (object_id, session_id), 'H H', 'B')
 
-    def allocate_string(self, length_to_reserve, buffer):
+    def allocate_string(self, length_to_reserve, buffer, session_id):
         """
         Allocates a new string object, reserves ``length_to_reserve`` bytes memory
         for it and sets up to the first 60 bytes. Set ``length_to_reserve`` to the
@@ -296,7 +321,7 @@ class BrickRED(Device):
         
         Returns the object ID of the new string object and the resulting error code.
         """
-        return AllocateString(*self.ipcon.send_request(self, BrickRED.FUNCTION_ALLOCATE_STRING, (length_to_reserve, buffer), 'I 60s', 'B H'))
+        return AllocateString(*self.ipcon.send_request(self, BrickRED.FUNCTION_ALLOCATE_STRING, (length_to_reserve, buffer, session_id), 'I 58s H', 'B H'))
 
     def truncate_string(self, string_id, length):
         """
@@ -326,7 +351,7 @@ class BrickRED(Device):
         """
         return GetStringChunk(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_STRING_CHUNK, (string_id, offset), 'H I', 'B 63s'))
 
-    def allocate_list(self, length_to_reserve):
+    def allocate_list(self, length_to_reserve, session_id):
         """
         Allocates a new list object and reserves memory for ``length_to_reserve``
         items. Set ``length_to_reserve`` to the number of items that should be stored
@@ -337,7 +362,7 @@ class BrickRED(Device):
         When a list object gets destroyed then the reference count of each object in
         the list object is decreased by one.
         """
-        return AllocateList(*self.ipcon.send_request(self, BrickRED.FUNCTION_ALLOCATE_LIST, (length_to_reserve,), 'H', 'B H'))
+        return AllocateList(*self.ipcon.send_request(self, BrickRED.FUNCTION_ALLOCATE_LIST, (length_to_reserve, session_id), 'H H', 'B H'))
 
     def get_list_length(self, list_id):
         """
@@ -345,7 +370,7 @@ class BrickRED(Device):
         """
         return GetListLength(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LIST_LENGTH, (list_id,), 'H', 'B H'))
 
-    def get_list_item(self, list_id, index):
+    def get_list_item(self, list_id, index, session_id):
         """
         Returns the object ID and type of the object stored at ``index`` in a list
         object and returns the resulting error code.
@@ -359,7 +384,7 @@ class BrickRED(Device):
         * Process = 4
         * Program = 5
         """
-        return GetListItem(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LIST_ITEM, (list_id, index), 'H H', 'B H B'))
+        return GetListItem(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LIST_ITEM, (list_id, index, session_id), 'H H H', 'B H B'))
 
     def append_to_list(self, list_id, item_object_id):
         """
@@ -379,7 +404,7 @@ class BrickRED(Device):
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_REMOVE_FROM_LIST, (list_id, index), 'H H', 'B')
 
-    def open_file(self, name_string_id, flags, permissions, uid, gid):
+    def open_file(self, name_string_id, flags, permissions, uid, gid, session_id):
         """
         Opens an existing file or creates a new file and allocates a new file object
         for it.
@@ -422,9 +447,9 @@ class BrickRED(Device):
         
         Returns the object ID of the new file object and the resulting error code.
         """
-        return OpenFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_FILE, (name_string_id, flags, permissions, uid, gid), 'H H H I I', 'B H'))
+        return OpenFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_FILE, (name_string_id, flags, permissions, uid, gid, session_id), 'H H H I I H', 'B H'))
 
-    def create_pipe(self, flags):
+    def create_pipe(self, flags, session_id):
         """
         Creates a new pipe and allocates a new file object for it.
         
@@ -436,9 +461,9 @@ class BrickRED(Device):
         
         Returns the object ID of the new file object and the resulting error code.
         """
-        return CreatePipe(*self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_PIPE, (flags,), 'H', 'B H'))
+        return CreatePipe(*self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_PIPE, (flags, session_id), 'H H', 'B H'))
 
-    def get_file_info(self, file_id):
+    def get_file_info(self, file_id, session_id):
         """
         Returns various information about a file and the resulting error code.
         
@@ -464,7 +489,7 @@ class BrickRED(Device):
         
         FIXME: everything except flags is invalid if file type is *Pipe*
         """
-        return GetFileInfo(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_INFO, (file_id,), 'H', 'B B H H H I I Q Q Q Q'))
+        return GetFileInfo(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_INFO, (file_id, session_id), 'H H', 'B B H H H I I Q Q Q Q'))
 
     def read_file(self, file_id, length_to_read):
         """
@@ -592,7 +617,7 @@ class BrickRED(Device):
         """
         return LookupFileInfo(*self.ipcon.send_request(self, BrickRED.FUNCTION_LOOKUP_FILE_INFO, (name_string_id, follow_symlink), 'H ?', 'B B H I I Q Q Q Q'))
 
-    def lookup_symlink_target(self, name_string_id, canonicalize):
+    def lookup_symlink_target(self, name_string_id, canonicalize, session_id):
         """
         Returns the target of a symbolic link and the resulting error code.
         
@@ -605,9 +630,9 @@ class BrickRED(Device):
         `realpath() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/realpath.html>`__
         function.
         """
-        return LookupSymlinkTarget(*self.ipcon.send_request(self, BrickRED.FUNCTION_LOOKUP_SYMLINK_TARGET, (name_string_id, canonicalize), 'H ?', 'B H'))
+        return LookupSymlinkTarget(*self.ipcon.send_request(self, BrickRED.FUNCTION_LOOKUP_SYMLINK_TARGET, (name_string_id, canonicalize, session_id), 'H ? H', 'B H'))
 
-    def open_directory(self, name_string_id):
+    def open_directory(self, name_string_id, session_id):
         """
         Opens an existing directory and allocates a new directory object for it.
         
@@ -620,16 +645,16 @@ class BrickRED(Device):
         
         Returns the object ID of the new directory object and the resulting error code.
         """
-        return OpenDirectory(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_DIRECTORY, (name_string_id,), 'H', 'B H'))
+        return OpenDirectory(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_DIRECTORY, (name_string_id, session_id), 'H H', 'B H'))
 
-    def get_directory_name(self, directory_id):
+    def get_directory_name(self, directory_id, session_id):
         """
         Returns the name of a directory object, as passed to :func:`OpenDirectory`, and
         the resulting error code.
         """
-        return GetDirectoryName(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_DIRECTORY_NAME, (directory_id,), 'H', 'B H'))
+        return GetDirectoryName(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_DIRECTORY_NAME, (directory_id, session_id), 'H H', 'B H'))
 
-    def get_next_directory_entry(self, directory_id):
+    def get_next_directory_entry(self, directory_id, session_id):
         """
         Returns the next entry in a directory object and the resulting error code.
         
@@ -647,7 +672,7 @@ class BrickRED(Device):
         * Symlink = 6
         * Socket = 7
         """
-        return GetNextDirectoryEntry(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_NEXT_DIRECTORY_ENTRY, (directory_id,), 'H', 'B H B'))
+        return GetNextDirectoryEntry(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_NEXT_DIRECTORY_ENTRY, (directory_id, session_id), 'H H', 'B H B'))
 
     def rewind_directory(self, directory_id):
         """
@@ -661,17 +686,17 @@ class BrickRED(Device):
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_DIRECTORY, (name_string_id, flags, permissions, uid, gid), 'H H H I I', 'B')
 
-    def get_processes(self):
+    def get_processes(self, session_id):
         """
         
         """
-        return GetProcesses(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESSES, (), '', 'B H'))
+        return GetProcesses(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESSES, (session_id,), 'H', 'B H'))
 
-    def spawn_process(self, executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id, uid, gid, stdin_file_id, stdout_file_id, stderr_file_id):
+    def spawn_process(self, executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id, uid, gid, stdin_file_id, stdout_file_id, stderr_file_id, session_id):
         """
         
         """
-        return SpawnProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_SPAWN_PROCESS, (executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id, uid, gid, stdin_file_id, stdout_file_id, stderr_file_id), 'H H H H I I H H H', 'B H'))
+        return SpawnProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_SPAWN_PROCESS, (executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id, uid, gid, stdin_file_id, stdout_file_id, stderr_file_id, session_id), 'H H H H I I H H H H', 'B H'))
 
     def kill_process(self, process_id, signal):
         """
@@ -691,13 +716,13 @@ class BrickRED(Device):
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_KILL_PROCESS, (process_id, signal), 'H B', 'B')
 
-    def get_process_command(self, process_id):
+    def get_process_command(self, process_id, session_id):
         """
         Returns the executable, arguments, environment and working directory used to
         spawn a process object, as passed to :func:`SpawnProcess`, and the resulting
         error code.
         """
-        return GetProcessCommand(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_COMMAND, (process_id,), 'H', 'B H H H H'))
+        return GetProcessCommand(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_COMMAND, (process_id, session_id), 'H H', 'B H H H H'))
 
     def get_process_identity(self, process_id):
         """
@@ -709,12 +734,12 @@ class BrickRED(Device):
         """
         return GetProcessIdentity(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_IDENTITY, (process_id,), 'H', 'B I I I'))
 
-    def get_process_stdio(self, process_id):
+    def get_process_stdio(self, process_id, session_id):
         """
         Returns the stdin, stdout and stderr files used to spawn a process object, as
         passed to :func:`SpawnProcess`, and the resulting error code.
         """
-        return GetProcessStdio(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STDIO, (process_id,), 'H', 'B H H H'))
+        return GetProcessStdio(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STDIO, (process_id, session_id), 'H H', 'B H H H'))
 
     def get_process_state(self, process_id):
         """
@@ -749,17 +774,17 @@ class BrickRED(Device):
         """
         return GetProcessState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STATE, (process_id,), 'H', 'B B B'))
 
-    def get_defined_programs(self):
+    def get_defined_programs(self, session_id):
         """
         
         """
-        return GetDefinedPrograms(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_DEFINED_PROGRAMS, (), '', 'B H'))
+        return GetDefinedPrograms(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_DEFINED_PROGRAMS, (session_id,), 'H', 'B H'))
 
-    def define_program(self, identifier_string_id):
+    def define_program(self, identifier_string_id, session_id):
         """
         
         """
-        return DefineProgram(*self.ipcon.send_request(self, BrickRED.FUNCTION_DEFINE_PROGRAM, (identifier_string_id,), 'H', 'B H'))
+        return DefineProgram(*self.ipcon.send_request(self, BrickRED.FUNCTION_DEFINE_PROGRAM, (identifier_string_id, session_id), 'H H', 'B H'))
 
     def undefine_program(self, program_id):
         """
@@ -767,17 +792,17 @@ class BrickRED(Device):
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_UNDEFINE_PROGRAM, (program_id,), 'H', 'B')
 
-    def get_program_identifier(self, program_id):
+    def get_program_identifier(self, program_id, session_id):
         """
         
         """
-        return GetProgramIdentifier(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_IDENTIFIER, (program_id,), 'H', 'B H'))
+        return GetProgramIdentifier(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_IDENTIFIER, (program_id, session_id), 'H H', 'B H'))
 
-    def get_program_root_directory(self, program_id):
+    def get_program_root_directory(self, program_id, session_id):
         """
         
         """
-        return GetProgramRootDirectory(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_ROOT_DIRECTORY, (program_id,), 'H', 'B H'))
+        return GetProgramRootDirectory(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_ROOT_DIRECTORY, (program_id, session_id), 'H H', 'B H'))
 
     def set_program_command(self, program_id, executable_string_id, arguments_list_id, environment_list_id):
         """
@@ -785,11 +810,11 @@ class BrickRED(Device):
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_COMMAND, (program_id, executable_string_id, arguments_list_id, environment_list_id), 'H H H H', 'B')
 
-    def get_program_command(self, program_id):
+    def get_program_command(self, program_id, session_id):
         """
         
         """
-        return GetProgramCommand(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_COMMAND, (program_id,), 'H', 'B H H H'))
+        return GetProgramCommand(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_COMMAND, (program_id, session_id), 'H H', 'B H H H'))
 
     def set_program_stdio_redirection(self, program_id, stdin_redirection, stdin_file_name_string_id, stdout_redirection, stdout_file_name_string_id, stderr_redirection, stderr_file_name_string_id):
         """
@@ -797,11 +822,11 @@ class BrickRED(Device):
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_STDIO_REDIRECTION, (program_id, stdin_redirection, stdin_file_name_string_id, stdout_redirection, stdout_file_name_string_id, stderr_redirection, stderr_file_name_string_id), 'H B H B H B H', 'B')
 
-    def get_program_stdio_redirection(self, program_id):
+    def get_program_stdio_redirection(self, program_id, session_id):
         """
         
         """
-        return GetProgramStdioRedirection(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_STDIO_REDIRECTION, (program_id,), 'H', 'B B H B H B H'))
+        return GetProgramStdioRedirection(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_STDIO_REDIRECTION, (program_id, session_id), 'H H', 'B B H B H B H'))
 
     def set_program_schedule(self, program_id, start_condition, start_timestamp, start_delay, repeat_mode, repeat_interval, repeat_second_mask, repeat_minute_mask, repeat_hour_mask, repeat_day_mask, repeat_month_mask, repeat_weekday_mask):
         """
@@ -815,23 +840,23 @@ class BrickRED(Device):
         """
         return GetProgramSchedule(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_SCHEDULE, (program_id,), 'H', 'B B Q I B I Q Q I I H B'))
 
-    def get_last_spawned_program_process(self, program_id):
+    def get_last_spawned_program_process(self, program_id, session_id):
         """
         
         """
-        return GetLastSpawnedProgramProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LAST_SPAWNED_PROGRAM_PROCESS, (program_id,), 'H', 'B H Q'))
+        return GetLastSpawnedProgramProcess(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LAST_SPAWNED_PROGRAM_PROCESS, (program_id, session_id), 'H H', 'B H Q'))
 
-    def get_last_program_scheduler_error(self, program_id):
+    def get_last_program_scheduler_error(self, program_id, session_id):
         """
         
         """
-        return GetLastProgramSchedulerError(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LAST_PROGRAM_SCHEDULER_ERROR, (program_id,), 'H', 'B H Q'))
+        return GetLastProgramSchedulerError(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_LAST_PROGRAM_SCHEDULER_ERROR, (program_id, session_id), 'H H', 'B H Q'))
 
-    def get_custom_program_option_names(self, program_id):
+    def get_custom_program_option_names(self, program_id, session_id):
         """
         
         """
-        return GetCustomProgramOptionNames(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_CUSTOM_PROGRAM_OPTION_NAMES, (program_id,), 'H', 'B H'))
+        return GetCustomProgramOptionNames(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_CUSTOM_PROGRAM_OPTION_NAMES, (program_id, session_id), 'H H', 'B H'))
 
     def set_custom_program_option_value(self, program_id, name_string_id, value_string_id):
         """
@@ -839,11 +864,11 @@ class BrickRED(Device):
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_CUSTOM_PROGRAM_OPTION_VALUE, (program_id, name_string_id, value_string_id), 'H H H', 'B')
 
-    def get_custom_program_option_value(self, program_id, name_string_id):
+    def get_custom_program_option_value(self, program_id, name_string_id, session_id):
         """
         
         """
-        return GetCustomProgramOptionValue(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_CUSTOM_PROGRAM_OPTION_VALUE, (program_id, name_string_id), 'H H', 'B H'))
+        return GetCustomProgramOptionValue(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_CUSTOM_PROGRAM_OPTION_VALUE, (program_id, name_string_id, session_id), 'H H H', 'B H'))
 
     def remove_custom_program_option(self, program_id, name_string_id):
         """
