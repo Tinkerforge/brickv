@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>665</width>
-    <height>461</height>
+    <width>725</width>
+    <height>867</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,87 +24,414 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>629</width>
-        <height>923</height>
+        <width>689</width>
+        <height>884</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_11">
        <item>
-        <widget class="QGroupBox" name="gbox_locales">
+        <widget class="QGroupBox" name="gbox_network_settings">
          <property name="title">
-          <string>Locales</string>
+          <string>Network Settings</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <layout class="QGridLayout" name="gridLayout">
-            <item row="2" column="0">
-             <widget class="QLabel" name="label">
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="1" column="1" colspan="6">
+             <widget class="QComboBox" name="comboBox_4"/>
+            </item>
+            <item row="0" column="1" colspan="6">
+             <widget class="QLineEdit" name="lineEdit"/>
+            </item>
+            <item row="6" column="1" colspan="4">
+             <widget class="QListView" name="listView"/>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="label_14">
               <property name="text">
-               <string>Time</string>
+               <string>DNS</string>
               </property>
              </widget>
-            </item>
-            <item row="3" column="3">
-             <widget class="QSpinBox" name="spinBox_6"/>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Keyboard</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="3">
-             <widget class="QSpinBox" name="spinBox_3"/>
-            </item>
-            <item row="4" column="1" colspan="3">
-             <widget class="QComboBox" name="comboBox_2"/>
-            </item>
-            <item row="5" column="1" colspan="3">
-             <widget class="QComboBox" name="comboBox_3"/>
             </item>
             <item row="2" column="2">
-             <widget class="QSpinBox" name="spinBox_2"/>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_3">
+             <widget class="QRadioButton" name="radioButton_3">
               <property name="text">
-               <string>Language</string>
+               <string>Static</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1" colspan="3">
-             <widget class="QComboBox" name="comboBox"/>
-            </item>
-            <item row="3" column="1">
-             <widget class="QSpinBox" name="spinBox_4"/>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_2">
-              <property name="text">
-               <string>Date</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QSpinBox" name="spinBox"/>
-            </item>
-            <item row="3" column="2">
-             <widget class="QSpinBox" name="spinBox_5"/>
-            </item>
-            <item row="1" column="0" colspan="4">
-             <widget class="Line" name="line">
+            <item row="9" column="0" colspan="7">
+             <widget class="Line" name="line_2">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_15">
-              <property name="text">
-               <string>System Locales</string>
+            <item row="3" column="4">
+             <widget class="QSpinBox" name="spinBox_10">
+              <property name="maximum">
+               <number>255</number>
               </property>
              </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Interface</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="4">
+             <widget class="QSpinBox" name="spinBox_22">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="0">
+             <widget class="QLabel" name="label_13">
+              <property name="text">
+               <string>Pass</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="1">
+             <widget class="QSpinBox" name="spinBox_19">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="5">
+             <widget class="QSpinBox" name="spinBox_27">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>MAC</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="6">
+             <widget class="QSpinBox" name="spinBox_28">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="3">
+             <widget class="QSpinBox" name="spinBox_17">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>Hostname</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="1" colspan="6">
+             <widget class="QComboBox" name="comboBox_5"/>
+            </item>
+            <item row="8" column="3">
+             <widget class="QSpinBox" name="spinBox_21">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="2">
+             <widget class="QSpinBox" name="spinBox_20">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>SSID</string>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="0">
+             <widget class="QLabel" name="label_12">
+              <property name="text">
+               <string>Authentication</string>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="1" colspan="6">
+             <widget class="QComboBox" name="comboBox_6"/>
+            </item>
+            <item row="12" column="1" colspan="6">
+             <widget class="QLineEdit" name="lineEdit_2"/>
+            </item>
+            <item row="2" column="1">
+             <widget class="QRadioButton" name="radioButton_2">
+              <property name="text">
+               <string>DHCP</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <widget class="QSpinBox" name="spinBox_8">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>IP</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="3">
+             <widget class="QSpinBox" name="spinBox_9">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QSpinBox" name="spinBox_7">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Subnet</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Gateway</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QSpinBox" name="spinBox_11">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="2">
+             <widget class="QSpinBox" name="spinBox_12">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="3">
+             <widget class="QSpinBox" name="spinBox_13">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="4">
+             <widget class="QSpinBox" name="spinBox_14">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QSpinBox" name="spinBox_15">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="2">
+             <widget class="QSpinBox" name="spinBox_16">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="4">
+             <widget class="QSpinBox" name="spinBox_18">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1">
+             <widget class="QSpinBox" name="spinBox_23">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="2">
+             <widget class="QSpinBox" name="spinBox_24">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="3">
+             <widget class="QSpinBox" name="spinBox_25">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="4">
+             <widget class="QSpinBox" name="spinBox_26">
+              <property name="maximum">
+               <number>255</number>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="5" colspan="3">
+             <layout class="QVBoxLayout" name="verticalLayout_8">
+              <item>
+               <widget class="QPushButton" name="pushButton_5">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>125</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Move Up</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_6">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>125</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Move Down</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_7">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>125</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Remove</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="7" column="5" colspan="3">
+             <layout class="QVBoxLayout" name="verticalLayout_9">
+              <item>
+               <widget class="QPushButton" name="pushButton_8">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>125</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Add</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="0" column="7">
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="13" column="5" colspan="3">
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="QPushButton" name="pushButton_4">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>125</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Save</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
@@ -118,9 +445,21 @@
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_7">
-            <item>
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="0">
              <widget class="QTabWidget" name="tabWidget">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>515</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="tabPosition">
                <enum>QTabWidget::North</enum>
               </property>
@@ -131,9 +470,16 @@
                <attribute name="title">
                 <string>Connectivity</string>
                </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_8">
+               <layout class="QVBoxLayout" name="verticalLayout_2">
                 <item>
                  <layout class="QGridLayout" name="gridLayout_3">
+                  <item row="3" column="1">
+                   <widget class="QCheckBox" name="checkBox">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
                   <item row="0" column="0">
                    <widget class="QLabel" name="label_16">
                     <property name="text">
@@ -180,12 +526,41 @@
                   <item row="2" column="1">
                    <widget class="QSpinBox" name="spinBox_34"/>
                   </item>
-                  <item row="3" column="1">
-                   <widget class="QCheckBox" name="checkBox">
-                    <property name="text">
-                     <string/>
-                    </property>
-                   </widget>
+                  <item row="4" column="3" colspan="2">
+                   <layout class="QHBoxLayout" name="horizontalLayout_5">
+                    <item>
+                     <spacer name="horizontalSpacer">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="pushButton_3">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>125</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string>Save</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                  </layout>
                 </item>
@@ -195,42 +570,54 @@
                <attribute name="title">
                 <string>Authentication</string>
                </attribute>
-               <layout class="QVBoxLayout" name="verticalLayout_9">
+               <layout class="QVBoxLayout" name="verticalLayout_3">
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout">
-                  <item>
-                   <widget class="QLabel" name="label_20">
+                 <layout class="QGridLayout" name="gridLayout">
+                  <item row="2" column="1">
+                   <layout class="QHBoxLayout" name="horizontalLayout_2">
+                    <item>
+                     <spacer name="horizontalSpacer_8">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="pushButton_2">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>125</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string>Save</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="lineEdit_3"/>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label">
                     <property name="text">
                      <string>Secret</string>
                     </property>
                    </widget>
-                  </item>
-                  <item>
-                   <widget class="QLineEdit" name="lineEdit_3"/>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QGridLayout" name="gridLayout_4">
-                  <item row="0" column="1">
-                   <widget class="QPushButton" name="pushButton">
-                    <property name="text">
-                     <string>Save</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <spacer name="horizontalSpacer">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
                   </item>
                  </layout>
                 </item>
@@ -242,30 +629,88 @@
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_10">
                 <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_2">
-                  <item>
-                   <widget class="QLabel" name="label_21">
+                 <layout class="QGridLayout" name="gridLayout_4">
+                  <item row="0" column="1">
+                   <widget class="QComboBox" name="comboBox">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_2">
                     <property name="text">
                      <string>Category</string>
                     </property>
                    </widget>
                   </item>
-                  <item>
-                   <widget class="QComboBox" name="comboBox_7"/>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_3">
-                  <item>
-                   <widget class="QLabel" name="label_22">
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_3">
                     <property name="text">
                      <string>Level</string>
                     </property>
                    </widget>
                   </item>
-                  <item>
-                   <widget class="QComboBox" name="comboBox_8"/>
+                  <item row="1" column="1">
+                   <widget class="QComboBox" name="comboBox_2">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <layout class="QHBoxLayout" name="horizontalLayout">
+                    <item>
+                     <spacer name="horizontalSpacer_2">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="pushButton">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>125</width>
+                        <height>0</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string>Save</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                  </layout>
                 </item>
@@ -273,278 +718,18 @@
               </widget>
              </widget>
             </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="gbox_network_settings">
-         <property name="title">
-          <string>Network Settings</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <layout class="QGridLayout" name="gridLayout_2">
-            <item row="8" column="0" colspan="7">
-             <widget class="Line" name="line_2">
+            <item row="0" column="1">
+             <spacer name="horizontalSpacer_3">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
-             </widget>
-            </item>
-            <item row="3" column="4">
-             <widget class="QSpinBox" name="spinBox_10">
-              <property name="maximum">
-               <number>255</number>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
               </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_10">
-              <property name="text">
-               <string>Interface</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="4">
-             <widget class="QSpinBox" name="spinBox_22">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="11" column="0">
-             <widget class="QLabel" name="label_13">
-              <property name="text">
-               <string>Pass</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="1">
-             <widget class="QSpinBox" name="spinBox_19">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="5">
-             <widget class="QSpinBox" name="spinBox_27">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="label_9">
-              <property name="text">
-               <string>MAC</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1" colspan="6">
-             <widget class="QLineEdit" name="lineEdit"/>
-            </item>
-            <item row="7" column="6">
-             <widget class="QSpinBox" name="spinBox_28">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_5">
-              <property name="text">
-               <string>Hostname</string>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="1" colspan="6">
-             <widget class="QComboBox" name="comboBox_5"/>
-            </item>
-            <item row="1" column="1" colspan="6">
-             <widget class="QComboBox" name="comboBox_4"/>
-            </item>
-            <item row="7" column="3">
-             <widget class="QSpinBox" name="spinBox_21">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="2">
-             <widget class="QSpinBox" name="spinBox_20">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="0">
-             <widget class="QLabel" name="label_11">
-              <property name="text">
-               <string>SSID</string>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="0">
-             <widget class="QLabel" name="label_12">
-              <property name="text">
-               <string>Authentication</string>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="1" colspan="6">
-             <widget class="QComboBox" name="comboBox_6"/>
-            </item>
-            <item row="11" column="1" colspan="6">
-             <widget class="QLineEdit" name="lineEdit_2"/>
-            </item>
-            <item row="2" column="1">
-             <widget class="QRadioButton" name="radioButton_2">
-              <property name="text">
-               <string>DHCP</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
-             <widget class="QSpinBox" name="spinBox_8">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_6">
-              <property name="text">
-               <string>IP</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="3">
-             <widget class="QSpinBox" name="spinBox_9">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QSpinBox" name="spinBox_7">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2">
-             <widget class="QRadioButton" name="radioButton_3">
-              <property name="text">
-               <string>Static</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>Subnet</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="label_8">
-              <property name="text">
-               <string>Gateway</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="0">
-             <widget class="QLabel" name="label_14">
-              <property name="text">
-               <string>DNS</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QSpinBox" name="spinBox_11">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="2">
-             <widget class="QSpinBox" name="spinBox_12">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="3">
-             <widget class="QSpinBox" name="spinBox_13">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="4">
-             <widget class="QSpinBox" name="spinBox_14">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QSpinBox" name="spinBox_15">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="2">
-             <widget class="QSpinBox" name="spinBox_16">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="3">
-             <widget class="QSpinBox" name="spinBox_17">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="4">
-             <widget class="QSpinBox" name="spinBox_18">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1">
-             <widget class="QSpinBox" name="spinBox_23">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="2">
-             <widget class="QSpinBox" name="spinBox_24">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="3">
-             <widget class="QSpinBox" name="spinBox_25">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="4">
-             <widget class="QSpinBox" name="spinBox_26">
-              <property name="maximum">
-               <number>255</number>
-              </property>
-             </widget>
+             </spacer>
             </item>
            </layout>
           </item>
@@ -554,7 +739,7 @@
        <item>
         <widget class="QGroupBox" name="gbox_ntp">
          <property name="title">
-          <string>NTP</string>
+          <string>Time</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5"/>
         </widget>
@@ -569,14 +754,54 @@
       </layout>
       <zorder>gbox_cron</zorder>
       <zorder>gbox_brickd</zorder>
-      <zorder>gbox_locales</zorder>
-      <zorder>gbox_network_settings</zorder>
       <zorder>gbox_ntp</zorder>
+      <zorder>gbox_network_settings</zorder>
      </widget>
     </widget>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>spinBox_33</tabstop>
+  <tabstop>spinBox_30</tabstop>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>spinBox_34</tabstop>
+  <tabstop>spinBox_11</tabstop>
+  <tabstop>spinBox_7</tabstop>
+  <tabstop>radioButton_2</tabstop>
+  <tabstop>checkBox</tabstop>
+  <tabstop>spinBox_10</tabstop>
+  <tabstop>spinBox_19</tabstop>
+  <tabstop>spinBox_23</tabstop>
+  <tabstop>spinBox_15</tabstop>
+  <tabstop>sarea_settings</tabstop>
+  <tabstop>comboBox_2</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>spinBox_29</tabstop>
+  <tabstop>spinBox_20</tabstop>
+  <tabstop>comboBox_6</tabstop>
+  <tabstop>lineEdit_2</tabstop>
+  <tabstop>comboBox_4</tabstop>
+  <tabstop>spinBox_21</tabstop>
+  <tabstop>spinBox_8</tabstop>
+  <tabstop>spinBox_9</tabstop>
+  <tabstop>spinBox_32</tabstop>
+  <tabstop>radioButton_3</tabstop>
+  <tabstop>spinBox_31</tabstop>
+  <tabstop>spinBox_12</tabstop>
+  <tabstop>spinBox_13</tabstop>
+  <tabstop>spinBox_14</tabstop>
+  <tabstop>spinBox_27</tabstop>
+  <tabstop>spinBox_16</tabstop>
+  <tabstop>spinBox_17</tabstop>
+  <tabstop>spinBox_18</tabstop>
+  <tabstop>spinBox_22</tabstop>
+  <tabstop>spinBox_24</tabstop>
+  <tabstop>spinBox_25</tabstop>
+  <tabstop>spinBox_26</tabstop>
+  <tabstop>comboBox_5</tabstop>
+  <tabstop>spinBox_28</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
