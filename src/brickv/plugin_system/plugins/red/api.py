@@ -57,6 +57,7 @@ class REDError(Exception):
     E_NAME_TOO_LONG            = 141
     E_INVALID_SEEK             = 142
     E_NOT_SUPPORTED            = 143
+    E_TOO_MANY_OPEN_FILES      = 144
 
     _error_code_names = {
         E_SUCCESS                  : 'E_SUCCESS',
@@ -87,7 +88,8 @@ class REDError(Exception):
         E_OUT_OF_RANGE             : 'E_OUT_OF_RANGE',
         E_NAME_TOO_LONG            : 'E_NAME_TOO_LONG',
         E_INVALID_SEEK             : 'E_INVALID_SEEK',
-        E_NOT_SUPPORTED            : 'E_NOT_SUPPORTED'
+        E_NOT_SUPPORTED            : 'E_NOT_SUPPORTED',
+        E_TOO_MANY_OPEN_FILES      : 'E_TOO_MANY_OPEN_FILES'
     }
 
     def __init__(self, message, error_code):
