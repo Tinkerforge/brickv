@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
 
 red_tab_console.py: RED console tab implementation
 
@@ -31,6 +32,11 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
         self.setupUi(self)
 
         self.session = None
+        self.connect_button.pressed.connect(self.connect_pressed)
+
+        self.console.setStyleSheet("background-color: black; color: white");
+        self.console.setCursorWidth(8)
+        self.console.setDisabled(True)
 
     def tab_on_focus(self):
         pass
@@ -38,4 +44,11 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
     def tab_off_focus(self):
         pass
 
-    # the callbacks
+    def connect_pressed(self):
+        text = self.connect_button.text()
+        if text == 'Connect':
+            self.console.setDisabled(False)
+            self.connect_button.setText("Disconnect")
+        else:
+            self.console.setDisabled(True)
+            self.connect_button.setText("Connect")
