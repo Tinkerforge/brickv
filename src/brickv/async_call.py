@@ -2,6 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 async_call.py: Asynchronous call for Brick/Bricklet functions
 
@@ -24,9 +25,9 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtGui import QApplication
 from PyQt4.QtCore import QThread, QEvent
 from threading import Lock
-
 import logging
 import traceback
+from brickv.bindings import ip_connection
 
 try:
     from Queue import Queue
@@ -82,15 +83,20 @@ def async_start_thread(parent):
                         return_value = func_to_call(*parameter)
                     else:
                         return_value = func_to_call(parameter)
-                except:
+                except Exception as e:
                     with async_session_lock:
                         if session_id != async_session_id:
                             continue
 
                     if return_error != None:
                         async_event_queue.put(return_error)
-                        with async_call_queue.mutex:
-                            async_call_queue.queue.clear()
+
+                        if isinstance(e, ip_connection.Error):
+                            # clear the async call queue if an IPConnection
+                            # error occurred. in this case we assume that the
+                            # next calls will also fail
+                            with async_call_queue.mutex:
+                                async_call_queue.queue.clear()
 
                         QApplication.postEvent(self, QEvent(ASYNC_EVENT))
                         continue
