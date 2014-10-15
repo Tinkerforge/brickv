@@ -31,7 +31,8 @@ import time
 
 from PyQt4.QtGui import QWidget, QMessageBox
 from brickv.plugin_system.plugins.master.ui_rs485 import Ui_RS485
-from brickv.plugin_system.plugins.master.ui_ethernet import Ui_Ethernet
+from brickv.plugin_system.plugins.master.ethernet import SpinBoxHex
+from brickv.plugin_system.plugins.red.ui_red_tab_extension_ethernet import Ui_Ethernet
 
 from brickv.plugin_system.plugins.red import config_parser
 
@@ -42,7 +43,7 @@ def reconnect(mainwindow):
             QtCore.QObject.__init__(self)
             self.reconnect_signal.connect(mainwindow.reconnect)
 
-    time.sleep(1)
+    time.sleep(0.25)
     rs = ReconnectSignal(mainwindow)
     rs.reconnect_signal.emit()
 
@@ -168,11 +169,15 @@ class RS485(QWidget, Ui_RS485):
         eeprom[404] = ord(new_config['parity'])
         eeprom[405] = int(new_config['stopbits'])
 
+        # Add start address
+        data = [0, 0]
+        data.extend(eeprom)
+
         def cb_error(new_config, error):
             new_config['eeprom_file'].release()
             if error is not None:
                 self.rs485_type_changed(self.rs485_type.currentIndex())
-                popup_fail(self, 'Could write file on RED Brick: ' + str(error))
+                popup_fail(self, 'Could not write file on RED Brick: ' + str(error))
             else:
                 self.save_button.setText("Configuration saved. Reconnect in setup tab to reload eeprom.")
                 self.parent.script_manager.execute_script('restart_brickd', None)
@@ -180,10 +185,7 @@ class RS485(QWidget, Ui_RS485):
 #                mainwindow = self.parent.parent().parent().parent().parent().parent().parent().parent().parent()
 #                QtCore.QTimer.singleShot(1, lambda: reconnect(mainwindow))
 
-        f = open("/tmp/eeprom", "w")
-        f.write(''.join(map(chr, eeprom)))
-        f.close()
-        new_config['eeprom_file'].write_async(map(chr, eeprom), lambda x: cb_error(new_config, x), None)
+        new_config['eeprom_file'].write_async(map(chr, data), lambda x: cb_error(new_config, x), None)
 
     def rs485_type_changed(self, index):
         if index == 0:
@@ -221,8 +223,74 @@ class Ethernet(QWidget, Ui_Ethernet):
         self.extension = extension
         self.config = config
 
+        self.ethernet_mac6 = SpinBoxHex()
+        self.ethernet_mac5 = SpinBoxHex()
+        self.ethernet_mac4 = SpinBoxHex()
+        self.ethernet_mac3 = SpinBoxHex()
+        self.ethernet_mac2 = SpinBoxHex()
+        self.ethernet_mac1 = SpinBoxHex()
+        self.mac_layout.addWidget(self.ethernet_mac6)
+        self.mac_layout.addWidget(QtGui.QLabel(':'))
+        self.mac_layout.addWidget(self.ethernet_mac5)
+        self.mac_layout.addWidget(QtGui.QLabel(':'))
+        self.mac_layout.addWidget(self.ethernet_mac4)
+        self.mac_layout.addWidget(QtGui.QLabel(':'))
+        self.mac_layout.addWidget(self.ethernet_mac3)
+        self.mac_layout.addWidget(QtGui.QLabel(':'))
+        self.mac_layout.addWidget(self.ethernet_mac2)
+        self.mac_layout.addWidget(QtGui.QLabel(':'))
+        self.mac_layout.addWidget(self.ethernet_mac1)
+
     def start(self):
-        pass # TODO
+        mac = map(lambda x: int(x, 16), self.config['mac'].split(':'))
+        self.ethernet_mac6.setValue(mac[0])
+        self.ethernet_mac5.setValue(mac[1])
+        self.ethernet_mac4.setValue(mac[2])
+        self.ethernet_mac3.setValue(mac[3])
+        self.ethernet_mac2.setValue(mac[4])
+        self.ethernet_mac1.setValue(mac[5])
+
+        self.ethernet_save.pressed.connect(self.save_pressed)
+
+    def save_pressed(self):
+        new_config = {}
+        new_config['type'] = 4
+        new_config['extension'] = self.extension
+        new_config['eeprom_file'] = REDFile(self.session)
+
+        def cb_file_open_error(new_config):
+            popup_fail(self, 'Could not open file on RED Brick')
+
+        async_call(new_config['eeprom_file'].open, ('/tmp/new_eeprom_extension_' + str(new_config['extension']) + ".conf", REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0555, 0, 0), lambda x: self.upload_eeprom_data(new_config, x), lambda: cb_file_open_error(new_config))
+
+    def upload_eeprom_data(self, new_config, result):
+        if not isinstance(result, REDFile):
+            popup_fail(self, 'Could not open file on RED Brick')
+            return
+
+        eeprom = [self.ethernet_mac6.value(),
+                  self.ethernet_mac5.value(),
+                  self.ethernet_mac4.value(),
+                  self.ethernet_mac3.value(),
+                  self.ethernet_mac2.value(),
+                  self.ethernet_mac1.value()]
+
+        # Add start address
+        data = [32*4, 0]
+        data.extend(eeprom)
+
+        def cb_error(new_config, error):
+            new_config['eeprom_file'].release()
+            if error is not None:
+                popup_fail(self, 'Could not write file on RED Brick: ' + str(error))
+            else:
+                self.ethernet_save.setText("Configuration saved. Reconnect in setup tab to reload eeprom.")
+                self.parent.script_manager.execute_script('restart_brickd', None)
+                popup_ok(self, 'Saved configuration successfully, restarting brickd.\nPlease go to setup tab and reconnect')
+#                mainwindow = self.parent.parent().parent().parent().parent().parent().parent().parent().parent()
+#                QtCore.QTimer.singleShot(1, lambda: reconnect(mainwindow))
+
+        new_config['eeprom_file'].write_async(map(chr, data), lambda x: cb_error(new_config, x), None)
 
 class REDTabExtension(QtGui.QWidget, Ui_REDTabExtension):
     def __init__(self):
