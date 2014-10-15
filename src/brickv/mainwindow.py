@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, QVariant, Qt, QTimer, QEvent
+from PyQt4.QtCore import pyqtSignal, QVariant, Qt, QTimer, QEvent, pyqtSlot
 from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, \
                         QPushButton, QWidget, QHBoxLayout, QVBoxLayout, \
                         QLabel, QFrame, QSpacerItem, QSizePolicy, \
@@ -355,6 +355,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.update_advanced_window()
         self.advanced_window.show()
+
+    @pyqtSlot()
+    def reconnect(self):
+        time.sleep(0.5)
+        self.connect_pressed()
+        time.sleep(0.5)
+        self.connect_pressed()
 
     def connect_pressed(self):
         if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_DISCONNECTED:

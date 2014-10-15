@@ -46,6 +46,7 @@ class ScriptManager:
 
     def __init__(self, session):
         self.session = session
+        # FIXME: This is blocking the GUI!
         self.devnull = REDFile(self.session).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0)
         self.scripts = {}
 
@@ -67,14 +68,16 @@ class ScriptManager:
     # If there is an error, callback will return None.
     def execute_script(self, script_name, callback, params = [], max_len = 65536):
         if not script_name in self.scripts:
-            callback(None) # We are still in GUI thread, use callback instead of signal
+            if callback is not None:
+                callback(None) # We are still in GUI thread, use callback instead of signal
             
         # The script is currently being executed, this should be the only case
         # were we don't call the callback
         if self.scripts[script_name].is_executing:
             return
 
-        self.scripts[script_name].script_signal.connect(callback)
+        if callback is not None:
+            self.scripts[script_name].script_signal.connect(callback)
 
         # We just let all exceptions fall through to here and give up.
         # There is nothing we can do anyway.
@@ -83,10 +86,12 @@ class ScriptManager:
             self._init_script(script_name, callback, params, max_len)
         except:
             traceback.print_exc()
-            self.scripts[script_name].script_signal.disconnect(callback)
+            if callback is not None:
+                self.scripts[script_name].script_signal.disconnect(callback)
             self.scripts[script_name].copied = False
             self.scripts[script_name].is_executing = False
-            callback(None) # We are still in GUI thread, use callback instead of signal
+            if callback is not None:
+                callback(None) # We are still in GUI thread, use callback instead of signal
 
 
     def _init_script(self, script_name, callback, params, max_len):
@@ -115,6 +120,7 @@ class ScriptManager:
             else:
                 self._execute_after_init(script_name, callback, params, max_len)
         else:
+            print str(async_write_error)
             ScriptManager._call(self.scripts[script_name], callback, None)
 
     def _execute_after_init(self, script_name, callback, params, max_len):
