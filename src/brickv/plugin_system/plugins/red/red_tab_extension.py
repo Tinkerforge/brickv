@@ -174,7 +174,7 @@ class RS485(QWidget, Ui_RS485):
         data.extend(eeprom)
 
         def cb_error(new_config, error):
-            async_call(new_config['eeprom_file'].release, None, None, None)
+            new_config['eeprom_file'].release()
             if error is not None:
                 self.rs485_type_changed(self.rs485_type.currentIndex())
                 popup_fail(self, 'Could not write file on RED Brick: ' + str(error))
@@ -280,7 +280,7 @@ class Ethernet(QWidget, Ui_Ethernet):
         data.extend(eeprom)
 
         def cb_error(new_config, error):
-            async_call(new_config['eeprom_file'].release, None, None, None)
+            new_config['eeprom_file'].release()
             if error is not None:
                 popup_fail(self, 'Could not write file on RED Brick: ' + str(error))
             else:
@@ -325,7 +325,7 @@ class REDTabExtension(QtGui.QWidget, Ui_REDTabExtension):
         self.extension_layout.addWidget(Ethernet(self, extension, config))
 
     def cb_file_read(self, extension, result):
-        async_call(self.red_file[extension].release, None, None, None)
+        self.red_file[extension].release()
 
         if result.error == None:
             config = config_parser.parse(result.data)

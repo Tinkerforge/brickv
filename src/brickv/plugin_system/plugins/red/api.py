@@ -174,6 +174,7 @@ class REDSession(QtCore.QObject):
 
         return self
 
+    # don't call this method with async_call, this is already non-blocking
     def expire(self):
         if self._session_id is None:
             # expiring an unattached session is allowed and does nothing
@@ -275,6 +276,7 @@ class REDObject(QtCore.QObject):
 
         return object_id
 
+    # don't call this method with async_call, this is already non-blocking
     def release(self):
         if self._object_id is None:
             # releasing an unattached object is allowed and does nothing

@@ -60,7 +60,7 @@ class ScriptManager:
 
     def destroy(self):
         # ensure to release of REDObjects
-        async_call(self.devnull.release, None, None, None)
+        self.devnull.release()
         self.scripts = {}
 
     # Call with a script name from the scripts/ folder.

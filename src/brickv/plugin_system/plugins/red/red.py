@@ -66,7 +66,7 @@ class RED(PluginBase, Ui_RED):
 
     def destroy(self):
         self.script_manager.destroy()
-        async_call(self.session.expire, None, None, None)
+        self.session.expire()
 
     def has_reset_device(self):
         return False # FIXME: will have reboot, instead of reset
