@@ -102,13 +102,11 @@ class REDError(Exception):
         return '{0}: {1} ({2})'.format(self._message,
                                        REDError._error_code_names.get(self._error_code, '<unknown>'),
                                        self._error_code)
-    @property
-    def message(self):
-        return self._message
 
     @property
-    def error_code(self):
-        return self._error_code
+    def message(self):    return self._message
+    @property
+    def error_code(self): return self._error_code
 
 
 class REDBrick(BrickRED):
@@ -196,8 +194,7 @@ class REDSession(QtCore.QObject):
             pass
 
     @property
-    def session_id(self):
-        return self._session_id
+    def session_id(self): return self._session_id
 
 
 def _attach_or_release(session, object_class, object_id, extra_object_ids_to_release_on_error=[]):
@@ -292,12 +289,9 @@ class REDObject(QtCore.QObject):
             pass
 
     @property
-    def session(self):
-        return self._session
-
+    def session(self):   return self._session
     @property
-    def object_id(self):
-        return self._object_id
+    def object_id(self): return self._object_id
 
 
 class REDString(REDObject):
@@ -366,8 +360,7 @@ class REDString(REDObject):
         return self
 
     @property
-    def data(self):
-        return self._data
+    def data(self): return self._data
 
 
 class REDList(REDObject):
@@ -429,8 +422,7 @@ class REDList(REDObject):
         return self
 
     @property
-    def items(self):
-        return self._items
+    def items(self): return self._items
 
 
 def _get_zero_padded_chunk(data, max_chunk_length):
@@ -681,44 +673,25 @@ class REDFileBase(REDObject):
         self._session._brick.read_file_async(self._object_id, length_max)
 
     @property
-    def type(self):
-        return self._type
-
+    def type(self):               return self._type
     @property
-    def name(self):
-        return self._name
-
+    def name(self):               return self._name
     @property
-    def flags(self):
-        return self._flags
-
+    def flags(self):              return self._flags
     @property
-    def permissions(self):
-        return self._permissions
-
+    def permissions(self):        return self._permissions
     @property
-    def uid(self):
-        return self._uid
-
+    def uid(self):                return self._uid
     @property
-    def gid(self):
-        return self._gid
-
+    def gid(self):                return self._gid
     @property
-    def length(self):
-        return self._length
-
+    def length(self):             return self._length
     @property
-    def access_time(self):
-        return self._access_time
-
+    def access_time(self):        return self._access_time
     @property
-    def modification_time(self):
-        return self._modification_time
-
+    def modification_time(self):  return self._modification_time
     @property
-    def status_change_time(self):
-        return self._status_change_time
+    def status_change_time(self): return self._status_change_time
 
 
 class REDFile(REDFileBase):
@@ -904,12 +877,9 @@ class REDDirectory(REDObject):
         return self
 
     @property
-    def name(self):
-        return self._name
-
+    def name(self):    return self._name
     @property
-    def entries(self):
-        return self._entries
+    def entries(self): return self._entries
 
 
 DIRECTORY_FLAG_RECURSIVE = BrickRED.DIRECTORY_FLAG_RECURSIVE
@@ -1110,52 +1080,29 @@ class REDProcess(REDObject):
             raise REDError('Could not kill process object {0}'.format(self._object_id), error_code)
 
     @property
-    def executable(self):
-        return self._executable
-
+    def executable(self):        return self._executable
     @property
-    def arguments(self):
-        return self._arguments
-
+    def arguments(self):         return self._arguments
     @property
-    def environment(self):
-        return self._environment
-
+    def environment(self):       return self._environment
     @property
-    def working_directory(self):
-        return self._working_directory
-
+    def working_directory(self): return self._working_directory
     @property
-    def pid(self):
-        return self._pid
-
+    def pid(self):               return self._pid
     @property
-    def uid(self):
-        return self._uid
-
+    def uid(self):               return self._uid
     @property
-    def gid(self):
-        return self._gid
-
+    def gid(self):               return self._gid
     @property
-    def stdin(self):
-        return self._stdin
-
+    def stdin(self):             return self._stdin
     @property
-    def stdout(self):
-        return self._stdout
-
+    def stdout(self):            return self._stdout
     @property
-    def stderr(self):
-        return self._stderr
-
+    def stderr(self):            return self._stderr
     @property
-    def state(self):
-        return self._state
-
+    def state(self):             return self._state
     @property
-    def exit_code(self):
-        return self._exit_code
+    def exit_code(self):         return self._exit_code
 
 
 def get_processes(session):
