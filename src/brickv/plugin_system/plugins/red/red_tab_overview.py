@@ -33,10 +33,11 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 
 # constants
-REFRESH_TIME = 3000 #2s
-REFRESH_TIMEOUT = 500 # 500ms
-DEFAULT_TVIEW_NIC_HEADER_WIDTH = 210 # 210px
-DEFAULT_TVIEW_PROCESS_HEADER_WIDTH = 210 # 210px
+REFRESH_TIME = 3000 # in milliseconds
+REFRESH_TIMEOUT = 500 # in milliseconds
+DEFAULT_TVIEW_NIC_HEADER_WIDTH = 210 # in pixels
+DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_FIRST = 210 # in pixels
+DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER = 105 # in pixels
 
 class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
     red = None
@@ -256,11 +257,11 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.tview_process.setSpan(0, 0, 1, 5)
         self.process_item_model.setItem(0, 0, Qt.QStandardItem("Collecting data..."))
         self.tview_process.setModel(self.process_item_model)
-        self.tview_process.setColumnWidth(0, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
-        self.tview_process.setColumnWidth(1, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
-        self.tview_process.setColumnWidth(2, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
-        self.tview_process.setColumnWidth(3, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
-        self.tview_process.setColumnWidth(4, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH)
+        self.tview_process.setColumnWidth(0, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_FIRST)
+        self.tview_process.setColumnWidth(1, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER)
+        self.tview_process.setColumnWidth(2, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER)
+        self.tview_process.setColumnWidth(3, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER)
+        self.tview_process.setColumnWidth(4, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER)
         self.tview_process.horizontalHeader().setSortIndicator(3, QtCore.Qt.DescendingOrder)
         self.tview_process_previous_sort = {'column_index': 3, 'order': QtCore.Qt.DescendingOrder}
         self.tview_process_horizontal_header = self.tview_process.horizontalHeader()
