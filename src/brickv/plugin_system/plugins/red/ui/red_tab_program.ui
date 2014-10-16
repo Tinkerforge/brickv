@@ -15,12 +15,9 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QLabel" name="label">
+    <widget class="QPushButton" name="button_new">
      <property name="text">
-      <string>Program tab</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
+      <string>New</string>
      </property>
     </widget>
    </item>

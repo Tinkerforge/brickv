@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4 import Qt, QtCore, QtGui
 from brickv.plugin_system.plugins.red.ui_red_tab_program import Ui_REDTabProgram
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.new_program import NewProgram
 
 class REDTabProgram(QtGui.QWidget, Ui_REDTabProgram):
     def __init__(self):
@@ -32,6 +33,9 @@ class REDTabProgram(QtGui.QWidget, Ui_REDTabProgram):
         self.setupUi(self)
 
         self.session = None
+        self.wizard = None
+
+        self.button_new.clicked.connect(self.new_program)
 
     def tab_on_focus(self):
         defined_programs = get_defined_programs(self.session)
@@ -42,4 +46,6 @@ class REDTabProgram(QtGui.QWidget, Ui_REDTabProgram):
     def tab_off_focus(self):
         pass
 
-    # the callbacks
+    def new_program(self):
+        self.wizard = NewProgram()
+        self.wizard.show()
