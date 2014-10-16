@@ -200,7 +200,7 @@ class REDSession(QtCore.QObject):
 def _attach_or_release(session, object_class, object_id, extra_object_ids_to_release_on_error=[]):
     try:
         obj = object_class(session).attach(object_id)
-    except Exception as e:
+    except:
         try:
             session._brick.release_object(object_id, session._session_id)
         except:
@@ -214,7 +214,7 @@ def _attach_or_release(session, object_class, object_id, extra_object_ids_to_rel
                 # FIXME: error handling
                 pass
 
-        raise e
+        raise # just re-raise the original exception
 
     return obj
 
