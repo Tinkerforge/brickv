@@ -158,7 +158,7 @@ class REDSession(QtCore.QObject):
             error_code = self._brick.keep_session_alive(self._session_id, REDSession.LIFETIME)
         except:
             # FIXME: error handling
-            pass
+            traceback.print_exc()
 
     def create(self):
         self.expire()
@@ -188,10 +188,10 @@ class REDSession(QtCore.QObject):
         self._session_id = None
 
         try:
-            session._brick.expire_session(session_id)
+            self._brick.expire_session_unchecked(session_id)
         except:
-            # FIXME: error handling
-            pass
+            # ignoring IPConnection-level error
+            traceback.print_exc()
 
     @property
     def session_id(self): return self._session_id
@@ -202,17 +202,17 @@ def _attach_or_release(session, object_class, object_id, extra_object_ids_to_rel
         obj = object_class(session).attach(object_id)
     except:
         try:
-            session._brick.release_object(object_id, session._session_id)
+            session._brick.release_object_unchecked(object_id, session._session_id)
         except:
-            # FIXME: error handling
-            pass
+            # ignoring IPConnection-level error
+            traceback.print_exc()
 
         for extra_object_id in extra_object_ids_to_release_on_error:
             try:
-                session._brick.release_object(extra_object_id, session._session_id)
+                session._brick.release_object_unchecked(extra_object_id, session._session_id)
             except:
-                # FIXME: error handling
-                pass
+                # ignoring IPConnection-level error
+                traceback.print_exc()
 
         raise # just re-raise the original exception
 
@@ -283,10 +283,10 @@ class REDObject(QtCore.QObject):
         object_id = self.detach()
 
         try:
-            self._session._brick.release_object(object_id, self._session._session_id)
+            self._session._brick.release_object_unchecked(object_id, self._session._session_id)
         except:
-            # FIXME: error handling
-            pass
+            # ignoring IPConnection-level error
+            traceback.print_exc()
 
     @property
     def session(self):   return self._session
@@ -769,10 +769,10 @@ class REDFileOrPipeAttacher:
             obj = _attach_or_release(self._session, REDPipe, self._object_id)
         else:
             try:
-                self._session._brick.release_object(name_string_id, self._session._session_id)
+                self._session._brick.release_object_unchecked(name_string_id, self._session._session_id)
             except:
-                # FIXME: error handling
-                pass
+                # ignoring IPConnection-level error
+                traceback.print_exc()
 
             obj = _attach_or_release(self._session, REDFile, self._object_id)
 
