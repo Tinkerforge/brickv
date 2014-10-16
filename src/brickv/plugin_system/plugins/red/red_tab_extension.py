@@ -174,16 +174,16 @@ class RS485(QWidget, Ui_RS485):
         data.extend(eeprom)
 
         def cb_error(new_config, error):
-            new_config['eeprom_file'].release()
+            async_call(new_config['eeprom_file'].release, None, None, None)
             if error is not None:
                 self.rs485_type_changed(self.rs485_type.currentIndex())
                 popup_fail(self, 'Could not write file on RED Brick: ' + str(error))
             else:
-                self.save_button.setText("Configuration saved. Reconnect in setup tab to reload eeprom.")
+                self.save_button.setText("Configuration saved. Brick Viewer should reconnect now.")
                 self.parent.script_manager.execute_script('restart_brickd', None)
-                popup_ok(self, 'Saved configuration successfully, restarting brickd.\nPlease go to setup tab and reconnect')
-#                mainwindow = self.parent.parent().parent().parent().parent().parent().parent().parent().parent()
-#                QtCore.QTimer.singleShot(1, lambda: reconnect(mainwindow))
+                popup_ok(self, 'Saved configuration successfully, restarting brickd.')
+                mainwindow = self.parent.parent().parent().parent().parent().parent().parent().parent().parent()
+                QtCore.QTimer.singleShot(1, lambda: reconnect(mainwindow))
 
         new_config['eeprom_file'].write_async(map(chr, data), lambda x: cb_error(new_config, x), None)
 
@@ -280,15 +280,15 @@ class Ethernet(QWidget, Ui_Ethernet):
         data.extend(eeprom)
 
         def cb_error(new_config, error):
-            new_config['eeprom_file'].release()
+            async_call(new_config['eeprom_file'].release, None, None, None)
             if error is not None:
                 popup_fail(self, 'Could not write file on RED Brick: ' + str(error))
             else:
-                self.ethernet_save.setText("Configuration saved. Reconnect in setup tab to reload eeprom.")
+                self.ethernet_save.setText("Configuration saved. Brick Viewer should reconnect now.")
                 self.parent.script_manager.execute_script('restart_brickd', None)
-                popup_ok(self, 'Saved configuration successfully, restarting brickd.\nPlease go to setup tab and reconnect')
-#                mainwindow = self.parent.parent().parent().parent().parent().parent().parent().parent().parent()
-#                QtCore.QTimer.singleShot(1, lambda: reconnect(mainwindow))
+                popup_ok(self, 'Saved configuration successfully, restarting brickd.')
+                mainwindow = self.parent.parent().parent().parent().parent().parent().parent().parent().parent()
+                QtCore.QTimer.singleShot(1, lambda: reconnect(mainwindow))
 
         new_config['eeprom_file'].write_async(map(chr, data), lambda x: cb_error(new_config, x), None)
 
@@ -325,7 +325,7 @@ class REDTabExtension(QtGui.QWidget, Ui_REDTabExtension):
         self.extension_layout.addWidget(Ethernet(self, extension, config))
 
     def cb_file_read(self, extension, result):
-        self.red_file[extension].release()
+        async_call(self.red_file[extension].release, None, None, None)
 
         if result.error == None:
             config = config_parser.parse(result.data)
