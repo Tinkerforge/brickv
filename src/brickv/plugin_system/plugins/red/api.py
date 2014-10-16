@@ -1116,10 +1116,358 @@ def get_processes(session):
     return _attach_or_release(session, REDList, processes_list_id)
 
 
+class REDProgram(REDObject):
+    STDIO_REDIRECTION_DEV_NULL = BrickRED.PROGRAM_STDIO_REDIRECTION_DEV_NULL
+    STDIO_REDIRECTION_PIPE     = BrickRED.PROGRAM_STDIO_REDIRECTION_PIPE
+    STDIO_REDIRECTION_FILE     = BrickRED.PROGRAM_STDIO_REDIRECTION_FILE
+    STDIO_REDIRECTION_STDOUT   = BrickRED.PROGRAM_STDIO_REDIRECTION_STDOUT
+    STDIO_REDIRECTION_LOG      = BrickRED.PROGRAM_STDIO_REDIRECTION_LOG
+
+    START_CONDITION_NEVER     = BrickRED.PROGRAM_START_CONDITION_NEVER
+    START_CONDITION_NOW       = BrickRED.PROGRAM_START_CONDITION_NOW
+    START_CONDITION_REBOOT    = BrickRED.PROGRAM_START_CONDITION_REBOOT
+    START_CONDITION_TIMESTAMP = BrickRED.PROGRAM_START_CONDITION_TIMESTAMP
+
+    REPEAT_MODE_NEVER     = BrickRED.PROGRAM_REPEAT_MODE_NEVER
+    REPEAT_MODE_INTERVAL  = BrickRED.PROGRAM_REPEAT_MODE_INTERVAL
+    REPEAT_MODE_SELECTION = BrickRED.PROGRAM_REPEAT_MODE_SELECTION
+
+    _qtcb_process_spawned = QtCore.pyqtSignal(int)
+    _qtcb_scheduler_error_occurred = QtCore.pyqtSignal(int)
+
+    def __init__(self, *args):
+        REDObject.__init__(self, *args)
+
+        self._qtcb_process_spawned.connect(self._cb_process_spawned)
+        self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
+                                          self._qtcb_process_spawned.emit)
+
+        self._qtcb_scheduler_error_occurred.connect(self._cb_scheduler_error_occurred)
+        self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED,
+                                          self._qtcb_scheduler_error_occurred.emit)
+
+    def __repr__(self):
+        return '<REDProgram object_id: {0}, identifier: {1}>'.format(self._object_id, self._identifier)
+
+    def _initialize(self):
+        self._identifier = None
+        self._root_directory = None
+        self._executable = None
+        self._arguments = None
+        self._environment = None
+        self._stdin_redirection = None
+        self._stdin_file_name = None
+        self._stdout_redirection = None
+        self._stdout_file_name = None
+        self._stderr_redirection = None
+        self._stderr_file_name = None
+        self._start_condition = None
+        self._start_timestamp = None
+        self._start_delay = None
+        self._repeat_mode = None
+        self._repeat_interval = None
+        self._repeat_second_mask = None
+        self._repeat_minute_mask = None
+        self._repeat_hour_mask = None
+        self._repeat_day_mask = None
+        self._repeat_month_mask = None
+        self._repeat_weekday_mask = None
+        self._last_spawned_process = None
+        self._last_spawned_timestamp = None
+        self._last_scheduler_error_message = None
+        self._last_scheduler_error_timestamp = None
+        self.process_spawned_callback = None
+        self.scheduler_error_occurred_callback = None
+
+    def _cb_process_spawned(self, program_id):
+        if self._object_id != program_id:
+            return
+
+        error_code, process_id, timestamp = self._session._brick.get_last_spawned_program_process(self._object_id, self._session._session_id)
+
+        if error_code != REDError.E_SUCCESS:
+            return
+
+        try:
+            self._last_spawned_process = _attach_or_release(self._session, REDProcess, process_id)
+        except:
+            # FIXME: error handling
+            traceback.print_exc()
+
+        self._last_spawned_timestamp = timestamp
+
+        process_spawned_callback = self.process_spawned_callback
+
+        if process_spawned_callback is not None:
+            process_spawned_callback(self)
+
+    def _cb_scheduler_error_occurred(self, program_id):
+        if self._object_id != program_id:
+            return
+
+        error_code, message_string_id, timestamp = self._session._brick.get_last_program_scheduler_error(self._object_id, self._session._session_id)
+
+        if error_code != REDError.E_SUCCESS:
+            return
+
+        try:
+            self._last_scheduler_error_message = _attach_or_release(self._session, REDString, message_string_id)
+        except:
+            # FIXME: error handling
+            traceback.print_exc()
+
+        self._last_scheduler_error_timestamp = timestamp
+
+        scheduler_error_occurred_callback = self.scheduler_error_occurred_callback
+
+        if scheduler_error_occurred_callback is not None:
+            scheduler_error_occurred_callback(self)
+
+    def update(self):
+        self.update_identifier()
+        self.update_root_directory()
+        self.update_command()
+        self.update_stdio_redirection()
+        self.update_schedule()
+        self.update_last_spawned_process()
+        self.update_last_scheduler_error()
+
+    def update_identifier(self):
+        if self._object_id is None:
+            raise RuntimeError('Cannot update unattached program object')
+
+        error_code, identifier_string_id = self._session._brick.get_program_identifier(self._object_id, self._session._session_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get identifier of program object {0}'.format(self._object_id), error_code)
+
+        self._identifier = _attach_or_release(self._session, REDString, identifier_string_id)
+
+    def update_root_directory(self):
+        if self._object_id is None:
+            raise RuntimeError('Cannot update unattached program object')
+
+        error_code, root_directory_string_id = self._session._brick.get_program_root_directory(self._object_id, self._session._session_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get root directory of program object {0}'.format(self._object_id), error_code)
+
+        self._root_directory = _attach_or_release(self._session, REDString, root_directory_string_id)
+
+    def update_command(self):
+        if self._object_id is None:
+            raise RuntimeError('Cannot update unattached program object')
+
+        error_code, executable_string_id, arguments_list_id, \
+        environment_list_id = self._session._brick.get_program_command(self._object_id, self._session._session_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get command of program object {0}'.format(self._object_id), error_code)
+
+        self._executable = _attach_or_release(self._session, REDString, executable_string_id, [arguments_list_id, environment_list_id])
+        self._arguments = _attach_or_release(self._session, REDList, arguments_list_id, [environment_list_id])
+        self._environment = _attach_or_release(self._session, REDList, environment_list_id)
+
+    def update_stdio_redirection(self):
+        if self._object_id is None:
+            raise RuntimeError('Cannot update unattached program object')
+
+        error_code, stdin_redirection, stdin_file_name_string_id, stdout_redirection, stdout_file_name_string_id, \
+        stderr_redirection, stderr_file_name_string_id = self._session._brick.get_program_stdio_redirection(self._object_id, self._session._session_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get stdio redirection of program object {0}'.format(self._object_id), error_code)
+
+        # stdin
+        self._stdin_redirection = stdin_redirection
+
+        if self._stdin_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+            extra_object_ids_to_release_on_error = []
+
+            if stdout_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+                extra_object_ids_to_release_on_error.append(stdout_file_name_string_id)
+
+            if stderr_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+                extra_object_ids_to_release_on_error.append(stderr_file_name_string_id)
+
+            self._stdin_file_name = _attach_or_release(self._session, REDString, stdin_file_name_string_id, extra_object_ids_to_release_on_error)
+        else:
+            self._stdin_file_name = None
+
+        # stdout
+        self._stdout_redirection = stdout_redirection
+
+        if self._stdout_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+            extra_object_ids_to_release_on_error = []
+
+            if stderr_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+                extra_object_ids_to_release_on_error.append(stderr_file_name_string_id)
+
+            self._stdout_file_name = _attach_or_release(self._session, REDString, stdout_file_name_string_id, extra_object_ids_to_release_on_error)
+        else:
+            self._stdout_file_name = None
+
+        # stderr
+        self._stderr_redirection = stderr_redirection
+
+        if self._stdin_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+            self._stderr_file_name = _attach_or_release(self._session, REDString, stderr_file_name_string_id)
+        else:
+            self._stderr_file_name = None
+
+    def update_schedule(self):
+        if self._object_id is None:
+            raise RuntimeError('Cannot update unattached program object')
+
+        error_code, start_condition, start_timestamp, start_delay, repeat_mode, repeat_interval, repeat_second_mask, repeat_minute_mask, \
+        repeat_hour_mask, repeat_day_mask, repeat_month_mask, repeat_weekday_mask = self._session._brick.get_program_schedule(self._object_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get schedule of program object {0}'.format(self._object_id), error_code)
+
+        self._start_condition = start_condition
+        self._start_timestamp = start_timestamp
+        self._start_delay = start_delay
+        self._repeat_mode = repeat_mode
+        self._repeat_interval = repeat_interval
+        self._repeat_second_mask = repeat_second_mask
+        self._repeat_minute_mask = repeat_minute_mask
+        self._repeat_hour_mask = repeat_hour_mask
+        self._repeat_day_mask = repeat_day_mask
+        self._repeat_month_mask = repeat_month_mask
+        self._repeat_weekday_mask = repeat_weekday_mask
+
+    def update_last_spawned_process(self):
+        if self._object_id is None:
+            raise RuntimeError('Cannot update unattached program object')
+
+        error_code, process_id, timestamp = self._session._brick.get_last_spawned_program_process(self._object_id, self._session._session_id)
+
+        if error_code == REDError.E_DOES_NOT_EXIST:
+            self._last_spawned_process = None
+            self._last_spawned_timestamp = None
+
+            return
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get last spawned process of program object {0}'.format(self._object_id), error_code)
+
+        self._last_spawned_process = _attach_or_release(self._session, REDProcess, process_id)
+        self._last_spawn_timestamp = timestamp
+
+    def update_last_scheduler_error(self):
+        if self._object_id is None:
+            raise RuntimeError('Cannot update unattached program object')
+
+        error_code, message_string_id, timestamp = self._session._brick.get_last_program_scheduler_error(self._object_id, self._session._session_id)
+
+        if error_code == REDError.E_DOES_NOT_EXIST:
+            self._last_scheduler_error_message = None
+            self._last_scheduler_error_timestamp = None
+
+            return
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get last spawned process of program object {0}'.format(self._object_id), error_code)
+
+        self._last_scheduler_error_message = _attach_or_release(self._session, REDString, message_string_id)
+        self._last_scheduler_error_timestamp = timestamp
+
+    def define(self, identifier):
+        self.release()
+
+        if not isinstance(identifier, REDString):
+            identifier = REDString(self._session).allocate(identifier)
+
+        error_code, object_id = self._session._brick.define_program(identifier._object_id,
+                                                                    self._session._session_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not define program object', error_code)
+
+        self._set_object_id(object_id)
+
+        self.update()
+
+        return self
+
+    def undefine(self, signal):
+        if self._object_id is None:
+            raise RuntimeError('Cannot kill unattached process object')
+
+        error_code = self._session._brick.undefine_program(self._object_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not undefine program object {0}'.format(self._object_id), error_code)
+
+    @property
+    def identifier(self):                     return self._identifier
+    @property
+    def root_directory(self):                 return self._root_directory
+    @property
+    def executable(self):                     return self._executable
+    @property
+    def arguments(self):                      return self._arguments
+    @property
+    def environment(self):                    return self._environment
+    @property
+    def stdin_redirection(self):              return self._stdin_redirection
+    @property
+    def stdin_file_name(self):                return self._stdin_file_name
+    @property
+    def stdout_redirection(self):             return self._stdout_redirection
+    @property
+    def stdout_file_name(self):               return self._stdout_file_name
+    @property
+    def stderr_redirection(self):             return self._stderr_redirection
+    @property
+    def stderr_file_name(self):               return self._stderr_file_name
+    @property
+    def start_condition(self):                return self._start_condition
+    @property
+    def start_timestamp(self):                return self._start_timestamp
+    @property
+    def start_delay(self):                    return self._start_delay
+    @property
+    def repeat_mode(self):                    return self._repeat_mode
+    @property
+    def repeat_interval(self):                return self._repeat_interval
+    @property
+    def repeat_second_mask(self):             return self._repeat_second_mask
+    @property
+    def repeat_minute_mask(self):             return self._repeat_minute_mask
+    @property
+    def repeat_hour_mask(self):               return self._repeat_hour_mask
+    @property
+    def repeat_day_mask(self):                return self._repeat_day_mask
+    @property
+    def repeat_month_mask(self):              return self._repeat_month_mask
+    @property
+    def repeat_weekday_mask(self):            return self._repeat_weekday_mask
+    @property
+    def last_spawned_process(self):           return self._last_spawned_process
+    @property
+    def last_spawned_timestamp(self):         return self._last_spawned_timestamp
+    @property
+    def last_scheduler_error_message(self):   return self._last_scheduler_error_message
+    @property
+    def last_scheduler_error_timestamp(self): return self._last_scheduler_error_timestamp
+
+
+def get_defined_programs(session):
+    error_code, programs_list_id = session._brick.get_defined_programs(session._session_id)
+
+    if error_code != REDError.E_SUCCESS:
+        raise REDError('Could not get defined programs list object', error_code)
+
+    return _attach_or_release(session, REDList, programs_list_id)
+
+
 REDObject._subclasses = {
     REDObject.TYPE_STRING:    REDString,
     REDObject.TYPE_LIST:      REDList,
     REDObject.TYPE_FILE:      REDFileOrPipeAttacher,
     REDObject.TYPE_DIRECTORY: REDDirectory,
     REDObject.TYPE_PROCESS:   REDProcess,
+    REDObject.TYPE_PROGRAM:   REDProgram
 }

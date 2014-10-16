@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2014 Matthias <matthias@tinkerforge.com>
 
 red_tab_program.py: RED program tab implementation
 
@@ -33,7 +34,10 @@ class REDTabProgram(QtGui.QWidget, Ui_REDTabProgram):
         self.session = None
 
     def tab_on_focus(self):
-        pass
+        defined_programs = get_defined_programs(self.session)
+
+        for program in defined_programs.items:
+            print program.identifier
 
     def tab_off_focus(self):
         pass
