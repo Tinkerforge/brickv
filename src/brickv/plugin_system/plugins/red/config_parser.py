@@ -67,3 +67,16 @@ def parse(data):
         return None
     
     return config
+
+def parse_no_fake(data):
+    if isinstance(data, list):
+        string = str(bytearray(data))
+    elif isinstance(data, str):
+        string = data
+    else:
+        return None
+    
+    config = ConfigParser.ConfigParser()
+    config.readfp(StringIO(string))
+
+    return config
