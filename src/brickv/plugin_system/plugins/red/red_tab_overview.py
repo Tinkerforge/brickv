@@ -180,7 +180,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.tview_nic.horizontalHeader().setSortIndicator(self.tview_nic_previous_sort['column_index'],
                                                            self.tview_nic_previous_sort['order'])
 
-        self.process_item_model.removeRows(0, self.nic_item_model.rowCount())
+        self.process_item_model.removeRows(0, self.process_item_model.rowCount())
         self.tview_process.clearSpans()
 
         if self.cbox_based_on.currentIndex() == 0:
