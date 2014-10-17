@@ -23,11 +23,13 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QWizard
-from brickv.plugin_system.plugins.red.new_program_pages import *
+from brickv.plugin_system.plugins.red.new_program_constants import Constants
 from brickv.plugin_system.plugins.red.new_program_general import NewProgramGeneral
 from brickv.plugin_system.plugins.red.new_program_files import NewProgramFiles
 from brickv.plugin_system.plugins.red.new_program_java import NewProgramJava
 from brickv.plugin_system.plugins.red.new_program_python import NewProgramPython
+from brickv.plugin_system.plugins.red.new_program_stdio import NewProgramStdio
+from brickv.plugin_system.plugins.red.new_program_schedule import NewProgramSchedule
 
 class NewProgram(QWizard):
     def __init__(self, identifiers, *args, **kwargs):
@@ -38,10 +40,12 @@ class NewProgram(QWizard):
         self.setWindowFlags(self.windowFlags() | Qt.Tool)
         self.setWindowTitle('New Program')
 
-        self.setPage(PAGE_GENERAL, NewProgramGeneral())
-        self.setPage(PAGE_FILES, NewProgramFiles())
-        self.setPage(PAGE_JAVA, NewProgramJava())
-        self.setPage(PAGE_PYTHON, NewProgramPython())
+        self.setPage(Constants.PAGE_GENERAL, NewProgramGeneral())
+        self.setPage(Constants.PAGE_FILES, NewProgramFiles())
+        self.setPage(Constants.PAGE_JAVA, NewProgramJava())
+        self.setPage(Constants.PAGE_PYTHON, NewProgramPython())
+        self.setPage(Constants.PAGE_STDIO, NewProgramStdio())
+        self.setPage(Constants.PAGE_SCHEDULE, NewProgramSchedule())
 
     # overrides QWizard.sizeHint
     def sizeHint(self):

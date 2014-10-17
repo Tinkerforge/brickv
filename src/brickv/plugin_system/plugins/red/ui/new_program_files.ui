@@ -34,7 +34,7 @@
       </widget>
      </item>
      <item row="1" column="3">
-      <widget class="QPushButton" name="button_remove">
+      <widget class="QPushButton" name="button_remove_selected_files">
        <property name="text">
         <string>Remove</string>
        </property>

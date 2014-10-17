@@ -33,6 +33,11 @@
        </property>
        <item>
         <property name="text">
+         <string>Select...</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Java</string>
         </property>
        </item>

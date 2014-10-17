@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import QDir
 from PyQt4.QtGui import QWizardPage, QFileDialog
-from brickv.plugin_system.plugins.red.new_program_pages import *
+from brickv.plugin_system.plugins.red.new_program_constants import Constants
 from brickv.plugin_system.plugins.red.ui_new_program_files import Ui_NewProgramFiles
 import os
 
@@ -33,33 +33,34 @@ class NewProgramFiles(QWizardPage, Ui_NewProgramFiles):
 
         self.setupUi(self)
 
-        self.setTitle('Program Files')
+        self.setTitle('Files')
 
         self.list_files.itemSelectionChanged.connect(self.update_ui_state)
         self.button_add_files.clicked.connect(self.show_add_files_dialog)
         self.button_add_directory.clicked.connect(self.show_add_directory_dialog)
-        self.button_remove.clicked.connect(self.remove_selected_files)
+        self.button_remove_selected_files.clicked.connect(self.remove_selected_files)
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle('Specify the files to be uploaded for the new {0} program [{1}].'.format(str(self.field('language').toString()),
-                                                                                                  str(self.field('name').toString())))
+        self.setSubTitle('Specify the files to be uploaded for the new {0} program [{1}].'
+                         .format(Constants.language_names[self.field('language').toInt()[0]],
+                                 str(self.field('name').toString())))
         self.list_files.clear()
         self.update_ui_state()
 
     # overrides QWizardPage.nextId
     def nextId(self):
-        language = str(self.field('language').toString())
+        language = self.field('language').toInt()[0]
 
-        if language == 'Java':
-            return PAGE_JAVA
-        elif language == 'Python':
-            return PAGE_PYTHON
+        if language == Constants.LANGUAGE_JAVA:
+            return Constants.PAGE_JAVA
+        elif language == Constants.LANGUAGE_PYTHON:
+            return Constants.PAGE_PYTHON
         else:
-            return PAGE_GENERAL
+            return Constants.PAGE_GENERAL
 
     def update_ui_state(self):
-        self.button_remove.setEnabled(len(self.list_files.selectedItems()) > 0)
+        self.button_remove_selected_files.setEnabled(len(self.list_files.selectedItems()) > 0)
 
     def show_add_files_dialog(self):
         filenames = QFileDialog.getOpenFileNames(self, "Select files to be uploaded")
