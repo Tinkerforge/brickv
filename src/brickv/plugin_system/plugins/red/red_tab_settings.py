@@ -31,9 +31,12 @@ from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 
 from brickv.async_call import async_call
 
-CBOX_PLEASE_SELECT = 0
-CONNECTION_TYPE_ETHERNET = 1
-CONNECTION_TYPE_WIFI = 2
+BOX_INDEX_NETWORK = 0
+
+TAB_INDEX_NETWORK_GENERAL = 0
+
+CONNECTION_TYPE_ETHERNET = 0
+CONNECTION_TYPE_WIFI = 1
 
 class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     script_manager = None
@@ -44,15 +47,14 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.session = None
         self.brickd_conf = None
         
-        self.cbox_net_gen_contype.addItem("Please select...")
+        self.network_general_dict = None
+        
         self.cbox_net_gen_contype.addItem("Ethernet")
         self.cbox_net_gen_contype.addItem("WiFi")
 
-        self.cbox_net_eth_contype.addItem("Please select...")
         self.cbox_net_eth_contype.addItem("DHCP")
         self.cbox_net_eth_contype.addItem("Static")
 
-        self.cbox_net_wifi_contype.addItem("Please select...")
         self.cbox_net_wifi_contype.addItem("DHCP")
         self.cbox_net_wifi_contype.addItem("Static")
         
@@ -84,13 +86,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
     # the callbacks
     def cb_cbox_net_gen_contype_changed(self, cidx):
-        if cidx == CBOX_PLEASE_SELECT:
-            self.label_net_gen_ccon_ip.setText("None")
-            self.label_net_gen_ccon_mask.setText("None")
-            self.label_net_gen_ccon_gateway.setText("None")
-            self.label_net_gen_ccon_dns.setText("None")
-            return
-        elif cidx == CONNECTION_TYPE_ETHERNET:
+        if cidx == CONNECTION_TYPE_ETHERNET:
             if "cconfig_ifs" in self.network_general_dict and\
                "eth0" in self.network_general_dict['cconfig_ifs'] and\
                "ip" in self.network_general_dict['cconfig_ifs']['eth0'] and\
@@ -124,6 +120,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def cb_get_network_general_state_changed(self, result):
         self.network_general_dict = json.loads(result.stdout)
         self.ledit_net_gen_hostname.setText(self.network_general_dict['hostname'].strip())
+
+        if(self.tbox_settings.currentIndex() == BOX_INDEX_NETWORK and\
+           self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_GENERAL):
+            self.cb_cbox_net_gen_contype_changed(self.cbox_net_gen_contype.currentIndex())
 
     def cb_wired_settings_conf_open_error(self):
         pass
