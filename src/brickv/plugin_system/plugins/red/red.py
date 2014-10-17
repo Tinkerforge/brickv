@@ -65,6 +65,10 @@ class RED(PluginBase, Ui_RED):
             tab.tab_off_focus()
 
     def destroy(self):
+        for index in range(0, self.red_tab_widget.count()):
+            if hasattr(self.tabs_list[index], 'destroy'):
+                self.tabs_list[index].destroy()
+            
         self.script_manager.destroy()
         self.session.expire()
 

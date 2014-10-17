@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>486</width>
     <height>300</height>
    </rect>
   </property>
@@ -15,7 +15,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout" name="console_layout">
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
@@ -26,12 +26,13 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="ports">
-         <item>
-          <property name="text">
-           <string>/dev/ttyACM0</string>
-          </property>
-         </item>
+        <widget class="QComboBox" name="combo_serial_port"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="refresh_button">
+         <property name="text">
+          <string>Refresh Ports</string>
+         </property>
         </widget>
        </item>
        <item>
@@ -57,9 +58,32 @@
       </layout>
      </item>
      <item>
-      <widget class="QPlainTextEdit" name="console"/>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
+   </item>
+   <item>
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
