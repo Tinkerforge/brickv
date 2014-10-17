@@ -284,11 +284,13 @@ class REDObject(QtCore.QObject):
 
         object_id = self.detach()
 
-        try:
-            self._session._brick.release_object_unchecked(object_id, self._session._session_id)
-        except:
-            # ignoring IPConnection-level error
-            traceback.print_exc()
+        # only release object if the session was not already expired
+        if self._session._session_id is not None:
+            try:
+                self._session._brick.release_object_unchecked(object_id, self._session._session_id)
+            except:
+                # ignoring IPConnection-level error
+                traceback.print_exc()
 
     @property
     def session(self):   return self._session
