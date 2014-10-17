@@ -42,16 +42,20 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle('Specify how the new Python program [{0}] should be executed.'.format(str(self.field('identifier').toString())))
+        self.setSubTitle('Specify how the new Python program [{0}] should be executed.'.format(str(self.field('name').toString())))
         self.combo_mode.setCurrentIndex(0)
         self.update_ui_state()
+
+    # overrides QWizardPage.nextId
+    def nextId(self):
+        return -1
 
     def update_ui_state(self):
         mode = str(self.field('python.mode').toString())
 
-        self.label_script.setEnabled(mode == 'Script')
-        self.edit_script.setEnabled(mode == 'Script')
-        self.label_module.setEnabled(mode == 'Module')
-        self.edit_module.setEnabled(mode == 'Module')
-        self.label_command.setEnabled(mode == 'Command')
-        self.edit_command.setEnabled(mode == 'Command')
+        self.label_script.setVisible(mode == 'Script')
+        self.edit_script.setVisible(mode == 'Script')
+        self.label_module.setVisible(mode == 'Module')
+        self.edit_module.setVisible(mode == 'Module')
+        self.label_command.setVisible(mode == 'Command')
+        self.edit_command.setVisible(mode == 'Command')

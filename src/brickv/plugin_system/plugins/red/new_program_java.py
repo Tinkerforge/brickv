@@ -41,14 +41,18 @@ class NewProgramJava(QWizardPage, Ui_NewProgramJava):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle('Specify how the new Java program [{0}] should be executed.'.format(str(self.field('identifier').toString())))
+        self.setSubTitle('Specify how the new Java program [{0}] should be executed.'.format(str(self.field('name').toString())))
         self.combo_mode.setCurrentIndex(0)
         self.update_ui_state()
+
+    # overrides QWizardPage.nextId
+    def nextId(self):
+        return -1
 
     def update_ui_state(self):
         mode = str(self.field('java.mode').toString())
 
-        self.label_class.setEnabled(mode == 'Class')
-        self.edit_class.setEnabled(mode == 'Class')
-        self.label_jar.setEnabled(mode == 'JAR')
-        self.edit_jar.setEnabled(mode == 'JAR')
+        self.label_class.setVisible(mode == 'Class')
+        self.edit_class.setVisible(mode == 'Class')
+        self.label_jar.setVisible(mode == 'JAR')
+        self.edit_jar.setVisible(mode == 'JAR')

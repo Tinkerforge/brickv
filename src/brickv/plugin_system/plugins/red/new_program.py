@@ -30,8 +30,10 @@ from brickv.plugin_system.plugins.red.new_program_java import NewProgramJava
 from brickv.plugin_system.plugins.red.new_program_python import NewProgramPython
 
 class NewProgram(QWizard):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, identifiers, *args, **kwargs):
         QWizard.__init__(self, *args, **kwargs)
+
+        self.identifiers = identifiers
 
         self.setWindowFlags(self.windowFlags() | Qt.Tool)
         self.setWindowTitle('New Program')
@@ -40,3 +42,12 @@ class NewProgram(QWizard):
         self.setPage(PAGE_FILES, NewProgramFiles())
         self.setPage(PAGE_JAVA, NewProgramJava())
         self.setPage(PAGE_PYTHON, NewProgramPython())
+
+    # overrides QWizard.sizeHint
+    def sizeHint(self):
+        size = QWizard.sizeHint(self)
+
+        if size.height() < 550:
+            size.setHeight(550)
+
+        return size

@@ -21,9 +21,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWizardPage
+from PyQt4.QtCore import QDir
+from PyQt4.QtGui import QWizardPage, QFileDialog
 from brickv.plugin_system.plugins.red.new_program_pages import *
 from brickv.plugin_system.plugins.red.ui_new_program_files import Ui_NewProgramFiles
+import os
 
 class NewProgramFiles(QWizardPage, Ui_NewProgramFiles):
     def __init__(self, *args, **kwargs):
@@ -34,11 +36,14 @@ class NewProgramFiles(QWizardPage, Ui_NewProgramFiles):
         self.setTitle('Program Files')
 
         self.list_files.itemSelectionChanged.connect(self.update_ui_state)
+        self.button_add_files.clicked.connect(self.show_add_files_dialog)
+        self.button_add_directory.clicked.connect(self.show_add_directory_dialog)
+        self.button_remove.clicked.connect(self.remove_selected_files)
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle('Specify the files to be uploaded for the new {0} program [{1}].'.format(str(self.field('language').toString()),
-                                                                                                  str(self.field('identifier').toString())))
+                                                                                                  str(self.field('name').toString())))
         self.list_files.clear()
         self.update_ui_state()
 
@@ -55,3 +60,19 @@ class NewProgramFiles(QWizardPage, Ui_NewProgramFiles):
 
     def update_ui_state(self):
         self.button_remove.setEnabled(len(self.list_files.selectedItems()) > 0)
+
+    def show_add_files_dialog(self):
+        filenames = QFileDialog.getOpenFileNames(self, "Select files to be uploaded")
+
+        for filename in filenames:
+            self.list_files.addItem(QDir.toNativeSeparators(filename))
+
+    def show_add_directory_dialog(self):
+        directory = unicode(QDir.toNativeSeparators(QFileDialog.getExistingDirectory(self, "Select a directory of files to be uploaded")))
+
+        if len(directory) > 0:
+            self.list_files.addItem(os.path.join(directory, '*'))
+
+    def remove_selected_files(self):
+        for item in self.list_files.selectedItems():
+            self.list_files.takeItem(self.list_files.row(item))
