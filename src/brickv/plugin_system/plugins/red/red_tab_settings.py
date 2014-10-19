@@ -32,11 +32,7 @@ from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 from brickv.async_call import async_call
 
 BOX_INDEX_NETWORK = 0
-
 TAB_INDEX_NETWORK_GENERAL = 0
-
-CONNECTION_TYPE_ETHERNET = 0
-CONNECTION_TYPE_WIFI = 1
 
 class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     script_manager = None
@@ -46,23 +42,17 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         self.session = None
         self.brickd_conf = None
-        
         self.network_general_dict = None
-        
-        self.cbox_net_gen_contype.addItem("Ethernet")
-        self.cbox_net_gen_contype.addItem("WiFi")
 
         self.cbox_net_eth_contype.addItem("DHCP")
         self.cbox_net_eth_contype.addItem("Static")
 
         self.cbox_net_wifi_contype.addItem("DHCP")
         self.cbox_net_wifi_contype.addItem("Static")
-        
-        self.cbox_net_gen_contype.currentIndexChanged.connect(self.cb_cbox_net_gen_contype_changed)
 
     def tab_on_focus(self):
-        self.script_manager.execute_script('settings_network_general',
-                                           self.cb_get_network_general_state_changed,
+        self.script_manager.execute_script('settings_network',
+                                           self.cb_settings_network_state_changed,
                                            [])
         
         self.wired_settings_conf = REDFile(self.session)
@@ -85,45 +75,29 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         pass
 
     # the callbacks
-    def cb_cbox_net_gen_contype_changed(self, cidx):
-        if cidx == CONNECTION_TYPE_ETHERNET:
-            if "cconfig_ifs" in self.network_general_dict and\
-               "eth0" in self.network_general_dict['cconfig_ifs'] and\
-               "ip" in self.network_general_dict['cconfig_ifs']['eth0'] and\
-               "mask" in self.network_general_dict['cconfig_ifs']['eth0']:
-                self.label_net_gen_ccon_ip.setText(self.network_general_dict['cconfig_ifs']['eth0']['ip'].strip())
-                self.label_net_gen_ccon_mask.setText(self.network_general_dict['cconfig_ifs']['eth0']['mask'].strip())
-            else:
-                self.label_net_gen_ccon_ip.setText("None")
-                self.label_net_gen_ccon_mask.setText("None")
-
-        elif cidx == CONNECTION_TYPE_WIFI:
-            if "cconfig_ifs" in self.network_general_dict and\
-               "wlan0" in self.network_general_dict['cconfig_ifs'] and\
-               "ip" in self.network_general_dict['cconfig_ifs']['wlan0'] and\
-               "mask" in self.network_general_dict['cconfig_ifs']['wlan0']:
-                self.label_net_gen_ccon_ip.setText(self.network_general_dict['cconfig_ifs']['wlan0']['ip'].strip())
-                self.label_net_gen_ccon_mask.setText(self.network_general_dict['cconfig_ifs']['wlan0']['mask'].strip())
-            else:
-                self.label_net_gen_ccon_ip.setText("None")
-                self.label_net_gen_ccon_mask.setText("None")
-
-        if "cconfig_dns" in self.network_general_dict and\
-           "cconfig_gateway" in self.network_general_dict:
-            self.label_net_gen_ccon_gateway.setText(self.network_general_dict['cconfig_dns'].strip())
-            self.label_net_gen_ccon_dns.setText(self.network_general_dict['cconfig_gateway'].strip())
-
-        else:
-            self.label_net_gen_ccon_gateway.setText("None")
-            self.label_net_gen_ccon_dns.setText("None")
-
-    def cb_get_network_general_state_changed(self, result):
+    def cb_settings_network_state_changed(self, result):
         self.network_general_dict = json.loads(result.stdout)
-        self.ledit_net_gen_hostname.setText(self.network_general_dict['hostname'].strip())
 
-        if(self.tbox_settings.currentIndex() == BOX_INDEX_NETWORK and\
-           self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_GENERAL):
-            self.cb_cbox_net_gen_contype_changed(self.cbox_net_gen_contype.currentIndex())
+        if self.network_general_dict['cstat_hostname'] is not None:
+            self.ledit_net_gen_hostname.setText(self.network_general_dict['cstat_hostname'].strip())
+        else:
+            self.ledit_net_gen_hostname.setText("")
+
+        if self.network_general_dict['cstat_ifs']['active']['if_name'].strip() ==\
+           self.network_general_dict['cstat_ifs']['wireless']['if_name'].strip():
+            self.label_net_gen_stat_conn.setText("Wireless")
+        elif self.network_general_dict['cstat_ifs']['active']['if_name'].strip() ==\
+             self.network_general_dict['cstat_ifs']['wired']['if_name'].strip():
+            self.label_net_gen_stat_conn.setText("Wired")
+        elif self.network_general_dict['cstat_ifs']['active']['if_name'].strip() == "None":
+            self.label_net_gen_stat_conn.setText("Not Connected")
+        else:
+            self.label_net_gen_stat_conn.setText("Other")
+
+        self.label_net_gen_stat_ip.setText(self.network_general_dict['cstat_ifs']['active']['ip'].strip())
+        self.label_net_gen_stat_mask.setText(self.network_general_dict['cstat_ifs']['active']['mask'].strip())
+        self.label_net_gen_stat_gateway.setText(self.network_general_dict['cstat_gateway'].strip())
+        self.label_net_gen_stat_dns.setText(self.network_general_dict['cstat_dns'].strip())
 
     def cb_wired_settings_conf_open_error(self):
         pass
