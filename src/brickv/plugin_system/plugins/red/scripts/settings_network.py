@@ -88,13 +88,17 @@ try:
 except:
     return_dict['cstat_gateway'] = "None"
 
-with open("/etc/resolv.conf", "r") as rcf:
-    lines = rcf.readlines()
-    for i, l in enumerate(lines):
-        if l.split(' ')[0] == "nameserver":
-            return_dict['cstat_dns'] = l.split(' ')[1]
-            break
-        if i == len(lines) - 1:
-            return_dict['cstat_dns'] = "None"
+try:
+    with open("/etc/resolv.conf", "r") as rcf:
+        lines = rcf.readlines()
+        for i, l in enumerate(lines):
+            l_splitted = l.split(' ')
+            if l_splitted[0] == "nameserver" and l.splitted[1] != "":
+                return_dict['cstat_dns'] = l.splitted[1]
+                break
+            if i == len(lines) - 1:
+                return_dict['cstat_dns'] = "None"
+except:
+    return_dict['cstat_dns'] = "None"
 
 print json.dumps(return_dict)
