@@ -93,10 +93,10 @@ try:
         lines = rcf.readlines()
         for i, l in enumerate(lines):
             l_splitted = l.split(' ')
-            if l_splitted[0] == "nameserver" and l.splitted[1] != "":
-                return_dict['cstat_dns'] = l.splitted[1]
+            if l_splitted[0] == "nameserver" and l_splitted[1] != "":
+                return_dict['cstat_dns'] = l_splitted[1]
                 break
-            if i == len(lines) - 1:
+            elif i == len(lines) - 1:
                 return_dict['cstat_dns'] = "None"
 except:
     return_dict['cstat_dns'] = "None"
