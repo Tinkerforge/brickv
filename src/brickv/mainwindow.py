@@ -499,7 +499,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         tab_window = infos.infos[uid].tab_window
 
         if i > 0 and self.tab_widget.isTabEnabled(i):
-             self.tab_widget.setCurrentIndex(i)
+            self.tab_widget.setCurrentIndex(i)
 
         QApplication.setActiveWindow(tab_window)
 
