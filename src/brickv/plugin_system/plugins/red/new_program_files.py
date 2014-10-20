@@ -21,11 +21,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import QDir
-from PyQt4.QtGui import QWizardPage, QFileDialog
+from PyQt4.QtCore import Qt, QDir, QVariant
+from PyQt4.QtGui import QWizardPage, QFileDialog, QListWidgetItem, QProgressDialog, QApplication
 from brickv.plugin_system.plugins.red.new_program_constants import Constants
 from brickv.plugin_system.plugins.red.ui_new_program_files import Ui_NewProgramFiles
 import os
+from collections import namedtuple
+
+Upload = namedtuple('Upload', ['source', 'target'])
 
 class NewProgramFiles(QWizardPage, Ui_NewProgramFiles):
     def __init__(self, *args, **kwargs):
@@ -66,14 +69,58 @@ class NewProgramFiles(QWizardPage, Ui_NewProgramFiles):
         filenames = QFileDialog.getOpenFileNames(self, "Select files to be uploaded")
 
         for filename in filenames:
-            self.list_files.addItem(QDir.toNativeSeparators(filename))
+            filename = unicode(QDir.toNativeSeparators(filename))
+            uploads = [Upload(filename, os.path.split(filename)[1])]
+
+            item = QListWidgetItem(filename)
+            item.setData(Qt.UserRole, QVariant(uploads))
+            self.list_files.addItem(item)
 
     def show_add_directory_dialog(self):
         directory = unicode(QDir.toNativeSeparators(QFileDialog.getExistingDirectory(self, "Select a directory of files to be uploaded")))
 
-        if len(directory) > 0:
-            self.list_files.addItem(os.path.join(directory, '*'))
+        if len(directory) == 0:
+            return
+
+        uploads = []
+        progress = QProgressDialog(self)
+        progress.setWindowTitle('New Program')
+        progress.setLabelText(u"Collecting content of '{0}'".format(directory))
+        progress.setWindowModality(Qt.WindowModal)
+        progress.setMaximum(0)
+        progress.setValue(0)
+        progress.show()
+
+        for root, directories, files in os.walk(directory):
+            for filename in files:
+                source = os.path.join(root, filename)
+                target = os.path.relpath(source, directory)
+                uploads.append(Upload(source, target))
+
+                QApplication.processEvents()
+
+                if progress.wasCanceled():
+                    break
+
+        if progress.wasCanceled():
+            return
+
+        progress.cancel()
+
+        # FIXME: maybe add a warning if the directory contains very many files or a large amount of data
+
+        item = QListWidgetItem(os.path.join(directory, '*'))
+        item.setData(Qt.UserRole, QVariant(uploads))
+        self.list_files.addItem(item)
 
     def remove_selected_files(self):
         for item in self.list_files.selectedItems():
             self.list_files.takeItem(self.list_files.row(item))
+
+    def get_uploads(self):
+        uploads = []
+
+        for row in range(self.list_files.count()):
+            uploads += self.list_files.item(row).data(Qt.UserRole).toPyObject()
+
+        return uploads

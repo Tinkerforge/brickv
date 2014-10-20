@@ -48,9 +48,6 @@
      <item row="2" column="1" colspan="4">
       <widget class="QLineEdit" name="edit_main_class"/>
      </item>
-     <item row="4" column="1" colspan="4">
-      <widget class="QLineEdit" name="edit_jar_file"/>
-     </item>
      <item row="1" column="1" colspan="4">
       <widget class="QComboBox" name="combo_start_mode">
        <item>
@@ -82,7 +79,7 @@
      <item row="5" column="1" colspan="4">
       <widget class="QLabel" name="label_jar_file_help">
        <property name="text">
-        <string>In JAR mode [-jar] the specified Java archive will be executed.</string>
+        <string>In JAR File mode [-jar] the specified Java archive will be executed.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -92,7 +89,7 @@
      <item row="3" column="1" colspan="4">
       <widget class="QLabel" name="label_main_class_help">
        <property name="text">
-        <string>In Class mode the specified Java class will be executed.</string>
+        <string>In Main Class mode the specified Java class will be executed.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -150,6 +147,16 @@
        </property>
       </widget>
      </item>
+     <item row="4" column="1" colspan="4">
+      <widget class="QComboBox" name="combo_jar_file">
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+       <property name="insertPolicy">
+        <enum>QComboBox::NoInsert</enum>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -167,6 +174,17 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>combo_version</tabstop>
+  <tabstop>combo_start_mode</tabstop>
+  <tabstop>edit_main_class</tabstop>
+  <tabstop>combo_jar_file</tabstop>
+  <tabstop>list_arguments</tabstop>
+  <tabstop>button_add_argument</tabstop>
+  <tabstop>button_up_argument</tabstop>
+  <tabstop>button_down_argument</tabstop>
+  <tabstop>button_remove_argument</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

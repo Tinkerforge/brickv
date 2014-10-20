@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>465</width>
-    <height>346</height>
+    <width>649</width>
+    <height>608</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="0" column="1" colspan="4">
       <widget class="QComboBox" name="combo_version">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -38,29 +38,26 @@
        </item>
       </widget>
      </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_script">
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_script_file">
        <property name="text">
         <string>Script File:</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="edit_script"/>
+     <item row="4" column="1" colspan="4">
+      <widget class="QLineEdit" name="edit_module_name"/>
      </item>
-     <item row="4" column="1">
-      <widget class="QLineEdit" name="edit_module"/>
-     </item>
-     <item row="1" column="1">
+     <item row="1" column="1" colspan="4">
       <widget class="QComboBox" name="combo_start_mode">
        <item>
         <property name="text">
-         <string>Script</string>
+         <string>Script File</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Module</string>
+         <string>Module Name</string>
         </property>
        </item>
        <item>
@@ -78,29 +75,110 @@
       </widget>
      </item>
      <item row="4" column="0">
-      <widget class="QLabel" name="label_module">
+      <widget class="QLabel" name="label_module_name">
        <property name="text">
         <string>Module Name:</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
+     <item row="6" column="0">
       <widget class="QLabel" name="label_command">
        <property name="text">
         <string>Command:</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="6" column="1" colspan="4">
       <widget class="QLineEdit" name="edit_command"/>
      </item>
-     <item row="2" column="1">
-      <widget class="QLabel" name="label_6">
+     <item row="5" column="1" colspan="4">
+      <widget class="QLabel" name="label_module_name_help">
        <property name="text">
-        <string>In Script mode the specified Python script will be executed, in Module mode [-m] the specified Python module will be executed and in Command mode [-c] the specified Python command will be executed.</string>
+        <string>In Module Name mode [-m] the specified Python module will be executed.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1" colspan="4">
+      <widget class="QLabel" name="label_command_help">
+       <property name="text">
+        <string>In Command mode [-c] the specified Python command will be executed.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" colspan="4">
+      <widget class="QLabel" name="label_script_file_help">
+       <property name="text">
+        <string>In Script File mode the specified Python script will be executed.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Arguments:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1" colspan="4">
+      <widget class="QListWidget" name="list_arguments"/>
+     </item>
+     <item row="10" column="1">
+      <widget class="QPushButton" name="button_add_argument">
+       <property name="text">
+        <string>Add</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="3">
+      <widget class="QPushButton" name="button_down_argument">
+       <property name="text">
+        <string>Down</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="4">
+      <widget class="QPushButton" name="button_remove_argument">
+       <property name="text">
+        <string>Remove</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="2">
+      <widget class="QPushButton" name="button_up_argument">
+       <property name="text">
+        <string>Up</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="1" colspan="4">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>This list of arguments will be available as the sys.argv list.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" colspan="4">
+      <widget class="QComboBox" name="combo_script_file">
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+       <property name="insertPolicy">
+        <enum>QComboBox::NoInsert</enum>
        </property>
       </widget>
      </item>
@@ -121,6 +199,17 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>combo_version</tabstop>
+  <tabstop>combo_start_mode</tabstop>
+  <tabstop>edit_module_name</tabstop>
+  <tabstop>edit_command</tabstop>
+  <tabstop>list_arguments</tabstop>
+  <tabstop>button_add_argument</tabstop>
+  <tabstop>button_up_argument</tabstop>
+  <tabstop>button_down_argument</tabstop>
+  <tabstop>button_remove_argument</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

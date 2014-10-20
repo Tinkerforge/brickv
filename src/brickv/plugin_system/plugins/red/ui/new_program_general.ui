@@ -142,6 +142,12 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>edit_name</tabstop>
+  <tabstop>check_auto_generate</tabstop>
+  <tabstop>edit_identifier</tabstop>
+  <tabstop>combo_language</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

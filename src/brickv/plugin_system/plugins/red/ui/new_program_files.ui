@@ -64,6 +64,12 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>list_files</tabstop>
+  <tabstop>button_add_files</tabstop>
+  <tabstop>button_add_directory</tabstop>
+  <tabstop>button_remove_selected_files</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

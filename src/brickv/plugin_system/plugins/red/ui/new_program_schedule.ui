@@ -224,6 +224,19 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>combo_start_condition</tabstop>
+  <tabstop>date_start_time</tabstop>
+  <tabstop>spin_start_delay</tabstop>
+  <tabstop>combo_repeat_mode</tabstop>
+  <tabstop>spin_repeat_interval</tabstop>
+  <tabstop>edit_repeat_seconds</tabstop>
+  <tabstop>edit_repeat_minutes</tabstop>
+  <tabstop>edit_repeat_hours</tabstop>
+  <tabstop>edit_repeat_days</tabstop>
+  <tabstop>edit_repeat_months</tabstop>
+  <tabstop>edit_repeat_weekdays</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
