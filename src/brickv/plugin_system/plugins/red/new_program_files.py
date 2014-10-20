@@ -70,6 +70,10 @@ class NewProgramFiles(QWizardPage, Ui_NewProgramFiles):
 
         for filename in filenames:
             filename = unicode(QDir.toNativeSeparators(filename))
+
+            if len(self.list_files.findItems(filename, Qt.MatchFixedString)) > 0:
+                continue
+
             uploads = [Upload(filename, os.path.split(filename)[1])]
 
             item = QListWidgetItem(filename)
@@ -80,6 +84,9 @@ class NewProgramFiles(QWizardPage, Ui_NewProgramFiles):
         directory = unicode(QDir.toNativeSeparators(QFileDialog.getExistingDirectory(self, "Select a directory of files to be uploaded")))
 
         if len(directory) == 0:
+            return
+
+        if len(self.list_files.findItems(os.path.join(directory, '*'), Qt.MatchFixedString)) > 0:
             return
 
         uploads = []
