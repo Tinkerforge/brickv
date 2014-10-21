@@ -41,11 +41,11 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
         self.registerField('python.command', self.edit_command)
 
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
-        self.combo_start_mode.currentIndexChanged.connect(self.emitCompleteChanged)
-        self.combo_script_file.currentIndexChanged.connect(self.emitCompleteChanged)
-        self.combo_script_file.editTextChanged.connect(self.emitCompleteChanged)
-        self.edit_module_name.textChanged.connect(self.emitCompleteChanged)
-        self.edit_command.textChanged.connect(self.emitCompleteChanged)
+        self.combo_start_mode.currentIndexChanged.connect(self.emit_complete_changed)
+        self.combo_script_file.currentIndexChanged.connect(self.emit_complete_changed)
+        self.combo_script_file.editTextChanged.connect(self.emit_complete_changed)
+        self.edit_module_name.textChanged.connect(self.emit_complete_changed)
+        self.edit_command.textChanged.connect(self.emit_complete_changed)
 
         self.argument_list_editor = ListWidgetEditor(self.list_arguments,
                                                      self.button_add_argument,
@@ -111,5 +111,5 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
 
         self.argument_list_editor.update_ui_state()
 
-    def emitCompleteChanged(self):
+    def emit_complete_changed(self):
         self.completeChanged.emit()
