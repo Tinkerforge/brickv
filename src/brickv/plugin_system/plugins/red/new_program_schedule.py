@@ -96,16 +96,22 @@ class NewProgramSchedule(QWizardPage, Ui_NewProgramSchedule):
 
     def update_ui_state(self):
         start_condition = self.field('schedule.start_condition').toInt()[0]
-        start_condition_time = start_condition == Constants.SCHEDULE_START_CONDITION_TIME
+        start_condition_never = start_condition == Constants.SCHEDULE_START_CONDITION_NEVER
         start_condition_now = start_condition == Constants.SCHEDULE_START_CONDITION_NOW
         start_condition_reboot = start_condition == Constants.SCHEDULE_START_CONDITION_REBOOT
+        start_condition_time = start_condition == Constants.SCHEDULE_START_CONDITION_TIME
 
         self.label_start_time.setVisible(start_condition_time)
         self.date_start_time.setVisible(start_condition_time)
         self.label_start_delay.setVisible(start_condition_now or start_condition_reboot)
         self.spin_start_delay.setVisible(start_condition_now or start_condition_reboot)
+        self.label_start_condition_never_help.setVisible(start_condition_never)
+        self.label_start_condition_now_help.setVisible(start_condition_now)
+        self.label_start_condition_reboot_help.setVisible(start_condition_reboot)
+        self.label_start_condition_time_help.setVisible(start_condition_time)
 
         repeat_mode = self.field('schedule.repeat_mode').toInt()[0]
+        repeat_mode_never = repeat_mode == Constants.SCHEDULE_REPEAT_MODE_NEVER
         repeat_mode_interval = repeat_mode == Constants.SCHEDULE_REPEAT_MODE_INTERVAL
         repeat_mode_selection = repeat_mode == Constants.SCHEDULE_REPEAT_MODE_SELECTION
 
@@ -123,6 +129,9 @@ class NewProgramSchedule(QWizardPage, Ui_NewProgramSchedule):
         self.edit_repeat_months.setVisible(repeat_mode_selection)
         self.label_repeat_weekdays.setVisible(repeat_mode_selection)
         self.edit_repeat_weekdays.setVisible(repeat_mode_selection)
+        self.label_repeat_mode_never_help.setVisible(repeat_mode_never)
+        self.label_repeat_mode_interval_help.setVisible(repeat_mode_interval)
+        self.label_repeat_mode_selection_help.setVisible(repeat_mode_selection)
 
     def emit_complete_changed(self):
         self.completeChanged.emit()

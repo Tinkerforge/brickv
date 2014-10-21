@@ -60,7 +60,7 @@ class NewProgram(QWizard):
         if size.width() < 550:
             size.setWidth(550)
 
-        if size.height() < 550:
-            size.setHeight(550)
+        if size.height() < 600:
+            size.setHeight(600)
 
         return size
