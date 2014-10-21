@@ -52,8 +52,8 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle('Specify how the new Python program [{0}] should be executed.'
-                         .format(str(self.field('name').toString())))
+        self.setSubTitle(u'Specify how the new Python program [{0}] should be executed.'
+                         .format(unicode(self.field('name').toString())))
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PYTHON_START_MODE)
         self.combo_script_file.clear()
 

@@ -45,9 +45,9 @@ class NewProgramFiles(QWizardPage, Ui_NewProgramFiles):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle('Specify the files to be uploaded for the new {0} program [{1}].'
+        self.setSubTitle(u'Specify the files to be uploaded for the new {0} program [{1}].'
                          .format(Constants.language_names[self.field('language').toInt()[0]],
-                                 str(self.field('name').toString())))
+                                 unicode(self.field('name').toString())))
         self.list_files.clear()
         self.update_ui_state()
 
@@ -123,6 +123,14 @@ class NewProgramFiles(QWizardPage, Ui_NewProgramFiles):
     def remove_selected_files(self):
         for item in self.list_files.selectedItems():
             self.list_files.takeItem(self.list_files.row(item))
+
+    def get_items(self):
+        items = []
+
+        for row in range(self.list_files.count()):
+            items.append(self.list_files.item(row).text())
+
+        return items
 
     def get_uploads(self):
         uploads = []

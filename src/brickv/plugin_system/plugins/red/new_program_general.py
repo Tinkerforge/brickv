@@ -103,7 +103,7 @@ class NewProgramGeneral(QWizardPage, Ui_NewProgramGeneral):
 
         if unique_identifier in self.wizard().identifiers:
             QMessageBox.critical(self, 'Identifier Error',
-                                 'Could not auto-generate unique identifier from program name [{0}] because all tested ones are already in use.'
+                                 u'Could not auto-generate unique identifier from program name [{0}] because all tested ones are already in use.'
                                  .format(name))
 
     def check_identifier(self, identifier):

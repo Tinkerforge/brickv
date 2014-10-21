@@ -39,9 +39,9 @@ class NewProgramUpload(QWizardPage, Ui_NewProgramUpload):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle('Upload the new {0} program [{1}].'
+        self.setSubTitle(u'Upload the new {0} program [{1}].'
                          .format(Constants.language_names[self.field('language').toInt()[0]],
-                                 str(self.field('name').toString())))
+                                 unicode(self.field('name').toString())))
         self.update_ui_state()
 
     # overrides QWizardPage.nextId

@@ -67,9 +67,9 @@ class NewProgramSchedule(QWizardPage, Ui_NewProgramSchedule):
     def initializePage(self):
         now = QDateTime.currentDateTime().addSecs(5 * 60) # set default start time to 5 minutes from now
 
-        self.setSubTitle('Specify the execution schedule for the new {0} program [{1}].'
+        self.setSubTitle(u'Specify the execution schedule for the new {0} program [{1}].'
                          .format(Constants.language_names[self.field('language').toInt()[0]],
-                                 str(self.field('name').toString())))
+                                 unicode(self.field('name').toString())))
         self.combo_start_condition.setCurrentIndex(Constants.DEFAULT_SCHEDULE_START_CONDITION)
         self.date_start_time.setDateTime(now)
         self.combo_repeat_mode.setCurrentIndex(Constants.DEFAULT_SCHEDULE_REPEAT_MODE)
