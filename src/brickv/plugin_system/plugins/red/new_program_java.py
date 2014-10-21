@@ -23,7 +23,6 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtGui import QWizardPage
 from brickv.plugin_system.plugins.red.new_program_constants import Constants
-from brickv.plugin_system.plugins.red.list_widget_editor import ListWidgetEditor
 from brickv.plugin_system.plugins.red.ui_new_program_java import Ui_NewProgramJava
 
 class NewProgramJava(QWizardPage, Ui_NewProgramJava):
@@ -45,13 +44,6 @@ class NewProgramJava(QWizardPage, Ui_NewProgramJava):
         self.combo_jar_file.currentIndexChanged.connect(self.emit_complete_changed)
         self.combo_jar_file.editTextChanged.connect(self.emit_complete_changed)
 
-        self.argument_list_editor = ListWidgetEditor(self.list_arguments,
-                                                     self.button_add_argument,
-                                                     self.button_up_argument,
-                                                     self.button_down_argument,
-                                                     self.button_remove_argument,
-                                                     '<new argument {0}>')
-
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle('Specify how the new Java program [{0}] should be executed.'
@@ -66,12 +58,11 @@ class NewProgramJava(QWizardPage, Ui_NewProgramJava):
         if self.combo_jar_file.count() > 1:
             self.combo_jar_file.clearEditText()
 
-        self.argument_list_editor.remove_all_items()
         self.update_ui_state()
 
     # overrides QWizardPage.nextId
     def nextId(self):
-        return Constants.PAGE_STDIO
+        return Constants.PAGE_ARGUMENTS
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
@@ -98,8 +89,6 @@ class NewProgramJava(QWizardPage, Ui_NewProgramJava):
         self.label_jar_file.setVisible(start_mode_jar_file)
         self.combo_jar_file.setVisible(start_mode_jar_file)
         self.label_jar_file_help.setVisible(start_mode_jar_file)
-
-        self.argument_list_editor.update_ui_state()
 
     def emit_complete_changed(self):
         self.completeChanged.emit()

@@ -26,8 +26,9 @@ class Constants:
     PAGE_FILES = 1
     PAGE_JAVA = 2
     PAGE_PYTHON = 3
-    PAGE_STDIO = 4
-    PAGE_SCHEDULE = 5
+    PAGE_ARGUMENTS = 4
+    PAGE_STDIO = 5
+    PAGE_SCHEDULE = 6
 
     LANGUAGE_INVALID = 0
     LANGUAGE_JAVA = 1
@@ -37,6 +38,12 @@ class Constants:
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'Java',
         LANGUAGE_PYTHON:  'Python'
+    }
+
+    arguments_help = {
+        LANGUAGE_INVALID: '<invalid>',
+        LANGUAGE_JAVA:    'This list of arguments will be passed to the main() method.',
+        LANGUAGE_PYTHON:  'This list of arguments will be available as the sys.argv list.'
     }
 
     JAVA_START_MODE_MAIN_CLASS = 0

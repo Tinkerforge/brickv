@@ -28,6 +28,7 @@ from brickv.plugin_system.plugins.red.new_program_general import NewProgramGener
 from brickv.plugin_system.plugins.red.new_program_files import NewProgramFiles
 from brickv.plugin_system.plugins.red.new_program_java import NewProgramJava
 from brickv.plugin_system.plugins.red.new_program_python import NewProgramPython
+from brickv.plugin_system.plugins.red.new_program_arguments import NewProgramArguments
 from brickv.plugin_system.plugins.red.new_program_stdio import NewProgramStdio
 from brickv.plugin_system.plugins.red.new_program_schedule import NewProgramSchedule
 
@@ -44,6 +45,7 @@ class NewProgram(QWizard):
         self.setPage(Constants.PAGE_FILES, NewProgramFiles())
         self.setPage(Constants.PAGE_JAVA, NewProgramJava())
         self.setPage(Constants.PAGE_PYTHON, NewProgramPython())
+        self.setPage(Constants.PAGE_ARGUMENTS, NewProgramArguments())
         self.setPage(Constants.PAGE_STDIO, NewProgramStdio())
         self.setPage(Constants.PAGE_SCHEDULE, NewProgramSchedule())
 

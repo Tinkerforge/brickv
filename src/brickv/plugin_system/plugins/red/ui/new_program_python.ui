@@ -23,7 +23,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1" colspan="4">
+     <item row="0" column="1" colspan="2">
       <widget class="QComboBox" name="combo_version">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -45,10 +45,10 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1" colspan="4">
+     <item row="4" column="1" colspan="2">
       <widget class="QLineEdit" name="edit_module_name"/>
      </item>
-     <item row="1" column="1" colspan="4">
+     <item row="1" column="1" colspan="2">
       <widget class="QComboBox" name="combo_start_mode">
        <item>
         <property name="text">
@@ -88,10 +88,10 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="1" colspan="4">
+     <item row="6" column="1" colspan="2">
       <widget class="QLineEdit" name="edit_command"/>
      </item>
-     <item row="5" column="1" colspan="4">
+     <item row="5" column="1" colspan="2">
       <widget class="QLabel" name="label_module_name_help">
        <property name="text">
         <string>In Module Name mode [-m] the specified Python module will be executed.</string>
@@ -101,7 +101,7 @@
        </property>
       </widget>
      </item>
-     <item row="7" column="1" colspan="4">
+     <item row="7" column="1" colspan="2">
       <widget class="QLabel" name="label_command_help">
        <property name="text">
         <string>In Command mode [-c] the specified Python command will be executed.</string>
@@ -111,7 +111,7 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1" colspan="4">
+     <item row="3" column="1" colspan="2">
       <widget class="QLabel" name="label_script_file_help">
        <property name="text">
         <string>In Script File mode the specified Python script will be executed.</string>
@@ -121,58 +121,7 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="0">
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>Arguments:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="1" colspan="4">
-      <widget class="QListWidget" name="list_arguments"/>
-     </item>
-     <item row="10" column="1">
-      <widget class="QPushButton" name="button_add_argument">
-       <property name="text">
-        <string>Add</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="3">
-      <widget class="QPushButton" name="button_down_argument">
-       <property name="text">
-        <string>Down</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="4">
-      <widget class="QPushButton" name="button_remove_argument">
-       <property name="text">
-        <string>Remove</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="2">
-      <widget class="QPushButton" name="button_up_argument">
-       <property name="text">
-        <string>Up</string>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="1" colspan="4">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>This list of arguments will be available as the sys.argv list.</string>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1" colspan="4">
+     <item row="2" column="1" colspan="2">
       <widget class="QComboBox" name="combo_script_file">
        <property name="editable">
         <bool>true</bool>
@@ -204,11 +153,6 @@
   <tabstop>combo_start_mode</tabstop>
   <tabstop>edit_module_name</tabstop>
   <tabstop>edit_command</tabstop>
-  <tabstop>list_arguments</tabstop>
-  <tabstop>button_add_argument</tabstop>
-  <tabstop>button_up_argument</tabstop>
-  <tabstop>button_down_argument</tabstop>
-  <tabstop>button_remove_argument</tabstop>
  </tabstops>
  <resources/>
  <connections/>

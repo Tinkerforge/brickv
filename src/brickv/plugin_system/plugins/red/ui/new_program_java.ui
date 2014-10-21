@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>604</width>
-    <height>429</height>
+    <height>632</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1" colspan="4">
+     <item row="0" column="1" colspan="2">
       <widget class="QComboBox" name="combo_version">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -45,10 +45,10 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1" colspan="4">
+     <item row="2" column="1" colspan="2">
       <widget class="QLineEdit" name="edit_main_class"/>
      </item>
-     <item row="1" column="1" colspan="4">
+     <item row="1" column="1" colspan="2">
       <widget class="QComboBox" name="combo_start_mode">
        <item>
         <property name="text">
@@ -76,7 +76,7 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1" colspan="4">
+     <item row="5" column="1" colspan="2">
       <widget class="QLabel" name="label_jar_file_help">
        <property name="text">
         <string>In JAR File mode [-jar] the specified Java archive will be executed.</string>
@@ -86,7 +86,7 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1" colspan="4">
+     <item row="3" column="1" colspan="2">
       <widget class="QLabel" name="label_main_class_help">
        <property name="text">
         <string>In Main Class mode the specified Java class will be executed.</string>
@@ -96,64 +96,27 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="1" colspan="4">
-      <widget class="QListWidget" name="list_arguments"/>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Arguments:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="1">
-      <widget class="QPushButton" name="button_add_argument">
-       <property name="text">
-        <string>Add</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="4">
-      <widget class="QPushButton" name="button_remove_argument">
-       <property name="text">
-        <string>Remove</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="1" colspan="4">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>This list of arguments will be passed to the main() method.</string>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="3">
-      <widget class="QPushButton" name="button_down_argument">
-       <property name="text">
-        <string>Down</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="2">
-      <widget class="QPushButton" name="button_up_argument">
-       <property name="text">
-        <string>Up</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1" colspan="4">
+     <item row="4" column="1" colspan="2">
       <widget class="QComboBox" name="combo_jar_file">
        <property name="editable">
         <bool>true</bool>
        </property>
        <property name="insertPolicy">
         <enum>QComboBox::NoInsert</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Classpath:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1" colspan="2">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>FIXME</string>
        </property>
       </widget>
      </item>
@@ -179,11 +142,6 @@
   <tabstop>combo_start_mode</tabstop>
   <tabstop>edit_main_class</tabstop>
   <tabstop>combo_jar_file</tabstop>
-  <tabstop>list_arguments</tabstop>
-  <tabstop>button_add_argument</tabstop>
-  <tabstop>button_up_argument</tabstop>
-  <tabstop>button_down_argument</tabstop>
-  <tabstop>button_remove_argument</tabstop>
  </tabstops>
  <resources/>
  <connections/>
