@@ -129,7 +129,12 @@ class ScriptManager:
             #       but it may not be necessary.
             if p.state == REDProcess.STATE_ERROR:
                 ScriptManager._call(self.scripts[script_name], callback, None)
-                red_process.release()
+                try:
+                    red_process.release()
+                    self.scripts[script_name].stdout.release()
+                    self.scripts[script_name].stderr.release()
+                except:
+                    traceback.print_exc()
             elif p.state == REDProcess.STATE_EXITED:
                 try:
                     out = self.scripts[script_name].stdout.read(max_len)
