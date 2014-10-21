@@ -414,12 +414,12 @@ class REDList(REDObject):
             if isinstance(item, str):
                 item = REDString(self._session).allocate(item)
             elif not isinstance(item, REDObject):
-                raise TypeError('Cannot append {0} item to list object {0}'.format(type(item), self._object_id))
+                raise TypeError('Cannot append {0} item to list object {1}'.format(type(item), self._object_id))
 
             error_code = self._session._brick.append_to_list(self._object_id, item._object_id)
 
             if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not append item {0} to list object {0}'.format(item._object_id, self._object_id), error_code)
+                raise REDError('Could not append item {0} to list object {1}'.format(item._object_id, self._object_id), error_code)
 
         self._items = items
 
