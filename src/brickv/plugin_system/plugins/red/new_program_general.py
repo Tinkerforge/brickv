@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import QRegExp, QString, Qt
 from PyQt4.QtGui import QWizardPage, QRegExpValidator, QMessageBox
-from brickv.plugin_system.plugins.red.new_program_constants import Constants
+from brickv.plugin_system.plugins.red.new_program_utils import Constants, MandatoryLineEditChecker
 from brickv.plugin_system.plugins.red.ui_new_program_general import Ui_NewProgramGeneral
 import re
 
@@ -35,7 +35,7 @@ class NewProgramGeneral(QWizardPage, Ui_NewProgramGeneral):
 
         self.identifier_is_unique = False
 
-        self.setTitle('General Information')
+        self.setTitle('Step 1 of {0}: General Information'.format(Constants.STEP_COUNT))
         self.setSubTitle('Specify name, identifier and programming language for the new program.')
 
         self.edit_identifier.setValidator(QRegExpValidator(QRegExp('^[a-zA-Z0-9_][a-zA-Z0-9._-]{2,}$'), self))
@@ -44,14 +44,21 @@ class NewProgramGeneral(QWizardPage, Ui_NewProgramGeneral):
         self.registerField('identifier*', self.edit_identifier)
         self.registerField('language', self.combo_language)
 
-        self.check_auto_generate.stateChanged.connect(self.update_ui_state)
         self.edit_name.textChanged.connect(self.auto_generate_identifier)
+        self.check_auto_generate.stateChanged.connect(self.update_ui_state)
         self.edit_identifier.textChanged.connect(self.check_identifier)
+        self.combo_language.currentIndexChanged.connect(self.check_language)
         self.combo_language.currentIndexChanged.connect(lambda: self.completeChanged.emit())
+
+        self.edit_name_checker = MandatoryLineEditChecker(self.edit_name, self.label_name)
+        self.edit_identifier_checker = MandatoryLineEditChecker(self.edit_identifier, self.label_identifier)
+
+        self.check_language(self.combo_language.currentIndex())
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.edit_name.setText('unnamed')
+        self.combo_language.setCurrentIndex(Constants.LANGUAGE_INVALID)
         self.update_ui_state()
 
     # overrides QWizardPage.nextId
@@ -112,3 +119,11 @@ class NewProgramGeneral(QWizardPage, Ui_NewProgramGeneral):
 
         if identifier_was_unique != self.identifier_is_unique:
             self.completeChanged.emit()
+
+    def check_language(self, language):
+        if language == Constants.LANGUAGE_INVALID:
+            self.label_language.setStyleSheet('QLabel { color : red }')
+        else:
+            self.label_language.setStyleSheet('')
+
+        self.completeChanged.emit()

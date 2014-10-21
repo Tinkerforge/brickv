@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt, QDir, QVariant
 from PyQt4.QtGui import QWizardPage, QFileDialog, QListWidgetItem, QProgressDialog, QApplication
-from brickv.plugin_system.plugins.red.new_program_constants import Constants
+from brickv.plugin_system.plugins.red.new_program_utils import Constants
 from brickv.plugin_system.plugins.red.ui_new_program_files import Ui_NewProgramFiles
 import os
 from collections import namedtuple
@@ -36,7 +36,7 @@ class NewProgramFiles(QWizardPage, Ui_NewProgramFiles):
 
         self.setupUi(self)
 
-        self.setTitle('Files')
+        self.setTitle('Step 2 of {0}: Files'.format(Constants.STEP_COUNT))
 
         self.list_files.itemSelectionChanged.connect(self.update_ui_state)
         self.button_add_files.clicked.connect(self.show_add_files_dialog)

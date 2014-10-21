@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QWizard
-from brickv.plugin_system.plugins.red.new_program_constants import Constants
+from brickv.plugin_system.plugins.red.new_program_utils import Constants
 from brickv.plugin_system.plugins.red.new_program_general import NewProgramGeneral
 from brickv.plugin_system.plugins.red.new_program_files import NewProgramFiles
 from brickv.plugin_system.plugins.red.new_program_java import NewProgramJava
@@ -31,6 +31,8 @@ from brickv.plugin_system.plugins.red.new_program_python import NewProgramPython
 from brickv.plugin_system.plugins.red.new_program_arguments import NewProgramArguments
 from brickv.plugin_system.plugins.red.new_program_stdio import NewProgramStdio
 from brickv.plugin_system.plugins.red.new_program_schedule import NewProgramSchedule
+from brickv.plugin_system.plugins.red.new_program_summary import NewProgramSummary
+from brickv.plugin_system.plugins.red.new_program_upload import NewProgramUpload
 
 class NewProgram(QWizard):
     def __init__(self, identifiers, *args, **kwargs):
@@ -48,10 +50,15 @@ class NewProgram(QWizard):
         self.setPage(Constants.PAGE_ARGUMENTS, NewProgramArguments())
         self.setPage(Constants.PAGE_STDIO, NewProgramStdio())
         self.setPage(Constants.PAGE_SCHEDULE, NewProgramSchedule())
+        self.setPage(Constants.PAGE_SUMMARY, NewProgramSummary())
+        self.setPage(Constants.PAGE_UPLOAD, NewProgramUpload())
 
     # overrides QWizard.sizeHint
     def sizeHint(self):
         size = QWizard.sizeHint(self)
+
+        if size.width() < 550:
+            size.setWidth(550)
 
         if size.height() < 550:
             size.setHeight(550)

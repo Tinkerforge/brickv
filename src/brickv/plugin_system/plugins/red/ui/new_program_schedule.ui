@@ -21,6 +21,9 @@
        <property name="text">
         <string>Start Condition:</string>
        </property>
+       <property name="buddy">
+        <cstring>combo_start_condition</cstring>
+       </property>
       </widget>
      </item>
      <item row="0" column="1">
@@ -77,6 +80,9 @@
        <property name="text">
         <string>Repeat Mode:</string>
        </property>
+       <property name="buddy">
+        <cstring>combo_repeat_mode</cstring>
+       </property>
       </widget>
      </item>
      <item row="1" column="0">
@@ -84,12 +90,18 @@
        <property name="text">
         <string>Start Time:</string>
        </property>
+       <property name="buddy">
+        <cstring>date_start_time</cstring>
+       </property>
       </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_start_delay">
        <property name="text">
         <string>Start Delay:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spin_start_delay</cstring>
        </property>
       </widget>
      </item>
@@ -125,12 +137,18 @@
        <property name="text">
         <string>Repeat Inverval:</string>
        </property>
+       <property name="buddy">
+        <cstring>spin_repeat_interval</cstring>
+       </property>
       </widget>
      </item>
      <item row="5" column="0">
       <widget class="QLabel" name="label_repeat_seconds">
        <property name="text">
         <string>Repeat Seconds:</string>
+       </property>
+       <property name="buddy">
+        <cstring>edit_repeat_seconds</cstring>
        </property>
       </widget>
      </item>
@@ -139,12 +157,18 @@
        <property name="text">
         <string>Repeat Weekdays:</string>
        </property>
+       <property name="buddy">
+        <cstring>edit_repeat_weekdays</cstring>
+       </property>
       </widget>
      </item>
      <item row="9" column="0">
       <widget class="QLabel" name="label_repeat_months">
        <property name="text">
         <string>Repeat Months:</string>
+       </property>
+       <property name="buddy">
+        <cstring>edit_repeat_months</cstring>
        </property>
       </widget>
      </item>
@@ -153,12 +177,18 @@
        <property name="text">
         <string>Repeat Days:</string>
        </property>
+       <property name="buddy">
+        <cstring>edit_repeat_days</cstring>
+       </property>
       </widget>
      </item>
      <item row="6" column="0">
       <widget class="QLabel" name="label_repeat_minutes">
        <property name="text">
         <string>Repeat Minutes:</string>
+       </property>
+       <property name="buddy">
+        <cstring>edit_repeat_minutes</cstring>
        </property>
       </widget>
      </item>
@@ -167,25 +197,52 @@
        <property name="text">
         <string>Repeat Hours:</string>
        </property>
+       <property name="buddy">
+        <cstring>edit_repeat_hours</cstring>
+       </property>
       </widget>
      </item>
      <item row="5" column="1">
-      <widget class="QLineEdit" name="edit_repeat_seconds"/>
+      <widget class="QLineEdit" name="edit_repeat_seconds">
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
      </item>
      <item row="6" column="1">
-      <widget class="QLineEdit" name="edit_repeat_minutes"/>
+      <widget class="QLineEdit" name="edit_repeat_minutes">
+       <property name="text">
+        <string>*</string>
+       </property>
+      </widget>
      </item>
      <item row="7" column="1">
-      <widget class="QLineEdit" name="edit_repeat_hours"/>
+      <widget class="QLineEdit" name="edit_repeat_hours">
+       <property name="text">
+        <string>*</string>
+       </property>
+      </widget>
      </item>
      <item row="8" column="1">
-      <widget class="QLineEdit" name="edit_repeat_days"/>
+      <widget class="QLineEdit" name="edit_repeat_days">
+       <property name="text">
+        <string>*</string>
+       </property>
+      </widget>
      </item>
      <item row="9" column="1">
-      <widget class="QLineEdit" name="edit_repeat_months"/>
+      <widget class="QLineEdit" name="edit_repeat_months">
+       <property name="text">
+        <string>*</string>
+       </property>
+      </widget>
      </item>
      <item row="10" column="1">
-      <widget class="QLineEdit" name="edit_repeat_weekdays"/>
+      <widget class="QLineEdit" name="edit_repeat_weekdays">
+       <property name="text">
+        <string>*</string>
+       </property>
+      </widget>
      </item>
      <item row="2" column="1">
       <widget class="QSpinBox" name="spin_start_delay">
@@ -204,6 +261,9 @@
        </property>
        <property name="maximum">
         <number>2147483647</number>
+       </property>
+       <property name="value">
+        <number>60</number>
        </property>
       </widget>
      </item>

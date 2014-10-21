@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.new_program_constants import Constants
+from brickv.plugin_system.plugins.red.new_program_utils import Constants, MandatoryLineEditChecker
 from brickv.plugin_system.plugins.red.ui_new_program_python import Ui_NewProgramPython
 
 class NewProgramPython(QWizardPage, Ui_NewProgramPython):
@@ -31,7 +31,7 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
 
         self.setupUi(self)
 
-        self.setTitle('Python Configuration')
+        self.setTitle('Step 4 of {0}: Python Configuration'.format(Constants.STEP_COUNT))
 
         self.registerField('python.version', self.combo_version)
         self.registerField('python.start_mode', self.combo_start_mode)
@@ -45,6 +45,10 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
         self.combo_script_file.editTextChanged.connect(self.emit_complete_changed)
         self.edit_module_name.textChanged.connect(self.emit_complete_changed)
         self.edit_command.textChanged.connect(self.emit_complete_changed)
+
+        self.combo_script_file_checker = MandatoryLineEditChecker(self.combo_script_file.lineEdit(), self.label_script_file)
+        self.edit_module_name_checker = MandatoryLineEditChecker(self.edit_module_name, self.label_module_name)
+        self.edit_command_checker = MandatoryLineEditChecker(self.edit_command, self.label_command)
 
     # overrides QWizardPage.initializePage
     def initializePage(self):

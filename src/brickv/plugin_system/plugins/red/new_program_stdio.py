@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.new_program_constants import Constants
+from brickv.plugin_system.plugins.red.new_program_utils import Constants, MandatoryLineEditChecker
 from brickv.plugin_system.plugins.red.ui_new_program_stdio import Ui_NewProgramStdio
 import os
 
@@ -32,7 +32,7 @@ class NewProgramStdio(QWizardPage, Ui_NewProgramStdio):
 
         self.setupUi(self)
 
-        self.setTitle('Stdio Redirection')
+        self.setTitle('Step 5 of {0}: Stdio Redirection'.format(Constants.STEP_COUNT))
 
         self.registerField('stdin_redirection', self.combo_stdin_redirection)
         self.registerField('stdin_file', self.combo_stdin_file, 'currentText')
@@ -51,6 +51,10 @@ class NewProgramStdio(QWizardPage, Ui_NewProgramStdio):
         self.combo_stderr_redirection.currentIndexChanged.connect(self.update_ui_state)
         self.combo_stderr_redirection.currentIndexChanged.connect(self.emit_complete_changed)
         self.edit_stderr_file.textChanged.connect(self.emit_complete_changed)
+
+        self.combo_stdin_file_checker = MandatoryLineEditChecker(self.combo_stdin_file.lineEdit(), self.label_stdin_file)
+        self.edit_stdout_file_checker = MandatoryLineEditChecker(self.edit_stdout_file, self.label_stdout_file)
+        self.edit_stderr_file_checker = MandatoryLineEditChecker(self.edit_stderr_file, self.label_stderr_file)
 
     # overrides QWizardPage.initializePage
     def initializePage(self):

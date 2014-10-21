@@ -43,8 +43,12 @@ class REDTabProgram(QtGui.QWidget, Ui_REDTabProgram):
         self.defined_programs = get_defined_programs(self.session)
         self.identifiers = []
 
+        self.list_programs.clear()
+
         for program in self.defined_programs.items:
             self.identifiers.append(str(program.identifier))
+
+            self.list_programs.addItem(str(program.identifier))
 
     def tab_off_focus(self):
         pass

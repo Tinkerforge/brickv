@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>649</width>
+    <width>603</width>
     <height>608</height>
    </rect>
   </property>
@@ -20,6 +20,9 @@
       <widget class="QLabel" name="label">
        <property name="text">
         <string>Python Version:</string>
+       </property>
+       <property name="buddy">
+        <cstring>combo_version</cstring>
        </property>
       </widget>
      </item>
@@ -42,6 +45,9 @@
       <widget class="QLabel" name="label_script_file">
        <property name="text">
         <string>Script File:</string>
+       </property>
+       <property name="buddy">
+        <cstring>combo_script_file</cstring>
        </property>
       </widget>
      </item>
@@ -72,6 +78,9 @@
        <property name="text">
         <string>Start Mode:</string>
        </property>
+       <property name="buddy">
+        <cstring>combo_start_mode</cstring>
+       </property>
       </widget>
      </item>
      <item row="4" column="0">
@@ -79,12 +88,18 @@
        <property name="text">
         <string>Module Name:</string>
        </property>
+       <property name="buddy">
+        <cstring>edit_module_name</cstring>
+       </property>
       </widget>
      </item>
      <item row="6" column="0">
       <widget class="QLabel" name="label_command">
        <property name="text">
         <string>Command:</string>
+       </property>
+       <property name="buddy">
+        <cstring>edit_command</cstring>
        </property>
       </widget>
      </item>
@@ -94,7 +109,7 @@
      <item row="5" column="1" colspan="2">
       <widget class="QLabel" name="label_module_name_help">
        <property name="text">
-        <string>In Module Name mode [-m] the specified Python module will be executed.</string>
+        <string>The specified Python module will be executed with the -m option.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -104,7 +119,7 @@
      <item row="7" column="1" colspan="2">
       <widget class="QLabel" name="label_command_help">
        <property name="text">
-        <string>In Command mode [-c] the specified Python command will be executed.</string>
+        <string>The specified Python command will be executed with the -c option.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -114,7 +129,7 @@
      <item row="3" column="1" colspan="2">
       <widget class="QLabel" name="label_script_file_help">
        <property name="text">
-        <string>In Script File mode the specified Python script will be executed.</string>
+        <string>The specified Python script will be executed.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>

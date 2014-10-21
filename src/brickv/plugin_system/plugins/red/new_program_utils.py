@@ -3,7 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-list_widget_editor.py: QListWidget Editor for Add/Up/Down/Remove buttons
+new_program_utils.py: New Program Wizard Utils
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -23,6 +23,66 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QListWidgetItem
+
+class Constants:
+    STEP_COUNT = 8
+
+    PAGE_GENERAL = 0
+    PAGE_FILES = 1
+    PAGE_JAVA = 2
+    PAGE_PYTHON = 3
+    PAGE_ARGUMENTS = 4
+    PAGE_STDIO = 5
+    PAGE_SCHEDULE = 6
+    PAGE_SUMMARY = 7
+    PAGE_UPLOAD = 8
+
+    LANGUAGE_INVALID = 0
+    LANGUAGE_JAVA = 1
+    LANGUAGE_PYTHON = 2
+
+    language_names = {
+        LANGUAGE_INVALID: '<invalid>',
+        LANGUAGE_JAVA:    'Java',
+        LANGUAGE_PYTHON:  'Python'
+    }
+
+    arguments_help = {
+        LANGUAGE_INVALID: '<invalid>',
+        LANGUAGE_JAVA:    'This list of arguments will be passed to the main() method.',
+        LANGUAGE_PYTHON:  'This list of arguments will be available as the sys.argv list.'
+    }
+
+    JAVA_START_MODE_MAIN_CLASS = 0
+    JAVA_START_MODE_JAR_FILE   = 1
+
+    PYTHON_START_MODE_SCRIPT_FILE = 0
+    PYTHON_START_MODE_MODULE_NAME = 1
+    PYTHON_START_MODE_COMMAND     = 2
+
+    STDIO_REDIRECTION_DEV_NULL = 0
+    STDIO_REDIRECTION_PIPE     = 1
+    STDIO_REDIRECTION_FILE     = 2
+    STDIO_REDIRECTION_LOG      = 3
+    STDIO_REDIRECTION_STDOUT   = 4
+
+    SCHEDULE_START_CONDITION_NEVER  = 0
+    SCHEDULE_START_CONDITION_NOW    = 1
+    SCHEDULE_START_CONDITION_REBOOT = 2
+    SCHEDULE_START_CONDITION_TIME   = 3
+
+    SCHEDULE_REPEAT_MODE_NEVER     = 0
+    SCHEDULE_REPEAT_MODE_INTERVAL  = 1
+    SCHEDULE_REPEAT_MODE_SELECTION = 2
+
+    DEFAULT_JAVA_START_MODE          = JAVA_START_MODE_MAIN_CLASS
+    DEFAULT_PYTHON_START_MODE        = PYTHON_START_MODE_SCRIPT_FILE
+    DEFAULT_STDIN_REDIRECTION        = STDIO_REDIRECTION_PIPE
+    DEFAULT_STDOUT_REDIRECTION       = STDIO_REDIRECTION_LOG
+    DEFAULT_STDERR_REDIRECTION       = STDIO_REDIRECTION_STDOUT
+    DEFAULT_SCHEDULE_START_CONDITION = SCHEDULE_START_CONDITION_NOW
+    DEFAULT_SCHEDULE_REPEAT_MODE     = SCHEDULE_REPEAT_MODE_NEVER
+
 
 class ListWidgetEditor:
     def __init__(self, list_items, button_add_item, button_up_item,
@@ -98,3 +158,18 @@ class ListWidgetEditor:
 
         self.list_items.clear()
         self.update_ui_state()
+
+
+class MandatoryLineEditChecker:
+    def __init__(self, edit, label):
+        self.edit = edit
+        self.label = label
+        self.edit.textChanged.connect(self.check)
+
+        self.check()
+
+    def check(self):
+        if len(self.edit.text()) == 0:
+            self.label.setStyleSheet('QLabel { color : red }')
+        else:
+            self.label.setStyleSheet('')

@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.new_program_constants import Constants
+from brickv.plugin_system.plugins.red.new_program_utils import Constants, MandatoryLineEditChecker
 from brickv.plugin_system.plugins.red.ui_new_program_java import Ui_NewProgramJava
 
 class NewProgramJava(QWizardPage, Ui_NewProgramJava):
@@ -31,7 +31,7 @@ class NewProgramJava(QWizardPage, Ui_NewProgramJava):
 
         self.setupUi(self)
 
-        self.setTitle('Java Configuration')
+        self.setTitle('Step 3 of {0}: Java Configuration'.format(Constants.STEP_COUNT))
 
         self.registerField('java.version', self.combo_version)
         self.registerField('java.start_mode', self.combo_start_mode)
@@ -43,6 +43,9 @@ class NewProgramJava(QWizardPage, Ui_NewProgramJava):
         self.edit_main_class.textChanged.connect(self.emit_complete_changed)
         self.combo_jar_file.currentIndexChanged.connect(self.emit_complete_changed)
         self.combo_jar_file.editTextChanged.connect(self.emit_complete_changed)
+
+        self.edit_main_class_checker = MandatoryLineEditChecker(self.edit_main_class, self.label_main_class)
+        self.combo_jar_file_checker = MandatoryLineEditChecker(self.combo_jar_file.lineEdit(), self.label_jar_file)
 
     # overrides QWizardPage.initializePage
     def initializePage(self):

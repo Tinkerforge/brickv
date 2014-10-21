@@ -34,6 +34,9 @@
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
+       <property name="buddy">
+        <cstring>list_arguments</cstring>
+       </property>
       </widget>
      </item>
      <item row="2" column="1">

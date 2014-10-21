@@ -22,8 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.new_program_constants import Constants
-from brickv.plugin_system.plugins.red.list_widget_editor import ListWidgetEditor
+from brickv.plugin_system.plugins.red.new_program_utils import Constants, ListWidgetEditor
 from brickv.plugin_system.plugins.red.ui_new_program_arguments import Ui_NewProgramArguments
 
 class NewProgramArguments(QWizardPage, Ui_NewProgramArguments):
@@ -32,7 +31,7 @@ class NewProgramArguments(QWizardPage, Ui_NewProgramArguments):
 
         self.setupUi(self)
 
-        self.setTitle('Arguments')
+        self.setTitle('Step 4 of {0}: Arguments'.format(Constants.STEP_COUNT))
 
         self.argument_list_editor = ListWidgetEditor(self.list_arguments,
                                                      self.button_add_argument,

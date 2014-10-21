@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import QDateTime, QDate, QTime
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.new_program_constants import Constants
+from brickv.plugin_system.plugins.red.new_program_utils import Constants, MandatoryLineEditChecker
 from brickv.plugin_system.plugins.red.ui_new_program_schedule import Ui_NewProgramSchedule
 import os
 
@@ -33,7 +33,7 @@ class NewProgramSchedule(QWizardPage, Ui_NewProgramSchedule):
 
         self.setupUi(self)
 
-        self.setTitle('Schedule')
+        self.setTitle('Step 6 of {0}: Schedule'.format(Constants.STEP_COUNT))
 
         self.registerField('schedule.start_condition', self.combo_start_condition)
         self.registerField('schedule.start_time', self.date_start_time)
@@ -49,6 +49,19 @@ class NewProgramSchedule(QWizardPage, Ui_NewProgramSchedule):
 
         self.combo_start_condition.currentIndexChanged.connect(self.update_ui_state)
         self.combo_repeat_mode.currentIndexChanged.connect(self.update_ui_state)
+        self.edit_repeat_seconds.textChanged.connect(self.emit_complete_changed)
+        self.edit_repeat_minutes.textChanged.connect(self.emit_complete_changed)
+        self.edit_repeat_hours.textChanged.connect(self.emit_complete_changed)
+        self.edit_repeat_days.textChanged.connect(self.emit_complete_changed)
+        self.edit_repeat_months.textChanged.connect(self.emit_complete_changed)
+        self.edit_repeat_weekdays.textChanged.connect(self.emit_complete_changed)
+
+        self.edit_repeat_seconds_checker = MandatoryLineEditChecker(self.edit_repeat_seconds, self.label_repeat_seconds)
+        self.edit_repeat_minutes_checker = MandatoryLineEditChecker(self.edit_repeat_minutes, self.label_repeat_minutes)
+        self.edit_repeat_hours_checker = MandatoryLineEditChecker(self.edit_repeat_hours, self.label_repeat_hours)
+        self.edit_repeat_days_checker = MandatoryLineEditChecker(self.edit_repeat_days, self.label_repeat_days)
+        self.edit_repeat_months_checker = MandatoryLineEditChecker(self.edit_repeat_months, self.label_repeat_months)
+        self.edit_repeat_weekdays_checker = MandatoryLineEditChecker(self.edit_repeat_weekdays, self.label_repeat_weekdays)
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
@@ -62,9 +75,24 @@ class NewProgramSchedule(QWizardPage, Ui_NewProgramSchedule):
         self.combo_repeat_mode.setCurrentIndex(Constants.DEFAULT_SCHEDULE_REPEAT_MODE)
         self.update_ui_state()
 
+    # overrides QWizardPage.isComplete
+    def isComplete(self):
+        repeat_mode = self.field('schedule.repeat_mode').toInt()[0]
+
+        if repeat_mode == Constants.SCHEDULE_REPEAT_MODE_SELECTION:
+            if len(self.edit_repeat_seconds.text()) == 0 or \
+               len(self.edit_repeat_minutes.text()) == 0 or \
+               len(self.edit_repeat_hours.text()) == 0 or \
+               len(self.edit_repeat_days.text()) == 0 or \
+               len(self.edit_repeat_months.text()) == 0 or \
+               len(self.edit_repeat_weekdays.text()) == 0:
+                return False
+
+        return QWizardPage.isComplete(self)
+
     # overrides QWizardPage.nextId
     def nextId(self):
-        return -1
+        return Constants.PAGE_SUMMARY
 
     def update_ui_state(self):
         start_condition = self.field('schedule.start_condition').toInt()[0]
@@ -95,3 +123,6 @@ class NewProgramSchedule(QWizardPage, Ui_NewProgramSchedule):
         self.edit_repeat_months.setVisible(repeat_mode_selection)
         self.label_repeat_weekdays.setVisible(repeat_mode_selection)
         self.edit_repeat_weekdays.setVisible(repeat_mode_selection)
+
+    def emit_complete_changed(self):
+        self.completeChanged.emit()
