@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-10-16.      #
+# This file was automatically generated on 2014-10-20.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -202,8 +202,8 @@ class BrickRED(Device):
     PROGRAM_STDIO_REDIRECTION_DEV_NULL = 0
     PROGRAM_STDIO_REDIRECTION_PIPE = 1
     PROGRAM_STDIO_REDIRECTION_FILE = 2
-    PROGRAM_STDIO_REDIRECTION_STDOUT = 3
-    PROGRAM_STDIO_REDIRECTION_LOG = 4
+    PROGRAM_STDIO_REDIRECTION_LOG = 3
+    PROGRAM_STDIO_REDIRECTION_STDOUT = 4
     PROGRAM_START_CONDITION_NEVER = 0
     PROGRAM_START_CONDITION_NOW = 1
     PROGRAM_START_CONDITION_REBOOT = 2
