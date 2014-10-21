@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QListWidgetItem
+from brickv.plugin_system.plugins.red.api import REDProgram
 
 class Constants:
     STEP_COUNT = 8
@@ -41,10 +42,16 @@ class Constants:
     LANGUAGE_JAVA = 1
     LANGUAGE_PYTHON = 2
 
-    language_names = {
+    language_display_names = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'Java',
         LANGUAGE_PYTHON:  'Python'
+    }
+
+    api_languages = {
+        LANGUAGE_INVALID: '<invalid>',
+        LANGUAGE_JAVA:    'java',
+        LANGUAGE_PYTHON:  'python'
     }
 
     arguments_help = {
@@ -66,14 +73,35 @@ class Constants:
     STDIO_REDIRECTION_LOG      = 3
     STDIO_REDIRECTION_STDOUT   = 4
 
+    api_stdio_redirections = {
+        STDIO_REDIRECTION_DEV_NULL: REDProgram.STDIO_REDIRECTION_DEV_NULL,
+        STDIO_REDIRECTION_PIPE:     REDProgram.STDIO_REDIRECTION_PIPE,
+        STDIO_REDIRECTION_FILE:     REDProgram.STDIO_REDIRECTION_FILE,
+        STDIO_REDIRECTION_LOG:      REDProgram.STDIO_REDIRECTION_LOG,
+        STDIO_REDIRECTION_STDOUT:   REDProgram.STDIO_REDIRECTION_STDOUT
+    }
+
     SCHEDULE_START_CONDITION_NEVER  = 0
     SCHEDULE_START_CONDITION_NOW    = 1
     SCHEDULE_START_CONDITION_REBOOT = 2
     SCHEDULE_START_CONDITION_TIME   = 3
 
+    api_schedule_start_condition = {
+        SCHEDULE_START_CONDITION_NEVER:  REDProgram.START_CONDITION_NEVER,
+        SCHEDULE_START_CONDITION_NOW:    REDProgram.START_CONDITION_NOW,
+        SCHEDULE_START_CONDITION_REBOOT: REDProgram.START_CONDITION_REBOOT,
+        SCHEDULE_START_CONDITION_TIME:   REDProgram.START_CONDITION_TIMESTAMP
+    }
+
     SCHEDULE_REPEAT_MODE_NEVER     = 0
     SCHEDULE_REPEAT_MODE_INTERVAL  = 1
     SCHEDULE_REPEAT_MODE_SELECTION = 2
+
+    api_schedule_repeat_mode = {
+        SCHEDULE_REPEAT_MODE_NEVER:     REDProgram.REPEAT_MODE_NEVER,
+        SCHEDULE_REPEAT_MODE_INTERVAL:  REDProgram.REPEAT_MODE_INTERVAL,
+        SCHEDULE_REPEAT_MODE_SELECTION: REDProgram.REPEAT_MODE_SELECTION,
+    }
 
     DEFAULT_JAVA_START_MODE          = JAVA_START_MODE_MAIN_CLASS
     DEFAULT_PYTHON_START_MODE        = PYTHON_START_MODE_SCRIPT_FILE

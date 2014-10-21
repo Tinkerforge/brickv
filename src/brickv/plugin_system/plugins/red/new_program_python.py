@@ -52,8 +52,8 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle('Specify how the new Python program [{0}] should be executed.'
-                         .format(str(self.field('name').toString())))
+        self.setSubTitle(u'Specify how the new Python program [{0}] should be executed.'
+                         .format(unicode(self.field('name').toString())))
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PYTHON_START_MODE)
         self.combo_script_file.clear()
 
@@ -106,3 +106,19 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
 
     def emit_complete_changed(self):
         self.completeChanged.emit()
+
+    def get_command(self):
+        executable = '/usr/bin/python2'
+        arguments = []
+        start_mode = self.field('python.start_mode').toInt()[0]
+
+        if start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE:
+            arguments.append(unicode(self.combo_script_file.currentText()))
+        elif start_mode == Constants.PYTHON_START_MODE_MODULE_NAME:
+            arguments.append('-m')
+            arguments.append(unicode(self.edit_module_name.text()))
+        elif start_mode == Constants.PYTHON_START_MODE_COMMAND:
+            arguments.append('-c')
+            arguments.append(unicode(self.edit_command.text()))
+
+        return executable, arguments

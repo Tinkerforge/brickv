@@ -35,9 +35,10 @@ from brickv.plugin_system.plugins.red.new_program_summary import NewProgramSumma
 from brickv.plugin_system.plugins.red.new_program_upload import NewProgramUpload
 
 class NewProgram(QWizard):
-    def __init__(self, identifiers, *args, **kwargs):
+    def __init__(self, session, identifiers, *args, **kwargs):
         QWizard.__init__(self, *args, **kwargs)
 
+        self.session = session
         self.identifiers = identifiers
 
         self.setWindowFlags(self.windowFlags() | Qt.Tool)
@@ -51,7 +52,7 @@ class NewProgram(QWizard):
         self.setPage(Constants.PAGE_STDIO, NewProgramStdio())
         self.setPage(Constants.PAGE_SCHEDULE, NewProgramSchedule())
         self.setPage(Constants.PAGE_SUMMARY, NewProgramSummary())
-        self.setPage(Constants.PAGE_UPLOAD, NewProgramUpload())
+        self.setPage(Constants.PAGE_UPLOAD, NewProgramUpload(session))
 
     # overrides QWizard.sizeHint
     def sizeHint(self):

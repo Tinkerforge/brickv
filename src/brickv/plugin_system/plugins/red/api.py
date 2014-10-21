@@ -306,6 +306,9 @@ class REDString(REDObject):
     def __str__(self):
         return self._data
 
+    def __unicode__(self):
+        return self._data.decode('utf-8')
+
     def __repr__(self):
         return '<REDString object_id: {0}, data: {1}>'.format(self._object_id, repr(self._data))
 
@@ -411,15 +414,15 @@ class REDList(REDObject):
         self._set_object_id(object_id)
 
         for item in items:
-            if isinstance(item, str):
+            if isinstance(item, str) or isinstance(item, unicode):
                 item = REDString(self._session).allocate(item)
             elif not isinstance(item, REDObject):
-                raise TypeError('Cannot append {0} item to list object {0}'.format(type(item), self._object_id))
+                raise TypeError('Cannot append {0} item to list object {1}'.format(type(item), self._object_id))
 
             error_code = self._session._brick.append_to_list(self._object_id, item._object_id)
 
             if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not append item {0} to list object {0}'.format(item._object_id, self._object_id), error_code)
+                raise REDError('Could not append item {0} to list object {1}'.format(item._object_id, self._object_id), error_code)
 
         self._items = items
 
@@ -1122,8 +1125,8 @@ class REDProgram(REDObject):
     STDIO_REDIRECTION_DEV_NULL = BrickRED.PROGRAM_STDIO_REDIRECTION_DEV_NULL
     STDIO_REDIRECTION_PIPE     = BrickRED.PROGRAM_STDIO_REDIRECTION_PIPE
     STDIO_REDIRECTION_FILE     = BrickRED.PROGRAM_STDIO_REDIRECTION_FILE
-    STDIO_REDIRECTION_STDOUT   = BrickRED.PROGRAM_STDIO_REDIRECTION_STDOUT
     STDIO_REDIRECTION_LOG      = BrickRED.PROGRAM_STDIO_REDIRECTION_LOG
+    STDIO_REDIRECTION_STDOUT   = BrickRED.PROGRAM_STDIO_REDIRECTION_STDOUT
 
     START_CONDITION_NEVER     = BrickRED.PROGRAM_START_CONDITION_NEVER
     START_CONDITION_NOW       = BrickRED.PROGRAM_START_CONDITION_NOW
@@ -1312,7 +1315,7 @@ class REDProgram(REDObject):
         # stderr
         self._stderr_redirection = stderr_redirection
 
-        if self._stdin_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+        if self._stderr_redirection == REDProgram.STDIO_REDIRECTION_FILE:
             self._stderr_file_name = _attach_or_release(self._session, REDString, stderr_file_name_string_id)
         else:
             self._stderr_file_name = None
@@ -1395,12 +1398,154 @@ class REDProgram(REDObject):
 
     def undefine(self, signal):
         if self._object_id is None:
-            raise RuntimeError('Cannot kill unattached process object')
+            raise RuntimeError('Cannot undefine unattached process object')
 
         error_code = self._session._brick.undefine_program(self._object_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not undefine program object {0}'.format(self._object_id), error_code)
+
+    def set_command(self, executable, arguments, environment):
+        if self._object_id is None:
+            raise RuntimeError('Cannot set command for unattached process object')
+
+        if not isinstance(executable, REDString):
+            executable = REDString(self._session).allocate(executable)
+
+        if not isinstance(arguments, REDList):
+            arguments = REDList(self._session).allocate(arguments)
+
+        if not isinstance(environment, REDList):
+            environment = REDList(self._session).allocate(environment)
+
+        error_code = self._session._brick.set_program_command(self._object_id,
+                                                              executable.object_id,
+                                                              arguments.object_id,
+                                                              environment.object_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not set command for program object {0}'.format(self._object_id), error_code)
+
+        self._executable = executable
+        self._arguments = arguments
+        self._environment = environment
+
+    def set_stdio_redirection(self, stdin_redirection, stdin_file_name,
+                              stdout_redirection, stdout_file_name,
+                              stderr_redirection, stderr_file_name):
+        if self._object_id is None:
+            raise RuntimeError('Cannot set stdio redirection for unattached process object')
+
+        # stdin
+        if stdin_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+            if not isinstance(stdin_file_name, REDString):
+                stdin_file_name = REDString(self._session).allocate(stdin_file_name)
+
+            stdin_file_name_object_id = stdin_file_name.object_id
+        else:
+            stdin_file_name_object_id = 0
+
+        # stdout
+        if stdout_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+            if not isinstance(stdout_file_name, REDString):
+                stdout_file_name = REDString(self._session).allocate(stdout_file_name)
+
+            stdout_file_name_object_id = stdout_file_name.object_id
+        else:
+            stdout_file_name_object_id = 0
+
+        # stderr
+        if stderr_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+            if not isinstance(stderr_file_name, REDString):
+                stderr_file_name = REDString(self._session).allocate(stderr_file_name)
+
+            stderr_file_name_object_id = stderr_file_name.object_id
+        else:
+            stderr_file_name_object_id = 0
+
+        error_code = self._session._brick.set_program_stdio_redirection(self._object_id,
+                                                                        stdin_redirection,
+                                                                        stdin_file_name_object_id,
+                                                                        stdout_redirection,
+                                                                        stdout_file_name_object_id,
+                                                                        stderr_redirection,
+                                                                        stderr_file_name_object_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not set stdio redirection for program object {0}'.format(self._object_id), error_code)
+
+        # stdin
+        self._stdin_redirection = stdin_redirection
+
+        if self._stdin_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+            self._stdin_file_name = stdin_file_name
+        else:
+            self._stdin_file_name = None
+
+        # stdout
+        self._stdout_redirection = stdout_redirection
+
+        if self._stdout_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+            self._stdout_file_name = stdout_file_name
+        else:
+            self._stdout_file_name = None
+
+        # stderr
+        self._stderr_redirection = stderr_redirection
+
+        if self._stderr_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+            self._stderr_file_name = stderr_file_name
+        else:
+            self._stderr_file_name = None
+
+    def set_schedule(self, start_condition, start_timestamp, start_delay,
+                     repeat_mode, repeat_interval, repeat_second_mask, repeat_minute_mask,
+                     repeat_hour_mask, repeat_day_mask, repeat_month_mask, repeat_weekday_mask):
+        if self._object_id is None:
+            raise RuntimeError('Cannot set schedule for unattached process object')
+
+        error_code = self._session._brick.set_program_schedule(self._object_id,
+                                                               start_condition,
+                                                               start_timestamp,
+                                                               start_delay,
+                                                               repeat_mode,
+                                                               repeat_interval,
+                                                               repeat_second_mask,
+                                                               repeat_minute_mask,
+                                                               repeat_hour_mask,
+                                                               repeat_day_mask,
+                                                               repeat_month_mask,
+                                                               repeat_weekday_mask)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not set schedule for program object {0}'.format(self._object_id), error_code)
+
+        self._start_condition = start_condition
+        self._start_timestamp = start_timestamp
+        self._start_delay = start_delay
+        self._repeat_mode = repeat_mode
+        self._repeat_interval = repeat_interval
+        self._repeat_second_mask = repeat_second_mask
+        self._repeat_minute_mask = repeat_minute_mask
+        self._repeat_hour_mask = repeat_hour_mask
+        self._repeat_day_mask = repeat_day_mask
+        self._repeat_month_mask = repeat_month_mask
+        self._repeat_weekday_mask = repeat_weekday_mask
+
+    def set_custom_option_value(self, name, value):
+        if self._object_id is None:
+            raise RuntimeError('Cannot set custom option for unattached process object')
+
+        if not isinstance(name, REDString):
+            name = REDString(self._session).allocate(name)
+
+        if not isinstance(value, REDString):
+            value = REDString(self._session).allocate(value)
+
+        error_code = self._session._brick.set_custom_program_option_value(self._object_id, name.object_id, value.object_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not set custom option for program object {0}'.format(self._object_id), error_code)
 
     @property
     def identifier(self):                     return self._identifier

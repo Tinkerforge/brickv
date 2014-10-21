@@ -44,9 +44,9 @@ class NewProgramArguments(QWizardPage, Ui_NewProgramArguments):
     def initializePage(self):
         language = self.field('language').toInt()[0]
 
-        self.setSubTitle('Specify the arguments to be passed to the new {0} program [{1}].'
-                         .format(Constants.language_names[language],
-                                 str(self.field('name').toString())))
+        self.setSubTitle(u'Specify the arguments to be passed to the new {0} program [{1}].'
+                         .format(Constants.language_display_names[language],
+                                 unicode(self.field('name').toString())))
         self.label_arguments_help.setText(Constants.arguments_help[language])
         self.argument_list_editor.remove_all_items()
         self.update_ui_state()
@@ -60,3 +60,11 @@ class NewProgramArguments(QWizardPage, Ui_NewProgramArguments):
 
     def emit_complete_changed(self):
         self.completeChanged.emit()
+
+    def get_arguments(self):
+        arguments = []
+
+        for row in range(self.list_arguments.count()):
+            arguments.append(unicode(self.list_arguments.item(row).text()))
+
+        return arguments
