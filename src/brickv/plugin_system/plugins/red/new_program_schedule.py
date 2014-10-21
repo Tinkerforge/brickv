@@ -58,9 +58,9 @@ class NewProgramSchedule(QWizardPage, Ui_NewProgramSchedule):
         self.setSubTitle('Specify the execution schedule for the new {0} program [{1}].'
                          .format(Constants.language_names[self.field('language').toInt()[0]],
                                  str(self.field('name').toString())))
-        self.combo_start_condition.setCurrentIndex(Constants.SCHEDULE_START_CONDITION_NOW)
+        self.combo_start_condition.setCurrentIndex(Constants.DEFAULT_SCHEDULE_START_CONDITION)
         self.date_start_time.setDateTime(now)
-        self.combo_repeat_mode.setCurrentIndex(0)
+        self.combo_repeat_mode.setCurrentIndex(Constants.DEFAULT_SCHEDULE_REPEAT_MODE)
         self.update_ui_state()
 
     # overrides QWizardPage.nextId

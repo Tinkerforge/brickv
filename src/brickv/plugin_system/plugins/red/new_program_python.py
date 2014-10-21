@@ -58,7 +58,7 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
     def initializePage(self):
         self.setSubTitle('Specify how the new Python program [{0}] should be executed.'
                          .format(str(self.field('name').toString())))
-        self.combo_start_mode.setCurrentIndex(0)
+        self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PYTHON_START_MODE)
         self.combo_script_file.clear()
 
         for upload in self.wizard().page(Constants.PAGE_FILES).get_uploads():
