@@ -26,7 +26,7 @@
       <item>
        <widget class="QToolBox" name="tbox_settings">
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="box_net">
          <property name="geometry">
@@ -280,8 +280,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>762</width>
-                   <height>547</height>
+                   <width>350</width>
+                   <height>383</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -580,8 +580,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>762</width>
-                   <height>547</height>
+                   <width>350</width>
+                   <height>284</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -967,9 +967,19 @@
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pbutton_brickd_save">
+                       <widget class="QPushButton" name="pbutton_brickd_general_refresh">
                         <property name="text">
-                         <string>Save</string>
+                         <string>Refresh</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="pbutton_brickd_general_save">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="text">
+                         <string>Saved</string>
                         </property>
                        </widget>
                       </item>
@@ -991,7 +1001,7 @@
                     <item row="3" column="0">
                      <widget class="QLabel" name="label">
                       <property name="text">
-                       <string>Secret</string>
+                       <string>Authentication Secret</string>
                       </property>
                      </widget>
                     </item>
@@ -1058,9 +1068,19 @@
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pbutton_brickd_adv_save">
+                       <widget class="QPushButton" name="pbutton_brickd_adv_refresh">
                         <property name="text">
-                         <string>Save</string>
+                         <string>Refresh</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="pbutton_brickd_adv_save">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="text">
+                         <string>Saved</string>
                         </property>
                        </widget>
                       </item>

@@ -80,3 +80,18 @@ def parse_no_fake(data):
     config.readfp(StringIO(string))
 
     return config
+
+def to_string(data):
+    config = ConfigParser.ConfigParser()
+    config.add_section('fake_section')
+    for key, value in data.items():
+        config.set('fake_section', key, value)
+        
+    s = StringIO()
+    config.write(s)
+    return s.getvalue().replace('[fake_section]\n', '')
+    
+
+def to_string_no_fake(data):
+    # TODO
+    pass
