@@ -140,7 +140,12 @@ class ScriptManager:
                 else:
                     ScriptManager._call(self.scripts[script_name], callback, self.ScriptResult(out, err))
                 finally:
-                    red_process.release()
+                    try:
+                        red_process.release()
+                        self.scripts[script_name].stdout.release()
+                        self.scripts[script_name].stderr.release()
+                    except:
+                        traceback.print_exc()
     
                 
         red_process = REDProcess(self.session)
