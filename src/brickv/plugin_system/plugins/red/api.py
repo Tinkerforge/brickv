@@ -306,6 +306,9 @@ class REDString(REDObject):
     def __str__(self):
         return self._data
 
+    def __unicode__(self):
+        return self._data.decode('utf-8')
+
     def __repr__(self):
         return '<REDString object_id: {0}, data: {1}>'.format(self._object_id, repr(self._data))
 
@@ -411,7 +414,7 @@ class REDList(REDObject):
         self._set_object_id(object_id)
 
         for item in items:
-            if isinstance(item, str):
+            if isinstance(item, str) or isinstance(item, unicode):
                 item = REDString(self._session).allocate(item)
             elif not isinstance(item, REDObject):
                 raise TypeError('Cannot append {0} item to list object {1}'.format(type(item), self._object_id))
