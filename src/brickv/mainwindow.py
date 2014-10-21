@@ -510,6 +510,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def cb_enumerate(self, uid, connected_uid, position,
                      hardware_version, firmware_version,
                      device_identifier, enumeration_type):
+
         # because the enumerate callback is decoupled by a signal/slot, strings
         # arrive here as QStrings, convert them back to normal Python strings
         uid = str(uid)
