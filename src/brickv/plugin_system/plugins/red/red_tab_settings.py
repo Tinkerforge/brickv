@@ -403,7 +403,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.pbutton_brickd_adv_save.setText("Saved")
     
     def brickd_update_widget_data(self):
-        print self.brickd_conf
         if self.brickd_conf == None:
             return
         
