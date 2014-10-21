@@ -18,7 +18,7 @@ class TerminalWidget(QWidget):
         1: "#b00",
         2: "#0b0",
         3: "#bb0",
-        4: "#00b",
+        4: "#66F",
         5: "#b0b",
         6: "#0bb",
         7: "#bbb",
