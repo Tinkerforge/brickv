@@ -46,7 +46,7 @@ class NewProgramFiles(QWizardPage, Ui_NewProgramFiles):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle(u'Specify the files to be uploaded for the new {0} program [{1}].'
-                         .format(Constants.language_names[self.field('language').toInt()[0]],
+                         .format(Constants.language_display_names[self.field('language').toInt()[0]],
                                  unicode(self.field('name').toString())))
         self.list_files.clear()
         self.update_ui_state()

@@ -45,7 +45,7 @@ class NewProgramArguments(QWizardPage, Ui_NewProgramArguments):
         language = self.field('language').toInt()[0]
 
         self.setSubTitle(u'Specify the arguments to be passed to the new {0} program [{1}].'
-                         .format(Constants.language_names[language],
+                         .format(Constants.language_display_names[language],
                                  unicode(self.field('name').toString())))
         self.label_arguments_help.setText(Constants.arguments_help[language])
         self.argument_list_editor.remove_all_items()
@@ -65,6 +65,6 @@ class NewProgramArguments(QWizardPage, Ui_NewProgramArguments):
         arguments = []
 
         for row in range(self.list_arguments.count()):
-            arguments.append(self.list_arguments.item(row).text())
+            arguments.append(unicode(self.list_arguments.item(row).text()))
 
         return arguments

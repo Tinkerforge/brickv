@@ -95,3 +95,16 @@ class NewProgramJava(QWizardPage, Ui_NewProgramJava):
 
     def emit_complete_changed(self):
         self.completeChanged.emit()
+
+    def get_command(self):
+        executable = '/usr/bin/java'
+        arguments = ['-cp', '.'] # FIXME
+        start_mode = self.field('java.start_mode').toInt()[0]
+
+        if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS:
+            arguments.append(unicode(self.edit_main_class.text()))
+        elif start_mode == Constants.JAVA_START_MODE_JAR_FILE:
+            arguments.append('-jar')
+            arguments.append(unicode(self.combo_jar_file.currentText()))
+
+        return executable, arguments

@@ -59,7 +59,7 @@ class NewProgramStdio(QWizardPage, Ui_NewProgramStdio):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle(u'Specify how standard input, output and error of the new {0} program [{1}] should be redirected.'
-                         .format(Constants.language_names[self.field('language').toInt()[0]],
+                         .format(Constants.language_display_names[self.field('language').toInt()[0]],
                                  unicode(self.field('name').toString())))
         self.combo_stdin_redirection.setCurrentIndex(Constants.DEFAULT_STDIN_REDIRECTION)
         self.combo_stdout_redirection.setCurrentIndex(Constants.DEFAULT_STDOUT_REDIRECTION)

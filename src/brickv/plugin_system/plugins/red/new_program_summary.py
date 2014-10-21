@@ -37,15 +37,15 @@ class NewProgramSummary(QWizardPage, Ui_NewProgramSummary):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         name = unicode(self.field('name').toString())
-        language_name = Constants.language_names[self.field('language').toInt()[0]]
+        language_display_name = Constants.language_display_names[self.field('language').toInt()[0]]
 
         self.setSubTitle(u'The complete configuration of the new {0} program [{1}].'
-                         .format(language_name, name))
+                         .format(language_display_name, name))
 
         html  = u'<b>General Information</b><br/>'
         html += u'Name: {0}<br/>'.format(Qt.escape(name))
         html += u'Identifier: {0}<br/>'.format(Qt.escape(self.field('identifier').toString()))
-        html += u'Language: {0}<br/>'.format(Qt.escape(language_name))
+        html += u'Language: {0}<br/>'.format(Qt.escape(language_display_name))
         html += u'<br/>'
 
         html += u'<b>Files</b><br/>'
@@ -53,7 +53,7 @@ class NewProgramSummary(QWizardPage, Ui_NewProgramSummary):
             html += u'{0}<br/>'.format(Qt.escape(item))
         html += u'<br/>'
 
-        html += u'<b>{0} Configuration</b><br/>'.format(Qt.escape(language_name))
+        html += u'<b>{0} Configuration</b><br/>'.format(Qt.escape(language_display_name))
         html += u'FIXME<br/>'
         html += u'<br/>'
 

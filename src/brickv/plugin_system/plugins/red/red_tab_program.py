@@ -54,5 +54,5 @@ class REDTabProgram(QtGui.QWidget, Ui_REDTabProgram):
         pass
 
     def show_new_program_wizard(self):
-        self.new_program_wizard = NewProgram(self.identifiers)
+        self.new_program_wizard = NewProgram(self.session, self.identifiers)
         self.new_program_wizard.show()
