@@ -93,12 +93,30 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.cbox_net_wired_contype.addItem("Static")
         self.cbox_net_wireless_contype.addItem("DHCP")
         self.cbox_net_wireless_contype.addItem("Static")
+        self.cbox_net_wireless_enctype.addItem("WPA 1/2 (Hex [0-9/A-F])")
+        self.cbox_brickd_adv_ll.addItem("Error")
+        self.cbox_brickd_adv_ll.addItem("Warn")
+        self.cbox_brickd_adv_ll.addItem("Info")
+        self.cbox_brickd_adv_ll.addItem("Debug")
+        self.cbox_brickd_adv_rt.addItem("cpu")
+        self.cbox_brickd_adv_rt.addItem("gpio")
+        self.cbox_brickd_adv_rt.addItem("heartbeat")
+        self.cbox_brickd_adv_rt.addItem("mmc")
+        self.cbox_brickd_adv_rt.addItem("off")
+        self.cbox_brickd_adv_rt.addItem("on")
+        self.cbox_brickd_adv_gt.addItem("cpu")
+        self.cbox_brickd_adv_gt.addItem("gpio")
+        self.cbox_brickd_adv_gt.addItem("heartbeat")
+        self.cbox_brickd_adv_gt.addItem("mmc")
+        self.cbox_brickd_adv_gt.addItem("off")
+        self.cbox_brickd_adv_gt.addItem("on")
 
         self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRELESS, 0)
         self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRED, 0)
 
         # connecting signals to slots
         self.refresh_timer.timeout.connect(self.cb_refresh_timer_timedout)
+        self.tbox_settings.currentChanged.connect(self.cb_tbox_settings_current_changed)
         self.twidget_net.currentChanged.connect(self.cb_twidget_net_current_changed)
         self.cbox_net_wireless_contype.currentIndexChanged.connect\
             (self.cb_cbox_net_wireless_contype_current_idx_changed)
@@ -107,7 +125,15 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.pbutton_net_wired_activate.clicked.connect(self.cb_pbutton_net_wired_activate_clicked)
 
     def tab_on_focus(self):
-        self.update_settings_all_data()
+        if self.tbox_settings.currentIndex() == BOX_INDEX_BRICKD:
+            self.brickd_brickd_conf = REDFile(self.session)
+
+            async_call(self.brickd_brickd_conf.open,
+                       (BRICKD_BRICKD_CONF_FILE, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                       self.cb_brickd_brickd_conf_open,
+                       self.cb_brickd_brickd_conf_open_error)
+
+        self.update_settings_net_all_data()
         self.refresh_timer.start(REFRESH_TIMEOUT)
 
     def tab_off_focus(self):
@@ -132,21 +158,29 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         if "wireless" in self.dict_net_interfaces:
             if self.dict_net_interfaces['wireless'] is None:
                 self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRELESS, 0)
-            else:
-                self.cbox_net_wireless_intf.clear()
-                for intf in self.dict_net_interfaces['wireless']:
-                    self.cbox_net_wireless_intf.addItem(intf)
-                self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRELESS, 1)
+
+            elif len(self.dict_net_interfaces['wireless']) > 0:
+                    self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRELESS, 1)
+                    cbox_net_wireless_intf_clist = [self.cbox_net_wireless_intf.itemText(i)\
+                                                    for i in range(self.cbox_net_wireless_intf.count())]
+
+                    if cmp(cbox_net_wireless_intf_clist, self.dict_net_interfaces['wireless']) == -1:
+                        self.cbox_net_wireless_intf.clear()
+                        self.cbox_net_wireless_intf.addItems(self.dict_net_interfaces['wireless'])
 
     def update_net_wired_widget_data(self):
         if "wired" in self.dict_net_interfaces:
             if self.dict_net_interfaces['wired'] is None:
                 self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRED, 0)
-            else:
-                self.cbox_net_wired_intf.clear()
-                for intf in self.dict_net_interfaces['wired']:
-                    self.cbox_net_wired_intf.addItem(intf)
-                self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRED, 1)
+
+            elif len(self.dict_net_interfaces['wired']) > 0:
+                    self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRED, 1)
+                    cbox_net_wired_intf_clist = [self.cbox_net_wired_intf.itemText(i)\
+                                                 for i in range(self.cbox_net_wired_intf.count())]
+
+                    if cmp(cbox_net_wired_intf_clist, self.dict_net_interfaces['wired']) == -1:
+                        self.cbox_net_wired_intf.clear()
+                        self.cbox_net_wired_intf.addItems(self.dict_net_interfaces['wired'])
 
     def update_brickd_gen_widget_data(self):
         l_addr = self.dict_brickd_brickd_conf['listen.address'].split('.')
@@ -165,7 +199,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def update_datetime_gen_widget_data(self):
         pass
 
-    def update_settings_all_data(self):
+    def update_settings_net_all_data(self):
         self.script_manager.execute_script('settings_network_gen',
                                            self.cb_settings_network_gen_returned,
                                            [])
@@ -181,7 +215,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.net_manager_settings_conf = REDFile(self.session)
         self.net_wired_settings_conf = REDFile(self.session)
         self.net_wireless_settings_conf = REDFile(self.session)
-        self.brickd_brickd_conf = REDFile(self.session)
 
         async_call(self.net_manager_settings_conf.open,
                    (NET_MANAGER_SETTINGS_CONF_FILE, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
@@ -198,15 +231,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    self.cb_net_wired_settings_conf_open,
                    self.cb_net_wired_settings_conf_open_error)
 
-        async_call(self.brickd_brickd_conf.open,
-                   (BRICKD_BRICKD_CONF_FILE, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                   self.cb_brickd_brickd_conf_open,
-                   self.cb_brickd_brickd_conf_open_error)
-
     # the callbacks
     def cb_refresh_timer_timedout(self):
         self.refresh_timer.stop()
-        self.update_settings_all_data()
+        self.update_settings_net_all_data()
         self.refresh_timer.start(REFRESH_TIMEOUT)
 
     def cb_settings_network_gen_returned(self, result):
@@ -273,6 +301,15 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.dict_brickd_brickd_conf = config_parser.parse(result.data)
             self.update_brickd_gen_widget_data()
         self.brickd_brickd_conf.release()
+
+    def cb_tbox_settings_current_changed(self, ctidx):
+        if ctidx == BOX_INDEX_BRICKD:
+            self.brickd_brickd_conf = REDFile(self.session)
+
+            async_call(self.brickd_brickd_conf.open,
+                       (BRICKD_BRICKD_CONF_FILE, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                       self.cb_brickd_brickd_conf_open,
+                       self.cb_brickd_brickd_conf_open_error)
 
     def cb_twidget_net_current_changed(self, ctidx):
         if ctidx == TAB_INDEX_NETWORK_WIRELESS:
