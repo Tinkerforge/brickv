@@ -1125,8 +1125,8 @@ class REDProgram(REDObject):
     STDIO_REDIRECTION_DEV_NULL = BrickRED.PROGRAM_STDIO_REDIRECTION_DEV_NULL
     STDIO_REDIRECTION_PIPE     = BrickRED.PROGRAM_STDIO_REDIRECTION_PIPE
     STDIO_REDIRECTION_FILE     = BrickRED.PROGRAM_STDIO_REDIRECTION_FILE
-    STDIO_REDIRECTION_STDOUT   = BrickRED.PROGRAM_STDIO_REDIRECTION_STDOUT
     STDIO_REDIRECTION_LOG      = BrickRED.PROGRAM_STDIO_REDIRECTION_LOG
+    STDIO_REDIRECTION_STDOUT   = BrickRED.PROGRAM_STDIO_REDIRECTION_STDOUT
 
     START_CONDITION_NEVER     = BrickRED.PROGRAM_START_CONDITION_NEVER
     START_CONDITION_NOW       = BrickRED.PROGRAM_START_CONDITION_NOW
@@ -1315,7 +1315,7 @@ class REDProgram(REDObject):
         # stderr
         self._stderr_redirection = stderr_redirection
 
-        if self._stdin_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+        if self._stderr_redirection == REDProgram.STDIO_REDIRECTION_FILE:
             self._stderr_file_name = _attach_or_release(self._session, REDString, stderr_file_name_string_id)
         else:
             self._stderr_file_name = None
@@ -1398,7 +1398,7 @@ class REDProgram(REDObject):
 
     def undefine(self, signal):
         if self._object_id is None:
-            raise RuntimeError('Cannot kill unattached process object')
+            raise RuntimeError('Cannot undefine unattached process object')
 
         error_code = self._session._brick.undefine_program(self._object_id)
 
