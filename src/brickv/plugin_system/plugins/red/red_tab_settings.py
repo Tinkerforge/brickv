@@ -27,6 +27,7 @@ except:
     from StringIO import StringIO
 
 import json
+import time
 from PyQt4 import Qt, QtCore, QtGui
 
 from brickv.plugin_system.plugins.red.ui_red_tab_settings import Ui_REDTabSettings
@@ -70,6 +71,15 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.setupUi(self)
 
         self.session = None
+
+        self.time_refresh_timer = QtCore.QTimer()
+        self.time_refresh_timer.setInterval(1000)
+        self.time_refresh_timer.timeout.connect(self.time_refresh)
+        
+        self.time_local_old = 0
+        self.time_red_old = 0
+
+        self.last_index = -1
 
         self.net_manager_settings_conf_rfile = None
         self.net_wired_settings_conf_rfile = None
@@ -185,6 +195,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.sbox_brickd_adv_spi_dly.valueChanged.connect(self.brickd_settings_changed)
         self.sbox_brickd_adv_rs485_dly.valueChanged.connect(self.brickd_settings_changed)
 
+
+        # Date/Time buttons
+        self.time_sync_button.pressed.connect(self.time_sync_pressed)
+
     def tab_on_focus(self):
         self.manager_settings_conf_rfile = REDFile(self.session)
         self.wired_settings_conf_rfile = REDFile(self.session)
@@ -196,9 +210,17 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.slot_network_refresh_clicked()
         elif index == BOX_INDEX_BRICKD:
             self.slot_brickd_refresh_clicked()
+        elif index == BOX_INDEX_DATETIME:
+            self.time_start()
 
     def tab_off_focus(self):
-        pass
+        index = self.tbox_settings.currentIndex()
+        if index == BOX_INDEX_BRICKD:
+            pass
+        elif index == BOX_INDEX_NETWORK:
+            pass
+        elif index == BOX_INDEX_DATETIME:
+            self.time_stop()
 
     def update_network_widget_data(self):
         pass
@@ -314,6 +336,15 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
     # The slots
     def slot_tbox_settings_current_changed(self, ctidx):
+        if self.last_index == BOX_INDEX_BRICKD:
+            pass
+        elif self.last_index == BOX_INDEX_NETWORK:
+            pass
+        elif self.last_index == BOX_INDEX_DATETIME:
+            self.time_stop()
+            
+        self.last_index = ctidx
+
         if ctidx == BOX_INDEX_NETWORK:
             self.slot_network_refresh_clicked()
 
@@ -327,6 +358,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         elif ctidx == BOX_INDEX_BRICKD:
             self.slot_brickd_refresh_clicked()
+        elif self.last_index == BOX_INDEX_DATETIME:
+            self.time_start()
 
     def slot_twidget_net_current_changed(self, ctidx):
         if self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRELESS:
@@ -651,3 +684,113 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
     def brickd_settings_changed(self, value):
         self.brickd_button_save_enabled(True)
+
+
+
+    # ======== date/time settings =========
+    
+    def time_utc_offset(self):
+        if time.localtime(time.time()).tm_isdst and time.daylight:
+            return -time.altzone/(60*60)
+        
+        return -time.timezone/(60*60)
+    
+    def time_start(self):
+        self.time_sync_button.setEnabled(False)
+
+        def cb_red_brick_time(result):
+            try:
+                if result.stderr == '':
+                    self.time_red_old, tz = map(int, result.stdout.split('\n')[:2])
+                    if tz < 0:
+                        tz_str_red = "UTC" + str(tz)
+                    else:
+                        tz_str_red = "UTC+" + str(tz)
+                    self.time_timezone_red.setText(tz_str_red)
+                    
+                    self.time_local_old = int(time.time())
+                    tz = self.time_utc_offset()
+                    if tz < 0:
+                        tz_str_local = "UTC" + str(tz)
+                    else:
+                        tz_str_local = "UTC+" + str(tz)
+                    
+                    self.time_timezone_local.setText(tz_str_local)
+                    self.time_update_gui()
+                    
+                    self.time_refresh_timer.start()
+                    
+                    if (self.time_red_old == self.time_local_old) and (tz_str_local == tz_str_red):
+                        self.time_sync_button.setEnabled(False)
+                    else:
+                        self.time_sync_button.setEnabled(True)
+                        
+                    return
+                else:
+                    # TODO: Error popup for user?
+                    print result.stderr
+            except:
+                # TODO: Error popup for user?
+                traceback.print_exc()
+            
+            self.time_sync_button.setEnabled(True)
+        
+        self.script_manager.execute_script('settings_time_get',
+                                           cb_red_brick_time,
+                                           [])
+    
+    def time_stop(self):
+        try:
+            self.time_refresh_timer.stop()
+        except:
+            traceback.print_exc()
+            
+    def time_refresh(self):
+        self.time_local_old += 1
+        self.time_red_old += 1
+        
+        self.time_update_gui()
+        
+    def time_update_gui(self):
+        t = QtCore.QDateTime.fromTime_t(self.time_local_old)
+        self.time_date_local.setDateTime(t)
+        self.time_time_local.setDateTime(t)
+        
+        t = QtCore.QDateTime.fromTime_t(self.time_red_old)
+        self.time_date_red.setDateTime(t)
+        self.time_time_red.setDateTime(t)
+        
+    def time_sync_pressed(self):
+        def state_changed(process, t, p):
+            if p.state == REDProcess.STATE_ERROR:
+                # TODO: Error popup for user?
+                process.release()
+            elif p.state == REDProcess.STATE_EXITED:
+                if t == 0: #timezone
+                    self.time_timezone_red.setText(self.time_timezone_local.text())
+                elif t == 1: #time
+                    self.time_red_old = self.time_local_old
+                    
+                process.release()
+                
+            if (self.time_red_old == self.time_local_old) and (self.time_timezone_red.text() == self.time_timezone_local.text()):
+                self.time_sync_button.setEnabled(False)
+            else:
+                self.time_sync_button.setEnabled(True)
+            
+        tz = -self.time_utc_offset() # Use posix timezone definition
+        if tz < 0:
+            tz_str = str(tz)
+        else:
+            tz_str = '+' + str(tz)
+            
+        set_tz_str = ('/bin/ln -sf /usr/share/zoneinfo/Etc/GMT' + tz_str + ' /etc/localtime').split(' ')
+        red_process_tz = REDProcess(self.session)
+        red_process_tz.state_changed_callback = lambda x: state_changed(red_process_tz, 0, x)
+        red_process_tz.spawn(set_tz_str[0], set_tz_str[1:], [], '/', 0, 0, self.script_manager.devnull, self.script_manager.devnull, self.script_manager.devnull)
+
+        set_t_str = ('/bin/date +%s -u -s @' + str(int(time.time()))).split(' ')
+        red_process_t = REDProcess(self.session)
+        red_process_t.state_changed_callback = lambda x: state_changed(red_process_t, 1, x)
+        red_process_t.spawn(set_t_str[0], set_t_str[1:], [], '/', 0, 0, self.script_manager.devnull, self.script_manager.devnull, self.script_manager.devnull)
+
