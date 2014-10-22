@@ -726,7 +726,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def slot_network_wired_save_clicked(self):
         self.network_button_save_enabled(False)
         
-        def cb_settings_network_apply(result):
+        def cb_settings_network_apply_wired(result):
+            print result
             if result.stderr is not None and  result.stderr == "":
                 pass
             else:
@@ -760,9 +761,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         # TODO: Error popup for user?
                         print result
                     else:
-                        # TODO: Can brickd reload configuration? Otherwise we need to restart it.
-                        self.script_manager.execute_script('settings_network_apply',
-                                                           cb_settings_network_apply,
+                        self.script_manager.execute_script('settings_network_apply_wired',
+                                                           cb_settings_network_apply_wired,
                                                            [])
                 
                 red_file.write_async(config, lambda x: cb_write(red_file, x), None)
@@ -825,8 +825,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         # TODO: Error popup for user?
                         print result
                     else:
-                        self.script_manager.execute_script('settings_network_apply',
-                                                           cb_settings_network_apply,
+                        self.script_manager.execute_script('settings_network_apply_wired',
+                                                           cb_settings_network_apply_wired,
                                                            [])
                 
                 red_file.write_async(config, lambda x: cb_write(red_file, x), None)
@@ -854,8 +854,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     # TODO: Error popup for user?
                     print result
                 else:
-                    self.script_manager.execute_script('settings_network_apply',
-                                                       cb_settings_network_apply,
+                    self.script_manager.execute_script('settings_network_apply_wired',
+                                                       cb_settings_network_apply_wired,
                                                        [])
                 
             red_file.write_async(config_ms, lambda x: cb_write_ms(red_file, x), None)
