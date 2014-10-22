@@ -469,6 +469,14 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 pass
                 # TODO: Error popup for user?
 
+        def cb_settings_network_wireless_scan(result):
+            if result.stderr == "":
+                self.network_all_data['scan_result'] = json.loads(result.stdout)
+                self.update_network_widget_data()
+            else:
+                pass
+                # TODO: Error popup for user?
+
         def cb_open_manager_settings(red_file):
             def cb_read(red_file, result):
                 red_file.release()
@@ -539,6 +547,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.script_manager.execute_script('settings_network_get_interfaces',
                                            cb_settings_network_get_interfaces,
                                            [])
+
+        self.script_manager.execute_script('settings_network_wireless_scan',
+                                           cb_settings_network_wireless_scan,
+                                           ['cache'])
 
         async_call(self.manager_settings_conf_rfile.open,
                    (MANAGER_SETTINGS_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
