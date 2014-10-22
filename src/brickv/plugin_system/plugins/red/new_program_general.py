@@ -90,15 +90,18 @@ class NewProgramGeneral(QWizardPage, Ui_NewProgramGeneral):
         # ensure the identifier matches ^[a-zA-Z0-9_][a-zA-Z0-9._-]{2,}$
         identifier = str(re.sub('[^a-zA-Z0-9._-]', '_', name)).lstrip('-.')
 
-        while len(identifier) < 3:
-            identifier += '_'
-
         unique_identifier = identifier
         counter = 1
+
+        while len(unique_identifier) < 3:
+            unique_identifier += '_'
 
         while unique_identifier in self.wizard().identifiers and counter < 10000:
             unique_identifier = identifier + str(counter)
             counter += 1
+
+            while len(unique_identifier) < 3:
+                unique_identifier += '_'
 
         self.edit_identifier.setText(unique_identifier)
 
