@@ -86,10 +86,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         self.mbox_settings = QtGui.QMessageBox()
 
-        self.cbox_net_wired_contype.addItem("DHCP")
-        self.cbox_net_wired_contype.addItem("Static")
-        self.cbox_net_wireless_contype.addItem("DHCP")
-        self.cbox_net_wireless_contype.addItem("Static")
+        self.cbox_net_wired_conftype.addItem("DHCP")
+        self.cbox_net_wired_conftype.addItem("Static")
+        self.cbox_net_wireless_conftype.addItem("DHCP")
+        self.cbox_net_wireless_conftype.addItem("Static")
         self.cbox_net_wireless_enctype.addItem("WPA 1/2 (Hex [0-9/A-F])")
         self.cbox_brickd_adv_ll.addItem("Error")
         self.cbox_brickd_adv_ll.addItem("Warn")
@@ -123,8 +123,47 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.pbutton_net_wired_refresh.clicked.connect(self.slot_network_refresh_clicked)
         
         # Network fields
-        self.cbox_net_wireless_contype.currentIndexChanged.connect(self.slot_network_settings_changed)
-        self.cbox_net_wired_contype.currentIndexChanged.connect(self.slot_network_settings_changed)
+        self.ledit_net_gen_hostname.textEdited.connect(self.slot_network_settings_changed)
+        self.cbox_net_wireless_intf.currentIndexChanged.connect(self.slot_network_settings_changed)
+        self.cbox_net_wireless_conftype.currentIndexChanged.connect(self.slot_network_settings_changed)
+        self.cbox_net_wireless_ap.currentIndexChanged.connect(self.slot_network_settings_changed)
+        self.cbox_net_wireless_enctype.currentIndexChanged.connect(self.slot_network_settings_changed)
+        self.ledit_net_wireless_key.textEdited.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_ip1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_ip2.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_ip3.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_ip4.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_mask1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_mask2.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_mask3.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_mask4.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_gw1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_gw2.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_gw3.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_gw4.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_dns1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_dns1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_dns1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_dns1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wireless_dns1.valueChanged.connect(self.slot_network_settings_changed)
+        self.cbox_net_wired_intf.currentIndexChanged.connect(self.slot_network_settings_changed)
+        self.cbox_net_wired_conftype.currentIndexChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_ip1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_ip2.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_ip3.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_ip4.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_mask1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_mask2.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_mask3.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_mask4.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_gw1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_gw2.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_gw3.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_gw4.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_dns1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_dns2.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_dns3.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_wired_dns4.valueChanged.connect(self.slot_network_settings_changed)
 
         # Brick daemon buttons
         self.pbutton_brickd_general_save.clicked.connect(self.slot_brickd_save_clicked)
@@ -280,11 +319,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
             if self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRELESS:
                 self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRELESS,
-                                                     self.cbox_net_wireless_contype.currentIndex())
+                                                     self.cbox_net_wireless_conftype.currentIndex())
 
             elif self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRED:
                 self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRED,
-                                                     self.cbox_net_wired_contype.currentIndex())
+                                                     self.cbox_net_wired_conftype.currentIndex())
 
         elif ctidx == BOX_INDEX_BRICKD:
             self.slot_brickd_refresh_clicked()
@@ -292,11 +331,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def slot_twidget_net_current_changed(self, ctidx):
         if self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRELESS:
             self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRELESS,
-                                                 self.cbox_net_wireless_contype.currentIndex())
+                                                 self.cbox_net_wireless_conftype.currentIndex())
             
         elif self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRED:
             self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRED,
-                                                 self.cbox_net_wired_contype.currentIndex())
+                                                 self.cbox_net_wired_conftype.currentIndex())
 
     def network_button_refresh_enabled(self, state):
         self.pbutton_net_gen_refresh.setEnabled(state)
@@ -556,6 +595,15 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         
         config = config_parser.to_string(self.brickd_conf)
 
+        '''def cb_restart_brickd(result):
+            if result.stderr == "":
+                print result
+                # TODO: Error popup for user?
+                pass
+            else:
+                # TODO: Error popup for user?
+                pass'''
+
         def cb_open(config, red_file):
             def cb_write(red_file, result):
                 red_file.release()
@@ -585,16 +633,21 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    lambda x: cb_open(config, x),
                    cb_open_error)
 
+        # Restart brickd for the changes to be appplied
+        '''self.script_manager.execute_script('restart_brickd',
+                                           cb_restart_brickd,
+                                           [])'''
+
     def slot_network_settings_changed(self):
         self.network_button_save_enabled(True)
 
         if self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRELESS:
             self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRELESS,
-                                                 self.cbox_net_wireless_contype.currentIndex())
+                                                 self.cbox_net_wireless_conftype.currentIndex())
 
         elif self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRED:
             self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRED,
-                                                 self.cbox_net_wired_contype.currentIndex())
+                                                 self.cbox_net_wired_conftype.currentIndex())
 
     def brickd_settings_changed(self, value):
         self.brickd_button_save_enabled(True)
