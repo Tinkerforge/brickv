@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt, QDir, QVariant
 from PyQt4.QtGui import QWizardPage, QFileDialog, QListWidgetItem, QProgressDialog, QApplication
-from brickv.plugin_system.plugins.red.new_program_utils import Constants
+from brickv.plugin_system.plugins.red.new_program_utils import *
 from brickv.plugin_system.plugins.red.ui_new_program_files import Ui_NewProgramFiles
 import os
 from collections import namedtuple

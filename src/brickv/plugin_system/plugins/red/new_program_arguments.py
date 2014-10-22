@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.new_program_utils import Constants, ListWidgetEditor
+from brickv.plugin_system.plugins.red.new_program_utils import *
 from brickv.plugin_system.plugins.red.ui_new_program_arguments import Ui_NewProgramArguments
 
 class NewProgramArguments(QWizardPage, Ui_NewProgramArguments):
@@ -57,9 +57,6 @@ class NewProgramArguments(QWizardPage, Ui_NewProgramArguments):
 
     def update_ui_state(self):
         self.argument_list_editor.update_ui_state()
-
-    def emit_complete_changed(self):
-        self.completeChanged.emit()
 
     def get_arguments(self):
         arguments = []

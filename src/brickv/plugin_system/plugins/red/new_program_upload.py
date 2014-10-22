@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtGui import QWizard, QWizardPage
 from brickv.plugin_system.plugins.red.api import REDError, REDFile, REDProgram
-from brickv.plugin_system.plugins.red.new_program_utils import Constants
+from brickv.plugin_system.plugins.red.new_program_utils import *
 from brickv.plugin_system.plugins.red.ui_new_program_upload import Ui_NewProgramUpload
 import os
 

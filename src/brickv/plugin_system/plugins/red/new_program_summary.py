@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.new_program_utils import Constants
+from brickv.plugin_system.plugins.red.new_program_utils import *
 from brickv.plugin_system.plugins.red.ui_new_program_summary import Ui_NewProgramSummary
 
 class NewProgramSummary(QWizardPage, Ui_NewProgramSummary):

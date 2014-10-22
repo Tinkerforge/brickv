@@ -189,15 +189,49 @@ class ListWidgetEditor:
 
 
 class MandatoryLineEditChecker:
-    def __init__(self, edit, label):
+    def __init__(self, page, edit, label):
+        self.page = page
         self.edit = edit
         self.label = label
-        self.edit.textChanged.connect(self.check)
+        self.valid = False
 
-        self.check()
+        self.edit.textChanged.connect(lambda: self.check(True))
 
-    def check(self):
-        if len(self.edit.text()) == 0:
-            self.label.setStyleSheet('QLabel { color : red }')
-        else:
+        self.check(False)
+
+    def check(self, emit):
+        was_valid = self.valid
+        self.valid = len(self.edit.text()) > 0
+
+        if self.valid:
             self.label.setStyleSheet('')
+        else:
+            self.label.setStyleSheet('QLabel { color : red }')
+
+        if emit and was_valid != self.valid:
+            self.page.completeChanged.emit()
+
+
+class MandatoryEditableComboBoxChecker:
+    def __init__(self, page, combo, label):
+        self.page = page
+        self.combo = combo
+        self.label = label
+        self.valid = False
+
+        self.combo.currentIndexChanged.connect(lambda: self.check(True))
+        self.combo.editTextChanged.connect(lambda: self.check(True))
+
+        self.check(False)
+
+    def check(self, emit):
+        was_valid = self.valid
+        self.valid = len(self.combo.currentText()) > 0
+
+        if self.valid:
+            self.label.setStyleSheet('')
+        else:
+            self.label.setStyleSheet('QLabel { color : red }')
+
+        if emit and was_valid != self.valid:
+            self.page.completeChanged.emit()

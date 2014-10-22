@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QWizard
-from brickv.plugin_system.plugins.red.new_program_utils import Constants
+from brickv.plugin_system.plugins.red.new_program_utils import *
 from brickv.plugin_system.plugins.red.new_program_general import NewProgramGeneral
 from brickv.plugin_system.plugins.red.new_program_files import NewProgramFiles
 from brickv.plugin_system.plugins.red.new_program_java import NewProgramJava

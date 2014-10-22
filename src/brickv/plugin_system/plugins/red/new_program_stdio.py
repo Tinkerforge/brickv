@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.new_program_utils import Constants, MandatoryLineEditChecker
+from brickv.plugin_system.plugins.red.new_program_utils import *
 from brickv.plugin_system.plugins.red.ui_new_program_stdio import Ui_NewProgramStdio
 import os
 
@@ -43,18 +43,14 @@ class NewProgramStdio(QWizardPage, Ui_NewProgramStdio):
 
         self.combo_stdin_redirection.currentIndexChanged.connect(self.update_ui_state)
         self.combo_stdin_redirection.currentIndexChanged.connect(self.emit_complete_changed)
-        self.combo_stdin_file.currentIndexChanged.connect(self.emit_complete_changed)
-        self.combo_stdin_file.editTextChanged.connect(self.emit_complete_changed)
         self.combo_stdout_redirection.currentIndexChanged.connect(self.update_ui_state)
         self.combo_stdout_redirection.currentIndexChanged.connect(self.emit_complete_changed)
-        self.edit_stdout_file.textChanged.connect(self.emit_complete_changed)
         self.combo_stderr_redirection.currentIndexChanged.connect(self.update_ui_state)
         self.combo_stderr_redirection.currentIndexChanged.connect(self.emit_complete_changed)
-        self.edit_stderr_file.textChanged.connect(self.emit_complete_changed)
 
-        self.combo_stdin_file_checker = MandatoryLineEditChecker(self.combo_stdin_file.lineEdit(), self.label_stdin_file)
-        self.edit_stdout_file_checker = MandatoryLineEditChecker(self.edit_stdout_file, self.label_stdout_file)
-        self.edit_stderr_file_checker = MandatoryLineEditChecker(self.edit_stderr_file, self.label_stderr_file)
+        self.combo_stdin_file_checker = MandatoryEditableComboBoxChecker(self, self.combo_stdin_file, self.label_stdin_file)
+        self.edit_stdout_file_checker = MandatoryLineEditChecker(self, self.edit_stdout_file, self.label_stdout_file)
+        self.edit_stderr_file_checker = MandatoryLineEditChecker(self, self.edit_stderr_file, self.label_stderr_file)
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
@@ -82,15 +78,15 @@ class NewProgramStdio(QWizardPage, Ui_NewProgramStdio):
         stderr_redirection = self.field('stderr_redirection').toInt()[0]
 
         if stdin_redirection == Constants.STDIO_REDIRECTION_FILE and \
-           len(self.combo_stdin_file.currentText()) == 0:
+           not self.combo_stdin_file_checker.valid:
             return False
 
         if stdout_redirection == Constants.STDIO_REDIRECTION_FILE and \
-           len(self.edit_stdout_file.text()) == 0:
+           not self.edit_stdout_file_checker.valid:
             return False
 
         if stderr_redirection == Constants.STDIO_REDIRECTION_FILE and \
-           len(self.edit_stderr_file.text()) == 0:
+           not self.edit_stderr_file_checker.valid:
             return False
 
         return QWizardPage.isComplete(self)

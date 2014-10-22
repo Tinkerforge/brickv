@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.new_program_utils import Constants, MandatoryLineEditChecker
+from brickv.plugin_system.plugins.red.new_program_utils import *
 from brickv.plugin_system.plugins.red.ui_new_program_python import Ui_NewProgramPython
 
 class NewProgramPython(QWizardPage, Ui_NewProgramPython):
@@ -40,15 +40,12 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
         self.registerField('python.command', self.edit_command)
 
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
-        self.combo_start_mode.currentIndexChanged.connect(self.emit_complete_changed)
-        self.combo_script_file.currentIndexChanged.connect(self.emit_complete_changed)
-        self.combo_script_file.editTextChanged.connect(self.emit_complete_changed)
-        self.edit_module_name.textChanged.connect(self.emit_complete_changed)
-        self.edit_command.textChanged.connect(self.emit_complete_changed)
+        self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
+        self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
-        self.combo_script_file_checker = MandatoryLineEditChecker(self.combo_script_file.lineEdit(), self.label_script_file)
-        self.edit_module_name_checker = MandatoryLineEditChecker(self.edit_module_name, self.label_module_name)
-        self.edit_command_checker = MandatoryLineEditChecker(self.edit_command, self.label_command)
+        self.combo_script_file_checker = MandatoryEditableComboBoxChecker(self, self.combo_script_file, self.label_script_file)
+        self.edit_module_name_checker = MandatoryLineEditChecker(self, self.edit_module_name, self.label_module_name)
+        self.edit_command_checker = MandatoryLineEditChecker(self, self.edit_command, self.label_command)
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
@@ -75,15 +72,15 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
         start_mode = self.field('python.start_mode').toInt()[0]
 
         if start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE and \
-           len(self.combo_script_file.currentText()) == 0:
+           not self.combo_script_file_checker.valid:
             return False
 
         if start_mode == Constants.PYTHON_START_MODE_MODULE_NAME and \
-           len(self.edit_module_name.text()) == 0:
+           not self.edit_module_name_checker.valid:
             return False
 
         if start_mode == Constants.PYTHON_START_MODE_COMMAND and \
-           len(self.edit_command.text()) == 0:
+           not self.edit_command_checker.valid:
             return False
 
         return QWizardPage.isComplete(self)
@@ -103,9 +100,6 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
         self.label_command.setVisible(start_mode_command)
         self.edit_command.setVisible(start_mode_command)
         self.label_command_help.setVisible(start_mode_command)
-
-    def emit_complete_changed(self):
-        self.completeChanged.emit()
 
     def get_command(self):
         executable = '/usr/bin/python2'

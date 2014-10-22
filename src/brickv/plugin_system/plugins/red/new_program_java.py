@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.new_program_utils import Constants, MandatoryLineEditChecker
+from brickv.plugin_system.plugins.red.new_program_utils import *
 from brickv.plugin_system.plugins.red.ui_new_program_java import Ui_NewProgramJava
 
 class NewProgramJava(QWizardPage, Ui_NewProgramJava):
@@ -39,13 +39,11 @@ class NewProgramJava(QWizardPage, Ui_NewProgramJava):
         self.registerField('java.jar_file', self.combo_jar_file, 'currentText')
 
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
-        self.combo_start_mode.currentIndexChanged.connect(self.emit_complete_changed)
-        self.edit_main_class.textChanged.connect(self.emit_complete_changed)
-        self.combo_jar_file.currentIndexChanged.connect(self.emit_complete_changed)
-        self.combo_jar_file.editTextChanged.connect(self.emit_complete_changed)
+        self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
+        self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
-        self.edit_main_class_checker = MandatoryLineEditChecker(self.edit_main_class, self.label_main_class)
-        self.combo_jar_file_checker = MandatoryLineEditChecker(self.combo_jar_file.lineEdit(), self.label_jar_file)
+        self.edit_main_class_checker = MandatoryLineEditChecker(self, self.edit_main_class, self.label_main_class)
+        self.combo_jar_file_checker = MandatoryEditableComboBoxChecker(self, self.combo_jar_file, self.label_jar_file)
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
@@ -72,11 +70,11 @@ class NewProgramJava(QWizardPage, Ui_NewProgramJava):
         start_mode = self.field('java.start_mode').toInt()[0]
 
         if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS and \
-           len(self.edit_main_class.text()) == 0:
+           not self.edit_main_class_checker.valid:
             return False
 
         if start_mode == Constants.JAVA_START_MODE_JAR_FILE and \
-           len(self.combo_jar_file.currentText()) == 0:
+           not self.combo_jar_file_checker.valid:
             return False
 
         return QWizardPage.isComplete(self)
@@ -92,9 +90,6 @@ class NewProgramJava(QWizardPage, Ui_NewProgramJava):
         self.label_jar_file.setVisible(start_mode_jar_file)
         self.combo_jar_file.setVisible(start_mode_jar_file)
         self.label_jar_file_help.setVisible(start_mode_jar_file)
-
-    def emit_complete_changed(self):
-        self.completeChanged.emit()
 
     def get_command(self):
         executable = '/usr/bin/java'
