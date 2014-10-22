@@ -36,12 +36,10 @@ from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 
 from brickv.async_call import async_call
 
-REFRESH_TIMEOUT = 7000 # 7 seconds
-
-NET_MANAGER_SETTINGS_CONF_FILE = "/etc/wicd/manager-settings.conf"
-NET_WIRELESS_SETTINGS_CONF_FILE = "/etc/wicd/wireless-settings.conf"
-NET_WIRED_SETTINGS_CONF_FILE = "/etc/wicd/wired-settings.conf"
-BRICKD_BRICKD_CONF_FILE = "/etc/brickd.conf"
+MANAGER_SETTINGS_CONF_PATH = "/etc/wicd/manager-settings.conf"
+WIRELESS_SETTINGS_CONF_PATH = "/etc/wicd/wireless-settings.conf"
+WIRED_SETTINGS_CONF_PATH = "/etc/wicd/wired-settings.conf"
+BRICKD_CONF_PATH = "/etc/brickd.conf"
 
 BOX_INDEX_NETWORK = 0
 BOX_INDEX_BRICKD = 1
@@ -73,18 +71,17 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         self.session = None
 
-        self.refresh_timer = QtCore.QTimer()
+        self.net_manager_settings_conf_rfile = None
+        self.net_wired_settings_conf_rfile = None
+        self.net_wireless_settings_conf_rfile = None
+        self.brickd_conf_rfile = None
 
-        self.net_manager_settings_conf = None
-        self.net_wireless_settings_conf = None
-        self.net_wired_settings_conf = None
-        self.brickd_brickd_conf = None
-        self.net_gen_dict = {}
-        self.dict_net_interfaces = {}
-        self.cparser_net_manager_settings_conf = None
-        self.cparser_net_wireless_settings_conf = None
-        self.dict_net_wireless_scan_result = {}
-        self.cparser_net_wired_settings_conf = None
+        self.network_conf = {'status': None,
+                             'interfaces': None,
+                             'scan_result': None,
+                             'manager_settings': None,
+                             'wireless_settings': None,
+                             'wired_settings': None}
         self.brickd_conf = {}
 
         self.mbox_settings = QtGui.QMessageBox()
@@ -111,27 +108,31 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.cbox_brickd_adv_gt.addItem("off")
         self.cbox_brickd_adv_gt.addItem("on")
 
-        self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRELESS, 0)
-        self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRED, 0)
+        # Signals and slots
 
-        # connecting signals to slots
-        self.refresh_timer.timeout.connect(self.cb_refresh_timer_timedout)
-        self.tbox_settings.currentChanged.connect(self.cb_tbox_settings_current_changed)
-        self.twidget_net.currentChanged.connect(self.cb_twidget_net_current_changed)
-        self.cbox_net_wireless_contype.currentIndexChanged.connect\
-            (self.cb_cbox_net_wireless_contype_current_idx_changed)
-        self.cbox_net_wired_contype.currentIndexChanged.connect\
-            (self.cb_cbox_net_wired_contype_current_idx_changed)
-        self.pbutton_net_wired_activate.clicked.connect(self.cb_pbutton_net_wired_activate_clicked)
+        # Tabs
+        self.tbox_settings.currentChanged.connect(self.slot_tbox_settings_current_changed)
+        self.twidget_net.currentChanged.connect(self.slot_twidget_net_current_changed)
+
+        # Network Buttons
+        self.pbutton_net_gen_save.clicked.connect(self.slot_network_save_clicked)
+        self.pbutton_net_wireless_save.clicked.connect(self.slot_network_save_clicked)
+        self.pbutton_net_wired_save.clicked.connect(self.slot_network_save_clicked)
+        self.pbutton_net_gen_refresh.clicked.connect(self.slot_network_refresh_clicked)
+        self.pbutton_net_wireless_refresh.clicked.connect(self.slot_network_refresh_clicked)
+        self.pbutton_net_wired_refresh.clicked.connect(self.slot_network_refresh_clicked)
         
-        # brickd buttons
-        self.pbutton_brickd_general_save.pressed.connect(self.brickd_save_pressed)
-        self.pbutton_brickd_general_refresh.pressed.connect(self.brickd_refresh_pressed)
+        # Network fields
+        self.cbox_net_wireless_contype.currentIndexChanged.connect(self.slot_network_settings_changed)
+        self.cbox_net_wired_contype.currentIndexChanged.connect(self.slot_network_settings_changed)
+
+        # Brick daemon buttons
+        self.pbutton_brickd_general_save.clicked.connect(self.slot_brickd_save_clicked)
+        self.pbutton_brickd_general_refresh.clicked.connect(self.slot_brickd_refresh_clicked)
+        self.pbutton_brickd_adv_save.clicked.connect(self.slot_brickd_save_clicked)
+        self.pbutton_brickd_adv_refresh.clicked.connect(self.slot_brickd_refresh_clicked)
         
-        self.pbutton_brickd_adv_save.pressed.connect(self.brickd_save_pressed)
-        self.pbutton_brickd_adv_refresh.pressed.connect(self.brickd_refresh_pressed)
-        
-        # brickd fields
+        # Brick daemon fields
         self.sbox_brickd_la_ip1.valueChanged.connect(self.brickd_settings_changed)
         self.sbox_brickd_la_ip2.valueChanged.connect(self.brickd_settings_changed)
         self.sbox_brickd_la_ip3.valueChanged.connect(self.brickd_settings_changed)
@@ -145,267 +146,28 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.sbox_brickd_adv_spi_dly.valueChanged.connect(self.brickd_settings_changed)
         self.sbox_brickd_adv_rs485_dly.valueChanged.connect(self.brickd_settings_changed)
 
-
     def tab_on_focus(self):
+        self.manager_settings_conf_rfile = REDFile(self.session)
+        self.wired_settings_conf_rfile = REDFile(self.session)
+        self.wireless_settings_conf_rfile = REDFile(self.session)
+        self.brickd_conf_rfile = REDFile(self.session)
+
         index = self.tbox_settings.currentIndex()
-        if index == BOX_INDEX_BRICKD:
-            self.brickd_refresh_pressed()
-        elif index == BOX_INDEX_NETWORK:
-            # Use self.network_general_refresh_pressed() or similar
-            self.update_settings_net_all_data()
-            self.refresh_timer.start(REFRESH_TIMEOUT)
+        if index == BOX_INDEX_NETWORK:
+            self.slot_network_refresh_clicked()
+        elif index == BOX_INDEX_BRICKD:
+            self.slot_brickd_refresh_clicked()
 
     def tab_off_focus(self):
-        self.refresh_timer.stop()
-
-    def update_net_gen_widget_data(self):
-        if self.net_gen_dict['cstat_hostname'] is not None:
-            self.ledit_net_gen_hostname.setText(self.net_gen_dict['cstat_hostname'].strip())
-        else:
-            self.ledit_net_gen_hostname.setText("")
-
-        if self.net_gen_dict['cstat_ifs']['active']['if_name'] is not None:
-            self.label_net_gen_cstat_intf.setText(self.net_gen_dict['cstat_ifs']['active']['if_name'].strip())
-        else:
-            self.label_net_gen_cstat_intf.setText("Not Connected")
-        self.label_net_gen_cstat_ip.setText(self.net_gen_dict['cstat_ifs']['active']['ip'].strip())
-        self.label_net_gen_cstat_mask.setText(self.net_gen_dict['cstat_ifs']['active']['mask'].strip())
-        self.label_net_gen_cstat_gateway.setText(self.net_gen_dict['cstat_gateway'].strip())
-        self.label_net_gen_cstat_dns.setText(self.net_gen_dict['cstat_dns'].strip())
-
-    def update_net_wireless_widget_data(self):
-        if "wireless" in self.dict_net_interfaces:
-            if self.dict_net_interfaces['wireless'] is None:
-                self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRELESS, 0)
-
-            elif len(self.dict_net_interfaces['wireless']) > 0:
-                    self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRELESS, 1)
-                    cbox_net_wireless_intf_clist = [self.cbox_net_wireless_intf.itemText(i)\
-                                                    for i in range(self.cbox_net_wireless_intf.count())]
-
-                    if cmp(cbox_net_wireless_intf_clist, self.dict_net_interfaces['wireless']) == -1:
-                        self.cbox_net_wireless_intf.clear()
-                        self.cbox_net_wireless_intf.addItems(self.dict_net_interfaces['wireless'])
-
-    def update_net_wired_widget_data(self):
-        if "wired" in self.dict_net_interfaces:
-            if self.dict_net_interfaces['wired'] is None:
-                self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRED, 0)
-
-            elif len(self.dict_net_interfaces['wired']) > 0:
-                    self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRED, 1)
-                    cbox_net_wired_intf_clist = [self.cbox_net_wired_intf.itemText(i)\
-                                                 for i in range(self.cbox_net_wired_intf.count())]
-
-                    if cmp(cbox_net_wired_intf_clist, self.dict_net_interfaces['wired']) == -1:
-                        self.cbox_net_wired_intf.clear()
-                        self.cbox_net_wired_intf.addItems(self.dict_net_interfaces['wired'])
-
-
-
-    def update_datetime_gen_widget_data(self):
         pass
 
-    def update_settings_net_all_data(self):
-        self.script_manager.execute_script('settings_network_gen',
-                                           self.cb_settings_network_gen_returned,
-                                           [])
-
-        self.script_manager.execute_script('settings_network_wireless_scan',
-                                           self.cb_settings_network_wireless_scan_returned,
-                                           ['cache'])
-
-        self.script_manager.execute_script('settings_network_get_interfaces',
-                                           self.cb_settings_network_get_interfaces_returned,
-                                           [])
-
-        self.net_manager_settings_conf = REDFile(self.session)
-        self.net_wired_settings_conf = REDFile(self.session)
-        self.net_wireless_settings_conf = REDFile(self.session)
-
-        async_call(self.net_manager_settings_conf.open,
-                   (NET_MANAGER_SETTINGS_CONF_FILE, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                   self.cb_net_manager_settings_conf_open,
-                   self.cb_net_manager_settings_conf_open_error)
-
-        async_call(self.net_wireless_settings_conf.open,
-                   (NET_WIRELESS_SETTINGS_CONF_FILE, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                   self.cb_net_wireless_settings_conf_open,
-                   self.cb_net_wireless_settings_conf_open_error)
-
-        async_call(self.net_wired_settings_conf.open,
-                   (NET_WIRED_SETTINGS_CONF_FILE, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                   self.cb_net_wired_settings_conf_open,
-                   self.cb_net_wired_settings_conf_open_error)
-
-    # the callbacks
-    def cb_refresh_timer_timedout(self):
-        self.refresh_timer.stop()
-        self.update_settings_net_all_data()
-        self.refresh_timer.start(REFRESH_TIMEOUT)
-
-    def cb_settings_network_gen_returned(self, result):
-        if result.stderr == "":
-            self.net_gen_dict = json.loads(result.stdout)
-            self.update_net_gen_widget_data()
-
-    def cb_settings_network_wireless_scan_returned(self, result):
-        if result.stderr == "":
-            self.dict_net_wireless_scan_result = json.loads(result.stdout)
-            self.update_net_wireless_widget_data()
-
-    def cb_settings_network_get_interfaces_returned(self, result):
-        if result.stderr == "":
-            self.dict_net_interfaces = json.loads(result.stdout)
-            self.update_net_wireless_widget_data()
-            self.update_net_wired_widget_data()
-
-    def cb_net_manager_settings_conf_open(self, result):
-        self.net_manager_settings_conf.read_async(4096, self.cb_read_net_manager_settings_conf)
-
-    def cb_net_manager_settings_conf_open_error(self, result):
-        self.net_manager_settings_conf.release()
-
-    def cb_net_wireless_settings_conf_open(self, result):
-        self.net_wireless_settings_conf.read_async(4096, self.cb_read_net_wireless_settings_conf)
-
-    def cb_net_wireless_settings_conf_open_error(self, result):
-        self.net_wireless_settings_conf.release()
-
-    def cb_net_wired_settings_conf_open(self, result):
-        self.net_wired_settings_conf.read_async(4096, self.cb_read_net_wired_settings_conf)
-
-    def cb_net_wired_settings_conf_open_error(self, result):
-        self.net_wired_settings_conf.release()
-
-    def cb_read_net_manager_settings_conf(self, result):
-        if result is not None:
-            self.cparser_net_manager_settings_conf = config_parser.parse_no_fake(result.data)
-            self.update_net_wireless_widget_data()
-            self.update_net_wired_widget_data()
-        self.net_manager_settings_conf.release()
-
-    def cb_read_net_wireless_settings_conf(self, result):
-        if result is not None:
-            self.cparser_net_wireless_settings_conf = config_parser.parse_no_fake(result.data)
-            self.update_net_wireless_widget_data()
-        self.net_wireless_settings_conf.release()
-
-    def cb_read_net_wired_settings_conf(self, result):
-        if result is not None:
-            self.cparser_net_wired_settings_conf = config_parser.parse_no_fake(result.data)
-            self.update_net_wired_widget_data()
-        self.net_wired_settings_conf.release()
-
-    def cb_tbox_settings_current_changed(self, ctidx):
-        if ctidx == BOX_INDEX_BRICKD:
-            self.brickd_refresh_pressed()
-
-    def cb_twidget_net_current_changed(self, ctidx):
-        if ctidx == TAB_INDEX_NETWORK_WIRELESS:
-            if self.cbox_net_wireless_contype.currentIndex() == CBOX_NET_CONTYPE_INDEX_DHCP:
-                self.frame_net_wireless_staticipconf.hide()
-            elif self.cbox_net_wireless_contype.currentIndex() == CBOX_NET_CONTYPE_INDEX_STATIC:
-                self.frame_net_wireless_staticipconf.show()
-
-        elif ctidx == TAB_INDEX_NETWORK_WIRED:
-            if self.cbox_net_wired_contype.currentIndex() == CBOX_NET_CONTYPE_INDEX_DHCP:
-                self.frame_net_wired_staticipconf.hide()
-            elif self.cbox_net_wired_contype.currentIndex() == CBOX_NET_CONTYPE_INDEX_STATIC:
-                self.frame_net_wired_staticipconf.show()
-
-    def cb_cbox_net_wireless_contype_current_idx_changed(self, cidx):
-        if cidx == CBOX_NET_CONTYPE_INDEX_DHCP:
-            self.frame_net_wireless_staticipconf.hide()
-        elif cidx == CBOX_NET_CONTYPE_INDEX_STATIC:
-            self.frame_net_wireless_staticipconf.show()
-
-    def cb_cbox_net_wired_contype_current_idx_changed(self, cidx):
-        if cidx == CBOX_NET_CONTYPE_INDEX_DHCP:
-            self.frame_net_wired_staticipconf.hide()
-        elif cidx == CBOX_NET_CONTYPE_INDEX_STATIC:
-            self.frame_net_wired_staticipconf.show()
-
-    def cb_pbutton_net_wired_activate_clicked(self):
-        if self.cbox_net_wired_contype.currentIndex() == CBOX_NET_CONTYPE_INDEX_DHCP:
-            self.cparser_net_wired_settings_conf.set("wired-default", "ip", "None")
-            self.cparser_net_wired_settings_conf.set("wired-default", "netmask", "None")
-            self.cparser_net_wired_settings_conf.set("wired-default", "gateway", "None")
-            self.cparser_net_wired_settings_conf.set("wired-default", "search_domain", "None")
-            self.cparser_net_wired_settings_conf.set("wired-default", "dns_domain", "None")
-            self.cparser_net_wired_settings_conf.set("wired-default", "dns1", "None")
-            self.cparser_net_wired_settings_conf.set("wired-default", "dns2", "None")
-            self.cparser_net_wired_settings_conf.set("wired-default", "dns3", "None")
-            if  self.net_gen_dict['cstat_hostname'] is not None:
-                self.cparser_net_wired_settings_conf.set("wired-default", "dhcphostname", self.net_gen_dict['cstat_hostname'])
-            else:
-                self.cparser_net_wired_settings_conf.set("wired-default", "dhcphostname", self.net_gen_dict["None"])
-
-        elif self.cbox_net_wired_contype.currentIndex() == CBOX_NET_CONTYPE_INDEX_STATIC:
-            pass
-
-        async_call(self.net_wired_settings_conf.open,
-                   (NET_WIRED_SETTINGS_CONF_FILE,
-                   REDFile.FLAG_WRITE_ONLY |
-                   REDFile.FLAG_CREATE |
-                   REDFile.FLAG_NON_BLOCKING |
-                   REDFile.FLAG_TRUNCATE, 0500, 0, 0),
-                   self.cb_net_wired_settings_conf_write_open,
-                   self.cb_net_wired_settings_conf_write_open_error)
-
-    def cb_net_wired_settings_conf_write_open(self, result):
-        _strio_conf = StringIO()
-        self.cparser_net_wired_settings_conf.write(_strio_conf)
-        self.net_wired_settings_conf.write_async(_strio_conf.getvalue(), self.cb_net_wired_settings_conf_write_error, None)
-        
-    def cb_net_wired_settings_conf_write_open_error(self, error):
-        self.net_wired_settings_conf.release()
-
-    def cb_net_wired_settings_conf_write_error(self, error):
-        if error == None:
-            self.script_manager.execute_script('settings_network_connect_wired',
-                                               self.cb_settings_network_connect_wired_changed,
-                                               [])
-            self.net_wired_settings_conf.release()
-        else:
-            self.net_wired_settings_conf.release()
-
-    def cb_settings_network_connect_wired_changed(self, result):
+    def update_network_widget_data(self):
         pass
-    
-    
-    
-    
-    
-    # ======== brickd settings =========
-    
-    def brickd_button_refresh_enabled(self, state):
-        self.pbutton_brickd_general_refresh.setEnabled(state)
-        self.pbutton_brickd_adv_refresh.setEnabled(state)
-        
-        if state:
-            self.pbutton_brickd_general_refresh.setText("Refresh")
-            self.pbutton_brickd_adv_refresh.setText("Refresh")
-        else:
-            self.pbutton_brickd_general_refresh.setText("Refreshing...")
-            self.pbutton_brickd_adv_refresh.setText("Refreshing...")
-        
-    
-    def brickd_button_save_enabled(self, state):
-        self.pbutton_brickd_general_save.setEnabled(state)
-        self.pbutton_brickd_adv_save.setEnabled(state)
-        
-        if state:
-            self.pbutton_brickd_general_save.setText("Save")
-            self.pbutton_brickd_adv_save.setText("Save")
-        else:
-            self.pbutton_brickd_general_save.setText("Saved")
-            self.pbutton_brickd_adv_save.setText("Saved")
-    
-    def brickd_update_widget_data(self):
+
+    def update_brickd_widget_data(self):
         if self.brickd_conf == None:
             return
-        
+
         # Fill keys with default values if not available
         if not 'listen.address' in self.brickd_conf:
             self.brickd_conf['listen.address'] = '0.0.0.0'
@@ -456,55 +218,251 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         
         log_level = self.brickd_conf['log_level.other']
         if log_level == 'debug':
-            self.cbox_brickd_adv_ll.setCurrentIndex(3)
+            self.cbox_brickd_adv_ll.setCurrentIndex(CBOX_BRICKD_LOG_LEVEL_DEBUG)
         elif log_level == 'info':
-            self.cbox_brickd_adv_ll.setCurrentIndex(2)
+            self.cbox_brickd_adv_ll.setCurrentIndex(CBOX_BRICKD_LOG_LEVEL_INFO)
         elif log_level == 'warn':
-            self.cbox_brickd_adv_ll.setCurrentIndex(1)
+            self.cbox_brickd_adv_ll.setCurrentIndex(CBOX_BRICKD_LOG_LEVEL_WARN)
         elif log_level == 'error':
-            self.cbox_brickd_adv_ll.setCurrentIndex(0)
+            self.cbox_brickd_adv_ll.setCurrentIndex(CBOX_BRICKD_LOG_LEVEL_ERROR)
         
         trigger_green = self.brickd_conf['led_trigger.green']
         if trigger_green == 'cpu':
-            self.cbox_brickd_adv_gt.setCurrentIndex(0)
+            self.cbox_brickd_adv_gt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_CPU)
         elif trigger_green == 'gpio':
-            self.cbox_brickd_adv_gt.setCurrentIndex(1)
+            self.cbox_brickd_adv_gt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_GPIO)
         elif trigger_green == 'heartbeat':
-            self.cbox_brickd_adv_gt.setCurrentIndex(2)
+            self.cbox_brickd_adv_gt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_HEARTBEAT)
         elif trigger_green == 'mmc':
-            self.cbox_brickd_adv_gt.setCurrentIndex(3)
+            self.cbox_brickd_adv_gt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_MMC)
         elif trigger_green == 'off':
-            self.cbox_brickd_adv_gt.setCurrentIndex(4)
+            self.cbox_brickd_adv_gt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_OFF)
         elif trigger_green == 'on':
-            self.cbox_brickd_adv_gt.setCurrentIndex(5)
+            self.cbox_brickd_adv_gt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_ON)
             
         trigger_red = self.brickd_conf['led_trigger.red']
         if trigger_red == 'cpu':
-            self.cbox_brickd_adv_rt.setCurrentIndex(0)
+            self.cbox_brickd_adv_rt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_CPU)
         elif trigger_red == 'gpio':
-            self.cbox_brickd_adv_rt.setCurrentIndex(1)
+            self.cbox_brickd_adv_rt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_GPIO)
         elif trigger_red == 'heartbeat':
-            self.cbox_brickd_adv_rt.setCurrentIndex(2)
+            self.cbox_brickd_adv_rt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_HEARTBEAT)
         elif trigger_red == 'mmc':
-            self.cbox_brickd_adv_rt.setCurrentIndex(3)
+            self.cbox_brickd_adv_rt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_MMC)
         elif trigger_red == 'off':
-            self.cbox_brickd_adv_rt.setCurrentIndex(4)
+            self.cbox_brickd_adv_rt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_OFF)
         elif trigger_red == 'on':
-            self.cbox_brickd_adv_rt.setCurrentIndex(5)
+            self.cbox_brickd_adv_rt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_ON)
         
         self.sbox_brickd_adv_spi_dly.setValue(int(self.brickd_conf['poll_delay.spi']))
         self.sbox_brickd_adv_rs485_dly.setValue(int(self.brickd_conf['poll_delay.rs485']))
 
-    def brickd_refresh_pressed(self):
-        self.brickd_button_refresh_enabled(False)
+    def update_datetime_widget_data(self):
+        pass
+
+    def network_show_hide_static_ipconf(self, tidx, contype):
+        if tidx == TAB_INDEX_NETWORK_WIRELESS:
+            if contype == CBOX_NET_CONTYPE_INDEX_DHCP:
+                self.frame_net_wireless_staticipconf.hide()
+            elif contype == CBOX_NET_CONTYPE_INDEX_STATIC:
+                self.frame_net_wireless_staticipconf.show()
+
+        elif tidx == TAB_INDEX_NETWORK_WIRED:
+            if contype == CBOX_NET_CONTYPE_INDEX_DHCP:
+                self.frame_net_wired_staticipconf.hide()
+            elif contype == CBOX_NET_CONTYPE_INDEX_STATIC:
+                self.frame_net_wired_staticipconf.show()
+
+    # The slots
+    def slot_tbox_settings_current_changed(self, ctidx):
+        if ctidx == BOX_INDEX_NETWORK:
+            self.slot_network_refresh_clicked()
+
+            if self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRELESS:
+                self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRELESS,
+                                                     self.cbox_net_wireless_contype.currentIndex())
+
+            elif self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRED:
+                self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRED,
+                                                     self.cbox_net_wired_contype.currentIndex())
+
+        elif ctidx == BOX_INDEX_BRICKD:
+            self.slot_brickd_refresh_clicked()
+
+    def slot_twidget_net_current_changed(self, ctidx):
+        if self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRELESS:
+            self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRELESS,
+                                                 self.cbox_net_wireless_contype.currentIndex())
+            
+        elif self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRED:
+            self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRED,
+                                                 self.cbox_net_wired_contype.currentIndex())
+
+    def network_button_refresh_enabled(self, state):
+        self.pbutton_net_gen_refresh.setEnabled(state)
+        self.pbutton_net_wireless_refresh.setEnabled(state)
+        self.pbutton_net_wired_refresh.setEnabled(state)
+
+        if state:
+            self.pbutton_net_gen_refresh.setText("Refresh")
+            self.pbutton_net_wireless_refresh.setText("Refresh")
+            self.pbutton_net_wired_refresh.setText("Refresh")
+        else:
+            self.pbutton_net_gen_refresh.setText("Refreshing...")
+            self.pbutton_net_wireless_refresh.setText("Refreshing...")
+            self.pbutton_net_wired_refresh.setText("Refreshing...")
+
+    def network_button_save_enabled(self, state):
+        self.pbutton_net_gen_save.setEnabled(state)
+        self.pbutton_net_wireless_save.setEnabled(state)
+        self.pbutton_net_wired_save.setEnabled(state)
+
+        if state:
+            self.pbutton_net_gen_save.setText("Save")
+            self.pbutton_net_wireless_save.setText("Save")
+            self.pbutton_net_wired_save.setText("Save")
+        else:
+            self.pbutton_net_gen_save.setText("Saved")
+            self.pbutton_net_wireless_save.setText("Saved")
+            self.pbutton_net_wired_save.setText("Saved")
+
+    def brickd_button_refresh_enabled(self, state):
+        self.pbutton_brickd_general_refresh.setEnabled(state)
+        self.pbutton_brickd_adv_refresh.setEnabled(state)
         
+        if state:
+            self.pbutton_brickd_general_refresh.setText("Refresh")
+            self.pbutton_brickd_adv_refresh.setText("Refresh")
+        else:
+            self.pbutton_brickd_general_refresh.setText("Refreshing...")
+            self.pbutton_brickd_adv_refresh.setText("Refreshing...")
+        
+    
+    def brickd_button_save_enabled(self, state):
+        self.pbutton_brickd_general_save.setEnabled(state)
+        self.pbutton_brickd_adv_save.setEnabled(state)
+        
+        if state:
+            self.pbutton_brickd_general_save.setText("Save")
+            self.pbutton_brickd_adv_save.setText("Save")
+        else:
+            self.pbutton_brickd_general_save.setText("Saved")
+            self.pbutton_brickd_adv_save.setText("Saved")
+
+    def slot_network_refresh_clicked(self):
+        self.network_button_refresh_enabled(False)
+
+        def cb_settings_network_status(result):
+            if result.stderr == "":
+                self.network_conf['status'] = json.loads(result.stdout)
+            else:
+                # TODO: Error popup for user?
+                pass
+
+        def cb_settings_network_get_interfaces(result):
+            if result.stderr == "":
+                self.network_conf['interfaces'] = json.loads(result.stdout)
+            else:
+                # TODO: Error popup for user?
+                pass
+
+        def cb_open_manager_settings(red_file):
+            def cb_read(red_file, result):
+                red_file.release()
+
+                if result is not None:
+                    self.network_conf['manager_settings'] = config_parser.parse_no_fake(result.data)
+                    self.update_network_widget_data()
+                else:
+                    # TODO: Error popup for user?
+                    print result
+
+                self.network_button_refresh_enabled(True)
+                self.network_button_save_enabled(False)
+                
+            red_file.read_async(4096, lambda x: cb_read(red_file, x))
+            
+        def cb_open_error_manager_settings(result):
+            self.network_button_refresh_enabled(True)
+            # TODO: Error popup for user?
+            print result
+
+        def cb_open_wireless_settings(red_file):
+            def cb_read(red_file, result):
+                red_file.release()
+
+                if result is not None:
+                    self.network_conf['wireless_settings'] = config_parser.parse_no_fake(result.data)
+                    self.update_network_widget_data()
+                else:
+                    # TODO: Error popup for user?
+                    print result
+
+                self.network_button_refresh_enabled(True)
+                self.network_button_save_enabled(False)
+                
+            red_file.read_async(4096, lambda x: cb_read(red_file, x))
+            
+        def cb_open_error_wireless_settings(result):
+            self.network_button_refresh_enabled(True)
+            # TODO: Error popup for user?
+            print result
+
+        def cb_open_wired_settings(red_file):
+            def cb_read(red_file, result):
+                red_file.release()
+
+                if result is not None:
+                    self.network_conf['wired_settings'] = config_parser.parse_no_fake(result.data)
+                    self.update_network_widget_data()
+                else:
+                    # TODO: Error popup for user?
+                    print result
+
+                self.network_button_refresh_enabled(True)
+                self.network_button_save_enabled(False)
+
+            red_file.read_async(4096, lambda x: cb_read(red_file, x))
+            
+        def cb_open_error_wired_settings(result):
+            self.network_button_refresh_enabled(True)
+            # TODO: Error popup for user?
+            print result
+
+
+        self.script_manager.execute_script('settings_network_status',
+                                           cb_settings_network_status,
+                                           [])
+
+        self.script_manager.execute_script('settings_network_get_interfaces',
+                                           cb_settings_network_get_interfaces,
+                                           [])
+
+        async_call(self.manager_settings_conf_rfile.open,
+                   (MANAGER_SETTINGS_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   cb_open_manager_settings,
+                   cb_open_error_manager_settings)
+
+        async_call(self.wireless_settings_conf_rfile.open,
+                   (WIRELESS_SETTINGS_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   cb_open_wireless_settings,
+                   cb_open_error_wireless_settings)
+
+        async_call(self.wired_settings_conf_rfile.open,
+                   (WIRED_SETTINGS_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   cb_open_wired_settings,
+                   cb_open_error_wired_settings)
+
+    def slot_brickd_refresh_clicked(self):
+        self.brickd_button_refresh_enabled(False)
+
         def cb_open(red_file):
             def cb_read(red_file, result):
                 red_file.release()
 
                 if result is not None:
                     self.brickd_conf = config_parser.parse(result.data)
-                    self.brickd_update_widget_data()
+                    self.update_brickd_widget_data()
                 else:
                     # TODO: Error popup for user?
                     print result
@@ -519,16 +477,20 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             
             # TODO: Error popup for user?
             print result
-            
-        async_call(REDFile(self.session).open,
-                   (BRICKD_BRICKD_CONF_FILE, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+
+        async_call(self.brickd_conf_rfile.open,
+                   (BRICKD_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                    cb_open,
                    cb_open_error)
-    
-    def brickd_save_pressed(self):
+
+    def slot_network_save_clicked(self):
+        self.network_button_save_enabled(False)
+        pass
+
+    def slot_brickd_save_clicked(self):
         self.brickd_button_save_enabled(False)
 
-        # general
+        # General
         adr = '.'.join((str(self.sbox_brickd_la_ip1.value()),
                         str(self.sbox_brickd_la_ip2.value()),
                         str(self.sbox_brickd_la_ip3.value()),
@@ -550,50 +512,50 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.brickd_conf['log_level.rs485'] = level
             self.brickd_conf['log_level.other'] = level            
         
-        # advanced
+        # Advanced
         index = self.cbox_brickd_adv_ll.currentIndex()
-        if index == 0:
+        if index == CBOX_BRICKD_LOG_LEVEL_ERROR:
             set_all_log_level('error')
-        elif index == 1:
+        elif index == CBOX_BRICKD_LOG_LEVEL_WARN:
             set_all_log_level('warn')
-        elif index == 2:
+        elif index == CBOX_BRICKD_LOG_LEVEL_INFO:
             set_all_log_level('info')
-        elif index == 3:
+        elif index == CBOX_BRICKD_LOG_LEVEL_DEBUG:
             set_all_log_level('debug')
             
         index = self.cbox_brickd_adv_gt.currentIndex()
-        if index == 0:
+        if index == CBOX_BRICKD_LED_TRIGGER_CPU:
             self.brickd_conf['led_trigger.green'] = 'cpu'
-        elif index == 1:
+        elif index == CBOX_BRICKD_LED_TRIGGER_GPIO:
             self.brickd_conf['led_trigger.green'] = 'gpio'
-        elif index == 2:
+        elif index == CBOX_BRICKD_LED_TRIGGER_HEARTBEAT:
             self.brickd_conf['led_trigger.green'] = 'heartbeat'
-        elif index == 3:
+        elif index == CBOX_BRICKD_LED_TRIGGER_MMC:
             self.brickd_conf['led_trigger.green'] = 'mmc'
-        elif index == 4:
+        elif index == CBOX_BRICKD_LED_TRIGGER_OFF:
             self.brickd_conf['led_trigger.green'] = 'off'
-        elif index == 5:
+        elif index == CBOX_BRICKD_LED_TRIGGER_ON:
             self.brickd_conf['led_trigger.green'] = 'on'
         
         index = self.cbox_brickd_adv_rt.currentIndex()
-        if index == 0:
+        if index == CBOX_BRICKD_LED_TRIGGER_CPU:
             self.brickd_conf['led_trigger.red'] = 'cpu'
-        elif index == 1:
+        elif index == CBOX_BRICKD_LED_TRIGGER_GPIO:
             self.brickd_conf['led_trigger.red'] = 'gpio'
-        elif index == 2:
+        elif index == CBOX_BRICKD_LED_TRIGGER_HEARTBEAT:
             self.brickd_conf['led_trigger.red'] = 'heartbeat'
-        elif index == 3:
+        elif index == CBOX_BRICKD_LED_TRIGGER_MMC:
             self.brickd_conf['led_trigger.red'] = 'mmc'
-        elif index == 4:
+        elif index == CBOX_BRICKD_LED_TRIGGER_OFF:
             self.brickd_conf['led_trigger.red'] = 'off'
-        elif index == 5:
+        elif index == CBOX_BRICKD_LED_TRIGGER_ON:
             self.brickd_conf['led_trigger.red'] = 'on'
             
         self.brickd_conf['poll_delay.spi'] = str(self.sbox_brickd_adv_spi_dly.value())
         self.brickd_conf['poll_delay.rs485'] = str(self.sbox_brickd_adv_rs485_dly.value())
         
         config = config_parser.to_string(self.brickd_conf)
-        
+
         def cb_open(config, red_file):
             def cb_write(red_file, result):
                 red_file.release()
@@ -613,17 +575,26 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             
             # TODO: Error popup for user?
             print result
-        
-        async_call(REDFile(self.session).open,
-                   (BRICKD_BRICKD_CONF_FILE,                    
-                    REDFile.FLAG_WRITE_ONLY |
-                    REDFile.FLAG_CREATE |
-                    REDFile.FLAG_NON_BLOCKING |
-                    REDFile.FLAG_TRUNCATE, 0500, 0, 0),
+
+        async_call(self.brickd_conf_rfile.open,
+                   (BRICKD_CONF_PATH,
+                   REDFile.FLAG_WRITE_ONLY |
+                   REDFile.FLAG_CREATE |
+                   REDFile.FLAG_NON_BLOCKING |
+                   REDFile.FLAG_TRUNCATE, 0500, 0, 0),
                    lambda x: cb_open(config, x),
                    cb_open_error)
-            
-        
+
+    def slot_network_settings_changed(self):
+        self.network_button_save_enabled(True)
+
+        if self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRELESS:
+            self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRELESS,
+                                                 self.cbox_net_wireless_contype.currentIndex())
+
+        elif self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRED:
+            self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRED,
+                                                 self.cbox_net_wired_contype.currentIndex())
+
     def brickd_settings_changed(self, value):
         self.brickd_button_save_enabled(True)
-        

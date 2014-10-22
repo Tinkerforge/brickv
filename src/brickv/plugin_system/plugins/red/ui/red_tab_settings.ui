@@ -26,7 +26,7 @@
       <item>
        <widget class="QToolBox" name="tbox_settings">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="box_net">
          <property name="geometry">
@@ -81,9 +81,6 @@
                       </property>
                      </widget>
                     </item>
-                    <item row="0" column="1">
-                     <widget class="QLineEdit" name="ledit_net_gen_hostname"/>
-                    </item>
                     <item row="4" column="0">
                      <spacer name="verticalSpacer_2">
                       <property name="orientation">
@@ -96,13 +93,6 @@
                        </size>
                       </property>
                      </spacer>
-                    </item>
-                    <item row="0" column="2">
-                     <widget class="QPushButton" name="pushButton">
-                      <property name="text">
-                       <string>Refresh</string>
-                      </property>
-                     </widget>
                     </item>
                     <item row="1" column="0" colspan="3">
                      <widget class="QGroupBox" name="groupBox">
@@ -230,9 +220,19 @@
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pbutton_net_gen_save">
+                       <widget class="QPushButton" name="pbutton_net_gen_refresh">
                         <property name="text">
-                         <string>Save</string>
+                         <string>Refresh</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="pbutton_net_gen_save">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="text">
+                         <string>Saved</string>
                         </property>
                        </widget>
                       </item>
@@ -250,6 +250,9 @@
                        </spacer>
                       </item>
                      </layout>
+                    </item>
+                    <item row="0" column="1" colspan="2">
+                     <widget class="QLineEdit" name="ledit_net_gen_hostname"/>
                     </item>
                    </layout>
                   </item>
@@ -280,8 +283,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>350</width>
-                   <height>383</height>
+                   <width>762</width>
+                   <height>547</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -316,9 +319,19 @@
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pbutton_net_wireless_activate">
+                       <widget class="QPushButton" name="pbutton_net_wireless_refresh">
                         <property name="text">
-                         <string>Activate Connection</string>
+                         <string>Refresh</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="pbutton_net_wireless_save">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="text">
+                         <string>Saved</string>
                         </property>
                        </widget>
                       </item>
@@ -580,8 +593,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>350</width>
-                   <height>284</height>
+                   <width>762</width>
+                   <height>547</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -610,9 +623,19 @@
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pbutton_net_wired_activate">
+                       <widget class="QPushButton" name="pbutton_net_wired_refresh">
                         <property name="text">
-                         <string>Activate Connection</string>
+                         <string>Refresh</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="pbutton_net_wired_save">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="text">
+                         <string>Saved</string>
                         </property>
                        </widget>
                       </item>
@@ -1264,9 +1287,19 @@
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pbutton_datetime_save">
+                       <widget class="QPushButton" name="pbutton_datetime_refresh">
                         <property name="text">
-                         <string>Save</string>
+                         <string>Refresh</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="pbutton_datetime_save">
+                        <property name="enabled">
+                         <bool>false</bool>
+                        </property>
+                        <property name="text">
+                         <string>Saved</string>
                         </property>
                        </widget>
                       </item>
