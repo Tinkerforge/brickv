@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 config_parser.py: Parses key=value configs from RED Brick
 
@@ -93,5 +94,6 @@ def to_string(data):
     
 
 def to_string_no_fake(data):
-    # TODO
-    pass
+    s = StringIO()
+    data.write(s)
+    return s.getvalue()
