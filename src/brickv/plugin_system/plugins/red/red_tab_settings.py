@@ -264,7 +264,19 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.cbox_net_wired_intf.clear()
                 for wintf in self.network_all_data['interfaces']['wired']:
                     self.cbox_net_wired_intf.addItem(wintf)
-
+            if self.network_all_data['manager_settings'] is not None:
+                try:
+                    _wiredintf = self.network_all_data['manager_settings'].get('Settings', 'wired_interface')
+                    if _wiredintf == "" or _wiredintf is None:
+                        pass
+                    else:
+                        for i in range(self.cbox_net_wired_intf.count()):
+                            if self.cbox_net_wired_intf.itemText(i) == _wiredintf:
+                                self.cbox_net_wired_intf.setCurrentIndex(i)
+                                break
+                except:
+                    pass
+            
         if self.network_all_data['wireless_settings'] is not None:
             pass
 
