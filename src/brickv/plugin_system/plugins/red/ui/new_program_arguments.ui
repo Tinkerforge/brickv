@@ -47,9 +47,9 @@
       </widget>
      </item>
      <item row="2" column="4">
-      <widget class="QPushButton" name="button_remove_argument">
+      <widget class="QPushButton" name="button_down_argument">
        <property name="text">
-        <string>Remove</string>
+        <string>Down</string>
        </property>
       </widget>
      </item>
@@ -64,16 +64,16 @@
       </widget>
      </item>
      <item row="2" column="3">
-      <widget class="QPushButton" name="button_down_argument">
+      <widget class="QPushButton" name="button_up_argument">
        <property name="text">
-        <string>Down</string>
+        <string>Up</string>
        </property>
       </widget>
      </item>
      <item row="2" column="2">
-      <widget class="QPushButton" name="button_up_argument">
+      <widget class="QPushButton" name="button_remove_argument">
        <property name="text">
-        <string>Up</string>
+        <string>Remove</string>
        </property>
       </widget>
      </item>
@@ -84,9 +84,9 @@
  <tabstops>
   <tabstop>list_arguments</tabstop>
   <tabstop>button_add_argument</tabstop>
+  <tabstop>button_remove_argument</tabstop>
   <tabstop>button_up_argument</tabstop>
   <tabstop>button_down_argument</tabstop>
-  <tabstop>button_remove_argument</tabstop>
  </tabstops>
  <resources/>
  <connections/>

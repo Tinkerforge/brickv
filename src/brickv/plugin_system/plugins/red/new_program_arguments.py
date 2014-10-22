@@ -35,9 +35,9 @@ class NewProgramArguments(QWizardPage, Ui_NewProgramArguments):
 
         self.argument_list_editor = ListWidgetEditor(self.list_arguments,
                                                      self.button_add_argument,
+                                                     self.button_remove_argument,
                                                      self.button_up_argument,
                                                      self.button_down_argument,
-                                                     self.button_remove_argument,
                                                      '<new argument {0}>')
 
     # overrides QWizardPage.initializePage
@@ -48,7 +48,7 @@ class NewProgramArguments(QWizardPage, Ui_NewProgramArguments):
                          .format(Constants.language_display_names[language],
                                  unicode(self.field('name').toString())))
         self.label_arguments_help.setText(Constants.arguments_help[language])
-        self.argument_list_editor.remove_all_items()
+        self.argument_list_editor.reset_items()
         self.update_ui_state()
 
     # overrides QWizardPage.nextId
@@ -59,9 +59,4 @@ class NewProgramArguments(QWizardPage, Ui_NewProgramArguments):
         self.argument_list_editor.update_ui_state()
 
     def get_arguments(self):
-        arguments = []
-
-        for row in range(self.list_arguments.count()):
-            arguments.append(unicode(self.list_arguments.item(row).text()))
-
-        return arguments
+        return self.argument_list_editor.get_items()

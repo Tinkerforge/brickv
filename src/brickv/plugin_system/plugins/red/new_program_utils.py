@@ -113,21 +113,26 @@ class Constants:
 
 
 class ListWidgetEditor:
-    def __init__(self, list_items, button_add_item, button_up_item,
-                 button_down_item, button_remove_item, new_item_string):
+    def __init__(self, list_items, button_add_item, button_remove_item,
+                 button_up_item, button_down_item, new_item_string):
         self.list_items = list_items
         self.button_add_item = button_add_item
+        self.button_remove_item = button_remove_item
         self.button_up_item = button_up_item
         self.button_down_item = button_down_item
-        self.button_remove_item = button_remove_item
         self.new_item_string = new_item_string
         self.new_item_counter = 1
 
         self.list_items.itemSelectionChanged.connect(self.update_ui_state)
         self.button_add_item.clicked.connect(self.add_new_item)
+        self.button_remove_item.clicked.connect(self.remove_selected_item)
         self.button_up_item.clicked.connect(self.up_selected_item)
         self.button_down_item.clicked.connect(self.down_selected_item)
-        self.button_remove_item.clicked.connect(self.remove_selected_item)
+
+        self.original_items = []
+
+        for row in range(self.list_items.count()):
+            self.original_items.append(unicode(self.list_items.item(row).text()))
 
     def update_ui_state(self):
         has_selection = len(self.list_items.selectedItems()) > 0
@@ -149,6 +154,12 @@ class ListWidgetEditor:
 
         self.list_items.addItem(item)
         self.list_items.editItem(item)
+        self.update_ui_state()
+
+    def remove_selected_item(self):
+        for item in self.list_items.selectedItems():
+            self.list_items.takeItem(self.list_items.row(item))
+
         self.update_ui_state()
 
     def up_selected_item(self):
@@ -175,17 +186,25 @@ class ListWidgetEditor:
         self.list_items.insertItem(row + 1, item)
         self.list_items.setCurrentRow(row + 1)
 
-    def remove_selected_item(self):
-        for item in self.list_items.selectedItems():
-            self.list_items.takeItem(self.list_items.row(item))
-
-        self.update_ui_state()
-
-    def remove_all_items(self):
+    def reset_items(self):
         self.new_item_counter = 1
 
         self.list_items.clear()
+
+        for original_item in self.original_items:
+            item = QListWidgetItem(original_item)
+            item.setFlags(item.flags() | Qt.ItemIsEditable)
+            self.list_items.addItem(item)
+
         self.update_ui_state()
+
+    def get_items(self):
+        items = []
+
+        for row in range(self.list_arguments.count()):
+            items.append(unicode(self.list_items.item(row).text()))
+
+        return items
 
 
 class MandatoryLineEditChecker:
