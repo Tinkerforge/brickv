@@ -126,9 +126,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.twidget_net.currentChanged.connect(self.slot_twidget_net_current_changed)
 
         # Network Buttons
-        self.pbutton_net_gen_save.clicked.connect(self.slot_network_save_clicked)
-        self.pbutton_net_wireless_save.clicked.connect(self.slot_network_save_clicked)
-        self.pbutton_net_wired_save.clicked.connect(self.slot_network_save_clicked)
+        self.pbutton_net_gen_save.clicked.connect(self.slot_network_general_save_clicked)
+        self.pbutton_net_wireless_save.clicked.connect(self.slot_network_wireless_save_clicked)
+        self.pbutton_net_wired_save.clicked.connect(self.slot_network_wired_save_clicked)
         self.pbutton_net_gen_refresh.clicked.connect(self.slot_network_refresh_clicked)
         self.pbutton_net_wireless_refresh.clicked.connect(self.slot_network_refresh_clicked)
         self.pbutton_net_wired_refresh.clicked.connect(self.slot_network_refresh_clicked)
@@ -253,6 +253,31 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.label_net_gen_cstat_mask.setText("None")
             self.label_net_gen_cstat_gateway.setText("None")
             self.label_net_gen_cstat_dns.setText("None")
+
+        if self.network_all_data['interfaces'] is not None:
+            if self.network_all_data['interfaces']['wireless'] is not None:
+                self.cbox_net_wireless_intf.clear()
+                for wintf in self.network_all_data['interfaces']['wireless']:
+                    self.cbox_net_wireless_intf.addItem(wintf)
+
+            if self.network_all_data['interfaces']['wired'] is not None:
+                self.cbox_net_wired_intf.clear()
+                for wintf in self.network_all_data['interfaces']['wired']:
+                    self.cbox_net_wired_intf.addItem(wintf)
+
+        if self.network_all_data['wireless_settings'] is not None:
+            pass
+
+        if self.network_all_data['wired_settings'] is not None:
+            pass
+            '''try:
+                _ifs = self.network_all_data['wired_settings'].get('wired-default', 'ip')
+                if _ifs == "None" or _ifs == "":
+                    self.cbox_net_wired_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
+                else:
+                    self.cbox_net_wired_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_STATIC)
+            except:
+                self.cbox_net_wired_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)'''
 
     def update_brickd_widget_data(self):
         if self.brickd_conf == None:
@@ -461,6 +486,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 pass
                 # TODO: Error popup for user?
 
+            self.network_button_refresh_enabled(True)
+            self.network_button_save_enabled(False)
+
         def cb_settings_network_get_interfaces(result):
             if result.stderr == "":
                 self.network_all_data['interfaces'] = json.loads(result.stdout)
@@ -469,6 +497,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 pass
                 # TODO: Error popup for user?
 
+            self.network_button_refresh_enabled(True)
+            self.network_button_save_enabled(False)
+
         def cb_settings_network_wireless_scan(result):
             if result.stderr == "":
                 self.network_all_data['scan_result'] = json.loads(result.stdout)
@@ -476,6 +507,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             else:
                 pass
                 # TODO: Error popup for user?
+
+            self.network_button_refresh_enabled(True)
+            self.network_button_save_enabled(False)
 
         def cb_open_manager_settings(red_file):
             def cb_read(red_file, result):
@@ -600,6 +634,124 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def slot_network_save_clicked(self):
         self.network_button_save_enabled(False)
         pass
+
+    def slot_network_general_save_clicked(self):
+        self.network_button_save_enabled(False)
+        pass
+        
+    def slot_network_wireless_save_clicked(self):
+        self.network_button_save_enabled(False)
+        pass
+        
+    def slot_network_wired_save_clicked(self):
+        self.network_button_save_enabled(False)
+        
+        idx = self.cbox_net_wired_conftype.currentIndex()
+        if idx == CBOX_NET_CONTYPE_INDEX_DHCP:
+            self.network_all_data['wired_settings'].set('wired-default', 'ip', 'None')
+            self.network_all_data['wired_settings'].set('wired-default', 'broadcast', 'None')
+            self.network_all_data['wired_settings'].set('wired-default', 'netmask', 'None')
+            self.network_all_data['wired_settings'].set('wired-default', 'gateway', 'None')
+            self.network_all_data['wired_settings'].set('wired-default', 'search_domain', 'None')
+            self.network_all_data['wired_settings'].set('wired-default', 'dns_domain', 'None')
+            self.network_all_data['wired_settings'].set('wired-default', 'dns1', 'None')
+            self.network_all_data['wired_settings'].set('wired-default', 'dns2', 'None')
+            self.network_all_data['wired_settings'].set('wired-default', 'dns3', 'None')
+            self.network_all_data['wired_settings'].set('wired-default', 'default', 'True')
+            
+            config = config_parser.to_string_no_fake(self.network_all_data['wired_settings'])
+
+            def cb_open(config, red_file):
+                def cb_write(red_file, result):
+                    red_file.release()
+
+                    if result is not None:
+                        self.network_button_save_enabled(True)
+                        # TODO: Error popup for user?
+                        print result
+                    else:
+                        # TODO: Can brickd reload configuration? Otherwise we need to restart it.
+                        pass
+                
+                red_file.write_async(config, lambda x: cb_write(red_file, x), None)
+            
+            def cb_open_error(result):
+                self.brickd_button_save_enabled(True)
+            
+                # TODO: Error popup for user?
+                print result
+
+            async_call(self.wired_settings_conf_rfile.open,
+                       (WIRED_SETTINGS_CONF_PATH,
+                       REDFile.FLAG_WRITE_ONLY |
+                       REDFile.FLAG_CREATE |
+                       REDFile.FLAG_NON_BLOCKING |
+                       REDFile.FLAG_TRUNCATE, 0500, 0, 0),
+                       lambda x: cb_open(config, x),
+                       cb_open_error)
+
+        elif idx == CBOX_NET_CONTYPE_INDEX_STATIC:
+            ip = '.'.join((str(self.sbox_net_wired_ip1.value()),
+                           str(self.sbox_net_wired_ip2.value()),
+                           str(self.sbox_net_wired_ip3.value()),
+                           str(self.sbox_net_wired_ip4.value())))
+
+            mask = '.'.join((str(self.sbox_net_wired_mask1.value()),
+                             str(self.sbox_net_wired_mask2.value()),
+                             str(self.sbox_net_wired_mask3.value()),
+                             str(self.sbox_net_wired_mask4.value())))
+
+            gw = '.'.join((str(self.sbox_net_wired_gw1.value()),
+                           str(self.sbox_net_wired_gw2.value()),
+                           str(self.sbox_net_wired_gw3.value()),
+                           str(self.sbox_net_wired_gw4.value())))
+
+            dns = '.'.join((str(self.sbox_net_wired_dns1.value()),
+                            str(self.sbox_net_wired_dns2.value()),
+                            str(self.sbox_net_wired_dns3.value()),
+                            str(self.sbox_net_wired_dns4.value())))
+
+            self.network_all_data['wired_settings'].set('wired-default', 'ip', ip)
+            self.network_all_data['wired_settings'].set('wired-default', 'broadcast', 'None')
+            self.network_all_data['wired_settings'].set('wired-default', 'netmask', mask)
+            self.network_all_data['wired_settings'].set('wired-default', 'gateway', gw)
+            self.network_all_data['wired_settings'].set('wired-default', 'search_domain', 'None')
+            self.network_all_data['wired_settings'].set('wired-default', 'dns_domain', 'None')
+            self.network_all_data['wired_settings'].set('wired-default', 'dns1', dns)
+            self.network_all_data['wired_settings'].set('wired-default', 'dns2', 'None')
+            self.network_all_data['wired_settings'].set('wired-default', 'dns3', 'None')
+            self.network_all_data['wired_settings'].set('wired-default', 'default', 'True')
+
+            config = config_parser.to_string_no_fake(self.network_all_data['wired_settings'])
+
+            def cb_open(config, red_file):
+                def cb_write(red_file, result):
+                    red_file.release()
+
+                    if result is not None:
+                        self.network_button_save_enabled(True)
+                        # TODO: Error popup for user?
+                        print result
+                    else:
+                        # TODO: Can brickd reload configuration? Otherwise we need to restart it.
+                        pass
+                
+                red_file.write_async(config, lambda x: cb_write(red_file, x), None)
+            
+            def cb_open_error(result):
+                self.brickd_button_save_enabled(True)
+            
+                # TODO: Error popup for user?
+                print result
+
+            async_call(self.wired_settings_conf_rfile.open,
+                       (WIRED_SETTINGS_CONF_PATH,
+                       REDFile.FLAG_WRITE_ONLY |
+                       REDFile.FLAG_CREATE |
+                       REDFile.FLAG_NON_BLOCKING |
+                       REDFile.FLAG_TRUNCATE, 0500, 0, 0),
+                       lambda x: cb_open(config, x),
+                       cb_open_error)
 
     def slot_brickd_save_clicked(self):
         self.brickd_button_save_enabled(False)
