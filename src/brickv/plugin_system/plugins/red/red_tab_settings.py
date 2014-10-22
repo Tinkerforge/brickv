@@ -269,15 +269,83 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             pass
 
         if self.network_all_data['wired_settings'] is not None:
-            pass
-            '''try:
-                _ifs = self.network_all_data['wired_settings'].get('wired-default', 'ip')
-                if _ifs == "None" or _ifs == "":
+            try:
+                _ips = self.network_all_data['wired_settings'].get('wired-default', 'ip')
+                if _ips == "None" or _ips == "":
                     self.cbox_net_wired_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
+                    self.sbox_net_wired_ip1.setValue(0)
+                    self.sbox_net_wired_ip2.setValue(0)
+                    self.sbox_net_wired_ip3.setValue(0)
+                    self.sbox_net_wired_ip4.setValue(0)
                 else:
                     self.cbox_net_wired_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_STATIC)
+                    _ips_splitted = _ips.split('.')
+                    self.sbox_net_wired_ip1.setValue(int(_ips_splitted[0]))
+                    self.sbox_net_wired_ip2.setValue(int(_ips_splitted[1]))
+                    self.sbox_net_wired_ip3.setValue(int(_ips_splitted[2]))
+                    self.sbox_net_wired_ip4.setValue(int(_ips_splitted[3]))
             except:
-                self.cbox_net_wired_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)'''
+                self.cbox_net_wired_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
+                self.sbox_net_wired_ip1.setValue(0)
+                self.sbox_net_wired_ip2.setValue(0)
+                self.sbox_net_wired_ip3.setValue(0)
+                self.sbox_net_wired_ip4.setValue(0)
+            try:
+                _mask = self.network_all_data['wired_settings'].get('wired-default', 'netmask')
+                if _ips == "None" or _ips == "":
+                    self.sbox_net_wired_mask1.setValue(0)
+                    self.sbox_net_wired_mask2.setValue(0)
+                    self.sbox_net_wired_mask3.setValue(0)
+                    self.sbox_net_wired_mask4.setValue(0)
+                else:
+                    _mask_splitted = _mask.split('.')
+                    self.sbox_net_wired_mask1.setValue(int(_mask_splitted[0]))
+                    self.sbox_net_wired_mask2.setValue(int(_mask_splitted[1]))
+                    self.sbox_net_wired_mask3.setValue(int(_mask_splitted[2]))
+                    self.sbox_net_wired_mask4.setValue(int(_mask_splitted[3]))
+            except:
+                self.sbox_net_wired_mask1.setValue(0)
+                self.sbox_net_wired_mask2.setValue(0)
+                self.sbox_net_wired_mask3.setValue(0)
+                self.sbox_net_wired_mask4.setValue(0)
+
+            try:
+                _gw = self.network_all_data['wired_settings'].get('wired-default', 'gateway')
+                if _gw == "None" or _gw == "":
+                    self.sbox_net_wired_gw1.setValue(0)
+                    self.sbox_net_wired_gw2.setValue(0)
+                    self.sbox_net_wired_gw3.setValue(0)
+                    self.sbox_net_wired_gw4.setValue(0)
+                else:
+                    _gw_splitted = _gw.split('.')
+                    self.sbox_net_wired_gw1.setValue(int(_gw_splitted[0]))
+                    self.sbox_net_wired_gw2.setValue(int(_gw_splitted[1]))
+                    self.sbox_net_wired_gw3.setValue(int(_gw_splitted[2]))
+                    self.sbox_net_wired_gw4.setValue(int(_gw_splitted[3]))
+            except:
+                self.sbox_net_wired_gw1.setValue(0)
+                self.sbox_net_wired_gw2.setValue(0)
+                self.sbox_net_wired_gw3.setValue(0)
+                self.sbox_net_wired_gw4.setValue(0)
+
+            try:
+                _dns = self.network_all_data['wired_settings'].get('wired-default', 'dns1')
+                if _dns == "None" or _dns == "":
+                    self.sbox_net_wired_dns1.setValue(0)
+                    self.sbox_net_wired_dns2.setValue(0)
+                    self.sbox_net_wired_dns3.setValue(0)
+                    self.sbox_net_wired_dns4.setValue(0)
+                else:
+                    _dns_splitted = _dns.split('.')
+                    self.sbox_net_wired_dns1.setValue(int(_dns_splitted[0]))
+                    self.sbox_net_wired_dns2.setValue(int(_dns_splitted[1]))
+                    self.sbox_net_wired_dns3.setValue(int(_dns_splitted[2]))
+                    self.sbox_net_wired_dns4.setValue(int(_dns_splitted[3]))
+            except:
+                self.sbox_net_wired_dns1.setValue(0)
+                self.sbox_net_wired_dns2.setValue(0)
+                self.sbox_net_wired_dns3.setValue(0)
+                self.sbox_net_wired_dns4.setValue(0)
 
     def update_brickd_widget_data(self):
         if self.brickd_conf == None:
@@ -646,6 +714,16 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def slot_network_wired_save_clicked(self):
         self.network_button_save_enabled(False)
         
+        def cb_settings_network_apply(result):
+            if result.stderr is not None and  result.stderr == "":
+                pass
+            else:
+                # TODO: Error popup for user?
+                pass
+
+        self.network_all_data['manager_settings'].set('Settings', 'wired_interface', self.cbox_net_wired_intf.currentText())
+        config_ms = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
+
         idx = self.cbox_net_wired_conftype.currentIndex()
         if idx == CBOX_NET_CONTYPE_INDEX_DHCP:
             self.network_all_data['wired_settings'].set('wired-default', 'ip', 'None')
@@ -671,7 +749,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         print result
                     else:
                         # TODO: Can brickd reload configuration? Otherwise we need to restart it.
-                        pass
+                        self.script_manager.execute_script('settings_network_apply',
+                                                           cb_settings_network_apply,
+                                                           [])
                 
                 red_file.write_async(config, lambda x: cb_write(red_file, x), None)
             
@@ -733,14 +813,14 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         # TODO: Error popup for user?
                         print result
                     else:
-                        # TODO: Can brickd reload configuration? Otherwise we need to restart it.
-                        pass
+                        self.script_manager.execute_script('settings_network_apply',
+                                                           cb_settings_network_apply,
+                                                           [])
                 
                 red_file.write_async(config, lambda x: cb_write(red_file, x), None)
             
             def cb_open_error(result):
                 self.brickd_button_save_enabled(True)
-            
                 # TODO: Error popup for user?
                 print result
 
@@ -752,6 +832,35 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                        REDFile.FLAG_TRUNCATE, 0500, 0, 0),
                        lambda x: cb_open(config, x),
                        cb_open_error)
+
+        def cb_open_ms(config, red_file):
+            def cb_write_ms(red_file, result):
+                red_file.release()
+
+                if result is not None:
+                    self.network_button_save_enabled(True)
+                    # TODO: Error popup for user?
+                    print result
+                else:
+                    self.script_manager.execute_script('settings_network_apply',
+                                                       cb_settings_network_apply,
+                                                       [])
+                
+            red_file.write_async(config_ms, lambda x: cb_write_ms(red_file, x), None)
+
+        def cb_open_ms_error(result):
+            self.brickd_button_save_enabled(True)
+            # TODO: Error popup for user?
+            print result
+
+        async_call(self.manager_settings_conf_rfile.open,
+                   (MANAGER_SETTINGS_CONF_PATH,
+                   REDFile.FLAG_WRITE_ONLY |
+                   REDFile.FLAG_CREATE |
+                   REDFile.FLAG_NON_BLOCKING |
+                   REDFile.FLAG_TRUNCATE, 0500, 0, 0),
+                   lambda x: cb_open_ms(config, x),
+                   cb_open_ms_error)
 
     def slot_brickd_save_clicked(self):
         self.brickd_button_save_enabled(False)
@@ -842,6 +951,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 else:
                     # TODO: Can brickd reload configuration? Otherwise we need to restart it.
                     pass
+                    # Restart brickd for the changes to be appplied
+                    '''self.script_manager.execute_script('restart_brickd',
+                                                          cb_restart_brickd,
+                                                          [])'''
                 
             red_file.write_async(config, lambda x: cb_write(red_file, x), None)
             
@@ -859,11 +972,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    REDFile.FLAG_TRUNCATE, 0500, 0, 0),
                    lambda x: cb_open(config, x),
                    cb_open_error)
-
-        # Restart brickd for the changes to be appplied
-        '''self.script_manager.execute_script('restart_brickd',
-                                           cb_restart_brickd,
-                                           [])'''
 
     def slot_network_settings_changed(self):
         self.network_button_save_enabled(True)
