@@ -87,7 +87,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.net_wireless_settings_conf_rfile = None
         self.brickd_conf_rfile = None
 
-        self.network_conf = {'status': None,
+        self.network_all_data = {'status': None,
                              'interfaces': None,
                              'scan_result': None,
                              'manager_settings': None,
@@ -224,7 +224,30 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.time_stop()
 
     def update_network_widget_data(self):
-        pass
+        if self.network_all_data['status'] is not None:
+            self.ledit_net_gen_hostname.setText\
+                (self.network_all_data['status']['cstat_hostname'])
+        else:
+            self.ledit_net_gen_hostname.setText("")
+
+        if self.network_all_data['status']['cstat_intf_active']['name'] is not None:
+            self.label_net_gen_cstat_intf.setText(self.network_all_data['status']['cstat_intf_active']['name'])
+            self.label_net_gen_cstat_ip.setText(self.network_all_data['status']['cstat_intf_active']['ip'])
+            self.label_net_gen_cstat_mask.setText(self.network_all_data['status']['cstat_intf_active']['mask'])
+        else:
+            self.label_net_gen_cstat_intf.setText("Not Connected")
+            self.label_net_gen_cstat_ip.setText("None")
+            self.label_net_gen_cstat_mask.setText("None")
+
+        if self.network_all_data['status']['cstat_gateway'] is not None:
+            self.label_net_gen_cstat_gateway.setText(self.network_all_data['status']['cstat_gateway'])
+        else:
+            self.label_net_gen_cstat_gateway.setText("None")
+        
+        if self.network_all_data['status']['cstat_dns'] is not None:
+            self.label_net_gen_cstat_dns.setText(self.network_all_data['status']['cstat_dns'].strip())
+        else:
+            self.label_net_gen_cstat_dns.setText("None")
 
     def update_brickd_widget_data(self):
         if self.brickd_conf == None:
@@ -427,27 +450,33 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         def cb_settings_network_status(result):
             if result.stderr == "":
-                self.network_conf['status'] = json.loads(result.stdout)
+                self.network_all_data['status'] = json.loads(result.stdout)
+                self.update_network_widget_data()
             else:
                 # TODO: Error popup for user?
-                pass
+                self.mbox_settings.setText("Error occured")
+                self.mbox_settings.exec_()
 
         def cb_settings_network_get_interfaces(result):
             if result.stderr == "":
-                self.network_conf['interfaces'] = json.loads(result.stdout)
+                self.network_all_data['interfaces'] = json.loads(result.stdout)
+                self.update_network_widget_data()
             else:
                 # TODO: Error popup for user?
-                pass
+                self.mbox_settings.setText("Error occured")
+                self.mbox_settings.exec_()
 
         def cb_open_manager_settings(red_file):
             def cb_read(red_file, result):
                 red_file.release()
 
                 if result is not None:
-                    self.network_conf['manager_settings'] = config_parser.parse_no_fake(result.data)
+                    self.network_all_data['manager_settings'] = config_parser.parse_no_fake(result.data)
                     self.update_network_widget_data()
                 else:
                     # TODO: Error popup for user?
+                    self.mbox_settings.setText("Error occured")
+                    self.mbox_settings.exec_()
                     print result
 
                 self.network_button_refresh_enabled(True)
@@ -459,17 +488,21 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.network_button_refresh_enabled(True)
             # TODO: Error popup for user?
             print result
+            self.mbox_settings.setText("Error occured")
+            self.mbox_settings.exec_()
 
         def cb_open_wireless_settings(red_file):
             def cb_read(red_file, result):
                 red_file.release()
 
                 if result is not None:
-                    self.network_conf['wireless_settings'] = config_parser.parse_no_fake(result.data)
+                    self.network_all_data['wireless_settings'] = config_parser.parse_no_fake(result.data)
                     self.update_network_widget_data()
                 else:
                     # TODO: Error popup for user?
                     print result
+                    self.mbox_settings.setText("Error occured")
+                    self.mbox_settings.exec_()
 
                 self.network_button_refresh_enabled(True)
                 self.network_button_save_enabled(False)
@@ -480,17 +513,21 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.network_button_refresh_enabled(True)
             # TODO: Error popup for user?
             print result
+            self.mbox_settings.setText("Error occured")
+            self.mbox_settings.exec_()
 
         def cb_open_wired_settings(red_file):
             def cb_read(red_file, result):
                 red_file.release()
 
                 if result is not None:
-                    self.network_conf['wired_settings'] = config_parser.parse_no_fake(result.data)
+                    self.network_all_data['wired_settings'] = config_parser.parse_no_fake(result.data)
                     self.update_network_widget_data()
                 else:
                     # TODO: Error popup for user?
                     print result
+                    self.mbox_settings.setText("Error occured")
+                    self.mbox_settings.exec_()
 
                 self.network_button_refresh_enabled(True)
                 self.network_button_save_enabled(False)
@@ -501,7 +538,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.network_button_refresh_enabled(True)
             # TODO: Error popup for user?
             print result
-
+            self.mbox_settings.setText("Error occured")
+            self.mbox_settings.exec_()
 
         self.script_manager.execute_script('settings_network_status',
                                            cb_settings_network_status,
@@ -539,6 +577,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 else:
                     # TODO: Error popup for user?
                     print result
+                    self.mbox_settings.setText("Error occured")
+                    self.mbox_settings.exec_()
 
                 self.brickd_button_refresh_enabled(True)
                 self.brickd_button_save_enabled(False)
@@ -550,6 +590,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             
             # TODO: Error popup for user?
             print result
+            self.mbox_settings.setText("Error occured")
+            self.mbox_settings.exec_()
 
         async_call(self.brickd_conf_rfile.open,
                    (BRICKD_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
