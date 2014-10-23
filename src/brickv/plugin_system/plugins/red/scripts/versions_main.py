@@ -18,8 +18,8 @@ def get_changelog_version(bindings_root_directory):
 
     return last
 
-os.system('/home/olaf/ee/brickd/src/brickd/brickd --version')
-os.system('/home/olaf/ee/red-brick-apid/src/redapid/redapid --version')
+os.system('/usr/bin/brickd --version')
+os.system('/usr/bin/redapid --version')
 os.system('/bin/cat /etc/tf_image_version')
 
 
