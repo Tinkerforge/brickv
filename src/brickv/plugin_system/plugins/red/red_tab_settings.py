@@ -943,15 +943,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         
         config = config_parser.to_string(self.brickd_conf)
 
-        '''def cb_restart_brickd(result):
-            if result.stderr == "":
-                print result
-                # TODO: Error popup for user?
-                pass
-            else:
-                # TODO: Error popup for user?
-                pass'''
-
         def cb_open(config, red_file):
             def cb_write(red_file, result):
                 red_file.release()
@@ -961,12 +952,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     # TODO: Error popup for user?
                     print result
                 else:
-                    # TODO: Can brickd reload configuration? Otherwise we need to restart it.
-                    pass
-                    # Restart brickd for the changes to be appplied
-                    '''self.script_manager.execute_script('restart_brickd',
-                                                          cb_restart_brickd,
-                                                          [])'''
+                    self.script_manager.execute_script('restart_brickd', None)
+                    QtGui.QMessageBox.information(None, 'Configuration', 'Saved configuration successfully, restarting brickd.', QtGui.QMessageBox.Ok)
+
                 
             red_file.write_async(config, lambda x: cb_write(red_file, x), None)
             

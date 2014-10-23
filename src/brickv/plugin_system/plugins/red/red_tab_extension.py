@@ -36,22 +36,11 @@ from brickv.plugin_system.plugins.red.ui_red_tab_extension_ethernet import Ui_Et
 
 from brickv.plugin_system.plugins.red import config_parser
 
-def reconnect(mainwindow):
-    class ReconnectSignal(QtCore.QObject):
-        reconnect_signal = QtCore.pyqtSignal()
-        def __init__(self, mainwindow):
-            QtCore.QObject.__init__(self)
-            self.reconnect_signal.connect(mainwindow.reconnect)
+def popup_ok(msg):
+    QMessageBox.information(None, 'Configuration', msg, QMessageBox.Ok)
 
-    time.sleep(0.25)
-    rs = ReconnectSignal(mainwindow)
-    rs.reconnect_signal.emit()
-
-def popup_ok(parent, msg):
-    QMessageBox.information(parent, 'Configuration', msg, QMessageBox.Ok)
-
-def popup_fail(parent, msg):
-    QMessageBox.critical(parent, 'Configuration', msg, QMessageBox.Ok)
+def popup_fail(msg):
+    QMessageBox.critical(None, 'Configuration', msg, QMessageBox.Ok)
 
 class RS485(QWidget, Ui_RS485):
     def __init__(self, parent, extension, config):
@@ -131,14 +120,14 @@ class RS485(QWidget, Ui_RS485):
 
         def cb_file_open_error(new_config):
             self.rs485_type_changed(self.rs485_type.currentIndex())
-            popup_fail(self, 'Could not open file on RED Brick')
+            popup_fail('Could not open file on RED Brick')
 
         async_call(new_config['eeprom_file'].open, ('/tmp/new_eeprom_extension_' + str(new_config['extension']) + ".conf", REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0555, 0, 0), lambda x: self.upload_eeprom_data(new_config, x), lambda: cb_file_open_error(new_config))
 
     def upload_eeprom_data(self, new_config, result):
         if not isinstance(result, REDFile):
             self.rs485_type_changed(self.rs485_type.currentIndex())
-            popup_fail(self, 'Could not open file on RED Brick')
+            popup_fail('Could not open file on RED Brick')
             return
 
         eeprom = [0]*512
@@ -177,13 +166,11 @@ class RS485(QWidget, Ui_RS485):
             new_config['eeprom_file'].release()
             if error is not None:
                 self.rs485_type_changed(self.rs485_type.currentIndex())
-                popup_fail(self, 'Could not write file on RED Brick: ' + str(error))
+                popup_fail('Could not write file on RED Brick: ' + str(error))
             else:
                 self.save_button.setText("Configuration saved. Brick Viewer should reconnect now.")
                 self.parent.script_manager.execute_script('restart_brickd', None)
-                popup_ok(self, 'Saved configuration successfully, restarting brickd.')
-                mainwindow = self.parent.parent().parent().parent().parent().parent().parent().parent().parent()
-                QtCore.QTimer.singleShot(1, lambda: reconnect(mainwindow))
+                popup_ok('Saved configuration successfully, restarting brickd.')
 
         new_config['eeprom_file'].write_async(map(chr, data), lambda x: cb_error(new_config, x), None)
 
@@ -259,13 +246,13 @@ class Ethernet(QWidget, Ui_Ethernet):
         new_config['eeprom_file'] = REDFile(self.session)
 
         def cb_file_open_error(new_config):
-            popup_fail(self, 'Could not open file on RED Brick')
+            popup_fail('Could not open file on RED Brick')
 
         async_call(new_config['eeprom_file'].open, ('/tmp/new_eeprom_extension_' + str(new_config['extension']) + ".conf", REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0555, 0, 0), lambda x: self.upload_eeprom_data(new_config, x), lambda: cb_file_open_error(new_config))
 
     def upload_eeprom_data(self, new_config, result):
         if not isinstance(result, REDFile):
-            popup_fail(self, 'Could not open file on RED Brick')
+            popup_fail('Could not open file on RED Brick')
             return
 
         eeprom = [self.ethernet_mac6.value(),
@@ -282,13 +269,11 @@ class Ethernet(QWidget, Ui_Ethernet):
         def cb_error(new_config, error):
             new_config['eeprom_file'].release()
             if error is not None:
-                popup_fail(self, 'Could not write file on RED Brick: ' + str(error))
+                popup_fail('Could not write file on RED Brick: ' + str(error))
             else:
                 self.ethernet_save.setText("Configuration saved. Brick Viewer should reconnect now.")
                 self.parent.script_manager.execute_script('restart_brickd', None)
-                popup_ok(self, 'Saved configuration successfully, restarting brickd.')
-                mainwindow = self.parent.parent().parent().parent().parent().parent().parent().parent().parent()
-                QtCore.QTimer.singleShot(1, lambda: reconnect(mainwindow))
+                popup_ok('Saved configuration successfully, restarting brickd.')
 
         new_config['eeprom_file'].write_async(map(chr, data), lambda x: cb_error(new_config, x), None)
 
