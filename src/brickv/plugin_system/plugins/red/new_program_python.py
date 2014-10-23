@@ -70,15 +70,15 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
         if self.combo_script_file.count() > 1:
             self.combo_script_file.clearEditText()
 
+        self.check_show_advanced_options.setCheckState(Qt.Unchecked)
+
+        directorys = self.wizard().page(Constants.PAGE_FILES).get_directorys()
+
         self.combo_working_directory.clear()
         self.combo_working_directory.addItem('.')
+        self.combo_working_directory.addItems(directorys)
 
-        for upload in self.wizard().page(Constants.PAGE_FILES).get_uploads():
-            directory = os.path.split(upload.target)[0]
-
-            if len(directory) > 0:
-                self.combo_working_directory.addItem(directory)
-
+        self.option_list_editor.reset_items()
         self.update_ui_state()
 
     # overrides QWizardPage.nextId
@@ -128,6 +128,8 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
         self.button_remove_option.setVisible(show_advanced_options)
         self.button_up_option.setVisible(show_advanced_options)
         self.button_down_option.setVisible(show_advanced_options)
+
+        self.option_list_editor.update_ui_state()
 
     def get_command(self):
         executable = '/usr/bin/python2'

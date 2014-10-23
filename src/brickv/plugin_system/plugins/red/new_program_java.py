@@ -76,14 +76,13 @@ class NewProgramJava(QWizardPage, Ui_NewProgramJava):
         if self.combo_jar_file.count() > 1:
             self.combo_jar_file.clearEditText()
 
+        self.check_show_advanced_options.setCheckState(Qt.Unchecked)
+
+        directorys = self.wizard().page(Constants.PAGE_FILES).get_directorys()
+
         self.combo_working_directory.clear()
         self.combo_working_directory.addItem('.')
-
-        for upload in self.wizard().page(Constants.PAGE_FILES).get_uploads():
-            directory = os.path.split(upload.target)[0]
-
-            if len(directory) > 0:
-                self.combo_working_directory.addItem(directory)
+        self.combo_working_directory.addItems(directorys)
 
         self.class_path_list_editor.reset_items()
         self.option_list_editor.reset_items()

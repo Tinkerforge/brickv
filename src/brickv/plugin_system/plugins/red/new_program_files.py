@@ -132,6 +132,17 @@ class NewProgramFiles(QWizardPage, Ui_NewProgramFiles):
 
         return items
 
+    def get_directorys(self):
+        directorys = set()
+
+        for upload in self.get_uploads():
+            directory = os.path.split(upload.target)[0]
+
+            if len(directory) > 0:
+                directorys.add(directory)
+
+        return sorted(list(directorys))
+
     def get_uploads(self):
         uploads = []
 
