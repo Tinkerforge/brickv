@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QListWidgetItem, QTreeWidgetItem
+from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem
 from brickv.plugin_system.plugins.red.api import REDProgram
 
 class Constants:
@@ -116,6 +116,21 @@ class Constants:
     DEFAULT_STDERR_REDIRECTION       = STDIO_REDIRECTION_STDOUT
     DEFAULT_SCHEDULE_START_CONDITION = SCHEDULE_START_CONDITION_NOW
     DEFAULT_SCHEDULE_REPEAT_MODE     = SCHEDULE_REPEAT_MODE_NEVER
+
+
+# workaround miscalculated initial size-hint for initially hidden QListWidgets
+class ExpandingListWidget(QListWidget):
+    def __init__(self, *args, **kwargs):
+        QListWidget.__init__(self, *args, **kwargs)
+
+    # overrides QListWidget.sizeHint
+    def sizeHint(self):
+        size = QListWidget.sizeHint(self)
+
+        if size.height() < 2000:
+            size.setHeight(2000)
+
+        return size
 
 
 class ListWidgetEditor:

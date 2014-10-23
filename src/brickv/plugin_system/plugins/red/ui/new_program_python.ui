@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>636</width>
-    <height>608</height>
+    <width>582</width>
+    <height>689</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,18 +41,15 @@
        </item>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_script_file">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Script File:</string>
+        <string>Start Mode:</string>
        </property>
        <property name="buddy">
-        <cstring>combo_script_file</cstring>
+        <cstring>combo_start_mode</cstring>
        </property>
       </widget>
-     </item>
-     <item row="4" column="1" colspan="4">
-      <widget class="QLineEdit" name="edit_module_name"/>
      </item>
      <item row="1" column="1" colspan="4">
       <widget class="QComboBox" name="combo_start_mode">
@@ -73,13 +70,33 @@
        </item>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_3">
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_script_file">
        <property name="text">
-        <string>Start Mode:</string>
+        <string>Script File:</string>
        </property>
        <property name="buddy">
-        <cstring>combo_start_mode</cstring>
+        <cstring>combo_script_file</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" colspan="4">
+      <widget class="QComboBox" name="combo_script_file">
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+       <property name="insertPolicy">
+        <enum>QComboBox::NoInsert</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" colspan="4">
+      <widget class="QLabel" name="label_script_file_help">
+       <property name="text">
+        <string>The specified Python script will be executed.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -90,6 +107,19 @@
        </property>
        <property name="buddy">
         <cstring>edit_module_name</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1" colspan="4">
+      <widget class="QLineEdit" name="edit_module_name"/>
+     </item>
+     <item row="5" column="1" colspan="4">
+      <widget class="QLabel" name="label_module_name_help">
+       <property name="text">
+        <string>The specified Python module will be executed with the -m option.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -106,16 +136,6 @@
      <item row="6" column="1" colspan="4">
       <widget class="QLineEdit" name="edit_command"/>
      </item>
-     <item row="5" column="1" colspan="4">
-      <widget class="QLabel" name="label_module_name_help">
-       <property name="text">
-        <string>The specified Python module will be executed with the -m option.</string>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
      <item row="7" column="1" colspan="4">
       <widget class="QLabel" name="label_command_help">
        <property name="text">
@@ -126,37 +146,10 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1" colspan="4">
-      <widget class="QLabel" name="label_script_file_help">
-       <property name="text">
-        <string>The specified Python script will be executed.</string>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1" colspan="4">
-      <widget class="QComboBox" name="combo_script_file">
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-       <property name="insertPolicy">
-        <enum>QComboBox::NoInsert</enum>
-       </property>
-      </widget>
-     </item>
      <item row="9" column="1" colspan="4">
       <widget class="QCheckBox" name="check_show_advanced_options">
        <property name="text">
         <string>Show advanced options</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0" colspan="5">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -166,19 +159,6 @@
         <string>Working Directory:</string>
        </property>
       </widget>
-     </item>
-     <item row="11" column="0">
-      <widget class="QLabel" name="label_options">
-       <property name="text">
-        <string>Python Options:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="1" colspan="4">
-      <widget class="QListWidget" name="list_options"/>
      </item>
      <item row="10" column="1" colspan="4">
       <widget class="QComboBox" name="combo_working_directory">
@@ -195,17 +175,33 @@
        </item>
       </widget>
      </item>
+     <item row="11" column="0">
+      <widget class="QLabel" name="label_options">
+       <property name="text">
+        <string>Python Options:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="1" colspan="4">
+      <widget class="ExpandingListWidget" name="list_options"/>
+     </item>
+     <item row="12" column="1" colspan="4">
+      <widget class="QLabel" name="label_options_help">
+       <property name="text">
+        <string>This list of options will be passed to the Python interpreter.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
      <item row="13" column="1">
       <widget class="QPushButton" name="button_add_option">
        <property name="text">
         <string>Add</string>
-       </property>
-      </widget>
-     </item>
-     <item row="13" column="4">
-      <widget class="QPushButton" name="button_down_option">
-       <property name="text">
-        <string>Down</string>
        </property>
       </widget>
      </item>
@@ -223,13 +219,17 @@
        </property>
       </widget>
      </item>
-     <item row="12" column="1" colspan="4">
-      <widget class="QLabel" name="label_options_help">
+     <item row="13" column="4">
+      <widget class="QPushButton" name="button_down_option">
        <property name="text">
-        <string>This list of options will be passed to the Python interpreter.</string>
+        <string>Down</string>
        </property>
-       <property name="wordWrap">
-        <bool>true</bool>
+      </widget>
+     </item>
+     <item row="8" column="0" colspan="5">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
@@ -237,6 +237,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ExpandingListWidget</class>
+   <extends>QListWidget</extends>
+   <header location="global">brickv.plugin_system.plugins.red.new_program_utils</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>combo_version</tabstop>
   <tabstop>combo_start_mode</tabstop>
