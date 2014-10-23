@@ -42,30 +42,69 @@ class NewProgramSummary(QWizardPage, Ui_NewProgramSummary):
         self.setSubTitle(u'The complete configuration of the new {0} program [{1}].'
                          .format(language_display_name, name))
 
+        # general information
         html  = u'<b>General Information</b><br/>'
         html += u'Name: {0}<br/>'.format(Qt.escape(name))
         html += u'Identifier: {0}<br/>'.format(Qt.escape(self.field('identifier').toString()))
         html += u'Language: {0}<br/>'.format(Qt.escape(language_display_name))
         html += u'<br/>'
 
-        html += u'<b>Files</b><br/>'
-        for item in self.wizard().page(Constants.PAGE_FILES).get_items():
-            html += u'{0}<br/>'.format(Qt.escape(item))
+        # files
+        html += u'<b>Files</b>'
+
+        items = self.wizard().page(Constants.PAGE_FILES).get_items()
+
+        if len(items) == 0:
+            html += u' (none)'
+
         html += u'<br/>'
 
+        for item in items:
+            html += u'{0}<br/>'.format(Qt.escape(item))
+
+        html += u'<br/>'
+
+        # language specific configuration
         html += u'<b>{0} Configuration</b><br/>'.format(Qt.escape(language_display_name))
         html += u'FIXME<br/>'
         html += u'<br/>'
 
-        html += u'<b>Arguments</b><br/>'
-        for argument in self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments():
-            html += u'{0}<br/>'.format(Qt.escape(argument))
+        # arguments
+        html += u'<b>Arguments</b>'
+
+        arguments = self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
+
+        if len(arguments) == 0:
+            html += u' (none)'
+
         html += u'<br/>'
 
+        for argument in arguments:
+            html += u'{0}<br/>'.format(Qt.escape(argument))
+
+        html += u'<br/>'
+
+        # environment
+        html += u'<b>Environment</b>'
+
+        environment = self.wizard().page(Constants.PAGE_ARGUMENTS).get_environment()
+
+        if len(environment) == 0:
+            html += u' (empty)'
+
+        html += u'<br/>'
+
+        for variable in environment:
+            html += u'{0} = {1}<br/>'.format(Qt.escape(variable[0]), Qt.escape(variable[1]))
+
+        html += u'<br/>'
+
+        # stdio redirection
         html += u'<b>Stdio Redirection</b><br/>'
         html += u'FIXME<br/>'
         html += u'<br/>'
 
+        # schedule
         html += u'<b>Schedule</b><br/>'
         html += u'FIXME<br/>'
 

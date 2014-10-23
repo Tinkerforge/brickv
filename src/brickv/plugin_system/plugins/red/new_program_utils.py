@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QListWidgetItem
+from PyQt4.QtGui import QListWidgetItem, QTreeWidgetItem
 from brickv.plugin_system.plugins.red.api import REDProgram
 
 class Constants:
@@ -58,6 +58,12 @@ class Constants:
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'This list of arguments will be passed to the main() method.',
         LANGUAGE_PYTHON:  'This list of arguments will be available as the sys.argv list.'
+    }
+
+    environment_help = {
+        LANGUAGE_INVALID: '<invalid>',
+        LANGUAGE_JAVA:    'This list of environment variables will be set for the Java program.',
+        LANGUAGE_PYTHON:  'This list of environment variables will be set for the Python program.',
     }
 
     JAVA_START_MODE_MAIN_CLASS = 0
@@ -114,13 +120,13 @@ class Constants:
 
 class ListWidgetEditor:
     def __init__(self, list_items, button_add_item, button_remove_item,
-                 button_up_item, button_down_item, new_item_string):
+                 button_up_item, button_down_item, new_item_text):
         self.list_items = list_items
         self.button_add_item = button_add_item
         self.button_remove_item = button_remove_item
         self.button_up_item = button_up_item
         self.button_down_item = button_down_item
-        self.new_item_string = new_item_string
+        self.new_item_text = new_item_text
         self.new_item_counter = 1
 
         self.list_items.itemSelectionChanged.connect(self.update_ui_state)
@@ -147,7 +153,7 @@ class ListWidgetEditor:
         self.button_down_item.setEnabled(item_count > 1 and has_selection and selected_index < item_count - 1)
 
     def add_new_item(self):
-        item = QListWidgetItem(self.new_item_string.format(self.new_item_counter))
+        item = QListWidgetItem(self.new_item_text.format(self.new_item_counter))
         item.setFlags(item.flags() | Qt.ItemIsEditable)
 
         self.new_item_counter += 1
@@ -203,6 +209,121 @@ class ListWidgetEditor:
 
         for row in range(self.list_items.count()):
             items.append(unicode(self.list_items.item(row).text()))
+
+        return items
+
+
+class TreeWidgetEditor:
+    def __init__(self, tree_items, button_add_item, button_remove_item,
+                 button_up_item, button_down_item, new_item_texts):
+        self.tree_items = tree_items
+        self.button_add_item = button_add_item
+        self.button_remove_item = button_remove_item
+        self.button_up_item = button_up_item
+        self.button_down_item = button_down_item
+        self.new_item_texts = new_item_texts
+        self.new_item_counter = 1
+
+        self.tree_items.itemSelectionChanged.connect(self.update_ui_state)
+        self.button_add_item.clicked.connect(self.add_new_item)
+        self.button_remove_item.clicked.connect(self.remove_selected_item)
+        self.button_up_item.clicked.connect(self.up_selected_item)
+        self.button_down_item.clicked.connect(self.down_selected_item)
+
+        self.original_items = []
+
+        root = self.tree_items.invisibleRootItem()
+
+        for row in range(root.childCount()):
+            child = self.tree_items.child(row)
+            item = []
+
+            for column in range(child.columnCount()):
+                item.append(unicode(child.text(column)))
+
+            self.original_items.append(item)
+
+    def update_ui_state(self):
+        has_selection = len(self.tree_items.selectedItems()) > 0
+        item_count = self.tree_items.invisibleRootItem().childCount()
+
+        if has_selection:
+            selected_index = self.tree_items.indexOfTopLevelItem(self.tree_items.selectedItems()[0])
+        else:
+            selected_index = -1
+
+        self.button_up_item.setEnabled(item_count > 1 and has_selection and selected_index > 0)
+        self.button_down_item.setEnabled(item_count > 1 and has_selection and selected_index < item_count - 1)
+
+    def add_new_item(self):
+        texts = []
+
+        for text in self.new_item_texts:
+            texts.append(text.format(self.new_item_counter))
+
+        self.new_item_counter += 1
+
+        item = QTreeWidgetItem(texts)
+        item.setFlags(item.flags() | Qt.ItemIsEditable)
+
+        self.tree_items.addTopLevelItem(item)
+        self.tree_items.editItem(item)
+        self.update_ui_state()
+
+    def remove_selected_item(self):
+        for item in self.tree_items.selectedItems():
+            row = self.tree_items.indexOfTopLevelItem(item)
+            self.tree_items.takeTopLevelItem(row)
+
+        self.update_ui_state()
+
+    def up_selected_item(self):
+        selected_items = self.tree_items.selectedItems()
+
+        if len(selected_items) == 0:
+            return
+
+        row = self.tree_items.indexOfTopLevelItem(selected_items[0])
+        item = self.tree_items.takeTopLevelItem(row)
+
+        self.tree_items.insertTopLevelItem(row - 1, item)
+        self.tree_items.setCurrentItem(item)
+
+    def down_selected_item(self):
+        selected_items = self.tree_items.selectedItems()
+
+        if len(selected_items) == 0:
+            return
+
+        row = self.tree_items.indexOfTopLevelItem(selected_items[0])
+        item = self.tree_items.takeTopLevelItem(row)
+
+        self.tree_items.insertTopLevelItem(row + 1, item)
+        self.tree_items.setCurrentItem(item)
+
+    def reset_items(self):
+        self.new_item_counter = 1
+
+        self.tree_items.invisibleRootItem().takeChildren()
+
+        for original_item in self.original_items:
+            item = QTreeWidgetItem(original_item)
+            item.setFlags(item.flags() | Qt.ItemIsEditable)
+            self.tree_items.addTopLevelItem(item)
+
+        self.update_ui_state()
+
+    def get_items(self):
+        items = []
+
+        for row in range(self.tree_items.topLevelItemCount()):
+            child = self.tree_items.topLevelItem(row)
+            item = []
+
+            for column in range(child.columnCount()):
+                item.append(unicode(child.text(column)))
+
+            items.append(item)
 
         return items
 

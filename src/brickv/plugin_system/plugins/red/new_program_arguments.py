@@ -31,7 +31,13 @@ class NewProgramArguments(QWizardPage, Ui_NewProgramArguments):
 
         self.setupUi(self)
 
+        self.environment_is_valid = True
+
         self.setTitle('Step 4 of {0}: Arguments'.format(Constants.STEP_COUNT))
+
+        self.tree_environment.setColumnWidth(0, 150)
+        self.check_show_environment.stateChanged.connect(self.update_ui_state)
+        self.tree_environment.itemChanged.connect(self.check_environment)
 
         self.argument_list_editor = ListWidgetEditor(self.list_arguments,
                                                      self.button_add_argument,
@@ -39,6 +45,13 @@ class NewProgramArguments(QWizardPage, Ui_NewProgramArguments):
                                                      self.button_up_argument,
                                                      self.button_down_argument,
                                                      '<new argument {0}>')
+
+        self.environment_list_editor = TreeWidgetEditor(self.tree_environment,
+                                                        self.button_add_environment_variable,
+                                                        self.button_remove_environment_variable,
+                                                        self.button_up_environment_variable,
+                                                        self.button_down_environment_variable,
+                                                        ['<new name {0}>', '<new value {0}>'])
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
@@ -49,14 +62,51 @@ class NewProgramArguments(QWizardPage, Ui_NewProgramArguments):
                                  unicode(self.field('name').toString())))
         self.label_arguments_help.setText(Constants.arguments_help[language])
         self.argument_list_editor.reset_items()
+        self.check_show_environment.setCheckState(Qt.Unchecked)
+        self.label_environment_help.setText(Constants.environment_help[language])
+        self.environment_list_editor.reset_items()
         self.update_ui_state()
 
     # overrides QWizardPage.nextId
     def nextId(self):
         return Constants.PAGE_STDIO
 
+    # overrides QWizardPage.isComplete
+    def isComplete(self):
+        return self.environment_is_valid and QWizardPage.isComplete(self)
+
     def update_ui_state(self):
+        show_environment = self.check_show_environment.checkState() == Qt.Checked
+
+        self.label_environment.setVisible(show_environment)
+        self.tree_environment.setVisible(show_environment)
+        self.label_environment_help.setVisible(show_environment)
+        self.button_add_environment_variable.setVisible(show_environment)
+        self.button_remove_environment_variable.setVisible(show_environment)
+        self.button_up_environment_variable.setVisible(show_environment)
+        self.button_down_environment_variable.setVisible(show_environment)
+
         self.argument_list_editor.update_ui_state()
+        self.environment_list_editor.update_ui_state()
+
+    def check_environment(self):
+        environment_was_valid = self.environment_is_valid
+        self.environment_is_valid = True
+
+        for item in self.environment_list_editor.get_items():
+            if len(item[0]) == 0 or '=' in item[0]:
+                self.environment_is_valid = False
+
+        if self.environment_is_valid:
+            self.label_environment.setStyleSheet('')
+        else:
+            self.label_environment.setStyleSheet('QLabel { color : red }')
+
+        if environment_was_valid != self.environment_is_valid:
+            self.completeChanged.emit()
 
     def get_arguments(self):
         return self.argument_list_editor.get_items()
+
+    def get_environment(self):
+        return self.environment_list_editor.get_items()
