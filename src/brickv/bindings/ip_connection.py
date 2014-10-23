@@ -29,6 +29,7 @@ import os
 import math
 import hmac
 import hashlib
+import errno
 
 # use normal tuples instead of namedtuples in python version below 2.6
 if sys.hexversion < 0x02060000:
@@ -675,6 +676,10 @@ class IPConnection:
                 data = self.socket.recv(8192)
             except socket.error:
                 if self.receive_flag:
+                    e = sys.exc_info()[1]
+                    if e.errno == errno.EINTR:
+                        continue
+
                     self.handle_disconnect_by_peer(IPConnection.DISCONNECT_REASON_ERROR, socket_id, False)
                 break
 
