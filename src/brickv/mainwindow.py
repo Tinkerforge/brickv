@@ -27,7 +27,7 @@ from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, \
                         QPushButton, QWidget, QHBoxLayout, QVBoxLayout, \
                         QLabel, QFrame, QSpacerItem, QSizePolicy, \
                         QStandardItemModel, QStandardItem, QToolButton, \
-                        QLineEdit, QCursor, QIcon
+                        QLineEdit, QCursor, QIcon, QMenu, QToolButton
 from brickv.ui_mainwindow import Ui_MainWindow
 from brickv.plugin_system.plugin_manager import PluginManager
 from brickv.bindings.ip_connection import IPConnection
@@ -444,7 +444,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if device_info.plugin.has_reset_device():
                 button.clicked.connect(device_info.plugin.reset_device)
             else:
-                button.setDisabled(True)
+                drop_down = device_info.plugin.has_drop_down()
+                if len(drop_down) > 1:
+                    button = QToolButton()
+                    button.setText(drop_down[0])
+                    button.setPopupMode(QToolButton.InstantPopup)
+                    button.setToolButtonStyle(Qt.ToolButtonTextOnly)
+                    button.setArrowType(Qt.DownArrow)
+                    button.setAutoRaise(True)
+                    button.triggered.connect(device_info.plugin.drop_down_triggered)
+                    menu = QMenu(drop_down[0])
+                    button.setMenu(menu)
+                    for action in drop_down[1:]:
+                        menu.addAction(action)
+                else:
+                    button.setDisabled(True)
 
             info_bar.addSpacerItem(QSpacerItem(40, 20, QSizePolicy.Expanding))
             info_bar.addWidget(button)

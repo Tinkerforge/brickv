@@ -77,6 +77,12 @@ class RED(PluginBase, Ui_RED):
 
     def reset_device(self):
         pass
+    
+    def has_drop_down(self):
+        return ['System', 'Restart Brick Daemon', 'Reboot RED Brick', 'Shut down RED Brick']
+    
+    def drop_down_triggered(self, action):
+        print action.text()
 
     def is_brick(self):
         return True
