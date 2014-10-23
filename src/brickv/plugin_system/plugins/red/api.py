@@ -40,7 +40,6 @@ class REDError(Exception):
     E_OBJECT_IS_LOCKED         = 9
     E_NO_MORE_DATA             = 10
     E_WRONG_LIST_ITEM_TYPE     = 11
-    E_MALFORMED_PROGRAM_CONFIG = 12
     E_INVALID_PARAMETER        = 128
     E_NO_FREE_MEMORY           = 129
     E_NO_FREE_SPACE            = 130
@@ -72,7 +71,6 @@ class REDError(Exception):
         E_OBJECT_IS_LOCKED         : 'E_OBJECT_IS_LOCKED',
         E_NO_MORE_DATA             : 'E_NO_MORE_DATA',
         E_WRONG_LIST_ITEM_TYPE     : 'E_WRONG_LIST_ITEM_TYPE',
-        E_MALFORMED_PROGRAM_CONFIG : 'E_MALFORMED_PROGRAM_CONFIG',
         E_INVALID_PARAMETER        : 'E_INVALID_PARAMETER',
         E_NO_FREE_MEMORY           : 'E_NO_FREE_MEMORY',
         E_NO_FREE_SPACE            : 'E_NO_FREE_SPACE',

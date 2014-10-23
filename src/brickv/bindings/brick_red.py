@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-10-22.      #
+# This file was automatically generated on 2014-10-23.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -816,7 +816,7 @@ class BrickRED(Device):
 
     def get_program_root_directory(self, program_id, session_id):
         """
-        
+        FIXME: root directory is absolute: <home>/programs/<identifier>
         """
         return GetProgramRootDirectory(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_ROOT_DIRECTORY, (program_id, session_id), 'H H', 'B H'))
 
@@ -834,13 +834,13 @@ class BrickRED(Device):
 
     def set_program_stdio_redirection(self, program_id, stdin_redirection, stdin_file_name_string_id, stdout_redirection, stdout_file_name_string_id, stderr_redirection, stderr_file_name_string_id):
         """
-        
+        FIXME: stdio file names are relative to <home>/programs/<identifier>/bin
         """
         return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_STDIO_REDIRECTION, (program_id, stdin_redirection, stdin_file_name_string_id, stdout_redirection, stdout_file_name_string_id, stderr_redirection, stderr_file_name_string_id), 'H B H B H B H', 'B')
 
     def get_program_stdio_redirection(self, program_id, session_id):
         """
-        
+        FIXME: stdio file names are relative to <home>/programs/<identifier>/bin
         """
         return GetProgramStdioRedirection(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_STDIO_REDIRECTION, (program_id, session_id), 'H H', 'B B H B H B H'))
 
