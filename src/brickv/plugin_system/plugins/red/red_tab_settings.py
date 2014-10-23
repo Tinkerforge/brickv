@@ -582,7 +582,16 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         def cb_settings_network_wireless_scan(result):
             if result.stderr == "":
-                self.network_all_data['scan_result'] = json.loads(result.stdout)
+                _srdict = {}
+                _lines = result.stdout.split('\n')
+                for l in _lines:
+                    lsplitted = l.split('\t')
+                    if len(lsplitted) == 1:
+                        continue
+                    _idx = lsplitted[3] # 0 = ESSID, 1 = BSSID, 2 = Channel 3 = Index
+                    lsplitted.pop() # Getting rid of the last item
+                    _srdict[_idx] = lsplitted
+                self.network_all_data['scan_result'] = _srdict
                 self.update_network_widget_data()
             else:
                 pass
