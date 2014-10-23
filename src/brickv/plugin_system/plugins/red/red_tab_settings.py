@@ -735,10 +735,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def slot_network_wired_save_clicked(self):
         self.network_button_save_enabled(False)
         
-        def cb_settings_network_apply_wired(result):
-            print result
+        def cb_settings_network_wired_apply(result):
             if result.stderr is not None and  result.stderr == "":
-                pass
+                QtGui.QMessageBox.information(None,
+                                              'Configuration',
+                                              'Wired connection configuration saved and activated. If may need to reconnect.',
+                                              QtGui.QMessageBox.Ok)
+
             else:
                 # TODO: Error popup for user?
                 pass
@@ -770,8 +773,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         # TODO: Error popup for user?
                         print result
                     else:
-                        self.script_manager.execute_script('settings_network_apply_wired',
-                                                           cb_settings_network_apply_wired,
+                        self.script_manager.execute_script('settings_network_wired_apply',
+                                                           cb_settings_network_wired_apply,
                                                            [])
                 
                 red_file.write_async(config, lambda x: cb_write(red_file, x), None)
@@ -834,8 +837,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         # TODO: Error popup for user?
                         print result
                     else:
-                        self.script_manager.execute_script('settings_network_apply_wired',
-                                                           cb_settings_network_apply_wired,
+                        self.script_manager.execute_script('settings_network_wired_apply',
+                                                           cb_settings_network_wired_apply,
                                                            [])
                 
                 red_file.write_async(config, lambda x: cb_write(red_file, x), None)
@@ -863,8 +866,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     # TODO: Error popup for user?
                     print result
                 else:
-                    self.script_manager.execute_script('settings_network_apply_wired',
-                                                       cb_settings_network_apply_wired,
+                    self.script_manager.execute_script('settings_network_wired_apply',
+                                                       cb_settings_network_wired_apply,
                                                        [])
                 
             red_file.write_async(config_ms, lambda x: cb_write_ms(red_file, x), None)
@@ -964,7 +967,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.script_manager.execute_script('restart_brickd', None)
                     QtGui.QMessageBox.information(None, 'Configuration', 'Saved configuration successfully, restarting brickd.', QtGui.QMessageBox.Ok)
 
-                
             red_file.write_async(config, lambda x: cb_write(red_file, x), None)
             
         def cb_open_error(result):
