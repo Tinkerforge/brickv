@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-10-20.      #
+# This file was automatically generated on 2014-10-22.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -51,7 +51,7 @@ GetDefinedPrograms = namedtuple('DefinedPrograms', ['error_code', 'programs_list
 DefineProgram = namedtuple('DefineProgram', ['error_code', 'program_id'])
 GetProgramIdentifier = namedtuple('ProgramIdentifier', ['error_code', 'identifier_string_id'])
 GetProgramRootDirectory = namedtuple('ProgramRootDirectory', ['error_code', 'root_directory_string_id'])
-GetProgramCommand = namedtuple('ProgramCommand', ['error_code', 'executable_string_id', 'arguments_list_id', 'environment_list_id'])
+GetProgramCommand = namedtuple('ProgramCommand', ['error_code', 'executable_string_id', 'arguments_list_id', 'environment_list_id', 'working_directory_string_id'])
 GetProgramStdioRedirection = namedtuple('ProgramStdioRedirection', ['error_code', 'stdin_redirection', 'stdin_file_name_string_id', 'stdout_redirection', 'stdout_file_name_string_id', 'stderr_redirection', 'stderr_file_name_string_id'])
 GetProgramSchedule = namedtuple('ProgramSchedule', ['error_code', 'start_condition', 'start_timestamp', 'start_delay', 'repeat_mode', 'repeat_interval', 'repeat_second_mask', 'repeat_minute_mask', 'repeat_hour_mask', 'repeat_day_mask', 'repeat_month_mask', 'repeat_weekday_mask'])
 GetLastSpawnedProgramProcess = namedtuple('LastSpawnedProgramProcess', ['error_code', 'process_id', 'timestamp'])
@@ -820,17 +820,17 @@ class BrickRED(Device):
         """
         return GetProgramRootDirectory(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_ROOT_DIRECTORY, (program_id, session_id), 'H H', 'B H'))
 
-    def set_program_command(self, program_id, executable_string_id, arguments_list_id, environment_list_id):
+    def set_program_command(self, program_id, executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id):
         """
-        
+        FIXME: working directory is relative to <home>/programs/<identifier>/bin
         """
-        return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_COMMAND, (program_id, executable_string_id, arguments_list_id, environment_list_id), 'H H H H', 'B')
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_COMMAND, (program_id, executable_string_id, arguments_list_id, environment_list_id, working_directory_string_id), 'H H H H H', 'B')
 
     def get_program_command(self, program_id, session_id):
         """
-        
+        FIXME: working directory is relative to <home>/programs/<identifier>/bin
         """
-        return GetProgramCommand(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_COMMAND, (program_id, session_id), 'H H', 'B H H H'))
+        return GetProgramCommand(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_COMMAND, (program_id, session_id), 'H H', 'B H H H H'))
 
     def set_program_stdio_redirection(self, program_id, stdin_redirection, stdin_file_name_string_id, stdout_redirection, stdout_file_name_string_id, stderr_redirection, stderr_file_name_string_id):
         """

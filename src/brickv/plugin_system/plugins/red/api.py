@@ -1160,6 +1160,7 @@ class REDProgram(REDObject):
         self._executable = None
         self._arguments = None
         self._environment = None
+        self._working_directory = None
         self._stdin_redirection = None
         self._stdin_file_name = None
         self._stdout_redirection = None
@@ -1264,14 +1265,15 @@ class REDProgram(REDObject):
             raise RuntimeError('Cannot update unattached program object')
 
         error_code, executable_string_id, arguments_list_id, \
-        environment_list_id = self._session._brick.get_program_command(self._object_id, self._session._session_id)
+        environment_list_id, working_directory_string_id = self._session._brick.get_program_command(self._object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get command of program object {0}'.format(self._object_id), error_code)
 
-        self._executable = _attach_or_release(self._session, REDString, executable_string_id, [arguments_list_id, environment_list_id])
-        self._arguments = _attach_or_release(self._session, REDList, arguments_list_id, [environment_list_id])
-        self._environment = _attach_or_release(self._session, REDList, environment_list_id)
+        self._executable = _attach_or_release(self._session, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
+        self._arguments = _attach_or_release(self._session, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
+        self._environment = _attach_or_release(self._session, REDList, environment_list_id, [working_directory_string_id])
+        self._working_directory = _attach_or_release(self._session, REDString, working_directory_string_id)
 
     def update_stdio_redirection(self):
         if self._object_id is None:
@@ -1405,7 +1407,7 @@ class REDProgram(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not undefine program object {0}'.format(self._object_id), error_code)
 
-    def set_command(self, executable, arguments, environment):
+    def set_command(self, executable, arguments, environment, working_directory):
         if self._object_id is None:
             raise RuntimeError('Cannot set command for unattached process object')
 
@@ -1418,10 +1420,14 @@ class REDProgram(REDObject):
         if not isinstance(environment, REDList):
             environment = REDList(self._session).allocate(environment)
 
+        if not isinstance(working_directory, REDString):
+            working_directory = REDString(self._session).allocate(working_directory)
+
         error_code = self._session._brick.set_program_command(self._object_id,
                                                               executable.object_id,
                                                               arguments.object_id,
-                                                              environment.object_id)
+                                                              environment.object_id,
+                                                              working_directory.object_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not set command for program object {0}'.format(self._object_id), error_code)
@@ -1429,6 +1435,7 @@ class REDProgram(REDObject):
         self._executable = executable
         self._arguments = arguments
         self._environment = environment
+        self._working_directory = working_directory
 
     def set_stdio_redirection(self, stdin_redirection, stdin_file_name,
                               stdout_redirection, stdout_file_name,
@@ -1557,6 +1564,8 @@ class REDProgram(REDObject):
     def arguments(self):                      return self._arguments
     @property
     def environment(self):                    return self._environment
+    @property
+    def working_directory(self):              return self._working_directory
     @property
     def stdin_redirection(self):              return self._stdin_redirection
     @property

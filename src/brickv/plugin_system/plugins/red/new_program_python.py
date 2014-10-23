@@ -38,6 +38,7 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
         self.registerField('python.script_file', self.combo_script_file, 'currentText')
         self.registerField('python.module_name', self.edit_module_name)
         self.registerField('python.command', self.edit_command)
+        self.registerField('python.working_directory', self.combo_working_directory, 'currentText')
 
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
@@ -46,6 +47,14 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
         self.combo_script_file_checker = MandatoryEditableComboBoxChecker(self, self.combo_script_file, self.label_script_file)
         self.edit_module_name_checker = MandatoryLineEditChecker(self, self.edit_module_name, self.label_module_name)
         self.edit_command_checker = MandatoryLineEditChecker(self, self.edit_command, self.label_command)
+        self.combo_working_directory_checker = MandatoryEditableComboBoxChecker(self, self.combo_working_directory, self.label_working_directory)
+
+        self.option_list_editor = ListWidgetEditor(self.list_options,
+                                                   self.button_add_option,
+                                                   self.button_remove_option,
+                                                   self.button_up_option,
+                                                   self.button_down_option,
+                                                   '<new Python option {0}>')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
@@ -60,6 +69,15 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
 
         if self.combo_script_file.count() > 1:
             self.combo_script_file.clearEditText()
+
+        self.combo_working_directory.clear()
+        self.combo_working_directory.addItem('.')
+
+        for upload in self.wizard().page(Constants.PAGE_FILES).get_uploads():
+            directory = os.path.split(upload.target)[0]
+
+            if len(directory) > 0:
+                self.combo_working_directory.addItem(directory)
 
         self.update_ui_state()
 
@@ -83,13 +101,14 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
            not self.edit_command_checker.valid:
             return False
 
-        return QWizardPage.isComplete(self)
+        return self.combo_working_directory_checker.valid and QWizardPage.isComplete(self)
 
     def update_ui_state(self):
         start_mode = self.field('python.start_mode').toInt()[0]
         start_mode_script_file = start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE
         start_mode_module_name = start_mode == Constants.PYTHON_START_MODE_MODULE_NAME
         start_mode_command = start_mode == Constants.PYTHON_START_MODE_COMMAND
+        show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
 
         self.label_script_file.setVisible(start_mode_script_file)
         self.combo_script_file.setVisible(start_mode_script_file)
@@ -100,10 +119,19 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
         self.label_command.setVisible(start_mode_command)
         self.edit_command.setVisible(start_mode_command)
         self.label_command_help.setVisible(start_mode_command)
+        self.label_working_directory.setVisible(show_advanced_options)
+        self.combo_working_directory.setVisible(show_advanced_options)
+        self.label_options.setVisible(show_advanced_options)
+        self.list_options.setVisible(show_advanced_options)
+        self.label_options_help.setVisible(show_advanced_options)
+        self.button_add_option.setVisible(show_advanced_options)
+        self.button_remove_option.setVisible(show_advanced_options)
+        self.button_up_option.setVisible(show_advanced_options)
+        self.button_down_option.setVisible(show_advanced_options)
 
     def get_command(self):
         executable = '/usr/bin/python2'
-        arguments = []
+        arguments = self.option_list_editor.get_items()
         start_mode = self.field('python.start_mode').toInt()[0]
 
         if start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE:
@@ -115,4 +143,6 @@ class NewProgramPython(QWizardPage, Ui_NewProgramPython):
             arguments.append('-c')
             arguments.append(unicode(self.edit_command.text()))
 
-        return executable, arguments
+        working_directory = unicode(self.field('python.working_directory').toString())
+
+        return executable, arguments, working_directory

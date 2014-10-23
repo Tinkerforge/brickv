@@ -201,7 +201,7 @@ class ListWidgetEditor:
     def get_items(self):
         items = []
 
-        for row in range(self.list_arguments.count()):
+        for row in range(self.list_items.count()):
             items.append(unicode(self.list_items.item(row).text()))
 
         return items

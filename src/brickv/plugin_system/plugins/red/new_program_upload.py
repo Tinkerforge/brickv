@@ -190,15 +190,15 @@ class NewProgramUpload(QWizardPage, Ui_NewProgramUpload):
         self.next_step('Setting command...')
 
         if language == 'java':
-            executable, arguments = self.wizard().page(Constants.PAGE_JAVA).get_command()
+            executable, arguments, working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
         elif language == 'python':
-            executable, arguments = self.wizard().page(Constants.PAGE_PYTHON).get_command()
+            executable, arguments, working_directory = self.wizard().page(Constants.PAGE_PYTHON).get_command()
 
         arguments += self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
         environment = []
 
         try:
-            program.set_command(executable, arguments, environment) # FIXME: async_call
+            program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return
