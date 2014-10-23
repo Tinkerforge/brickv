@@ -134,7 +134,7 @@ class NewProgramJava(QWizardPage, Ui_NewProgramJava):
     def get_command(self):
         executable = '/usr/bin/java'
         arguments = self.option_list_editor.get_items()
-        class_path_entries = self.class_path_editor.get_items()
+        class_path_entries = self.class_path_list_editor.get_items()
 
         if len(class_path_entries) > 0:
             arguments += ['-cp', ':'.join(class_path_entries)]
