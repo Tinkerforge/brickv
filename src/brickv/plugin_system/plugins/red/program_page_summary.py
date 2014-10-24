@@ -3,7 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-new_program_summary.py: New Program Wizard Summary Page
+program_page_summary.py: Program Wizard Summary Page
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -23,10 +23,10 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.new_program_utils import *
-from brickv.plugin_system.plugins.red.ui_new_program_summary import Ui_NewProgramSummary
+from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.ui_program_page_summary import Ui_ProgramPageSummary
 
-class NewProgramSummary(QWizardPage, Ui_NewProgramSummary):
+class ProgramPageSummary(QWizardPage, Ui_ProgramPageSummary):
     def __init__(self, *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 

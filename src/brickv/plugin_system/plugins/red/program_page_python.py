@@ -3,7 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-new_program_python.py: New Program Wizard Python Page
+program_page_python.py: Program Wizard Python Page
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -22,10 +22,10 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.new_program_utils import *
-from brickv.plugin_system.plugins.red.ui_new_program_python import Ui_NewProgramPython
+from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.ui_program_page_python import Ui_ProgramPagePython
 
-class NewProgramPython(QWizardPage, Ui_NewProgramPython):
+class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
     def __init__(self, *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 

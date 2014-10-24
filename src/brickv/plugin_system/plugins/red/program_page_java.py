@@ -3,7 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-new_program_java.py: New Program Wizard Java Page
+program_page_java.py: Program Wizard Java Page
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -22,10 +22,10 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.new_program_utils import *
-from brickv.plugin_system.plugins.red.ui_new_program_java import Ui_NewProgramJava
+from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.ui_program_page_java import Ui_ProgramPageJava
 
-class NewProgramJava(QWizardPage, Ui_NewProgramJava):
+class ProgramPageJava(QWizardPage, Ui_ProgramPageJava):
     def __init__(self, *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 

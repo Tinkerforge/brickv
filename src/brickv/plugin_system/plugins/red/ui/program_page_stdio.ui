@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NewProgramStdio</class>
- <widget class="QWidget" name="NewProgramStdio">
+ <class>ProgramPageStdio</class>
+ <widget class="QWidget" name="ProgramPageStdio">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -208,6 +208,9 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="edit_stdout_file"/>
+          </item>
           <item row="3" column="1">
            <widget class="QLabel" name="label_stdout_pipe_help">
             <property name="text">
@@ -217,9 +220,6 @@
              <bool>true</bool>
             </property>
            </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="edit_stdout_file"/>
           </item>
          </layout>
         </item>
@@ -332,6 +332,9 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="edit_stderr_file"/>
+          </item>
           <item row="3" column="1">
            <widget class="QLabel" name="label_stderr_pipe_help">
             <property name="text">
@@ -341,9 +344,6 @@
              <bool>true</bool>
             </property>
            </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="edit_stderr_file"/>
           </item>
          </layout>
         </item>

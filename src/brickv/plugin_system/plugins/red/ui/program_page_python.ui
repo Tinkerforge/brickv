@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NewProgramPython</class>
- <widget class="QWidget" name="NewProgramPython">
+ <class>ProgramPagePython</class>
+ <widget class="QWidget" name="ProgramPagePython">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -241,7 +241,7 @@
   <customwidget>
    <class>ExpandingListWidget</class>
    <extends>QListWidget</extends>
-   <header location="global">brickv.plugin_system.plugins.red.new_program_utils</header>
+   <header location="global">brickv.plugin_system.plugins.red.program_wizard_utils</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -25,7 +25,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtGui import QWidget, QMessageBox
 from brickv.plugin_system.plugins.red.ui_red_tab_program import Ui_REDTabProgram
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.new_program import NewProgram
+from brickv.plugin_system.plugins.red.program_wizard_new import ProgramWizardNew
 
 class REDTabProgram(QWidget, Ui_REDTabProgram):
     def __init__(self):
@@ -60,7 +60,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         self.button_delete.setEnabled(has_selection)
 
     def show_new_program_wizard(self):
-        self.new_program_wizard = NewProgram(self.session, self.programs.keys())
+        self.new_program_wizard = ProgramWizardNew(self.session, self.programs.keys())
         self.new_program_wizard.show()
 
     def purge_selected_program(self):

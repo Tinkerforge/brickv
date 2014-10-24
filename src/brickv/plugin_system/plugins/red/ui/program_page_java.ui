@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NewProgramJava</class>
- <widget class="QWidget" name="NewProgramJava">
+ <class>ProgramPageJava</class>
+ <widget class="QWidget" name="ProgramPageJava">
   <property name="geometry">
    <rect>
     <x>0</x>

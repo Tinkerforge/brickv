@@ -3,7 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-new_program_utils.py: New Program Wizard Utils
+program_wizard_utils.py: Program Wizard Utils
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

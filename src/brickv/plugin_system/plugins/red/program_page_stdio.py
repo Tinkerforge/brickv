@@ -3,7 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-new_program_stdio.py: New Program Wizard Stdio Page
+program_page_stdio.py: Program Wizard Stdio Page
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -22,11 +22,11 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.new_program_utils import *
-from brickv.plugin_system.plugins.red.ui_new_program_stdio import Ui_NewProgramStdio
+from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.ui_program_page_stdio import Ui_ProgramPageStdio
 import os
 
-class NewProgramStdio(QWizardPage, Ui_NewProgramStdio):
+class ProgramPageStdio(QWizardPage, Ui_ProgramPageStdio):
     def __init__(self, *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 

@@ -3,7 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-new_program_general.py: New Program Wizard General Page
+program_page_general.py: Program Wizard General Page
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -23,11 +23,11 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import QRegExp, QString, Qt
 from PyQt4.QtGui import QWizardPage, QRegExpValidator, QMessageBox
-from brickv.plugin_system.plugins.red.new_program_utils import *
-from brickv.plugin_system.plugins.red.ui_new_program_general import Ui_NewProgramGeneral
+from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.ui_program_page_general import Ui_ProgramPageGeneral
 import re
 
-class NewProgramGeneral(QWizardPage, Ui_NewProgramGeneral):
+class ProgramPageGeneral(QWizardPage, Ui_ProgramPageGeneral):
     def __init__(self, *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 

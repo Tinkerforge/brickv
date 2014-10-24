@@ -3,7 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-new_program_files.py: New Program Wizard Files Page
+program_page_files.py: Program Wizard Files Page
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -23,14 +23,14 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt, QDir, QVariant
 from PyQt4.QtGui import QWizardPage, QFileDialog, QListWidgetItem, QProgressDialog, QApplication
-from brickv.plugin_system.plugins.red.new_program_utils import *
-from brickv.plugin_system.plugins.red.ui_new_program_files import Ui_NewProgramFiles
+from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.ui_program_page_files import Ui_ProgramPageFiles
 import os
 from collections import namedtuple
 
 Upload = namedtuple('Upload', ['source', 'target'])
 
-class NewProgramFiles(QWizardPage, Ui_NewProgramFiles):
+class ProgramPageFiles(QWizardPage, Ui_ProgramPageFiles):
     def __init__(self, *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 

@@ -3,7 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-new_program_upload.py: New Program Wizard Upload Page
+program_page_upload.py: Program Wizard Upload Page
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -23,11 +23,11 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtGui import QWizard, QWizardPage
 from brickv.plugin_system.plugins.red.api import REDError, REDFile, REDProgram
-from brickv.plugin_system.plugins.red.new_program_utils import *
-from brickv.plugin_system.plugins.red.ui_new_program_upload import Ui_NewProgramUpload
+from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.ui_program_page_upload import Ui_ProgramPageUpload
 import os
 
-class NewProgramUpload(QWizardPage, Ui_NewProgramUpload):
+class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
     def __init__(self, session, *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 
