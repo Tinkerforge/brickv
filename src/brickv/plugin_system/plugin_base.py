@@ -176,6 +176,9 @@ class PluginBase(QWidget, object):
     
     def drop_down_triggered(self, action):
         pass
+    
+    def has_custom_version(self, label_version_name, label_version):
+        return False
 
     def reset_device(self):
         pass

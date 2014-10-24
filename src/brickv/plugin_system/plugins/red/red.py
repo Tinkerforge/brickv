@@ -59,6 +59,9 @@ class RED(PluginBase, Ui_RED):
                 tab.tab_on_focus()
             else:
                 tab.tab_off_focus()
+        
+        self.tabs_list[4].label_version = self.label_version
+        self.tabs_list[4].update_main()
 
     def stop(self):
         for tab in self.tabs_list:
@@ -83,6 +86,13 @@ class RED(PluginBase, Ui_RED):
     
     def drop_down_triggered(self, action):
         print action.text()
+        
+    def has_custom_version(self, label_version_name, label_version):
+        self.label_version_name = label_version_name
+        self.label_version_name.setText('RED Brick Image Version: ')
+        self.label_version = label_version
+        
+        return True
 
     def is_brick(self):
         return True

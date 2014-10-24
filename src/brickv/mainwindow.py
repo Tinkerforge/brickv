@@ -426,8 +426,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         info_bar.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
         # firmware version
-        info_bar.addWidget(QLabel('FW Version:'))
-        info_bar.addWidget(QLabel(infos.get_version_string(device_info.plugin.firmware_version)))
+        label_version_name = QLabel('Version:')
+        label_version = QLabel('...')
+        if not device_info.plugin.has_custom_version(label_version_name, label_version):
+            label_version_name.setText('FW Version:')
+            label_version.setText(infos.get_version_string(device_info.plugin.firmware_version))
+    
+        info_bar.addWidget(label_version_name)
+        info_bar.addWidget(label_version)
 
         info_bar.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 

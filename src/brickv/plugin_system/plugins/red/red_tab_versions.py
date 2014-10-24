@@ -123,6 +123,7 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
                 # TODO: Error for user? 
                 return
             
+            self.label_version.setText(versions[2])
             for i in range(num_versions):
                 self.package_list[0][i]['version'] = versions[i]
             self.tab_data[0]['updated'] = True
