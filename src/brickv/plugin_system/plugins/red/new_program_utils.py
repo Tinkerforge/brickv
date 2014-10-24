@@ -164,6 +164,7 @@ class ListWidgetEditor:
         else:
             selected_index = -1
 
+        self.button_remove_item.setEnabled(has_selection)
         self.button_up_item.setEnabled(item_count > 1 and has_selection and selected_index > 0)
         self.button_down_item.setEnabled(item_count > 1 and has_selection and selected_index < item_count - 1)
 
@@ -267,6 +268,7 @@ class TreeWidgetEditor:
         else:
             selected_index = -1
 
+        self.button_remove_item.setEnabled(has_selection)
         self.button_up_item.setEnabled(item_count > 1 and has_selection and selected_index > 0)
         self.button_down_item.setEnabled(item_count > 1 and has_selection and selected_index < item_count - 1)
 
