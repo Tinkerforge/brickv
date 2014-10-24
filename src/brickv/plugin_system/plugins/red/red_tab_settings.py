@@ -123,6 +123,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         # Tabs
         self.tbox_settings.currentChanged.connect(self.slot_tbox_settings_current_changed)
         self.twidget_net.currentChanged.connect(self.slot_twidget_net_current_changed)
+        self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRELESS, False)
+        self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRED, False)
 
         # Network Buttons
         self.pbutton_net_wireless_scan.clicked.connect(self.slot_network_button_wireless_scan_clicked)
@@ -138,6 +140,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.cbox_net_wireless_intf.currentIndexChanged.connect(self.slot_network_settings_changed)
         self.cbox_net_wireless_conftype.currentIndexChanged.connect(self.slot_network_settings_changed)
         self.cbox_net_wireless_ap.currentIndexChanged.connect(self.slot_network_settings_changed)
+        self.cbox_net_wireless_ap.currentIndexChanged.connect(self.slot_cbox_net_wireless_ap_current_idx_changed)
         self.cbox_net_wireless_enctype.currentIndexChanged.connect(self.slot_network_settings_changed)
         self.ledit_net_wireless_key.textEdited.connect(self.slot_network_settings_changed)
         self.sbox_net_wireless_ip1.valueChanged.connect(self.slot_network_settings_changed)
@@ -258,14 +261,20 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         if self.network_all_data['interfaces'] is not None:
             if self.network_all_data['interfaces']['wireless'] is not None:
+                self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRELESS, True)
                 self.cbox_net_wireless_intf.clear()
                 for intf in self.network_all_data['interfaces']['wireless']:
                     self.cbox_net_wireless_intf.addItem(intf)
+            else:
+                self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRELESS, False)
 
             if self.network_all_data['interfaces']['wired'] is not None:
+                self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRED, True)
                 self.cbox_net_wired_intf.clear()
                 for intf in self.network_all_data['interfaces']['wired']:
                     self.cbox_net_wired_intf.addItem(intf)
+            else:
+                self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRED, False)
 
             if self.network_all_data['manager_settings'] is not None:
                 try:
@@ -291,17 +300,53 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 except:
                     pass
 
-        # Populating access points combobox
-        self.cbox_net_wireless_ap.clear()
-        if self.network_all_data['scan_result'] is not None and len(self.network_all_data['scan_result']) > 0:
-            for nidx, apdict in self.network_all_data['scan_result'].iteritems():
-                self.cbox_net_wireless_ap.addItem(apdict['essid'])
+
 
         if self.network_all_data['wireless_settings'] is not None:
+            # Populating access points combobox
+            self.cbox_net_wireless_ap.clear()
+            _essid = ""
+            _bssid = ""
+            if self.network_all_data['scan_result'] is not None and len(self.network_all_data['scan_result']) > 0:
+                for nidx, apdict in self.network_all_data['scan_result'].iteritems():
+                    self.cbox_net_wireless_ap.addItem(apdict['essid'])
+            _essid = self.cbox_net_wireless_ap.currentText()
+
             if self.network_all_data['wireless_link'] is not None and\
                self.network_all_data['wireless_link']['status']:
                 self.label_net_wireless_constat.setText("Connected to "+self.network_all_data['wireless_link']['essid'])
-                _bssid = self.network_all_data['wireless_link']['bssid'].upper()
+            else:
+                self.label_net_wireless_constat.setText("Not Connected")
+                self.cbox_net_wireless_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
+                self.ledit_net_wireless_key.setText("")
+
+                self.sbox_net_wireless_ip1.setValue(0)
+                self.sbox_net_wireless_ip2.setValue(0)
+                self.sbox_net_wireless_ip3.setValue(0)
+                self.sbox_net_wireless_ip4.setValue(0)
+
+                self.sbox_net_wireless_mask1.setValue(0)
+                self.sbox_net_wireless_mask2.setValue(0)
+                self.sbox_net_wireless_mask3.setValue(0)
+                self.sbox_net_wireless_mask4.setValue(0)
+
+                self.sbox_net_wireless_gw1.setValue(0)
+                self.sbox_net_wireless_gw2.setValue(0)
+                self.sbox_net_wireless_gw3.setValue(0)
+                self.sbox_net_wireless_gw4.setValue(0)
+
+                self.sbox_net_wireless_dns1.setValue(0)
+                self.sbox_net_wireless_dns2.setValue(0)
+                self.sbox_net_wireless_dns3.setValue(0)
+                self.sbox_net_wireless_dns4.setValue(0)
+
+            if _essid != "" and self.network_all_data['scan_result'] is not None:
+                for key, apdict in self.network_all_data['scan_result'].iteritems():
+                    if _essid == apdict['essid']:
+                        _bssid = apdict['bssid']
+                        break
+
+            if _bssid != "":
                 try:
                     _key = self.network_all_data['wireless_settings'].get(_bssid, 'key')
                     if _key == "":
@@ -389,31 +434,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.sbox_net_wireless_dns2.setValue(0)
                     self.sbox_net_wireless_dns3.setValue(0)
                     self.sbox_net_wireless_dns4.setValue(0)
-
-            else:
-                self.label_net_wireless_constat.setText("Not Connected")
-                self.cbox_net_wireless_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
-                self.ledit_net_wireless_key.setText("")
-
-                self.sbox_net_wireless_ip1.setValue(0)
-                self.sbox_net_wireless_ip2.setValue(0)
-                self.sbox_net_wireless_ip3.setValue(0)
-                self.sbox_net_wireless_ip4.setValue(0)
-
-                self.sbox_net_wireless_mask1.setValue(0)
-                self.sbox_net_wireless_mask2.setValue(0)
-                self.sbox_net_wireless_mask3.setValue(0)
-                self.sbox_net_wireless_mask4.setValue(0)
-
-                self.sbox_net_wireless_gw1.setValue(0)
-                self.sbox_net_wireless_gw2.setValue(0)
-                self.sbox_net_wireless_gw3.setValue(0)
-                self.sbox_net_wireless_gw4.setValue(0)
-
-                self.sbox_net_wireless_dns1.setValue(0)
-                self.sbox_net_wireless_dns2.setValue(0)
-                self.sbox_net_wireless_dns3.setValue(0)
-                self.sbox_net_wireless_dns4.setValue(0)
 
         if self.network_all_data['wired_settings'] is not None:
             try:
@@ -916,7 +936,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         dns_domain = "None"
         dns2 = "None"
         dns3 = "None"
-        automatic = "True"
+        automatic = "False"
 
         self.network_all_data['manager_settings'].set('Settings',
                                                       'wireless_interface',
@@ -1260,6 +1280,107 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    REDFile.FLAG_TRUNCATE, 0500, 0, 0),
                    lambda x: cb_open(config, x),
                    cb_open_error)
+
+    def slot_cbox_net_wireless_ap_current_idx_changed(self, idx):
+        _essid = ""
+        _bssid = ""
+        _essid = self.cbox_net_wireless_ap.currentText()
+
+        if _essid != "" and self.network_all_data['wireless_settings'] is not None and\
+           self.network_all_data['scan_result'] is not None:
+            for key, apdict in self.network_all_data['scan_result'].iteritems():
+                if _essid == apdict['essid']:
+                    _bssid = apdict['bssid']
+                    break
+
+            if _bssid != "":
+                try:
+                    _key = self.network_all_data['wireless_settings'].get(_bssid, 'key')
+                    if _key == "":
+                        self.ledit_net_wireless_key.setText("")
+                    else:
+                        self.ledit_net_wireless_key.setText(_key)
+                except:
+                    self.ledit_net_wireless_key.setText("")
+
+                try:
+                    _ips = self.network_all_data['wireless_settings'].get(_bssid, 'ip')
+                    if _ips == "" or _ips == "None":
+                        self.cbox_net_wireless_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
+                        self.sbox_net_wireless_ip1.setValue(0)
+                        self.sbox_net_wireless_ip2.setValue(0)
+                        self.sbox_net_wireless_ip3.setValue(0)
+                        self.sbox_net_wireless_ip4.setValue(0)
+                    else:
+                        self.cbox_net_wireless_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_STATIC)
+                        _ips_splitted = _ips.split('.')
+                        self.sbox_net_wireless_ip1.setValue(int(_ips_splitted[0]))
+                        self.sbox_net_wireless_ip2.setValue(int(_ips_splitted[1]))
+                        self.sbox_net_wireless_ip3.setValue(int(_ips_splitted[2]))
+                        self.sbox_net_wireless_ip4.setValue(int(_ips_splitted[3]))
+                except:
+                    self.cbox_net_wireless_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
+                    self.sbox_net_wireless_ip1.setValue(0)
+                    self.sbox_net_wireless_ip2.setValue(0)
+                    self.sbox_net_wireless_ip3.setValue(0)
+                    self.sbox_net_wireless_ip4.setValue(0)
+
+                try:
+                    _mask = self.network_all_data['wireless_settings'].get(_bssid, 'netmask')
+                    if _mask == "" or _mask == "None":
+                        self.sbox_net_wireless_mask1.setValue(0)
+                        self.sbox_net_wireless_mask2.setValue(0)
+                        self.sbox_net_wireless_mask3.setValue(0)
+                        self.sbox_net_wireless_mask4.setValue(0)
+                    else:
+                        _mask_splitted = _mask.split('.')
+                        self.sbox_net_wireless_mask1.setValue(int(_mask_splitted[0]))
+                        self.sbox_net_wireless_mask2.setValue(int(_mask_splitted[1]))
+                        self.sbox_net_wireless_mask3.setValue(int(_mask_splitted[2]))
+                        self.sbox_net_wireless_mask4.setValue(int(_mask_splitted[3]))
+                except:
+                    self.sbox_net_wireless_mask1.setValue(0)
+                    self.sbox_net_wireless_mask2.setValue(0)
+                    self.sbox_net_wireless_mask3.setValue(0)
+                    self.sbox_net_wireless_mask4.setValue(0)
+
+                try:
+                    _gw = self.network_all_data['wireless_settings'].get(_bssid, 'gateway')
+                    if _gw == "" or _gw == "None":
+                        self.sbox_net_wireless_gw1.setValue(0)
+                        self.sbox_net_wireless_gw2.setValue(0)
+                        self.sbox_net_wireless_gw3.setValue(0)
+                        self.sbox_net_wireless_gw4.setValue(0)
+                    else:
+                        _gw_splitted = _gw.split('.')
+                        self.sbox_net_wireless_gw1.setValue(int(_gw_splitted[0]))
+                        self.sbox_net_wireless_gw2.setValue(int(_gw_splitted[1]))
+                        self.sbox_net_wireless_gw3.setValue(int(_gw_splitted[2]))
+                        self.sbox_net_wireless_gw4.setValue(int(_gw_splitted[3]))
+                except:
+                    self.sbox_net_wireless_gw1.setValue(0)
+                    self.sbox_net_wireless_gw2.setValue(0)
+                    self.sbox_net_wireless_gw3.setValue(0)
+                    self.sbox_net_wireless_gw4.setValue(0)
+
+                try:
+                    _dns = self.network_all_data['wireless_settings'].get(_bssid, 'dns1')
+                    if _dns == "" or _dns == "None":
+                        self.sbox_net_wireless_dns1.setValue(0)
+                        self.sbox_net_wireless_dns2.setValue(0)
+                        self.sbox_net_wireless_dns3.setValue(0)
+                        self.sbox_net_wireless_dns4.setValue(0)
+                    else:
+                        _dns_splitted = _dns.split('.')
+                        self.sbox_net_wireless_dns1.setValue(int(_dns_splitted[0]))
+                        self.sbox_net_wireless_dns2.setValue(int(_dns_splitted[1]))
+                        self.sbox_net_wireless_dns3.setValue(int(_dns_splitted[2]))
+                        self.sbox_net_wireless_dns4.setValue(int(_dns_splitted[3]))
+                except:
+                    self.sbox_net_wireless_dns1.setValue(0)
+                    self.sbox_net_wireless_dns2.setValue(0)
+                    self.sbox_net_wireless_dns3.setValue(0)
+                    self.sbox_net_wireless_dns4.setValue(0)
 
     def slot_network_settings_changed(self):
         self.network_button_save_enabled(True)
