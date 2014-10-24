@@ -231,7 +231,7 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         start_condition = Constants.api_schedule_start_condition[self.field('schedule.start_condition').toInt()[0]]
         start_time = self.field('schedule.start_time').toDateTime().toMSecsSinceEpoch() / 1000
         start_delay = self.field('schedule.start_delay').toInt()[0]
-        repeat_mode = Constants.api_stdio_redirections[self.field('schedule.repeat_mode').toInt()[0]]
+        repeat_mode = Constants.api_schedule_repeat_mode[self.field('schedule.repeat_mode').toInt()[0]]
         repeat_interval = self.field('schedule.repeat_interval').toInt()[0]
         # FIXME: handle selection repeat mode
 
