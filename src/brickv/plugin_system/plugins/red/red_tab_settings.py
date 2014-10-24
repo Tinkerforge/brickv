@@ -216,6 +216,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
     def tab_off_focus(self):
         index = self.tbox_settings.currentIndex()
+        self.last_index = index
+
         if index == BOX_INDEX_BRICKD:
             pass
         elif index == BOX_INDEX_NETWORK:
@@ -492,7 +494,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         elif ctidx == BOX_INDEX_BRICKD:
             self.slot_brickd_refresh_clicked()
-        elif self.last_index == BOX_INDEX_DATETIME:
+        elif ctidx == BOX_INDEX_DATETIME:
             self.time_start()
 
     def slot_twidget_net_current_changed(self, ctidx):
