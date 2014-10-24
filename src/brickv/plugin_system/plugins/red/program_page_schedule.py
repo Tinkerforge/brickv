@@ -51,11 +51,11 @@ class ProgramPageSchedule(QWizardPage, Ui_ProgramPageSchedule):
         self.combo_repeat_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_repeat_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
 
-        self.edit_repeat_seconds_checker = MandatoryLineEditChecker(self, self.edit_repeat_seconds, self.label_repeat_seconds)
-        self.edit_repeat_minutes_checker = MandatoryLineEditChecker(self, self.edit_repeat_minutes, self.label_repeat_minutes)
-        self.edit_repeat_hours_checker = MandatoryLineEditChecker(self, self.edit_repeat_hours, self.label_repeat_hours)
-        self.edit_repeat_days_checker = MandatoryLineEditChecker(self, self.edit_repeat_days, self.label_repeat_days)
-        self.edit_repeat_months_checker = MandatoryLineEditChecker(self, self.edit_repeat_months, self.label_repeat_months)
+        self.edit_repeat_seconds_checker  = MandatoryLineEditChecker(self, self.edit_repeat_seconds, self.label_repeat_seconds)
+        self.edit_repeat_minutes_checker  = MandatoryLineEditChecker(self, self.edit_repeat_minutes, self.label_repeat_minutes)
+        self.edit_repeat_hours_checker    = MandatoryLineEditChecker(self, self.edit_repeat_hours, self.label_repeat_hours)
+        self.edit_repeat_days_checker     = MandatoryLineEditChecker(self, self.edit_repeat_days, self.label_repeat_days)
+        self.edit_repeat_months_checker   = MandatoryLineEditChecker(self, self.edit_repeat_months, self.label_repeat_months)
         self.edit_repeat_weekdays_checker = MandatoryLineEditChecker(self, self.edit_repeat_weekdays, self.label_repeat_weekdays)
 
     # overrides QWizardPage.initializePage
@@ -90,11 +90,11 @@ class ProgramPageSchedule(QWizardPage, Ui_ProgramPageSchedule):
         return Constants.PAGE_SUMMARY
 
     def update_ui_state(self):
-        start_condition = self.field('schedule.start_condition').toInt()[0]
-        start_condition_never = start_condition == Constants.SCHEDULE_START_CONDITION_NEVER
-        start_condition_now = start_condition == Constants.SCHEDULE_START_CONDITION_NOW
+        start_condition        = self.field('schedule.start_condition').toInt()[0]
+        start_condition_never  = start_condition == Constants.SCHEDULE_START_CONDITION_NEVER
+        start_condition_now    = start_condition == Constants.SCHEDULE_START_CONDITION_NOW
         start_condition_reboot = start_condition == Constants.SCHEDULE_START_CONDITION_REBOOT
-        start_condition_time = start_condition == Constants.SCHEDULE_START_CONDITION_TIME
+        start_condition_time   = start_condition == Constants.SCHEDULE_START_CONDITION_TIME
 
         self.label_start_time.setVisible(start_condition_time)
         self.date_start_time.setVisible(start_condition_time)

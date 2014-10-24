@@ -211,9 +211,9 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         stdin_redirection  = Constants.api_stdin_redirections[self.field('stdin_redirection').toInt()[0]]
         stdout_redirection = Constants.api_stdout_redirections[self.field('stdout_redirection').toInt()[0]]
         stderr_redirection = Constants.api_stderr_redirections[self.field('stderr_redirection').toInt()[0]]
-        stdin_file = unicode(self.field('stdin_file').toString())
-        stdout_file = unicode(self.field('stdout_file').toString())
-        stderr_file = unicode(self.field('stderr_file').toString())
+        stdin_file         = unicode(self.field('stdin_file').toString())
+        stdout_file        = unicode(self.field('stdout_file').toString())
+        stderr_file        = unicode(self.field('stderr_file').toString())
 
         try:
             program.set_stdio_redirection(stdin_redirection, stdin_file,
@@ -229,9 +229,9 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         self.next_step('Setting schedule...')
 
         start_condition = Constants.api_schedule_start_condition[self.field('schedule.start_condition').toInt()[0]]
-        start_time = self.field('schedule.start_time').toDateTime().toMSecsSinceEpoch() / 1000
-        start_delay = self.field('schedule.start_delay').toInt()[0]
-        repeat_mode = Constants.api_schedule_repeat_mode[self.field('schedule.repeat_mode').toInt()[0]]
+        start_time      = self.field('schedule.start_time').toDateTime().toMSecsSinceEpoch() / 1000
+        start_delay     = self.field('schedule.start_delay').toInt()[0]
+        repeat_mode     = Constants.api_schedule_repeat_mode[self.field('schedule.repeat_mode').toInt()[0]]
         repeat_interval = self.field('schedule.repeat_interval').toInt()[0]
         # FIXME: handle selection repeat mode
 

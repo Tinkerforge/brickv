@@ -28,19 +28,19 @@ from brickv.plugin_system.plugins.red.api import REDProgram
 class Constants:
     STEP_COUNT = 8
 
-    PAGE_GENERAL = 0
-    PAGE_FILES = 1
-    PAGE_JAVA = 2
-    PAGE_PYTHON = 3
+    PAGE_GENERAL   = 0
+    PAGE_FILES     = 1
+    PAGE_JAVA      = 2
+    PAGE_PYTHON    = 3
     PAGE_ARGUMENTS = 4
-    PAGE_STDIO = 5
-    PAGE_SCHEDULE = 6
-    PAGE_SUMMARY = 7
-    PAGE_UPLOAD = 8
+    PAGE_STDIO     = 5
+    PAGE_SCHEDULE  = 6
+    PAGE_SUMMARY   = 7
+    PAGE_UPLOAD    = 8
 
     LANGUAGE_INVALID = 0
-    LANGUAGE_JAVA = 1
-    LANGUAGE_PYTHON = 2
+    LANGUAGE_JAVA    = 1
+    LANGUAGE_PYTHON  = 2
 
     language_display_names = {
         LANGUAGE_INVALID: '<invalid>',
@@ -154,13 +154,13 @@ class ExpandingListWidget(QListWidget):
 class ListWidgetEditor:
     def __init__(self, list_items, button_add_item, button_remove_item,
                  button_up_item, button_down_item, new_item_text):
-        self.list_items = list_items
-        self.button_add_item = button_add_item
+        self.list_items         = list_items
+        self.button_add_item    = button_add_item
         self.button_remove_item = button_remove_item
-        self.button_up_item = button_up_item
-        self.button_down_item = button_down_item
-        self.new_item_text = new_item_text
-        self.new_item_counter = 1
+        self.button_up_item     = button_up_item
+        self.button_down_item   = button_down_item
+        self.new_item_text      = new_item_text
+        self.new_item_counter   = 1
 
         self.list_items.itemSelectionChanged.connect(self.update_ui_state)
         self.button_add_item.clicked.connect(self.add_new_item)
@@ -250,13 +250,13 @@ class ListWidgetEditor:
 class TreeWidgetEditor:
     def __init__(self, tree_items, button_add_item, button_remove_item,
                  button_up_item, button_down_item, new_item_texts):
-        self.tree_items = tree_items
-        self.button_add_item = button_add_item
+        self.tree_items         = tree_items
+        self.button_add_item    = button_add_item
         self.button_remove_item = button_remove_item
-        self.button_up_item = button_up_item
-        self.button_down_item = button_down_item
-        self.new_item_texts = new_item_texts
-        self.new_item_counter = 1
+        self.button_up_item     = button_up_item
+        self.button_down_item   = button_down_item
+        self.new_item_texts     = new_item_texts
+        self.new_item_counter   = 1
 
         self.tree_items.itemSelectionChanged.connect(self.update_ui_state)
         self.button_add_item.clicked.connect(self.add_new_item)
@@ -389,7 +389,7 @@ class MandatoryLineEditChecker:
 
 class MandatoryEditableComboBoxChecker:
     def __init__(self, page, combo, label):
-        self.page = page
+        self.page  = page
         self.combo = combo
         self.label = label
         self.valid = False

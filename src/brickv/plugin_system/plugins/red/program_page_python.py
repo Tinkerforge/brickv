@@ -104,11 +104,11 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
         return self.combo_working_directory_checker.valid and QWizardPage.isComplete(self)
 
     def update_ui_state(self):
-        start_mode = self.field('python.start_mode').toInt()[0]
+        start_mode             = self.field('python.start_mode').toInt()[0]
         start_mode_script_file = start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE
         start_mode_module_name = start_mode == Constants.PYTHON_START_MODE_MODULE_NAME
-        start_mode_command = start_mode == Constants.PYTHON_START_MODE_COMMAND
-        show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
+        start_mode_command     = start_mode == Constants.PYTHON_START_MODE_COMMAND
+        show_advanced_options  = self.check_show_advanced_options.checkState() == Qt.Checked
 
         self.label_script_file.setVisible(start_mode_script_file)
         self.combo_script_file.setVisible(start_mode_script_file)

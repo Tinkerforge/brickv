@@ -114,7 +114,7 @@ class ProgramPageFiles(QWizardPage, Ui_ProgramPageFiles):
 
         progress.cancel()
 
-        # FIXME: maybe add a warning if the directory contains very many files or a large amount of data
+        # FIXME: maybe add a warning if the directory contains very many files or large amounts of data
 
         item = QListWidgetItem(os.path.join(directory, '*'))
         item.setData(Qt.UserRole, QVariant(uploads))

@@ -43,8 +43,8 @@ class ProgramPageJava(QWizardPage, Ui_ProgramPageJava):
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
-        self.edit_main_class_checker = MandatoryLineEditChecker(self, self.edit_main_class, self.label_main_class)
-        self.combo_jar_file_checker = MandatoryEditableComboBoxChecker(self, self.combo_jar_file, self.label_jar_file)
+        self.edit_main_class_checker         = MandatoryLineEditChecker(self, self.edit_main_class, self.label_main_class)
+        self.combo_jar_file_checker          = MandatoryEditableComboBoxChecker(self, self.combo_jar_file, self.label_jar_file)
         self.combo_working_directory_checker = MandatoryEditableComboBoxChecker(self, self.combo_working_directory, self.label_working_directory)
 
         # FIXME: allow adding class path entries using a combo box prefilled with avialable .jar files
@@ -107,9 +107,9 @@ class ProgramPageJava(QWizardPage, Ui_ProgramPageJava):
         return self.combo_working_directory_checker.valid and QWizardPage.isComplete(self)
 
     def update_ui_state(self):
-        start_mode = self.field('java.start_mode').toInt()[0]
+        start_mode            = self.field('java.start_mode').toInt()[0]
         start_mode_main_class = start_mode == Constants.JAVA_START_MODE_MAIN_CLASS
-        start_mode_jar_file = start_mode == Constants.JAVA_START_MODE_JAR_FILE
+        start_mode_jar_file   = start_mode == Constants.JAVA_START_MODE_JAR_FILE
         show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
 
         self.label_main_class.setVisible(start_mode_main_class)
