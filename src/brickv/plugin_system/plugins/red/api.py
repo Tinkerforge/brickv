@@ -307,13 +307,14 @@ class REDString(REDObject):
         return self._data
 
     def __unicode__(self):
-        return self._data.decode('utf-8')
+        return self._data_unicode
 
     def __repr__(self):
         return '<REDString object_id: {0}, data: {1}>'.format(self._object_id, repr(self._data))
 
     def _initialize(self):
         self._data = None
+        self._data_unicode = None
 
     def update(self):
         if self._object_id is None:
@@ -335,6 +336,7 @@ class REDString(REDObject):
             data += chunk
 
         self._data = data
+        self._data_unicode = data.decode('utf-8')
 
     def allocate(self, data):
         self.release()
@@ -363,6 +365,7 @@ class REDString(REDObject):
             offset += len(chunk)
 
         self._data = data
+        self._data_unicode = data.decode('utf-8')
 
         return self
 
