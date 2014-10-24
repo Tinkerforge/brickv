@@ -47,7 +47,7 @@ GetProcessCommand = namedtuple('ProcessCommand', ['error_code', 'executable_stri
 GetProcessIdentity = namedtuple('ProcessIdentity', ['error_code', 'pid', 'uid', 'gid'])
 GetProcessStdio = namedtuple('ProcessStdio', ['error_code', 'stdin_file_id', 'stdout_file_id', 'stderr_file_id'])
 GetProcessState = namedtuple('ProcessState', ['error_code', 'state', 'exit_code'])
-GetDefinedPrograms = namedtuple('DefinedPrograms', ['error_code', 'programs_list_id'])
+GetPrograms = namedtuple('Programs', ['error_code', 'programs_list_id'])
 DefineProgram = namedtuple('DefineProgram', ['error_code', 'program_id'])
 GetProgramIdentifier = namedtuple('ProgramIdentifier', ['error_code', 'identifier_string_id'])
 GetProgramRootDirectory = namedtuple('ProgramRootDirectory', ['error_code', 'root_directory_string_id'])
@@ -114,9 +114,9 @@ class BrickRED(Device):
     FUNCTION_GET_PROCESS_IDENTITY = 41
     FUNCTION_GET_PROCESS_STDIO = 42
     FUNCTION_GET_PROCESS_STATE = 43
-    FUNCTION_GET_DEFINED_PROGRAMS = 45
+    FUNCTION_GET_PROGRAMS = 45
     FUNCTION_DEFINE_PROGRAM = 46
-    FUNCTION_UNDEFINE_PROGRAM = 47
+    FUNCTION_PURGE_PROGRAM = 47
     FUNCTION_GET_PROGRAM_IDENTIFIER = 48
     FUNCTION_GET_PROGRAM_ROOT_DIRECTORY = 49
     FUNCTION_SET_PROGRAM_COMMAND = 50
@@ -265,9 +265,9 @@ class BrickRED(Device):
         self.response_expected[BrickRED.FUNCTION_GET_PROCESS_STDIO] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_PROCESS_STATE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.CALLBACK_PROCESS_STATE_CHANGED] = BrickRED.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickRED.FUNCTION_GET_DEFINED_PROGRAMS] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_PROGRAMS] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_DEFINE_PROGRAM] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_UNDEFINE_PROGRAM] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_PURGE_PROGRAM] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_PROGRAM_IDENTIFIER] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_PROGRAM_ROOT_DIRECTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_SET_PROGRAM_COMMAND] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -790,11 +790,11 @@ class BrickRED(Device):
         """
         return GetProcessState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STATE, (process_id,), 'H', 'B B B'))
 
-    def get_defined_programs(self, session_id):
+    def get_programs(self, session_id):
         """
         
         """
-        return GetDefinedPrograms(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_DEFINED_PROGRAMS, (session_id,), 'H', 'B H'))
+        return GetPrograms(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAMS, (session_id,), 'H', 'B H'))
 
     def define_program(self, identifier_string_id, session_id):
         """
@@ -802,11 +802,11 @@ class BrickRED(Device):
         """
         return DefineProgram(*self.ipcon.send_request(self, BrickRED.FUNCTION_DEFINE_PROGRAM, (identifier_string_id, session_id), 'H H', 'B H'))
 
-    def undefine_program(self, program_id):
+    def purge_program(self, program_id, cookie):
         """
         
         """
-        return self.ipcon.send_request(self, BrickRED.FUNCTION_UNDEFINE_PROGRAM, (program_id,), 'H', 'B')
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_PURGE_PROGRAM, (program_id, cookie), 'H I', 'B')
 
     def get_program_identifier(self, program_id, session_id):
         """

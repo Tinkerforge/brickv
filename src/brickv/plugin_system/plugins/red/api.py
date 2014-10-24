@@ -40,6 +40,7 @@ class REDError(Exception):
     E_OBJECT_IS_LOCKED         = 9
     E_NO_MORE_DATA             = 10
     E_WRONG_LIST_ITEM_TYPE     = 11
+    E_PROGRAM_IS_PURGED        = 12
     E_INVALID_PARAMETER        = 128
     E_NO_FREE_MEMORY           = 129
     E_NO_FREE_SPACE            = 130
@@ -71,6 +72,7 @@ class REDError(Exception):
         E_OBJECT_IS_LOCKED         : 'E_OBJECT_IS_LOCKED',
         E_NO_MORE_DATA             : 'E_NO_MORE_DATA',
         E_WRONG_LIST_ITEM_TYPE     : 'E_WRONG_LIST_ITEM_TYPE',
+        E_PROGRAM_IS_PURGED        : 'E_PROGRAM_IS_PURGED',
         E_INVALID_PARAMETER        : 'E_INVALID_PARAMETER',
         E_NO_FREE_MEMORY           : 'E_NO_FREE_MEMORY',
         E_NO_FREE_SPACE            : 'E_NO_FREE_SPACE',
@@ -1396,18 +1398,23 @@ class REDProgram(REDObject):
 
         return self
 
-    def undefine(self, signal):
+    def purge(self):
         if self._object_id is None:
-            raise RuntimeError('Cannot undefine unattached process object')
+            raise RuntimeError('Cannot purge unattached program object')
 
-        error_code = self._session._brick.undefine_program(self._object_id)
+        cookie = 0
+
+        for c in str(self._identifier):
+            cookie += ord(c)
+
+        error_code = self._session._brick.purge_program(self._object_id, cookie)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not undefine program object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not purge program object {0}'.format(self._object_id), error_code)
 
     def set_command(self, executable, arguments, environment, working_directory):
         if self._object_id is None:
-            raise RuntimeError('Cannot set command for unattached process object')
+            raise RuntimeError('Cannot set command for unattached program object')
 
         if not isinstance(executable, REDString):
             executable = REDString(self._session).allocate(executable)
@@ -1439,7 +1446,7 @@ class REDProgram(REDObject):
                               stdout_redirection, stdout_file_name,
                               stderr_redirection, stderr_file_name):
         if self._object_id is None:
-            raise RuntimeError('Cannot set stdio redirection for unattached process object')
+            raise RuntimeError('Cannot set stdio redirection for unattached program object')
 
         # stdin
         if stdin_redirection == REDProgram.STDIO_REDIRECTION_FILE:
@@ -1507,7 +1514,7 @@ class REDProgram(REDObject):
                      repeat_mode, repeat_interval, repeat_second_mask, repeat_minute_mask,
                      repeat_hour_mask, repeat_day_mask, repeat_month_mask, repeat_weekday_mask):
         if self._object_id is None:
-            raise RuntimeError('Cannot set schedule for unattached process object')
+            raise RuntimeError('Cannot set schedule for unattached program object')
 
         error_code = self._session._brick.set_program_schedule(self._object_id,
                                                                start_condition,
@@ -1539,7 +1546,7 @@ class REDProgram(REDObject):
 
     def set_custom_option_value(self, name, value):
         if self._object_id is None:
-            raise RuntimeError('Cannot set custom option for unattached process object')
+            raise RuntimeError('Cannot set custom option for unattached program object')
 
         if not isinstance(name, REDString):
             name = REDString(self._session).allocate(name)
@@ -1608,11 +1615,11 @@ class REDProgram(REDObject):
     def last_scheduler_error_timestamp(self): return self._last_scheduler_error_timestamp
 
 
-def get_defined_programs(session):
-    error_code, programs_list_id = session._brick.get_defined_programs(session._session_id)
+def get_programs(session):
+    error_code, programs_list_id = session._brick.get_programs(session._session_id)
 
     if error_code != REDError.E_SUCCESS:
-        raise REDError('Could not get defined programs list object', error_code)
+        raise REDError('Could not get programs list object', error_code)
 
     return _attach_or_release(session, REDList, programs_list_id)
 
