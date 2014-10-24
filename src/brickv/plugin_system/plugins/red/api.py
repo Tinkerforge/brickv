@@ -1148,11 +1148,11 @@ class REDProgram(REDObject):
 
         self._qtcb_process_spawned.connect(self._cb_process_spawned)
         self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
-                                          self._qtcb_process_spawned.emit)
+                                          self._cb_process_spawned_emit)
 
         self._qtcb_scheduler_error_occurred.connect(self._cb_scheduler_error_occurred)
         self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED,
-                                          self._qtcb_scheduler_error_occurred.emit)
+                                          self._cb_scheduler_error_occurred_emit)
 
     def __repr__(self):
         return '<REDProgram object_id: {0}, identifier: {1}>'.format(self._object_id, self._identifier)
@@ -1188,6 +1188,12 @@ class REDProgram(REDObject):
         self.process_spawned_callback = None
         self.scheduler_error_occurred_callback = None
 
+    def _cb_process_spawned_emit(self, *args, **kwargs):
+        # cannot directly use emit function as callback functions, because this
+        # triggers a segfault on the second call for some unknown reason. adding
+        # a method in between helps
+        self._qtcb_process_spawned.emit(*args, **kwargs)
+
     def _cb_process_spawned(self, program_id):
         if self._object_id != program_id:
             return
@@ -1209,6 +1215,12 @@ class REDProgram(REDObject):
 
         if process_spawned_callback is not None:
             process_spawned_callback(self)
+
+    def _cb_scheduler_error_occurred_emit(self, *args, **kwargs):
+        # cannot directly use emit function as callback functions, because this
+        # triggers a segfault on the second call for some unknown reason. adding
+        # a method in between helps
+        self._qtcb_scheduler_error_occurred.emit(*args, **kwargs)
 
     def _cb_scheduler_error_occurred(self, program_id):
         if self._object_id != program_id:
