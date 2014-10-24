@@ -43,6 +43,18 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
 
         self.button_start_upload.clicked.connect(self.start_upload)
 
+        # state for async file upload
+        self.language = None
+        self.program = None
+        self.root_directory = None
+        self.uploads = None
+        self.target = None
+        self.source = None
+        self.target_name = None
+        self.source_name = None
+        self.source_size = None
+        self.last_upload_size = None
+
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle(u'Upload the {0} program [{1}].'
@@ -80,9 +92,9 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         self.wizard().setOption(QWizard.DisabledBackButtonOnLastPage, True)
         self.wizard().setOption(QWizard.NoCancelButton, True)
 
-        uploads = self.wizard().page(Constants.PAGE_FILES).get_uploads()
+        self.uploads = self.wizard().page(Constants.PAGE_FILES).get_uploads()
 
-        self.progress_total.setRange(0, 6 + len(uploads))
+        self.progress_total.setRange(0, 6 + len(self.uploads))
 
         # define new program
         identifier = str(self.field('identifier').toString())
@@ -90,7 +102,7 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         self.next_step('Defining new program...', increase=0)
 
         try:
-            program = REDProgram(self.session).define(identifier) # FIXME: async_call
+            self.program = REDProgram(self.session).define(identifier) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(identifier, e), False)
             return
@@ -102,16 +114,16 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         name = unicode(self.field('name').toString())
 
         try:
-            program.set_custom_option_value('name', name) # FIXME: async_call
+            self.program.set_custom_option_value('name', name) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return
 
         # set custom option: language
-        language = Constants.api_languages[self.field('language').toInt()[0]]
+        self.language = Constants.api_languages[self.field('language').toInt()[0]]
 
         try:
-            program.set_custom_option_value('language', language) # FIXME: async_call
+            self.program.set_custom_option_value('language', self.language) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return
@@ -121,98 +133,122 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         # upload files
         self.next_step('Uploading files...', log=False)
 
-        root_directory = unicode(program.root_directory)
+        self.root_directory = unicode(self.program.root_directory)
 
-        self.progress_file.setRange(0, len(uploads))
+        self.progress_file.setRange(0, len(self.uploads))
 
-        for upload in uploads:
-            source_name = upload.source
+        self.next_upload()
 
-            self.next_step('Uploading {0}...'.format(source_name))
+    def next_upload(self):
+        if len(self.uploads) == 0:
+            self.upload_done()
+            return
 
-            self.progress_file.setVisible(True)
-            self.progress_file.setRange(0, 0)
-            self.progress_file.setValue(0)
+        upload = self.uploads[0]
+        self.uploads = self.uploads[1:]
+
+        self.source_name = upload.source
+
+        self.next_step('Uploading {0}...'.format(self.source_name))
+
+        self.progress_file.setVisible(True)
+        self.progress_file.setRange(0, 0)
+        self.progress_file.setValue(0)
+
+        try:
+            source_st = os.stat(self.source_name)
+            self.source = open(self.source_name, 'rb')
+        except Exception as e:
+            self.upload_error("...error opening source file '{0}': {1}".format(self.source_name, e))
+            return
+
+        self.source_size = source_st.st_size
+        self.progress_file.setRange(0, self.source_size)
+
+        self.target_name = os.path.join(self.root_directory, 'bin', upload.target)
+
+        if len(os.path.split(upload.target)[0]) > 0:
+            target_directory = os.path.split(self.target_name)[0]
 
             try:
-                source_st = os.stat(source_name)
-                source = open(source_name, 'rb')
-            except Exception as e:
-                self.upload_error("...error opening source file '{0}': {1}".format(source_name, e))
-                return
-
-            self.progress_file.setRange(0, source_st.st_size)
-
-            target_name = os.path.join(root_directory, 'bin', upload.target)
-
-            if len(os.path.split(upload.target)[0]) > 0:
-                target_directory = os.path.split(target_name)[0]
-
-                try:
-                    create_directory(self.session, target_directory, DIRECTORY_FLAG_RECURSIVE, 0755, 1000, 1000)
-                except REDError as e:
-                    self.upload_error("...error creating target directory '{0}': {1}".format(target_directory, e))
-                    return
-
-            if (source_st.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)) != 0:
-                permissions = 0755
-            else:
-                permissions = 0644
-
-            try:
-                target = REDFile(self.session).open(target_name,
-                                                    REDFile.FLAG_WRITE_ONLY |
-                                                    REDFile.FLAG_CREATE |
-                                                    REDFile.FLAG_NON_BLOCKING |
-                                                    REDFile.FLAG_TRUNCATE,
-                                                    permissions, 1000, 1000) # FIXME: async_call
+                create_directory(self.session, target_directory, DIRECTORY_FLAG_RECURSIVE, 0755, 1000, 1000)
             except REDError as e:
-                self.upload_error("...error opening target file '{0}': {1}".format(target_name, e))
+                self.upload_error("...error creating target directory '{0}': {1}".format(target_directory, e))
                 return
 
-            # FIXME: upload files async
-            while True:
-                try:
-                    data = source.read(256)
-                except Exception as e:
-                    self.upload_error("...error reading source file '{0}': {1}".format(source_name, e))
-                    return
+        if (source_st.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)) != 0:
+            permissions = 0755
+        else:
+            permissions = 0644
 
-                if len(data) == 0:
-                    break
+        try:
+            self.target = REDFile(self.session).open(self.target_name,
+                                                REDFile.FLAG_WRITE_ONLY |
+                                                REDFile.FLAG_CREATE |
+                                                REDFile.FLAG_NON_BLOCKING |
+                                                REDFile.FLAG_TRUNCATE,
+                                                permissions, 1000, 1000) # FIXME: async_call
+        except REDError as e:
+            self.upload_error("...error opening target file '{0}': {1}".format(self.target_name, e))
+            return
 
-                try:
-                    target.write(data)
-                except REDError as e:
-                    self.upload_error("...error writing target file '{0}': {1}".format(target_name, e))
-                    return
+        self.upload_write_async()
 
-                # ensure that the UI stays responsive and the keep-alive timer works
-                QApplication.processEvents()
 
-                self.progress_file.setValue(self.progress_file.value() + len(data))
+    def upload_write_async_cb_status(self, upload_size, upload_of):
+        uploaded = self.progress_file.value() + upload_size - self.last_upload_size
+        self.progress_file.setValue(uploaded)
+        self.progress_file.setFormat('{0}kiB of {1}kiB'.format(uploaded/1024, self.source_size/1024))
+        self.last_upload_size = upload_size
 
-            self.log('...done')
-            self.progress_file.setValue(self.progress_file.maximum())
+    def upload_write_async_cb_error(self, error):
+        if error == None:
+            self.upload_write_async()
+        else:
+            self.upload_error("...error writing target file '{0}': {1}".format(self.target_name, str(error)))
 
-            target.release()
-            source.close()
+    def upload_write_async(self):
+        try:
+            data = self.source.read(1000*1000*10) # Read 10mb at a time
+        except Exception as e:
+            self.upload_error("...error reading source file '{0}': {1}".format(self.source_name, e))
+            return
 
+        if len(data) == 0:
+            self.upload_write_async_done()
+            return
+
+        self.last_upload_size = 0
+        try:
+            self.target.write_async(data, self.upload_write_async_cb_error, self.upload_write_async_cb_status)
+        except REDError as e:
+            self.upload_error("...error writing target file '{0}': {1}".format(self.target_name, e))
+
+    def upload_write_async_done(self):
+        self.log('...done')
+        self.progress_file.setValue(self.progress_file.maximum())
+
+        self.target.release()
+        self.source.close()
+
+        self.next_upload()
+
+    def upload_done(self):
         self.progress_file.setVisible(False)
 
         # set command
         self.next_step('Setting command...')
 
-        if language == 'java':
+        if self.language == 'java':
             executable, arguments, working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
-        elif language == 'python':
+        elif self.language == 'python':
             executable, arguments, working_directory = self.wizard().page(Constants.PAGE_PYTHON).get_command()
 
         arguments += self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
         environment = []
 
         try:
-            program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
+            self.program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return
@@ -230,9 +266,9 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         stderr_file        = unicode(self.field('stderr_file').toString())
 
         try:
-            program.set_stdio_redirection(stdin_redirection, stdin_file,
-                                          stdout_redirection, stdout_file,
-                                          stderr_redirection, stderr_file) # FIXME: async_call
+            self.program.set_stdio_redirection(stdin_redirection, stdin_file,
+                                               stdout_redirection, stdout_file,
+                                               stderr_redirection, stderr_file) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return
@@ -250,8 +286,8 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         # FIXME: handle selection repeat mode
 
         try:
-            program.set_schedule(start_condition, start_time, start_delay,
-                                 repeat_mode, repeat_interval, 0, 0, 0, 0, 0, 0) # FIXME: async_call
+            self.program.set_schedule(start_condition, start_time, start_delay,
+                                      repeat_mode, repeat_interval, 0, 0, 0, 0, 0, 0) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return
