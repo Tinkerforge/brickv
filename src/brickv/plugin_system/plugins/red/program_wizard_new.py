@@ -97,3 +97,16 @@ class ProgramWizardNew(QWizard):
             return -1
         else:
             return Constants.PAGE_GENERAL
+
+    @property
+    def available_files(self):
+        available_files = []
+
+        for upload in self.page(Constants.PAGE_FILES).get_uploads():
+            available_files.append(upload.target)
+
+        return available_files
+
+    @property
+    def available_directories(self):
+        return self.page(Constants.PAGE_FILES).get_directories()

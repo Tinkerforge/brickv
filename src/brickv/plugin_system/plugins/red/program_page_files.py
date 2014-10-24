@@ -122,16 +122,16 @@ class ProgramPageFiles(QWizardPage, Ui_ProgramPageFiles):
 
         return items
 
-    def get_directorys(self):
-        directorys = set()
+    def get_directories(self):
+        directories = set()
 
         for upload in self.get_uploads():
             directory = os.path.split(upload.target)[0]
 
             if len(directory) > 0:
-                directorys.add(directory)
+                directories.add(directory)
 
-        return sorted(list(directorys))
+        return sorted(list(directories))
 
     def get_uploads(self):
         uploads = []

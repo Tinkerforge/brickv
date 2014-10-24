@@ -60,10 +60,7 @@ class ProgramPageStdio(QWizardPage, Ui_ProgramPageStdio):
         self.combo_stdin_redirection.setCurrentIndex(Constants.DEFAULT_STDIN_REDIRECTION)
         self.combo_stdout_redirection.setCurrentIndex(Constants.DEFAULT_STDOUT_REDIRECTION)
         self.combo_stderr_redirection.setCurrentIndex(Constants.DEFAULT_STDERR_REDIRECTION)
-
-        for upload in self.wizard().page(Constants.PAGE_FILES).get_uploads():
-            self.combo_stdin_file.addItem(upload.target)
-
+        self.combo_stdin_file.addItems(self.wizard().available_files)
         self.combo_stdin_file.clearEditText()
         self.update_ui_state()
 

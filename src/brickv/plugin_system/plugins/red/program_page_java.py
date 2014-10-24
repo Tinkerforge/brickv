@@ -69,20 +69,18 @@ class ProgramPageJava(QWizardPage, Ui_ProgramPageJava):
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_JAVA_START_MODE)
         self.combo_jar_file.clear()
 
-        for upload in self.wizard().page(Constants.PAGE_FILES).get_uploads():
-            if upload.target.lower().endswith('.jar'):
-                self.combo_jar_file.addItem(upload.target)
+        for filename in self.wizard().available_files:
+            if filename.lower().endswith('.jar'):
+                self.combo_jar_file.addItem(filename)
 
         if self.combo_jar_file.count() > 1:
             self.combo_jar_file.clearEditText()
 
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
 
-        directorys = self.wizard().page(Constants.PAGE_FILES).get_directorys()
-
         self.combo_working_directory.clear()
         self.combo_working_directory.addItem('.')
-        self.combo_working_directory.addItems(directorys)
+        self.combo_working_directory.addItems(self.wizard().available_directories)
 
         self.class_path_list_editor.reset_items()
         self.option_list_editor.reset_items()
