@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>465</width>
-    <height>652</height>
+    <width>433</width>
+    <height>665</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -144,16 +144,11 @@
              </sizepolicy>
             </property>
             <property name="currentIndex">
-             <number>3</number>
+             <number>2</number>
             </property>
             <item>
              <property name="text">
               <string>/dev/null</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Pipe</string>
              </property>
             </item>
             <item>
@@ -178,7 +173,7 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
+          <item row="4" column="1">
            <widget class="QLabel" name="label_stdout_log_help">
             <property name="text">
              <string>FIXME: Automatic Log File help</string>
@@ -188,7 +183,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="3" column="1">
            <widget class="QLabel" name="label_stdout_file_help">
             <property name="text">
              <string>FIXME: File help</string>
@@ -210,16 +205,6 @@
           </item>
           <item row="1" column="1">
            <widget class="QLineEdit" name="edit_stdout_file"/>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="label_stdout_pipe_help">
-            <property name="text">
-             <string>FIXME: Pipe help</string>
-            </property>
-            <property name="wordWrap">
-             <bool>true</bool>
-            </property>
-           </widget>
           </item>
          </layout>
         </item>
@@ -244,44 +229,6 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="combo_stderr_redirection">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>1</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="currentIndex">
-             <number>4</number>
-            </property>
-            <item>
-             <property name="text">
-              <string>/dev/null</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Pipe</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>File</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Automatic Log File</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Standard Output</string>
-             </property>
-            </item>
-           </widget>
-          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_stderr_file">
             <property name="text">
@@ -292,7 +239,7 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="1">
+          <item row="5" column="1">
            <widget class="QLabel" name="label_stderr_stdout_help">
             <property name="text">
              <string>FIXME: Standard Output help</string>
@@ -312,7 +259,7 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
+          <item row="4" column="1">
            <widget class="QLabel" name="label_stderr_log_help">
             <property name="text">
              <string>FIXME: Automatic Log File help</string>
@@ -322,7 +269,7 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
+          <item row="3" column="1">
            <widget class="QLabel" name="label_stderr_file_help">
             <property name="text">
              <string>FIXME: File help</string>
@@ -335,14 +282,37 @@
           <item row="1" column="1">
            <widget class="QLineEdit" name="edit_stderr_file"/>
           </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="label_stderr_pipe_help">
-            <property name="text">
-             <string>FIXME: Pipe help</string>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="combo_stderr_redirection">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="wordWrap">
-             <bool>true</bool>
+            <property name="currentIndex">
+             <number>3</number>
             </property>
+            <item>
+             <property name="text">
+              <string>/dev/null</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>File</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Automatic Log File</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Standard Output</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>
@@ -371,7 +341,9 @@
   <tabstop>combo_stdin_redirection</tabstop>
   <tabstop>combo_stdin_file</tabstop>
   <tabstop>combo_stdout_redirection</tabstop>
+  <tabstop>edit_stdout_file</tabstop>
   <tabstop>combo_stderr_redirection</tabstop>
+  <tabstop>edit_stderr_file</tabstop>
  </tabstops>
  <resources/>
  <connections/>
