@@ -124,7 +124,7 @@
      <item row="1" column="1">
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>This is the display name that will be used to refer to the new program.</string>
+        <string>This is the display name that will be used to refer to the program.</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

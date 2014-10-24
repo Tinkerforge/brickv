@@ -44,15 +44,15 @@ class ProgramWizardNew(QWizard):
         self.setWindowFlags(self.windowFlags() | Qt.Tool)
         self.setWindowTitle('New Program')
 
-        self.setPage(Constants.PAGE_GENERAL, ProgramPageGeneral())
-        self.setPage(Constants.PAGE_FILES, ProgramPageFiles())
-        self.setPage(Constants.PAGE_JAVA, ProgramPageJava())
-        self.setPage(Constants.PAGE_PYTHON, ProgramPagePython())
-        self.setPage(Constants.PAGE_ARGUMENTS, ProgramPageArguments())
-        self.setPage(Constants.PAGE_STDIO, ProgramPageStdio())
-        self.setPage(Constants.PAGE_SCHEDULE, ProgramPageSchedule())
-        self.setPage(Constants.PAGE_SUMMARY, ProgramPageSummary())
-        self.setPage(Constants.PAGE_UPLOAD, ProgramPageUpload(session))
+        self.setPage(Constants.PAGE_GENERAL, ProgramPageGeneral(title_prefix='Step 1 or 8: '))
+        self.setPage(Constants.PAGE_FILES, ProgramPageFiles(title_prefix='Step 2 or 8: '))
+        self.setPage(Constants.PAGE_JAVA, ProgramPageJava(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_PYTHON, ProgramPagePython(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_ARGUMENTS, ProgramPageArguments(title_prefix='Step 4 or 8: '))
+        self.setPage(Constants.PAGE_STDIO, ProgramPageStdio(title_prefix='Step 5 or 8: '))
+        self.setPage(Constants.PAGE_SCHEDULE, ProgramPageSchedule(title_prefix='Step 6 or 8: '))
+        self.setPage(Constants.PAGE_SUMMARY, ProgramPageSummary(title_prefix='Step 7 or 8: '))
+        self.setPage(Constants.PAGE_UPLOAD, ProgramPageUpload(session, title_prefix='Step 8 or 8: '))
 
     # overrides QWizard.sizeHint
     def sizeHint(self):

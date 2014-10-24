@@ -26,14 +26,14 @@ from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_arguments import Ui_ProgramPageArguments
 
 class ProgramPageArguments(QWizardPage, Ui_ProgramPageArguments):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title_prefix='', *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
         self.environment_is_valid = True
 
-        self.setTitle('Step 4 of {0}: Arguments'.format(Constants.STEP_COUNT))
+        self.setTitle(title_prefix + 'Arguments and Environment')
 
         self.tree_environment.setColumnWidth(0, 150)
         self.check_show_environment.stateChanged.connect(self.update_ui_state)
@@ -57,7 +57,7 @@ class ProgramPageArguments(QWizardPage, Ui_ProgramPageArguments):
     def initializePage(self):
         language = self.field('language').toInt()[0]
 
-        self.setSubTitle(u'Specify the arguments to be passed to the new {0} program [{1}].'
+        self.setSubTitle(u'Specify the arguments to be passed to the {0} program [{1}] and its environment.'
                          .format(Constants.language_display_names[language],
                                  unicode(self.field('name').toString())))
         self.label_arguments_help.setText(Constants.arguments_help[language])

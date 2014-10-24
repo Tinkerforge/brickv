@@ -28,12 +28,12 @@ from brickv.plugin_system.plugins.red.ui_program_page_schedule import Ui_Program
 import os
 
 class ProgramPageSchedule(QWizardPage, Ui_ProgramPageSchedule):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title_prefix='', *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
-        self.setTitle('Step 6 of {0}: Schedule'.format(Constants.STEP_COUNT))
+        self.setTitle(title_prefix + 'Schedule')
 
         self.registerField('schedule.start_condition', self.combo_start_condition)
         self.registerField('schedule.start_time', self.date_start_time)
@@ -62,7 +62,7 @@ class ProgramPageSchedule(QWizardPage, Ui_ProgramPageSchedule):
     def initializePage(self):
         now = QDateTime.currentDateTime().addSecs(5 * 60) # set default start time to 5 minutes from now
 
-        self.setSubTitle(u'Specify the execution schedule for the new {0} program [{1}].'
+        self.setSubTitle(u'Specify the execution schedule for the {0} program [{1}].'
                          .format(Constants.language_display_names[self.field('language').toInt()[0]],
                                  unicode(self.field('name').toString())))
         self.combo_start_condition.setCurrentIndex(Constants.DEFAULT_SCHEDULE_START_CONDITION)

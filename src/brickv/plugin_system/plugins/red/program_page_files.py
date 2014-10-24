@@ -31,12 +31,12 @@ from collections import namedtuple
 Upload = namedtuple('Upload', ['source', 'target'])
 
 class ProgramPageFiles(QWizardPage, Ui_ProgramPageFiles):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title_prefix='', *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
-        self.setTitle('Step 2 of {0}: Files'.format(Constants.STEP_COUNT))
+        self.setTitle(title_prefix + 'Files')
 
         self.list_files.itemSelectionChanged.connect(self.update_ui_state)
         self.button_add_files.clicked.connect(self.show_add_files_dialog)
@@ -45,7 +45,7 @@ class ProgramPageFiles(QWizardPage, Ui_ProgramPageFiles):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle(u'Specify the files to be uploaded for the new {0} program [{1}].'
+        self.setSubTitle(u'Specify the files to be uploaded for the {0} program [{1}].'
                          .format(Constants.language_display_names[self.field('language').toInt()[0]],
                                  unicode(self.field('name').toString())))
         self.list_files.clear()

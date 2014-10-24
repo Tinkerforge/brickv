@@ -27,19 +27,19 @@ from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_summary import Ui_ProgramPageSummary
 
 class ProgramPageSummary(QWizardPage, Ui_ProgramPageSummary):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title_prefix='', *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
-        self.setTitle('Step 7 of {0}: Summary'.format(Constants.STEP_COUNT))
+        self.setTitle(title_prefix + 'Summary')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
         name = unicode(self.field('name').toString())
         language_display_name = Constants.language_display_names[self.field('language').toInt()[0]]
 
-        self.setSubTitle(u'The complete configuration of the new {0} program [{1}].'
+        self.setSubTitle(u'The complete configuration of the {0} program [{1}].'
                          .format(language_display_name, name))
 
         # general information

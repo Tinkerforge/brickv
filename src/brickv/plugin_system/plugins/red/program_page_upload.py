@@ -29,15 +29,15 @@ import os
 import stat
 
 class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
-    def __init__(self, session, *args, **kwargs):
+    def __init__(self, session, title_prefix='', *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
-        self.session = session
+        self.session = session # FIXME: remove local ref to session, use self.wizard().session instead
         self.upload_successful = False
 
-        self.setTitle('Step 8 of {0}: Upload'.format(Constants.STEP_COUNT))
+        self.setTitle(title_prefix + 'Upload')
 
         self.progress_file.setVisible(False)
 
@@ -45,7 +45,7 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle(u'Upload the new {0} program [{1}].'
+        self.setSubTitle(u'Upload the {0} program [{1}].'
                          .format(Constants.language_display_names[self.field('language').toInt()[0]],
                                  unicode(self.field('name').toString())))
         self.update_ui_state()

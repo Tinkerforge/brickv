@@ -26,12 +26,12 @@ from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_java import Ui_ProgramPageJava
 
 class ProgramPageJava(QWizardPage, Ui_ProgramPageJava):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title_prefix='', *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
-        self.setTitle('Step 3 of {0}: Java Configuration'.format(Constants.STEP_COUNT))
+        self.setTitle(title_prefix + 'Java Configuration')
 
         self.registerField('java.version', self.combo_version)
         self.registerField('java.start_mode', self.combo_start_mode)
@@ -64,7 +64,7 @@ class ProgramPageJava(QWizardPage, Ui_ProgramPageJava):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle(u'Specify how the new Java program [{0}] should be executed.'
+        self.setSubTitle(u'Specify how the Java program [{0}] should be executed.'
                          .format(unicode(self.field('name').toString())))
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_JAVA_START_MODE)
         self.combo_jar_file.clear()

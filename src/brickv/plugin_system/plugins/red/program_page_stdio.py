@@ -27,12 +27,12 @@ from brickv.plugin_system.plugins.red.ui_program_page_stdio import Ui_ProgramPag
 import os
 
 class ProgramPageStdio(QWizardPage, Ui_ProgramPageStdio):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title_prefix='', *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
-        self.setTitle('Step 5 of {0}: Stdio Redirection'.format(Constants.STEP_COUNT))
+        self.setTitle(title_prefix + 'Stdio Redirection')
 
         self.registerField('stdin_redirection', self.combo_stdin_redirection)
         self.registerField('stdin_file', self.combo_stdin_file, 'currentText')
@@ -54,7 +54,7 @@ class ProgramPageStdio(QWizardPage, Ui_ProgramPageStdio):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle(u'Specify how standard input, output and error of the new {0} program [{1}] should be redirected.'
+        self.setSubTitle(u'Specify how standard input, output and error of the {0} program [{1}] should be redirected.'
                          .format(Constants.language_display_names[self.field('language').toInt()[0]],
                                  unicode(self.field('name').toString())))
         self.combo_stdin_redirection.setCurrentIndex(Constants.DEFAULT_STDIN_REDIRECTION)

@@ -26,12 +26,12 @@ from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_python import Ui_ProgramPagePython
 
 class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title_prefix='', *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
-        self.setTitle('Step 4 of {0}: Python Configuration'.format(Constants.STEP_COUNT))
+        self.setTitle(title_prefix + 'Python Configuration')
 
         self.registerField('python.version', self.combo_version)
         self.registerField('python.start_mode', self.combo_start_mode)
@@ -58,7 +58,7 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle(u'Specify how the new Python program [{0}] should be executed.'
+        self.setSubTitle(u'Specify how the Python program [{0}] should be executed.'
                          .format(unicode(self.field('name').toString())))
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PYTHON_START_MODE)
         self.combo_script_file.clear()

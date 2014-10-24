@@ -28,15 +28,15 @@ from brickv.plugin_system.plugins.red.ui_program_page_general import Ui_ProgramP
 import re
 
 class ProgramPageGeneral(QWizardPage, Ui_ProgramPageGeneral):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title_prefix='', *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
         self.identifier_is_unique = False
 
-        self.setTitle('Step 1 of {0}: General Information'.format(Constants.STEP_COUNT))
-        self.setSubTitle('Specify name, identifier and programming language for the new program.')
+        self.setTitle(title_prefix + 'General Information')
+        self.setSubTitle('Specify name, identifier and programming language for the program.')
 
         self.edit_identifier.setValidator(QRegExpValidator(QRegExp('^[a-zA-Z0-9_][a-zA-Z0-9._-]{2,}$'), self))
 
