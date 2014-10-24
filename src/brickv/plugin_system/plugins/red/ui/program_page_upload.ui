@@ -67,6 +67,9 @@
        <property name="text">
         <string>Waiting for start...</string>
        </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item row="3" column="1">

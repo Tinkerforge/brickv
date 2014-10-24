@@ -21,11 +21,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWizard, QWizardPage
-from brickv.plugin_system.plugins.red.api import REDError, REDFile, REDProgram
+from PyQt4.QtGui import QWizard, QWizardPage, QApplication
+from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_upload import Ui_ProgramPageUpload
 import os
+import stat
 
 class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
     def __init__(self, session, *args, **kwargs):
@@ -62,6 +63,7 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
 
     def log(self, message):
         self.list_log.addItem(message)
+        self.list_log.scrollToBottom()
 
     def next_step(self, message, increase=1, log=True):
         self.progress_total.setValue(self.progress_total.value() + increase)
@@ -75,7 +77,7 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         self.log(message)
 
         if defined:
-            pass # FIXME: undefine and purge program?
+            pass # FIXME: purge program?
 
     def start_upload(self):
         self.button_start_upload.setEnabled(False)
@@ -132,22 +134,34 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
 
             self.next_step('Uploading {0}...'.format(source_name))
 
-            self.progress_file.setVisible(False)
+            self.progress_file.setVisible(True)
             self.progress_file.setRange(0, 0)
             self.progress_file.setValue(0)
 
             try:
-                source_size = os.stat(source_name).st_size
+                source_st = os.stat(source_name)
                 source = open(source_name, 'rb')
             except Exception as e:
                 self.upload_error("...error opening source file '{0}': {1}".format(source_name, e))
                 return
 
-            self.progress_file.setRange(0, source_size)
+            self.progress_file.setRange(0, source_st.st_size)
 
             target_name = os.path.join(root_directory, 'bin', upload.target)
 
-            # FIXME: if upload.target contains a directory then create it before writing
+            if len(os.path.split(upload.target)[0]) > 0:
+                target_directory = os.path.split(target_name)[0]
+
+                try:
+                    create_directory(self.session, target_directory, DIRECTORY_FLAG_RECURSIVE, 0755, 1000, 1000)
+                except REDError as e:
+                    self.upload_error("...error creating target directory '{0}': {1}".format(target_directory, e))
+                    return
+
+            if (source_st.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)) != 0:
+                permissions = 0755
+            else:
+                permissions = 0644
 
             try:
                 target = REDFile(self.session).open(target_name,
@@ -155,14 +169,15 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
                                                     REDFile.FLAG_CREATE |
                                                     REDFile.FLAG_NON_BLOCKING |
                                                     REDFile.FLAG_TRUNCATE,
-                                                    0555, 1000, 1000) # FIXME: async_call, use correct permissions
+                                                    permissions, 1000, 1000) # FIXME: async_call
             except REDError as e:
                 self.upload_error("...error opening target file '{0}': {1}".format(target_name, e))
                 return
 
+            # FIXME: upload files async
             while True:
                 try:
-                    data = source.read(1024)
+                    data = source.read(256)
                 except Exception as e:
                     self.upload_error("...error reading source file '{0}': {1}".format(source_name, e))
                     return
@@ -175,6 +190,9 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
                 except REDError as e:
                     self.upload_error("...error writing target file '{0}': {1}".format(target_name, e))
                     return
+
+                # ensure that the UI stays responsive and the keep-alive timer works
+                QApplication.processEvents()
 
                 self.progress_file.setValue(self.progress_file.value() + len(data))
 

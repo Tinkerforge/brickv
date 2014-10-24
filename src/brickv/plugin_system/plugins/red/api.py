@@ -894,9 +894,9 @@ DIRECTORY_FLAG_EXCLUSIVE = BrickRED.DIRECTORY_FLAG_EXCLUSIVE
 
 def create_directory(session, name, flags, permissions, uid, gid):
     if not isinstance(name, REDString):
-        name = REDString(red).allocate(name)
+        name = REDString(session).allocate(name)
 
-    error_code = session._brick.create_directory(name, flags, permissions, uid, gid)
+    error_code = session._brick.create_directory(name._object_id, flags, permissions, uid, gid)
 
     if error_code != REDError.E_SUCCESS:
         raise REDError('Could not create directory', error_code)

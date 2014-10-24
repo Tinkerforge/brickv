@@ -104,6 +104,7 @@ class ProgramPageFiles(QWizardPage, Ui_ProgramPageFiles):
                 target = os.path.relpath(source, directory)
                 uploads.append(Upload(source, target))
 
+                # ensure that the UI stays responsive and the keep-alive timer works
                 QApplication.processEvents()
 
                 if progress.wasCanceled():
