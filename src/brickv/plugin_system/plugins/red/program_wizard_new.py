@@ -65,3 +65,35 @@ class ProgramWizardNew(QWizard):
             size.setHeight(700)
 
         return size
+
+    # overrides QWizard.nextId
+    def nextId(self):
+        currentId = self.currentId()
+
+        if currentId == Constants.PAGE_GENERAL:
+            return Constants.PAGE_FILES
+        elif currentId == Constants.PAGE_FILES:
+            language = self.field('language').toInt()[0]
+
+            if language == Constants.LANGUAGE_JAVA:
+                return Constants.PAGE_JAVA
+            elif language == Constants.LANGUAGE_PYTHON:
+                return Constants.PAGE_PYTHON
+            else:
+                return Constants.PAGE_GENERAL
+        elif currentId == Constants.PAGE_JAVA:
+            return Constants.PAGE_ARGUMENTS
+        elif currentId == Constants.PAGE_PYTHON:
+            return Constants.PAGE_ARGUMENTS
+        elif currentId == Constants.PAGE_ARGUMENTS:
+            return Constants.PAGE_STDIO
+        elif currentId == Constants.PAGE_STDIO:
+            return Constants.PAGE_SCHEDULE
+        elif currentId == Constants.PAGE_SCHEDULE:
+            return Constants.PAGE_SUMMARY
+        elif currentId == Constants.PAGE_SUMMARY:
+            return Constants.PAGE_UPLOAD
+        elif currentId == Constants.PAGE_UPLOAD:
+            return -1
+        else:
+            return Constants.PAGE_GENERAL

@@ -81,10 +81,6 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
         self.option_list_editor.reset_items()
         self.update_ui_state()
 
-    # overrides QWizardPage.nextId
-    def nextId(self):
-        return Constants.PAGE_ARGUMENTS
-
     # overrides QWizardPage.isComplete
     def isComplete(self):
         start_mode = self.field('python.start_mode').toInt()[0]

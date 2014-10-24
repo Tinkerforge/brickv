@@ -111,9 +111,5 @@ class ProgramPageSummary(QWizardPage, Ui_ProgramPageSummary):
         self.text_summary.setHtml(html)
         self.update_ui_state()
 
-    # overrides QWizardPage.nextId
-    def nextId(self):
-        return Constants.PAGE_UPLOAD
-
     def update_ui_state(self):
         pass

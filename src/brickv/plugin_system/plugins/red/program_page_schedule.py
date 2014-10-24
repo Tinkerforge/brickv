@@ -85,10 +85,6 @@ class ProgramPageSchedule(QWizardPage, Ui_ProgramPageSchedule):
 
         return QWizardPage.isComplete(self)
 
-    # overrides QWizardPage.nextId
-    def nextId(self):
-        return Constants.PAGE_SUMMARY
-
     def update_ui_state(self):
         start_condition        = self.field('schedule.start_condition').toInt()[0]
         start_condition_never  = start_condition == Constants.SCHEDULE_START_CONDITION_NEVER

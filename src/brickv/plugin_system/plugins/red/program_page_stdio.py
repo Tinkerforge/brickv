@@ -67,10 +67,6 @@ class ProgramPageStdio(QWizardPage, Ui_ProgramPageStdio):
         self.combo_stdin_file.clearEditText()
         self.update_ui_state()
 
-    # overrides QWizardPage.nextId
-    def nextId(self):
-        return Constants.PAGE_SCHEDULE
-
     # overrides QWizardPage.isComplete
     def isComplete(self):
         stdin_redirection = self.field('stdin_redirection').toInt()[0]

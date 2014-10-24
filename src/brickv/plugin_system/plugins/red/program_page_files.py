@@ -51,17 +51,6 @@ class ProgramPageFiles(QWizardPage, Ui_ProgramPageFiles):
         self.list_files.clear()
         self.update_ui_state()
 
-    # overrides QWizardPage.nextId
-    def nextId(self):
-        language = self.field('language').toInt()[0]
-
-        if language == Constants.LANGUAGE_JAVA:
-            return Constants.PAGE_JAVA
-        elif language == Constants.LANGUAGE_PYTHON:
-            return Constants.PAGE_PYTHON
-        else:
-            return Constants.PAGE_GENERAL
-
     def update_ui_state(self):
         self.button_remove_selected_files.setEnabled(len(self.list_files.selectedItems()) > 0)
 

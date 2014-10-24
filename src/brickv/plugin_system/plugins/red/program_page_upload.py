@@ -50,10 +50,6 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
                                  unicode(self.field('name').toString())))
         self.update_ui_state()
 
-    # overrides QWizardPage.nextId
-    def nextId(self):
-        return -1
-
     # overrides QWizardPage.isComplete
     def isComplete(self):
         return self.upload_successful and QWizardPage.isComplete(self)

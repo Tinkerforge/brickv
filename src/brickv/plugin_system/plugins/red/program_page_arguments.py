@@ -67,10 +67,6 @@ class ProgramPageArguments(QWizardPage, Ui_ProgramPageArguments):
         self.environment_list_editor.reset_items()
         self.update_ui_state()
 
-    # overrides QWizardPage.nextId
-    def nextId(self):
-        return Constants.PAGE_STDIO
-
     # overrides QWizardPage.isComplete
     def isComplete(self):
         return self.environment_is_valid and QWizardPage.isComplete(self)

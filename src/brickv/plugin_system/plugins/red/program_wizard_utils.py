@@ -26,8 +26,6 @@ from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem
 from brickv.plugin_system.plugins.red.api import REDProgram
 
 class Constants:
-    STEP_COUNT = 8
-
     PAGE_GENERAL   = 0
     PAGE_FILES     = 1
     PAGE_JAVA      = 2

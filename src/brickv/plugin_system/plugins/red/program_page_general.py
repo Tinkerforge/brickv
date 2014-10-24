@@ -60,10 +60,6 @@ class ProgramPageGeneral(QWizardPage, Ui_ProgramPageGeneral):
         self.combo_language.setCurrentIndex(Constants.LANGUAGE_INVALID)
         self.update_ui_state()
 
-    # overrides QWizardPage.nextId
-    def nextId(self):
-        return Constants.PAGE_FILES
-
     # overrides QWizardPage.isComplete
     def isComplete(self):
         return self.edit_name_checker.valid and \
