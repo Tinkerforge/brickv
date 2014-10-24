@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 
+import time
 from sys import argv
 import subprocess
 
@@ -45,3 +46,4 @@ subprocess.Popen(cmd_wireless_connect9, shell=True)
 subprocess.Popen(cmd_wireless_connect10, shell=True)
 subprocess.Popen(cmd_wireless_connect11, shell=True)
 subprocess.Popen(cmd_wireless_connect, shell=True)
+time.sleep(7)
