@@ -85,7 +85,22 @@ class RED(PluginBase, Ui_RED):
         return ['System', 'Restart Brick Daemon', 'Reboot RED Brick', 'Shut down RED Brick']
     
     def drop_down_triggered(self, action):
-        print action.text()
+        def cb(result):
+            if result == None or result.stderr != '':
+                pass # TODO: Error popup?
+
+        t = action.text()
+        param = -1
+        
+        if t == 'Restart Brick Daemon':
+            param = 0
+        elif t == 'Reboot RED Brick':
+            param = 1
+        elif t == 'Shut down RED Brick':
+            param = 2
+        
+        if param != -1:
+            self.script_manager.execute_script('restart_reboot_shutdown', cb, [str(param)])
         
     def has_custom_version(self, label_version_name, label_version):
         self.label_version_name = label_version_name
