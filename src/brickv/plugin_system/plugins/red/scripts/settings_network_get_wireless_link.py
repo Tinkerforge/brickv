@@ -5,7 +5,7 @@ import json
 import netifaces
 import subprocess
 
-return_dict = {'status': 'disconnected',
+return_dict = {'status': False,
                'essid': None,
                'bssid': None}
 
@@ -21,7 +21,7 @@ if sys.argv[1] in netifaces.interfaces():
             pass
         else:
             cmd_output_first_split = cmd_output.split('\n')
-            return_dict['status'] = 'connected'
+            return_dict['status'] = True
             return_dict['essid'] = cmd_output_first_split[1].strip().split('SSID: ')[1]
             return_dict['bssid'] = cmd_output_first_split[0].strip().split('Connected to ')[1].split(' (')[0]
 
