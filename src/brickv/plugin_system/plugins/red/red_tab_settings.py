@@ -132,7 +132,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.pbutton_net_gen_refresh.clicked.connect(self.slot_network_refresh_clicked)
         self.pbutton_net_wireless_refresh.clicked.connect(self.slot_network_refresh_clicked)
         self.pbutton_net_wired_refresh.clicked.connect(self.slot_network_refresh_clicked)
-        
+
         # Network fields
         self.ledit_net_gen_hostname.textEdited.connect(self.slot_network_settings_changed)
         self.cbox_net_wireless_intf.currentIndexChanged.connect(self.slot_network_settings_changed)
@@ -952,6 +952,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def slot_network_button_wireless_use_intf_clicked(self):
         def cb_settings_network_wireless_apply_intf(result):
             if result.stderr == "":
+                self.update_network_widget_data()
                 QtGui.QMessageBox.information(None,
                                               'Settings | Network | Wireless',
                                               'Wireless interface changed.',
@@ -1005,6 +1006,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.cbox_net_wireless_ap.clear()
                     for nidx, apdict in self.network_all_data['scan_result'].iteritems():
                         self.cbox_net_wireless_ap.addItem(apdict['essid'])
+                    self.update_network_widget_data()
                     QtGui.QMessageBox.information(None,
                                                   'Settings | Network | Wireless',
                                                   'Wireless scan finished successfully.',
