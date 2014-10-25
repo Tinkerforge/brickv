@@ -19,7 +19,6 @@ dns2 = argv[10]
 dns3 = argv[11]
 automatic = argv[12]
 
-cmd_restart_wicd = "/etc/init.d/wicd force-reload"
 prepend_cmd = "/usr/bin/wicd-cli --wireless "+"-n"+argv[1]
 cmd_wireless_connect1 = prepend_cmd+" -p enctype -s "+enct
 cmd_wireless_connect2 = prepend_cmd+" -p key -s "+key
@@ -46,4 +45,4 @@ subprocess.Popen(cmd_wireless_connect9, shell=True)
 subprocess.Popen(cmd_wireless_connect10, shell=True)
 subprocess.Popen(cmd_wireless_connect11, shell=True)
 subprocess.Popen(cmd_wireless_connect, shell=True)
-time.sleep(7)
+time.sleep(5)
