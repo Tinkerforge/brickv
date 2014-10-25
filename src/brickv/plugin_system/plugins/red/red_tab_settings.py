@@ -704,6 +704,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.pbutton_brickd_adv_save.setText("Saved")
 
     def slot_network_refresh_clicked(self):
+        if not self.twidget_net.isEnabled():
+            return
+
         self.network_button_refresh_enabled(False)
 
         def cb_settings_network_status(result):
