@@ -42,6 +42,16 @@
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
+           <widget class="QLabel" name="label_working_wait">
+            <property name="text">
+             <string>Working, Please wait...</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QTabWidget" name="twidget_net">
             <property name="enabled">
              <bool>true</bool>
@@ -68,7 +78,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>762</width>
-                   <height>547</height>
+                   <height>524</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_18">
@@ -284,7 +294,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>762</width>
-                   <height>547</height>
+                   <height>524</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -312,9 +322,6 @@
                        <enum>Qt::Horizontal</enum>
                       </property>
                      </widget>
-                    </item>
-                    <item row="6" column="1" colspan="2">
-                     <widget class="QComboBox" name="cbox_net_wireless_enctype"/>
                     </item>
                     <item row="10" column="0" colspan="3">
                      <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -364,7 +371,11 @@
                      </layout>
                     </item>
                     <item row="7" column="1" colspan="2">
-                     <widget class="QLineEdit" name="ledit_net_wireless_key"/>
+                     <widget class="QLineEdit" name="ledit_net_wireless_key">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
                     </item>
                     <item row="11" column="0">
                      <spacer name="verticalSpacer_3">
@@ -622,6 +633,13 @@
                       </property>
                      </widget>
                     </item>
+                    <item row="6" column="1" colspan="2">
+                     <widget class="QLabel" name="label_net_wireless_enctype">
+                      <property name="text">
+                       <string>None</string>
+                      </property>
+                     </widget>
+                    </item>
                    </layout>
                   </item>
                  </layout>
@@ -646,7 +664,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>762</width>
-                   <height>547</height>
+                   <height>524</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_7">
