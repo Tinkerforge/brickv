@@ -577,7 +577,7 @@
                     <item row="0" column="1" colspan="2">
                      <widget class="QLabel" name="label_net_wireless_constat">
                       <property name="text">
-                       <string>Not Connected</string>
+                       <string>None</string>
                       </property>
                      </widget>
                     </item>
