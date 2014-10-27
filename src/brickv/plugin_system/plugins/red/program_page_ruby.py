@@ -63,7 +63,7 @@ class ProgramPageRuby(QWizardPage, Ui_ProgramPageRuby):
         self.combo_script_file.clear()
 
         for filename in self.wizard().available_files:
-            if filename.lower().endswith('.py'):
+            if filename.lower().endswith('.rb'):
                 self.combo_script_file.addItem(filename)
 
         if self.combo_script_file.count() > 1:
