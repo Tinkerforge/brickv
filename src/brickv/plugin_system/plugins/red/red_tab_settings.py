@@ -34,8 +34,6 @@ from PyQt4 import Qt, QtCore, QtGui
 from brickv.plugin_system.plugins.red.ui_red_tab_settings import Ui_REDTabSettings
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red import config_parser
-from brickv.plugin_system.plugins.red.script_manager import ScriptManager
-
 from brickv.async_call import async_call
 
 MANAGER_SETTINGS_CONF_PATH = "/etc/wicd/manager-settings.conf"
@@ -68,7 +66,6 @@ CBOX_BRICKD_LED_TRIGGER_ON = 5
 network_refresh_tasks_remaining = -1
 
 class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
-    script_manager = None
     def __init__(self):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)

@@ -27,10 +27,9 @@ import time
 
 from PyQt4 import QtCore, Qt, QtGui
 
-from brickv.program_path import get_program_path
+#from brickv.program_path import get_program_path
 from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOverview
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 
 # constants
 REFRESH_TIME = 3000 # in milliseconds
@@ -40,9 +39,6 @@ DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_FIRST = 210 # in pixels
 DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER = 105 # in pixels
 
 class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
-    red = None
-    script_manager = None
-
     def __init__(self):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
