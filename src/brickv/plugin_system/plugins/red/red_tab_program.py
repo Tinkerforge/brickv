@@ -64,7 +64,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         self.button_delete.setEnabled(has_selection)
 
     def add_program_to_list(self, program):
-        program_info = ProgramInfo(program)
+        program_info = ProgramInfo(program, self.script_manager)
 
         item = QListWidgetItem(str(program.custom_options.get(Constants.FIELD_NAME, '<unknown>')))
         item.setData(Qt.UserRole, QVariant(program_info))

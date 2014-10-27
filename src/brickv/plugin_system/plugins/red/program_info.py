@@ -21,18 +21,23 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import json
 from PyQt4.QtGui import QWidget
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_info import Ui_ProgramInfo
 from brickv.async_call import async_call
 
 class ProgramInfo(QWidget, Ui_ProgramInfo):
-    def __init__(self, program, *args, **kwargs):
+    def __init__(self, program, script_manager, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
         self.program = program
+        self.script_manager = script_manager
+        self.program_dir = '/'.join(["/home/tf/programs",
+                                    str(self.program.custom_options.get(Constants.FIELD_NAME, '<unknown>'))])
+        self.program_dir_walk_result = None
 
         self.button_refresh.clicked.connect(self.refresh_info)
         self.button_download_log.clicked.connect(self.download_selected_log)
@@ -84,6 +89,24 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             language_display_name = Constants.language_display_names[language_id]
         except:
             language_display_name = '<unknown>'
+
+        def cb_program_get_os_walk(result):
+            if result.stderr == "":
+                self.program_dir_walk_result = json.loads(result.stdout)
+                print self.program_dir_walk_result
+                for dir_node_dict in self.program_dir_walk_result:
+                    if dir_node_dict['root'] == '/'.join([self.program_dir, "log"]):
+                        for f in dir_node_dict['files']:
+                            print f
+            else:
+                # TODO: Error popup for user?
+                print result
+
+        print self.program_dir
+
+        self.script_manager.execute_script('program_get_os_walk',
+                                           cb_program_get_os_walk,
+                                           [self.program_dir])
 
         self.label_name.setText(name)
         self.label_identifier.setText(str(self.program.identifier))
