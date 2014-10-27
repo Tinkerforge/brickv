@@ -72,6 +72,13 @@ class Constants:
         LANGUAGE_PYTHON:  'This list of environment variables will be set for the Python program.',
         LANGUAGE_RUBY:    'This list of environment variables will be set for the Ruby program.',
     }
+    
+    language_file_ending = { # endswith XXX sorted by file ending index 
+        LANGUAGE_INVALID: [],
+        LANGUAGE_JAVA:    ['', '.java'],
+        LANGUAGE_PYTHON:  ['', '.py'],
+        LANGUAGE_RUBY:    ['', '.rb']                 
+    }
 
     JAVA_START_MODE_MAIN_CLASS = 0
     JAVA_START_MODE_JAR_FILE   = 1
@@ -426,3 +433,20 @@ class MandatoryEditableComboBoxChecker:
 
         if emit and was_valid != self.valid:
             self.page.completeChanged.emit()
+
+class ComboBoxFileEndingChecker:
+    def __init__(self, page, combo_file, combo_ending):
+        self.page         = page
+        self.combo_file   = combo_file
+        self.combo_ending = combo_ending
+        
+        self.combo_ending.currentIndexChanged.connect(lambda: self.check(True))
+        
+    def check(self, emit):
+        self.combo_file.clear()
+        
+        end_str = Constants.language_file_ending[self.page.language][self.combo_ending.currentIndex()]
+
+        for filename in sorted(self.page.wizard().available_files):
+            if filename.lower().endswith(end_str):
+                self.combo_file.addItem(filename) 

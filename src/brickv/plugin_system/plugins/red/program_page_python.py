@@ -33,6 +33,8 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
 
         self.setTitle(title_prefix + 'Python Configuration')
 
+        self.language = Constants.LANGUAGE_PYTHON
+
         self.registerField('python.version', self.combo_version)
         self.registerField('python.start_mode', self.combo_start_mode)
         self.registerField('python.script_file', self.combo_script_file, 'currentText')
@@ -44,6 +46,7 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
+        self.combo_script_file_ending_checker = ComboBoxFileEndingChecker(self, self.combo_script_file, self.combo_script_file_ending)
         self.combo_script_file_checker = MandatoryEditableComboBoxChecker(self, self.combo_script_file, self.label_script_file)
         self.edit_module_name_checker = MandatoryLineEditChecker(self, self.edit_module_name, self.label_module_name)
         self.edit_command_checker = MandatoryLineEditChecker(self, self.edit_command, self.label_command)
@@ -58,18 +61,12 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
+        self.combo_script_file_ending_checker.check(False)
         self.update_python_versions()
+        
         self.setSubTitle(u'Specify how the Python program [{0}] should be executed.'
                          .format(unicode(self.field(Constants.FIELD_NAME).toString())))
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PYTHON_START_MODE)
-        self.combo_script_file.clear()
-
-        for filename in self.wizard().available_files:
-            if filename.lower().endswith('.py'):
-                self.combo_script_file.addItem(filename)
-
-        if self.combo_script_file.count() > 1:
-            self.combo_script_file.clearEditText()
 
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
 
@@ -126,7 +123,9 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
         start_mode_command     = start_mode == Constants.PYTHON_START_MODE_COMMAND
         show_advanced_options  = self.check_show_advanced_options.checkState() == Qt.Checked
 
+        self.label_script_file_ending.setVisible(start_mode_script_file)
         self.label_script_file.setVisible(start_mode_script_file)
+        self.combo_script_file_ending.setVisible(start_mode_script_file)
         self.combo_script_file.setVisible(start_mode_script_file)
         self.label_script_file_help.setVisible(start_mode_script_file)
         self.label_module_name.setVisible(start_mode_module_name)

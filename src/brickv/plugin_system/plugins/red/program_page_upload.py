@@ -239,6 +239,8 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
             executable, arguments, working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
         elif self.language == 'python':
             executable, arguments, working_directory = self.wizard().page(Constants.PAGE_PYTHON).get_command()
+        elif self.language == 'ruby':
+            executable, arguments, working_directory = self.wizard().page(Constants.PAGE_RUBY).get_command()
 
         arguments += self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
         environment = []
