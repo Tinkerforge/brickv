@@ -37,8 +37,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.session = session
         self.program = program
         self.script_manager = script_manager
-        self.program_dir = '/'.join(["/home/tf/programs",
-                                    str(self.program.custom_options.get(Constants.FIELD_NAME, '<unknown>'))])
+        self.program_dir = unicode(self.program.root_directory)
         self.program_dir_walk_result = None
         self.tree_logs_model = QStandardItemModel(self)
         self.tree_logs_header_labels = ["File", "Time Stamp"]
@@ -102,6 +101,11 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         except:
             language_display_name = '<unknown>'
 
+        self.label_name.setText(name)
+        self.label_identifier.setText(str(self.program.identifier))
+        self.label_language.setText(language_display_name)
+
+        # logs
         def cb_program_get_os_walk(result):
             if result.stderr == "":
                 self.program_dir_walk_result = json.loads(result.stdout)
@@ -140,10 +144,6 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.script_manager.execute_script('program_get_os_walk',
                                            cb_program_get_os_walk,
                                            [self.program_dir])
-
-        self.label_name.setText(name)
-        self.label_identifier.setText(str(self.program.identifier))
-        self.label_language.setText(language_display_name)
 
     def download_selected_log(self):
         #selected_items = self.list_logs.selectedItems()
