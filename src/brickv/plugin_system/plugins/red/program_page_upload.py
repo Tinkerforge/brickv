@@ -80,7 +80,6 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
             self.log(message)
 
     def upload_error(self, message, defined=True):
-        self.wizard().setOption(QWizard.NoCancelButton, False)
         self.log(message)
 
         if defined:
@@ -89,7 +88,6 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
     def start_upload(self):
         self.button_start_upload.setEnabled(False)
         self.wizard().setOption(QWizard.DisabledBackButtonOnLastPage, True)
-        self.wizard().setOption(QWizard.NoCancelButton, True)
 
         self.uploads = self.wizard().page(Constants.PAGE_FILES).get_uploads()
 
@@ -136,7 +134,7 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
 
         self.progress_file.setRange(0, len(self.uploads))
 
-        self.next_upload()
+        self.next_upload() # FIXME: abort upload once self.wizard().canceled is True
 
     def next_upload(self):
         if len(self.uploads) == 0:
@@ -293,5 +291,6 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         self.log('...done')
         self.next_step('Upload successful!')
 
+        self.wizard().setOption(QWizard.NoCancelButton, True)
         self.upload_successful = True
         self.completeChanged.emit()

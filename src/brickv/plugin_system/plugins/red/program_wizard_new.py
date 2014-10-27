@@ -41,6 +41,7 @@ class ProgramWizardNew(QWizard):
         self.session = session
         self.identifiers = identifiers
         self.script_manager = script_manager
+        self.canceled = False
 
         self.setWindowFlags(self.windowFlags() | Qt.Tool)
         self.setWindowTitle('New Program')
@@ -54,6 +55,8 @@ class ProgramWizardNew(QWizard):
         self.setPage(Constants.PAGE_SCHEDULE, ProgramPageSchedule(title_prefix='Step 6 or 8: '))
         self.setPage(Constants.PAGE_SUMMARY, ProgramPageSummary(title_prefix='Step 7 or 8: '))
         self.setPage(Constants.PAGE_UPLOAD, ProgramPageUpload(session, title_prefix='Step 8 or 8: '))
+
+        self.rejected.connect(lambda: self.set_canceled(True))
 
     # overrides QWizard.sizeHint
     def sizeHint(self):
@@ -98,6 +101,9 @@ class ProgramWizardNew(QWizard):
             return -1
         else:
             return Constants.PAGE_GENERAL
+
+    def set_canceled(self, canceled):
+        self.canceled = canceled
 
     @property
     def available_files(self):
