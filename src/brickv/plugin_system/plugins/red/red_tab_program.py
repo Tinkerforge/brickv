@@ -99,7 +99,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         async_call(refresh_async, None, cb_success, cb_error)
 
     def show_new_program_wizard(self):
-        #self.button_new.setEnabled(False)
+        self.button_new.setEnabled(False)
 
         identifiers = []
 
@@ -107,17 +107,16 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
             identifiers.append(str(self.list_programs.item(i).data(Qt.UserRole).toPyObject().program.identifier))
 
         self.new_program_wizard = ProgramWizardNew(self.session, identifiers, self.script_manager)
-        #self.new_program_wizard.finished.connect(self.new_program_wizard_finished)
+        self.new_program_wizard.finished.connect(self.new_program_wizard_finished)
         self.new_program_wizard.show()
 
     def new_program_wizard_finished(self, result):
-        #self.new_program_wizard.finished.disconnect(self.new_program_wizard_finished)
+        self.new_program_wizard.finished.disconnect(self.new_program_wizard_finished)
 
         if result == QDialog.Accepted:
             self.add_program_to_list(self.new_program_wizard.program)
             self.list_programs.item(self.list_programs.count() - 1).setSelected(True)
 
-        self.new_program_wizard = None
         self.button_new.setEnabled(True)
 
     def purge_selected_program(self):
