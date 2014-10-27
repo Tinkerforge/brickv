@@ -1188,6 +1188,7 @@ class REDProgram(REDObject):
         self._last_spawned_timestamp = None
         self._last_scheduler_error_message = None
         self._last_scheduler_error_timestamp = None
+        self._custom_options = None
         self.process_spawned_callback = None
         self.scheduler_error_occurred_callback = None
 
@@ -1255,6 +1256,7 @@ class REDProgram(REDObject):
         self.update_schedule()
         self.update_last_spawned_process()
         self.update_last_scheduler_error()
+        self.update_custom_options()
 
     def update_identifier(self):
         if self._object_id is None:
@@ -1397,6 +1399,29 @@ class REDProgram(REDObject):
 
         self._last_scheduler_error_message = _attach_or_release(self._session, REDString, message_string_id)
         self._last_scheduler_error_timestamp = timestamp
+
+    def update_custom_options(self):
+        if self._object_id is None:
+            raise RuntimeError('Cannot update unattached program object')
+
+        error_code, custom_option_names_list_id = self._session._brick.get_custom_program_option_names(self._object_id, self._session._session_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get list of custom option names of program object {0}'.format(self._object_id), error_code)
+
+        custom_option_names = _attach_or_release(self._session, REDList, custom_option_names_list_id)
+        custom_options = {}
+
+        for name in custom_option_names.items:
+            error_code, custom_option_value_string_id = \
+            self._session._brick.get_custom_program_option_value(self._object_id, name._object_id, self._session._session_id)
+
+            if error_code != REDError.E_SUCCESS:
+                raise REDError('Could not get custom option value of program object {0}'.format(self._object_id), error_code)
+
+            custom_options[unicode(name)] = _attach_or_release(self._session, REDString, custom_option_value_string_id)
+
+        self._custom_options = custom_options
 
     def define(self, identifier):
         self.release()
@@ -1577,6 +1602,8 @@ class REDProgram(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not set custom option for program object {0}'.format(self._object_id), error_code)
 
+        self._custom_options[unicode(name)] = value
+
     @property
     def identifier(self):                     return self._identifier
     @property
@@ -1631,6 +1658,8 @@ class REDProgram(REDObject):
     def last_scheduler_error_message(self):   return self._last_scheduler_error_message
     @property
     def last_scheduler_error_timestamp(self): return self._last_scheduler_error_timestamp
+    @property
+    def custom_options(self):                 return self._custom_options
 
 
 def get_programs(session):

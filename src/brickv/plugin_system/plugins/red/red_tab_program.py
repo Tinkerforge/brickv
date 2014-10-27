@@ -22,10 +22,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget, QMessageBox
+from PyQt4.QtCore import Qt, QVariant
+from PyQt4.QtGui import QWidget, QDialog, QMessageBox, QListWidgetItem
 from brickv.plugin_system.plugins.red.ui_red_tab_program import Ui_REDTabProgram
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.program_info import ProgramInfo
 from brickv.plugin_system.plugins.red.program_wizard_new import ProgramWizardNew
+from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.async_call import async_call
 
 class REDTabProgram(QWidget, Ui_REDTabProgram):
     def __init__(self):
@@ -33,23 +37,18 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         self.setupUi(self)
 
         self.session = None
-        self.programs = {}
         self.new_program_wizard = None
 
+        self.splitter.setSizes([200, 400])
         self.list_programs.itemSelectionChanged.connect(self.update_ui_state)
+        self.button_refresh.clicked.connect(self.refresh_program_list)
         self.button_new.clicked.connect(self.show_new_program_wizard)
         self.button_delete.clicked.connect(self.purge_selected_program)
 
         self.update_ui_state()
 
     def tab_on_focus(self):
-        self.programs = {}
-        self.list_programs.clear()
-
-        for program in get_programs(self.session).items:
-            self.programs[str(program.identifier)] = program
-
-            self.list_programs.addItem(str(program.identifier))
+        self.refresh_program_list()
 
     def tab_off_focus(self):
         pass
@@ -57,11 +56,68 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
     def update_ui_state(self):
         has_selection = len(self.list_programs.selectedItems()) > 0
 
+        if has_selection:
+            row = self.list_programs.row(self.list_programs.selectedItems()[0])
+            self.stacked_container.setCurrentIndex(row + 1)
+
         self.button_delete.setEnabled(has_selection)
 
+    def add_program_to_list(self, program):
+        program_info = ProgramInfo(program)
+
+        item = QListWidgetItem(str(program.custom_options.get(Constants.FIELD_NAME, '<unknown>')))
+        item.setData(Qt.UserRole, QVariant(program_info))
+
+        self.list_programs.addItem(item)
+        self.stacked_container.addWidget(program_info)
+
+    def refresh_program_list(self):
+        def refresh_async():
+            return get_programs(self.session).items
+
+        def cb_success(programs):
+            for program in programs:
+                self.add_program_to_list(program)
+
+            self.button_refresh.setText("Refresh")
+            self.button_refresh.setEnabled(True)
+            self.update_ui_state()
+            self.stacked_container.setCurrentIndex(1)
+
+        def cb_error():
+            self.button_refresh.setText("Error")
+
+        self.button_refresh.setText("Refreshing...")
+        self.button_refresh.setEnabled(False)
+
+        self.list_programs.clear()
+
+        while self.stacked_container.count() > 1:
+            self.stacked_container.removeWidget(self.stacked_container.currentWidget())
+
+        async_call(refresh_async, None, cb_success, cb_error)
+
     def show_new_program_wizard(self):
-        self.new_program_wizard = ProgramWizardNew(self.session, self.programs.keys())
+        #self.button_new.setEnabled(False)
+
+        identifiers = []
+
+        for i in range(self.list_programs.count()):
+            identifiers.append(str(self.list_programs.item(i).data(Qt.UserRole).toPyObject().program.identifier))
+
+        self.new_program_wizard = ProgramWizardNew(self.session, identifiers)
+        #self.new_program_wizard.finished.connect(self.new_program_wizard_finished)
         self.new_program_wizard.show()
+
+    def new_program_wizard_finished(self, result):
+        #self.new_program_wizard.finished.disconnect(self.new_program_wizard_finished)
+
+        if result == QDialog.Accepted:
+            self.add_program_to_list(self.new_program_wizard.program)
+            self.list_programs.item(self.list_programs.count() - 1).setSelected(True)
+
+        self.new_program_wizard = None
+        self.button_new.setEnabled(True)
 
     def purge_selected_program(self):
         selected_items = self.list_programs.selectedItems()
@@ -69,21 +125,26 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         if len(selected_items) == 0:
             return
 
-        identifier = str(selected_items[0].text())
-        program = self.programs[identifier]
-        name = identifier # FIXME: get program name
+        program_info = selected_items[0].data(Qt.UserRole).toPyObject()
+        program = program_info.program
+        name = str(program_info.program.identifier) # FIXME: get program name
 
         button = QMessageBox.question(self, 'Delete Program',
                                       u'Deleting program [{0}] is irreversible. All files of this program will be deleted.'.format(name),
                                       QMessageBox.Ok, QMessageBox.Cancel)
 
-        if button == QMessageBox.Ok:
-            try:
-                program.purge() # FIXME: async_call
-            except REDError as e:
-                QMessageBox.critical(self, 'Delete Error',
-                                     u'Could not delete program [{0}]:\n\n{1}'.format(name, str(e)))
-                return
+        if button != QMessageBox.Ok:
+            return
 
-            QMessageBox.information(self, 'Delete Successful',
-                                     u'Program [{0}] successful deleted!'.format(name))
+        try:
+            program.purge() # FIXME: async_call
+        except REDError as e:
+            QMessageBox.critical(self, 'Delete Error',
+                                 u'Could not delete program [{0}]:\n\n{1}'.format(name, str(e)))
+            return
+
+        QMessageBox.information(self, 'Delete Successful',
+                                 u'Program [{0}] successful deleted!'.format(name))
+
+        self.stacked_container.removeWidget(program_info)
+        self.list_programs.takeItem(self.list_programs.row(selected_items[0]))

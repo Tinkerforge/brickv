@@ -110,3 +110,7 @@ class ProgramWizardNew(QWizard):
     @property
     def available_directories(self):
         return self.page(Constants.PAGE_FILES).get_directories()
+
+    @property
+    def program(self):
+        return self.page(Constants.PAGE_UPLOAD).program
