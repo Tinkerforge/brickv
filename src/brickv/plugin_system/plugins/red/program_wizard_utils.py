@@ -36,6 +36,7 @@ class Constants:
     PAGE_SUMMARY   = 7
     PAGE_UPLOAD    = 8
     PAGE_RUBY      = 9
+    PAGE_SHELL     = 10
 
     FIELD_NAME     = 'name'
     FIELD_LANGUAGE = 'language'
@@ -45,26 +46,30 @@ class Constants:
     LANGUAGE_JAVA    = 1
     LANGUAGE_PYTHON  = 2
     LANGUAGE_RUBY    = 3
+    LANGUAGE_SHELL   = 4
 
     language_display_names = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'Java',
         LANGUAGE_PYTHON:  'Python',
-        LANGUAGE_RUBY:    'Ruby'
+        LANGUAGE_RUBY:    'Ruby',
+        LANGUAGE_SHELL:   'Shell'
     }
 
     api_languages = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'java',
         LANGUAGE_PYTHON:  'python',
-        LANGUAGE_RUBY:    'ruby'
+        LANGUAGE_RUBY:    'ruby',
+        LANGUAGE_SHELL:   'shell'
     }
 
     arguments_help = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'This list of arguments will be passed to the main() method.',
         LANGUAGE_PYTHON:  'This list of arguments will be available as the sys.argv list.',
-        LANGUAGE_RUBY:    'This list of arguments will be available in the ARGV Array variable.'
+        LANGUAGE_RUBY:    'This list of arguments will be available in the ARGV Array variable.',
+        LANGUAGE_SHELL:   'This list of arguments will be available as $1 to $n.'
     }
 
     environment_help = {
@@ -72,13 +77,15 @@ class Constants:
         LANGUAGE_JAVA:    'This list of environment variables will be set for the Java program.',
         LANGUAGE_PYTHON:  'This list of environment variables will be set for the Python program.',
         LANGUAGE_RUBY:    'This list of environment variables will be set for the Ruby program.',
+        LANGUAGE_SHELL:   'This list of environment variables will be set for the Shell script.',
     }
     
     language_file_ending = { # endswith XXX sorted by file ending index 
         LANGUAGE_INVALID: [],
         LANGUAGE_JAVA:    ['', '.java'],
         LANGUAGE_PYTHON:  ['', '.py'],
-        LANGUAGE_RUBY:    ['', '.rb']                 
+        LANGUAGE_RUBY:    ['', '.rb'],
+        LANGUAGE_SHELL:   ['', ('.sh', '.bash')],
     }
 
     # must match item order in combo_start_mode on Java page
@@ -93,6 +100,11 @@ class Constants:
     # must match item order in combo_start_mode on Ruby page
     RUBY_START_MODE_SCRIPT_FILE = 0
     RUBY_START_MODE_COMMAND     = 1
+
+    # must match item order in combo_start_mode on Shell page
+    SHELL_START_MODE_SCRIPT_FILE = 0
+    SHELL_START_MODE_COMMAND     = 1
+    
 
     # must match item order in combo_stdin_redirection on stdio page
     STDIN_REDIRECTION_DEV_NULL = 0
@@ -156,6 +168,7 @@ class Constants:
     DEFAULT_JAVA_START_MODE          = JAVA_START_MODE_MAIN_CLASS
     DEFAULT_PYTHON_START_MODE        = PYTHON_START_MODE_SCRIPT_FILE
     DEFAULT_RUBY_START_MODE          = RUBY_START_MODE_SCRIPT_FILE
+    DEFAULT_SHELL_START_MODE         = SHELL_START_MODE_SCRIPT_FILE
     DEFAULT_STDIN_REDIRECTION        = STDIN_REDIRECTION_PIPE
     DEFAULT_STDOUT_REDIRECTION       = STDOUT_REDIRECTION_LOG
     DEFAULT_STDERR_REDIRECTION       = STDERR_REDIRECTION_STDOUT
@@ -449,8 +462,11 @@ class ComboBoxFileEndingChecker:
     def check(self, emit):
         self.combo_file.clear()
         
-        end_str = Constants.language_file_ending[self.page.language][self.combo_ending.currentIndex()]
+        ends = Constants.language_file_ending[self.page.language][self.combo_ending.currentIndex()]
 
         for filename in sorted(self.page.wizard().available_files):
-            if filename.lower().endswith(end_str):
-                self.combo_file.addItem(filename) 
+            if type(ends) != tuple:
+                ends = (ends,)
+            for end in ends:
+                if filename.lower().endswith(end):
+                    self.combo_file.addItem(filename)
