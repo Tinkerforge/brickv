@@ -303,7 +303,12 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.cbox_net_wireless_ap.clear()
                 for nidx, apdict in self.network_all_data['scan_result'].iteritems():
                     self.cbox_net_wireless_ap.addItem(apdict['essid'])
+            else:
+                self.cbox_net_wireless_ap.clear()
+                self.cbox_net_wireless_ap.addItem("Nothing found. Scan again?")
+
             self.cbox_net_wireless_ap.setCurrentIndex(0)
+            
             _essid = str(self.cbox_net_wireless_ap.currentText())
 
             _cwlintf = str(self.cbox_net_wireless_intf.currentText())
@@ -1007,6 +1012,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def slot_network_wireless_save_clicked(self):
         self.network_button_save_enabled(False)
 
+        if self.cbox_net_wireless_ap.curentText() == "Nothing found. Scan again?":
+            QtGui.QMessageBox.critical(None,
+                                       'Settings | Network | Wireless',
+                                       'Please select an access point.',
+                                       QtGui.QMessageBox.Ok)
+            return
+
         for key, apdict in self.network_all_data['scan_result'].iteritems():
             if apdict['essid'] == str(self.cbox_net_wireless_ap.currentText()):
                 nidx = key
@@ -1156,6 +1168,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                   'Settings | Network | Wireless',
                                                   'Wireless scan finished successfully.',
                                                   QtGui.QMessageBox.Ok)
+                else:
+                    self.cbox_net_wireless_ap.clear()
+                    self.cbox_net_wireless_ap.addItem("Nothing found. Scan again?")
             else:
                 pass
                 self.cbox_net_wireless_ap.clear()
