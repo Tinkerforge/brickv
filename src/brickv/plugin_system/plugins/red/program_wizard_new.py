@@ -73,7 +73,7 @@ class ProgramWizardNew(QWizard):
         if currentId == Constants.PAGE_GENERAL:
             return Constants.PAGE_FILES
         elif currentId == Constants.PAGE_FILES:
-            language = self.field('language').toInt()[0]
+            language = self.field(Constants.FIELD_LANGUAGE).toInt()[0]
 
             if language == Constants.LANGUAGE_JAVA:
                 return Constants.PAGE_JAVA

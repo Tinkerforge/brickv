@@ -55,11 +55,11 @@ class ProgramPageArguments(QWizardPage, Ui_ProgramPageArguments):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        language = self.field('language').toInt()[0]
+        language = self.field(Constants.FIELD_LANGUAGE).toInt()[0]
 
         self.setSubTitle(u'Specify the arguments to be passed to the {0} program [{1}] and its environment.'
                          .format(Constants.language_display_names[language],
-                                 unicode(self.field('name').toString())))
+                                 unicode(self.field(Constants.FIELD_NAME).toString())))
         self.label_arguments_help.setText(Constants.arguments_help[language])
         self.argument_list_editor.reset_items()
         self.check_show_environment.setCheckState(Qt.Unchecked)

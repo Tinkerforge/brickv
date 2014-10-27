@@ -65,7 +65,7 @@ class ProgramPageJava(QWizardPage, Ui_ProgramPageJava):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle(u'Specify how the Java program [{0}] should be executed.'
-                         .format(unicode(self.field('name').toString())))
+                         .format(unicode(self.field(Constants.FIELD_NAME).toString())))
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_JAVA_START_MODE)
         self.combo_jar_file.clear()
 

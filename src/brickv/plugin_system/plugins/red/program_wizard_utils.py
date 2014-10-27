@@ -36,6 +36,9 @@ class Constants:
     PAGE_SUMMARY   = 7
     PAGE_UPLOAD    = 8
 
+    FIELD_NAME     = 'name'
+    FIELD_LANGUAGE = 'language'
+
     LANGUAGE_INVALID = 0
     LANGUAGE_JAVA    = 1
     LANGUAGE_PYTHON  = 2

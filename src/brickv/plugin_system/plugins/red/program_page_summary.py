@@ -36,8 +36,8 @@ class ProgramPageSummary(QWizardPage, Ui_ProgramPageSummary):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        name = unicode(self.field('name').toString())
-        language_display_name = Constants.language_display_names[self.field('language').toInt()[0]]
+        name = unicode(self.field(Constants.FIELD_NAME).toString())
+        language_display_name = Constants.language_display_names[self.field(Constants.FIELD_LANGUAGE).toInt()[0]]
 
         self.setSubTitle(u'The complete configuration of the {0} program [{1}].'
                          .format(language_display_name, name))

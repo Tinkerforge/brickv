@@ -57,8 +57,8 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle(u'Upload the {0} program [{1}].'
-                         .format(Constants.language_display_names[self.field('language').toInt()[0]],
-                                 unicode(self.field('name').toString())))
+                         .format(Constants.language_display_names[self.field(Constants.FIELD_LANGUAGE).toInt()[0]],
+                                 unicode(self.field(Constants.FIELD_NAME).toString())))
         self.update_ui_state()
 
     # overrides QWizardPage.isComplete
@@ -110,19 +110,19 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         self.next_step('Setting custom options...')
 
         # set custom option: name
-        name = unicode(self.field('name').toString())
+        name = unicode(self.field(Constants.FIELD_NAME).toString())
 
         try:
-            self.program.set_custom_option_value('name', name) # FIXME: async_call
+            self.program.set_custom_option_value(Constants.FIELD_NAME, name) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return
 
         # set custom option: language
-        self.language = Constants.api_languages[self.field('language').toInt()[0]]
+        self.language = Constants.api_languages[self.field(Constants.FIELD_LANGUAGE).toInt()[0]]
 
         try:
-            self.program.set_custom_option_value('language', self.language) # FIXME: async_call
+            self.program.set_custom_option_value(Constants.FIELD_LANGUAGE, self.language) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return

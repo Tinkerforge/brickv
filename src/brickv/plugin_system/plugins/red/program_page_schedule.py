@@ -63,8 +63,8 @@ class ProgramPageSchedule(QWizardPage, Ui_ProgramPageSchedule):
         now = QDateTime.currentDateTime().addSecs(5 * 60) # set default start time to 5 minutes from now
 
         self.setSubTitle(u'Specify the execution schedule for the {0} program [{1}].'
-                         .format(Constants.language_display_names[self.field('language').toInt()[0]],
-                                 unicode(self.field('name').toString())))
+                         .format(Constants.language_display_names[self.field(Constants.FIELD_LANGUAGE).toInt()[0]],
+                                 unicode(self.field(Constants.FIELD_NAME).toString())))
         self.combo_start_condition.setCurrentIndex(Constants.DEFAULT_SCHEDULE_START_CONDITION)
         self.date_start_time.setDateTime(now)
         self.combo_repeat_mode.setCurrentIndex(Constants.DEFAULT_SCHEDULE_REPEAT_MODE)

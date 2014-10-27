@@ -59,7 +59,7 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle(u'Specify how the Python program [{0}] should be executed.'
-                         .format(unicode(self.field('name').toString())))
+                         .format(unicode(self.field(Constants.FIELD_NAME).toString())))
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PYTHON_START_MODE)
         self.combo_script_file.clear()
 

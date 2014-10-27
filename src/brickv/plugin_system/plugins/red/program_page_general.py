@@ -40,9 +40,9 @@ class ProgramPageGeneral(QWizardPage, Ui_ProgramPageGeneral):
 
         self.edit_identifier.setValidator(QRegExpValidator(QRegExp('^[a-zA-Z0-9_][a-zA-Z0-9._-]{2,}$'), self))
 
-        self.registerField('name', self.edit_name)
+        self.registerField(Constants.FIELD_NAME, self.edit_name)
         self.registerField('identifier', self.edit_identifier)
-        self.registerField('language', self.combo_language)
+        self.registerField(Constants.FIELD_LANGUAGE, self.combo_language)
 
         self.edit_name.textChanged.connect(self.auto_generate_identifier)
         self.check_auto_generate.stateChanged.connect(self.update_ui_state)
@@ -65,7 +65,7 @@ class ProgramPageGeneral(QWizardPage, Ui_ProgramPageGeneral):
         return self.edit_name_checker.valid and \
                self.edit_identifier_checker.valid and \
                self.identifier_is_unique and \
-               self.field('language').toInt()[0] != Constants.LANGUAGE_INVALID and \
+               self.field(Constants.FIELD_LANGUAGE).toInt()[0] != Constants.LANGUAGE_INVALID and \
                QWizardPage.isComplete(self)
 
     def update_ui_state(self):
