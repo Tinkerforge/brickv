@@ -1012,7 +1012,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def slot_network_wireless_save_clicked(self):
         self.network_button_save_enabled(False)
 
-        if self.cbox_net_wireless_ap.curentText() == "Nothing found. Scan again?":
+        if self.cbox_net_wireless_ap.currentText() == "Nothing found. Scan again?":
             QtGui.QMessageBox.critical(None,
                                        'Settings | Network | Wireless',
                                        'Please select an access point.',
