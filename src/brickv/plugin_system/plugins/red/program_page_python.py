@@ -22,13 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import QVariant
-from PyQt4.QtGui import QWizardPage
+from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_python import Ui_ProgramPagePython
 
-class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
+class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
     def __init__(self, title_prefix='', *args, **kwargs):
-        QWizardPage.__init__(self, *args, **kwargs)
+        ProgramPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
@@ -63,7 +63,7 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle(u'Specify how the Python program [{0}] should be executed.'
-                         .format(unicode(self.field(Constants.FIELD_NAME).toString())))
+                         .format(unicode(self.get_field(Constants.FIELD_NAME).toString())))
         self.update_python_versions()
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PYTHON_START_MODE)
         self.combo_script_file_ending_checker.check(False)
@@ -79,7 +79,7 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
     # overrides QWizardPage.isComplete
     def isComplete(self):
         executable = self.get_executable()
-        start_mode = self.field('python.start_mode').toInt()[0]
+        start_mode = self.get_field('python.start_mode').toInt()[0]
 
         if len(executable) == 0:
             return False
@@ -96,7 +96,7 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
            not self.edit_command_checker.valid:
             return False
 
-        return self.combo_working_directory_checker.valid and QWizardPage.isComplete(self)
+        return self.combo_working_directory_checker.valid and ProgramPage.isComplete(self)
 
     def update_python_versions(self):
         def cb_versions(result):
@@ -122,7 +122,7 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
         self.wizard().script_manager.execute_script('python_versions', cb_versions)
 
     def update_ui_state(self):
-        start_mode             = self.field('python.start_mode').toInt()[0]
+        start_mode             = self.get_field('python.start_mode').toInt()[0]
         start_mode_script_file = start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE
         start_mode_module_name = start_mode == Constants.PYTHON_START_MODE_MODULE_NAME
         start_mode_command     = start_mode == Constants.PYTHON_START_MODE_COMMAND
@@ -157,7 +157,7 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
     def get_command(self):
         executable = self.get_executable()
         arguments = self.option_list_editor.get_items()
-        start_mode = self.field('python.start_mode').toInt()[0]
+        start_mode = self.get_field('python.start_mode').toInt()[0]
 
         if start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE:
             arguments.append(unicode(self.combo_script_file.currentText()))
@@ -168,6 +168,6 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
             arguments.append('-c')
             arguments.append(unicode(self.edit_command.text()))
 
-        working_directory = unicode(self.field('python.working_directory').toString())
+        working_directory = unicode(self.get_field('python.working_directory').toString())
 
         return executable, arguments, working_directory

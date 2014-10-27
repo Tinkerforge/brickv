@@ -22,13 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWizardPage
+from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_summary import Ui_ProgramPageSummary
 
-class ProgramPageSummary(QWizardPage, Ui_ProgramPageSummary):
+class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
     def __init__(self, title_prefix='', *args, **kwargs):
-        QWizardPage.__init__(self, *args, **kwargs)
+        ProgramPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
@@ -36,8 +36,8 @@ class ProgramPageSummary(QWizardPage, Ui_ProgramPageSummary):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        name = unicode(self.field(Constants.FIELD_NAME).toString())
-        language_display_name = Constants.language_display_names[self.field(Constants.FIELD_LANGUAGE).toInt()[0]]
+        name = unicode(self.get_field(Constants.FIELD_NAME).toString())
+        language_display_name = Constants.language_display_names[self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]]
 
         self.setSubTitle(u'The complete configuration of the {0} program [{1}].'
                          .format(language_display_name, name))
@@ -45,7 +45,7 @@ class ProgramPageSummary(QWizardPage, Ui_ProgramPageSummary):
         # general information
         html  = u'<b>General Information</b><br/>'
         html += u'Name: {0}<br/>'.format(Qt.escape(name))
-        html += u'Identifier: {0}<br/>'.format(Qt.escape(self.field('identifier').toString()))
+        html += u'Identifier: {0}<br/>'.format(Qt.escape(self.get_field('identifier').toString()))
         html += u'Language: {0}<br/>'.format(Qt.escape(language_display_name))
         html += u'<br/>'
 

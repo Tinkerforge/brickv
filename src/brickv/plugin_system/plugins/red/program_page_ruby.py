@@ -22,13 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import QVariant
-from PyQt4.QtGui import QWizardPage
+from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_ruby import Ui_ProgramPageRuby
 
-class ProgramPageRuby(QWizardPage, Ui_ProgramPageRuby):
+class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
     def __init__(self, title_prefix='', *args, **kwargs):
-        QWizardPage.__init__(self, *args, **kwargs)
+        ProgramPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
@@ -62,7 +62,7 @@ class ProgramPageRuby(QWizardPage, Ui_ProgramPageRuby):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle(u'Specify how the Ruby program [{0}] should be executed.'
-                         .format(unicode(self.field(Constants.FIELD_NAME).toString())))
+                         .format(unicode(self.get_field(Constants.FIELD_NAME).toString())))
         self.update_ruby_versions()
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_RUBY_START_MODE)
 
@@ -82,7 +82,7 @@ class ProgramPageRuby(QWizardPage, Ui_ProgramPageRuby):
     # overrides QWizardPage.isComplete
     def isComplete(self):
         executable = self.get_executable()
-        start_mode = self.field('ruby.start_mode').toInt()[0]
+        start_mode = self.get_field('ruby.start_mode').toInt()[0]
 
         if len(executable) == 0:
             return False
@@ -95,7 +95,7 @@ class ProgramPageRuby(QWizardPage, Ui_ProgramPageRuby):
            not self.edit_command_checker.valid:
             return False
 
-        return self.combo_working_directory_checker.valid and QWizardPage.isComplete(self)
+        return self.combo_working_directory_checker.valid and ProgramPage.isComplete(self)
 
     def update_ruby_versions(self):
         def cb_versions(result):
@@ -119,7 +119,7 @@ class ProgramPageRuby(QWizardPage, Ui_ProgramPageRuby):
         self.wizard().script_manager.execute_script('ruby_versions', cb_versions)
         
     def update_ui_state(self):
-        start_mode             = self.field('ruby.start_mode').toInt()[0]
+        start_mode             = self.get_field('ruby.start_mode').toInt()[0]
         start_mode_script_file = start_mode == Constants.RUBY_START_MODE_SCRIPT_FILE
         start_mode_command     = start_mode == Constants.RUBY_START_MODE_COMMAND
         show_advanced_options  = self.check_show_advanced_options.checkState() == Qt.Checked
@@ -150,7 +150,7 @@ class ProgramPageRuby(QWizardPage, Ui_ProgramPageRuby):
     def get_command(self):
         executable = self.get_executable()
         arguments = self.option_list_editor.get_items()
-        start_mode = self.field('ruby.start_mode').toInt()[0]
+        start_mode = self.get_field('ruby.start_mode').toInt()[0]
 
         if start_mode == Constants.RUBY_START_MODE_SCRIPT_FILE:
             arguments.append(unicode(self.combo_script_file.currentText()))
@@ -158,6 +158,6 @@ class ProgramPageRuby(QWizardPage, Ui_ProgramPageRuby):
             arguments.append('-e')
             arguments.append(unicode(self.edit_command.text()))
 
-        working_directory = unicode(self.field('ruby.working_directory').toString())
+        working_directory = unicode(self.get_field('ruby.working_directory').toString())
 
         return executable, arguments, working_directory

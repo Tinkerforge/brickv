@@ -22,7 +22,8 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QDir, QVariant
-from PyQt4.QtGui import QWizardPage, QFileDialog, QListWidgetItem, QProgressDialog, QApplication
+from PyQt4.QtGui import QFileDialog, QListWidgetItem, QProgressDialog, QApplication
+from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_files import Ui_ProgramPageFiles
 import os
@@ -30,9 +31,9 @@ from collections import namedtuple
 
 Upload = namedtuple('Upload', ['source', 'target'])
 
-class ProgramPageFiles(QWizardPage, Ui_ProgramPageFiles):
+class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
     def __init__(self, title_prefix='', *args, **kwargs):
-        QWizardPage.__init__(self, *args, **kwargs)
+        ProgramPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
@@ -46,8 +47,8 @@ class ProgramPageFiles(QWizardPage, Ui_ProgramPageFiles):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle(u'Specify the files to be uploaded for the {0} program [{1}].'
-                         .format(Constants.language_display_names[self.field(Constants.FIELD_LANGUAGE).toInt()[0]],
-                                 unicode(self.field(Constants.FIELD_NAME).toString())))
+                         .format(Constants.language_display_names[self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]],
+                                 unicode(self.get_field(Constants.FIELD_NAME).toString())))
         self.list_files.clear()
         self.update_ui_state()
 

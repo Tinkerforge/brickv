@@ -226,15 +226,22 @@ class ListWidgetEditor:
         self.button_up_item.setEnabled(item_count > 1 and has_selection and selected_index > 0)
         self.button_down_item.setEnabled(item_count > 1 and has_selection and selected_index < item_count - 1)
 
-    def add_new_item(self):
-        item = QListWidgetItem(self.new_item_text.format(self.new_item_counter))
+    def add_item(self, text, edit_item=False):
+        item = QListWidgetItem(text)
         item.setFlags(item.flags() | Qt.ItemIsEditable)
 
+        self.list_items.addItem(item)
+
+        if edit_item:
+            self.list_items.editItem(item)
+
+        self.update_ui_state()
+
+    def add_new_item(self):
+        counter = self.new_item_counter
         self.new_item_counter += 1
 
-        self.list_items.addItem(item)
-        self.list_items.editItem(item)
-        self.update_ui_state()
+        self.add_item(self.new_item_text.format(counter), edit_item=True)
 
     def remove_selected_item(self):
         for item in self.list_items.selectedItems():
@@ -272,11 +279,7 @@ class ListWidgetEditor:
         self.list_items.clear()
 
         for original_item in self.original_items:
-            item = QListWidgetItem(original_item)
-            item.setFlags(item.flags() | Qt.ItemIsEditable)
-            self.list_items.addItem(item)
-
-        self.update_ui_state()
+            self.add_item(original_item)
 
     def get_items(self):
         items = []

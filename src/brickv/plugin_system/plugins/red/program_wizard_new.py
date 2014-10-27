@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QWizard
+from brickv.plugin_system.plugins.red.program_wizard import ProgramWizard
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.program_page_general import ProgramPageGeneral
 from brickv.plugin_system.plugins.red.program_page_files import ProgramPageFiles
@@ -36,43 +37,23 @@ from brickv.plugin_system.plugins.red.program_page_schedule import ProgramPageSc
 from brickv.plugin_system.plugins.red.program_page_summary import ProgramPageSummary
 from brickv.plugin_system.plugins.red.program_page_upload import ProgramPageUpload
 
-class ProgramWizardNew(QWizard):
+class ProgramWizardNew(ProgramWizard):
     def __init__(self, session, identifiers, script_manager, *args, **kwargs):
-        QWizard.__init__(self, *args, **kwargs)
+        ProgramWizard.__init__(self, session, identifiers, script_manager, *args, **kwargs)
 
-        self.session = session
-        self.identifiers = identifiers
-        self.script_manager = script_manager
-        self.canceled = False
-
-        self.setWindowFlags(self.windowFlags() | Qt.Tool)
         self.setWindowTitle('New Program')
 
-        self.setPage(Constants.PAGE_GENERAL, ProgramPageGeneral(title_prefix='Step 1 or 8: '))
-        self.setPage(Constants.PAGE_FILES, ProgramPageFiles(title_prefix='Step 2 or 8: '))
-        self.setPage(Constants.PAGE_JAVA, ProgramPageJava(title_prefix='Step 3 or 8: '))
-        self.setPage(Constants.PAGE_PYTHON, ProgramPagePython(title_prefix='Step 3 or 8: '))
-        self.setPage(Constants.PAGE_RUBY, ProgramPageRuby(title_prefix='Step 3 or 8: '))
-        self.setPage(Constants.PAGE_SHELL, ProgramPageShell(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_GENERAL,   ProgramPageGeneral(title_prefix='Step 1 or 8: '))
+        self.setPage(Constants.PAGE_FILES,     ProgramPageFiles(title_prefix='Step 2 or 8: '))
+        self.setPage(Constants.PAGE_JAVA,      ProgramPageJava(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_PYTHON,    ProgramPagePython(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_RUBY,      ProgramPageRuby(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_SHELL,     ProgramPageShell(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_ARGUMENTS, ProgramPageArguments(title_prefix='Step 4 or 8: '))
-        self.setPage(Constants.PAGE_STDIO, ProgramPageStdio(title_prefix='Step 5 or 8: '))
-        self.setPage(Constants.PAGE_SCHEDULE, ProgramPageSchedule(title_prefix='Step 6 or 8: '))
-        self.setPage(Constants.PAGE_SUMMARY, ProgramPageSummary(title_prefix='Step 7 or 8: '))
-        self.setPage(Constants.PAGE_UPLOAD, ProgramPageUpload(title_prefix='Step 8 or 8: '))
-
-        self.rejected.connect(lambda: self.set_canceled(True))
-
-    # overrides QWizard.sizeHint
-    def sizeHint(self):
-        size = QWizard.sizeHint(self)
-
-        if size.width() < 550:
-            size.setWidth(550)
-
-        if size.height() < 700:
-            size.setHeight(700)
-
-        return size
+        self.setPage(Constants.PAGE_STDIO,     ProgramPageStdio(title_prefix='Step 5 or 8: '))
+        self.setPage(Constants.PAGE_SCHEDULE,  ProgramPageSchedule(title_prefix='Step 6 or 8: '))
+        self.setPage(Constants.PAGE_SUMMARY,   ProgramPageSummary(title_prefix='Step 7 or 8: '))
+        self.setPage(Constants.PAGE_UPLOAD,    ProgramPageUpload(title_prefix='Step 8 or 8: '))
 
     # overrides QWizard.nextId
     def nextId(self):
@@ -81,7 +62,7 @@ class ProgramWizardNew(QWizard):
         if currentId == Constants.PAGE_GENERAL:
             return Constants.PAGE_FILES
         elif currentId == Constants.PAGE_FILES:
-            language = self.field(Constants.FIELD_LANGUAGE).toInt()[0]
+            language = self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]
 
             if language == Constants.LANGUAGE_JAVA:
                 return Constants.PAGE_JAVA
@@ -108,22 +89,26 @@ class ProgramWizardNew(QWizard):
         else:
             return Constants.PAGE_GENERAL
 
-    def set_canceled(self, canceled):
-        self.canceled = canceled
-
     @property
     def available_files(self):
         available_files = []
 
-        for upload in self.page(Constants.PAGE_FILES).get_uploads():
-            available_files.append(upload.target)
+        if self.hasVisitedPage(Constants.PAGE_FILES):
+            for upload in self.page(Constants.PAGE_FILES).get_uploads():
+                available_files.append(upload.target)
 
         return available_files
 
     @property
     def available_directories(self):
-        return self.page(Constants.PAGE_FILES).get_directories()
+        if self.hasVisitedPage(Constants.PAGE_FILES):
+            return self.page(Constants.PAGE_FILES).get_directories()
+        else:
+            return []
 
     @property
     def program(self):
-        return self.page(Constants.PAGE_UPLOAD).program
+        if self.hasVisitedPage(Constants.PAGE_FILES):
+            return self.page(Constants.PAGE_UPLOAD).program
+        else:
+            return None

@@ -21,14 +21,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWizardPage
+from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_stdio import Ui_ProgramPageStdio
 import os
 
-class ProgramPageStdio(QWizardPage, Ui_ProgramPageStdio):
+class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
     def __init__(self, title_prefix='', *args, **kwargs):
-        QWizardPage.__init__(self, *args, **kwargs)
+        ProgramPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
@@ -55,8 +55,8 @@ class ProgramPageStdio(QWizardPage, Ui_ProgramPageStdio):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle(u'Specify how standard input, output and error of the {0} program [{1}] should be redirected.'
-                         .format(Constants.language_display_names[self.field(Constants.FIELD_LANGUAGE).toInt()[0]],
-                                 unicode(self.field(Constants.FIELD_NAME).toString())))
+                         .format(Constants.language_display_names[self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]],
+                                 unicode(self.get_field(Constants.FIELD_NAME).toString())))
         self.combo_stdin_redirection.setCurrentIndex(Constants.DEFAULT_STDIN_REDIRECTION)
         self.combo_stdout_redirection.setCurrentIndex(Constants.DEFAULT_STDOUT_REDIRECTION)
         self.combo_stderr_redirection.setCurrentIndex(Constants.DEFAULT_STDERR_REDIRECTION)
@@ -66,9 +66,9 @@ class ProgramPageStdio(QWizardPage, Ui_ProgramPageStdio):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
-        stdin_redirection = self.field('stdin_redirection').toInt()[0]
-        stdout_redirection = self.field('stdout_redirection').toInt()[0]
-        stderr_redirection = self.field('stderr_redirection').toInt()[0]
+        stdin_redirection  = self.get_field('stdin_redirection').toInt()[0]
+        stdout_redirection = self.get_field('stdout_redirection').toInt()[0]
+        stderr_redirection = self.get_field('stderr_redirection').toInt()[0]
 
         if stdin_redirection == Constants.STDIN_REDIRECTION_FILE and \
            not self.combo_stdin_file_checker.valid:
@@ -82,12 +82,12 @@ class ProgramPageStdio(QWizardPage, Ui_ProgramPageStdio):
            not self.edit_stderr_file_checker.valid:
             return False
 
-        return QWizardPage.isComplete(self)
+        return ProgramPage.isComplete(self)
 
     def update_ui_state(self):
-        stdin_redirection           = self.field('stdin_redirection').toInt()[0]
-        stdout_redirection          = self.field('stdout_redirection').toInt()[0]
-        stderr_redirection          = self.field('stderr_redirection').toInt()[0]
+        stdin_redirection           = self.get_field('stdin_redirection').toInt()[0]
+        stdout_redirection          = self.get_field('stdout_redirection').toInt()[0]
+        stderr_redirection          = self.get_field('stderr_redirection').toInt()[0]
         stdin_redirection_dev_null  = stdin_redirection  == Constants.STDIN_REDIRECTION_DEV_NULL
         stdin_redirection_pipe      = stdin_redirection  == Constants.STDIN_REDIRECTION_PIPE
         stdin_redirection_file      = stdin_redirection  == Constants.STDIN_REDIRECTION_FILE

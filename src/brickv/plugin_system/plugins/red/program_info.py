@@ -21,19 +21,20 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import json
-
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem
+from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_info import Ui_ProgramInfo
 from brickv.async_call import async_call
+import json
 
 class ProgramInfo(QWidget, Ui_ProgramInfo):
-    def __init__(self, program, script_manager, *args, **kwargs):
+    def __init__(self, session, program, script_manager, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
+        self.session = session
         self.program = program
         self.script_manager = script_manager
         self.program_dir = '/'.join(["/home/tf/programs",

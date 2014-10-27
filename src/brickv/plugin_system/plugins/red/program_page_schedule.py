@@ -22,14 +22,14 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import QDateTime, QDate, QTime
-from PyQt4.QtGui import QWizardPage
+from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_schedule import Ui_ProgramPageSchedule
 import os
 
-class ProgramPageSchedule(QWizardPage, Ui_ProgramPageSchedule):
+class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
     def __init__(self, title_prefix='', *args, **kwargs):
-        QWizardPage.__init__(self, *args, **kwargs)
+        ProgramPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
@@ -63,8 +63,8 @@ class ProgramPageSchedule(QWizardPage, Ui_ProgramPageSchedule):
         now = QDateTime.currentDateTime().addSecs(5 * 60) # set default start time to 5 minutes from now
 
         self.setSubTitle(u'Specify the execution schedule for the {0} program [{1}].'
-                         .format(Constants.language_display_names[self.field(Constants.FIELD_LANGUAGE).toInt()[0]],
-                                 unicode(self.field(Constants.FIELD_NAME).toString())))
+                         .format(Constants.language_display_names[self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]],
+                                 unicode(self.get_field(Constants.FIELD_NAME).toString())))
         self.combo_start_condition.setCurrentIndex(Constants.DEFAULT_SCHEDULE_START_CONDITION)
         self.date_start_time.setDateTime(now)
         self.combo_repeat_mode.setCurrentIndex(Constants.DEFAULT_SCHEDULE_REPEAT_MODE)
@@ -72,7 +72,7 @@ class ProgramPageSchedule(QWizardPage, Ui_ProgramPageSchedule):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
-        repeat_mode = self.field('schedule.repeat_mode').toInt()[0]
+        repeat_mode = self.get_field('schedule.repeat_mode').toInt()[0]
 
         if repeat_mode == Constants.SCHEDULE_REPEAT_MODE_SELECTION:
             if not self.edit_repeat_seconds_checker.valid or \
@@ -83,10 +83,10 @@ class ProgramPageSchedule(QWizardPage, Ui_ProgramPageSchedule):
                not self.edit_repeat_weekdays_checker.valid:
                 return False
 
-        return QWizardPage.isComplete(self)
+        return ProgramPage.isComplete(self)
 
     def update_ui_state(self):
-        start_condition        = self.field('schedule.start_condition').toInt()[0]
+        start_condition        = self.get_field('schedule.start_condition').toInt()[0]
         start_condition_never  = start_condition == Constants.SCHEDULE_START_CONDITION_NEVER
         start_condition_now    = start_condition == Constants.SCHEDULE_START_CONDITION_NOW
         start_condition_reboot = start_condition == Constants.SCHEDULE_START_CONDITION_REBOOT
@@ -101,7 +101,7 @@ class ProgramPageSchedule(QWizardPage, Ui_ProgramPageSchedule):
         self.label_start_condition_reboot_help.setVisible(start_condition_reboot)
         self.label_start_condition_time_help.setVisible(start_condition_time)
 
-        repeat_mode = self.field('schedule.repeat_mode').toInt()[0]
+        repeat_mode = self.get_field('schedule.repeat_mode').toInt()[0]
         repeat_mode_never = repeat_mode == Constants.SCHEDULE_REPEAT_MODE_NEVER
         repeat_mode_interval = repeat_mode == Constants.SCHEDULE_REPEAT_MODE_INTERVAL
         repeat_mode_selection = repeat_mode == Constants.SCHEDULE_REPEAT_MODE_SELECTION

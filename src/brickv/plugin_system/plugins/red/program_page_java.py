@@ -21,13 +21,13 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWizardPage
+from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_java import Ui_ProgramPageJava
 
-class ProgramPageJava(QWizardPage, Ui_ProgramPageJava):
+class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
     def __init__(self, title_prefix='', *args, **kwargs):
-        QWizardPage.__init__(self, *args, **kwargs)
+        ProgramPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
@@ -65,7 +65,7 @@ class ProgramPageJava(QWizardPage, Ui_ProgramPageJava):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle(u'Specify how the Java program [{0}] should be executed.'
-                         .format(unicode(self.field(Constants.FIELD_NAME).toString())))
+                         .format(unicode(self.get_field(Constants.FIELD_NAME).toString())))
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_JAVA_START_MODE)
         self.combo_jar_file.clear()
 
@@ -88,7 +88,7 @@ class ProgramPageJava(QWizardPage, Ui_ProgramPageJava):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
-        start_mode = self.field('java.start_mode').toInt()[0]
+        start_mode = self.get_field('java.start_mode').toInt()[0]
 
         if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS and \
            not self.edit_main_class_checker.valid:
@@ -98,10 +98,10 @@ class ProgramPageJava(QWizardPage, Ui_ProgramPageJava):
            not self.combo_jar_file_checker.valid:
             return False
 
-        return self.combo_working_directory_checker.valid and QWizardPage.isComplete(self)
+        return self.combo_working_directory_checker.valid and ProgramPage.isComplete(self)
 
     def update_ui_state(self):
-        start_mode            = self.field('java.start_mode').toInt()[0]
+        start_mode            = self.get_field('java.start_mode').toInt()[0]
         start_mode_main_class = start_mode == Constants.JAVA_START_MODE_MAIN_CLASS
         start_mode_jar_file   = start_mode == Constants.JAVA_START_MODE_JAR_FILE
         show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
@@ -133,7 +133,7 @@ class ProgramPageJava(QWizardPage, Ui_ProgramPageJava):
         if len(class_path_entries) > 0:
             arguments += ['-cp', ':'.join(class_path_entries)]
 
-        start_mode = self.field('java.start_mode').toInt()[0]
+        start_mode = self.get_field('java.start_mode').toInt()[0]
 
         if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS:
             arguments.append(unicode(self.edit_main_class.text()))
@@ -141,6 +141,6 @@ class ProgramPageJava(QWizardPage, Ui_ProgramPageJava):
             arguments.append('-jar')
             arguments.append(unicode(self.combo_jar_file.currentText()))
 
-        working_directory = unicode(self.field('java.working_directory').toString())
+        working_directory = unicode(self.get_field('java.working_directory').toString())
 
         return executable, arguments, working_directory

@@ -21,16 +21,17 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWizard, QWizardPage, QApplication
+from PyQt4.QtGui import QWizard, QApplication
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_upload import Ui_ProgramPageUpload
 import os
 import stat
 
-class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
+class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     def __init__(self, title_prefix='', *args, **kwargs):
-        QWizardPage.__init__(self, *args, **kwargs)
+        ProgramPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
@@ -57,13 +58,13 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle(u'Upload the {0} program [{1}].'
-                         .format(Constants.language_display_names[self.field(Constants.FIELD_LANGUAGE).toInt()[0]],
-                                 unicode(self.field(Constants.FIELD_NAME).toString())))
+                         .format(Constants.language_display_names[self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]],
+                                 unicode(self.get_field(Constants.FIELD_NAME).toString())))
         self.update_ui_state()
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
-        return self.upload_successful and QWizardPage.isComplete(self)
+        return self.upload_successful and ProgramPage.isComplete(self)
 
     def update_ui_state(self):
         pass
@@ -94,7 +95,7 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         self.progress_total.setRange(0, 6 + len(self.uploads))
 
         # define new program
-        identifier = str(self.field('identifier').toString())
+        identifier = str(self.get_field('identifier').toString())
 
         self.next_step('Defining new program...', increase=0)
 
@@ -108,7 +109,7 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         self.next_step('Setting custom options...')
 
         # set custom option: name
-        name = unicode(self.field(Constants.FIELD_NAME).toString())
+        name = unicode(self.get_field(Constants.FIELD_NAME).toString())
 
         try:
             self.program.set_custom_option_value(Constants.FIELD_NAME, name) # FIXME: async_call
@@ -117,7 +118,7 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
             return
 
         # set custom option: language
-        self.language = Constants.api_languages[self.field(Constants.FIELD_LANGUAGE).toInt()[0]]
+        self.language = Constants.api_languages[self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]]
 
         try:
             self.program.set_custom_option_value(Constants.FIELD_LANGUAGE, self.language) # FIXME: async_call
@@ -258,12 +259,12 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         # set stdio redirection
         self.next_step('Setting stdio redirection...')
 
-        stdin_redirection  = Constants.api_stdin_redirections[self.field('stdin_redirection').toInt()[0]]
-        stdout_redirection = Constants.api_stdout_redirections[self.field('stdout_redirection').toInt()[0]]
-        stderr_redirection = Constants.api_stderr_redirections[self.field('stderr_redirection').toInt()[0]]
-        stdin_file         = unicode(self.field('stdin_file').toString())
-        stdout_file        = unicode(self.field('stdout_file').toString())
-        stderr_file        = unicode(self.field('stderr_file').toString())
+        stdin_redirection  = Constants.api_stdin_redirections[self.get_field('stdin_redirection').toInt()[0]]
+        stdout_redirection = Constants.api_stdout_redirections[self.get_field('stdout_redirection').toInt()[0]]
+        stderr_redirection = Constants.api_stderr_redirections[self.get_field('stderr_redirection').toInt()[0]]
+        stdin_file         = unicode(self.get_field('stdin_file').toString())
+        stdout_file        = unicode(self.get_field('stdout_file').toString())
+        stderr_file        = unicode(self.get_field('stderr_file').toString())
 
         try:
             self.program.set_stdio_redirection(stdin_redirection, stdin_file,
@@ -278,11 +279,11 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         # set schedule
         self.next_step('Setting schedule...')
 
-        start_condition = Constants.api_schedule_start_condition[self.field('schedule.start_condition').toInt()[0]]
-        start_time      = self.field('schedule.start_time').toDateTime().toMSecsSinceEpoch() / 1000
-        start_delay     = self.field('schedule.start_delay').toInt()[0]
-        repeat_mode     = Constants.api_schedule_repeat_mode[self.field('schedule.repeat_mode').toInt()[0]]
-        repeat_interval = self.field('schedule.repeat_interval').toInt()[0]
+        start_condition = Constants.api_schedule_start_condition[self.get_field('schedule.start_condition').toInt()[0]]
+        start_time      = self.get_field('schedule.start_time').toDateTime().toMSecsSinceEpoch() / 1000
+        start_delay     = self.get_field('schedule.start_delay').toInt()[0]
+        repeat_mode     = Constants.api_schedule_repeat_mode[self.get_field('schedule.repeat_mode').toInt()[0]]
+        repeat_interval = self.get_field('schedule.repeat_interval').toInt()[0]
         # FIXME: handle selection repeat mode
 
         try:

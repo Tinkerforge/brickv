@@ -21,13 +21,13 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWizardPage
+from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_arguments import Ui_ProgramPageArguments
 
-class ProgramPageArguments(QWizardPage, Ui_ProgramPageArguments):
+class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
     def __init__(self, title_prefix='', *args, **kwargs):
-        QWizardPage.__init__(self, *args, **kwargs)
+        ProgramPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
@@ -55,11 +55,11 @@ class ProgramPageArguments(QWizardPage, Ui_ProgramPageArguments):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        language = self.field(Constants.FIELD_LANGUAGE).toInt()[0]
+        language = self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]
 
         self.setSubTitle(u'Specify the arguments to be passed to the {0} program [{1}] and its environment.'
                          .format(Constants.language_display_names[language],
-                                 unicode(self.field(Constants.FIELD_NAME).toString())))
+                                 unicode(self.get_field(Constants.FIELD_NAME).toString())))
         self.label_arguments_help.setText(Constants.arguments_help[language])
         self.argument_list_editor.reset_items()
         self.check_show_environment.setCheckState(Qt.Unchecked)
@@ -69,7 +69,7 @@ class ProgramPageArguments(QWizardPage, Ui_ProgramPageArguments):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
-        return self.environment_is_valid and QWizardPage.isComplete(self)
+        return self.environment_is_valid and ProgramPage.isComplete(self)
 
     def update_ui_state(self):
         show_environment = self.check_show_environment.checkState() == Qt.Checked

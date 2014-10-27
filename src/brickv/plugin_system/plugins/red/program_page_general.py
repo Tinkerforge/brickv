@@ -22,14 +22,15 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import QRegExp, QString, Qt
-from PyQt4.QtGui import QWizardPage, QRegExpValidator, QMessageBox
+from PyQt4.QtGui import QRegExpValidator, QMessageBox
+from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_general import Ui_ProgramPageGeneral
 import re
 
-class ProgramPageGeneral(QWizardPage, Ui_ProgramPageGeneral):
+class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
     def __init__(self, title_prefix='', *args, **kwargs):
-        QWizardPage.__init__(self, *args, **kwargs)
+        ProgramPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
@@ -65,8 +66,8 @@ class ProgramPageGeneral(QWizardPage, Ui_ProgramPageGeneral):
         return self.edit_name_checker.valid and \
                self.edit_identifier_checker.valid and \
                self.identifier_is_unique and \
-               self.field(Constants.FIELD_LANGUAGE).toInt()[0] != Constants.LANGUAGE_INVALID and \
-               QWizardPage.isComplete(self)
+               self.get_field(Constants.FIELD_LANGUAGE).toInt()[0] != Constants.LANGUAGE_INVALID and \
+               ProgramPage.isComplete(self)
 
     def update_ui_state(self):
         auto_generate = self.check_auto_generate.checkState() == Qt.Checked
