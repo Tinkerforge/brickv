@@ -29,7 +29,7 @@ import os
 import stat
 
 class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
-    def __init__(self, session, title_prefix='', *args, **kwargs):
+    def __init__(self, title_prefix='', *args, **kwargs):
         QWizardPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)

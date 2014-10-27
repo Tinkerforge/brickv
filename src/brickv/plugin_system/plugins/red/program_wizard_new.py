@@ -56,7 +56,7 @@ class ProgramWizardNew(QWizard):
         self.setPage(Constants.PAGE_STDIO, ProgramPageStdio(title_prefix='Step 5 or 8: '))
         self.setPage(Constants.PAGE_SCHEDULE, ProgramPageSchedule(title_prefix='Step 6 or 8: '))
         self.setPage(Constants.PAGE_SUMMARY, ProgramPageSummary(title_prefix='Step 7 or 8: '))
-        self.setPage(Constants.PAGE_UPLOAD, ProgramPageUpload(session, title_prefix='Step 8 or 8: '))
+        self.setPage(Constants.PAGE_UPLOAD, ProgramPageUpload(title_prefix='Step 8 or 8: '))
 
         self.rejected.connect(lambda: self.set_canceled(True))
 
