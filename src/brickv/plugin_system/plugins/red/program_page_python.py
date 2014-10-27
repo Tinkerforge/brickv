@@ -58,6 +58,7 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
+        self.update_python_versions()
         self.setSubTitle(u'Specify how the Python program [{0}] should be executed.'
                          .format(unicode(self.field(Constants.FIELD_NAME).toString())))
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PYTHON_START_MODE)
@@ -97,6 +98,27 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
 
         return self.combo_working_directory_checker.valid and QWizardPage.isComplete(self)
 
+    def update_python_versions(self):
+        def cb_versions(result):
+            self.combo_version.clear()
+            if result != None:
+                versions = result.stderr.split('\n')
+                try:
+                    self.combo_version.addItem(versions[0].split(' ')[1])
+                    self.combo_version.addItem(versions[1].split(' ')[1])
+                    self.combo_version.setEnabled(True)
+                    return
+                except:
+                    pass
+
+            # Could not get versions, we assume that some version
+            # of python 2.7 and some version of python 3 is installed
+            self.combo_version.addItem("2.7")
+            self.combo_version.addItem("3")
+            self.combo_version.setEnabled(True)
+
+        self.wizard().script_manager.execute_script('python_versions', cb_versions)
+
     def update_ui_state(self):
         start_mode             = self.field('python.start_mode').toInt()[0]
         start_mode_script_file = start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE
@@ -126,9 +148,13 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
         self.option_list_editor.update_ui_state()
 
     def get_command(self):
-        executable = '/usr/bin/python2'
         arguments = self.option_list_editor.get_items()
         start_mode = self.field('python.start_mode').toInt()[0]
+        version_index = self.combo_version.currentIndex()
+
+        executable = '/usr/bin/python2'
+        if version_index == Constants.PYTHON_VERSION_3:
+            executable = '/usr/bin/python3'
 
         if start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE:
             arguments.append(unicode(self.combo_script_file.currentText()))

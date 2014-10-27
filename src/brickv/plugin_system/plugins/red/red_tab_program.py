@@ -36,6 +36,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         QWidget.__init__(self)
         self.setupUi(self)
 
+        self.script_manager = None
         self.session = None
         self.new_program_wizard = None
 
@@ -105,7 +106,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         for i in range(self.list_programs.count()):
             identifiers.append(str(self.list_programs.item(i).data(Qt.UserRole).toPyObject().program.identifier))
 
-        self.new_program_wizard = ProgramWizardNew(self.session, identifiers)
+        self.new_program_wizard = ProgramWizardNew(self.session, identifiers, self.script_manager)
         #self.new_program_wizard.finished.connect(self.new_program_wizard_finished)
         self.new_program_wizard.show()
 

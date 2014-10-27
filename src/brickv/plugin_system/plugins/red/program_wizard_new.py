@@ -35,11 +35,12 @@ from brickv.plugin_system.plugins.red.program_page_summary import ProgramPageSum
 from brickv.plugin_system.plugins.red.program_page_upload import ProgramPageUpload
 
 class ProgramWizardNew(QWizard):
-    def __init__(self, session, identifiers, *args, **kwargs):
+    def __init__(self, session, identifiers, script_manager, *args, **kwargs):
         QWizard.__init__(self, *args, **kwargs)
 
         self.session = session
         self.identifiers = identifiers
+        self.script_manager = script_manager
 
         self.setWindowFlags(self.windowFlags() | Qt.Tool)
         self.setWindowTitle('New Program')
