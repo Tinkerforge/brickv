@@ -34,7 +34,6 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
 
         self.setupUi(self)
 
-        self.session = session # FIXME: remove local ref to session, use self.wizard().session instead
         self.upload_successful = False
 
         self.setTitle(title_prefix + 'Upload')
@@ -102,7 +101,7 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         self.next_step('Defining new program...', increase=0)
 
         try:
-            self.program = REDProgram(self.session).define(identifier) # FIXME: async_call
+            self.program = REDProgram(self.wizard().session).define(identifier) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e), False)
             return
@@ -171,7 +170,7 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
             target_directory = os.path.split(self.target_name)[0]
 
             try:
-                create_directory(self.session, target_directory, DIRECTORY_FLAG_RECURSIVE, 0755, 1000, 1000)
+                create_directory(self.wizard().session, target_directory, DIRECTORY_FLAG_RECURSIVE, 0755, 1000, 1000)
             except REDError as e:
                 self.upload_error("...error creating target directory '{0}': {1}".format(target_directory, e))
                 return
@@ -182,18 +181,17 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
             permissions = 0644
 
         try:
-            self.target = REDFile(self.session).open(self.target_name,
-                                                REDFile.FLAG_WRITE_ONLY |
-                                                REDFile.FLAG_CREATE |
-                                                REDFile.FLAG_NON_BLOCKING |
-                                                REDFile.FLAG_TRUNCATE,
-                                                permissions, 1000, 1000) # FIXME: async_call
+            self.target = REDFile(self.wizard().session).open(self.target_name,
+                                                              REDFile.FLAG_WRITE_ONLY |
+                                                              REDFile.FLAG_CREATE |
+                                                              REDFile.FLAG_NON_BLOCKING |
+                                                              REDFile.FLAG_TRUNCATE,
+                                                              permissions, 1000, 1000) # FIXME: async_call
         except REDError as e:
             self.upload_error("...error opening target file '{0}': {1}".format(self.target_name, e))
             return
 
         self.upload_write_async()
-
 
     def upload_write_async_cb_status(self, upload_size, upload_of):
         uploaded = self.progress_file.value() + upload_size - self.last_upload_size
