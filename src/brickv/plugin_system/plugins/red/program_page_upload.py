@@ -104,7 +104,7 @@ class ProgramPageUpload(QWizardPage, Ui_ProgramPageUpload):
         try:
             self.program = REDProgram(self.session).define(identifier) # FIXME: async_call
         except REDError as e:
-            self.upload_error('...error: {0}'.format(identifier, e), False)
+            self.upload_error('...error: {0}'.format(e), False)
             return
 
         self.log('...done')
