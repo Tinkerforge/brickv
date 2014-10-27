@@ -40,6 +40,7 @@ class Constants:
     FIELD_NAME     = 'name'
     FIELD_LANGUAGE = 'language'
 
+    # must match item order in combo_language on general page
     LANGUAGE_INVALID = 0
     LANGUAGE_JAVA    = 1
     LANGUAGE_PYTHON  = 2
@@ -80,21 +81,20 @@ class Constants:
         LANGUAGE_RUBY:    ['', '.rb']                 
     }
 
+    # must match item order in combo_start_mode on Java page
     JAVA_START_MODE_MAIN_CLASS = 0
     JAVA_START_MODE_JAR_FILE   = 1
 
+    # must match item order in combo_start_mode on Python page
     PYTHON_START_MODE_SCRIPT_FILE = 0
     PYTHON_START_MODE_MODULE_NAME = 1
     PYTHON_START_MODE_COMMAND     = 2
 
-    PYTHON_VERSION_2 = 0
-    PYTHON_VERSION_3 = 1
-    
+    # must match item order in combo_start_mode on Ruby page
     RUBY_START_MODE_SCRIPT_FILE = 0
     RUBY_START_MODE_COMMAND     = 1
 
-    RUBY_VERSION = 0
-
+    # must match item order in combo_stdin_redirection on stdio page
     STDIN_REDIRECTION_DEV_NULL = 0
     STDIN_REDIRECTION_PIPE     = 1
     STDIN_REDIRECTION_FILE     = 2
@@ -105,6 +105,7 @@ class Constants:
         STDIN_REDIRECTION_FILE:     REDProgram.STDIO_REDIRECTION_FILE
     }
 
+    # must match item order in combo_stdout_redirection on stdio page
     STDOUT_REDIRECTION_DEV_NULL = 0
     STDOUT_REDIRECTION_FILE     = 1
     STDOUT_REDIRECTION_LOG      = 2
@@ -115,6 +116,7 @@ class Constants:
         STDOUT_REDIRECTION_LOG:      REDProgram.STDIO_REDIRECTION_LOG
     }
 
+    # must match item order in combo_stderr_redirection on stdio page
     STDERR_REDIRECTION_DEV_NULL = 0
     STDERR_REDIRECTION_FILE     = 1
     STDERR_REDIRECTION_LOG      = 2
@@ -127,6 +129,7 @@ class Constants:
         STDERR_REDIRECTION_STDOUT:   REDProgram.STDIO_REDIRECTION_STDOUT
     }
 
+    # must match item order in combo_start_condition on schedule page
     SCHEDULE_START_CONDITION_NEVER  = 0
     SCHEDULE_START_CONDITION_NOW    = 1
     SCHEDULE_START_CONDITION_REBOOT = 2
@@ -139,6 +142,7 @@ class Constants:
         SCHEDULE_START_CONDITION_TIME:   REDProgram.START_CONDITION_TIMESTAMP
     }
 
+    # must match item order in combo_repeat_mode on schedule page
     SCHEDULE_REPEAT_MODE_NEVER     = 0
     SCHEDULE_REPEAT_MODE_INTERVAL  = 1
     SCHEDULE_REPEAT_MODE_SELECTION = 2

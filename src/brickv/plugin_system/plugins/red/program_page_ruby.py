@@ -21,6 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import QVariant
 from PyQt4.QtGui import QWizardPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_ruby import Ui_ProgramPageRuby
@@ -60,16 +61,15 @@ class ProgramPageRuby(QWizardPage, Ui_ProgramPageRuby):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.combo_script_file_ending_checker.check(False)
-        self.update_ruby_versions()
-
         self.setSubTitle(u'Specify how the Ruby program [{0}] should be executed.'
                          .format(unicode(self.field(Constants.FIELD_NAME).toString())))
+        self.update_ruby_versions()
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_RUBY_START_MODE)
 
         if self.combo_script_file.count() > 1:
             self.combo_script_file.clearEditText()
 
+        self.combo_script_file_ending_checker.check(False)
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
 
         self.combo_working_directory.clear()
@@ -81,7 +81,11 @@ class ProgramPageRuby(QWizardPage, Ui_ProgramPageRuby):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
+        executable = self.get_executable()
         start_mode = self.field('ruby.start_mode').toInt()[0]
+
+        if len(executable) == 0:
+            return False
 
         if start_mode == Constants.RUBY_START_MODE_SCRIPT_FILE and \
            not self.combo_script_file_checker.valid:
@@ -99,7 +103,7 @@ class ProgramPageRuby(QWizardPage, Ui_ProgramPageRuby):
             if result != None:
                 versions = result.stdout.split('\n')
                 try:
-                    self.combo_version.addItem(versions[0].split(' ')[1])
+                    self.combo_version.addItem(versions[0].split(' ')[1], QVariant('/usr/bin/ruby'))
                     self.combo_version.setEnabled(True)
                     return
                 except:
@@ -107,8 +111,10 @@ class ProgramPageRuby(QWizardPage, Ui_ProgramPageRuby):
 
             # Could not get versions, we assume that some version
             # of ruby 1.9 is installed
-            self.combo_version.addItem("1.9")
+            self.combo_version.clear()
+            self.combo_version.addItem('1.9', QVariant('/usr/bin/ruby'))
             self.combo_version.setEnabled(True)
+            self.completeChanged.emit()
 
         self.wizard().script_manager.execute_script('ruby_versions', cb_versions)
         
@@ -137,15 +143,14 @@ class ProgramPageRuby(QWizardPage, Ui_ProgramPageRuby):
         self.button_down_option.setVisible(show_advanced_options)
 
         self.option_list_editor.update_ui_state()
-        
+
+    def get_executable(self):
+        return unicode(self.combo_version.itemData(self.combo_version.currentIndex()).toString())
+
     def get_command(self):
+        executable = self.get_executable()
         arguments = self.option_list_editor.get_items()
         start_mode = self.field('ruby.start_mode').toInt()[0]
-
-#       There is only one ruby version installed for now
-#       version_index = self.combo_version.currentIndex()
-
-        executable = '/usr/bin/ruby'
 
         if start_mode == Constants.RUBY_START_MODE_SCRIPT_FILE:
             arguments.append(unicode(self.combo_script_file.currentText()))

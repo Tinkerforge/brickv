@@ -21,6 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import QVariant
 from PyQt4.QtGui import QWizardPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_python import Ui_ProgramPagePython
@@ -61,13 +62,11 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.combo_script_file_ending_checker.check(False)
-        self.update_python_versions()
-        
         self.setSubTitle(u'Specify how the Python program [{0}] should be executed.'
                          .format(unicode(self.field(Constants.FIELD_NAME).toString())))
+        self.update_python_versions()
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PYTHON_START_MODE)
-
+        self.combo_script_file_ending_checker.check(False)
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
 
         self.combo_working_directory.clear()
@@ -79,7 +78,11 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
+        executable = self.get_executable()
         start_mode = self.field('python.start_mode').toInt()[0]
+
+        if len(executable) == 0:
+            return False
 
         if start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE and \
            not self.combo_script_file_checker.valid:
@@ -101,8 +104,8 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
             if result != None:
                 versions = result.stderr.split('\n')
                 try:
-                    self.combo_version.addItem(versions[0].split(' ')[1])
-                    self.combo_version.addItem(versions[1].split(' ')[1])
+                    self.combo_version.addItem(versions[0].split(' ')[1], QVariant('/usr/bin/python2'))
+                    self.combo_version.addItem(versions[1].split(' ')[1], QVariant('/usr/bin/python3'))
                     self.combo_version.setEnabled(True)
                     return
                 except:
@@ -110,9 +113,11 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
 
             # Could not get versions, we assume that some version
             # of python 2.7 and some version of python 3 is installed
-            self.combo_version.addItem("2.7")
-            self.combo_version.addItem("3")
+            self.combo_version.clear()
+            self.combo_version.addItem('2.7', QVariant('/usr/bin/python2'))
+            self.combo_version.addItem('3.x', QVariant('/usr/bin/python3'))
             self.combo_version.setEnabled(True)
+            self.completeChanged.emit()
 
         self.wizard().script_manager.execute_script('python_versions', cb_versions)
 
@@ -146,14 +151,13 @@ class ProgramPagePython(QWizardPage, Ui_ProgramPagePython):
 
         self.option_list_editor.update_ui_state()
 
+    def get_executable(self):
+        return unicode(self.combo_version.itemData(self.combo_version.currentIndex()).toString())
+
     def get_command(self):
+        executable = self.get_executable()
         arguments = self.option_list_editor.get_items()
         start_mode = self.field('python.start_mode').toInt()[0]
-        version_index = self.combo_version.currentIndex()
-
-        executable = '/usr/bin/python2'
-        if version_index == Constants.PYTHON_VERSION_3:
-            executable = '/usr/bin/python3'
 
         if start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE:
             arguments.append(unicode(self.combo_script_file.currentText()))
