@@ -33,7 +33,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-158</y>
+        <y>0</y>
         <width>586</width>
         <height>1668</height>
        </rect>
@@ -128,16 +128,6 @@
          <layout class="QVBoxLayout" name="verticalLayout_11">
           <item>
            <layout class="QGridLayout" name="gridLayout_10">
-            <item row="1" column="0" colspan="2">
-             <widget class="QListWidget" name="list_logs">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>200</height>
-               </size>
-              </property>
-             </widget>
-            </item>
             <item row="2" column="0">
              <widget class="QPushButton" name="button_download_log">
               <property name="text">
@@ -149,6 +139,16 @@
              <widget class="QPushButton" name="button_delete_log">
               <property name="text">
                <string>Delete</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="2">
+             <widget class="QTreeView" name="tree_logs">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>200</height>
+               </size>
               </property>
              </widget>
             </item>
@@ -702,7 +702,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>list_logs</tabstop>
   <tabstop>tree_files</tabstop>
  </tabstops>
  <resources/>
