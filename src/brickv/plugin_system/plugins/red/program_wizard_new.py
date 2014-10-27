@@ -28,6 +28,7 @@ from brickv.plugin_system.plugins.red.program_page_general import ProgramPageGen
 from brickv.plugin_system.plugins.red.program_page_files import ProgramPageFiles
 from brickv.plugin_system.plugins.red.program_page_java import ProgramPageJava
 from brickv.plugin_system.plugins.red.program_page_python import ProgramPagePython
+from brickv.plugin_system.plugins.red.program_page_ruby import ProgramPageRuby
 from brickv.plugin_system.plugins.red.program_page_arguments import ProgramPageArguments
 from brickv.plugin_system.plugins.red.program_page_stdio import ProgramPageStdio
 from brickv.plugin_system.plugins.red.program_page_schedule import ProgramPageSchedule
@@ -50,6 +51,7 @@ class ProgramWizardNew(QWizard):
         self.setPage(Constants.PAGE_FILES, ProgramPageFiles(title_prefix='Step 2 or 8: '))
         self.setPage(Constants.PAGE_JAVA, ProgramPageJava(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_PYTHON, ProgramPagePython(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_RUBY, ProgramPageRuby(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_ARGUMENTS, ProgramPageArguments(title_prefix='Step 4 or 8: '))
         self.setPage(Constants.PAGE_STDIO, ProgramPageStdio(title_prefix='Step 5 or 8: '))
         self.setPage(Constants.PAGE_SCHEDULE, ProgramPageSchedule(title_prefix='Step 6 or 8: '))
@@ -83,11 +85,15 @@ class ProgramWizardNew(QWizard):
                 return Constants.PAGE_JAVA
             elif language == Constants.LANGUAGE_PYTHON:
                 return Constants.PAGE_PYTHON
+            elif language == Constants.LANGUAGE_RUBY:
+                return Constants.PAGE_RUBY
             else:
                 return Constants.PAGE_GENERAL
         elif currentId == Constants.PAGE_JAVA:
             return Constants.PAGE_ARGUMENTS
         elif currentId == Constants.PAGE_PYTHON:
+            return Constants.PAGE_ARGUMENTS
+        elif currentId == Constants.PAGE_RUBY:
             return Constants.PAGE_ARGUMENTS
         elif currentId == Constants.PAGE_ARGUMENTS:
             return Constants.PAGE_STDIO

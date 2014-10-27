@@ -35,6 +35,7 @@ class Constants:
     PAGE_SCHEDULE  = 6
     PAGE_SUMMARY   = 7
     PAGE_UPLOAD    = 8
+    PAGE_RUBY      = 9
 
     FIELD_NAME     = 'name'
     FIELD_LANGUAGE = 'language'
@@ -42,29 +43,34 @@ class Constants:
     LANGUAGE_INVALID = 0
     LANGUAGE_JAVA    = 1
     LANGUAGE_PYTHON  = 2
+    LANGUAGE_RUBY    = 3
 
     language_display_names = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'Java',
-        LANGUAGE_PYTHON:  'Python'
+        LANGUAGE_PYTHON:  'Python',
+        LANGUAGE_RUBY:    'Ruby'
     }
 
     api_languages = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'java',
-        LANGUAGE_PYTHON:  'python'
+        LANGUAGE_PYTHON:  'python',
+        LANGUAGE_RUBY:    'ruby'
     }
 
     arguments_help = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'This list of arguments will be passed to the main() method.',
-        LANGUAGE_PYTHON:  'This list of arguments will be available as the sys.argv list.'
+        LANGUAGE_PYTHON:  'This list of arguments will be available as the sys.argv list.',
+        LANGUAGE_RUBY:    'This list of arguments will be available in the ARGV Array variable.'
     }
 
     environment_help = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'This list of environment variables will be set for the Java program.',
         LANGUAGE_PYTHON:  'This list of environment variables will be set for the Python program.',
+        LANGUAGE_RUBY:    'This list of environment variables will be set for the Ruby program.',
     }
 
     JAVA_START_MODE_MAIN_CLASS = 0
@@ -76,6 +82,11 @@ class Constants:
 
     PYTHON_VERSION_2 = 0
     PYTHON_VERSION_3 = 1
+    
+    RUBY_START_MODE_SCRIPT_FILE = 0
+    RUBY_START_MODE_COMMAND     = 1
+
+    RUBY_VERSION = 0
 
     STDIN_REDIRECTION_DEV_NULL = 0
     STDIN_REDIRECTION_PIPE     = 1
@@ -133,6 +144,7 @@ class Constants:
 
     DEFAULT_JAVA_START_MODE          = JAVA_START_MODE_MAIN_CLASS
     DEFAULT_PYTHON_START_MODE        = PYTHON_START_MODE_SCRIPT_FILE
+    DEFAULT_RUBY_START_MODE          = RUBY_START_MODE_SCRIPT_FILE
     DEFAULT_STDIN_REDIRECTION        = STDIN_REDIRECTION_PIPE
     DEFAULT_STDOUT_REDIRECTION       = STDOUT_REDIRECTION_LOG
     DEFAULT_STDERR_REDIRECTION       = STDERR_REDIRECTION_STDOUT
