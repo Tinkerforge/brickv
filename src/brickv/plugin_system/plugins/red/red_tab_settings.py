@@ -967,6 +967,46 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def slot_network_general_save_clicked(self):
         self.network_button_save_enabled(False)
 
+        def cb_settings_network_status(result):
+            self.twidget_net.setEnabled(True)
+            self.label_working_wait.hide()
+            if result.stderr == "":
+                self.network_all_data['status'] = json.loads(result.stdout)
+                self.update_network_widget_data()
+            else:
+                pass
+                # TODO: Error popup for user?
+
+        def cb_settings_network_set_hostname(result):
+            if result.stderr != "":
+                self.script_manager.execute_script('settings_network_status',
+                                                   cb_settings_network_status,
+                                                   [])
+            else:
+                self.twidget_net.setEnabled(True)
+                self.label_working_wait.hide()
+                # TODO: Error popup for user?
+
+        self.twidget_net.setEnabled(False)
+        self.label_working_wait.show()
+
+        try:
+            hostname_new = str(self.ledit_net_gen_hostname.displayText())
+        except:
+            QtGui.QMessageBox.critical(None,
+                                       'Settings | Network | General',
+                                       'Invalid new hostname.',
+                                       QtGui.QMessageBox.Ok)
+            self.ledit_net_gen_hostname.setText(self.network_all_data['status']['cstat_hostname'])
+            self.twidget_net.setEnabled(True)
+            self.label_working_wait.hide()
+            return
+
+        self.script_manager.execute_script('settings_network_set_hostname',
+                                           cb_settings_network_set_hostname,
+                                           [self.network_all_data['status']['cstat_hostname'],
+                                            hostname_new])
+
     def slot_network_wireless_save_clicked(self):
         self.network_button_save_enabled(False)
 
