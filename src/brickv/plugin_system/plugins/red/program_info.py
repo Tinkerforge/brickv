@@ -179,15 +179,27 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                 if file_name_display.split('.')[0] == "stdout":
                                     parent[0].child(0).appendRow([QStandardItem(file_name_display),
                                                                   QStandardItem(time),
+                                                                  QStandardItem("LOG_FILE"),
                                                                   QStandardItem(file_path)])
                                 elif file_name_display.split('.')[0] == "stderr":
                                     parent[0].child(1).appendRow([QStandardItem(file_name_display),
                                                                   QStandardItem(time),
+                                                                  QStandardItem("LOG_FILE"),
                                                                   QStandardItem(file_path)])
                             else:
                                 parent = [QStandardItem(date)]
                                 parent[0].appendRow([QStandardItem("STDOUT")])
                                 parent[0].appendRow([QStandardItem("STDERR")])
+                                if file_name_display.split('.')[0] == "stdout":
+                                    parent[0].child(0).appendRow([QStandardItem(file_name_display),
+                                                                  QStandardItem(time),
+                                                                  QStandardItem("LOG_FILE"),
+                                                                  QStandardItem(file_path)])
+                                elif file_name_display.split('.')[0] == "stderr":
+                                    parent[0].child(1).appendRow([QStandardItem(file_name_display),
+                                                                  QStandardItem(time),
+                                                                  QStandardItem("LOG_FILE"),
+                                                                  QStandardItem(file_path)])
                                 self.tree_logs_model.appendRow(parent)
 
             else:
@@ -245,14 +257,14 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.label_stderr_file.setText(unicode(self.program.stderr_file_name))
 
     def download_selected_log(self):
-        #selected_items = self.list_logs.selectedItems()
-
-        if len(selected_items) == 0:
+        index_list =  self.tree_logs.selectedIndexes()
+        if len(index_list) != 4:
             return
-
-        filename = unicode(selected_items[0].text())
-
-        print 'download_selected_log', log_filename
+        else:
+            if self.tree_logs_model.itemFromIndex(index_list[2]).text() != "LOG_FILE":
+                return
+            log_filename = unicode(self.tree_logs_model.itemFromIndex(index_list[3]).text())
+            print 'download_selected_log', log_filename
 
     def delete_selected_log(self):
         #selected_items = self.list_logs.selectedItems()
