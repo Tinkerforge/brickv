@@ -65,6 +65,30 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
         self.check_show_environment.setCheckState(Qt.Unchecked)
         self.label_environment_help.setText(Constants.environment_help[language])
         self.environment_list_editor.reset_items()
+
+        # if a program exists then this page is used in an edit wizard
+        if self.wizard().program != None:
+            try:
+                editable_arguments_offset = max(int(unicode(self.wizard().program.custom_options.get('editable_arguments_offset', '0'))), 0)
+            except ValueError:
+                editable_arguments_offset = 0
+
+            for argument in self.wizard().program.arguments.items[editable_arguments_offset:]:
+                self.argument_list_editor.add_item(unicode(argument))
+
+            for variable in self.wizard().program.environment.items:
+                variable = unicode(variable)
+                i = variable.find('=')
+
+                if i < 0:
+                    name = variable
+                    value = ''
+                else:
+                    name = variable[:i]
+                    value = variable[i + 1:]
+
+                self.environment_list_editor.add_item([name, value])
+
         self.update_ui_state()
 
     # overrides QWizardPage.isComplete
@@ -105,4 +129,9 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
         return self.argument_list_editor.get_items()
 
     def get_environment(self):
-        return self.environment_list_editor.get_items()
+        environment = []
+
+        for variable in self.environment_list_editor.get_items():
+            environment.append(u'{0}={1}'.format(variable[0], variable[1]))
+
+        return environment

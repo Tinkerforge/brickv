@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem
+from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_info import Ui_ProgramInfo
@@ -37,6 +37,9 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.session = session
         self.program = program
         self.script_manager = script_manager
+
+        self.edit_arguments_wizard = None
+
         self.program_dir = unicode(self.program.root_directory)
         self.program_dir_walk_result = None
         self.tree_logs_model = QStandardItemModel(self)
@@ -118,12 +121,12 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                             f_splitted = f.split('-')
                             time_stamp = f_splitted[0]
                             file_name_tree_logs = f_splitted[1]
-                            
+
                             if file_name_tree_logs.split('.')[0] == "stdout":
                                 parent_stdout[0].appendRow([QStandardItem(file_name_tree_logs), QStandardItem(time_stamp)])
                             elif file_name_tree_logs.split('.')[0] == "stderr":
                                 parent_stderr[0].appendRow([QStandardItem(file_name_tree_logs), QStandardItem(time_stamp)])
-                            
+
                             print "FILE NAME="+file_name
                             print "FILE PATH="+file_path
                             print "TS="+time_stamp
@@ -144,6 +147,26 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.script_manager.execute_script('program_get_os_walk',
                                            cb_program_get_os_walk,
                                            [self.program_dir])
+
+        # arguments
+        try:
+            editable_arguments_offset = max(int(unicode(self.program.custom_options.get('editable_arguments_offset', '0'))), 0)
+        except ValueError:
+            editable_arguments_offset = 0
+
+        arguments = []
+
+        for argument in self.program.arguments.items[editable_arguments_offset:]:
+            arguments.append(unicode(argument))
+
+        self.label_arguments.setText('\n'.join(arguments))
+
+        environment = []
+
+        for variable in self.program.environment.items:
+            environment.append(unicode(variable))
+
+        self.label_environment.setText('\n'.join(environment))
 
     def download_selected_log(self):
         #selected_items = self.list_logs.selectedItems()
@@ -202,7 +225,20 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         print 'show_edit_language_wizard'
 
     def show_edit_arguments_wizard(self):
-        print 'show_edit_arguments_wizard'
+        self.button_edit_arguments.setEnabled(False)
+
+        self.edit_arguments_wizard = ProgramWizardEdit(self.session, self.program, [], self.script_manager)
+        self.edit_arguments_wizard.finished.connect(self.edit_arguments_wizard_finished)
+        self.edit_arguments_wizard.show()
+
+    def edit_arguments_wizard_finished(self, result):
+        self.edit_arguments_wizard.finished.disconnect(self.edit_arguments_wizard_finished)
+
+        if result == QDialog.Accepted:
+            #self.edit_arguments_wizard
+            pass
+
+        self.button_edit_arguments.setEnabled(True)
 
     def show_edit_stdio_wizard(self):
         print 'show_edit_stdio_wizard'

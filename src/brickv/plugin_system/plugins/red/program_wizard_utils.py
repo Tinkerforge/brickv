@@ -79,8 +79,8 @@ class Constants:
         LANGUAGE_RUBY:    'This list of environment variables will be set for the Ruby program.',
         LANGUAGE_SHELL:   'This list of environment variables will be set for the Shell script.',
     }
-    
-    language_file_ending = { # endswith XXX sorted by file ending index 
+
+    language_file_ending = { # endswith XXX sorted by file ending index
         LANGUAGE_INVALID: [],
         LANGUAGE_JAVA:    ['', '.java'],
         LANGUAGE_PYTHON:  ['', '.py'],
@@ -104,7 +104,6 @@ class Constants:
     # must match item order in combo_start_mode on Shell page
     SHELL_START_MODE_SCRIPT_FILE = 0
     SHELL_START_MODE_COMMAND     = 1
-    
 
     # must match item order in combo_stdin_redirection on stdio page
     STDIN_REDIRECTION_DEV_NULL = 0
@@ -333,6 +332,17 @@ class TreeWidgetEditor:
         self.button_up_item.setEnabled(item_count > 1 and has_selection and selected_index > 0)
         self.button_down_item.setEnabled(item_count > 1 and has_selection and selected_index < item_count - 1)
 
+    def add_item(self, texts, edit_item=False):
+        item = QTreeWidgetItem(texts)
+        item.setFlags(item.flags() | Qt.ItemIsEditable)
+
+        self.tree_items.addTopLevelItem(item)
+
+        if edit_item:
+            self.tree_items.editItem(item)
+
+        self.update_ui_state()
+
     def add_new_item(self):
         texts = []
 
@@ -341,12 +351,7 @@ class TreeWidgetEditor:
 
         self.new_item_counter += 1
 
-        item = QTreeWidgetItem(texts)
-        item.setFlags(item.flags() | Qt.ItemIsEditable)
-
-        self.tree_items.addTopLevelItem(item)
-        self.tree_items.editItem(item)
-        self.update_ui_state()
+        self.add_item(texts, edit_item=True)
 
     def remove_selected_item(self):
         for item in self.tree_items.selectedItems():
@@ -385,11 +390,7 @@ class TreeWidgetEditor:
         self.tree_items.invisibleRootItem().takeChildren()
 
         for original_item in self.original_items:
-            item = QTreeWidgetItem(original_item)
-            item.setFlags(item.flags() | Qt.ItemIsEditable)
-            self.tree_items.addTopLevelItem(item)
-
-        self.update_ui_state()
+            self.add_item(original_item)
 
     def get_items(self):
         items = []
@@ -454,17 +455,18 @@ class MandatoryEditableComboBoxChecker:
         if emit and was_valid != self.valid:
             self.page.completeChanged.emit()
 
+# FIXME: merge with MandatoryEditableComboBoxChecker into MandatoryFileSelector
 class ComboBoxFileEndingChecker:
     def __init__(self, page, combo_file, combo_ending):
         self.page         = page
         self.combo_file   = combo_file
         self.combo_ending = combo_ending
-        
+
         self.combo_ending.currentIndexChanged.connect(lambda: self.check(True))
-        
+
     def check(self, emit):
         self.combo_file.clear()
-        
+
         ends = Constants.language_file_ending[self.page.language][self.combo_ending.currentIndex()]
 
         for filename in sorted(self.page.wizard().available_files):

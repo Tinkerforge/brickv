@@ -245,11 +245,22 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         elif self.language == 'shell':
             executable, arguments, working_directory = self.wizard().page(Constants.PAGE_SHELL).get_command()
 
+        editable_arguments_offset = len(arguments)
         arguments += self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
-        environment = []
+        environment = self.wizard().page(Constants.PAGE_ARGUMENTS).get_environment()
 
         try:
             self.program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
+        except REDError as e:
+            self.upload_error('...error: {0}'.format(e))
+            return
+
+        self.log('...done')
+        self.next_step('Setting more custom options...')
+
+        # set custom option: editable_arguments_offset
+        try:
+            self.program.set_custom_option_value('editable_arguments_offset', str(editable_arguments_offset)) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return

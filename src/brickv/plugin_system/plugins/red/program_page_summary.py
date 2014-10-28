@@ -95,7 +95,7 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
         html += u'<br/>'
 
         for variable in environment:
-            html += u'{0} = {1}<br/>'.format(Qt.escape(variable[0]), Qt.escape(variable[1]))
+            html += u'{0}<br/>'.format(Qt.escape(variable))
 
         html += u'<br/>'
 
