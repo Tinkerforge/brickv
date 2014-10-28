@@ -304,17 +304,16 @@ class REDString(REDObject):
     MAX_GET_CHUNK_BUFFER_LENGTH = 63
 
     def __str__(self):
-        return self._data
+        return str(self._data)
 
     def __unicode__(self):
-        return self._data_unicode
+        return self._data
 
     def __repr__(self):
         return '<REDString object_id: {0}, data: {1}>'.format(self._object_id, repr(self._data))
 
     def _initialize(self):
-        self._data = None
-        self._data_unicode = None
+        self._data = None # stored as unicode
 
     def update(self):
         if self._object_id is None:
@@ -325,26 +324,26 @@ class REDString(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get length of string object {0}'.format(self._object_id), error_code)
 
-        data = ''
+        data_utf8 = ''
 
-        while len(data) < length:
-            error_code, chunk = self._session._brick.get_string_chunk(self._object_id, len(data))
+        while len(data_utf8) < length:
+            error_code, chunk = self._session._brick.get_string_chunk(self._object_id, len(data_utf8))
 
             if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not get chunk of string object {0} at offset {1}'.format(self._object_id, len(data)), error_code)
+                raise REDError('Could not get chunk of string object {0} at offset {1}'.format(self._object_id, len(data_utf8)), error_code)
 
-            data += chunk
+            data_utf8 += chunk
 
-        self._data = data
-        self._data_unicode = data.decode('utf-8')
+        self._data = data_utf8.decode('utf-8')
 
     def allocate(self, data):
         self.release()
 
-        chunk = data[:REDString.MAX_ALLOCATE_BUFFER_LENGTH]
-        remaining_data = data[REDString.MAX_ALLOCATE_BUFFER_LENGTH:]
+        data_utf8 = unicode(data).encode('utf-8')
+        chunk = data_utf8[:REDString.MAX_ALLOCATE_BUFFER_LENGTH]
+        remaining_data = data_utf8[REDString.MAX_ALLOCATE_BUFFER_LENGTH:]
 
-        error_code, object_id = self._session._brick.allocate_string(len(data), chunk, self._session._session_id)
+        error_code, object_id = self._session._brick.allocate_string(len(data_utf8), chunk, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not allocate string object', error_code)
@@ -365,7 +364,6 @@ class REDString(REDObject):
             offset += len(chunk)
 
         self._data = data
-        self._data_unicode = data.decode('utf-8')
 
         return self
 
