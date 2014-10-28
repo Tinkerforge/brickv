@@ -50,16 +50,11 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.program_dir = unicode(self.program.root_directory)
         self.program_dir_walk_result = None
         self.tree_logs_model = QStandardItemModel(self)
-        self.tree_logs_header_labels = ["File", "Time Stamp"]
+        self.tree_logs_header_labels = ["File", "Time"]
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_header_labels)
         self.tree_logs.setModel(self.tree_logs_model)
-        self.tree_logs_model.clear()
-        self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_header_labels)
-        parent_stdout = [QStandardItem("STDOUT"), QStandardItem("")]
-        parent_stderr = [QStandardItem("STDERR"), QStandardItem("")]
-        self.tree_logs_model.appendRow(parent_stdout)
-        self.tree_logs_model.appendRow(parent_stderr)
 
+        self.tree_logs_model.itemChanged.connect(self.tree_logs_model_item_changed)
         self.button_refresh.clicked.connect(self.refresh_info)
         self.button_download_log.clicked.connect(self.download_selected_log)
         self.button_delete_log.clicked.connect(self.delete_selected_log)
@@ -73,6 +68,9 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.button_edit_schedule.clicked.connect(self.show_edit_schedule_wizard)
 
         self.update_ui_state()
+
+    def tree_logs_model_item_changed(self, idx):
+        print idx
 
     def refresh_info(self):
         def refresh_async():
@@ -120,25 +118,70 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             if result.stderr == "":
                 self.program_dir_walk_result = json.loads(result.stdout)
 
+                '''parent1 = [QStandardItem("PONE"), QStandardItem("")]
+                parent2 = [QStandardItem("PTWO"), QStandardItem("")]
+                parent3 = [QStandardItem("PTHREE"), QStandardItem("")]
+                
+                self.tree_logs_model.appendRow(parent1)
+                self.tree_logs_model.appendRow(parent2)
+                self.tree_logs_model.appendRow(parent3)'''
+
                 for dir_node in self.program_dir_walk_result:
                     if dir_node['root'] == '/'.join([self.program_dir, "log"]):
                         for idx, f in enumerate(dir_node['files']):
                             file_name = f
                             file_path = '/'.join([dir_node['root'], f])
-                            f_splitted = f.split('-')
-                            time_stamp = f_splitted[0]
-                            file_name_tree_logs = f_splitted[1]
+                            time_stamp = f.split('-')[0]
+                            file_name_display = f.split('-')[1]
 
-                            if file_name_tree_logs.split('.')[0] == "stdout":
-                                parent_stdout[0].appendRow([QStandardItem(file_name_tree_logs), QStandardItem(time_stamp)])
-                            elif file_name_tree_logs.split('.')[0] == "stderr":
-                                parent_stderr[0].appendRow([QStandardItem(file_name_tree_logs), QStandardItem(time_stamp)])
+                            _date = time_stamp.split('T')[0]
+                            _time = time_stamp.split('T')[1]
+                            year = _date[:4]
+                            month = _date[4:6]
+                            day = _date[6:]
+                            date = '-'.join([year, month, day])
 
+                            if '+' in _time:
+                                __time = _time.split('+')[0].split('.')[0]
+                                hour = __time[:2]
+                                mins = __time[2:4]
+                                sec = __time[4:]
+                                gmt = _time.split('+')[1]
+                                gmt = '+'+gmt
+                            elif '-' in _time:
+                                __time = _time.split('-')[0].split('.')[0]
+                                hour = __time[:2]
+                                mins = __time[2:4]
+                                sec = __time[4:]
+                                gmt = _time.split('-')[1]
+                                gmt = '-'+gmt
+                            time = ':'.join([hour, mins, sec])
+                            time = time+' '+gmt
+                            '''
                             print "FILE NAME="+file_name
                             print "FILE PATH="+file_path
-                            print "TS="+time_stamp
-                            print "FNTG="+file_name_tree_logs
+                            print "TIMESTAMP="+time_stamp
+                            print "FILE NAME DISPLAY="+file_name_display
+                            print "DATE="+date
+                            print "TIME="+time
                             print "========================================="
+                            '''
+
+                            parent = self.tree_logs_model.findItems(date)
+                            if parent:
+                                if file_name_display.split('.')[0] == "stdout":
+                                    parent[0].child(0).appendRow([QStandardItem(file_name_display),
+                                                                  QStandardItem(time),
+                                                                  QStandardItem(file_path)])
+                                elif file_name_display.split('.')[0] == "stderr":
+                                    parent[0].child(1).appendRow([QStandardItem(file_name_display),
+                                                                  QStandardItem(time),
+                                                                  QStandardItem(file_path)])
+                            else:
+                                parent = [QStandardItem(date)]
+                                parent[0].appendRow([QStandardItem("STDOUT")])
+                                parent[0].appendRow([QStandardItem("STDERR")])
+                                self.tree_logs_model.appendRow(parent)
 
             else:
                 # TODO: Error popup for user?
@@ -146,10 +189,6 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
         self.tree_logs_model.clear()
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_header_labels)
-        parent_stdout = [QStandardItem("STDOUT"), QStandardItem("")]
-        parent_stderr = [QStandardItem("STDERR"), QStandardItem("")]
-        self.tree_logs_model.appendRow(parent_stdout)
-        self.tree_logs_model.appendRow(parent_stderr)
 
         self.script_manager.execute_script('program_get_os_walk',
                                            cb_program_get_os_walk,
