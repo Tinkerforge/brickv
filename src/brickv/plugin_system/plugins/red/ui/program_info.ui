@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>604</width>
-    <height>693</height>
+    <height>793</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,7 +35,7 @@
         <x>0</x>
         <y>0</y>
         <width>586</width>
-        <height>1668</height>
+        <height>1586</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -581,34 +581,6 @@
               <layout class="QVBoxLayout" name="verticalLayout_8">
                <item>
                 <layout class="QGridLayout" name="gridLayout_8">
-                 <item row="7" column="0">
-                  <widget class="QLabel" name="label_repeat_weekdays_title">
-                   <property name="text">
-                    <string>Weekdays:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="0">
-                  <widget class="QLabel" name="label_repeat_months_title">
-                   <property name="text">
-                    <string>Months:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="0">
-                  <widget class="QLabel" name="label_repeat_days_title">
-                   <property name="text">
-                    <string>Days:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="4" column="0">
-                  <widget class="QLabel" name="label_repeat_hours_title">
-                   <property name="text">
-                    <string>Hours:</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_20">
                    <property name="text">
@@ -617,16 +589,9 @@
                   </widget>
                  </item>
                  <item row="2" column="0">
-                  <widget class="QLabel" name="label_repeat_seconds_title">
+                  <widget class="QLabel" name="label_repeat_fields_title">
                    <property name="text">
-                    <string>Seconds:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="0">
-                  <widget class="QLabel" name="label_repeat_minutes_title">
-                   <property name="text">
-                    <string>Minutes:</string>
+                    <string>Fields:</string>
                    </property>
                   </widget>
                  </item>
@@ -658,44 +623,9 @@
                   </widget>
                  </item>
                  <item row="2" column="1">
-                  <widget class="QLabel" name="label_repeat_seconds">
+                  <widget class="QLabel" name="label_repeat_fields">
                    <property name="text">
                     <string>&lt;repeat-seconds&gt;</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="1">
-                  <widget class="QLabel" name="label_repeat_minutes">
-                   <property name="text">
-                    <string>&lt;repeat-minutes&gt;</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="4" column="1">
-                  <widget class="QLabel" name="label_repeat_hours">
-                   <property name="text">
-                    <string>&lt;repeat-hours&gt;</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="5" column="1">
-                  <widget class="QLabel" name="label_repeat_days">
-                   <property name="text">
-                    <string>&lt;repeat-days&gt;</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="1">
-                  <widget class="QLabel" name="label_repeat_months">
-                   <property name="text">
-                    <string>&lt;repeat-months&gt;</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="7" column="1">
-                  <widget class="QLabel" name="label_repeat_weekdays">
-                   <property name="text">
-                    <string>&lt;repeat-weekdays&gt;</string>
                    </property>
                   </widget>
                  </item>

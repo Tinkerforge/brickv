@@ -40,23 +40,13 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         self.registerField('start_delay', self.spin_start_delay)
         self.registerField('repeat_mode', self.combo_repeat_mode)
         self.registerField('repeat_interval', self.spin_repeat_interval)
-        self.registerField('repeat_seconds', self.edit_repeat_seconds)
-        self.registerField('repeat_minutes', self.edit_repeat_minutes)
-        self.registerField('repeat_hours', self.edit_repeat_hours)
-        self.registerField('repeat_days', self.edit_repeat_days)
-        self.registerField('repeat_months', self.edit_repeat_months)
-        self.registerField('repeat_weekdays', self.edit_repeat_weekdays)
+        self.registerField('repeat_fields', self.edit_repeat_fields)
 
         self.combo_start_condition.currentIndexChanged.connect(self.update_ui_state)
         self.combo_repeat_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_repeat_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
 
-        self.edit_repeat_seconds_checker  = MandatoryLineEditChecker(self, self.edit_repeat_seconds, self.label_repeat_seconds)
-        self.edit_repeat_minutes_checker  = MandatoryLineEditChecker(self, self.edit_repeat_minutes, self.label_repeat_minutes)
-        self.edit_repeat_hours_checker    = MandatoryLineEditChecker(self, self.edit_repeat_hours, self.label_repeat_hours)
-        self.edit_repeat_days_checker     = MandatoryLineEditChecker(self, self.edit_repeat_days, self.label_repeat_days)
-        self.edit_repeat_months_checker   = MandatoryLineEditChecker(self, self.edit_repeat_months, self.label_repeat_months)
-        self.edit_repeat_weekdays_checker = MandatoryLineEditChecker(self, self.edit_repeat_weekdays, self.label_repeat_weekdays)
+        self.edit_repeat_fields_checker = MandatoryLineEditChecker(self, self.edit_repeat_fields, self.label_repeat_fields)
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
@@ -74,13 +64,8 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
     def isComplete(self):
         repeat_mode = self.get_field('repeat_mode').toInt()[0]
 
-        if repeat_mode == Constants.SCHEDULE_REPEAT_MODE_SELECTION:
-            if not self.edit_repeat_seconds_checker.valid or \
-               not self.edit_repeat_minutes_checker.valid or \
-               not self.edit_repeat_hours_checker.valid or \
-               not self.edit_repeat_days_checker.valid or \
-               not self.edit_repeat_months_checker.valid or \
-               not self.edit_repeat_weekdays_checker.valid:
+        if repeat_mode == Constants.SCHEDULE_REPEAT_MODE_CRON:
+            if not self.edit_repeat_fields_checker.valid:
                 return False
 
         return ProgramPage.isComplete(self)
@@ -104,22 +89,12 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         repeat_mode = self.get_field('repeat_mode').toInt()[0]
         repeat_mode_never = repeat_mode == Constants.SCHEDULE_REPEAT_MODE_NEVER
         repeat_mode_interval = repeat_mode == Constants.SCHEDULE_REPEAT_MODE_INTERVAL
-        repeat_mode_selection = repeat_mode == Constants.SCHEDULE_REPEAT_MODE_SELECTION
+        repeat_mode_cron = repeat_mode == Constants.SCHEDULE_REPEAT_MODE_CRON
 
         self.label_repeat_interval.setVisible(repeat_mode_interval)
         self.spin_repeat_interval.setVisible(repeat_mode_interval)
-        self.label_repeat_seconds.setVisible(repeat_mode_selection)
-        self.edit_repeat_seconds.setVisible(repeat_mode_selection)
-        self.label_repeat_minutes.setVisible(repeat_mode_selection)
-        self.edit_repeat_minutes.setVisible(repeat_mode_selection)
-        self.label_repeat_hours.setVisible(repeat_mode_selection)
-        self.edit_repeat_hours.setVisible(repeat_mode_selection)
-        self.label_repeat_days.setVisible(repeat_mode_selection)
-        self.edit_repeat_days.setVisible(repeat_mode_selection)
-        self.label_repeat_months.setVisible(repeat_mode_selection)
-        self.edit_repeat_months.setVisible(repeat_mode_selection)
-        self.label_repeat_weekdays.setVisible(repeat_mode_selection)
-        self.edit_repeat_weekdays.setVisible(repeat_mode_selection)
+        self.label_repeat_fields.setVisible(repeat_mode_cron)
+        self.edit_repeat_fields.setVisible(repeat_mode_cron)
         self.label_repeat_mode_never_help.setVisible(repeat_mode_never)
         self.label_repeat_mode_interval_help.setVisible(repeat_mode_interval)
-        self.label_repeat_mode_selection_help.setVisible(repeat_mode_selection)
+        self.label_repeat_mode_cron_help.setVisible(repeat_mode_cron)

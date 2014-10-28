@@ -308,11 +308,11 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         start_delay     = self.get_field('start_delay').toInt()[0]
         repeat_mode     = Constants.api_schedule_repeat_mode[self.get_field('repeat_mode').toInt()[0]]
         repeat_interval = self.get_field('repeat_interval').toInt()[0]
-        # FIXME: handle selection repeat mode
+        repeat_fields   = unicode(self.get_field('repeat_fields').toString())
 
         try:
             self.program.set_schedule(start_condition, start_time, start_delay,
-                                      repeat_mode, repeat_interval, 0, 0, 0, 0, 0, 0) # FIXME: async_call
+                                      repeat_mode, repeat_interval, repeat_fields) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return

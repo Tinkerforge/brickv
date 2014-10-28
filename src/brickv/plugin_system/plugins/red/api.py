@@ -1139,9 +1139,9 @@ class REDProgram(REDObject):
     START_CONDITION_REBOOT    = BrickRED.PROGRAM_START_CONDITION_REBOOT
     START_CONDITION_TIMESTAMP = BrickRED.PROGRAM_START_CONDITION_TIMESTAMP
 
-    REPEAT_MODE_NEVER     = BrickRED.PROGRAM_REPEAT_MODE_NEVER
-    REPEAT_MODE_INTERVAL  = BrickRED.PROGRAM_REPEAT_MODE_INTERVAL
-    REPEAT_MODE_SELECTION = BrickRED.PROGRAM_REPEAT_MODE_SELECTION
+    REPEAT_MODE_NEVER    = BrickRED.PROGRAM_REPEAT_MODE_NEVER
+    REPEAT_MODE_INTERVAL = BrickRED.PROGRAM_REPEAT_MODE_INTERVAL
+    REPEAT_MODE_CRON     = BrickRED.PROGRAM_REPEAT_MODE_CRON
 
     _qtcb_process_spawned = QtCore.pyqtSignal(int)
     _qtcb_scheduler_error_occurred = QtCore.pyqtSignal(int)
@@ -1178,12 +1178,7 @@ class REDProgram(REDObject):
         self._start_delay = None
         self._repeat_mode = None
         self._repeat_interval = None
-        self._repeat_second_mask = None
-        self._repeat_minute_mask = None
-        self._repeat_hour_mask = None
-        self._repeat_day_mask = None
-        self._repeat_month_mask = None
-        self._repeat_weekday_mask = None
+        self._repeat_fields = None
         self._last_spawned_process = None
         self._last_spawned_timestamp = None
         self._last_scheduler_error_message = None
@@ -1346,8 +1341,8 @@ class REDProgram(REDObject):
         if self._object_id is None:
             raise RuntimeError('Cannot update unattached program object')
 
-        error_code, start_condition, start_timestamp, start_delay, repeat_mode, repeat_interval, repeat_second_mask, repeat_minute_mask, \
-        repeat_hour_mask, repeat_day_mask, repeat_month_mask, repeat_weekday_mask = self._session._brick.get_program_schedule(self._object_id)
+        error_code, start_condition, start_timestamp, start_delay, repeat_mode, repeat_interval, \
+        repeat_fields_string_id = self._session._brick.get_program_schedule(self._object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get schedule of program object {0}'.format(self._object_id), error_code)
@@ -1357,12 +1352,11 @@ class REDProgram(REDObject):
         self._start_delay = start_delay
         self._repeat_mode = repeat_mode
         self._repeat_interval = repeat_interval
-        self._repeat_second_mask = repeat_second_mask
-        self._repeat_minute_mask = repeat_minute_mask
-        self._repeat_hour_mask = repeat_hour_mask
-        self._repeat_day_mask = repeat_day_mask
-        self._repeat_month_mask = repeat_month_mask
-        self._repeat_weekday_mask = repeat_weekday_mask
+
+        if self._repeat_mode == REDProgram.REPEAT_MODE_CRON:
+            self._repeat_fields = _attach_or_release(self._session, REDString, repeat_fields_string_id)
+        else:
+            self._repeat_fields = None
 
     def update_last_spawned_process(self):
         if self._object_id is None:
@@ -1498,6 +1492,7 @@ class REDProgram(REDObject):
 
             stdin_file_name_object_id = stdin_file_name.object_id
         else:
+            stdin_file_name = None
             stdin_file_name_object_id = 0
 
         # stdout
@@ -1507,6 +1502,7 @@ class REDProgram(REDObject):
 
             stdout_file_name_object_id = stdout_file_name.object_id
         else:
+            stdout_file_name = None
             stdout_file_name_object_id = 0
 
         # stderr
@@ -1516,6 +1512,7 @@ class REDProgram(REDObject):
 
             stderr_file_name_object_id = stderr_file_name.object_id
         else:
+            stderr_file_name = None
             stderr_file_name_object_id = 0
 
         error_code = self._session._brick.set_program_stdio_redirection(self._object_id,
@@ -1529,35 +1526,26 @@ class REDProgram(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not set stdio redirection for program object {0}'.format(self._object_id), error_code)
 
-        # stdin
         self._stdin_redirection = stdin_redirection
-
-        if self._stdin_redirection == REDProgram.STDIO_REDIRECTION_FILE:
-            self._stdin_file_name = stdin_file_name
-        else:
-            self._stdin_file_name = None
-
-        # stdout
+        self._stdin_file_name = stdin_file_name
         self._stdout_redirection = stdout_redirection
-
-        if self._stdout_redirection == REDProgram.STDIO_REDIRECTION_FILE:
-            self._stdout_file_name = stdout_file_name
-        else:
-            self._stdout_file_name = None
-
-        # stderr
+        self._stdout_file_name = stdout_file_name
         self._stderr_redirection = stderr_redirection
-
-        if self._stderr_redirection == REDProgram.STDIO_REDIRECTION_FILE:
-            self._stderr_file_name = stderr_file_name
-        else:
-            self._stderr_file_name = None
+        self._stderr_file_name = stderr_file_name
 
     def set_schedule(self, start_condition, start_timestamp, start_delay,
-                     repeat_mode, repeat_interval, repeat_second_mask, repeat_minute_mask,
-                     repeat_hour_mask, repeat_day_mask, repeat_month_mask, repeat_weekday_mask):
+                     repeat_mode, repeat_interval, repeat_fields):
         if self._object_id is None:
             raise RuntimeError('Cannot set schedule for unattached program object')
+
+        if repeat_mode == REDProgram.REPEAT_MODE_CRON:
+            if not isinstance(repeat_fields, REDString):
+                repeat_fields = REDString(self._session).allocate(repeat_fields)
+
+            repeat_fields_object_id = repeat_fields.object_id
+        else:
+            repeat_fields = None
+            repeat_fields_object_id = 0
 
         error_code = self._session._brick.set_program_schedule(self._object_id,
                                                                start_condition,
@@ -1565,12 +1553,7 @@ class REDProgram(REDObject):
                                                                start_delay,
                                                                repeat_mode,
                                                                repeat_interval,
-                                                               repeat_second_mask,
-                                                               repeat_minute_mask,
-                                                               repeat_hour_mask,
-                                                               repeat_day_mask,
-                                                               repeat_month_mask,
-                                                               repeat_weekday_mask)
+                                                               repeat_fields_object_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not set schedule for program object {0}'.format(self._object_id), error_code)
@@ -1580,12 +1563,7 @@ class REDProgram(REDObject):
         self._start_delay = start_delay
         self._repeat_mode = repeat_mode
         self._repeat_interval = repeat_interval
-        self._repeat_second_mask = repeat_second_mask
-        self._repeat_minute_mask = repeat_minute_mask
-        self._repeat_hour_mask = repeat_hour_mask
-        self._repeat_day_mask = repeat_day_mask
-        self._repeat_month_mask = repeat_month_mask
-        self._repeat_weekday_mask = repeat_weekday_mask
+        self._repeat_fields = repeat_fields
 
     def set_custom_option_value(self, name, value):
         if self._object_id is None:
@@ -1645,17 +1623,7 @@ class REDProgram(REDObject):
     @property
     def repeat_interval(self):                return self._repeat_interval
     @property
-    def repeat_second_mask(self):             return self._repeat_second_mask
-    @property
-    def repeat_minute_mask(self):             return self._repeat_minute_mask
-    @property
-    def repeat_hour_mask(self):               return self._repeat_hour_mask
-    @property
-    def repeat_day_mask(self):                return self._repeat_day_mask
-    @property
-    def repeat_month_mask(self):              return self._repeat_month_mask
-    @property
-    def repeat_weekday_mask(self):            return self._repeat_weekday_mask
+    def repeat_fields(self):                  return self._repeat_fields
     @property
     def last_spawned_process(self):           return self._last_spawned_process
     @property

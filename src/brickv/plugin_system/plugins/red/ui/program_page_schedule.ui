@@ -192,7 +192,7 @@
           </item>
           <item>
            <property name="text">
-            <string>Selection</string>
+            <string>Cron</string>
            </property>
           </item>
          </widget>
@@ -218,42 +218,12 @@
          </widget>
         </item>
         <item row="2" column="0">
-         <widget class="QLabel" name="label_repeat_seconds">
+         <widget class="QLabel" name="label_repeat_fields">
           <property name="text">
-           <string>Seconds:</string>
+           <string>Fields:</string>
           </property>
           <property name="buddy">
-           <cstring>edit_repeat_seconds</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_repeat_minutes">
-          <property name="text">
-           <string>Minutes:</string>
-          </property>
-          <property name="buddy">
-           <cstring>edit_repeat_minutes</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_repeat_hours">
-          <property name="text">
-           <string>Hours:</string>
-          </property>
-          <property name="buddy">
-           <cstring>edit_repeat_hours</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QLabel" name="label_repeat_days">
-          <property name="text">
-           <string>Days:</string>
-          </property>
-          <property name="buddy">
-           <cstring>edit_repeat_days</cstring>
+           <cstring>edit_repeat_fields</cstring>
           </property>
          </widget>
         </item>
@@ -271,68 +241,13 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QLineEdit" name="edit_repeat_seconds">
+         <widget class="QLineEdit" name="edit_repeat_fields">
           <property name="text">
-           <string>0</string>
+           <string>* * * * *</string>
           </property>
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QLineEdit" name="edit_repeat_minutes">
-          <property name="text">
-           <string>*</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="edit_repeat_hours">
-          <property name="text">
-           <string>*</string>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="1">
-         <widget class="QLineEdit" name="edit_repeat_days">
-          <property name="text">
-           <string>*</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QLabel" name="label_repeat_months">
-          <property name="text">
-           <string>Months:</string>
-          </property>
-          <property name="buddy">
-           <cstring>edit_repeat_months</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="0">
-         <widget class="QLabel" name="label_repeat_weekdays">
-          <property name="text">
-           <string>Weekdays:</string>
-          </property>
-          <property name="buddy">
-           <cstring>edit_repeat_weekdays</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QLineEdit" name="edit_repeat_months">
-          <property name="text">
-           <string>*</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="1">
-         <widget class="QLineEdit" name="edit_repeat_weekdays">
-          <property name="text">
-           <string>*</string>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="1">
          <widget class="QLabel" name="label_repeat_mode_never_help">
           <property name="text">
            <string>The program will never be executed again after the first execution.</string>
@@ -342,7 +257,7 @@
           </property>
          </widget>
         </item>
-        <item row="9" column="1">
+        <item row="4" column="1">
          <widget class="QLabel" name="label_repeat_mode_interval_help">
           <property name="text">
            <string>The program will be executed with the specified interval after the first execution.</string>
@@ -352,10 +267,10 @@
           </property>
          </widget>
         </item>
-        <item row="10" column="1">
-         <widget class="QLabel" name="label_repeat_mode_selection_help">
+        <item row="5" column="1">
+         <widget class="QLabel" name="label_repeat_mode_cron_help">
           <property name="text">
-           <string>The program will be executed if the current time matches the selection.</string>
+           <string>The program will be executed if the current time matches the cron specification.</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
@@ -388,12 +303,7 @@
   <tabstop>spin_start_delay</tabstop>
   <tabstop>combo_repeat_mode</tabstop>
   <tabstop>spin_repeat_interval</tabstop>
-  <tabstop>edit_repeat_seconds</tabstop>
-  <tabstop>edit_repeat_minutes</tabstop>
-  <tabstop>edit_repeat_hours</tabstop>
-  <tabstop>edit_repeat_days</tabstop>
-  <tabstop>edit_repeat_months</tabstop>
-  <tabstop>edit_repeat_weekdays</tabstop>
+  <tabstop>edit_repeat_fields</tabstop>
  </tabstops>
  <resources/>
  <connections/>
