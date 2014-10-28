@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import pyqtSignal
-from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog
+from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog, QFileDialog
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.program_page_general import ProgramPageGeneral
@@ -38,7 +38,8 @@ from brickv.plugin_system.plugins.red.ui_program_info import Ui_ProgramInfo
 from brickv.async_call import async_call
 import json
 
-log_files_to_process = -1
+log_files_to_process_count = -1
+log_files_download_dir = ""
 
 class ProgramInfo(QWidget, Ui_ProgramInfo):
     name_changed = pyqtSignal()
@@ -263,12 +264,23 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         index_list =  self.tree_logs.selectedIndexes()
         print len(index_list)
 
-        if len(index_list) % 4 != 0:
+        if len(index_list) == 0 or len(index_list) % 4 != 0:
             return
 
         index_list_chunked =  zip(*[iter(index_list)] * 4)
+        if index_list_chunked <= 0:
+            return
         global log_files_to_process
         log_files_to_process = len(index_list_chunked)
+
+        file_dialog = QFileDialog(self)
+        file_dialog.setFileMode(QFileDialog.Directory)
+        file_dialog.setOption(QFileDialog.ShowDirsOnly, True)
+        global log_files_download_dir
+        log_files_download_dir = file_dialog.getExistingDirectory(self,
+                                                             "Download Log Files")
+
+        print log_files_download_dir
 
         for chunk in index_list_chunked:
             if self.tree_logs_model.itemFromIndex(chunk[2]).text() != "LOG_FILE":
