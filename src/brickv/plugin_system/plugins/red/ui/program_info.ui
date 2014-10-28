@@ -410,7 +410,7 @@
                  <item row="1" column="0">
                   <widget class="QLabel" name="label_stdout_file_title">
                    <property name="text">
-                    <string> File:</string>
+                    <string>File:</string>
                    </property>
                   </widget>
                  </item>
