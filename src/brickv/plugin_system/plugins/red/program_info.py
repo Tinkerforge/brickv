@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 program_info.py: Program Info Widget
 
@@ -36,6 +37,8 @@ from brickv.plugin_system.plugins.red.program_page_schedule import ProgramPageSc
 from brickv.plugin_system.plugins.red.ui_program_info import Ui_ProgramInfo
 from brickv.async_call import async_call
 import json
+
+log_files_to_process = -1
 
 class ProgramInfo(QWidget, Ui_ProgramInfo):
     name_changed = pyqtSignal()
@@ -97,11 +100,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         async_call(refresh_async, None, cb_success, cb_error)
 
     def update_ui_state(self):
-        #has_logs_selection = len(self.list_logs.selectedItems()) > 0
+        print "UUIS"
+
         has_files_selection = len(self.tree_files.selectedItems()) > 0
 
-        #self.button_download_log.setEnabled(has_logs_selection)
-        #self.button_delete_log.setEnabled(has_logs_selection)
         self.button_download_files.setEnabled(has_files_selection)
         self.button_rename_file.setEnabled(len(self.tree_files.selectedItems()) == 1)
         self.button_delete_files.setEnabled(has_files_selection)
@@ -124,14 +126,6 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         def cb_program_get_os_walk(result):
             if result.stderr == "":
                 self.program_dir_walk_result = json.loads(result.stdout)
-
-                '''parent1 = [QStandardItem("PONE"), QStandardItem("")]
-                parent2 = [QStandardItem("PTWO"), QStandardItem("")]
-                parent3 = [QStandardItem("PTHREE"), QStandardItem("")]
-                
-                self.tree_logs_model.appendRow(parent1)
-                self.tree_logs_model.appendRow(parent2)
-                self.tree_logs_model.appendRow(parent3)'''
 
                 for dir_node in self.program_dir_walk_result:
                     if dir_node['root'] == '/'.join([self.program_dir, "log"]):
@@ -187,9 +181,9 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                                                   QStandardItem("LOG_FILE"),
                                                                   QStandardItem(file_path)])
                             else:
-                                parent = [QStandardItem(date)]
-                                parent[0].appendRow([QStandardItem("STDOUT")])
-                                parent[0].appendRow([QStandardItem("STDERR")])
+                                parent = [QStandardItem(date), QStandardItem("")]
+                                parent[0].appendRow([QStandardItem("STDOUT"), QStandardItem("")])
+                                parent[0].appendRow([QStandardItem("STDERR"), QStandardItem("")])
                                 if file_name_display.split('.')[0] == "stdout":
                                     parent[0].child(0).appendRow([QStandardItem(file_name_display),
                                                                   QStandardItem(time),
@@ -200,8 +194,17 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                                                   QStandardItem(time),
                                                                   QStandardItem("LOG_FILE"),
                                                                   QStandardItem(file_path)])
+                                parent[0].setSelectable(False)
+                                parent[1].setSelectable(False)
+                                parent[0].child(0, 0).setSelectable(False)
+                                parent[0].child(0, 1).setSelectable(False)
+                                parent[0].child(1, 0).setSelectable(False)
+                                parent[0].child(1, 1).setSelectable(False)
                                 self.tree_logs_model.appendRow(parent)
 
+                # Enable/Disable Download and Delete buttons based on available data
+                self.button_download_log.setEnabled(self.tree_logs_model.rowCount())
+                self.button_delete_log.setEnabled(self.tree_logs_model.rowCount())
             else:
                 # TODO: Error popup for user?
                 print result
@@ -258,12 +261,19 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
     def download_selected_log(self):
         index_list =  self.tree_logs.selectedIndexes()
-        if len(index_list) != 4:
+        print len(index_list)
+
+        if len(index_list) % 4 != 0:
             return
-        else:
-            if self.tree_logs_model.itemFromIndex(index_list[2]).text() != "LOG_FILE":
+
+        index_list_chunked =  zip(*[iter(index_list)] * 4)
+        global log_files_to_process
+        log_files_to_process = len(index_list_chunked)
+
+        for chunk in index_list_chunked:
+            if self.tree_logs_model.itemFromIndex(chunk[2]).text() != "LOG_FILE":
                 return
-            log_filename = unicode(self.tree_logs_model.itemFromIndex(index_list[3]).text())
+            log_filename = unicode(self.tree_logs_model.itemFromIndex(chunk[3]).text())
             print 'download_selected_log', log_filename
 
     def delete_selected_log(self):
