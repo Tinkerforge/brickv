@@ -238,20 +238,19 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.next_step('Setting command...')
 
         if self.language == 'java':
-            executable, arguments, working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
+            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
         elif self.language == 'perl':
-            executable, arguments, working_directory = self.wizard().page(Constants.PAGE_PERL).get_command()
+            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_PERL).get_command()
         elif self.language == 'python':
-            executable, arguments, working_directory = self.wizard().page(Constants.PAGE_PYTHON).get_command()
+            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_PYTHON).get_command()
         elif self.language == 'ruby':
-            executable, arguments, working_directory = self.wizard().page(Constants.PAGE_RUBY).get_command()
+            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_RUBY).get_command()
         elif self.language == 'shell':
-            executable, arguments, working_directory = self.wizard().page(Constants.PAGE_SHELL).get_command()
+            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_SHELL).get_command()
 
         editable_arguments_offset = len(arguments)
         arguments += self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
 
-        environment = []
         editable_environment_offset = len(environment)
         environment += self.wizard().page(Constants.PAGE_ARGUMENTS).get_environment()
 

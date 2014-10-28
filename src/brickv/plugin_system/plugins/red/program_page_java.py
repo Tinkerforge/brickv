@@ -128,6 +128,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
     def get_command(self):
         executable = '/usr/bin/java'
         arguments = self.option_list_editor.get_items()
+        environment = []
         class_path_entries = self.class_path_list_editor.get_items()
 
         if len(class_path_entries) > 0:
@@ -143,4 +144,4 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
         working_directory = unicode(self.get_field('java.working_directory').toString())
 
-        return executable, arguments, working_directory
+        return executable, arguments, environment, working_directory

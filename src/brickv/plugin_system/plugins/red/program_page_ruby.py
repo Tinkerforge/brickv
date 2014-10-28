@@ -151,6 +151,7 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
     def get_command(self):
         executable = self.get_executable()
         arguments = self.option_list_editor.get_items()
+        environment = []
         start_mode = self.get_field('ruby.start_mode').toInt()[0]
 
         if start_mode == Constants.RUBY_START_MODE_SCRIPT_FILE:
@@ -161,4 +162,4 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
 
         working_directory = unicode(self.get_field('ruby.working_directory').toString())
 
-        return executable, arguments, working_directory
+        return executable, arguments, environment, working_directory

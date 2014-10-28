@@ -110,9 +110,9 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
                     pass
 
             # Could not get versions, we assume that some version
-            # of perl 1.9 is installed
+            # of perl 5 is installed
             self.combo_version.clear()
-            self.combo_version.addItem('5', QVariant('/usr/bin/perl'))
+            self.combo_version.addItem('5.x', QVariant('/usr/bin/perl'))
             self.combo_version.setEnabled(True)
             self.completeChanged.emit()
 
@@ -150,6 +150,7 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
     def get_command(self):
         executable = self.get_executable()
         arguments = self.option_list_editor.get_items()
+        environment = []
         start_mode = self.get_field('perl.start_mode').toInt()[0]
 
         if start_mode == Constants.PERL_START_MODE_SCRIPT_FILE:
@@ -160,4 +161,4 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
 
         working_directory = unicode(self.get_field('perl.working_directory').toString())
 
-        return executable, arguments, working_directory
+        return executable, arguments, environment, working_directory
