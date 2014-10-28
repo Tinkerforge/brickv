@@ -1604,6 +1604,12 @@ class REDProgram(REDObject):
 
         self._custom_options[unicode(name)] = value
 
+    def cast_custom_option_value(self, name, cast, default):
+        try:
+            return cast(unicode(self._custom_options.get(name, default)))
+        except ValueError:
+            return default
+
     @property
     def identifier(self):                     return self._identifier
     @property

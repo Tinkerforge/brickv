@@ -95,8 +95,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.button_delete_files.setEnabled(has_files_selection)
 
         # general
-        name = unicode(self.program.custom_options.get(Constants.FIELD_NAME, '<unknown>'))
-        api_language = unicode(self.program.custom_options.get(Constants.FIELD_LANGUAGE, '<unknown>'))
+        name = self.program.cast_custom_option_value(Constants.FIELD_NAME, unicode, '<unknown>')
+        api_language = self.program.cast_custom_option_value(Constants.FIELD_LANGUAGE, unicode, '<unknown>')
 
         try:
             language_id = Constants.api_languages.keys()[Constants.api_languages.values().index(api_language)]
@@ -149,12 +149,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                            [self.program_dir])
 
         # arguments
-        try:
-            editable_arguments_offset = max(int(unicode(self.program.custom_options.get('editable_arguments_offset', '0'))), 0)
-        except ValueError:
-            editable_arguments_offset = 0
-
         arguments = []
+        editable_arguments_offset = max(self.program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
 
         for argument in self.program.arguments.items[editable_arguments_offset:]:
             arguments.append(unicode(argument))

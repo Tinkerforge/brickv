@@ -53,9 +53,9 @@ class ProgramWizardEdit(ProgramWizard):
     # overrides ProgramWizard.get_field
     def get_field(self, name):
         if name == Constants.FIELD_NAME:
-            return QVariant(unicode(self.program.custom_options.get(Constants.FIELD_NAME, '<unknown>')))
+            return QVariant(self.program.cast_custom_option_value(Constants.FIELD_NAME, unicode, '<unknown>'))
         elif name == Constants.FIELD_LANGUAGE:
-            api_language = unicode(self.program.custom_options.get(Constants.FIELD_LANGUAGE, '<unknown>'))
+            api_language = self.program.cast_custom_option_value(Constants.FIELD_LANGUAGE, unicode, '<unknown>')
 
             try:
                 language_id = Constants.api_languages.keys()[Constants.api_languages.values().index(api_language)]

@@ -68,10 +68,7 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
 
         # if a program exists then this page is used in an edit wizard
         if self.wizard().program != None:
-            try:
-                editable_arguments_offset = max(int(unicode(self.wizard().program.custom_options.get('editable_arguments_offset', '0'))), 0)
-            except ValueError:
-                editable_arguments_offset = 0
+            editable_arguments_offset = max(self.wizard().program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
 
             for argument in self.wizard().program.arguments.items[editable_arguments_offset:]:
                 self.argument_list_editor.add_item(unicode(argument))

@@ -66,7 +66,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
     def add_program_to_list(self, program):
         program_info = ProgramInfo(self.session, program, self.script_manager)
 
-        item = QListWidgetItem(str(program.custom_options.get(Constants.FIELD_NAME, '<unknown>')))
+        item = QListWidgetItem(program.cast_custom_option_value(Constants.FIELD_NAME, unicode, '<unknown>'))
         item.setData(Qt.UserRole, QVariant(program_info))
 
         self.list_programs.addItem(item)
