@@ -46,7 +46,8 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         self.combo_repeat_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_repeat_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
 
-        self.edit_repeat_fields_checker = MandatoryLineEditChecker(self, self.edit_repeat_fields, self.label_repeat_fields)
+        self.edit_repeat_fields_checker = MandatoryLineEditChecker(self, self.edit_repeat_fields, self.label_repeat_fields,
+                                                                   '^ *' + ' +'.join(['[a-zA-Z0-9,*/-]+']*5) + ' *$')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):

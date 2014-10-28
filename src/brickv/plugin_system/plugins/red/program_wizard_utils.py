@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem
 from brickv.plugin_system.plugins.red.api import REDProgram
+import re
 
 class Constants:
     PAGE_GENERAL   = 0
@@ -471,11 +472,15 @@ class TreeWidgetEditor:
 
 
 class MandatoryLineEditChecker:
-    def __init__(self, page, edit, label):
+    def __init__(self, page, edit, label, regexp=None):
         self.page = page
         self.edit = edit
         self.label = label
+        self.regexp = None
         self.valid = False
+
+        if regexp != None:
+            self.regexp = re.compile(regexp)
 
         self.edit.textChanged.connect(lambda: self.check(True))
 
@@ -483,7 +488,11 @@ class MandatoryLineEditChecker:
 
     def check(self, emit):
         was_valid = self.valid
-        self.valid = len(self.edit.text()) > 0
+        text = unicode(self.edit.text())
+        self.valid = len(text) > 0
+
+        if self.valid and self.regexp != None:
+            self.valid = self.regexp.match(text) != None
 
         if self.valid:
             self.label.setStyleSheet('')

@@ -308,7 +308,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         start_delay     = self.get_field('start_delay').toInt()[0]
         repeat_mode     = Constants.api_schedule_repeat_mode[self.get_field('repeat_mode').toInt()[0]]
         repeat_interval = self.get_field('repeat_interval').toInt()[0]
-        repeat_fields   = unicode(self.get_field('repeat_fields').toString())
+        repeat_fields   = ' '.join(unicode(self.get_field('repeat_fields').toString()).split())
 
         try:
             self.program.set_schedule(start_condition, start_time, start_delay,
