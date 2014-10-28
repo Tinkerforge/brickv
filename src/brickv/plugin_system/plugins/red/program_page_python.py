@@ -152,7 +152,7 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         self.option_list_editor.update_ui_state()
 
     def get_executable(self):
-        return unicode(self.combo_version.itemData(self.combo_version.currentIndex()).toString())
+        return unicode(self.combo_version.itemData(self.get_field('python.version').toInt()[0]).toString())
 
     def get_command(self):
         executable = self.get_executable()

@@ -35,17 +35,17 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
 
         self.setTitle(title_prefix + 'Schedule')
 
-        self.registerField('schedule.start_condition', self.combo_start_condition)
-        self.registerField('schedule.start_time', self.date_start_time)
-        self.registerField('schedule.start_delay', self.spin_start_delay)
-        self.registerField('schedule.repeat_mode', self.combo_repeat_mode)
-        self.registerField('schedule.repeat_interval', self.spin_repeat_interval)
-        self.registerField('schedule.repeat_seconds', self.edit_repeat_seconds)
-        self.registerField('schedule.repeat_minutes', self.edit_repeat_minutes)
-        self.registerField('schedule.repeat_hours', self.edit_repeat_hours)
-        self.registerField('schedule.repeat_days', self.edit_repeat_days)
-        self.registerField('schedule.repeat_months', self.edit_repeat_months)
-        self.registerField('schedule.repeat_weekdays', self.edit_repeat_weekdays)
+        self.registerField('start_condition', self.combo_start_condition)
+        self.registerField('start_time', self.date_start_time)
+        self.registerField('start_delay', self.spin_start_delay)
+        self.registerField('repeat_mode', self.combo_repeat_mode)
+        self.registerField('repeat_interval', self.spin_repeat_interval)
+        self.registerField('repeat_seconds', self.edit_repeat_seconds)
+        self.registerField('repeat_minutes', self.edit_repeat_minutes)
+        self.registerField('repeat_hours', self.edit_repeat_hours)
+        self.registerField('repeat_days', self.edit_repeat_days)
+        self.registerField('repeat_months', self.edit_repeat_months)
+        self.registerField('repeat_weekdays', self.edit_repeat_weekdays)
 
         self.combo_start_condition.currentIndexChanged.connect(self.update_ui_state)
         self.combo_repeat_mode.currentIndexChanged.connect(self.update_ui_state)
@@ -72,7 +72,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
-        repeat_mode = self.get_field('schedule.repeat_mode').toInt()[0]
+        repeat_mode = self.get_field('repeat_mode').toInt()[0]
 
         if repeat_mode == Constants.SCHEDULE_REPEAT_MODE_SELECTION:
             if not self.edit_repeat_seconds_checker.valid or \
@@ -86,7 +86,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         return ProgramPage.isComplete(self)
 
     def update_ui_state(self):
-        start_condition        = self.get_field('schedule.start_condition').toInt()[0]
+        start_condition        = self.get_field('start_condition').toInt()[0]
         start_condition_never  = start_condition == Constants.SCHEDULE_START_CONDITION_NEVER
         start_condition_now    = start_condition == Constants.SCHEDULE_START_CONDITION_NOW
         start_condition_reboot = start_condition == Constants.SCHEDULE_START_CONDITION_REBOOT
@@ -101,7 +101,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         self.label_start_condition_reboot_help.setVisible(start_condition_reboot)
         self.label_start_condition_time_help.setVisible(start_condition_time)
 
-        repeat_mode = self.get_field('schedule.repeat_mode').toInt()[0]
+        repeat_mode = self.get_field('repeat_mode').toInt()[0]
         repeat_mode_never = repeat_mode == Constants.SCHEDULE_REPEAT_MODE_NEVER
         repeat_mode_interval = repeat_mode == Constants.SCHEDULE_REPEAT_MODE_INTERVAL
         repeat_mode_selection = repeat_mode == Constants.SCHEDULE_REPEAT_MODE_SELECTION
