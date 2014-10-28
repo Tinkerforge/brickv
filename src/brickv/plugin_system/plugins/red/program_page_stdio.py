@@ -21,6 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtGui import QMessageBox
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_stdio import Ui_ProgramPageStdio
@@ -62,6 +63,28 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
         self.combo_stderr_redirection.setCurrentIndex(Constants.DEFAULT_STDERR_REDIRECTION)
         self.combo_stdin_file.addItems(self.wizard().available_files)
         self.combo_stdin_file.clearEditText()
+
+        # if a program exists then this page is used in an edit wizard
+        if self.wizard().program != None:
+            program = self.wizard().program
+
+            stdin_redirection  = Constants.get_stdin_redirection(program.stdin_redirection)
+            stdout_redirection = Constants.get_stdout_redirection(program.stdout_redirection)
+            stderr_redirection = Constants.get_stderr_redirection(program.stderr_redirection)
+
+            self.combo_stdin_redirection.setCurrentIndex(stdin_redirection)
+            self.combo_stdout_redirection.setCurrentIndex(stdout_redirection)
+            self.combo_stderr_redirection.setCurrentIndex(stderr_redirection)
+
+            if program.stdin_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+                self.combo_stdin_file.lineEdit().setText(unicode(program.stdin_file_name))
+
+            if program.stdout_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+                self.edit_stdout_file.setText(unicode(program.stdout_file_name))
+
+            if program.stdin_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+                self.edit_stderr_file.setText(unicode(program.stderr_file_name))
+
         self.update_ui_state()
 
     # overrides QWizardPage.isComplete
@@ -118,3 +141,25 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
 
     def emit_complete_changed(self):
         self.completeChanged.emit()
+
+    def apply_program_changes(self):
+        program = self.wizard().program
+
+        if program is None:
+            return
+
+        stdin_redirection  = Constants.api_stdin_redirections[self.get_field('stdin_redirection').toInt()[0]]
+        stdout_redirection = Constants.api_stdout_redirections[self.get_field('stdout_redirection').toInt()[0]]
+        stderr_redirection = Constants.api_stderr_redirections[self.get_field('stderr_redirection').toInt()[0]]
+        stdin_file         = unicode(self.get_field('stdin_file').toString())
+        stdout_file        = unicode(self.get_field('stdout_file').toString())
+        stderr_file        = unicode(self.get_field('stderr_file').toString())
+
+        try:
+            program.set_stdio_redirection(stdin_redirection, stdin_file,
+                                          stdout_redirection, stdout_file,
+                                          stderr_redirection, stderr_file) # FIXME: async_call
+        except REDError as e:
+            QMessageBox.critical(self, 'Edit Error',
+                                 u'Could not update stdio redirection of program [{0}]:\n\n{1}'
+                                 .format(program.cast_custom_option_value(Constants.FIELD_NAME, unicode, '<unknown>')))

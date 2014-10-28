@@ -79,12 +79,18 @@
               <property name="text">
                <string>&lt;name&gt;</string>
               </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+              </property>
              </widget>
             </item>
             <item row="1" column="1">
              <widget class="QLabel" name="label_identifier">
               <property name="text">
                <string>&lt;identifer&gt;</string>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -298,6 +304,9 @@
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
               </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+              </property>
              </widget>
             </item>
             <item row="1" column="1">
@@ -307,6 +316,9 @@
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -370,6 +382,9 @@
                    <property name="text">
                     <string>&lt;stdin-file&gt;</string>
                    </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -417,6 +432,9 @@
                    <property name="text">
                     <string>&lt;stdout-file&gt;</string>
                    </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -463,6 +481,9 @@
                   <widget class="QLabel" name="label_stderr_file">
                    <property name="text">
                     <string>&lt;stderr-file&gt;</string>
+                   </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>

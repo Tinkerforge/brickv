@@ -25,16 +25,6 @@ from PyQt4.QtCore import Qt, QVariant
 from PyQt4.QtGui import QWizard
 from brickv.plugin_system.plugins.red.program_wizard import ProgramWizard
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
-from brickv.plugin_system.plugins.red.program_page_general import ProgramPageGeneral
-from brickv.plugin_system.plugins.red.program_page_files import ProgramPageFiles
-from brickv.plugin_system.plugins.red.program_page_java import ProgramPageJava
-from brickv.plugin_system.plugins.red.program_page_python import ProgramPagePython
-from brickv.plugin_system.plugins.red.program_page_ruby import ProgramPageRuby
-from brickv.plugin_system.plugins.red.program_page_arguments import ProgramPageArguments
-from brickv.plugin_system.plugins.red.program_page_stdio import ProgramPageStdio
-from brickv.plugin_system.plugins.red.program_page_schedule import ProgramPageSchedule
-from brickv.plugin_system.plugins.red.program_page_summary import ProgramPageSummary
-from brickv.plugin_system.plugins.red.program_page_upload import ProgramPageUpload
 
 class ProgramWizardEdit(ProgramWizard):
     def __init__(self, session, program, identifiers, script_manager, *args, **kwargs):
@@ -43,8 +33,6 @@ class ProgramWizardEdit(ProgramWizard):
         self.program = program
 
         self.setWindowTitle('Edit Program')
-
-        self.setPage(Constants.PAGE_ARGUMENTS, ProgramPageArguments())
 
     # overrides QWizard.nextId
     def nextId(self):

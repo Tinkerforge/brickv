@@ -21,6 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtGui import QMessageBox
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_arguments import Ui_ProgramPageArguments
@@ -68,12 +69,16 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
 
         # if a program exists then this page is used in an edit wizard
         if self.wizard().program != None:
-            editable_arguments_offset = max(self.wizard().program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
+            program = self.wizard().program
 
-            for argument in self.wizard().program.arguments.items[editable_arguments_offset:]:
+            editable_arguments_offset = max(program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
+
+            for argument in program.arguments.items[editable_arguments_offset:]:
                 self.argument_list_editor.add_item(unicode(argument))
 
-            for variable in self.wizard().program.environment.items:
+            editable_environment_offset = max(program.cast_custom_option_value('editable_environment_offset', int, 0), 0)
+
+            for variable in program.environment.items[editable_environment_offset:]:
                 variable = unicode(variable)
                 i = variable.find('=')
 
@@ -132,3 +137,26 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
             environment.append(u'{0}={1}'.format(variable[0], variable[1]))
 
         return environment
+
+    def apply_program_changes(self):
+        program = self.wizard().program
+
+        if program is None:
+            return
+
+        executable = program.executable
+        editable_arguments_offset = max(program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
+        arguments = program.arguments.items[:editable_arguments_offset]
+        editable_environment_offset = max(program.cast_custom_option_value('editable_environment_offset', int, 0), 0)
+        environment = program.environment.items[:editable_environment_offset]
+        working_directory = program.working_directory
+
+        arguments += self.get_arguments()
+        environment += self.get_environment()
+
+        try:
+            program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
+        except REDError as e:
+            QMessageBox.critical(self, 'Edit Error',
+                                 u'Could not update arguments and environment of program [{0}]:\n\n{1}'
+                                 .format(program.cast_custom_option_value(Constants.FIELD_NAME, unicode, '<unknown>')))

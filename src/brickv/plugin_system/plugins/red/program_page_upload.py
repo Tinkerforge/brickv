@@ -247,7 +247,10 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         editable_arguments_offset = len(arguments)
         arguments += self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
-        environment = self.wizard().page(Constants.PAGE_ARGUMENTS).get_environment()
+
+        environment = []
+        editable_environment_offset = len(environment)
+        environment += self.wizard().page(Constants.PAGE_ARGUMENTS).get_environment()
 
         try:
             self.program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
@@ -261,6 +264,13 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         # set custom option: editable_arguments_offset
         try:
             self.program.set_custom_option_value('editable_arguments_offset', str(editable_arguments_offset)) # FIXME: async_call
+        except REDError as e:
+            self.upload_error('...error: {0}'.format(e))
+            return
+
+        # set custom option: editable_environment_offset
+        try:
+            self.program.set_custom_option_value('editable_environment_offset', str(editable_environment_offset)) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return

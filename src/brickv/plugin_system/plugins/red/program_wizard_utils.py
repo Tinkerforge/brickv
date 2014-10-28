@@ -121,6 +121,17 @@ class Constants:
         STDIN_REDIRECTION_FILE:     REDProgram.STDIO_REDIRECTION_FILE
     }
 
+    api_stdin_redirection_display_names = {
+        REDProgram.STDIO_REDIRECTION_DEV_NULL: '/dev/null',
+        REDProgram.STDIO_REDIRECTION_PIPE:     'Pipe',
+        REDProgram.STDIO_REDIRECTION_FILE:     'File'
+    }
+
+    @staticmethod
+    def get_stdin_redirection(api_stdin_redirection):
+        d = Constants.api_stdin_redirections
+        return d.keys()[d.values().index(api_stdin_redirection)]
+
     # must match item order in combo_stdout_redirection on stdio page
     STDOUT_REDIRECTION_DEV_NULL = 0
     STDOUT_REDIRECTION_FILE     = 1
@@ -131,6 +142,17 @@ class Constants:
         STDOUT_REDIRECTION_FILE:     REDProgram.STDIO_REDIRECTION_FILE,
         STDOUT_REDIRECTION_LOG:      REDProgram.STDIO_REDIRECTION_LOG
     }
+
+    api_stdout_redirection_display_names = {
+        REDProgram.STDIO_REDIRECTION_DEV_NULL: '/dev/null',
+        REDProgram.STDIO_REDIRECTION_FILE:     'File',
+        REDProgram.STDIO_REDIRECTION_LOG:      'Automatic Log File'
+    }
+
+    @staticmethod
+    def get_stdout_redirection(api_stdout_redirection):
+        d = Constants.api_stdout_redirections
+        return d.keys()[d.values().index(api_stdout_redirection)]
 
     # must match item order in combo_stderr_redirection on stdio page
     STDERR_REDIRECTION_DEV_NULL = 0
@@ -144,6 +166,18 @@ class Constants:
         STDERR_REDIRECTION_LOG:      REDProgram.STDIO_REDIRECTION_LOG,
         STDERR_REDIRECTION_STDOUT:   REDProgram.STDIO_REDIRECTION_STDOUT
     }
+
+    api_stderr_redirection_display_names = {
+        REDProgram.STDIO_REDIRECTION_DEV_NULL: '/dev/null',
+        REDProgram.STDIO_REDIRECTION_FILE:     'File',
+        REDProgram.STDIO_REDIRECTION_LOG:      'Automatic Log File',
+        REDProgram.STDIO_REDIRECTION_STDOUT:   'Standard Output'
+    }
+
+    @staticmethod
+    def get_stderr_redirection(api_stderr_redirection):
+        d = Constants.api_stderr_redirections
+        return d.keys()[d.values().index(api_stderr_redirection)]
 
     # must match item order in combo_start_condition on schedule page
     SCHEDULE_START_CONDITION_NEVER  = 0

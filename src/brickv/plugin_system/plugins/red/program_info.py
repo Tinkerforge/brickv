@@ -24,6 +24,12 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.program_page_java import ProgramPageJava
+from brickv.plugin_system.plugins.red.program_page_python import ProgramPagePython
+from brickv.plugin_system.plugins.red.program_page_ruby import ProgramPageRuby
+from brickv.plugin_system.plugins.red.program_page_arguments import ProgramPageArguments
+from brickv.plugin_system.plugins.red.program_page_stdio import ProgramPageStdio
+from brickv.plugin_system.plugins.red.program_page_schedule import ProgramPageSchedule
 from brickv.plugin_system.plugins.red.ui_program_info import Ui_ProgramInfo
 from brickv.async_call import async_call
 import json
@@ -39,6 +45,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.script_manager = script_manager
 
         self.edit_arguments_wizard = None
+        self.edit_stdio_wizard = None
 
         self.program_dir = unicode(self.program.root_directory)
         self.program_dir_walk_result = None
@@ -158,11 +165,38 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.label_arguments.setText('\n'.join(arguments))
 
         environment = []
+        editable_environment_offset = max(self.program.cast_custom_option_value('editable_environment_offset', int, 0), 0)
 
-        for variable in self.program.environment.items:
+        for variable in self.program.environment.items[editable_environment_offset:]:
             environment.append(unicode(variable))
 
         self.label_environment.setText('\n'.join(environment))
+
+        # stdio
+        stdin_redirection_file  = self.program.stdin_redirection  == REDProgram.STDIO_REDIRECTION_FILE
+        stdout_redirection_file = self.program.stdout_redirection == REDProgram.STDIO_REDIRECTION_FILE
+        stderr_redirection_file = self.program.stderr_redirection == REDProgram.STDIO_REDIRECTION_FILE
+
+        self.label_stdin_source.setText(Constants.api_stdin_redirection_display_names.get(self.program.stdin_redirection, '<unknown>'))
+        self.label_stdin_file_title.setVisible(stdin_redirection_file)
+        self.label_stdin_file.setVisible(stdin_redirection_file)
+
+        if stdin_redirection_file:
+            self.label_stdin_file.setText(unicode(self.program.stdin_file_name))
+
+        self.label_stdout_target.setText(Constants.api_stdout_redirection_display_names.get(self.program.stdout_redirection, '<unknown>'))
+        self.label_stdout_file_title.setVisible(stdout_redirection_file)
+        self.label_stdout_file.setVisible(stdout_redirection_file)
+
+        if stdout_redirection_file:
+            self.label_stdout_file.setText(unicode(self.program.stdout_file_name))
+
+        self.label_stderr_target.setText(Constants.api_stderr_redirection_display_names.get(self.program.stderr_redirection, '<unknown>'))
+        self.label_stderr_file_title.setVisible(stderr_redirection_file)
+        self.label_stderr_file.setVisible(stderr_redirection_file)
+
+        if stderr_redirection_file:
+            self.label_stderr_file.setText(unicode(self.program.stderr_file_name))
 
     def download_selected_log(self):
         #selected_items = self.list_logs.selectedItems()
@@ -217,13 +251,20 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
         print 'delete_selected_files', filenames
 
+    def set_edit_buttons_enabled(self, enabled):
+        self.button_edit_language.setEnabled(enabled)
+        self.button_edit_arguments.setEnabled(enabled)
+        self.button_edit_stdio.setEnabled(enabled)
+        self.button_edit_schedule.setEnabled(enabled)
+
     def show_edit_language_wizard(self):
         print 'show_edit_language_wizard'
 
     def show_edit_arguments_wizard(self):
-        self.button_edit_arguments.setEnabled(False)
+        self.set_edit_buttons_enabled(False)
 
         self.edit_arguments_wizard = ProgramWizardEdit(self.session, self.program, [], self.script_manager)
+        self.edit_arguments_wizard.setPage(Constants.PAGE_ARGUMENTS, ProgramPageArguments())
         self.edit_arguments_wizard.finished.connect(self.edit_arguments_wizard_finished)
         self.edit_arguments_wizard.show()
 
@@ -231,13 +272,27 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.edit_arguments_wizard.finished.disconnect(self.edit_arguments_wizard_finished)
 
         if result == QDialog.Accepted:
-            #self.edit_arguments_wizard
-            pass
+            self.edit_arguments_wizard.page(Constants.PAGE_ARGUMENTS).apply_program_changes()
+            self.refresh_info()
 
-        self.button_edit_arguments.setEnabled(True)
+        self.set_edit_buttons_enabled(True)
 
     def show_edit_stdio_wizard(self):
-        print 'show_edit_stdio_wizard'
+        self.set_edit_buttons_enabled(False)
+
+        self.edit_stdio_wizard = ProgramWizardEdit(self.session, self.program, [], self.script_manager)
+        self.edit_stdio_wizard.setPage(Constants.PAGE_STDIO, ProgramPageStdio())
+        self.edit_stdio_wizard.finished.connect(self.edit_stdio_wizard_finished)
+        self.edit_stdio_wizard.show()
+
+    def edit_stdio_wizard_finished(self, result):
+        self.edit_stdio_wizard.finished.disconnect(self.edit_stdio_wizard_finished)
+
+        if result == QDialog.Accepted:
+            self.edit_stdio_wizard.page(Constants.PAGE_STDIO).apply_program_changes()
+            self.refresh_info()
+
+        self.set_edit_buttons_enabled(True)
 
     def show_edit_schedule_wizard(self):
         print 'show_edit_schedule_wizard'
