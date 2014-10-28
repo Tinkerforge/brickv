@@ -132,6 +132,10 @@ class Constants:
         d = Constants.api_stdin_redirections
         return d.keys()[d.values().index(api_stdin_redirection)]
 
+    @staticmethod
+    def get_stdin_redirection_display_name(stdin_redirection):
+        return Constants.api_stdin_redirection_display_names[Constants.api_stdin_redirections[stdin_redirection]]
+
     # must match item order in combo_stdout_redirection on stdio page
     STDOUT_REDIRECTION_DEV_NULL = 0
     STDOUT_REDIRECTION_FILE     = 1
@@ -153,6 +157,10 @@ class Constants:
     def get_stdout_redirection(api_stdout_redirection):
         d = Constants.api_stdout_redirections
         return d.keys()[d.values().index(api_stdout_redirection)]
+
+    @staticmethod
+    def get_stdout_redirection_display_name(stdout_redirection):
+        return Constants.api_stdout_redirection_display_names[Constants.api_stdout_redirections[stdout_redirection]]
 
     # must match item order in combo_stderr_redirection on stdio page
     STDERR_REDIRECTION_DEV_NULL = 0
@@ -178,6 +186,10 @@ class Constants:
     def get_stderr_redirection(api_stderr_redirection):
         d = Constants.api_stderr_redirections
         return d.keys()[d.values().index(api_stderr_redirection)]
+
+    @staticmethod
+    def get_stderr_redirection_display_name(stderr_redirection):
+        return Constants.api_stderr_redirection_display_names[Constants.api_stderr_redirections[stderr_redirection]]
 
     # must match item order in combo_start_condition on schedule page
     SCHEDULE_START_CONDITION_NEVER  = 0

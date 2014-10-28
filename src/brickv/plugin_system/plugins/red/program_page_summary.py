@@ -101,7 +101,26 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
 
         # stdio redirection
         html += u'<b>Stdio Redirection</b><br/>'
-        html += u'FIXME<br/>'
+
+        stdin_redirection  = self.get_field('stdin_redirection').toInt()[0]
+        stdout_redirection = self.get_field('stdout_redirection').toInt()[0]
+        stderr_redirection = self.get_field('stderr_redirection').toInt()[0]
+
+        if stdin_redirection == Constants.STDIN_REDIRECTION_FILE:
+            html += u'Standard Input: {0}<br/>'.format(self.get_field('stdin_file').toString())
+        else:
+            html += u'Standard Input: {0}<br/>'.format(Constants.get_stdin_redirection_display_name(stdin_redirection))
+
+        if stdout_redirection == Constants.STDOUT_REDIRECTION_FILE:
+            html += u'Standard Output: {0}<br/>'.format(self.get_field('stdout_file').toString())
+        else:
+            html += u'Standard Output: {0}<br/>'.format(Constants.get_stdout_redirection_display_name(stdout_redirection))
+
+        if stderr_redirection == Constants.STDERR_REDIRECTION_FILE:
+            html += u'Standard Error: {0}<br/>'.format(self.get_field('stderr_file').toString())
+        else:
+            html += u'Standard Error: {0}<br/>'.format(Constants.get_stderr_redirection_display_name(stderr_redirection))
+
         html += u'<br/>'
 
         # schedule
