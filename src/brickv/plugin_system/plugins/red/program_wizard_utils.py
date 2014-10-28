@@ -39,6 +39,7 @@ class Constants:
     PAGE_RUBY      = 9
     PAGE_SHELL     = 10
     PAGE_PERL      = 11
+    PAGE_PHP       = 12
 
     FIELD_NAME     = 'name'
     FIELD_LANGUAGE = 'language'
@@ -47,14 +48,16 @@ class Constants:
     LANGUAGE_INVALID = 0
     LANGUAGE_JAVA    = 1
     LANGUAGE_PERL    = 2
-    LANGUAGE_PYTHON  = 3
-    LANGUAGE_RUBY    = 4
-    LANGUAGE_SHELL   = 5
+    LANGUAGE_PHP     = 3
+    LANGUAGE_PYTHON  = 4
+    LANGUAGE_RUBY    = 5
+    LANGUAGE_SHELL   = 6
 
     language_display_names = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'Java',
         LANGUAGE_PERL:    'Perl',
+        LANGUAGE_PHP:     'PHP',
         LANGUAGE_PYTHON:  'Python',
         LANGUAGE_RUBY:    'Ruby',
         LANGUAGE_SHELL:   'Shell'
@@ -64,6 +67,7 @@ class Constants:
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'java',
         LANGUAGE_PERL:    'perl',
+        LANGUAGE_PHP:     'php',
         LANGUAGE_PYTHON:  'python',
         LANGUAGE_RUBY:    'ruby',
         LANGUAGE_SHELL:   'shell'
@@ -77,9 +81,10 @@ class Constants:
     arguments_help = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'This list of arguments will be passed to the main() method.',
-        LANGUAGE_PERL:    'This list of arguments will be available as @ARGV',
+        LANGUAGE_PERL:    'This list of arguments will be available as @ARGV.',
+        LANGUAGE_PHP:     'This list of arguments will be available in the $argv array.',
         LANGUAGE_PYTHON:  'This list of arguments will be available as the sys.argv list.',
-        LANGUAGE_RUBY:    'This list of arguments will be available in the ARGV Array variable.',
+        LANGUAGE_RUBY:    'This list of arguments will be available in the ARGV Array.',
         LANGUAGE_SHELL:   'This list of arguments will be available as $1 to $n.'
     }
 
@@ -87,6 +92,7 @@ class Constants:
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'This list of environment variables will be set for the Java program.',
         LANGUAGE_PERL:    'This list of environment variables will be set for the Perl program.',
+        LANGUAGE_PHP:     'This list of environment variables will be set for the PHP program.',
         LANGUAGE_PYTHON:  'This list of environment variables will be set for the Python program.',
         LANGUAGE_RUBY:    'This list of environment variables will be set for the Ruby program.',
         LANGUAGE_SHELL:   'This list of environment variables will be set for the Shell script.',
@@ -96,6 +102,7 @@ class Constants:
         LANGUAGE_INVALID: [],
         LANGUAGE_JAVA:    ['', '.java'],
         LANGUAGE_PERL:    ['', '.pl'],
+        LANGUAGE_PHP:     ['', ('.php', '.php2', '.php3', '.php4', '.php5')],
         LANGUAGE_PYTHON:  ['', '.py'],
         LANGUAGE_RUBY:    ['', '.rb'],
         LANGUAGE_SHELL:   ['', ('.sh', '.bash')],
@@ -108,6 +115,10 @@ class Constants:
     # must match item order in combo_start_mode on Perl page
     PERL_START_MODE_SCRIPT_FILE = 0
     PERL_START_MODE_COMMAND     = 1
+    
+    # must match item order in combo_start_mode on PHP page
+    PHP_START_MODE_SCRIPT_FILE = 0
+    PHP_START_MODE_COMMAND     = 1
     
     # must match item order in combo_start_mode on Python page
     PYTHON_START_MODE_SCRIPT_FILE = 0
@@ -229,6 +240,7 @@ class Constants:
 
     DEFAULT_JAVA_START_MODE          = JAVA_START_MODE_MAIN_CLASS
     DEFAULT_PERL_START_MODE          = PERL_START_MODE_SCRIPT_FILE
+    DEFAULT_PHP_START_MODE           = PHP_START_MODE_SCRIPT_FILE
     DEFAULT_PYTHON_START_MODE        = PYTHON_START_MODE_SCRIPT_FILE
     DEFAULT_RUBY_START_MODE          = RUBY_START_MODE_SCRIPT_FILE
     DEFAULT_SHELL_START_MODE         = SHELL_START_MODE_SCRIPT_FILE

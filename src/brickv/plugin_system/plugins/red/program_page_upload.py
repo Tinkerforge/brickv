@@ -241,6 +241,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
         elif self.language == 'perl':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_PERL).get_command()
+        elif self.language == 'php':
+            executable, arguments, environment working_directory = self.wizard().page(Constants.PAGE_PHP).get_command()
         elif self.language == 'python':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_PYTHON).get_command()
         elif self.language == 'ruby':

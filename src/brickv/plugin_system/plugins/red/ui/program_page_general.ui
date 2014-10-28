@@ -51,6 +51,11 @@
        </item>
        <item>
         <property name="text">
+         <string>PHP</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Python</string>
         </property>
        </item>
