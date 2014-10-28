@@ -22,6 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QMessageBox
+from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_stdio import Ui_ProgramPageStdio
@@ -145,7 +146,7 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
     def apply_program_changes(self):
         program = self.wizard().program
 
-        if program is None:
+        if program == None:
             return
 
         stdin_redirection  = Constants.api_stdin_redirections[self.get_field('stdin_redirection').toInt()[0]]

@@ -21,12 +21,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.program_page_general import ProgramPageGeneral
 from brickv.plugin_system.plugins.red.program_page_java import ProgramPageJava
 from brickv.plugin_system.plugins.red.program_page_python import ProgramPagePython
 from brickv.plugin_system.plugins.red.program_page_ruby import ProgramPageRuby
+from brickv.plugin_system.plugins.red.program_page_shell import ProgramPageShell
 from brickv.plugin_system.plugins.red.program_page_arguments import ProgramPageArguments
 from brickv.plugin_system.plugins.red.program_page_stdio import ProgramPageStdio
 from brickv.plugin_system.plugins.red.program_page_schedule import ProgramPageSchedule
@@ -35,6 +38,8 @@ from brickv.async_call import async_call
 import json
 
 class ProgramInfo(QWidget, Ui_ProgramInfo):
+    name_changed = pyqtSignal()
+
     def __init__(self, session, program, script_manager, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
 
@@ -44,6 +49,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.program = program
         self.script_manager = script_manager
 
+        self.edit_general_wizard = None
         self.edit_arguments_wizard = None
         self.edit_stdio_wizard = None
 
@@ -62,6 +68,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.button_download_files.clicked.connect(self.download_selected_files)
         self.button_rename_file.clicked.connect(self.rename_selected_file)
         self.button_delete_files.clicked.connect(self.delete_selected_files)
+        self.button_edit_general.clicked.connect(self.show_edit_general_wizard)
         self.button_edit_language.clicked.connect(self.show_edit_language_wizard)
         self.button_edit_arguments.clicked.connect(self.show_edit_arguments_wizard)
         self.button_edit_stdio.clicked.connect(self.show_edit_stdio_wizard)
@@ -291,10 +298,29 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         print 'delete_selected_files', filenames
 
     def set_edit_buttons_enabled(self, enabled):
+        self.button_edit_general.setEnabled(enabled)
         self.button_edit_language.setEnabled(enabled)
         self.button_edit_arguments.setEnabled(enabled)
         self.button_edit_stdio.setEnabled(enabled)
         self.button_edit_schedule.setEnabled(enabled)
+
+    def show_edit_general_wizard(self):
+        self.set_edit_buttons_enabled(False)
+
+        self.edit_general_wizard = ProgramWizardEdit(self.session, self.program, [], self.script_manager)
+        self.edit_general_wizard.setPage(Constants.PAGE_GENERAL, ProgramPageGeneral())
+        self.edit_general_wizard.finished.connect(self.edit_general_wizard_finished)
+        self.edit_general_wizard.show()
+
+    def edit_general_wizard_finished(self, result):
+        self.edit_general_wizard.finished.disconnect(self.edit_general_wizard_finished)
+
+        if result == QDialog.Accepted:
+            self.edit_general_wizard.page(Constants.PAGE_GENERAL).apply_program_changes()
+            self.refresh_info()
+            self.name_changed.emit()
+
+        self.set_edit_buttons_enabled(True)
 
     def show_edit_language_wizard(self):
         print 'show_edit_language_wizard'

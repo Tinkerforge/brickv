@@ -65,6 +65,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
 
     def add_program_to_list(self, program):
         program_info = ProgramInfo(self.session, program, self.script_manager)
+        program_info.name_changed.connect(self.refresh_program_names)
 
         item = QListWidgetItem(program.cast_custom_option_value(Constants.FIELD_NAME, unicode, '<unknown>'))
         item.setData(Qt.UserRole, QVariant(program_info))
@@ -80,15 +81,15 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
             for program in programs:
                 self.add_program_to_list(program)
 
-            self.button_refresh.setText("Refresh")
+            self.button_refresh.setText('Refresh')
             self.button_refresh.setEnabled(True)
             self.update_ui_state()
             self.stacked_container.setCurrentIndex(1)
 
         def cb_error():
-            self.button_refresh.setText("Error")
+            self.button_refresh.setText('Error')
 
-        self.button_refresh.setText("Refreshing...")
+        self.button_refresh.setText('Refreshing...')
         self.button_refresh.setEnabled(False)
 
         self.list_programs.clear()
@@ -97,6 +98,12 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
             self.stacked_container.removeWidget(self.stacked_container.currentWidget())
 
         async_call(refresh_async, None, cb_success, cb_error)
+
+    def refresh_program_names(self):
+        for i in range(self.list_programs.count()):
+            item = self.list_programs.item(i)
+            program = item.data(Qt.UserRole).toPyObject().program
+            item.setText(program.cast_custom_option_value('name', unicode, '<unknown>'))
 
     def show_new_program_wizard(self):
         self.button_new.setEnabled(False)
@@ -135,6 +142,8 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
 
         if button != QMessageBox.Ok:
             return
+
+        program_info.name_changed.disconnect(self.refresh_program_names)
 
         try:
             program.purge() # FIXME: async_call

@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import QRegExp, QString, Qt
 from PyQt4.QtGui import QRegExpValidator, QMessageBox
+from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_general import Ui_ProgramPageGeneral
@@ -34,6 +35,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
 
         self.setupUi(self)
 
+        self.edit_mode = False
         self.identifier_is_unique = False
 
         self.setTitle(title_prefix + 'General Information')
@@ -59,6 +61,25 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
     def initializePage(self):
         self.edit_name.setText('unnamed')
         self.combo_language.setCurrentIndex(Constants.LANGUAGE_INVALID)
+
+        # if a program exists then this page is used in an edit wizard
+        if self.wizard().program != None:
+            program = self.wizard().program
+            self.edit_mode = True
+
+            self.setSubTitle('Specify the name for the program.')
+
+            self.edit_name.setText(program.cast_custom_option_value('name', unicode, '<unknown>'))
+            self.edit_identifier.setText(unicode(program.identifier))
+
+            api_language = program.cast_custom_option_value(Constants.FIELD_LANGUAGE, unicode, '<unknown>')
+
+            try:
+                language = Constants.get_language(api_language)
+                self.combo_language.setCurrentIndex(language)
+            except:
+                pass
+
         self.update_ui_state()
 
     # overrides QWizardPage.isComplete
@@ -78,8 +99,14 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         self.edit_identifier.setVisible(not auto_generate)
         self.label_identifier_help.setVisible(not auto_generate)
 
+        self.check_auto_generate.setEnabled(not self.edit_mode)
+        self.edit_identifier.setEnabled(not self.edit_mode)
+        self.label_language.setEnabled(not self.edit_mode)
+        self.combo_language.setEnabled(not self.edit_mode)
+        self.label_language_help.setEnabled(not self.edit_mode)
+
     def auto_generate_identifier(self, name):
-        if self.check_auto_generate.checkState() != Qt.Checked:
+        if self.check_auto_generate.checkState() != Qt.Checked or self.edit_mode:
             return
 
         name = unicode(name) # convert QString to Unicode
@@ -128,3 +155,18 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
             self.label_language.setStyleSheet('')
 
         self.completeChanged.emit()
+
+    def apply_program_changes(self):
+        program = self.wizard().program
+
+        if program == None:
+            return
+
+        name = unicode(self.get_field('name').toString())
+
+        try:
+            program.set_custom_option_value('name', name) # FIXME: async_call
+        except REDError as e:
+            QMessageBox.critical(self, 'Edit Error',
+                                 u'Could not update name of program [{0}]:\n\n{1}'
+                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>')))

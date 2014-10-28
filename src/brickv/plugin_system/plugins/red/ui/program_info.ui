@@ -101,6 +101,13 @@
               </property>
              </widget>
             </item>
+            <item row="3" column="0" colspan="2">
+             <widget class="QPushButton" name="button_edit_general">
+              <property name="text">
+               <string>Edit</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>
