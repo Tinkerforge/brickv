@@ -58,11 +58,11 @@ class ProgramWizardEdit(ProgramWizard):
             api_language = self.program.cast_custom_option_value(Constants.FIELD_LANGUAGE, unicode, '<unknown>')
 
             try:
-                language_id = Constants.api_languages.keys()[Constants.api_languages.values().index(api_language)]
+                language = Constants.get_language(api_language)
             except:
-                language_id = LANGUAGE_INVALID
+                language = Constants.LANGUAGE_INVALID
 
-            return QVariant(language_id)
+            return QVariant(language)
         else:
             return ProgramWizard.get_field(self, name)
 

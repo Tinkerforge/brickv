@@ -64,6 +64,11 @@ class Constants:
         LANGUAGE_SHELL:   'shell'
     }
 
+    @staticmethod
+    def get_language(api_language):
+        d = Constants.api_languages
+        return d.keys()[d.values().index(api_language)]
+
     arguments_help = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'This list of arguments will be passed to the main() method.',

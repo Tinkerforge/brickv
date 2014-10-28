@@ -99,8 +99,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         api_language = self.program.cast_custom_option_value(Constants.FIELD_LANGUAGE, unicode, '<unknown>')
 
         try:
-            language_id = Constants.api_languages.keys()[Constants.api_languages.values().index(api_language)]
-            language_display_name = Constants.language_display_names[language_id]
+            language = Constants.get_language(api_language)
+            language_display_name = Constants.language_display_names[language]
         except:
             language_display_name = '<unknown>'
 
