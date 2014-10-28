@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
 
 program_page_upload.py: Program Wizard Upload Page
 
@@ -238,6 +239,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         if self.language == 'java':
             executable, arguments, working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
+        elif self.language == 'perl':
+            executable, arguments, working_directory = self.wizard().page(Constants.PAGE_PERL).get_command()
         elif self.language == 'python':
             executable, arguments, working_directory = self.wizard().page(Constants.PAGE_PYTHON).get_command()
         elif self.language == 'ruby':

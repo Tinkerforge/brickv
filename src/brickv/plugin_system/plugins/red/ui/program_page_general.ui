@@ -46,6 +46,11 @@
        </item>
        <item>
         <property name="text">
+         <string>Perl</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Python</string>
         </property>
        </item>

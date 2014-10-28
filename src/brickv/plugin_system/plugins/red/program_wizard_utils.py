@@ -37,6 +37,7 @@ class Constants:
     PAGE_UPLOAD    = 8
     PAGE_RUBY      = 9
     PAGE_SHELL     = 10
+    PAGE_PERL      = 11
 
     FIELD_NAME     = 'name'
     FIELD_LANGUAGE = 'language'
@@ -44,13 +45,15 @@ class Constants:
     # must match item order in combo_language on general page
     LANGUAGE_INVALID = 0
     LANGUAGE_JAVA    = 1
-    LANGUAGE_PYTHON  = 2
-    LANGUAGE_RUBY    = 3
-    LANGUAGE_SHELL   = 4
+    LANGUAGE_PERL    = 2
+    LANGUAGE_PYTHON  = 3
+    LANGUAGE_RUBY    = 4
+    LANGUAGE_SHELL   = 5
 
     language_display_names = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'Java',
+        LANGUAGE_PERL:    'Perl',
         LANGUAGE_PYTHON:  'Python',
         LANGUAGE_RUBY:    'Ruby',
         LANGUAGE_SHELL:   'Shell'
@@ -59,6 +62,7 @@ class Constants:
     api_languages = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'java',
+        LANGUAGE_PERL:    'perl',
         LANGUAGE_PYTHON:  'python',
         LANGUAGE_RUBY:    'ruby',
         LANGUAGE_SHELL:   'shell'
@@ -72,6 +76,7 @@ class Constants:
     arguments_help = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'This list of arguments will be passed to the main() method.',
+        LANGUAGE_PERL:    'This list of arguments will be available as @ARGV',
         LANGUAGE_PYTHON:  'This list of arguments will be available as the sys.argv list.',
         LANGUAGE_RUBY:    'This list of arguments will be available in the ARGV Array variable.',
         LANGUAGE_SHELL:   'This list of arguments will be available as $1 to $n.'
@@ -80,6 +85,7 @@ class Constants:
     environment_help = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'This list of environment variables will be set for the Java program.',
+        LANGUAGE_PERL:    'This list of environment variables will be set for the Perl program.',
         LANGUAGE_PYTHON:  'This list of environment variables will be set for the Python program.',
         LANGUAGE_RUBY:    'This list of environment variables will be set for the Ruby program.',
         LANGUAGE_SHELL:   'This list of environment variables will be set for the Shell script.',
@@ -88,6 +94,7 @@ class Constants:
     language_file_ending = { # endswith XXX sorted by file ending index
         LANGUAGE_INVALID: [],
         LANGUAGE_JAVA:    ['', '.java'],
+        LANGUAGE_PERL:    ['', '.pl'],
         LANGUAGE_PYTHON:  ['', '.py'],
         LANGUAGE_RUBY:    ['', '.rb'],
         LANGUAGE_SHELL:   ['', ('.sh', '.bash')],
@@ -97,6 +104,10 @@ class Constants:
     JAVA_START_MODE_MAIN_CLASS = 0
     JAVA_START_MODE_JAR_FILE   = 1
 
+    # must match item order in combo_start_mode on Perl page
+    PERL_START_MODE_SCRIPT_FILE = 0
+    PERL_START_MODE_COMMAND     = 1
+    
     # must match item order in combo_start_mode on Python page
     PYTHON_START_MODE_SCRIPT_FILE = 0
     PYTHON_START_MODE_MODULE_NAME = 1
@@ -216,6 +227,7 @@ class Constants:
     }
 
     DEFAULT_JAVA_START_MODE          = JAVA_START_MODE_MAIN_CLASS
+    DEFAULT_PERL_START_MODE          = PERL_START_MODE_SCRIPT_FILE
     DEFAULT_PYTHON_START_MODE        = PYTHON_START_MODE_SCRIPT_FILE
     DEFAULT_RUBY_START_MODE          = RUBY_START_MODE_SCRIPT_FILE
     DEFAULT_SHELL_START_MODE         = SHELL_START_MODE_SCRIPT_FILE
