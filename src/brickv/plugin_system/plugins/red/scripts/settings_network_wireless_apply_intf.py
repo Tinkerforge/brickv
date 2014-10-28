@@ -2,5 +2,7 @@
 
 import subprocess
 
-cmd_restart_wicd = "/etc/init.d/wicd force-reload"
-subprocess.Popen(cmd_restart_wicd, shell=True)
+cmd_disconnect_restart = "/usr/bin/wicd-cli --wireless -x; /etc/init.d/wicd force-reload"
+
+ps = subprocess.Popen(cmd_disconnect_restart, shell=True)
+comm = ps.communicate()
