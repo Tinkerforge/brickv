@@ -81,16 +81,16 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.edit_stdio_wizard = None
         self.edit_schedule_wizard = None
 
+        self.program_dir = unicode(self.program.root_directory)
         self.program_dir_walk_result = None
         self.tree_logs_model = QStandardItemModel(self)
-        self.tree_logs_header_labels = ["File", "Time"]
+        self.tree_logs_header_labels = ["Date/Time", "Size (bytes)"]
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_header_labels)
         self.tree_logs.setModel(self.tree_logs_model)
 
-        self.tree_logs_model.itemChanged.connect(self.tree_logs_model_item_changed)
         self.button_refresh.clicked.connect(self.refresh_info)
-        self.button_download_log.clicked.connect(self.download_selected_log)
-        self.button_delete_log.clicked.connect(self.delete_selected_log)
+        self.button_download_logs.clicked.connect(self.download_selected_logs)
+        self.button_delete_logs.clicked.connect(self.delete_selected_logs)
         self.button_upload_files.clicked.connect(self.upload_files)
         self.button_download_files.clicked.connect(self.download_selected_files)
         self.button_rename_file.clicked.connect(self.rename_selected_file)
@@ -102,9 +102,6 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.button_edit_schedule.clicked.connect(self.show_edit_schedule_wizard)
 
         self.update_ui_state()
-
-    def tree_logs_model_item_changed(self, idx):
-        print idx
 
     def refresh_info(self):
         self.refresh_program()
@@ -128,7 +125,103 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         async_call(refresh_async, None, cb_success, cb_error)
 
     def refresh_logs(self):
-        pass # FIXME: move the logs section from update_ui_state here
+        def cb_program_get_os_walk(result):
+            self.logs_refresh_in_progress = False
+            if result.stderr != "":
+                # TODO: Error popup for user?
+                print result
+                return
+
+            self.program_dir_walk_result = json.loads(result.stdout)
+
+            for dir_node in self.program_dir_walk_result:
+                if dir_node['root'] == '/'.join([self.program_dir, "log"]):
+                    for idx, f in enumerate(dir_node['files']):
+                        file_name = f['name']
+                        file_size = str(f['size'])
+                        file_path = '/'.join([dir_node['root'], file_name])
+                        time_stamp = file_name.split('-')[0]
+                        file_name_display = file_name.split('-')[1]
+
+                        _date = time_stamp.split('T')[0]
+                        _time = time_stamp.split('T')[1]
+                        year = _date[:4]
+                        month = _date[4:6]
+                        day = _date[6:]
+                        date = '-'.join([year, month, day])
+
+                        if '+' in _time:
+                            __time = _time.split('+')[0].split('.')[0]
+                            hour = __time[:2]
+                            mins = __time[2:4]
+                            sec = __time[4:]
+                            gmt = _time.split('+')[1]
+                            gmt = '+'+gmt
+                        elif '-' in _time:
+                            __time = _time.split('-')[0].split('.')[0]
+                            hour = __time[:2]
+                            mins = __time[2:4]
+                            sec = __time[4:]
+                            gmt = _time.split('-')[1]
+                            gmt = '-'+gmt
+                        time = ':'.join([hour, mins, sec])
+                        time_with_gmt = time+' '+gmt
+
+                        parent_date = None
+                        for i in range(self.tree_logs_model.rowCount()):
+                            if self.tree_logs_model.item(i).text() == date:
+                                parent_date = self.tree_logs_model.item(i)
+                                parent_date_size = self.tree_logs_model.item(i, 1)
+                                break
+
+                        if parent_date:
+                            found_parent_time = False
+                            for i in range(parent_date.rowCount()):
+                                if parent_date.child(i).text() == time:
+                                    found_parent_time = True
+                                    parent_date.child(i).appendRow([QStandardItem(file_name_display),
+                                                                    QStandardItem(file_size),
+                                                                    QStandardItem("LOG_FILE"),
+                                                                    QStandardItem(file_path)])
+                                    current_size = int (parent_date.child(i, 1).text())
+                                    new_file_size = int(file_size)
+                                    parent_date.child(i, 1).setText(str(current_size + new_file_size))
+
+                                    current_size = int(parent_date_size.text())
+                                    new_file_size = int(parent_date.child(i, 1).text())
+                                    parent_date_size.setText(str(current_size + new_file_size))
+                                    break
+
+                            if not found_parent_time:
+                                parent_date.appendRow([QStandardItem(time), QStandardItem(file_size)])
+                                parent_date.child(parent_date.rowCount()-1).appendRow([QStandardItem(file_name_display),
+                                                                                       QStandardItem(file_size),
+                                                                                       QStandardItem("LOG_FILE"),
+                                                                                       QStandardItem(file_path)])
+                                current_size = int(parent_date_size.text())
+                                new_file_size = int(file_size)
+                                parent_date_size.setText(str(current_size + new_file_size))
+
+                        else:
+                            parent_date = [QStandardItem(date), QStandardItem(file_size)]
+                            parent_date[0].appendRow([QStandardItem(time), QStandardItem(file_size)])
+                            parent_date[0].child(0).appendRow([QStandardItem(file_name_display),
+                                                               QStandardItem(file_size),
+                                                               QStandardItem("LOG_FILE"),
+                                                               QStandardItem(file_path)])
+                            self.tree_logs_model.appendRow(parent_date)
+
+            self.update_ui_state()
+
+
+        self.logs_refresh_in_progress = True
+        self.update_ui_state()
+
+        self.tree_logs_model.clear()
+        self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_header_labels)
+        self.script_manager.execute_script('program_get_os_walk',
+                                           cb_program_get_os_walk,
+                                           [self.program_dir])
 
     def refresh_files(self):
         def cb_directory_walk(result):
@@ -141,7 +234,6 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
                 if directory_walk != None:
                     available_files = expand_directory_walk_to_files_list(directory_walk)
-
                 return sorted(available_files)
 
             def cb_expand_success(available_files):
@@ -161,10 +253,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                            [os.path.join(self.root_directory, 'bin')], max_len=1024*1024)
 
     def update_ui_state(self):
-        print "UUIS"
+        self.button_download_logs.setEnabled(self.tree_logs_model.rowCount())
+        self.button_delete_logs.setEnabled(self.tree_logs_model.rowCount())
 
         has_files_selection = len(self.tree_files.selectedItems()) > 0
-
         self.button_download_files.setEnabled(has_files_selection)
         self.button_rename_file.setEnabled(len(self.tree_files.selectedItems()) == 1)
         self.button_delete_files.setEnabled(has_files_selection)
@@ -191,100 +283,6 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.label_identifier.setText(unicode(self.program.identifier))
         self.label_language.setText(language_display_name)
         self.label_description.setText(description)
-
-        # logs
-        def cb_program_get_os_walk(result):
-            if result.stderr == "":
-                self.program_dir_walk_result = json.loads(result.stdout)
-
-                for dir_node in self.program_dir_walk_result:
-                    if dir_node['root'] == '/'.join([self.root_directory, "log"]):
-                        for idx, f in enumerate(dir_node['files']):
-                            file_name = f
-                            file_path = '/'.join([dir_node['root'], f])
-                            time_stamp = f.split('-')[0]
-                            file_name_display = f.split('-')[1]
-
-                            _date = time_stamp.split('T')[0]
-                            _time = time_stamp.split('T')[1]
-                            year = _date[:4]
-                            month = _date[4:6]
-                            day = _date[6:]
-                            date = '-'.join([year, month, day])
-
-                            if '+' in _time:
-                                __time = _time.split('+')[0].split('.')[0]
-                                hour = __time[:2]
-                                mins = __time[2:4]
-                                sec = __time[4:]
-                                gmt = _time.split('+')[1]
-                                gmt = '+'+gmt
-                            elif '-' in _time:
-                                __time = _time.split('-')[0].split('.')[0]
-                                hour = __time[:2]
-                                mins = __time[2:4]
-                                sec = __time[4:]
-                                gmt = _time.split('-')[1]
-                                gmt = '-'+gmt
-                            time = ':'.join([hour, mins, sec])
-                            time = time+' '+gmt
-                            '''
-                            print "FILE NAME="+file_name
-                            print "FILE PATH="+file_path
-                            print "TIMESTAMP="+time_stamp
-                            print "FILE NAME DISPLAY="+file_name_display
-                            print "DATE="+date
-                            print "TIME="+time
-                            print "========================================="
-                            '''
-
-                            parent = self.tree_logs_model.findItems(date)
-                            if parent:
-                                if file_name_display.split('.')[0] == "stdout":
-                                    parent[0].child(0).appendRow([QStandardItem(file_name_display),
-                                                                  QStandardItem(time),
-                                                                  QStandardItem("LOG_FILE"),
-                                                                  QStandardItem(file_path)])
-                                elif file_name_display.split('.')[0] == "stderr":
-                                    parent[0].child(1).appendRow([QStandardItem(file_name_display),
-                                                                  QStandardItem(time),
-                                                                  QStandardItem("LOG_FILE"),
-                                                                  QStandardItem(file_path)])
-                            else:
-                                parent = [QStandardItem(date), QStandardItem("")]
-                                parent[0].appendRow([QStandardItem("STDOUT"), QStandardItem("")])
-                                parent[0].appendRow([QStandardItem("STDERR"), QStandardItem("")])
-                                if file_name_display.split('.')[0] == "stdout":
-                                    parent[0].child(0).appendRow([QStandardItem(file_name_display),
-                                                                  QStandardItem(time),
-                                                                  QStandardItem("LOG_FILE"),
-                                                                  QStandardItem(file_path)])
-                                elif file_name_display.split('.')[0] == "stderr":
-                                    parent[0].child(1).appendRow([QStandardItem(file_name_display),
-                                                                  QStandardItem(time),
-                                                                  QStandardItem("LOG_FILE"),
-                                                                  QStandardItem(file_path)])
-                                parent[0].setSelectable(False)
-                                parent[1].setSelectable(False)
-                                parent[0].child(0, 0).setSelectable(False)
-                                parent[0].child(0, 1).setSelectable(False)
-                                parent[0].child(1, 0).setSelectable(False)
-                                parent[0].child(1, 1).setSelectable(False)
-                                self.tree_logs_model.appendRow(parent)
-
-                # Enable/Disable Download and Delete buttons based on available data
-                self.button_download_log.setEnabled(self.tree_logs_model.rowCount())
-                self.button_delete_log.setEnabled(self.tree_logs_model.rowCount())
-            else:
-                # TODO: Error popup for user?
-                print result
-
-        self.tree_logs_model.clear()
-        self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_header_labels)
-
-        self.script_manager.execute_script('program_get_os_walk',
-                                           cb_program_get_os_walk,
-                                           [self.root_directory])
 
         # arguments
         arguments = []
@@ -355,9 +353,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.label_repeat_fields.setVisible(repeat_mode_cron)
         self.label_repeat_fields.setText(unicode(self.program.repeat_fields))
 
-    def download_selected_log(self):
+    def download_selected_logs(self):
         index_list =  self.tree_logs.selectedIndexes()
-        print len(index_list)
 
         if len(index_list) == 0 or len(index_list) % 4 != 0:
             return
@@ -375,15 +372,13 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         log_files_download_dir = file_dialog.getExistingDirectory(self,
                                                              "Download Log Files")
 
-        print log_files_download_dir
-
         for chunk in index_list_chunked:
             if self.tree_logs_model.itemFromIndex(chunk[2]).text() != "LOG_FILE":
                 return
             log_filename = unicode(self.tree_logs_model.itemFromIndex(chunk[3]).text())
-            print 'download_selected_log', log_filename
+            print 'download_selected_logs', log_filename
 
-    def delete_selected_log(self):
+    def delete_selected_logs(self):
         #selected_items = self.list_logs.selectedItems()
 
         if len(selected_items) == 0:
@@ -391,7 +386,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
         filename = unicode(selected_items[0].text())
 
-        print 'delete_selected_log', filename
+        print 'delete_selected_logs', filename
 
     def upload_files(self):
         print 'upload_files'

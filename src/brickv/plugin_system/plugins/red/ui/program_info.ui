@@ -177,14 +177,14 @@
           <item>
            <layout class="QGridLayout" name="gridLayout_10">
             <item row="2" column="0">
-             <widget class="QPushButton" name="button_download_log">
+             <widget class="QPushButton" name="button_download_logs">
               <property name="text">
                <string>Download</string>
               </property>
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QPushButton" name="button_delete_log">
+             <widget class="QPushButton" name="button_delete_logs">
               <property name="text">
                <string>Delete</string>
               </property>
