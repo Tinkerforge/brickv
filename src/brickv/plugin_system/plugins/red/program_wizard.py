@@ -25,13 +25,13 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QWizard
 
 class ProgramWizard(QWizard):
-    def __init__(self, session, identifiers, script_manager, version, *args, **kwargs):
+    def __init__(self, context, *args, **kwargs):
         QWizard.__init__(self, *args, **kwargs)
 
-        self.session = session
-        self.identifiers = identifiers
-        self.script_manager = script_manager
-        self.red_version = version
+        self.session = context.session
+        self.identifiers = context.identifiers
+        self.script_manager = context.script_manager
+        self.image_version_ref = context.image_version_ref
         self.canceled = False
 
         self.setWindowFlags(self.windowFlags() | Qt.Tool)

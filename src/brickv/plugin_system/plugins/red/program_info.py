@@ -45,14 +45,15 @@ log_files_download_dir = ""
 class ProgramInfo(QWidget, Ui_ProgramInfo):
     name_changed = pyqtSignal()
 
-    def __init__(self, session, program, script_manager, *args, **kwargs):
+    def __init__(self, session, script_manager, image_version_ref, program, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
         self.session = session
-        self.program = program
         self.script_manager = script_manager
+        self.image_version_ref = image_version_ref
+        self.program = program
         self.root_directory = unicode(self.program.root_directory)
         self.program_refresh_in_progress = False
         self.logs_refresh_in_progress = False
@@ -429,7 +430,9 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
     def show_edit_general_wizard(self):
         self.set_buttons_enabled(False)
 
-        self.edit_general_wizard = ProgramWizardEdit(self.session, self.program, [], self.script_manager)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
+
+        self.edit_general_wizard = ProgramWizardEdit(context, self.program)
         self.edit_general_wizard.setPage(Constants.PAGE_GENERAL, ProgramPageGeneral())
         self.edit_general_wizard.finished.connect(self.edit_general_wizard_finished)
         self.edit_general_wizard.show()
@@ -450,7 +453,9 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
     def show_edit_arguments_wizard(self):
         self.set_buttons_enabled(False)
 
-        self.edit_arguments_wizard = ProgramWizardEdit(self.session, self.program, [], self.script_manager)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
+
+        self.edit_arguments_wizard = ProgramWizardEdit(context, self.program)
         self.edit_arguments_wizard.setPage(Constants.PAGE_ARGUMENTS, ProgramPageArguments())
         self.edit_arguments_wizard.finished.connect(self.edit_arguments_wizard_finished)
         self.edit_arguments_wizard.show()
@@ -467,7 +472,9 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
     def show_edit_stdio_wizard(self):
         self.set_buttons_enabled(False)
 
-        self.edit_stdio_wizard = ProgramWizardEdit(self.session, self.program, [], self.script_manager)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
+
+        self.edit_stdio_wizard = ProgramWizardEdit(context, self.program)
         self.edit_stdio_wizard.setPage(Constants.PAGE_STDIO, ProgramPageStdio())
         self.edit_stdio_wizard.finished.connect(self.edit_stdio_wizard_finished)
         self.edit_stdio_wizard.show()
@@ -484,7 +491,9 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
     def show_edit_schedule_wizard(self):
         self.set_buttons_enabled(False)
 
-        self.edit_schedule_wizard = ProgramWizardEdit(self.session, self.program, [], self.script_manager)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
+
+        self.edit_schedule_wizard = ProgramWizardEdit(context, self.program)
         self.edit_schedule_wizard.setPage(Constants.PAGE_SCHEDULE, ProgramPageSchedule())
         self.edit_schedule_wizard.finished.connect(self.edit_schedule_wizard_finished)
         self.edit_schedule_wizard.show()

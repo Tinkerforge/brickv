@@ -25,6 +25,9 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem
 from brickv.plugin_system.plugins.red.api import REDProgram
 import re
+from collections import namedtuple
+
+ProgramWizardContext = namedtuple('ProgramWizardContext', ['session', 'identifiers', 'script_manager', 'image_version_ref'])
 
 class Constants:
     PAGE_GENERAL    = 0

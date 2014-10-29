@@ -60,7 +60,7 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the Octave program [{name}] should be executed.')
-        self.is_full_image = 'full' in self.parent().parent().parent().red_version
+        self.is_full_image = 'full' in self.wizard().image_version_ref[0]
         self.update_octave_versions()
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_OCTAVE_START_MODE)
 

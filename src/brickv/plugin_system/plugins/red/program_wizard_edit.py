@@ -27,8 +27,8 @@ from brickv.plugin_system.plugins.red.program_wizard import ProgramWizard
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 
 class ProgramWizardEdit(ProgramWizard):
-    def __init__(self, session, program, identifiers, script_manager, *args, **kwargs):
-        ProgramWizard.__init__(self, session, identifiers, script_manager, *args, **kwargs)
+    def __init__(self, context, program, *args, **kwargs):
+        ProgramWizard.__init__(self, context, *args, **kwargs)
 
         self.program = program
 

@@ -45,8 +45,8 @@ from brickv.plugin_system.plugins.red.program_page_summary import ProgramPageSum
 from brickv.plugin_system.plugins.red.program_page_upload import ProgramPageUpload
 
 class ProgramWizardNew(ProgramWizard):
-    def __init__(self, session, identifiers, script_manager, *args, **kwargs):
-        ProgramWizard.__init__(self, session, identifiers, script_manager, *args, **kwargs)
+    def __init__(self, context, *args, **kwargs):
+        ProgramWizard.__init__(self, context, *args, **kwargs)
 
         self.setWindowTitle('New Program')
 

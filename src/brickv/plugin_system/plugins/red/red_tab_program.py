@@ -38,6 +38,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
 
         self.script_manager = None
         self.session = None
+        self.image_version_ref = ['<unknown>']
         self.new_program_wizard = None
 
         self.splitter.setSizes([200, 400])
@@ -49,6 +50,13 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         self.update_ui_state()
 
     def tab_on_focus(self):
+        if self.image_version_ref[0] == '<unknown>':
+            # FIXME: this is should actually be sync to ensure that the image version is known before it'll be used
+            def read_image_version():
+                self.image_version_ref[0] = REDFile(self.session).open('/etc/tf_image_version', REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0).read(256)
+
+            async_call(read_image_version, None, None, None)
+
         self.refresh_program_list()
 
     def tab_off_focus(self):
@@ -64,7 +72,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         self.button_delete.setEnabled(has_selection)
 
     def add_program_to_list(self, program):
-        program_info = ProgramInfo(self.session, program, self.script_manager)
+        program_info = ProgramInfo(self.session, self.script_manager, self.image_version_ref, program)
         program_info.name_changed.connect(self.refresh_program_names)
 
         item = QListWidgetItem(program.cast_custom_option_value(Constants.FIELD_NAME, unicode, '<unknown>'))
@@ -112,11 +120,10 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
 
         for i in range(self.list_programs.count()):
             identifiers.append(str(self.list_programs.item(i).data(Qt.UserRole).toPyObject().program.identifier))
-            
 
-        version = unicode(str(self.parent().parent().parent().label_version.text()))
+        context = ProgramWizardContext(self.session, identifiers, self.script_manager, self.image_version_ref)
 
-        self.new_program_wizard = ProgramWizardNew(self.session, identifiers, self.script_manager, version)
+        self.new_program_wizard = ProgramWizardNew(context)
         self.new_program_wizard.finished.connect(self.new_program_wizard_finished)
         self.new_program_wizard.show()
 
