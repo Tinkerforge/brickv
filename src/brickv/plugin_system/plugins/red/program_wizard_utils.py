@@ -85,7 +85,7 @@ class Constants:
     arguments_help = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'This list of arguments will be passed to the main() method.',
-        LANGUAGE_OCTAVE:  'This list of arguments can be accessed with by calling argv().',
+        LANGUAGE_OCTAVE:  'This list of arguments can be accessed by calling argv().',
         LANGUAGE_PERL:    'This list of arguments will be available as @ARGV array.',
         LANGUAGE_PHP:     'This list of arguments will be available as $argv array.',
         LANGUAGE_PYTHON:  'This list of arguments will be available as sys.argv list.',
