@@ -46,6 +46,11 @@
        </item>
        <item>
         <property name="text">
+         <string>JavaScript (Node.js/Browser)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Octave</string>
         </property>
        </item>

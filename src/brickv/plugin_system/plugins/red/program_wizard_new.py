@@ -29,6 +29,7 @@ from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.program_page_general import ProgramPageGeneral
 from brickv.plugin_system.plugins.red.program_page_files import ProgramPageFiles
 from brickv.plugin_system.plugins.red.program_page_java import ProgramPageJava
+from brickv.plugin_system.plugins.red.program_page_javascript import ProgramPageJavascript
 from brickv.plugin_system.plugins.red.program_page_octave import ProgramPageOctave
 from brickv.plugin_system.plugins.red.program_page_perl import ProgramPagePerl
 from brickv.plugin_system.plugins.red.program_page_php import ProgramPagePHP
@@ -47,20 +48,21 @@ class ProgramWizardNew(ProgramWizard):
 
         self.setWindowTitle('New Program')
 
-        self.setPage(Constants.PAGE_GENERAL,   ProgramPageGeneral(title_prefix='Step 1 or 8: '))
-        self.setPage(Constants.PAGE_FILES,     ProgramPageFiles(title_prefix='Step 2 or 8: '))
-        self.setPage(Constants.PAGE_JAVA,      ProgramPageJava(title_prefix='Step 3 or 8: '))
-        self.setPage(Constants.PAGE_OCTAVE,    ProgramPageOctave(title_prefix='Step 3 or 8: '))
-        self.setPage(Constants.PAGE_PERL,      ProgramPagePerl(title_prefix='Step 3 or 8: '))
-        self.setPage(Constants.PAGE_PHP,       ProgramPagePHP(title_prefix='Step 3 or 8: '))
-        self.setPage(Constants.PAGE_PYTHON,    ProgramPagePython(title_prefix='Step 3 or 8: '))
-        self.setPage(Constants.PAGE_RUBY,      ProgramPageRuby(title_prefix='Step 3 or 8: '))
-        self.setPage(Constants.PAGE_SHELL,     ProgramPageShell(title_prefix='Step 3 or 8: '))
-        self.setPage(Constants.PAGE_ARGUMENTS, ProgramPageArguments(title_prefix='Step 4 or 8: '))
-        self.setPage(Constants.PAGE_STDIO,     ProgramPageStdio(title_prefix='Step 5 or 8: '))
-        self.setPage(Constants.PAGE_SCHEDULE,  ProgramPageSchedule(title_prefix='Step 6 or 8: '))
-        self.setPage(Constants.PAGE_SUMMARY,   ProgramPageSummary(title_prefix='Step 7 or 8: '))
-        self.setPage(Constants.PAGE_UPLOAD,    ProgramPageUpload(title_prefix='Step 8 or 8: '))
+        self.setPage(Constants.PAGE_GENERAL,    ProgramPageGeneral(title_prefix='Step 1 or 8: '))
+        self.setPage(Constants.PAGE_FILES,      ProgramPageFiles(title_prefix='Step 2 or 8: '))
+        self.setPage(Constants.PAGE_JAVA,       ProgramPageJava(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_JAVASCRIPT, ProgramPageJavascript(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_OCTAVE,     ProgramPageOctave(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_PERL,       ProgramPagePerl(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_PHP,        ProgramPagePHP(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_PYTHON,     ProgramPagePython(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_RUBY,       ProgramPageRuby(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_SHELL,      ProgramPageShell(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_ARGUMENTS,  ProgramPageArguments(title_prefix='Step 4 or 8: '))
+        self.setPage(Constants.PAGE_STDIO,      ProgramPageStdio(title_prefix='Step 5 or 8: '))
+        self.setPage(Constants.PAGE_SCHEDULE,   ProgramPageSchedule(title_prefix='Step 6 or 8: '))
+        self.setPage(Constants.PAGE_SUMMARY,    ProgramPageSummary(title_prefix='Step 7 or 8: '))
+        self.setPage(Constants.PAGE_UPLOAD,     ProgramPageUpload(title_prefix='Step 8 or 8: '))
 
     # overrides QWizard.nextId
     def nextId(self):
@@ -73,6 +75,8 @@ class ProgramWizardNew(ProgramWizard):
 
             if language == Constants.LANGUAGE_JAVA:
                 return Constants.PAGE_JAVA
+            elif language == Constants.LANGUAGE_JAVASCRIPT:
+                return Constants.PAGE_JAVASCRIPT
             elif language == Constants.LANGUAGE_OCTAVE:
                 return Constants.PAGE_OCTAVE
             elif language == Constants.LANGUAGE_PERL:
@@ -87,6 +91,11 @@ class ProgramWizardNew(ProgramWizard):
                 return Constants.PAGE_SHELL
             else:
                 return Constants.PAGE_GENERAL
+        elif currentId == Constants.PAGE_JAVASCRIPT:
+            if self.get_field('javascript.version').toInt()[0] == 0:
+                return Constants.PAGE_SUMMARY
+            else:
+                return Constants.PAGE_ARGUMENTS
         elif currentId in (Constants.PAGE_JAVA, Constants.PAGE_OCTAVE, Constants.PAGE_PERL, Constants.PAGE_PHP, Constants.PAGE_PYTHON, Constants.PAGE_RUBY, Constants.PAGE_SHELL):
             return Constants.PAGE_ARGUMENTS
         elif currentId == Constants.PAGE_ARGUMENTS:

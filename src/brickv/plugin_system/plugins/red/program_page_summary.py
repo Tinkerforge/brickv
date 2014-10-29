@@ -63,85 +63,88 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
 
         html += u'<br/>'
 
-        # language specific configuration
-        html += u'<b>{0} Configuration</b><br/>'.format(Qt.escape(language_display_name))
-        html += u'FIXME<br/>'
-        html += u'<br/>'
+        language = self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]
+        is_browser = self.get_field('javascript.version').toInt()[0] == 0
+        if not (language == Constants.LANGUAGE_JAVASCRIPT and is_browser):
+            # language specific configuration
+            html += u'<b>{0} Configuration</b><br/>'.format(Qt.escape(language_display_name))
+            html += u'FIXME<br/>'
+            html += u'<br/>'
 
-        # arguments
-        html += u'<b>Arguments</b>'
+            # arguments
+            html += u'<b>Arguments</b>'
 
-        arguments = self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
+            arguments = self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
 
-        if len(arguments) == 0:
-            html += u' (none)'
+            if len(arguments) == 0:
+                html += u' (none)'
 
-        html += u'<br/>'
+            html += u'<br/>'
 
-        for argument in arguments:
-            html += u'{0}<br/>'.format(Qt.escape(argument))
+            for argument in arguments:
+                html += u'{0}<br/>'.format(Qt.escape(argument))
 
-        html += u'<br/>'
+            html += u'<br/>'
 
-        # environment
-        html += u'<b>Environment</b>'
+            # environment
+            html += u'<b>Environment</b>'
 
-        environment = self.wizard().page(Constants.PAGE_ARGUMENTS).get_environment()
+            environment = self.wizard().page(Constants.PAGE_ARGUMENTS).get_environment()
 
-        if len(environment) == 0:
-            html += u' (empty)'
+            if len(environment) == 0:
+                html += u' (empty)'
 
-        html += u'<br/>'
+            html += u'<br/>'
 
-        for variable in environment:
-            html += u'{0}<br/>'.format(Qt.escape(variable))
+            for variable in environment:
+                html += u'{0}<br/>'.format(Qt.escape(variable))
 
-        html += u'<br/>'
+            html += u'<br/>'
 
-        # stdio redirection
-        html += u'<b>Stdio Redirection</b><br/>'
+            # stdio redirection
+            html += u'<b>Stdio Redirection</b><br/>'
 
-        stdin_redirection  = self.get_field('stdin_redirection').toInt()[0]
-        stdout_redirection = self.get_field('stdout_redirection').toInt()[0]
-        stderr_redirection = self.get_field('stderr_redirection').toInt()[0]
+            stdin_redirection  = self.get_field('stdin_redirection').toInt()[0]
+            stdout_redirection = self.get_field('stdout_redirection').toInt()[0]
+            stderr_redirection = self.get_field('stderr_redirection').toInt()[0]
 
-        if stdin_redirection == Constants.STDIN_REDIRECTION_FILE:
-            html += u'Standard Input: {0}<br/>'.format(self.get_field('stdin_file').toString())
-        else:
-            html += u'Standard Input: {0}<br/>'.format(Constants.get_stdin_redirection_display_name(stdin_redirection))
+            if stdin_redirection == Constants.STDIN_REDIRECTION_FILE:
+                html += u'Standard Input: {0}<br/>'.format(self.get_field('stdin_file').toString())
+            else:
+                html += u'Standard Input: {0}<br/>'.format(Constants.get_stdin_redirection_display_name(stdin_redirection))
 
-        if stdout_redirection == Constants.STDOUT_REDIRECTION_FILE:
-            html += u'Standard Output: {0}<br/>'.format(self.get_field('stdout_file').toString())
-        else:
-            html += u'Standard Output: {0}<br/>'.format(Constants.get_stdout_redirection_display_name(stdout_redirection))
+            if stdout_redirection == Constants.STDOUT_REDIRECTION_FILE:
+                html += u'Standard Output: {0}<br/>'.format(self.get_field('stdout_file').toString())
+            else:
+                html += u'Standard Output: {0}<br/>'.format(Constants.get_stdout_redirection_display_name(stdout_redirection))
 
-        if stderr_redirection == Constants.STDERR_REDIRECTION_FILE:
-            html += u'Standard Error: {0}<br/>'.format(self.get_field('stderr_file').toString())
-        else:
-            html += u'Standard Error: {0}<br/>'.format(Constants.get_stderr_redirection_display_name(stderr_redirection))
+            if stderr_redirection == Constants.STDERR_REDIRECTION_FILE:
+                html += u'Standard Error: {0}<br/>'.format(self.get_field('stderr_file').toString())
+            else:
+                html += u'Standard Error: {0}<br/>'.format(Constants.get_stderr_redirection_display_name(stderr_redirection))
 
-        html += u'<br/>'
+            html += u'<br/>'
 
-        # schedule
-        html += u'<b>Schedule</b><br/>'
+            # schedule
+            html += u'<b>Schedule</b><br/>'
 
-        start_condition = self.get_field('start_condition').toInt()[0]
-        repeat_mode     = self.get_field('repeat_mode').toInt()[0]
+            start_condition = self.get_field('start_condition').toInt()[0]
+            repeat_mode     = self.get_field('repeat_mode').toInt()[0]
 
-        html += u'Start Condition: {0}<br/>'.format(Constants.get_start_condition_display_name(start_condition))
+            html += u'Start Condition: {0}<br/>'.format(Constants.get_start_condition_display_name(start_condition))
 
-        if start_condition == Constants.START_CONDITION_TIME:
-            html += u'Start Time: {0}<br/>'.format(self.get_field('start_time').toDateTime().toString('dd.MM.yyyy HH:mm:ss'))
-        elif start_condition == Constants.START_CONDITION_NOW or \
-           start_condition == Constants.START_CONDITION_REBOOT:
-            html += u'Start Delay: {0} seconds<br/>'.format(self.get_field('start_delay').toUInt()[0])
+            if start_condition == Constants.START_CONDITION_TIME:
+                html += u'Start Time: {0}<br/>'.format(self.get_field('start_time').toDateTime().toString('dd.MM.yyyy HH:mm:ss'))
+            elif start_condition == Constants.START_CONDITION_NOW or \
+               start_condition == Constants.START_CONDITION_REBOOT:
+                html += u'Start Delay: {0} seconds<br/>'.format(self.get_field('start_delay').toUInt()[0])
 
-        html += u'Repeat Mode: {0}<br/>'.format(Constants.get_repeat_mode_display_name(repeat_mode))
+            html += u'Repeat Mode: {0}<br/>'.format(Constants.get_repeat_mode_display_name(repeat_mode))
 
-        if repeat_mode == Constants.REPEAT_MODE_INTERVAL:
-            html += u'Repeat Interval: {0} seconds<br/>'.format(self.get_field('repeat_interval').toUInt()[0])
-        elif repeat_mode == Constants.REPEAT_MODE_CRON:
-            html += u'Repeat Fields: {0}<br/>'.format(' '.join(unicode(self.get_field('repeat_fields').toString()).split()))
+            if repeat_mode == Constants.REPEAT_MODE_INTERVAL:
+                html += u'Repeat Interval: {0} seconds<br/>'.format(self.get_field('repeat_interval').toUInt()[0])
+            elif repeat_mode == Constants.REPEAT_MODE_CRON:
+                html += u'Repeat Fields: {0}<br/>'.format(' '.join(unicode(self.get_field('repeat_fields').toString()).split()))
 
         self.text_summary.setHtml(html)
         self.update_ui_state()

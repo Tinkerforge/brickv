@@ -241,11 +241,14 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     def upload_done(self):
         self.progress_file.setVisible(False)
 
-        # set command
-        self.next_step('Setting command...')
+        is_executed_by_apid = True
 
         if self.api_language == 'java':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
+        elif self.api_language == 'javascript':
+            if self.get_field('javascript.version').toInt()[0] == 0:
+                is_executed_by_apid = False
+            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_JAVASCRIPT).get_command()
         elif self.api_language == 'octave':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_OCTAVE).get_command()
         elif self.api_language == 'perl':
@@ -259,76 +262,82 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         elif self.api_language == 'shell':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_SHELL).get_command()
 
-        editable_arguments_offset = len(arguments)
-        arguments += self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
+        if is_executed_by_apid:
+            # set command
+            self.next_step('Setting command...')
 
-        editable_environment_offset = len(environment)
-        environment += self.wizard().page(Constants.PAGE_ARGUMENTS).get_environment()
+            editable_arguments_offset = len(arguments)
+            arguments += self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
 
-        try:
-            self.program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
-        except REDError as e:
-            self.upload_error('...error: {0}'.format(e))
-            return
+            editable_environment_offset = len(environment)
+            environment += self.wizard().page(Constants.PAGE_ARGUMENTS).get_environment()
 
-        self.log('...done')
-        self.next_step('Setting more custom options...')
+            try:
+                self.program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
+            except REDError as e:
+                self.upload_error('...error: {0}'.format(e))
+                return
 
-        # set custom option: editable_arguments_offset
-        try:
-            self.program.set_custom_option_value('editable_arguments_offset', str(editable_arguments_offset)) # FIXME: async_call
-        except REDError as e:
-            self.upload_error('...error: {0}'.format(e))
-            return
+            self.log('...done')
+            self.next_step('Setting more custom options...')
 
-        # set custom option: editable_environment_offset
-        try:
-            self.program.set_custom_option_value('editable_environment_offset', str(editable_environment_offset)) # FIXME: async_call
-        except REDError as e:
-            self.upload_error('...error: {0}'.format(e))
-            return
+            # set custom option: editable_arguments_offset
+            try:
+                self.program.set_custom_option_value('editable_arguments_offset', str(editable_arguments_offset)) # FIXME: async_call
+            except REDError as e:
+                self.upload_error('...error: {0}'.format(e))
+                return
 
-        self.log('...done')
+            # set custom option: editable_environment_offset
+            try:
+                self.program.set_custom_option_value('editable_environment_offset', str(editable_environment_offset)) # FIXME: async_call
+            except REDError as e:
+                self.upload_error('...error: {0}'.format(e))
+                return
 
-        # set stdio redirection
-        self.next_step('Setting stdio redirection...')
+            self.log('...done')
 
-        stdin_redirection  = Constants.api_stdin_redirections[self.get_field('stdin_redirection').toInt()[0]]
-        stdout_redirection = Constants.api_stdout_redirections[self.get_field('stdout_redirection').toInt()[0]]
-        stderr_redirection = Constants.api_stderr_redirections[self.get_field('stderr_redirection').toInt()[0]]
-        stdin_file         = unicode(self.get_field('stdin_file').toString())
-        stdout_file        = unicode(self.get_field('stdout_file').toString())
-        stderr_file        = unicode(self.get_field('stderr_file').toString())
+            # set stdio redirection
+            self.next_step('Setting stdio redirection...')
 
-        try:
-            self.program.set_stdio_redirection(stdin_redirection, stdin_file,
-                                               stdout_redirection, stdout_file,
-                                               stderr_redirection, stderr_file) # FIXME: async_call
-        except REDError as e:
-            self.upload_error('...error: {0}'.format(e))
-            return
+            stdin_redirection  = Constants.api_stdin_redirections[self.get_field('stdin_redirection').toInt()[0]]
+            stdout_redirection = Constants.api_stdout_redirections[self.get_field('stdout_redirection').toInt()[0]]
+            stderr_redirection = Constants.api_stderr_redirections[self.get_field('stderr_redirection').toInt()[0]]
+            stdin_file         = unicode(self.get_field('stdin_file').toString())
+            stdout_file        = unicode(self.get_field('stdout_file').toString())
+            stderr_file        = unicode(self.get_field('stderr_file').toString())
 
-        self.log('...done')
+            try:
+                self.program.set_stdio_redirection(stdin_redirection, stdin_file,
+                                                   stdout_redirection, stdout_file,
+                                                   stderr_redirection, stderr_file) # FIXME: async_call
+            except REDError as e:
+                self.upload_error('...error: {0}'.format(e))
+                return
 
-        # set schedule
-        self.next_step('Setting schedule...')
+            self.log('...done')
 
-        start_condition = Constants.api_start_conditions[self.get_field('start_condition').toInt()[0]]
-        start_time      = self.get_field('start_time').toDateTime().toMSecsSinceEpoch() / 1000
-        start_delay     = self.get_field('start_delay').toUInt()[0]
-        repeat_mode     = Constants.api_repeat_modes[self.get_field('repeat_mode').toInt()[0]]
-        repeat_interval = self.get_field('repeat_interval').toUInt()[0]
-        repeat_fields   = ' '.join(unicode(self.get_field('repeat_fields').toString()).split())
+            # set schedule
+            self.next_step('Setting schedule...')
 
-        try:
-            self.program.set_schedule(start_condition, start_time, start_delay,
-                                      repeat_mode, repeat_interval, repeat_fields) # FIXME: async_call
-        except REDError as e:
-            self.upload_error('...error: {0}'.format(e))
-            return
+            start_condition = Constants.api_start_conditions[self.get_field('start_condition').toInt()[0]]
+            start_time      = self.get_field('start_time').toDateTime().toMSecsSinceEpoch() / 1000
+            start_delay     = self.get_field('start_delay').toUInt()[0]
+            repeat_mode     = Constants.api_repeat_modes[self.get_field('repeat_mode').toInt()[0]]
+            repeat_interval = self.get_field('repeat_interval').toUInt()[0]
+            repeat_fields   = ' '.join(unicode(self.get_field('repeat_fields').toString()).split())
 
-        self.log('...done')
+            try:
+                self.program.set_schedule(start_condition, start_time, start_delay,
+                                          repeat_mode, repeat_interval, repeat_fields) # FIXME: async_call
+            except REDError as e:
+                self.upload_error('...error: {0}'.format(e))
+                return
+
+            self.log('...done')
         self.next_step('Upload successful!')
+
+        self.progress_total.setValue(self.progress_total.maximum())
 
         self.wizard().setOption(QWizard.NoCancelButton, True)
         self.upload_successful = True
