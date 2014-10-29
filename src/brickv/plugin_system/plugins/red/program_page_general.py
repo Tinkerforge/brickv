@@ -39,13 +39,14 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         self.identifier_is_unique = False
 
         self.setTitle(title_prefix + 'General Information')
-        self.setSubTitle('Specify name, identifier and programming language for the program.')
+        self.setSubTitle('Specify name, identifier, programming language and description for the program.')
 
         self.edit_identifier.setValidator(QRegExpValidator(QRegExp('^[a-zA-Z0-9_][a-zA-Z0-9._-]{2,}$'), self))
 
         self.registerField(Constants.FIELD_NAME, self.edit_name)
         self.registerField('identifier', self.edit_identifier)
         self.registerField(Constants.FIELD_LANGUAGE, self.combo_language)
+        self.registerField('description', self.text_description, 'plainText', self.text_description.textChanged)
 
         self.edit_name.textChanged.connect(self.auto_generate_identifier)
         self.check_auto_generate.stateChanged.connect(self.update_ui_state)
@@ -67,10 +68,11 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
             program = self.wizard().program
             self.edit_mode = True
 
-            self.setSubTitle('Specify the name for the program.')
+            self.setSubTitle('Specify name and description for the program.')
 
             self.edit_name.setText(program.cast_custom_option_value('name', unicode, '<unknown>'))
             self.edit_identifier.setText(unicode(program.identifier))
+            self.text_description.setPlainText(program.cast_custom_option_value('description', unicode, ''))
 
             api_language = program.cast_custom_option_value(Constants.FIELD_LANGUAGE, unicode, '<unknown>')
 
@@ -169,4 +171,14 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         except REDError as e:
             QMessageBox.critical(self, 'Edit Error',
                                  u'Could not update name of program [{0}]:\n\n{1}'
+                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
+            return
+
+        description = unicode(self.get_field('description').toString())
+
+        try:
+            program.set_custom_option_value('description', description) # FIXME: async_call
+        except REDError as e:
+            QMessageBox.critical(self, 'Edit Error',
+                                 u'Could not update description of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>')))

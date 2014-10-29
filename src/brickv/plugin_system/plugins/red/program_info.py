@@ -112,6 +112,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         # general
         name = self.program.cast_custom_option_value(Constants.FIELD_NAME, unicode, '<unknown>')
         api_language = self.program.cast_custom_option_value(Constants.FIELD_LANGUAGE, unicode, '<unknown>')
+        description = self.program.cast_custom_option_value('description', unicode, '')
 
         try:
             language = Constants.get_language(api_language)
@@ -122,6 +123,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.label_name.setText(name)
         self.label_identifier.setText(unicode(self.program.identifier))
         self.label_language.setText(language_display_name)
+        self.label_description.setText(description)
 
         # logs
         def cb_program_get_os_walk(result):

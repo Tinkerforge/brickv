@@ -125,6 +125,15 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             self.upload_error('...error: {0}'.format(e))
             return
 
+        # set custom option: description
+        description = unicode(self.get_field('description').toString())
+
+        try:
+            self.program.set_custom_option_value('description', description) # FIXME: async_call
+        except REDError as e:
+            self.upload_error('...error: {0}'.format(e))
+            return
+
         self.log('...done')
 
         # upload files
