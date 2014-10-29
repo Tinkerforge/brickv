@@ -47,7 +47,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
 
         self.setup_tview_nic()
         self.setup_tview_process()
-        
+
         self.refresh_timer = Qt.QTimer(self)
         self.refresh_counter = 0
         self.nic_time = 0
@@ -102,7 +102,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.refresh_timer.start(REFRESH_TIMEOUT)
         if result == None:
             return
-        
+
         csv_tokens = result.stdout.split('\n')
         for i, t in enumerate(csv_tokens):
             if t == "" and i < len(csv_tokens) - 1:
@@ -111,7 +111,22 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         _uptime = csv_tokens[0]
         hrs, hrs_remainder = divmod(int(_uptime), 60 * 60)
         mins, _ = divmod(hrs_remainder, 60)
-        uptime = str(hrs) + " hour " + str(mins) + " minutes"
+        uptime = ''
+
+        if hrs > 0:
+            uptime += str(hrs)
+
+            if hrs == 1:
+                uptime += ' hour '
+            else:
+                uptime += ' hours '
+
+        uptime += str(mins)
+
+        if mins == 1:
+            uptime += ' minute'
+        else:
+            uptime += ' minutes'
 
         cpu_percent = csv_tokens[1]
         cpu_percent_v = int(csv_tokens[1].split('.')[0])
@@ -133,10 +148,10 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
 
         self.pbar_cpu.setFormat("{0}%".format(cpu_percent))
         self.pbar_cpu.setValue(cpu_percent_v)
-    
+
         self.pbar_memory.setFormat("{0}% [{1} of {2} MiB]".format(memory_percent, memory_used, memory_total))
         self.pbar_memory.setValue(memory_percent_v)
-    
+
         self.pbar_storage.setFormat("{0}% [{1} of {2} GiB]".format(storage_percent, storage_used, storage_total))
         self.pbar_storage.setValue(storage_percent_v)
 
@@ -211,7 +226,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
 
     def cb_tview_nic_sort_indicator_changed(self, column_index, order):
         self.tview_nic_previous_sort = {'column_index': column_index, 'order': order}
-        
+
     def cb_tview_process_sort_indicator_changed(self, column_index, order):
         self.tview_process_previous_sort = {'column_index': column_index, 'order': order}
 
