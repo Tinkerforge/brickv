@@ -61,8 +61,7 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle(u'Specify how the Perl program [{0}] should be executed.'
-                         .format(unicode(self.get_field(Constants.FIELD_NAME).toString())))
+        self.set_formatted_sub_title(u'Specify how the Perl program [{name}] should be executed.')
         self.update_perl_versions()
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PERL_START_MODE)
 

@@ -58,9 +58,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle(u'Upload the {0} program [{1}].'
-                         .format(Constants.language_display_names[self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]],
-                                 unicode(self.get_field(Constants.FIELD_NAME).toString())))
+        self.set_formatted_sub_title(u'Upload the {language} program [{name}].')
         self.update_ui_state()
 
     # overrides QWizardPage.isComplete

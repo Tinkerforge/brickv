@@ -59,9 +59,7 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
     def initializePage(self):
         language = self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]
 
-        self.setSubTitle(u'Specify the arguments to be passed to the {0} program [{1}] and its environment.'
-                         .format(Constants.language_display_names[language],
-                                 unicode(self.get_field(Constants.FIELD_NAME).toString())))
+        self.set_formatted_sub_title(u'Specify the arguments to be passed to the {language} program [{name}] and its environment.')
         self.label_arguments_help.setText(Constants.arguments_help[language])
         self.argument_list_editor.reset_items()
         self.check_show_environment.setCheckState(Qt.Unchecked)

@@ -22,8 +22,15 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWizardPage
+from brickv.plugin_system.plugins.red.program_wizard_utils import *
 
 class ProgramPage(QWizardPage):
     # makes QWizardPage.field virtual
     def get_field(self, name):
         return self.wizard().get_field(name)
+
+    def set_formatted_sub_title(self, sub_title):
+        language = Constants.language_display_names[self.get_field('language').toInt()[0]]
+        name     = unicode(Qt.escape(self.get_field('name').toString()))
+
+        self.setSubTitle(sub_title.format(**{'language': language, 'name': name}))

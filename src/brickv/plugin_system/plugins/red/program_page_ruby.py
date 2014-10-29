@@ -62,8 +62,7 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle(u'Specify how the Ruby program [{0}] should be executed.'
-                         .format(unicode(self.get_field(Constants.FIELD_NAME).toString())))
+        self.set_formatted_sub_title(u'Specify how the Ruby program [{name}] should be executed.')
         self.update_ruby_versions()
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_RUBY_START_MODE)
 
