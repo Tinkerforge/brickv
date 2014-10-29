@@ -126,7 +126,3 @@ class RED(PluginBase, Ui_RED):
                 tab.tab_on_focus()
             else:
                 tab.tab_off_focus()
-
-    def cb_foobar(self, p):
-        print 'cb_foobar', p.state, p.timestamp, p.pid, p.exit_code
-        print 'echo: ' + self.p.stdout.read(256)
