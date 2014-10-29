@@ -43,6 +43,7 @@ class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
         self.registerField('javascript.working_directory', self.combo_working_directory, 'currentText')
 
         self.combo_version.currentIndexChanged.connect(self.update_ui_state)
+        self.combo_version.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
@@ -82,22 +83,20 @@ class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
     # overrides QWizardPage.isComplete
     def isComplete(self):
         executable = self.get_executable()
+        use_nodejs = self.get_field('javascript.version').toInt()[0] != 0
         start_mode = self.get_field('javascript.start_mode').toInt()[0]
-        js_version = self.get_field('javascript.version').toInt()[0]
-        
-        if js_version == 0:
-            return True
 
         if len(executable) == 0:
             return False
 
-        if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE and \
-           not self.combo_script_file_checker.valid:
-            return False
+        if use_nodejs:
+            if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE and \
+               not self.combo_script_file_checker.valid:
+                return False
 
-        if start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND and \
-           not self.edit_command_checker.valid:
-            return False
+            if start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND and \
+               not self.edit_command_checker.valid:
+                return False
 
         return self.combo_working_directory_checker.valid and ProgramPage.isComplete(self)
 
@@ -108,7 +107,7 @@ class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
                 version = result.stdout.split('\n')[0]
                 node_version_str = 'Server-side (Node.js {0})'.format(version)
                 try:
-                    self.combo_version.addItem('Client-side (web browser)', QVariant('None'))
+                    self.combo_version.addItem('Client-side (web browser)', QVariant('/bin/true'))
                     self.combo_version.addItem(node_version_str, QVariant('/usr/local/bin/node'))
                     self.combo_version.setEnabled(True)
                     return
@@ -126,12 +125,11 @@ class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
         self.wizard().script_manager.execute_script('javascript_versions', cb_versions)
 
     def update_ui_state(self):
-        js_version             = self.get_field('javascript.version').toInt()[0]
-        use_nodejs             = js_version != 0
+        use_nodejs             = self.get_field('javascript.version').toInt()[0] != 0
         start_mode             = self.get_field('javascript.start_mode').toInt()[0]
         start_mode_script_file = (start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE) and use_nodejs
         start_mode_command     = (start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND) and use_nodejs
-        show_advanced_options  = (self.check_show_advanced_options.checkState() == Qt.Checked) and  use_nodejs
+        show_advanced_options  = (self.check_show_advanced_options.checkState() == Qt.Checked) and use_nodejs
 
         self.label_start_mode.setVisible(use_nodejs)
         self.combo_start_mode.setVisible(use_nodejs)
@@ -143,6 +141,8 @@ class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
         self.label_command.setVisible(start_mode_command)
         self.edit_command.setVisible(start_mode_command)
         self.label_command_help.setVisible(start_mode_command)
+        self.line.setVisible(use_nodejs)
+        self.check_show_advanced_options.setVisible(use_nodejs)
         self.label_working_directory.setVisible(show_advanced_options)
         self.combo_working_directory.setVisible(show_advanced_options)
         self.label_options.setVisible(show_advanced_options)
@@ -152,7 +152,6 @@ class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
         self.button_remove_option.setVisible(show_advanced_options)
         self.button_up_option.setVisible(show_advanced_options)
         self.button_down_option.setVisible(show_advanced_options)
-        self.check_show_advanced_options.setVisible(use_nodejs)
 
         self.option_list_editor.update_ui_state()
 
