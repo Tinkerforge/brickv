@@ -36,6 +36,7 @@ from brickv.plugin_system.plugins.red.program_page_stdio import ProgramPageStdio
 from brickv.plugin_system.plugins.red.program_page_schedule import ProgramPageSchedule
 from brickv.plugin_system.plugins.red.ui_program_info import Ui_ProgramInfo
 from brickv.async_call import async_call
+import os
 import json
 
 log_files_to_process = -1
@@ -52,13 +53,19 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.session = session
         self.program = program
         self.script_manager = script_manager
+        self.root_directory = unicode(self.program.root_directory)
+        self.program_refresh_in_progress = False
+        self.logs_refresh_in_progress = False
+        self.files_refresh_in_progress = False
+
+        self.available_files = []
+        self.available_directories = []
 
         self.edit_general_wizard = None
         self.edit_arguments_wizard = None
         self.edit_stdio_wizard = None
         self.edit_schedule_wizard = None
 
-        self.program_dir = unicode(self.program.root_directory)
         self.program_dir_walk_result = None
         self.tree_logs_model = QStandardItemModel(self)
         self.tree_logs_header_labels = ["File", "Time"]
@@ -85,21 +92,65 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         print idx
 
     def refresh_info(self):
+        self.refresh_program()
+        self.refresh_logs()
+        self.refresh_files()
+
+    def refresh_program(self):
         def refresh_async():
             self.program.update()
 
         def cb_success():
-            self.button_refresh.setText("Refresh")
-            self.button_refresh.setEnabled(True)
+            self.program_refresh_in_progress = False
             self.update_ui_state()
 
         def cb_error():
-            self.button_refresh.setText("Error")
+            pass # FIXME: report error
 
-        self.button_refresh.setText("Refreshing...")
-        self.button_refresh.setEnabled(False)
+        self.program_refresh_in_progress = True
+        self.update_ui_state()
 
         async_call(refresh_async, None, cb_success, cb_error)
+
+    def refresh_logs(self):
+        pass # FIXME: move the logs section from update_ui_state here
+
+    def refresh_files(self):
+        def cb_directory_walk(result):
+            if len(result.stderr) > 0:
+                return # FIXME: report error
+
+            def expand_async(data):
+                d = json.loads(data)
+                available_files = []
+
+                if d != None:
+                    def expand(root, d):
+                        if 'c' in d:
+                            for c in d['c']:
+                                expand(os.path.join(root, c), d['c'][c])
+                        else:
+                            available_files.append(root)
+
+                    expand('', d)
+
+                return sorted(available_files)
+
+            def cb_expand_success(available_files):
+                self.available_files = available_files
+                self.files_refresh_in_progress = False
+                self.update_ui_state()
+
+            def cb_expand_error():
+                pass # FIXME: report error
+
+            async_call(expand_async, result.stdout, cb_expand_success, cb_expand_error)
+
+        self.files_refresh_in_progress = True
+        self.update_ui_state()
+
+        self.script_manager.execute_script('directory_walk', cb_directory_walk,
+                                           [os.path.join(self.root_directory, 'bin')], max_len=1024*1024)
 
     def update_ui_state(self):
         print "UUIS"
@@ -109,6 +160,13 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.button_download_files.setEnabled(has_files_selection)
         self.button_rename_file.setEnabled(len(self.tree_files.selectedItems()) == 1)
         self.button_delete_files.setEnabled(has_files_selection)
+
+        if self.program_refresh_in_progress or self.files_refresh_in_progress or self.logs_refresh_in_progress:
+            self.button_refresh.setText('Refreshing...')
+            self.set_buttons_enabled(False)
+        else:
+            self.button_refresh.setText('Refresh')
+            self.set_buttons_enabled(True)
 
         # general
         name = self.program.cast_custom_option_value(Constants.FIELD_NAME, unicode, '<unknown>')
@@ -132,7 +190,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                 self.program_dir_walk_result = json.loads(result.stdout)
 
                 for dir_node in self.program_dir_walk_result:
-                    if dir_node['root'] == '/'.join([self.program_dir, "log"]):
+                    if dir_node['root'] == '/'.join([self.root_directory, "log"]):
                         for idx, f in enumerate(dir_node['files']):
                             file_name = f
                             file_path = '/'.join([dir_node['root'], f])
@@ -218,7 +276,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
         self.script_manager.execute_script('program_get_os_walk',
                                            cb_program_get_os_walk,
-                                           [self.program_dir])
+                                           [self.root_directory])
 
         # arguments
         arguments = []
@@ -360,7 +418,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
         print 'delete_selected_files', filenames
 
-    def set_edit_buttons_enabled(self, enabled):
+    def set_buttons_enabled(self, enabled):
+        self.button_refresh.setEnabled(enabled)
         self.button_edit_general.setEnabled(enabled)
         self.button_edit_language.setEnabled(enabled)
         self.button_edit_arguments.setEnabled(enabled)
@@ -368,7 +427,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.button_edit_schedule.setEnabled(enabled)
 
     def show_edit_general_wizard(self):
-        self.set_edit_buttons_enabled(False)
+        self.set_buttons_enabled(False)
 
         self.edit_general_wizard = ProgramWizardEdit(self.session, self.program, [], self.script_manager)
         self.edit_general_wizard.setPage(Constants.PAGE_GENERAL, ProgramPageGeneral())
@@ -383,13 +442,13 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.refresh_info()
             self.name_changed.emit()
 
-        self.set_edit_buttons_enabled(True)
+        self.set_buttons_enabled(True)
 
     def show_edit_language_wizard(self):
         print 'show_edit_language_wizard'
 
     def show_edit_arguments_wizard(self):
-        self.set_edit_buttons_enabled(False)
+        self.set_buttons_enabled(False)
 
         self.edit_arguments_wizard = ProgramWizardEdit(self.session, self.program, [], self.script_manager)
         self.edit_arguments_wizard.setPage(Constants.PAGE_ARGUMENTS, ProgramPageArguments())
@@ -403,10 +462,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.edit_arguments_wizard.page(Constants.PAGE_ARGUMENTS).apply_program_changes()
             self.refresh_info()
 
-        self.set_edit_buttons_enabled(True)
+        self.set_buttons_enabled(True)
 
     def show_edit_stdio_wizard(self):
-        self.set_edit_buttons_enabled(False)
+        self.set_buttons_enabled(False)
 
         self.edit_stdio_wizard = ProgramWizardEdit(self.session, self.program, [], self.script_manager)
         self.edit_stdio_wizard.setPage(Constants.PAGE_STDIO, ProgramPageStdio())
@@ -420,10 +479,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.edit_stdio_wizard.page(Constants.PAGE_STDIO).apply_program_changes()
             self.refresh_info()
 
-        self.set_edit_buttons_enabled(True)
+        self.set_buttons_enabled(True)
 
     def show_edit_schedule_wizard(self):
-        self.set_edit_buttons_enabled(False)
+        self.set_buttons_enabled(False)
 
         self.edit_schedule_wizard = ProgramWizardEdit(self.session, self.program, [], self.script_manager)
         self.edit_schedule_wizard.setPage(Constants.PAGE_SCHEDULE, ProgramPageSchedule())
@@ -437,4 +496,4 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.edit_schedule_wizard.page(Constants.PAGE_SCHEDULE).apply_program_changes()
             self.refresh_info()
 
-        self.set_edit_buttons_enabled(True)
+        self.set_buttons_enabled(True)
