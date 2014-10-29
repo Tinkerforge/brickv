@@ -313,7 +313,7 @@ class REDTabExtension(QtGui.QWidget, Ui_REDTabExtension):
         self.red_file[extension].release()
 
         if result.error == None:
-            config = config_parser.parse(result.data)
+            config = config_parser.parse(result.data.decode('utf-8'))
             try:
                 t = int(config['type'])
             except:

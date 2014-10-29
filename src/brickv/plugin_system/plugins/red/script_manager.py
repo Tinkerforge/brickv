@@ -70,7 +70,7 @@ class ScriptManager:
         if not script_name in self.scripts:
             if callback is not None:
                 callback(None) # We are still in GUI thread, use callback instead of signal
-            
+
         # The script is currently being executed, this should be the only case
         # were we don't call the callback
         if self.scripts[script_name].is_executing:
@@ -93,11 +93,10 @@ class ScriptManager:
             if callback is not None:
                 callback(None) # We are still in GUI thread, use callback instead of signal
 
-
     def _init_script(self, script_name, callback, params, max_len):
         if self.scripts[script_name].copied:
             return self._execute_after_init(script_name, callback, params, max_len)
-        
+
         red_file = REDFile(self.session)
         async_call(red_file.open, (os.path.join(SCRIPT_FOLDER, script_name + self.scripts[script_name].file_ending), REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0755, 0, 0), lambda x: self._init_script_open_file(script_name, callback, params, max_len, x), lambda: self._init_script_open_file_error(script_name, callback, params, max_len))
 
@@ -124,10 +123,10 @@ class ScriptManager:
             ScriptManager._call(self.scripts[script_name], callback, None)
 
     def _execute_after_init(self, script_name, callback, params, max_len):
-        def state_changed(p):
+        def state_changed(red_process):
             # TODO: If we want to support returns > 65kb we need to do more work here,
             #       but it may not be necessary.
-            if p.state == REDProcess.STATE_ERROR:
+            if red_process.state == REDProcess.STATE_ERROR:
                 ScriptManager._call(self.scripts[script_name], callback, None)
                 try:
                     red_process.release()
@@ -135,24 +134,39 @@ class ScriptManager:
                     self.scripts[script_name].stderr.release()
                 except:
                     traceback.print_exc()
-            elif p.state == REDProcess.STATE_EXITED:
-                try:
-                    out = self.scripts[script_name].stdout.read(max_len)
-                    err = self.scripts[script_name].stderr.read(max_len)
-                except REDError:
-                    traceback.print_exc()
-                    ScriptManager._call(self.scripts[script_name], callback, None)
-                else:
-                    ScriptManager._call(self.scripts[script_name], callback, self.ScriptResult(out, err))
-                finally:
-                    try:
-                        red_process.release()
-                        self.scripts[script_name].stdout.release()
-                        self.scripts[script_name].stderr.release()
-                    except:
-                        traceback.print_exc()
-    
-                
+            elif red_process.state == REDProcess.STATE_EXITED:
+                def cb_stdout_data(result):
+                    if result.error != None:
+                        ScriptManager._call(self.scripts[script_name], callback, None)
+
+                        try:
+                            red_process.release()
+                            self.scripts[script_name].stdout.release()
+                            self.scripts[script_name].stderr.release()
+                        except:
+                            traceback.print_exc()
+
+                    out = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
+
+                    def cb_stderr_data(result):
+                        if result.error != None:
+                            ScriptManager._call(self.scripts[script_name], callback, None)
+
+                        try:
+                            red_process.release()
+                            self.scripts[script_name].stdout.release()
+                            self.scripts[script_name].stderr.release()
+                        except:
+                            traceback.print_exc()
+
+                        err = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
+
+                        ScriptManager._call(self.scripts[script_name], callback, self.ScriptResult(out, err))
+
+                    self.scripts[script_name].stderr.read_async(max_len, cb_stderr_data)
+
+                self.scripts[script_name].stdout.read_async(max_len, cb_stdout_data)
+
         red_process = REDProcess(self.session)
         red_process.state_changed_callback = state_changed
 

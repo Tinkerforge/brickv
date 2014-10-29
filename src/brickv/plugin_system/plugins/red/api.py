@@ -434,7 +434,7 @@ class REDList(REDObject):
 
 
 def _get_zero_padded_chunk(data, max_chunk_length, start = 0):
-    chunk = data[start:start+max_chunk_length]
+    chunk = data[start:start + max_chunk_length]
     chunk_length = len(chunk)
     chunk += b'\0'*(max_chunk_length - chunk_length)
 
@@ -583,7 +583,7 @@ class REDFileBase(REDObject):
             return
 
         if length_read > 0:
-            self._read_async_data.data.extend(buf[:length_read])
+            self._read_async_data.data += bytearray(buf[:length_read])
             self._read_async_data.signal_status.emit(len(self._read_async_data.data), self._read_async_data.max_length)
         else:
             # Return data if length is 0 (i.e. the given length was greater then the file length)
@@ -624,7 +624,7 @@ class REDFileBase(REDObject):
         if self._object_id is None:
             raise RuntimeError('Cannot write to unattached file object')
 
-        remaining_data = [ord(x) for x in data]
+        remaining_data = bytearray(data)
 
         while len(remaining_data) > 0:
             chunk, length_to_write = _get_zero_padded_chunk(remaining_data,
@@ -653,7 +653,7 @@ class REDFileBase(REDObject):
         if self._object_id is None:
             raise RuntimeError('Cannot read from unattached file object')
 
-        data = ''
+        data = bytearray()
 
         while length > 0:
             length_to_read = min(length, REDFileBase.MAX_READ_BUFFER_LENGTH)
@@ -667,7 +667,7 @@ class REDFileBase(REDObject):
             if length_read == 0:
                 break
 
-            data += ''.join([chr(x) for x in chunk[:length_read]])
+            data += bytearray(chunk[:length_read])
             length -= length_read
 
         return data
@@ -680,7 +680,7 @@ class REDFileBase(REDObject):
         if self._read_async_data is not None:
             raise RuntimeError('Another asynchronous write is already in progress')
 
-        self._read_async_data = REDFileBase.ReadAsyncData([], length_max, callback_status, callback)
+        self._read_async_data = REDFileBase.ReadAsyncData(bytearray(), length_max, callback_status, callback)
         self._session._brick.read_file_async(self._object_id, length_max)
 
     @property

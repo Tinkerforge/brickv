@@ -149,7 +149,7 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
             
     def update_language_packages_read(self, language, result):
         self.language_packages_file.release()
-        self.language_packages = json.loads(str(bytearray(result.data)))
+        self.language_packages = json.loads(result.data.decode('utf-8'))
         self.update_language_table(language)
 
     def update_language_packages_open(self, language, result):
@@ -174,4 +174,3 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
                     tab_data['model'].setItem(i, j, Qt.QStandardItem(p[item_name]))
                 else:
                     tab_data['model'].item(i, j).setText(p[item_name])
-                

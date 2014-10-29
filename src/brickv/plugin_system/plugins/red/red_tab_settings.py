@@ -773,7 +773,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 red_file.release()
 
                 if result is not None:
-                    self.network_all_data['manager_settings'] = config_parser.parse_no_fake(result.data)
+                    self.network_all_data['manager_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
                 else:
                     # TODO: Error popup for user?
                     print result
@@ -810,7 +810,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 red_file.release()
 
                 if result is not None:
-                    self.network_all_data['wireless_settings'] = config_parser.parse_no_fake(result.data)
+                    self.network_all_data['wireless_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
                 else:
                     # TODO: Error popup for user?
                     print result
@@ -848,7 +848,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 red_file.release()
 
                 if result is not None:
-                    self.network_all_data['wired_settings'] = config_parser.parse_no_fake(result.data)
+                    self.network_all_data['wired_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
                 else:
                     # TODO: Error popup for user?
                     print result
@@ -944,7 +944,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 red_file.release()
 
                 if result is not None:
-                    self.brickd_conf = config_parser.parse(result.data)
+                    self.brickd_conf = config_parser.parse(result.data.decode('utf-8'))
                     self.update_brickd_widget_data()
                 else:
                     # TODO: Error popup for user?
