@@ -38,7 +38,7 @@ from brickv.plugin_system.plugins.red.ui_program_info import Ui_ProgramInfo
 from brickv.async_call import async_call
 import json
 
-log_files_to_process_count = -1
+log_files_to_process = -1
 log_files_download_dir = ""
 
 class ProgramInfo(QWidget, Ui_ProgramInfo):
