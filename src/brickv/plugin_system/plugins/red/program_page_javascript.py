@@ -33,7 +33,7 @@ class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
         self.setupUi(self)
 
         self.setTitle(title_prefix + 'JavaScript Configuration')
-        
+
         self.language = Constants.LANGUAGE_JAVASCRIPT
 
         self.registerField('javascript.version', self.combo_version)
@@ -160,10 +160,10 @@ class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
         return unicode(self.combo_version.itemData(self.get_field('javascript.version').toInt()[0]).toString())
 
     def get_command(self):
-        executable = self.get_executable()
-        arguments = self.option_list_editor.get_items()
+        executable  = self.get_executable()
+        arguments   = self.option_list_editor.get_items()
         environment = []
-        start_mode = self.get_field('javascript.start_mode').toInt()[0]
+        start_mode  = self.get_field('javascript.start_mode').toInt()[0]
 
         if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE:
             arguments.append(unicode(self.combo_script_file.currentText()))

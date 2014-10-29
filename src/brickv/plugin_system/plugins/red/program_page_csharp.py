@@ -109,7 +109,7 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
             self.completeChanged.emit()
 
         self.wizard().script_manager.execute_script('mono_versions', cb_versions)
-        
+
     def update_ui_state(self):
         start_mode             = self.get_field('csharp.start_mode').toInt()[0]
         start_mode_script_file = start_mode == Constants.CSHARP_START_MODE_EXECUTABLE
@@ -136,10 +136,10 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
         return unicode(self.combo_version.itemData(self.get_field('csharp.version').toInt()[0]).toString())
 
     def get_command(self):
-        executable = self.get_executable()
-        arguments = self.option_list_editor.get_items()
+        executable  = self.get_executable()
+        arguments   = self.option_list_editor.get_items()
         environment = []
-        start_mode = self.get_field('csharp.start_mode').toInt()[0]
+        start_mode  = self.get_field('csharp.start_mode').toInt()[0]
 
         if start_mode == Constants.CSHARP_START_MODE_EXECUTABLE:
             arguments.append(unicode(self.combo_script_file.currentText()))

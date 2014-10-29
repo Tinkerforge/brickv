@@ -148,9 +148,9 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
         return unicode(self.combo_version.itemData(self.get_field('php.version').toInt()[0]).toString())
 
     def get_command(self):
-        executable = self.get_executable()
-        arguments = self.option_list_editor.get_items()
-        start_mode = self.get_field('php.start_mode').toInt()[0]
+        executable  = self.get_executable()
+        arguments   = self.option_list_editor.get_items()
+        start_mode  = self.get_field('php.start_mode').toInt()[0]
 
         if start_mode == Constants.PHP_START_MODE_SCRIPT_FILE:
             arguments.append(unicode(self.combo_script_file.currentText()))

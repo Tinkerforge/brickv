@@ -148,10 +148,10 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
         return unicode(self.combo_version.itemData(self.get_field('ruby.version').toInt()[0]).toString())
 
     def get_command(self):
-        executable = self.get_executable()
-        arguments = self.option_list_editor.get_items()
+        executable  = self.get_executable()
+        arguments   = self.option_list_editor.get_items()
         environment = []
-        start_mode = self.get_field('ruby.start_mode').toInt()[0]
+        start_mode  = self.get_field('ruby.start_mode').toInt()[0]
 
         if start_mode == Constants.RUBY_START_MODE_SCRIPT_FILE:
             arguments.append(unicode(self.combo_script_file.currentText()))

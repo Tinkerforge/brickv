@@ -143,12 +143,13 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
         return unicode(self.combo_version.itemData(self.get_field('octave.version').toInt()[0]).toString())
 
     def get_command(self):
-        executable = self.get_executable()
-        arguments = self.option_list_editor.get_items()
+        executable  = self.get_executable()
+        arguments   = self.option_list_editor.get_items()
         environment = []
+        start_mode  = self.get_field('octave.start_mode').toInt()[0]
+
         if self.is_full_image:
             environment.append(unicode('DISPLAY=:0'))
-        start_mode = self.get_field('octave.start_mode').toInt()[0]
 
         if start_mode == Constants.OCTAVE_START_MODE_SCRIPT_FILE:
             arguments.append(unicode(self.combo_script_file.currentText()))

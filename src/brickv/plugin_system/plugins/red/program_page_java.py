@@ -125,15 +125,14 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.option_list_editor.update_ui_state()
 
     def get_command(self):
-        executable = '/usr/bin/java'
-        arguments = self.option_list_editor.get_items()
-        environment = []
+        executable         = '/usr/bin/java'
+        arguments          = self.option_list_editor.get_items()
+        environment        = []
+        start_mode         = self.get_field('java.start_mode').toInt()[0]
         class_path_entries = self.class_path_list_editor.get_items()
 
         if len(class_path_entries) > 0:
             arguments += ['-cp', ':'.join(class_path_entries)]
-
-        start_mode = self.get_field('java.start_mode').toInt()[0]
 
         if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS:
             arguments.append(unicode(self.edit_main_class.text()))
