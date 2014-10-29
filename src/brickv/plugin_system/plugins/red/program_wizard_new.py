@@ -28,6 +28,7 @@ from brickv.plugin_system.plugins.red.program_wizard import ProgramWizard
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.program_page_general import ProgramPageGeneral
 from brickv.plugin_system.plugins.red.program_page_files import ProgramPageFiles
+from brickv.plugin_system.plugins.red.program_page_c import ProgramPageC
 from brickv.plugin_system.plugins.red.program_page_csharp import ProgramPageCSharp
 from brickv.plugin_system.plugins.red.program_page_java import ProgramPageJava
 from brickv.plugin_system.plugins.red.program_page_javascript import ProgramPageJavascript
@@ -52,6 +53,7 @@ class ProgramWizardNew(ProgramWizard):
 
         self.setPage(Constants.PAGE_GENERAL,    ProgramPageGeneral(title_prefix='Step 1 or 8: '))
         self.setPage(Constants.PAGE_FILES,      ProgramPageFiles(title_prefix='Step 2 or 8: '))
+        self.setPage(Constants.PAGE_C,          ProgramPageC(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_CSHARP,     ProgramPageCSharp(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_JAVA,       ProgramPageJava(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_JAVASCRIPT, ProgramPageJavascript(title_prefix='Step 3 or 8: '))
@@ -77,7 +79,9 @@ class ProgramWizardNew(ProgramWizard):
         elif currentId == Constants.PAGE_FILES:
             language = self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]
 
-            if language == Constants.LANGUAGE_CSHARP:
+            if language == Constants.LANGUAGE_C:
+                return Constants.PAGE_C
+            elif language == Constants.LANGUAGE_CSHARP:
                 return Constants.PAGE_CSHARP
             elif language == Constants.LANGUAGE_JAVA:
                 return Constants.PAGE_JAVA
@@ -104,7 +108,7 @@ class ProgramWizardNew(ProgramWizard):
                 return Constants.PAGE_SUMMARY
             else:
                 return Constants.PAGE_ARGUMENTS
-        elif currentId in (Constants.PAGE_CSHARP, Constants.PAGE_JAVA, Constants.PAGE_OCTAVE, Constants.PAGE_PERL, Constants.PAGE_PHP, Constants.PAGE_PYTHON, Constants.PAGE_RUBY, Constants.PAGE_SHELL, Constants.PAGE_VBNET):
+        elif currentId in (Constants.PAGE_C, Constants.PAGE_CSHARP, Constants.PAGE_JAVA, Constants.PAGE_OCTAVE, Constants.PAGE_PERL, Constants.PAGE_PHP, Constants.PAGE_PYTHON, Constants.PAGE_RUBY, Constants.PAGE_SHELL, Constants.PAGE_VBNET):
             return Constants.PAGE_ARGUMENTS
         elif currentId == Constants.PAGE_ARGUMENTS:
             return Constants.PAGE_STDIO

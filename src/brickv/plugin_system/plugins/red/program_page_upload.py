@@ -242,8 +242,13 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.progress_file.setVisible(False)
 
         is_executed_by_apid = True
+        use_make = False
+        use_cmake = False
 
-        if self.api_language == 'csharp':
+        if self.api_language == 'c':
+            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_C).get_command()
+            # TODO: Set use_make and use_cmake accordingly
+        elif self.api_language == 'csharp':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_CSHARP).get_command()
         elif self.api_language == 'java':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()

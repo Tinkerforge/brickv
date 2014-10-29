@@ -47,26 +47,29 @@ class Constants:
     PAGE_JAVASCRIPT = 14
     PAGE_CSHARP     = 15
     PAGE_VBNET      = 16
+    PAGE_C          = 17
 
     FIELD_NAME     = 'name'
     FIELD_LANGUAGE = 'language'
 
     # must match item order in combo_language on general page
     LANGUAGE_INVALID    = 0
-    LANGUAGE_CSHARP     = 1
-    LANGUAGE_JAVA       = 2
-    LANGUAGE_JAVASCRIPT = 3
-    LANGUAGE_OCTAVE     = 4
-    LANGUAGE_PERL       = 5
-    LANGUAGE_PHP        = 6
-    LANGUAGE_PYTHON     = 7
-    LANGUAGE_RUBY       = 8
-    LANGUAGE_SHELL      = 9
-    LANGUAGE_VBNET      = 10
+    LANGUAGE_C          = 1
+    LANGUAGE_CSHARP     = 2
+    LANGUAGE_JAVA       = 3
+    LANGUAGE_JAVASCRIPT = 4
+    LANGUAGE_OCTAVE     = 5
+    LANGUAGE_PERL       = 6
+    LANGUAGE_PHP        = 7
+    LANGUAGE_PYTHON     = 8
+    LANGUAGE_RUBY       = 9
+    LANGUAGE_SHELL      = 10
+    LANGUAGE_VBNET      = 11
 
     language_display_names = {
         LANGUAGE_INVALID:    '<invalid>',
         LANGUAGE_CSHARP:     'C#',
+        LANGUAGE_C:          'C/C++',
         LANGUAGE_JAVA:       'Java',
         LANGUAGE_JAVASCRIPT: 'JavaScript',
         LANGUAGE_OCTAVE:     'Octave',
@@ -80,6 +83,7 @@ class Constants:
 
     api_languages = {
         LANGUAGE_INVALID:    '<invalid>',
+        LANGUAGE_C:          'c',
         LANGUAGE_CSHARP:     'csharp',
         LANGUAGE_JAVA:       'java',
         LANGUAGE_JAVASCRIPT: 'javascript',
@@ -99,6 +103,7 @@ class Constants:
 
     arguments_help = {
         LANGUAGE_INVALID:    '<invalid>',
+        LANGUAGE_C:          'This list of arguments will be passed to the main() function.',
         LANGUAGE_CSHARP:     'This list of arguments will be passed to the Main() method.',
         LANGUAGE_JAVA:       'This list of arguments will be passed to the main() method.',
         LANGUAGE_JAVASCRIPT: 'This list of arguments will be available as process.argv array.',
@@ -113,8 +118,9 @@ class Constants:
 
     language_file_ending = { # endswith XXX sorted by file ending index
         LANGUAGE_INVALID:    [],
+        LANGUAGE_C:          [''],
         LANGUAGE_CSHARP:     ['', '.exe'],
-        LANGUAGE_JAVA:       ['', '.java'],
+        LANGUAGE_JAVA:       [''],
         LANGUAGE_JAVASCRIPT: ['', '.js'],
         LANGUAGE_OCTAVE:     ['', '.m'],
         LANGUAGE_PERL:       ['', '.pl'],
@@ -124,6 +130,11 @@ class Constants:
         LANGUAGE_SHELL:      ['', ('.sh', '.bash')],
         LANGUAGE_VBNET:      ['', '.exe'],
     }
+    
+    # must match item order in combo_start_mode on C/C++ page
+    C_START_MODE_EXECUTABLE = 0
+    C_START_MODE_MAKE = 1
+    C_START_MODE_CMAKE = 2
     
     # must match item order in combo_start_mode on C# page
     CSHARP_START_MODE_EXECUTABLE = 0
@@ -299,6 +310,7 @@ class Constants:
     def get_repeat_mode_display_name(repeat_mode):
         return Constants.api_repeat_mode_display_names[Constants.api_repeat_modes[repeat_mode]]
 
+    DEFAULT_C_START_MODE          = C_START_MODE_EXECUTABLE
     DEFAULT_CSHARP_START_MODE     = CSHARP_START_MODE_EXECUTABLE
     DEFAULT_JAVA_START_MODE       = JAVA_START_MODE_MAIN_CLASS
     DEFAULT_JAVASCRIPT_START_MODE = JAVASCRIPT_START_MODE_SCRIPT_FILE

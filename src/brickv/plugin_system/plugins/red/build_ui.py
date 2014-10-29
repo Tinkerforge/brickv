@@ -13,6 +13,7 @@ os.system("pyuic4 -o ui_red_tab_extension_ethernet.py ui/red_tab_extension_ether
 os.system("pyuic4 -o ui_program_info.py ui/program_info.ui")
 os.system("pyuic4 -o ui_program_page_general.py ui/program_page_general.ui")
 os.system("pyuic4 -o ui_program_page_files.py ui/program_page_files.ui")
+os.system("pyuic4 -o ui_program_page_c.py ui/program_page_c.ui")
 os.system("pyuic4 -o ui_program_page_csharp.py ui/program_page_csharp.ui")
 os.system("pyuic4 -o ui_program_page_java.py ui/program_page_java.ui")
 os.system("pyuic4 -o ui_program_page_javascript.py ui/program_page_javascript.ui")

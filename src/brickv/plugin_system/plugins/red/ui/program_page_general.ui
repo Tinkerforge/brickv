@@ -41,6 +41,11 @@
        </item>
        <item>
         <property name="text">
+         <string>C/C++</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>C#</string>
         </property>
        </item>
