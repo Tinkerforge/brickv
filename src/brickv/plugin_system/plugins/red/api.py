@@ -744,10 +744,10 @@ class REDPipe(REDFileBase):
     def __repr__(self):
         return '<REDPipe object_id: {0}>'.format(self._object_id)
 
-    def create(self, flags):
+    def create(self, flags, length):
         self.release()
 
-        error_code, object_id = self._session._brick.create_pipe(flags, self._session._session_id)
+        error_code, object_id = self._session._brick.create_pipe(flags, length, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not create pipe object', error_code)

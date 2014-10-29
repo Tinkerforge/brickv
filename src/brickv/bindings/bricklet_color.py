@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-08-05.      #
+# This file was automatically generated on 2014-10-29.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -215,7 +215,10 @@ class BrickletColor(Device):
 
     def is_light_on(self):
         """
-        Returns *true* if the backlight is on and *false* otherwise.
+        Returns the state of the LED. Possible values are:
+        
+        * 0: On
+        * 1: Off
         """
         return self.ipcon.send_request(self, BrickletColor.FUNCTION_IS_LIGHT_ON, (), '', 'B')
 

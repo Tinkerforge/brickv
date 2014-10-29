@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-10-28.      #
+# This file was automatically generated on 2014-10-29.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -465,7 +465,7 @@ class BrickRED(Device):
         """
         return OpenFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_FILE, (name_string_id, flags, permissions, uid, gid, session_id), 'H H H I I H', 'B H'))
 
-    def create_pipe(self, flags, session_id):
+    def create_pipe(self, flags, length, session_id):
         """
         Creates a new pipe and allocates a new file object for it.
         
@@ -475,9 +475,12 @@ class BrickRED(Device):
         * NonBlockingRead = 0x0001
         * NonBlockingWrite = 0x0002
         
+        The length of the pipe buffer can be specified with the ``length`` parameter
+        in bytes. If length is set to zero, then the default pipe buffer length is used.
+        
         Returns the object ID of the new file object and the resulting error code.
         """
-        return CreatePipe(*self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_PIPE, (flags, session_id), 'H H', 'B H'))
+        return CreatePipe(*self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_PIPE, (flags, length, session_id), 'H Q H', 'B H'))
 
     def get_file_info(self, file_id, session_id):
         """
@@ -503,7 +506,7 @@ class BrickRED(Device):
         :func:`OpenFile` or :func:`CreatePipe`. See the respective function for a list
         of possible file and pipe flags.
         
-        FIXME: everything except flags is invalid if file type is *Pipe*
+        FIXME: everything except flags and length is invalid if file type is *Pipe*
         """
         return GetFileInfo(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_INFO, (file_id, session_id), 'H H', 'B B H H H I I Q Q Q Q'))
 

@@ -111,8 +111,8 @@ class ScriptManager:
 
         if async_write_error == None:
             try:
-                self.scripts[script_name].stdout = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ)
-                self.scripts[script_name].stderr = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ)
+                self.scripts[script_name].stdout = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, 1024*1024)
+                self.scripts[script_name].stderr = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, 1024*1024)
             except:
                 traceback.print_exc()
                 ScriptManager._call(self.scripts[script_name], callback, None)
@@ -124,7 +124,7 @@ class ScriptManager:
 
     def _execute_after_init(self, script_name, callback, params, max_len):
         def state_changed(red_process):
-            # TODO: If we want to support returns > 65kb we need to do more work here,
+            # TODO: If we want to support returns > 1MB we need to do more work here,
             #       but it may not be necessary.
             if red_process.state == REDProcess.STATE_ERROR:
                 ScriptManager._call(self.scripts[script_name], callback, None)
