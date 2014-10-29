@@ -311,11 +311,11 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         # set schedule
         self.next_step('Setting schedule...')
 
-        start_condition = Constants.api_start_condition[self.get_field('start_condition').toInt()[0]]
+        start_condition = Constants.api_start_conditions[self.get_field('start_condition').toInt()[0]]
         start_time      = self.get_field('start_time').toDateTime().toMSecsSinceEpoch() / 1000
-        start_delay     = self.get_field('start_delay').toInt()[0]
-        repeat_mode     = Constants.api_repeat_mode[self.get_field('repeat_mode').toInt()[0]]
-        repeat_interval = self.get_field('repeat_interval').toInt()[0]
+        start_delay     = self.get_field('start_delay').toUInt()[0]
+        repeat_mode     = Constants.api_repeat_modes[self.get_field('repeat_mode').toInt()[0]]
+        repeat_interval = self.get_field('repeat_interval').toUInt()[0]
         repeat_fields   = ' '.join(unicode(self.get_field('repeat_fields').toString()).split())
 
         try:

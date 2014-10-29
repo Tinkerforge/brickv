@@ -210,7 +210,7 @@ class Constants:
     START_CONDITION_REBOOT = 2
     START_CONDITION_TIME   = 3
 
-    api_start_condition = {
+    api_start_conditions = {
         START_CONDITION_NEVER:  REDProgram.START_CONDITION_NEVER,
         START_CONDITION_NOW:    REDProgram.START_CONDITION_NOW,
         START_CONDITION_REBOOT: REDProgram.START_CONDITION_REBOOT,
@@ -226,15 +226,19 @@ class Constants:
 
     @staticmethod
     def get_start_condition(api_start_condition):
-        d = Constants.api_start_condition
+        d = Constants.api_start_conditions
         return d.keys()[d.values().index(api_start_condition)]
+
+    @staticmethod
+    def get_start_condition_display_name(start_condition):
+        return Constants.api_start_condition_display_names[Constants.api_start_conditions[start_condition]]
 
     # must match item order in combo_repeat_mode on schedule page
     REPEAT_MODE_NEVER    = 0
     REPEAT_MODE_INTERVAL = 1
     REPEAT_MODE_CRON     = 2
 
-    api_repeat_mode = {
+    api_repeat_modes = {
         REPEAT_MODE_NEVER:    REDProgram.REPEAT_MODE_NEVER,
         REPEAT_MODE_INTERVAL: REDProgram.REPEAT_MODE_INTERVAL,
         REPEAT_MODE_CRON:     REDProgram.REPEAT_MODE_CRON,
@@ -248,8 +252,12 @@ class Constants:
 
     @staticmethod
     def get_repeat_mode(api_repeat_mode):
-        d = Constants.api_repeat_mode
+        d = Constants.api_repeat_modes
         return d.keys()[d.values().index(api_repeat_mode)]
+
+    @staticmethod
+    def get_repeat_mode_display_name(repeat_mode):
+        return Constants.api_repeat_mode_display_names[Constants.api_repeat_modes[repeat_mode]]
 
     DEFAULT_JAVA_START_MODE    = JAVA_START_MODE_MAIN_CLASS
     DEFAULT_PERL_START_MODE    = PERL_START_MODE_SCRIPT_FILE

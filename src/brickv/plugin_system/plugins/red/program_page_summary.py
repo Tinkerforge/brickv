@@ -124,7 +124,24 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
 
         # schedule
         html += u'<b>Schedule</b><br/>'
-        html += u'FIXME<br/>'
+
+        start_condition = self.get_field('start_condition').toInt()[0]
+        repeat_mode     = self.get_field('repeat_mode').toInt()[0]
+
+        html += u'Start Condition: {0}<br/>'.format(Constants.get_start_condition_display_name(start_condition))
+
+        if start_condition == Constants.START_CONDITION_TIME:
+            html += u'Start Time: {0}<br/>'.format(self.get_field('start_time').toDateTime().toString('dd.MM.yyyy HH:mm:ss'))
+        elif start_condition == Constants.START_CONDITION_NOW or \
+           start_condition == Constants.START_CONDITION_REBOOT:
+            html += u'Start Delay: {0} seconds<br/>'.format(self.get_field('start_delay').toUInt()[0])
+
+        html += u'Repeat Mode: {0}<br/>'.format(Constants.get_repeat_mode_display_name(repeat_mode))
+
+        if repeat_mode == Constants.REPEAT_MODE_INTERVAL:
+            html += u'Repeat Interval: {0} seconds<br/>'.format(self.get_field('repeat_interval').toUInt()[0])
+        elif repeat_mode == Constants.REPEAT_MODE_CRON:
+            html += u'Repeat Fields: {0}<br/>'.format(' '.join(unicode(self.get_field('repeat_fields').toString()).split()))
 
         self.text_summary.setHtml(html)
         self.update_ui_state()
