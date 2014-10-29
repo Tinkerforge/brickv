@@ -40,6 +40,7 @@ class Constants:
     PAGE_SHELL     = 10
     PAGE_PERL      = 11
     PAGE_PHP       = 12
+    PAGE_OCTAVE    = 13
 
     FIELD_NAME     = 'name'
     FIELD_LANGUAGE = 'language'
@@ -47,15 +48,17 @@ class Constants:
     # must match item order in combo_language on general page
     LANGUAGE_INVALID = 0
     LANGUAGE_JAVA    = 1
-    LANGUAGE_PERL    = 2
-    LANGUAGE_PHP     = 3
-    LANGUAGE_PYTHON  = 4
-    LANGUAGE_RUBY    = 5
-    LANGUAGE_SHELL   = 6
+    LANGUAGE_OCTAVE  = 2
+    LANGUAGE_PERL    = 3
+    LANGUAGE_PHP     = 4
+    LANGUAGE_PYTHON  = 5
+    LANGUAGE_RUBY    = 6
+    LANGUAGE_SHELL   = 7
 
     language_display_names = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'Java',
+        LANGUAGE_OCTAVE:  'Octave',
         LANGUAGE_PERL:    'Perl',
         LANGUAGE_PHP:     'PHP',
         LANGUAGE_PYTHON:  'Python',
@@ -66,6 +69,7 @@ class Constants:
     api_languages = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'java',
+        LANGUAGE_OCTAVE:  'octave',
         LANGUAGE_PERL:    'perl',
         LANGUAGE_PHP:     'php',
         LANGUAGE_PYTHON:  'python',
@@ -81,6 +85,7 @@ class Constants:
     arguments_help = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'This list of arguments will be passed to the main() method.',
+        LANGUAGE_OCTAVE:  'This list of arguments can be accessed with by calling argv().',
         LANGUAGE_PERL:    'This list of arguments will be available as @ARGV array.',
         LANGUAGE_PHP:     'This list of arguments will be available as $argv array.',
         LANGUAGE_PYTHON:  'This list of arguments will be available as sys.argv list.',
@@ -91,6 +96,7 @@ class Constants:
     language_file_ending = { # endswith XXX sorted by file ending index
         LANGUAGE_INVALID: [],
         LANGUAGE_JAVA:    ['', '.java'],
+        LANGUAGE_OCTAVE:  ['', '.m'],
         LANGUAGE_PERL:    ['', '.pl'],
         LANGUAGE_PHP:     ['', ('.php', '.php2', '.php3', '.php4', '.php5')],
         LANGUAGE_PYTHON:  ['', '.py'],
@@ -101,6 +107,9 @@ class Constants:
     # must match item order in combo_start_mode on Java page
     JAVA_START_MODE_MAIN_CLASS = 0
     JAVA_START_MODE_JAR_FILE   = 1
+    
+    # must match item order in combo_start_mode on Octave page
+    OCTAVE_START_MODE_SCRIPT_FILE = 0
 
     # must match item order in combo_start_mode on Perl page
     PERL_START_MODE_SCRIPT_FILE = 0
@@ -260,6 +269,7 @@ class Constants:
         return Constants.api_repeat_mode_display_names[Constants.api_repeat_modes[repeat_mode]]
 
     DEFAULT_JAVA_START_MODE    = JAVA_START_MODE_MAIN_CLASS
+    DEFAULT_OCTAVE_START_MODE  = OCTAVE_START_MODE_SCRIPT_FILE
     DEFAULT_PERL_START_MODE    = PERL_START_MODE_SCRIPT_FILE
     DEFAULT_PHP_START_MODE     = PHP_START_MODE_SCRIPT_FILE
     DEFAULT_PYTHON_START_MODE  = PYTHON_START_MODE_SCRIPT_FILE
@@ -270,7 +280,6 @@ class Constants:
     DEFAULT_STDERR_REDIRECTION = STDERR_REDIRECTION_STDOUT
     DEFAULT_START_CONDITION    = START_CONDITION_NOW
     DEFAULT_REPEAT_MODE        = REPEAT_MODE_NEVER
-
 
 # workaround miscalculated initial size-hint for initially hidden QListWidgets
 class ExpandingListWidget(QListWidget):

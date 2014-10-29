@@ -112,8 +112,11 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
 
         for i in range(self.list_programs.count()):
             identifiers.append(str(self.list_programs.item(i).data(Qt.UserRole).toPyObject().program.identifier))
+            
 
-        self.new_program_wizard = ProgramWizardNew(self.session, identifiers, self.script_manager)
+        version = unicode(str(self.parent().parent().parent().label_version.text()))
+
+        self.new_program_wizard = ProgramWizardNew(self.session, identifiers, self.script_manager, version)
         self.new_program_wizard.finished.connect(self.new_program_wizard_finished)
         self.new_program_wizard.show()
 

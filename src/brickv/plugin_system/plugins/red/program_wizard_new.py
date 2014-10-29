@@ -29,6 +29,7 @@ from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.program_page_general import ProgramPageGeneral
 from brickv.plugin_system.plugins.red.program_page_files import ProgramPageFiles
 from brickv.plugin_system.plugins.red.program_page_java import ProgramPageJava
+from brickv.plugin_system.plugins.red.program_page_octave import ProgramPageOctave
 from brickv.plugin_system.plugins.red.program_page_perl import ProgramPagePerl
 from brickv.plugin_system.plugins.red.program_page_php import ProgramPagePHP
 from brickv.plugin_system.plugins.red.program_page_python import ProgramPagePython
@@ -49,8 +50,9 @@ class ProgramWizardNew(ProgramWizard):
         self.setPage(Constants.PAGE_GENERAL,   ProgramPageGeneral(title_prefix='Step 1 or 8: '))
         self.setPage(Constants.PAGE_FILES,     ProgramPageFiles(title_prefix='Step 2 or 8: '))
         self.setPage(Constants.PAGE_JAVA,      ProgramPageJava(title_prefix='Step 3 or 8: '))
-        self.setPage(Constants.PAGE_PHP,       ProgramPagePHP(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_OCTAVE,    ProgramPageOctave(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_PERL,      ProgramPagePerl(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_PHP,       ProgramPagePHP(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_PYTHON,    ProgramPagePython(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_RUBY,      ProgramPageRuby(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_SHELL,     ProgramPageShell(title_prefix='Step 3 or 8: '))
@@ -71,10 +73,12 @@ class ProgramWizardNew(ProgramWizard):
 
             if language == Constants.LANGUAGE_JAVA:
                 return Constants.PAGE_JAVA
-            elif language == Constants.LANGUAGE_PHP:
-                return Constants.PAGE_PHP
+            elif language == Constants.LANGUAGE_OCTAVE:
+                return Constants.PAGE_OCTAVE
             elif language == Constants.LANGUAGE_PERL:
                 return Constants.PAGE_PERL
+            elif language == Constants.LANGUAGE_PHP:
+                return Constants.PAGE_PHP
             elif language == Constants.LANGUAGE_PYTHON:
                 return Constants.PAGE_PYTHON
             elif language == Constants.LANGUAGE_RUBY:
@@ -83,7 +87,7 @@ class ProgramWizardNew(ProgramWizard):
                 return Constants.PAGE_SHELL
             else:
                 return Constants.PAGE_GENERAL
-        elif currentId in (Constants.PAGE_JAVA, Constants.PAGE_PERL, Constants.PAGE_PHP, Constants.PAGE_PYTHON, Constants.PAGE_RUBY, Constants.PAGE_SHELL):
+        elif currentId in (Constants.PAGE_JAVA, Constants.PAGE_OCTAVE, Constants.PAGE_PERL, Constants.PAGE_PHP, Constants.PAGE_PYTHON, Constants.PAGE_RUBY, Constants.PAGE_SHELL):
             return Constants.PAGE_ARGUMENTS
         elif currentId == Constants.PAGE_ARGUMENTS:
             return Constants.PAGE_STDIO

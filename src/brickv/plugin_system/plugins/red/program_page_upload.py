@@ -246,6 +246,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         if self.api_language == 'java':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
+        elif self.api_language == 'octave':
+            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_OCTAVE).get_command()
         elif self.api_language == 'perl':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_PERL).get_command()
         elif self.api_language == 'php':
