@@ -42,23 +42,28 @@ class Constants:
     PAGE_PHP        = 12
     PAGE_OCTAVE     = 13
     PAGE_JAVASCRIPT = 14
+    PAGE_CSHARP     = 15
+    PAGE_VBNET      = 16
 
     FIELD_NAME     = 'name'
     FIELD_LANGUAGE = 'language'
 
     # must match item order in combo_language on general page
     LANGUAGE_INVALID    = 0
-    LANGUAGE_JAVA       = 1
-    LANGUAGE_JAVASCRIPT = 2
-    LANGUAGE_OCTAVE     = 3
-    LANGUAGE_PERL       = 4
-    LANGUAGE_PHP        = 5
-    LANGUAGE_PYTHON     = 6
-    LANGUAGE_RUBY       = 7
-    LANGUAGE_SHELL      = 8
+    LANGUAGE_CSHARP     = 1
+    LANGUAGE_JAVA       = 2
+    LANGUAGE_JAVASCRIPT = 3
+    LANGUAGE_OCTAVE     = 4
+    LANGUAGE_PERL       = 5
+    LANGUAGE_PHP        = 6
+    LANGUAGE_PYTHON     = 7
+    LANGUAGE_RUBY       = 8
+    LANGUAGE_SHELL      = 9
+    LANGUAGE_VBNET      = 10
 
     language_display_names = {
         LANGUAGE_INVALID:    '<invalid>',
+        LANGUAGE_CSHARP:     'C#',
         LANGUAGE_JAVA:       'Java',
         LANGUAGE_JAVASCRIPT: 'JavaScript',
         LANGUAGE_OCTAVE:     'Octave',
@@ -66,11 +71,13 @@ class Constants:
         LANGUAGE_PHP:        'PHP',
         LANGUAGE_PYTHON:     'Python',
         LANGUAGE_RUBY:       'Ruby',
-        LANGUAGE_SHELL:      'Shell'
+        LANGUAGE_SHELL:      'Shell',
+        LANGUAGE_VBNET:      'Visual Basic .NET'
     }
 
     api_languages = {
         LANGUAGE_INVALID:    '<invalid>',
+        LANGUAGE_CSHARP:     'csharp',
         LANGUAGE_JAVA:       'java',
         LANGUAGE_JAVASCRIPT: 'javascript',
         LANGUAGE_OCTAVE:     'octave',
@@ -78,7 +85,8 @@ class Constants:
         LANGUAGE_PHP:        'php',
         LANGUAGE_PYTHON:     'python',
         LANGUAGE_RUBY:       'ruby',
-        LANGUAGE_SHELL:      'shell'
+        LANGUAGE_SHELL:      'shell',
+        LANGUAGE_VBNET:      'vbnet'
     }
 
     @staticmethod
@@ -88,6 +96,7 @@ class Constants:
 
     arguments_help = {
         LANGUAGE_INVALID:    '<invalid>',
+        LANGUAGE_CSHARP:     'This list of arguments will be passed to the Main() method.',
         LANGUAGE_JAVA:       'This list of arguments will be passed to the main() method.',
         LANGUAGE_JAVASCRIPT: 'This list of arguments will be available as process.argv array.',
         LANGUAGE_OCTAVE:     'This list of arguments can be accessed by calling argv().',
@@ -95,11 +104,13 @@ class Constants:
         LANGUAGE_PHP:        'This list of arguments will be available as $argv array.',
         LANGUAGE_PYTHON:     'This list of arguments will be available as sys.argv list.',
         LANGUAGE_RUBY:       'This list of arguments will be available as ARGV array.',
-        LANGUAGE_SHELL:      'This list of arguments will be available as $1 to $n.'
+        LANGUAGE_SHELL:      'This list of arguments will be available as $1 to $n.',
+        LANGUAGE_VBNET:      'This list of arguments can be accessed by calling Environment.GetCommandLineArgs()'
     }
 
     language_file_ending = { # endswith XXX sorted by file ending index
         LANGUAGE_INVALID:    [],
+        LANGUAGE_CSHARP:     ['', '.exe'],
         LANGUAGE_JAVA:       ['', '.java'],
         LANGUAGE_JAVASCRIPT: ['', '.js'],
         LANGUAGE_OCTAVE:     ['', '.m'],
@@ -108,7 +119,11 @@ class Constants:
         LANGUAGE_PYTHON:     ['', '.py'],
         LANGUAGE_RUBY:       ['', '.rb'],
         LANGUAGE_SHELL:      ['', ('.sh', '.bash')],
+        LANGUAGE_VBNET:      ['', '.exe'],
     }
+    
+    # must match item order in combo_start_mode on C# page
+    CSHARP_START_MODE_EXECUTABLE = 0
 
     # must match item order in combo_start_mode on Java page
     JAVA_START_MODE_MAIN_CLASS = 0
@@ -141,6 +156,9 @@ class Constants:
     # must match item order in combo_start_mode on Shell page
     SHELL_START_MODE_SCRIPT_FILE = 0
     SHELL_START_MODE_COMMAND     = 1
+    
+    # must match item order in combo_start_mode on VB.NET page
+    VBNET_START_MODE_EXECUTABLE = 0
 
     # must match item order in combo_stdin_redirection on stdio page
     STDIN_REDIRECTION_DEV_NULL = 0
@@ -278,6 +296,7 @@ class Constants:
     def get_repeat_mode_display_name(repeat_mode):
         return Constants.api_repeat_mode_display_names[Constants.api_repeat_modes[repeat_mode]]
 
+    DEFAULT_CSHARP_START_MODE     = CSHARP_START_MODE_EXECUTABLE
     DEFAULT_JAVA_START_MODE       = JAVA_START_MODE_MAIN_CLASS
     DEFAULT_JAVASCRIPT_START_MODE = JAVASCRIPT_START_MODE_SCRIPT_FILE
     DEFAULT_OCTAVE_START_MODE     = OCTAVE_START_MODE_SCRIPT_FILE
@@ -286,6 +305,7 @@ class Constants:
     DEFAULT_PYTHON_START_MODE     = PYTHON_START_MODE_SCRIPT_FILE
     DEFAULT_RUBY_START_MODE       = RUBY_START_MODE_SCRIPT_FILE
     DEFAULT_SHELL_START_MODE      = SHELL_START_MODE_SCRIPT_FILE
+    DEFAULT_VBNET_START_MODE      = VBNET_START_MODE_EXECUTABLE
     DEFAULT_STDIN_REDIRECTION     = STDIN_REDIRECTION_PIPE
     DEFAULT_STDOUT_REDIRECTION    = STDOUT_REDIRECTION_LOG
     DEFAULT_STDERR_REDIRECTION    = STDERR_REDIRECTION_STDOUT

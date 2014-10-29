@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ProgramPageVBNet</class>
+ <widget class="QWidget" name="ProgramPageVBNet">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>582</width>
+    <height>689</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Mono Version:</string>
+       </property>
+       <property name="buddy">
+        <cstring>combo_version</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" colspan="4">
+      <widget class="QComboBox" name="combo_version">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <item>
+        <property name="text">
+         <string>Fetching Versions...</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Start Mode:</string>
+       </property>
+       <property name="buddy">
+        <cstring>combo_start_mode</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" colspan="4">
+      <widget class="QComboBox" name="combo_start_mode">
+       <item>
+        <property name="text">
+         <string>Executable</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_script_file">
+       <property name="text">
+        <string>Executable:</string>
+       </property>
+       <property name="buddy">
+        <cstring>combo_script_file</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" colspan="4">
+      <widget class="QComboBox" name="combo_script_file">
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+       <property name="insertPolicy">
+        <enum>QComboBox::NoInsert</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1" colspan="4">
+      <widget class="QLabel" name="label_script_file_help">
+       <property name="text">
+        <string>The specified .NET Executable will be executed.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1" colspan="4">
+      <widget class="QCheckBox" name="check_show_advanced_options">
+       <property name="text">
+        <string>Show advanced options</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0">
+      <widget class="QLabel" name="label_working_directory">
+       <property name="text">
+        <string>Working Directory:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1" colspan="4">
+      <widget class="QComboBox" name="combo_working_directory">
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+       <property name="insertPolicy">
+        <enum>QComboBox::NoInsert</enum>
+       </property>
+       <item>
+        <property name="text">
+         <string>.</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="8" column="0">
+      <widget class="QLabel" name="label_options">
+       <property name="text">
+        <string>Mono Options:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="1">
+      <widget class="QPushButton" name="button_add_option">
+       <property name="text">
+        <string>Add</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1" colspan="4">
+      <widget class="ExpandingListWidget" name="list_options"/>
+     </item>
+     <item row="9" column="1" colspan="4">
+      <widget class="QLabel" name="label_options_help">
+       <property name="text">
+        <string>This list of options will be passed to the Mono JIT compiler.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="2">
+      <widget class="QPushButton" name="button_remove_option">
+       <property name="text">
+        <string>Remove</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="3">
+      <widget class="QPushButton" name="button_up_option">
+       <property name="text">
+        <string>Up</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="4">
+      <widget class="QPushButton" name="button_down_option">
+       <property name="text">
+        <string>Down</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="5">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" colspan="4">
+      <widget class="QComboBox" name="combo_script_file_ending">
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>All files</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>.NET Executable (*.exe)</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_script_file_ending">
+       <property name="text">
+        <string>Executable Ending:</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ExpandingListWidget</class>
+   <extends>QListWidget</extends>
+   <header location="global">brickv.plugin_system.plugins.red.program_wizard_utils</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>combo_version</tabstop>
+  <tabstop>combo_start_mode</tabstop>
+  <tabstop>combo_script_file</tabstop>
+  <tabstop>check_show_advanced_options</tabstop>
+  <tabstop>combo_working_directory</tabstop>
+  <tabstop>list_options</tabstop>
+  <tabstop>button_add_option</tabstop>
+  <tabstop>button_remove_option</tabstop>
+  <tabstop>button_up_option</tabstop>
+  <tabstop>button_down_option</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

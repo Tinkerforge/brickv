@@ -243,7 +243,9 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         is_executed_by_apid = True
 
-        if self.api_language == 'java':
+        if self.api_language == 'csharp':
+            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_CSHARP).get_command()
+        elif self.api_language == 'java':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
         elif self.api_language == 'javascript':
             if self.get_field('javascript.version').toInt()[0] == 0:
@@ -261,6 +263,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_RUBY).get_command()
         elif self.api_language == 'shell':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_SHELL).get_command()
+        elif self.api_language == 'vbnet':
+            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_VBNET).get_command()
 
         if is_executed_by_apid:
             # set command
