@@ -42,6 +42,20 @@ import json
 log_files_to_process = -1
 log_files_download_dir = ""
 
+def expand_directory_walk_to_files_list(directory_walk):
+    files = []
+
+    def expand(root, dw):
+        if 'c' in dw:
+            for cn, cdw in dw['c'].iteritems():
+                expand(os.path.join(root, cn), cdw)
+        else:
+            files.append(root)
+
+    expand('', directory_walk)
+
+    return files
+
 class ProgramInfo(QWidget, Ui_ProgramInfo):
     name_changed = pyqtSignal()
 
@@ -122,18 +136,11 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                 return # FIXME: report error
 
             def expand_async(data):
-                d = json.loads(data)
+                directory_walk = json.loads(data)
                 available_files = []
 
-                if d != None:
-                    def expand(root, d):
-                        if 'c' in d:
-                            for c in d['c']:
-                                expand(os.path.join(root, c), d['c'][c])
-                        else:
-                            available_files.append(root)
-
-                    expand('', d)
+                if directory_walk != None:
+                    available_files = expand_directory_walk_to_files_list(directory_walk)
 
                 return sorted(available_files)
 
