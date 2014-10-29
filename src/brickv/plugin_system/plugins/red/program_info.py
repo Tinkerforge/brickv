@@ -120,7 +120,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             language_display_name = '<unknown>'
 
         self.label_name.setText(name)
-        self.label_identifier.setText(str(self.program.identifier))
+        self.label_identifier.setText(unicode(self.program.identifier))
         self.label_language.setText(language_display_name)
 
         # logs

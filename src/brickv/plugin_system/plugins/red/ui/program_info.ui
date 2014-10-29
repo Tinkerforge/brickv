@@ -79,6 +79,9 @@
               <property name="text">
                <string>&lt;name&gt;</string>
               </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
               <property name="textInteractionFlags">
                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
               </property>
@@ -89,6 +92,9 @@
               <property name="text">
                <string>&lt;identifer&gt;</string>
               </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
               <property name="textInteractionFlags">
                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
               </property>
@@ -98,6 +104,12 @@
              <widget class="QLabel" name="label_language">
               <property name="text">
                <string>&lt;language&gt;</string>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -311,6 +323,9 @@
               <property name="text">
                <string>&lt;arguments&gt;</string>
               </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
               </property>
@@ -323,6 +338,9 @@
              <widget class="QLabel" name="label_environment">
               <property name="text">
                <string>&lt;environment&gt;</string>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
               </property>
               <property name="alignment">
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -385,12 +403,21 @@
                    <property name="text">
                     <string>&lt;stdin-source&gt;</string>
                    </property>
+                   <property name="textFormat">
+                    <enum>Qt::PlainText</enum>
+                   </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                   </property>
                   </widget>
                  </item>
                  <item row="1" column="1">
                   <widget class="QLabel" name="label_stdin_file">
                    <property name="text">
                     <string>&lt;stdin-file&gt;</string>
+                   </property>
+                   <property name="textFormat">
+                    <enum>Qt::PlainText</enum>
                    </property>
                    <property name="textInteractionFlags">
                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -435,12 +462,21 @@
                    <property name="text">
                     <string>&lt;stdout-target&gt;</string>
                    </property>
+                   <property name="textFormat">
+                    <enum>Qt::PlainText</enum>
+                   </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                   </property>
                   </widget>
                  </item>
                  <item row="1" column="1">
                   <widget class="QLabel" name="label_stdout_file">
                    <property name="text">
                     <string>&lt;stdout-file&gt;</string>
+                   </property>
+                   <property name="textFormat">
+                    <enum>Qt::PlainText</enum>
                    </property>
                    <property name="textInteractionFlags">
                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -478,6 +514,12 @@
                    <property name="text">
                     <string>&lt;stderr-target&gt;</string>
                    </property>
+                   <property name="textFormat">
+                    <enum>Qt::PlainText</enum>
+                   </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                   </property>
                   </widget>
                  </item>
                  <item row="1" column="0">
@@ -491,6 +533,9 @@
                   <widget class="QLabel" name="label_stderr_file">
                    <property name="text">
                     <string>&lt;stderr-file&gt;</string>
+                   </property>
+                   <property name="textFormat">
+                    <enum>Qt::PlainText</enum>
                    </property>
                    <property name="textInteractionFlags">
                     <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -562,6 +607,12 @@
                    <property name="text">
                     <string>&lt;start-condition&gt;</string>
                    </property>
+                   <property name="textFormat">
+                    <enum>Qt::PlainText</enum>
+                   </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                   </property>
                   </widget>
                  </item>
                  <item row="1" column="1">
@@ -569,12 +620,24 @@
                    <property name="text">
                     <string>&lt;start-time&gt;</string>
                    </property>
+                   <property name="textFormat">
+                    <enum>Qt::PlainText</enum>
+                   </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                   </property>
                   </widget>
                  </item>
                  <item row="2" column="1">
                   <widget class="QLabel" name="label_start_delay">
                    <property name="text">
                     <string>&lt;start-delay&gt;</string>
+                   </property>
+                   <property name="textFormat">
+                    <enum>Qt::PlainText</enum>
+                   </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
@@ -623,6 +686,12 @@
                    <property name="text">
                     <string>&lt;repeat-mode&gt;</string>
                    </property>
+                   <property name="textFormat">
+                    <enum>Qt::PlainText</enum>
+                   </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                   </property>
                   </widget>
                  </item>
                  <item row="1" column="1">
@@ -630,12 +699,24 @@
                    <property name="text">
                     <string>&lt;repeat-interval&gt;</string>
                    </property>
+                   <property name="textFormat">
+                    <enum>Qt::PlainText</enum>
+                   </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                   </property>
                   </widget>
                  </item>
                  <item row="2" column="1">
                   <widget class="QLabel" name="label_repeat_fields">
                    <property name="text">
                     <string>&lt;repeat-seconds&gt;</string>
+                   </property>
+                   <property name="textFormat">
+                    <enum>Qt::PlainText</enum>
+                   </property>
+                   <property name="textInteractionFlags">
+                    <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                    </property>
                   </widget>
                  </item>
