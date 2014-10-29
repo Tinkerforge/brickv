@@ -45,7 +45,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.button_start_upload.clicked.connect(self.start_upload)
 
         # state for async file upload
-        self.language = None
+        self.api_language = None
         self.program = None
         self.root_directory = None
         self.uploads = None
@@ -117,10 +117,10 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             return
 
         # set custom option: language
-        self.language = Constants.api_languages[self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]]
+        self.api_language = Constants.api_languages[self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]]
 
         try:
-            self.program.set_custom_option_value(Constants.FIELD_LANGUAGE, self.language) # FIXME: async_call
+            self.program.set_custom_option_value(Constants.FIELD_LANGUAGE, self.api_language) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return
@@ -235,17 +235,17 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         # set command
         self.next_step('Setting command...')
 
-        if self.language == 'java':
+        if self.api_language == 'java':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
-        elif self.language == 'perl':
+        elif self.api_language == 'perl':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_PERL).get_command()
-        elif self.language == 'php':
+        elif self.api_language == 'php':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_PHP).get_command()
-        elif self.language == 'python':
+        elif self.api_language == 'python':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_PYTHON).get_command()
-        elif self.language == 'ruby':
+        elif self.api_language == 'ruby':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_RUBY).get_command()
-        elif self.language == 'shell':
+        elif self.api_language == 'shell':
             executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_SHELL).get_command()
 
         editable_arguments_offset = len(arguments)

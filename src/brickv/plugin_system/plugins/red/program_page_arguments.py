@@ -63,7 +63,8 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
         self.label_arguments_help.setText(Constants.arguments_help[language])
         self.argument_list_editor.reset_items()
         self.check_show_environment.setCheckState(Qt.Unchecked)
-        self.label_environment_help.setText(Constants.environment_help[language])
+        self.label_environment_help.setText('This list of environment variables will be set for the {0} program.'
+                                            .format(Constants.language_display_names[language]))
         self.environment_list_editor.reset_items()
 
         # if a program exists then this page is used in an edit wizard

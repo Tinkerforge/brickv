@@ -81,21 +81,11 @@ class Constants:
     arguments_help = {
         LANGUAGE_INVALID: '<invalid>',
         LANGUAGE_JAVA:    'This list of arguments will be passed to the main() method.',
-        LANGUAGE_PERL:    'This list of arguments will be available as @ARGV.',
-        LANGUAGE_PHP:     'This list of arguments will be available in the $argv array.',
-        LANGUAGE_PYTHON:  'This list of arguments will be available as the sys.argv list.',
-        LANGUAGE_RUBY:    'This list of arguments will be available in the ARGV Array.',
+        LANGUAGE_PERL:    'This list of arguments will be available as @ARGV array.',
+        LANGUAGE_PHP:     'This list of arguments will be available as $argv array.',
+        LANGUAGE_PYTHON:  'This list of arguments will be available as sys.argv list.',
+        LANGUAGE_RUBY:    'This list of arguments will be available as ARGV array.',
         LANGUAGE_SHELL:   'This list of arguments will be available as $1 to $n.'
-    }
-
-    environment_help = {
-        LANGUAGE_INVALID: '<invalid>',
-        LANGUAGE_JAVA:    'This list of environment variables will be set for the Java program.',
-        LANGUAGE_PERL:    'This list of environment variables will be set for the Perl program.',
-        LANGUAGE_PHP:     'This list of environment variables will be set for the PHP program.',
-        LANGUAGE_PYTHON:  'This list of environment variables will be set for the Python program.',
-        LANGUAGE_RUBY:    'This list of environment variables will be set for the Ruby program.',
-        LANGUAGE_SHELL:   'This list of environment variables will be set for the Shell script.',
     }
 
     language_file_ending = { # endswith XXX sorted by file ending index
