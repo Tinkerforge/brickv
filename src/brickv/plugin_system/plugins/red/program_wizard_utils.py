@@ -205,40 +205,63 @@ class Constants:
         return Constants.api_stderr_redirection_display_names[Constants.api_stderr_redirections[stderr_redirection]]
 
     # must match item order in combo_start_condition on schedule page
-    SCHEDULE_START_CONDITION_NEVER  = 0
-    SCHEDULE_START_CONDITION_NOW    = 1
-    SCHEDULE_START_CONDITION_REBOOT = 2
-    SCHEDULE_START_CONDITION_TIME   = 3
+    START_CONDITION_NEVER  = 0
+    START_CONDITION_NOW    = 1
+    START_CONDITION_REBOOT = 2
+    START_CONDITION_TIME   = 3
 
-    api_schedule_start_condition = {
-        SCHEDULE_START_CONDITION_NEVER:  REDProgram.START_CONDITION_NEVER,
-        SCHEDULE_START_CONDITION_NOW:    REDProgram.START_CONDITION_NOW,
-        SCHEDULE_START_CONDITION_REBOOT: REDProgram.START_CONDITION_REBOOT,
-        SCHEDULE_START_CONDITION_TIME:   REDProgram.START_CONDITION_TIMESTAMP
+    api_start_condition = {
+        START_CONDITION_NEVER:  REDProgram.START_CONDITION_NEVER,
+        START_CONDITION_NOW:    REDProgram.START_CONDITION_NOW,
+        START_CONDITION_REBOOT: REDProgram.START_CONDITION_REBOOT,
+        START_CONDITION_TIME:   REDProgram.START_CONDITION_TIMESTAMP
     }
+
+    api_start_condition_display_names = {
+        REDProgram.START_CONDITION_NEVER:     'Never',
+        REDProgram.START_CONDITION_NOW:       'Now',
+        REDProgram.START_CONDITION_REBOOT:    'Reboot',
+        REDProgram.START_CONDITION_TIMESTAMP: 'Time'
+    }
+
+    @staticmethod
+    def get_start_condition(api_start_condition):
+        d = Constants.api_start_condition
+        return d.keys()[d.values().index(api_start_condition)]
 
     # must match item order in combo_repeat_mode on schedule page
-    SCHEDULE_REPEAT_MODE_NEVER    = 0
-    SCHEDULE_REPEAT_MODE_INTERVAL = 1
-    SCHEDULE_REPEAT_MODE_CRON     = 2
+    REPEAT_MODE_NEVER    = 0
+    REPEAT_MODE_INTERVAL = 1
+    REPEAT_MODE_CRON     = 2
 
-    api_schedule_repeat_mode = {
-        SCHEDULE_REPEAT_MODE_NEVER:    REDProgram.REPEAT_MODE_NEVER,
-        SCHEDULE_REPEAT_MODE_INTERVAL: REDProgram.REPEAT_MODE_INTERVAL,
-        SCHEDULE_REPEAT_MODE_CRON:     REDProgram.REPEAT_MODE_CRON,
+    api_repeat_mode = {
+        REPEAT_MODE_NEVER:    REDProgram.REPEAT_MODE_NEVER,
+        REPEAT_MODE_INTERVAL: REDProgram.REPEAT_MODE_INTERVAL,
+        REPEAT_MODE_CRON:     REDProgram.REPEAT_MODE_CRON,
     }
 
-    DEFAULT_JAVA_START_MODE          = JAVA_START_MODE_MAIN_CLASS
-    DEFAULT_PERL_START_MODE          = PERL_START_MODE_SCRIPT_FILE
-    DEFAULT_PHP_START_MODE           = PHP_START_MODE_SCRIPT_FILE
-    DEFAULT_PYTHON_START_MODE        = PYTHON_START_MODE_SCRIPT_FILE
-    DEFAULT_RUBY_START_MODE          = RUBY_START_MODE_SCRIPT_FILE
-    DEFAULT_SHELL_START_MODE         = SHELL_START_MODE_SCRIPT_FILE
-    DEFAULT_STDIN_REDIRECTION        = STDIN_REDIRECTION_PIPE
-    DEFAULT_STDOUT_REDIRECTION       = STDOUT_REDIRECTION_LOG
-    DEFAULT_STDERR_REDIRECTION       = STDERR_REDIRECTION_STDOUT
-    DEFAULT_SCHEDULE_START_CONDITION = SCHEDULE_START_CONDITION_NOW
-    DEFAULT_SCHEDULE_REPEAT_MODE     = SCHEDULE_REPEAT_MODE_NEVER
+    api_repeat_mode_display_names = {
+        REDProgram.REPEAT_MODE_NEVER:    'Never',
+        REDProgram.REPEAT_MODE_INTERVAL: 'Interval',
+        REDProgram.REPEAT_MODE_CRON:     'Cron'
+    }
+
+    @staticmethod
+    def get_repeat_mode(api_repeat_mode):
+        d = Constants.api_repeat_mode
+        return d.keys()[d.values().index(api_repeat_mode)]
+
+    DEFAULT_JAVA_START_MODE    = JAVA_START_MODE_MAIN_CLASS
+    DEFAULT_PERL_START_MODE    = PERL_START_MODE_SCRIPT_FILE
+    DEFAULT_PHP_START_MODE     = PHP_START_MODE_SCRIPT_FILE
+    DEFAULT_PYTHON_START_MODE  = PYTHON_START_MODE_SCRIPT_FILE
+    DEFAULT_RUBY_START_MODE    = RUBY_START_MODE_SCRIPT_FILE
+    DEFAULT_SHELL_START_MODE   = SHELL_START_MODE_SCRIPT_FILE
+    DEFAULT_STDIN_REDIRECTION  = STDIN_REDIRECTION_PIPE
+    DEFAULT_STDOUT_REDIRECTION = STDOUT_REDIRECTION_LOG
+    DEFAULT_STDERR_REDIRECTION = STDERR_REDIRECTION_STDOUT
+    DEFAULT_START_CONDITION    = START_CONDITION_NOW
+    DEFAULT_REPEAT_MODE        = REPEAT_MODE_NEVER
 
 
 # workaround miscalculated initial size-hint for initially hidden QListWidgets

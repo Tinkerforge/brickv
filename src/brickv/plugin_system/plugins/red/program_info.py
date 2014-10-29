@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import pyqtSignal, QDateTime
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog, QFileDialog
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
@@ -56,6 +56,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.edit_general_wizard = None
         self.edit_arguments_wizard = None
         self.edit_stdio_wizard = None
+        self.edit_schedule_wizard = None
 
         self.program_dir = unicode(self.program.root_directory)
         self.program_dir_walk_result = None
@@ -262,6 +263,32 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         if stderr_redirection_file:
             self.label_stderr_file.setText(unicode(self.program.stderr_file_name))
 
+        # schedule
+        start_condition_never  = self.program.start_condition == REDProgram.START_CONDITION_NEVER
+        start_condition_now    = self.program.start_condition == REDProgram.START_CONDITION_NOW
+        start_condition_reboot = self.program.start_condition == REDProgram.START_CONDITION_REBOOT
+        start_condition_time   = self.program.start_condition == REDProgram.START_CONDITION_TIMESTAMP
+
+        self.label_start_condition.setText(Constants.api_start_condition_display_names.get(self.program.start_condition, '<unknown>'))
+        self.label_start_time_title.setVisible(start_condition_time)
+        self.label_start_time.setVisible(start_condition_time)
+        self.label_start_time.setText(QDateTime.fromTime_t(self.program.start_timestamp).toString('dd.MM.yyyy HH:mm:ss'))
+        self.label_start_delay_title.setVisible(start_condition_now or start_condition_reboot)
+        self.label_start_delay.setVisible(start_condition_now or start_condition_reboot)
+        self.label_start_delay.setText('{0} seconds'.format(self.program.start_delay))
+
+        repeat_mode_never    = self.program.repeat_mode == REDProgram.REPEAT_MODE_NEVER
+        repeat_mode_interval = self.program.repeat_mode == REDProgram.REPEAT_MODE_INTERVAL
+        repeat_mode_cron     = self.program.repeat_mode == REDProgram.REPEAT_MODE_CRON
+
+        self.label_repeat_mode.setText(Constants.api_repeat_mode_display_names.get(self.program.repeat_mode, '<unknown>'))
+        self.label_repeat_interval_title.setVisible(repeat_mode_interval)
+        self.label_repeat_interval.setVisible(repeat_mode_interval)
+        self.label_repeat_interval.setText('{0} seconds'.format(self.program.repeat_interval))
+        self.label_repeat_fields_title.setVisible(repeat_mode_cron)
+        self.label_repeat_fields.setVisible(repeat_mode_cron)
+        self.label_repeat_fields.setText(unicode(self.program.repeat_fields))
+
     def download_selected_log(self):
         index_list =  self.tree_logs.selectedIndexes()
         print len(index_list)
@@ -396,4 +423,18 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.set_edit_buttons_enabled(True)
 
     def show_edit_schedule_wizard(self):
-        print 'show_edit_schedule_wizard'
+        self.set_edit_buttons_enabled(False)
+
+        self.edit_schedule_wizard = ProgramWizardEdit(self.session, self.program, [], self.script_manager)
+        self.edit_schedule_wizard.setPage(Constants.PAGE_SCHEDULE, ProgramPageSchedule())
+        self.edit_schedule_wizard.finished.connect(self.edit_schedule_wizard_finished)
+        self.edit_schedule_wizard.show()
+
+    def edit_schedule_wizard_finished(self, result):
+        self.edit_schedule_wizard.finished.disconnect(self.edit_schedule_wizard_finished)
+
+        if result == QDialog.Accepted:
+            self.edit_schedule_wizard.page(Constants.PAGE_SCHEDULE).apply_program_changes()
+            self.refresh_info()
+
+        self.set_edit_buttons_enabled(True)
