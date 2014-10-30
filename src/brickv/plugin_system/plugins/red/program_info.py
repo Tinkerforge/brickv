@@ -151,18 +151,30 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
                             if parent_continuous:
                                 if file_name.split('-')[1] == "stdout.log":
-                                    parent_continuous.appendRow([QStandardItem("stdout"), QStandardItem(file_size)])
+                                    parent_continuous.appendRow([QStandardItem("stdout"),
+                                                                 QStandardItem(file_size),
+                                                                 QStandardItem("LOG_FILE_CONT"),
+                                                                 QStandardItem(file_path)])
                                 elif file_name.split('-')[1] == "stderr.log":
-                                    parent_continuous.appendRow([QStandardItem("stderr"), QStandardItem(file_size)])
+                                    parent_continuous.appendRow([QStandardItem("stderr"),
+                                                                 QStandardItem(file_size),
+                                                                 QStandardItem("LOG_FILE_CONT"),
+                                                                 QStandardItem(file_path)])
                                 current_size = int(parent_continuous_size.text())
                                 new_file_size = int(file_size)
                                 parent_continuous_size.setText(str(current_size + new_file_size))
                             else:
                                 parent_continuous = [QStandardItem("Continuous"), QStandardItem(file_size)]
                                 if file_name.split('-')[1] == "stdout.log":
-                                    parent_continuous[0].appendRow([QStandardItem("stdout"), QStandardItem(file_size)])
+                                    parent_continuous[0].appendRow([QStandardItem("stdout"),
+                                                                    QStandardItem(file_size),
+                                                                    QStandardItem("LOG_FILE_CONT"),
+                                                                    QStandardItem(file_path)])
                                 elif file_name.split('-')[1] == "stderr.log":
-                                    parent_continuous[0].appendRow([QStandardItem("stderr"), QStandardItem(file_size)])
+                                    parent_continuous[0].appendRow([QStandardItem("stderr"),
+                                                                    QStandardItem(file_size),
+                                                                    QStandardItem("LOG_FILE_CONT"),
+                                                                    QStandardItem(file_path)])
                                 self.tree_logs_model.appendRow(parent_continuous)
 
                             self.tree_logs_model.sort(0, Qt.DescendingOrder)
@@ -395,7 +407,29 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         index_list =  self.tree_logs.selectedIndexes()
 
         print index_list
+        print self.tree_logs_model.itemFromIndex(index_list[0]).rowCount()
+        print self.tree_logs_model.itemFromIndex(index_list[1]).rowCount()
+        print self.tree_logs_model.itemFromIndex(index_list[1]).text()
+        print "================================"
 
+        if index_list % 2 != 0:
+            return
+        
+        logs_download_file_list = {'files': [], 'total_download_size': 0}
+
+        for i in index_list:
+            if i % 2 != 0:
+                item = self.tree_logs_model.itemFromIndex(index_list[i])
+                if item.rowCount() == 0:
+                    if item.child(0, 3) in dict(logs_download_file_list['files']):
+                        continue
+                    else:
+                        pass
+                elif item.rowCount() > 0:
+                    pass
+                    for j in range(item.rowCount()):
+                        pass
+        
         '''
         if len(index_list) == 0 or len(index_list) % 4 != 0:
             return
