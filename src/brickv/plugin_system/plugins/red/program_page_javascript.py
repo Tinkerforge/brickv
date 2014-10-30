@@ -59,7 +59,7 @@ class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
                                                    self.button_remove_option,
                                                    self.button_up_option,
                                                    self.button_down_option,
-                                                   '<new JavaScript option {0}>')
+                                                   '<new Node.js option {0}>')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
@@ -107,7 +107,7 @@ class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
                 version = result.stdout.split('\n')[0]
                 node_version_str = 'Server-side (Node.js {0})'.format(version)
                 try:
-                    self.combo_version.addItem('Client-side (web browser)', QVariant('/bin/true'))
+                    self.combo_version.addItem('Client-side (Browser)', QVariant('/bin/true'))
                     self.combo_version.addItem(node_version_str, QVariant('/usr/local/bin/node'))
                     self.combo_version.setEnabled(True)
                     return
@@ -117,7 +117,7 @@ class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
             # Could not get versions, we assume that some version
             # of nodejs is installed
             self.combo_version.clear()
-            self.combo_version.addItem('Client-side (web browser)', QVariant('None'))
+            self.combo_version.addItem('Client-side (Browser)', QVariant('/bin/true'))
             self.combo_version.addItem('Server-side (Node.js)', QVariant('/usr/local/bin/node'))
             self.combo_version.setEnabled(True)
             self.completeChanged.emit()

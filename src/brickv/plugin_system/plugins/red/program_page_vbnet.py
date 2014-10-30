@@ -55,7 +55,7 @@ class ProgramPageVBNet(ProgramPage, Ui_ProgramPageVBNet):
                                                    self.button_remove_option,
                                                    self.button_up_option,
                                                    self.button_down_option,
-                                                   '<new Visual Basic .NET option {0}>')
+                                                   '<new Mono option {0}>')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):

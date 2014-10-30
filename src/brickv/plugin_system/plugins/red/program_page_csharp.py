@@ -55,7 +55,7 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
                                                    self.button_remove_option,
                                                    self.button_up_option,
                                                    self.button_down_option,
-                                                   '<new C# option {0}>')
+                                                   '<new Mono option {0}>')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
