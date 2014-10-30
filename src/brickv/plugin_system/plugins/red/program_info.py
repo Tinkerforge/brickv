@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import pyqtSignal, QDateTime
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog, QFileDialog, QProgressDialog
+from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.api import *
@@ -67,6 +68,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.image_version_ref = image_version_ref
         self.program = program
         self.root_directory = unicode(self.program.root_directory)
+
+        self.program.process_spawned_callback = self.process_spawned
+        self.program.scheduler_error_occurred_callback = self.scheduler_error_occurred
+
         self.program_refresh_in_progress = False
         self.logs_refresh_in_progress = False
         self.files_refresh_in_progress = False
@@ -99,6 +104,17 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.button_edit_stdio.clicked.connect(self.show_edit_stdio_wizard)
         self.button_edit_schedule.clicked.connect(self.show_edit_schedule_wizard)
 
+        self.update_ui_state()
+
+    def process_spawned(self, program):
+        self.update_ui_state()
+
+        self.program.last_spawned_process.state_changed_callback = self.process_state_changed
+
+    def scheduler_error_occurred(self, program):
+        self.update_ui_state()
+
+    def process_state_changed(self, process):
         self.update_ui_state()
 
     def refresh_info(self):
@@ -301,6 +317,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
                 if directory_walk != None:
                     available_files = expand_directory_walk_to_files_list(directory_walk)
+
                 return sorted(available_files)
 
             def cb_expand_success(available_files):
@@ -336,6 +353,44 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         else:
             self.button_refresh.setText('Refresh')
             self.set_buttons_enabled(True)
+
+        # status
+        if self.program.last_spawned_process != None:
+            if self.program.last_spawned_process.state == REDProcess.STATE_UNKNOWN:
+                self.label_current_state.setText('Unknown')
+            elif self.program.last_spawned_process.state == REDProcess.STATE_RUNNING:
+                self.label_current_state.setText('Running')
+            elif self.program.last_spawned_process.state == REDProcess.STATE_ERROR:
+                if self.program.last_spawned_process.exit_code == REDProcess.E_INTERNAL_ERROR:
+                    self.label_current_state.setText('Internal error occurred')
+                elif self.program.last_spawned_process.exit_code == REDProcess.E_CANNOT_EXECUTE:
+                    self.label_current_state.setText('Could not be executed')
+                elif self.program.last_spawned_process.exit_code == REDProcess.E_DOES_NOT_EXIST:
+                    self.label_current_state.setText('Executable does not exist')
+                else:
+                    self.label_current_state.setText('Unknown error occurred')
+            elif self.program.last_spawned_process.state == REDProcess.STATE_EXITED:
+                if self.program.last_spawned_process.exit_code == 0:
+                    self.label_current_state.setText('Not running, last run exited normally')
+                else:
+                    self.label_current_state.setText('Not running, last run exited with an error (exit code: {0})'
+                                                     .format(self.program.last_spawned_process.exit_code))
+            elif self.program.last_spawned_process.state == REDProcess.STATE_KILLED:
+                    self.label_current_state.setText('Not running, last run was killed (signal: {0})'
+                                                     .format(self.program.last_spawned_process.exit_code))
+            elif self.program.last_spawned_process.state == REDProcess.STATE_STOPPED:
+                self.label_current_state.setText('Stopped') # FIXME: show continue button?
+
+            self.label_last_start_time.setText(QDateTime.fromTime_t(self.program.last_spawned_timestamp).toString('yyyy-MM-dd HH:mm:ss'))
+        else:
+            self.label_current_state.setText('Not running')
+            self.label_last_start_time.setText('Never started')
+
+        if self.program.last_scheduler_error_message != None:
+            self.label_last_scheduler_error.setText('{0}\n{1}'.format(QDateTime.fromTime_t(self.program.last_scheduler_error_timestamp).toString('yyyy-MM-dd HH:mm:ss'),
+                                                                      unicode(self.program.last_scheduler_error_message)))
+        else:
+            self.label_last_scheduler_error.setText('None')
 
         # general
         name = self.program.cast_custom_option_value('name', unicode, '<unknown>')

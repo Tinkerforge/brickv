@@ -35,7 +35,7 @@
         <x>0</x>
         <y>0</y>
         <width>586</width>
-        <height>1609</height>
+        <height>1655</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -156,10 +156,81 @@
          <layout class="QVBoxLayout" name="verticalLayout_9">
           <item>
            <layout class="QGridLayout" name="gridLayout_9">
-            <item row="0" column="0">
+            <item row="1" column="0">
              <widget class="QLabel" name="label_35">
               <property name="text">
-               <string>&lt;status&gt;</string>
+               <string>Last Start Time:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLabel" name="label_last_start_time">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>1</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>&lt;last-start-time&gt;</string>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Last Scheduler Error:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLabel" name="label_last_scheduler_error">
+              <property name="text">
+               <string>&lt;last-scheduler-error&gt;</string>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Current State:</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label_current_state">
+              <property name="text">
+               <string>&lt;current-state&gt;</string>
+              </property>
+              <property name="textFormat">
+               <enum>Qt::PlainText</enum>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
               </property>
              </widget>
             </item>
@@ -770,7 +841,21 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>button_refresh</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>button_edit_general</tabstop>
+  <tabstop>tree_logs</tabstop>
+  <tabstop>button_download_logs</tabstop>
+  <tabstop>button_delete_logs</tabstop>
   <tabstop>tree_files</tabstop>
+  <tabstop>button_upload_files</tabstop>
+  <tabstop>button_download_files</tabstop>
+  <tabstop>button_rename_file</tabstop>
+  <tabstop>button_delete_files</tabstop>
+  <tabstop>button_edit_language</tabstop>
+  <tabstop>button_edit_arguments</tabstop>
+  <tabstop>button_edit_stdio</tabstop>
+  <tabstop>button_edit_schedule</tabstop>
  </tabstops>
  <resources/>
  <connections/>
