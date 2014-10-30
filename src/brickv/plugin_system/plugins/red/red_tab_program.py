@@ -143,12 +143,11 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
             return
 
         program_info = selected_items[0].data(Qt.UserRole).toPyObject()
-        program = program_info.program
-        name = str(program_info.program.identifier) # FIXME: get program name
-
-        button = QMessageBox.question(self, 'Delete Program',
-                                      u'Deleting program [{0}] is irreversible. All files of this program will be deleted.'.format(name),
-                                      QMessageBox.Ok, QMessageBox.Cancel)
+        program      = program_info.program
+        name         = program.cast_custom_option_value('name', unicode, '<unknown>')
+        button       = QMessageBox.question(self, 'Delete Program',
+                                            u'Deleting program [{0}] is irreversible. All files of this program will be deleted.'.format(name),
+                                            QMessageBox.Ok, QMessageBox.Cancel)
 
         if button != QMessageBox.Ok:
             return
