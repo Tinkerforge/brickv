@@ -164,7 +164,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                 new_file_size = int(file_size)
                                 parent_continuous_size.setText(str(current_size + new_file_size))
                             else:
-                                parent_continuous = [QStandardItem("Continuous"), QStandardItem(file_size)]
+                                parent_continuous = [QStandardItem("Continuous"),
+                                                     QStandardItem(file_size),
+                                                     QStandardItem("PARENT_CONT"),
+                                                     QStandardItem("")]
                                 if file_name.split('-')[1] == "stdout.log":
                                     parent_continuous[0].appendRow([QStandardItem("stdout"),
                                                                     QStandardItem(file_size),
@@ -243,7 +246,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                     break
 
                             if not found_parent_time:
-                                parent_date.appendRow([QStandardItem(time), QStandardItem(file_size)])
+                                parent_date.appendRow([QStandardItem(time),
+                                                       QStandardItem(file_size),
+                                                       QStandardItem("PARENT_TIME"),
+                                                       QStandardItem("")])
                                 parent_date.child(parent_date.rowCount()-1).appendRow([QStandardItem(file_name_display),
                                                                                        QStandardItem(file_size),
                                                                                        QStandardItem("LOG_FILE"),
@@ -253,8 +259,14 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                 parent_date_size.setText(str(current_size + new_file_size))
 
                         else:
-                            parent_date = [QStandardItem(date), QStandardItem(file_size)]
-                            parent_date[0].appendRow([QStandardItem(time), QStandardItem(file_size)])
+                            parent_date = [QStandardItem(date),
+                                           QStandardItem(file_size),
+                                           QStandardItem("PARENT_DATE"),
+                                           QStandardItem("")]
+                            parent_date[0].appendRow([QStandardItem(time),
+                                                      QStandardItem(file_size),
+                                                      QStandardItem("PARENT_TIME"),
+                                                      QStandardItem("")])
                             parent_date[0].child(0).appendRow([QStandardItem(file_name_display),
                                                                QStandardItem(file_size),
                                                                QStandardItem("LOG_FILE"),
@@ -305,6 +317,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
     def update_ui_state(self):
         self.button_download_logs.setEnabled(self.tree_logs_model.rowCount())
         self.button_delete_logs.setEnabled(self.tree_logs_model.rowCount())
+        self.tree_logs.setColumnHidden(2, True)
+        self.tree_logs.setColumnHidden(3, True)
 
         has_files_selection = len(self.tree_files.selectedItems()) > 0
         self.button_download_files.setEnabled(has_files_selection)
@@ -403,55 +417,75 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.label_repeat_fields.setVisible(repeat_mode_cron)
         self.label_repeat_fields.setText(unicode(self.program.repeat_fields))
 
-    def download_selected_logs(self):
-        index_list =  self.tree_logs.selectedIndexes()
-
-        print index_list
-        print self.tree_logs_model.itemFromIndex(index_list[0]).rowCount()
-        print self.tree_logs_model.itemFromIndex(index_list[1]).rowCount()
-        print self.tree_logs_model.itemFromIndex(index_list[1]).text()
-        print "================================"
-
-        if index_list % 2 != 0:
-            return
-        
-        logs_download_file_list = {'files': [], 'total_download_size': 0}
-
-        for i in index_list:
-            if i % 2 != 0:
-                item = self.tree_logs_model.itemFromIndex(index_list[i])
-                if item.rowCount() == 0:
-                    if item.child(0, 3) in dict(logs_download_file_list['files']):
-                        continue
-                    else:
-                        pass
-                elif item.rowCount() > 0:
-                    pass
-                    for j in range(item.rowCount()):
-                        pass
-        
-        '''
-        if len(index_list) == 0 or len(index_list) % 4 != 0:
+    def load_log_files_for_ops(self, index_list):   
+        if len(index_list) % 4 != 0:
             return
 
         index_list_chunked =  zip(*[iter(index_list)] * 4)
-        if index_list_chunked <= 0:
-            return
-        global log_files_to_process
-        log_files_to_process = len(index_list_chunked)
 
-        file_dialog = QFileDialog(self)
-        file_dialog.setFileMode(QFileDialog.Directory)
-        file_dialog.setOption(QFileDialog.ShowDirsOnly, True)
-        global log_files_download_dir
-        log_files_download_dir = file_dialog.getExistingDirectory(self,
-                                                             "Download Log Files")
+        logs_download_dict = {'files': {}, 'total_download_size': 0}
 
-        for chunk in index_list_chunked:
-            if self.tree_logs_model.itemFromIndex(chunk[2]).text() != "LOG_FILE":
-                return
-            log_filename = unicode(self.tree_logs_model.itemFromIndex(chunk[3]).text())
-            print 'download_selected_logs', log_filename'''
+        def populate_log_download(item_list):
+            if item_list[2].text() == "PARENT_CONT":
+                for i in range(item_list[0].rowCount()):
+                    f_size = int(item_list[0].child(i, 1).text()) # File size
+                    f_path = str(item_list[0].child(i, 3).text()) # File path
+                    if not f_path in logs_download_dict['files']:
+                        logs_download_dict['files'][f_path] = {'size': f_size}
+                        logs_download_dict['total_download_size'] = \
+                            logs_download_dict['total_download_size'] + f_size
+
+            elif item_list[2].text() == "PARENT_DATE":
+                for i in range(item_list[0].rowCount()):
+                    parent_time = item_list[0].child(i)
+                    for j in range(parent_time.rowCount()):
+                        f_size = int(parent_time.child(j, 1).text()) # File size
+                        f_path = str(parent_time.child(j, 3).text()) # File path
+                        if not f_path in logs_download_dict['files']:
+                            logs_download_dict['files'][f_path] = {'size': f_size}
+                            logs_download_dict['total_download_size'] = \
+                                logs_download_dict['total_download_size'] + f_size
+
+            elif item_list[2].text() == "PARENT_TIME":
+                print "PARENT_TIME"
+                for i in range(item_list[0].rowCount()):
+                    #print i
+                    f_size = int(item_list[0].child(i, 1).text()) # File size
+                    f_path = str(item_list[0].child(i, 3).text()) # File path
+                    if not f_path in logs_download_dict['files']:
+                        logs_download_dict['files'][f_path] = {'size': f_size}
+                        logs_download_dict['total_download_size'] = \
+                            logs_download_dict['total_download_size'] + f_size
+
+            elif item_list[2].text() == "LOG_FILE" or \
+                 item_list[2].text() == "LOG_FILE_CONT":
+                f_size = int(item_list[1].text()) # File size
+                f_path = str(item_list[3].text()) # File path
+                if not f_path in logs_download_dict['files']:
+                    logs_download_dict['files'][f_path] = {'size': f_size}
+                    logs_download_dict['total_download_size'] = \
+                        logs_download_dict['total_download_size'] + f_size
+            else:
+                pass
+
+        for index_chunk in index_list_chunked:
+            print ">>>>>>>", len(index_chunk)
+            item_list = []
+            for index in index_chunk:
+                item = self.tree_logs_model.itemFromIndex(index)
+                item_list.append(item)
+            populate_log_download(item_list)
+
+        return logs_download_dict
+
+    def download_selected_logs(self):
+        self.tree_logs.setColumnHidden(2, False)
+        self.tree_logs.setColumnHidden(3, False)
+        index_list =  self.tree_logs.selectedIndexes()
+        self.tree_logs.setColumnHidden(2, True)
+        self.tree_logs.setColumnHidden(3, True)
+
+        print self.load_log_files_for_ops(index_list)
 
     def delete_selected_logs(self):
         #selected_items = self.list_logs.selectedItems()
