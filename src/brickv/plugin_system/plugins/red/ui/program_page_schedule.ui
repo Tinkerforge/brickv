@@ -95,7 +95,7 @@
            </datetime>
           </property>
           <property name="displayFormat">
-           <string>dd.MM.yyyy HH:mm:ss</string>
+           <string>yyyy-MM-dd HH:mm:ss</string>
           </property>
          </widget>
         </item>

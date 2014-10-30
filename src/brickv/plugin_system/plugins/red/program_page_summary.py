@@ -134,7 +134,7 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
             html += u'Start Condition: {0}<br/>'.format(Constants.get_start_condition_display_name(start_condition))
 
             if start_condition == Constants.START_CONDITION_TIME:
-                html += u'Start Time: {0}<br/>'.format(self.get_field('start_time').toDateTime().toString('dd.MM.yyyy HH:mm:ss'))
+                html += u'Start Time: {0}<br/>'.format(self.get_field('start_time').toDateTime().toString('yyyy-MM-dd HH:mm:ss'))
             elif start_condition == Constants.START_CONDITION_NOW or \
                start_condition == Constants.START_CONDITION_REBOOT:
                 html += u'Start Delay: {0} seconds<br/>'.format(self.get_field('start_delay').toUInt()[0])

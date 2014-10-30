@@ -401,7 +401,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.label_start_condition.setText(Constants.api_start_condition_display_names.get(self.program.start_condition, '<unknown>'))
         self.label_start_time_title.setVisible(start_condition_time)
         self.label_start_time.setVisible(start_condition_time)
-        self.label_start_time.setText(QDateTime.fromTime_t(self.program.start_timestamp).toString('dd.MM.yyyy HH:mm:ss'))
+        self.label_start_time.setText(QDateTime.fromTime_t(self.program.start_timestamp).toString('yyyy-MM-dd HH:mm:ss'))
         self.label_start_delay_title.setVisible(start_condition_now or start_condition_reboot)
         self.label_start_delay.setVisible(start_condition_now or start_condition_reboot)
         self.label_start_delay.setText('{0} seconds'.format(self.program.start_delay))
