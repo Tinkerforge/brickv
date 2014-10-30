@@ -198,6 +198,9 @@
                 <height>200</height>
                </size>
               </property>
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
               <property name="selectionMode">
                <enum>QAbstractItemView::MultiSelection</enum>
               </property>

@@ -39,9 +39,6 @@ from brickv.async_call import async_call
 import os
 import json
 
-log_files_to_process = -1
-log_files_download_dir = ""
-
 def expand_directory_walk_to_files_list(directory_walk):
     files = []
 
@@ -399,6 +396,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
         print index_list
 
+        '''
         if len(index_list) == 0 or len(index_list) % 4 != 0:
             return
 
@@ -419,7 +417,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             if self.tree_logs_model.itemFromIndex(chunk[2]).text() != "LOG_FILE":
                 return
             log_filename = unicode(self.tree_logs_model.itemFromIndex(chunk[3]).text())
-            print 'download_selected_logs', log_filename
+            print 'download_selected_logs', log_filename'''
 
     def delete_selected_logs(self):
         #selected_items = self.list_logs.selectedItems()
