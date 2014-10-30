@@ -35,11 +35,6 @@
          <string>Makefile Project</string>
         </property>
        </item>
-       <item>
-        <property name="text">
-         <string>CMake Project</string>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="1" column="0">
@@ -145,7 +140,7 @@
      <item row="12" column="1" colspan="4">
       <widget class="QLabel" name="label_options_help">
        <property name="text">
-        <string>This list of options will be passed to Make/CMake.</string>
+        <string>This list of options will be passed to Make</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -155,7 +150,7 @@
      <item row="2" column="1" colspan="4">
       <widget class="QLabel" name="label_start_executable_help">
        <property name="text">
-        <string>FIXME: Executable help (+ has to be cross compiled)</string>
+        <string>The executable has to be cross compiled for armhf.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -165,7 +160,7 @@
      <item row="3" column="1" colspan="4">
       <widget class="QLabel" name="label_start_make_help">
        <property name="text">
-        <string>FIXME: Make help (+ link to example?)</string>
+        <string>For a Makefile project It is assumed that a makefile with the name &quot;Makefile&quot; is present in the working directory. Make will be called during the last step, after the upload has finished.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -185,7 +180,7 @@
      <item row="6" column="1" colspan="4">
       <widget class="QLabel" name="label_file_make_help">
        <property name="text">
-        <string>The specified file will be executed. Use the name of the executable as it will be after compiling.</string>
+        <string>The specified file will be executed. Use the name of the executable as it will be &lt;b&gt;after compiling&lt;/b&gt;.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>

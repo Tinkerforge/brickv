@@ -21,6 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import pyqtProperty
+
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_c import Ui_ProgramPageC
@@ -36,6 +38,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.registerField('c.start_mode', self.combo_start_mode)
         self.registerField('c.file', self.combo_file, 'currentText')
         self.registerField('c.working_directory', self.combo_working_directory, 'currentText')
+        self.registerField('c.make_options', self, 'get_make_options')
 
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
@@ -101,7 +104,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
     def update_ui_state(self):
         start_mode            = self.get_field('c.start_mode').toInt()[0]
         start_mode_exe        = start_mode == Constants.C_START_MODE_EXECUTABLE
-        start_mode_make       = start_mode in (Constants.C_START_MODE_MAKE, Constants.C_START_MODE_CMAKE)
+        start_mode_make       = start_mode == Constants.C_START_MODE_MAKE
         show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
 
         self.label_compiler.setVisible(start_mode_make)
@@ -115,20 +118,14 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
         self.option_list_editor.update_ui_state()
 
+    @pyqtProperty(str)
+    def get_make_options(self):
+        return ' '.join(self.option_list_editor.get_items())
+
     def get_command(self):
-        executable = unicode(self.get_field('c.file').toString())
+        executable = unicode('./{0}'.format(self.get_field('c.file').toString()))
         arguments = self.option_list_editor.get_items()
         environment = []
-
-        start_mode = self.get_field('c.start_mode').toInt()[0]
-
-        if start_mode == Constants.C_START_MODE_EXECUTABLE:
-            pass # TODO
-        elif start_mode == Constants.C_START_MODE_MAKE:
-            pass # TODO
-        elif start_mode == Constants.C_START_MODE_CMAKE:
-            pass # TODO
-
         working_directory = unicode(self.get_field('c.working_directory').toString())
 
         return executable, arguments, environment, working_directory

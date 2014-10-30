@@ -55,6 +55,11 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.source_name = None
         self.source_size = None
         self.last_upload_size = None
+        self.is_executed_by_apid = None
+        self.executable = None
+        self.arguments = None
+        self.environment = None
+        self.working_directory = None
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
@@ -241,48 +246,54 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     def upload_done(self):
         self.progress_file.setVisible(False)
 
-        is_executed_by_apid = True
+        self.is_executed_by_apid = True
         use_make = False
-        use_cmake = False
 
         if self.api_language == 'c':
-            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_C).get_command()
-            # TODO: Set use_make and use_cmake accordingly
+            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_C).get_command()
+            start_mode = self.get_field('c.start_mode').toInt()[0]
+            if start_mode == Constants.C_START_MODE_MAKE:
+                use_make = True
         elif self.api_language == 'csharp':
-            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_CSHARP).get_command()
+            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_CSHARP).get_command()
         elif self.api_language == 'java':
-            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
+            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
         elif self.api_language == 'javascript':
             if self.get_field('javascript.version').toInt()[0] == 0:
-                is_executed_by_apid = False
-            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_JAVASCRIPT).get_command()
+                self.is_executed_by_apid = False
+            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_JAVASCRIPT).get_command()
         elif self.api_language == 'octave':
-            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_OCTAVE).get_command()
+            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_OCTAVE).get_command()
         elif self.api_language == 'perl':
-            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_PERL).get_command()
+            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_PERL).get_command()
         elif self.api_language == 'php':
-            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_PHP).get_command()
+            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_PHP).get_command()
         elif self.api_language == 'python':
-            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_PYTHON).get_command()
+            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_PYTHON).get_command()
         elif self.api_language == 'ruby':
-            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_RUBY).get_command()
+            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_RUBY).get_command()
         elif self.api_language == 'shell':
-            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_SHELL).get_command()
+            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_SHELL).get_command()
         elif self.api_language == 'vbnet':
-            executable, arguments, environment, working_directory = self.wizard().page(Constants.PAGE_VBNET).get_command()
+            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_VBNET).get_command()
 
-        if is_executed_by_apid:
+        if use_make:
+            self.compile_make()
+            return
+
+    def upload_configuration(self):
+        if self.is_executed_by_apid:
             # set command
             self.next_step('Setting command...')
 
-            editable_arguments_offset = len(arguments)
-            arguments += self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
+            editable_arguments_offset = len(self.arguments)
+            self.arguments += self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
 
-            editable_environment_offset = len(environment)
-            environment += self.wizard().page(Constants.PAGE_ARGUMENTS).get_environment()
+            editable_environment_offset = len(self.environment)
+            self.environment += self.wizard().page(Constants.PAGE_ARGUMENTS).get_environment()
 
             try:
-                self.program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
+                self.program.set_command(self.executable, self.arguments, self.environment, self.working_directory) # FIXME: async_call
             except REDError as e:
                 self.upload_error('...error: {0}'.format(e))
                 return
@@ -352,3 +363,22 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.wizard().setOption(QWizard.NoCancelButton, True)
         self.upload_successful = True
         self.completeChanged.emit()
+
+    def compile_make(self):
+        def cb(result):
+            if result != None and result.stderr == '':
+                for s in result.stdout.split('\n'):
+                    self.log(s)
+                self.log('...done')
+                self.upload_configuration()
+            else:
+                if result != None:
+                    self.log(result.stdout)
+                self.log('...error')
+
+        self.next_step('Calling make...')
+        make_options = unicode(self.get_field('c.make_options').toString())
+        identifier = unicode(self.get_field('identifier').toString())
+        p = os.path.join('/', 'home', 'tf', 'programs' , identifier, 'bin', self.working_directory)
+
+        self.wizard().script_manager.execute_script('make_helper', cb, [p, make_options])

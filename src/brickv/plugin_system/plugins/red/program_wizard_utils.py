@@ -131,7 +131,6 @@ class Constants:
     # must match item order in combo_start_mode on C/C++ page
     C_START_MODE_EXECUTABLE = 0
     C_START_MODE_MAKE = 1
-    C_START_MODE_CMAKE = 2
 
     # must match item order in combo_start_mode on C# page
     CSHARP_START_MODE_EXECUTABLE = 0
@@ -449,7 +448,6 @@ class ListWidgetEditor:
             items.append(unicode(self.list_items.item(row).text()))
 
         return items
-
 
 class TreeWidgetEditor:
     def __init__(self, label_items, tree_items, label_items_help,
