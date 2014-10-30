@@ -33,6 +33,8 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
         self.setTitle(title_prefix + 'Java Configuration')
 
+        self.language = Constants.LANGUAGE_JAVA
+
         self.registerField('java.version', self.combo_version)
         self.registerField('java.start_mode', self.combo_start_mode)
         self.registerField('java.main_class', self.edit_main_class)
@@ -43,45 +45,44 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
-        self.edit_main_class_checker          = MandatoryLineEditChecker(self, self.edit_main_class, self.label_main_class)
-        self.combo_jar_file_checker           = MandatoryEditableComboBoxChecker(self, self.combo_jar_file, self.label_jar_file)
-        self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
-
+        self.edit_main_class_checker          = MandatoryLineEditChecker(self,
+                                                                         self.edit_main_class,
+                                                                         self.label_main_class)
+        self.combo_jar_file_selector          = MandatoryTypedFileSelector(self,
+                                                                           self.label_jar_file,
+                                                                           self.combo_jar_file,
+                                                                           self.label_jar_file_type,
+                                                                           self.combo_jar_file_type,
+                                                                           self.label_jar_file_help)
+        self.combo_working_directory_selector = MandatoryDirectorySelector(self,
+                                                                           self.combo_working_directory,
+                                                                           self.label_working_directory)
         # FIXME: allow adding class path entries using a combo box prefilled with avialable .jar files
-        self.class_path_list_editor = ListWidgetEditor(self.label_class_path,
-                                                       self.list_class_path,
-                                                       self.label_class_path_help,
-                                                       self.button_add_class_path_entry,
-                                                       self.button_remove_class_path_entry,
-                                                       self.button_up_class_path_entry,
-                                                       self.button_down_class_path_entry,
-                                                       '<new class path entry {0}>')
-
-        self.option_list_editor = ListWidgetEditor(self.label_options,
-                                                   self.list_options,
-                                                   self.label_options_help,
-                                                   self.button_add_option,
-                                                   self.button_remove_option,
-                                                   self.button_up_option,
-                                                   self.button_down_option,
-                                                   '<new JVM option {0}>')
+        self.class_path_list_editor           = ListWidgetEditor(self.label_class_path,
+                                                                 self.list_class_path,
+                                                                 self.label_class_path_help,
+                                                                 self.button_add_class_path_entry,
+                                                                 self.button_remove_class_path_entry,
+                                                                 self.button_up_class_path_entry,
+                                                                 self.button_down_class_path_entry,
+                                                                 '<new class path entry {0}>')
+        self.option_list_editor               = ListWidgetEditor(self.label_options,
+                                                                 self.list_options,
+                                                                 self.label_options_help,
+                                                                 self.button_add_option,
+                                                                 self.button_remove_option,
+                                                                 self.button_up_option,
+                                                                 self.button_down_option,
+                                                                 '<new JVM option {0}>')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the Java program [{name}] should be executed.')
+
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_JAVA_START_MODE)
-        self.combo_jar_file.clear()
-
-        for filename in self.wizard().available_files:
-            if filename.lower().endswith('.jar'):
-                self.combo_jar_file.addItem(filename)
-
-        if self.combo_jar_file.count() > 1:
-            self.combo_jar_file.clearEditText()
-
-        self.check_show_advanced_options.setCheckState(Qt.Unchecked)
-
+        self.combo_jar_file_selector.reset()
         self.class_path_list_editor.reset()
+        self.check_show_advanced_options.setCheckState(Qt.Unchecked)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
@@ -92,11 +93,11 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         start_mode = self.get_field('java.start_mode').toInt()[0]
 
         if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS and \
-           not self.edit_main_class_checker.valid:
+           not self.edit_main_class_checker.complete:
             return False
 
         if start_mode == Constants.JAVA_START_MODE_JAR_FILE and \
-           not self.combo_jar_file_checker.valid:
+           not self.combo_jar_file_selector.complete:
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
@@ -110,9 +111,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.label_main_class.setVisible(start_mode_main_class)
         self.edit_main_class.setVisible(start_mode_main_class)
         self.label_main_class_help.setVisible(start_mode_main_class)
-        self.label_jar_file.setVisible(start_mode_jar_file)
-        self.combo_jar_file.setVisible(start_mode_jar_file)
-        self.label_jar_file_help.setVisible(start_mode_jar_file)
+        self.combo_jar_file_selector.set_visible(start_mode_jar_file)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.option_list_editor.set_visible(show_advanced_options)
 

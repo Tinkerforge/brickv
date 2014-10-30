@@ -93,15 +93,15 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
         stderr_redirection = self.get_field('stderr_redirection').toInt()[0]
 
         if stdin_redirection == Constants.STDIN_REDIRECTION_FILE and \
-           not self.combo_stdin_file_checker.valid:
+           not self.combo_stdin_file_checker.complete:
             return False
 
         if stdout_redirection == Constants.STDOUT_REDIRECTION_FILE and \
-           not self.edit_stdout_file_checker.valid:
+           not self.edit_stdout_file_checker.complete:
             return False
 
         if stderr_redirection == Constants.STDERR_REDIRECTION_FILE and \
-           not self.edit_stderr_file_checker.valid:
+           not self.edit_stderr_file_checker.complete:
             return False
 
         return ProgramPage.isComplete(self)

@@ -38,39 +38,42 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
 
         self.registerField('csharp.version', self.combo_version)
         self.registerField('csharp.start_mode', self.combo_start_mode)
-        self.registerField('csharp.script_file', self.combo_script_file, 'currentText')
+        self.registerField('csharp.executable_file', self.combo_executable_file, 'currentText')
         self.registerField('csharp.working_directory', self.combo_working_directory, 'currentText')
 
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
-        self.combo_script_file_ending.currentIndexChanged.connect(self.update_ui_state)
 
-        self.combo_script_file_ending_checker = ComboBoxFileEndingChecker(self, self.combo_script_file, self.combo_script_file_ending)
-        self.combo_script_file_checker        = MandatoryEditableComboBoxChecker(self, self.combo_script_file, self.label_script_file)
-        self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
-
-        self.option_list_editor = ListWidgetEditor(self.label_options,
-                                                   self.list_options,
-                                                   self.label_options_help,
-                                                   self.button_add_option,
-                                                   self.button_remove_option,
-                                                   self.button_up_option,
-                                                   self.button_down_option,
-                                                   '<new Mono option {0}>')
+        self.combo_executable_file_selector   = MandatoryTypedFileSelector(self,
+                                                                           self.label_executable_file,
+                                                                           self.combo_executable_file,
+                                                                           self.label_executable_file_type,
+                                                                           self.combo_executable_file_type,
+                                                                           self.label_executable_file_help)
+        self.combo_working_directory_selector = MandatoryDirectorySelector(self,
+                                                                           self.combo_working_directory,
+                                                                           self.label_working_directory)
+        self.option_list_editor               = ListWidgetEditor(self.label_options,
+                                                                 self.list_options,
+                                                                 self.label_options_help,
+                                                                 self.button_add_option,
+                                                                 self.button_remove_option,
+                                                                 self.button_up_option,
+                                                                 self.button_down_option,
+                                                                 '<new Mono option {0}>')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the C# program [{name}] should be executed.')
+
         self.update_csharp_versions()
+
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_CSHARP_START_MODE)
-
-        if self.combo_script_file.count() > 1:
-            self.combo_script_file.clearEditText()
-
-        self.combo_script_file_ending_checker.check(False)
+        #if self.combo_executable_file.count() > 1:
+        #    self.combo_executable_file.clearEditText()
+        self.combo_executable_file_selector.reset()
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
-
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
@@ -85,7 +88,7 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
             return False
 
         if start_mode == Constants.CSHARP_START_MODE_EXECUTABLE and \
-           not self.combo_script_file_checker.valid:
+           not self.combo_executable_file_selector.complete:
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
@@ -112,15 +115,15 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
         self.wizard().script_manager.execute_script('mono_versions', cb_versions)
 
     def update_ui_state(self):
-        start_mode             = self.get_field('csharp.start_mode').toInt()[0]
-        start_mode_script_file = start_mode == Constants.CSHARP_START_MODE_EXECUTABLE
-        show_advanced_options  = self.check_show_advanced_options.checkState() == Qt.Checked
+        start_mode                 = self.get_field('csharp.start_mode').toInt()[0]
+        start_mode_executable_file = start_mode == Constants.CSHARP_START_MODE_EXECUTABLE
+        show_advanced_options      = self.check_show_advanced_options.checkState() == Qt.Checked
 
-        self.label_script_file.setVisible(start_mode_script_file)
-        self.label_script_file_ending.setVisible(start_mode_script_file)
-        self.combo_script_file.setVisible(start_mode_script_file)
-        self.combo_script_file_ending.setVisible(start_mode_script_file)
-        self.label_script_file_help.setVisible(start_mode_script_file)
+        self.label_executable_file.setVisible(start_mode_executable_file)
+        self.label_executable_file_type.setVisible(start_mode_executable_file)
+        self.combo_executable_file.setVisible(start_mode_executable_file)
+        self.combo_executable_file_type.setVisible(start_mode_executable_file)
+        self.label_executable_file_help.setVisible(start_mode_executable_file)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.option_list_editor.set_visible(show_advanced_options)
 
@@ -136,7 +139,7 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
         start_mode  = self.get_field('csharp.start_mode').toInt()[0]
 
         if start_mode == Constants.CSHARP_START_MODE_EXECUTABLE:
-            arguments.append(unicode(self.combo_script_file.currentText()))
+            arguments.append(unicode(self.combo_executable_file.currentText()))
 
         working_directory = unicode(self.get_field('csharp.working_directory').toString())
 

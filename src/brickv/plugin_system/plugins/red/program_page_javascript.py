@@ -24,9 +24,9 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtCore import QVariant
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
-from brickv.plugin_system.plugins.red.ui_program_page_javascript import Ui_ProgramPageJavascript
+from brickv.plugin_system.plugins.red.ui_program_page_javascript import Ui_ProgramPageJavaScript
 
-class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
+class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
     def __init__(self, title_prefix='', *args, **kwargs):
         ProgramPage.__init__(self, *args, **kwargs)
 
@@ -47,34 +47,37 @@ class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
-        self.combo_script_file_ending.currentIndexChanged.connect(self.update_ui_state)
 
-        self.combo_script_file_ending_checker = ComboBoxFileEndingChecker(self, self.combo_script_file, self.combo_script_file_ending)
-        self.combo_script_file_checker        = MandatoryEditableComboBoxChecker(self, self.combo_script_file, self.label_script_file)
-        self.edit_command_checker             = MandatoryLineEditChecker(self, self.edit_command, self.label_command)
-        self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
-
-        self.option_list_editor = ListWidgetEditor(self.label_options,
-                                                   self.list_options,
-                                                   self.label_options_help,
-                                                   self.button_add_option,
-                                                   self.button_remove_option,
-                                                   self.button_up_option,
-                                                   self.button_down_option,
-                                                   '<new Node.js option {0}>')
+        self.combo_script_file_selector       = MandatoryTypedFileSelector(self,
+                                                                           self.label_script_file,
+                                                                           self.combo_script_file,
+                                                                           self.label_script_file_type,
+                                                                           self.combo_script_file_type,
+                                                                           self.label_script_file_help)
+        self.edit_command_checker             = MandatoryLineEditChecker(self,
+                                                                         self.edit_command,
+                                                                         self.label_command)
+        self.combo_working_directory_selector = MandatoryDirectorySelector(self,
+                                                                           self.combo_working_directory,
+                                                                           self.label_working_directory)
+        self.option_list_editor               = ListWidgetEditor(self.label_options,
+                                                                 self.list_options,
+                                                                 self.label_options_help,
+                                                                 self.button_add_option,
+                                                                 self.button_remove_option,
+                                                                 self.button_up_option,
+                                                                 self.button_down_option,
+                                                                 '<new Node.js option {0}>')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the JavaScript program [{name}] should be executed.')
+
         self.update_javascript_versions()
+
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_JAVASCRIPT_START_MODE)
-
-        if self.combo_script_file.count() > 1:
-            self.combo_script_file.clearEditText()
-
-        self.combo_script_file_ending_checker.check(False)
+        self.combo_script_file_selector.reset()
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
-
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
@@ -91,11 +94,11 @@ class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
 
         if use_nodejs:
             if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE and \
-               not self.combo_script_file_checker.valid:
+               not self.combo_script_file_selector.complete:
                 return False
 
             if start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND and \
-               not self.edit_command_checker.valid:
+               not self.edit_command_checker.complete:
                 return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
@@ -133,11 +136,7 @@ class ProgramPageJavascript(ProgramPage, Ui_ProgramPageJavascript):
 
         self.label_start_mode.setVisible(use_nodejs)
         self.combo_start_mode.setVisible(use_nodejs)
-        self.label_script_file.setVisible(start_mode_script_file)
-        self.label_script_file_ending.setVisible(start_mode_script_file)
-        self.combo_script_file.setVisible(start_mode_script_file)
-        self.combo_script_file_ending.setVisible(start_mode_script_file)
-        self.label_script_file_help.setVisible(start_mode_script_file)
+        self.combo_script_file_selector.set_visible(start_mode_script_file)
         self.label_command.setVisible(start_mode_command)
         self.edit_command.setVisible(start_mode_command)
         self.label_command_help.setVisible(start_mode_command)

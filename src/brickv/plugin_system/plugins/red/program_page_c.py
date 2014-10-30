@@ -43,15 +43,14 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
         self.combo_file_checker               = MandatoryEditableComboBoxChecker(self, self.combo_file, self.label_file)
         self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
-
-        self.option_list_editor = ListWidgetEditor(self.label_options,
-                                                   self.list_options,
-                                                   self.label_options_help,
-                                                   self.button_add_option,
-                                                   self.button_remove_option,
-                                                   self.button_up_option,
-                                                   self.button_down_option,
-                                                   '<new Make option {0}>')
+        self.option_list_editor               = ListWidgetEditor(self.label_options,
+                                                                  self.list_options,
+                                                                  self.label_options_help,
+                                                                  self.button_add_option,
+                                                                  self.button_remove_option,
+                                                                  self.button_up_option,
+                                                                  self.button_down_option,
+                                                                  '<new Make option {0}>')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
@@ -72,7 +71,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
-        if not self.combo_file_checker.valid:
+        if not self.combo_file_checker.complete:
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)

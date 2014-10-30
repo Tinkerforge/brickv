@@ -86,8 +86,8 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
-        return self.edit_name_checker.valid and \
-               self.edit_identifier_checker.valid and \
+        return self.edit_name_checker.complete and \
+               self.edit_identifier_checker.complete and \
                self.identifier_is_unique and \
                self.get_field(Constants.FIELD_LANGUAGE).toInt()[0] != Constants.LANGUAGE_INVALID and \
                ProgramPage.isComplete(self)

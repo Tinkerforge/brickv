@@ -237,7 +237,7 @@
       </widget>
      </item>
      <item row="3" column="1" colspan="4">
-      <widget class="QComboBox" name="combo_script_file_ending">
+      <widget class="QComboBox" name="combo_script_file_type">
        <property name="currentIndex">
         <number>1</number>
        </property>
@@ -254,9 +254,9 @@
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QLabel" name="label_script_file_ending">
+      <widget class="QLabel" name="label_script_file_type">
        <property name="text">
-        <string>Script File Ending:</string>
+        <string>Script File Type:</string>
        </property>
       </widget>
      </item>

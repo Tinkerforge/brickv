@@ -81,7 +81,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         repeat_mode = self.get_field('repeat_mode').toInt()[0]
 
         if repeat_mode == Constants.REPEAT_MODE_CRON and \
-           not self.edit_repeat_fields_checker.valid:
+           not self.edit_repeat_fields_checker.complete:
                 return False
 
         return ProgramPage.isComplete(self)

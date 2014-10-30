@@ -64,17 +64,17 @@
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="label_script_file">
+      <widget class="QLabel" name="label_executable_file">
        <property name="text">
         <string>Executable:</string>
        </property>
        <property name="buddy">
-        <cstring>combo_script_file</cstring>
+        <cstring>combo_executable_file</cstring>
        </property>
       </widget>
      </item>
      <item row="2" column="1" colspan="4">
-      <widget class="QComboBox" name="combo_script_file">
+      <widget class="QComboBox" name="combo_executable_file">
        <property name="editable">
         <bool>true</bool>
        </property>
@@ -84,9 +84,9 @@
       </widget>
      </item>
      <item row="4" column="1" colspan="4">
-      <widget class="QLabel" name="label_script_file_help">
+      <widget class="QLabel" name="label_executable_file_help">
        <property name="text">
-        <string>The specified .NET Executable will be executed.</string>
+        <string>The specified .NET executable will be executed.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -181,7 +181,7 @@
       </widget>
      </item>
      <item row="3" column="1" colspan="4">
-      <widget class="QComboBox" name="combo_script_file_ending">
+      <widget class="QComboBox" name="combo_executable_file_type">
        <property name="currentIndex">
         <number>1</number>
        </property>
@@ -192,15 +192,15 @@
        </item>
        <item>
         <property name="text">
-         <string>.NET Executable (*.exe)</string>
+         <string>.NET executable (*.exe)</string>
         </property>
        </item>
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QLabel" name="label_script_file_ending">
+      <widget class="QLabel" name="label_executable_file_type">
        <property name="text">
-        <string>Executable Ending:</string>
+        <string>Executable Type:</string>
        </property>
       </widget>
      </item>
@@ -218,7 +218,7 @@
  <tabstops>
   <tabstop>combo_version</tabstop>
   <tabstop>combo_start_mode</tabstop>
-  <tabstop>combo_script_file</tabstop>
+  <tabstop>combo_executable_file</tabstop>
   <tabstop>check_show_advanced_options</tabstop>
   <tabstop>combo_working_directory</tabstop>
   <tabstop>list_options</tabstop>

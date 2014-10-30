@@ -120,7 +120,7 @@ class Constants:
         LANGUAGE_INVALID:    [],
         LANGUAGE_C:          [''],
         LANGUAGE_CSHARP:     ['', '.exe'],
-        LANGUAGE_JAVA:       [''],
+        LANGUAGE_JAVA:       ['', '.jar'],
         LANGUAGE_JAVASCRIPT: ['', '.js'],
         LANGUAGE_OCTAVE:     ['', '.m'],
         LANGUAGE_PERL:       ['', '.pl'],
@@ -585,12 +585,12 @@ class TreeWidgetEditor:
 
 
 class MandatoryLineEditChecker:
-    def __init__(self, page, edit, label, regexp=None):
-        self.page = page
-        self.edit = edit
-        self.label = label
-        self.regexp = None
-        self.valid = False
+    def __init__(self, page, edit, label, regexp=None): # FIXME: swap edit and label
+        self.page     = page
+        self.edit     = edit
+        self.label    = label
+        self.regexp   = None
+        self.complete = False
 
         if regexp != None:
             self.regexp = re.compile(regexp)
@@ -600,28 +600,28 @@ class MandatoryLineEditChecker:
         self.check(False)
 
     def check(self, emit):
-        was_valid = self.valid
+        was_complete = self.complete
         text = unicode(self.edit.text())
-        self.valid = len(text) > 0
+        self.complete = len(text) > 0
 
-        if self.valid and self.regexp != None:
-            self.valid = self.regexp.match(text) != None
+        if self.complete and self.regexp != None:
+            self.complete = self.regexp.match(text) != None
 
-        if self.valid:
+        if self.complete:
             self.label.setStyleSheet('')
         else:
             self.label.setStyleSheet('QLabel { color : red }')
 
-        if emit and was_valid != self.valid:
+        if emit and was_complete != self.complete:
             self.page.completeChanged.emit()
 
 
 class MandatoryEditableComboBoxChecker:
-    def __init__(self, page, combo, label):
-        self.page  = page
-        self.combo = combo
-        self.label = label
-        self.valid = False
+    def __init__(self, page, combo, label): # FIXME: swap combo and label
+        self.page     = page
+        self.combo    = combo
+        self.label    = label
+        self.complete = False
 
         self.combo.currentIndexChanged.connect(lambda: self.check(True))
         self.combo.editTextChanged.connect(lambda: self.check(True))
@@ -629,16 +629,46 @@ class MandatoryEditableComboBoxChecker:
         self.check(False)
 
     def check(self, emit):
-        was_valid = self.valid
-        self.valid = len(self.combo.currentText()) > 0
+        was_complete = self.complete
+        self.complete = len(self.combo.currentText()) > 0
 
-        if self.valid:
+        if self.complete:
             self.label.setStyleSheet('')
         else:
             self.label.setStyleSheet('QLabel { color : red }')
 
-        if emit and was_valid != self.valid:
+        if emit and was_complete != self.complete:
             self.page.completeChanged.emit()
+
+
+# expects the combo box to be editable
+class MandatoryTypedFileSelector:
+    def __init__(self, page, label_file, combo_file, label_type, combo_type, label_help):
+        self.page       = page
+        self.label_file = label_file
+        self.combo_file = combo_file
+        self.label_type = label_type
+        self.combo_type = combo_type
+        self.label_help = label_help
+
+        # FIXME
+        self.c1 = MandatoryEditableComboBoxChecker(page, combo_file, label_file)
+        self.c2 = ComboBoxFileEndingChecker(page, combo_file, combo_type)
+
+    def set_visible(self, visible):
+        self.label_file.setVisible(visible)
+        self.combo_file.setVisible(visible)
+        self.label_type.setVisible(visible)
+        self.combo_type.setVisible(visible)
+        self.label_help.setVisible(visible)
+
+    def reset(self):
+        self.c2.check(False)
+        self.combo_type.setCurrentIndex(1) # FIXME
+
+    @property
+    def complete(self):
+        return self.c1.complete
 
 
 # expects the combo box to be editable
@@ -681,7 +711,6 @@ class MandatoryDirectorySelector:
             self.page.completeChanged.emit()
 
 
-# FIXME: merge with MandatoryEditableComboBoxChecker into MandatoryFileSelector
 class ComboBoxFileEndingChecker:
     def __init__(self, page, combo_file, combo_ending):
         self.page         = page
@@ -692,6 +721,7 @@ class ComboBoxFileEndingChecker:
 
     def check(self, emit):
         self.combo_file.clear()
+        self.combo_file.clearEditText()
 
         ends = Constants.language_file_ending[self.page.language][self.combo_ending.currentIndex()]
 
@@ -701,3 +731,6 @@ class ComboBoxFileEndingChecker:
             for end in ends:
                 if filename.lower().endswith(end):
                     self.combo_file.addItem(filename)
+
+        if self.combo_file.count() > 1:
+            self.combo_file.clearEditText()

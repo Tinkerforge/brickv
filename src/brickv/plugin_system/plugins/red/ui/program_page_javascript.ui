@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ProgramPageJavascript</class>
- <widget class="QWidget" name="ProgramPageJavascript">
+ <class>ProgramPageJavaScript</class>
+ <widget class="QWidget" name="ProgramPageJavaScript">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -209,7 +209,7 @@
       </widget>
      </item>
      <item row="4" column="1" colspan="4">
-      <widget class="QComboBox" name="combo_script_file_ending">
+      <widget class="QComboBox" name="combo_script_file_type">
        <property name="currentIndex">
         <number>1</number>
        </property>
@@ -220,15 +220,15 @@
        </item>
        <item>
         <property name="text">
-         <string>JavaScript files (*.js)</string>
+         <string>Node.js files (*.js)</string>
         </property>
        </item>
       </widget>
      </item>
      <item row="4" column="0">
-      <widget class="QLabel" name="label_script_file_ending">
+      <widget class="QLabel" name="label_script_file_type">
        <property name="text">
-        <string>Script File Ending:</string>
+        <string>Script File Type:</string>
        </property>
       </widget>
      </item>

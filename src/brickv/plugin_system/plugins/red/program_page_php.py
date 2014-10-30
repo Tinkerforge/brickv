@@ -33,7 +33,7 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
         self.setupUi(self)
 
         self.setTitle(title_prefix + 'PHP Configuration')
-        
+
         self.language = Constants.LANGUAGE_PHP
 
         self.registerField('php.version', self.combo_version)
@@ -45,35 +45,38 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
-        self.combo_script_file_ending.currentIndexChanged.connect(self.update_ui_state)
 
-        self.combo_script_file_ending_checker = ComboBoxFileEndingChecker(self, self.combo_script_file, self.combo_script_file_ending)
-        self.combo_script_file_checker        = MandatoryEditableComboBoxChecker(self, self.combo_script_file, self.label_script_file)
-        self.edit_command_checker             = MandatoryLineEditChecker(self, self.edit_command, self.label_command)
-        self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
-
-        self.option_list_editor = ListWidgetEditor(self.label_options,
-                                                   self.list_options,
-                                                   self.label_options_help,
-                                                   self.button_add_option,
-                                                   self.button_remove_option,
-                                                   self.button_up_option,
-                                                   self.button_down_option,
-                                                   '<new PHP option {0}>')
+        self.combo_script_file_selector       = MandatoryTypedFileSelector(self,
+                                                                           self.label_script_file,
+                                                                           self.combo_script_file,
+                                                                           self.label_script_file_type,
+                                                                           self.combo_script_file_type,
+                                                                           self.label_script_file_help)
+        self.edit_command_checker             = MandatoryLineEditChecker(self,
+                                                                         self.edit_command,
+                                                                         self.label_command)
+        self.combo_working_directory_selector = MandatoryDirectorySelector(self,
+                                                                           self.combo_working_directory,
+                                                                           self.label_working_directory)
+        self.option_list_editor               = ListWidgetEditor(self.label_options,
+                                                                 self.list_options,
+                                                                 self.label_options_help,
+                                                                 self.button_add_option,
+                                                                 self.button_remove_option,
+                                                                 self.button_up_option,
+                                                                 self.button_down_option,
+                                                                 '<new PHP option {0}>')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle(u'Specify how the PHP program [{0}] should be executed.'
                          .format(unicode(self.get_field(Constants.FIELD_NAME).toString())))
+
         self.update_php_versions()
+
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PHP_START_MODE)
-
-        if self.combo_script_file.count() > 1:
-            self.combo_script_file.clearEditText()
-
-        self.combo_script_file_ending_checker.check(False)
+        self.combo_script_file_selector.reset()
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
-
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
@@ -88,11 +91,11 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
             return False
 
         if start_mode == Constants.PHP_START_MODE_SCRIPT_FILE and \
-           not self.combo_script_file_checker.valid:
+           not self.combo_script_file_selector.complete:
             return False
 
         if start_mode == Constants.PHP_START_MODE_COMMAND and \
-           not self.edit_command_checker.valid:
+           not self.edit_command_checker.complete:
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
@@ -117,18 +120,14 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
             self.completeChanged.emit()
 
         self.wizard().script_manager.execute_script('php_versions', cb_versions)
-        
+
     def update_ui_state(self):
         start_mode             = self.get_field('php.start_mode').toInt()[0]
         start_mode_script_file = start_mode == Constants.PHP_START_MODE_SCRIPT_FILE
         start_mode_command     = start_mode == Constants.PHP_START_MODE_COMMAND
         show_advanced_options  = self.check_show_advanced_options.checkState() == Qt.Checked
 
-        self.label_script_file.setVisible(start_mode_script_file)
-        self.label_script_file_ending.setVisible(start_mode_script_file)
-        self.combo_script_file.setVisible(start_mode_script_file)
-        self.combo_script_file_ending.setVisible(start_mode_script_file)
-        self.label_script_file_help.setVisible(start_mode_script_file)
+        self.combo_script_file_selector.set_visible(start_mode_script_file)
         self.label_command.setVisible(start_mode_command)
         self.edit_command.setVisible(start_mode_command)
         self.label_command_help.setVisible(start_mode_command)

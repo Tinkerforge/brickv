@@ -38,39 +38,40 @@ class ProgramPageVBNet(ProgramPage, Ui_ProgramPageVBNet):
 
         self.registerField('vbnet.version', self.combo_version)
         self.registerField('vbnet.start_mode', self.combo_start_mode)
-        self.registerField('vbnet.script_file', self.combo_script_file, 'currentText')
+        self.registerField('vbnet.executable_file', self.combo_executable_file, 'currentText')
         self.registerField('vbnet.working_directory', self.combo_working_directory, 'currentText')
 
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
-        self.combo_script_file_ending.currentIndexChanged.connect(self.update_ui_state)
 
-        self.combo_script_file_ending_checker = ComboBoxFileEndingChecker(self, self.combo_script_file, self.combo_script_file_ending)
-        self.combo_script_file_checker        = MandatoryEditableComboBoxChecker(self, self.combo_script_file, self.label_script_file)
-        self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
-
-        self.option_list_editor = ListWidgetEditor(self.label_options,
-                                                   self.list_options,
-                                                   self.label_options_help,
-                                                   self.button_add_option,
-                                                   self.button_remove_option,
-                                                   self.button_up_option,
-                                                   self.button_down_option,
-                                                   '<new Mono option {0}>')
+        self.combo_executable_file_selector   = MandatoryTypedFileSelector(self,
+                                                                           self.label_executable_file,
+                                                                           self.combo_executable_file,
+                                                                           self.label_executable_file_type,
+                                                                           self.combo_executable_file_type,
+                                                                           self.label_executable_file_help)
+        self.combo_working_directory_selector = MandatoryDirectorySelector(self,
+                                                                           self.combo_working_directory,
+                                                                           self.label_working_directory)
+        self.option_list_editor               = ListWidgetEditor(self.label_options,
+                                                                 self.list_options,
+                                                                 self.label_options_help,
+                                                                 self.button_add_option,
+                                                                 self.button_remove_option,
+                                                                 self.button_up_option,
+                                                                 self.button_down_option,
+                                                                 '<new Mono option {0}>')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the Visual Basic .NET program [{name}] should be executed.')
+
         self.update_vbnet_versions()
+
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_VBNET_START_MODE)
-
-        if self.combo_script_file.count() > 1:
-            self.combo_script_file.clearEditText()
-
-        self.combo_script_file_ending_checker.check(False)
+        self.combo_executable_file_selector.reset()
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
-
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
@@ -85,7 +86,7 @@ class ProgramPageVBNet(ProgramPage, Ui_ProgramPageVBNet):
             return False
 
         if start_mode == Constants.VBNET_START_MODE_EXECUTABLE and \
-           not self.combo_script_file_checker.valid:
+           not self.combo_executable_file_selector.complete:
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
@@ -112,15 +113,11 @@ class ProgramPageVBNet(ProgramPage, Ui_ProgramPageVBNet):
         self.wizard().script_manager.execute_script('mono_versions', cb_versions)
         
     def update_ui_state(self):
-        start_mode             = self.get_field('vbnet.start_mode').toInt()[0]
-        start_mode_script_file = start_mode == Constants.VBNET_START_MODE_EXECUTABLE
-        show_advanced_options  = self.check_show_advanced_options.checkState() == Qt.Checked
+        start_mode                 = self.get_field('vbnet.start_mode').toInt()[0]
+        start_mode_executable_file = start_mode == Constants.VBNET_START_MODE_EXECUTABLE
+        show_advanced_options      = self.check_show_advanced_options.checkState() == Qt.Checked
 
-        self.label_script_file.setVisible(start_mode_script_file)
-        self.label_script_file_ending.setVisible(start_mode_script_file)
-        self.combo_script_file.setVisible(start_mode_script_file)
-        self.combo_script_file_ending.setVisible(start_mode_script_file)
-        self.label_script_file_help.setVisible(start_mode_script_file)
+        self.combo_executable_file_selector.set_visible(start_mode_executable_file)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.option_list_editor.set_visible(show_advanced_options)
 
@@ -136,7 +133,7 @@ class ProgramPageVBNet(ProgramPage, Ui_ProgramPageVBNet):
         start_mode  = self.get_field('vbnet.start_mode').toInt()[0]
 
         if start_mode == Constants.VBNET_START_MODE_EXECUTABLE:
-            arguments.append(unicode(self.combo_script_file.currentText()))
+            arguments.append(unicode(self.combo_executable_file.currentText()))
 
         working_directory = unicode(self.get_field('vbnet.working_directory').toString())
 

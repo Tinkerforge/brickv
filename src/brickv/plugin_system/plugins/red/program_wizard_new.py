@@ -31,7 +31,7 @@ from brickv.plugin_system.plugins.red.program_page_files import ProgramPageFiles
 from brickv.plugin_system.plugins.red.program_page_c import ProgramPageC
 from brickv.plugin_system.plugins.red.program_page_csharp import ProgramPageCSharp
 from brickv.plugin_system.plugins.red.program_page_java import ProgramPageJava
-from brickv.plugin_system.plugins.red.program_page_javascript import ProgramPageJavascript
+from brickv.plugin_system.plugins.red.program_page_javascript import ProgramPageJavaScript
 from brickv.plugin_system.plugins.red.program_page_octave import ProgramPageOctave
 from brickv.plugin_system.plugins.red.program_page_perl import ProgramPagePerl
 from brickv.plugin_system.plugins.red.program_page_php import ProgramPagePHP
@@ -56,7 +56,7 @@ class ProgramWizardNew(ProgramWizard):
         self.setPage(Constants.PAGE_C,          ProgramPageC(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_CSHARP,     ProgramPageCSharp(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_JAVA,       ProgramPageJava(title_prefix='Step 3 or 8: '))
-        self.setPage(Constants.PAGE_JAVASCRIPT, ProgramPageJavascript(title_prefix='Step 3 or 8: '))
+        self.setPage(Constants.PAGE_JAVASCRIPT, ProgramPageJavaScript(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_OCTAVE,     ProgramPageOctave(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_PERL,       ProgramPagePerl(title_prefix='Step 3 or 8: '))
         self.setPage(Constants.PAGE_PHP,        ProgramPagePHP(title_prefix='Step 3 or 8: '))
