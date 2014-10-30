@@ -59,7 +59,7 @@ class ScriptManager:
             self.scripts[key] = Script(value.script, value.file_ending)
 
     def destroy(self):
-        # ensure to release of REDObjects
+        # ensure to release all REDObjects
         self.devnull.release()
         self.scripts = {}
 
@@ -97,17 +97,22 @@ class ScriptManager:
         if self.scripts[script_name].copied:
             return self._execute_after_init(script_name, callback, params, max_len)
 
-        red_file = REDFile(self.session)
-        async_call(red_file.open, (os.path.join(SCRIPT_FOLDER, script_name + self.scripts[script_name].file_ending), REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0755, 0, 0), lambda x: self._init_script_open_file(script_name, callback, params, max_len, x), lambda: self._init_script_open_file_error(script_name, callback, params, max_len))
+        self.scripts[script_name].file = REDFile(self.session)
+        async_call(self.scripts[script_name].file.open,
+                   (os.path.join(SCRIPT_FOLDER, script_name + self.scripts[script_name].file_ending),
+                    REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0755, 0, 0),
+                   lambda x: self._init_script_open_file(script_name, callback, params, max_len, x),
+                   lambda: self._init_script_open_file_error(script_name, callback, params, max_len))
 
     def _init_script_open_file_error(self, script_name, callback, params, max_len):
         ScriptManager._call(self.scripts[script_name], callback, None)
 
     def _init_script_open_file(self, script_name, callback, params, max_len, red_file):
-        red_file.write_async(self.scripts[script_name].script, lambda async_write_error: self._init_script_done(async_write_error, red_file, script_name, callback, params, max_len))
+        self.scripts[script_name].file.write_async(self.scripts[script_name].script,
+                                                   lambda async_write_error: self._init_script_done(async_write_error, script_name, callback, params, max_len))
 
-    def _init_script_done(self, async_write_error, red_file, script_name, callback, params, max_len):
-        red_file.release()
+    def _init_script_done(self, async_write_error, script_name, callback, params, max_len):
+        self.scripts[script_name].file.release()
 
         if async_write_error == None:
             try:
@@ -129,7 +134,7 @@ class ScriptManager:
             if red_process.state == REDProcess.STATE_ERROR:
                 ScriptManager._call(self.scripts[script_name], callback, None)
                 try:
-                    red_process.release()
+                    self.scripts[script_name].process.release()
                     self.scripts[script_name].stdout.release()
                     self.scripts[script_name].stderr.release()
                 except:
@@ -140,7 +145,7 @@ class ScriptManager:
                         ScriptManager._call(self.scripts[script_name], callback, None)
 
                         try:
-                            red_process.release()
+                            self.scripts[script_name].process.release()
                             self.scripts[script_name].stdout.release()
                             self.scripts[script_name].stderr.release()
                         except:
@@ -153,7 +158,7 @@ class ScriptManager:
                             ScriptManager._call(self.scripts[script_name], callback, None)
 
                         try:
-                            red_process.release()
+                            self.scripts[script_name].process.release()
                             self.scripts[script_name].stdout.release()
                             self.scripts[script_name].stderr.release()
                         except:
@@ -167,8 +172,9 @@ class ScriptManager:
 
                 self.scripts[script_name].stdout.read_async(max_len, cb_stdout_data)
 
-        red_process = REDProcess(self.session)
-        red_process.state_changed_callback = state_changed
+        self.scripts[script_name].process = REDProcess(self.session)
+        self.scripts[script_name].process.state_changed_callback = state_changed
 
         # FIXME: Do we need a timeout here in case that the state_changed callback never comes?
-        red_process.spawn(os.path.join(SCRIPT_FOLDER, script_name + self.scripts[script_name].file_ending), params, [], '/', 0, 0, self.devnull, self.scripts[script_name].stdout, self.scripts[script_name].stderr)
+        self.scripts[script_name].process.spawn(os.path.join(SCRIPT_FOLDER, script_name + self.scripts[script_name].file_ending),
+                                                params, [], '/', 0, 0, self.devnull, self.scripts[script_name].stdout, self.scripts[script_name].stderr)

@@ -125,7 +125,9 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
     def refresh_logs(self):
         def cb_program_get_os_walk(result):
             self.logs_refresh_in_progress = False
-            if result.stderr != "":
+
+            if result == None or result.stderr != "":
+                self.update_ui_state()
                 # TODO: Error popup for user?
                 print result
                 return
@@ -288,7 +290,9 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
     def refresh_files(self):
         def cb_directory_walk(result):
-            if len(result.stderr) > 0:
+            if result == None or len(result.stderr) > 0:
+                self.files_refresh_in_progress = False
+                self.update_ui_state()
                 return # FIXME: report error
 
             def expand_async(data):

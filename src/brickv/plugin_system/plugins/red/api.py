@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 from collections import namedtuple
 import functools
 import traceback
+import weakref
 from PyQt4 import QtCore
 from brickv.bindings.brick_red import BrickRED
 
@@ -109,30 +110,66 @@ class REDError(Exception):
     def error_code(self): return self._error_code
 
 
+class WeakMethod:
+    def __init__(self, method):
+        self.target_ref = weakref.ref(method.__self__)
+        self.method_ref = weakref.ref(method.__func__)
+
+    def __call__(self, *args, **kwargs):
+        target = self.target_ref()
+        method = self.method_ref()
+
+        if target == None or method == None:
+            return None
+        else:
+            return method(target, *args, **kwargs)
+
+    def alive(self):
+        return self.target_ref() != None and self.method_ref() != None
+
+
 class REDBrick(BrickRED):
     def __init__(self, *args):
         BrickRED.__init__(self, *args)
 
-        self._added_callbacks = {}
+        self._active_callbacks = {}
 
     def _dispatch_callback(self, callback_id, *args, **kwargs):
-        for callback_function in self._added_callbacks[callback_id]:
-            try:
-                callback_function(*args, **kwargs)
-            except:
-                traceback.print_exc()
+        callbacks_still_alive = []
+
+        for callback_function in self._active_callbacks[callback_id]:
+            if callback_function.alive():
+                callbacks_still_alive.append(callback_function)
+
+                try:
+                    callback_function(*args, **kwargs)
+                except:
+                    traceback.print_exc()
+
+        self._active_callbacks[callback_id] = callbacks_still_alive
 
     def add_callback(self, callback_id, callback_function):
-        if callback_id in self._added_callbacks:
-            self._added_callbacks[callback_id].append(callback_function)
+        if callback_id in self._active_callbacks:
+            self._active_callbacks[callback_id].append(WeakMethod(callback_function))
         else:
-            self._added_callbacks[callback_id] = [callback_function]
+            self._active_callbacks[callback_id] = [WeakMethod(callback_function)]
 
             self.register_callback(callback_id, functools.partial(self._dispatch_callback, callback_id))
 
-    def remove_callbacks(self):
+    def remove_callback(self, callback_id, callback_function):
+        if callback_id not in self._active_callbacks:
+            return
+
+        try:
+            i = self._active_callbacks[callback_id].index(callback_function)
+        except ValueError:
+            return
+
+        self._active_callbacks[callback_id].pop(i)
+
+    def remove_all_callbacks(self):
         self.registered_callbacks = {}
-        self._added_callbacks = {}
+        self._active_callbacks = {}
 
 
 class REDSession(QtCore.QObject):
@@ -183,7 +220,7 @@ class REDSession(QtCore.QObject):
         self._keep_alive_timer.stop()
 
         # ensure to remove references to REDObject via their added callback methods
-        self._brick.remove_callbacks()
+        self._brick.remove_all_callbacks()
 
         session_id = self._session_id
         self._session_id = None
@@ -220,6 +257,26 @@ def _attach_or_release(session, object_class, object_id, extra_object_ids_to_rel
     return obj
 
 
+class REDObjectReleaser:
+    def __init__(self, object, object_id, session):
+        self._object_ref  = weakref.ref(object, self.release)
+        self._object_id   = object_id
+        self._session     = session
+        self.armed        = True
+
+    def release(self, ref):
+        if not self.armed:
+            return
+
+        # only release object if the session was not already expired
+        if self._session._session_id is not None:
+            try:
+                self._session._brick.release_object_unchecked(self._object_id, self._session._session_id)
+            except:
+                # ignoring IPConnection-level error
+                traceback.print_exc()
+
+
 class REDObject(QtCore.QObject):
     TYPE_STRING    = BrickRED.OBJECT_TYPE_STRING
     TYPE_LIST      = BrickRED.OBJECT_TYPE_LIST
@@ -233,44 +290,51 @@ class REDObject(QtCore.QObject):
     def __init__(self, session):
         QtCore.QObject.__init__(self)
 
-        self._session = session
-        self._object_id = None
+        self._session    = session
+        self._releaser   = None
+        self.__object_id = None # make object_id private, to ensure that it
+                                # is only manipulated via attach/detach
 
         self._initialize()
 
-    def __del__(self):
-        self.release()
-
     def __repr__(self):
-        return '<REDObject object_id: {0}>'.format(self._object_id)
+        return '<REDObject object_id: {0}>'.format(self.__object_id)
 
     def _initialize(self):
         raise NotImplementedError()
 
-    def _set_object_id(self, object_id):
-        if self._object_id is not None:
-            raise RuntimeError('Cannot overwrite object ID')
+    def _attach_callbacks(self):
+        raise NotImplementedError()
 
-        self._object_id = object_id
+    def _detach_callbacks(self):
+        raise NotImplementedError()
 
     def update(self):
         raise NotImplementedError()
 
-    def attach(self, object_id):
+    def attach(self, object_id, update=True):
         self.release()
 
-        self._set_object_id(object_id)
+        self._releaser   = REDObjectReleaser(self, object_id, self._session)
+        self.__object_id = object_id
 
-        self.update()
+        self._attach_callbacks()
+
+        if update:
+            self.update()
 
         return self
 
     def detach(self):
-        if self._object_id is None:
+        if self.__object_id is None:
             raise RuntimeError('Cannot detach unattached object')
 
-        object_id = self._object_id
-        self._object_id = None
+        self._detach_callbacks()
+
+        self._releaser.armed = False
+        self._releaser       = None
+        object_id            = self.__object_id
+        self.__object_id     = None
 
         self._initialize()
 
@@ -278,7 +342,7 @@ class REDObject(QtCore.QObject):
 
     # don't call this method with async_call, this is already non-blocking
     def release(self):
-        if self._object_id is None:
+        if self.__object_id is None:
             # releasing an unattached object is allowed and does nothing
             return
 
@@ -295,7 +359,7 @@ class REDObject(QtCore.QObject):
     @property
     def session(self):   return self._session
     @property
-    def object_id(self): return self._object_id
+    def object_id(self): return self.__object_id
 
 
 class REDString(REDObject):
@@ -310,27 +374,33 @@ class REDString(REDObject):
         return self._data
 
     def __repr__(self):
-        return '<REDString object_id: {0}, data: {1}>'.format(self._object_id, repr(self._data))
+        return '<REDString object_id: {0}, data: {1}>'.format(self.object_id, repr(self._data))
 
     def _initialize(self):
         self._data = None # stored as unicode
 
+    def _attach_callbacks(self):
+        pass
+
+    def _detach_callbacks(self):
+        pass
+
     def update(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached string object')
 
-        error_code, length = self._session._brick.get_string_length(self._object_id)
+        error_code, length = self._session._brick.get_string_length(self.object_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get length of string object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get length of string object {0}'.format(self.object_id), error_code)
 
         data_utf8 = ''
 
         while len(data_utf8) < length:
-            error_code, chunk = self._session._brick.get_string_chunk(self._object_id, len(data_utf8))
+            error_code, chunk = self._session._brick.get_string_chunk(self.object_id, len(data_utf8))
 
             if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not get chunk of string object {0} at offset {1}'.format(self._object_id, len(data_utf8)), error_code)
+                raise REDError('Could not get chunk of string object {0} at offset {1}'.format(self.object_id, len(data_utf8)), error_code)
 
             data_utf8 += chunk
 
@@ -339,8 +409,8 @@ class REDString(REDObject):
     def allocate(self, data):
         self.release()
 
-        data_utf8 = unicode(data).encode('utf-8')
-        chunk = data_utf8[:REDString.MAX_ALLOCATE_BUFFER_LENGTH]
+        data_utf8      = unicode(data).encode('utf-8')
+        chunk          = data_utf8[:REDString.MAX_ALLOCATE_BUFFER_LENGTH]
         remaining_data = data_utf8[REDString.MAX_ALLOCATE_BUFFER_LENGTH:]
 
         error_code, object_id = self._session._brick.allocate_string(len(data_utf8), chunk, self._session._session_id)
@@ -348,18 +418,18 @@ class REDString(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not allocate string object', error_code)
 
-        self._set_object_id(object_id)
+        self.attach(object_id, False)
 
         offset = len(chunk)
 
         while len(remaining_data) > 0:
-            chunk = remaining_data[:REDString.MAX_SET_CHUNK_BUFFER_LENGTH]
+            chunk          = remaining_data[:REDString.MAX_SET_CHUNK_BUFFER_LENGTH]
             remaining_data = remaining_data[REDString.MAX_SET_CHUNK_BUFFER_LENGTH:]
 
-            error_code = self._session._brick.set_string_chunk(self._object_id, offset, chunk)
+            error_code = self._session._brick.set_string_chunk(self.object_id, offset, chunk)
 
             if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not set chunk of string object {0} at offset {1}'.format(self._object_id, offset), error_code)
+                raise REDError('Could not set chunk of string object {0} at offset {1}'.format(self.object_id, offset), error_code)
 
             offset += len(chunk)
 
@@ -373,32 +443,38 @@ class REDString(REDObject):
 
 class REDList(REDObject):
     def __repr__(self):
-        return '<REDList object_id: {0}>'.format(self._object_id)
+        return '<REDList object_id: {0}>'.format(self.object_id)
 
     def _initialize(self):
         self._items = None
 
+    def _attach_callbacks(self):
+        pass
+
+    def _detach_callbacks(self):
+        pass
+
     def update(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached list object')
 
-        error_code, length = self._session._brick.get_list_length(self._object_id)
+        error_code, length = self._session._brick.get_list_length(self.object_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get length of list object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get length of list object {0}'.format(self.object_id), error_code)
 
         items = []
 
         for i in range(length):
-            error_code, item_object_id, type = self._session._brick.get_list_item(self._object_id, i, self._session._session_id)
+            error_code, item_object_id, type = self._session._brick.get_list_item(self.object_id, i, self._session._session_id)
 
             if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not get item at index {0} of list object {1}'.format(i, self._object_id), error_code)
+                raise REDError('Could not get item at index {0} of list object {1}'.format(i, self.object_id), error_code)
 
             try:
                 wrapper_class = REDObject._subclasses[type]
             except KeyError:
-                raise TypeError('List object {0} contains item with unknown type {1} at index {2}'.format(self._object_id, type, i))
+                raise TypeError('List object {0} contains item with unknown type {1} at index {2}'.format(self.object_id, type, i))
 
             items.append(_attach_or_release(self._session, wrapper_class, item_object_id))
 
@@ -412,18 +488,18 @@ class REDList(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not allocate list object', error_code)
 
-        self._set_object_id(object_id)
+        self.attach(object_id, False)
 
         for item in items:
             if isinstance(item, str) or isinstance(item, unicode):
                 item = REDString(self._session).allocate(item)
             elif not isinstance(item, REDObject):
-                raise TypeError('Cannot append {0} item to list object {1}'.format(type(item), self._object_id))
+                raise TypeError('Cannot append {0} item to list object {1}'.format(type(item), self.object_id))
 
-            error_code = self._session._brick.append_to_list(self._object_id, item._object_id)
+            error_code = self._session._brick.append_to_list(self.object_id, item.object_id)
 
             if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not append item {0} to list object {1}'.format(item._object_id, self._object_id), error_code)
+                raise REDError('Could not append item {0} to list object {1}'.format(item.object_id, self.object_id), error_code)
 
         self._items = items
 
@@ -434,11 +510,12 @@ class REDList(REDObject):
 
 
 def _get_zero_padded_chunk(data, max_chunk_length, start = 0):
-    chunk = data[start:start + max_chunk_length]
+    chunk        = data[start:start + max_chunk_length]
     chunk_length = len(chunk)
-    chunk += b'\0'*(max_chunk_length - chunk_length)
+    chunk       += b'\0'*(max_chunk_length - chunk_length)
 
     return chunk, chunk_length
+
 
 class REDFileBase(REDObject):
     class WriteAsyncData(QtCore.QObject):
@@ -493,28 +570,31 @@ class REDFileBase(REDObject):
     # Number of chunks written in one async read/write burst
     ASYNC_BURST_CHUNKS = 2000
 
-    def __init__(self, *args):
-        REDObject.__init__(self, *args)
+    def _initialize(self):
+        self._type               = None
+        self._name               = None
+        self._flags              = None
+        self._permissions        = None
+        self._uid                = None
+        self._gid                = None
+        self._length             = None
+        self._access_time        = None
+        self._modification_time  = None
+        self._status_change_time = None
+        self._write_async_data   = None
+        self._read_async_data    = None
 
+    def _attach_callbacks(self):
         self._session._brick.add_callback(REDBrick.CALLBACK_ASYNC_FILE_WRITE,
                                           self._cb_async_file_write)
         self._session._brick.add_callback(REDBrick.CALLBACK_ASYNC_FILE_READ,
                                           self._cb_async_file_read)
 
-    def _initialize(self):
-        self._type = None
-        self._name = None
-        self._flags = None
-        self._permissions = None
-        self._uid = None
-        self._gid = None
-        self._length = None
-        self._access_time = None
-        self._modification_time = None
-        self._status_change_time = None
-
-        self._write_async_data = None
-        self._read_async_data = None
+    def _detach_callbacks(self):
+        self._session._brick.remove_callback(REDBrick.CALLBACK_ASYNC_FILE_WRITE,
+                                             self._cb_async_file_write)
+        self._session._brick.remove_callback(REDBrick.CALLBACK_ASYNC_FILE_READ,
+                                             self._cb_async_file_read)
 
     # Unset all of the temporary async data in case of error.
     def _report_write_async_error(self, error):
@@ -522,12 +602,12 @@ class REDFileBase(REDObject):
         self._write_async_data = None
 
     def _cb_async_file_write(self, file_id, error_code, length_written):
-        if self._object_id != file_id:
+        if self.object_id != file_id:
             return
 
         if error_code != REDError.E_SUCCESS:
             # FIXME: recover seek position on error after successful call?
-            self._report_write_async_error(REDError('Could not write to file object {0}'.format(self._object_id), error_code))
+            self._report_write_async_error(REDError('Could not write to file object {0}'.format(self.object_id), error_code))
             return
 
         # Remove data of async call. Data of unchecked writes has been removed already.
@@ -552,7 +632,7 @@ class REDFileBase(REDObject):
                                                             self._write_async_data.written)
 
             try:
-                self._session._brick.write_file_unchecked(self._object_id, chunk, length_to_write)
+                self._session._brick.write_file_unchecked(self.object_id, chunk, length_to_write)
             except Exception as e:
                 self._report_write_async_error(e)
                 return
@@ -566,7 +646,7 @@ class REDFileBase(REDObject):
 
         try:
             # FIXME: Do we need a timeout here for the case that no callback comes?
-            self._session._brick.write_file_async(self._object_id, chunk, length_to_write)
+            self._session._brick.write_file_async(self.object_id, chunk, length_to_write)
         except Exception as e:
             self._report_write_async_error(e)
 
@@ -575,11 +655,11 @@ class REDFileBase(REDObject):
         self._read_async_data = None
 
     def _cb_async_file_read(self, file_id, error_code, buf, length_read):
-        if self._object_id != file_id:
+        if self.object_id != file_id:
             return
 
         if error_code != REDError.E_SUCCESS:
-            self._report_read_async_error(REDError('Could not read file object {0}'.format(self._object_id), error_code))
+            self._report_read_async_error(REDError('Could not read file object {0}'.format(self.object_id), error_code))
             return
 
         if length_read > 0:
@@ -595,14 +675,14 @@ class REDFileBase(REDObject):
             self._report_read_async_error(None)
 
     def update(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached file object')
 
         error_code, type, name_string_id, flags, permissions, uid, gid, \
-        length, access_time, modification_time, status_change_time = self._session._brick.get_file_info(self._object_id, self._session._session_id)
+        length, access_time, modification_time, status_change_time = self._session._brick.get_file_info(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get information for file object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get information for file object {0}'.format(self.object_id), error_code)
 
         self._type = type
 
@@ -611,17 +691,17 @@ class REDFileBase(REDObject):
         else:
             self._name = _attach_or_release(self._session, REDString, name_string_id)
 
-        self._flags = flags
-        self._permissions = permissions
-        self._uid = uid
-        self._gid = gid
-        self._length = length
-        self._access_time = access_time
-        self._modification_time = modification_time
+        self._flags              = flags
+        self._permissions        = permissions
+        self._uid                = uid
+        self._gid                = gid
+        self._length             = length
+        self._access_time        = access_time
+        self._modification_time  = modification_time
         self._status_change_time = status_change_time
 
     def write(self, data):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot write to unattached file object')
 
         remaining_data = bytearray(data)
@@ -630,16 +710,16 @@ class REDFileBase(REDObject):
             chunk, length_to_write = _get_zero_padded_chunk(remaining_data,
                                                             REDFileBase.MAX_WRITE_BUFFER_LENGTH)
 
-            error_code, length_written = self._session._brick.write_file(self._object_id, chunk, length_to_write)
+            error_code, length_written = self._session._brick.write_file(self.object_id, chunk, length_to_write)
 
             if error_code != REDError.E_SUCCESS:
                 # FIXME: recover seek position on error after successful call?
-                raise REDError('Could not write to file object {0}'.format(self._object_id), error_code)
+                raise REDError('Could not write to file object {0}'.format(self.object_id), error_code)
 
             remaining_data = remaining_data[length_written:]
 
     def write_async(self, data, callback_error=None, callback_status=None):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot write to unattached file object')
 
         if self._write_async_data is not None:
@@ -650,7 +730,7 @@ class REDFileBase(REDObject):
         self._next_write_async_burst()
 
     def read(self, length):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot read from unattached file object')
 
         data = bytearray()
@@ -658,11 +738,11 @@ class REDFileBase(REDObject):
         while length > 0:
             length_to_read = min(length, REDFileBase.MAX_READ_BUFFER_LENGTH)
 
-            error_code, chunk, length_read = self._session._brick.read_file(self._object_id, length_to_read)
+            error_code, chunk, length_read = self._session._brick.read_file(self.object_id, length_to_read)
 
             if error_code != REDError.E_SUCCESS:
                 # FIXME: recover seek position on error after successful call?
-                raise REDError('Could not read from file object {0}'.format(self._object_id), error_code)
+                raise REDError('Could not read from file object {0}'.format(self.object_id), error_code)
 
             if length_read == 0:
                 break
@@ -674,14 +754,14 @@ class REDFileBase(REDObject):
 
     # calls "callback" with data of length min("length_max", "length_of_file")
     def read_async(self, length_max, callback, callback_status = None):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot write to unattached file object')
 
         if self._read_async_data is not None:
             raise RuntimeError('Another asynchronous write is already in progress')
 
         self._read_async_data = REDFileBase.ReadAsyncData(bytearray(), length_max, callback_status, callback)
-        self._session._brick.read_file_async(self._object_id, length_max)
+        self._session._brick.read_file_async(self.object_id, length_max)
 
     @property
     def type(self):               return self._type
@@ -717,7 +797,7 @@ class REDFile(REDFileBase):
     FLAG_TEMPORARY    = BrickRED.FILE_FLAG_TEMPORARY
 
     def __repr__(self):
-        return '<REDFile object_id: {0}, name: {1}>'.format(self._object_id, repr(self._name))
+        return '<REDFile object_id: {0}, name: {1}>'.format(self.object_id, repr(self._name))
 
     def open(self, name, flags, permissions, uid, gid):
         self.release()
@@ -725,14 +805,12 @@ class REDFile(REDFileBase):
         if not isinstance(name, REDString):
             name = REDString(self._session).allocate(name)
 
-        error_code, object_id = self._session._brick.open_file(name._object_id, flags, permissions, uid, gid, self._session._session_id)
+        error_code, object_id = self._session._brick.open_file(name.object_id, flags, permissions, uid, gid, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not open file object', error_code)
 
-        self._set_object_id(object_id)
-
-        self.update()
+        self.attach(object_id)
 
         return self
 
@@ -742,7 +820,7 @@ class REDPipe(REDFileBase):
     FLAG_NON_BLOCKING_WRITE = BrickRED.PIPE_FLAG_NON_BLOCKING_WRITE
 
     def __repr__(self):
-        return '<REDPipe object_id: {0}>'.format(self._object_id)
+        return '<REDPipe object_id: {0}>'.format(self.object_id)
 
     def create(self, flags, length):
         self.release()
@@ -752,32 +830,36 @@ class REDPipe(REDFileBase):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not create pipe object', error_code)
 
-        self._set_object_id(object_id)
-
-        self.update()
+        self.attach(object_id)
 
         return self
 
 
-class REDFileOrPipeAttacher:
+class REDFileOrPipeAttacher(REDObject):
     def __repr__(self):
-        return '<REDFileOrPipeAttacher object_id: {0}>'.format(self._object_id)
+        return '<REDFileOrPipeAttacher object_id: {0}>'.format(self.object_id)
 
     def _initialize(self):
+        pass
+
+    def _attach_callbacks(self):
+        pass
+
+    def _detach_callbacks(self):
         pass
 
     def attach(self, object_id):
         self.release()
 
-        self._set_object_id(object_id)
+        REDObject.attach(object_id, False)
 
-        error_code, type, name_string_id, _, _, _, _, _, _, _, _ = self._session._brick.get_file_info(self._object_id, self._session._session_id)
+        error_code, type, name_string_id, _, _, _, _, _, _, _, _ = self._session._brick.get_file_info(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get information for file object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get information for file object {0}'.format(self.object_id), error_code)
 
         if type == REDFileBase.TYPE_PIPE:
-            obj = _attach_or_release(self._session, REDPipe, self._object_id)
+            obj = _attach_or_release(self._session, REDPipe, self.object_id)
         else:
             try:
                 self._session._brick.release_object_unchecked(name_string_id, self._session._session_id)
@@ -785,7 +867,7 @@ class REDFileOrPipeAttacher:
                 # ignoring IPConnection-level error
                 traceback.print_exc()
 
-            obj = _attach_or_release(self._session, REDFile, self._object_id)
+            obj = _attach_or_release(self._session, REDFile, self.object_id)
 
         self.detach()
 
@@ -830,41 +912,41 @@ class REDDirectory(REDObject):
     ENTRY_TYPE_SOCKET    = BrickRED.DIRECTORY_ENTRY_TYPE_SOCKET
 
     def __repr__(self):
-        return '<REDDirectory object_id: {0}, name: {1}>'.format(self._object_id, repr(self._name))
+        return '<REDDirectory object_id: {0}, name: {1}>'.format(self.object_id, repr(self._name))
 
     def _initialize(self):
         self._name = None
         self._entries = None
 
     def update(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached directory object')
 
         # get name
-        error_code, name_string_id = self._session._brick.get_directory_name(self._object_id, self._session._session_id)
+        error_code, name_string_id = self._session._brick.get_directory_name(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get name of directory object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get name of directory object {0}'.format(self.object_id), error_code)
 
         self._name = _attach_or_release(self._session, REDString, name_string_id)
 
         # rewind
-        error_code = self._session._brick.rewind_directory(self._object_id)
+        error_code = self._session._brick.rewind_directory(self.object_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not rewind directory object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not rewind directory object {0}'.format(self.object_id), error_code)
 
         # get entries
         entries = []
 
         while True:
-            error_code, name_string_id, type = self._session._brick.get_next_directory_entry(self._object_id, self._session._session_id)
+            error_code, name_string_id, type = self._session._brick.get_next_directory_entry(self.object_id, self._session._session_id)
 
             if error_code == REDError.E_NO_MORE_DATA:
                 break
 
             if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not get next entry of directory object {0}'.format(self._object_id), error_code)
+                raise REDError('Could not get next entry of directory object {0}'.format(self.object_id), error_code)
 
             entries.append((_attach_or_release(self._session, REDString, name_string_id), type))
 
@@ -876,14 +958,12 @@ class REDDirectory(REDObject):
         if not isinstance(name, REDString):
             name = REDString(self._session).allocate(name)
 
-        error_code, object_id = self._session._brick.open_directory(name._object_id, self._session._session_id)
+        error_code, object_id = self._session._brick.open_directory(name.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not open directory object', error_code)
 
-        self._set_object_id(object_id)
-
-        self.update()
+        self.attach(object_id)
 
         return self
 
@@ -900,7 +980,7 @@ def create_directory(session, name, flags, permissions, uid, gid):
     if not isinstance(name, REDString):
         name = REDString(session).allocate(name)
 
-    error_code = session._brick.create_directory(name._object_id, flags, permissions, uid, gid)
+    error_code = session._brick.create_directory(name.object_id, flags, permissions, uid, gid)
 
     if error_code != REDError.E_SUCCESS:
         raise REDError('Could not create directory', error_code)
@@ -931,30 +1011,33 @@ class REDProcess(REDObject):
 
     _qtcb_state_changed = QtCore.pyqtSignal(int, int, int)
 
-    def __init__(self, *args):
-        REDObject.__init__(self, *args)
+    def __repr__(self):
+        return '<REDProcess object_id: {0}>'.format(self.object_id)
 
+    def _initialize(self):
+        self._executable            = None
+        self._arguments             = None
+        self._environment           = None
+        self._working_directory     = None
+        self._pid                   = None
+        self._uid                   = None
+        self._gid                   = None
+        self._stdin                 = None
+        self._stdout                = None
+        self._stderr                = None
+        self._state                 = None
+        self._exit_code             = None
+        self.state_changed_callback = None
+
+    def _attach_callbacks(self):
         self._qtcb_state_changed.connect(self._cb_state_changed)
         self._session._brick.add_callback(BrickRED.CALLBACK_PROCESS_STATE_CHANGED,
                                           self._cb_state_changed_emit)
 
-    def __repr__(self):
-        return '<REDProcess object_id: {0}>'.format(self._object_id)
-
-    def _initialize(self):
-        self._executable = None
-        self._arguments = None
-        self._environment = None
-        self._working_directory = None
-        self._pid = None
-        self._uid = None
-        self._gid = None
-        self._stdin = None
-        self._stdout = None
-        self._stderr = None
-        self._state = None
-        self._exit_code = None
-        self.state_changed_callback = None
+    def _detach_callbacks(self):
+        self._qtcb_state_changed.disconnect(self._cb_state_changed)
+        self._session._brick.remove_callback(BrickRED.CALLBACK_PROCESS_STATE_CHANGED,
+                                             self._cb_state_changed_emit)
 
     def _cb_state_changed_emit(self, *args, **kwargs):
         # cannot directly use emit function as callback functions, because this
@@ -963,7 +1046,7 @@ class REDProcess(REDObject):
         self._qtcb_state_changed.emit(*args, **kwargs)
 
     def _cb_state_changed(self, process_id, state, exit_code):
-        if self._object_id != process_id:
+        if self.object_id != process_id:
             return
 
         self._state = state
@@ -984,56 +1067,56 @@ class REDProcess(REDObject):
         self.update_state()
 
     def update_command(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached process object')
 
         error_code, executable_string_id, arguments_list_id, \
-        environment_list_id, working_directory_string_id = self._session._brick.get_process_command(self._object_id, self._session._session_id)
+        environment_list_id, working_directory_string_id = self._session._brick.get_process_command(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get command of process object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get command of process object {0}'.format(self.object_id), error_code)
 
-        self._executable = _attach_or_release(self._session, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
-        self._arguments = _attach_or_release(self._session, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
-        self._environment = _attach_or_release(self._session, REDList, environment_list_id, [working_directory_string_id])
+        self._executable         = _attach_or_release(self._session, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
+        self._arguments         = _attach_or_release(self._session, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
+        self._environment       = _attach_or_release(self._session, REDList, environment_list_id, [working_directory_string_id])
         self._working_directory = _attach_or_release(self._session, REDString, working_directory_string_id)
 
     def update_identity(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached process object')
 
-        error_code, pid, uid, gid = self._session._brick.get_process_identity(self._object_id)
+        error_code, pid, uid, gid = self._session._brick.get_process_identity(self.object_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get identity of process object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get identity of process object {0}'.format(self.object_id), error_code)
 
         self._pid = pid
         self._uid = uid
         self._gid = gid
 
     def update_stdio(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached process object')
 
-        error_code, stdin_file_id, stdout_file_id, stderr_file_id = self._session._brick.get_process_stdio(self._object_id, self._session._session_id)
+        error_code, stdin_file_id, stdout_file_id, stderr_file_id = self._session._brick.get_process_stdio(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get stdio of process object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get stdio of process object {0}'.format(self.object_id), error_code)
 
-        self._stdin = _attach_or_release(self._session, REDFile, stdin_file_id, [stdout_file_id, stderr_file_id])
+        self._stdin  = _attach_or_release(self._session, REDFile, stdin_file_id, [stdout_file_id, stderr_file_id])
         self._stdout = _attach_or_release(self._session, REDFile, stdout_file_id, [stderr_file_id])
         self._stderr = _attach_or_release(self._session, REDFile, stderr_file_id)
 
     def update_state(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached process object')
 
-        error_code, state, exit_code = self._session._brick.get_process_state(self._object_id)
+        error_code, state, exit_code = self._session._brick.get_process_state(self.object_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get state of process object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get state of process object {0}'.format(self.object_id), error_code)
 
-        self._state = state
+        self._state     = state
         self._exit_code = exit_code
 
     def spawn(self, executable, arguments, environment, working_directory,
@@ -1052,29 +1135,30 @@ class REDProcess(REDObject):
         if not isinstance(working_directory, REDString):
             working_directory = REDString(self._session).allocate(working_directory)
 
-        error_code, object_id = self._session._brick.spawn_process(executable._object_id,
-                                                                   arguments._object_id,
-                                                                   environment._object_id,
-                                                                   working_directory._object_id,
+        error_code, object_id = self._session._brick.spawn_process(executable.object_id,
+                                                                   arguments.object_id,
+                                                                   environment.object_id,
+                                                                   working_directory.object_id,
                                                                    uid, gid,
-                                                                   stdin._object_id,
-                                                                   stdout._object_id,
-                                                                   stderr._object_id,
+                                                                   stdin.object_id,
+                                                                   stdout.object_id,
+                                                                   stderr.object_id,
                                                                    self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not spawn process object', error_code)
 
-        self._set_object_id(object_id)
-        self._executable = executable
-        self._arguments = arguments
-        self._environment = environment
+        self.attach(object_id, False)
+
+        self._executable        = executable
+        self._arguments         = arguments
+        self._environment       = environment
         self._working_directory = working_directory
-        self._uid = uid
-        self._gid = gid
-        self._stdin = stdin
-        self._stdout = stdout
-        self._stderr = stderr
+        self._uid               = uid
+        self._gid               = gid
+        self._stdin             = stdin
+        self._stdout            = stdout
+        self._stderr            = stderr
 
         self.update_identity()
         self.update_state()
@@ -1082,13 +1166,13 @@ class REDProcess(REDObject):
         return self
 
     def kill(self, signal):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot kill unattached process object')
 
-        error_code = self._session._brick.kill_process(self._object_id, signal)
+        error_code = self._session._brick.kill_process(self.object_id, signal)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not kill process object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not kill process object {0}'.format(self.object_id), error_code)
 
     @property
     def executable(self):        return self._executable
@@ -1144,9 +1228,37 @@ class REDProgram(REDObject):
     _qtcb_process_spawned = QtCore.pyqtSignal(int)
     _qtcb_scheduler_error_occurred = QtCore.pyqtSignal(int)
 
-    def __init__(self, *args):
-        REDObject.__init__(self, *args)
+    def __repr__(self):
+        return '<REDProgram object_id: {0}, identifier: {1}>'.format(self.object_id, self._identifier)
 
+    def _initialize(self):
+        self._identifier                       = None
+        self._root_directory                   = None
+        self._executable                       = None
+        self._arguments                        = None
+        self._environment                      = None
+        self._working_directory                = None
+        self._stdin_redirection                = None
+        self._stdin_file_name                  = None
+        self._stdout_redirection               = None
+        self._stdout_file_name                 = None
+        self._stderr_redirection               = None
+        self._stderr_file_name                 = None
+        self._start_condition                  = None
+        self._start_timestamp                  = None
+        self._start_delay                      = None
+        self._repeat_mode                      = None
+        self._repeat_interval                  = None
+        self._repeat_fields                    = None
+        self._last_spawned_process             = None
+        self._last_spawned_timestamp           = None
+        self._last_scheduler_error_message     = None
+        self._last_scheduler_error_timestamp   = None
+        self._custom_options                   = None
+        self.process_spawned_callback          = None
+        self.scheduler_error_occurred_callback = None
+
+    def _attach_callbacks(self):
         self._qtcb_process_spawned.connect(self._cb_process_spawned)
         self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
                                           self._cb_process_spawned_emit)
@@ -1155,35 +1267,14 @@ class REDProgram(REDObject):
         self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED,
                                           self._cb_scheduler_error_occurred_emit)
 
-    def __repr__(self):
-        return '<REDProgram object_id: {0}, identifier: {1}>'.format(self._object_id, self._identifier)
+    def _detach_callbacks(self):
+        self._qtcb_process_spawned.disconnect(self._cb_process_spawned)
+        self._session._brick.remove_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
+                                             self._cb_process_spawned_emit)
 
-    def _initialize(self):
-        self._identifier = None
-        self._root_directory = None
-        self._executable = None
-        self._arguments = None
-        self._environment = None
-        self._working_directory = None
-        self._stdin_redirection = None
-        self._stdin_file_name = None
-        self._stdout_redirection = None
-        self._stdout_file_name = None
-        self._stderr_redirection = None
-        self._stderr_file_name = None
-        self._start_condition = None
-        self._start_timestamp = None
-        self._start_delay = None
-        self._repeat_mode = None
-        self._repeat_interval = None
-        self._repeat_fields = None
-        self._last_spawned_process = None
-        self._last_spawned_timestamp = None
-        self._last_scheduler_error_message = None
-        self._last_scheduler_error_timestamp = None
-        self._custom_options = None
-        self.process_spawned_callback = None
-        self.scheduler_error_occurred_callback = None
+        self._qtcb_scheduler_error_occurred.disconnect(self._cb_scheduler_error_occurred)
+        self._session._brick.remove_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED,
+                                             self._cb_scheduler_error_occurred_emit)
 
     def _cb_process_spawned_emit(self, *args, **kwargs):
         # cannot directly use emit function as callback functions, because this
@@ -1192,10 +1283,10 @@ class REDProgram(REDObject):
         self._qtcb_process_spawned.emit(*args, **kwargs)
 
     def _cb_process_spawned(self, program_id):
-        if self._object_id != program_id:
+        if self.object_id != program_id:
             return
 
-        error_code, process_id, timestamp = self._session._brick.get_last_spawned_program_process(self._object_id, self._session._session_id)
+        error_code, process_id, timestamp = self._session._brick.get_last_spawned_program_process(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             return
@@ -1206,7 +1297,7 @@ class REDProgram(REDObject):
             process = None
             traceback.print_exc() # FIXME: error handling
 
-        self._last_spawned_process = process
+        self._last_spawned_process   = process
         self._last_spawned_timestamp = timestamp
 
         process_spawned_callback = self.process_spawned_callback
@@ -1221,10 +1312,10 @@ class REDProgram(REDObject):
         self._qtcb_scheduler_error_occurred.emit(*args, **kwargs)
 
     def _cb_scheduler_error_occurred(self, program_id):
-        if self._object_id != program_id:
+        if self.object_id != program_id:
             return
 
-        error_code, message_string_id, timestamp = self._session._brick.get_last_program_scheduler_error(self._object_id, self._session._session_id)
+        error_code, message_string_id, timestamp = self._session._brick.get_last_program_scheduler_error(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             return
@@ -1235,7 +1326,7 @@ class REDProgram(REDObject):
             message = None
             traceback.print_exc() # FIXME: error handling
 
-        self._last_scheduler_error_message = message
+        self._last_scheduler_error_message   = message
         self._last_scheduler_error_timestamp = timestamp
 
         scheduler_error_occurred_callback = self.scheduler_error_occurred_callback
@@ -1254,51 +1345,51 @@ class REDProgram(REDObject):
         self.update_custom_options()
 
     def update_identifier(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached program object')
 
-        error_code, identifier_string_id = self._session._brick.get_program_identifier(self._object_id, self._session._session_id)
+        error_code, identifier_string_id = self._session._brick.get_program_identifier(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get identifier of program object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get identifier of program object {0}'.format(self.object_id), error_code)
 
         self._identifier = _attach_or_release(self._session, REDString, identifier_string_id)
 
     def update_root_directory(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached program object')
 
-        error_code, root_directory_string_id = self._session._brick.get_program_root_directory(self._object_id, self._session._session_id)
+        error_code, root_directory_string_id = self._session._brick.get_program_root_directory(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get root directory of program object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get root directory of program object {0}'.format(self.object_id), error_code)
 
         self._root_directory = _attach_or_release(self._session, REDString, root_directory_string_id)
 
     def update_command(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached program object')
 
         error_code, executable_string_id, arguments_list_id, \
-        environment_list_id, working_directory_string_id = self._session._brick.get_program_command(self._object_id, self._session._session_id)
+        environment_list_id, working_directory_string_id = self._session._brick.get_program_command(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get command of program object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get command of program object {0}'.format(self.object_id), error_code)
 
-        self._executable = _attach_or_release(self._session, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
-        self._arguments = _attach_or_release(self._session, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
-        self._environment = _attach_or_release(self._session, REDList, environment_list_id, [working_directory_string_id])
+        self._executable        = _attach_or_release(self._session, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
+        self._arguments         = _attach_or_release(self._session, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
+        self._environment       = _attach_or_release(self._session, REDList, environment_list_id, [working_directory_string_id])
         self._working_directory = _attach_or_release(self._session, REDString, working_directory_string_id)
 
     def update_stdio_redirection(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached program object')
 
         error_code, stdin_redirection, stdin_file_name_string_id, stdout_redirection, stdout_file_name_string_id, \
-        stderr_redirection, stderr_file_name_string_id = self._session._brick.get_program_stdio_redirection(self._object_id, self._session._session_id)
+        stderr_redirection, stderr_file_name_string_id = self._session._brick.get_program_stdio_redirection(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get stdio redirection of program object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get stdio redirection of program object {0}'.format(self.object_id), error_code)
 
         # stdin
         self._stdin_redirection = stdin_redirection
@@ -1338,19 +1429,19 @@ class REDProgram(REDObject):
             self._stderr_file_name = None
 
     def update_schedule(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached program object')
 
         error_code, start_condition, start_timestamp, start_delay, repeat_mode, repeat_interval, \
-        repeat_fields_string_id = self._session._brick.get_program_schedule(self._object_id, self._session._session_id)
+        repeat_fields_string_id = self._session._brick.get_program_schedule(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get schedule of program object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get schedule of program object {0}'.format(self.object_id), error_code)
 
         self._start_condition = start_condition
         self._start_timestamp = start_timestamp
-        self._start_delay = start_delay
-        self._repeat_mode = repeat_mode
+        self._start_delay     = start_delay
+        self._repeat_mode     = repeat_mode
         self._repeat_interval = repeat_interval
 
         if self._repeat_mode == REDProgram.REPEAT_MODE_CRON:
@@ -1359,59 +1450,59 @@ class REDProgram(REDObject):
             self._repeat_fields = None
 
     def update_last_spawned_process(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached program object')
 
-        error_code, process_id, timestamp = self._session._brick.get_last_spawned_program_process(self._object_id, self._session._session_id)
+        error_code, process_id, timestamp = self._session._brick.get_last_spawned_program_process(self.object_id, self._session._session_id)
 
         if error_code == REDError.E_DOES_NOT_EXIST:
-            self._last_spawned_process = None
+            self._last_spawned_process   = None
             self._last_spawned_timestamp = None
 
             return
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get last spawned process of program object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get last spawned process of program object {0}'.format(self.object_id), error_code)
 
         self._last_spawned_process = _attach_or_release(self._session, REDProcess, process_id)
         self._last_spawned_timestamp = timestamp
 
     def update_last_scheduler_error(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached program object')
 
-        error_code, message_string_id, timestamp = self._session._brick.get_last_program_scheduler_error(self._object_id, self._session._session_id)
+        error_code, message_string_id, timestamp = self._session._brick.get_last_program_scheduler_error(self.object_id, self._session._session_id)
 
         if error_code == REDError.E_DOES_NOT_EXIST:
-            self._last_scheduler_error_message = None
+            self._last_scheduler_error_message   = None
             self._last_scheduler_error_timestamp = None
 
             return
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get last spawned process of program object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get last spawned process of program object {0}'.format(self.object_id), error_code)
 
-        self._last_scheduler_error_message = _attach_or_release(self._session, REDString, message_string_id)
+        self._last_scheduler_error_message   = _attach_or_release(self._session, REDString, message_string_id)
         self._last_scheduler_error_timestamp = timestamp
 
     def update_custom_options(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot update unattached program object')
 
-        error_code, custom_option_names_list_id = self._session._brick.get_custom_program_option_names(self._object_id, self._session._session_id)
+        error_code, custom_option_names_list_id = self._session._brick.get_custom_program_option_names(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get list of custom option names of program object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not get list of custom option names of program object {0}'.format(self.object_id), error_code)
 
         custom_option_names = _attach_or_release(self._session, REDList, custom_option_names_list_id)
         custom_options = {}
 
         for name in custom_option_names.items:
             error_code, custom_option_value_string_id = \
-            self._session._brick.get_custom_program_option_value(self._object_id, name._object_id, self._session._session_id)
+            self._session._brick.get_custom_program_option_value(self.object_id, name.object_id, self._session._session_id)
 
             if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not get custom option value of program object {0}'.format(self._object_id), error_code)
+                raise REDError('Could not get custom option value of program object {0}'.format(self.object_id), error_code)
 
             custom_options[unicode(name)] = _attach_or_release(self._session, REDString, custom_option_value_string_id)
 
@@ -1423,20 +1514,18 @@ class REDProgram(REDObject):
         if not isinstance(identifier, REDString):
             identifier = REDString(self._session).allocate(identifier)
 
-        error_code, object_id = self._session._brick.define_program(identifier._object_id,
+        error_code, object_id = self._session._brick.define_program(identifier.object_id,
                                                                     self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not define program object', error_code)
 
-        self._set_object_id(object_id)
-
-        self.update()
+        self.attach(object_id)
 
         return self
 
     def purge(self):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot purge unattached program object')
 
         cookie = 0
@@ -1444,13 +1533,13 @@ class REDProgram(REDObject):
         for c in str(self._identifier):
             cookie += ord(c)
 
-        error_code = self._session._brick.purge_program(self._object_id, cookie)
+        error_code = self._session._brick.purge_program(self.object_id, cookie)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not purge program object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not purge program object {0}'.format(self.object_id), error_code)
 
     def set_command(self, executable, arguments, environment, working_directory):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot set command for unattached program object')
 
         if not isinstance(executable, REDString):
@@ -1465,24 +1554,24 @@ class REDProgram(REDObject):
         if not isinstance(working_directory, REDString):
             working_directory = REDString(self._session).allocate(working_directory)
 
-        error_code = self._session._brick.set_program_command(self._object_id,
+        error_code = self._session._brick.set_program_command(self.object_id,
                                                               executable.object_id,
                                                               arguments.object_id,
                                                               environment.object_id,
                                                               working_directory.object_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not set command for program object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not set command for program object {0}'.format(self.object_id), error_code)
 
-        self._executable = executable
-        self._arguments = arguments
-        self._environment = environment
+        self._executable        = executable
+        self._arguments         = arguments
+        self._environment       = environment
         self._working_directory = working_directory
 
     def set_stdio_redirection(self, stdin_redirection, stdin_file_name,
                               stdout_redirection, stdout_file_name,
                               stderr_redirection, stderr_file_name):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot set stdio redirection for unattached program object')
 
         # stdin
@@ -1492,7 +1581,7 @@ class REDProgram(REDObject):
 
             stdin_file_name_object_id = stdin_file_name.object_id
         else:
-            stdin_file_name = None
+            stdin_file_name           = None
             stdin_file_name_object_id = 0
 
         # stdout
@@ -1502,7 +1591,7 @@ class REDProgram(REDObject):
 
             stdout_file_name_object_id = stdout_file_name.object_id
         else:
-            stdout_file_name = None
+            stdout_file_name           = None
             stdout_file_name_object_id = 0
 
         # stderr
@@ -1512,10 +1601,10 @@ class REDProgram(REDObject):
 
             stderr_file_name_object_id = stderr_file_name.object_id
         else:
-            stderr_file_name = None
+            stderr_file_name           = None
             stderr_file_name_object_id = 0
 
-        error_code = self._session._brick.set_program_stdio_redirection(self._object_id,
+        error_code = self._session._brick.set_program_stdio_redirection(self.object_id,
                                                                         stdin_redirection,
                                                                         stdin_file_name_object_id,
                                                                         stdout_redirection,
@@ -1524,18 +1613,18 @@ class REDProgram(REDObject):
                                                                         stderr_file_name_object_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not set stdio redirection for program object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not set stdio redirection for program object {0}'.format(self.object_id), error_code)
 
-        self._stdin_redirection = stdin_redirection
-        self._stdin_file_name = stdin_file_name
+        self._stdin_redirection  = stdin_redirection
+        self._stdin_file_name    = stdin_file_name
         self._stdout_redirection = stdout_redirection
-        self._stdout_file_name = stdout_file_name
+        self._stdout_file_name   = stdout_file_name
         self._stderr_redirection = stderr_redirection
-        self._stderr_file_name = stderr_file_name
+        self._stderr_file_name   = stderr_file_name
 
     def set_schedule(self, start_condition, start_timestamp, start_delay,
                      repeat_mode, repeat_interval, repeat_fields):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot set schedule for unattached program object')
 
         if repeat_mode == REDProgram.REPEAT_MODE_CRON:
@@ -1544,10 +1633,10 @@ class REDProgram(REDObject):
 
             repeat_fields_object_id = repeat_fields.object_id
         else:
-            repeat_fields = None
+            repeat_fields           = None
             repeat_fields_object_id = 0
 
-        error_code = self._session._brick.set_program_schedule(self._object_id,
+        error_code = self._session._brick.set_program_schedule(self.object_id,
                                                                start_condition,
                                                                start_timestamp,
                                                                start_delay,
@@ -1556,17 +1645,17 @@ class REDProgram(REDObject):
                                                                repeat_fields_object_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not set schedule for program object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not set schedule for program object {0}'.format(self.object_id), error_code)
 
         self._start_condition = start_condition
         self._start_timestamp = start_timestamp
-        self._start_delay = start_delay
-        self._repeat_mode = repeat_mode
+        self._start_delay     = start_delay
+        self._repeat_mode     = repeat_mode
         self._repeat_interval = repeat_interval
-        self._repeat_fields = repeat_fields
+        self._repeat_fields   = repeat_fields
 
     def set_custom_option_value(self, name, value):
-        if self._object_id is None:
+        if self.object_id is None:
             raise RuntimeError('Cannot set custom option for unattached program object')
 
         if not isinstance(name, REDString):
@@ -1575,10 +1664,10 @@ class REDProgram(REDObject):
         if not isinstance(value, REDString):
             value = REDString(self._session).allocate(value)
 
-        error_code = self._session._brick.set_custom_program_option_value(self._object_id, name.object_id, value.object_id)
+        error_code = self._session._brick.set_custom_program_option_value(self.object_id, name.object_id, value.object_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not set custom option for program object {0}'.format(self._object_id), error_code)
+            raise REDError('Could not set custom option for program object {0}'.format(self.object_id), error_code)
 
         self._custom_options[unicode(name)] = value
 
