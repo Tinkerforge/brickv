@@ -140,9 +140,13 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                         file_name = f['name']
                         file_size = str(f['size'])
                         file_path = '/'.join([dir_node['root'], file_name])
+                        if len(file_name.split('-')) < 2:
+                            return
                         time_stamp = file_name.split('-')[0]
                         file_name_display = file_name.split('-')[1]
 
+                        if len(time_stamp.split('T')) < 2:
+                            return
                         _date = time_stamp.split('T')[0]
                         _time = time_stamp.split('T')[1]
                         year = _date[:4]
@@ -151,6 +155,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                         date = '-'.join([year, month, day])
 
                         if '+' in _time:
+                            if len(_time.split('+')) < 2:
+                                return
                             __time = _time.split('+')[0].split('.')[0]
                             hour = __time[:2]
                             mins = __time[2:4]
@@ -158,6 +164,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                             gmt = _time.split('+')[1]
                             gmt = '+'+gmt
                         elif '-' in _time:
+                            if len(_time.split('-')) < 2:
+                                return
                             __time = _time.split('-')[0].split('.')[0]
                             hour = __time[:2]
                             mins = __time[2:4]
@@ -355,6 +363,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
     def download_selected_logs(self):
         index_list =  self.tree_logs.selectedIndexes()
+
+        print index_list
 
         if len(index_list) == 0 or len(index_list) % 4 != 0:
             return
