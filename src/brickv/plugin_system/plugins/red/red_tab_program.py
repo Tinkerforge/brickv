@@ -41,7 +41,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         self.image_version_ref = ['<unknown>']
         self.new_program_wizard = None
 
-        self.splitter.setSizes([200, 400])
+        self.splitter.setSizes([150, 400])
         self.list_programs.itemSelectionChanged.connect(self.update_ui_state)
         self.button_refresh.clicked.connect(self.refresh_program_list)
         self.button_new.clicked.connect(self.show_new_program_wizard)
@@ -105,7 +105,11 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         while self.stacked_container.count() > 1:
             self.stacked_container.removeWidget(self.stacked_container.currentWidget())
 
-        async_call(refresh_async, None, cb_success, cb_error)
+        # FIXME: with async_call the REDProgram objects are created on the async
+        #        thread. form some reason this stops the signals of REDProgram
+        #        from working at all
+        #async_call(refresh_async, None, cb_success, cb_error)
+        cb_success(refresh_async())
 
     def refresh_program_names(self):
         for i in range(self.list_programs.count()):
