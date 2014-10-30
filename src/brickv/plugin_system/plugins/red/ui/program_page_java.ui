@@ -126,6 +126,9 @@
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
+       <property name="buddy">
+        <cstring>list_class_path</cstring>
+       </property>
       </widget>
      </item>
      <item row="7" column="1" colspan="4">
@@ -198,6 +201,9 @@
        <property name="text">
         <string>Working Directory:</string>
        </property>
+       <property name="buddy">
+        <cstring>combo_working_directory</cstring>
+       </property>
       </widget>
      </item>
      <item row="13" column="0">
@@ -207,6 +213,9 @@
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="buddy">
+        <cstring>list_options</cstring>
        </property>
       </widget>
      </item>
@@ -278,6 +287,9 @@
        <property name="text">
         <string>JAR File Type:</string>
        </property>
+       <property name="buddy">
+        <cstring>combo_jar_file_type</cstring>
+       </property>
       </widget>
      </item>
      <item row="5" column="1" colspan="4">
@@ -306,6 +318,7 @@
   <tabstop>combo_start_mode</tabstop>
   <tabstop>edit_main_class</tabstop>
   <tabstop>combo_jar_file</tabstop>
+  <tabstop>combo_jar_file_type</tabstop>
   <tabstop>list_class_path</tabstop>
   <tabstop>button_add_class_path_entry</tabstop>
   <tabstop>button_remove_class_path_entry</tabstop>
