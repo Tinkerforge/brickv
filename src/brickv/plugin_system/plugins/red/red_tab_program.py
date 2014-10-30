@@ -75,7 +75,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         program_info = ProgramInfo(self.session, self.script_manager, self.image_version_ref, program)
         program_info.name_changed.connect(self.refresh_program_names)
 
-        item = QListWidgetItem(program.cast_custom_option_value(Constants.FIELD_NAME, unicode, '<unknown>'))
+        item = QListWidgetItem(program.cast_custom_option_value('name', unicode, '<unknown>'))
         item.setData(Qt.UserRole, QVariant(program_info))
 
         self.list_programs.addItem(item)

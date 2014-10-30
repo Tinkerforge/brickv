@@ -161,4 +161,4 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
         except REDError as e:
             QMessageBox.critical(self, 'Edit Error',
                                  u'Could not update stdio redirection of program [{0}]:\n\n{1}'
-                                 .format(program.cast_custom_option_value(Constants.FIELD_NAME, unicode, '<unknown>')))
+                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>')))

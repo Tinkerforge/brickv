@@ -49,9 +49,6 @@ class Constants:
     PAGE_VBNET      = 16
     PAGE_C          = 17
 
-    FIELD_NAME     = 'name'
-    FIELD_LANGUAGE = 'language'
-
     # must match item order in combo_language on general page
     LANGUAGE_INVALID    = 0
     LANGUAGE_C          = 1

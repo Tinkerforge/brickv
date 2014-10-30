@@ -42,10 +42,10 @@ class ProgramWizardEdit(ProgramWizard):
     def get_field(self, name):
         if self.currentId() == Constants.PAGE_GENERAL:
             return ProgramWizard.get_field(self, name)
-        elif name == Constants.FIELD_NAME:
-            return QVariant(self.program.cast_custom_option_value(Constants.FIELD_NAME, unicode, '<unknown>'))
-        elif name == Constants.FIELD_LANGUAGE:
-            api_language = self.program.cast_custom_option_value(Constants.FIELD_LANGUAGE, unicode, '<unknown>')
+        elif name == 'name':
+            return QVariant(self.program.cast_custom_option_value('name', unicode, '<unknown>'))
+        elif name == 'language':
+            api_language = self.program.cast_custom_option_value('language', unicode, '<unknown>')
 
             try:
                 language = Constants.get_language(api_language)

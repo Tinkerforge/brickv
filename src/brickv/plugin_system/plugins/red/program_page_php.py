@@ -70,7 +70,7 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.setSubTitle(u'Specify how the PHP program [{0}] should be executed.'
-                         .format(unicode(self.get_field(Constants.FIELD_NAME).toString())))
+                         .format(unicode(self.get_field('name').toString())))
 
         self.update_php_versions()
 

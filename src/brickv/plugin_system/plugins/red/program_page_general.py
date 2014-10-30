@@ -43,9 +43,9 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
 
         self.edit_identifier.setValidator(QRegExpValidator(QRegExp('^[a-zA-Z0-9_][a-zA-Z0-9._-]{2,}$'), self))
 
-        self.registerField(Constants.FIELD_NAME, self.edit_name)
+        self.registerField('name', self.edit_name)
         self.registerField('identifier', self.edit_identifier)
-        self.registerField(Constants.FIELD_LANGUAGE, self.combo_language)
+        self.registerField('language', self.combo_language)
         self.registerField('description', self.text_description, 'plainText', self.text_description.textChanged)
 
         self.edit_name.textChanged.connect(self.auto_generate_identifier)
@@ -74,7 +74,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
             self.edit_identifier.setText(unicode(program.identifier))
             self.text_description.setPlainText(program.cast_custom_option_value('description', unicode, ''))
 
-            api_language = program.cast_custom_option_value(Constants.FIELD_LANGUAGE, unicode, '<unknown>')
+            api_language = program.cast_custom_option_value('language', unicode, '<unknown>')
 
             try:
                 language = Constants.get_language(api_language)
@@ -89,7 +89,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         return self.edit_name_checker.complete and \
                self.edit_identifier_checker.complete and \
                self.identifier_is_unique and \
-               self.get_field(Constants.FIELD_LANGUAGE).toInt()[0] != Constants.LANGUAGE_INVALID and \
+               self.get_field('language').toInt()[0] != Constants.LANGUAGE_INVALID and \
                ProgramPage.isComplete(self)
 
     def update_ui_state(self):

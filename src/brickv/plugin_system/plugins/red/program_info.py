@@ -307,8 +307,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.set_buttons_enabled(True)
 
         # general
-        name = self.program.cast_custom_option_value(Constants.FIELD_NAME, unicode, '<unknown>')
-        api_language = self.program.cast_custom_option_value(Constants.FIELD_LANGUAGE, unicode, '<unknown>')
+        name = self.program.cast_custom_option_value('name', unicode, '<unknown>')
+        api_language = self.program.cast_custom_option_value('language', unicode, '<unknown>')
         description = self.program.cast_custom_option_value('description', unicode, '')
 
         try:

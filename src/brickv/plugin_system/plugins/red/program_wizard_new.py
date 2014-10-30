@@ -77,7 +77,7 @@ class ProgramWizardNew(ProgramWizard):
         if currentId == Constants.PAGE_GENERAL:
             return Constants.PAGE_FILES
         elif currentId == Constants.PAGE_FILES:
-            language = self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]
+            language = self.get_field('language').toInt()[0]
 
             if language == Constants.LANGUAGE_C:
                 return Constants.PAGE_C

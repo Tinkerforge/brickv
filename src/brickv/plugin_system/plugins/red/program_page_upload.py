@@ -108,19 +108,19 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.next_step('Setting custom options...')
 
         # set custom option: name
-        name = unicode(self.get_field(Constants.FIELD_NAME).toString())
+        name = unicode(self.get_field('name').toString())
 
         try:
-            self.program.set_custom_option_value(Constants.FIELD_NAME, name) # FIXME: async_call
+            self.program.set_custom_option_value('name', name) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return
 
         # set custom option: language
-        self.api_language = Constants.api_languages[self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]]
+        self.api_language = Constants.api_languages[self.get_field('language').toInt()[0]]
 
         try:
-            self.program.set_custom_option_value(Constants.FIELD_LANGUAGE, self.api_language) # FIXME: async_call
+            self.program.set_custom_option_value('language', self.api_language) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return
@@ -203,7 +203,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     def upload_write_async_cb_status(self, upload_size, upload_of):
         uploaded = self.progress_file.value() + upload_size - self.last_upload_size
         self.progress_file.setValue(uploaded)
-        self.progress_file.setFormat('{0}kiB of {1}kiB'.format(uploaded/1024, self.source_size/1024))
+        self.progress_file.setFormat('{0} kiB of {1} kiB'.format(uploaded/1024, self.source_size/1024))
         self.last_upload_size = upload_size
 
     def upload_write_async_cb_error(self, error):
@@ -344,6 +344,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 return
 
             self.log('...done')
+
         self.next_step('Upload successful!')
 
         self.progress_total.setValue(self.progress_total.maximum())

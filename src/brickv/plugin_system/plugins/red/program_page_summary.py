@@ -38,11 +38,11 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
     def initializePage(self):
         self.set_formatted_sub_title(u'The complete configuration of the {language} program [{name}].')
 
-        language_display_name = Constants.language_display_names[self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]]
+        language_display_name = Constants.language_display_names[self.get_field('language').toInt()[0]]
 
         # general information
         html  = u'<b>General Information</b><br/>'
-        html += u'Name: {0}<br/>'.format(Qt.escape(unicode(self.get_field(Constants.FIELD_NAME).toString())))
+        html += u'Name: {0}<br/>'.format(Qt.escape(unicode(self.get_field('name').toString())))
         html += u'Identifier: {0}<br/>'.format(Qt.escape(self.get_field('identifier').toString()))
         html += u'Language: {0}<br/>'.format(Qt.escape(language_display_name))
         html += u'Description: {0}<br/>'.format(Qt.escape(self.get_field('description').toString()))
@@ -63,7 +63,7 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
 
         html += u'<br/>'
 
-        language = self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]
+        language = self.get_field('language').toInt()[0]
         is_browser = self.get_field('javascript.version').toInt()[0] == 0
         if not (language == Constants.LANGUAGE_JAVASCRIPT and is_browser):
             # language specific configuration

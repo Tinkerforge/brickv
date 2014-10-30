@@ -61,9 +61,10 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        language = self.get_field(Constants.FIELD_LANGUAGE).toInt()[0]
+        language = self.get_field('language').toInt()[0]
 
         self.set_formatted_sub_title(u'Specify the arguments to be passed to the {language} program [{name}] and its environment.')
+
         self.label_arguments_help.setText(Constants.arguments_help[language])
         self.argument_list_editor.reset()
         self.check_show_environment.setCheckState(Qt.Unchecked)
@@ -157,4 +158,4 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
         except REDError as e:
             QMessageBox.critical(self, 'Edit Error',
                                  u'Could not update arguments and environment of program [{0}]:\n\n{1}'
-                                 .format(program.cast_custom_option_value(Constants.FIELD_NAME, unicode, '<unknown>')))
+                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
