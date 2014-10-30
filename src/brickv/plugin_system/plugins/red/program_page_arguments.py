@@ -41,14 +41,18 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
         self.check_show_environment.stateChanged.connect(self.update_ui_state)
         self.tree_environment.itemChanged.connect(self.check_environment)
 
-        self.argument_list_editor = ListWidgetEditor(self.list_arguments,
+        self.argument_list_editor = ListWidgetEditor(self.label_arguments,
+                                                     self.list_arguments,
+                                                     self.label_arguments_help,
                                                      self.button_add_argument,
                                                      self.button_remove_argument,
                                                      self.button_up_argument,
                                                      self.button_down_argument,
                                                      '<new argument {0}>')
 
-        self.environment_list_editor = TreeWidgetEditor(self.tree_environment,
+        self.environment_list_editor = TreeWidgetEditor(self.label_environment,
+                                                        self.tree_environment,
+                                                        self.label_environment_help,
                                                         self.button_add_environment_variable,
                                                         self.button_remove_environment_variable,
                                                         self.button_up_environment_variable,
@@ -100,13 +104,7 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
     def update_ui_state(self):
         show_environment = self.check_show_environment.checkState() == Qt.Checked
 
-        self.label_environment.setVisible(show_environment)
-        self.tree_environment.setVisible(show_environment)
-        self.label_environment_help.setVisible(show_environment)
-        self.button_add_environment_variable.setVisible(show_environment)
-        self.button_remove_environment_variable.setVisible(show_environment)
-        self.button_up_environment_variable.setVisible(show_environment)
-        self.button_down_environment_variable.setVisible(show_environment)
+        self.environment_list_editor.set_visible(show_environment)
 
         self.argument_list_editor.update_ui_state()
         self.environment_list_editor.update_ui_state()

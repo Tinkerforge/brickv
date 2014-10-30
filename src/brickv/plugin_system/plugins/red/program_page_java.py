@@ -48,14 +48,18 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
 
         # FIXME: allow adding class path entries using a combo box prefilled with avialable .jar files
-        self.class_path_list_editor = ListWidgetEditor(self.list_class_path,
+        self.class_path_list_editor = ListWidgetEditor(self.label_class_path,
+                                                       self.list_class_path,
+                                                       self.label_class_path_help,
                                                        self.button_add_class_path_entry,
                                                        self.button_remove_class_path_entry,
                                                        self.button_up_class_path_entry,
                                                        self.button_down_class_path_entry,
                                                        '<new class path entry {0}>')
 
-        self.option_list_editor = ListWidgetEditor(self.list_options,
+        self.option_list_editor = ListWidgetEditor(self.label_options,
+                                                   self.list_options,
+                                                   self.label_options_help,
                                                    self.button_add_option,
                                                    self.button_remove_option,
                                                    self.button_up_option,
@@ -110,13 +114,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_jar_file.setVisible(start_mode_jar_file)
         self.label_jar_file_help.setVisible(start_mode_jar_file)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
-        self.label_options.setVisible(show_advanced_options)
-        self.list_options.setVisible(show_advanced_options)
-        self.label_options_help.setVisible(show_advanced_options)
-        self.button_add_option.setVisible(show_advanced_options)
-        self.button_remove_option.setVisible(show_advanced_options)
-        self.button_up_option.setVisible(show_advanced_options)
-        self.button_down_option.setVisible(show_advanced_options)
+        self.option_list_editor.set_visible(show_advanced_options)
 
         self.class_path_list_editor.update_ui_state()
         self.option_list_editor.update_ui_state()

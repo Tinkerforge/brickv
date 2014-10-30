@@ -44,7 +44,9 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.combo_file_checker               = MandatoryEditableComboBoxChecker(self, self.combo_file, self.label_file)
         self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
 
-        self.option_list_editor = ListWidgetEditor(self.list_options,
+        self.option_list_editor = ListWidgetEditor(self.label_options,
+                                                   self.list_options,
+                                                   self.label_options_help,
                                                    self.button_add_option,
                                                    self.button_remove_option,
                                                    self.button_up_option,
@@ -110,13 +112,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.label_file_executable_help.setVisible(start_mode_exe)
         self.label_file_make_help.setVisible(start_mode_make)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
-        self.label_options.setVisible(show_advanced_options and start_mode_make)
-        self.list_options.setVisible(show_advanced_options and start_mode_make)
-        self.label_options_help.setVisible(show_advanced_options and start_mode_make)
-        self.button_add_option.setVisible(show_advanced_options and start_mode_make)
-        self.button_remove_option.setVisible(show_advanced_options and start_mode_make)
-        self.button_up_option.setVisible(show_advanced_options and start_mode_make)
-        self.button_down_option.setVisible(show_advanced_options and start_mode_make)
+        self.option_list_editor.set_visible(show_advanced_options and start_mode_make)
 
         self.option_list_editor.update_ui_state()
 

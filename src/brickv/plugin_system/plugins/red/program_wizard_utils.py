@@ -327,6 +327,7 @@ class Constants:
     DEFAULT_START_CONDITION       = START_CONDITION_NOW
     DEFAULT_REPEAT_MODE           = REPEAT_MODE_NEVER
 
+
 # workaround miscalculated initial size-hint for initially hidden QListWidgets
 class ExpandingListWidget(QListWidget):
     def __init__(self, *args, **kwargs):
@@ -343,9 +344,12 @@ class ExpandingListWidget(QListWidget):
 
 
 class ListWidgetEditor:
-    def __init__(self, list_items, button_add_item, button_remove_item,
+    def __init__(self, label_items, list_items, label_items_help,
+                 button_add_item, button_remove_item,
                  button_up_item, button_down_item, new_item_text):
+        self.label_items        = label_items
         self.list_items         = list_items
+        self.label_items_help   = label_items_help
         self.button_add_item    = button_add_item
         self.button_remove_item = button_remove_item
         self.button_up_item     = button_up_item
@@ -376,6 +380,15 @@ class ListWidgetEditor:
         self.button_remove_item.setEnabled(has_selection)
         self.button_up_item.setEnabled(item_count > 1 and has_selection and selected_index > 0)
         self.button_down_item.setEnabled(item_count > 1 and has_selection and selected_index < item_count - 1)
+
+    def set_visible(self, visible):
+        self.label_items.setVisible(visible)
+        self.list_items.setVisible(visible)
+        self.label_items_help.setVisible(visible)
+        self.button_add_item.setVisible(visible)
+        self.button_remove_item.setVisible(visible)
+        self.button_up_item.setVisible(visible)
+        self.button_down_item.setVisible(visible)
 
     def add_item(self, text, edit_item=False):
         item = QListWidgetItem(text)
@@ -442,9 +455,12 @@ class ListWidgetEditor:
 
 
 class TreeWidgetEditor:
-    def __init__(self, tree_items, button_add_item, button_remove_item,
+    def __init__(self, label_items, tree_items, label_items_help,
+                 button_add_item, button_remove_item,
                  button_up_item, button_down_item, new_item_texts):
+        self.label_items        = label_items
         self.tree_items         = tree_items
+        self.label_items_help   = label_items_help
         self.button_add_item    = button_add_item
         self.button_remove_item = button_remove_item
         self.button_up_item     = button_up_item
@@ -483,6 +499,15 @@ class TreeWidgetEditor:
         self.button_remove_item.setEnabled(has_selection)
         self.button_up_item.setEnabled(item_count > 1 and has_selection and selected_index > 0)
         self.button_down_item.setEnabled(item_count > 1 and has_selection and selected_index < item_count - 1)
+
+    def set_visible(self, visible):
+        self.label_items.setVisible(visible)
+        self.tree_items.setVisible(visible)
+        self.label_items_help.setVisible(visible)
+        self.button_add_item.setVisible(visible)
+        self.button_remove_item.setVisible(visible)
+        self.button_up_item.setVisible(visible)
+        self.button_down_item.setVisible(visible)
 
     def add_item(self, texts, edit_item=False):
         item = QTreeWidgetItem(texts)
