@@ -141,11 +141,42 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                         file_size = str(f['size'])
                         file_path = '/'.join([dir_node['root'], file_name])
                         if len(file_name.split('-')) < 2:
+                            self.update_ui_state()
                             return
+
+                        if file_name.split('-')[0] == "continuous":
+                            parent_continuous = None
+                            for i in range(self.tree_logs_model.rowCount()):
+                                if self.tree_logs_model.item(i).text() == "Continuous":
+                                    parent_continuous = self.tree_logs_model.item(i)
+                                    parent_continuous_size = self.tree_logs_model.item(i, 1)
+                                    break
+
+                            if parent_continuous:
+                                if file_name.split('-')[1] == "stdout.log":
+                                    parent_continuous.appendRow([QStandardItem("stdout"), QStandardItem(file_size)])
+                                elif file_name.split('-')[1] == "stderr.log":
+                                    parent_continuous.appendRow([QStandardItem("stderr"), QStandardItem(file_size)])
+                                current_size = int(parent_continuous_size.text())
+                                new_file_size = int(file_size)
+                                parent_continuous_size.setText(str(current_size + new_file_size))
+                            else:
+                                parent_continuous = [QStandardItem("Continuous"), QStandardItem(file_size)]
+                                if file_name.split('-')[1] == "stdout.log":
+                                    parent_continuous[0].appendRow([QStandardItem("stdout"), QStandardItem(file_size)])
+                                elif file_name.split('-')[1] == "stderr.log":
+                                    parent_continuous[0].appendRow([QStandardItem("stderr"), QStandardItem(file_size)])
+                                self.tree_logs_model.appendRow(parent_continuous)
+
+                            self.tree_logs_model.sort(0, Qt.DescendingOrder)
+                            self.update_ui_state()
+                            continue
+
                         time_stamp = file_name.split('-')[0]
                         file_name_display = file_name.split('-')[1]
 
                         if len(time_stamp.split('T')) < 2:
+                            self.update_ui_state()
                             return
                         _date = time_stamp.split('T')[0]
                         _time = time_stamp.split('T')[1]
@@ -156,6 +187,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
                         if '+' in _time:
                             if len(_time.split('+')) < 2:
+                                self.update_ui_state()
                                 return
                             __time = _time.split('+')[0].split('.')[0]
                             hour = __time[:2]
@@ -165,6 +197,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                             gmt = '+'+gmt
                         elif '-' in _time:
                             if len(_time.split('-')) < 2:
+                                self.update_ui_state()
                                 return
                             __time = _time.split('-')[0].split('.')[0]
                             hour = __time[:2]
@@ -219,8 +252,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                                                QStandardItem(file_path)])
                             self.tree_logs_model.appendRow(parent_date)
 
+            self.tree_logs_model.sort(0, Qt.DescendingOrder)
             self.update_ui_state()
-
 
         self.logs_refresh_in_progress = True
         self.update_ui_state()
