@@ -74,7 +74,7 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
         self.combo_working_directory.addItem('.')
         self.combo_working_directory.addItems(self.wizard().available_directories)
 
-        self.option_list_editor.reset_items()
+        self.option_list_editor.reset()
         self.option_list_editor.add_item(unicode('--silent'))
 
         if not self.is_full_image:

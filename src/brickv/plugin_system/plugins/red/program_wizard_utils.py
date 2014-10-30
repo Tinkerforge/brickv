@@ -424,7 +424,7 @@ class ListWidgetEditor:
         self.list_items.insertItem(row + 1, item)
         self.list_items.setCurrentRow(row + 1)
 
-    def reset_items(self):
+    def reset(self):
         self.new_item_counter = 1
 
         self.list_items.clear()
@@ -536,7 +536,7 @@ class TreeWidgetEditor:
         self.tree_items.insertTopLevelItem(row + 1, item)
         self.tree_items.setCurrentItem(item)
 
-    def reset_items(self):
+    def reset(self):
         self.new_item_counter = 1
 
         self.tree_items.invisibleRootItem().takeChildren()

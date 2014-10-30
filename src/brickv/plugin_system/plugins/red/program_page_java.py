@@ -77,12 +77,12 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
 
+        self.class_path_list_editor.reset()
         self.combo_working_directory.clear()
         self.combo_working_directory.addItem('.')
         self.combo_working_directory.addItems(self.wizard().available_directories)
+        self.option_list_editor.reset()
 
-        self.class_path_list_editor.reset_items()
-        self.option_list_editor.reset_items()
         self.update_ui_state()
 
     # overrides QWizardPage.isComplete

@@ -74,8 +74,8 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
         self.combo_working_directory.clear()
         self.combo_working_directory.addItem('.')
         self.combo_working_directory.addItems(self.wizard().available_directories)
+        self.option_list_editor.reset()
 
-        self.option_list_editor.reset_items()
         self.update_ui_state()
 
     # overrides QWizardPage.isComplete
