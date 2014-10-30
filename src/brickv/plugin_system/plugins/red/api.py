@@ -1201,11 +1201,12 @@ class REDProgram(REDObject):
             return
 
         try:
-            self._last_spawned_process = _attach_or_release(self._session, REDProcess, process_id)
+            process = _attach_or_release(self._session, REDProcess, process_id)
         except:
-            # FIXME: error handling
-            traceback.print_exc()
+            process = None
+            traceback.print_exc() # FIXME: error handling
 
+        self._last_spawned_process = process
         self._last_spawned_timestamp = timestamp
 
         process_spawned_callback = self.process_spawned_callback
@@ -1229,11 +1230,12 @@ class REDProgram(REDObject):
             return
 
         try:
-            self._last_scheduler_error_message = _attach_or_release(self._session, REDString, message_string_id)
+            message = _attach_or_release(self._session, REDString, message_string_id)
         except:
-            # FIXME: error handling
-            traceback.print_exc()
+            message = None
+            traceback.print_exc() # FIXME: error handling
 
+        self._last_scheduler_error_message = message
         self._last_scheduler_error_timestamp = timestamp
 
         scheduler_error_occurred_callback = self.scheduler_error_occurred_callback
@@ -1372,7 +1374,7 @@ class REDProgram(REDObject):
             raise REDError('Could not get last spawned process of program object {0}'.format(self._object_id), error_code)
 
         self._last_spawned_process = _attach_or_release(self._session, REDProcess, process_id)
-        self._last_spawn_timestamp = timestamp
+        self._last_spawned_timestamp = timestamp
 
     def update_last_scheduler_error(self):
         if self._object_id is None:
