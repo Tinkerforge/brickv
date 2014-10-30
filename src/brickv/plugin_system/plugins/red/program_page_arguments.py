@@ -61,11 +61,11 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
 
         self.set_formatted_sub_title(u'Specify the arguments to be passed to the {language} program [{name}] and its environment.')
         self.label_arguments_help.setText(Constants.arguments_help[language])
-        self.argument_list_editor.reset_items()
+        self.argument_list_editor.reset()
         self.check_show_environment.setCheckState(Qt.Unchecked)
         self.label_environment_help.setText('This list of environment variables will be set for the {0} program.'
                                             .format(Constants.language_display_names[language]))
-        self.environment_list_editor.reset_items()
+        self.environment_list_editor.reset()
 
         # if a program exists then this page is used in an edit wizard
         if self.wizard().program != None:
