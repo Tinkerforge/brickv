@@ -309,15 +309,14 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
             self.cbox_net_wireless_ap.setCurrentIndex(0)
             
-            _essid = str(self.cbox_net_wireless_ap.currentText())
-
-            _cwlintf = str(self.cbox_net_wireless_intf.currentText())
+            _essid = unicode(self.cbox_net_wireless_ap.currentText())
+            _cwlintf = unicode(self.cbox_net_wireless_intf.currentText())
             if self.network_all_data['interfaces'] is not None and\
                self.network_all_data['interfaces']['wireless_links'] is not None and\
-               str(_cwlintf) in self.network_all_data['interfaces']['wireless_links'] and\
-               self.network_all_data['interfaces']['wireless_links'][str(_cwlintf)]['status']:
+               unicode(_cwlintf) in self.network_all_data['interfaces']['wireless_links'] and\
+               self.network_all_data['interfaces']['wireless_links'][unicode(_cwlintf)]['status']:
                 self.label_net_wireless_constat.setText\
-                    ("Connected to "+self.network_all_data['interfaces']['wireless_links'][str(_cwlintf)]['essid'])
+                    ("Connected to "+self.network_all_data['interfaces']['wireless_links'][unicode(_cwlintf)]['essid'])
             else:
                 self.label_net_wireless_constat.setText("Not Connected")
 
@@ -993,7 +992,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.label_working_wait.show()
 
         try:
-            hostname_new = str(self.ledit_net_gen_hostname.displayText())
+            hostname_new = unicode(self.ledit_net_gen_hostname.displayText())
         except:
             QtGui.QMessageBox.critical(None,
                                        'Settings | Network | General',
@@ -1020,7 +1019,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             return
 
         for key, apdict in self.network_all_data['scan_result'].iteritems():
-            if apdict['essid'] == str(self.cbox_net_wireless_ap.currentText()):
+            if apdict['essid'] == unicode(self.cbox_net_wireless_ap.currentText()):
                 nidx = key
                 break
         if self.cbox_net_wireless_conftype.currentIndex() == CBOX_NET_CONTYPE_INDEX_DHCP:
@@ -1111,7 +1110,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 pass
                 # TODO: Error popup for user?
 
-        wlintf = str(self.cbox_net_wireless_intf.currentText())
+        wlintf = unicode(self.cbox_net_wireless_intf.currentText())
         if self.network_all_data['manager_settings'] is not None and\
            wlintf != "":
             self.network_all_data['manager_settings'].set("Settings", "wireless_interface", wlintf)
@@ -1379,9 +1378,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         str(self.sbox_brickd_la_ip3.value()),
                         str(self.sbox_brickd_la_ip4.value())))
         self.brickd_conf['listen.address'] = adr
-        self.brickd_conf['listen.plain_port'] = str(self.sbox_brickd_lp.value())
-        self.brickd_conf['listen.websocket_port'] = str(self.sbox_brickd_lwsp.value())
-        self.brickd_conf['authentication.secret'] = str(self.ledit_brickd_secret.text())
+        self.brickd_conf['listen.plain_port'] = unicode(self.sbox_brickd_lp.value())
+        self.brickd_conf['listen.websocket_port'] = unicode(self.sbox_brickd_lwsp.value())
+        self.brickd_conf['authentication.secret'] = unicode(self.ledit_brickd_secret.text())
         
         def set_all_log_level(level):
             self.brickd_conf['log_level.event'] = level

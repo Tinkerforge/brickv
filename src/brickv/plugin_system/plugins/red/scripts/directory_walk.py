@@ -6,11 +6,11 @@ from sys import argv
 
 result = {}
 
-if len(argv) < 2 or not os.path.isdir(str(argv[1])):
+if len(argv) < 2 or not os.path.isdir(unicode(argv[1])):
     print json.dumps(None)
     exit(0)
 
-base = argv[1]
+base = unicode(argv[1])
 
 try:
     for root, directories, files in os.walk(base):

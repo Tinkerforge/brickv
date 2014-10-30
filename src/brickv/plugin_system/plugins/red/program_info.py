@@ -154,7 +154,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                 if dir_node['root'] == '/'.join([self.program_dir, "log"]):
                     for idx, f in enumerate(dir_node['files']):
                         file_name = f['name']
-                        file_size = str(f['size'])
+                        file_size = unicode(f['size'])
                         file_path = '/'.join([dir_node['root'], file_name])
                         if len(file_name.split('-')) < 2:
                             self.update_ui_state()
@@ -181,7 +181,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                                                  QStandardItem(file_path)])
                                 current_size = int(parent_continuous_size.text())
                                 new_file_size = int(file_size)
-                                parent_continuous_size.setText(str(current_size + new_file_size))
+                                parent_continuous_size.setText(unicode(current_size + new_file_size))
                             else:
                                 parent_continuous = [QStandardItem("Continuous"),
                                                      QStandardItem(file_size),
@@ -257,11 +257,11 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                                                     QStandardItem(file_path)])
                                     current_size = int (parent_date.child(i, 1).text())
                                     new_file_size = int(file_size)
-                                    parent_date.child(i, 1).setText(str(current_size + new_file_size))
+                                    parent_date.child(i, 1).setText(unicode(current_size + new_file_size))
 
                                     current_size = int(parent_date_size.text())
                                     new_file_size = int(parent_date.child(i, 1).text())
-                                    parent_date_size.setText(str(current_size + new_file_size))
+                                    parent_date_size.setText(unicode(current_size + new_file_size))
                                     break
 
                             if not found_parent_time:
@@ -275,7 +275,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                                                                        QStandardItem(file_path)])
                                 current_size = int(parent_date_size.text())
                                 new_file_size = int(file_size)
-                                parent_date_size.setText(str(current_size + new_file_size))
+                                parent_date_size.setText(unicode(current_size + new_file_size))
 
                         else:
                             parent_date = [QStandardItem(date),
@@ -481,15 +481,14 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         if len(index_list) % 4 != 0:
             return
 
-        index_list_chunked =  zip(*[iter(index_list)] * 4)
-
+        index_list_chunked = zip(*[iter(index_list)] * 4)
         logs_download_dict = {'files': {}, 'total_download_size': 0}
 
         def populate_log_download(item_list):
             if item_list[2].text() == "PARENT_CONT":
                 for i in range(item_list[0].rowCount()):
                     f_size = int(item_list[0].child(i, 1).text()) # File size
-                    f_path = str(item_list[0].child(i, 3).text()) # File path
+                    f_path = unicode(item_list[0].child(i, 3).text()) # File path
                     if not f_path in logs_download_dict['files']:
                         logs_download_dict['files'][f_path] = {'size': f_size}
                         logs_download_dict['total_download_size'] = \
@@ -500,7 +499,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                     parent_time = item_list[0].child(i)
                     for j in range(parent_time.rowCount()):
                         f_size = int(parent_time.child(j, 1).text()) # File size
-                        f_path = str(parent_time.child(j, 3).text()) # File path
+                        f_path = unicode(parent_time.child(j, 3).text()) # File path
                         if not f_path in logs_download_dict['files']:
                             logs_download_dict['files'][f_path] = {'size': f_size}
                             logs_download_dict['total_download_size'] = \
@@ -509,7 +508,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             elif item_list[2].text() == "PARENT_TIME":
                 for i in range(item_list[0].rowCount()):
                     f_size = int(item_list[0].child(i, 1).text()) # File size
-                    f_path = str(item_list[0].child(i, 3).text()) # File path
+                    f_path = unicode(item_list[0].child(i, 3).text()) # File path
                     if not f_path in logs_download_dict['files']:
                         logs_download_dict['files'][f_path] = {'size': f_size}
                         logs_download_dict['total_download_size'] = \
@@ -518,7 +517,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             elif item_list[2].text() == "LOG_FILE" or \
                  item_list[2].text() == "LOG_FILE_CONT":
                 f_size = int(item_list[1].text()) # File size
-                f_path = str(item_list[3].text()) # File path
+                f_path = unicode(item_list[3].text()) # File path
                 if not f_path in logs_download_dict['files']:
                     logs_download_dict['files'][f_path] = {'size': f_size}
                     logs_download_dict['total_download_size'] = \
@@ -543,11 +542,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.tree_logs.setColumnHidden(3, True)
 
         log_files_to_download = self.load_log_files_for_ops(index_list)
-
-        file_dialog = QFileDialog(self)
-        file_dialog.setFileMode(QFileDialog.Directory)
-        file_dialog.setOption(QFileDialog.ShowDirsOnly, True)
-        log_files_download_dir = file_dialog.getExistingDirectory(self, "Choose Download Location")
+        log_files_download_dir = unicode(QFileDialog.getExistingDirectory(self, "Choose Download Location"))
         
         if log_files_download_dir != "":
             print log_files_download_dir
@@ -567,7 +562,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                         print result
                         save_file_name = ''.join(log_files_to_download['files'].keys()[0].split('/')[-1:])
                         print save_file_name
-                        with open("/".join([str(log_files_download_dir), str(save_file_name)]), 'wb') as fh_log_write:
+                        with open("/".join([unicode(log_files_download_dir), unicode(save_file_name)]), 'wb') as fh_log_write:
                             fh_log_write.write(result.data)
                         '''
                         if len(log_files_to_download['files']) > 0:

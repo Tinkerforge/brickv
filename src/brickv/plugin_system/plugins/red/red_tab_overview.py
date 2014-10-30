@@ -206,19 +206,19 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         processes_data_list_sorted = processes_data_list_sorted[:self.sbox_number_of_process.value()]
 
         for i, p in enumerate(processes_data_list_sorted):
-            _item_command = Qt.QStandardItem(str(processes_data_list_sorted[i]['command']))
+            _item_command = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['command']))
             self.process_item_model.setItem(i, 0,_item_command)
 
-            _item_pid = Qt.QStandardItem(str(processes_data_list_sorted[i]['pid']))
+            _item_pid = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['pid']))
             self.process_item_model.setItem(i, 1, _item_pid)
 
-            _item_user = Qt.QStandardItem(str(processes_data_list_sorted[i]['user']))
+            _item_user = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['user']))
             self.process_item_model.setItem(i, 2, _item_user)
 
-            _item_cpu = Qt.QStandardItem(str(processes_data_list_sorted[i]['cpu'])+'%')
+            _item_cpu = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['cpu'])+'%')
             self.process_item_model.setItem(i, 3, _item_cpu)
 
-            _item_memory = Qt.QStandardItem(str(processes_data_list_sorted[i]['memory'])+'%')
+            _item_memory = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['memory'])+'%')
             self.process_item_model.setItem(i, 4, _item_memory)
 
         self.tview_process.horizontalHeader().setSortIndicator(self.tview_process_previous_sort['column_index'],

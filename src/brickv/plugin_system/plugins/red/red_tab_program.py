@@ -123,7 +123,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         identifiers = []
 
         for i in range(self.list_programs.count()):
-            identifiers.append(str(self.list_programs.item(i).data(Qt.UserRole).toPyObject().program.identifier))
+            identifiers.append(unicode(self.list_programs.item(i).data(Qt.UserRole).toPyObject().program.identifier))
 
         context = ProgramWizardContext(self.session, identifiers, self.script_manager, self.image_version_ref)
 

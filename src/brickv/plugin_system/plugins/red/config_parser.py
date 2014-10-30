@@ -54,7 +54,7 @@ class FakeSectionHeadAndFile(object):
 
 def parse(data):
     if isinstance(data, list):
-        string = str(bytearray(data))
+        string = bytearray(data).decode('utf-8')
     elif isinstance(data, str):
         string = data
     elif isinstance(data, unicode):
@@ -73,7 +73,7 @@ def parse(data):
 
 def parse_no_fake(data):
     if isinstance(data, list):
-        string = str(bytearray(data))
+        string = bytearray(data).decode('utf-8')
     elif isinstance(data, str):
         string = data
     elif isinstance(data, unicode):
