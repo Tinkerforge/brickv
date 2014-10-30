@@ -23,9 +23,10 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import pyqtSignal, QDateTime
-from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog, QFileDialog
+from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog, QFileDialog, QProgressDialog
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page_general import ProgramPageGeneral
 from brickv.plugin_system.plugins.red.program_page_java import ProgramPageJava
 from brickv.plugin_system.plugins.red.program_page_python import ProgramPagePython
@@ -447,9 +448,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                 logs_download_dict['total_download_size'] + f_size
 
             elif item_list[2].text() == "PARENT_TIME":
-                print "PARENT_TIME"
                 for i in range(item_list[0].rowCount()):
-                    #print i
                     f_size = int(item_list[0].child(i, 1).text()) # File size
                     f_path = str(item_list[0].child(i, 3).text()) # File path
                     if not f_path in logs_download_dict['files']:
@@ -469,7 +468,6 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                 pass
 
         for index_chunk in index_list_chunked:
-            print ">>>>>>>", len(index_chunk)
             item_list = []
             for index in index_chunk:
                 item = self.tree_logs_model.itemFromIndex(index)
@@ -485,7 +483,57 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.tree_logs.setColumnHidden(2, True)
         self.tree_logs.setColumnHidden(3, True)
 
-        print self.load_log_files_for_ops(index_list)
+        log_files_to_download = self.load_log_files_for_ops(index_list)
+
+        file_dialog = QFileDialog(self)
+        file_dialog.setFileMode(QFileDialog.Directory)
+        file_dialog.setOption(QFileDialog.ShowDirsOnly, True)
+        log_files_download_dir = file_dialog.getExistingDirectory(self, "Choose Download Location")
+        
+        if log_files_download_dir != "":
+            print log_files_download_dir
+            print log_files_to_download
+            log_download_pd = QProgressDialog("Downloading log files...", "Cancel", 16, 0, self)
+            log_download_pd.setWindowTitle("Download Progress")
+            log_download_pd.setAutoReset(True)
+            log_download_pd.setAutoClose(True)
+            #log_download_pd.setValue(i)
+
+            def cb_open(red_file):
+                def cb_read(red_file, result):
+                    red_file.release()
+                    if result is not None:
+                        # Success
+                        print "SUCCESS"
+                        print result
+                        save_file_name = ''.join(log_files_to_download['files'].keys()[0].split('/')[-1:])
+                        print save_file_name
+                        with open("/".join([str(log_files_download_dir), str(save_file_name)]), 'wb') as fh_log_write:
+                            fh_log_write.write(result.data)
+                        '''
+                        if len(log_files_to_download['files']) > 0:
+                            if len(log_files_to_download['files']) > 0:
+                                async_call(REDFile(self.session).open,
+                                           (log_files_to_download['files'].keys()[0],
+                                           REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                                           cb_open_error)
+                        '''
+                    else:
+                        # TODO: Error popup for user?
+                        print result
+        
+                red_file.read_async(4096, lambda x: cb_read(red_file, x))
+
+            def cb_open_error(result):    
+                # TODO: Error popup for user?
+                print result
+
+            if len(log_files_to_download['files']) > 0:
+                async_call(REDFile(self.session).open,
+                           (log_files_to_download['files'].keys()[0],
+                           REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                           cb_open,
+                           cb_open_error)
 
     def delete_selected_logs(self):
         #selected_items = self.list_logs.selectedItems()
