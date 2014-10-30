@@ -43,9 +43,9 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
-        self.edit_main_class_checker         = MandatoryLineEditChecker(self, self.edit_main_class, self.label_main_class)
-        self.combo_jar_file_checker          = MandatoryEditableComboBoxChecker(self, self.combo_jar_file, self.label_jar_file)
-        self.combo_working_directory_checker = MandatoryEditableComboBoxChecker(self, self.combo_working_directory, self.label_working_directory)
+        self.edit_main_class_checker          = MandatoryLineEditChecker(self, self.edit_main_class, self.label_main_class)
+        self.combo_jar_file_checker           = MandatoryEditableComboBoxChecker(self, self.combo_jar_file, self.label_jar_file)
+        self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
 
         # FIXME: allow adding class path entries using a combo box prefilled with avialable .jar files
         self.class_path_list_editor = ListWidgetEditor(self.list_class_path,
@@ -78,9 +78,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
 
         self.class_path_list_editor.reset()
-        self.combo_working_directory.clear()
-        self.combo_working_directory.addItem('.')
-        self.combo_working_directory.addItems(self.wizard().available_directories)
+        self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
         self.update_ui_state()
@@ -97,7 +95,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
            not self.combo_jar_file_checker.valid:
             return False
 
-        return self.combo_working_directory_checker.valid and ProgramPage.isComplete(self)
+        return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_ui_state(self):
         start_mode            = self.get_field('java.start_mode').toInt()[0]
@@ -111,8 +109,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.label_jar_file.setVisible(start_mode_jar_file)
         self.combo_jar_file.setVisible(start_mode_jar_file)
         self.label_jar_file_help.setVisible(start_mode_jar_file)
-        self.label_working_directory.setVisible(show_advanced_options)
-        self.combo_working_directory.setVisible(show_advanced_options)
+        self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.label_options.setVisible(show_advanced_options)
         self.list_options.setVisible(show_advanced_options)
         self.label_options_help.setVisible(show_advanced_options)

@@ -53,7 +53,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         self.edit_identifier.textChanged.connect(self.check_identifier)
         self.combo_language.currentIndexChanged.connect(self.check_language)
 
-        self.edit_name_checker = MandatoryLineEditChecker(self, self.edit_name, self.label_name)
+        self.edit_name_checker       = MandatoryLineEditChecker(self, self.edit_name, self.label_name)
         self.edit_identifier_checker = MandatoryLineEditChecker(self, self.edit_identifier, self.label_identifier)
 
         self.check_language(self.combo_language.currentIndex())

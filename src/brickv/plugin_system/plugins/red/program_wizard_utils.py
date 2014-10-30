@@ -130,19 +130,19 @@ class Constants:
         LANGUAGE_SHELL:      ['', ('.sh', '.bash')],
         LANGUAGE_VBNET:      ['', '.exe'],
     }
-    
+
     # must match item order in combo_start_mode on C/C++ page
     C_START_MODE_EXECUTABLE = 0
     C_START_MODE_MAKE = 1
     C_START_MODE_CMAKE = 2
-    
+
     # must match item order in combo_start_mode on C# page
     CSHARP_START_MODE_EXECUTABLE = 0
 
     # must match item order in combo_start_mode on Java page
     JAVA_START_MODE_MAIN_CLASS = 0
     JAVA_START_MODE_JAR_FILE   = 1
-    
+
     # must match item order in combo_start_mode on JavaScript page
     JAVASCRIPT_START_MODE_SCRIPT_FILE = 0
     JAVASCRIPT_START_MODE_COMMAND     = 1
@@ -153,11 +153,11 @@ class Constants:
     # must match item order in combo_start_mode on Perl page
     PERL_START_MODE_SCRIPT_FILE = 0
     PERL_START_MODE_COMMAND     = 1
-    
+
     # must match item order in combo_start_mode on PHP page
     PHP_START_MODE_SCRIPT_FILE = 0
     PHP_START_MODE_COMMAND     = 1
-    
+
     # must match item order in combo_start_mode on Python page
     PYTHON_START_MODE_SCRIPT_FILE = 0
     PYTHON_START_MODE_MODULE_NAME = 1
@@ -170,7 +170,7 @@ class Constants:
     # must match item order in combo_start_mode on Shell page
     SHELL_START_MODE_SCRIPT_FILE = 0
     SHELL_START_MODE_COMMAND     = 1
-    
+
     # must match item order in combo_start_mode on VB.NET page
     VBNET_START_MODE_EXECUTABLE = 0
 
@@ -614,6 +614,47 @@ class MandatoryEditableComboBoxChecker:
 
         if emit and was_valid != self.valid:
             self.page.completeChanged.emit()
+
+
+# expects the combo box to be editable
+class MandatoryDirectorySelector:
+    def __init__(self, page, combo, label):
+        self.page  = page
+        self.combo = combo
+        self.label = label
+        self.complete = False
+        self.original_items = []
+
+        for i in range(combo.count()):
+            self.original_items.append(unicode(combo.itemText(i)))
+
+        self.combo.currentIndexChanged.connect(lambda: self.check(True))
+        self.combo.editTextChanged.connect(lambda: self.check(True))
+
+    def set_visible(self, visible):
+        self.combo.setVisible(visible)
+        self.label.setVisible(visible)
+
+    def reset(self):
+        self.combo.clear()
+        self.combo.addItems(self.original_items)
+        self.combo.addItems(self.page.wizard().available_directories)
+
+        if self.combo.count() > 1 and len(self.original_items) > 0 and self.original_items[0] != '.':
+            self.combo.clearEditText()
+
+    def check(self, emit):
+        was_complete = self.complete
+        self.complete = len(self.combo.currentText()) > 0
+
+        if self.complete:
+            self.label.setStyleSheet('')
+        else:
+            self.label.setStyleSheet('QLabel { color : red }')
+
+        if emit and was_complete != self.complete:
+            self.page.completeChanged.emit()
+
 
 # FIXME: merge with MandatoryEditableComboBoxChecker into MandatoryFileSelector
 class ComboBoxFileEndingChecker:

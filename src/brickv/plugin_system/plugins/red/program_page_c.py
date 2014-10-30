@@ -41,8 +41,8 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
-        self.combo_file_checker              = MandatoryEditableComboBoxChecker(self, self.combo_file, self.label_file)
-        self.combo_working_directory_checker = MandatoryEditableComboBoxChecker(self, self.combo_working_directory, self.label_working_directory)
+        self.combo_file_checker               = MandatoryEditableComboBoxChecker(self, self.combo_file, self.label_file)
+        self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
 
         self.option_list_editor = ListWidgetEditor(self.list_options,
                                                    self.button_add_option,
@@ -63,9 +63,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
 
-        self.combo_working_directory.clear()
-        self.combo_working_directory.addItem('.')
-        self.combo_working_directory.addItems(self.wizard().available_directories)
+        self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
         self.update_ui_state()
@@ -75,7 +73,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         if not self.combo_file_checker.valid:
             return False
 
-        return self.combo_working_directory_checker.valid and ProgramPage.isComplete(self)
+        return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
     
     def update_gcc_versions(self):
         version_str = 'Available are {0} and {1}'
@@ -111,8 +109,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.label_start_make_help.setVisible(start_mode_make)
         self.label_file_executable_help.setVisible(start_mode_exe)
         self.label_file_make_help.setVisible(start_mode_make)
-        self.label_working_directory.setVisible(show_advanced_options)
-        self.combo_working_directory.setVisible(show_advanced_options)
+        self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.label_options.setVisible(show_advanced_options and start_mode_make)
         self.list_options.setVisible(show_advanced_options and start_mode_make)
         self.label_options_help.setVisible(show_advanced_options and start_mode_make)

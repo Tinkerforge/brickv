@@ -48,9 +48,9 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
         self.combo_script_file_ending.currentIndexChanged.connect(self.update_ui_state)
 
         self.combo_script_file_ending_checker = ComboBoxFileEndingChecker(self, self.combo_script_file, self.combo_script_file_ending)
-        self.combo_script_file_checker = MandatoryEditableComboBoxChecker(self, self.combo_script_file, self.label_script_file)
-        self.edit_command_checker = MandatoryLineEditChecker(self, self.edit_command, self.label_command)
-        self.combo_working_directory_checker = MandatoryEditableComboBoxChecker(self, self.combo_working_directory, self.label_working_directory)
+        self.combo_script_file_checker        = MandatoryEditableComboBoxChecker(self, self.combo_script_file, self.label_script_file)
+        self.edit_command_checker             = MandatoryLineEditChecker(self, self.edit_command, self.label_command)
+        self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
 
         self.option_list_editor = ListWidgetEditor(self.list_options,
                                                    self.button_add_option,
@@ -71,9 +71,7 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
         self.combo_script_file_ending_checker.check(False)
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
 
-        self.combo_working_directory.clear()
-        self.combo_working_directory.addItem('.')
-        self.combo_working_directory.addItems(self.wizard().available_directories)
+        self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
         self.update_ui_state()
@@ -94,7 +92,7 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
            not self.edit_command_checker.valid:
             return False
 
-        return self.combo_working_directory_checker.valid and ProgramPage.isComplete(self)
+        return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_perl_versions(self):
         def cb_versions(result):
@@ -131,8 +129,7 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
         self.label_command.setVisible(start_mode_command)
         self.edit_command.setVisible(start_mode_command)
         self.label_command_help.setVisible(start_mode_command)
-        self.label_working_directory.setVisible(show_advanced_options)
-        self.combo_working_directory.setVisible(show_advanced_options)
+        self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.label_options.setVisible(show_advanced_options)
         self.list_options.setVisible(show_advanced_options)
         self.label_options_help.setVisible(show_advanced_options)
