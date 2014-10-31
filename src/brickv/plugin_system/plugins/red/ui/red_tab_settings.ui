@@ -65,6 +65,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="pbutton_net_refresh">
+            <property name="text">
+             <string>Refresh</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QTabWidget" name="twidget_net">
             <property name="enabled">
              <bool>true</bool>
@@ -91,7 +98,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>762</width>
-                   <height>493</height>
+                   <height>460</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_18">
@@ -243,13 +250,6 @@
                        </spacer>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="pbutton_net_gen_refresh">
-                        <property name="text">
-                         <string>Refresh</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
                        <widget class="QPushButton" name="pbutton_net_gen_save">
                         <property name="enabled">
                          <bool>false</bool>
@@ -307,7 +307,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>762</width>
-                   <height>493</height>
+                   <height>460</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -350,13 +350,6 @@
                          </size>
                         </property>
                        </spacer>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="pbutton_net_wireless_refresh">
-                        <property name="text">
-                         <string>Refresh</string>
-                        </property>
-                       </widget>
                       </item>
                       <item>
                        <widget class="QPushButton" name="pbutton_net_wireless_save">
@@ -583,12 +576,12 @@
                     <item row="0" column="0">
                      <widget class="QLabel" name="label_37">
                       <property name="text">
-                       <string>Connection Status</string>
+                       <string>Association</string>
                       </property>
                      </widget>
                     </item>
                     <item row="0" column="1" colspan="2">
-                     <widget class="QLabel" name="label_net_wireless_constat">
+                     <widget class="QLabel" name="label_net_wireless_association">
                       <property name="text">
                        <string>None</string>
                       </property>
@@ -677,7 +670,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>762</width>
-                   <height>493</height>
+                   <height>460</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -704,13 +697,6 @@
                          </size>
                         </property>
                        </spacer>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="pbutton_net_wired_refresh">
-                        <property name="text">
-                         <string>Refresh</string>
-                        </property>
-                       </widget>
                       </item>
                       <item>
                        <widget class="QPushButton" name="pbutton_net_wired_save">

@@ -151,11 +151,11 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.program_dir_walk_result = json.loads(result.stdout)
 
             for dir_node in self.program_dir_walk_result:
-                if dir_node['root'] == '/'.join([self.program_dir, "log"]):
+                if dir_node['root'] == os.path.join(self.program_dir, "log"):
                     for idx, f in enumerate(dir_node['files']):
                         file_name = f['name']
                         file_size = unicode(f['size'])
-                        file_path = '/'.join([dir_node['root'], file_name])
+                        file_path = os.path.join(dir_node['root'], file_name)
                         if len(file_name.split('-')) < 2:
                             self.update_ui_state()
                             return
@@ -549,39 +549,60 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         if log_files_download_dir != "":
             print log_files_download_dir
             print log_files_to_download
-            log_download_pd = QProgressDialog("Downloading log files...", "Cancel", 16, 0, self)
+            log_download_pd = QProgressDialog("Downloading log files...",
+                                              "Cancel",
+                                              0,
+                                              log_files_to_download['total_download_size'],
+                                              self)
             log_download_pd.setWindowTitle("Download Progress")
             log_download_pd.setAutoReset(True)
             log_download_pd.setAutoClose(True)
-            #log_download_pd.setValue(i)
+            log_download_pd.setMinimumDuration(0)
+            log_download_pd.setValue(0)
 
             def cb_open(red_file):
+                def cb_read_status(bytes_read, pd_current_value):
+                    print "UPDATE PBAR", bytes_read
+                    #print "PD CV", log_download_pd_value
+                    #log_download_pd_value = log_download_pd_value + 1
+                    #log_download_pd_value = log_download_pd_value + bytes_read
+                    pd_current_value = pd_current_value + bytes_read
+                    log_download_pd.setValue(pd_current_value)
+
                 def cb_read(red_file, result):
                     red_file.release()
                     if result is not None:
                         # Success
                         print "SUCCESS"
                         print result
-                        save_file_name = ''.join(log_files_to_download['files'].keys()[0].split('/')[-1:])
+                        read_file_path = log_files_to_download['files'].keys()[0]
+                        save_file_name = ''.join(read_file_path.split('/')[-1:])
                         print save_file_name
-                        with open("/".join([unicode(log_files_download_dir), unicode(save_file_name)]), 'wb') as fh_log_write:
+                        with open(os.path.join(unicode(log_files_download_dir), unicode(save_file_name)), 'wb') as fh_log_write:
                             fh_log_write.write(result.data)
-                        '''
-                        if len(log_files_to_download['files']) > 0:
-                            if len(log_files_to_download['files']) > 0:
-                                async_call(REDFile(self.session).open,
-                                           (log_files_to_download['files'].keys()[0],
-                                           REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                                           cb_open_error)
-                        '''
+
+                        if read_file_path in log_files_to_download['files']:
+                            log_files_to_download['files'].pop(read_file_path, None)
+
+                        print "FILES COUNT = ", len(log_files_to_download['files'])
+
+                        if len(log_files_to_download['files']) > 0 and not log_download_pd.wasCanceled():
+                            async_call(REDFile(self.session).open,
+                                       (log_files_to_download['files'].keys()[0],
+                                       REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                                       cb_open,
+                                       cb_open_error)
+
                     else:
                         # TODO: Error popup for user?
+                        log_download_pd.setValue(log_files_to_download['total_download_size'])
                         print result
 
                 red_file.read_async(4096, lambda x: cb_read(red_file, x))
 
             def cb_open_error(result):
                 # TODO: Error popup for user?
+                log_download_pd.setValue(log_files_to_download['total_download_size'])
                 print result
 
             if len(log_files_to_download['files']) > 0:
@@ -590,6 +611,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                            REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                            cb_open,
                            cb_open_error)
+            
 
     def delete_selected_logs(self):
         #selected_items = self.list_logs.selectedItems()

@@ -120,13 +120,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         # Network Buttons
         self.pbutton_net_gen_save.clicked.connect(self.slot_network_general_save_clicked)
-        self.pbutton_net_gen_refresh.clicked.connect(self.slot_network_refresh_clicked)
+        self.pbutton_net_refresh.clicked.connect(self.slot_network_refresh_clicked)
         self.pbutton_net_wireless_use_intf.clicked.connect(self.slot_network_button_wireless_use_intf_clicked)
         self.pbutton_net_wireless_scan.clicked.connect(self.slot_network_button_wireless_scan_clicked)
         self.pbutton_net_wireless_save.clicked.connect(self.slot_network_wireless_save_clicked)
-        self.pbutton_net_wireless_refresh.clicked.connect(self.slot_network_refresh_clicked)
         self.pbutton_net_wired_save.clicked.connect(self.slot_network_wired_save_clicked)
-        self.pbutton_net_wired_refresh.clicked.connect(self.slot_network_refresh_clicked)
 
         # Network fields
         self.label_working_wait.hide()
@@ -233,7 +231,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.label_net_gen_cstat_ip.setText(self.network_all_data['status']['cstat_intf_active']['ip'])
                 self.label_net_gen_cstat_mask.setText(self.network_all_data['status']['cstat_intf_active']['mask'])
             else:
-                self.label_net_gen_cstat_intf.setText("Not Connected")
+                self.label_net_gen_cstat_intf.setText("No Address")
                 self.label_net_gen_cstat_ip.setText("None")
                 self.label_net_gen_cstat_mask.setText("None")
 
@@ -316,10 +314,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                self.network_all_data['interfaces']['wireless_links'] is not None and\
                _cwlintf in self.network_all_data['interfaces']['wireless_links'] and\
                self.network_all_data['interfaces']['wireless_links'][_cwlintf]['status']:
-                self.label_net_wireless_constat.setText\
-                    ("Connected to "+self.network_all_data['interfaces']['wireless_links'][_cwlintf]['essid'])
+                self.label_net_wireless_association.setText\
+                    (self.network_all_data['interfaces']['wireless_links'][unicode(_cwlintf)]['essid'])
+
             else:
-                self.label_net_wireless_constat.setText("Not Connected")
+                self.label_net_wireless_association.setText("Not Associated")
 
             if _essid != "" and self.network_all_data['scan_result'] is not None:
                 for key, apdict in self.network_all_data['scan_result'].iteritems():
@@ -655,18 +654,12 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                  self.cbox_net_wired_conftype.currentIndex())
 
     def network_button_refresh_enabled(self, state):
-        self.pbutton_net_gen_refresh.setEnabled(state)
-        self.pbutton_net_wireless_refresh.setEnabled(state)
-        self.pbutton_net_wired_refresh.setEnabled(state)
+        self.pbutton_net_refresh.setEnabled(state)
 
         if state:
-            self.pbutton_net_gen_refresh.setText("Refresh")
-            self.pbutton_net_wireless_refresh.setText("Refresh")
-            self.pbutton_net_wired_refresh.setText("Refresh")
+            self.pbutton_net_refresh.setText("Refresh")
         else:
-            self.pbutton_net_gen_refresh.setText("Refreshing...")
-            self.pbutton_net_wireless_refresh.setText("Refreshing...")
-            self.pbutton_net_wired_refresh.setText("Refreshing...")
+            self.pbutton_net_refresh.setText("Refreshing...")
 
     def network_button_save_enabled(self, state):
         self.pbutton_net_gen_save.setEnabled(state)
@@ -1159,7 +1152,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.twidget_net.setEnabled(False)
             self.label_working_wait.show()
             self.pbar_working_wait.show()
-            self.label_net_wireless_constat.setText("None")
+            self.label_net_wireless_association.setText("None")
             self.label_net_wireless_currently_used_intf.setText("None")
 
             async_call(self.manager_settings_conf_rfile.open,
@@ -1501,10 +1494,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
            self.network_all_data['interfaces']['wireless_links'] is not None and\
            _cwlintf in self.network_all_data['interfaces']['wireless_links'] and\
            self.network_all_data['interfaces']['wireless_links'][_cwlintf]['status']:
-            self.label_net_wireless_constat.setText\
-                ("Connected to "+self.network_all_data['interfaces']['wireless_links'][_cwlintf]['essid'])
+            self.label_net_wireless_association.setText\
+                (self.network_all_data['interfaces']['wireless_links'][_cwlintf]['essid'])
         else:
-            self.label_net_wireless_constat.setText("Not Connected")
+            self.label_net_wireless_association.setText("Not Associated")
 
     def slot_cbox_net_wireless_ap_current_idx_changed(self, idx):
         _essid = ""
