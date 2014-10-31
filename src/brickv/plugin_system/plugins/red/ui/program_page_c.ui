@@ -79,6 +79,9 @@
        <property name="text">
         <string>Working Directory:</string>
        </property>
+       <property name="buddy">
+        <cstring>combo_working_directory</cstring>
+       </property>
       </widget>
      </item>
      <item row="11" column="0">
@@ -88,6 +91,9 @@
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="buddy">
+        <cstring>list_options</cstring>
        </property>
       </widget>
      </item>
@@ -107,7 +113,7 @@
       </widget>
      </item>
      <item row="11" column="1" colspan="4">
-      <widget class="QListWidget" name="list_options"/>
+      <widget class="ExpandingListWidget" name="list_options"/>
      </item>
      <item row="13" column="1">
       <widget class="QPushButton" name="button_add_option">
@@ -140,7 +146,7 @@
      <item row="12" column="1" colspan="4">
       <widget class="QLabel" name="label_options_help">
        <property name="text">
-        <string>This list of options will be passed to Make</string>
+        <string>This list of options will be passed to Make.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -205,6 +211,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ExpandingListWidget</class>
+   <extends>QListWidget</extends>
+   <header location="global">brickv.plugin_system.plugins.red.program_wizard_utils</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>combo_start_mode</tabstop>
   <tabstop>combo_file</tabstop>

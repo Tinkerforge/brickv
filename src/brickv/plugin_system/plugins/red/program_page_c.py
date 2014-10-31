@@ -60,15 +60,12 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
+
         self.update_gcc_versions()
+
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_C_START_MODE)
         self.combo_file.clear()
-
-        if self.combo_file.count() > 1:
-            self.combo_file.clearEditText()
-
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
-
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 

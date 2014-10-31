@@ -25,7 +25,6 @@ from PyQt4.QtCore import QVariant, pyqtProperty, QObject, pyqtSignal
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_delphi import Ui_ProgramPageDelphi
-
 import os
 
 class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
@@ -34,9 +33,9 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
 
         self.setupUi(self)
 
-        self.setTitle(title_prefix + 'Delphi/Lazarus Configuration')
-
         self.language = Constants.LANGUAGE_DELPHI
+
+        self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
         self.registerField('delphi.start_mode', self.combo_start_mode)
         self.registerField('delphi.file', self.combo_file, 'currentText')
@@ -48,17 +47,17 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
+        self.combo_executable_selector        = MandatoryEditableComboBoxChecker(self,
+                                                                                 self.combo_executable,
+                                                                                 self.label_executable)
+        self.combo_executable_checker         = ComboBoxFileEndingChecker(self,
+                                                                          self.combo_executable)
         self.combo_file_selector              = MandatoryTypedFileSelector(self,
                                                                            self.label_file,
                                                                            self.combo_file,
                                                                            self.label_file_type,
                                                                            self.combo_file_type,
                                                                            self.label_file_help)
-        self.combo_executable_selector        = MandatoryEditableComboBoxChecker(self,
-                                                                                 self.combo_executable,
-                                                                                 self.label_executable)
-        self.combo_executable_checker         = ComboBoxFileEndingChecker(self,
-                                                                          self.combo_executable)
         self.combo_working_directory_selector = MandatoryDirectorySelector(self,
                                                                            self.combo_working_directory,
                                                                            self.label_working_directory)
@@ -69,11 +68,11 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
                                                                  self.button_remove_option,
                                                                  self.button_up_option,
                                                                  self.button_down_option,
-                                                                 '<new Delphi/Lazarus option {0}>')
+                                                                 '<new FPC option {0}>')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify how the Delphi/Lazarus program [{name}] should be executed.')
+        self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
         self.update_delphi_versions()
 
@@ -90,11 +89,11 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
     def isComplete(self):
         start_mode = self.get_field('delphi.start_mode').toInt()[0]
 
-        if start_mode == Constants.DELPHI_START_MODE_COMPILE and \
-           not self.combo_file_selector.complete:
-            return False
-        elif start_mode == Constants.DELPHI_START_MODE_EXECUTABLE and \
+        if start_mode == Constants.DELPHI_START_MODE_EXECUTABLE and \
            not self.combo_executable_selector.complete:
+            return False
+        elif start_mode == Constants.DELPHI_START_MODE_COMPILE and \
+           not self.combo_file_selector.complete:
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
@@ -124,20 +123,20 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
 
     def update_ui_state(self):
         start_mode            = self.get_field('delphi.start_mode').toInt()[0]
-        start_mode_exe        = start_mode == Constants.DELPHI_START_MODE_EXECUTABLE
+        start_mode_executable = start_mode == Constants.DELPHI_START_MODE_EXECUTABLE
         start_mode_compile    = start_mode == Constants.DELPHI_START_MODE_COMPILE
         show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
 
         self.label_start_compile_help.setVisible(start_mode_compile)
-        self.label_start_executable_help.setVisible(start_mode_exe)
+        self.label_start_executable_help.setVisible(start_mode_executable)
         self.label_file.setVisible(start_mode_compile)
         self.label_file_help.setVisible(start_mode_compile)
         self.combo_file.setVisible(start_mode_compile)
         self.label_file_type.setVisible(start_mode_compile)
         self.combo_file_type.setVisible(start_mode_compile)
-        self.label_executable.setVisible(start_mode_exe)
-        self.label_executable_help.setVisible(start_mode_exe)
-        self.combo_executable.setVisible(start_mode_exe)
+        self.label_executable.setVisible(start_mode_executable)
+        self.label_executable_help.setVisible(start_mode_executable)
+        self.combo_executable.setVisible(start_mode_executable)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.option_list_editor.set_visible(show_advanced_options and start_mode_compile)
 
