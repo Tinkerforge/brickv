@@ -523,7 +523,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
     def load_log_files_for_ops(self, index_list):
         if len(index_list) % 4 != 0:
-            return
+            return False
 
         index_list_chunked = zip(*[iter(index_list)] * 4)
         logs_download_dict = {'files': {}, 'total_download_size': 0}
@@ -596,8 +596,13 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         index_list =  self.tree_logs.selectedIndexes()
         self.tree_logs.setColumnHidden(2, True)
         self.tree_logs.setColumnHidden(3, True)
+        if not index_list:
+            return
 
         log_files_to_download = self.load_log_files_for_ops(index_list)
+        if not log_files_to_download:
+            return
+
         log_files_download_dir = unicode(QFileDialog.getExistingDirectory(self, "Choose Download Location"))
 
         if log_files_download_dir != "":
@@ -675,14 +680,44 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
 
     def delete_selected_logs(self):
-        #selected_items = self.list_logs.selectedItems()
+        def cb_program_delete_logs(result):
+            if result.stderr == "":
+                if json.loads(result.stdout):
+                    QtGui.QMessageBox.information(None,
+                                                  'Program | Logs',
+                                                  'Deleted successfully!',
+                                                  QtGui.QMessageBox.Ok)
+                else:
+                    QtGui.QMessageBox.critical(None,
+                                               'Program | Logs',
+                                               'Deletion failed',
+                                               QtGui.QMessageBox.Ok)
+            else:
+                pass
+                # TODO: Error popup for user?
 
-        if len(selected_items) == 0:
+        self.tree_logs.setColumnHidden(2, False)
+        self.tree_logs.setColumnHidden(3, False)
+        index_list =  self.tree_logs.selectedIndexes()
+        self.tree_logs.setColumnHidden(2, True)
+        self.tree_logs.setColumnHidden(3, True)
+        if not index_list:
+            return
+        
+        log_files_to_delete = self.load_log_files_for_ops(index_list)
+
+        if not log_files_to_delete:
             return
 
-        filename = unicode(selected_items[0].text())
+        file_list = []
 
-        print 'delete_selected_logs', filename
+        for f_path in log_files_to_delete['files']:
+            file_list.append(f_path)
+
+        if len(file_list) > 0:
+            self.script_manager.execute_script('program_delete_logs',
+                                               cb_program_delete_logs,
+                                               [json.dumps(file_list)])
 
     def upload_files(self):
         print 'upload_files'
