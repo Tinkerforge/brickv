@@ -354,6 +354,21 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.button_refresh.setText('Refresh')
             self.set_buttons_enabled(True)
 
+        # general
+        name = self.program.cast_custom_option_value('name', unicode, '<unknown>')
+        api_language = self.program.cast_custom_option_value('language', unicode, '<unknown>')
+        description = self.program.cast_custom_option_value('description', unicode, '')
+
+        try:
+            language_display_name = Constants.get_language_display_name(api_language)
+        except:
+            language_display_name = '<unknown>'
+
+        self.label_name.setText(name)
+        self.label_identifier.setText(unicode(self.program.identifier))
+        self.label_language.setText(language_display_name)
+        self.label_description.setText(description)
+
         # status
         if self.program.last_spawned_process != None:
             if self.program.last_spawned_process.state == REDProcess.STATE_UNKNOWN:
@@ -392,21 +407,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         else:
             self.label_last_scheduler_error.setText('None')
 
-        # general
-        name = self.program.cast_custom_option_value('name', unicode, '<unknown>')
-        api_language = self.program.cast_custom_option_value('language', unicode, '<unknown>')
-        description = self.program.cast_custom_option_value('description', unicode, '')
-
-        try:
-            language = Constants.get_language(api_language)
-            language_display_name = Constants.language_display_names[language]
-        except:
-            language_display_name = '<unknown>'
-
-        self.label_name.setText(name)
-        self.label_identifier.setText(unicode(self.program.identifier))
-        self.label_language.setText(language_display_name)
-        self.label_description.setText(description)
+        # language
+        self.group_language.setTitle('{0} Configuration'.format(language_display_name))
 
         # arguments
         arguments = []
@@ -477,7 +479,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.label_repeat_fields.setVisible(repeat_mode_cron)
         self.label_repeat_fields.setText(unicode(self.program.repeat_fields))
 
-    def load_log_files_for_ops(self, index_list):   
+    def load_log_files_for_ops(self, index_list):
         if len(index_list) % 4 != 0:
             return
 
@@ -543,7 +545,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
         log_files_to_download = self.load_log_files_for_ops(index_list)
         log_files_download_dir = unicode(QFileDialog.getExistingDirectory(self, "Choose Download Location"))
-        
+
         if log_files_download_dir != "":
             print log_files_download_dir
             print log_files_to_download
@@ -575,10 +577,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                     else:
                         # TODO: Error popup for user?
                         print result
-        
+
                 red_file.read_async(4096, lambda x: cb_read(red_file, x))
 
-            def cb_open_error(result):    
+            def cb_open_error(result):
                 # TODO: Error popup for user?
                 print result
 

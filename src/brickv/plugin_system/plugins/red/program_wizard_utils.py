@@ -102,6 +102,10 @@ class Constants:
         d = Constants.api_languages
         return d.keys()[d.values().index(api_language)]
 
+    @staticmethod
+    def get_language_display_name(api_language):
+        return Constants.language_display_names[Constants.get_language(api_language)]
+
     arguments_help = {
         LANGUAGE_INVALID:    '<invalid>',
         LANGUAGE_C:          'This list of arguments will be passed to the main() function.',
@@ -459,6 +463,7 @@ class ListWidgetEditor:
             items.append(unicode(self.list_items.item(row).text()))
 
         return items
+
 
 class TreeWidgetEditor:
     def __init__(self, label_items, tree_items, label_items_help,
