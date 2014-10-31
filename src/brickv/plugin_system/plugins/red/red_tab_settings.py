@@ -317,7 +317,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                _cwlintf in self.network_all_data['interfaces']['wireless_links'] and\
                self.network_all_data['interfaces']['wireless_links'][_cwlintf]['status']:
                 self.label_net_wireless_constat.setText\
-                    ("Connected to "+self.network_all_data['interfaces']['wireless_links'][unicode(_cwlintf)]['essid'])
+                    ("Connected to "+self.network_all_data['interfaces']['wireless_links'][_cwlintf]['essid'])
             else:
                 self.label_net_wireless_constat.setText("Not Connected")
 
