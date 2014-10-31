@@ -26,6 +26,48 @@ from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_java import Ui_ProgramPageJava
 
+from brickv.plugin_system.plugins.red.javatools.jarinfo import JarInfo
+from brickv.plugin_system.plugins.red.javatools import unpack_class
+
+import os
+
+def get_classes_from_class_or_jar(uploads):
+    MAIN_ENDING = '.main(java.lang.String[]):void'
+
+    def parse_jar(f):
+        try:
+            with JarInfo(filename=f) as ji:
+                return ji.get_provides()
+        except:
+            import traceback
+            traceback.print_exc()
+
+        return []
+
+    def parse_class(f):
+        try:
+            with open(f) as cf:
+                return unpack_class(cf).get_provides()
+        except:
+            import traceback
+            traceback.print_exc()
+
+        return []
+
+    classes = []
+    main_classes = []
+    for upload in uploads:
+        if upload.source.endswith('.jar'):
+            classes.extend(parse_jar(upload.source))
+        elif upload.source.endswith('.class'):
+            classes.extend(parse_class(upload.source))
+
+    for cls in classes:
+        if cls.endswith(MAIN_ENDING):
+            main_classes.append(cls.replace(MAIN_ENDING, ''))
+
+    return main_classes
+
 class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
     def __init__(self, title_prefix='', *args, **kwargs):
         ProgramPage.__init__(self, *args, **kwargs)
@@ -38,7 +80,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
         self.registerField('java.version', self.combo_version)
         self.registerField('java.start_mode', self.combo_start_mode)
-        self.registerField('java.main_class', self.edit_main_class)
+        self.registerField('java.main_class', self.combo_main_class, 'currentText')
         self.registerField('java.jar_file', self.combo_jar_file, 'currentText')
         self.registerField('java.working_directory', self.combo_working_directory, 'currentText')
 
@@ -46,9 +88,9 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
-        self.edit_main_class_checker          = MandatoryLineEditChecker(self,
-                                                                         self.edit_main_class,
-                                                                         self.label_main_class)
+        self.combo_main_class_checker         = MandatoryEditableComboBoxChecker(self,
+                                                                                 self.combo_main_class,
+                                                                                 self.label_main_class)
         self.combo_jar_file_selector          = MandatoryTypedFileSelector(self,
                                                                            self.label_jar_file,
                                                                            self.combo_jar_file,
@@ -89,6 +131,20 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
+        identifier = str(self.get_field('identifier').toString())
+        root_dir = os.path.join('/', 'home', 'tf', 'programs', identifier, 'bin')
+        for f in sorted(self.wizard().available_files):
+            if f.endswith('.jar'):
+                self.class_path_list_editor.add_item(os.path.join(root_dir, f))
+
+        self.combo_main_class.clear()
+        self.combo_main_class.clearEditText()
+        for cls in sorted(get_classes_from_class_or_jar(self.wizard().page(Constants.PAGE_FILES).get_uploads())):
+            self.combo_main_class.addItem(cls)
+
+        if self.combo_main_class.count() > 1:
+            self.combo_main_class.clearEditText()
+
         self.update_ui_state()
 
     # overrides QWizardPage.isComplete
@@ -100,7 +156,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             return False
 
         if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS and \
-           not self.edit_main_class_checker.complete:
+           not self.combo_main_class_checker.complete:
             return False
 
         if start_mode == Constants.JAVA_START_MODE_JAR_FILE and \
@@ -137,7 +193,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
 
         self.label_main_class.setVisible(start_mode_main_class)
-        self.edit_main_class.setVisible(start_mode_main_class)
+        self.combo_main_class.setVisible(start_mode_main_class)
         self.label_main_class_help.setVisible(start_mode_main_class)
         self.combo_jar_file_selector.set_visible(start_mode_jar_file)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
@@ -160,7 +216,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             arguments += ['-cp', ':'.join(class_path_entries)]
 
         if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS:
-            arguments.append(unicode(self.edit_main_class.text()))
+            arguments.append(unicode(self.combo_main_class.currentText()))
         elif start_mode == Constants.JAVA_START_MODE_JAR_FILE:
             arguments.append('-jar')
             arguments.append(unicode(self.combo_jar_file.currentText()))
