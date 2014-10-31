@@ -130,6 +130,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         # Network fields
         self.label_working_wait.hide()
+        self.pbar_working_wait.hide()
         self.ledit_net_gen_hostname.textEdited.connect(self.slot_network_settings_changed)
         self.cbox_net_wireless_intf.currentIndexChanged.connect(self.slot_network_settings_changed)
         self.cbox_net_wireless_intf.currentIndexChanged.connect(self.slot_cbox_net_wireless_intf_current_idx_changed)
@@ -723,6 +724,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             if (network_refresh_tasks_remaining == 0):
                 self.twidget_net.setEnabled(True)
                 self.label_working_wait.hide()
+                self.pbar_working_wait.hide()
                 network_refresh_tasks_remaining = -1
                 self.update_network_widget_data()
                 self.network_button_refresh_enabled(True)
@@ -741,6 +743,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             if (network_refresh_tasks_remaining == 0):
                 self.twidget_net.setEnabled(True)
                 self.label_working_wait.hide()
+                self.pbar_working_wait.hide()
                 network_refresh_tasks_remaining = -1
                 self.update_network_widget_data()
                 self.network_button_refresh_enabled(True)
@@ -760,6 +763,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             if (network_refresh_tasks_remaining == 0):
                 self.twidget_net.setEnabled(True)
                 self.label_working_wait.hide()
+                self.pbar_working_wait.hide()
                 network_refresh_tasks_remaining = -1
                 self.update_network_widget_data()
                 self.network_button_refresh_enabled(True)
@@ -780,6 +784,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 if (network_refresh_tasks_remaining == 0):
                     self.twidget_net.setEnabled(True)
                     self.label_working_wait.hide()
+                    self.pbar_working_wait.hide()
                     network_refresh_tasks_remaining = -1
                     self.update_network_widget_data()
                     self.network_button_refresh_enabled(True)
@@ -793,6 +798,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             if (network_refresh_tasks_remaining == 0):
                 self.twidget_net.setEnabled(True)
                 self.label_working_wait.hide()
+                self.pbar_working_wait.hide()
                 network_refresh_tasks_remaining = -1
                 self.update_network_widget_data()
                 self.network_button_refresh_enabled(True)
@@ -817,6 +823,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 if (network_refresh_tasks_remaining == 0):
                     self.twidget_net.setEnabled(True)
                     self.label_working_wait.hide()
+                    self.pbar_working_wait.hide()
                     network_refresh_tasks_remaining = -1
                     self.update_network_widget_data()
                     self.network_button_refresh_enabled(True)
@@ -830,6 +837,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             if (network_refresh_tasks_remaining == 0):
                 self.twidget_net.setEnabled(True)
                 self.label_working_wait.hide()
+                self.pbar_working_wait.hide()
                 network_refresh_tasks_remaining = -1
                 self.update_network_widget_data()
                 self.network_button_refresh_enabled(True)
@@ -855,6 +863,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 if (network_refresh_tasks_remaining == 0):
                     self.twidget_net.setEnabled(True)
                     self.label_working_wait.hide()
+                    self.pbar_working_wait.hide()
                     network_refresh_tasks_remaining = -1
                     self.update_network_widget_data()
                     self.network_button_refresh_enabled(True)
@@ -868,6 +877,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             if (network_refresh_tasks_remaining == 0):
                 self.twidget_net.setEnabled(True)
                 self.label_working_wait.hide()
+                self.pbar_working_wait.hide()
                 network_refresh_tasks_remaining = -1
                 self.update_network_widget_data()
                 self.network_button_refresh_enabled(True)
@@ -907,6 +917,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     
         self.twidget_net.setEnabled(False)
         self.label_working_wait.show()
+        self.pbar_working_wait.show()
 
         self.script_manager.execute_script('settings_network_status',
                                            cb_settings_network_status,
@@ -971,6 +982,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         def cb_settings_network_status(result):
             self.twidget_net.setEnabled(True)
             self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
+
             if result.stderr == "":
                 self.network_all_data['status'] = json.loads(result.stdout)
                 self.update_network_widget_data()
@@ -986,10 +999,12 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             else:
                 self.twidget_net.setEnabled(True)
                 self.label_working_wait.hide()
+                self.pbar_working_wait.hide()
                 # TODO: Error popup for user?
 
         self.twidget_net.setEnabled(False)
         self.label_working_wait.show()
+        self.pbar_working_wait.show()
 
         try:
             hostname_new = unicode(self.ledit_net_gen_hostname.displayText())
@@ -1001,6 +1016,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.ledit_net_gen_hostname.setText(self.network_all_data['status']['cstat_hostname'])
             self.twidget_net.setEnabled(True)
             self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
             return
 
         self.script_manager.execute_script('settings_network_set_hostname',
@@ -1069,6 +1085,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         def cb_settings_network_wireless_apply(result):
             self.twidget_net.setEnabled(True)
             self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
             if result.stderr == "":
                 QtGui.QMessageBox.information(None,
                                               'Settings | Network | Wireless',
@@ -1080,6 +1097,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         self.twidget_net.setEnabled(False)
         self.label_working_wait.show()
+        self.pbar_working_wait.show()
 
         self.script_manager.execute_script('settings_network_wireless_apply',
                                            cb_settings_network_wireless_apply,
@@ -1100,6 +1118,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         def cb_settings_network_wireless_apply_intf(result):
             self.twidget_net.setEnabled(True)
             self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
             if result.stderr == "":
                 self.update_network_widget_data()
                 QtGui.QMessageBox.information(None,
@@ -1139,6 +1158,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
             self.twidget_net.setEnabled(False)
             self.label_working_wait.show()
+            self.pbar_working_wait.show()
             self.label_net_wireless_constat.setText("None")
             self.label_net_wireless_currently_used_intf.setText("None")
 
@@ -1155,6 +1175,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         def cb_settings_network_wireless_scan(result):
             self.twidget_net.setEnabled(True)
             self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
             if result.stderr == "":
                 self.network_all_data['scan_result'] = json.loads(result.stdout)
                 if self.network_all_data['scan_result'] is not None and\
@@ -1202,6 +1223,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         self.twidget_net.setEnabled(False)
         self.label_working_wait.show()
+        self.pbar_working_wait.show()
 
         self.script_manager.execute_script('settings_network_wireless_scan',
                                            cb_settings_network_wireless_scan,
@@ -1213,6 +1235,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         def cb_settings_network_wired_apply(result):
             self.twidget_net.setEnabled(True)
             self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
             if result.stderr is not None and  result.stderr == "":
                 QtGui.QMessageBox.information(None,
                                               'Settings | Network | Wired',
@@ -1327,6 +1350,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
             self.twidget_net.setEnabled(False)
             self.label_working_wait.show()
+            self.pbar_working_wait.show()
 
             async_call(self.wired_settings_conf_rfile.open,
                        (WIRED_SETTINGS_CONF_PATH,
@@ -1359,6 +1383,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         self.twidget_net.setEnabled(False)
         self.label_working_wait.show()
+        self.pbar_working_wait.show()
 
         async_call(self.manager_settings_conf_rfile.open,
                    (MANAGER_SETTINGS_CONF_PATH,
