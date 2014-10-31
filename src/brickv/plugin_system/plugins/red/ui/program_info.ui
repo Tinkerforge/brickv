@@ -298,14 +298,14 @@
                  <item row="2" column="0">
                   <widget class="QLabel" name="label_13">
                    <property name="text">
-                    <string>Last Error Message:</string>
+                    <string>Last Message:</string>
                    </property>
                   </widget>
                  </item>
                  <item row="2" column="1">
-                  <widget class="QLabel" name="label_last_scheduler_error_message">
+                  <widget class="QLabel" name="label_last_scheduler_message">
                    <property name="text">
-                    <string>&lt;last-error-message&gt;</string>
+                    <string>&lt;last-message&gt;</string>
                    </property>
                    <property name="wordWrap">
                     <bool>true</bool>

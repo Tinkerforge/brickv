@@ -1258,63 +1258,105 @@ class REDProgram(REDObject):
     REPEAT_MODE_INTERVAL = BrickRED.PROGRAM_REPEAT_MODE_INTERVAL
     REPEAT_MODE_CRON     = BrickRED.PROGRAM_REPEAT_MODE_CRON
 
+    SCHEDULER_STATE_STOPPED                      = BrickRED.PROGRAM_SCHEDULER_STATE_STOPPED
+    SCHEDULER_STATE_WAITING_FOR_START_CONDITION  = BrickRED.PROGRAM_SCHEDULER_STATE_WAITING_FOR_START_CONDITION
+    SCHEDULER_STATE_DELAYING_START               = BrickRED.PROGRAM_SCHEDULER_STATE_DELAYING_START
+    SCHEDULER_STATE_WAITING_FOR_REPEAT_CONDITION = BrickRED.PROGRAM_SCHEDULER_STATE_WAITING_FOR_REPEAT_CONDITION
+    SCHEDULER_STATE_ERROR_OCCURRED               = BrickRED.PROGRAM_SCHEDULER_STATE_ERROR_OCCURRED
+
+    _qtcb_scheduler_state_changed = QtCore.pyqtSignal(int)
     _qtcb_process_spawned = QtCore.pyqtSignal(int)
-    _qtcb_scheduler_error_occurred = QtCore.pyqtSignal(int)
 
     def __repr__(self):
         return '<REDProgram object_id: {0}, identifier: {1}>'.format(self.object_id, self._identifier)
 
     def _initialize(self):
-        self._identifier                     = None
-        self._root_directory                 = None
-        self._executable                     = None
-        self._arguments                      = None
-        self._environment                    = None
-        self._working_directory              = None
-        self._stdin_redirection              = None
-        self._stdin_file_name                = None
-        self._stdout_redirection             = None
-        self._stdout_file_name               = None
-        self._stderr_redirection             = None
-        self._stderr_file_name               = None
-        self._start_condition                = None
-        self._start_timestamp                = None
-        self._start_delay                    = None
-        self._repeat_mode                    = None
-        self._repeat_interval                = None
-        self._repeat_fields                  = None
-        self._last_spawned_process           = None
-        self._last_spawned_timestamp         = None
-        self._last_scheduler_error_message   = None
-        self._last_scheduler_error_timestamp = None
-        self._custom_options                 = None
+        self._identifier             = None
+        self._root_directory         = None
+        self._executable             = None
+        self._arguments              = None
+        self._environment            = None
+        self._working_directory      = None
+        self._stdin_redirection      = None
+        self._stdin_file_name        = None
+        self._stdout_redirection     = None
+        self._stdout_file_name       = None
+        self._stderr_redirection     = None
+        self._stderr_file_name       = None
+        self._start_condition        = None
+        self._start_timestamp        = None
+        self._start_delay            = None
+        self._repeat_mode            = None
+        self._repeat_interval        = None
+        self._repeat_fields          = None
+        self._scheduler_state        = None
+        self._scheduler_timestamp    = None
+        self._scheduler_message      = None
+        self._last_spawned_process   = None
+        self._last_spawned_timestamp = None
+        self._custom_options         = None
 
-        self.process_spawned_callback          = None
-        self.scheduler_error_occurred_callback = None
+        self.scheduler_state_changed_callback = None
+        self.process_spawned_callback         = None
 
-        self._cb_process_spawned_emit_cookie          = None
-        self._cb_scheduler_error_occurred_emit_cookie = None
+        self._cb_scheduler_state_changed_emit_cookie = None
+        self._cb_process_spawned_emit_cookie         = None
 
     def _attach_callbacks(self):
+        self._qtcb_scheduler_state_changed.connect(self._cb_scheduler_state_changed)
+        self._cb_scheduler_state_changed_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED,
+                                                                                          self._cb_scheduler_state_changed_emit)
+
         self._qtcb_process_spawned.connect(self._cb_process_spawned)
         self._cb_process_spawned_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
                                                                                  self._cb_process_spawned_emit)
 
-        self._qtcb_scheduler_error_occurred.connect(self._cb_scheduler_error_occurred)
-        self._cb_scheduler_error_occurred_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED,
-                                                                                          self._cb_scheduler_error_occurred_emit)
 
     def _detach_callbacks(self):
+        self._qtcb_scheduler_state_changed.disconnect(self._cb_scheduler_state_changed)
+        self._session._brick.remove_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED,
+                                             self._cb_scheduler_state_changed_emit_cookie)
+
         self._qtcb_process_spawned.disconnect(self._cb_process_spawned)
         self._session._brick.remove_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
                                              self._cb_process_spawned_emit_cookie)
 
-        self._qtcb_scheduler_error_occurred.disconnect(self._cb_scheduler_error_occurred)
-        self._session._brick.remove_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED,
-                                             self._cb_scheduler_error_occurred_emit_cookie)
 
-        self._cb_process_spawned_emit_cookie          = None
-        self._cb_scheduler_error_occurred_emit_cookie = None
+        self._cb_scheduler_state_changed_emit_cookie = None
+        self._cb_process_spawned_emit_cookie         = None
+
+    def _cb_scheduler_state_changed_emit(self, *args, **kwargs):
+        # cannot directly use emit function as callback functions, because this
+        # triggers a segfault on the second call for some unknown reason. adding
+        # a method in between helps
+        self._qtcb_scheduler_state_changed.emit(*args, **kwargs)
+
+    def _cb_scheduler_state_changed(self, program_id):
+        if self.object_id != program_id:
+            return
+
+        error_code, state, timestamp, message_string_id = self._session._brick.get_program_scheduler_state(self.object_id, self._session._session_id)
+
+        if error_code != REDError.E_SUCCESS:
+            return
+
+        if state == REDProgram.SCHEDULER_STATE_ERROR_OCCURRED:
+            try:
+                message = _attach_or_release(self._session, REDString, message_string_id)
+            except:
+                message = None
+                traceback.print_exc() # FIXME: error handling
+        else:
+            message = None
+
+        self._scheduler_state     = state
+        self._scheduler_timestamp = timestamp
+        self._scheduler_message   = message
+
+        scheduler_state_changed_callback = self.scheduler_state_changed_callback
+
+        if scheduler_state_changed_callback is not None:
+            scheduler_state_changed_callback(self)
 
     def _cb_process_spawned_emit(self, *args, **kwargs):
         # cannot directly use emit function as callback functions, because this
@@ -1345,43 +1387,14 @@ class REDProgram(REDObject):
         if process_spawned_callback is not None:
             process_spawned_callback(self)
 
-    def _cb_scheduler_error_occurred_emit(self, *args, **kwargs):
-        # cannot directly use emit function as callback functions, because this
-        # triggers a segfault on the second call for some unknown reason. adding
-        # a method in between helps
-        self._qtcb_scheduler_error_occurred.emit(*args, **kwargs)
-
-    def _cb_scheduler_error_occurred(self, program_id):
-        if self.object_id != program_id:
-            return
-
-        error_code, message_string_id, timestamp = self._session._brick.get_last_program_scheduler_error(self.object_id, self._session._session_id)
-
-        if error_code != REDError.E_SUCCESS:
-            return
-
-        try:
-            message = _attach_or_release(self._session, REDString, message_string_id)
-        except:
-            message = None
-            traceback.print_exc() # FIXME: error handling
-
-        self._last_scheduler_error_message   = message
-        self._last_scheduler_error_timestamp = timestamp
-
-        scheduler_error_occurred_callback = self.scheduler_error_occurred_callback
-
-        if scheduler_error_occurred_callback is not None:
-            scheduler_error_occurred_callback(self)
-
     def update(self):
         self.update_identifier()
         self.update_root_directory()
         self.update_command()
         self.update_stdio_redirection()
         self.update_schedule()
+        self.update_scheduler_state()
         self.update_last_spawned_process()
-        self.update_last_scheduler_error()
         self.update_custom_options()
 
     def update_identifier(self):
@@ -1489,6 +1502,24 @@ class REDProgram(REDObject):
         else:
             self._repeat_fields = None
 
+    def update_scheduler_state(self):
+        if self.object_id is None:
+            raise RuntimeError('Cannot update unattached program object')
+
+        error_code, state, timestamp, message_string_id = self._session._brick.get_program_scheduler_state(self.object_id, self._session._session_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get scheduler state of program object {0}'.format(self.object_id), error_code)
+
+        if state == REDProgram.SCHEDULER_STATE_ERROR_OCCURRED:
+            message = _attach_or_release(self._session, REDString, message_string_id)
+        else:
+            message = None
+
+        self._scheduler_state     = state
+        self._scheduler_timestamp = timestamp
+        self._scheduler_message   = message
+
     def update_last_spawned_process(self):
         if self.object_id is None:
             raise RuntimeError('Cannot update unattached program object')
@@ -1504,26 +1535,8 @@ class REDProgram(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get last spawned process of program object {0}'.format(self.object_id), error_code)
 
-        self._last_spawned_process = _attach_or_release(self._session, REDProcess, process_id)
+        self._last_spawned_process   = _attach_or_release(self._session, REDProcess, process_id)
         self._last_spawned_timestamp = timestamp
-
-    def update_last_scheduler_error(self):
-        if self.object_id is None:
-            raise RuntimeError('Cannot update unattached program object')
-
-        error_code, message_string_id, timestamp = self._session._brick.get_last_program_scheduler_error(self.object_id, self._session._session_id)
-
-        if error_code == REDError.E_DOES_NOT_EXIST:
-            self._last_scheduler_error_message   = None
-            self._last_scheduler_error_timestamp = None
-
-            return
-
-        if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get last spawned process of program object {0}'.format(self.object_id), error_code)
-
-        self._last_scheduler_error_message   = _attach_or_release(self._session, REDString, message_string_id)
-        self._last_scheduler_error_timestamp = timestamp
 
     def update_custom_options(self):
         if self.object_id is None:
@@ -1694,6 +1707,15 @@ class REDProgram(REDObject):
         self._repeat_interval = repeat_interval
         self._repeat_fields   = repeat_fields
 
+    def schedule_now(self):
+        if self.object_id is None:
+            raise RuntimeError('Cannot schedule unattached program object now')
+
+        error_code = self._session._brick.schedule_program_now(self.object_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not schedule program object {0} now'.format(self.object_id), error_code)
+
     def set_custom_option_value(self, name, value):
         if self.object_id is None:
             raise RuntimeError('Cannot set custom option for unattached program object')
@@ -1718,51 +1740,53 @@ class REDProgram(REDObject):
             return default
 
     @property
-    def identifier(self):                     return self._identifier
+    def identifier(self):               return self._identifier
     @property
-    def root_directory(self):                 return self._root_directory
+    def root_directory(self):         return self._root_directory
     @property
-    def executable(self):                     return self._executable
+    def executable(self):             return self._executable
     @property
-    def arguments(self):                      return self._arguments
+    def arguments(self):              return self._arguments
     @property
-    def environment(self):                    return self._environment
+    def environment(self):            return self._environment
     @property
-    def working_directory(self):              return self._working_directory
+    def working_directory(self):      return self._working_directory
     @property
-    def stdin_redirection(self):              return self._stdin_redirection
+    def stdin_redirection(self):      return self._stdin_redirection
     @property
-    def stdin_file_name(self):                return self._stdin_file_name
+    def stdin_file_name(self):        return self._stdin_file_name
     @property
-    def stdout_redirection(self):             return self._stdout_redirection
+    def stdout_redirection(self):     return self._stdout_redirection
     @property
-    def stdout_file_name(self):               return self._stdout_file_name
+    def stdout_file_name(self):       return self._stdout_file_name
     @property
-    def stderr_redirection(self):             return self._stderr_redirection
+    def stderr_redirection(self):     return self._stderr_redirection
     @property
-    def stderr_file_name(self):               return self._stderr_file_name
+    def stderr_file_name(self):       return self._stderr_file_name
     @property
-    def start_condition(self):                return self._start_condition
+    def start_condition(self):        return self._start_condition
     @property
-    def start_timestamp(self):                return self._start_timestamp
+    def start_timestamp(self):        return self._start_timestamp
     @property
-    def start_delay(self):                    return self._start_delay
+    def start_delay(self):            return self._start_delay
     @property
-    def repeat_mode(self):                    return self._repeat_mode
+    def repeat_mode(self):            return self._repeat_mode
     @property
-    def repeat_interval(self):                return self._repeat_interval
+    def repeat_interval(self):        return self._repeat_interval
     @property
-    def repeat_fields(self):                  return self._repeat_fields
+    def repeat_fields(self):          return self._repeat_fields
     @property
-    def last_spawned_process(self):           return self._last_spawned_process
+    def scheduler_state(self):        return self._scheduler_state
     @property
-    def last_spawned_timestamp(self):         return self._last_spawned_timestamp
+    def scheduler_timestamp(self):    return self._scheduler_timestamp
     @property
-    def last_scheduler_error_message(self):   return self._last_scheduler_error_message
+    def scheduler_message(self):      return self._scheduler_message
     @property
-    def last_scheduler_error_timestamp(self): return self._last_scheduler_error_timestamp
+    def last_spawned_process(self):   return self._last_spawned_process
     @property
-    def custom_options(self):                 return self._custom_options
+    def last_spawned_timestamp(self): return self._last_spawned_timestamp
+    @property
+    def custom_options(self):         return self._custom_options
 
 
 def get_programs(session):

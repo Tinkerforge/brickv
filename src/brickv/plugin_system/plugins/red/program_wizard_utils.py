@@ -321,6 +321,14 @@ class Constants:
     def get_repeat_mode_display_name(repeat_mode):
         return Constants.api_repeat_mode_display_names[Constants.api_repeat_modes[repeat_mode]]
 
+    api_scheduler_state_display_name = {
+        REDProgram.SCHEDULER_STATE_STOPPED:                      'Stopped',
+        REDProgram.SCHEDULER_STATE_WAITING_FOR_START_CONDITION:  'Waiting for start condition',
+        REDProgram.SCHEDULER_STATE_DELAYING_START:               'Delaying start',
+        REDProgram.SCHEDULER_STATE_WAITING_FOR_REPEAT_CONDITION: 'Waiting for repeat condition',
+        REDProgram.SCHEDULER_STATE_ERROR_OCCURRED:               'Error occurred'
+    }
+
     DEFAULT_C_START_MODE          = C_START_MODE_EXECUTABLE
     DEFAULT_CSHARP_START_MODE     = CSHARP_START_MODE_EXECUTABLE
     DEFAULT_DELPHI_START_MODE     = DELPHI_START_MODE_EXECUTABLE

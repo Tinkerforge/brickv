@@ -92,8 +92,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.program = program
         self.root_directory = unicode(self.program.root_directory)
 
+        self.program.scheduler_state_changed_callback = self.scheduler_state_changed
         self.program.process_spawned_callback = self.process_spawned
-        self.program.scheduler_error_occurred_callback = self.scheduler_error_occurred
 
         self.program_refresh_in_progress = False
         self.logs_refresh_in_progress = False
@@ -123,8 +123,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.button_delete_files.clicked.connect(self.delete_selected_files)
 
         self.button_kill.clicked.connect(self.kill_process)
-        self.button_send_stdin_pipe_input.clicked.connect(self.send_stdin_pipe_input)
         self.button_schedule_now.clicked.connect(self.schedule_now)
+        self.button_send_stdin_pipe_input.clicked.connect(self.send_stdin_pipe_input)
 
         self.button_edit_general.clicked.connect(self.show_edit_general_wizard)
         self.button_edit_language.clicked.connect(self.show_edit_language_wizard)
@@ -134,13 +134,13 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
         self.update_ui_state()
 
+    def scheduler_state_changed(self, program):
+        self.update_ui_state()
+
     def process_spawned(self, program):
         self.update_ui_state()
 
         self.program.last_spawned_process.state_changed_callback = self.process_state_changed
-
-    def scheduler_error_occurred(self, program):
-        self.update_ui_state()
 
     def process_state_changed(self, process):
         self.update_ui_state()
@@ -436,14 +436,16 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.label_program_current_state.setText('Not running')
             self.label_last_start.setText('Never started')
 
-        if self.program.last_scheduler_error_message != None:
-            self.label_last_scheduler_state_change.setText(QDateTime.fromTime_t(self.program.last_scheduler_error_timestamp).toString('yyyy-MM-dd HH:mm:ss'))
-            self.label_last_scheduler_error_message.setText(unicode(self.program.last_scheduler_error_message))
+        self.label_scheduler_current_state.setText(Constants.api_scheduler_state_display_name.get(self.program.scheduler_state, '<unknown>'))
+        self.label_last_scheduler_state_change.setText(QDateTime.fromTime_t(self.program.scheduler_timestamp).toString('yyyy-MM-dd HH:mm:ss'))
+
+        if self.program.scheduler_message != None:
+            self.label_last_scheduler_message.setText(unicode(self.program.scheduler_message))
         else:
-            self.label_last_scheduler_state_change.setText('Never changed')
-            self.label_last_scheduler_error_message.setText('None')
+            self.label_last_scheduler_message.setText('None')
 
         self.button_kill.setEnabled(process_running)
+        self.button_schedule_now.setEnabled(not process_running)
 
         # language
         self.group_language.setTitle('{0} Configuration'.format(language_display_name))
@@ -523,8 +525,6 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.label_repeat_fields_title.setVisible(repeat_mode_cron)
         self.label_repeat_fields.setVisible(repeat_mode_cron)
         self.label_repeat_fields.setText(unicode(self.program.repeat_fields))
-
-        self.button_schedule_now.setEnabled(not process_running)
 
     def load_log_files_for_ops(self, index_list):
         if len(index_list) % 4 != 0:
@@ -621,7 +621,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             log_download_pd.setAutoClose(False)
             log_download_pd.setMinimumDuration(0)
             log_download_pd.setValue(0)
-            
+
             log_download_pd.canceled.connect(log_download_pd_closed)
 
             def cb_open(red_file):
@@ -683,7 +683,6 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                            cb_open,
                            cb_open_error)
 
-
     def delete_selected_logs(self):
         def cb_program_delete_logs(result):
             if result.stderr == "":
@@ -708,7 +707,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.tree_logs.setColumnHidden(3, True)
         if not index_list:
             return
-        
+
         log_files_to_delete = self.load_log_files_for_ops(index_list)
 
         if not log_files_to_delete:
@@ -763,7 +762,16 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                 self.program.last_spawned_process.kill(REDProcess.SIGNAL_KILL)
             except REDError as e:
                 QMessageBox.critical(self, 'Kill Error',
-                                     u'Could not kill current process of program [{0}]:\n\n{1}'.format(name, str(e)))
+                                     u'Could not kill current process of program [{0}]:\n\n{1}'
+                                     .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
+
+    def schedule_now(self):
+        try:
+            self.program.schedule_now()
+        except REDError as e:
+            QMessageBox.critical(self, 'Schedule Error',
+                                 u'Could not schedule program [{0}] now:\n\n{1}'
+                                 .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
 
     def send_stdin_pipe_input(self):
         if self.program.last_spawned_process != None and self.program.last_spawned_process.stdin != None:
@@ -771,12 +779,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                 self.program.last_spawned_process.stdin.write_async((unicode(self.edit_stdin_pipe_input.text()) + u'\n').encode('utf-8'))
             except REDError as e:
                 QMessageBox.critical(self, 'Pipe Input Error',
-                                     u'Could not write to stdin of current process of program [{0}]:\n\n{1}'.format(name, str(e)))
+                                     u'Could not write to stdin of current process of program [{0}]:\n\n{1}'
+                                     .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
             else:
                 self.edit_stdin_pipe_input.setText('')
-
-    def schedule_now(self):
-        pass
 
     def set_buttons_enabled(self, enabled):
         self.button_refresh.setEnabled(enabled)
