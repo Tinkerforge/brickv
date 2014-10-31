@@ -21,10 +21,6 @@ printing it out.
 :license: LGPL
 """
 
-
-from json import dump
-from sys import stdout
-
 from brickv.plugin_system.plugins.red.javatools import unpack_class
 from brickv.plugin_system.plugins.red.javatools.dirutils import fnmatches
 from brickv.plugin_system.plugins.red.javatools.ziputils import open_zip_entry, zip_file, zip_entry_rollup
