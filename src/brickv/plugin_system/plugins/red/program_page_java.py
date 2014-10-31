@@ -39,8 +39,7 @@ def get_classes_from_class_or_jar(uploads):
             with JarInfo(filename=f) as ji:
                 return ji.get_provides()
         except:
-            import traceback
-            traceback.print_exc()
+            pass
 
         return []
 
@@ -49,8 +48,7 @@ def get_classes_from_class_or_jar(uploads):
             with open(f) as cf:
                 return unpack_class(cf).get_provides()
         except:
-            import traceback
-            traceback.print_exc()
+            pass
 
         return []
 
