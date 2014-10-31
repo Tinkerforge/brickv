@@ -32,9 +32,9 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
 
         self.setupUi(self)
 
-        self.setTitle(title_prefix + 'Perl Configuration')
-
         self.language = Constants.LANGUAGE_PERL
+
+        self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
         self.registerField('perl.version', self.combo_version)
         self.registerField('perl.start_mode', self.combo_start_mode)
@@ -69,7 +69,7 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify how the Perl program [{name}] should be executed.')
+        self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
         self.update_perl_versions()
 

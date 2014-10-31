@@ -33,9 +33,9 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
 
         self.setupUi(self)
 
-        self.setTitle(title_prefix + 'Ruby Configuration')
-
         self.language = Constants.LANGUAGE_RUBY
+
+        self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
         self.registerField('ruby.version', self.combo_version)
         self.registerField('ruby.start_mode', self.combo_start_mode)
@@ -70,7 +70,7 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify how the Ruby program [{name}] should be executed.')
+        self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
         self.update_ruby_versions()
 

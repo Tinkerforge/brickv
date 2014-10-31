@@ -32,9 +32,9 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
 
         self.setupUi(self)
 
-        self.setTitle(title_prefix + 'PHP Configuration')
-
         self.language = Constants.LANGUAGE_PHP
+
+        self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
         self.registerField('php.version', self.combo_version)
         self.registerField('php.start_mode', self.combo_start_mode)
@@ -69,8 +69,7 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.setSubTitle(u'Specify how the PHP program [{0}] should be executed.'
-                         .format(unicode(self.get_field('name').toString())))
+        self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
         self.update_php_versions()
 

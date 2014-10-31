@@ -33,7 +33,9 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
         self.setupUi(self)
 
-        self.setTitle(title_prefix + 'C/C++ Configuration')
+        self.language = Constants.LANGUAGE_C
+
+        self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
         self.registerField('c.start_mode', self.combo_start_mode)
         self.registerField('c.file', self.combo_file, 'currentText')
@@ -47,17 +49,17 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.combo_file_checker               = MandatoryEditableComboBoxChecker(self, self.combo_file, self.label_file)
         self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
         self.option_list_editor               = ListWidgetEditor(self.label_options,
-                                                                  self.list_options,
-                                                                  self.label_options_help,
-                                                                  self.button_add_option,
-                                                                  self.button_remove_option,
-                                                                  self.button_up_option,
-                                                                  self.button_down_option,
-                                                                  '<new Make option {0}>')
+                                                                 self.list_options,
+                                                                 self.label_options_help,
+                                                                 self.button_add_option,
+                                                                 self.button_remove_option,
+                                                                 self.button_up_option,
+                                                                 self.button_down_option,
+                                                                 '<new Make option {0}>')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify how the C/C++ program [{name}] should be executed.')
+        self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
         self.update_gcc_versions()
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_C_START_MODE)
         self.combo_file.clear()

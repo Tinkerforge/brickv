@@ -32,9 +32,9 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
 
         self.setupUi(self)
 
-        self.setTitle(title_prefix + 'JavaScript Configuration')
-
         self.language = Constants.LANGUAGE_JAVASCRIPT
+
+        self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
         self.registerField('javascript.version', self.combo_version)
         self.registerField('javascript.start_mode', self.combo_start_mode)
@@ -71,7 +71,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify how the JavaScript program [{name}] should be executed.')
+        self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
         self.update_javascript_versions()
 

@@ -32,9 +32,9 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
 
         self.setupUi(self)
 
-        self.setTitle(title_prefix + 'Python Configuration')
-
         self.language = Constants.LANGUAGE_PYTHON
+
+        self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
         self.registerField('python.version', self.combo_version)
         self.registerField('python.start_mode', self.combo_start_mode)
@@ -73,7 +73,7 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify how the Python program [{name}] should be executed.')
+        self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
         self.update_python_versions()
 
