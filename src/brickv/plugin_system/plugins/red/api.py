@@ -25,6 +25,7 @@ from collections import namedtuple
 import functools
 import traceback
 import weakref
+import threading
 from PyQt4 import QtCore
 from brickv.bindings.brick_red import BrickRED
 
@@ -133,43 +134,58 @@ class REDBrick(BrickRED):
         BrickRED.__init__(self, *args)
 
         self._active_callbacks = {}
+        self._active_callbacks_lock = threading.Lock()
+        self._next_cookie = 1
 
     def _dispatch_callback(self, callback_id, *args, **kwargs):
-        callbacks_still_alive = []
+        active_callbacks = self._active_callbacks[callback_id]
+        dead_callbacks = []
 
-        for callback_function in self._active_callbacks[callback_id]:
+        for cookie in list(active_callbacks.keys()):
+            try:
+                callback_function = active_callbacks[cookie]
+            except KeyError:
+                continue
+
             if callback_function.alive():
-                callbacks_still_alive.append(callback_function)
-
                 try:
                     callback_function(*args, **kwargs)
                 except:
                     traceback.print_exc()
+            else:
+                dead_callbacks.append(cookie)
 
-        self._active_callbacks[callback_id] = callbacks_still_alive
+        with self._active_callbacks_lock:
+            for cookie in dead_callbacks:
+                del active_callbacks[cookie]
 
     def add_callback(self, callback_id, callback_function):
-        if callback_id in self._active_callbacks:
-            self._active_callbacks[callback_id].append(WeakMethod(callback_function))
-        else:
-            self._active_callbacks[callback_id] = [WeakMethod(callback_function)]
+        with self._active_callbacks_lock:
+            cookie = self._next_cookie
+            self._next_cookie += 1
 
-            self.register_callback(callback_id, functools.partial(self._dispatch_callback, callback_id))
+            if callback_id in self._active_callbacks:
+                self._active_callbacks[callback_id][cookie] = WeakMethod(callback_function)
+            else:
+                self._active_callbacks[callback_id] = {cookie: WeakMethod(callback_function)}
 
-    def remove_callback(self, callback_id, callback_function):
-        if callback_id not in self._active_callbacks:
-            return
+                self.register_callback(callback_id, functools.partial(self._dispatch_callback, callback_id))
 
-        try:
-            i = self._active_callbacks[callback_id].index(callback_function)
-        except ValueError:
-            return
+            return cookie
 
-        self._active_callbacks[callback_id].pop(i)
+    def remove_callback(self, callback_id, cookie):
+        with self._active_callbacks_lock:
+            if callback_id not in self._active_callbacks or \
+               cookie not in self._active_callbacks[callback_id]:
+                return
+
+            del self._active_callbacks[callback_id][cookie]
 
     def remove_all_callbacks(self):
         self.registered_callbacks = {}
-        self._active_callbacks = {}
+
+        with self._active_callbacks_lock:
+            self._active_callbacks = {}
 
 
 class REDSession(QtCore.QObject):
@@ -581,20 +597,27 @@ class REDFileBase(REDObject):
         self._access_time        = None
         self._modification_time  = None
         self._status_change_time = None
-        self._write_async_data   = None
-        self._read_async_data    = None
+
+        self._cb_async_file_write_cookie = None
+        self._cb_async_file_read_cookie  = None
+
+        self._write_async_data = None
+        self._read_async_data  = None
 
     def _attach_callbacks(self):
-        self._session._brick.add_callback(REDBrick.CALLBACK_ASYNC_FILE_WRITE,
-                                          self._cb_async_file_write)
-        self._session._brick.add_callback(REDBrick.CALLBACK_ASYNC_FILE_READ,
-                                          self._cb_async_file_read)
+        self._cb_async_file_write_cookie = self._session._brick.add_callback(REDBrick.CALLBACK_ASYNC_FILE_WRITE,
+                                                                             self._cb_async_file_write)
+        self._cb_async_file_read_cookie  = self._session._brick.add_callback(REDBrick.CALLBACK_ASYNC_FILE_READ,
+                                                                             self._cb_async_file_read)
 
     def _detach_callbacks(self):
         self._session._brick.remove_callback(REDBrick.CALLBACK_ASYNC_FILE_WRITE,
-                                             self._cb_async_file_write)
+                                             self._cb_async_file_write_cookie)
         self._session._brick.remove_callback(REDBrick.CALLBACK_ASYNC_FILE_READ,
-                                             self._cb_async_file_read)
+                                             self._cb_async_file_read_cookie)
+
+        self._cb_async_file_write_cookie = None
+        self._cb_async_file_read_cookie  = None
 
     # Unset all of the temporary async data in case of error.
     def _report_write_async_error(self, error):
@@ -1015,29 +1038,34 @@ class REDProcess(REDObject):
         return '<REDProcess object_id: {0}>'.format(self.object_id)
 
     def _initialize(self):
-        self._executable            = None
-        self._arguments             = None
-        self._environment           = None
-        self._working_directory     = None
-        self._pid                   = None
-        self._uid                   = None
-        self._gid                   = None
-        self._stdin                 = None
-        self._stdout                = None
-        self._stderr                = None
-        self._state                 = None
+        self._executable        = None
+        self._arguments         = None
+        self._environment       = None
+        self._working_directory = None
+        self._pid               = None
+        self._uid               = None
+        self._gid               = None
+        self._stdin             = None
+        self._stdout            = None
+        self._stderr            = None
+        self._state             = None
+
         self._exit_code             = None
         self.state_changed_callback = None
 
+        self._cb_state_changed_emit_cookie = None
+
     def _attach_callbacks(self):
         self._qtcb_state_changed.connect(self._cb_state_changed)
-        self._session._brick.add_callback(BrickRED.CALLBACK_PROCESS_STATE_CHANGED,
-                                          self._cb_state_changed_emit)
+        self._cb_state_changed_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROCESS_STATE_CHANGED,
+                                                                               self._cb_state_changed_emit)
 
     def _detach_callbacks(self):
         self._qtcb_state_changed.disconnect(self._cb_state_changed)
         self._session._brick.remove_callback(BrickRED.CALLBACK_PROCESS_STATE_CHANGED,
-                                             self._cb_state_changed_emit)
+                                             self._cb_state_changed_emit_cookie)
+
+        self._cb_state_changed_emit_cookie = None
 
     def _cb_state_changed_emit(self, *args, **kwargs):
         # cannot directly use emit function as callback functions, because this
@@ -1232,49 +1260,56 @@ class REDProgram(REDObject):
         return '<REDProgram object_id: {0}, identifier: {1}>'.format(self.object_id, self._identifier)
 
     def _initialize(self):
-        self._identifier                       = None
-        self._root_directory                   = None
-        self._executable                       = None
-        self._arguments                        = None
-        self._environment                      = None
-        self._working_directory                = None
-        self._stdin_redirection                = None
-        self._stdin_file_name                  = None
-        self._stdout_redirection               = None
-        self._stdout_file_name                 = None
-        self._stderr_redirection               = None
-        self._stderr_file_name                 = None
-        self._start_condition                  = None
-        self._start_timestamp                  = None
-        self._start_delay                      = None
-        self._repeat_mode                      = None
-        self._repeat_interval                  = None
-        self._repeat_fields                    = None
-        self._last_spawned_process             = None
-        self._last_spawned_timestamp           = None
-        self._last_scheduler_error_message     = None
-        self._last_scheduler_error_timestamp   = None
-        self._custom_options                   = None
+        self._identifier                     = None
+        self._root_directory                 = None
+        self._executable                     = None
+        self._arguments                      = None
+        self._environment                    = None
+        self._working_directory              = None
+        self._stdin_redirection              = None
+        self._stdin_file_name                = None
+        self._stdout_redirection             = None
+        self._stdout_file_name               = None
+        self._stderr_redirection             = None
+        self._stderr_file_name               = None
+        self._start_condition                = None
+        self._start_timestamp                = None
+        self._start_delay                    = None
+        self._repeat_mode                    = None
+        self._repeat_interval                = None
+        self._repeat_fields                  = None
+        self._last_spawned_process           = None
+        self._last_spawned_timestamp         = None
+        self._last_scheduler_error_message   = None
+        self._last_scheduler_error_timestamp = None
+        self._custom_options                 = None
+
         self.process_spawned_callback          = None
         self.scheduler_error_occurred_callback = None
 
+        self._cb_process_spawned_emit_cookie          = None
+        self._cb_scheduler_error_occurred_emit_cookie = None
+
     def _attach_callbacks(self):
         self._qtcb_process_spawned.connect(self._cb_process_spawned)
-        self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
-                                          self._cb_process_spawned_emit)
+        self._cb_process_spawned_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
+                                                                                 self._cb_process_spawned_emit)
 
         self._qtcb_scheduler_error_occurred.connect(self._cb_scheduler_error_occurred)
-        self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED,
-                                          self._cb_scheduler_error_occurred_emit)
+        self._cb_scheduler_error_occurred_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED,
+                                                                                          self._cb_scheduler_error_occurred_emit)
 
     def _detach_callbacks(self):
         self._qtcb_process_spawned.disconnect(self._cb_process_spawned)
         self._session._brick.remove_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
-                                             self._cb_process_spawned_emit)
+                                             self._cb_process_spawned_emit_cookie)
 
         self._qtcb_scheduler_error_occurred.disconnect(self._cb_scheduler_error_occurred)
         self._session._brick.remove_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED,
-                                             self._cb_scheduler_error_occurred_emit)
+                                             self._cb_scheduler_error_occurred_emit_cookie)
+
+        self._cb_process_spawned_emit_cookie          = None
+        self._cb_scheduler_error_occurred_emit_cookie = None
 
     def _cb_process_spawned_emit(self, *args, **kwargs):
         # cannot directly use emit function as callback functions, because this
