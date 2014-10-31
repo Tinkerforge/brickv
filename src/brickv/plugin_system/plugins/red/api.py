@@ -1032,7 +1032,7 @@ class REDProcess(REDObject):
     E_CANNOT_EXECUTE = 126
     E_DOES_NOT_EXIST = 127
 
-    _qtcb_state_changed = QtCore.pyqtSignal(int, int, int)
+    _qtcb_state_changed = QtCore.pyqtSignal(int, int, int, int)
 
     def __repr__(self):
         return '<REDProcess object_id: {0}>'.format(self.object_id)
@@ -1049,8 +1049,9 @@ class REDProcess(REDObject):
         self._stdout            = None
         self._stderr            = None
         self._state             = None
+        self._timestamp         = None
+        self._exit_code         = None
 
-        self._exit_code             = None
         self.state_changed_callback = None
 
         self._cb_state_changed_emit_cookie = None
@@ -1073,11 +1074,12 @@ class REDProcess(REDObject):
         # a method in between helps
         self._qtcb_state_changed.emit(*args, **kwargs)
 
-    def _cb_state_changed(self, process_id, state, exit_code):
+    def _cb_state_changed(self, process_id, state, timestamp, exit_code):
         if self.object_id != process_id:
             return
 
         self._state = state
+        self._timestamp = timestamp
         self._exit_code = exit_code
 
         if state != REDProcess.STATE_RUNNING and state != REDProcess.STATE_STOPPED:
@@ -1104,7 +1106,7 @@ class REDProcess(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get command of process object {0}'.format(self.object_id), error_code)
 
-        self._executable         = _attach_or_release(self._session, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
+        self._executable        = _attach_or_release(self._session, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
         self._arguments         = _attach_or_release(self._session, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
         self._environment       = _attach_or_release(self._session, REDList, environment_list_id, [working_directory_string_id])
         self._working_directory = _attach_or_release(self._session, REDString, working_directory_string_id)
@@ -1139,12 +1141,13 @@ class REDProcess(REDObject):
         if self.object_id is None:
             raise RuntimeError('Cannot update unattached process object')
 
-        error_code, state, exit_code = self._session._brick.get_process_state(self.object_id)
+        error_code, state, timestamp, exit_code = self._session._brick.get_process_state(self.object_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get state of process object {0}'.format(self.object_id), error_code)
 
         self._state     = state
+        self._timestamp = timestamp
         self._exit_code = exit_code
 
     def spawn(self, executable, arguments, environment, working_directory,
@@ -1224,6 +1227,8 @@ class REDProcess(REDObject):
     def stderr(self):            return self._stderr
     @property
     def state(self):             return self._state
+    @property
+    def timestamp(self):         return self._timestamp
     @property
     def exit_code(self):         return self._exit_code
 

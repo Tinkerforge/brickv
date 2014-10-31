@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-10-29.      #
+# This file was automatically generated on 2014-10-31.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -46,7 +46,7 @@ SpawnProcess = namedtuple('SpawnProcess', ['error_code', 'process_id'])
 GetProcessCommand = namedtuple('ProcessCommand', ['error_code', 'executable_string_id', 'arguments_list_id', 'environment_list_id', 'working_directory_string_id'])
 GetProcessIdentity = namedtuple('ProcessIdentity', ['error_code', 'pid', 'uid', 'gid'])
 GetProcessStdio = namedtuple('ProcessStdio', ['error_code', 'stdin_file_id', 'stdout_file_id', 'stderr_file_id'])
-GetProcessState = namedtuple('ProcessState', ['error_code', 'state', 'exit_code'])
+GetProcessState = namedtuple('ProcessState', ['error_code', 'state', 'timestamp', 'exit_code'])
 GetPrograms = namedtuple('Programs', ['error_code', 'programs_list_id'])
 DefineProgram = namedtuple('DefineProgram', ['error_code', 'program_id'])
 GetProgramIdentifier = namedtuple('ProgramIdentifier', ['error_code', 'identifier_string_id'])
@@ -288,7 +288,7 @@ class BrickRED(Device):
 
         self.callback_formats[BrickRED.CALLBACK_ASYNC_FILE_READ] = 'H B 60B B'
         self.callback_formats[BrickRED.CALLBACK_ASYNC_FILE_WRITE] = 'H B B'
-        self.callback_formats[BrickRED.CALLBACK_PROCESS_STATE_CHANGED] = 'H B B'
+        self.callback_formats[BrickRED.CALLBACK_PROCESS_STATE_CHANGED] = 'H B Q B'
         self.callback_formats[BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED] = 'H'
         self.callback_formats[BrickRED.CALLBACK_PROGRAM_SCHEDULER_ERROR_OCCURRED] = 'H'
 
@@ -762,8 +762,8 @@ class BrickRED(Device):
 
     def get_process_state(self, process_id):
         """
-        Returns the current state and exit code of a process object, and the resulting
-        error code.
+        Returns the current state, timestamp and exit code of a process object, and
+        the resulting error code.
         
         Possible process states are:
         
@@ -773,6 +773,9 @@ class BrickRED(Device):
         * Exited = 3
         * Killed = 4
         * Stopped = 5
+        
+        The timestamp represents the UNIX time since when the process is in its current
+        state.
         
         The exit code is only valid if the state is *Error*, *Exited*, *Killed* or
         *Stopped* and has different meanings depending on the state:
@@ -791,7 +794,7 @@ class BrickRED(Device):
         The *CannotExecute* error can be caused by the executable being opened for
         writing.
         """
-        return GetProcessState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STATE, (process_id,), 'H', 'B B B'))
+        return GetProcessState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROCESS_STATE, (process_id,), 'H', 'B B Q B'))
 
     def get_programs(self, session_id):
         """

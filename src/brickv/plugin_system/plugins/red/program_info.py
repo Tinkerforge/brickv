@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import pyqtSignal, QDateTime
 from PyQt4 import QtGui
-from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog, QFileDialog, QProgressDialog
+from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog, QFileDialog, QProgressDialog, QMessageBox
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
@@ -401,42 +401,47 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         process_running = False
 
         if self.program.last_spawned_process != None:
+            timestamp = self.program.last_spawned_process.timestamp
+            date      = QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd')
+            time      = QDateTime.fromTime_t(timestamp).toString('HH:mm:ss')
+
             if self.program.last_spawned_process.state == REDProcess.STATE_UNKNOWN:
-                self.label_current_state.setText('Unknown')
+                self.label_program_current_state.setText('Unknown since {0} at {1}'.format(date, time))
             elif self.program.last_spawned_process.state == REDProcess.STATE_RUNNING:
-                self.label_current_state.setText('Running')
+                self.label_program_current_state.setText('Running since {0} at {1}'.format(date, time))
                 process_running = True
             elif self.program.last_spawned_process.state == REDProcess.STATE_ERROR:
                 if self.program.last_spawned_process.exit_code == REDProcess.E_INTERNAL_ERROR:
-                    self.label_current_state.setText('Internal error occurred')
+                    self.label_program_current_state.setText('Internal error occurred on {0} at {1}'.format(date, time))
                 elif self.program.last_spawned_process.exit_code == REDProcess.E_CANNOT_EXECUTE:
-                    self.label_current_state.setText('Could not be executed')
+                    self.label_program_current_state.setText('Could not be executed on {0} at {1}'.format(date, time))
                 elif self.program.last_spawned_process.exit_code == REDProcess.E_DOES_NOT_EXIST:
-                    self.label_current_state.setText('Executable does not exist')
+                    self.label_program_current_state.setText('Executable does not exist on {0} at {1}'.format(date, time))
                 else:
-                    self.label_current_state.setText('Unknown error occurred')
+                    self.label_program_current_state.setText('Unknown error occurred on {0} at {1}'.format(date, time))
             elif self.program.last_spawned_process.state == REDProcess.STATE_EXITED:
                 if self.program.last_spawned_process.exit_code == 0:
-                    self.label_current_state.setText('Not running, last run exited normally')
+                    self.label_program_current_state.setText('Not running, last run exited normally on {0} at {1}'.format(date, time))
                 else:
-                    self.label_current_state.setText('Not running, last run exited with an error (exit code: {0})'
-                                                     .format(self.program.last_spawned_process.exit_code))
+                    self.label_program_current_state.setText('Not running, last run exited with an error (exit code: {0}) on {1} at {2}'
+                                                            .format(self.program.last_spawned_process.exit_code, date, time))
             elif self.program.last_spawned_process.state == REDProcess.STATE_KILLED:
-                    self.label_current_state.setText('Not running, last run was killed (signal: {0})'
-                                                     .format(self.program.last_spawned_process.exit_code))
+                    self.label_program_current_state.setText('Not running, last run was killed (signal: {0}) on {1} at {2}'
+                                                             .format(self.program.last_spawned_process.exit_code, date, time))
             elif self.program.last_spawned_process.state == REDProcess.STATE_STOPPED:
-                self.label_current_state.setText('Stopped') # FIXME: show continue button?
+                self.label_program_current_state.setText('Stopped on {0} at {1}'.format(date, time)) # FIXME: show continue button?
 
-            self.label_last_start_time.setText(QDateTime.fromTime_t(self.program.last_spawned_timestamp).toString('yyyy-MM-dd HH:mm:ss'))
+            self.label_last_start.setText(QDateTime.fromTime_t(self.program.last_spawned_timestamp).toString('yyyy-MM-dd HH:mm:ss'))
         else:
-            self.label_current_state.setText('Not running')
-            self.label_last_start_time.setText('Never started')
+            self.label_program_current_state.setText('Not running')
+            self.label_last_start.setText('Never started')
 
         if self.program.last_scheduler_error_message != None:
-            self.label_last_scheduler_error.setText('{0}\n{1}'.format(QDateTime.fromTime_t(self.program.last_scheduler_error_timestamp).toString('yyyy-MM-dd HH:mm:ss'),
-                                                                      unicode(self.program.last_scheduler_error_message)))
+            self.label_last_scheduler_state_change.setText(QDateTime.fromTime_t(self.program.last_scheduler_error_timestamp).toString('yyyy-MM-dd HH:mm:ss'))
+            self.label_last_scheduler_error_message.setText(unicode(self.program.last_scheduler_error_message))
         else:
-            self.label_last_scheduler_error.setText('None')
+            self.label_last_scheduler_state_change.setText('Never changed')
+            self.label_last_scheduler_error_message.setText('None')
 
         self.button_kill.setEnabled(process_running)
 
