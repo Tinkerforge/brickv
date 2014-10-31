@@ -27,8 +27,8 @@ from zipfile import is_zipfile, ZipFile, ZipInfo, _EndRecData
 from zlib import crc32
 from os import walk
 from os.path import getsize, isdir, isfile, islink, join, relpath
-from .dirutils import LEFT, RIGHT, DIFF, SAME
-from .dirutils import closing
+from brickv.plugin_system.plugins.red.javatools.dirutils import LEFT, RIGHT, DIFF, SAME
+from brickv.plugin_system.plugins.red.javatools.dirutils import closing
 
 
 __all__ = (
