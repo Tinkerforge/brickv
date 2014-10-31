@@ -21,10 +21,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, QDir
 from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem
 from brickv.plugin_system.plugins.red.api import REDProgram
 import re
+import os
 from collections import namedtuple
 
 ProgramWizardContext = namedtuple('ProgramWizardContext', ['session', 'identifiers', 'script_manager', 'image_version_ref'])
@@ -653,6 +654,7 @@ class MandatoryEditableComboBoxChecker:
 
 
 # expects the combo box to be editable
+# FIXME: ensure that file is relative, non-empty and does not start with ..
 class MandatoryTypedFileSelector:
     def __init__(self, page, label_file, combo_file, label_type, combo_type, label_help):
         self.page       = page
@@ -709,9 +711,16 @@ class MandatoryDirectorySelector:
         if self.combo.count() > 1 and len(self.original_items) > 0 and self.original_items[0] != '.':
             self.combo.clearEditText()
 
+    # ensure that directory is relative, non-empty and does not start with ..
     def check(self, emit):
-        was_complete = self.complete
-        self.complete = len(self.combo.currentText()) > 0
+        was_complete  = self.complete
+        directory     = unicode(QDir.cleanPath(os.path.join(unicode(self.combo.currentText()), '.')))
+        self.complete = len(directory) > 0 and \
+                        not directory.startswith('/') and \
+                        directory != './..' and \
+                        not directory.startswith('./../') and \
+                        directory != '..' and \
+                        not directory.startswith('../')
 
         if self.complete:
             self.label.setStyleSheet('')
@@ -729,7 +738,7 @@ class ComboBoxFileEndingChecker:
                 return
         currentIndexChanged = NoIndexChangeRequired()
         def currentIndex(self):
-            return 0 # = *.*
+            return 0 # = *
 
     def __init__(self, page, combo_file, combo_ending = None):
         self.page       = page
