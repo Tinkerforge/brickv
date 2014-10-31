@@ -28,6 +28,9 @@
      </item>
      <item row="0" column="1" colspan="4">
       <widget class="QComboBox" name="combo_version">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>1</horstretch>
@@ -36,7 +39,7 @@
        </property>
        <item>
         <property name="text">
-         <string>1.8</string>
+         <string>Fetching Versions...</string>
         </property>
        </item>
       </widget>

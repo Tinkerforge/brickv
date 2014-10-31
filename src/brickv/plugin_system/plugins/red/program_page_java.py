@@ -21,6 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import QVariant
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_java import Ui_ProgramPageJava
@@ -80,6 +81,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
         self.update_java_versions()
+
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_JAVA_START_MODE)
         self.combo_jar_file_selector.reset()
         self.class_path_list_editor.reset()
@@ -91,7 +93,11 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
+        executable = self.get_executable()
         start_mode = self.get_field('java.start_mode').toInt()[0]
+
+        if len(executable) == 0:
+            return False
 
         if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS and \
            not self.edit_main_class_checker.complete:
@@ -109,7 +115,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             if result != None:
                 try:
                     version = result.stderr.split('\n')[1].split(' ')[5].replace(')', '')
-                    self.combo_version.addItem(version)
+                    self.combo_version.addItem(version, QVariant('/usr/bin/java'))
                     self.combo_version.setEnabled(True)
                     return
                 except:
@@ -118,7 +124,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             # Could not get versions, we assume that some version
             # of java 8 is installed
             self.combo_version.clear()
-            self.combo_version.addItem('1.8')
+            self.combo_version.addItem('1.8', QVariant('/usr/bin/java'))
             self.combo_version.setEnabled(True)
             self.completeChanged.emit()
 
@@ -140,8 +146,11 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.class_path_list_editor.update_ui_state()
         self.option_list_editor.update_ui_state()
 
+    def get_executable(self):
+        return unicode(self.combo_version.itemData(self.get_field('java.version').toInt()[0]).toString())
+
     def get_command(self):
-        executable         = '/usr/bin/java'
+        executable         = self.get_executable()
         arguments          = self.option_list_editor.get_items()
         environment        = []
         start_mode         = self.get_field('java.start_mode').toInt()[0]
