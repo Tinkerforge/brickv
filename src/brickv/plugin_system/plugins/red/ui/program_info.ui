@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>604</width>
-    <height>793</height>
+    <height>656</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,9 +33,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
+        <y>-609</y>
         <width>586</width>
-        <height>1723</height>
+        <height>1925</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -273,7 +273,7 @@
               <property name="minimumSize">
                <size>
                 <width>0</width>
-                <height>200</height>
+                <height>300</height>
                </size>
               </property>
               <property name="editTriggers">
@@ -297,37 +297,6 @@
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
            <layout class="QGridLayout" name="gridLayout_4">
-            <item row="0" column="0" colspan="4">
-             <widget class="QTreeWidget" name="tree_files">
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>200</height>
-               </size>
-              </property>
-              <property name="selectionMode">
-               <enum>QAbstractItemView::ExtendedSelection</enum>
-              </property>
-              <attribute name="headerVisible">
-               <bool>true</bool>
-              </attribute>
-              <column>
-               <property name="text">
-                <string>Name</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Size</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Last Modified</string>
-               </property>
-              </column>
-             </widget>
-            </item>
             <item row="1" column="0">
              <widget class="QPushButton" name="button_upload_files">
               <property name="text">
@@ -353,6 +322,16 @@
              <widget class="QPushButton" name="button_delete_files">
               <property name="text">
                <string>Delete</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0" colspan="4">
+             <widget class="QTreeView" name="tree_files">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>300</height>
+               </size>
               </property>
              </widget>
             </item>
@@ -851,11 +830,25 @@
              </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QPushButton" name="button_edit_schedule">
-              <property name="text">
-               <string>Edit</string>
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <property name="topMargin">
+               <number>0</number>
               </property>
-             </widget>
+              <item>
+               <widget class="QPushButton" name="button_edit_schedule">
+                <property name="text">
+                 <string>Edit</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="button_schedule_now">
+                <property name="text">
+                 <string>Schedule Now</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
@@ -875,7 +868,6 @@
   <tabstop>tree_logs</tabstop>
   <tabstop>button_download_logs</tabstop>
   <tabstop>button_delete_logs</tabstop>
-  <tabstop>tree_files</tabstop>
   <tabstop>button_upload_files</tabstop>
   <tabstop>button_download_files</tabstop>
   <tabstop>button_rename_file</tabstop>
@@ -883,7 +875,6 @@
   <tabstop>button_edit_language</tabstop>
   <tabstop>button_edit_arguments</tabstop>
   <tabstop>button_edit_stdio</tabstop>
-  <tabstop>button_edit_schedule</tabstop>
  </tabstops>
  <resources/>
  <connections/>

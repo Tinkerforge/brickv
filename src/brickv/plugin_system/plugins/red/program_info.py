@@ -49,14 +49,36 @@ def expand_directory_walk_to_files_list(directory_walk):
 
     def expand(root, dw):
         if 'c' in dw:
-            for cn, cdw in dw['c'].iteritems():
-                expand(os.path.join(root, cn), cdw)
+            for child_name, child_dw in dw['c'].iteritems():
+                expand(os.path.join(root, child_name), child_dw)
         else:
             files.append(root)
 
     expand('', directory_walk)
 
     return files
+
+
+def expand_directory_walk_to_model(directory_walk, parent):
+    model = QStandardItemModel(parent)
+
+    def expand(parent_item, name, dw):
+        if 'c' in dw:
+            if name == None:
+                item = parent_item
+            else:
+                item = QStandardItem(name)
+                parent_item.appendRow([item, QStandardItem(''), QStandardItem('')])
+
+            for child_name, child_dw in dw['c'].iteritems():
+                expand(item, child_name, child_dw)
+        else:
+            parent_item.appendRow([QStandardItem(name), QStandardItem(unicode(dw['s'])), QStandardItem(unicode(dw['l']))])
+
+    expand(model.invisibleRootItem(), None, directory_walk)
+
+    return model
+
 
 class ProgramInfo(QWidget, Ui_ProgramInfo):
     name_changed = pyqtSignal()
@@ -101,8 +123,11 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.button_download_files.clicked.connect(self.download_selected_files)
         self.button_rename_file.clicked.connect(self.rename_selected_file)
         self.button_delete_files.clicked.connect(self.delete_selected_files)
+
         self.button_kill.clicked.connect(self.kill_process)
         self.button_send_stdin_pipe_input.clicked.connect(self.send_stdin_pipe_input)
+        self.button_schedule_now.clicked.connect(self.schedule_now)
+
         self.button_edit_general.clicked.connect(self.show_edit_general_wizard)
         self.button_edit_language.clicked.connect(self.show_edit_language_wizard)
         self.button_edit_arguments.clicked.connect(self.show_edit_arguments_wizard)
@@ -319,12 +344,16 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                 if directory_walk != None:
                     available_files = expand_directory_walk_to_files_list(directory_walk)
 
-                return sorted(available_files)
+                return sorted(available_files), directory_walk
 
-            def cb_expand_success(available_files):
+            def cb_expand_success(args):
+                available_files, directory_walk = args
+
                 self.available_files = available_files
                 self.files_refresh_in_progress = False
                 self.update_ui_state()
+
+                self.tree_files.setModel(expand_directory_walk_to_model(directory_walk, self))
 
             def cb_expand_error():
                 pass # FIXME: report error
@@ -343,10 +372,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.tree_logs.setColumnHidden(2, True)
         self.tree_logs.setColumnHidden(3, True)
 
-        has_files_selection = len(self.tree_files.selectedItems()) > 0
-        self.button_download_files.setEnabled(has_files_selection)
-        self.button_rename_file.setEnabled(len(self.tree_files.selectedItems()) == 1)
-        self.button_delete_files.setEnabled(has_files_selection)
+        #has_files_selection = len(self.tree_files.selectedItems()) > 0
+        #self.button_download_files.setEnabled(has_files_selection)
+        #self.button_rename_file.setEnabled(len(self.tree_files.selectedItems()) == 1)
+        #self.button_delete_files.setEnabled(has_files_selection)
 
         if self.program_refresh_in_progress or self.files_refresh_in_progress or self.logs_refresh_in_progress:
             self.button_refresh.setText('Refreshing...')
@@ -492,6 +521,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.label_repeat_fields.setVisible(repeat_mode_cron)
         self.label_repeat_fields.setText(unicode(self.program.repeat_fields))
 
+        self.button_schedule_now.setEnabled(not process_running)
+
     def load_log_files_for_ops(self, index_list):
         if len(index_list) % 4 != 0:
             return
@@ -625,7 +656,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                            REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                            cb_open,
                            cb_open_error)
-            
+
 
     def delete_selected_logs(self):
         #selected_items = self.list_logs.selectedItems()
@@ -681,12 +712,15 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
     def send_stdin_pipe_input(self):
         if self.program.last_spawned_process != None and self.program.last_spawned_process.stdin != None:
             try:
-                self.program.last_spawned_process.stdin.write((unicode(self.edit_stdin_pipe_input.text()) + u'\n').encode('utf-8'))
+                self.program.last_spawned_process.stdin.write_async((unicode(self.edit_stdin_pipe_input.text()) + u'\n').encode('utf-8'))
             except REDError as e:
                 QMessageBox.critical(self, 'Pipe Input Error',
                                      u'Could not write to stdin of current process of program [{0}]:\n\n{1}'.format(name, str(e)))
             else:
                 self.edit_stdin_pipe_input.setText('')
+
+    def schedule_now(self):
+        pass
 
     def set_buttons_enabled(self, enabled):
         self.button_refresh.setEnabled(enabled)
