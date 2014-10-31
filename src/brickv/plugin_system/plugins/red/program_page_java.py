@@ -79,6 +79,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the Java program [{name}] should be executed.')
 
+        self.update_java_versions()
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_JAVA_START_MODE)
         self.combo_jar_file_selector.reset()
         self.class_path_list_editor.reset()
@@ -101,6 +102,27 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
+
+    def update_java_versions(self):
+        def cb_versions(result):
+            self.combo_version.clear()
+            if result != None:
+                try:
+                    version = result.stderr.split('\n')[1].split(' ')[5].replace(')', '')
+                    self.combo_version.addItem(version)
+                    self.combo_version.setEnabled(True)
+                    return
+                except:
+                    pass
+
+            # Could not get versions, we assume that some version
+            # of java 8 is installed
+            self.combo_version.clear()
+            self.combo_version.addItem('1.8')
+            self.combo_version.setEnabled(True)
+            self.completeChanged.emit()
+
+        self.wizard().script_manager.execute_script('java_versions', cb_versions)
 
     def update_ui_state(self):
         start_mode            = self.get_field('java.start_mode').toInt()[0]

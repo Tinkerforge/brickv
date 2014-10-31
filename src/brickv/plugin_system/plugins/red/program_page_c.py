@@ -78,7 +78,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
-    
+
     def update_gcc_versions(self):
         version_str = 'Available are {0} and {1}'
         def cb_versions(result):
