@@ -35,7 +35,7 @@
         <x>0</x>
         <y>0</y>
         <width>586</width>
-        <height>1655</height>
+        <height>1723</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -231,6 +231,13 @@
               </property>
               <property name="textInteractionFlags">
                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0" colspan="2">
+             <widget class="QPushButton" name="button_kill">
+              <property name="text">
+               <string>Kill</string>
               </property>
              </widget>
             </item>
@@ -482,13 +489,6 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="label_stdin_file_title">
-                   <property name="text">
-                    <string>File:</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="0" column="1">
                   <widget class="QLabel" name="label_stdin_source">
                    <property name="sizePolicy">
@@ -508,7 +508,35 @@
                    </property>
                   </widget>
                  </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_stdin_pipe_input_title">
+                   <property name="text">
+                    <string>Input:</string>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="1" column="1">
+                  <layout class="QHBoxLayout" name="horizontalLayout">
+                   <item>
+                    <widget class="QLineEdit" name="edit_stdin_pipe_input"/>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="button_send_stdin_pipe_input">
+                     <property name="text">
+                      <string>Send Line</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_stdin_file_title">
+                   <property name="text">
+                    <string>File:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
                   <widget class="QLabel" name="label_stdin_file">
                    <property name="text">
                     <string>&lt;stdin-file&gt;</string>

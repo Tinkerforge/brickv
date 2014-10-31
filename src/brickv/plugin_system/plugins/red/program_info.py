@@ -98,6 +98,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.button_download_files.clicked.connect(self.download_selected_files)
         self.button_rename_file.clicked.connect(self.rename_selected_file)
         self.button_delete_files.clicked.connect(self.delete_selected_files)
+        self.button_kill.clicked.connect(self.kill_process)
+        self.button_send_stdin_pipe_input.clicked.connect(self.send_stdin_pipe_input)
         self.button_edit_general.clicked.connect(self.show_edit_general_wizard)
         self.button_edit_language.clicked.connect(self.show_edit_language_wizard)
         self.button_edit_arguments.clicked.connect(self.show_edit_arguments_wizard)
@@ -370,11 +372,14 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.label_description.setText(description)
 
         # status
+        process_running = False
+
         if self.program.last_spawned_process != None:
             if self.program.last_spawned_process.state == REDProcess.STATE_UNKNOWN:
                 self.label_current_state.setText('Unknown')
             elif self.program.last_spawned_process.state == REDProcess.STATE_RUNNING:
                 self.label_current_state.setText('Running')
+                process_running = True
             elif self.program.last_spawned_process.state == REDProcess.STATE_ERROR:
                 if self.program.last_spawned_process.exit_code == REDProcess.E_INTERNAL_ERROR:
                     self.label_current_state.setText('Internal error occurred')
@@ -407,6 +412,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         else:
             self.label_last_scheduler_error.setText('None')
 
+        self.button_kill.setEnabled(process_running)
+
         # language
         self.group_language.setTitle('{0} Configuration'.format(language_display_name))
 
@@ -428,13 +435,20 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.label_environment.setText('\n'.join(environment))
 
         # stdio
+        stdin_redirection_pipe  = self.program.stdin_redirection  == REDProgram.STDIO_REDIRECTION_PIPE
         stdin_redirection_file  = self.program.stdin_redirection  == REDProgram.STDIO_REDIRECTION_FILE
         stdout_redirection_file = self.program.stdout_redirection == REDProgram.STDIO_REDIRECTION_FILE
         stderr_redirection_file = self.program.stderr_redirection == REDProgram.STDIO_REDIRECTION_FILE
 
         self.label_stdin_source.setText(Constants.api_stdin_redirection_display_names.get(self.program.stdin_redirection, '<unknown>'))
+        self.label_stdin_pipe_input_title.setVisible(stdin_redirection_pipe)
+        self.edit_stdin_pipe_input.setVisible(stdin_redirection_pipe)
+        self.button_send_stdin_pipe_input.setVisible(stdin_redirection_pipe)
         self.label_stdin_file_title.setVisible(stdin_redirection_file)
         self.label_stdin_file.setVisible(stdin_redirection_file)
+
+        self.edit_stdin_pipe_input.setEnabled(process_running)
+        self.button_send_stdin_pipe_input.setEnabled(process_running)
 
         if stdin_redirection_file:
             self.label_stdin_file.setText(unicode(self.program.stdin_file_name))
@@ -655,6 +669,24 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         filenames = [unicode(selected_item.text()) for selected_item in selected_items]
 
         print 'delete_selected_files', filenames
+
+    def kill_process(self):
+        if self.program.last_spawned_process != None:
+            try:
+                self.program.last_spawned_process.kill(REDProcess.SIGNAL_KILL)
+            except REDError as e:
+                QMessageBox.critical(self, 'Kill Error',
+                                     u'Could not kill current process of program [{0}]:\n\n{1}'.format(name, str(e)))
+
+    def send_stdin_pipe_input(self):
+        if self.program.last_spawned_process != None and self.program.last_spawned_process.stdin != None:
+            try:
+                self.program.last_spawned_process.stdin.write((unicode(self.edit_stdin_pipe_input.text()) + u'\n').encode('utf-8'))
+            except REDError as e:
+                QMessageBox.critical(self, 'Pipe Input Error',
+                                     u'Could not write to stdin of current process of program [{0}]:\n\n{1}'.format(name, str(e)))
+            else:
+                self.edit_stdin_pipe_input.setText('')
 
     def set_buttons_enabled(self, enabled):
         self.button_refresh.setEnabled(enabled)
