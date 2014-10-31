@@ -34,7 +34,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
 
         self.setupUi(self)
 
-        self.setTitle(title_prefix + 'Delphi/Lazerus Configuration')
+        self.setTitle(title_prefix + 'Delphi/Lazarus Configuration')
 
         self.language = Constants.LANGUAGE_DELPHI
 
@@ -69,11 +69,11 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
                                                                  self.button_remove_option,
                                                                  self.button_up_option,
                                                                  self.button_down_option,
-                                                                 '<new Delphi/Lazerus option {0}>')
+                                                                 '<new Delphi/Lazarus option {0}>')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        self.set_formatted_sub_title(u'Specify how the Delphi/Lazerus program [{name}] should be executed.')
+        self.set_formatted_sub_title(u'Specify how the Delphi/Lazarus program [{name}] should be executed.')
 
         self.update_delphi_versions()
 

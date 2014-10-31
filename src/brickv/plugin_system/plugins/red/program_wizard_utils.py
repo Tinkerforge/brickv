@@ -69,7 +69,7 @@ class Constants:
         LANGUAGE_INVALID:    '<invalid>',
         LANGUAGE_CSHARP:     'C#',
         LANGUAGE_C:          'C/C++',
-        LANGUAGE_DELPHI:     'Delphi/Lazerus',
+        LANGUAGE_DELPHI:     'Delphi/Lazarus',
         LANGUAGE_JAVA:       'Java',
         LANGUAGE_JAVASCRIPT: 'JavaScript',
         LANGUAGE_OCTAVE:     'Octave',
@@ -141,7 +141,7 @@ class Constants:
     # must match item order in combo_start_mode on C# page
     CSHARP_START_MODE_EXECUTABLE = 0
 
-    # must match item order in combo_start_mode on Delphi/Lazerus page
+    # must match item order in combo_start_mode on Delphi/Lazarus page
     DELPHI_START_MODE_EXECUTABLE = 0
     DELPHI_START_MODE_COMPILE = 1
 
