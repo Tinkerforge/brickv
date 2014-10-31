@@ -51,6 +51,11 @@
        </item>
        <item>
         <property name="text">
+         <string>Delphi/Lazerus</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
          <string>Java</string>
         </property>
        </item>

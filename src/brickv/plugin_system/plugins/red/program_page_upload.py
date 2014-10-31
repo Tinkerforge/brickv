@@ -248,6 +248,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.is_executed_by_apid = True
         use_make = False
+        use_fpc = False
 
         if self.api_language == 'c':
             self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_C).get_command()
@@ -256,6 +257,11 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 use_make = True
         elif self.api_language == 'csharp':
             self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_CSHARP).get_command()
+        elif self.api_language == 'delphi':
+            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_DELPHI).get_command()
+            start_mode = self.get_field('delphi.start_mode').toInt()[0]
+            if start_mode == Constants.DELPHI_START_MODE_COMPILE:
+                use_fpc = True
         elif self.api_language == 'java':
             self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
         elif self.api_language == 'javascript':
@@ -280,6 +286,11 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if use_make:
             self.compile_make()
             return
+        if use_fpc:
+            self.compile_fpc()
+            return
+ 
+        self.upload_configuration()
 
     def upload_configuration(self):
         if self.is_executed_by_apid:
@@ -373,7 +384,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 self.upload_configuration()
             else:
                 if result != None:
-                    self.log(result.stdout)
+                    for s in result.stderr.split('\n'):
+                        self.log(s)
                 self.log('...error')
 
         self.next_step('Calling make...')
@@ -382,3 +394,24 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         p = os.path.join('/', 'home', 'tf', 'programs' , identifier, 'bin', self.working_directory)
 
         self.wizard().script_manager.execute_script('make_helper', cb, [p, make_options])
+
+    def compile_fpc(self):
+        def cb(result):
+            if result != None and len(result.stderr.split('\n')) < 3:
+                for s in result.stdout.split('\n'):
+                    self.log(s)
+                self.log('...done')
+                self.upload_configuration()
+            else:
+                if result != None:
+                    for s in result.stderr.split('\n'):
+                        self.log(s)
+                self.log('...error')
+
+        self.next_step('Calling fpc...')
+        compile_options = unicode(self.get_field('delphi.compile_options').toString())
+        main_file = unicode(self.get_field('delphi.file').toString())
+        identifier = unicode(self.get_field('identifier').toString())
+        p = os.path.join('/', 'home', 'tf', 'programs' , identifier, 'bin', self.working_directory)
+
+        self.wizard().script_manager.execute_script('fpc_helper', cb, [p, '{0} {1}'.format(compile_options, main_file)])

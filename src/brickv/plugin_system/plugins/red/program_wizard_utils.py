@@ -48,25 +48,28 @@ class Constants:
     PAGE_CSHARP     = 15
     PAGE_VBNET      = 16
     PAGE_C          = 17
+    PAGE_DELPHI     = 18
 
     # must match item order in combo_language on general page
     LANGUAGE_INVALID    = 0
     LANGUAGE_C          = 1
     LANGUAGE_CSHARP     = 2
-    LANGUAGE_JAVA       = 3
-    LANGUAGE_JAVASCRIPT = 4
-    LANGUAGE_OCTAVE     = 5
-    LANGUAGE_PERL       = 6
-    LANGUAGE_PHP        = 7
-    LANGUAGE_PYTHON     = 8
-    LANGUAGE_RUBY       = 9
-    LANGUAGE_SHELL      = 10
-    LANGUAGE_VBNET      = 11
+    LANGUAGE_DELPHI     = 3
+    LANGUAGE_JAVA       = 4
+    LANGUAGE_JAVASCRIPT = 5
+    LANGUAGE_OCTAVE     = 6
+    LANGUAGE_PERL       = 7
+    LANGUAGE_PHP        = 8
+    LANGUAGE_PYTHON     = 9
+    LANGUAGE_RUBY       = 10
+    LANGUAGE_SHELL      = 11
+    LANGUAGE_VBNET      = 12
 
     language_display_names = {
         LANGUAGE_INVALID:    '<invalid>',
         LANGUAGE_CSHARP:     'C#',
         LANGUAGE_C:          'C/C++',
+        LANGUAGE_DELPHI:     'Delphi/Lazerus',
         LANGUAGE_JAVA:       'Java',
         LANGUAGE_JAVASCRIPT: 'JavaScript',
         LANGUAGE_OCTAVE:     'Octave',
@@ -82,6 +85,7 @@ class Constants:
         LANGUAGE_INVALID:    '<invalid>',
         LANGUAGE_C:          'c',
         LANGUAGE_CSHARP:     'csharp',
+        LANGUAGE_DELPHI:     'delphi',
         LANGUAGE_JAVA:       'java',
         LANGUAGE_JAVASCRIPT: 'javascript',
         LANGUAGE_OCTAVE:     'octave',
@@ -102,6 +106,7 @@ class Constants:
         LANGUAGE_INVALID:    '<invalid>',
         LANGUAGE_C:          'This list of arguments will be passed to the main() function.',
         LANGUAGE_CSHARP:     'This list of arguments will be passed to the Main() method.',
+        LANGUAGE_DELPHI:     'This list of arguments will be available as ParamStr array.',
         LANGUAGE_JAVA:       'This list of arguments will be passed to the main() method.',
         LANGUAGE_JAVASCRIPT: 'This list of arguments will be available as process.argv array.',
         LANGUAGE_OCTAVE:     'This list of arguments can be accessed by calling argv().',
@@ -117,6 +122,7 @@ class Constants:
         LANGUAGE_INVALID:    [],
         LANGUAGE_C:          [''],
         LANGUAGE_CSHARP:     ['', '.exe'],
+        LANGUAGE_DELPHI:     ['', ('.pas', '.pp')],
         LANGUAGE_JAVA:       ['', '.jar'],
         LANGUAGE_JAVASCRIPT: ['', '.js'],
         LANGUAGE_OCTAVE:     ['', '.m'],
@@ -134,6 +140,10 @@ class Constants:
 
     # must match item order in combo_start_mode on C# page
     CSHARP_START_MODE_EXECUTABLE = 0
+
+    # must match item order in combo_start_mode on Delphi/Lazerus page
+    DELPHI_START_MODE_EXECUTABLE = 0
+    DELPHI_START_MODE_COMPILE = 1
 
     # must match item order in combo_start_mode on Java page
     JAVA_START_MODE_MAIN_CLASS = 0
@@ -308,6 +318,7 @@ class Constants:
 
     DEFAULT_C_START_MODE          = C_START_MODE_EXECUTABLE
     DEFAULT_CSHARP_START_MODE     = CSHARP_START_MODE_EXECUTABLE
+    DEFAULT_DELPHI_START_MODE     = DELPHI_START_MODE_EXECUTABLE
     DEFAULT_JAVA_START_MODE       = JAVA_START_MODE_MAIN_CLASS
     DEFAULT_JAVASCRIPT_START_MODE = JAVASCRIPT_START_MODE_SCRIPT_FILE
     DEFAULT_OCTAVE_START_MODE     = OCTAVE_START_MODE_SCRIPT_FILE
@@ -707,10 +718,21 @@ class MandatoryDirectorySelector:
 
 
 class ComboBoxFileEndingChecker:
-    def __init__(self, page, combo_file, combo_ending):
-        self.page         = page
-        self.combo_file   = combo_file
-        self.combo_ending = combo_ending
+    class NoEndingCheckRequired:
+        class NoIndexChangeRequired:
+            def connect(self, *args, **kwargs):
+                return
+        currentIndexChanged = NoIndexChangeRequired()
+        def currentIndex(self):
+            return 0 # = *.*
+
+    def __init__(self, page, combo_file, combo_ending = None):
+        self.page       = page
+        self.combo_file = combo_file
+        if combo_ending == None:
+            self.combo_ending = self.NoEndingCheckRequired()
+        else:
+            self.combo_ending = combo_ending
 
         self.combo_ending.currentIndexChanged.connect(lambda: self.check(True))
 
