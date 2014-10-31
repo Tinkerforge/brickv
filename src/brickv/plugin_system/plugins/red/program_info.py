@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import pyqtSignal, QDateTime
+from PyQt4 import QtGui
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog, QFileDialog, QProgressDialog
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
@@ -40,6 +41,8 @@ from brickv.plugin_system.plugins.red.ui_program_info import Ui_ProgramInfo
 from brickv.async_call import async_call
 import os
 import json
+
+logs_download_pd_current_value = 0
 
 def expand_directory_walk_to_files_list(directory_walk):
     files = []
@@ -159,8 +162,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                         file_size = unicode(f['size'])
                         file_path = os.path.join(dir_node['root'], file_name)
                         if len(file_name.split('-')) < 2:
-                            self.update_ui_state()
-                            return
+                            continue
 
                         if file_name.split('-')[0] == "continuous":
                             parent_continuous = None
@@ -209,8 +211,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                         file_name_display = file_name.split('-')[1]
 
                         if len(time_stamp.split('T')) < 2:
-                            self.update_ui_state()
-                            return
+                            continue
                         _date = time_stamp.split('T')[0]
                         _time = time_stamp.split('T')[1]
                         year = _date[:4]
@@ -220,8 +221,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
                         if '+' in _time:
                             if len(_time.split('+')) < 2:
-                                self.update_ui_state()
-                                return
+                                continue
                             __time = _time.split('+')[0].split('.')[0]
                             hour = __time[:2]
                             mins = __time[2:4]
@@ -230,8 +230,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                             gmt = '+'+gmt
                         elif '-' in _time:
                             if len(_time.split('-')) < 2:
-                                self.update_ui_state()
-                                return
+                                continue
                             __time = _time.split('-')[0].split('.')[0]
                             hour = __time[:2]
                             mins = __time[2:4]
@@ -572,33 +571,29 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             log_download_pd.setAutoReset(True)
             log_download_pd.setAutoClose(True)
             log_download_pd.setMinimumDuration(0)
-            log_download_pd.setValue(0)
+            global logs_download_pd_current_value
+            logs_download_pd_current_value = 0
+            log_download_pd.setValue(logs_download_pd_current_value)
 
             def cb_open(red_file):
-                def cb_read_status(bytes_read, pd_current_value):
-                    print "UPDATE PBAR", bytes_read
-                    #print "PD CV", log_download_pd_value
-                    #log_download_pd_value = log_download_pd_value + 1
-                    #log_download_pd_value = log_download_pd_value + bytes_read
-                    pd_current_value = pd_current_value + bytes_read
-                    log_download_pd.setValue(pd_current_value)
+                def cb_read_status(bytes_read):
+                    print "CB_stat"
+                    global logs_download_pd_current_value
+                    print logs_download_pd_current_value
+                    logs_download_pd_current_value = logs_download_pd_current_value + bytes_read
+                    log_download_pd.setValue(logs_download_pd_current_value)
 
                 def cb_read(red_file, result):
                     red_file.release()
                     if result is not None:
                         # Success
-                        print "SUCCESS"
-                        print result
                         read_file_path = log_files_to_download['files'].keys()[0]
                         save_file_name = ''.join(read_file_path.split('/')[-1:])
-                        print save_file_name
                         with open(os.path.join(unicode(log_files_download_dir), unicode(save_file_name)), 'wb') as fh_log_write:
                             fh_log_write.write(result.data)
 
                         if read_file_path in log_files_to_download['files']:
                             log_files_to_download['files'].pop(read_file_path, None)
-
-                        print "FILES COUNT = ", len(log_files_to_download['files'])
 
                         if len(log_files_to_download['files']) > 0 and not log_download_pd.wasCanceled():
                             async_call(REDFile(self.session).open,
@@ -606,13 +601,18 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                        REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                                        cb_open,
                                        cb_open_error)
+                        else:
+                            QtGui.QMessageBox.information(None,
+                                                          'Program | Logs',
+                                                          'Download complete!',
+                                                          QtGui.QMessageBox.Ok)
 
                     else:
                         # TODO: Error popup for user?
                         log_download_pd.setValue(log_files_to_download['total_download_size'])
                         print result
 
-                red_file.read_async(4096, lambda x: cb_read(red_file, x))
+                red_file.read_async(4096, lambda x: cb_read(red_file, x), lambda x: cb_read_status(x))
 
             def cb_open_error(result):
                 # TODO: Error popup for user?
