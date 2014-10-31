@@ -313,8 +313,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             _cwlintf = unicode(self.cbox_net_wireless_intf.currentText())
             if self.network_all_data['interfaces'] is not None and\
                self.network_all_data['interfaces']['wireless_links'] is not None and\
-               unicode(_cwlintf) in self.network_all_data['interfaces']['wireless_links'] and\
-               self.network_all_data['interfaces']['wireless_links'][unicode(_cwlintf)]['status']:
+               _cwlintf in self.network_all_data['interfaces']['wireless_links'] and\
+               self.network_all_data['interfaces']['wireless_links'][_cwlintf]['status']:
                 self.label_net_wireless_constat.setText\
                     ("Connected to "+self.network_all_data['interfaces']['wireless_links'][unicode(_cwlintf)]['essid'])
             else:
@@ -1223,7 +1223,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 # TODO: Error popup for user?
                 pass
 
-        self.network_all_data['manager_settings'].set('Settings', 'wired_interface', str(self.cbox_net_wired_intf.currentText()))
+        self.network_all_data['manager_settings'].set('Settings', 'wired_interface', unicode(self.cbox_net_wired_intf.currentText()))
         config_ms = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
 
         idx = self.cbox_net_wired_conftype.currentIndex()
@@ -1471,7 +1471,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    cb_open_error)
 
     def slot_cbox_net_wireless_intf_current_idx_changed(self, idx):
-        _cwlintf = str(self.cbox_net_wireless_intf.currentText())
+        _cwlintf = unicode(self.cbox_net_wireless_intf.currentText())
         if self.network_all_data['interfaces'] is not None and\
            self.network_all_data['interfaces']['wireless_links'] is not None and\
            _cwlintf in self.network_all_data['interfaces']['wireless_links'] and\
@@ -1484,7 +1484,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def slot_cbox_net_wireless_ap_current_idx_changed(self, idx):
         _essid = ""
         _bssid = ""
-        _essid = str(self.cbox_net_wireless_ap.currentText())
+        _essid = unicode(self.cbox_net_wireless_ap.currentText())
 
         if _essid != "" and self.network_all_data['wireless_settings'] is not None and\
            self.network_all_data['scan_result'] is not None:
