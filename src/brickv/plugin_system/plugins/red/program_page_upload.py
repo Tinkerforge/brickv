@@ -148,11 +148,11 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.progress_file.setRange(0, len(self.uploads))
 
-        self.next_upload() # FIXME: abort upload once self.wizard().canceled is True
+        self.upload_next_file() # FIXME: abort upload once self.wizard().canceled is True
 
-    def next_upload(self):
+    def upload_next_file(self):
         if len(self.uploads) == 0:
-            self.upload_done()
+            self.upload_files_done()
             return
 
         upload = self.uploads[0]
@@ -241,55 +241,32 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.target.release()
         self.source.close()
 
-        self.next_upload()
+        self.upload_next_file()
 
-    def upload_done(self):
+    def upload_files_done(self):
         self.progress_file.setVisible(False)
 
         self.is_executed_by_apid = True
-        use_make = False
-        use_fpc = False
+
+        command = self.wizard().page(Constants.get_language_page(self.api_language)).get_command()
+        self.executable, self.arguments, self.environment, self.working_directory = command
 
         if self.api_language == 'c':
-            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_C).get_command()
             start_mode = self.get_field('c.start_mode').toInt()[0]
+
             if start_mode == Constants.C_START_MODE_MAKE:
-                use_make = True
-        elif self.api_language == 'csharp':
-            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_CSHARP).get_command()
+                self.compile_make()
+                return
         elif self.api_language == 'delphi':
-            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_DELPHI).get_command()
             start_mode = self.get_field('delphi.start_mode').toInt()[0]
+
             if start_mode == Constants.DELPHI_START_MODE_COMPILE:
-                use_fpc = True
-        elif self.api_language == 'java':
-            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_JAVA).get_command()
+                self.compile_fpc()
+                return
         elif self.api_language == 'javascript':
             if self.get_field('javascript.version').toInt()[0] == 0:
                 self.is_executed_by_apid = False
-            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_JAVASCRIPT).get_command()
-        elif self.api_language == 'octave':
-            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_OCTAVE).get_command()
-        elif self.api_language == 'perl':
-            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_PERL).get_command()
-        elif self.api_language == 'php':
-            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_PHP).get_command()
-        elif self.api_language == 'python':
-            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_PYTHON).get_command()
-        elif self.api_language == 'ruby':
-            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_RUBY).get_command()
-        elif self.api_language == 'shell':
-            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_SHELL).get_command()
-        elif self.api_language == 'vbnet':
-            self.executable, self.arguments, self.environment, self.working_directory = self.wizard().page(Constants.PAGE_VBNET).get_command()
 
-        if use_make:
-            self.compile_make()
-            return
-        if use_fpc:
-            self.compile_fpc()
-            return
- 
         self.upload_configuration()
 
     def upload_configuration(self):

@@ -81,38 +81,16 @@ class ProgramWizardNew(ProgramWizard):
         elif currentId == Constants.PAGE_FILES:
             language = self.get_field('language').toInt()[0]
 
-            if language == Constants.LANGUAGE_C:
-                return Constants.PAGE_C
-            elif language == Constants.LANGUAGE_CSHARP:
-                return Constants.PAGE_CSHARP
-            elif language == Constants.LANGUAGE_DELPHI:
-                return Constants.PAGE_DELPHI
-            elif language == Constants.LANGUAGE_JAVA:
-                return Constants.PAGE_JAVA
-            elif language == Constants.LANGUAGE_JAVASCRIPT:
-                return Constants.PAGE_JAVASCRIPT
-            elif language == Constants.LANGUAGE_OCTAVE:
-                return Constants.PAGE_OCTAVE
-            elif language == Constants.LANGUAGE_PERL:
-                return Constants.PAGE_PERL
-            elif language == Constants.LANGUAGE_PHP:
-                return Constants.PAGE_PHP
-            elif language == Constants.LANGUAGE_PYTHON:
-                return Constants.PAGE_PYTHON
-            elif language == Constants.LANGUAGE_RUBY:
-                return Constants.PAGE_RUBY
-            elif language == Constants.LANGUAGE_SHELL:
-                return Constants.PAGE_SHELL
-            elif language == Constants.LANGUAGE_VBNET:
-                return Constants.PAGE_VBNET
-            else:
+            try:
+                return Constants.language_pages[language]
+            except KeyError:
                 return Constants.PAGE_GENERAL
         elif currentId == Constants.PAGE_JAVASCRIPT:
             if self.get_field('javascript.version').toInt()[0] == 0:
                 return Constants.PAGE_SUMMARY
             else:
                 return Constants.PAGE_ARGUMENTS
-        elif currentId in (Constants.PAGE_C, Constants.PAGE_CSHARP, Constants.PAGE_DELPHI, Constants.PAGE_JAVA, Constants.PAGE_OCTAVE, Constants.PAGE_PERL, Constants.PAGE_PHP, Constants.PAGE_PYTHON, Constants.PAGE_RUBY, Constants.PAGE_SHELL, Constants.PAGE_VBNET):
+        elif currentId in Constants.language_pages.values():
             return Constants.PAGE_ARGUMENTS
         elif currentId == Constants.PAGE_ARGUMENTS:
             return Constants.PAGE_STDIO

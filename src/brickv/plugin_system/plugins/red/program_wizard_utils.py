@@ -31,25 +31,25 @@ from collections import namedtuple
 ProgramWizardContext = namedtuple('ProgramWizardContext', ['session', 'identifiers', 'script_manager', 'image_version_ref'])
 
 class Constants:
-    PAGE_GENERAL    = 0
-    PAGE_FILES      = 1
-    PAGE_JAVA       = 2
-    PAGE_PYTHON     = 3
-    PAGE_ARGUMENTS  = 4
-    PAGE_STDIO      = 5
-    PAGE_SCHEDULE   = 6
-    PAGE_SUMMARY    = 7
-    PAGE_UPLOAD     = 8
-    PAGE_RUBY       = 9
-    PAGE_SHELL      = 10
-    PAGE_PERL       = 11
-    PAGE_PHP        = 12
-    PAGE_OCTAVE     = 13
-    PAGE_JAVASCRIPT = 14
-    PAGE_CSHARP     = 15
-    PAGE_VBNET      = 16
-    PAGE_C          = 17
-    PAGE_DELPHI     = 18
+    PAGE_GENERAL    = 1001
+    PAGE_FILES      = 1002
+    PAGE_C          = 1003
+    PAGE_CSHARP     = 1004
+    PAGE_DELPHI     = 1005
+    PAGE_JAVA       = 1006
+    PAGE_JAVASCRIPT = 1007
+    PAGE_OCTAVE     = 1008
+    PAGE_PERL       = 1009
+    PAGE_PHP        = 1010
+    PAGE_PYTHON     = 1011
+    PAGE_RUBY       = 1012
+    PAGE_SHELL      = 1013
+    PAGE_VBNET      = 1014
+    PAGE_ARGUMENTS  = 1015
+    PAGE_STDIO      = 1016
+    PAGE_SCHEDULE   = 1017
+    PAGE_SUMMARY    = 1018
+    PAGE_UPLOAD     = 1019
 
     # must match item order in combo_language on general page
     LANGUAGE_INVALID    = 0
@@ -68,8 +68,8 @@ class Constants:
 
     language_display_names = {
         LANGUAGE_INVALID:    '<invalid>',
-        LANGUAGE_CSHARP:     'C#',
         LANGUAGE_C:          'C/C++',
+        LANGUAGE_CSHARP:     'C#',
         LANGUAGE_DELPHI:     'Delphi/Lazarus',
         LANGUAGE_JAVA:       'Java',
         LANGUAGE_JAVASCRIPT: 'JavaScript',
@@ -98,6 +98,21 @@ class Constants:
         LANGUAGE_VBNET:      'vbnet'
     }
 
+    language_pages = {
+        LANGUAGE_C:          PAGE_C,
+        LANGUAGE_CSHARP:     PAGE_CSHARP,
+        LANGUAGE_DELPHI:     PAGE_DELPHI,
+        LANGUAGE_JAVA:       PAGE_JAVA,
+        LANGUAGE_JAVASCRIPT: PAGE_JAVASCRIPT,
+        LANGUAGE_OCTAVE:     PAGE_OCTAVE,
+        LANGUAGE_PERL:       PAGE_PERL,
+        LANGUAGE_PHP:        PAGE_PHP,
+        LANGUAGE_PYTHON:     PAGE_PYTHON,
+        LANGUAGE_RUBY:       PAGE_RUBY,
+        LANGUAGE_SHELL:      PAGE_SHELL,
+        LANGUAGE_VBNET:      PAGE_VBNET
+    }
+
     @staticmethod
     def get_language(api_language):
         d = Constants.api_languages
@@ -106,6 +121,11 @@ class Constants:
     @staticmethod
     def get_language_display_name(api_language):
         return Constants.language_display_names[Constants.get_language(api_language)]
+
+    @staticmethod
+    def get_language_page(api_language):
+        d = Constants.api_languages
+        return Constants.language_pages[d.keys()[d.values().index(api_language)]]
 
     arguments_help = {
         LANGUAGE_INVALID:    '<invalid>',
