@@ -707,13 +707,13 @@ class REDFileBase(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get information for file object {0}'.format(self.object_id), error_code)
 
-        self._type = type
-
         if type == REDFileBase.TYPE_PIPE:
-            self._name = None
+            name = None
         else:
-            self._name = _attach_or_release(self._session, REDString, name_string_id)
+            name = _attach_or_release(self._session, REDString, name_string_id)
 
+        self._type               = type
+        self._name               = name
         self._flags              = flags
         self._permissions        = permissions
         self._uid                = uid
@@ -770,7 +770,7 @@ class REDFileBase(REDObject):
             if length_read == 0:
                 break
 
-            data += bytearray(chunk[:length_read])
+            data   += bytearray(chunk[:length_read])
             length -= length_read
 
         return data
@@ -903,7 +903,7 @@ def lookup_file_info(session, name, follow_symlink):
     if not isinstance(name, REDString):
         name = REDString(session).allocate(name)
 
-    result = session._brick.lookup_file_info(name, follow_symlink, session._session_id)
+    result     = session._brick.lookup_file_info(name, follow_symlink, session._session_id)
     error_code = result[0]
 
     if error_code != REDError.E_SUCCESS:
@@ -938,7 +938,7 @@ class REDDirectory(REDObject):
         return '<REDDirectory object_id: {0}, name: {1}>'.format(self.object_id, repr(self._name))
 
     def _initialize(self):
-        self._name = None
+        self._name    = None
         self._entries = None
 
     def update(self):
@@ -1078,7 +1078,7 @@ class REDProcess(REDObject):
         if self.object_id != process_id:
             return
 
-        self._state = state
+        self._state     = state
         self._timestamp = timestamp
         self._exit_code = exit_code
 
@@ -1106,10 +1106,15 @@ class REDProcess(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get command of process object {0}'.format(self.object_id), error_code)
 
-        self._executable        = _attach_or_release(self._session, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
-        self._arguments         = _attach_or_release(self._session, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
-        self._environment       = _attach_or_release(self._session, REDList, environment_list_id, [working_directory_string_id])
-        self._working_directory = _attach_or_release(self._session, REDString, working_directory_string_id)
+        executable        = _attach_or_release(self._session, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
+        arguments         = _attach_or_release(self._session, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
+        environment       = _attach_or_release(self._session, REDList, environment_list_id, [working_directory_string_id])
+        working_directory = _attach_or_release(self._session, REDString, working_directory_string_id)
+
+        self._executable        = executable
+        self._arguments         = arguments
+        self._environment       = environment
+        self._working_directory = working_directory
 
     def update_identity(self):
         if self.object_id is None:
@@ -1133,9 +1138,13 @@ class REDProcess(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get stdio of process object {0}'.format(self.object_id), error_code)
 
-        self._stdin  = _attach_or_release(self._session, REDFile, stdin_file_id, [stdout_file_id, stderr_file_id])
-        self._stdout = _attach_or_release(self._session, REDFile, stdout_file_id, [stderr_file_id])
-        self._stderr = _attach_or_release(self._session, REDFile, stderr_file_id)
+        stdin  = _attach_or_release(self._session, REDFile, stdin_file_id, [stdout_file_id, stderr_file_id])
+        stdout = _attach_or_release(self._session, REDFile, stdout_file_id, [stderr_file_id])
+        stderr = _attach_or_release(self._session, REDFile, stderr_file_id)
+
+        self._stdin  = stdin
+        self._stdout = stdout
+        self._stderr = stderr
 
     def update_state(self):
         if self.object_id is None:
@@ -1429,10 +1438,15 @@ class REDProgram(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get command of program object {0}'.format(self.object_id), error_code)
 
-        self._executable        = _attach_or_release(self._session, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
-        self._arguments         = _attach_or_release(self._session, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
-        self._environment       = _attach_or_release(self._session, REDList, environment_list_id, [working_directory_string_id])
-        self._working_directory = _attach_or_release(self._session, REDString, working_directory_string_id)
+        executable        = _attach_or_release(self._session, REDString, executable_string_id, [arguments_list_id, environment_list_id, working_directory_string_id])
+        arguments         = _attach_or_release(self._session, REDList, arguments_list_id, [environment_list_id, working_directory_string_id])
+        environment       = _attach_or_release(self._session, REDList, environment_list_id, [working_directory_string_id])
+        working_directory = _attach_or_release(self._session, REDString, working_directory_string_id)
+
+        self._executable        = executable
+        self._arguments         = arguments
+        self._environment       = environment
+        self._working_directory = working_directory
 
     def update_stdio_redirection(self):
         if self.object_id is None:
@@ -1445,9 +1459,7 @@ class REDProgram(REDObject):
             raise REDError('Could not get stdio redirection of program object {0}'.format(self.object_id), error_code)
 
         # stdin
-        self._stdin_redirection = stdin_redirection
-
-        if self._stdin_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+        if stdin_redirection == REDProgram.STDIO_REDIRECTION_FILE:
             extra_object_ids_to_release_on_error = []
 
             if stdout_redirection == REDProgram.STDIO_REDIRECTION_FILE:
@@ -1456,30 +1468,33 @@ class REDProgram(REDObject):
             if stderr_redirection == REDProgram.STDIO_REDIRECTION_FILE:
                 extra_object_ids_to_release_on_error.append(stderr_file_name_string_id)
 
-            self._stdin_file_name = _attach_or_release(self._session, REDString, stdin_file_name_string_id, extra_object_ids_to_release_on_error)
+            stdin_file_name = _attach_or_release(self._session, REDString, stdin_file_name_string_id, extra_object_ids_to_release_on_error)
         else:
-            self._stdin_file_name = None
+            stdin_file_name = None
 
         # stdout
-        self._stdout_redirection = stdout_redirection
-
-        if self._stdout_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+        if stdout_redirection == REDProgram.STDIO_REDIRECTION_FILE:
             extra_object_ids_to_release_on_error = []
 
             if stderr_redirection == REDProgram.STDIO_REDIRECTION_FILE:
                 extra_object_ids_to_release_on_error.append(stderr_file_name_string_id)
 
-            self._stdout_file_name = _attach_or_release(self._session, REDString, stdout_file_name_string_id, extra_object_ids_to_release_on_error)
+            stdout_file_name = _attach_or_release(self._session, REDString, stdout_file_name_string_id, extra_object_ids_to_release_on_error)
         else:
-            self._stdout_file_name = None
+            stdout_file_name = None
 
         # stderr
-        self._stderr_redirection = stderr_redirection
-
-        if self._stderr_redirection == REDProgram.STDIO_REDIRECTION_FILE:
-            self._stderr_file_name = _attach_or_release(self._session, REDString, stderr_file_name_string_id)
+        if stderr_redirection == REDProgram.STDIO_REDIRECTION_FILE:
+            stderr_file_name = _attach_or_release(self._session, REDString, stderr_file_name_string_id)
         else:
-            self._stderr_file_name = None
+            stderr_file_name = None
+
+        self._stdin_redirection  = stdin_redirection
+        self._stdin_file_name    = stdin_file_name
+        self._stdout_redirection = stdout_redirection
+        self._stdout_file_name   = stdout_file_name
+        self._stderr_redirection = stderr_redirection
+        self._stderr_file_name   = stderr_file_name
 
     def update_schedule(self):
         if self.object_id is None:
@@ -1548,7 +1563,7 @@ class REDProgram(REDObject):
             raise REDError('Could not get list of custom option names of program object {0}'.format(self.object_id), error_code)
 
         custom_option_names = _attach_or_release(self._session, REDList, custom_option_names_list_id)
-        custom_options = {}
+        custom_options      = {}
 
         for name in custom_option_names.items:
             error_code, custom_option_value_string_id = \
@@ -1740,7 +1755,7 @@ class REDProgram(REDObject):
             return default
 
     @property
-    def identifier(self):               return self._identifier
+    def identifier(self):             return self._identifier
     @property
     def root_directory(self):         return self._root_directory
     @property
