@@ -89,14 +89,17 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
             for program in programs:
                 self.add_program_to_list(program)
 
+            self.progress_refresh.setVisible(False)
             self.button_refresh.setText('Refresh')
             self.button_refresh.setEnabled(True)
             self.update_ui_state()
             self.stacked_container.setCurrentIndex(1)
 
         def cb_error():
+            self.progress_refresh.setVisible(False)
             self.button_refresh.setText('Error')
 
+        self.progress_refresh.setVisible(True)
         self.button_refresh.setText('Refreshing...')
         self.button_refresh.setEnabled(False)
 
