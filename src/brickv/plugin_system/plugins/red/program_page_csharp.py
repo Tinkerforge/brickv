@@ -26,8 +26,6 @@ from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_csharp import Ui_ProgramPageCSharp
 
-import os
-
 class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
     def __init__(self, title_prefix='', *args, **kwargs):
         ProgramPage.__init__(self, *args, **kwargs)
@@ -139,9 +137,6 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
 
     def get_command(self):
         executable  = self.get_executable()
-        if not executable.startswith('/'):
-            executable = os.path.join('./', executable)
-
         arguments   = self.option_list_editor.get_items()
         environment = []
         start_mode  = self.get_field('csharp.start_mode').toInt()[0]
