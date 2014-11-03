@@ -93,6 +93,10 @@ class ProgramPageVBNet(ProgramPage, Ui_ProgramPageVBNet):
 
     def update_vbnet_versions(self):
         def done():
+            # if a program exists then this page is used in an edit wizard
+            if self.wizard().program != None:
+                set_current_combo_index_from_data(self.combo_version, unicode(self.wizard().program.executable))
+
             self.combo_version.setEnabled(True)
             self.completeChanged.emit()
 
@@ -114,7 +118,7 @@ class ProgramPageVBNet(ProgramPage, Ui_ProgramPageVBNet):
             done()
 
         self.wizard().script_manager.execute_script('mono_versions', cb_versions)
-        
+
     def update_ui_state(self):
         start_mode                 = self.get_field('vbnet.start_mode').toInt()[0]
         start_mode_executable_file = start_mode == Constants.VBNET_START_MODE_EXECUTABLE

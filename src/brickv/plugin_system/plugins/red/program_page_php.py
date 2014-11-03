@@ -101,13 +101,16 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
 
     def update_php_versions(self):
         def done():
+            # if a program exists then this page is used in an edit wizard
+            if self.wizard().program != None:
+                set_current_combo_index_from_data(self.combo_version, unicode(self.wizard().program.executable))
+
             self.combo_version.setEnabled(True)
             self.completeChanged.emit()
 
         def cb_versions(result):
             self.combo_version.clear()
             if result != None:
-                version = result.stdout.split('\n')[0].split(' ')[1]
                 try:
                     version = result.stdout.split('\n')[0].split(' ')[1]
                     self.combo_version.addItem(version, QVariant('/usr/bin/php'))

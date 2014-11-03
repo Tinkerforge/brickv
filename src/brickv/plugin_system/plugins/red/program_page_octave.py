@@ -99,6 +99,10 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
 
     def update_octave_versions(self):
         def done():
+            # if a program exists then this page is used in an edit wizard
+            if self.wizard().program != None:
+                set_current_combo_index_from_data(self.combo_version, unicode(self.wizard().program.executable))
+
             self.combo_version.setEnabled(True)
             self.completeChanged.emit()
 
@@ -117,8 +121,7 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
             # of octave 3.6 is installed
             self.combo_version.clear()
             self.combo_version.addItem('3.6', QVariant('/usr/bin/octave'))
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
+            done()
 
         self.wizard().script_manager.execute_script('octave_versions', cb_versions)
 

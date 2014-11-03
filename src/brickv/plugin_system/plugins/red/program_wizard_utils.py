@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QDir
+from PyQt4.QtCore import Qt, QDir, QVariant
 from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem
 from brickv.plugin_system.plugins.red.api import REDProgram
 import re
@@ -802,3 +802,13 @@ class ComboBoxFileEndingChecker:
 
         if self.combo_file.count() > 1:
             self.combo_file.clearEditText()
+
+
+def set_current_combo_index_from_data(combo, data):
+    i = combo.findData(QVariant(data))
+
+    if i >= 0:
+        combo.setCurrentIndex(i)
+    else:
+        combo.addItem('<unknown>', QVariant(data))
+        combo.setCurrentIndex(combo.count() - 1)

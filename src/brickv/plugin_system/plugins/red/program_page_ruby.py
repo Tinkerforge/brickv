@@ -102,13 +102,16 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
 
     def update_ruby_versions(self):
         def done():
+            # if a program exists then this page is used in an edit wizard
+            if self.wizard().program != None:
+                set_current_combo_index_from_data(self.combo_version, unicode(self.wizard().program.executable))
+
             self.combo_version.setEnabled(True)
             self.completeChanged.emit()
 
         def cb_versions(result):
             self.combo_version.clear()
             if result != None:
-                versions = result.stdout.split('\n')
                 try:
                     versions = result.stdout.split('\n')
                     self.combo_version.addItem(versions[0].split(' ')[1], QVariant('/usr/bin/ruby'))
