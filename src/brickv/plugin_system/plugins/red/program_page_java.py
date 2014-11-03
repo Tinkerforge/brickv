@@ -25,10 +25,8 @@ from PyQt4.QtCore import QVariant
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_java import Ui_ProgramPageJava
-
 from brickv.plugin_system.plugins.red.javatools.jarinfo import JarInfo
 from brickv.plugin_system.plugins.red.javatools import unpack_class
-
 import os
 
 def get_classes_from_class_or_jar(uploads):
@@ -65,6 +63,7 @@ def get_classes_from_class_or_jar(uploads):
             main_classes.append(cls.replace(MAIN_ENDING, ''))
 
     return main_classes
+
 
 class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
     def __init__(self, title_prefix='', *args, **kwargs):
@@ -137,8 +136,11 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
         self.combo_main_class.clear()
         self.combo_main_class.clearEditText()
-        for cls in sorted(get_classes_from_class_or_jar(self.wizard().page(Constants.PAGE_FILES).get_uploads())):
-            self.combo_main_class.addItem(cls)
+
+        # FIXME: make this work in edit mode
+        if self.wizard().hasVisitedPage(Constants.PAGE_FILES):
+            for cls in sorted(get_classes_from_class_or_jar(self.wizard().page(Constants.PAGE_FILES).get_uploads())):
+                self.combo_main_class.addItem(cls)
 
         if self.combo_main_class.count() > 1:
             self.combo_main_class.clearEditText()
