@@ -38,6 +38,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         self.registerField('start_condition', self.combo_start_condition)
         self.registerField('start_time', self.date_start_time)
         self.registerField('start_delay', self.spin_start_delay)
+        self.registerField('start_fields', self.edit_start_fields)
         self.registerField('repeat_mode', self.combo_repeat_mode)
         self.registerField('repeat_interval', self.spin_repeat_interval)
         self.registerField('repeat_fields', self.edit_repeat_fields)
@@ -46,6 +47,8 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         self.combo_repeat_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_repeat_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
 
+        self.edit_start_fields_checker  = MandatoryLineEditChecker(self, self.edit_start_fields, self.label_start_fields,
+                                                                   '^ *' + ' +'.join(['[a-zA-Z0-9,*/-]+']*5) + ' *$')
         self.edit_repeat_fields_checker = MandatoryLineEditChecker(self, self.edit_repeat_fields, self.label_repeat_fields,
                                                                    '^ *' + ' +'.join(['[a-zA-Z0-9,*/-]+']*5) + ' *$')
 
@@ -68,6 +71,10 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
             self.combo_start_condition.setCurrentIndex(start_condition)
             self.date_start_time.setDateTime(QDateTime.fromTime_t(program.start_timestamp))
             self.spin_start_delay.setValue(program.start_delay)
+
+            if program.start_condition == REDProgram.START_CONDITION_CRON:
+                self.edit_start_fields.setText(unicode(program.start_fields))
+
             self.combo_repeat_mode.setCurrentIndex(repeat_mode)
             self.spin_repeat_interval.setValue(program.repeat_interval)
 
@@ -78,7 +85,12 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
+        start_condition = self.get_field('start_condition').toInt()[0]
         repeat_mode = self.get_field('repeat_mode').toInt()[0]
+
+        if start_condition == Constants.START_CONDITION_CRON and \
+           not self.edit_start_fields_checker.complete:
+                return False
 
         if repeat_mode == Constants.REPEAT_MODE_CRON and \
            not self.edit_repeat_fields_checker.complete:
@@ -92,15 +104,19 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         start_condition_now    = start_condition == Constants.START_CONDITION_NOW
         start_condition_reboot = start_condition == Constants.START_CONDITION_REBOOT
         start_condition_time   = start_condition == Constants.START_CONDITION_TIME
+        start_condition_cron   = start_condition == Constants.START_CONDITION_CRON
 
         self.label_start_time.setVisible(start_condition_time)
         self.date_start_time.setVisible(start_condition_time)
         self.label_start_delay.setVisible(start_condition_now or start_condition_reboot)
         self.spin_start_delay.setVisible(start_condition_now or start_condition_reboot)
+        self.label_start_fields.setVisible(start_condition_cron)
+        self.edit_start_fields.setVisible(start_condition_cron)
         self.label_start_condition_never_help.setVisible(start_condition_never)
         self.label_start_condition_now_help.setVisible(start_condition_now)
         self.label_start_condition_reboot_help.setVisible(start_condition_reboot)
         self.label_start_condition_time_help.setVisible(start_condition_time)
+        self.label_start_condition_cron_help.setVisible(start_condition_cron)
 
         repeat_mode          = self.get_field('repeat_mode').toInt()[0]
         repeat_mode_never    = repeat_mode == Constants.REPEAT_MODE_NEVER
@@ -124,12 +140,13 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         start_condition = Constants.api_start_conditions[self.get_field('start_condition').toInt()[0]]
         start_time      = self.get_field('start_time').toDateTime().toMSecsSinceEpoch() / 1000
         start_delay     = self.get_field('start_delay').toUInt()[0]
+        start_fields    = ' '.join(unicode(self.get_field('start_fields').toString()).split())
         repeat_mode     = Constants.api_repeat_modes[self.get_field('repeat_mode').toInt()[0]]
         repeat_interval = self.get_field('repeat_interval').toInt()[0]
         repeat_fields   = ' '.join(unicode(self.get_field('repeat_fields').toString()).split())
 
         try:
-            program.set_schedule(start_condition, start_time, start_delay,
+            program.set_schedule(start_condition, start_time, start_delay, start_fields,
                                  repeat_mode, repeat_interval, repeat_fields) # FIXME: async_call
         except REDError as e:
             QMessageBox.critical(self, 'Edit Error',

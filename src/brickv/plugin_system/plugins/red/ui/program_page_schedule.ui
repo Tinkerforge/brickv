@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>498</width>
-    <height>610</height>
+    <height>694</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,6 +48,11 @@
           <item>
            <property name="text">
             <string>Time</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Cron</string>
            </property>
           </item>
          </widget>
@@ -119,7 +124,7 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="4" column="1">
          <widget class="QLabel" name="label_start_condition_never_help">
           <property name="text">
            <string>The program will never be executed.</string>
@@ -129,7 +134,7 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
+        <item row="5" column="1">
          <widget class="QLabel" name="label_start_condition_now_help">
           <property name="text">
            <string>The program will be executed after the specified delay has passed starting from now.</string>
@@ -139,7 +144,7 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="1">
+        <item row="6" column="1">
          <widget class="QLabel" name="label_start_condition_reboot_help">
           <property name="text">
            <string>The program will be executed after the specified delay has passed starting from every reboot.</string>
@@ -149,10 +154,37 @@
           </property>
          </widget>
         </item>
-        <item row="6" column="1">
+        <item row="7" column="1">
          <widget class="QLabel" name="label_start_condition_time_help">
           <property name="text">
            <string>The program will be executed at the specified time.</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_start_fields">
+          <property name="text">
+           <string>Fields:</string>
+          </property>
+          <property name="buddy">
+           <cstring>edit_start_fields</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="edit_start_fields">
+          <property name="text">
+           <string>* * * * *</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QLabel" name="label_start_condition_cron_help">
+          <property name="text">
+           <string>The program will be executed if the current time matches the cron specification.</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
@@ -301,6 +333,7 @@
   <tabstop>combo_start_condition</tabstop>
   <tabstop>date_start_time</tabstop>
   <tabstop>spin_start_delay</tabstop>
+  <tabstop>edit_start_fields</tabstop>
   <tabstop>combo_repeat_mode</tabstop>
   <tabstop>spin_repeat_interval</tabstop>
   <tabstop>edit_repeat_fields</tabstop>

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-10-31.      #
+# This file was automatically generated on 2014-11-03.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -53,7 +53,7 @@ GetProgramIdentifier = namedtuple('ProgramIdentifier', ['error_code', 'identifie
 GetProgramRootDirectory = namedtuple('ProgramRootDirectory', ['error_code', 'root_directory_string_id'])
 GetProgramCommand = namedtuple('ProgramCommand', ['error_code', 'executable_string_id', 'arguments_list_id', 'environment_list_id', 'working_directory_string_id'])
 GetProgramStdioRedirection = namedtuple('ProgramStdioRedirection', ['error_code', 'stdin_redirection', 'stdin_file_name_string_id', 'stdout_redirection', 'stdout_file_name_string_id', 'stderr_redirection', 'stderr_file_name_string_id'])
-GetProgramSchedule = namedtuple('ProgramSchedule', ['error_code', 'start_condition', 'start_timestamp', 'start_delay', 'repeat_mode', 'repeat_interval', 'repeat_fields_string_id'])
+GetProgramSchedule = namedtuple('ProgramSchedule', ['error_code', 'start_condition', 'start_timestamp', 'start_delay', 'start_fields_string_id', 'repeat_mode', 'repeat_interval', 'repeat_fields_string_id'])
 GetProgramSchedulerState = namedtuple('ProgramSchedulerState', ['error_code', 'state', 'timestamp', 'message_string_id'])
 GetLastSpawnedProgramProcess = namedtuple('LastSpawnedProgramProcess', ['error_code', 'process_id', 'timestamp'])
 GetCustomProgramOptionNames = namedtuple('CustomProgramOptionNames', ['error_code', 'names_list_id'])
@@ -210,6 +210,7 @@ class BrickRED(Device):
     PROGRAM_START_CONDITION_NOW = 1
     PROGRAM_START_CONDITION_REBOOT = 2
     PROGRAM_START_CONDITION_TIMESTAMP = 3
+    PROGRAM_START_CONDITION_CRON = 4
     PROGRAM_REPEAT_MODE_NEVER = 0
     PROGRAM_REPEAT_MODE_INTERVAL = 1
     PROGRAM_REPEAT_MODE_CRON = 2
@@ -858,17 +859,17 @@ class BrickRED(Device):
         """
         return GetProgramStdioRedirection(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_STDIO_REDIRECTION, (program_id, session_id), 'H H', 'B B H B H B H'))
 
-    def set_program_schedule(self, program_id, start_condition, start_timestamp, start_delay, repeat_mode, repeat_interval, repeat_fields_string_id):
+    def set_program_schedule(self, program_id, start_condition, start_timestamp, start_delay, start_fields_string_id, repeat_mode, repeat_interval, repeat_fields_string_id):
         """
         
         """
-        return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_SCHEDULE, (program_id, start_condition, start_timestamp, start_delay, repeat_mode, repeat_interval, repeat_fields_string_id), 'H B Q I B I H', 'B')
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_PROGRAM_SCHEDULE, (program_id, start_condition, start_timestamp, start_delay, start_fields_string_id, repeat_mode, repeat_interval, repeat_fields_string_id), 'H B Q I H B I H', 'B')
 
     def get_program_schedule(self, program_id, session_id):
         """
         
         """
-        return GetProgramSchedule(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_SCHEDULE, (program_id, session_id), 'H H', 'B B Q I B I H'))
+        return GetProgramSchedule(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_SCHEDULE, (program_id, session_id), 'H H', 'B B Q I H B I H'))
 
     def get_program_scheduler_state(self, program_id, session_id):
         """

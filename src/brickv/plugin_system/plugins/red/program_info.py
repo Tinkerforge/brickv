@@ -513,6 +513,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         start_condition_now    = self.program.start_condition == REDProgram.START_CONDITION_NOW
         start_condition_reboot = self.program.start_condition == REDProgram.START_CONDITION_REBOOT
         start_condition_time   = self.program.start_condition == REDProgram.START_CONDITION_TIMESTAMP
+        start_condition_cron   = self.program.start_condition == REDProgram.START_CONDITION_CRON
 
         self.label_start_condition.setText(Constants.api_start_condition_display_names.get(self.program.start_condition, '<unknown>'))
         self.label_start_time_title.setVisible(start_condition_time)
@@ -521,6 +522,11 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.label_start_delay_title.setVisible(start_condition_now or start_condition_reboot)
         self.label_start_delay.setVisible(start_condition_now or start_condition_reboot)
         self.label_start_delay.setText('{0} seconds'.format(self.program.start_delay))
+        self.label_start_fields_title.setVisible(start_condition_cron)
+        self.label_start_fields.setVisible(start_condition_cron)
+
+        if start_condition_cron:
+            self.label_start_fields.setText(unicode(self.program.start_fields))
 
         repeat_mode_never    = self.program.repeat_mode == REDProgram.REPEAT_MODE_NEVER
         repeat_mode_interval = self.program.repeat_mode == REDProgram.REPEAT_MODE_INTERVAL
@@ -532,7 +538,9 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.label_repeat_interval.setText('{0} seconds'.format(self.program.repeat_interval))
         self.label_repeat_fields_title.setVisible(repeat_mode_cron)
         self.label_repeat_fields.setVisible(repeat_mode_cron)
-        self.label_repeat_fields.setText(unicode(self.program.repeat_fields))
+
+        if repeat_mode_cron:
+            self.label_repeat_fields.setText(unicode(self.program.repeat_fields))
 
     def load_log_files_for_ops(self, index_list):
         if len(index_list) % 4 != 0:

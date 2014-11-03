@@ -138,6 +138,8 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
             elif start_condition == Constants.START_CONDITION_NOW or \
                start_condition == Constants.START_CONDITION_REBOOT:
                 html += u'Start Delay: {0} seconds<br/>'.format(self.get_field('start_delay').toUInt()[0])
+            elif start_condition == Constants.START_CONDITION_CRON:
+                html += u'Start Fields: {0}<br/>'.format(' '.join(unicode(self.get_field('start_fields').toString()).split()))
 
             html += u'Repeat Mode: {0}<br/>'.format(Constants.get_repeat_mode_display_name(repeat_mode))
 

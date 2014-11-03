@@ -354,12 +354,13 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             start_condition = Constants.api_start_conditions[self.get_field('start_condition').toInt()[0]]
             start_time      = self.get_field('start_time').toDateTime().toMSecsSinceEpoch() / 1000
             start_delay     = self.get_field('start_delay').toUInt()[0]
+            start_fields    = ' '.join(unicode(self.get_field('start_fields').toString()).split())
             repeat_mode     = Constants.api_repeat_modes[self.get_field('repeat_mode').toInt()[0]]
             repeat_interval = self.get_field('repeat_interval').toUInt()[0]
             repeat_fields   = ' '.join(unicode(self.get_field('repeat_fields').toString()).split())
 
             try:
-                self.program.set_schedule(start_condition, start_time, start_delay,
+                self.program.set_schedule(start_condition, start_time, start_delay, start_fields,
                                           repeat_mode, repeat_interval, repeat_fields) # FIXME: async_call
             except REDError as e:
                 self.upload_error('...error: {0}'.format(e))

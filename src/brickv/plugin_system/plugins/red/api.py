@@ -1263,6 +1263,7 @@ class REDProgram(REDObject):
     START_CONDITION_NOW       = BrickRED.PROGRAM_START_CONDITION_NOW
     START_CONDITION_REBOOT    = BrickRED.PROGRAM_START_CONDITION_REBOOT
     START_CONDITION_TIMESTAMP = BrickRED.PROGRAM_START_CONDITION_TIMESTAMP
+    START_CONDITION_CRON      = BrickRED.PROGRAM_START_CONDITION_CRON
 
     REPEAT_MODE_NEVER    = BrickRED.PROGRAM_REPEAT_MODE_NEVER
     REPEAT_MODE_INTERVAL = BrickRED.PROGRAM_REPEAT_MODE_INTERVAL
@@ -1296,6 +1297,7 @@ class REDProgram(REDObject):
         self._start_condition        = None
         self._start_timestamp        = None
         self._start_delay            = None
+        self._start_fields           = None
         self._repeat_mode            = None
         self._repeat_interval        = None
         self._repeat_fields          = None
@@ -1501,22 +1503,34 @@ class REDProgram(REDObject):
         if self.object_id is None:
             raise RuntimeError('Cannot update unattached program object')
 
-        error_code, start_condition, start_timestamp, start_delay, repeat_mode, repeat_interval, \
+        error_code, start_condition, start_timestamp, start_delay, start_fields_string_id, repeat_mode, repeat_interval, \
         repeat_fields_string_id = self._session._brick.get_program_schedule(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get schedule of program object {0}'.format(self.object_id), error_code)
 
+        if start_condition == REDProgram.START_CONDITION_CRON:
+            extra_object_ids_to_release_on_error = []
+
+            if repeat_mode == REDProgram.REPEAT_MODE_CRON:
+                extra_object_ids_to_release_on_error.append(repeat_fields_string_id)
+
+            start_fields = _attach_or_release(self._session, REDString, start_fields_string_id, extra_object_ids_to_release_on_error)
+        else:
+            start_fields = None
+
+        if repeat_mode == REDProgram.REPEAT_MODE_CRON:
+            repeat_fields = _attach_or_release(self._session, REDString, repeat_fields_string_id)
+        else:
+            repeat_fields = None
+
         self._start_condition = start_condition
         self._start_timestamp = start_timestamp
         self._start_delay     = start_delay
+        self._start_fields    = start_fields
         self._repeat_mode     = repeat_mode
         self._repeat_interval = repeat_interval
-
-        if self._repeat_mode == REDProgram.REPEAT_MODE_CRON:
-            self._repeat_fields = _attach_or_release(self._session, REDString, repeat_fields_string_id)
-        else:
-            self._repeat_fields = None
+        self._repeat_fields   = repeat_fields
 
     def update_scheduler_state(self):
         if self.object_id is None:
@@ -1691,10 +1705,19 @@ class REDProgram(REDObject):
         self._stderr_redirection = stderr_redirection
         self._stderr_file_name   = stderr_file_name
 
-    def set_schedule(self, start_condition, start_timestamp, start_delay,
+    def set_schedule(self, start_condition, start_timestamp, start_delay, start_fields,
                      repeat_mode, repeat_interval, repeat_fields):
         if self.object_id is None:
             raise RuntimeError('Cannot set schedule for unattached program object')
+
+        if start_condition == REDProgram.START_CONDITION_CRON:
+            if not isinstance(start_fields, REDString):
+                start_fields = REDString(self._session).allocate(start_fields)
+
+            start_fields_object_id = start_fields.object_id
+        else:
+            start_fields           = None
+            start_fields_object_id = 0
 
         if repeat_mode == REDProgram.REPEAT_MODE_CRON:
             if not isinstance(repeat_fields, REDString):
@@ -1709,6 +1732,7 @@ class REDProgram(REDObject):
                                                                start_condition,
                                                                start_timestamp,
                                                                start_delay,
+                                                               start_fields_object_id,
                                                                repeat_mode,
                                                                repeat_interval,
                                                                repeat_fields_object_id)
@@ -1719,6 +1743,7 @@ class REDProgram(REDObject):
         self._start_condition = start_condition
         self._start_timestamp = start_timestamp
         self._start_delay     = start_delay
+        self._start_fields    = start_fields
         self._repeat_mode     = repeat_mode
         self._repeat_interval = repeat_interval
         self._repeat_fields   = repeat_fields
@@ -1785,6 +1810,8 @@ class REDProgram(REDObject):
     def start_timestamp(self):        return self._start_timestamp
     @property
     def start_delay(self):            return self._start_delay
+    @property
+    def start_fields(self):           return self._start_fields
     @property
     def repeat_mode(self):            return self._repeat_mode
     @property

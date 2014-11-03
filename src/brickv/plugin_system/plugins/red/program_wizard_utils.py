@@ -277,19 +277,22 @@ class Constants:
     START_CONDITION_NOW    = 1
     START_CONDITION_REBOOT = 2
     START_CONDITION_TIME   = 3
+    START_CONDITION_CRON   = 4
 
     api_start_conditions = {
         START_CONDITION_NEVER:  REDProgram.START_CONDITION_NEVER,
         START_CONDITION_NOW:    REDProgram.START_CONDITION_NOW,
         START_CONDITION_REBOOT: REDProgram.START_CONDITION_REBOOT,
-        START_CONDITION_TIME:   REDProgram.START_CONDITION_TIMESTAMP
+        START_CONDITION_TIME:   REDProgram.START_CONDITION_TIMESTAMP,
+        START_CONDITION_CRON:   REDProgram.START_CONDITION_CRON
     }
 
     api_start_condition_display_names = {
         REDProgram.START_CONDITION_NEVER:     'Never',
         REDProgram.START_CONDITION_NOW:       'Now',
         REDProgram.START_CONDITION_REBOOT:    'Reboot',
-        REDProgram.START_CONDITION_TIMESTAMP: 'Time'
+        REDProgram.START_CONDITION_TIMESTAMP: 'Time',
+        REDProgram.START_CONDITION_CRON:      'Cron'
     }
 
     @staticmethod
