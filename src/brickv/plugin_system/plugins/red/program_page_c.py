@@ -127,7 +127,9 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         return ' '.join(self.option_list_editor.get_items())
 
     def get_command(self):
-        executable = unicode('./{0}'.format(self.get_field('c.file').toString()))
+        executable = unicode(self.get_field('c.file').toString())
+        if not executable.startswith('/'):
+            executable = os.path.join('./', executable)
         arguments = self.option_list_editor.get_items()
         environment = []
         working_directory = unicode(self.get_field('c.working_directory').toString())

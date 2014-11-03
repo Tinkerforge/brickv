@@ -152,7 +152,9 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
 
         start_mode  = self.get_field('delphi.start_mode').toInt()[0]
         if start_mode == Constants.DELPHI_START_MODE_EXECUTABLE:
-            executable = unicode('./{0}'.format(self.get_field('delphi.executable').toString()))
+            executable = unicode(self.get_field('delphi.executable').toString())
+            if not executable.startswith('/'):
+                executable = os.path.join('./', executable)
         elif start_mode == Constants.DELPHI_START_MODE_COMPILE:
             to_compile = unicode('./{0}'.format(self.get_field('delphi.file').toString()))
             executable = os.path.splitext(to_compile)[0]
