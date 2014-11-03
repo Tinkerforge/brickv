@@ -27,10 +27,12 @@ from brickv.plugin_system.plugins.red.program_wizard import ProgramWizard
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 
 class ProgramWizardEdit(ProgramWizard):
-    def __init__(self, context, program, *args, **kwargs):
+    def __init__(self, context, program, available_files, available_directories, *args, **kwargs):
         ProgramWizard.__init__(self, context, *args, **kwargs)
 
-        self.program = program
+        self.program               = program
+        self.available_files       = available_files
+        self.available_directories = available_directories
 
         self.setWindowTitle('Edit Program')
 
@@ -55,11 +57,3 @@ class ProgramWizardEdit(ProgramWizard):
             return QVariant(language)
         else:
             return ProgramWizard.get_field(self, name)
-
-    @property
-    def available_files(self):
-        return [] # FIXME
-
-    @property
-    def available_directories(self):
-        return [] # FIXME

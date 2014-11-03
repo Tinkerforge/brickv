@@ -30,10 +30,18 @@ from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEd
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page_general import ProgramPageGeneral
+from brickv.plugin_system.plugins.red.program_page_c import ProgramPageC
+from brickv.plugin_system.plugins.red.program_page_csharp import ProgramPageCSharp
+from brickv.plugin_system.plugins.red.program_page_delphi import ProgramPageDelphi
 from brickv.plugin_system.plugins.red.program_page_java import ProgramPageJava
+from brickv.plugin_system.plugins.red.program_page_javascript import ProgramPageJavaScript
+from brickv.plugin_system.plugins.red.program_page_octave import ProgramPageOctave
+from brickv.plugin_system.plugins.red.program_page_perl import ProgramPagePerl
+from brickv.plugin_system.plugins.red.program_page_php import ProgramPagePHP
 from brickv.plugin_system.plugins.red.program_page_python import ProgramPagePython
 from brickv.plugin_system.plugins.red.program_page_ruby import ProgramPageRuby
 from brickv.plugin_system.plugins.red.program_page_shell import ProgramPageShell
+from brickv.plugin_system.plugins.red.program_page_vbnet import ProgramPageVBNet
 from brickv.plugin_system.plugins.red.program_page_arguments import ProgramPageArguments
 from brickv.plugin_system.plugins.red.program_page_stdio import ProgramPageStdio
 from brickv.plugin_system.plugins.red.program_page_schedule import ProgramPageSchedule
@@ -103,6 +111,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.available_directories = []
 
         self.edit_general_wizard = None
+        self.edit_language_wizard = None
         self.edit_arguments_wizard = None
         self.edit_stdio_wizard = None
         self.edit_schedule_wizard = None
@@ -338,16 +347,27 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             def expand_async(data):
                 directory_walk = json.loads(data)
                 available_files = []
+                available_directories = []
 
                 if directory_walk != None:
-                    available_files = expand_directory_walk_to_files_list(directory_walk)
+                    available_files = sorted(expand_directory_walk_to_files_list(directory_walk))
+                    directories = set()
 
-                return sorted(available_files), directory_walk
+                    for available_file in available_files:
+                        directory = os.path.split(available_file)[0]
+
+                        if len(directory) > 0:
+                            directories.add(directory)
+
+                    available_directories = sorted(list(directories))
+
+                return directory_walk, available_files, available_directories
 
             def cb_expand_success(args):
-                available_files, directory_walk = args
+                directory_walk, available_files, available_directories = args
 
                 self.available_files = available_files
+                self.available_directories = available_directories
                 self.files_refresh_in_progress = False
                 self.update_ui_state()
 
@@ -383,9 +403,9 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.set_buttons_enabled(True)
 
         # general
-        name = self.program.cast_custom_option_value('name', unicode, '<unknown>')
+        name         = self.program.cast_custom_option_value('name', unicode, '<unknown>')
         api_language = self.program.cast_custom_option_value('language', unicode, '<unknown>')
-        description = self.program.cast_custom_option_value('description', unicode, '')
+        description  = self.program.cast_custom_option_value('description', unicode, '')
 
         try:
             language_display_name = Constants.get_language_display_name(api_language)
@@ -813,7 +833,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
 
-        self.edit_general_wizard = ProgramWizardEdit(context, self.program)
+        self.edit_general_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
         self.edit_general_wizard.setPage(Constants.PAGE_GENERAL, ProgramPageGeneral())
         self.edit_general_wizard.finished.connect(self.edit_general_wizard_finished)
         self.edit_general_wizard.show()
@@ -829,14 +849,52 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.set_buttons_enabled(True)
 
     def show_edit_language_wizard(self):
-        print 'show_edit_language_wizard'
+        api_language = self.program.cast_custom_option_value('language', unicode, '<unknown>')
+
+        try:
+            language_page = Constants.get_language_page(api_language)
+        except:
+            return
+
+        language_page_classes = {
+            Constants.PAGE_C:          ProgramPageC,
+            Constants.PAGE_CSHARP:     ProgramPageCSharp,
+            Constants.PAGE_DELPHI:     ProgramPageDelphi,
+            Constants.PAGE_JAVA:       ProgramPageJava,
+            Constants.PAGE_JAVASCRIPT: ProgramPageJavaScript,
+            Constants.PAGE_OCTAVE:     ProgramPageOctave,
+            Constants.PAGE_PERL:       ProgramPagePerl,
+            Constants.PAGE_PHP:        ProgramPagePHP,
+            Constants.PAGE_PYTHON:     ProgramPagePython,
+            Constants.PAGE_RUBY:       ProgramPageRuby,
+            Constants.PAGE_SHELL:      ProgramPageShell,
+            Constants.PAGE_VBNET:      ProgramPageVBNet
+        }
+
+        self.set_buttons_enabled(False)
+
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
+
+        self.edit_language_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
+        self.edit_language_wizard.setPage(language_page, language_page_classes[language_page]())
+        self.edit_language_wizard.finished.connect(self.edit_language_wizard_finished)
+        self.edit_language_wizard.show()
+
+    def edit_language_wizard_finished(self, result):
+        self.edit_language_wizard.finished.disconnect(self.edit_language_wizard_finished)
+
+        if result == QDialog.Accepted:
+            #self.edit_language_wizard.page(Constants.PAGE_language).apply_program_changes()
+            self.refresh_info()
+
+        self.set_buttons_enabled(True)
 
     def show_edit_arguments_wizard(self):
         self.set_buttons_enabled(False)
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
 
-        self.edit_arguments_wizard = ProgramWizardEdit(context, self.program)
+        self.edit_arguments_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
         self.edit_arguments_wizard.setPage(Constants.PAGE_ARGUMENTS, ProgramPageArguments())
         self.edit_arguments_wizard.finished.connect(self.edit_arguments_wizard_finished)
         self.edit_arguments_wizard.show()
@@ -855,7 +913,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
 
-        self.edit_stdio_wizard = ProgramWizardEdit(context, self.program)
+        self.edit_stdio_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
         self.edit_stdio_wizard.setPage(Constants.PAGE_STDIO, ProgramPageStdio())
         self.edit_stdio_wizard.finished.connect(self.edit_stdio_wizard_finished)
         self.edit_stdio_wizard.show()
@@ -874,7 +932,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
 
-        self.edit_schedule_wizard = ProgramWizardEdit(context, self.program)
+        self.edit_schedule_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
         self.edit_schedule_wizard.setPage(Constants.PAGE_SCHEDULE, ProgramPageSchedule())
         self.edit_schedule_wizard.finished.connect(self.edit_schedule_wizard_finished)
         self.edit_schedule_wizard.show()
