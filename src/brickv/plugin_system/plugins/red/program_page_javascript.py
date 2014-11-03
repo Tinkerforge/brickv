@@ -160,7 +160,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
     def get_command(self):
         executable  = self.get_executable()
         arguments   = self.option_list_editor.get_items()
-        environment = []
+        environment = [u'NODE_PATH={0}'.format(os.path.join(u'/', u'usr', u'local', u'lib', u'node_modules'))]
         start_mode  = self.get_field('javascript.start_mode').toInt()[0]
 
         if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE:
