@@ -98,13 +98,17 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_octave_versions(self):
+        def done():
+            self.combo_version.setEnabled(True)
+            self.completeChanged.emit()
+
         def cb_versions(result):
             self.combo_version.clear()
             if result != None:
-                version = result.stdout.split('\n')[0].split(' ')[-1]
                 try:
+                    version = result.stdout.split('\n')[0].split(' ')[-1]
                     self.combo_version.addItem(version, QVariant('/usr/bin/octave'))
-                    self.combo_version.setEnabled(True)
+                    done()
                     return
                 except:
                     pass

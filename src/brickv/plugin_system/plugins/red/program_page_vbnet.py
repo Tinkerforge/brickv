@@ -92,13 +92,17 @@ class ProgramPageVBNet(ProgramPage, Ui_ProgramPageVBNet):
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_vbnet_versions(self):
+        def done():
+            self.combo_version.setEnabled(True)
+            self.completeChanged.emit()
+
         def cb_versions(result):
             self.combo_version.clear()
             if result != None:
-                version = result.stdout.split('\n')[0].split(' ')[4]
                 try:
+                    version = result.stdout.split('\n')[0].split(' ')[4]
                     self.combo_version.addItem(version, QVariant('/usr/bin/mono'))
-                    self.combo_version.setEnabled(True)
+                    done()
                     return
                 except:
                     pass
@@ -107,8 +111,7 @@ class ProgramPageVBNet(ProgramPage, Ui_ProgramPageVBNet):
             # of mono 3.2 is installed
             self.combo_version.clear()
             self.combo_version.addItem('3.2', QVariant('/usr/bin/mono'))
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
+            done()
 
         self.wizard().script_manager.execute_script('mono_versions', cb_versions)
         

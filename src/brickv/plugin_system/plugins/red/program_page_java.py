@@ -164,13 +164,17 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_java_versions(self):
+        def done():
+            self.combo_version.setEnabled(True)
+            self.completeChanged.emit()
+
         def cb_versions(result):
             self.combo_version.clear()
             if result != None:
                 try:
                     version = result.stderr.split('\n')[1].split(' ')[5].replace(')', '')
                     self.combo_version.addItem(version, QVariant('/usr/bin/java'))
-                    self.combo_version.setEnabled(True)
+                    done()
                     return
                 except:
                     pass
@@ -179,8 +183,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             # of java 8 is installed
             self.combo_version.clear()
             self.combo_version.addItem('1.8', QVariant('/usr/bin/java'))
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
+            done()
 
         self.wizard().script_manager.execute_script('java_versions', cb_versions)
 

@@ -100,13 +100,17 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_perl_versions(self):
+        def done():
+            self.combo_version.setEnabled(True)
+            self.completeChanged.emit()
+
         def cb_versions(result):
             self.combo_version.clear()
             if result != None:
-                version = result.stdout.split('\n')[1].split(' ')[8].replace('(', '').replace(')', '')
                 try:
+                    version = result.stdout.split('\n')[1].split(' ')[8].replace('(', '').replace(')', '')
                     self.combo_version.addItem(version, QVariant('/usr/bin/perl'))
-                    self.combo_version.setEnabled(True)
+                    done()
                     return
                 except:
                     pass
@@ -115,8 +119,7 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
             # of perl 5 is installed
             self.combo_version.clear()
             self.combo_version.addItem('5.x', QVariant('/usr/bin/perl'))
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
+            done()
 
         self.wizard().script_manager.execute_script('perl_versions', cb_versions)
 

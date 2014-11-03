@@ -108,14 +108,18 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_python_versions(self):
+        def done():
+            self.combo_version.setEnabled(True)
+            self.completeChanged.emit()
+
         def cb_versions(result):
             self.combo_version.clear()
             if result != None:
-                versions = result.stderr.split('\n')
                 try:
+                    versions = result.stderr.split('\n')
                     self.combo_version.addItem(versions[0].split(' ')[1], QVariant('/usr/bin/python2'))
                     self.combo_version.addItem(versions[1].split(' ')[1], QVariant('/usr/bin/python3'))
-                    self.combo_version.setEnabled(True)
+                    done()
                     return
                 except:
                     pass
@@ -125,8 +129,7 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
             self.combo_version.clear()
             self.combo_version.addItem('2.7', QVariant('/usr/bin/python2'))
             self.combo_version.addItem('3.x', QVariant('/usr/bin/python3'))
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
+            done()
 
         self.wizard().script_manager.execute_script('python_versions', cb_versions)
 

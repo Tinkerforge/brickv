@@ -104,15 +104,19 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_javascript_versions(self):
+        def done():
+            self.combo_version.setEnabled(True)
+            self.completeChanged.emit()
+
         def cb_versions(result):
             self.combo_version.clear()
             if result != None:
-                version = result.stdout.split('\n')[0]
-                node_version_str = 'Server-side (Node.js {0})'.format(version)
                 try:
+                    version = result.stdout.split('\n')[0]
+                    node_version_str = 'Server-side (Node.js {0})'.format(version)
                     self.combo_version.addItem('Client-side (Browser)', QVariant('/bin/true'))
                     self.combo_version.addItem(node_version_str, QVariant('/usr/local/bin/node'))
-                    self.combo_version.setEnabled(True)
+                    done()
                     return
                 except:
                     pass
@@ -122,8 +126,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
             self.combo_version.clear()
             self.combo_version.addItem('Client-side (Browser)', QVariant('/bin/true'))
             self.combo_version.addItem('Server-side (Node.js)', QVariant('/usr/local/bin/node'))
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
+            done()
 
         self.wizard().script_manager.execute_script('javascript_versions', cb_versions)
 

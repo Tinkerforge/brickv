@@ -101,13 +101,17 @@ class ProgramPageShell(ProgramPage, Ui_ProgramPageShell):
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_shell_versions(self):
+        def done():
+            self.combo_version.setEnabled(True)
+            self.completeChanged.emit()
+
         def cb_versions(result):
             self.combo_version.clear()
             if result != None:
-                versions = result.stdout.split('\n')
                 try:
+                    versions = result.stdout.split('\n')
                     self.combo_version.addItem(' '.join(versions[0].split(' ')[:-1]), QVariant('/bin/bash'))
-                    self.combo_version.setEnabled(True)
+                    done()
                     return
                 except:
                     pass
@@ -116,8 +120,7 @@ class ProgramPageShell(ProgramPage, Ui_ProgramPageShell):
             # of bash is installed
             self.combo_version.clear()
             self.combo_version.addItem("bash", QVariant('/bin/bash'))
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
+            done()
 
         self.wizard().script_manager.execute_script('shell_versions', cb_versions)
 

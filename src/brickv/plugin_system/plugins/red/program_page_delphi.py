@@ -99,6 +99,10 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_delphi_versions(self):
+        def done():
+            self.combo_version.setEnabled(True)
+            self.completeChanged.emit()
+
         def cb_versions(result):
             self.combo_start_mode.clear()
             if result != None:
@@ -106,7 +110,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
                     version = result.stdout.split('\n')[0].split(' ')[-1]
                     self.combo_start_mode.addItem('Executable')
                     self.combo_start_mode.addItem('Compile on RED Brick (fpc {0})'.format(version), QVariant('/usr/bin/fpc'))
-                    self.combo_start_mode.setEnabled(True)
+                    done()
                     return
                 except:
                     pass
@@ -116,8 +120,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
             self.combo_start_mode.clear()
             self.combo_start_mode.addItem('Executable')
             self.combo_start_mode.addItem('Compile on RED Brick (fpc 2.6)', QVariant('/usr/bin/fpc'))
-            self.combo_start_mode.setEnabled(True)
-            self.completeChanged.emit()
+            done()
 
         self.wizard().script_manager.execute_script('fpc_versions', cb_versions)
 

@@ -100,13 +100,18 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_php_versions(self):
+        def done():
+            self.combo_version.setEnabled(True)
+            self.completeChanged.emit()
+
         def cb_versions(result):
             self.combo_version.clear()
             if result != None:
                 version = result.stdout.split('\n')[0].split(' ')[1]
                 try:
+                    version = result.stdout.split('\n')[0].split(' ')[1]
                     self.combo_version.addItem(version, QVariant('/usr/bin/php'))
-                    self.combo_version.setEnabled(True)
+                    done()
                     return
                 except:
                     pass
@@ -115,8 +120,7 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
             # of php 1.9 is installed
             self.combo_version.clear()
             self.combo_version.addItem('5', QVariant('/usr/bin/php'))
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
+            done()
 
         self.wizard().script_manager.execute_script('php_versions', cb_versions)
 
