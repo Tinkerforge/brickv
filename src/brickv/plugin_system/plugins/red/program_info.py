@@ -436,7 +436,15 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.label_program_current_state.setText('Not running')
             self.label_last_start.setText('Never started')
 
-        self.label_scheduler_current_state.setText(Constants.api_scheduler_state_display_name.get(self.program.scheduler_state, '<unknown>'))
+        scheduler_state_display_name = Constants.api_scheduler_state_display_name.get(self.program.scheduler_state, '<unknown>')
+
+        if self.program.scheduler_state == REDProgram.SCHEDULER_STATE_STOPPED:
+            if process_running:
+                scheduler_state_display_name += ', no automatic program repeat'
+            else:
+                scheduler_state_display_name += ', no automatic program start'
+
+        self.label_scheduler_current_state.setText(scheduler_state_display_name)
         self.label_last_scheduler_state_change.setText(QDateTime.fromTime_t(self.program.scheduler_timestamp).toString('yyyy-MM-dd HH:mm:ss'))
 
         if self.program.scheduler_message != None:
