@@ -109,21 +109,30 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
                 return
 
         _uptime = csv_tokens[0]
-        hrs, hrs_remainder = divmod(int(_uptime), 60 * 60)
-        mins, _ = divmod(hrs_remainder, 60)
+        days, days_remainder = divmod(int(_uptime), 24 * 60 * 60)
+        hours, hours_remainder = divmod(days_remainder, 60 * 60)
+        minutes, _ = divmod(hours_remainder, 60)
         uptime = ''
 
-        if hrs > 0:
-            uptime += str(hrs)
+        if days > 0:
+            uptime += str(days)
 
-            if hrs == 1:
+            if days == 1:
+                uptime += ' day '
+            else:
+                uptime += ' days '
+
+        if hours > 0:
+            uptime += str(hours)
+
+            if hours == 1:
                 uptime += ' hour '
             else:
                 uptime += ' hours '
 
-        uptime += str(mins)
+        uptime += str(minutes)
 
-        if mins == 1:
+        if minutes == 1:
             uptime += ' minute'
         else:
             uptime += ' minutes'
