@@ -212,20 +212,23 @@ class Constants:
         return Constants.api_stdin_redirection_display_names[Constants.api_stdin_redirections[stdin_redirection]]
 
     # must match item order in combo_stdout_redirection on stdio page
-    STDOUT_REDIRECTION_DEV_NULL = 0
-    STDOUT_REDIRECTION_FILE     = 1
-    STDOUT_REDIRECTION_LOG      = 2
+    STDOUT_REDIRECTION_DEV_NULL       = 0
+    STDOUT_REDIRECTION_FILE           = 1
+    STDOUT_REDIRECTION_INDIVIDUAL_LOG = 2
+    STDOUT_REDIRECTION_CONTINUOUS_LOG = 3
 
     api_stdout_redirections = {
-        STDOUT_REDIRECTION_DEV_NULL: REDProgram.STDIO_REDIRECTION_DEV_NULL,
-        STDOUT_REDIRECTION_FILE:     REDProgram.STDIO_REDIRECTION_FILE,
-        STDOUT_REDIRECTION_LOG:      REDProgram.STDIO_REDIRECTION_LOG
+        STDOUT_REDIRECTION_DEV_NULL:       REDProgram.STDIO_REDIRECTION_DEV_NULL,
+        STDOUT_REDIRECTION_FILE:           REDProgram.STDIO_REDIRECTION_FILE,
+        STDOUT_REDIRECTION_INDIVIDUAL_LOG: REDProgram.STDIO_REDIRECTION_INDIVIDUAL_LOG,
+        STDOUT_REDIRECTION_CONTINUOUS_LOG: REDProgram.STDIO_REDIRECTION_CONTINUOUS_LOG,
     }
 
     api_stdout_redirection_display_names = {
-        REDProgram.STDIO_REDIRECTION_DEV_NULL: '/dev/null',
-        REDProgram.STDIO_REDIRECTION_FILE:     'File',
-        REDProgram.STDIO_REDIRECTION_LOG:      'Automatic Log File'
+        REDProgram.STDIO_REDIRECTION_DEV_NULL:       '/dev/null',
+        REDProgram.STDIO_REDIRECTION_FILE:           'File',
+        REDProgram.STDIO_REDIRECTION_INDIVIDUAL_LOG: 'Individual Log Files',
+        REDProgram.STDIO_REDIRECTION_CONTINUOUS_LOG: 'Continuous Log File'
     }
 
     @staticmethod
@@ -238,23 +241,26 @@ class Constants:
         return Constants.api_stdout_redirection_display_names[Constants.api_stdout_redirections[stdout_redirection]]
 
     # must match item order in combo_stderr_redirection on stdio page
-    STDERR_REDIRECTION_DEV_NULL = 0
-    STDERR_REDIRECTION_FILE     = 1
-    STDERR_REDIRECTION_LOG      = 2
-    STDERR_REDIRECTION_STDOUT   = 3
+    STDERR_REDIRECTION_DEV_NULL       = 0
+    STDERR_REDIRECTION_FILE           = 1
+    STDERR_REDIRECTION_INDIVIDUAL_LOG = 2
+    STDERR_REDIRECTION_CONTINUOUS_LOG = 3
+    STDERR_REDIRECTION_STDOUT         = 4
 
     api_stderr_redirections = {
-        STDERR_REDIRECTION_DEV_NULL: REDProgram.STDIO_REDIRECTION_DEV_NULL,
-        STDERR_REDIRECTION_FILE:     REDProgram.STDIO_REDIRECTION_FILE,
-        STDERR_REDIRECTION_LOG:      REDProgram.STDIO_REDIRECTION_LOG,
-        STDERR_REDIRECTION_STDOUT:   REDProgram.STDIO_REDIRECTION_STDOUT
+        STDERR_REDIRECTION_DEV_NULL:       REDProgram.STDIO_REDIRECTION_DEV_NULL,
+        STDERR_REDIRECTION_FILE:           REDProgram.STDIO_REDIRECTION_FILE,
+        STDERR_REDIRECTION_INDIVIDUAL_LOG: REDProgram.STDIO_REDIRECTION_INDIVIDUAL_LOG,
+        STDERR_REDIRECTION_CONTINUOUS_LOG: REDProgram.STDIO_REDIRECTION_CONTINUOUS_LOG,
+        STDERR_REDIRECTION_STDOUT:         REDProgram.STDIO_REDIRECTION_STDOUT
     }
 
     api_stderr_redirection_display_names = {
-        REDProgram.STDIO_REDIRECTION_DEV_NULL: '/dev/null',
-        REDProgram.STDIO_REDIRECTION_FILE:     'File',
-        REDProgram.STDIO_REDIRECTION_LOG:      'Automatic Log File',
-        REDProgram.STDIO_REDIRECTION_STDOUT:   'Standard Output'
+        REDProgram.STDIO_REDIRECTION_DEV_NULL:       '/dev/null',
+        REDProgram.STDIO_REDIRECTION_FILE:           'File',
+        REDProgram.STDIO_REDIRECTION_INDIVIDUAL_LOG: 'Individual Log Files',
+        REDProgram.STDIO_REDIRECTION_CONTINUOUS_LOG: 'Continuous Log File',
+        REDProgram.STDIO_REDIRECTION_STDOUT:         'Standard Output'
     }
 
     @staticmethod
@@ -342,7 +348,7 @@ class Constants:
     DEFAULT_SHELL_START_MODE      = SHELL_START_MODE_SCRIPT_FILE
     DEFAULT_VBNET_START_MODE      = VBNET_START_MODE_EXECUTABLE
     DEFAULT_STDIN_REDIRECTION     = STDIN_REDIRECTION_PIPE
-    DEFAULT_STDOUT_REDIRECTION    = STDOUT_REDIRECTION_LOG
+    DEFAULT_STDOUT_REDIRECTION    = STDOUT_REDIRECTION_CONTINUOUS_LOG
     DEFAULT_STDERR_REDIRECTION    = STDERR_REDIRECTION_STDOUT
     DEFAULT_START_CONDITION       = START_CONDITION_NOW
     DEFAULT_REPEAT_MODE           = REPEAT_MODE_NEVER

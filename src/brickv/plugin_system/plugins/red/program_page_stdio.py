@@ -107,19 +107,21 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
         return ProgramPage.isComplete(self)
 
     def update_ui_state(self):
-        stdin_redirection           = self.get_field('stdin_redirection').toInt()[0]
-        stdout_redirection          = self.get_field('stdout_redirection').toInt()[0]
-        stderr_redirection          = self.get_field('stderr_redirection').toInt()[0]
-        stdin_redirection_dev_null  = stdin_redirection  == Constants.STDIN_REDIRECTION_DEV_NULL
-        stdin_redirection_pipe      = stdin_redirection  == Constants.STDIN_REDIRECTION_PIPE
-        stdin_redirection_file      = stdin_redirection  == Constants.STDIN_REDIRECTION_FILE
-        stdout_redirection_dev_null = stdout_redirection == Constants.STDOUT_REDIRECTION_DEV_NULL
-        stdout_redirection_file     = stdout_redirection == Constants.STDOUT_REDIRECTION_FILE
-        stdout_redirection_log      = stdout_redirection == Constants.STDOUT_REDIRECTION_LOG
-        stderr_redirection_dev_null = stderr_redirection == Constants.STDERR_REDIRECTION_DEV_NULL
-        stderr_redirection_file     = stderr_redirection == Constants.STDERR_REDIRECTION_FILE
-        stderr_redirection_log      = stderr_redirection == Constants.STDERR_REDIRECTION_LOG
-        stderr_redirection_stdout   = stderr_redirection == Constants.STDERR_REDIRECTION_STDOUT
+        stdin_redirection                 = self.get_field('stdin_redirection').toInt()[0]
+        stdout_redirection                = self.get_field('stdout_redirection').toInt()[0]
+        stderr_redirection                = self.get_field('stderr_redirection').toInt()[0]
+        stdin_redirection_dev_null        = stdin_redirection  == Constants.STDIN_REDIRECTION_DEV_NULL
+        stdin_redirection_pipe            = stdin_redirection  == Constants.STDIN_REDIRECTION_PIPE
+        stdin_redirection_file            = stdin_redirection  == Constants.STDIN_REDIRECTION_FILE
+        stdout_redirection_dev_null       = stdout_redirection == Constants.STDOUT_REDIRECTION_DEV_NULL
+        stdout_redirection_file           = stdout_redirection == Constants.STDOUT_REDIRECTION_FILE
+        stdout_redirection_individual_log = stdout_redirection == Constants.STDOUT_REDIRECTION_INDIVIDUAL_LOG
+        stdout_redirection_continuous_log = stdout_redirection == Constants.STDOUT_REDIRECTION_CONTINUOUS_LOG
+        stderr_redirection_dev_null       = stderr_redirection == Constants.STDERR_REDIRECTION_DEV_NULL
+        stderr_redirection_file           = stderr_redirection == Constants.STDERR_REDIRECTION_FILE
+        stderr_redirection_individual_log = stderr_redirection == Constants.STDERR_REDIRECTION_INDIVIDUAL_LOG
+        stderr_redirection_continuous_log = stderr_redirection == Constants.STDERR_REDIRECTION_CONTINUOUS_LOG
+        stderr_redirection_stdout         = stderr_redirection == Constants.STDERR_REDIRECTION_STDOUT
 
         self.label_stdin_file.setVisible(stdin_redirection_file)
         self.combo_stdin_file.setVisible(stdin_redirection_file)
@@ -129,13 +131,15 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
         self.label_stdout_file.setVisible(stdout_redirection_file)
         self.label_stdout_dev_null_help.setVisible(stdout_redirection_dev_null)
         self.label_stdout_file_help.setVisible(stdout_redirection_file)
-        self.label_stdout_log_help.setVisible(stdout_redirection_log)
+        self.label_stdout_individual_log_help.setVisible(stdout_redirection_individual_log)
+        self.label_stdout_continuous_log_help.setVisible(stdout_redirection_continuous_log)
         self.edit_stdout_file.setVisible(stdout_redirection_file)
         self.label_stderr_file.setVisible(stderr_redirection_file)
         self.edit_stderr_file.setVisible(stderr_redirection_file)
         self.label_stderr_dev_null_help.setVisible(stderr_redirection_dev_null)
         self.label_stderr_file_help.setVisible(stderr_redirection_file)
-        self.label_stderr_log_help.setVisible(stderr_redirection_log)
+        self.label_stderr_individual_log_help.setVisible(stderr_redirection_individual_log)
+        self.label_stderr_continuous_log_help.setVisible(stderr_redirection_continuous_log)
         self.label_stderr_stdout_help.setVisible(stderr_redirection_stdout)
 
     def emit_complete_changed(self):
