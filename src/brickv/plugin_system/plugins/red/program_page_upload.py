@@ -36,30 +36,29 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.setupUi(self)
 
-        self.upload_successful = False
+        # state for async file upload
+        self.upload_successful   = False
+        self.language_api_name   = None
+        self.program             = None
+        self.root_directory      = None
+        self.uploads             = None
+        self.target              = None
+        self.source              = None
+        self.target_name         = None
+        self.source_name         = None
+        self.source_size         = None
+        self.last_upload_size    = None
+        self.is_executed_by_apid = None
+        self.executable          = None
+        self.arguments           = None
+        self.environment         = None
+        self.working_directory   = None
 
         self.setTitle(title_prefix + 'Upload')
 
         self.progress_file.setVisible(False)
 
         self.button_start_upload.clicked.connect(self.start_upload)
-
-        # state for async file upload
-        self.api_language = None
-        self.program = None
-        self.root_directory = None
-        self.uploads = None
-        self.target = None
-        self.source = None
-        self.target_name = None
-        self.source_name = None
-        self.source_size = None
-        self.last_upload_size = None
-        self.is_executed_by_apid = None
-        self.executable = None
-        self.arguments = None
-        self.environment = None
-        self.working_directory = None
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
@@ -122,10 +121,10 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             return
 
         # set custom option: language
-        self.api_language = Constants.api_languages[self.get_field('language').toInt()[0]]
+        self.language_api_name = Constants.language_api_names[self.get_field('language').toInt()[0]]
 
         try:
-            self.program.set_custom_option_value('language', self.api_language) # FIXME: async_call
+            self.program.set_custom_option_value('language', self.language_api_name) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return
@@ -248,22 +247,22 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.is_executed_by_apid = True
 
-        command = self.wizard().page(Constants.get_language_page(self.api_language)).get_command()
+        command = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_command()
         self.executable, self.arguments, self.environment, self.working_directory = command
 
-        if self.api_language == 'c':
+        if self.language_api_name == 'c':
             start_mode = self.get_field('c.start_mode').toInt()[0]
 
             if start_mode == Constants.C_START_MODE_MAKE:
                 self.compile_make()
                 return
-        elif self.api_language == 'delphi':
+        elif self.language_api_name == 'delphi':
             start_mode = self.get_field('delphi.start_mode').toInt()[0]
 
             if start_mode == Constants.DELPHI_START_MODE_COMPILE:
                 self.compile_fpc()
                 return
-        elif self.api_language == 'javascript':
+        elif self.language_api_name == 'javascript':
             if self.get_field('javascript.version').toInt()[0] == 0:
                 self.is_executed_by_apid = False
 

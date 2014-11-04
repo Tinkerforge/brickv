@@ -382,7 +382,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.update_ui_state()
 
         self.script_manager.execute_script('directory_walk', cb_directory_walk,
-                                           [os.path.join(self.root_directory, 'bin')], max_len=1024*1024)
+                                           [os.path.join(self.root_directory, 'bin')],
+                                           max_len=1024*1024)
 
     def update_ui_state(self):
         self.button_download_logs.setEnabled(self.tree_logs_model.rowCount())
@@ -403,12 +404,12 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.set_buttons_enabled(True)
 
         # general
-        name         = self.program.cast_custom_option_value('name', unicode, '<unknown>')
-        api_language = self.program.cast_custom_option_value('language', unicode, '<unknown>')
-        description  = self.program.cast_custom_option_value('description', unicode, '')
+        name              = self.program.cast_custom_option_value('name', unicode, '<unknown>')
+        language_api_name = self.program.cast_custom_option_value('language', unicode, '<unknown>')
+        description       = self.program.cast_custom_option_value('description', unicode, '')
 
         try:
-            language_display_name = Constants.get_language_display_name(api_language)
+            language_display_name = Constants.get_language_display_name(language_api_name)
         except:
             language_display_name = '<unknown>'
 
@@ -849,10 +850,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.set_buttons_enabled(True)
 
     def show_edit_language_wizard(self):
-        api_language = self.program.cast_custom_option_value('language', unicode, '<unknown>')
+        language_api_name = self.program.cast_custom_option_value('language', unicode, '<unknown>')
 
         try:
-            language_page = Constants.get_language_page(api_language)
+            language_page = Constants.get_language_page(language_api_name)
         except:
             return
 

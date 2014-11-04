@@ -82,7 +82,7 @@ class Constants:
         LANGUAGE_VBNET:      'Visual Basic .NET'
     }
 
-    api_languages = {
+    language_api_names = {
         LANGUAGE_INVALID:    '<invalid>',
         LANGUAGE_C:          'c',
         LANGUAGE_CSHARP:     'csharp',
@@ -114,18 +114,17 @@ class Constants:
     }
 
     @staticmethod
-    def get_language(api_language):
-        d = Constants.api_languages
-        return d.keys()[d.values().index(api_language)]
+    def get_language(language_api_name):
+        d = Constants.language_api_names
+        return d.keys()[d.values().index(language_api_name)]
 
     @staticmethod
-    def get_language_display_name(api_language):
-        return Constants.language_display_names[Constants.get_language(api_language)]
+    def get_language_display_name(language_api_name):
+        return Constants.language_display_names[Constants.get_language(language_api_name)]
 
     @staticmethod
-    def get_language_page(api_language):
-        d = Constants.api_languages
-        return Constants.language_pages[d.keys()[d.values().index(api_language)]]
+    def get_language_page(language_api_name):
+        return Constants.language_pages[Constants.get_language(language_api_name)]
 
     arguments_help = {
         LANGUAGE_INVALID:    '<invalid>',
@@ -168,7 +167,7 @@ class Constants:
 
     # must match item order in combo_start_mode on Delphi/Lazarus page
     DELPHI_START_MODE_EXECUTABLE = 0
-    DELPHI_START_MODE_COMPILE = 1
+    DELPHI_START_MODE_COMPILE    = 1
 
     # must match item order in combo_start_mode on Java page
     JAVA_START_MODE_MAIN_CLASS = 0

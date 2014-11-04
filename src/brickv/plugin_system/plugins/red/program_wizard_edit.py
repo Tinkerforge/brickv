@@ -47,10 +47,10 @@ class ProgramWizardEdit(ProgramWizard):
         elif name == 'name':
             return QVariant(self.program.cast_custom_option_value('name', unicode, '<unknown>'))
         elif name == 'language':
-            api_language = self.program.cast_custom_option_value('language', unicode, '<unknown>')
+            language_api_name = self.program.cast_custom_option_value('language', unicode, '<unknown>')
 
             try:
-                language = Constants.get_language(api_language)
+                language = Constants.get_language(language_api_name)
             except:
                 language = Constants.LANGUAGE_INVALID
 

@@ -74,10 +74,10 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
             self.edit_identifier.setText(unicode(program.identifier))
             self.text_description.setPlainText(program.cast_custom_option_value('description', unicode, ''))
 
-            api_language = program.cast_custom_option_value('language', unicode, '<unknown>')
+            language_api_name = program.cast_custom_option_value('language', unicode, '<unknown>')
 
             try:
-                language = Constants.get_language(api_language)
+                language = Constants.get_language(language_api_name)
                 self.combo_language.setCurrentIndex(language)
             except:
                 pass
