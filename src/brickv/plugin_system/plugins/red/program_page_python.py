@@ -83,6 +83,12 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
+        # if a program exists then this page is used in an edit wizard
+        if self.wizard().program != None:
+            program = self.wizard().program
+
+            self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+
         self.update_ui_state()
 
     # overrides QWizardPage.isComplete

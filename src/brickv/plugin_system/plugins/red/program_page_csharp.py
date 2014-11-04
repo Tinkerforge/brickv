@@ -70,12 +70,16 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
         self.update_csharp_versions()
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_CSHARP_START_MODE)
-        #if self.combo_executable_file.count() > 1:
-        #    self.combo_executable_file.clearEditText()
         self.combo_executable_file_selector.reset()
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
+
+        # if a program exists then this page is used in an edit wizard
+        if self.wizard().program != None:
+            program = self.wizard().program
+
+            self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
 
         self.update_ui_state()
 

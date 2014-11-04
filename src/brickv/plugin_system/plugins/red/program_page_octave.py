@@ -81,6 +81,12 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
         if not self.is_full_image:
             self.option_list_editor.add_item(unicode('--no-window-system'))
 
+        # if a program exists then this page is used in an edit wizard
+        if self.wizard().program != None:
+            program = self.wizard().program
+
+            self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+
         self.update_ui_state()
 
     # overrides QWizardPage.isComplete

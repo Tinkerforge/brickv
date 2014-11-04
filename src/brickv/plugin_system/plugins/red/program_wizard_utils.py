@@ -739,6 +739,18 @@ class MandatoryDirectorySelector:
         self.combo.setVisible(visible)
         self.label.setVisible(visible)
 
+    def set_current_text(self, text):
+        if len(text) == 0:
+            return
+
+        i = self.combo.findText(text)
+
+        if i < 0:
+            self.combo.addItem(text)
+            i = self.combo.count() - 1
+
+        self.combo.setCurrentIndex(i)
+
     def reset(self):
         self.combo.clear()
         self.combo.addItems(self.original_items)

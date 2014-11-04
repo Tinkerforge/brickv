@@ -146,6 +146,12 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         if self.combo_main_class.count() > 1:
             self.combo_main_class.clearEditText()
 
+        # if a program exists then this page is used in an edit wizard
+        if self.wizard().program != None:
+            program = self.wizard().program
+
+            self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+
         self.update_ui_state()
 
     # overrides QWizardPage.isComplete
