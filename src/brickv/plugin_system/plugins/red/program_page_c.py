@@ -79,10 +79,6 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_gcc_versions(self):
-        def done():
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
-
         version_str = 'Available are {0} and {1}'
         def cb_versions(result):
             if result != None:
@@ -93,7 +89,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
                     str_gcc = '<b>/usr/bin/{0}</b> ({1})'.format(version_gcc[0], version_gcc[3])
                     str_gpp = '<b>/usr/bin/{0}</b> ({1})'.format(version_gpp[0], version_gpp[3])
                     self.label_compiler_available.setText(version_str.format(str_gcc, str_gpp))
-                    done()
+                    self.completeChanged.emit()
                     return
                 except:
                     pass
@@ -101,7 +97,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
             # Could not get versions, we assume that some version
             # of gcc/g++ is installed
             self.label_compiler_available.setText(version_str.format('<b>/usr/bin/gcc</b>', '<b>/usr/bin/g++</b>'))
-            done()
+            self.completeChanged.emit()
 
         self.wizard().script_manager.execute_script('gcc_versions', cb_versions)
 
