@@ -24,9 +24,9 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtCore import QVariant
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
-from brickv.plugin_system.plugins.red.ui_program_page_vbnet import Ui_ProgramPageVBNet
+from brickv.plugin_system.plugins.red.ui_program_page_vbnet import Ui_ProgramPageVBNET
 
-class ProgramPageVBNet(ProgramPage, Ui_ProgramPageVBNet):
+class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
     def __init__(self, title_prefix='', *args, **kwargs):
         ProgramPage.__init__(self, *args, **kwargs)
 

@@ -41,7 +41,7 @@ from brickv.plugin_system.plugins.red.program_page_php import ProgramPagePHP
 from brickv.plugin_system.plugins.red.program_page_python import ProgramPagePython
 from brickv.plugin_system.plugins.red.program_page_ruby import ProgramPageRuby
 from brickv.plugin_system.plugins.red.program_page_shell import ProgramPageShell
-from brickv.plugin_system.plugins.red.program_page_vbnet import ProgramPageVBNet
+from brickv.plugin_system.plugins.red.program_page_vbnet import ProgramPageVBNET
 from brickv.plugin_system.plugins.red.program_page_arguments import ProgramPageArguments
 from brickv.plugin_system.plugins.red.program_page_stdio import ProgramPageStdio
 from brickv.plugin_system.plugins.red.program_page_schedule import ProgramPageSchedule
@@ -886,7 +886,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             Constants.PAGE_PYTHON:     ProgramPagePython,
             Constants.PAGE_RUBY:       ProgramPageRuby,
             Constants.PAGE_SHELL:      ProgramPageShell,
-            Constants.PAGE_VBNET:      ProgramPageVBNet
+            Constants.PAGE_VBNET:      ProgramPageVBNET
         }
 
         self.set_edit_buttons_enabled(False)

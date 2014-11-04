@@ -39,7 +39,7 @@ from brickv.plugin_system.plugins.red.program_page_php import ProgramPagePHP
 from brickv.plugin_system.plugins.red.program_page_python import ProgramPagePython
 from brickv.plugin_system.plugins.red.program_page_ruby import ProgramPageRuby
 from brickv.plugin_system.plugins.red.program_page_shell import ProgramPageShell
-from brickv.plugin_system.plugins.red.program_page_vbnet import ProgramPageVBNet
+from brickv.plugin_system.plugins.red.program_page_vbnet import ProgramPageVBNET
 from brickv.plugin_system.plugins.red.program_page_arguments import ProgramPageArguments
 from brickv.plugin_system.plugins.red.program_page_stdio import ProgramPageStdio
 from brickv.plugin_system.plugins.red.program_page_schedule import ProgramPageSchedule
@@ -65,7 +65,7 @@ class ProgramWizardNew(ProgramWizard):
         self.setPage(Constants.PAGE_PYTHON,     ProgramPagePython(title_prefix='Step 3 of 8: '))
         self.setPage(Constants.PAGE_RUBY,       ProgramPageRuby(title_prefix='Step 3 of 8: '))
         self.setPage(Constants.PAGE_SHELL,      ProgramPageShell(title_prefix='Step 3 of 8: '))
-        self.setPage(Constants.PAGE_VBNET,      ProgramPageVBNet(title_prefix='Step 3 of 8: '))
+        self.setPage(Constants.PAGE_VBNET,      ProgramPageVBNET(title_prefix='Step 3 of 8: '))
         self.setPage(Constants.PAGE_ARGUMENTS,  ProgramPageArguments(title_prefix='Step 4 of 8: '))
         self.setPage(Constants.PAGE_STDIO,      ProgramPageStdio(title_prefix='Step 5 of 8: '))
         self.setPage(Constants.PAGE_SCHEDULE,   ProgramPageSchedule(title_prefix='Step 6 of 8: '))
