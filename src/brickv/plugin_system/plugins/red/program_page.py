@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QWizardPage
-from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.program_utils import *
 
 class ProgramPage(QWizardPage):
     # makes QWizardPage.field virtual

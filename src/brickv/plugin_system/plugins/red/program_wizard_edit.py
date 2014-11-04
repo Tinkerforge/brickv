@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtCore import Qt, QVariant
 from PyQt4.QtGui import QWizard
 from brickv.plugin_system.plugins.red.program_wizard import ProgramWizard
-from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.program_utils import *
 
 class ProgramWizardEdit(ProgramWizard):
     def __init__(self, context, program, available_files, available_directories, *args, **kwargs):

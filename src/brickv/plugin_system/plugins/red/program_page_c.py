@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtCore import pyqtProperty
 
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
-from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_c import Ui_ProgramPageC
 
 def get_gcc_versions(script_manager, callback):

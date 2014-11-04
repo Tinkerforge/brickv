@@ -25,7 +25,7 @@ from PyQt4.QtCore import QRegExp, QString, Qt
 from PyQt4.QtGui import QRegExpValidator, QMessageBox
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
-from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_general import Ui_ProgramPageGeneral
 import re
 

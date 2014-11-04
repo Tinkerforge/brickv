@@ -30,7 +30,7 @@ from brickv.plugin_system.plugins.red.program_info import ProgramInfoContext
 from brickv.plugin_system.plugins.red.program_info_python import ProgramInfoPython
 from brickv.plugin_system.plugins.red.program_wizard import ProgramWizardContext
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
-from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.program_page_general import ProgramPageGeneral
 from brickv.plugin_system.plugins.red.program_page_c import ProgramPageC
 from brickv.plugin_system.plugins.red.program_page_csharp import ProgramPageCSharp

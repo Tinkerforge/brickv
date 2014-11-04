@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import QVariant
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
-from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_java import Ui_ProgramPageJava
 from brickv.plugin_system.plugins.red.javatools.jarinfo import JarInfo
 from brickv.plugin_system.plugins.red.javatools import unpack_class

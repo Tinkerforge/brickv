@@ -29,7 +29,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_info_main import ProgramInfoMain
 from brickv.plugin_system.plugins.red.program_wizard import ProgramWizardContext
 from brickv.plugin_system.plugins.red.program_wizard_new import ProgramWizardNew
-from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.program_page_delphi import get_fpc_versions
 from brickv.plugin_system.plugins.red.program_page_c import get_gcc_versions
 from brickv.plugin_system.plugins.red.program_page_java import get_java_versions

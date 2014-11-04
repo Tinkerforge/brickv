@@ -277,7 +277,7 @@
   <customwidget>
    <class>ExpandingListWidget</class>
    <extends>QListWidget</extends>
-   <header location="global">brickv.plugin_system.plugins.red.program_wizard_utils</header>
+   <header location="global">brickv.plugin_system.plugins.red.program_utils</header>
   </customwidget>
  </customwidgets>
  <tabstops>

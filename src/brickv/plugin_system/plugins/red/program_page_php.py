@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import QVariant
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
-from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_php import Ui_ProgramPagePHP
 
 def get_php_versions(script_manager, callback):
