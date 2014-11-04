@@ -221,12 +221,12 @@
        </property>
        <item>
         <property name="text">
-         <string>All files</string>
+         <string>All Files</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Perl files (*.pl)</string>
+         <string>Perl Files (*.pl)</string>
         </property>
        </item>
       </widget>

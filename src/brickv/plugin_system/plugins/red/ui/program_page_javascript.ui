@@ -221,12 +221,12 @@
        </property>
        <item>
         <property name="text">
-         <string>All files</string>
+         <string>All Files</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Node.js files (*.js)</string>
+         <string>Node.js Files (*.js)</string>
         </property>
        </item>
       </widget>

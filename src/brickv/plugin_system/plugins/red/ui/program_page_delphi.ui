@@ -190,12 +190,12 @@
        </property>
        <item>
         <property name="text">
-         <string>All files</string>
+         <string>All Files</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Delphi/Lazarus files (*.pas, *.pp)</string>
+         <string>Delphi/Lazarus Files (*.pas, *.pp)</string>
         </property>
        </item>
       </widget>

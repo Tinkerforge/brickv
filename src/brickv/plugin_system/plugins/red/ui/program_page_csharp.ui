@@ -193,12 +193,12 @@
        </property>
        <item>
         <property name="text">
-         <string>All files</string>
+         <string>All Files</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>.NET executable (*.exe)</string>
+         <string>.NET Executable (*.exe)</string>
         </property>
        </item>
       </widget>

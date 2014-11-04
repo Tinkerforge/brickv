@@ -296,12 +296,12 @@
        </property>
        <item>
         <property name="text">
-         <string>All files</string>
+         <string>All Files</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>JAR files (*.jar)</string>
+         <string>JAR Files (*.jar)</string>
         </property>
        </item>
       </widget>

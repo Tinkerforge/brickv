@@ -221,12 +221,12 @@
        </property>
        <item>
         <property name="text">
-         <string>All files</string>
+         <string>All Files</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Shell files (*.sh, *.bash)</string>
+         <string>Shell Files (*.sh, *.bash)</string>
         </property>
        </item>
       </widget>
