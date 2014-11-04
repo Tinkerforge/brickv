@@ -175,6 +175,9 @@ class ScriptManager:
         self.scripts[script_name].process = REDProcess(self.session)
         self.scripts[script_name].process.state_changed_callback = state_changed
 
+        # need to set LANG otherwise python will not correctly handle non-ASCII filenames
+        env = ['LANG=en_US.UTF-8']
+
         # FIXME: Do we need a timeout here in case that the state_changed callback never comes?
         self.scripts[script_name].process.spawn(os.path.join(SCRIPT_FOLDER, script_name + self.scripts[script_name].file_ending),
-                                                params, [], '/', 0, 0, self.devnull, self.scripts[script_name].stdout, self.scripts[script_name].stderr)
+                                                params, env, '/', 0, 0, self.devnull, self.scripts[script_name].stdout, self.scripts[script_name].stderr)
