@@ -76,11 +76,13 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
         if self.wizard().program != None:
             program = self.wizard().program
 
+            self.argument_list_editor.clear()
             editable_arguments_offset = max(program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
 
             for argument in program.arguments.items[editable_arguments_offset:]:
                 self.argument_list_editor.add_item(unicode(argument))
 
+            self.environment_list_editor.clear()
             editable_environment_offset = max(program.cast_custom_option_value('editable_environment_offset', int, 0), 0)
 
             for variable in program.environment.items[editable_environment_offset:]:

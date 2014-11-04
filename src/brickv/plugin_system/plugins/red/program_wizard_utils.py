@@ -485,10 +485,13 @@ class ListWidgetEditor:
         self.list_items.insertItem(row + 1, item)
         self.list_items.setCurrentRow(row + 1)
 
-    def reset(self):
+    def clear(self):
         self.new_item_counter = 1
 
         self.list_items.clear()
+
+    def reset(self):
+        self.clear()
 
         for original_item in self.original_items:
             self.add_item(original_item)
@@ -609,10 +612,13 @@ class TreeWidgetEditor:
         self.tree_items.insertTopLevelItem(row + 1, item)
         self.tree_items.setCurrentItem(item)
 
-    def reset(self):
+    def clear(self):
         self.new_item_counter = 1
 
         self.tree_items.invisibleRootItem().takeChildren()
+
+    def reset(self):
+        self.clear()
 
         for original_item in self.original_items:
             self.add_item(original_item)
