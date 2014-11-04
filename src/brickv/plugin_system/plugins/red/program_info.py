@@ -135,6 +135,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.button_schedule_now.clicked.connect(self.schedule_now)
         self.button_send_stdin_pipe_input.clicked.connect(self.send_stdin_pipe_input)
 
+        self.check_show_environment.stateChanged.connect(self.update_ui_state)
+
         self.button_edit_general.clicked.connect(self.show_edit_general_wizard)
         self.button_edit_language.clicked.connect(self.show_edit_language_wizard)
         self.button_edit_arguments.clicked.connect(self.show_edit_arguments_wizard)
@@ -494,6 +496,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         for variable in self.program.environment.items[editable_environment_offset:]:
             environment.append(unicode(variable))
 
+        show_environment = self.check_show_environment.checkState() == Qt.Checked
+
+        self.label_environment_title.setVisible(show_environment)
+        self.label_environment.setVisible(show_environment)
         self.label_environment.setText('\n'.join(environment))
 
         # stdio
