@@ -386,22 +386,22 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
                                            max_len=1024*1024)
 
     def update_ui_state(self):
-        self.button_download_logs.setEnabled(self.tree_logs_model.rowCount())
-        self.button_delete_logs.setEnabled(self.tree_logs_model.rowCount())
+        self.set_widget_enabled(self.button_download_logs, self.tree_logs_model.rowCount() > 0)
+        self.set_widget_enabled(self.button_delete_logs, self.tree_logs_model.rowCount() > 0)
         self.tree_logs.setColumnHidden(2, True)
         self.tree_logs.setColumnHidden(3, True)
 
         #has_files_selection = len(self.tree_files.selectedItems()) > 0
-        #self.button_download_files.setEnabled(has_files_selection)
-        #self.button_rename_file.setEnabled(len(self.tree_files.selectedItems()) == 1)
-        #self.button_delete_files.setEnabled(has_files_selection)
+        #self.set_widget_enabled(self.button_download_files, has_files_selection)
+        #self.set_widget_enabled(self.button_rename_file, len(self.tree_files.selectedItems()) == 1)
+        #self.set_widget_enabled(self.button_delete_files, has_files_selection)
 
         if self.program_refresh_in_progress or self.files_refresh_in_progress or self.logs_refresh_in_progress:
             self.button_refresh.setText('Refreshing...')
-            self.set_buttons_enabled(False)
+            self.set_edit_buttons_enabled(False)
         else:
             self.button_refresh.setText('Refresh')
-            self.set_buttons_enabled(True)
+            self.set_edit_buttons_enabled(True)
 
         # general
         name              = self.program.cast_custom_option_value('name', unicode, '<unknown>')
@@ -473,8 +473,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         else:
             self.label_last_scheduler_message.setText('None')
 
-        self.button_kill.setEnabled(process_running)
-        self.button_schedule_now.setEnabled(not process_running)
+        self.set_widget_enabled(self.button_kill, process_running)
+        self.set_widget_enabled(self.button_schedule_now, not process_running)
 
         # language
         self.group_language.setTitle('{0} Configuration'.format(language_display_name))
@@ -509,8 +509,8 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.label_stdin_file_title.setVisible(stdin_redirection_file)
         self.label_stdin_file.setVisible(stdin_redirection_file)
 
-        self.edit_stdin_pipe_input.setEnabled(process_running)
-        self.button_send_stdin_pipe_input.setEnabled(process_running)
+        self.set_widget_enabled(self.edit_stdin_pipe_input, process_running)
+        self.set_widget_enabled(self.button_send_stdin_pipe_input, process_running)
 
         if stdin_redirection_file:
             self.label_stdin_file.setText(unicode(self.program.stdin_file_name))
@@ -821,7 +821,20 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             else:
                 self.edit_stdin_pipe_input.setText('')
 
-    def set_buttons_enabled(self, enabled):
+    def set_widget_enabled(self, widget, enabled):
+        # store current scroll position
+        position = self.scroll_area.verticalScrollBar().value()
+
+        widget.setEnabled(enabled)
+
+        # restore current scroll position, because en/disableing buttons
+        # makes the scroll position jump for som reason
+        self.scroll_area.verticalScrollBar().setValue(position)
+
+    def set_edit_buttons_enabled(self, enabled):
+        # store current scroll position
+        position = self.scroll_area.verticalScrollBar().value()
+
         self.button_refresh.setEnabled(enabled)
         self.button_edit_general.setEnabled(enabled)
         self.button_edit_language.setEnabled(enabled)
@@ -829,8 +842,12 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
         self.button_edit_stdio.setEnabled(enabled)
         self.button_edit_schedule.setEnabled(enabled)
 
+        # restore current scroll position, because en/disableing buttons
+        # makes the scroll position jump for som reason
+        self.scroll_area.verticalScrollBar().setValue(position)
+
     def show_edit_general_wizard(self):
-        self.set_buttons_enabled(False)
+        self.set_edit_buttons_enabled(False)
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
 
@@ -847,7 +864,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.refresh_info()
             self.name_changed.emit()
 
-        self.set_buttons_enabled(True)
+        self.set_edit_buttons_enabled(True)
 
     def show_edit_language_wizard(self):
         language_api_name = self.program.cast_custom_option_value('language', unicode, '<unknown>')
@@ -872,7 +889,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             Constants.PAGE_VBNET:      ProgramPageVBNet
         }
 
-        self.set_buttons_enabled(False)
+        self.set_edit_buttons_enabled(False)
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
 
@@ -888,10 +905,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             #self.edit_language_wizard.page(Constants.PAGE_language).apply_program_changes()
             self.refresh_info()
 
-        self.set_buttons_enabled(True)
+        self.set_edit_buttons_enabled(True)
 
     def show_edit_arguments_wizard(self):
-        self.set_buttons_enabled(False)
+        self.set_edit_buttons_enabled(False)
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
 
@@ -907,10 +924,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.edit_arguments_wizard.page(Constants.PAGE_ARGUMENTS).apply_program_changes()
             self.refresh_info()
 
-        self.set_buttons_enabled(True)
+        self.set_edit_buttons_enabled(True)
 
     def show_edit_stdio_wizard(self):
-        self.set_buttons_enabled(False)
+        self.set_edit_buttons_enabled(False)
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
 
@@ -926,10 +943,10 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.edit_stdio_wizard.page(Constants.PAGE_STDIO).apply_program_changes()
             self.refresh_info()
 
-        self.set_buttons_enabled(True)
+        self.set_edit_buttons_enabled(True)
 
     def show_edit_schedule_wizard(self):
-        self.set_buttons_enabled(False)
+        self.set_edit_buttons_enabled(False)
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
 
@@ -945,4 +962,4 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
             self.edit_schedule_wizard.page(Constants.PAGE_SCHEDULE).apply_program_changes()
             self.refresh_info()
 
-        self.set_buttons_enabled(True)
+        self.set_edit_buttons_enabled(True)
