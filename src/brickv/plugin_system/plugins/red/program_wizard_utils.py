@@ -527,7 +527,7 @@ class TreeWidgetEditor:
         root = self.tree_items.invisibleRootItem()
 
         for row in range(root.childCount()):
-            child = self.tree_items.child(row)
+            child = root.child(row)
             item = []
 
             for column in range(child.columnCount()):
