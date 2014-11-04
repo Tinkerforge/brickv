@@ -138,6 +138,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_main_class.clearEditText()
 
         # FIXME: make this work in edit mode
+        # FIXME: make get_classes_from_class_or_jar async
         if self.wizard().hasVisitedPage(Constants.PAGE_FILES):
             for cls in sorted(get_classes_from_class_or_jar(self.wizard().page(Constants.PAGE_FILES).get_uploads())):
                 self.combo_main_class.addItem(cls)

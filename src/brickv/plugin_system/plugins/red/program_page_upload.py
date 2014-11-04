@@ -160,7 +160,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.source_name = upload.source
 
-        self.next_step('Uploading {0}...'.format(self.source_name))
+        self.next_step(u'Uploading {0}...'.format(self.source_name))
 
         self.progress_file.setVisible(True)
         self.progress_file.setRange(0, 0)
@@ -170,7 +170,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             source_st = os.stat(self.source_name)
             self.source = open(self.source_name, 'rb')
         except Exception as e:
-            self.upload_error("...error opening source file '{0}': {1}".format(self.source_name, e))
+            self.upload_error(u"...error opening source file '{0}': {1}".format(self.source_name, e))
             return
 
         self.source_size = source_st.st_size
@@ -200,7 +200,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                                                               REDFile.FLAG_TRUNCATE,
                                                               permissions, 1000, 1000) # FIXME: async_call
         except REDError as e:
-            self.upload_error("...error opening target file '{0}': {1}".format(self.target_name, e))
+            self.upload_error(u"...error opening target file '{0}': {1}".format(self.target_name, e))
             return
 
         self.upload_write_async()
@@ -215,13 +215,13 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if error == None:
             self.upload_write_async()
         else:
-            self.upload_error("...error writing target file '{0}': {1}".format(self.target_name, str(error)))
+            self.upload_error(u"...error writing target file '{0}': {1}".format(self.target_name, str(error)))
 
     def upload_write_async(self):
         try:
             data = self.source.read(1000*1000*10) # Read 10mb at a time
         except Exception as e:
-            self.upload_error("...error reading source file '{0}': {1}".format(self.source_name, e))
+            self.upload_error(u"...error reading source file '{0}': {1}".format(self.source_name, e))
             return
 
         if len(data) == 0:
@@ -232,7 +232,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         try:
             self.target.write_async(data, self.upload_write_async_cb_error, self.upload_write_async_cb_status)
         except REDError as e:
-            self.upload_error("...error writing target file '{0}': {1}".format(self.target_name, e))
+            self.upload_error(u"...error writing target file '{0}': {1}".format(self.target_name, e))
 
     def upload_write_async_done(self):
         self.log('...done')
