@@ -29,6 +29,17 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_info import ProgramInfo
 from brickv.plugin_system.plugins.red.program_wizard_new import ProgramWizardNew
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
+from brickv.plugin_system.plugins.red.program_page_delphi import get_fpc_versions
+from brickv.plugin_system.plugins.red.program_page_c import get_gcc_versions
+from brickv.plugin_system.plugins.red.program_page_java import get_java_versions
+from brickv.plugin_system.plugins.red.program_page_csharp import get_mono_versions
+from brickv.plugin_system.plugins.red.program_page_javascript import get_nodejs_versions
+from brickv.plugin_system.plugins.red.program_page_octave import get_octave_versions
+from brickv.plugin_system.plugins.red.program_page_perl import get_perl_versions
+from brickv.plugin_system.plugins.red.program_page_php import get_php_versions
+from brickv.plugin_system.plugins.red.program_page_python import get_python_versions
+from brickv.plugin_system.plugins.red.program_page_ruby import get_ruby_versions
+from brickv.plugin_system.plugins.red.program_page_shell import get_shell_versions
 from brickv.async_call import async_call
 
 class REDTabProgram(QWidget, Ui_REDTabProgram):
@@ -36,14 +47,29 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         QWidget.__init__(self)
         self.setupUi(self)
 
-        self.script_manager = None
-        self.session = None
-        self.image_version_ref = ['<unknown>']
-        self.new_program_wizard = None
+        self.script_manager      = None
+        self.session             = None
+        self.image_version_ref   = ['<unknown>']
+        self.executable_versions = {
+            'fpc':    None,
+            'gcc':    None,
+            'java':   None,
+            'mono':   None,
+            'nodejs': None,
+            'octave': None,
+            'perl':   None,
+            'php':    None,
+            'python': None,
+            'ruby':   None,
+            'shell':  None
+        }
+        self.first_tab_on_focus  = True
+        self.new_program_wizard  = None
 
         self.splitter.setSizes([150, 400])
         self.list_programs.itemSelectionChanged.connect(self.update_ui_state)
         self.button_refresh.clicked.connect(self.refresh_program_list)
+        self.button_refresh.clicked.connect(self.refresh_executable_versions)
         self.button_new.clicked.connect(self.show_new_program_wizard)
         self.button_delete.clicked.connect(self.purge_selected_program)
 
@@ -57,7 +83,10 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
 
             async_call(read_image_version, None, None, None)
 
-        self.refresh_program_list()
+        if self.first_tab_on_focus:
+            self.first_tab_on_focus = False
+            self.refresh_program_list()
+            self.refresh_executable_versions()
 
     def tab_off_focus(self):
         pass
@@ -72,7 +101,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         self.button_delete.setEnabled(has_selection)
 
     def add_program_to_list(self, program):
-        program_info = ProgramInfo(self.session, self.script_manager, self.image_version_ref, program)
+        program_info = ProgramInfo(self.session, self.script_manager, self.image_version_ref, self.executable_versions, program)
         program_info.name_changed.connect(self.refresh_program_names)
 
         item = QListWidgetItem(program.cast_custom_option_value('name', unicode, '<unknown>'))
@@ -120,6 +149,22 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
             program = item.data(Qt.UserRole).toPyObject().program
             item.setText(program.cast_custom_option_value('name', unicode, '<unknown>'))
 
+    def refresh_executable_versions(self):
+        def cb_versions(executable_name, versions):
+            self.executable_versions[executable_name] = versions
+
+        get_fpc_versions(self.script_manager, lambda versions: cb_versions('fpc', versions))
+        get_gcc_versions(self.script_manager, lambda versions: cb_versions('gcc', versions))
+        get_java_versions(self.script_manager, lambda versions: cb_versions('java', versions))
+        get_mono_versions(self.script_manager, lambda versions: cb_versions('mono', versions))
+        get_nodejs_versions(self.script_manager, lambda versions: cb_versions('nodejs', versions))
+        get_octave_versions(self.script_manager, lambda versions: cb_versions('octave', versions))
+        get_perl_versions(self.script_manager, lambda versions: cb_versions('perl', versions))
+        get_php_versions(self.script_manager, lambda versions: cb_versions('php', versions))
+        get_python_versions(self.script_manager, lambda versions: cb_versions('python', versions))
+        get_ruby_versions(self.script_manager, lambda versions: cb_versions('ruby', versions))
+        get_shell_versions(self.script_manager, lambda versions: cb_versions('shell', versions))
+
     def show_new_program_wizard(self):
         self.button_new.setEnabled(False)
 
@@ -128,7 +173,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         for i in range(self.list_programs.count()):
             identifiers.append(unicode(self.list_programs.item(i).data(Qt.UserRole).toPyObject().program.identifier))
 
-        context = ProgramWizardContext(self.session, identifiers, self.script_manager, self.image_version_ref)
+        context = ProgramWizardContext(self.session, identifiers, self.script_manager, self.image_version_ref, self.executable_versions)
 
         self.new_program_wizard = ProgramWizardNew(context)
         self.new_program_wizard.finished.connect(self.new_program_wizard_finished)

@@ -26,6 +26,22 @@ from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_octave import Ui_ProgramPageOctave
 
+def get_octave_versions(script_manager, callback):
+    def cb_versions(result):
+        if result != None:
+            try:
+                version = result.stdout.split('\n')[0].split(' ')[-1]
+                callback([ExecutableVersion('/usr/bin/octave', version)])
+                return
+            except:
+                pass
+
+        # Could not get versions, we assume that some version of octave 3.6 is installed
+        callback([ExecutableVersion('/usr/bin/octave', '3.6')])
+
+    script_manager.execute_script('octave_versions', cb_versions)
+
+
 class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
     def __init__(self, title_prefix='', *args, **kwargs):
         ProgramPage.__init__(self, *args, **kwargs)
@@ -67,7 +83,7 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
-        self.update_octave_versions()
+        self.update_combo_version('octave', self.combo_version)
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_OCTAVE_START_MODE)
         self.combo_script_file_selector.reset()
@@ -102,34 +118,6 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
-
-    def update_octave_versions(self):
-        def done():
-            # if a program exists then this page is used in an edit wizard
-            if self.wizard().program != None:
-                set_current_combo_index_from_data(self.combo_version, unicode(self.wizard().program.executable))
-
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
-
-        def cb_versions(result):
-            self.combo_version.clear()
-            if result != None:
-                try:
-                    version = result.stdout.split('\n')[0].split(' ')[-1]
-                    self.combo_version.addItem(version, QVariant('/usr/bin/octave'))
-                    done()
-                    return
-                except:
-                    pass
-
-            # Could not get versions, we assume that some version
-            # of octave 3.6 is installed
-            self.combo_version.clear()
-            self.combo_version.addItem('3.6', QVariant('/usr/bin/octave'))
-            done()
-
-        self.wizard().script_manager.execute_script('octave_versions', cb_versions)
 
     def update_ui_state(self):
         start_mode             = self.get_field('octave.start_mode').toInt()[0]

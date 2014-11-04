@@ -28,11 +28,12 @@ class ProgramWizard(QWizard):
     def __init__(self, context, *args, **kwargs):
         QWizard.__init__(self, *args, **kwargs)
 
-        self.session = context.session
-        self.identifiers = context.identifiers
-        self.script_manager = context.script_manager
-        self.image_version_ref = context.image_version_ref
-        self.canceled = False
+        self.session             = context.session
+        self.identifiers         = context.identifiers
+        self.script_manager      = context.script_manager
+        self.image_version_ref   = context.image_version_ref
+        self.executable_versions = context.executable_versions
+        self.canceled            = False
 
         self.setWindowFlags(self.windowFlags() | Qt.Tool)
 

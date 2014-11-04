@@ -26,6 +26,22 @@ from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_javascript import Ui_ProgramPageJavaScript
 
+def get_nodejs_versions(script_manager, callback):
+    def cb_versions(result):
+        if result != None:
+            try:
+                version = result.stdout.split('\n')[0]
+                callback([ExecutableVersion('/usr/local/bin/node', version)])
+                return
+            except:
+                pass
+
+        # Could not get versions, we assume that some version of nodejs is installed
+        callback([ExecutableVersion('/usr/local/bin/node', None)])
+
+    script_manager.execute_script('nodejs_versions', cb_versions)
+
+
 class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
     def __init__(self, title_prefix='', *args, **kwargs):
         ProgramPage.__init__(self, *args, **kwargs)
@@ -73,7 +89,24 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
-        self.update_javascript_versions()
+        def cb_nodejs_versions(versions):
+            if versions[0].version != None:
+                node_version_str = ' ' + versions[0].version
+            else:
+                node_version_str = ''
+
+            self.combo_version.clear()
+            self.combo_version.addItem('Client-Side (Browser)', QVariant('/bin/true'))
+            self.combo_version.addItem('Server-Side (Node.js{0})'.format(node_version_str), QVariant(versions[0].executable))
+
+            # if a program exists then this page is used in an edit wizard
+            if self.wizard().program != None:
+                set_current_combo_index_from_data(self.combo_version, unicode(self.wizard().program.executable))
+
+            self.combo_version.setEnabled(True)
+            self.completeChanged.emit()
+
+        self.get_executable_versions('nodejs', cb_nodejs_versions)
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_JAVASCRIPT_START_MODE)
         self.combo_script_file_selector.reset()
@@ -108,37 +141,6 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
                 return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
-
-    def update_javascript_versions(self):
-        def done():
-            # if a program exists then this page is used in an edit wizard
-            if self.wizard().program != None:
-                set_current_combo_index_from_data(self.combo_version, unicode(self.wizard().program.executable))
-
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
-
-        def cb_versions(result):
-            self.combo_version.clear()
-            if result != None:
-                try:
-                    version = result.stdout.split('\n')[0]
-                    node_version_str = 'Server-side (Node.js {0})'.format(version)
-                    self.combo_version.addItem('Client-side (Browser)', QVariant('/bin/true'))
-                    self.combo_version.addItem(node_version_str, QVariant('/usr/local/bin/node'))
-                    done()
-                    return
-                except:
-                    pass
-
-            # Could not get versions, we assume that some version
-            # of nodejs is installed
-            self.combo_version.clear()
-            self.combo_version.addItem('Client-side (Browser)', QVariant('/bin/true'))
-            self.combo_version.addItem('Server-side (Node.js)', QVariant('/usr/local/bin/node'))
-            done()
-
-        self.wizard().script_manager.execute_script('javascript_versions', cb_versions)
 
     def update_ui_state(self):
         use_nodejs             = self.get_field('javascript.version').toInt()[0] != 0

@@ -21,6 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QWizardPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 
@@ -34,3 +35,36 @@ class ProgramPage(QWizardPage):
         name     = unicode(Qt.escape(self.get_field('name').toString()))
 
         self.setSubTitle(sub_title.format(**{'language': language, 'name': name}))
+
+    # to be used on language configuratiopn pages
+    def get_executable_versions(self, executable_name, callback):
+        def cb_get():
+            versions = self.wizard().executable_versions[executable_name]
+
+            if versions == None:
+                QTimer.singleShot(100, cb_get)
+                return
+
+            callback(versions)
+
+        if self.wizard().executable_versions[executable_name] == None:
+            QTimer.singleShot(100, cb_get)
+        else:
+            cb_get()
+
+    # to be used on language configuratiopn pages
+    def update_combo_version(self, executable_name, combo_version):
+        def cb_update(versions):
+            combo_version.clear()
+
+            for version in versions:
+                combo_version.addItem(version.version, QVariant(version.executable))
+
+            # if a program exists then this page is used in an edit wizard
+            if self.wizard().program != None:
+                set_current_combo_index_from_data(combo_version, unicode(self.wizard().program.executable))
+
+            combo_version.setEnabled(True)
+            self.completeChanged.emit()
+
+        self.get_executable_versions(executable_name, cb_update)

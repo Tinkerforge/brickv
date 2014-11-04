@@ -27,6 +27,22 @@ from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_ruby import Ui_ProgramPageRuby
 
+def get_ruby_versions(script_manager, callback):
+    def cb_versions(result):
+        if result != None:
+            try:
+                version = result.stdout.split('\n')[0].split(' ')[1]
+                callback([ExecutableVersion('/usr/bin/ruby', version)])
+                return
+            except:
+                pass
+
+        # Could not get versions, we assume that some version of ruby 1.9 is installed
+        callback([ExecutableVersion('/usr/bin/ruby', '1.9')])
+
+    script_manager.execute_script('ruby_versions', cb_versions)
+
+
 class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
     def __init__(self, title_prefix='', *args, **kwargs):
         ProgramPage.__init__(self, *args, **kwargs)
@@ -72,7 +88,7 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
-        self.update_ruby_versions()
+        self.update_combo_version('ruby', self.combo_version)
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_RUBY_START_MODE)
         self.combo_script_file_selector.reset()
@@ -105,34 +121,6 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
-
-    def update_ruby_versions(self):
-        def done():
-            # if a program exists then this page is used in an edit wizard
-            if self.wizard().program != None:
-                set_current_combo_index_from_data(self.combo_version, unicode(self.wizard().program.executable))
-
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
-
-        def cb_versions(result):
-            self.combo_version.clear()
-            if result != None:
-                try:
-                    versions = result.stdout.split('\n')
-                    self.combo_version.addItem(versions[0].split(' ')[1], QVariant('/usr/bin/ruby'))
-                    done()
-                    return
-                except:
-                    pass
-
-            # Could not get versions, we assume that some version
-            # of ruby 1.9 is installed
-            self.combo_version.clear()
-            self.combo_version.addItem('1.9', QVariant('/usr/bin/ruby'))
-            done()
-
-        self.wizard().script_manager.execute_script('ruby_versions', cb_versions)
 
     def update_ui_state(self):
         start_mode             = self.get_field('ruby.start_mode').toInt()[0]

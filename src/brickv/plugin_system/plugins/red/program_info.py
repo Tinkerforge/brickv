@@ -28,7 +28,6 @@ from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog, QFi
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
-from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page_general import ProgramPageGeneral
 from brickv.plugin_system.plugins.red.program_page_c import ProgramPageC
 from brickv.plugin_system.plugins.red.program_page_csharp import ProgramPageCSharp
@@ -89,16 +88,17 @@ def expand_directory_walk_to_model(directory_walk, parent):
 class ProgramInfo(QWidget, Ui_ProgramInfo):
     name_changed = pyqtSignal()
 
-    def __init__(self, session, script_manager, image_version_ref, program, *args, **kwargs):
+    def __init__(self, session, script_manager, image_version_ref, executable_versions, program, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
 
-        self.session = session
-        self.script_manager = script_manager
-        self.image_version_ref = image_version_ref
-        self.program = program
-        self.root_directory = unicode(self.program.root_directory)
+        self.session             = session
+        self.script_manager      = script_manager
+        self.image_version_ref   = image_version_ref
+        self.executable_versions = executable_versions
+        self.program             = program
+        self.root_directory      = unicode(self.program.root_directory)
 
         self.program.scheduler_state_changed_callback = self.scheduler_state_changed
         self.program.process_spawned_callback = self.process_spawned
@@ -855,7 +855,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
     def show_edit_general_wizard(self):
         self.set_edit_buttons_enabled(False)
 
-        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
         self.edit_general_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
         self.edit_general_wizard.setPage(Constants.PAGE_GENERAL, ProgramPageGeneral())
@@ -897,7 +897,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
 
         self.set_edit_buttons_enabled(False)
 
-        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
         self.edit_language_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
         self.edit_language_wizard.setPage(language_page, language_page_classes[language_page]())
@@ -916,7 +916,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
     def show_edit_arguments_wizard(self):
         self.set_edit_buttons_enabled(False)
 
-        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
         self.edit_arguments_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
         self.edit_arguments_wizard.setPage(Constants.PAGE_ARGUMENTS, ProgramPageArguments())
@@ -935,7 +935,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
     def show_edit_stdio_wizard(self):
         self.set_edit_buttons_enabled(False)
 
-        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
         self.edit_stdio_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
         self.edit_stdio_wizard.setPage(Constants.PAGE_STDIO, ProgramPageStdio())
@@ -954,7 +954,7 @@ class ProgramInfo(QWidget, Ui_ProgramInfo):
     def show_edit_schedule_wizard(self):
         self.set_edit_buttons_enabled(False)
 
-        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
         self.edit_schedule_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
         self.edit_schedule_wizard.setPage(Constants.PAGE_SCHEDULE, ProgramPageSchedule())

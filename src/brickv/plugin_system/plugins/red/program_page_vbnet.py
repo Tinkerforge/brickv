@@ -67,7 +67,7 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
-        self.update_vbnet_versions()
+        self.update_combo_version('mono', self.combo_version)
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_VBNET_START_MODE)
         self.combo_executable_file_selector.reset()
@@ -96,34 +96,6 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
-
-    def update_vbnet_versions(self):
-        def done():
-            # if a program exists then this page is used in an edit wizard
-            if self.wizard().program != None:
-                set_current_combo_index_from_data(self.combo_version, unicode(self.wizard().program.executable))
-
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
-
-        def cb_versions(result):
-            self.combo_version.clear()
-            if result != None:
-                try:
-                    version = result.stdout.split('\n')[0].split(' ')[4]
-                    self.combo_version.addItem(version, QVariant('/usr/bin/mono'))
-                    done()
-                    return
-                except:
-                    pass
-
-            # Could not get versions, we assume that some version
-            # of mono 3.2 is installed
-            self.combo_version.clear()
-            self.combo_version.addItem('3.2', QVariant('/usr/bin/mono'))
-            done()
-
-        self.wizard().script_manager.execute_script('mono_versions', cb_versions)
 
     def update_ui_state(self):
         start_mode                 = self.get_field('vbnet.start_mode').toInt()[0]

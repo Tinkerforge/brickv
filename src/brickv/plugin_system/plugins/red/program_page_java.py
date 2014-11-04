@@ -29,6 +29,22 @@ from brickv.plugin_system.plugins.red.javatools.jarinfo import JarInfo
 from brickv.plugin_system.plugins.red.javatools import unpack_class
 import os
 
+def get_java_versions(script_manager, callback):
+    def cb_versions(result):
+        if result != None:
+            try:
+                version = result.stderr.split('\n')[1].split(' ')[5].replace(')', '')
+                callback([ExecutableVersion('/usr/bin/java', version)])
+                return
+            except:
+                pass
+
+        # Could not get versions, we assume that some version of java 8 is installed
+        callback([ExecutableVersion('/usr/bin/java', '1.8')])
+
+    script_manager.execute_script('java_versions', cb_versions)
+
+
 def get_classes_from_class_or_jar(uploads):
     MAIN_ENDING = '.main(java.lang.String[]):void'
 
@@ -119,7 +135,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
-        self.update_java_versions()
+        self.update_combo_version('java', self.combo_version)
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_JAVA_START_MODE)
         self.combo_jar_file_selector.reset()
@@ -171,34 +187,6 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
-
-    def update_java_versions(self):
-        def done():
-            # if a program exists then this page is used in an edit wizard
-            if self.wizard().program != None:
-                set_current_combo_index_from_data(self.combo_version, unicode(self.wizard().program.executable))
-
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
-
-        def cb_versions(result):
-            self.combo_version.clear()
-            if result != None:
-                try:
-                    version = result.stderr.split('\n')[1].split(' ')[5].replace(')', '')
-                    self.combo_version.addItem(version, QVariant('/usr/bin/java'))
-                    done()
-                    return
-                except:
-                    pass
-
-            # Could not get versions, we assume that some version
-            # of java 8 is installed
-            self.combo_version.clear()
-            self.combo_version.addItem('1.8', QVariant('/usr/bin/java'))
-            done()
-
-        self.wizard().script_manager.execute_script('java_versions', cb_versions)
 
     def update_ui_state(self):
         start_mode            = self.get_field('java.start_mode').toInt()[0]

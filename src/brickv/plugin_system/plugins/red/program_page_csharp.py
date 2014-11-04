@@ -26,6 +26,22 @@ from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_csharp import Ui_ProgramPageCSharp
 
+def get_mono_versions(script_manager, callback):
+    def cb_versions(result):
+        if result != None:
+            try:
+                version = result.stdout.split('\n')[0].split(' ')[4]
+                callback([ExecutableVersion('/usr/bin/mono', version)])
+                return
+            except:
+                pass
+
+        # Could not get versions, we assume that some version of mono 3.2 is installed
+        callback([ExecutableVersion('/usr/bin/mono', '3.2')])
+
+    script_manager.execute_script('mono_versions', cb_versions)
+
+
 class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
     def __init__(self, title_prefix='', *args, **kwargs):
         ProgramPage.__init__(self, *args, **kwargs)
@@ -67,7 +83,7 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
-        self.update_csharp_versions()
+        self.update_combo_version('mono', self.combo_version)
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_CSHARP_START_MODE)
         self.combo_executable_file_selector.reset()
@@ -96,34 +112,6 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
-
-    def update_csharp_versions(self):
-        def done():
-            # if a program exists then this page is used in an edit wizard
-            if self.wizard().program != None:
-                set_current_combo_index_from_data(self.combo_version, unicode(self.wizard().program.executable))
-
-            self.combo_version.setEnabled(True)
-            self.completeChanged.emit()
-
-        def cb_versions(result):
-            self.combo_version.clear()
-            if result != None:
-                try:
-                    version = result.stdout.split('\n')[0].split(' ')[4]
-                    self.combo_version.addItem(version, QVariant('/usr/bin/mono'))
-                    done()
-                    return
-                except:
-                    pass
-
-            # Could not get versions, we assume that some version
-            # of mono 3.2 is installed
-            self.combo_version.clear()
-            self.combo_version.addItem('3.2', QVariant('/usr/bin/mono'))
-            done()
-
-        self.wizard().script_manager.execute_script('mono_versions', cb_versions)
 
     def update_ui_state(self):
         start_mode                 = self.get_field('csharp.start_mode').toInt()[0]

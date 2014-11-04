@@ -27,6 +27,22 @@ from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_delphi import Ui_ProgramPageDelphi
 import os
 
+def get_fpc_versions(script_manager, callback):
+    def cb_versions(result):
+        if result != None:
+            try:
+                version = result.stdout.split('\n')[0].split(' ')[-1]
+                callback([ExecutableVersion('/usr/bin/fpc', version)])
+                return
+            except:
+                pass
+
+        # Could not get versions, we assume that some version of fpc 2.6 is installed
+        callback([ExecutableVersion('/usr/bin/fpc', '2.6')])
+
+    script_manager.execute_script('fpc_versions', cb_versions)
+
+
 class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
     def __init__(self, title_prefix='', *args, **kwargs):
         ProgramPage.__init__(self, *args, **kwargs)
@@ -74,7 +90,13 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
-        self.update_delphi_versions()
+        def cb_fpc_versions(versions):
+            self.combo_start_mode.clear()
+            self.combo_start_mode.addItem('Executable')
+            self.combo_start_mode.addItem('Compile on RED Brick (FPC {0})'.format(versions[0].version), QVariant(versions[0].executable))
+            self.completeChanged.emit()
+
+        self.get_executable_versions('fpc', cb_fpc_versions)
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_DELPHI_START_MODE)
         self.combo_executable_checker.check(False)
@@ -104,28 +126,6 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
-    def update_delphi_versions(self):
-        def cb_versions(result):
-            self.combo_start_mode.clear()
-            if result != None:
-                try:
-                    version = result.stdout.split('\n')[0].split(' ')[-1]
-                    self.combo_start_mode.addItem('Executable')
-                    self.combo_start_mode.addItem('Compile on RED Brick (fpc {0})'.format(version), QVariant('/usr/bin/fpc'))
-                    self.completeChanged.emit()
-                    return
-                except:
-                    pass
-
-            # Could not get versions, we assume that some version
-            # of fpc 2.6 is installed
-            self.combo_start_mode.clear()
-            self.combo_start_mode.addItem('Executable')
-            self.combo_start_mode.addItem('Compile on RED Brick (fpc 2.6)', QVariant('/usr/bin/fpc'))
-            self.completeChanged.emit()
-
-        self.wizard().script_manager.execute_script('fpc_versions', cb_versions)
-
     def update_ui_state(self):
         start_mode            = self.get_field('delphi.start_mode').toInt()[0]
         start_mode_executable = start_mode == Constants.DELPHI_START_MODE_EXECUTABLE
@@ -152,13 +152,14 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
         return ' '.join(self.option_list_editor.get_items())
 
     def get_command(self):
-        arguments = self.option_list_editor.get_items()
-        environment = []
+        arguments         = self.option_list_editor.get_items()
+        environment       = []
         working_directory = unicode(self.get_field('delphi.working_directory').toString())
+        start_mode        = self.get_field('delphi.start_mode').toInt()[0]
 
-        start_mode  = self.get_field('delphi.start_mode').toInt()[0]
         if start_mode == Constants.DELPHI_START_MODE_EXECUTABLE:
             executable = unicode(self.get_field('delphi.executable').toString())
+
             if not executable.startswith('/'):
                 executable = os.path.join('./', executable)
         elif start_mode == Constants.DELPHI_START_MODE_COMPILE:

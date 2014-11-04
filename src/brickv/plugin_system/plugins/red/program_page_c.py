@@ -27,6 +27,26 @@ from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_c import Ui_ProgramPageC
 
+def get_gcc_versions(script_manager, callback):
+    def cb_versions(result):
+        if result != None:
+            try:
+                versions    = result.stdout.split('\n\n')
+                version_gcc = versions[0].split('\n')[0].split(' ')
+                version_gpp = versions[1].split('\n')[0].split(' ')
+                callback([ExecutableVersion('/usr/bin/' + version_gcc[0], version_gcc[3]),
+                          ExecutableVersion('/usr/bin/' + version_gpp[0], version_gpp[3])])
+                return
+            except:
+                pass
+
+        # Could not get versions, we assume that some version of gcc/g++ is installed
+        callback([ExecutableVersion('/usr/bin/gcc', None),
+                  ExecutableVersion('/usr/bin/g++', None)])
+
+    script_manager.execute_script('gcc_versions', cb_versions)
+
+
 class ProgramPageC(ProgramPage, Ui_ProgramPageC):
     def __init__(self, title_prefix='', *args, **kwargs):
         ProgramPage.__init__(self, *args, **kwargs)
@@ -61,7 +81,20 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
     def initializePage(self):
         self.set_formatted_sub_title(u'Specify how the {language} program [{name}] should be executed.')
 
-        self.update_gcc_versions()
+        def cb_gcc_versions(versions):
+            if versions[0].version != None:
+                gcc = '<b>{0}</b> ({1})'.format(versions[0].executable, versions[0].version)
+            else:
+                gcc = '<b>{0}</b>'.format(versions[0].executable)
+
+            if versions[1].version != None:
+                gpp = '<b>{0}</b> ({1})'.format(versions[1].executable, versions[1].version)
+            else:
+                gpp = '<b>{0}</b>'.format(versions[1].executable)
+
+            self.label_compiler_available.setText('Available are {0} and {1}'.format(gcc, gpp))
+
+        self.get_executable_versions('gcc', cb_gcc_versions)
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_C_START_MODE)
         self.combo_file.clear()
@@ -83,29 +116,6 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
-
-    def update_gcc_versions(self):
-        version_str = 'Available are {0} and {1}'
-        def cb_versions(result):
-            if result != None:
-                try:
-                    versions = result.stdout.split('\n\n')
-                    version_gcc = versions[0].split('\n')[0].split(' ')
-                    version_gpp = versions[1].split('\n')[0].split(' ')
-                    str_gcc = '<b>/usr/bin/{0}</b> ({1})'.format(version_gcc[0], version_gcc[3])
-                    str_gpp = '<b>/usr/bin/{0}</b> ({1})'.format(version_gpp[0], version_gpp[3])
-                    self.label_compiler_available.setText(version_str.format(str_gcc, str_gpp))
-                    self.completeChanged.emit()
-                    return
-                except:
-                    pass
-
-            # Could not get versions, we assume that some version
-            # of gcc/g++ is installed
-            self.label_compiler_available.setText(version_str.format('<b>/usr/bin/gcc</b>', '<b>/usr/bin/g++</b>'))
-            self.completeChanged.emit()
-
-        self.wizard().script_manager.execute_script('gcc_versions', cb_versions)
 
     def update_ui_state(self):
         start_mode            = self.get_field('c.start_mode').toInt()[0]
@@ -129,11 +139,12 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         return ' '.join(self.option_list_editor.get_items())
 
     def get_command(self):
-        executable = unicode(self.get_field('c.file').toString())
+        executable        = unicode(self.get_field('c.file').toString())
+        arguments         = self.option_list_editor.get_items()
+        environment       = []
+        working_directory = unicode(self.get_field('c.working_directory').toString())
+
         if not executable.startswith('/'):
             executable = os.path.join('./', executable)
-        arguments = self.option_list_editor.get_items()
-        environment = []
-        working_directory = unicode(self.get_field('c.working_directory').toString())
 
         return executable, arguments, environment, working_directory
