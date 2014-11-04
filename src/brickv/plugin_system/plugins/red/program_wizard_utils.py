@@ -28,7 +28,7 @@ import re
 import os
 from collections import namedtuple
 
-ProgramWizardContext = namedtuple('ProgramWizardContext', ['session', 'identifiers', 'script_manager', 'image_version_ref'])
+ProgramWizardContext = namedtuple('ProgramWizardContext', 'session identifiers script_manager image_version_ref')
 
 class Constants:
     PAGE_GENERAL    = 1001

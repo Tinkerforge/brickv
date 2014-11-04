@@ -29,7 +29,7 @@ from brickv.plugin_system.plugins.red.ui_program_page_files import Ui_ProgramPag
 import os
 from collections import namedtuple
 
-Upload = namedtuple('Upload', ['source', 'target'])
+Upload = namedtuple('Upload', 'source target')
 
 class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
     def __init__(self, title_prefix='', *args, **kwargs):

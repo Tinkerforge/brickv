@@ -33,7 +33,7 @@ from brickv.async_call import async_call
 SCRIPT_FOLDER = '/usr/local/scripts'
 
 class ScriptManager:
-    ScriptResult = namedtuple('ReturnValue', 'stdout stderr')
+    ScriptResult = namedtuple('ScriptResult', 'stdout stderr')
 
     @staticmethod
     def _call(script, callback, data):

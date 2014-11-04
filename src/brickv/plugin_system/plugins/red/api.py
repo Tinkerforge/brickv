@@ -581,7 +581,7 @@ class REDFileBase(REDObject):
     TYPE_SOCKET    = BrickRED.FILE_TYPE_SOCKET
     TYPE_PIPE      = BrickRED.FILE_TYPE_PIPE
 
-    AsyncReadResult = namedtuple("AsyncReadResult", "data error")
+    AsyncReadResult = namedtuple('AsyncReadResult', 'data error')
 
     # Number of chunks written in one async read/write burst
     ASYNC_BURST_CHUNKS = 2000
@@ -897,7 +897,7 @@ class REDFileOrPipeAttacher(REDObject):
         return obj
 
 
-REDFileInfo = namedtuple('REDFileInfo', ['type', 'permissions', 'uid', 'gid', 'length', 'access_timestamp', 'modification_timestamp', 'status_change_timestamp'])
+REDFileInfo = namedtuple('REDFileInfo', 'type permissions uid gid length access_timestamp modification_timestamp status_change_timestamp')
 
 def lookup_file_info(session, name, follow_symlink):
     if not isinstance(name, REDString):
