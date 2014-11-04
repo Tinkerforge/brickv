@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>433</width>
-    <height>665</height>
+    <width>570</width>
+    <height>718</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -85,7 +85,7 @@
           <item row="3" column="1">
            <widget class="QLabel" name="label_stdin_pipe_help">
             <property name="text">
-             <string>FIXME: Pipe help</string>
+             <string>Input data can be read from a pipe (behaves similar to a terminal).</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -95,7 +95,7 @@
           <item row="2" column="1">
            <widget class="QLabel" name="label_stdin_dev_null_help">
             <property name="text">
-             <string>FIXME: /dev/null help</string>
+             <string>No input data will be available.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -105,7 +105,7 @@
           <item row="4" column="1">
            <widget class="QLabel" name="label_stdin_file_help">
             <property name="text">
-             <string>FIXME: File help</string>
+             <string>Input data can be read from the specified file.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -181,7 +181,7 @@
           <item row="4" column="1">
            <widget class="QLabel" name="label_stdout_individual_log_help">
             <property name="text">
-             <string>FIXME: Individual Log File help</string>
+             <string>Output data is written to an individual log file (&lt;timestamp&gt;-stdout.log) per program execution.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -191,7 +191,7 @@
           <item row="3" column="1">
            <widget class="QLabel" name="label_stdout_file_help">
             <property name="text">
-             <string>FIXME: File help</string>
+             <string>Output data is written to the specified file.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -201,7 +201,7 @@
           <item row="2" column="1">
            <widget class="QLabel" name="label_stdout_dev_null_help">
             <property name="text">
-             <string>FIXME: /dev/null help</string>
+             <string>Output data is discarded.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -214,7 +214,7 @@
           <item row="5" column="1">
            <widget class="QLabel" name="label_stdout_continuous_log_help">
             <property name="text">
-             <string>FIXME: Continuous Log Files help</string>
+             <string>Output data is written to a contiuous log file (contiuous-stdout.log).</string>
             </property>
            </widget>
           </item>
@@ -254,7 +254,7 @@
           <item row="6" column="1">
            <widget class="QLabel" name="label_stderr_stdout_help">
             <property name="text">
-             <string>FIXME: Standard Output help</string>
+             <string>Error data is written to the same target as selected for stdout.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -264,7 +264,7 @@
           <item row="2" column="1">
            <widget class="QLabel" name="label_stderr_dev_null_help">
             <property name="text">
-             <string>FIXME: /dev/null help</string>
+             <string>Error data is discarded.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -274,7 +274,7 @@
           <item row="4" column="1">
            <widget class="QLabel" name="label_stderr_individual_log_help">
             <property name="text">
-             <string>FIXME: Individual Log Files help</string>
+             <string>Error data is written to an individual log file (&lt;timestamp&gt;-stderr.log) per program execution.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -284,7 +284,7 @@
           <item row="3" column="1">
            <widget class="QLabel" name="label_stderr_file_help">
             <property name="text">
-             <string>FIXME: File help</string>
+             <string>Error data is written to the specified file.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -335,7 +335,7 @@
           <item row="5" column="1">
            <widget class="QLabel" name="label_stderr_continuous_log_help">
             <property name="text">
-             <string>FIXME: Continuous Log File help</string>
+             <string>Error data is written to a contiuous log file (contiuous-stderr.log).</string>
             </property>
            </widget>
           </item>
