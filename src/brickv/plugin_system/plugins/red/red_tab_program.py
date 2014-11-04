@@ -26,7 +26,8 @@ from PyQt4.QtCore import Qt, QVariant
 from PyQt4.QtGui import QWidget, QDialog, QMessageBox, QListWidgetItem
 from brickv.plugin_system.plugins.red.ui_red_tab_program import Ui_REDTabProgram
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.program_info import ProgramInfo
+from brickv.plugin_system.plugins.red.program_info_main import ProgramInfoMain
+from brickv.plugin_system.plugins.red.program_wizard import ProgramWizardContext
 from brickv.plugin_system.plugins.red.program_wizard_new import ProgramWizardNew
 from brickv.plugin_system.plugins.red.program_wizard_utils import *
 from brickv.plugin_system.plugins.red.program_page_delphi import get_fpc_versions
@@ -101,7 +102,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         self.button_delete.setEnabled(has_selection)
 
     def add_program_to_list(self, program):
-        program_info = ProgramInfo(self.session, self.script_manager, self.image_version_ref, self.executable_versions, program)
+        program_info = ProgramInfoMain(self.session, self.script_manager, self.image_version_ref, self.executable_versions, program)
         program_info.name_changed.connect(self.refresh_program_names)
 
         item = QListWidgetItem(program.cast_custom_option_value('name', unicode, '<unknown>'))

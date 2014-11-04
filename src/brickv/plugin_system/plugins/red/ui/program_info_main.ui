@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ProgramInfo</class>
- <widget class="QWidget" name="ProgramInfo">
+ <class>ProgramInfoMain</class>
+ <widget class="QWidget" name="ProgramInfoMain">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -35,7 +35,7 @@
         <x>0</x>
         <y>0</y>
         <width>586</width>
-        <height>2101</height>
+        <height>2123</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -436,19 +436,15 @@
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
            <layout class="QGridLayout" name="gridLayout_3">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>&lt;language-configuration&gt;</string>
-              </property>
-             </widget>
-            </item>
             <item row="1" column="0">
              <widget class="QPushButton" name="button_edit_language">
               <property name="text">
                <string>Edit</string>
               </property>
              </widget>
+            </item>
+            <item row="0" column="0">
+             <layout class="QVBoxLayout" name="layout_language"/>
             </item>
            </layout>
           </item>

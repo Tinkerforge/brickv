@@ -23,6 +23,9 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QWizard
+from collections import namedtuple
+
+ProgramWizardContext = namedtuple('ProgramWizardContext', 'session identifiers script_manager image_version_ref executable_versions')
 
 class ProgramWizard(QWizard):
     def __init__(self, context, *args, **kwargs):
