@@ -23,10 +23,10 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import pyqtSignal, QDateTime
-from PyQt4 import QtGui
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog, QFileDialog, QProgressDialog, QMessageBox
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_info import ProgramInfoContext
+from brickv.plugin_system.plugins.red.program_info_files import ProgramInfoFiles
 from brickv.plugin_system.plugins.red.program_info_python import ProgramInfoPython
 from brickv.plugin_system.plugins.red.program_wizard import ProgramWizardContext
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
@@ -52,42 +52,6 @@ from brickv.async_call import async_call
 import os
 import json
 
-def expand_directory_walk_to_files_list(directory_walk):
-    files = []
-
-    def expand(root, dw):
-        if 'c' in dw:
-            for child_name, child_dw in dw['c'].iteritems():
-                expand(os.path.join(root, child_name), child_dw)
-        else:
-            files.append(root)
-
-    expand('', directory_walk)
-
-    return files
-
-
-def expand_directory_walk_to_model(directory_walk, parent):
-    model = QStandardItemModel(parent)
-
-    def expand(parent_item, name, dw):
-        if 'c' in dw:
-            if name == None:
-                item = parent_item
-            else:
-                item = QStandardItem(name)
-                parent_item.appendRow([item, QStandardItem(''), QStandardItem('')])
-
-            for child_name, child_dw in dw['c'].iteritems():
-                expand(item, child_name, child_dw)
-        else:
-            parent_item.appendRow([QStandardItem(name), QStandardItem(unicode(dw['s'])), QStandardItem(unicode(dw['l']))])
-
-    expand(model.invisibleRootItem(), None, directory_walk)
-
-    return model
-
-
 class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
     name_changed = pyqtSignal()
 
@@ -108,10 +72,6 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         self.program_refresh_in_progress = False
         self.logs_refresh_in_progress = False
-        self.files_refresh_in_progress = False
-
-        self.available_files = []
-        self.available_directories = []
 
         self.edit_general_wizard = None
         self.edit_language_wizard = None
@@ -129,10 +89,6 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.button_refresh.clicked.connect(self.refresh_info)
         self.button_download_logs.clicked.connect(self.download_selected_logs)
         self.button_delete_logs.clicked.connect(self.delete_selected_logs)
-        self.button_upload_files.clicked.connect(self.upload_files)
-        self.button_download_files.clicked.connect(self.download_selected_files)
-        self.button_rename_file.clicked.connect(self.rename_selected_file)
-        self.button_delete_files.clicked.connect(self.delete_selected_files)
 
         self.button_kill.clicked.connect(self.kill_process)
         self.button_schedule_now.clicked.connect(self.schedule_now)
@@ -180,6 +136,12 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         else:
             self.widget_language = None
 
+        # create files info widget
+        context = ProgramInfoContext(self.script_manager, self.executable_versions, self.program)
+
+        self.widget_files = ProgramInfoFiles(context, self.update_ui_state)
+        self.layout_files.addWidget(self.widget_files)
+
         self.update_ui_state()
 
     def scheduler_state_changed(self, program):
@@ -196,7 +158,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
     def refresh_info(self):
         self.refresh_program()
         self.refresh_logs()
-        self.refresh_files()
+        self.widget_files.refresh_files()
 
     def refresh_program(self):
         def refresh_async():
@@ -376,66 +338,13 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
                                            cb_program_get_os_walk,
                                            [self.program_dir])
 
-    def refresh_files(self):
-        def cb_directory_walk(result):
-            if result == None or len(result.stderr) > 0:
-                self.files_refresh_in_progress = False
-                self.update_ui_state()
-                return # FIXME: report error
-
-            def expand_async(data):
-                directory_walk = json.loads(data)
-                available_files = []
-                available_directories = []
-
-                if directory_walk != None:
-                    available_files = sorted(expand_directory_walk_to_files_list(directory_walk))
-                    directories = set()
-
-                    for available_file in available_files:
-                        directory = os.path.split(available_file)[0]
-
-                        if len(directory) > 0:
-                            directories.add(directory)
-
-                    available_directories = sorted(list(directories))
-
-                return directory_walk, available_files, available_directories
-
-            def cb_expand_success(args):
-                directory_walk, available_files, available_directories = args
-
-                self.available_files = available_files
-                self.available_directories = available_directories
-                self.files_refresh_in_progress = False
-                self.update_ui_state()
-
-                self.tree_files.setModel(expand_directory_walk_to_model(directory_walk, self))
-
-            def cb_expand_error():
-                pass # FIXME: report error
-
-            async_call(expand_async, result.stdout, cb_expand_success, cb_expand_error)
-
-        self.files_refresh_in_progress = True
-        self.update_ui_state()
-
-        self.script_manager.execute_script('directory_walk', cb_directory_walk,
-                                           [os.path.join(self.root_directory, 'bin')],
-                                           max_len=1024*1024)
-
     def update_ui_state(self):
         self.set_widget_enabled(self.button_download_logs, self.tree_logs_model.rowCount() > 0)
         self.set_widget_enabled(self.button_delete_logs, self.tree_logs_model.rowCount() > 0)
         self.tree_logs.setColumnHidden(2, True)
         self.tree_logs.setColumnHidden(3, True)
 
-        #has_files_selection = len(self.tree_files.selectedItems()) > 0
-        #self.set_widget_enabled(self.button_download_files, has_files_selection)
-        #self.set_widget_enabled(self.button_rename_file, len(self.tree_files.selectedItems()) == 1)
-        #self.set_widget_enabled(self.button_delete_files, has_files_selection)
-
-        if self.program_refresh_in_progress or self.files_refresh_in_progress or self.logs_refresh_in_progress:
+        if self.program_refresh_in_progress or self.widget_files.refresh_in_progress or self.logs_refresh_in_progress:
             self.button_refresh.setText('Refreshing...')
             self.set_edit_buttons_enabled(False)
         else:
@@ -669,15 +578,15 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
     def download_selected_logs(self):
         def log_download_pd_closed():
             if len(log_files_to_download['files']) > 0:
-                QtGui.QMessageBox.warning(None,
-                                          'Program | Logs',
-                                          'Download could not finish.',
-                                          QtGui.QMessageBox.Ok)
+                QMessageBox.warning(None,
+                                    'Program | Logs',
+                                    'Download could not finish.',
+                                    QMessageBox.Ok)
             else:
-                QtGui.QMessageBox.information(None,
-                                              'Program | Logs',
-                                              'Download complete!',
-                                              QtGui.QMessageBox.Ok)
+                QMessageBox.information(None,
+                                        'Program | Logs',
+                                        'Download complete!',
+                                        QMessageBox.Ok)
 
         self.tree_logs.setColumnHidden(2, False)
         self.tree_logs.setColumnHidden(3, False)
@@ -770,15 +679,15 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         def cb_program_delete_logs(result):
             if result.stderr == "":
                 if json.loads(result.stdout):
-                    QtGui.QMessageBox.information(None,
-                                                  'Program | Logs',
-                                                  'Deleted successfully!',
-                                                  QtGui.QMessageBox.Ok)
+                    QMessageBox.information(None,
+                                           'Program | Logs',
+                                           'Deleted successfully!',
+                                                  QMessageBox.Ok)
                 else:
-                    QtGui.QMessageBox.critical(None,
-                                               'Program | Logs',
-                                               'Deletion failed',
-                                               QtGui.QMessageBox.Ok)
+                    QMessageBox.critical(None,
+                                         'Program | Logs',
+                                         'Deletion failed',
+                                               QMessageBox.Ok)
             else:
                 pass
                 # TODO: Error popup for user?
@@ -805,39 +714,6 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             self.script_manager.execute_script('program_delete_logs',
                                                cb_program_delete_logs,
                                                [json.dumps(file_list)])
-
-    def upload_files(self):
-        print 'upload_files'
-
-    def download_selected_files(self):
-        selected_items = self.tree_files.selectedItems()
-
-        if len(selected_items) == 0:
-            return
-
-        filenames = [unicode(selected_item.text()) for selected_item in selected_items]
-
-        print 'download_selected_files', filenames
-
-    def rename_selected_file(self):
-        selected_items = self.tree_files.selectedItems()
-
-        if len(selected_items) == 0:
-            return
-
-        filename = unicode(selected_items[0].text())
-
-        print 'rename_selected_file', filename
-
-    def delete_selected_files(self):
-        selected_items = self.tree_files.selectedItems()
-
-        if len(selected_items) == 0:
-            return
-
-        filenames = [unicode(selected_item.text()) for selected_item in selected_items]
-
-        print 'delete_selected_files', filenames
 
     def kill_process(self):
         if self.program.last_spawned_process != None:
@@ -897,7 +773,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
-        self.edit_general_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
+        self.edit_general_wizard = ProgramWizardEdit(context, self.program, self.widget_files.available_files, self.widget_files.available_directories)
         self.edit_general_wizard.setPage(Constants.PAGE_GENERAL, ProgramPageGeneral())
         self.edit_general_wizard.finished.connect(self.edit_general_wizard_finished)
         self.edit_general_wizard.show()
@@ -939,7 +815,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
-        self.edit_language_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
+        self.edit_language_wizard = ProgramWizardEdit(context, self.program, self.widget_files.available_files, self.widget_files.available_directories)
         self.edit_language_wizard.setPage(language_page, language_page_classes[language_page]())
         self.edit_language_wizard.finished.connect(self.edit_language_wizard_finished)
         self.edit_language_wizard.show()
@@ -958,7 +834,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
-        self.edit_arguments_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
+        self.edit_arguments_wizard = ProgramWizardEdit(context, self.program, self.widget_files.available_files, self.widget_files.available_directories)
         self.edit_arguments_wizard.setPage(Constants.PAGE_ARGUMENTS, ProgramPageArguments())
         self.edit_arguments_wizard.finished.connect(self.edit_arguments_wizard_finished)
         self.edit_arguments_wizard.show()
@@ -977,7 +853,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
-        self.edit_stdio_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
+        self.edit_stdio_wizard = ProgramWizardEdit(context, self.program, self.widget_files.available_files, self.widget_files.available_directories)
         self.edit_stdio_wizard.setPage(Constants.PAGE_STDIO, ProgramPageStdio())
         self.edit_stdio_wizard.finished.connect(self.edit_stdio_wizard_finished)
         self.edit_stdio_wizard.show()
@@ -996,7 +872,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
-        self.edit_schedule_wizard = ProgramWizardEdit(context, self.program, self.available_files, self.available_directories)
+        self.edit_schedule_wizard = ProgramWizardEdit(context, self.program, self.widget_files.available_files, self.widget_files.available_directories)
         self.edit_schedule_wizard.setPage(Constants.PAGE_SCHEDULE, ProgramPageSchedule())
         self.edit_schedule_wizard.finished.connect(self.edit_schedule_wizard_finished)
         self.edit_schedule_wizard.show()
