@@ -26,7 +26,7 @@
       <item>
        <widget class="QToolBox" name="tbox_settings">
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="box_net">
          <property name="geometry">
@@ -80,7 +80,7 @@
              <enum>QTabWidget::South</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="tab_net_gen">
              <attribute name="title">
@@ -943,7 +943,7 @@
              <enum>QTabWidget::South</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="tab_brickd_gen">
              <attribute name="title">
@@ -1130,8 +1130,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>330</width>
-                   <height>229</height>
+                   <width>762</width>
+                   <height>547</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -1520,6 +1520,85 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>pbutton_net_refresh</tabstop>
+  <tabstop>twidget_net</tabstop>
+  <tabstop>scrollArea_4</tabstop>
+  <tabstop>ledit_net_gen_hostname</tabstop>
+  <tabstop>pbutton_net_gen_save</tabstop>
+  <tabstop>twidget_brickd</tabstop>
+  <tabstop>sarea_net_wireless</tabstop>
+  <tabstop>cbox_net_wireless_intf</tabstop>
+  <tabstop>pbutton_net_wireless_use_intf</tabstop>
+  <tabstop>cbox_net_wireless_ap</tabstop>
+  <tabstop>pbutton_net_wireless_scan</tabstop>
+  <tabstop>cbox_net_wireless_conftype</tabstop>
+  <tabstop>ledit_net_wireless_key</tabstop>
+  <tabstop>sbox_net_wireless_ip1</tabstop>
+  <tabstop>sbox_net_wireless_ip2</tabstop>
+  <tabstop>sbox_net_wireless_ip3</tabstop>
+  <tabstop>sbox_net_wireless_ip4</tabstop>
+  <tabstop>sbox_net_wireless_mask1</tabstop>
+  <tabstop>sbox_net_wireless_mask2</tabstop>
+  <tabstop>sbox_net_wireless_mask3</tabstop>
+  <tabstop>sbox_net_wireless_mask4</tabstop>
+  <tabstop>sbox_net_wireless_gw1</tabstop>
+  <tabstop>sbox_net_wireless_gw2</tabstop>
+  <tabstop>sbox_net_wireless_gw3</tabstop>
+  <tabstop>sbox_net_wireless_gw4</tabstop>
+  <tabstop>sbox_net_wireless_dns1</tabstop>
+  <tabstop>sbox_net_wireless_dns2</tabstop>
+  <tabstop>sbox_net_wireless_dns3</tabstop>
+  <tabstop>sbox_net_wireless_dns4</tabstop>
+  <tabstop>pbutton_net_wireless_save</tabstop>
+  <tabstop>scrollArea_3</tabstop>
+  <tabstop>cbox_net_wired_intf</tabstop>
+  <tabstop>cbox_net_wired_conftype</tabstop>
+  <tabstop>sbox_net_wired_ip1</tabstop>
+  <tabstop>sbox_net_wired_ip2</tabstop>
+  <tabstop>sbox_net_wired_ip3</tabstop>
+  <tabstop>sbox_net_wired_ip4</tabstop>
+  <tabstop>sbox_net_wired_mask1</tabstop>
+  <tabstop>sbox_net_wired_mask2</tabstop>
+  <tabstop>sbox_net_wired_mask3</tabstop>
+  <tabstop>sbox_net_wired_mask4</tabstop>
+  <tabstop>sbox_net_wired_gw1</tabstop>
+  <tabstop>sbox_net_wired_gw2</tabstop>
+  <tabstop>sbox_net_wired_gw3</tabstop>
+  <tabstop>sbox_net_wired_gw4</tabstop>
+  <tabstop>sbox_net_wired_dns1</tabstop>
+  <tabstop>sbox_net_wired_dns2</tabstop>
+  <tabstop>sbox_net_wired_dns3</tabstop>
+  <tabstop>sbox_net_wired_dns4</tabstop>
+  <tabstop>pbutton_net_wired_save</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>sbox_brickd_la_ip1</tabstop>
+  <tabstop>sbox_brickd_la_ip2</tabstop>
+  <tabstop>sbox_brickd_la_ip3</tabstop>
+  <tabstop>sbox_brickd_la_ip4</tabstop>
+  <tabstop>sbox_brickd_lp</tabstop>
+  <tabstop>sbox_brickd_lwsp</tabstop>
+  <tabstop>ledit_brickd_secret</tabstop>
+  <tabstop>pbutton_brickd_general_refresh</tabstop>
+  <tabstop>pbutton_brickd_general_save</tabstop>
+  <tabstop>scrollArea_5</tabstop>
+  <tabstop>cbox_brickd_adv_ll</tabstop>
+  <tabstop>sbox_brickd_adv_spi_dly</tabstop>
+  <tabstop>sbox_brickd_adv_rs485_dly</tabstop>
+  <tabstop>cbox_brickd_adv_rt</tabstop>
+  <tabstop>cbox_brickd_adv_gt</tabstop>
+  <tabstop>pbutton_brickd_adv_refresh</tabstop>
+  <tabstop>pbutton_brickd_adv_save</tabstop>
+  <tabstop>twidget_datetime</tabstop>
+  <tabstop>scrollArea_8</tabstop>
+  <tabstop>time_date_red</tabstop>
+  <tabstop>time_time_red</tabstop>
+  <tabstop>time_timezone_red</tabstop>
+  <tabstop>time_date_local</tabstop>
+  <tabstop>time_time_local</tabstop>
+  <tabstop>time_timezone_local</tabstop>
+  <tabstop>time_sync_button</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
