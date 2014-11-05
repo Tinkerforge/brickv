@@ -1762,24 +1762,61 @@ class REDProgram(REDObject):
         if self.object_id is None:
             raise RuntimeError('Cannot set custom option for unattached program object')
 
-        if not isinstance(name, REDString):
-            name = REDString(self._session).allocate(name)
+        if isinstance(value, list):
+            self.set_custom_option_value_list(name, value)
+        else:
+            if not isinstance(name, REDString):
+                name = REDString(self._session).allocate(name)
 
-        if not isinstance(value, REDString):
-            value = REDString(self._session).allocate(value)
+            if not isinstance(value, REDString):
+                value = REDString(self._session).allocate(value)
 
-        error_code = self._session._brick.set_custom_program_option_value(self.object_id, name.object_id, value.object_id)
+            error_code = self._session._brick.set_custom_program_option_value(self.object_id, name.object_id, value.object_id)
 
-        if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not set custom option for program object {0}'.format(self.object_id), error_code)
+            if error_code != REDError.E_SUCCESS:
+                raise REDError('Could not set custom option for program object {0}'.format(self.object_id), error_code)
 
-        self._custom_options[unicode(name)] = value
+            self._custom_options[unicode(name)] = value
+
+    def set_custom_option_value_list(self, name, values):
+        if self.object_id is None:
+            raise RuntimeError('Cannot set custom option for unattached program object')
+
+        for i, value in enumerate(values):
+            self.set_custom_option_value(name + '.item' + str(i), unicode(value))
+
+        self.set_custom_option_value(name + '.length', unicode(len(values)))
 
     def cast_custom_option_value(self, name, cast, default):
         try:
-            return cast(unicode(self._custom_options.get(name, default)))
+            string = self._custom_options[unicode(name)]
+        except KeyError:
+            return default
+
+        #print repr(cast),  repr(name), repr(string)
+
+        try:
+            return cast(unicode(string))
         except ValueError:
             return default
+
+    def cast_custom_option_value_list(self, name, cast, default):
+        length = self.cast_custom_option_value(name + '.length', int, None)
+
+        if length == None:
+            return default
+
+        values = []
+
+        for i in range(max(length, 0)):
+            value = self.cast_custom_option_value(name + '.item' + str(i), cast, None)
+
+            if value == None:
+                return default
+
+            values.append(value)
+
+        return values
 
     @property
     def identifier(self):             return self._identifier
