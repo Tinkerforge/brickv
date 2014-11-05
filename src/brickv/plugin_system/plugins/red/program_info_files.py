@@ -21,7 +21,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem
+from PyQt4.QtCore import Qt, QDateTime, QVariant
+from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QSortFilterProxyModel
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
 from brickv.async_call import async_call
 import os
@@ -42,25 +43,66 @@ def expand_directory_walk_to_files_list(directory_walk):
     return files
 
 
-def expand_directory_walk_to_model(directory_walk, parent):
-    model = QStandardItemModel(parent)
+def get_file_display_size(size):
+    if size < 1024:
+        return str(size) + ' Bytes'
+    else:
+        return str(size / 1024) + ' kiB'
+
+
+def expand_directory_walk_to_model(directory_walk, model):
+    def create_last_modified_item(last_modified):
+        item = QStandardItem(QDateTime.fromTime_t(last_modified).toString('yyyy-MM-dd HH:mm:ss'))
+        item.setData(QVariant(last_modified))
+
+        return item
 
     def expand(parent_item, name, dw):
         if 'c' in dw:
             if name == None:
-                item = parent_item
+                name_item = parent_item
+                size_item = None
             else:
-                item = QStandardItem(name)
-                parent_item.appendRow([item, QStandardItem(''), QStandardItem('')])
+                name_item          = QStandardItem(name)
+                size_item          = QStandardItem('')
+                last_modified_item = create_last_modified_item(int(dw['l']))
+
+                parent_item.appendRow([name_item, size_item, last_modified_item])
+
+            size = 0
 
             for child_name, child_dw in dw['c'].iteritems():
-                expand(item, child_name, child_dw)
+                size += expand(name_item, child_name, child_dw)
+
+            if size_item != None:
+                size_item.setText(get_file_display_size(size))
+                size_item.setData(QVariant(size))
+
+            return size
         else:
-            parent_item.appendRow([QStandardItem(name), QStandardItem(unicode(dw['s'])), QStandardItem(unicode(dw['l']))])
+            size      = int(dw['s'])
+            size_item = QStandardItem(get_file_display_size(size))
+            size_item.setData(QVariant(size))
+
+            last_modified_item = create_last_modified_item(int(dw['l']))
+
+            parent_item.appendRow([QStandardItem(name), size_item, last_modified_item])
+
+            return size
 
     expand(model.invisibleRootItem(), None, directory_walk)
 
     return model
+
+
+class FilesProxyModel(QSortFilterProxyModel):
+    # overrides QSortFilterProxyModel.lessThan
+    def lessThan(self, left, right):
+        # size and last modified
+        if left.column() in [1, 2]:
+            return left.data(Qt.UserRole + 1).toInt()[0] < right.data(Qt.UserRole + 1).toInt()[0]
+
+        return QSortFilterProxyModel.lessThan(self, left, right)
 
 
 class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
@@ -69,26 +111,37 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         self.setupUi(self)
 
-        self.script_manager        = context.script_manager
-        self.program               = context.program
-        self.update_main_ui_state  = update_main_ui_state
-        self.set_widget_enabled    = set_widget_enabled
-        self.root_directory        = unicode(self.program.root_directory)
-        self.refresh_in_progress   = False
-        self.available_files       = []
-        self.available_directories = []
+        self.script_manager          = context.script_manager
+        self.program                 = context.program
+        self.update_main_ui_state    = update_main_ui_state
+        self.set_widget_enabled      = set_widget_enabled
+        self.root_directory          = unicode(self.program.root_directory)
+        self.refresh_in_progress     = False
+        self.available_files         = []
+        self.available_directories   = []
+        self.tree_files_model        = QStandardItemModel(self)
+        self.tree_files_model_header = ['Name', 'Size', 'Last Modified']
+        self.tree_files_proxy_model  = FilesProxyModel(self)
 
+        self.tree_files_model.setHorizontalHeaderLabels(self.tree_files_model_header)
+        self.tree_files_proxy_model.setSourceModel(self.tree_files_model)
+        self.tree_files.setModel(self.tree_files_model)
+        self.tree_files.setModel(self.tree_files_proxy_model)
+        self.tree_files.setColumnWidth(0, 175)
+        self.tree_files.setColumnWidth(1, 75)
+
+        self.tree_files.selectionModel().selectionChanged.connect(self.update_ui_state)
         self.button_upload_files.clicked.connect(self.upload_files)
         self.button_download_files.clicked.connect(self.download_selected_files)
         self.button_rename_file.clicked.connect(self.rename_selected_file)
         self.button_delete_files.clicked.connect(self.delete_selected_files)
 
     def update_ui_state(self):
-        #has_files_selection = len(self.tree_files.selectedItems()) > 0
-        #self.set_widget_enabled(self.button_download_files, has_files_selection)
-        #self.set_widget_enabled(self.button_rename_file, len(self.tree_files.selectedItems()) == 1)
-        #self.set_widget_enabled(self.button_delete_files, has_files_selection)
-        pass
+        selection_count = len(self.tree_files.selectionModel().selectedRows())
+
+        self.set_widget_enabled(self.button_download_files, selection_count > 0)
+        self.set_widget_enabled(self.button_rename_file, selection_count == 1)
+        self.set_widget_enabled(self.button_delete_files, selection_count > 0)
 
     def refresh_files(self):
         def cb_directory_walk(result):
@@ -124,7 +177,9 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 self.refresh_in_progress   = False
                 self.update_main_ui_state()
 
-                self.tree_files.setModel(expand_directory_walk_to_model(directory_walk, self))
+                expand_directory_walk_to_model(directory_walk, self.tree_files_model)
+
+                self.tree_files.header().setSortIndicator(0, Qt.AscendingOrder)
 
             def cb_expand_error():
                 pass # FIXME: report error
@@ -133,6 +188,14 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         self.refresh_in_progress = True
         self.update_main_ui_state()
+
+        width1 = self.tree_files.columnWidth(0)
+        width2 = self.tree_files.columnWidth(1)
+
+        self.tree_files_model.clear()
+        self.tree_files_model.setHorizontalHeaderLabels(self.tree_files_model_header)
+        self.tree_files.setColumnWidth(0, width1)
+        self.tree_files.setColumnWidth(1, width2)
 
         self.script_manager.execute_script('directory_walk', cb_directory_walk,
                                            [os.path.join(self.root_directory, 'bin')],

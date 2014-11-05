@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 program_info_logs.py: Program Logs Info Widget
 
@@ -22,12 +23,22 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QVariant
-from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QFileDialog, QProgressDialog, QMessageBox
+from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QFileDialog, QProgressDialog, QMessageBox, QSortFilterProxyModel
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.ui_program_info_logs import Ui_ProgramInfoLogs
 from brickv.async_call import async_call
 import os
 import json
+
+class LogsProxyModel(QSortFilterProxyModel):
+    # overrides QSortFilterProxyModel.lessThan
+    def lessThan(self, left, right):
+        # size
+        if left.column() == 1:
+            return left.data(Qt.UserRole + 1).toInt()[0] < right.data(Qt.UserRole + 1).toInt()[0]
+
+        return QSortFilterProxyModel.lessThan(self, left, right)
+
 
 class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
     def __init__(self, context, update_main_ui_state, set_widget_enabled, *args, **kwargs):
@@ -35,28 +46,32 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
         self.setupUi(self)
 
-        self.session               = context.session
-        self.script_manager        = context.script_manager
-        self.program               = context.program
-        self.update_main_ui_state  = update_main_ui_state
-        self.set_widget_enabled    = set_widget_enabled
-        self.root_directory        = unicode(self.program.root_directory)
-        self.refresh_in_progress   = False
+        self.session                = context.session
+        self.script_manager         = context.script_manager
+        self.program                = context.program
+        self.update_main_ui_state   = update_main_ui_state
+        self.set_widget_enabled     = set_widget_enabled
+        self.root_directory         = unicode(self.program.root_directory)
+        self.refresh_in_progress    = False
+        self.tree_logs_model        = QStandardItemModel(self)
+        self.tree_logs_model_header = ['Date / Time', 'Size']
+        self.tree_logs_proxy_model  = LogsProxyModel(self)
 
-        self.program_dir = unicode(self.program.root_directory)
-        self.program_dir_walk_result = None
-        self.tree_logs_model = QStandardItemModel(self)
-        self.tree_logs_header_labels = ["Date / Time", "Size"]
-        self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_header_labels)
-        self.tree_logs.setModel(self.tree_logs_model)
+        self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_model_header)
+        self.tree_logs_proxy_model.setSourceModel(self.tree_logs_model)
+        self.tree_logs.setModel(self.tree_logs_proxy_model)
         self.tree_logs.setColumnWidth(0, 250)
 
+        self.tree_logs.selectionModel().selectionChanged.connect(self.update_ui_state)
         self.button_download_logs.clicked.connect(self.download_selected_logs)
         self.button_delete_logs.clicked.connect(self.delete_selected_logs)
 
     def update_ui_state(self):
-        self.set_widget_enabled(self.button_download_logs, self.tree_logs_model.rowCount() > 0)
-        self.set_widget_enabled(self.button_delete_logs, self.tree_logs_model.rowCount() > 0)
+        has_selection = self.tree_logs.selectionModel().hasSelection()
+
+        self.set_widget_enabled(self.button_download_logs, has_selection)
+        self.set_widget_enabled(self.button_delete_logs, has_selection)
+
         self.tree_logs.setColumnHidden(2, True)
         self.tree_logs.setColumnHidden(3, True)
 
@@ -70,8 +85,6 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                 print result
                 return
 
-            self.program_dir_walk_result = json.loads(result.stdout)
-
             def get_file_display_size(size):
                 if size < 1024:
                     return str(size) + ' Bytes'
@@ -84,8 +97,10 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
                 return item
 
-            for dir_node in self.program_dir_walk_result:
-                if dir_node['root'] == os.path.join(self.program_dir, "log"):
+            program_dir_walk_result = json.loads(result.stdout)
+
+            for dir_node in program_dir_walk_result:
+                if dir_node['root'] == os.path.join(self.root_directory, "log"):
                     for idx, f in enumerate(dir_node['files']):
                         file_name = f['name']
                         file_size = int(unicode(f['size']))
@@ -133,7 +148,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                                                     QStandardItem(file_path)])
                                 self.tree_logs_model.appendRow(parent_continuous)
 
-                            self.tree_logs_model.sort(0, Qt.DescendingOrder)
+                            self.tree_logs.header().setSortIndicator(0, Qt.DescendingOrder)
                             self.update_ui_state()
                             continue
 
@@ -225,7 +240,8 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                                                QStandardItem(file_path)])
                             self.tree_logs_model.appendRow(parent_date)
 
-            self.tree_logs_model.sort(0, Qt.DescendingOrder)
+
+            self.tree_logs.header().setSortIndicator(0, Qt.DescendingOrder)
             self.update_ui_state()
 
         self.refresh_in_progress = True
@@ -233,12 +249,12 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
         width = self.tree_logs.columnWidth(0)
         self.tree_logs_model.clear()
-        self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_header_labels)
+        self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_model_header)
         self.tree_logs.setColumnWidth(0, width)
 
         self.script_manager.execute_script('program_get_os_walk',
                                            cb_program_get_os_walk,
-                                           [self.program_dir])
+                                           [self.root_directory])
 
     def load_log_files_for_ops(self, index_list):
         if len(index_list) % 4 != 0:

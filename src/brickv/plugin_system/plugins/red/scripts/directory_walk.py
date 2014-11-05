@@ -16,15 +16,19 @@ base = unicode(argv[1])
 try:
     for root, directories, files in os.walk(base):
         relative_root = os.path.relpath(root, base)
-        children = result.setdefault('c', {})
+        children      = result.setdefault('c', {})
 
         if relative_root != '.':
             for part in relative_root.split('/'):
-                children = children.setdefault(part, {}).setdefault('c', {})
+                directory = children.setdefault(part, {})
+                children  = directory.setdefault('c', {})
+
+                if 'l' not in directory:
+                    directory['l'] = int(os.lstat(root).st_mtime)
 
         for filename in files:
-            absolute = os.path.join(root, filename)
-            st = os.lstat(absolute)
+            absolute           = os.path.join(root, filename)
+            st                 = os.lstat(absolute)
             children[filename] = {'m': st.st_mode, 's': st.st_size, 'l': int(st.st_mtime)}
 except:
     print json.dumps(None)
