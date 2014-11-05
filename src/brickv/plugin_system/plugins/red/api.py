@@ -425,7 +425,8 @@ class REDString(REDObject):
     def allocate(self, data):
         self.release()
 
-        data_utf8      = unicode(data).encode('utf-8')
+        data_unicode   = unicode(data)
+        data_utf8      = data_unicode.encode('utf-8')
         chunk          = data_utf8[:REDString.MAX_ALLOCATE_BUFFER_LENGTH]
         remaining_data = data_utf8[REDString.MAX_ALLOCATE_BUFFER_LENGTH:]
 
@@ -449,7 +450,7 @@ class REDString(REDObject):
 
             offset += len(chunk)
 
-        self._data = data
+        self._data = data_unicode
 
         return self
 
