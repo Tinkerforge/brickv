@@ -256,6 +256,12 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.set_widget_enabled(self.button_kill, process_running)
         self.set_widget_enabled(self.button_schedule_now, not process_running)
 
+        # logs
+        self.widget_logs.update_ui_state()
+
+        # files
+        self.widget_files.update_ui_state()
+
         # language
         self.group_language.setTitle('{0} Configuration'.format(language_display_name))
 
