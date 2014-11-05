@@ -25,12 +25,13 @@ from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QWidget
 from collections import namedtuple
 
-ProgramInfoContext = namedtuple('ProgramInfoContext', 'script_manager executable_versions program')
+ProgramInfoContext = namedtuple('ProgramInfoContext', 'session script_manager executable_versions program')
 
 class ProgramInfo(QWidget):
     def __init__(self, context, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
 
+        self.session             = context.session
         self.script_manager      = context.script_manager
         self.executable_versions = context.executable_versions
         self.program             = context.program

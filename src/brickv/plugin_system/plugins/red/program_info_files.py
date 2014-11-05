@@ -64,7 +64,7 @@ def expand_directory_walk_to_model(directory_walk, parent):
 
 
 class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
-    def __init__(self, context, update_main_ui_state, *args, **kwargs):
+    def __init__(self, context, update_main_ui_state, set_widget_enabled, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
@@ -72,6 +72,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.script_manager        = context.script_manager
         self.program               = context.program
         self.update_main_ui_state  = update_main_ui_state
+        self.set_widget_enabled    = set_widget_enabled
         self.root_directory        = unicode(self.program.root_directory)
         self.refresh_in_progress   = False
         self.available_files       = []

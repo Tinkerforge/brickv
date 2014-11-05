@@ -23,10 +23,11 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import pyqtSignal, QDateTime
-from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QDialog, QFileDialog, QProgressDialog, QMessageBox
+from PyQt4.QtGui import QWidget, QDialog, QMessageBox
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_info import ProgramInfoContext
 from brickv.plugin_system.plugins.red.program_info_files import ProgramInfoFiles
+from brickv.plugin_system.plugins.red.program_info_logs import ProgramInfoLogs
 from brickv.plugin_system.plugins.red.program_info_python import ProgramInfoPython
 from brickv.plugin_system.plugins.red.program_wizard import ProgramWizardContext
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
@@ -71,7 +72,6 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.program.process_spawned_callback = self.process_spawned
 
         self.program_refresh_in_progress = False
-        self.logs_refresh_in_progress = False
 
         self.edit_general_wizard = None
         self.edit_language_wizard = None
@@ -79,16 +79,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.edit_stdio_wizard = None
         self.edit_schedule_wizard = None
 
-        self.program_dir = unicode(self.program.root_directory)
-        self.program_dir_walk_result = None
-        self.tree_logs_model = QStandardItemModel(self)
-        self.tree_logs_header_labels = ["Date/Time", "Size (bytes)"]
-        self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_header_labels)
-        self.tree_logs.setModel(self.tree_logs_model)
-
         self.button_refresh.clicked.connect(self.refresh_info)
-        self.button_download_logs.clicked.connect(self.download_selected_logs)
-        self.button_delete_logs.clicked.connect(self.delete_selected_logs)
 
         self.button_kill.clicked.connect(self.kill_process)
         self.button_schedule_now.clicked.connect(self.schedule_now)
@@ -127,7 +118,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             }
 
             if language_info_classes[language] != None:
-                context = ProgramInfoContext(self.script_manager, self.executable_versions, self.program)
+                context = ProgramInfoContext(self.session, self.script_manager, self.executable_versions, self.program)
 
                 self.widget_language = language_info_classes[language](context)
                 self.layout_language.addWidget(self.widget_language)
@@ -136,10 +127,16 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         else:
             self.widget_language = None
 
-        # create files info widget
-        context = ProgramInfoContext(self.script_manager, self.executable_versions, self.program)
+        # create logs info widget
+        context = ProgramInfoContext(self.session, self.script_manager, self.executable_versions, self.program)
 
-        self.widget_files = ProgramInfoFiles(context, self.update_ui_state)
+        self.widget_logs = ProgramInfoLogs(context, self.update_ui_state, self.set_widget_enabled)
+        self.layout_logs.addWidget(self.widget_logs)
+
+        # create files info widget
+        context = ProgramInfoContext(self.session, self.script_manager, self.executable_versions, self.program)
+
+        self.widget_files = ProgramInfoFiles(context, self.update_ui_state, self.set_widget_enabled)
         self.layout_files.addWidget(self.widget_files)
 
         self.update_ui_state()
@@ -157,7 +154,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
     def refresh_info(self):
         self.refresh_program()
-        self.refresh_logs()
+        self.widget_logs.refresh_logs()
         self.widget_files.refresh_files()
 
     def refresh_program(self):
@@ -176,175 +173,10 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         async_call(refresh_async, None, cb_success, cb_error)
 
-    def refresh_logs(self):
-        def cb_program_get_os_walk(result):
-            self.logs_refresh_in_progress = False
-
-            if result == None or result.stderr != "":
-                self.update_ui_state()
-                # TODO: Error popup for user?
-                print result
-                return
-
-            self.program_dir_walk_result = json.loads(result.stdout)
-
-            for dir_node in self.program_dir_walk_result:
-                if dir_node['root'] == os.path.join(self.program_dir, "log"):
-                    for idx, f in enumerate(dir_node['files']):
-                        file_name = f['name']
-                        file_size = unicode(f['size'])
-                        file_path = os.path.join(dir_node['root'], file_name)
-                        if len(file_name.split('-')) < 2:
-                            continue
-
-                        if file_name.split('-')[0] == "continuous":
-                            parent_continuous = None
-                            for i in range(self.tree_logs_model.rowCount()):
-                                if self.tree_logs_model.item(i).text() == "Continuous":
-                                    parent_continuous = self.tree_logs_model.item(i)
-                                    parent_continuous_size = self.tree_logs_model.item(i, 1)
-                                    break
-
-                            if parent_continuous:
-                                if file_name.split('-')[1] == "stdout.log":
-                                    parent_continuous.appendRow([QStandardItem("stdout"),
-                                                                 QStandardItem(file_size),
-                                                                 QStandardItem("LOG_FILE_CONT"),
-                                                                 QStandardItem(file_path)])
-                                elif file_name.split('-')[1] == "stderr.log":
-                                    parent_continuous.appendRow([QStandardItem("stderr"),
-                                                                 QStandardItem(file_size),
-                                                                 QStandardItem("LOG_FILE_CONT"),
-                                                                 QStandardItem(file_path)])
-                                current_size = int(parent_continuous_size.text())
-                                new_file_size = int(file_size)
-                                parent_continuous_size.setText(unicode(current_size + new_file_size))
-                            else:
-                                parent_continuous = [QStandardItem("Continuous"),
-                                                     QStandardItem(file_size),
-                                                     QStandardItem("PARENT_CONT"),
-                                                     QStandardItem("")]
-                                if file_name.split('-')[1] == "stdout.log":
-                                    parent_continuous[0].appendRow([QStandardItem("stdout"),
-                                                                    QStandardItem(file_size),
-                                                                    QStandardItem("LOG_FILE_CONT"),
-                                                                    QStandardItem(file_path)])
-                                elif file_name.split('-')[1] == "stderr.log":
-                                    parent_continuous[0].appendRow([QStandardItem("stderr"),
-                                                                    QStandardItem(file_size),
-                                                                    QStandardItem("LOG_FILE_CONT"),
-                                                                    QStandardItem(file_path)])
-                                self.tree_logs_model.appendRow(parent_continuous)
-
-                            self.tree_logs_model.sort(0, Qt.DescendingOrder)
-                            self.update_ui_state()
-                            continue
-
-                        time_stamp = file_name.split('-')[0]
-                        file_name_display = file_name.split('-')[1]
-
-                        if len(time_stamp.split('T')) < 2:
-                            continue
-                        _date = time_stamp.split('T')[0]
-                        _time = time_stamp.split('T')[1]
-                        year = _date[:4]
-                        month = _date[4:6]
-                        day = _date[6:]
-                        date = '-'.join([year, month, day])
-
-                        if '+' in _time:
-                            if len(_time.split('+')) < 2:
-                                continue
-                            __time = _time.split('+')[0].split('.')[0]
-                            hour = __time[:2]
-                            mins = __time[2:4]
-                            sec = __time[4:]
-                            gmt = _time.split('+')[1]
-                            gmt = '+'+gmt
-                        elif '-' in _time:
-                            if len(_time.split('-')) < 2:
-                                continue
-                            __time = _time.split('-')[0].split('.')[0]
-                            hour = __time[:2]
-                            mins = __time[2:4]
-                            sec = __time[4:]
-                            gmt = _time.split('-')[1]
-                            gmt = '-'+gmt
-                        time = ':'.join([hour, mins, sec])
-                        time_with_gmt = time+' '+gmt
-
-                        parent_date = None
-                        for i in range(self.tree_logs_model.rowCount()):
-                            if self.tree_logs_model.item(i).text() == date:
-                                parent_date = self.tree_logs_model.item(i)
-                                parent_date_size = self.tree_logs_model.item(i, 1)
-                                break
-
-                        if parent_date:
-                            found_parent_time = False
-                            for i in range(parent_date.rowCount()):
-                                if parent_date.child(i).text() == time:
-                                    found_parent_time = True
-                                    parent_date.child(i).appendRow([QStandardItem(file_name_display),
-                                                                    QStandardItem(file_size),
-                                                                    QStandardItem("LOG_FILE"),
-                                                                    QStandardItem(file_path)])
-                                    current_size = int (parent_date.child(i, 1).text())
-                                    new_file_size = int(file_size)
-                                    parent_date.child(i, 1).setText(unicode(current_size + new_file_size))
-
-                                    current_size = int(parent_date_size.text())
-                                    new_file_size = int(parent_date.child(i, 1).text())
-                                    parent_date_size.setText(unicode(current_size + new_file_size))
-                                    break
-
-                            if not found_parent_time:
-                                parent_date.appendRow([QStandardItem(time),
-                                                       QStandardItem(file_size),
-                                                       QStandardItem("PARENT_TIME"),
-                                                       QStandardItem("")])
-                                parent_date.child(parent_date.rowCount()-1).appendRow([QStandardItem(file_name_display),
-                                                                                       QStandardItem(file_size),
-                                                                                       QStandardItem("LOG_FILE"),
-                                                                                       QStandardItem(file_path)])
-                                current_size = int(parent_date_size.text())
-                                new_file_size = int(file_size)
-                                parent_date_size.setText(unicode(current_size + new_file_size))
-
-                        else:
-                            parent_date = [QStandardItem(date),
-                                           QStandardItem(file_size),
-                                           QStandardItem("PARENT_DATE"),
-                                           QStandardItem("")]
-                            parent_date[0].appendRow([QStandardItem(time),
-                                                      QStandardItem(file_size),
-                                                      QStandardItem("PARENT_TIME"),
-                                                      QStandardItem("")])
-                            parent_date[0].child(0).appendRow([QStandardItem(file_name_display),
-                                                               QStandardItem(file_size),
-                                                               QStandardItem("LOG_FILE"),
-                                                               QStandardItem(file_path)])
-                            self.tree_logs_model.appendRow(parent_date)
-
-            self.tree_logs_model.sort(0, Qt.DescendingOrder)
-            self.update_ui_state()
-
-        self.logs_refresh_in_progress = True
-        self.update_ui_state()
-
-        self.tree_logs_model.clear()
-        self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_header_labels)
-        self.script_manager.execute_script('program_get_os_walk',
-                                           cb_program_get_os_walk,
-                                           [self.program_dir])
-
     def update_ui_state(self):
-        self.set_widget_enabled(self.button_download_logs, self.tree_logs_model.rowCount() > 0)
-        self.set_widget_enabled(self.button_delete_logs, self.tree_logs_model.rowCount() > 0)
-        self.tree_logs.setColumnHidden(2, True)
-        self.tree_logs.setColumnHidden(3, True)
-
-        if self.program_refresh_in_progress or self.widget_files.refresh_in_progress or self.logs_refresh_in_progress:
+        if self.program_refresh_in_progress or \
+           self.widget_files.refresh_in_progress or \
+           self.widget_logs.refresh_in_progress:
             self.button_refresh.setText('Refreshing...')
             self.set_edit_buttons_enabled(False)
         else:
@@ -517,203 +349,6 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         if repeat_mode_cron:
             self.label_repeat_fields.setText(unicode(self.program.repeat_fields))
-
-    def load_log_files_for_ops(self, index_list):
-        if len(index_list) % 4 != 0:
-            return False
-
-        index_list_chunked = zip(*[iter(index_list)] * 4)
-        logs_download_dict = {'files': {}, 'total_download_size': 0}
-
-        def populate_log_download(item_list):
-            if item_list[2].text() == "PARENT_CONT":
-                for i in range(item_list[0].rowCount()):
-                    f_size = int(item_list[0].child(i, 1).text()) # File size
-                    f_path = unicode(item_list[0].child(i, 3).text()) # File path
-                    if not f_path in logs_download_dict['files']:
-                        logs_download_dict['files'][f_path] = {'size': f_size}
-                        logs_download_dict['total_download_size'] = \
-                            logs_download_dict['total_download_size'] + f_size
-
-            elif item_list[2].text() == "PARENT_DATE":
-                for i in range(item_list[0].rowCount()):
-                    parent_time = item_list[0].child(i)
-                    for j in range(parent_time.rowCount()):
-                        f_size = int(parent_time.child(j, 1).text()) # File size
-                        f_path = unicode(parent_time.child(j, 3).text()) # File path
-                        if not f_path in logs_download_dict['files']:
-                            logs_download_dict['files'][f_path] = {'size': f_size}
-                            logs_download_dict['total_download_size'] = \
-                                logs_download_dict['total_download_size'] + f_size
-
-            elif item_list[2].text() == "PARENT_TIME":
-                for i in range(item_list[0].rowCount()):
-                    f_size = int(item_list[0].child(i, 1).text()) # File size
-                    f_path = unicode(item_list[0].child(i, 3).text()) # File path
-                    if not f_path in logs_download_dict['files']:
-                        logs_download_dict['files'][f_path] = {'size': f_size}
-                        logs_download_dict['total_download_size'] = \
-                            logs_download_dict['total_download_size'] + f_size
-
-            elif item_list[2].text() == "LOG_FILE" or \
-                 item_list[2].text() == "LOG_FILE_CONT":
-                f_size = int(item_list[1].text()) # File size
-                f_path = unicode(item_list[3].text()) # File path
-                if not f_path in logs_download_dict['files']:
-                    logs_download_dict['files'][f_path] = {'size': f_size}
-                    logs_download_dict['total_download_size'] = \
-                        logs_download_dict['total_download_size'] + f_size
-            else:
-                pass
-
-        for index_chunk in index_list_chunked:
-            item_list = []
-            for index in index_chunk:
-                item = self.tree_logs_model.itemFromIndex(index)
-                item_list.append(item)
-            populate_log_download(item_list)
-
-        return logs_download_dict
-
-    def download_selected_logs(self):
-        def log_download_pd_closed():
-            if len(log_files_to_download['files']) > 0:
-                QMessageBox.warning(None,
-                                    'Program | Logs',
-                                    'Download could not finish.',
-                                    QMessageBox.Ok)
-            else:
-                QMessageBox.information(None,
-                                        'Program | Logs',
-                                        'Download complete!',
-                                        QMessageBox.Ok)
-
-        self.tree_logs.setColumnHidden(2, False)
-        self.tree_logs.setColumnHidden(3, False)
-        index_list =  self.tree_logs.selectedIndexes()
-        self.tree_logs.setColumnHidden(2, True)
-        self.tree_logs.setColumnHidden(3, True)
-        if not index_list:
-            return
-
-        log_files_to_download = self.load_log_files_for_ops(index_list)
-        if not log_files_to_download:
-            return
-
-        log_files_download_dir = unicode(QFileDialog.getExistingDirectory(self, "Choose Download Location"))
-
-        if log_files_download_dir != "":
-            log_download_pd = QProgressDialog(str(len(log_files_to_download['files']))+" file(s) remaining...",
-                                              "Cancel",
-                                              0,
-                                              100,
-                                              self)
-            log_download_pd.setWindowTitle("Download Progress")
-            log_download_pd.setAutoReset(False)
-            log_download_pd.setAutoClose(False)
-            log_download_pd.setMinimumDuration(0)
-            log_download_pd.setValue(0)
-
-            log_download_pd.canceled.connect(log_download_pd_closed)
-
-            def cb_open(red_file):
-                def cb_read_status(bytes_read, max_length):
-                    files_remaining = str(len(log_files_to_download['files']))
-                    current_percent = int(float(bytes_read)/float(max_length) * 100)
-
-                    log_download_pd.setLabelText(files_remaining+" file(s) remaining...")
-                    log_download_pd.setValue(current_percent)
-
-                    if current_percent == 100:
-                        log_download_pd.setValue(0)
-
-                def cb_read(red_file, result):
-                    red_file.release()
-                    if result is not None:
-                        # Success
-                        read_file_path = log_files_to_download['files'].keys()[0]
-                        save_file_name = ''.join(read_file_path.split('/')[-1:])
-                        with open(os.path.join(unicode(log_files_download_dir),
-                                               unicode(save_file_name)),
-                                               'wb') as fh_log_write:
-                            fh_log_write.write(result.data)
-
-                        if read_file_path in log_files_to_download['files']:
-                            log_files_to_download['files'].pop(read_file_path, None)
-
-                        if len(log_files_to_download['files']) == 0:
-                            log_download_pd.close()
-                            return
-
-                        if not log_download_pd.wasCanceled():
-                            log_download_pd.setLabelText(str(len(log_files_to_download['files']))+" file(s) remaining...")
-                            log_download_pd.setValue(0)
-                            async_call(REDFile(self.session).open,
-                                       (log_files_to_download['files'].keys()[0],
-                                       REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                                       cb_open,
-                                       cb_open_error)
-
-                    else:
-                        # TODO: Error popup for user?
-                        log_download_pd.close()
-                        print result
-
-                red_file.read_async(log_files_to_download['files'].values()[0]['size'],
-                                    lambda x: cb_read(red_file, x),
-                                    cb_read_status)
-
-            def cb_open_error(result):
-                # TODO: Error popup for user?
-                log_download_pd.close()
-                print result
-
-            if len(log_files_to_download['files']) > 0:
-                async_call(REDFile(self.session).open,
-                           (log_files_to_download['files'].keys()[0],
-                           REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                           cb_open,
-                           cb_open_error)
-
-    def delete_selected_logs(self):
-        def cb_program_delete_logs(result):
-            if result.stderr == "":
-                if json.loads(result.stdout):
-                    QMessageBox.information(None,
-                                           'Program | Logs',
-                                           'Deleted successfully!',
-                                                  QMessageBox.Ok)
-                else:
-                    QMessageBox.critical(None,
-                                         'Program | Logs',
-                                         'Deletion failed',
-                                               QMessageBox.Ok)
-            else:
-                pass
-                # TODO: Error popup for user?
-
-        self.tree_logs.setColumnHidden(2, False)
-        self.tree_logs.setColumnHidden(3, False)
-        index_list =  self.tree_logs.selectedIndexes()
-        self.tree_logs.setColumnHidden(2, True)
-        self.tree_logs.setColumnHidden(3, True)
-        if not index_list:
-            return
-
-        log_files_to_delete = self.load_log_files_for_ops(index_list)
-
-        if not log_files_to_delete:
-            return
-
-        file_list = []
-
-        for f_path in log_files_to_delete['files']:
-            file_list.append(f_path)
-
-        if len(file_list) > 0:
-            self.script_manager.execute_script('program_delete_logs',
-                                               cb_program_delete_logs,
-                                               [json.dumps(file_list)])
 
     def kill_process(self):
         if self.program.last_spawned_process != None:
