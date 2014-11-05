@@ -127,8 +127,8 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.tree_files_proxy_model.setSourceModel(self.tree_files_model)
         self.tree_files.setModel(self.tree_files_model)
         self.tree_files.setModel(self.tree_files_proxy_model)
-        self.tree_files.setColumnWidth(0, 175)
-        self.tree_files.setColumnWidth(1, 75)
+        self.tree_files.setColumnWidth(0, 210)
+        self.tree_files.setColumnWidth(1, 85)
 
         self.tree_files.selectionModel().selectionChanged.connect(self.update_ui_state)
         self.button_upload_files.clicked.connect(self.upload_files)
