@@ -26,7 +26,7 @@
       <item>
        <widget class="QToolBox" name="tbox_settings">
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="box_net">
          <property name="geometry">
@@ -80,7 +80,7 @@
              <enum>QTabWidget::South</enum>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tab_net_gen">
              <attribute name="title">
@@ -306,8 +306,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>762</width>
-                   <height>460</height>
+                   <width>370</width>
+                   <height>442</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -929,8 +929,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>804</width>
-           <height>618</height>
+           <width>141</width>
+           <height>148</height>
           </rect>
          </property>
          <attribute name="label">
@@ -960,8 +960,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>762</width>
-                   <height>547</height>
+                   <width>442</width>
+                   <height>196</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -1130,8 +1130,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>762</width>
-                   <height>547</height>
+                   <width>332</width>
+                   <height>229</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_20">
