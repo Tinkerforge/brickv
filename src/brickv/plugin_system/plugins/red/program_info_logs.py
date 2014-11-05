@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, QVariant
 from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QFileDialog, QProgressDialog, QMessageBox
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.ui_program_info_logs import Ui_ProgramInfoLogs
@@ -46,7 +46,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.program_dir = unicode(self.program.root_directory)
         self.program_dir_walk_result = None
         self.tree_logs_model = QStandardItemModel(self)
-        self.tree_logs_header_labels = ["Date/Time", "Size (bytes)"]
+        self.tree_logs_header_labels = ["Date / Time", "Size"]
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_header_labels)
         self.tree_logs.setModel(self.tree_logs_model)
 
@@ -71,11 +71,23 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
             self.program_dir_walk_result = json.loads(result.stdout)
 
+            def get_file_display_size(size):
+                if size < 1024:
+                    return str(size) + ' Bytes'
+                else:
+                    return str(size / 1024) + ' kiB'
+
+            def create_file_size_item(size):
+                item = QStandardItem(get_file_display_size(size))
+                item.setData(QVariant(size))
+
+                return item
+
             for dir_node in self.program_dir_walk_result:
                 if dir_node['root'] == os.path.join(self.program_dir, "log"):
                     for idx, f in enumerate(dir_node['files']):
                         file_name = f['name']
-                        file_size = unicode(f['size'])
+                        file_size = int(unicode(f['size']))
                         file_path = os.path.join(dir_node['root'], file_name)
                         if len(file_name.split('-')) < 2:
                             continue
@@ -90,31 +102,32 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
                             if parent_continuous:
                                 if file_name.split('-')[1] == "stdout.log":
-                                    parent_continuous.appendRow([QStandardItem("stdout"),
-                                                                 QStandardItem(file_size),
+                                    parent_continuous.appendRow([QStandardItem("stdout.log"),
+                                                                 create_file_size_item(file_size),
                                                                  QStandardItem("LOG_FILE_CONT"),
                                                                  QStandardItem(file_path)])
                                 elif file_name.split('-')[1] == "stderr.log":
-                                    parent_continuous.appendRow([QStandardItem("stderr"),
-                                                                 QStandardItem(file_size),
+                                    parent_continuous.appendRow([QStandardItem("stderr.log"),
+                                                                 create_file_size_item(file_size),
                                                                  QStandardItem("LOG_FILE_CONT"),
                                                                  QStandardItem(file_path)])
-                                current_size = int(parent_continuous_size.text())
-                                new_file_size = int(file_size)
-                                parent_continuous_size.setText(unicode(current_size + new_file_size))
+                                current_size = parent_continuous_size.data().toInt()[0]
+                                new_file_size = current_size + file_size
+                                parent_continuous_size.setText(get_file_display_size(new_file_size))
+                                parent_continuous_size.setData(QVariant(new_file_size))
                             else:
                                 parent_continuous = [QStandardItem("Continuous"),
-                                                     QStandardItem(file_size),
+                                                     create_file_size_item(file_size),
                                                      QStandardItem("PARENT_CONT"),
                                                      QStandardItem("")]
                                 if file_name.split('-')[1] == "stdout.log":
-                                    parent_continuous[0].appendRow([QStandardItem("stdout"),
-                                                                    QStandardItem(file_size),
+                                    parent_continuous[0].appendRow([QStandardItem("stdout.log"),
+                                                                    create_file_size_item(file_size),
                                                                     QStandardItem("LOG_FILE_CONT"),
                                                                     QStandardItem(file_path)])
                                 elif file_name.split('-')[1] == "stderr.log":
-                                    parent_continuous[0].appendRow([QStandardItem("stderr"),
-                                                                    QStandardItem(file_size),
+                                    parent_continuous[0].appendRow([QStandardItem("stderr.log"),
+                                                                    create_file_size_item(file_size),
                                                                     QStandardItem("LOG_FILE_CONT"),
                                                                     QStandardItem(file_path)])
                                 self.tree_logs_model.appendRow(parent_continuous)
@@ -169,42 +182,44 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                 if parent_date.child(i).text() == time:
                                     found_parent_time = True
                                     parent_date.child(i).appendRow([QStandardItem(file_name_display),
-                                                                    QStandardItem(file_size),
+                                                                    create_file_size_item(file_size),
                                                                     QStandardItem("LOG_FILE"),
                                                                     QStandardItem(file_path)])
-                                    current_size = int (parent_date.child(i, 1).text())
-                                    new_file_size = int(file_size)
-                                    parent_date.child(i, 1).setText(unicode(current_size + new_file_size))
+                                    current_size = parent_date.child(i, 1).data().toInt()[0]
+                                    new_file_size = current_size + file_size
+                                    parent_date.child(i, 1).setText(get_file_display_size(new_file_size))
+                                    parent_date.child(i, 1).setData(QVariant(new_file_size))
 
-                                    current_size = int(parent_date_size.text())
-                                    new_file_size = int(parent_date.child(i, 1).text())
-                                    parent_date_size.setText(unicode(current_size + new_file_size))
+                                    current_parent_size = parent_date_size.data().toInt()[0]
+                                    new_parent_file_size = current_parent_size + file_size
+                                    parent_date_size.setText(get_file_display_size(new_parent_file_size))
+                                    parent_date_size.setData(QVariant(new_parent_file_size))
                                     break
 
                             if not found_parent_time:
                                 parent_date.appendRow([QStandardItem(time),
-                                                       QStandardItem(file_size),
+                                                       create_file_size_item(file_size),
                                                        QStandardItem("PARENT_TIME"),
                                                        QStandardItem("")])
                                 parent_date.child(parent_date.rowCount()-1).appendRow([QStandardItem(file_name_display),
-                                                                                       QStandardItem(file_size),
+                                                                                       create_file_size_item(file_size),
                                                                                        QStandardItem("LOG_FILE"),
                                                                                        QStandardItem(file_path)])
-                                current_size = int(parent_date_size.text())
-                                new_file_size = int(file_size)
-                                parent_date_size.setText(unicode(current_size + new_file_size))
-
+                                current_parent_size = parent_date_size.data().toInt()[0]
+                                new_parent_file_size = current_parent_size + file_size
+                                parent_date_size.setText(get_file_display_size(new_parent_file_size))
+                                parent_date_size.setData(QVariant(new_parent_file_size))
                         else:
                             parent_date = [QStandardItem(date),
-                                           QStandardItem(file_size),
+                                           create_file_size_item(file_size),
                                            QStandardItem("PARENT_DATE"),
                                            QStandardItem("")]
                             parent_date[0].appendRow([QStandardItem(time),
-                                                      QStandardItem(file_size),
+                                                      create_file_size_item(file_size),
                                                       QStandardItem("PARENT_TIME"),
                                                       QStandardItem("")])
                             parent_date[0].child(0).appendRow([QStandardItem(file_name_display),
-                                                               QStandardItem(file_size),
+                                                               create_file_size_item(file_size),
                                                                QStandardItem("LOG_FILE"),
                                                                QStandardItem(file_path)])
                             self.tree_logs_model.appendRow(parent_date)
@@ -231,7 +246,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         def populate_log_download(item_list):
             if item_list[2].text() == "PARENT_CONT":
                 for i in range(item_list[0].rowCount()):
-                    f_size = int(item_list[0].child(i, 1).text()) # File size
+                    f_size = item_list[0].child(i, 1).data().toInt()[0] # File size
                     f_path = unicode(item_list[0].child(i, 3).text()) # File path
                     if not f_path in logs_download_dict['files']:
                         logs_download_dict['files'][f_path] = {'size': f_size}
@@ -242,7 +257,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                 for i in range(item_list[0].rowCount()):
                     parent_time = item_list[0].child(i)
                     for j in range(parent_time.rowCount()):
-                        f_size = int(parent_time.child(j, 1).text()) # File size
+                        f_size = parent_time.child(j, 1).data().toInt()[0] # File size
                         f_path = unicode(parent_time.child(j, 3).text()) # File path
                         if not f_path in logs_download_dict['files']:
                             logs_download_dict['files'][f_path] = {'size': f_size}
@@ -251,7 +266,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
             elif item_list[2].text() == "PARENT_TIME":
                 for i in range(item_list[0].rowCount()):
-                    f_size = int(item_list[0].child(i, 1).text()) # File size
+                    f_size = item_list[0].child(i, 1).toInt()[0] # File size
                     f_path = unicode(item_list[0].child(i, 3).text()) # File path
                     if not f_path in logs_download_dict['files']:
                         logs_download_dict['files'][f_path] = {'size': f_size}
@@ -260,7 +275,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
             elif item_list[2].text() == "LOG_FILE" or \
                  item_list[2].text() == "LOG_FILE_CONT":
-                f_size = int(item_list[1].text()) # File size
+                f_size = item_list[1].data().toInt()[0] # File size
                 f_path = unicode(item_list[3].text()) # File path
                 if not f_path in logs_download_dict['files']:
                     logs_download_dict['files'][f_path] = {'size': f_size}
