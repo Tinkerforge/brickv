@@ -138,6 +138,9 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
     def get_make_options(self):
         return ' '.join(self.option_list_editor.get_items())
 
+    def get_custom_options(self):
+        return {}
+
     def get_command(self):
         executable        = unicode(self.get_field('c.file').toString())
         arguments         = self.option_list_editor.get_items()

@@ -151,6 +151,9 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
     def get_compile_options(self):
         return ' '.join(self.option_list_editor.get_items())
 
+    def get_custom_options(self):
+        return {}
+
     def get_command(self):
         arguments         = self.option_list_editor.get_items()
         environment       = []

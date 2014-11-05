@@ -140,6 +140,9 @@ class ProgramPageShell(ProgramPage, Ui_ProgramPageShell):
     def get_executable(self):
         return unicode(self.combo_version.itemData(self.get_field('shell.version').toInt()[0]).toString())
 
+    def get_custom_options(self):
+        return {}
+
     def get_command(self):
         executable  = self.get_executable()
         arguments   = self.option_list_editor.get_items()

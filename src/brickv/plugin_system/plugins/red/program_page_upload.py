@@ -138,6 +138,16 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             self.upload_error('...error: {0}'.format(e))
             return
 
+        # set language specific custom option
+        custom_options = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_custom_options()
+
+        for name, value in custom_options.iteritems():
+            try:
+                self.program.set_custom_option_value(name, value) # FIXME: async_call
+            except REDError as e:
+                self.upload_error('...error: {0}'.format(e))
+                return
+
         self.log('...done')
 
         # upload files
