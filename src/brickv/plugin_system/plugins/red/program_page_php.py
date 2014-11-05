@@ -149,10 +149,10 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
         start_mode  = self.get_field('php.start_mode').toInt()[0]
 
         if start_mode == Constants.PHP_START_MODE_SCRIPT_FILE:
-            arguments.append(unicode(self.combo_script_file.currentText()))
+            arguments.append(unicode(self.get_field('php.script_file').toString()))
         elif start_mode == Constants.PHP_START_MODE_COMMAND:
             arguments.append('-r')
-            arguments.append(unicode(self.edit_command.text()))
+            arguments.append(unicode(self.get_field('php.command').toString()))
 
         working_directory = unicode(self.get_field('php.working_directory').toString())
 

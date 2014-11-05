@@ -177,10 +177,8 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         return unicode(self.combo_version.itemData(self.get_field('python.version').toInt()[0]).toString())
 
     def get_custom_options(self):
-        start_mode = self.get_field('python.start_mode').toInt()[0]
-
         return {
-            'python.start_mode':  Constants.python_start_mode_api_names[start_mode],
+            'python.start_mode':  Constants.python_start_mode_api_names[self.get_field('python.start_mode').toInt()[0]],
             'python.script_file': unicode(self.get_field('python.script_file').toString()),
             'python.module_name': unicode(self.get_field('python.module_name').toString()),
             'python.command':     unicode(self.get_field('python.command').toString()),

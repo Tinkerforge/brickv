@@ -146,7 +146,7 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
             environment.append(unicode('DISPLAY=:0'))
 
         if start_mode == Constants.OCTAVE_START_MODE_SCRIPT_FILE:
-            arguments.append(unicode(self.combo_script_file.currentText()))
+            arguments.append(unicode(self.get_field('octave.script_file').toString()))
 
         working_directory = unicode(self.get_field('octave.working_directory').toString())
 

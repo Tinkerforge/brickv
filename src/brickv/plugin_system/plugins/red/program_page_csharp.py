@@ -141,7 +141,7 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
         start_mode  = self.get_field('csharp.start_mode').toInt()[0]
 
         if start_mode == Constants.CSHARP_START_MODE_EXECUTABLE:
-            arguments.append(unicode(self.combo_executable_file.currentText()))
+            arguments.append(unicode(self.get_field('csharp.executable_file').toString()))
 
         working_directory = unicode(self.get_field('csharp.working_directory').toString())
 

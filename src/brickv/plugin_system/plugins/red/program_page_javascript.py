@@ -175,10 +175,10 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         start_mode  = self.get_field('javascript.start_mode').toInt()[0]
 
         if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE:
-            arguments.append(unicode(self.combo_script_file.currentText()))
+            arguments.append(unicode(self.get_field('javascript.script_file').toString()))
         elif start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND:
             arguments.append('-e')
-            arguments.append(unicode(self.edit_command.text()))
+            arguments.append(unicode(self.get_field('javascript.command').toString()))
 
         working_directory = unicode(self.get_field('javascript.working_directory').toString())
 

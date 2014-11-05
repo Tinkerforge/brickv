@@ -150,10 +150,10 @@ class ProgramPageShell(ProgramPage, Ui_ProgramPageShell):
         start_mode  = self.get_field('shell.start_mode').toInt()[0]
 
         if start_mode == Constants.SHELL_START_MODE_SCRIPT_FILE:
-            arguments.append(unicode(self.combo_script_file.currentText()))
+            arguments.append(unicode(self.get_field('shell.script_file').toString()))
         elif start_mode == Constants.SHELL_START_MODE_COMMAND:
             arguments.append('-c')
-            arguments.append(unicode(self.edit_command.text()))
+            arguments.append(unicode(self.get_field('shell.command').toString()))
 
         working_directory = unicode(self.get_field('shell.working_directory').toString())
 

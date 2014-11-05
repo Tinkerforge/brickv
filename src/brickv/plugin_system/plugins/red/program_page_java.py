@@ -221,10 +221,10 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             arguments += ['-cp', ':'.join(class_path_entries)]
 
         if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS:
-            arguments.append(unicode(self.combo_main_class.currentText()))
+            arguments.append(unicode(self.get_field('java.main_class').toString()))
         elif start_mode == Constants.JAVA_START_MODE_JAR_FILE:
             arguments.append('-jar')
-            arguments.append(unicode(self.combo_jar_file.currentText()))
+            arguments.append(unicode(self.get_field('java.jar_file').toString()))
 
         working_directory = unicode(self.get_field('java.working_directory').toString())
 

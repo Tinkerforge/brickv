@@ -149,10 +149,10 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
         start_mode  = self.get_field('perl.start_mode').toInt()[0]
 
         if start_mode == Constants.PERL_START_MODE_SCRIPT_FILE:
-            arguments.append(unicode(self.combo_script_file.currentText()))
+            arguments.append(unicode(self.get_field('perl.script_file').toString()))
         elif start_mode == Constants.PERL_START_MODE_COMMAND:
             arguments.append('-e')
-            arguments.append(unicode(self.edit_command.text()))
+            arguments.append(unicode(self.get_field('perl.command').toString()))
 
         working_directory = unicode(self.get_field('perl.working_directory').toString())
 
