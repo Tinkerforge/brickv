@@ -70,7 +70,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        self.session = None
+        self.session        = None # set from RED after construction
+        self.script_manager = None # set from RED after construction
 
         self.time_refresh_timer = QtCore.QTimer()
         self.time_refresh_timer.setInterval(1000)

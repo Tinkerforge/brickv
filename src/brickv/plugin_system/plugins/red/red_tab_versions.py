@@ -40,8 +40,8 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        self.session = None
-        self.script_manager = None
+        self.session        = None # set from RED after construction
+        self.script_manager = None # set from RED after construction
         
         self.package_list = [[] for i in range(NUM_TABS)]
         

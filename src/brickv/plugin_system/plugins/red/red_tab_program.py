@@ -48,8 +48,8 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         QWidget.__init__(self)
         self.setupUi(self)
 
-        self.script_manager      = None
-        self.session             = None
+        self.session             = None # set from RED after construction
+        self.script_manager      = None # set from RED after construction
         self.image_version_ref   = ['<unknown>']
         self.executable_versions = {
             'fpc':    None,

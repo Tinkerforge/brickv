@@ -43,6 +43,9 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
+        self.session        = None # set from RED after construction
+        self.script_manager = None # set from RED after construction
+
         self.is_tab_on_focus = False
 
         self.setup_tview_nic()

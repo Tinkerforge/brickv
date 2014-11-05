@@ -35,6 +35,9 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
+        self.session        = None # set from RED after construction
+        self.script_manager = None # set from RED after construction
+
         self.console = TerminalWidget()
         self.console_layout.insertWidget(1, self.console)
         

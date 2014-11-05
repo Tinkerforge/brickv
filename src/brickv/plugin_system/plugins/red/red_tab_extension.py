@@ -282,9 +282,10 @@ class REDTabExtension(QtGui.QWidget, Ui_REDTabExtension):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        self.session = None
+        self.session        = None # set from RED after construction
+        self.script_manager = None # set from RED after construction
+
         self.red_file = [None, None]
-        
         self.extensions_found = 0
         self.extensions = []
 
