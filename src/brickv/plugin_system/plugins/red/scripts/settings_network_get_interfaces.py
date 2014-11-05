@@ -37,6 +37,10 @@ if len(lwireless) > 0:
                                            'status': True,
                                            'essid': cmd_output_first_split[1].strip().split('SSID: ')[1],
                                            'bssid': cmd_output_first_split[0].strip().split('Connected to ')[1].split(' (')[0]}
+
+#remove lo and tunl0 interfaces from interfaces list
+lwired = [x for x in lwired if x!='lo' and x!='tunl0']
+
 if len(lwired) > 0:
     return_dict['wired'] = lwired
 if len(wl_links_dict) > 0:

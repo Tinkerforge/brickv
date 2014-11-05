@@ -29,5 +29,13 @@ print psutil.used_phymem()
 print psutil.TOTAL_PHYMEM
 print du.used
 print du.total
-print json.dumps(psutil.network_io_counters(pernic=True))
+
+interfaces = psutil.network_io_counters(pernic=True)
+#remove lo and tunl0 interfaces from list
+#if 'lo' in interfaces:
+#    del interfaces['lo']
+if 'tunl0' in interfaces:
+    del interfaces['tunl0']
+print json.dumps(interfaces)
+
 print json.dumps(all_process_info )
