@@ -32,6 +32,8 @@ from brickv.async_call import async_call
 
 SCRIPT_FOLDER = '/usr/local/scripts'
 
+script_data_set = set()
+
 class ScriptData(QtCore.QObject):
     script_signal = QtCore.pyqtSignal(object)
 
@@ -87,6 +89,7 @@ class ScriptManager:
                 return
 
         sd = ScriptData()
+        script_data_set.add(sd)
         sd.script_name = script_name
         sd.callback = callback
         sd.params = params
@@ -106,6 +109,7 @@ class ScriptManager:
             self.scripts[sd.script_name].copied = False
             if sd.callback is not None:
                 sd.callback(None) # We are still in GUI thread, use callback instead of signal
+            script_data_set.remove(sd)
 
     def _init_script(self, sd):
         if self.scripts[sd.script_name].copied:
@@ -120,6 +124,7 @@ class ScriptManager:
 
     def _init_script_open_file_error(self, sd):
         ScriptManager._call(self.scripts[sd.script_name], sd, None)
+        script_data_set.remove(sd)
 
     def _init_script_open_file(self, red_file, sd):
         red_file.write_async(self.scripts[sd.script_name].script,
@@ -134,6 +139,7 @@ class ScriptManager:
         else:
             print str(async_write_error)
             ScriptManager._call(self.scripts[sd.script_name], sd, None)
+            script_data_set.remove(sd)
 
     def _execute_after_init(self, sd):
         try:
@@ -142,6 +148,7 @@ class ScriptManager:
         except:
             traceback.print_exc()
             ScriptManager._call(self.scripts[sd.script_name], sd, None)
+            script_data_set.remove(sd)
             return
 
         def state_changed(red_process, sd):
@@ -155,6 +162,8 @@ class ScriptManager:
                     sd.stderr.release()
                 except:
                     traceback.print_exc()
+
+                script_data_set.remove(sd)
             elif red_process.state == REDProcess.STATE_EXITED:
                 def cb_stdout_data(result, sd):
                     if result.error != None:
@@ -166,6 +175,8 @@ class ScriptManager:
                             sd.stderr.release()
                         except:
                             traceback.print_exc()
+
+                        script_data_set.remove(sd)
 
                     out = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
 
@@ -180,9 +191,11 @@ class ScriptManager:
                         except:
                             traceback.print_exc()
 
+
                         err = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
 
                         ScriptManager._call(self.scripts[sd.script_name], sd, self.ScriptResult(out, err))
+                        script_data_set.remove(sd)
 
                     sd.stderr.read_async(sd.max_len, lambda result: cb_stderr_data(result, sd))
 

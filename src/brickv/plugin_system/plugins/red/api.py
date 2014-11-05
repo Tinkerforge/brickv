@@ -1069,11 +1069,14 @@ class REDProcess(REDObject):
 
         self._cb_state_changed_emit_cookie = None
 
-    def _cb_state_changed_emit(self, *args, **kwargs):
+    def _cb_state_changed_emit(self, process_id, *args, **kwargs):
         # cannot directly use emit function as callback functions, because this
         # triggers a segfault on the second call for some unknown reason. adding
         # a method in between helps
-        self._qtcb_state_changed.emit(*args, **kwargs)
+        if self.object_id != process_id:
+            return
+
+        self._qtcb_state_changed.emit(process_id, *args, **kwargs)
 
     def _cb_state_changed(self, process_id, state, timestamp, exit_code):
         if self.object_id != process_id:
