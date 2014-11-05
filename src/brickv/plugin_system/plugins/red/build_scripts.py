@@ -41,7 +41,7 @@ try:
             print('----> I will use the non-minified versions for now.')
             use_minified = False
             break
-        
+
     scripts.extend(glob.glob(build_script_path + '/scripts/*.sh'))
 
     for i, script in enumerate(scripts):
@@ -54,14 +54,16 @@ try:
             file_ending = script[-3:]
             content = f.read()
             class Script:
-                def __init__(self, script, file_ending, copied = False, is_executing = False, stdout = None, stderr = None):
-                    self.file_ending = file_ending 
+                def __init__(self, script, file_ending, copied = False, file = None, script_instances = None):
                     self.script = script
+                    self.file_ending = file_ending
                     self.copied = copied
-                    self.is_executing = is_executing
-                    self.stdout = stdout
-                    self.stderr = stderr
-                    
+                    self.file = file
+                    if script_instances == None:
+                        self.script_instances = []
+                    else:
+                        self.script_instances = script_instances
+
                 def __repr__(self):
                     return 'Script(' + repr(self.script) + ', "' + str(self.file_ending) + '")'
 
@@ -72,22 +74,16 @@ try:
         f.write('# -*- coding: utf-8 -*-\n')
         f.write('# This file is generated, don\'t edit it. Edit the files in the scripts/ folder.\n')
         f.write('\n')
-        f.write('from PyQt4 import QtCore\n')
-        f.write('\n')
-        f.write('class Script(QtCore.QObject):\n')
-        f.write('    script_signal = QtCore.pyqtSignal(object)\n')
-        f.write('\n')
-        f.write('    def __init__(self, script, file_ending, copied = False, is_executing = False, file = None, process = None, stdout = None, stderr = None):\n')
-        f.write('        QtCore.QObject.__init__(self)\n')
-        f.write('\n')
+        f.write('class Script:\n')
+        f.write('    def __init__(self, script, file_ending, copied = False, file = None, script_instances = None):\n')
         f.write('        self.script = script\n')
         f.write('        self.file_ending = file_ending\n')
         f.write('        self.copied = copied\n')
-        f.write('        self.is_executing = is_executing\n')
         f.write('        self.file = file\n')
-        f.write('        self.process = process\n')
-        f.write('        self.stdout = stdout\n')
-        f.write('        self.stderr = stderr\n')
+        f.write('        if script_instances == None:\n')
+        f.write('            self.script_instances = []\n')
+        f.write('        else:\n')
+        f.write('            self.script_instances = script_instances\n')
         f.write('\n')
         f.write('scripts = ')
         f.write(repr(script_content).replace('\\n# Created by pyminifier (https://github.com/liftoff/pyminifier)\\n\\n', ''))
