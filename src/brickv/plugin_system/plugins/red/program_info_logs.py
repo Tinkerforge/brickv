@@ -49,6 +49,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.tree_logs_header_labels = ["Date / Time", "Size"]
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_header_labels)
         self.tree_logs.setModel(self.tree_logs_model)
+        self.tree_logs.setColumnWidth(0, 250)
 
         self.button_download_logs.clicked.connect(self.download_selected_logs)
         self.button_delete_logs.clicked.connect(self.delete_selected_logs)
@@ -230,8 +231,11 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.refresh_in_progress = True
         self.update_main_ui_state()
 
+        width = self.tree_logs.columnWidth(0)
         self.tree_logs_model.clear()
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_header_labels)
+        self.tree_logs.setColumnWidth(0, width)
+
         self.script_manager.execute_script('program_get_os_walk',
                                            cb_program_get_os_walk,
                                            [self.program_dir])
