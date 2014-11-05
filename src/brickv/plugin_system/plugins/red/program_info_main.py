@@ -28,6 +28,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_info import ProgramInfoContext
 from brickv.plugin_system.plugins.red.program_info_files import ProgramInfoFiles
 from brickv.plugin_system.plugins.red.program_info_logs import ProgramInfoLogs
+from brickv.plugin_system.plugins.red.program_info_php import ProgramInfoPHP
 from brickv.plugin_system.plugins.red.program_info_python import ProgramInfoPython
 from brickv.plugin_system.plugins.red.program_info_ruby import ProgramInfoRuby
 from brickv.plugin_system.plugins.red.program_wizard import ProgramWizardContext
@@ -111,7 +112,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
                 Constants.LANGUAGE_JAVASCRIPT: None,
                 Constants.LANGUAGE_OCTAVE:     None,
                 Constants.LANGUAGE_PERL:       None,
-                Constants.LANGUAGE_PHP:        None,
+                Constants.LANGUAGE_PHP:        ProgramInfoPHP,
                 Constants.LANGUAGE_PYTHON:     ProgramInfoPython,
                 Constants.LANGUAGE_RUBY:       ProgramInfoRuby,
                 Constants.LANGUAGE_SHELL:      None,

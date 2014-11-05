@@ -99,7 +99,26 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
         if self.wizard().program != None:
             program = self.wizard().program
 
+            # start mode
+            start_mode_api_name = program.cast_custom_option_value('php.start_mode', unicode, '<unknown>')
+            start_mode          = Constants.get_php_start_mode(start_mode_api_name)
+
+            self.combo_start_mode.setCurrentIndex(start_mode)
+
+            # script file
+            self.combo_script_file_selector.set_current_text(program.cast_custom_option_value('php.script_file', unicode, ''))
+
+            # command
+            self.edit_command.setText(program.cast_custom_option_value('php.command', unicode, ''))
+
+            # working directory
             self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+
+            # options
+            self.option_list_editor.clear()
+
+            for option in program.cast_custom_option_value_list('php.options', unicode, []):
+                self.option_list_editor.add_item(option)
 
         self.update_ui_state()
 
@@ -140,7 +159,12 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
         return unicode(self.combo_version.itemData(self.get_field('php.version').toInt()[0]).toString())
 
     def get_custom_options(self):
-        return {}
+        return {
+            'php.start_mode':  Constants.php_start_mode_api_names[self.get_field('php.start_mode').toInt()[0]],
+            'php.script_file': unicode(self.get_field('php.script_file').toString()),
+            'php.command':     unicode(self.get_field('php.command').toString()),
+            'php.options':     self.option_list_editor.get_items()
+        }
 
     def get_command(self):
         executable  = self.get_executable()
@@ -157,3 +181,6 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
         working_directory = unicode(self.get_field('php.working_directory').toString())
 
         return executable, arguments, environment, working_directory
+
+    def apply_program_changes(self):
+        self.apply_program_custom_options_and_command_changes()

@@ -192,6 +192,23 @@ class Constants:
     PHP_START_MODE_SCRIPT_FILE = 0
     PHP_START_MODE_COMMAND     = 1
 
+    php_start_mode_api_names = {
+        PHP_START_MODE_SCRIPT_FILE: 'script_file',
+        PHP_START_MODE_COMMAND:     'command',
+    }
+
+    php_start_mode_display_names = {
+        PHP_START_MODE_SCRIPT_FILE: 'Script File',
+        PHP_START_MODE_COMMAND:     'Command',
+    }
+
+    @staticmethod
+    def get_php_start_mode(php_start_mode_api_name):
+        try:
+            return get_key_from_value(Constants.php_start_mode_api_names, php_start_mode_api_name)
+        except ValueError:
+            return Constants.DEFAULT_PHP_START_MODE
+
     # must match item order in combo_start_mode on Python page
     PYTHON_START_MODE_SCRIPT_FILE = 0
     PYTHON_START_MODE_MODULE_NAME = 1
