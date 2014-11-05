@@ -29,6 +29,7 @@ from brickv.plugin_system.plugins.red.program_info import ProgramInfoContext
 from brickv.plugin_system.plugins.red.program_info_files import ProgramInfoFiles
 from brickv.plugin_system.plugins.red.program_info_logs import ProgramInfoLogs
 from brickv.plugin_system.plugins.red.program_info_python import ProgramInfoPython
+from brickv.plugin_system.plugins.red.program_info_ruby import ProgramInfoRuby
 from brickv.plugin_system.plugins.red.program_wizard import ProgramWizardContext
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
 from brickv.plugin_system.plugins.red.program_utils import *
@@ -112,7 +113,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
                 Constants.LANGUAGE_PERL:       None,
                 Constants.LANGUAGE_PHP:        None,
                 Constants.LANGUAGE_PYTHON:     ProgramInfoPython,
-                Constants.LANGUAGE_RUBY:       None,
+                Constants.LANGUAGE_RUBY:       ProgramInfoRuby,
                 Constants.LANGUAGE_SHELL:      None,
                 Constants.LANGUAGE_VBNET:      None
             }

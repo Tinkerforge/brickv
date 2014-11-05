@@ -100,7 +100,26 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
         if self.wizard().program != None:
             program = self.wizard().program
 
+            # start mode
+            start_mode_api_name = program.cast_custom_option_value('ruby.start_mode', unicode, '<unknown>')
+            start_mode          = Constants.get_ruby_start_mode(start_mode_api_name)
+
+            self.combo_start_mode.setCurrentIndex(start_mode)
+
+            # script file
+            self.combo_script_file_selector.set_current_text(program.cast_custom_option_value('ruby.script_file', unicode, ''))
+
+            # command
+            self.edit_command.setText(program.cast_custom_option_value('ruby.command', unicode, ''))
+
+            # working directory
             self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+
+            # options
+            self.option_list_editor.clear()
+
+            for option in program.cast_custom_option_value_list('ruby.options', unicode, []):
+                self.option_list_editor.add_item(option)
 
         self.update_ui_state()
 
@@ -141,7 +160,12 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
         return unicode(self.combo_version.itemData(self.get_field('ruby.version').toInt()[0]).toString())
 
     def get_custom_options(self):
-        return {}
+        return {
+            'ruby.start_mode':  Constants.ruby_start_mode_api_names[self.get_field('ruby.start_mode').toInt()[0]],
+            'ruby.script_file': unicode(self.get_field('ruby.script_file').toString()),
+            'ruby.command':     unicode(self.get_field('ruby.command').toString()),
+            'ruby.options':     self.option_list_editor.get_items()
+        }
 
     def get_command(self):
         executable  = self.get_executable()
@@ -158,3 +182,6 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
         working_directory = unicode(self.get_field('ruby.working_directory').toString())
 
         return executable, arguments, environment, working_directory
+
+    def apply_program_changes(self):
+        self.apply_program_custom_options_and_command_changes()

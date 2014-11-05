@@ -220,6 +220,23 @@ class Constants:
     RUBY_START_MODE_SCRIPT_FILE = 0
     RUBY_START_MODE_COMMAND     = 1
 
+    ruby_start_mode_api_names = {
+        RUBY_START_MODE_SCRIPT_FILE: 'script_file',
+        RUBY_START_MODE_COMMAND:     'command',
+    }
+
+    ruby_start_mode_display_names = {
+        RUBY_START_MODE_SCRIPT_FILE: 'Script File',
+        RUBY_START_MODE_COMMAND:     'Command',
+    }
+
+    @staticmethod
+    def get_ruby_start_mode(ruby_start_mode_api_name):
+        try:
+            return get_key_from_value(Constants.ruby_start_mode_api_names, ruby_start_mode_api_name)
+        except ValueError:
+            return Constants.DEFAULT_RUBY_START_MODE
+
     # must match item order in combo_start_mode on Shell page
     SHELL_START_MODE_SCRIPT_FILE = 0
     SHELL_START_MODE_COMMAND     = 1
