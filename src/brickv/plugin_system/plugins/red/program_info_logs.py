@@ -307,7 +307,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         for index_chunk in index_list_chunked:
             item_list = []
             for index in index_chunk:
-                item = self.tree_logs_model.itemFromIndex(index)
+                item = self.tree_logs_model.itemFromIndex(self.tree_logs_proxy_model.mapToSource(index))
                 item_list.append(item)
             populate_log_download(item_list)
 
@@ -328,7 +328,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
         self.tree_logs.setColumnHidden(2, False)
         self.tree_logs.setColumnHidden(3, False)
-        index_list =  self.tree_logs.selectedIndexes()
+        index_list = self.tree_logs.selectedIndexes()
         self.tree_logs.setColumnHidden(2, True)
         self.tree_logs.setColumnHidden(3, True)
         if not index_list:
