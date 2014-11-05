@@ -270,7 +270,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
             elif item_list[2].text() == "PARENT_TIME":
                 for i in range(item_list[0].rowCount()):
-                    f_size = item_list[0].child(i, 1).toInt()[0] # File size
+                    f_size = item_list[0].child(i, 1).data().toInt()[0] # File size
                     f_path = unicode(item_list[0].child(i, 3).text()) # File path
                     if not f_path in logs_download_dict['files']:
                         logs_download_dict['files'][f_path] = {'size': f_size}
