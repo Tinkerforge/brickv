@@ -197,6 +197,25 @@ class Constants:
     PYTHON_START_MODE_MODULE_NAME = 1
     PYTHON_START_MODE_COMMAND     = 2
 
+    python_start_mode_api_names = {
+        PYTHON_START_MODE_SCRIPT_FILE: 'script_file',
+        PYTHON_START_MODE_MODULE_NAME: 'module_name',
+        PYTHON_START_MODE_COMMAND:     'command',
+    }
+
+    python_start_mode_display_names = {
+        PYTHON_START_MODE_SCRIPT_FILE: 'Script File',
+        PYTHON_START_MODE_MODULE_NAME: 'Module Name',
+        PYTHON_START_MODE_COMMAND:     'Command',
+    }
+
+    @staticmethod
+    def get_python_start_mode(python_start_mode_api_name):
+        try:
+            return get_key_from_value(Constants.python_start_mode_api_names, python_start_mode_api_name)
+        except ValueError:
+            return Constants.DEFAULT_PYTHON_START_MODE
+
     # must match item order in combo_start_mode on Ruby page
     RUBY_START_MODE_SCRIPT_FILE = 0
     RUBY_START_MODE_COMMAND     = 1
@@ -716,6 +735,21 @@ class MandatoryTypedFileSelector:
         self.combo_type.setVisible(visible)
         self.label_help.setVisible(visible)
 
+    def set_current_text(self, text):
+        # FIXME: select current combo_type based on text
+
+        if len(text) == 0:
+            self.combo_file.clearEditText()
+            return
+
+        i = self.combo_file.findText(text)
+
+        if i < 0:
+            self.combo_file.addItem(text)
+            i = self.combo_file.count() - 1
+
+        self.combo_file.setCurrentIndex(i)
+
     def reset(self):
         self.c2.check(False)
         self.combo_type.setCurrentIndex(1) # FIXME
@@ -746,6 +780,7 @@ class MandatoryDirectorySelector:
 
     def set_current_text(self, text):
         if len(text) == 0:
+            self.combo.clearEditText()
             return
 
         i = self.combo.findText(text)

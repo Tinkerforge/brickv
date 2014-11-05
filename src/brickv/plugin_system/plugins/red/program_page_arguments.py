@@ -145,14 +145,14 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
         if program == None:
             return
 
-        executable = program.executable
-        editable_arguments_offset = max(program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
-        arguments = program.arguments.items[:editable_arguments_offset]
+        executable                  = program.executable
+        editable_arguments_offset   = max(program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
+        arguments                   = program.arguments.items[:editable_arguments_offset]
         editable_environment_offset = max(program.cast_custom_option_value('editable_environment_offset', int, 0), 0)
-        environment = program.environment.items[:editable_environment_offset]
-        working_directory = program.working_directory
+        environment                 = program.environment.items[:editable_environment_offset]
+        working_directory           = program.working_directory
 
-        arguments += self.get_arguments()
+        arguments   += self.get_arguments()
         environment += self.get_environment()
 
         try:

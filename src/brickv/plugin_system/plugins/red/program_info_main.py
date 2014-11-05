@@ -473,7 +473,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.edit_language_wizard.finished.disconnect(self.edit_language_wizard_finished)
 
         if result == QDialog.Accepted:
-            #self.edit_language_wizard.page(Constants.PAGE_language).apply_program_changes()
+            self.edit_language_wizard.page(self.edit_language_wizard.pageIds()[0]).apply_program_changes()
             self.refresh_info()
 
         self.set_edit_buttons_enabled(True)

@@ -106,7 +106,29 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         if self.wizard().program != None:
             program = self.wizard().program
 
+            # start mode
+            start_mode_api_name = program.cast_custom_option_value('python.start_mode', unicode, '<unknown>')
+            start_mode          = Constants.get_python_start_mode(start_mode_api_name)
+
+            self.combo_start_mode.setCurrentIndex(start_mode)
+
+            # script file
+            self.combo_script_file_selector.set_current_text(program.cast_custom_option_value('python.script_file', unicode, ''))
+
+            # module name
+            self.edit_module_name.setText(program.cast_custom_option_value('python.module_name', unicode, ''))
+
+            # command
+            self.edit_command.setText(program.cast_custom_option_value('python.command', unicode, ''))
+
+            # working directory
             self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+
+            # options
+            self.option_list_editor.clear()
+
+            for option in program.cast_custom_option_value_list('python.options', unicode, []):
+                self.option_list_editor.add_item(option)
 
         self.update_ui_state()
 
@@ -155,7 +177,15 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         return unicode(self.combo_version.itemData(self.get_field('python.version').toInt()[0]).toString())
 
     def get_custom_options(self):
-        return {}
+        start_mode = self.get_field('python.start_mode').toInt()[0]
+
+        return {
+            'python.start_mode':  Constants.python_start_mode_api_names[start_mode],
+            'python.script_file': unicode(self.get_field('python.script_file').toString()),
+            'python.module_name': unicode(self.get_field('python.module_name').toString()),
+            'python.command':     unicode(self.get_field('python.command').toString()),
+            'python.options':     self.option_list_editor.get_items()
+        }
 
     def get_command(self):
         executable  = self.get_executable()
@@ -164,14 +194,17 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         start_mode  = self.get_field('python.start_mode').toInt()[0]
 
         if start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE:
-            arguments.append(unicode(self.combo_script_file.currentText()))
+            arguments.append(unicode(self.get_field('python.script_file').toString()))
         elif start_mode == Constants.PYTHON_START_MODE_MODULE_NAME:
             arguments.append('-m')
-            arguments.append(unicode(self.edit_module_name.text()))
+            arguments.append(unicode(self.get_field('python.module_name').toString()))
         elif start_mode == Constants.PYTHON_START_MODE_COMMAND:
             arguments.append('-c')
-            arguments.append(unicode(self.edit_command.text()))
+            arguments.append(unicode(self.get_field('python.command').toString()))
 
         working_directory = unicode(self.get_field('python.working_directory').toString())
 
         return executable, arguments, environment, working_directory
+
+    def apply_program_changes(self):
+        self.apply_program_custom_options_and_command_changes()

@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QWizardPage
+from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import *
 
 class ProgramPage(QWizardPage):
@@ -36,7 +37,7 @@ class ProgramPage(QWizardPage):
 
         self.setSubTitle(sub_title.format(**{'language': language, 'name': name}))
 
-    # to be used on language configuratiopn pages
+    # to be used on language configuration pages
     def get_executable_versions(self, executable_name, callback):
         def cb_get():
             versions = self.wizard().executable_versions[executable_name]
@@ -52,7 +53,7 @@ class ProgramPage(QWizardPage):
         else:
             cb_get()
 
-    # to be used on language configuratiopn pages
+    # to be used on language configuration pages
     def update_combo_version(self, executable_name, combo_version):
         def cb_update(versions):
             combo_version.clear()
@@ -68,3 +69,46 @@ class ProgramPage(QWizardPage):
             self.completeChanged.emit()
 
         self.get_executable_versions(executable_name, cb_update)
+
+    # to be used on language configuration pages
+    def apply_program_custom_options_and_command_changes(self):
+        program = self.wizard().program
+
+        if program == None:
+            return
+
+        # command
+        executable, arguments, environment, working_directory = self.get_command()
+
+        editable_arguments_offset   = max(program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
+        editable_arguments          = program.arguments.items[editable_arguments_offset:]
+        editable_environment_offset = max(program.cast_custom_option_value('editable_environment_offset', int, 0), 0)
+        editable_environment        = program.environment.items[editable_environment_offset:]
+
+        editable_arguments_offset   = len(arguments)
+        editable_environment_offset = len(environment)
+
+        arguments   += editable_arguments
+        environment += editable_environment
+
+        try:
+            program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
+        except REDError as e:
+            QMessageBox.critical(self, 'Edit Error',
+                                 u'Could not update command of program [{0}]:\n\n{1}'
+                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
+            return
+
+        # custom options
+        custom_options = self.get_custom_options()
+
+        custom_options['editable_arguments_offset'] = editable_arguments_offset
+        custom_options['editable_environment_offset'] = editable_environment_offset
+
+        for name, value in custom_options.iteritems():
+            try:
+                program.set_custom_option_value(name, value) # FIXME: async_call
+            except REDError as e:
+                QMessageBox.critical(self, 'Edit Error',
+                                     u'Could not update custom options of program [{0}]:\n\n{1}'
+                                     .format(program.cast_custom_option_value('name', unicode, '<unknown>')))

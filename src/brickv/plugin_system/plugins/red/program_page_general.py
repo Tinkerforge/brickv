@@ -35,7 +35,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
 
         self.setupUi(self)
 
-        self.edit_mode = False
+        self.edit_mode            = False
         self.identifier_is_unique = False
 
         self.setTitle(title_prefix + 'General Information')

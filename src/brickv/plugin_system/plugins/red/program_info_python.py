@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QWidget
 from brickv.plugin_system.plugins.red.program_info import ProgramInfo
+from brickv.plugin_system.plugins.red.program_utils import Constants
 from brickv.plugin_system.plugins.red.ui_program_info_python import Ui_ProgramInfoPython
 
 class ProgramInfoPython(ProgramInfo, Ui_ProgramInfoPython):
@@ -55,5 +56,34 @@ class ProgramInfoPython(ProgramInfo, Ui_ProgramInfoPython):
 
         self.get_executable_versions('python', cb_python_versions)
 
+        # start mode
+        start_mode_api_name = self.program.cast_custom_option_value('python.start_mode', unicode, '<unknown>')
+        start_mode          = Constants.get_python_start_mode(start_mode_api_name)
+
+        self.label_start_mode.setText(Constants.python_start_mode_display_names[start_mode])
+
+        start_mode_script_file = start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE
+        start_mode_module_name = start_mode == Constants.PYTHON_START_MODE_MODULE_NAME
+        start_mode_command     = start_mode == Constants.PYTHON_START_MODE_COMMAND
+
+        self.label_script_file_title.setVisible(start_mode_script_file)
+        self.label_script_file.setVisible(start_mode_script_file)
+        self.label_module_name_title.setVisible(start_mode_module_name)
+        self.label_module_name.setVisible(start_mode_module_name)
+        self.label_command_title.setVisible(start_mode_command)
+        self.label_command.setVisible(start_mode_command)
+
+        # script file
+        self.label_script_file.setText(self.program.cast_custom_option_value('python.script_file', unicode, '<unknown>'))
+
+        # module name
+        self.label_module_name.setText(self.program.cast_custom_option_value('python.module_name', unicode, '<unknown>'))
+
+        # command
+        self.label_command.setText(self.program.cast_custom_option_value('python.command', unicode, '<unknown>'))
+
         # working directory
         self.label_working_directory.setText(unicode(self.program.working_directory))
+
+        # options
+        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('python.options', unicode, [])))
