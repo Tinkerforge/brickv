@@ -30,6 +30,11 @@ from collections import namedtuple
 
 ExecutableVersion = namedtuple('ExecutableVersion', 'executable version')
 
+
+def get_key_from_value(dictionary, value):
+    return dictionary.keys()[dictionary.values().index(value)]
+
+
 class Constants:
     PAGE_GENERAL    = 1001
     PAGE_FILES      = 1002
@@ -115,8 +120,7 @@ class Constants:
 
     @staticmethod
     def get_language(language_api_name):
-        d = Constants.language_api_names
-        return d.keys()[d.values().index(language_api_name)]
+        return get_key_from_value(Constants.language_api_names, language_api_name)
 
     @staticmethod
     def get_language_display_name(language_api_name):
@@ -223,8 +227,7 @@ class Constants:
 
     @staticmethod
     def get_stdin_redirection(api_stdin_redirection):
-        d = Constants.api_stdin_redirections
-        return d.keys()[d.values().index(api_stdin_redirection)]
+        return get_key_from_value(Constants.api_stdin_redirections, api_stdin_redirection)
 
     @staticmethod
     def get_stdin_redirection_display_name(stdin_redirection):
@@ -252,8 +255,7 @@ class Constants:
 
     @staticmethod
     def get_stdout_redirection(api_stdout_redirection):
-        d = Constants.api_stdout_redirections
-        return d.keys()[d.values().index(api_stdout_redirection)]
+        return get_key_from_value(Constants.api_stdout_redirections, api_stdout_redirection)
 
     @staticmethod
     def get_stdout_redirection_display_name(stdout_redirection):
@@ -284,8 +286,7 @@ class Constants:
 
     @staticmethod
     def get_stderr_redirection(api_stderr_redirection):
-        d = Constants.api_stderr_redirections
-        return d.keys()[d.values().index(api_stderr_redirection)]
+        return get_key_from_value(Constants.api_stderr_redirections, api_stderr_redirection)
 
     @staticmethod
     def get_stderr_redirection_display_name(stderr_redirection):
@@ -316,8 +317,7 @@ class Constants:
 
     @staticmethod
     def get_start_condition(api_start_condition):
-        d = Constants.api_start_conditions
-        return d.keys()[d.values().index(api_start_condition)]
+        return get_key_from_value(Constants.api_start_conditions, api_start_condition)
 
     @staticmethod
     def get_start_condition_display_name(start_condition):
@@ -342,8 +342,7 @@ class Constants:
 
     @staticmethod
     def get_repeat_mode(api_repeat_mode):
-        d = Constants.api_repeat_modes
-        return d.keys()[d.values().index(api_repeat_mode)]
+        return get_key_from_value(Constants.api_repeat_modes, api_repeat_mode)
 
     @staticmethod
     def get_repeat_mode_display_name(repeat_mode):
