@@ -57,7 +57,7 @@ class ProgramInfoPHP(ProgramInfo, Ui_ProgramInfoPHP):
         self.get_executable_versions('php', cb_php_versions)
 
         # start mode
-        start_mode_api_name = self.program.cast_custom_option_value('php.php_mode', unicode, '<unknown>')
+        start_mode_api_name = self.program.cast_custom_option_value('php.start_mode', unicode, '<unknown>')
         start_mode          = Constants.get_php_start_mode(start_mode_api_name)
 
         self.label_start_mode.setText(Constants.php_start_mode_display_names[start_mode])
