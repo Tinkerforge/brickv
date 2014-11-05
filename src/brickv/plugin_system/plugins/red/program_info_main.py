@@ -389,6 +389,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         position = self.scroll_area.verticalScrollBar().value()
 
         widget.setEnabled(enabled)
+        widget.setAttribute(Qt.WA_TransparentForMouseEvents, not enabled)
 
         # restore current scroll position, because en/disableing buttons
         # makes the scroll position jump for som reason
@@ -404,6 +405,13 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.button_edit_arguments.setEnabled(enabled)
         self.button_edit_stdio.setEnabled(enabled)
         self.button_edit_schedule.setEnabled(enabled)
+
+        self.button_refresh.setAttribute(Qt.WA_TransparentForMouseEvents, not enabled)
+        self.button_edit_general.setAttribute(Qt.WA_TransparentForMouseEvents, not enabled)
+        self.button_edit_language.setAttribute(Qt.WA_TransparentForMouseEvents, not enabled)
+        self.button_edit_arguments.setAttribute(Qt.WA_TransparentForMouseEvents, not enabled)
+        self.button_edit_stdio.setAttribute(Qt.WA_TransparentForMouseEvents, not enabled)
+        self.button_edit_schedule.setAttribute(Qt.WA_TransparentForMouseEvents, not enabled)
 
         # restore current scroll position, because en/disableing buttons
         # makes the scroll position jump for som reason
