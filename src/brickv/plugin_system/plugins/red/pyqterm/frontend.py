@@ -210,7 +210,10 @@ class TerminalWidget(QWidget):
 
     def _pos2pixel(self, col, row):
         x = self._char_width[col]
-        y = self._char_height[row-1]
+        if row == 0:
+            y = 0
+        else:
+            y = self._char_height[row-1]
         return x, y
 
     def _paint_cursor(self, painter):
@@ -373,14 +376,26 @@ class TerminalWidget(QWidget):
             start_row, end_row = end_row, start_row
         if start_col > end_col:
             start_col, end_col = end_col, start_col
-        if end_row - start_row == 1:
-            return [(start_col, start_row, end_col, end_row)]
-        else:
-            return [
-                (start_col, start_row, self._columns, start_row + 1),
-                (0, start_row + 1, self._columns, end_row - 1),
-                (0, end_row - 1, end_col, end_row)
-            ]
+
+        if start_col > 80:
+            start_col = 80
+        if end_col > 80:
+            end_col = 80
+        if start_col < 0:
+            start_col = 0
+        if end_col < 0:
+            end_col = 0
+
+        if start_row > 24:
+            start_row = 24
+        if end_row > 24:
+            end_row = 24
+        if start_row < 0:
+            start_row = 0
+        if end_row < 0:
+            end_row = 0
+
+        return [(start_col, start_row, end_col, end_row)]
 
     def text(self, rect=None):
         if rect is None:
@@ -404,6 +419,10 @@ class TerminalWidget(QWidget):
 
     def row_count(self):
         return self._rows
+
+    def copy_selection_to_clipboard(self):
+        sel = self.text_selection()
+        self._clipboard.setText(sel, QClipboard.Clipboard)
 
     def mouseMoveEvent(self, event):
         if self._session == None:

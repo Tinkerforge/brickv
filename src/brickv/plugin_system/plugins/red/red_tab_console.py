@@ -43,11 +43,12 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
         
         self.connect_button.pressed.connect(self.connect_pressed)
         self.refresh_button.pressed.connect(self.update_ports)
+        self.copy_button.pressed.connect(self.console.copy_selection_to_clipboard)
         
         self.setFocusPolicy(QtCore.Qt.NoFocus)
         
         self.update_ports()
-        
+
     def update_ports(self):
         current_text = self.combo_serial_port.currentText()
         self.combo_serial_port.clear()
