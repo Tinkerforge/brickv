@@ -1226,20 +1226,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def slot_network_wired_save_clicked(self):
         self.network_button_save_enabled(False)
 
-        def cb_settings_network_wired_apply(result):
-            self.twidget_net.setEnabled(True)
-            self.label_working_wait.hide()
-            self.pbar_working_wait.hide()
-            if result.stderr is not None and  result.stderr == "":
-                QtGui.QMessageBox.information(None,
-                                              'Settings | Network | Wired',
-                                              'Wired connection configuration saved and activated.',
-                                              QtGui.QMessageBox.Ok)
-
-            else:
-                # TODO: Error popup for user?
-                pass
-
         self.network_all_data['manager_settings'].set('Settings', 'wired_interface', unicode(self.cbox_net_wired_intf.currentText()))
         config_ms = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
 
@@ -1255,38 +1241,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.network_all_data['wired_settings'].set('wired-default', 'dns2', 'None')
             self.network_all_data['wired_settings'].set('wired-default', 'dns3', 'None')
             self.network_all_data['wired_settings'].set('wired-default', 'default', 'True')
-            
+
             config = config_parser.to_string_no_fake(self.network_all_data['wired_settings'])
-
-            def cb_open(config, red_file):
-                def cb_write(red_file, result):
-                    red_file.release()
-
-                    if result is not None:
-                        self.network_button_save_enabled(True)
-                        # TODO: Error popup for user?
-                        print result
-                    else:
-                        self.script_manager.execute_script('settings_network_wired_apply',
-                                                           cb_settings_network_wired_apply,
-                                                           [])
-                
-                red_file.write_async(config, lambda x: cb_write(red_file, x), None)
-            
-            def cb_open_error(result):
-                self.brickd_button_save_enabled(True)
-            
-                # TODO: Error popup for user?
-                print result
-
-            async_call(self.wired_settings_conf_rfile.open,
-                       (WIRED_SETTINGS_CONF_PATH,
-                       REDFile.FLAG_WRITE_ONLY |
-                       REDFile.FLAG_CREATE |
-                       REDFile.FLAG_NON_BLOCKING |
-                       REDFile.FLAG_TRUNCATE, 0500, 0, 0),
-                       lambda x: cb_open(config, x),
-                       cb_open_error)
 
         elif idx == CBOX_NET_CONTYPE_INDEX_STATIC:
             ip = '.'.join((str(self.sbox_net_wired_ip1.value()),
@@ -1322,38 +1278,19 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
             config = config_parser.to_string_no_fake(self.network_all_data['wired_settings'])
 
-            def cb_open(config, red_file):
-                def cb_write(red_file, result):
-                    red_file.release()
+        def cb_settings_network_wired_apply(result):
+            self.twidget_net.setEnabled(True)
+            self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
+            if result.stderr is not None and  result.stderr == "":
+                QtGui.QMessageBox.information(None,
+                                              'Settings | Network | Wired',
+                                              'Wired connection configuration saved and activated.',
+                                              QtGui.QMessageBox.Ok)
 
-                    if result is not None:
-                        self.network_button_save_enabled(True)
-                        # TODO: Error popup for user?
-                        print result
-                    else:
-                        self.script_manager.execute_script('settings_network_wired_apply',
-                                                           cb_settings_network_wired_apply,
-                                                           [])
-                
-                red_file.write_async(config, lambda x: cb_write(red_file, x), None)
-            
-            def cb_open_error(result):
-                self.brickd_button_save_enabled(True)
+            else:
                 # TODO: Error popup for user?
-                print result
-
-            self.twidget_net.setEnabled(False)
-            self.label_working_wait.show()
-            self.pbar_working_wait.show()
-
-            async_call(self.wired_settings_conf_rfile.open,
-                       (WIRED_SETTINGS_CONF_PATH,
-                       REDFile.FLAG_WRITE_ONLY |
-                       REDFile.FLAG_CREATE |
-                       REDFile.FLAG_NON_BLOCKING |
-                       REDFile.FLAG_TRUNCATE, 0500, 0, 0),
-                       lambda x: cb_open(config, x),
-                       cb_open_error)
+                pass
 
         def cb_open_ms(config, red_file):
             def cb_write_ms(red_file, result):
@@ -1364,16 +1301,40 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     # TODO: Error popup for user?
                     print result
                 else:
-                    self.script_manager.execute_script('settings_network_wired_apply',
-                                                       cb_settings_network_wired_apply,
-                                                       [])
-                
+                    pass
+
             red_file.write_async(config_ms, lambda x: cb_write_ms(red_file, x), None)
 
         def cb_open_ms_error(result):
             self.brickd_button_save_enabled(True)
             # TODO: Error popup for user?
             print result
+            self.twidget_net.setEnabled(True)
+            self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
+
+        def cb_open(config, red_file):
+            def cb_write(red_file, result):
+                red_file.release()
+
+                if result is not None:
+                    self.network_button_save_enabled(True)
+                    # TODO: Error popup for user?
+                    print result
+                else:
+                    self.script_manager.execute_script('settings_network_wired_apply',
+                                                       cb_settings_network_wired_apply,
+                                                       [])
+            
+            red_file.write_async(config, lambda x: cb_write(red_file, x), None)
+        
+        def cb_open_error(result):
+            self.brickd_button_save_enabled(True)
+            # TODO: Error popup for user?
+            print result
+            self.twidget_net.setEnabled(True)
+            self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
 
         self.twidget_net.setEnabled(False)
         self.label_working_wait.show()
@@ -1387,6 +1348,15 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    REDFile.FLAG_TRUNCATE, 0500, 0, 0),
                    lambda x: cb_open_ms(config, x),
                    cb_open_ms_error)
+
+        async_call(self.wired_settings_conf_rfile.open,
+                   (WIRED_SETTINGS_CONF_PATH,
+                   REDFile.FLAG_WRITE_ONLY |
+                   REDFile.FLAG_CREATE |
+                   REDFile.FLAG_NON_BLOCKING |
+                   REDFile.FLAG_TRUNCATE, 0500, 0, 0),
+                   lambda x: cb_open(config, x),
+                   cb_open_error)
 
     def slot_brickd_save_clicked(self):
         self.brickd_button_save_enabled(False)
