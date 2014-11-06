@@ -50,7 +50,7 @@ if not 'brickv' in sys.modules:
         sys.modules['brickv'] = __import__(tail, globals(), locals(), [], -1)
 
 from PyQt4.QtGui import QApplication
-from PyQt4.QtCore import QEvent
+from PyQt4.QtCore import QEvent, pyqtSignal
 
 from brickv import config
 from brickv.mainwindow import MainWindow
@@ -60,9 +60,18 @@ logging.basicConfig(
     level = config.LOGGING_LEVEL, 
     format = config.LOGGING_FORMAT,
     datefmt = config.LOGGING_DATEFMT
-) 
+)
 
 class BrickViewer(QApplication):
+    object_creator_signal = pyqtSignal(object)
+
+    def __init__(self, *args, **kwargs):
+        QApplication.__init__(self, *args, **kwargs)
+        self.object_creator_signal.connect(self.object_creator_slot)
+
+    def object_creator_slot(self, object_creator):
+        object_creator.create()
+
     def notify(self, receiver, event):
         if event.type() > QEvent.User:
             if event.type() == ASYNC_EVENT:

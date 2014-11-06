@@ -28,6 +28,7 @@ import weakref
 import threading
 from PyQt4 import QtCore
 from brickv.bindings.brick_red import BrickRED
+from brickv.object_creator import create_object_in_qt_main_thread
 
 class REDError(Exception):
     E_SUCCESS                  = 0
@@ -253,7 +254,8 @@ class REDSession(QtCore.QObject):
 
 def _attach_or_release(session, object_class, object_id, extra_object_ids_to_release_on_error=[]):
     try:
-        obj = object_class(session).attach(object_id)
+        object_class_instance = create_object_in_qt_main_thread(object_class, (session,))
+        obj = object_class_instance.attach(object_id)
     except:
         try:
             session._brick.release_object_unchecked(object_id, session._session_id)
