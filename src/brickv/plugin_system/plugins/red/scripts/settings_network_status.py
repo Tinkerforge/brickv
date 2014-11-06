@@ -19,9 +19,16 @@ except:
     pass
 
 try:
-    cmd_get_if_active = "ip route | head -1 | awk -F' ' '{print $5}'"
-    ps_get_if_active = subprocess.Popen(cmd_get_if_active, shell=True, stdout=subprocess.PIPE)
-    intf_active = ps_get_if_active.communicate()[0].strip()
+    cmd_get_if_ok = "ip route | head -1 | awk -F' ' '{print $1}'"
+    ps_get_if_ok = subprocess.Popen(cmd_get_if_ok, shell=True, stdout=subprocess.PIPE)
+    intf_ok = ps_get_if_ok.communicate()[0].strip()
+    if intf_ok == "default":
+        cmd_get_if_active = "ip route | head -1 | awk -F' ' '{print $5}'"
+        ps_get_if_active = subprocess.Popen(cmd_get_if_active, shell=True, stdout=subprocess.PIPE)
+        intf_active = ps_get_if_active.communicate()[0].strip()
+    else:
+        intf_active == ""
+
     if intf_active != "":
         return_dict['cstat_intf_active']['name'] = intf_active
         intf_addrs = netifaces.ifaddresses(intf_active)
