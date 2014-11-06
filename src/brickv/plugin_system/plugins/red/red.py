@@ -23,10 +23,8 @@ Boston, MA 02111-1307, USA.
 """
 
 from brickv.plugin_system.plugin_base import PluginBase
-from brickv.async_call import async_call
 
 from brickv.plugin_system.plugins.red.ui_red import Ui_RED
-from brickv.plugin_system.plugins.red.red_tab_overview import REDTabOverview
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 
