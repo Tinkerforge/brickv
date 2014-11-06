@@ -31,6 +31,7 @@ from brickv.plugin_system.plugins.red.program_info_logs import ProgramInfoLogs
 from brickv.plugin_system.plugins.red.program_info_php import ProgramInfoPHP
 from brickv.plugin_system.plugins.red.program_info_python import ProgramInfoPython
 from brickv.plugin_system.plugins.red.program_info_ruby import ProgramInfoRuby
+from brickv.plugin_system.plugins.red.program_info_shell import ProgramInfoShell
 from brickv.plugin_system.plugins.red.program_wizard import ProgramWizardContext
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
 from brickv.plugin_system.plugins.red.program_utils import *
@@ -71,15 +72,15 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.root_directory      = unicode(self.program.root_directory)
 
         self.program.scheduler_state_changed_callback = self.scheduler_state_changed
-        self.program.process_spawned_callback = self.process_spawned
+        self.program.process_spawned_callback         = self.process_spawned
 
         self.program_refresh_in_progress = False
 
-        self.edit_general_wizard = None
-        self.edit_language_wizard = None
+        self.edit_general_wizard   = None
+        self.edit_language_wizard  = None
         self.edit_arguments_wizard = None
-        self.edit_stdio_wizard = None
-        self.edit_schedule_wizard = None
+        self.edit_stdio_wizard     = None
+        self.edit_schedule_wizard  = None
 
         self.button_refresh.clicked.connect(self.refresh_info)
 
@@ -115,7 +116,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
                 Constants.LANGUAGE_PHP:        ProgramInfoPHP,
                 Constants.LANGUAGE_PYTHON:     ProgramInfoPython,
                 Constants.LANGUAGE_RUBY:       ProgramInfoRuby,
-                Constants.LANGUAGE_SHELL:      None,
+                Constants.LANGUAGE_SHELL:      ProgramInfoShell,
                 Constants.LANGUAGE_VBNET:      None
             }
 

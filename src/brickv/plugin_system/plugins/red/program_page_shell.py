@@ -31,7 +31,7 @@ def get_shell_versions(script_manager, callback):
     def cb_versions(result):
         if result != None:
             try:
-                version = ' '.join(result.stdout.split('\n')[0].split(' ')[:-1])
+                version = (' '.join(result.stdout.split('\n')[0].split(' ')[:-1])).replace('version ', '')
                 callback([ExecutableVersion('/bin/bash', version)])
                 return
             except:
@@ -90,7 +90,7 @@ class ProgramPageShell(ProgramPage, Ui_ProgramPageShell):
 
         self.update_combo_version('shell', self.combo_version)
 
-        self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_RUBY_START_MODE)
+        self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_SHELL_START_MODE)
         self.combo_script_file_selector.reset()
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
         self.combo_working_directory_selector.reset()
@@ -100,7 +100,26 @@ class ProgramPageShell(ProgramPage, Ui_ProgramPageShell):
         if self.wizard().program != None:
             program = self.wizard().program
 
+            # start mode
+            start_mode_api_name = program.cast_custom_option_value('shell.start_mode', unicode, '<unknown>')
+            start_mode          = Constants.get_shell_start_mode(start_mode_api_name)
+
+            self.combo_start_mode.setCurrentIndex(start_mode)
+
+            # script file
+            self.combo_script_file_selector.set_current_text(program.cast_custom_option_value('shell.script_file', unicode, ''))
+
+            # command
+            self.edit_command.setText(program.cast_custom_option_value('shell.command', unicode, ''))
+
+            # working directory
             self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+
+            # options
+            self.option_list_editor.clear()
+
+            for option in program.cast_custom_option_value_list('shell.options', unicode, []):
+                self.option_list_editor.add_item(option)
 
         self.update_ui_state()
 
@@ -141,7 +160,12 @@ class ProgramPageShell(ProgramPage, Ui_ProgramPageShell):
         return unicode(self.combo_version.itemData(self.get_field('shell.version').toInt()[0]).toString())
 
     def get_custom_options(self):
-        return {}
+        return {
+            'shell.start_mode':  Constants.shell_start_mode_api_names[self.get_field('shell.start_mode').toInt()[0]],
+            'shell.script_file': unicode(self.get_field('shell.script_file').toString()),
+            'shell.command':     unicode(self.get_field('shell.command').toString()),
+            'shell.options':     self.option_list_editor.get_items()
+        }
 
     def get_command(self):
         executable  = self.get_executable()
@@ -158,3 +182,6 @@ class ProgramPageShell(ProgramPage, Ui_ProgramPageShell):
         working_directory = unicode(self.get_field('shell.working_directory').toString())
 
         return executable, arguments, environment, working_directory
+
+    def apply_program_changes(self):
+        self.apply_program_custom_options_and_command_changes()

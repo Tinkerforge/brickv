@@ -17,6 +17,7 @@ os.system("pyuic4 -o ui_program_info_main.py ui/program_info_main.ui")
 os.system("pyuic4 -o ui_program_info_php.py ui/program_info_php.ui")
 os.system("pyuic4 -o ui_program_info_python.py ui/program_info_python.ui")
 os.system("pyuic4 -o ui_program_info_ruby.py ui/program_info_ruby.ui")
+os.system("pyuic4 -o ui_program_info_shell.py ui/program_info_shell.ui")
 
 os.system("pyuic4 -o ui_program_page_general.py ui/program_page_general.ui")
 os.system("pyuic4 -o ui_program_page_files.py ui/program_page_files.ui")

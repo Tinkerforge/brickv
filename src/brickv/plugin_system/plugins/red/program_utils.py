@@ -258,6 +258,23 @@ class Constants:
     SHELL_START_MODE_SCRIPT_FILE = 0
     SHELL_START_MODE_COMMAND     = 1
 
+    shell_start_mode_api_names = {
+        SHELL_START_MODE_SCRIPT_FILE: 'script_file',
+        SHELL_START_MODE_COMMAND:     'command',
+    }
+
+    shell_start_mode_display_names = {
+        SHELL_START_MODE_SCRIPT_FILE: 'Script File',
+        SHELL_START_MODE_COMMAND:     'Command',
+    }
+
+    @staticmethod
+    def get_shell_start_mode(shell_start_mode_api_name):
+        try:
+            return get_key_from_value(Constants.shell_start_mode_api_names, shell_start_mode_api_name)
+        except ValueError:
+            return Constants.DEFAULT_SHELL_START_MODE
+
     # must match item order in combo_start_mode on VB.NET page
     VBNET_START_MODE_EXECUTABLE = 0
 
