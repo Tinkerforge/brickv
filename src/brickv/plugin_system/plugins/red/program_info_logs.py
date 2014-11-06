@@ -69,11 +69,21 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
     def update_ui_state(self):
         has_selection = self.tree_logs.selectionModel().hasSelection()
 
-        self.set_widget_enabled(self.button_download_logs, has_selection)
-        self.set_widget_enabled(self.button_delete_logs, has_selection)
-
+        self.tree_logs.setColumnHidden(2, False)
+        self.tree_logs.setColumnHidden(3, False)
+        item_indexes = self.tree_logs.selectedIndexes()
         self.tree_logs.setColumnHidden(2, True)
         self.tree_logs.setColumnHidden(3, True)
+
+        for item_index in item_indexes:
+            item = self.tree_logs_model.itemFromIndex(self.tree_logs_proxy_model.mapToSource(item_index))
+            if item.text() == "PARENT_ERR":
+                self.set_widget_enabled(self.button_download_logs, False)
+                self.set_widget_enabled(self.button_delete_logs, False)
+                return
+
+        self.set_widget_enabled(self.button_download_logs, has_selection)
+        self.set_widget_enabled(self.button_delete_logs, has_selection)
 
     def refresh_logs(self):
         def cb_program_get_os_walk(result):
@@ -97,7 +107,17 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
                 return item
 
-            program_dir_walk_result = json.loads(result.stdout)
+            try:
+                program_dir_walk_result = json.loads(result.stdout)
+            except:
+                parent_error = [QStandardItem("Error loading files..."),
+                                QStandardItem(""),
+                                QStandardItem("PARENT_ERR"),
+                                QStandardItem("")]
+                self.tree_logs_model.appendRow(parent_error)
+                self.tree_logs.header().setSortIndicator(0, Qt.DescendingOrder)
+                self.update_ui_state()
+                return
 
             for dir_node in program_dir_walk_result:
                 if dir_node['root'] == os.path.join(self.root_directory, "log"):
@@ -239,7 +259,6 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                                                QStandardItem("LOG_FILE"),
                                                                QStandardItem(file_path)])
                             self.tree_logs_model.appendRow(parent_date)
-
 
             self.tree_logs.header().setSortIndicator(0, Qt.DescendingOrder)
             self.update_ui_state()
