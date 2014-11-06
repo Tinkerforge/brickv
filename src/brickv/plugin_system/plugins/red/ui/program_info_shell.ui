@@ -161,7 +161,7 @@
      <item row="7" column="1">
       <widget class="QLabel" name="label_options">
        <property name="text">
-        <string>&lt;python-options&gt;</string>
+        <string>&lt;shell-options&gt;</string>
        </property>
        <property name="textFormat">
         <enum>Qt::PlainText</enum>
