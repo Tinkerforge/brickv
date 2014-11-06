@@ -917,7 +917,7 @@ def lookup_file_info(session, name, follow_symlink):
 
 def lookup_symlink_target(session, name, canonicalize):
     if not isinstance(name, REDString):
-        name = REDString(red).allocate(name)
+        name = REDString(session).allocate(name)
 
     error_code, target_string_id = session._brick.lookup_symlink_target(name, canonicalize, session._session_id)
 
