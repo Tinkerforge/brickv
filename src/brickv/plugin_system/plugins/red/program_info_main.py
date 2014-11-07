@@ -75,6 +75,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.program.scheduler_state_changed_callback = self.scheduler_state_changed
         self.program.process_spawned_callback         = self.process_spawned
 
+        self.first_show_event            = True
         self.program_refresh_in_progress = False
 
         self.edit_general_wizard   = None
@@ -144,11 +145,17 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.widget_files = ProgramInfoFiles(context, self.update_ui_state, self.set_widget_enabled)
         self.layout_files.addWidget(self.widget_files)
 
-        # refresh logs and files
-        QTimer.singleShot(2, self.widget_logs.refresh_logs)
-        QTimer.singleShot(4, self.widget_files.refresh_files)
-
         self.update_ui_state()
+
+    # override QWidget.showEvent
+    def showEvent(self, event):
+        if self.first_show_event:
+            QTimer.singleShot(1, self.widget_logs.refresh_logs)
+            QTimer.singleShot(1, self.widget_files.refresh_files)
+
+            self.first_show_event = False
+
+        QWidget.showEvent(self, event)
 
     def scheduler_state_changed(self, program):
         self.update_ui_state()

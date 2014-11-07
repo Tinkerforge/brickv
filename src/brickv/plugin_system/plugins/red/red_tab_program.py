@@ -87,8 +87,8 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
 
         if self.first_tab_on_focus:
             self.first_tab_on_focus = False
-            QTimer.singleShot(2, self.refresh_program_list)
-            QTimer.singleShot(4, self.refresh_executable_versions)
+            QTimer.singleShot(1, self.refresh_program_list)
+            QTimer.singleShot(1, self.refresh_executable_versions)
 
     def tab_off_focus(self):
         pass
