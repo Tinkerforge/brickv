@@ -120,145 +120,144 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                 return
 
             for dir_node in program_dir_walk_result:
-                if dir_node['root'] == self.log_directory:
-                    for idx, f in enumerate(dir_node['files']):
-                        file_name = f['name']
-                        file_size = int(unicode(f['size']))
-                        file_path = os.path.join(dir_node['root'], file_name)
-                        if len(file_name.split('-')) < 2:
-                            continue
+                for f in dir_node['files']:
+                    file_name = f['name']
+                    file_size = int(unicode(f['size']))
+                    file_path = os.path.join(dir_node['root'], file_name)
+                    if len(file_name.split('-')) < 2:
+                        continue
 
-                        if file_name.split('-')[0] == "continuous":
-                            parent_continuous = None
-                            for i in range(self.tree_logs_model.rowCount()):
-                                if self.tree_logs_model.item(i).text() == "Continuous":
-                                    parent_continuous = self.tree_logs_model.item(i)
-                                    parent_continuous_size = self.tree_logs_model.item(i, 1)
-                                    break
-
-                            if parent_continuous:
-                                if file_name.split('-')[1] == "stdout.log":
-                                    parent_continuous.appendRow([QStandardItem("stdout.log"),
-                                                                 create_file_size_item(file_size),
-                                                                 QStandardItem("LOG_FILE_CONT"),
-                                                                 QStandardItem(file_path)])
-                                elif file_name.split('-')[1] == "stderr.log":
-                                    parent_continuous.appendRow([QStandardItem("stderr.log"),
-                                                                 create_file_size_item(file_size),
-                                                                 QStandardItem("LOG_FILE_CONT"),
-                                                                 QStandardItem(file_path)])
-                                current_size = parent_continuous_size.data().toInt()[0]
-                                new_file_size = current_size + file_size
-                                parent_continuous_size.setText(get_file_display_size(new_file_size))
-                                parent_continuous_size.setData(QVariant(new_file_size))
-                            else:
-                                parent_continuous = [QStandardItem("Continuous"),
-                                                     create_file_size_item(file_size),
-                                                     QStandardItem("PARENT_CONT"),
-                                                     QStandardItem("")]
-                                if file_name.split('-')[1] == "stdout.log":
-                                    parent_continuous[0].appendRow([QStandardItem("stdout.log"),
-                                                                    create_file_size_item(file_size),
-                                                                    QStandardItem("LOG_FILE_CONT"),
-                                                                    QStandardItem(file_path)])
-                                elif file_name.split('-')[1] == "stderr.log":
-                                    parent_continuous[0].appendRow([QStandardItem("stderr.log"),
-                                                                    create_file_size_item(file_size),
-                                                                    QStandardItem("LOG_FILE_CONT"),
-                                                                    QStandardItem(file_path)])
-                                self.tree_logs_model.appendRow(parent_continuous)
-
-                            self.tree_logs.header().setSortIndicator(0, Qt.DescendingOrder)
-                            self.update_ui_state()
-                            continue
-
-                        time_stamp = file_name.split('-')[0]
-                        file_name_display = file_name.split('-')[1]
-
-                        if len(time_stamp.split('T')) < 2:
-                            continue
-                        _date = time_stamp.split('T')[0]
-                        _time = time_stamp.split('T')[1]
-                        year = _date[:4]
-                        month = _date[4:6]
-                        day = _date[6:]
-                        date = '-'.join([year, month, day])
-
-                        if '+' in _time:
-                            if len(_time.split('+')) < 2:
-                                continue
-                            __time = _time.split('+')[0].split('.')[0]
-                            hour = __time[:2]
-                            mins = __time[2:4]
-                            sec = __time[4:]
-                            gmt = _time.split('+')[1]
-                            gmt = '+'+gmt
-                        elif '-' in _time:
-                            if len(_time.split('-')) < 2:
-                                continue
-                            __time = _time.split('-')[0].split('.')[0]
-                            hour = __time[:2]
-                            mins = __time[2:4]
-                            sec = __time[4:]
-                            gmt = _time.split('-')[1]
-                            gmt = '-'+gmt
-                        time = ':'.join([hour, mins, sec])
-                        time_with_gmt = time+' '+gmt
-
-                        parent_date = None
+                    if file_name.split('-')[0] == "continuous":
+                        parent_continuous = None
                         for i in range(self.tree_logs_model.rowCount()):
-                            if self.tree_logs_model.item(i).text() == date:
-                                parent_date = self.tree_logs_model.item(i)
-                                parent_date_size = self.tree_logs_model.item(i, 1)
+                            if self.tree_logs_model.item(i).text() == "Continuous":
+                                parent_continuous = self.tree_logs_model.item(i)
+                                parent_continuous_size = self.tree_logs_model.item(i, 1)
                                 break
 
-                        if parent_date:
-                            found_parent_time = False
-                            for i in range(parent_date.rowCount()):
-                                if parent_date.child(i).text() == time:
-                                    found_parent_time = True
-                                    parent_date.child(i).appendRow([QStandardItem(file_name_display),
-                                                                    create_file_size_item(file_size),
-                                                                    QStandardItem("LOG_FILE"),
-                                                                    QStandardItem(file_path)])
-                                    current_size = parent_date.child(i, 1).data().toInt()[0]
-                                    new_file_size = current_size + file_size
-                                    parent_date.child(i, 1).setText(get_file_display_size(new_file_size))
-                                    parent_date.child(i, 1).setData(QVariant(new_file_size))
+                        if parent_continuous:
+                            if file_name.split('-')[1] == "stdout.log":
+                                parent_continuous.appendRow([QStandardItem("stdout.log"),
+                                                             create_file_size_item(file_size),
+                                                             QStandardItem("LOG_FILE_CONT"),
+                                                             QStandardItem(file_path)])
+                            elif file_name.split('-')[1] == "stderr.log":
+                                parent_continuous.appendRow([QStandardItem("stderr.log"),
+                                                             create_file_size_item(file_size),
+                                                             QStandardItem("LOG_FILE_CONT"),
+                                                             QStandardItem(file_path)])
+                            current_size = parent_continuous_size.data().toInt()[0]
+                            new_file_size = current_size + file_size
+                            parent_continuous_size.setText(get_file_display_size(new_file_size))
+                            parent_continuous_size.setData(QVariant(new_file_size))
+                        else:
+                            parent_continuous = [QStandardItem("Continuous"),
+                                                 create_file_size_item(file_size),
+                                                 QStandardItem("PARENT_CONT"),
+                                                 QStandardItem("")]
+                            if file_name.split('-')[1] == "stdout.log":
+                                parent_continuous[0].appendRow([QStandardItem("stdout.log"),
+                                                                create_file_size_item(file_size),
+                                                                QStandardItem("LOG_FILE_CONT"),
+                                                                QStandardItem(file_path)])
+                            elif file_name.split('-')[1] == "stderr.log":
+                                parent_continuous[0].appendRow([QStandardItem("stderr.log"),
+                                                                create_file_size_item(file_size),
+                                                                QStandardItem("LOG_FILE_CONT"),
+                                                                QStandardItem(file_path)])
+                            self.tree_logs_model.appendRow(parent_continuous)
 
-                                    current_parent_size = parent_date_size.data().toInt()[0]
-                                    new_parent_file_size = current_parent_size + file_size
-                                    parent_date_size.setText(get_file_display_size(new_parent_file_size))
-                                    parent_date_size.setData(QVariant(new_parent_file_size))
-                                    break
+                        self.tree_logs.header().setSortIndicator(0, Qt.DescendingOrder)
+                        self.update_ui_state()
+                        continue
 
-                            if not found_parent_time:
-                                parent_date.appendRow([QStandardItem(time),
-                                                       create_file_size_item(file_size),
-                                                       QStandardItem("PARENT_TIME"),
-                                                       QStandardItem("")])
-                                parent_date.child(parent_date.rowCount()-1).appendRow([QStandardItem(file_name_display),
-                                                                                       create_file_size_item(file_size),
-                                                                                       QStandardItem("LOG_FILE"),
-                                                                                       QStandardItem(file_path)])
+                    time_stamp = file_name.split('-')[0]
+                    file_name_display = file_name.split('-')[1]
+
+                    if len(time_stamp.split('T')) < 2:
+                        continue
+                    _date = time_stamp.split('T')[0]
+                    _time = time_stamp.split('T')[1]
+                    year = _date[:4]
+                    month = _date[4:6]
+                    day = _date[6:]
+                    date = '-'.join([year, month, day])
+
+                    if '+' in _time:
+                        if len(_time.split('+')) < 2:
+                            continue
+                        __time = _time.split('+')[0].split('.')[0]
+                        hour = __time[:2]
+                        mins = __time[2:4]
+                        sec = __time[4:]
+                        gmt = _time.split('+')[1]
+                        gmt = '+'+gmt
+                    elif '-' in _time:
+                        if len(_time.split('-')) < 2:
+                            continue
+                        __time = _time.split('-')[0].split('.')[0]
+                        hour = __time[:2]
+                        mins = __time[2:4]
+                        sec = __time[4:]
+                        gmt = _time.split('-')[1]
+                        gmt = '-'+gmt
+                    time = ':'.join([hour, mins, sec])
+                    time_with_gmt = time+' '+gmt
+
+                    parent_date = None
+                    for i in range(self.tree_logs_model.rowCount()):
+                        if self.tree_logs_model.item(i).text() == date:
+                            parent_date = self.tree_logs_model.item(i)
+                            parent_date_size = self.tree_logs_model.item(i, 1)
+                            break
+
+                    if parent_date:
+                        found_parent_time = False
+                        for i in range(parent_date.rowCount()):
+                            if parent_date.child(i).text() == time:
+                                found_parent_time = True
+                                parent_date.child(i).appendRow([QStandardItem(file_name_display),
+                                                                create_file_size_item(file_size),
+                                                                QStandardItem("LOG_FILE"),
+                                                                QStandardItem(file_path)])
+                                current_size = parent_date.child(i, 1).data().toInt()[0]
+                                new_file_size = current_size + file_size
+                                parent_date.child(i, 1).setText(get_file_display_size(new_file_size))
+                                parent_date.child(i, 1).setData(QVariant(new_file_size))
+
                                 current_parent_size = parent_date_size.data().toInt()[0]
                                 new_parent_file_size = current_parent_size + file_size
                                 parent_date_size.setText(get_file_display_size(new_parent_file_size))
                                 parent_date_size.setData(QVariant(new_parent_file_size))
-                        else:
-                            parent_date = [QStandardItem(date),
-                                           create_file_size_item(file_size),
-                                           QStandardItem("PARENT_DATE"),
-                                           QStandardItem("")]
-                            parent_date[0].appendRow([QStandardItem(time),
-                                                      create_file_size_item(file_size),
-                                                      QStandardItem("PARENT_TIME"),
-                                                      QStandardItem("")])
-                            parent_date[0].child(0).appendRow([QStandardItem(file_name_display),
-                                                               create_file_size_item(file_size),
-                                                               QStandardItem("LOG_FILE"),
-                                                               QStandardItem(file_path)])
-                            self.tree_logs_model.appendRow(parent_date)
+                                break
+
+                        if not found_parent_time:
+                            parent_date.appendRow([QStandardItem(time),
+                                                   create_file_size_item(file_size),
+                                                   QStandardItem("PARENT_TIME"),
+                                                   QStandardItem("")])
+                            parent_date.child(parent_date.rowCount()-1).appendRow([QStandardItem(file_name_display),
+                                                                                   create_file_size_item(file_size),
+                                                                                   QStandardItem("LOG_FILE"),
+                                                                                   QStandardItem(file_path)])
+                            current_parent_size = parent_date_size.data().toInt()[0]
+                            new_parent_file_size = current_parent_size + file_size
+                            parent_date_size.setText(get_file_display_size(new_parent_file_size))
+                            parent_date_size.setData(QVariant(new_parent_file_size))
+                    else:
+                        parent_date = [QStandardItem(date),
+                                       create_file_size_item(file_size),
+                                       QStandardItem("PARENT_DATE"),
+                                       QStandardItem("")]
+                        parent_date[0].appendRow([QStandardItem(time),
+                                                  create_file_size_item(file_size),
+                                                  QStandardItem("PARENT_TIME"),
+                                                  QStandardItem("")])
+                        parent_date[0].child(0).appendRow([QStandardItem(file_name_display),
+                                                           create_file_size_item(file_size),
+                                                           QStandardItem("LOG_FILE"),
+                                                           QStandardItem(file_path)])
+                        self.tree_logs_model.appendRow(parent_date)
 
             self.tree_logs.header().setSortIndicator(0, Qt.DescendingOrder)
             self.update_ui_state()
