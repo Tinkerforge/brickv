@@ -116,7 +116,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                 QStandardItem("")]
                 self.tree_logs_model.appendRow(parent_error)
                 self.tree_logs.header().setSortIndicator(0, Qt.DescendingOrder)
-                self.update_ui_state()
+                self.update_main_ui_state()
                 return
 
             for dir_node in program_dir_walk_result:
@@ -260,7 +260,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                         self.tree_logs_model.appendRow(parent_date)
 
             self.tree_logs.header().setSortIndicator(0, Qt.DescendingOrder)
-            self.update_ui_state()
+            self.update_main_ui_state()
 
         self.refresh_in_progress = True
         self.update_main_ui_state()
