@@ -29,6 +29,7 @@ from collections import namedtuple
 from PyQt4 import QtCore
 
 from brickv.async_call import async_call
+from brickv.object_creator import create_object_in_qt_main_thread
 
 SCRIPT_FOLDER = '/usr/local/scripts'
 
@@ -115,31 +116,50 @@ class ScriptManager:
         if self.scripts[sd.script_name].copied:
             return self._execute_after_init(sd)
 
-        self.scripts[sd.script_name].file = REDFile(self.session)
-        async_call(self.scripts[sd.script_name].file.open,
-                   (os.path.join(SCRIPT_FOLDER, sd.script_name + self.scripts[sd.script_name].file_ending),
-                    REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0755, 0, 0),
-                   lambda red_file: self._init_script_open_file(red_file, sd),
-                   lambda: self._init_script_open_file_error(sd))
+        async_call(self._init_script_async, sd, lambda: self._init_script_done(sd), lambda: self._init_script_error(sd))
 
-    def _init_script_open_file_error(self, sd):
-        ScriptManager._call(self.scripts[sd.script_name], sd, None)
-        script_data_set.remove(sd)
+    def _init_script_async(self, sd):
+        script = self.scripts[sd.script_name]
 
-    def _init_script_open_file(self, red_file, sd):
-        red_file.write_async(self.scripts[sd.script_name].script,
-                             lambda async_write_error: self._init_script_done(async_write_error, sd, red_file))
+        script.copy_lock.acquire()
 
-    def _init_script_done(self, async_write_error, sd, red_file):
-        self.scripts[sd.script_name].copied = True
-        red_file.release()
+        # recheck the copied flag, maybe someone else managed to
+        # copy the script in the meantime. if not it's our turn to copy it
+        if script.copied:
+            script.copy_lock.release()
+            return
 
-        if async_write_error == None:
+        try:
+            script.file = create_object_in_qt_main_thread(REDFile, (self.session,))
+            script.file.open(os.path.join(SCRIPT_FOLDER, sd.script_name + script.file_ending),
+                             REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0755, 0, 0)
+            script.file.write_async(script.script, lambda error: self._init_script_async_write_done(error, sd))
+        except:
+            self.scripts[sd.script_name].copy_lock.release()
+            traceback.print_exc()
+            raise
+
+    def _init_script_async_write_done(self, error, sd):
+        script = self.scripts[sd.script_name]
+
+        script.file.release()
+        script.file = None
+        script.copied = True
+        script.copy_lock.release()
+
+        if error == None:
             self._execute_after_init(sd)
         else:
-            print str(async_write_error)
-            ScriptManager._call(self.scripts[sd.script_name], sd, None)
+            print '_init_script_async_write_done', unicode(error)
+            ScriptManager._call(script, sd, None)
             script_data_set.remove(sd)
+
+    def _init_script_done(self, sd):
+        self._execute_after_init(sd)
+
+    def _init_script_error(self, sd):
+        ScriptManager._call(self.scripts[sd.script_name], sd, None)
+        script_data_set.remove(sd)
 
     def _execute_after_init(self, sd):
         try:
