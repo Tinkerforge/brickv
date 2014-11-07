@@ -752,7 +752,7 @@ class REDFileBase(REDObject):
             raise RuntimeError('Another asynchronous write is already in progress')
 
         d = bytearray(data)
-        self._write_async_data = REDFileBase.WriteAsyncData(d, len(d) , callback_status, callback_error)
+        self._write_async_data = create_object_in_qt_main_thread(REDFileBase.WriteAsyncData, (d, len(d) , callback_status, callback_error))
         self._next_write_async_burst()
 
     def read(self, length):
@@ -786,7 +786,7 @@ class REDFileBase(REDObject):
         if self._read_async_data is not None:
             raise RuntimeError('Another asynchronous write is already in progress')
 
-        self._read_async_data = REDFileBase.ReadAsyncData(bytearray(), length_max, callback_status, callback)
+        self._read_async_data = create_object_in_qt_main_thread(REDFileBase.ReadAsyncData, (bytearray(), length_max, callback_status, callback))
         self._session._brick.read_file_async(self.object_id, length_max)
 
     @property
