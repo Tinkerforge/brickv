@@ -61,7 +61,7 @@
       </layout>
      </widget>
      <widget class="QStackedWidget" name="stacked_container">
-      <widget class="QWidget" name="page">
+      <widget class="QWidget" name="widget_help">
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QLabel" name="label">

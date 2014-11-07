@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QVariant, QTimer
-from PyQt4.QtGui import QWidget, QDialog, QMessageBox, QListWidgetItem
+from PyQt4.QtGui import QApplication, QWidget, QDialog, QMessageBox, QListWidgetItem
 from brickv.plugin_system.plugins.red.ui_red_tab_program import Ui_REDTabProgram
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_info_main import ProgramInfoMain
@@ -99,19 +99,20 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
             self.button_refresh.setText('Refreshing...')
             self.button_refresh.setEnabled(False)
             self.button_new.setEnabled(False)
+            self.button_delete.setEnabled(False)
         else:
             self.progress_refresh.setVisible(False)
             self.button_refresh.setText('Refresh')
             self.button_refresh.setEnabled(True)
             self.button_new.setEnabled(True)
 
-        has_selection = len(self.list_programs.selectedItems()) > 0
+            has_selection = len(self.list_programs.selectedItems()) > 0
 
-        if has_selection:
-            row = self.list_programs.row(self.list_programs.selectedItems()[0])
-            self.stacked_container.setCurrentIndex(row + 1)
+            if has_selection:
+                row = self.list_programs.row(self.list_programs.selectedItems()[0])
+                self.stacked_container.setCurrentIndex(row + 1)
 
-        self.button_delete.setEnabled(has_selection)
+            self.button_delete.setEnabled(has_selection)
 
     def add_program_to_list(self, program):
         program_info = ProgramInfoMain(self.session, self.script_manager, self.image_version_ref, self.executable_versions, program)
@@ -141,9 +142,21 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         self.refresh_in_progress = True
         self.update_ui_state()
         self.list_programs.clear()
+        QApplication.processEvents()
+
+        # move help widget to front so the other widgets wont show and update during removal
+        self.stacked_container.setCurrentWidget(self.widget_help)
+
+        index = 0
 
         while self.stacked_container.count() > 1:
-            self.stacked_container.removeWidget(self.stacked_container.currentWidget())
+            widget = self.stacked_container.widget(index)
+
+            if widget != self.widget_help:
+                self.stacked_container.removeWidget(widget)
+                QApplication.processEvents()
+            elif index == 0:
+                index = 1
 
         async_call(refresh_async, None, cb_success, cb_error)
 
