@@ -198,8 +198,11 @@ class REDSession(QtCore.QObject):
 
         self._brick = brick
         self._session_id = None
+
+        # FIXME: use a thread here to avoid depending on the main UI thread
+        # which might be blocked for a while by something
         self._keep_alive_timer = QtCore.QTimer(self)
-        self._keep_alive_timer.timeout.connect(self._keep_session_alive)
+        self._keep_alive_timer.timeout.connect(self._keep_session_alive, QtCore.Qt.QueuedConnection)
 
     def __del__(self):
         self.expire()
@@ -549,9 +552,9 @@ class REDFileBase(REDObject):
             self.written = 0
 
             if callback_error is not None:
-                self.signal_error.connect(callback_error)
+                self.signal_error.connect(callback_error, QtCore.Qt.QueuedConnection)
             if callback_status is not None:
-                self.signal_status.connect(callback_status)
+                self.signal_status.connect(callback_status, QtCore.Qt.QueuedConnection)
 
     class ReadAsyncData(QtCore.QObject):
         signal_status = QtCore.pyqtSignal(int, int)
@@ -564,9 +567,9 @@ class REDFileBase(REDObject):
             self.max_length = max_length
 
             if callback_status is not None:
-                self.signal_status.connect(callback_status)
+                self.signal_status.connect(callback_status, QtCore.Qt.QueuedConnection)
             if callback is not None:
-                self.signal.connect(callback)
+                self.signal.connect(callback, QtCore.Qt.QueuedConnection)
 
     MAX_READ_BUFFER_LENGTH            = 62
     MAX_READ_ASYNC_BUFFER_LENGTH      = 60
@@ -1035,7 +1038,7 @@ class REDProcess(REDObject):
     E_CANNOT_EXECUTE = 126
     E_DOES_NOT_EXIST = 127
 
-    _qtcb_state_changed = QtCore.pyqtSignal()
+    _qtcb_state_changed = QtCore.pyqtSignal(int, int, int)
 
     def __repr__(self):
         return '<REDProcess object_id: {0}>'.format(self.object_id)
@@ -1060,7 +1063,7 @@ class REDProcess(REDObject):
         self._cb_state_changed_emit_cookie = None
 
     def _attach_callbacks(self):
-        self._qtcb_state_changed.connect(self._cb_state_changed)
+        self._qtcb_state_changed.connect(self._cb_state_changed, QtCore.Qt.QueuedConnection)
         self._cb_state_changed_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROCESS_STATE_CHANGED,
                                                                                self._cb_state_changed_emit)
 
@@ -1075,6 +1078,12 @@ class REDProcess(REDObject):
         if self.object_id != process_id:
             return
 
+        # cannot directly use emit function as callback functions, because this
+        # triggers a segfault on the second call for some unknown reason. adding
+        # a method in between helps
+        self._qtcb_state_changed.emit(state, timestamp, exit_code)
+
+    def _cb_state_changed(self, state, timestamp, exit_code):
         self._state     = state
         self._timestamp = timestamp
         self._exit_code = exit_code
@@ -1082,12 +1091,6 @@ class REDProcess(REDObject):
         if state != REDProcess.STATE_RUNNING and state != REDProcess.STATE_STOPPED:
             self._pid = None
 
-        # cannot directly use emit function as callback functions, because this
-        # triggers a segfault on the second call for some unknown reason. adding
-        # a method in between helps
-        self._qtcb_state_changed.emit()
-
-    def _cb_state_changed(self):
         state_changed_callback = self.state_changed_callback
 
         if state_changed_callback is not None:
@@ -1307,11 +1310,11 @@ class REDProgram(REDObject):
         self._cb_process_spawned_emit_cookie         = None
 
     def _attach_callbacks(self):
-        self._qtcb_scheduler_state_changed.connect(self._cb_scheduler_state_changed)
+        self._qtcb_scheduler_state_changed.connect(self._cb_scheduler_state_changed, QtCore.Qt.QueuedConnection)
         self._cb_scheduler_state_changed_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED,
                                                                                           self._cb_scheduler_state_changed_emit)
 
-        self._qtcb_process_spawned.connect(self._cb_process_spawned)
+        self._qtcb_process_spawned.connect(self._cb_process_spawned, QtCore.Qt.QueuedConnection)
         self._cb_process_spawned_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
                                                                                  self._cb_process_spawned_emit)
 
@@ -1333,6 +1336,12 @@ class REDProgram(REDObject):
         if self.object_id != program_id:
             return
 
+        # cannot directly use emit function as callback functions, because this
+        # triggers a segfault on the second call for some unknown reason. adding
+        # a method in between helps
+        self._qtcb_scheduler_state_changed.emit()
+
+    def _cb_scheduler_state_changed(self):
         error_code, state, timestamp, message_string_id = self._session._brick.get_program_scheduler_state(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
@@ -1348,12 +1357,6 @@ class REDProgram(REDObject):
         self._scheduler_timestamp = timestamp
         self._scheduler_message   = message
 
-        # cannot directly use emit function as callback functions, because this
-        # triggers a segfault on the second call for some unknown reason. adding
-        # a method in between helps
-        self._qtcb_scheduler_state_changed.emit()
-
-    def _cb_scheduler_state_changed(self):
         scheduler_state_changed_callback = self.scheduler_state_changed_callback
 
         if scheduler_state_changed_callback is not None:
@@ -1362,6 +1365,13 @@ class REDProgram(REDObject):
     def _cb_process_spawned_emit(self, program_id):
         if self.object_id != program_id:
             return
+
+        # cannot directly use emit function as callback functions, because this
+        # triggers a segfault on the second call for some unknown reason. adding
+        # a method in between helps
+        self._qtcb_process_spawned.emit()
+
+    def _cb_process_spawned(self):
         error_code, process_id, timestamp = self._session._brick.get_last_spawned_program_process(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
@@ -1376,12 +1386,6 @@ class REDProgram(REDObject):
         self._last_spawned_process   = process
         self._last_spawned_timestamp = timestamp
 
-        # cannot directly use emit function as callback functions, because this
-        # triggers a segfault on the second call for some unknown reason. adding
-        # a method in between helps
-        self._qtcb_process_spawned.emit()
-
-    def _cb_process_spawned(self):
         process_spawned_callback = self.process_spawned_callback
 
         if process_spawned_callback is not None:
