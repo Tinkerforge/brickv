@@ -51,7 +51,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.program                = context.program
         self.update_main_ui_state   = update_main_ui_state
         self.set_widget_enabled     = set_widget_enabled
-        self.root_directory         = unicode(self.program.root_directory)
+        self.log_directory          = os.path.join(unicode(self.program.root_directory), 'log')
         self.refresh_in_progress    = False
         self.tree_logs_model        = QStandardItemModel(self)
         self.tree_logs_model_header = ['Date / Time', 'Size']
@@ -92,7 +92,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             if result == None or result.stderr != "":
                 self.update_main_ui_state()
                 # TODO: Error popup for user?
-                print result
+                print 'refresh_logs cb_program_get_os_walk', result
                 return
 
             def get_file_display_size(size):
@@ -120,7 +120,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                 return
 
             for dir_node in program_dir_walk_result:
-                if dir_node['root'] == os.path.join(self.root_directory, "log"):
+                if dir_node['root'] == self.log_directory:
                     for idx, f in enumerate(dir_node['files']):
                         file_name = f['name']
                         file_size = int(unicode(f['size']))
@@ -271,9 +271,8 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_model_header)
         self.tree_logs.setColumnWidth(0, width)
 
-        self.script_manager.execute_script('program_get_os_walk',
-                                           cb_program_get_os_walk,
-                                           [self.root_directory])
+        self.script_manager.execute_script('program_get_os_walk', cb_program_get_os_walk,
+                                           [self.log_directory], max_len=1024*1024)
 
     def load_log_files_for_ops(self, index_list):
         if len(index_list) % 4 != 0:
@@ -414,7 +413,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                     else:
                         # TODO: Error popup for user?
                         log_download_pd.close()
-                        print result
+                        print 'download_selected_logs cb_open cb_read', result
 
                 red_file.read_async(log_files_to_download['files'].values()[0]['size'],
                                     lambda x: cb_read(red_file, x),
@@ -423,7 +422,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             def cb_open_error(result):
                 # TODO: Error popup for user?
                 log_download_pd.close()
-                print result
+                print 'download_selected_logs cb_open_error', result
 
             if len(log_files_to_download['files']) > 0:
                 async_call(REDFile(self.session).open,

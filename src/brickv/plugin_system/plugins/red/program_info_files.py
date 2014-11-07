@@ -115,7 +115,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.program                 = context.program
         self.update_main_ui_state    = update_main_ui_state
         self.set_widget_enabled      = set_widget_enabled
-        self.root_directory          = unicode(self.program.root_directory)
+        self.bin_directory           = os.path.join(unicode(self.program.root_directory), 'bin')
         self.refresh_in_progress     = False
         self.available_files         = []
         self.available_directories   = []
@@ -198,8 +198,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.tree_files.setColumnWidth(1, width2)
 
         self.script_manager.execute_script('directory_walk', cb_directory_walk,
-                                           [os.path.join(self.root_directory, 'bin')],
-                                           max_len=1024*1024)
+                                           [self.bin_directory], max_len=1024*1024)
 
     def upload_files(self):
         print 'upload_files'
