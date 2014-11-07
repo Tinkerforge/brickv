@@ -181,7 +181,7 @@
           <item row="4" column="1">
            <widget class="QLabel" name="label_stdout_individual_log_help">
             <property name="text">
-             <string>Output data is written to an individual log file (&lt;timestamp&gt;-stdout.log) per program execution.</string>
+             <string>Output data is written to an individual log file (&lt;timestamp&gt;-stdout.log) per program run.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -274,7 +274,7 @@
           <item row="4" column="1">
            <widget class="QLabel" name="label_stderr_individual_log_help">
             <property name="text">
-             <string>Error data is written to an individual log file (&lt;timestamp&gt;-stderr.log) per program execution.</string>
+             <string>Error data is written to an individual log file (&lt;timestamp&gt;-stderr.log) per program run.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>

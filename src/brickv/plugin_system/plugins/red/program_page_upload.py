@@ -337,22 +337,44 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             # set schedule
             self.next_step('Setting schedule...')
 
-            start_condition = Constants.api_start_conditions[self.get_field('start_condition').toInt()[0]]
-            start_time      = self.get_field('start_time').toDateTime().toMSecsSinceEpoch() / 1000
-            start_delay     = self.get_field('start_delay').toUInt()[0]
-            start_fields    = ' '.join(unicode(self.get_field('start_fields').toString()).split())
-            repeat_mode     = Constants.api_repeat_modes[self.get_field('repeat_mode').toInt()[0]]
-            repeat_interval = self.get_field('repeat_interval').toUInt()[0]
-            repeat_fields   = ' '.join(unicode(self.get_field('repeat_fields').toString()).split())
+            start_mode = self.get_field('start_mode').toInt()[0]
+
+            if start_mode == Constants.START_MODE_ONCE:
+                api_start_mode          = REDProgram.START_MODE_NEVER
+                start_once_after_upload = True
+            else:
+                api_start_mode          = Constants.api_start_mode[start_mode]
+                start_once_after_upload = False
+
+            continue_after_error = self.get_field('continue_after_error').toBool()
+            start_interval       = self.get_field('start_interval').toUInt()[0]
+            start_fields         = unicode(self.get_field('start_fields').toString())
 
             try:
-                self.program.set_schedule(start_condition, start_time, start_delay, start_fields,
-                                          repeat_mode, repeat_interval, repeat_fields) # FIXME: async_call
+                self.program.set_schedule(api_start_mode, continue_after_error, start_interval, start_fields) # FIXME: async_call
             except REDError as e:
                 self.upload_error('...error: {0}'.format(e))
                 return
 
             self.log('...done')
+
+            # start once after upload, if enabled
+            if start_once_after_upload:
+                self.next_step('Starting...')
+
+                try:
+                    self.program.set_custom_option_value('started_once_after_upload', 'yes') # FIXME: async_call
+                except REDError as e:
+                    self.upload_error('...error: {0}'.format(e))
+                    return
+
+                try:
+                    self.program.start() # FIXME: async_call
+                except REDError as e:
+                    self.upload_error('...error: {0}'.format(e))
+                    return
+
+                self.log('...done')
 
         self.next_step('Upload successful!')
 

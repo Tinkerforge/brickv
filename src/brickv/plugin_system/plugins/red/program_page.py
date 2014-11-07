@@ -102,7 +102,7 @@ class ProgramPage(QWizardPage):
         # custom options
         custom_options = self.get_custom_options()
 
-        custom_options['editable_arguments_offset'] = editable_arguments_offset
+        custom_options['editable_arguments_offset']   = editable_arguments_offset
         custom_options['editable_environment_offset'] = editable_environment_offset
 
         for name, value in custom_options.iteritems():

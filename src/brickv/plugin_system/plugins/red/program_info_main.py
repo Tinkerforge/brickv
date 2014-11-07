@@ -84,8 +84,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         self.button_refresh.clicked.connect(self.refresh_info)
 
-        self.button_kill.clicked.connect(self.kill_process)
-        self.button_schedule_now.clicked.connect(self.schedule_now)
+        self.button_start_program.clicked.connect(self.start_program)
+        self.button_kill_process.clicked.connect(self.kill_process)
+        self.button_continue_schedule.clicked.connect(self.continue_schedule)
         self.button_send_stdin_pipe_input.clicked.connect(self.send_stdin_pipe_input)
 
         self.check_show_environment.stateChanged.connect(self.update_ui_state)
@@ -235,20 +236,18 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             elif self.program.last_spawned_process.state == REDProcess.STATE_STOPPED:
                 self.label_program_current_state.setText('Stopped on {0} at {1}'.format(date, time)) # FIXME: show continue button?
 
-            self.label_last_start.setText(QDateTime.fromTime_t(self.program.last_spawned_timestamp).toString('yyyy-MM-dd HH:mm:ss'))
+            self.label_last_program_start.setText(QDateTime.fromTime_t(self.program.last_spawned_timestamp).toString('yyyy-MM-dd HH:mm:ss'))
         else:
             self.label_program_current_state.setText('Not running')
-            self.label_last_start.setText('Never started')
+            self.label_last_program_start.setText('Never started')
 
+        scheduler_stopped            = self.program.scheduler_state == REDProgram.SCHEDULER_STATE_STOPPED
         scheduler_state_display_name = Constants.api_scheduler_state_display_name.get(self.program.scheduler_state, '<unknown>')
 
-        if self.program.scheduler_state == REDProgram.SCHEDULER_STATE_STOPPED:
-            if process_running:
-                scheduler_state_display_name += ', no automatic program repeat'
-            else:
-                scheduler_state_display_name += ', no automatic program start'
+        if scheduler_stopped:
+            scheduler_state_display_name += ', no automatic program start'
 
-        self.label_scheduler_current_state.setText(scheduler_state_display_name)
+        self.label_current_scheduler_state.setText(scheduler_state_display_name)
         self.label_last_scheduler_state_change.setText(QDateTime.fromTime_t(self.program.scheduler_timestamp).toString('yyyy-MM-dd HH:mm:ss'))
 
         if self.program.scheduler_message != None:
@@ -256,8 +255,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         else:
             self.label_last_scheduler_message.setText('None')
 
-        self.set_widget_enabled(self.button_kill, process_running)
-        self.set_widget_enabled(self.button_schedule_now, not process_running)
+        self.set_widget_enabled(self.button_start_program, not process_running)
+        self.set_widget_enabled(self.button_kill_process, process_running)
+        self.set_widget_enabled(self.button_continue_schedule, scheduler_stopped and self.program.start_mode != REDProgram.START_MODE_NEVER)
 
         # logs
         self.widget_logs.update_ui_state()
@@ -326,38 +326,42 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             self.label_stderr_file.setText(unicode(self.program.stderr_file_name))
 
         # schedule
-        start_condition_never  = self.program.start_condition == REDProgram.START_CONDITION_NEVER
-        start_condition_now    = self.program.start_condition == REDProgram.START_CONDITION_NOW
-        start_condition_reboot = self.program.start_condition == REDProgram.START_CONDITION_REBOOT
-        start_condition_time   = self.program.start_condition == REDProgram.START_CONDITION_TIMESTAMP
-        start_condition_cron   = self.program.start_condition == REDProgram.START_CONDITION_CRON
+        start_mode_never    = self.program.start_mode == REDProgram.START_MODE_NEVER
+        start_mode_always   = self.program.start_mode == REDProgram.START_MODE_ALWAYS
+        start_mode_interval = self.program.start_mode == REDProgram.START_MODE_INTERVAL
+        start_mode_cron     = self.program.start_mode == REDProgram.START_MODE_CRON
 
-        self.label_start_condition.setText(Constants.api_start_condition_display_names.get(self.program.start_condition, '<unknown>'))
-        self.label_start_time_title.setVisible(start_condition_time)
-        self.label_start_time.setVisible(start_condition_time)
-        self.label_start_time.setText(QDateTime.fromTime_t(self.program.start_timestamp).toString('yyyy-MM-dd HH:mm:ss'))
-        self.label_start_delay_title.setVisible(start_condition_now or start_condition_reboot)
-        self.label_start_delay.setVisible(start_condition_now or start_condition_reboot)
-        self.label_start_delay.setText('{0} seconds'.format(self.program.start_delay))
-        self.label_start_fields_title.setVisible(start_condition_cron)
-        self.label_start_fields.setVisible(start_condition_cron)
+        start_mode_display_names  = Constants.api_start_mode_display_names.get(self.program.start_mode, '<unknown>')
+        started_once_after_upload = self.program.cast_custom_option_value('started_once_after_upload', unicode, '<unknown>')
 
-        if start_condition_cron:
+        if started_once_after_upload == 'yes':
+            start_mode_display_names += ' (was started once after upload)'
+
+        self.label_start_mode.setText(start_mode_display_names)
+        self.label_start_interval_title.setVisible(start_mode_interval)
+        self.label_start_interval.setVisible(start_mode_interval)
+        self.label_start_interval.setText('{0} seconds'.format(self.program.start_interval))
+        self.label_start_fields_title.setVisible(start_mode_cron)
+        self.label_start_fields.setVisible(start_mode_cron)
+
+        if start_mode_cron:
             self.label_start_fields.setText(unicode(self.program.start_fields))
 
-        repeat_mode_never    = self.program.repeat_mode == REDProgram.REPEAT_MODE_NEVER
-        repeat_mode_interval = self.program.repeat_mode == REDProgram.REPEAT_MODE_INTERVAL
-        repeat_mode_cron     = self.program.repeat_mode == REDProgram.REPEAT_MODE_CRON
+        self.label_continue_after_error_title.setVisible(not start_mode_never)
+        self.label_continue_after_error.setVisible(not start_mode_never)
 
-        self.label_repeat_mode.setText(Constants.api_repeat_mode_display_names.get(self.program.repeat_mode, '<unknown>'))
-        self.label_repeat_interval_title.setVisible(repeat_mode_interval)
-        self.label_repeat_interval.setVisible(repeat_mode_interval)
-        self.label_repeat_interval.setText('{0} seconds'.format(self.program.repeat_interval))
-        self.label_repeat_fields_title.setVisible(repeat_mode_cron)
-        self.label_repeat_fields.setVisible(repeat_mode_cron)
+        if self.program.continue_after_error:
+            self.label_continue_after_error.setText('Enabled')
+        else:
+            self.label_continue_after_error.setText('Disabled')
 
-        if repeat_mode_cron:
-            self.label_repeat_fields.setText(unicode(self.program.repeat_fields))
+    def start_program(self):
+        try:
+            self.program.start()
+        except REDError as e:
+            QMessageBox.critical(self, 'Start Error',
+                                 u'Could not start program [{0}]:\n\n{1}'
+                                 .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
 
     def kill_process(self):
         if self.program.last_spawned_process != None:
@@ -368,12 +372,12 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
                                      u'Could not kill current process of program [{0}]:\n\n{1}'
                                      .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
 
-    def schedule_now(self):
+    def continue_schedule(self):
         try:
-            self.program.schedule_now()
+            self.program.continue_schedule()
         except REDError as e:
             QMessageBox.critical(self, 'Schedule Error',
-                                 u'Could not schedule program [{0}] now:\n\n{1}'
+                                 u'Could not continue schedule of program [{0}]:\n\n{1}'
                                  .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
 
     def send_stdin_pipe_input(self):
@@ -394,8 +398,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         widget.setEnabled(enabled)
         widget.setAttribute(Qt.WA_TransparentForMouseEvents, not enabled)
 
-        # restore current scroll position, because en/disableing buttons
-        # makes the scroll position jump for som reason
+        # restore current scroll position, because en/disabling buttons
+        # makes the scroll position jump for some reason
         self.scroll_area.verticalScrollBar().setValue(position)
 
     def set_edit_buttons_enabled(self, enabled):
@@ -416,8 +420,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.button_edit_stdio.setAttribute(Qt.WA_TransparentForMouseEvents, not enabled)
         self.button_edit_schedule.setAttribute(Qt.WA_TransparentForMouseEvents, not enabled)
 
-        # restore current scroll position, because en/disableing buttons
-        # makes the scroll position jump for som reason
+        # restore current scroll position, because en/disabling buttons
+        # makes the scroll position jump for some reason
         self.scroll_area.verticalScrollBar().setValue(position)
 
     def show_edit_general_wizard(self):

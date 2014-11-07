@@ -362,68 +362,38 @@ class Constants:
     def get_stderr_redirection_display_name(stderr_redirection):
         return Constants.api_stderr_redirection_display_names[Constants.api_stderr_redirections[stderr_redirection]]
 
-    # must match item order in combo_start_condition on schedule page
-    START_CONDITION_NEVER  = 0
-    START_CONDITION_NOW    = 1
-    START_CONDITION_REBOOT = 2
-    START_CONDITION_TIME   = 3
-    START_CONDITION_CRON   = 4
+    # must match item order in combo_start_mode on schedule page
+    START_MODE_NEVER    = 0
+    START_MODE_ALWAYS   = 1
+    START_MODE_INTERVAL = 2
+    START_MODE_CRON     = 3
+    START_MODE_ONCE     = 4 # never + start from upload page
 
-    api_start_conditions = {
-        START_CONDITION_NEVER:  REDProgram.START_CONDITION_NEVER,
-        START_CONDITION_NOW:    REDProgram.START_CONDITION_NOW,
-        START_CONDITION_REBOOT: REDProgram.START_CONDITION_REBOOT,
-        START_CONDITION_TIME:   REDProgram.START_CONDITION_TIMESTAMP,
-        START_CONDITION_CRON:   REDProgram.START_CONDITION_CRON
+    api_start_modes = {
+        START_MODE_NEVER:    REDProgram.START_MODE_NEVER,
+        START_MODE_ALWAYS:   REDProgram.START_MODE_ALWAYS,
+        START_MODE_INTERVAL: REDProgram.START_MODE_INTERVAL,
+        START_MODE_CRON:     REDProgram.START_MODE_CRON
     }
 
-    api_start_condition_display_names = {
-        REDProgram.START_CONDITION_NEVER:     'Never',
-        REDProgram.START_CONDITION_NOW:       'Now',
-        REDProgram.START_CONDITION_REBOOT:    'Reboot',
-        REDProgram.START_CONDITION_TIMESTAMP: 'Time',
-        REDProgram.START_CONDITION_CRON:      'Cron'
-    }
-
-    @staticmethod
-    def get_start_condition(api_start_condition):
-        return get_key_from_value(Constants.api_start_conditions, api_start_condition)
-
-    @staticmethod
-    def get_start_condition_display_name(start_condition):
-        return Constants.api_start_condition_display_names[Constants.api_start_conditions[start_condition]]
-
-    # must match item order in combo_repeat_mode on schedule page
-    REPEAT_MODE_NEVER    = 0
-    REPEAT_MODE_INTERVAL = 1
-    REPEAT_MODE_CRON     = 2
-
-    api_repeat_modes = {
-        REPEAT_MODE_NEVER:    REDProgram.REPEAT_MODE_NEVER,
-        REPEAT_MODE_INTERVAL: REDProgram.REPEAT_MODE_INTERVAL,
-        REPEAT_MODE_CRON:     REDProgram.REPEAT_MODE_CRON,
-    }
-
-    api_repeat_mode_display_names = {
-        REDProgram.REPEAT_MODE_NEVER:    'Never',
-        REDProgram.REPEAT_MODE_INTERVAL: 'Interval',
-        REDProgram.REPEAT_MODE_CRON:     'Cron'
+    api_start_mode_display_names = {
+        REDProgram.START_MODE_NEVER:    'Never',
+        REDProgram.START_MODE_ALWAYS:   'Always',
+        REDProgram.START_MODE_INTERVAL: 'Interval',
+        REDProgram.START_MODE_CRON:     'Cron'
     }
 
     @staticmethod
-    def get_repeat_mode(api_repeat_mode):
-        return get_key_from_value(Constants.api_repeat_modes, api_repeat_mode)
+    def get_start_mode(api_start_mode):
+        return get_key_from_value(Constants.api_start_modes, api_start_mode)
 
     @staticmethod
-    def get_repeat_mode_display_name(repeat_mode):
-        return Constants.api_repeat_mode_display_names[Constants.api_repeat_modes[repeat_mode]]
+    def get_start_mode_display_name(start_mode):
+        return Constants.api_start_mode_display_names[Constants.api_start_modes[start_mode]]
 
     api_scheduler_state_display_name = {
-        REDProgram.SCHEDULER_STATE_STOPPED:                      'Stopped',
-        REDProgram.SCHEDULER_STATE_WAITING_FOR_START_CONDITION:  'Waiting for start condition',
-        REDProgram.SCHEDULER_STATE_DELAYING_START:               'Delaying start',
-        REDProgram.SCHEDULER_STATE_WAITING_FOR_REPEAT_CONDITION: 'Waiting for repeat condition',
-        REDProgram.SCHEDULER_STATE_ERROR_OCCURRED:               'Error occurred'
+        REDProgram.SCHEDULER_STATE_STOPPED:  'Stopped',
+        REDProgram.SCHEDULER_STATE_RUNNING: 'Running'
     }
 
     DEFAULT_C_START_MODE          = C_START_MODE_EXECUTABLE
@@ -441,8 +411,7 @@ class Constants:
     DEFAULT_STDIN_REDIRECTION     = STDIN_REDIRECTION_PIPE
     DEFAULT_STDOUT_REDIRECTION    = STDOUT_REDIRECTION_CONTINUOUS_LOG
     DEFAULT_STDERR_REDIRECTION    = STDERR_REDIRECTION_STDOUT
-    DEFAULT_START_CONDITION       = START_CONDITION_NOW
-    DEFAULT_REPEAT_MODE           = REPEAT_MODE_NEVER
+    DEFAULT_START_MODE            = START_MODE_ALWAYS
 
 
 # workaround miscalculated initial size-hint for initially hidden QListWidgets

@@ -128,25 +128,23 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
             # schedule
             html += u'<b>Schedule</b><br/>'
 
-            start_condition = self.get_field('start_condition').toInt()[0]
-            repeat_mode     = self.get_field('repeat_mode').toInt()[0]
+            start_mode = self.get_field('start_mode').toInt()[0]
 
-            html += u'Start Condition: {0}<br/>'.format(Constants.get_start_condition_display_name(start_condition))
+            if start_mode == Constants.START_MODE_ONCE:
+                html += u'Mode: Once After Upload<br/>'
+            else:
+                html += u'Mode: {0}<br/>'.format(Constants.get_start_mode_display_name(start_mode))
 
-            if start_condition == Constants.START_CONDITION_TIME:
-                html += u'Start Time: {0}<br/>'.format(self.get_field('start_time').toDateTime().toString('yyyy-MM-dd HH:mm:ss'))
-            elif start_condition == Constants.START_CONDITION_NOW or \
-               start_condition == Constants.START_CONDITION_REBOOT:
-                html += u'Start Delay: {0} seconds<br/>'.format(self.get_field('start_delay').toUInt()[0])
-            elif start_condition == Constants.START_CONDITION_CRON:
-                html += u'Start Fields: {0}<br/>'.format(' '.join(unicode(self.get_field('start_fields').toString()).split()))
+            if start_mode != Constants.START_MODE_NEVER and start_mode != Constants.START_MODE_ONCE:
+                if self.get_field('continue_after_error').toBool():
+                    html += u'Continue After Error: Yes<br/>'
+                else:
+                    html += u'Continue After Error: No<br/>'
 
-            html += u'Repeat Mode: {0}<br/>'.format(Constants.get_repeat_mode_display_name(repeat_mode))
-
-            if repeat_mode == Constants.REPEAT_MODE_INTERVAL:
-                html += u'Repeat Interval: {0} seconds<br/>'.format(self.get_field('repeat_interval').toUInt()[0])
-            elif repeat_mode == Constants.REPEAT_MODE_CRON:
-                html += u'Repeat Fields: {0}<br/>'.format(' '.join(unicode(self.get_field('repeat_fields').toString()).split()))
+            if start_mode == Constants.START_MODE_INTERVAL:
+                html += u'Interval: {0} seconds<br/>'.format(self.get_field('start_intervaly').toUInt()[0])
+            elif start_mode == Constants.START_MODE_CRON:
+                html += u'Fields: {0}<br/>'.format(self.get_field('start_fields').toString())
 
         self.text_summary.setHtml(html)
         self.update_ui_state()

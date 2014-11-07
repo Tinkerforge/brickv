@@ -1035,7 +1035,7 @@ class REDProcess(REDObject):
     E_CANNOT_EXECUTE = 126
     E_DOES_NOT_EXIST = 127
 
-    _qtcb_state_changed = QtCore.pyqtSignal(int, int, int)
+    _qtcb_state_changed = QtCore.pyqtSignal()
 
     def __repr__(self):
         return '<REDProcess object_id: {0}>'.format(self.object_id)
@@ -1071,16 +1071,10 @@ class REDProcess(REDObject):
 
         self._cb_state_changed_emit_cookie = None
 
-    def _cb_state_changed_emit(self, process_id, *args, **kwargs):
+    def _cb_state_changed_emit(self, process_id, state, timestamp, exit_code):
         if self.object_id != process_id:
             return
 
-        # cannot directly use emit function as callback functions, because this
-        # triggers a segfault on the second call for some unknown reason. adding
-        # a method in between helps
-        self._qtcb_state_changed.emit(*args, **kwargs)
-
-    def _cb_state_changed(self, state, timestamp, exit_code):
         self._state     = state
         self._timestamp = timestamp
         self._exit_code = exit_code
@@ -1088,6 +1082,12 @@ class REDProcess(REDObject):
         if state != REDProcess.STATE_RUNNING and state != REDProcess.STATE_STOPPED:
             self._pid = None
 
+        # cannot directly use emit function as callback functions, because this
+        # triggers a segfault on the second call for some unknown reason. adding
+        # a method in between helps
+        self._qtcb_state_changed.emit()
+
+    def _cb_state_changed(self):
         state_changed_callback = self.state_changed_callback
 
         if state_changed_callback is not None:
@@ -1262,21 +1262,13 @@ class REDProgram(REDObject):
     STDIO_REDIRECTION_CONTINUOUS_LOG = BrickRED.PROGRAM_STDIO_REDIRECTION_CONTINUOUS_LOG
     STDIO_REDIRECTION_STDOUT         = BrickRED.PROGRAM_STDIO_REDIRECTION_STDOUT
 
-    START_CONDITION_NEVER     = BrickRED.PROGRAM_START_CONDITION_NEVER
-    START_CONDITION_NOW       = BrickRED.PROGRAM_START_CONDITION_NOW
-    START_CONDITION_REBOOT    = BrickRED.PROGRAM_START_CONDITION_REBOOT
-    START_CONDITION_TIMESTAMP = BrickRED.PROGRAM_START_CONDITION_TIMESTAMP
-    START_CONDITION_CRON      = BrickRED.PROGRAM_START_CONDITION_CRON
+    START_MODE_NEVER     = BrickRED.PROGRAM_START_MODE_NEVER
+    START_MODE_ALWAYS    = BrickRED.PROGRAM_START_MODE_ALWAYS
+    START_MODE_INTERVAL  = BrickRED.PROGRAM_START_MODE_INTERVAL
+    START_MODE_CRON      = BrickRED.PROGRAM_START_MODE_CRON
 
-    REPEAT_MODE_NEVER    = BrickRED.PROGRAM_REPEAT_MODE_NEVER
-    REPEAT_MODE_INTERVAL = BrickRED.PROGRAM_REPEAT_MODE_INTERVAL
-    REPEAT_MODE_CRON     = BrickRED.PROGRAM_REPEAT_MODE_CRON
-
-    SCHEDULER_STATE_STOPPED                      = BrickRED.PROGRAM_SCHEDULER_STATE_STOPPED
-    SCHEDULER_STATE_WAITING_FOR_START_CONDITION  = BrickRED.PROGRAM_SCHEDULER_STATE_WAITING_FOR_START_CONDITION
-    SCHEDULER_STATE_DELAYING_START               = BrickRED.PROGRAM_SCHEDULER_STATE_DELAYING_START
-    SCHEDULER_STATE_WAITING_FOR_REPEAT_CONDITION = BrickRED.PROGRAM_SCHEDULER_STATE_WAITING_FOR_REPEAT_CONDITION
-    SCHEDULER_STATE_ERROR_OCCURRED               = BrickRED.PROGRAM_SCHEDULER_STATE_ERROR_OCCURRED
+    SCHEDULER_STATE_STOPPED = BrickRED.PROGRAM_SCHEDULER_STATE_STOPPED
+    SCHEDULER_STATE_RUNNING = BrickRED.PROGRAM_SCHEDULER_STATE_RUNNING
 
     _qtcb_scheduler_state_changed = QtCore.pyqtSignal()
     _qtcb_process_spawned = QtCore.pyqtSignal()
@@ -1297,13 +1289,10 @@ class REDProgram(REDObject):
         self._stdout_file_name       = None
         self._stderr_redirection     = None
         self._stderr_file_name       = None
-        self._start_condition        = None
-        self._start_timestamp        = None
-        self._start_delay            = None
+        self._start_mode             = None
+        self._continue_after_error   = None
+        self._start_interval         = None
         self._start_fields           = None
-        self._repeat_mode            = None
-        self._repeat_interval        = None
-        self._repeat_fields          = None
         self._scheduler_state        = None
         self._scheduler_timestamp    = None
         self._scheduler_message      = None
@@ -1340,49 +1329,39 @@ class REDProgram(REDObject):
         self._cb_scheduler_state_changed_emit_cookie = None
         self._cb_process_spawned_emit_cookie         = None
 
-    def _cb_scheduler_state_changed_emit(self, program_id, *args, **kwargs):
+    def _cb_scheduler_state_changed_emit(self, program_id):
         if self.object_id != program_id:
             return
 
-        # cannot directly use emit function as callback functions, because this
-        # triggers a segfault on the second call for some unknown reason. adding
-        # a method in between helps
-        self._qtcb_scheduler_state_changed.emit(*args, **kwargs)
-
-    def _cb_scheduler_state_changed(self):
         error_code, state, timestamp, message_string_id = self._session._brick.get_program_scheduler_state(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             return
 
-        if state == REDProgram.SCHEDULER_STATE_ERROR_OCCURRED:
-            try:
-                message = _attach_or_release(self._session, REDString, message_string_id)
-            except:
-                message = None
-                traceback.print_exc() # FIXME: error handling
-        else:
+        try:
+            message = _attach_or_release(self._session, REDString, message_string_id)
+        except:
             message = None
+            traceback.print_exc() # FIXME: error handling
 
         self._scheduler_state     = state
         self._scheduler_timestamp = timestamp
         self._scheduler_message   = message
 
+        # cannot directly use emit function as callback functions, because this
+        # triggers a segfault on the second call for some unknown reason. adding
+        # a method in between helps
+        self._qtcb_scheduler_state_changed.emit()
+
+    def _cb_scheduler_state_changed(self):
         scheduler_state_changed_callback = self.scheduler_state_changed_callback
 
         if scheduler_state_changed_callback is not None:
             scheduler_state_changed_callback(self)
 
-    def _cb_process_spawned_emit(self, program_id, *args, **kwargs):
+    def _cb_process_spawned_emit(self, program_id):
         if self.object_id != program_id:
             return
-
-        # cannot directly use emit function as callback functions, because this
-        # triggers a segfault on the second call for some unknown reason. adding
-        # a method in between helps
-        self._qtcb_process_spawned.emit(*args, **kwargs)
-
-    def _cb_process_spawned(self):
         error_code, process_id, timestamp = self._session._brick.get_last_spawned_program_process(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
@@ -1397,6 +1376,12 @@ class REDProgram(REDObject):
         self._last_spawned_process   = process
         self._last_spawned_timestamp = timestamp
 
+        # cannot directly use emit function as callback functions, because this
+        # triggers a segfault on the second call for some unknown reason. adding
+        # a method in between helps
+        self._qtcb_process_spawned.emit()
+
+    def _cb_process_spawned(self):
         process_spawned_callback = self.process_spawned_callback
 
         if process_spawned_callback is not None:
@@ -1506,34 +1491,21 @@ class REDProgram(REDObject):
         if self.object_id is None:
             raise RuntimeError('Cannot update unattached program object')
 
-        error_code, start_condition, start_timestamp, start_delay, start_fields_string_id, repeat_mode, repeat_interval, \
-        repeat_fields_string_id = self._session._brick.get_program_schedule(self.object_id, self._session._session_id)
+        error_code, start_mode, continue_after_error, start_interval, \
+        start_fields_string_id = self._session._brick.get_program_schedule(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get schedule of program object {0}'.format(self.object_id), error_code)
 
-        if start_condition == REDProgram.START_CONDITION_CRON:
-            extra_object_ids_to_release_on_error = []
-
-            if repeat_mode == REDProgram.REPEAT_MODE_CRON:
-                extra_object_ids_to_release_on_error.append(repeat_fields_string_id)
-
-            start_fields = _attach_or_release(self._session, REDString, start_fields_string_id, extra_object_ids_to_release_on_error)
+        if start_mode == REDProgram.START_MODE_CRON:
+            start_fields = _attach_or_release(self._session, REDString, start_fields_string_id)
         else:
             start_fields = None
 
-        if repeat_mode == REDProgram.REPEAT_MODE_CRON:
-            repeat_fields = _attach_or_release(self._session, REDString, repeat_fields_string_id)
-        else:
-            repeat_fields = None
-
-        self._start_condition = start_condition
-        self._start_timestamp = start_timestamp
-        self._start_delay     = start_delay
-        self._start_fields    = start_fields
-        self._repeat_mode     = repeat_mode
-        self._repeat_interval = repeat_interval
-        self._repeat_fields   = repeat_fields
+        self._start_mode           = start_mode
+        self._continue_after_error = continue_after_error
+        self._start_interval       = start_interval
+        self._start_fields         = start_fields
 
     def update_scheduler_state(self):
         if self.object_id is None:
@@ -1544,10 +1516,7 @@ class REDProgram(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get scheduler state of program object {0}'.format(self.object_id), error_code)
 
-        if state == REDProgram.SCHEDULER_STATE_ERROR_OCCURRED:
-            message = _attach_or_release(self._session, REDString, message_string_id)
-        else:
-            message = None
+        message = _attach_or_release(self._session, REDString, message_string_id)
 
         self._scheduler_state     = state
         self._scheduler_timestamp = timestamp
@@ -1708,12 +1677,11 @@ class REDProgram(REDObject):
         self._stderr_redirection = stderr_redirection
         self._stderr_file_name   = stderr_file_name
 
-    def set_schedule(self, start_condition, start_timestamp, start_delay, start_fields,
-                     repeat_mode, repeat_interval, repeat_fields):
+    def set_schedule(self, start_mode, continue_after_error, start_interval, start_fields):
         if self.object_id is None:
             raise RuntimeError('Cannot set schedule for unattached program object')
 
-        if start_condition == REDProgram.START_CONDITION_CRON:
+        if start_mode == REDProgram.START_MODE_CRON:
             if not isinstance(start_fields, REDString):
                 start_fields = REDString(self._session).allocate(start_fields)
 
@@ -1722,43 +1690,37 @@ class REDProgram(REDObject):
             start_fields           = None
             start_fields_object_id = 0
 
-        if repeat_mode == REDProgram.REPEAT_MODE_CRON:
-            if not isinstance(repeat_fields, REDString):
-                repeat_fields = REDString(self._session).allocate(repeat_fields)
-
-            repeat_fields_object_id = repeat_fields.object_id
-        else:
-            repeat_fields           = None
-            repeat_fields_object_id = 0
-
         error_code = self._session._brick.set_program_schedule(self.object_id,
-                                                               start_condition,
-                                                               start_timestamp,
-                                                               start_delay,
-                                                               start_fields_object_id,
-                                                               repeat_mode,
-                                                               repeat_interval,
-                                                               repeat_fields_object_id)
+                                                               start_mode,
+                                                               continue_after_error,
+                                                               start_interval,
+                                                               start_fields_object_id)
 
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not set schedule for program object {0}'.format(self.object_id), error_code)
 
-        self._start_condition = start_condition
-        self._start_timestamp = start_timestamp
-        self._start_delay     = start_delay
-        self._start_fields    = start_fields
-        self._repeat_mode     = repeat_mode
-        self._repeat_interval = repeat_interval
-        self._repeat_fields   = repeat_fields
+        self._start_mode           = start_mode
+        self._continue_after_error = continue_after_error
+        self._start_interval       = start_interval
+        self._start_fields         = start_fields
 
-    def schedule_now(self):
+    def continue_schedule(self):
         if self.object_id is None:
-            raise RuntimeError('Cannot schedule unattached program object now')
+            raise RuntimeError('Cannot continue schedule of unattached program object now')
 
-        error_code = self._session._brick.schedule_program_now(self.object_id)
+        error_code = self._session._brick.continue_program_schedule(self.object_id)
 
         if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not schedule program object {0} now'.format(self.object_id), error_code)
+            raise REDError('Could not continue schedule of program object {0} now'.format(self.object_id), error_code)
+
+    def start(self):
+        if self.object_id is None:
+            raise RuntimeError('Cannot start unattached program object now')
+
+        error_code = self._session._brick.start_program(self.object_id)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not start program object {0} now'.format(self.object_id), error_code)
 
     def set_custom_option_value(self, name, value):
         if self.object_id is None:
@@ -1784,6 +1746,8 @@ class REDProgram(REDObject):
         if self.object_id is None:
             raise RuntimeError('Cannot set custom option for unattached program object')
 
+        # FIXME: remove all custom options that start with <name>.item* to ensure that
+        #        shrinking a list doesn't leaf old items behind
         for i, value in enumerate(values):
             self.set_custom_option_value(name + '.item' + str(i), unicode(value))
 
@@ -1794,8 +1758,6 @@ class REDProgram(REDObject):
             string = self._custom_options[unicode(name)]
         except KeyError:
             return default
-
-        #print repr(cast),  repr(name), repr(string)
 
         try:
             return cast(unicode(string))
@@ -1845,19 +1807,13 @@ class REDProgram(REDObject):
     @property
     def stderr_file_name(self):       return self._stderr_file_name
     @property
-    def start_condition(self):        return self._start_condition
+    def start_mode(self):             return self._start_mode
     @property
-    def start_timestamp(self):        return self._start_timestamp
+    def continue_after_error(self):   return self._continue_after_error
     @property
-    def start_delay(self):            return self._start_delay
+    def start_interval(self):         return self._start_interval
     @property
     def start_fields(self):           return self._start_fields
-    @property
-    def repeat_mode(self):            return self._repeat_mode
-    @property
-    def repeat_interval(self):        return self._repeat_interval
-    @property
-    def repeat_fields(self):          return self._repeat_fields
     @property
     def scheduler_state(self):        return self._scheduler_state
     @property
