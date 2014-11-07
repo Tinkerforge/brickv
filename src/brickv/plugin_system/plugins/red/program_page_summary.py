@@ -142,7 +142,7 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
                     html += u'Continue After Error: No<br/>'
 
             if start_mode == Constants.START_MODE_INTERVAL:
-                html += u'Interval: {0} seconds<br/>'.format(self.get_field('start_intervaly').toUInt()[0])
+                html += u'Interval: {0} seconds<br/>'.format(self.get_field('start_interval').toUInt()[0])
             elif start_mode == Constants.START_MODE_CRON:
                 html += u'Fields: {0}<br/>'.format(self.get_field('start_fields').toString())
 

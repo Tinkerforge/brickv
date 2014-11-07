@@ -368,7 +368,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 api_start_mode          = REDProgram.START_MODE_NEVER
                 start_once_after_upload = True
             else:
-                api_start_mode          = Constants.api_start_mode[start_mode]
+                api_start_mode          = Constants.api_start_modes[start_mode]
                 start_once_after_upload = False
 
             continue_after_error = self.get_field('continue_after_error').toBool()

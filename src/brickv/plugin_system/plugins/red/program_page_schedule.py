@@ -73,6 +73,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
                 self.edit_start_fields.setText(unicode(program.start_fields))
 
         self.update_ui_state()
+        self.update_interval_help()
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
