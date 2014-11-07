@@ -65,6 +65,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
             'shell':  None
         }
         self.first_tab_on_focus  = True
+        self.refresh_in_progress = False
         self.new_program_wizard  = None
 
         self.splitter.setSizes([150, 400])
@@ -93,6 +94,17 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         pass
 
     def update_ui_state(self):
+        if self.refresh_in_progress:
+            self.progress_refresh.setVisible(True)
+            self.button_refresh.setText('Refreshing...')
+            self.button_refresh.setEnabled(False)
+            self.button_new.setEnabled(False)
+        else:
+            self.progress_refresh.setVisible(False)
+            self.button_refresh.setText('Refresh')
+            self.button_refresh.setEnabled(True)
+            self.button_new.setEnabled(True)
+
         has_selection = len(self.list_programs.selectedItems()) > 0
 
         if has_selection:
@@ -119,20 +131,15 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
             for program in programs:
                 self.add_program_to_list(program)
 
-            self.progress_refresh.setVisible(False)
-            self.button_refresh.setText('Refresh')
-            self.button_refresh.setEnabled(True)
+            self.refresh_in_progress = False
             self.update_ui_state()
             self.stacked_container.setCurrentIndex(1)
 
         def cb_error():
-            self.progress_refresh.setVisible(False)
-            self.button_refresh.setText('Error')
+            pass # FIXME: report error
 
-        self.progress_refresh.setVisible(True)
-        self.button_refresh.setText('Refreshing...')
-        self.button_refresh.setEnabled(False)
-
+        self.refresh_in_progress = True
+        self.update_ui_state()
         self.list_programs.clear()
 
         while self.stacked_container.count() > 1:
