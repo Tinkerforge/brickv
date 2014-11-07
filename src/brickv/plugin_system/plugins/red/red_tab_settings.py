@@ -773,7 +773,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.network_all_data['manager_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
                 else:
                     # TODO: Error popup for user?
-                    print result
+                    print 'cb_open_manager_settings', result
 
                 if (network_refresh_tasks_remaining == 0):
                     self.twidget_net.setEnabled(True)
@@ -799,7 +799,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.network_button_save_enabled(False)
                 
             # TODO: Error popup for user?
-            print result
+            print 'cb_open_error_manager_settings', result
 
         def cb_open_wireless_settings(red_file):
             def cb_read(red_file, result):
@@ -812,7 +812,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.network_all_data['wireless_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
                 else:
                     # TODO: Error popup for user?
-                    print result
+                    print 'cb_open_wireless_settings', result
 
                 if (network_refresh_tasks_remaining == 0):
                     self.twidget_net.setEnabled(True)
@@ -839,7 +839,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
             self.network_button_refresh_enabled(True)
             # TODO: Error popup for user?
-            print result
+            print 'cb_open_error_wireless_settings', result
 
         def cb_open_wired_settings(red_file):
             def cb_read(red_file, result):
@@ -852,7 +852,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.network_all_data['wired_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
                 else:
                     # TODO: Error popup for user?
-                    print result
+                    print 'cb_open_wired_settings', result
 
                 if (network_refresh_tasks_remaining == 0):
                     self.twidget_net.setEnabled(True)
@@ -879,7 +879,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
             self.network_button_refresh_enabled(True)
             # TODO: Error popup for user?
-            print result
+            print 'cb_open_error_wired_settings', result
 
         self.cbox_net_wireless_ap.clear()
         self.cbox_net_wireless_ap.addItem("Scanning...")
@@ -952,7 +952,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.update_brickd_widget_data()
                 else:
                     # TODO: Error popup for user?
-                    print result
+                    print 'slot_brickd_refresh_clicked cb_open', result
 
                 self.brickd_button_refresh_enabled(True)
                 self.brickd_button_save_enabled(False)
@@ -963,7 +963,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.brickd_button_refresh_enabled(True)
             
             # TODO: Error popup for user?
-            print result
+            print 'slot_brickd_refresh_clicked cb_open_error', result
 
         async_call(self.brickd_conf_rfile.open,
                    (BRICKD_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
@@ -1106,7 +1106,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 if result is not None:
                     self.network_button_save_enabled(True)
                     # TODO: Error popup for user?
-                    print result
+                    print 'cb_open_ms cb_write_ms', result
                     self.twidget_net.setEnabled(True)
                     self.label_working_wait.hide()
                     self.pbar_working_wait.hide()
@@ -1131,7 +1131,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         def cb_open_ms_error(result):
             self.brickd_button_save_enabled(True)
             # TODO: Error popup for user?
-            print result
+            print 'cb_open_ms cb_open_ms_error', result
             self.twidget_net.setEnabled(True)
             self.label_working_wait.hide()
             self.pbar_working_wait.hide()
@@ -1173,7 +1173,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     if result is not None:
                         self.network_button_save_enabled(True)
                         # TODO: Error popup for user?
-                        print result
+                        print 'slot_network_button_wireless_use_intf_clicked cb_open cb_write', result
                     else:
                         self.script_manager.execute_script('settings_network_wireless_apply_intf',
                                                            cb_settings_network_wireless_apply_intf,
@@ -1185,7 +1185,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.brickd_button_save_enabled(True)
             
                 # TODO: Error popup for user?
-                print result
+                print 'slot_network_button_wireless_use_intf_clicked cb_open cb_open_error', result
 
             self.twidget_net.setEnabled(False)
             self.label_working_wait.show()
@@ -1223,7 +1223,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.cbox_net_wireless_ap.clear()
                     self.cbox_net_wireless_ap.addItem("Nothing found. Scan again?")
             else:
-                print result
+                print 'cb_settings_network_wireless_scan', result
                 self.cbox_net_wireless_ap.clear()
                 self.cbox_net_wireless_ap.addItem("Error occured. Scan again?")
                 # TODO: Error popup for user?
@@ -1339,7 +1339,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
                 if result is not None:
                     self.network_button_save_enabled(True)
-                    print result
+                    print 'slot_network_wired_save_clicked cb_open cb_write', result
                     QtGui.QMessageBox.critical(None,
                                                'Settings | Network | Wired',
                                                'Error saving wired connection configuration.',
@@ -1354,7 +1354,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         def cb_open_error(result):
             self.brickd_button_save_enabled(True)
             # TODO: Error popup for user?
-            print result
+            print 'slot_network_wired_save_clicked cb_open_error', result
             self.twidget_net.setEnabled(True)
             self.label_working_wait.hide()
             self.pbar_working_wait.hide()
@@ -1369,7 +1369,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
                 if result is not None:
                     self.network_button_save_enabled(True)
-                    print result
+                    print 'slot_network_wired_save_clicked cb_open_ms cb_write_ms', result
                     QtGui.QMessageBox.critical(None,
                                                'Settings | Network | Wired',
                                                'Error saving wired connection configuration.',
@@ -1388,7 +1388,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         def cb_open_ms_error(result):
             self.brickd_button_save_enabled(True)
-            print result
+            print 'slot_network_wired_save_clicked cb_open_ms_error', result
             self.twidget_net.setEnabled(True)
             self.label_working_wait.hide()
             self.pbar_working_wait.hide()
@@ -1486,7 +1486,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 if result is not None:
                     self.brickd_button_save_enabled(True)
                     # TODO: Error popup for user?
-                    print result
+                    print 'slot_brickd_save_clicked cb_open cb_write', result
                 else:
                     self.script_manager.execute_script('restart_brickd', None)
                     QtGui.QMessageBox.information(None,
@@ -1500,7 +1500,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.brickd_button_save_enabled(True)
             
             # TODO: Error popup for user?
-            print result
+            print 'slot_brickd_save_clicked cb_open_error', result
 
         async_call(self.brickd_conf_rfile.open,
                    (BRICKD_CONF_PATH,
@@ -1697,7 +1697,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     return
                 else:
                     # TODO: Error popup for user?
-                    print result.stderr
+                    print 'time_start cb_red_brick_time', result.stderr
             except:
                 # TODO: Error popup for user?
                 traceback.print_exc()
