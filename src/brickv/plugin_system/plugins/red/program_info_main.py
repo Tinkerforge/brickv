@@ -144,6 +144,10 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.widget_files = ProgramInfoFiles(context, self.update_ui_state, self.set_widget_enabled)
         self.layout_files.addWidget(self.widget_files)
 
+        # refresh logs and files
+        self.widget_logs.refresh_logs()
+        self.widget_files.refresh_files()
+
         self.update_ui_state()
 
     def scheduler_state_changed(self, program):
@@ -180,11 +184,13 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
     def update_ui_state(self):
         if self.program_refresh_in_progress or \
-           self.widget_files.refresh_in_progress or \
-           self.widget_logs.refresh_in_progress:
+           self.widget_logs.refresh_in_progress or \
+           self.widget_files.refresh_in_progress:
+            self.progress.setVisible(True)
             self.button_refresh.setText('Refreshing...')
             self.set_edit_buttons_enabled(False)
         else:
+            self.progress.setVisible(False)
             self.button_refresh.setText('Refresh')
             self.set_edit_buttons_enabled(True)
 
