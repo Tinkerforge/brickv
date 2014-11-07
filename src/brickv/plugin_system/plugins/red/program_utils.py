@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QDir, QVariant
+from PyQt4.QtCore import Qt, QDir, QVariant, QDateTime
 from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem
 from brickv.plugin_system.plugins.red.api import REDProgram
 import re
@@ -883,3 +883,10 @@ def set_current_combo_index_from_data(combo, data):
     else:
         combo.addItem('<unknown>', QVariant(data))
         combo.setCurrentIndex(combo.count() - 1)
+
+
+def timestamp_to_date_at_time(timestamp):
+    date = QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd')
+    time = QDateTime.fromTime_t(timestamp).toString('HH:mm:ss')
+
+    return date + ' at ' + time
