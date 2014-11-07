@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QVariant
+from PyQt4.QtCore import Qt, QVariant, QTimer
 from PyQt4.QtGui import QWidget, QDialog, QMessageBox, QListWidgetItem
 from brickv.plugin_system.plugins.red.ui_red_tab_program import Ui_REDTabProgram
 from brickv.plugin_system.plugins.red.api import *
@@ -86,8 +86,8 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
 
         if self.first_tab_on_focus:
             self.first_tab_on_focus = False
-            self.refresh_program_list()
-            self.refresh_executable_versions()
+            QTimer.singleShot(2, self.refresh_program_list)
+            QTimer.singleShot(4, self.refresh_executable_versions)
 
     def tab_off_focus(self):
         pass

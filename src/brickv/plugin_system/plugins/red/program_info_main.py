@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtCore import pyqtSignal, QTimer
 from PyQt4.QtGui import QWidget, QDialog, QMessageBox
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_info import ProgramInfoContext
@@ -145,8 +145,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.layout_files.addWidget(self.widget_files)
 
         # refresh logs and files
-        self.widget_logs.refresh_logs()
-        self.widget_files.refresh_files()
+        QTimer.singleShot(2, self.widget_logs.refresh_logs)
+        QTimer.singleShot(4, self.widget_files.refresh_files)
 
         self.update_ui_state()
 
