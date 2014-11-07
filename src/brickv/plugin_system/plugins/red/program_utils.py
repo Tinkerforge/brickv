@@ -188,6 +188,23 @@ class Constants:
     PERL_START_MODE_SCRIPT_FILE = 0
     PERL_START_MODE_COMMAND     = 1
 
+    perl_start_mode_api_names = {
+        PERL_START_MODE_SCRIPT_FILE: 'script_file',
+        PERL_START_MODE_COMMAND:     'command',
+    }
+
+    perl_start_mode_display_names = {
+        PERL_START_MODE_SCRIPT_FILE: 'Script File',
+        PERL_START_MODE_COMMAND:     'Command',
+    }
+
+    @staticmethod
+    def get_perl_start_mode(perl_start_mode_api_name):
+        try:
+            return get_key_from_value(Constants.perl_start_mode_api_names, perl_start_mode_api_name)
+        except ValueError:
+            return Constants.DEFAULT_PERL_START_MODE
+
     # must match item order in combo_start_mode on PHP page
     PHP_START_MODE_SCRIPT_FILE = 0
     PHP_START_MODE_COMMAND     = 1

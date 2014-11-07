@@ -30,7 +30,7 @@ def get_perl_versions(script_manager, callback):
     def cb_versions(result):
         if result != None:
             try:
-                version = result.stdout.split('\n')[1].split(' ')[8].replace('(', '').replace(')', '')
+                version = result.stdout.split('\n')[1].split(' ')[8].replace('(v', '').replace('(', '').replace(')', '')
                 callback([ExecutableVersion('/usr/bin/perl', version)])
                 return
             except:
@@ -99,7 +99,26 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
         if self.wizard().program != None:
             program = self.wizard().program
 
+            # start mode
+            start_mode_api_name = program.cast_custom_option_value('perl.start_mode', unicode, '<unknown>')
+            start_mode          = Constants.get_perl_start_mode(start_mode_api_name)
+
+            self.combo_start_mode.setCurrentIndex(start_mode)
+
+            # script file
+            self.combo_script_file_selector.set_current_text(program.cast_custom_option_value('perl.script_file', unicode, ''))
+
+            # command
+            self.edit_command.setText(program.cast_custom_option_value('perl.command', unicode, ''))
+
+            # working directory
             self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+
+            # options
+            self.option_list_editor.clear()
+
+            for option in program.cast_custom_option_value_list('perl.options', unicode, []):
+                self.option_list_editor.add_item(option)
 
         self.update_ui_state()
 
@@ -140,7 +159,12 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
         return unicode(self.combo_version.itemData(self.get_field('perl.version').toInt()[0]).toString())
 
     def get_custom_options(self):
-        return {}
+        return {
+            'perl.start_mode':  Constants.perl_start_mode_api_names[self.get_field('perl.start_mode').toInt()[0]],
+            'perl.script_file': unicode(self.get_field('perl.script_file').toString()),
+            'perl.command':     unicode(self.get_field('perl.command').toString()),
+            'perl.options':     self.option_list_editor.get_items()
+        }
 
     def get_command(self):
         executable  = self.get_executable()
@@ -157,3 +181,6 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
         working_directory = unicode(self.get_field('perl.working_directory').toString())
 
         return executable, arguments, environment, working_directory
+
+    def apply_program_changes(self):
+        self.apply_program_custom_options_and_command_changes()

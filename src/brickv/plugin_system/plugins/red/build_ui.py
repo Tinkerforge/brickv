@@ -14,6 +14,7 @@ os.system("pyuic4 -o ui_red_tab_extension_ethernet.py ui/red_tab_extension_ether
 os.system("pyuic4 -o ui_program_info_files.py ui/program_info_files.ui")
 os.system("pyuic4 -o ui_program_info_logs.py ui/program_info_logs.ui")
 os.system("pyuic4 -o ui_program_info_main.py ui/program_info_main.ui")
+os.system("pyuic4 -o ui_program_info_perl.py ui/program_info_perl.ui")
 os.system("pyuic4 -o ui_program_info_php.py ui/program_info_php.ui")
 os.system("pyuic4 -o ui_program_info_python.py ui/program_info_python.ui")
 os.system("pyuic4 -o ui_program_info_ruby.py ui/program_info_ruby.ui")
