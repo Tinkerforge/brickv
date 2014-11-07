@@ -129,8 +129,19 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
             return get_programs(self.session).items
 
         def cb_success(programs):
+            sorted_programs = {}
+
             for program in programs:
-                self.add_program_to_list(program)
+                first_upload = program.cast_custom_option_value('first_upload', int, 0)
+
+                if first_upload in sorted_programs:
+                    sorted_programs[first_upload][unicode(program.identifier)] = program
+                else:
+                    sorted_programs[first_upload] = {unicode(program.identifier): program}
+
+            for first_upload in sorted(sorted_programs.keys()):
+                for identifier in sorted(sorted_programs[first_upload].keys()):
+                    self.add_program_to_list(sorted_programs[first_upload][identifier])
 
             self.refresh_in_progress = False
             self.update_ui_state()
