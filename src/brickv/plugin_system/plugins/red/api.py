@@ -565,6 +565,7 @@ class REDFileBase(REDObject):
 
             self.data = data
             self.max_length = max_length
+            self.burst_length = 0
 
             if callback_status is not None:
                 self.signal_status.connect(callback_status, QtCore.Qt.QueuedConnection)
@@ -691,12 +692,26 @@ class REDFileBase(REDObject):
             self._report_read_async_error(REDError('Could not read file object {0}'.format(self.object_id), error_code))
             return
 
+        self._read_async_data.burst_length += length_read
+
         if length_read > 0:
             self._read_async_data.data += bytearray(buf[:length_read])
             self._read_async_data.signal_status.emit(len(self._read_async_data.data), self._read_async_data.max_length)
         else:
+            if len(self._read_async_data.data) != self._read_async_data.max_length and self._read_async_data.burst_length == REDFileBase.ASYNC_BURST_CHUNKS:
+                to_read = min(self._read_async_data.max_length - len(self._read_async_data.data), REDFileBase.ASYNC_BURST_CHUNKS)
+                self._read_async_data.burst_length = 0
+                self._session._brick.read_file_async(self.object_id, to_read)
+                return
+
             # Return data if length is 0 (i.e. the given length was greater then the file length)
             self._report_read_async_error(None)
+            return
+
+        if self._read_async_data.burst_length == REDFileBase.ASYNC_BURST_CHUNKS:
+            to_read = min(self._read_async_data.max_length - len(self._read_async_data.data), REDFileBase.ASYNC_BURST_CHUNKS)
+            self._read_async_data.burst_length = 0
+            self._session._brick.read_file_async(self.object_id, to_read)
             return
 
         # And also return data if we read all of the data the user asked for
@@ -790,7 +805,7 @@ class REDFileBase(REDObject):
             raise RuntimeError('Another asynchronous write is already in progress')
 
         self._read_async_data = create_object_in_qt_main_thread(REDFileBase.ReadAsyncData, (bytearray(), length_max, callback_status, callback))
-        self._session._brick.read_file_async(self.object_id, length_max)
+        self._session._brick.read_file_async(self.object_id, min(length_max, REDFileBase.ASYNC_BURST_CHUNKS))
 
     @property
     def type(self):               return self._type
