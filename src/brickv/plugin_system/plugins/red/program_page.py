@@ -25,6 +25,7 @@ from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QWizardPage
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import *
+import time
 
 class ProgramPage(QWizardPage):
     # makes QWizardPage.field virtual
@@ -36,6 +37,20 @@ class ProgramPage(QWizardPage):
         name     = unicode(Qt.escape(self.get_field('name').toString()))
 
         self.setSubTitle(sub_title.format(**{'language': language, 'name': name}))
+
+    # to be used on all edit pages
+    def set_last_edit_timestamp(self):
+        program = self.wizard().program
+
+        if program == None:
+            return
+
+        try:
+            program.set_custom_option_value('last_edit', int(time.time())) # FIXME: async_call
+        except REDError as e:
+            QMessageBox.critical(self, 'Edit Error',
+                                 u'Could not update last edit timestamp of program [{0}]:\n\n{1}'
+                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
 
     # to be used on language configuration pages
     def get_executable_versions(self, executable_name, callback):
@@ -112,3 +127,6 @@ class ProgramPage(QWizardPage):
                 QMessageBox.critical(self, 'Edit Error',
                                      u'Could not update custom options of program [{0}]:\n\n{1}'
                                      .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
+            return
+
+        self.set_last_edit_timestamp()

@@ -29,6 +29,7 @@ from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_upload import Ui_ProgramPageUpload
 import os
 import stat
+import time
 
 class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     def __init__(self, title_prefix='', *args, **kwargs):
@@ -134,6 +135,30 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         try:
             self.program.set_custom_option_value('description', description) # FIXME: async_call
+        except REDError as e:
+            self.upload_error('...error: {0}'.format(e))
+            return
+
+        # set custom option: description
+        description = unicode(self.get_field('description').toString())
+
+        try:
+            self.program.set_custom_option_value('description', description) # FIXME: async_call
+        except REDError as e:
+            self.upload_error('...error: {0}'.format(e))
+            return
+
+        # set custom option: first_upload and last_edit
+        timestamp = int(time.time())
+
+        try:
+            self.program.set_custom_option_value('first_upload', timestamp) # FIXME: async_call
+        except REDError as e:
+            self.upload_error('...error: {0}'.format(e))
+            return
+
+        try:
+            self.program.set_custom_option_value('last_edit', timestamp) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return

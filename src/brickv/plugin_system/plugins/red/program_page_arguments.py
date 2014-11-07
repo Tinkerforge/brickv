@@ -161,3 +161,6 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
             QMessageBox.critical(self, 'Edit Error',
                                  u'Could not update arguments and environment of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
+            return
+
+        self.set_last_edit_timestamp()

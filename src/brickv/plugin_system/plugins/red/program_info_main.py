@@ -205,6 +205,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         name              = self.program.cast_custom_option_value('name', unicode, '<unknown>')
         language_api_name = self.program.cast_custom_option_value('language', unicode, '<unknown>')
         description       = self.program.cast_custom_option_value('description', unicode, '')
+        first_upload      = self.program.cast_custom_option_value('first_upload', int, 0)
+        last_edit         = self.program.cast_custom_option_value('last_edit', int, 0)
 
         try:
             language_display_name = Constants.get_language_display_name(language_api_name)
@@ -215,6 +217,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.label_identifier.setText(unicode(self.program.identifier))
         self.label_language.setText(language_display_name)
         self.label_description.setText(description)
+        self.label_first_upload.setText(timestamp_to_date_at_time(first_upload))
+        self.label_last_edit.setText(timestamp_to_date_at_time(last_edit))
 
         # status
         process_running = False
