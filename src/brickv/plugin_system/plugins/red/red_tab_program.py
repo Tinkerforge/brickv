@@ -158,16 +158,9 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         # move help widget to front so the other widgets wont show and update during removal
         self.stacked_container.setCurrentWidget(self.widget_help)
 
-        index = 0
-
         while self.stacked_container.count() > 1:
-            widget = self.stacked_container.widget(index)
-
-            if widget != self.widget_help:
-                self.stacked_container.removeWidget(widget)
-                QApplication.processEvents()
-            elif index == 0:
-                index = 1
+            self.stacked_container.removeWidget(self.stacked_container.widget(1))
+            QApplication.processEvents()
 
         async_call(refresh_async, None, cb_success, cb_error)
 
