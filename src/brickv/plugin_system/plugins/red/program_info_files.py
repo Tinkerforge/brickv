@@ -28,11 +28,15 @@ from brickv.async_call import async_call
 import os
 import json
 
-def expand_directory_walk_to_files_list(directory_walk):
+def expand_directory_walk_to_lists(directory_walk):
     files = []
+    directories = set()
 
     def expand(root, dw):
         if 'c' in dw:
+            if len(root) > 0:
+                directories.add(root)
+
             for child_name, child_dw in dw['c'].iteritems():
                 expand(os.path.join(root, child_name), child_dw)
         else:
@@ -40,7 +44,7 @@ def expand_directory_walk_to_files_list(directory_walk):
 
     expand('', directory_walk)
 
-    return files
+    return sorted(files), sorted(list(directories))
 
 
 def get_file_display_size(size):
@@ -156,16 +160,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 available_directories = []
 
                 if directory_walk != None:
-                    available_files = sorted(expand_directory_walk_to_files_list(directory_walk))
-                    directories     = set()
-
-                    for available_file in available_files:
-                        directory = os.path.split(available_file)[0]
-
-                        if len(directory) > 0:
-                            directories.add(directory)
-
-                    available_directories = sorted(list(directories))
+                    available_files, available_directories = expand_directory_walk_to_lists(directory_walk)
 
                 return directory_walk, available_files, available_directories
 
