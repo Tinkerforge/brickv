@@ -79,7 +79,23 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
         if self.wizard().program != None:
             program = self.wizard().program
 
+            # start mode
+            start_mode_api_name = program.cast_custom_option_value('vbnet.start_mode', unicode, '<unknown>')
+            start_mode          = Constants.get_vbnet_start_mode(start_mode_api_name)
+
+            self.combo_start_mode.setCurrentIndex(start_mode)
+
+            # executable
+            self.combo_executable_selector.set_current_text(program.cast_custom_option_value('vbnet.executable', unicode, ''))
+
+            # working directory
             self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+
+            # options
+            self.option_list_editor.clear()
+
+            for option in program.cast_custom_option_value_list('vbnet.options', unicode, []):
+                self.option_list_editor.add_item(option)
 
         self.update_ui_state()
 
@@ -112,7 +128,11 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
         return unicode(self.combo_version.itemData(self.get_field('vbnet.version').toInt()[0]).toString())
 
     def get_custom_options(self):
-        return {}
+        return {
+            'vbnet.start_mode': Constants.vbnet_start_mode_api_names[self.get_field('vbnet.start_mode').toInt()[0]],
+            'vbnet.executable': unicode(self.get_field('vbnet.executable').toString()),
+            'vbnet.options':    self.option_list_editor.get_items()
+        }
 
     def get_command(self):
         executable  = self.get_executable()
@@ -126,3 +146,6 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
         working_directory = unicode(self.get_field('vbnet.working_directory').toString())
 
         return executable, arguments, environment, working_directory
+
+    def apply_program_changes(self):
+        self.apply_program_custom_options_and_command_changes()

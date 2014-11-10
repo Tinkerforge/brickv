@@ -169,6 +169,21 @@ class Constants:
     # must match item order in combo_start_mode on C# page
     CSHARP_START_MODE_EXECUTABLE = 0
 
+    csharp_start_mode_api_names = {
+        CSHARP_START_MODE_EXECUTABLE: 'executable'
+    }
+
+    csharp_start_mode_display_names = {
+        CSHARP_START_MODE_EXECUTABLE: 'Executable'
+    }
+
+    @staticmethod
+    def get_csharp_start_mode(csharp_start_mode_api_name):
+        try:
+            return get_key_from_value(Constants.csharp_start_mode_api_names, csharp_start_mode_api_name)
+        except ValueError:
+            return Constants.DEFAULT_CSHARP_START_MODE
+
     # must match item order in combo_start_mode on Delphi/Lazarus page
     DELPHI_START_MODE_EXECUTABLE = 0
     DELPHI_START_MODE_COMPILE    = 1
@@ -294,6 +309,21 @@ class Constants:
 
     # must match item order in combo_start_mode on VB.NET page
     VBNET_START_MODE_EXECUTABLE = 0
+
+    vbnet_start_mode_api_names = {
+        VBNET_START_MODE_EXECUTABLE: 'executable'
+    }
+
+    vbnet_start_mode_display_names = {
+        VBNET_START_MODE_EXECUTABLE: 'Executable'
+    }
+
+    @staticmethod
+    def get_vbnet_start_mode(vbnet_start_mode_api_name):
+        try:
+            return get_key_from_value(Constants.vbnet_start_mode_api_names, vbnet_start_mode_api_name)
+        except ValueError:
+            return Constants.DEFAULT_VBNET_START_MODE
 
     # must match item order in combo_stdin_redirection on stdio page
     STDIN_REDIRECTION_DEV_NULL = 0

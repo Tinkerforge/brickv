@@ -28,11 +28,13 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_info import ProgramInfoContext
 from brickv.plugin_system.plugins.red.program_info_files import ProgramInfoFiles
 from brickv.plugin_system.plugins.red.program_info_logs import ProgramInfoLogs
+from brickv.plugin_system.plugins.red.program_info_csharp import ProgramInfoCSharp
 from brickv.plugin_system.plugins.red.program_info_perl import ProgramInfoPerl
 from brickv.plugin_system.plugins.red.program_info_php import ProgramInfoPHP
 from brickv.plugin_system.plugins.red.program_info_python import ProgramInfoPython
 from brickv.plugin_system.plugins.red.program_info_ruby import ProgramInfoRuby
 from brickv.plugin_system.plugins.red.program_info_shell import ProgramInfoShell
+from brickv.plugin_system.plugins.red.program_info_vbnet import ProgramInfoVBNET
 from brickv.plugin_system.plugins.red.program_wizard import ProgramWizardContext
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
 from brickv.plugin_system.plugins.red.program_utils import *
@@ -110,7 +112,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         if language != None:
             language_info_classes = {
                 Constants.LANGUAGE_C:          None,
-                Constants.LANGUAGE_CSHARP:     None,
+                Constants.LANGUAGE_CSHARP:     ProgramInfoCSharp,
                 Constants.LANGUAGE_DELPHI:     None,
                 Constants.LANGUAGE_JAVA:       None,
                 Constants.LANGUAGE_JAVASCRIPT: None,
@@ -120,7 +122,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
                 Constants.LANGUAGE_PYTHON:     ProgramInfoPython,
                 Constants.LANGUAGE_RUBY:       ProgramInfoRuby,
                 Constants.LANGUAGE_SHELL:      ProgramInfoShell,
-                Constants.LANGUAGE_VBNET:      None
+                Constants.LANGUAGE_VBNET:      ProgramInfoVBNET
             }
 
             if language_info_classes[language] != None:
