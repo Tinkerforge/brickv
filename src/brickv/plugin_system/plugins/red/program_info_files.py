@@ -22,9 +22,10 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QDateTime, QVariant
-from PyQt4.QtGui import QWidget, QStandardItemModel, QStandardItem, QSortFilterProxyModel
+from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QSortFilterProxyModel
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
 from brickv.async_call import async_call
+from brickv.program_path import get_program_path
 import os
 import json
 
@@ -54,7 +55,7 @@ def get_file_display_size(size):
         return str(size / 1024) + ' kiB'
 
 
-def expand_directory_walk_to_model(directory_walk, model):
+def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon):
     def create_last_modified_item(last_modified):
         item = QStandardItem(QDateTime.fromTime_t(last_modified).toString('yyyy-MM-dd HH:mm:ss'))
         item.setData(QVariant(last_modified))
@@ -67,7 +68,9 @@ def expand_directory_walk_to_model(directory_walk, model):
                 name_item = parent_item
                 size_item = None
             else:
-                name_item          = QStandardItem(name)
+                name_item = QStandardItem(name)
+                name_item.setData(QVariant(folder_icon), Qt.DecorationRole)
+
                 size_item          = QStandardItem('')
                 last_modified_item = create_last_modified_item(int(dw['l']))
 
@@ -84,13 +87,16 @@ def expand_directory_walk_to_model(directory_walk, model):
 
             return size
         else:
+            name_item = QStandardItem(name)
+            name_item.setData(QVariant(file_icon), Qt.DecorationRole)
+
             size      = int(dw['s'])
             size_item = QStandardItem(get_file_display_size(size))
             size_item.setData(QVariant(size))
 
             last_modified_item = create_last_modified_item(int(dw['l']))
 
-            parent_item.appendRow([QStandardItem(name), size_item, last_modified_item])
+            parent_item.appendRow([name_item, size_item, last_modified_item])
 
             return size
 
@@ -123,6 +129,8 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.refresh_in_progress     = False
         self.available_files         = []
         self.available_directories   = []
+        self.folder_icon             = QIcon(os.path.join(get_program_path(), "folder-icon.png"))
+        self.file_icon               = QIcon(os.path.join(get_program_path(), "file-icon.png"))
         self.tree_files_model        = QStandardItemModel(self)
         self.tree_files_model_header = ['Name', 'Size', 'Last Modified']
         self.tree_files_proxy_model  = FilesProxyModel(self)
@@ -172,7 +180,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 self.refresh_in_progress   = False
                 self.update_main_ui_state()
 
-                expand_directory_walk_to_model(directory_walk, self.tree_files_model)
+                expand_directory_walk_to_model(directory_walk, self.tree_files_model, self.folder_icon, self.file_icon)
 
                 self.tree_files.header().setSortIndicator(0, Qt.AscendingOrder)
 

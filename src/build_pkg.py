@@ -97,8 +97,10 @@ def build_macosx_pkg():
 
     os.path.walk(os.path.normcase("build_data/macosx/"), visitor, (True, os.path.normcase("build_data/macosx/")))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'brickv-icon.png')]))
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tabicon-default.png')]))
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tabicon-mouse-over.png')]))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-default-icon.png')]))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-mouse-over-icon.png')]))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'file-icon.png')]))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'folder-icon.png')]))
 
     def delete_old():
         BUILD_PATH = os.path.join(PWD, "build")

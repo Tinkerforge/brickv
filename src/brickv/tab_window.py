@@ -80,9 +80,9 @@ class TabWindow(QWidget):
         self.button = None # see tab()
         self.button_handler = button_handler
         self.button_icon_default = \
-            QIcon(os.path.join(get_program_path(), "tabicon-default.png"))
+            QIcon(os.path.join(get_program_path(), "tab-default-icon.png"))
         self.button_icon_mouse_over = \
-            QIcon(os.path.join(get_program_path(), "tabicon-mouse-over.png"))
+            QIcon(os.path.join(get_program_path(), "tab-mouse-over-icon.png"))
 
     def closeEvent(self, event):
         self.tab()
