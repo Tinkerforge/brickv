@@ -239,3 +239,4 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
 
         self.stacked_container.removeWidget(program_info)
         self.list_programs.takeItem(self.list_programs.row(selected_items[0]))
+        self.update_ui_state()
