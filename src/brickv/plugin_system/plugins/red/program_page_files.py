@@ -22,10 +22,11 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QDir, QVariant
-from PyQt4.QtGui import QFileDialog, QListWidgetItem, QProgressDialog, QApplication
+from PyQt4.QtGui import QIcon, QFileDialog, QListWidgetItem, QProgressDialog, QApplication
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_files import Ui_ProgramPageFiles
+from brickv.program_path import get_program_path
 import os
 from collections import namedtuple
 
@@ -36,6 +37,9 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         ProgramPage.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
+
+        self.folder_icon = QIcon(os.path.join(get_program_path(), "folder-icon.png"))
+        self.file_icon   = QIcon(os.path.join(get_program_path(), "file-icon.png"))
 
         self.setTitle(title_prefix + 'Files')
 
@@ -66,6 +70,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
 
             item = QListWidgetItem(filename)
             item.setData(Qt.UserRole, QVariant(uploads))
+            item.setData(Qt.DecorationRole, QVariant(self.file_icon))
             self.list_files.addItem(item)
 
     def show_add_directory_dialog(self):
@@ -107,6 +112,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
 
         item = QListWidgetItem(os.path.join(directory, '*'))
         item.setData(Qt.UserRole, QVariant(uploads))
+        item.setData(Qt.DecorationRole, QVariant(self.folder_icon))
         self.list_files.addItem(item)
 
     def remove_selected_files(self):
