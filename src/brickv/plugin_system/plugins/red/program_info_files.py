@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 program_info_files.py: Program Files Info Widget
 
@@ -22,8 +23,8 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QDateTime, QVariant
-from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem,\
-                        QSortFilterProxyModel, QFileDialog, QProgressDialog, QMessageBox
+from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QAbstractItemView, QLineEdit,\
+                        QSortFilterProxyModel, QFileDialog, QProgressDialog, QMessageBox, QInputDialog
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
 from brickv.async_call import async_call
@@ -55,6 +56,12 @@ def get_file_display_size(size):
     else:
         return str(size / 1024) + ' kiB'
 
+def merge_path(item, path):
+    parent = item.parent()
+    if parent:
+        return merge_path(parent, os.path.join(unicode(parent.text()), path))
+    else:
+        return path
 
 def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon):
     def create_last_modified_item(last_modified):
@@ -105,7 +112,6 @@ def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon
 
     return model
 
-
 class FilesProxyModel(QSortFilterProxyModel):
     # overrides QSortFilterProxyModel.lessThan
     def lessThan(self, left, right):
@@ -136,6 +142,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.tree_files_model        = QStandardItemModel(self)
         self.tree_files_model_header = ['Name', 'Size', 'Last Modified']
         self.tree_files_proxy_model  = FilesProxyModel(self)
+        self.rename_from             = ""
 
         self.tree_files_model.setHorizontalHeaderLabels(self.tree_files_model_header)
         self.tree_files_proxy_model.setSourceModel(self.tree_files_model)
@@ -145,6 +152,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.tree_files.setColumnWidth(1, 85)
 
         self.tree_files.selectionModel().selectionChanged.connect(self.update_ui_state)
+        self.tree_files_model.itemChanged.connect(self.tree_file_item_changed)
         self.button_upload_files.clicked.connect(self.upload_files)
         self.button_download_files.clicked.connect(self.download_selected_files)
         self.button_rename_file.clicked.connect(self.rename_selected_file)
@@ -156,6 +164,13 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.set_widget_enabled(self.button_download_files, selection_count > 0)
         self.set_widget_enabled(self.button_rename_file, selection_count == 1)
         self.set_widget_enabled(self.button_delete_files, selection_count > 0)
+
+    def tree_file_item_changed(self, item):
+        _from = self.rename_from
+        _to = self.rename_from.replace(os.path.split(self.rename_from)[1], unicode(item.text()))
+        print unicode(_from)
+        print unicode(_to)
+        self.rename_from = ""
 
     def refresh_files(self):
         def cb_directory_walk(result):
@@ -181,7 +196,9 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 self.refresh_in_progress   = False
                 self.update_main_ui_state()
 
+                self.tree_files_model.itemChanged.disconnect(self.tree_file_item_changed)
                 expand_directory_walk_to_model(directory_walk, self.tree_files_model, self.folder_icon, self.file_icon)
+                self.tree_files_model.itemChanged.connect(self.tree_file_item_changed)
 
                 self.tree_files.header().setSortIndicator(0, Qt.AscendingOrder)
 
@@ -208,13 +225,6 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         print 'upload_files'
 
     def download_selected_files(self):
-        def merge_path(item, path):
-            parent = item.parent()
-            if parent:
-                return merge_path(parent, os.path.join(unicode(parent.text()), path))
-            else:
-                return path
-
         def file_download_pd_closed():
             if len(files_to_download) > 0:
                 QMessageBox.warning(None,
@@ -338,7 +348,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                     file_download_pd.close()
                     print 'download_selected_files cb_open cb_read', result
 
-            red_file.read_async(int(files_to_download.values()[0]['s']),
+            red_file.read_async(int(files_to_dqtreeviewownload.values()[0]['s']),
                                 lambda x: cb_read(red_file, x),
                                 cb_read_status)
 
@@ -355,14 +365,16 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                        cb_open_error)
 
     def rename_selected_file(self):
-        selected_items = self.tree_files.selectedItems()
-
-        if len(selected_items) == 0:
+        selected_indexes = self.tree_files.selectedIndexes()
+        if len(selected_indexes) != 3:
             return
 
-        filename = unicode(selected_items[0].text())
-
-        print 'rename_selected_file', filename
+        selected_item = self.tree_files_model.itemFromIndex\
+            (self.tree_files_proxy_model.mapToSource(selected_indexes[0]))
+        name, ok = QInputDialog.getText(self, "Rename File/Directory", "", QLineEdit.Normal)
+        if ok and name != "":
+            self.rename_from = unicode(merge_path(selected_item, unicode(selected_item.text())))
+            selected_item.setText(unicode(name))
 
     def delete_selected_files(self):
         selected_items = self.tree_files.selectedItems()
