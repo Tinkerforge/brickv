@@ -101,7 +101,23 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
         if self.wizard().program != None:
             program = self.wizard().program
 
+            # start mode
+            start_mode_api_name = program.cast_custom_option_value('octave.start_mode', unicode, '<unknown>')
+            start_mode          = Constants.get_octave_start_mode(start_mode_api_name)
+
+            self.combo_start_mode.setCurrentIndex(start_mode)
+
+            # script file
+            self.combo_script_file_selector.set_current_text(program.cast_custom_option_value('octave.script_file', unicode, ''))
+
+            # working directory
             self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+
+            # options
+            self.option_list_editor.clear()
+
+            for option in program.cast_custom_option_value_list('octave.options', unicode, []):
+                self.option_list_editor.add_item(option)
 
         self.update_ui_state()
 
@@ -134,7 +150,11 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
         return unicode(self.combo_version.itemData(self.get_field('octave.version').toInt()[0]).toString())
 
     def get_custom_options(self):
-        return {}
+        return {
+            'octave.start_mode':  Constants.octave_start_mode_api_names[self.get_field('octave.start_mode').toInt()[0]],
+            'octave.script_file': unicode(self.get_field('octave.script_file').toString()),
+            'octave.options':     self.option_list_editor.get_items()
+        }
 
     def get_command(self):
         executable  = self.get_executable()
@@ -151,3 +171,6 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
         working_directory = unicode(self.get_field('octave.working_directory').toString())
 
         return executable, arguments, environment, working_directory
+
+    def apply_program_changes(self):
+        self.apply_program_custom_options_and_command_changes()

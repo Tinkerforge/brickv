@@ -199,6 +199,21 @@ class Constants:
     # must match item order in combo_start_mode on Octave page
     OCTAVE_START_MODE_SCRIPT_FILE = 0
 
+    octave_start_mode_api_names = {
+        OCTAVE_START_MODE_SCRIPT_FILE: 'script_file'
+    }
+
+    octave_start_mode_display_names = {
+        OCTAVE_START_MODE_SCRIPT_FILE: 'Script File'
+    }
+
+    @staticmethod
+    def get_octave_start_mode(octave_start_mode_api_name):
+        try:
+            return get_key_from_value(Constants.octave_start_mode_api_names, octave_start_mode_api_name)
+        except ValueError:
+            return Constants.DEFAULT_OCTAVE_START_MODE
+
     # must match item order in combo_start_mode on Perl page
     PERL_START_MODE_SCRIPT_FILE = 0
     PERL_START_MODE_COMMAND     = 1
