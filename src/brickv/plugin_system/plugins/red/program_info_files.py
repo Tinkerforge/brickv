@@ -22,7 +22,9 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QDateTime, QVariant
-from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QSortFilterProxyModel
+from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem,\
+                        QSortFilterProxyModel, QFileDialog, QProgressDialog, QMessageBox
+from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
 from brickv.async_call import async_call
 from brickv.program_path import get_program_path
@@ -30,7 +32,7 @@ import os
 import json
 
 def expand_directory_walk_to_lists(directory_walk):
-    files = []
+    files = {}
     directories = set()
 
     def expand(root, dw):
@@ -41,12 +43,11 @@ def expand_directory_walk_to_lists(directory_walk):
             for child_name, child_dw in dw['c'].iteritems():
                 expand(os.path.join(root, child_name), child_dw)
         else:
-            files.append(root)
+            files[root] = dw
 
     expand('', directory_walk)
 
-    return sorted(files), sorted(list(directories))
-
+    return files, sorted(list(directories))
 
 def get_file_display_size(size):
     if size < 1024:
@@ -121,13 +122,14 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         self.setupUi(self)
 
+        self.session                 = context.session
         self.script_manager          = context.script_manager
         self.program                 = context.program
         self.update_main_ui_state    = update_main_ui_state
         self.set_widget_enabled      = set_widget_enabled
         self.bin_directory           = os.path.join(unicode(self.program.root_directory), 'bin')
         self.refresh_in_progress     = False
-        self.available_files         = []
+        self.available_files         = {}
         self.available_directories   = []
         self.folder_icon             = QIcon(os.path.join(get_program_path(), "folder-icon.png"))
         self.file_icon               = QIcon(os.path.join(get_program_path(), "file-icon.png"))
@@ -164,12 +166,11 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
             def expand_async(data):
                 directory_walk        = json.loads(data)
-                available_files       = []
+                available_files       = {}
                 available_directories = []
 
                 if directory_walk != None:
                     available_files, available_directories = expand_directory_walk_to_lists(directory_walk)
-
                 return directory_walk, available_files, available_directories
 
             def cb_expand_success(args):
@@ -207,14 +208,151 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         print 'upload_files'
 
     def download_selected_files(self):
-        selected_items = self.tree_files.selectedItems()
+        def merge_path(item, path):
+            parent = item.parent()
+            if parent:
+                return merge_path(parent, os.path.join(unicode(parent.text()), path))
+            else:
+                return path
 
-        if len(selected_items) == 0:
+        def file_download_pd_closed():
+            if len(files_to_download) > 0:
+                QMessageBox.warning(None,
+                                    'Program | Filess',
+                                    'Download could not finish.',
+                                    QMessageBox.Ok)
+            else:
+                QMessageBox.information(None,
+                                        'Program | Filess',
+                                        'Download complete!',
+                                        QMessageBox.Ok)
+
+        selected_indexes = self.tree_files.selectedIndexes()
+        if len(selected_indexes) == 0:
             return
 
-        filenames = [unicode(selected_item.text()) for selected_item in selected_items]
+        selected_indexes_chunked = zip(*[iter(selected_indexes)] * 3)
 
-        print 'download_selected_files', filenames
+        dirs_to_create = []
+        files_to_download = {}
+
+        for selected_index_chunked in selected_indexes_chunked:
+            selected_item = self.tree_files_model.itemFromIndex\
+                (self.tree_files_proxy_model.mapToSource(selected_index_chunked[0]))
+            path = merge_path(selected_item, unicode(selected_item.text()))
+
+            for directory in self.available_directories:
+                if path in directory:
+                    dirs_to_create.append(directory)
+            for file_path in self.available_files:
+                if path in file_path:
+                    files_to_download[file_path] = self.available_files[file_path]
+
+        files_download_dir = unicode(QFileDialog.getExistingDirectory(self, "Choose Download Location"))
+
+        if files_download_dir == "":
+            return
+
+        for directory in dirs_to_create:
+            try:
+                dir_path = os.path.join(files_download_dir, directory)
+
+                if not os.path.exists(dir_path):
+                    os.makedirs(dir_path)
+
+                with open(os.path.join(unicode(dir_path),
+                                       unicode('write_test_file')),
+                          'wb') as fh_write_test:
+                    fh_write_test.write("1")
+                os.remove(os.path.join(unicode(dir_path),
+                                       unicode('write_test_file')))
+            except:
+                QMessageBox.critical(None,
+                                     'Program | Logs',
+                                     'Directory not writeable.',
+                                     QMessageBox.Ok)
+                return
+
+        if len(files_to_download) <= 0:
+            QMessageBox.information(None,
+                                    'Program | Filess',
+                                    'Download complete!',
+                                    QMessageBox.Ok)
+            return
+
+        file_download_pd = QProgressDialog(str(len(files_to_download))+" file(s) remaining...",
+                                          "Cancel",
+                                          0,
+                                          100,
+                                          self)
+        file_download_pd.setWindowTitle("Download Progress")
+        file_download_pd.setAutoReset(False)
+        file_download_pd.setAutoClose(False)
+        file_download_pd.setMinimumDuration(0)
+        file_download_pd.canceled.connect(file_download_pd_closed)
+        file_download_pd.setValue(0)
+
+        def cb_open(red_file):
+            def cb_read_status(bytes_read, max_length):
+                if file_download_pd:
+                    if file_download_pd.wasCanceled():
+                        return
+                    files_remaining = str(len(files_to_download))
+                    current_percent = int(float(bytes_read)/float(max_length) * 100)
+    
+                    file_download_pd.setLabelText(files_remaining+" file(s) remaining...")
+                    file_download_pd.setValue(current_percent)
+    
+                    if current_percent == 100:
+                        file_download_pd.setValue(0)
+
+            def cb_read(red_file, result):
+                red_file.release()
+                if result is not None:
+                    # Success
+                    read_file_path = unicode(files_to_download.keys()[0])
+                    with open(os.path.join(unicode(files_download_dir), read_file_path), 'wb') as fh_file_write:
+                        fh_file_write.write(result.data)
+
+                    if file_download_pd.wasCanceled():
+                        return
+
+                    if read_file_path in files_to_download:
+                        files_to_download.pop(read_file_path, None)
+
+                    if len(files_to_download) == 0:
+                        file_download_pd.close()
+                        return
+
+                    if not file_download_pd.wasCanceled():
+                        file_download_pd.setLabelText(str(len(files_to_download))+" file(s) remaining...")
+                        file_download_pd.setValue(0)
+                        async_call(REDFile(self.session).open,
+                                   (os.path.join(self.bin_directory, files_to_download.keys()[0]),
+                                   REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                                   cb_open,
+                                   cb_open_error)
+
+                else:
+                    # TODO: Error popup for user?
+                    file_download_pd.close()
+                    print 'download_selected_files cb_open cb_read', result
+
+            red_file.read_async(int(files_to_download.values()[0]['s']),
+                                lambda x: cb_read(red_file, x),
+                                cb_read_status)
+
+        def cb_open_error(result):
+            # TODO: Error popup for user?
+            file_download_pd.close()
+            print 'download_selected_files cb_open_error', result
+
+        if len(files_to_download) > 0:
+            async_call(REDFile(self.session).open,
+                       (os.path.join(self.bin_directory, files_to_download.keys()[0]),
+                       REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                       cb_open,
+                       cb_open_error)
 
     def rename_selected_file(self):
         selected_items = self.tree_files.selectedItems()
