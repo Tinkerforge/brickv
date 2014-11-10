@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>598</width>
-    <height>767</height>
+    <width>630</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -55,7 +55,7 @@
       </widget>
      </item>
      <item row="5" column="1" colspan="4">
-      <widget class="QComboBox" name="combo_file">
+      <widget class="QComboBox" name="combo_main_source_file">
        <property name="editable">
         <bool>true</bool>
        </property>
@@ -164,7 +164,7 @@
       </widget>
      </item>
      <item row="7" column="1" colspan="4">
-      <widget class="QLabel" name="label_file_help">
+      <widget class="QLabel" name="label_main_source_file_help">
        <property name="text">
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Specify the main source file. It will be given to the Free Pascal Compiler for compiling.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
@@ -174,17 +174,17 @@
       </widget>
      </item>
      <item row="6" column="0">
-      <widget class="QLabel" name="label_file_type">
+      <widget class="QLabel" name="label_main_source_file_type">
        <property name="text">
-        <string>Main File Type:</string>
+        <string>Main Source File Type:</string>
        </property>
        <property name="buddy">
-        <cstring>combo_file_type</cstring>
+        <cstring>combo_main_source_file_type</cstring>
        </property>
       </widget>
      </item>
      <item row="6" column="1" colspan="4">
-      <widget class="QComboBox" name="combo_file_type">
+      <widget class="QComboBox" name="combo_main_source_file_type">
        <property name="currentIndex">
         <number>1</number>
        </property>
@@ -220,7 +220,7 @@
      <item row="4" column="1" colspan="4">
       <widget class="QLabel" name="label_executable_help">
        <property name="text">
-        <string>The specified file will be executed.</string>
+        <string>The specified executable will be executed.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -228,12 +228,12 @@
       </widget>
      </item>
      <item row="5" column="0">
-      <widget class="QLabel" name="label_file">
+      <widget class="QLabel" name="label_main_source_file">
        <property name="text">
-        <string>Main File:</string>
+        <string>Main Source File:</string>
        </property>
        <property name="buddy">
-        <cstring>combo_file</cstring>
+        <cstring>combo_main_source_file</cstring>
        </property>
       </widget>
      </item>
@@ -251,8 +251,8 @@
  <tabstops>
   <tabstop>combo_start_mode</tabstop>
   <tabstop>combo_executable</tabstop>
-  <tabstop>combo_file</tabstop>
-  <tabstop>combo_file_type</tabstop>
+  <tabstop>combo_main_source_file</tabstop>
+  <tabstop>combo_main_source_file_type</tabstop>
   <tabstop>check_show_advanced_options</tabstop>
   <tabstop>combo_working_directory</tabstop>
   <tabstop>list_options</tabstop>

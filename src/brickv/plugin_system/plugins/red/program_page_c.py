@@ -58,7 +58,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
         self.registerField('c.start_mode', self.combo_start_mode)
-        self.registerField('c.file', self.combo_file, 'currentText')
+        self.registerField('c.executable', self.combo_executable, 'currentText')
         self.registerField('c.working_directory', self.combo_working_directory, 'currentText')
         self.registerField('c.make_options', self, 'get_make_options')
 
@@ -66,7 +66,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
-        self.combo_file_checker               = MandatoryEditableComboBoxChecker(self, self.combo_file, self.label_file)
+        self.combo_executable_checker         = MandatoryEditableComboBoxChecker(self, self.combo_executable, self.label_executable)
         self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
         self.option_list_editor               = ListWidgetEditor(self.label_options,
                                                                  self.list_options,
@@ -97,7 +97,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.get_executable_versions('gcc', cb_gcc_versions)
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_C_START_MODE)
-        self.combo_file.clear()
+        self.combo_executable.clear()
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
@@ -112,23 +112,23 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
-        if not self.combo_file_checker.complete:
+        if not self.combo_executable_checker.complete:
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_ui_state(self):
         start_mode            = self.get_field('c.start_mode').toInt()[0]
-        start_mode_exe        = start_mode == Constants.C_START_MODE_EXECUTABLE
+        start_mode_executable = start_mode == Constants.C_START_MODE_EXECUTABLE
         start_mode_make       = start_mode == Constants.C_START_MODE_MAKE
         show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
 
         self.label_compiler.setVisible(start_mode_make)
         self.label_compiler_available.setVisible(start_mode_make)
-        self.label_start_executable_help.setVisible(start_mode_exe)
+        self.label_start_executable_help.setVisible(start_mode_executable)
         self.label_start_make_help.setVisible(start_mode_make)
-        self.label_file_executable_help.setVisible(start_mode_exe)
-        self.label_file_make_help.setVisible(start_mode_make)
+        self.label_executable_help.setVisible(start_mode_executable)
+        self.label_executable_make_help.setVisible(start_mode_make)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.option_list_editor.set_visible(show_advanced_options and start_mode_make)
 
@@ -142,7 +142,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         return {}
 
     def get_command(self):
-        executable        = unicode(self.get_field('c.file').toString())
+        executable        = unicode(self.get_field('c.executable').toString())
         arguments         = self.option_list_editor.get_items()
         environment       = []
         working_directory = unicode(self.get_field('c.working_directory').toString())

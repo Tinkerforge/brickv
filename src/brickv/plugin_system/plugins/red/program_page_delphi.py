@@ -54,8 +54,8 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
         self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
         self.registerField('delphi.start_mode', self.combo_start_mode)
-        self.registerField('delphi.file', self.combo_file, 'currentText')
         self.registerField('delphi.executable', self.combo_executable, 'currentText')
+        self.registerField('delphi.main_source_file', self.combo_main_source_file, 'currentText')
         self.registerField('delphi.working_directory', self.combo_working_directory, 'currentText')
         self.registerField('delphi.compile_options', self, 'get_compile_options')
 
@@ -68,12 +68,12 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
                                                                                  self.label_executable)
         self.combo_executable_checker         = ComboBoxFileEndingChecker(self,
                                                                           self.combo_executable)
-        self.combo_file_selector              = MandatoryTypedFileSelector(self,
-                                                                           self.label_file,
-                                                                           self.combo_file,
-                                                                           self.label_file_type,
-                                                                           self.combo_file_type,
-                                                                           self.label_file_help)
+        self.combo_main_source_file_selector  = MandatoryTypedFileSelector(self,
+                                                                           self.label_main_source_file,
+                                                                           self.combo_main_source_file,
+                                                                           self.label_main_source_file_type,
+                                                                           self.combo_main_source_file_type,
+                                                                           self.label_main_source_file_help)
         self.combo_working_directory_selector = MandatoryDirectorySelector(self,
                                                                            self.combo_working_directory,
                                                                            self.label_working_directory)
@@ -100,7 +100,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_DELPHI_START_MODE)
         self.combo_executable_checker.check(False)
-        self.combo_file_selector.reset()
+        self.combo_main_source_file_selector.reset()
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
@@ -121,7 +121,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
            not self.combo_executable_selector.complete:
             return False
         elif start_mode == Constants.DELPHI_START_MODE_COMPILE and \
-           not self.combo_file_selector.complete:
+           not self.combo_main_source_file_selector.complete:
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
@@ -132,16 +132,16 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
         start_mode_compile    = start_mode == Constants.DELPHI_START_MODE_COMPILE
         show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
 
-        self.label_start_compile_help.setVisible(start_mode_compile)
         self.label_start_executable_help.setVisible(start_mode_executable)
-        self.label_file.setVisible(start_mode_compile)
-        self.label_file_help.setVisible(start_mode_compile)
-        self.combo_file.setVisible(start_mode_compile)
-        self.label_file_type.setVisible(start_mode_compile)
-        self.combo_file_type.setVisible(start_mode_compile)
+        self.label_start_compile_help.setVisible(start_mode_compile)
         self.label_executable.setVisible(start_mode_executable)
-        self.label_executable_help.setVisible(start_mode_executable)
         self.combo_executable.setVisible(start_mode_executable)
+        self.label_executable_help.setVisible(start_mode_executable)
+        self.label_main_source_file.setVisible(start_mode_compile)
+        self.label_main_source_file_help.setVisible(start_mode_compile)
+        self.combo_main_source_file.setVisible(start_mode_compile)
+        self.label_main_source_file_type.setVisible(start_mode_compile)
+        self.combo_main_source_file_type.setVisible(start_mode_compile)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.option_list_editor.set_visible(show_advanced_options and start_mode_compile)
 
@@ -166,7 +166,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
             if not executable.startswith('/'):
                 executable = os.path.join('./', executable)
         elif start_mode == Constants.DELPHI_START_MODE_COMPILE:
-            to_compile = unicode('./{0}'.format(self.get_field('delphi.file').toString()))
+            to_compile = unicode('./{0}'.format(self.get_field('delphi.main_source_file').toString()))
             executable = os.path.splitext(to_compile)[0]
 
         return executable, arguments, environment, working_directory
