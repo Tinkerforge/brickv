@@ -127,6 +127,6 @@ class ProgramPage(QWizardPage):
                 QMessageBox.critical(self, 'Edit Error',
                                      u'Could not update custom options of program [{0}]:\n\n{1}'
                                      .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
-            return
+                return
 
         self.set_last_edit_timestamp()
