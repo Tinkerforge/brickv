@@ -269,7 +269,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.tree_logs_model.clear()
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_model_header)
         self.tree_logs.setColumnWidth(0, width)
-
+        print ">>>>>>>>>", self.log_directory
         self.script_manager.execute_script('program_get_os_walk', cb_program_get_os_walk,
                                            [self.log_directory], max_len=1024*1024)
 
@@ -356,6 +356,19 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             return
 
         log_files_download_dir = unicode(QFileDialog.getExistingDirectory(self, "Choose Download Location"))
+        try:
+            with open(os.path.join(unicode(log_files_download_dir),
+                                   unicode('write_test_file')),
+                      'wb') as fh_write_test:
+                fh_write_test.write("1")
+            os.remove(os.path.join(unicode(log_files_download_dir),
+                                   unicode('write_test_file')))
+        except:
+            QMessageBox.critical(None,
+                                 'Program | Logs',
+                                 'Directory not writeable.',
+                                 QMessageBox.Ok)
+            return
 
         if log_files_download_dir != "":
             log_download_pd = QProgressDialog(str(len(log_files_to_download['files']))+" file(s) remaining...",
@@ -373,6 +386,8 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
             def cb_open(red_file):
                 def cb_read_status(bytes_read, max_length):
+                    if log_download_pd.wasCanceled():
+                        return
                     files_remaining = str(len(log_files_to_download['files']))
                     current_percent = int(float(bytes_read)/float(max_length) * 100)
 
@@ -390,8 +405,11 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                         save_file_name = ''.join(read_file_path.split('/')[-1:])
                         with open(os.path.join(unicode(log_files_download_dir),
                                                unicode(save_file_name)),
-                                               'wb') as fh_log_write:
+                                  'wb') as fh_log_write:
                             fh_log_write.write(result.data)
+
+                        if log_download_pd.wasCanceled():
+                            return
 
                         if read_file_path in log_files_to_download['files']:
                             log_files_to_download['files'].pop(read_file_path, None)
