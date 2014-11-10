@@ -292,7 +292,6 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.tree_logs_model.clear()
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_model_header)
         self.tree_logs.setColumnWidth(0, width)
-        print ">>>>>>>>>", self.log_directory
         self.script_manager.execute_script('program_get_os_walk', cb_program_get_os_walk,
                                            [self.log_directory], max_len=1024*1024)
 
