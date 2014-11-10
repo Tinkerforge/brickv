@@ -408,16 +408,17 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
             def cb_open(red_file):
                 def cb_read_status(bytes_read, max_length):
-                    if log_download_pd.wasCanceled():
-                        return
-                    files_remaining = str(len(log_files_to_download['files']))
-                    current_percent = int(float(bytes_read)/float(max_length) * 100)
-
-                    log_download_pd.setLabelText(files_remaining+" file(s) remaining...")
-                    log_download_pd.setValue(current_percent)
-
-                    if current_percent == 100:
-                        log_download_pd.setValue(0)
+                    if log_download_pd:
+                        if log_download_pd.wasCanceled():
+                            return
+                        files_remaining = str(len(log_files_to_download['files']))
+                        current_percent = int(float(bytes_read)/float(max_length) * 100)
+    
+                        log_download_pd.setLabelText(files_remaining+" file(s) remaining...")
+                        log_download_pd.setValue(current_percent)
+    
+                        if current_percent == 100:
+                            log_download_pd.setValue(0)
 
                 def cb_read(red_file, result):
                     red_file.release()
