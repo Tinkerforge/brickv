@@ -448,7 +448,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
-        self.edit_general_wizard = ProgramWizardEdit(context, self.program, self.widget_files.available_files, self.widget_files.available_directories)
+        self.edit_general_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
         self.edit_general_wizard.setPage(Constants.PAGE_GENERAL, ProgramPageGeneral())
         self.edit_general_wizard.finished.connect(self.edit_general_wizard_finished)
         self.edit_general_wizard.show()
@@ -490,7 +490,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
-        self.edit_language_wizard = ProgramWizardEdit(context, self.program, self.widget_files.available_files, self.widget_files.available_directories)
+        self.edit_language_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
         self.edit_language_wizard.setPage(language_page, language_page_classes[language_page]())
         self.edit_language_wizard.finished.connect(self.edit_language_wizard_finished)
         self.edit_language_wizard.show()
@@ -509,7 +509,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
-        self.edit_arguments_wizard = ProgramWizardEdit(context, self.program, self.widget_files.available_files, self.widget_files.available_directories)
+        self.edit_arguments_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
         self.edit_arguments_wizard.setPage(Constants.PAGE_ARGUMENTS, ProgramPageArguments())
         self.edit_arguments_wizard.finished.connect(self.edit_arguments_wizard_finished)
         self.edit_arguments_wizard.show()
@@ -528,7 +528,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
-        self.edit_stdio_wizard = ProgramWizardEdit(context, self.program, self.widget_files.available_files, self.widget_files.available_directories)
+        self.edit_stdio_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
         self.edit_stdio_wizard.setPage(Constants.PAGE_STDIO, ProgramPageStdio())
         self.edit_stdio_wizard.finished.connect(self.edit_stdio_wizard_finished)
         self.edit_stdio_wizard.show()
@@ -547,7 +547,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
-        self.edit_schedule_wizard = ProgramWizardEdit(context, self.program, self.widget_files.available_files, self.widget_files.available_directories)
+        self.edit_schedule_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
         self.edit_schedule_wizard.setPage(Constants.PAGE_SCHEDULE, ProgramPageSchedule())
         self.edit_schedule_wizard.finished.connect(self.edit_schedule_wizard_finished)
         self.edit_schedule_wizard.show()
