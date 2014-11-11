@@ -137,6 +137,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.cbox_net_wireless_ap.currentIndexChanged.connect(self.slot_network_settings_changed)
         self.cbox_net_wireless_ap.currentIndexChanged.connect(self.slot_cbox_net_wireless_ap_current_idx_changed)
         self.ledit_net_wireless_key.textEdited.connect(self.slot_network_settings_changed)
+        self.ledit_net_wireless_key.setEchoMode(QtGui.QLineEdit.Password)
+        self.cbox_net_wireless_key_show.stateChanged.connect(self.slot_net_wireless_key_show_state_changed)
         self.sbox_net_wireless_ip1.valueChanged.connect(self.slot_network_settings_changed)
         self.sbox_net_wireless_ip2.valueChanged.connect(self.slot_network_settings_changed)
         self.sbox_net_wireless_ip3.valueChanged.connect(self.slot_network_settings_changed)
@@ -1639,6 +1641,12 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.sbox_net_wireless_dns2.setValue(0)
                     self.sbox_net_wireless_dns3.setValue(0)
                     self.sbox_net_wireless_dns4.setValue(0)
+
+    def slot_net_wireless_key_show_state_changed(self, state):
+        if state == QtCore.Qt.Checked:
+            self.ledit_net_wireless_key.setEchoMode(QtGui.QLineEdit.Normal)
+        else:
+            self.ledit_net_wireless_key.setEchoMode(QtGui.QLineEdit.Password)
 
     def slot_network_settings_changed(self):
         self.network_button_save_enabled(True)
