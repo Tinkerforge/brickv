@@ -150,12 +150,18 @@
                            <property name="text">
                             <string>None</string>
                            </property>
+                           <property name="textInteractionFlags">
+                            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                           </property>
                           </widget>
                          </item>
                          <item row="3" column="1">
                           <widget class="QLabel" name="label_net_gen_cstat_mask">
                            <property name="text">
                             <string>None</string>
+                           </property>
+                           <property name="textInteractionFlags">
+                            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                            </property>
                           </widget>
                          </item>
@@ -171,12 +177,18 @@
                            <property name="text">
                             <string>None</string>
                            </property>
+                           <property name="textInteractionFlags">
+                            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                           </property>
                           </widget>
                          </item>
                          <item row="4" column="1">
                           <widget class="QLabel" name="label_net_gen_cstat_gateway">
                            <property name="text">
                             <string>None</string>
+                           </property>
+                           <property name="textInteractionFlags">
+                            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                            </property>
                           </widget>
                          </item>
@@ -205,6 +217,9 @@
                           <widget class="QLabel" name="label_net_gen_cstat_ip">
                            <property name="text">
                             <string>None</string>
+                           </property>
+                           <property name="textInteractionFlags">
+                            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                            </property>
                           </widget>
                          </item>
@@ -306,8 +321,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>370</width>
-                   <height>442</height>
+                   <width>762</width>
+                   <height>460</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -929,8 +944,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>141</width>
-           <height>148</height>
+           <width>804</width>
+           <height>618</height>
           </rect>
          </property>
          <attribute name="label">
@@ -943,7 +958,7 @@
              <enum>QTabWidget::South</enum>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="tab_brickd_gen">
              <attribute name="title">
@@ -960,8 +975,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>442</width>
-                   <height>196</height>
+                   <width>762</width>
+                   <height>547</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -1130,8 +1145,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>332</width>
-                   <height>229</height>
+                   <width>762</width>
+                   <height>547</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_20">
