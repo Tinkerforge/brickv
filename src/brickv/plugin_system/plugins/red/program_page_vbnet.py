@@ -2,8 +2,9 @@
 """
 RED Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-program_page_vbnet.py: Program Wizard VBNet Page
+program_page_vbnet.py: Program Wizard Visual Basic .NET Page
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

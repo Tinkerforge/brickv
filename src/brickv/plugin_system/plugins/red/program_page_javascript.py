@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 program_page_javascript.py: Program Wizard JavaScript Page
 
@@ -22,6 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import QVariant
+from brickv.plugin_system.plugins.red.api import REDProgram
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_javascript import Ui_ProgramPageJavaScript
@@ -101,7 +103,16 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
 
             # if a program exists then this page is used in an edit wizard
             if self.wizard().program != None:
-                set_current_combo_index_from_data(self.combo_flavor, unicode(self.wizard().program.executable))
+                program         = self.wizard().program
+                flavor_api_name = program.cast_custom_option_value('javascript.flavor', unicode, '<unknown>')
+                flavor          = Constants.get_javascript_flavor(flavor_api_name)
+
+                if flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER:
+                    executable = '/bin/false'
+                else:
+                    executable = unicode(program.executable)
+
+                set_current_combo_index_from_data(self.combo_flavor, executable)
 
             self.combo_flavor.setEnabled(True)
             self.completeChanged.emit()
@@ -118,7 +129,26 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         if self.wizard().program != None:
             program = self.wizard().program
 
+            # start mode
+            start_mode_api_name = program.cast_custom_option_value('javascript.start_mode', unicode, '<unknown>')
+            start_mode          = Constants.get_javascript_start_mode(start_mode_api_name)
+
+            self.combo_start_mode.setCurrentIndex(start_mode)
+
+            # script file
+            self.combo_script_file_selector.set_current_text(program.cast_custom_option_value('javascript.script_file', unicode, ''))
+
+            # command
+            self.edit_command.setText(program.cast_custom_option_value('javascript.command', unicode, ''))
+
+            # working directory
             self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+
+            # options
+            self.option_list_editor.clear()
+
+            for option in program.cast_custom_option_value_list('javascript.options', unicode, []):
+                self.option_list_editor.add_item(option)
 
         self.update_ui_state()
 
@@ -197,4 +227,14 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
             return None
 
     def apply_program_changes(self):
-        self.apply_program_custom_options_and_command_changes()
+        if not self.apply_program_custom_options_and_command_changes():
+            return
+
+        # stop scheduler if switching to browser flavor
+        if self.get_field('javascript.flavor').toInt()[0] == Constants.JAVASCRIPT_FLAVOR_BROWSER:
+            try:
+                program.set_schedule(REDProgram.START_MODE_NEVER, False, 0, '') # FIXME: async_call
+            except REDError as e:
+                QMessageBox.critical(self, 'Edit Error',
+                                     u'Could not update schedule of program [{0}]:\n\n{1}'
+                                     .format(program.cast_custom_option_value('name', unicode, '<unknown>')))

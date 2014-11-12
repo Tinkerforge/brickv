@@ -90,7 +90,7 @@ class ProgramPage(QWizardPage):
         program = self.wizard().program
 
         if program == None:
-            return
+            return False
 
         # command
         command = self.get_command()
@@ -122,7 +122,7 @@ class ProgramPage(QWizardPage):
             QMessageBox.critical(self, 'Edit Error',
                                  u'Could not update command of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
-            return
+            return False
 
         # custom options
         custom_options = self.get_custom_options()
@@ -137,6 +137,8 @@ class ProgramPage(QWizardPage):
                 QMessageBox.critical(self, 'Edit Error',
                                      u'Could not update custom options of program [{0}]:\n\n{1}'
                                      .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
-                return
+                return False
 
         self.set_last_edit_timestamp()
+
+        return True
