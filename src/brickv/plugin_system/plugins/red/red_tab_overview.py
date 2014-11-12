@@ -117,55 +117,60 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         if result == None:
             return
 
-        csv_tokens = result.stdout.split('\n')
-        for i, t in enumerate(csv_tokens):
-            if t == "" and i < len(csv_tokens) - 1:
-                return
+        try:
+            csv_tokens = result.stdout.split('\n')
+            for i, t in enumerate(csv_tokens):
+                if t == "" and i < len(csv_tokens) - 1:
+                    return
 
-        _uptime = csv_tokens[0]
-        days, days_remainder = divmod(int(_uptime), 24 * 60 * 60)
-        hours, hours_remainder = divmod(days_remainder, 60 * 60)
-        minutes, _ = divmod(hours_remainder, 60)
-        uptime = ''
+            _uptime = csv_tokens[0]
+            days, days_remainder = divmod(int(_uptime), 24 * 60 * 60)
+            hours, hours_remainder = divmod(days_remainder, 60 * 60)
+            minutes, _ = divmod(hours_remainder, 60)
+            uptime = ''
 
-        if days > 0:
-            uptime += str(days)
+            if days > 0:
+                uptime += str(days)
 
-            if days == 1:
-                uptime += ' day '
+                if days == 1:
+                    uptime += ' day '
+                else:
+                    uptime += ' days '
+
+            if hours > 0:
+                uptime += str(hours)
+
+                if hours == 1:
+                    uptime += ' hour '
+                else:
+                    uptime += ' hours '
+
+            uptime += str(minutes)
+
+            if minutes == 1:
+                uptime += ' minute'
             else:
-                uptime += ' days '
+                uptime += ' minutes'
 
-        if hours > 0:
-            uptime += str(hours)
+            cpu_percent = csv_tokens[1]
+            cpu_percent_v = int(csv_tokens[1].split('.')[0])
 
-            if hours == 1:
-                uptime += ' hour '
-            else:
-                uptime += ' hours '
+            memory_used = self.bytes2human(int(csv_tokens[2]))
+            memory_total = self.bytes2human(int(csv_tokens[3]))
+            memory_percent = str("%.1f" % ((float(memory_used) / float(memory_total)) * 100))
+            memory_percent_v = int(memory_percent.split('.')[0])
 
-        uptime += str(minutes)
+            storage_used = self.bytes2human(int(csv_tokens[4]))
+            storage_total = self.bytes2human(int(csv_tokens[5]))
+            storage_percent = str("%.1f" % ((float(storage_used) / float(storage_total)) * 100))
+            storage_percent_v = int(storage_percent.split('.')[0])
 
-        if minutes == 1:
-            uptime += ' minute'
-        else:
-            uptime += ' minutes'
-
-        cpu_percent = csv_tokens[1]
-        cpu_percent_v = int(csv_tokens[1].split('.')[0])
-
-        memory_used = self.bytes2human(int(csv_tokens[2]))
-        memory_total = self.bytes2human(int(csv_tokens[3]))
-        memory_percent = str("%.1f" % ((float(memory_used) / float(memory_total)) * 100))
-        memory_percent_v = int(memory_percent.split('.')[0])
-
-        storage_used = self.bytes2human(int(csv_tokens[4]))
-        storage_total = self.bytes2human(int(csv_tokens[5]))
-        storage_percent = str("%.1f" % ((float(storage_used) / float(storage_total)) * 100))
-        storage_percent_v = int(storage_percent.split('.')[0])
-
-        nic_data_dict = json.loads(csv_tokens[6])
-        processes_data_list = json.loads(csv_tokens[7])
+            nic_data_dict = json.loads(csv_tokens[6])
+            processes_data_list = json.loads(csv_tokens[7])
+        except:
+            # some parsing error due to malfromed or incomplete output occured.
+            # ignore it and wait for the next update
+            return
 
         self.label_uptime_value.setText(str(uptime))
 
