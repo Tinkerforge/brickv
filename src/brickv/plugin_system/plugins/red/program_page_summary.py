@@ -63,14 +63,12 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
 
         html += u'<br/>'
 
-        language = self.get_field('language').toInt()[0]
-        is_browser = self.get_field('javascript.version').toInt()[0] == 0
-        if not (language == Constants.LANGUAGE_JAVASCRIPT and is_browser):
-            # language specific configuration
-            html += u'<b>{0} Configuration</b><br/>'.format(Qt.escape(language_display_name))
-            html += u'FIXME<br/>'
-            html += u'<br/>'
+        # language specific configuration
+        html += u'<b>{0} Configuration</b><br/>'.format(Qt.escape(language_display_name))
+        html += u'FIXME<br/>'
+        html += u'<br/>'
 
+        if self.wizard().hasVisitedPage(Constants.PAGE_ARGUMENTS):
             # arguments
             html += u'<b>Arguments</b>'
 
@@ -101,7 +99,8 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
 
             html += u'<br/>'
 
-            # stdio redirection
+        # stdio redirection
+        if self.wizard().hasVisitedPage(Constants.PAGE_STDIO):
             html += u'<b>Stdio Redirection</b><br/>'
 
             stdin_redirection  = self.get_field('stdin_redirection').toInt()[0]
@@ -125,7 +124,8 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
 
             html += u'<br/>'
 
-            # schedule
+        # schedule
+        if self.wizard().hasVisitedPage(Constants.PAGE_SCHEDULE):
             html += u'<b>Schedule</b><br/>'
 
             start_mode = self.get_field('start_mode').toInt()[0]

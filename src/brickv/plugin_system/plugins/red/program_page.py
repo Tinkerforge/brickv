@@ -93,18 +93,28 @@ class ProgramPage(QWizardPage):
             return
 
         # command
-        executable, arguments, environment, working_directory = self.get_command()
+        command = self.get_command()
 
-        editable_arguments_offset   = max(program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
-        editable_arguments          = program.arguments.items[editable_arguments_offset:]
-        editable_environment_offset = max(program.cast_custom_option_value('editable_environment_offset', int, 0), 0)
-        editable_environment        = program.environment.items[editable_environment_offset:]
+        if command != None:
+            executable, arguments, environment, working_directory = command
 
-        editable_arguments_offset   = len(arguments)
-        editable_environment_offset = len(environment)
+            editable_arguments_offset   = max(program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
+            editable_arguments          = program.arguments.items[editable_arguments_offset:]
+            editable_environment_offset = max(program.cast_custom_option_value('editable_environment_offset', int, 0), 0)
+            editable_environment        = program.environment.items[editable_environment_offset:]
 
-        arguments   += editable_arguments
-        environment += editable_environment
+            editable_arguments_offset   = len(arguments)
+            editable_environment_offset = len(environment)
+
+            arguments   += editable_arguments
+            environment += editable_environment
+        else:
+            executable                  = '/bin/false'
+            arguments                   = []
+            environment                 = []
+            working_directory           = '.'
+            editable_arguments_offset   = 0
+            editable_environment_offset = 0
 
         try:
             program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call

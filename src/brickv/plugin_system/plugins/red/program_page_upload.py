@@ -38,22 +38,17 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.setupUi(self)
 
         # state for async file upload
-        self.upload_successful   = False
-        self.language_api_name   = None
-        self.program             = None
-        self.root_directory      = None
-        self.uploads             = None
-        self.target              = None
-        self.source              = None
-        self.target_name         = None
-        self.source_name         = None
-        self.source_size         = None
-        self.last_upload_size    = None
-        self.is_executed_by_apid = None
-        self.executable          = None
-        self.arguments           = None
-        self.environment         = None
-        self.working_directory   = None
+        self.upload_successful = False
+        self.language_api_name = None
+        self.program           = None
+        self.root_directory    = None
+        self.uploads           = None
+        self.target            = None
+        self.source            = None
+        self.target_name       = None
+        self.source_name       = None
+        self.source_size       = None
+        self.last_upload_size  = None
 
         self.setTitle(title_prefix + 'Upload')
 
@@ -275,11 +270,6 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     def upload_files_done(self):
         self.progress_file.setVisible(False)
 
-        self.is_executed_by_apid = True
-
-        command = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_command()
-        self.executable, self.arguments, self.environment, self.working_directory = command
-
         if self.language_api_name == 'c':
             start_mode = self.get_field('c.start_mode').toInt()[0]
 
@@ -292,30 +282,34 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             if start_mode == Constants.DELPHI_START_MODE_COMPILE:
                 self.compile_fpc()
                 return
-        elif self.language_api_name == 'javascript':
-            if self.get_field('javascript.version').toInt()[0] == 0:
-                self.is_executed_by_apid = False
 
         self.upload_configuration()
 
     def upload_configuration(self):
-        if self.is_executed_by_apid:
-            # set command
+        # set command
+        command = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_command()
+
+        if command != None:
             self.next_step('Setting command...')
 
-            editable_arguments_offset = len(self.arguments)
-            self.arguments += self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
+            executable, arguments, environment, working_directory = command
 
-            editable_environment_offset = len(self.environment)
-            self.environment += self.wizard().page(Constants.PAGE_ARGUMENTS).get_environment()
+            editable_arguments_offset   = len(arguments)
+            editable_environment_offset = len(environment)
+
+            if self.wizard().hasVisitedPage(Constants.PAGE_ARGUMENTS):
+                arguments   += self.wizard().page(Constants.PAGE_ARGUMENTS).get_arguments()
+                environment += self.wizard().page(Constants.PAGE_ARGUMENTS).get_environment()
 
             try:
-                self.program.set_command(self.executable, self.arguments, self.environment, self.working_directory) # FIXME: async_call
+                self.program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
             except REDError as e:
                 self.upload_error('...error: {0}'.format(e))
                 return
 
             self.log('...done')
+
+            # set more custom options
             self.next_step('Setting more custom options...')
 
             # set custom option: editable_arguments_offset
@@ -334,7 +328,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
             self.log('...done')
 
-            # set stdio redirection
+        # set stdio redirection
+        if self.wizard().hasVisitedPage(Constants.PAGE_STDIO):
             self.next_step('Setting stdio redirection...')
 
             stdin_redirection  = Constants.api_stdin_redirections[self.get_field('stdin_redirection').toInt()[0]]
@@ -354,7 +349,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
             self.log('...done')
 
-            # set schedule
+        # set schedule
+        if self.wizard().hasVisitedPage(Constants.PAGE_SCHEDULE):
             self.next_step('Setting schedule...')
 
             start_mode = self.get_field('start_mode').toInt()[0]
