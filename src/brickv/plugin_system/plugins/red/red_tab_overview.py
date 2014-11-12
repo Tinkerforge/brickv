@@ -21,15 +21,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4 import QtCore, Qt, QtGui
+from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOverview
+from brickv.plugin_system.plugins.red.api import *
 import json
 from operator import itemgetter
 import time
-
-from PyQt4 import QtCore, Qt, QtGui
-
-#from brickv.program_path import get_program_path
-from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOverview
-from brickv.plugin_system.plugins.red.api import *
 
 # constants
 REFRESH_TIME = 3000 # in milliseconds
@@ -37,6 +34,15 @@ REFRESH_TIMEOUT = 500 # in milliseconds
 DEFAULT_TVIEW_NIC_HEADER_WIDTH = 210 # in pixels
 DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_FIRST = 210 # in pixels
 DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER = 105 # in pixels
+
+class ProcessesProxyModel(QtGui.QSortFilterProxyModel):
+    # overrides QSortFilterProxyModel.lessThan
+    def lessThan(self, left, right):
+        # cpu and mem
+        if left.column() in [3, 4]:
+            return left.data(QtCore.Qt.UserRole + 1).toInt()[0] < right.data(QtCore.Qt.UserRole + 1).toInt()[0]
+
+        return QtGui.QSortFilterProxyModel.lessThan(self, left, right)
 
 class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
     def __init__(self):
@@ -58,10 +64,9 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         # connecting signals to slots
         self.refresh_timer.timeout.connect(self.cb_refresh)
         self.button_refresh.clicked.connect(self.refresh_clicked)
-        self.tview_nic_horizontal_header.sortIndicatorChanged.connect\
-            (self.cb_tview_nic_sort_indicator_changed)
-        self.tview_process_horizontal_header.sortIndicatorChanged.connect\
-            (self.cb_tview_process_sort_indicator_changed)
+        self.cbox_based_on.currentIndexChanged.connect(self.change_process_sort_order)
+        self.tview_nic_horizontal_header.sortIndicatorChanged.connect(self.cb_tview_nic_sort_indicator_changed)
+        self.tview_process_horizontal_header.sortIndicatorChanged.connect(self.cb_tview_process_sort_indicator_changed)
 
     def tab_on_focus(self):
         self.button_refresh.setText('Gathering data...')
@@ -80,6 +85,12 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.refresh_timer.stop()
         self.refresh_counter = REFRESH_TIME/REFRESH_TIMEOUT
         self.cb_refresh()
+
+    def change_process_sort_order(self):
+        if self.cbox_based_on.currentIndex() == 0:
+            self.tview_process.horizontalHeader().setSortIndicator(3, QtCore.Qt.DescendingOrder)
+        elif self.cbox_based_on.currentIndex() == 1:
+            self.tview_process.horizontalHeader().setSortIndicator(4, QtCore.Qt.DescendingOrder)
 
     # the callbacks
     def cb_refresh(self):
@@ -208,30 +219,34 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
 
         if self.cbox_based_on.currentIndex() == 0:
             processes_data_list_sorted = sorted(processes_data_list,
-                                                key = itemgetter('cpu'),
-                                                reverse = True)
+                                                key=itemgetter('cpu'),
+                                                reverse=True)
         elif self.cbox_based_on.currentIndex() == 1:
             processes_data_list_sorted = sorted(processes_data_list,
-                                                key = itemgetter('memory'),
-                                                reverse = True)
+                                                key=itemgetter('mem'),
+                                                reverse=True)
 
         processes_data_list_sorted = processes_data_list_sorted[:self.sbox_number_of_process.value()]
 
         for i, p in enumerate(processes_data_list_sorted):
-            _item_command = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['command']))
-            self.process_item_model.setItem(i, 0,_item_command)
+            _item_cmd = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['cmd']))
+            self.process_item_model.setItem(i, 0, _item_cmd)
 
             _item_pid = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['pid']))
             self.process_item_model.setItem(i, 1, _item_pid)
 
-            _item_user = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['user']))
-            self.process_item_model.setItem(i, 2, _item_user)
+            _item_usr = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['usr']))
+            self.process_item_model.setItem(i, 2, _item_usr)
 
-            _item_cpu = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['cpu'])+'%')
+            cpu = processes_data_list_sorted[i]['cpu']
+            _item_cpu = Qt.QStandardItem(unicode(cpu / 10.0)+'%')
+            _item_cpu.setData(QtCore.QVariant(cpu))
             self.process_item_model.setItem(i, 3, _item_cpu)
 
-            _item_memory = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['memory'])+'%')
-            self.process_item_model.setItem(i, 4, _item_memory)
+            mem = processes_data_list_sorted[i]['mem']
+            _item_mem = Qt.QStandardItem(unicode(mem / 10.0)+'%')
+            _item_mem.setData(QtCore.QVariant(mem))
+            self.process_item_model.setItem(i, 4, _item_mem)
 
         self.tview_process.horizontalHeader().setSortIndicator(self.tview_process_previous_sort['column_index'],
                                                                self.tview_process_previous_sort['order'])
@@ -279,7 +294,9 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.process_item_model.setHorizontalHeaderItem(4, Qt.QStandardItem("Memory"))
         self.tview_process.setSpan(0, 0, 1, 5)
         self.process_item_model.setItem(0, 0, Qt.QStandardItem("Collecting data..."))
-        self.tview_process.setModel(self.process_item_model)
+        self.process_item_proxy_model = ProcessesProxyModel(self)
+        self.process_item_proxy_model.setSourceModel(self.process_item_model)
+        self.tview_process.setModel(self.process_item_proxy_model)
         self.tview_process.setColumnWidth(0, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_FIRST)
         self.tview_process.setColumnWidth(1, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER)
         self.tview_process.setColumnWidth(2, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER)

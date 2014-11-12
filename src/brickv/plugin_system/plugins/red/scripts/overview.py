@@ -20,9 +20,9 @@ else:
 
 all_process_info = []
 for p in psutil.process_iter():
-    process_dict = {'command':p.name, 'pid':p.pid, 'user':p.username,\
-    'cpu':"%.1f" % p.get_cpu_percent(interval=0),\
-    'memory':"%.1f" % p.get_memory_percent()}
+    process_dict = {'cmd': p.name, 'pid': p.pid, 'usr': p.username,
+                    'cpu': int(p.get_cpu_percent(interval=0) * 10),
+                    'mem': int(p.get_memory_percent() * 10)}
     all_process_info.append(process_dict)
 
 print psutil.used_phymem()
