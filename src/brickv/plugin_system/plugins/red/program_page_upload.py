@@ -110,6 +110,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             return
 
         self.log('...done')
+
+        # set custom options
         self.next_step('Setting custom options...')
 
         # set custom option: name
@@ -139,16 +141,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             self.upload_error('...error: {0}'.format(e))
             return
 
-        # set custom option: description
-        description = unicode(self.get_field('description').toString())
-
-        try:
-            self.program.set_custom_option_value('description', description) # FIXME: async_call
-        except REDError as e:
-            self.upload_error('...error: {0}'.format(e))
-            return
-
-        # set custom option: first_upload and last_edit
+        # set custom option: first_upload
         timestamp = int(time.time())
 
         try:
@@ -157,13 +150,14 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             self.upload_error('...error: {0}'.format(e))
             return
 
+        # set custom option: last_edit
         try:
             self.program.set_custom_option_value('last_edit', timestamp) # FIXME: async_call
         except REDError as e:
             self.upload_error('...error: {0}'.format(e))
             return
 
-        # set language specific custom option
+        # set language specific custom options
         custom_options = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_custom_options()
 
         for name, value in custom_options.iteritems():
@@ -263,6 +257,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             return
 
         self.last_upload_size = 0
+
         try:
             self.target.write_async(data, self.upload_write_async_cb_error, self.upload_write_async_cb_status)
         except REDError as e:
