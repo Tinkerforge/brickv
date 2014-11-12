@@ -1333,7 +1333,6 @@ class REDProgram(REDObject):
         self._cb_process_spawned_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
                                                                                  self._cb_process_spawned_emit)
 
-
     def _detach_callbacks(self):
         self._qtcb_scheduler_state_changed.disconnect(self._cb_scheduler_state_changed)
         self._session._brick.remove_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED,
@@ -1545,6 +1544,11 @@ class REDProgram(REDObject):
         if self.object_id is None:
             raise RuntimeError('Cannot update unattached program object')
 
+        if self._last_spawned_process != None:
+            state_changed_callback = self._last_spawned_process.state_changed_callback
+        else:
+            state_changed_callback = None
+
         error_code, process_id, timestamp = self._session._brick.get_last_spawned_program_process(self.object_id, self._session._session_id)
 
         if error_code == REDError.E_DOES_NOT_EXIST:
@@ -1558,6 +1562,9 @@ class REDProgram(REDObject):
 
         self._last_spawned_process   = _attach_or_release(self._session, REDProcess, process_id)
         self._last_spawned_timestamp = timestamp
+
+        if self._last_spawned_process != None:
+            self._last_spawned_process.state_changed_callback = state_changed_callback
 
     def update_custom_options(self):
         if self.object_id is None:
