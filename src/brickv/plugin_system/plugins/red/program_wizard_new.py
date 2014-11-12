@@ -86,7 +86,7 @@ class ProgramWizardNew(ProgramWizard):
             except KeyError:
                 return Constants.PAGE_GENERAL
         elif currentId == Constants.PAGE_JAVASCRIPT:
-            if self.get_field('javascript.version').toInt()[0] == 0:
+            if self.get_field('javascript.flavor').toInt()[0] == Constants.JAVASCRIPT_FLAVOR_BROWSER:
                 return Constants.PAGE_SUMMARY
             else:
                 return Constants.PAGE_ARGUMENTS
