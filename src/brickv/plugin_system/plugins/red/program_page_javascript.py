@@ -52,14 +52,14 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
 
         self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
-        self.registerField('javascript.version', self.combo_version)
+        self.registerField('javascript.flavor', self.combo_flavor)
         self.registerField('javascript.start_mode', self.combo_start_mode)
         self.registerField('javascript.script_file', self.combo_script_file, 'currentText')
         self.registerField('javascript.command', self.edit_command)
         self.registerField('javascript.working_directory', self.combo_working_directory, 'currentText')
 
-        self.combo_version.currentIndexChanged.connect(self.update_ui_state)
-        self.combo_version.currentIndexChanged.connect(lambda: self.completeChanged.emit())
+        self.combo_flavor.currentIndexChanged.connect(self.update_ui_state)
+        self.combo_flavor.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
@@ -95,15 +95,15 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
             else:
                 node_version_str = ''
 
-            self.combo_version.clear()
-            self.combo_version.addItem('Client-Side (Browser)', QVariant('/bin/true'))
-            self.combo_version.addItem('Server-Side (Node.js{0})'.format(node_version_str), QVariant(versions[0].executable))
+            self.combo_flavor.clear()
+            self.combo_flavor.addItem('Client-Side (Browser)', QVariant('/bin/false'))
+            self.combo_flavor.addItem('Server-Side (Node.js{0})'.format(node_version_str), QVariant(versions[0].executable))
 
             # if a program exists then this page is used in an edit wizard
             if self.wizard().program != None:
-                set_current_combo_index_from_data(self.combo_version, unicode(self.wizard().program.executable))
+                set_current_combo_index_from_data(self.combo_flavor, unicode(self.wizard().program.executable))
 
-            self.combo_version.setEnabled(True)
+            self.combo_flavor.setEnabled(True)
             self.completeChanged.emit()
 
         self.get_executable_versions('nodejs', cb_nodejs_versions)
@@ -124,14 +124,14 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
+        flavor     = self.get_field('javascript.flavor').toInt()[0] != 0
         executable = self.get_executable()
-        use_nodejs = self.get_field('javascript.version').toInt()[0] != 0
         start_mode = self.get_field('javascript.start_mode').toInt()[0]
 
-        if len(executable) == 0:
-            return False
+        if flavor == Constants.JAVASCRIPT_FLAVOR_NODEJS:
+            if len(executable) == 0:
+                return False
 
-        if use_nodejs:
             if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE and \
                not self.combo_script_file_selector.complete:
                 return False
@@ -143,43 +143,58 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_ui_state(self):
-        use_nodejs             = self.get_field('javascript.version').toInt()[0] != 0
+        flavor                 = self.get_field('javascript.flavor').toInt()[0]
+        flavor_nodejs          = flavor == Constants.JAVASCRIPT_FLAVOR_NODEJS
         start_mode             = self.get_field('javascript.start_mode').toInt()[0]
-        start_mode_script_file = (start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE) and use_nodejs
-        start_mode_command     = (start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND) and use_nodejs
-        show_advanced_options  = (self.check_show_advanced_options.checkState() == Qt.Checked) and use_nodejs
+        start_mode_script_file = start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE
+        start_mode_command     = start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND
+        show_advanced_options  = self.check_show_advanced_options.checkState() == Qt.Checked
 
-        self.label_start_mode.setVisible(use_nodejs)
-        self.combo_start_mode.setVisible(use_nodejs)
-        self.combo_script_file_selector.set_visible(start_mode_script_file)
-        self.label_command.setVisible(start_mode_command)
-        self.edit_command.setVisible(start_mode_command)
-        self.label_command_help.setVisible(start_mode_command)
-        self.line.setVisible(use_nodejs)
-        self.check_show_advanced_options.setVisible(use_nodejs)
-        self.combo_working_directory_selector.set_visible(show_advanced_options)
-        self.option_list_editor.set_visible(show_advanced_options)
+        self.label_start_mode.setVisible(flavor_nodejs)
+        self.combo_start_mode.setVisible(flavor_nodejs)
+        self.combo_script_file_selector.set_visible(flavor_nodejs and start_mode_script_file)
+        self.label_command.setVisible(flavor_nodejs and start_mode_command)
+        self.edit_command.setVisible(flavor_nodejs and start_mode_command)
+        self.label_command_help.setVisible(flavor_nodejs and start_mode_command)
+        self.line.setVisible(flavor_nodejs)
+        self.check_show_advanced_options.setVisible(flavor_nodejs)
+        self.combo_working_directory_selector.set_visible(flavor_nodejs and show_advanced_options)
+        self.option_list_editor.set_visible(flavor_nodejs and show_advanced_options)
 
         self.option_list_editor.update_ui_state()
 
     def get_executable(self):
-        return unicode(self.combo_version.itemData(self.get_field('javascript.version').toInt()[0]).toString())
+        return unicode(self.combo_flavor.itemData(self.get_field('javascript.flavor').toInt()[0]).toString())
 
     def get_custom_options(self):
-        return {}
+        return {
+            'javascript.flavor':      Constants.javascript_flavor_api_names[self.get_field('javascript.flavor').toInt()[0]],
+            'javascript.start_mode':  Constants.javascript_start_mode_api_names[self.get_field('javascript.start_mode').toInt()[0]],
+            'javascript.script_file': unicode(self.get_field('javascript.script_file').toString()),
+            'javascript.command':     unicode(self.get_field('javascript.command').toString()),
+            'javascript.options':     self.option_list_editor.get_items()
+        }
 
     def get_command(self):
-        executable  = self.get_executable()
-        arguments   = self.option_list_editor.get_items()
-        environment = [u'NODE_PATH={0}'.format(os.path.join(u'/', u'usr', u'local', u'lib', u'node_modules'))]
-        start_mode  = self.get_field('javascript.start_mode').toInt()[0]
+        flavor = self.get_field('javascript.flavor').toInt()[0]
 
-        if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE:
-            arguments.append(unicode(self.get_field('javascript.script_file').toString()))
-        elif start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND:
-            arguments.append('-e')
-            arguments.append(unicode(self.get_field('javascript.command').toString()))
+        if flavor == Constants.JAVASCRIPT_FLAVOR_NODEJS:
+            executable = self.get_executable()
+            arguments   = self.option_list_editor.get_items()
+            environment = ['NODE_PATH=/usr/local/lib/node_modules']
+            start_mode  = self.get_field('javascript.start_mode').toInt()[0]
 
-        working_directory = unicode(self.get_field('javascript.working_directory').toString())
+            if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE:
+                arguments.append(unicode(self.get_field('javascript.script_file').toString()))
+            elif start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND:
+                arguments.append('-e')
+                arguments.append(unicode(self.get_field('javascript.command').toString()))
 
-        return executable, arguments, environment, working_directory
+            working_directory = unicode(self.get_field('javascript.working_directory').toString())
+
+            return executable, arguments, environment, working_directory
+        elif flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER:
+            return None
+
+    def apply_program_changes(self):
+        self.apply_program_custom_options_and_command_changes()

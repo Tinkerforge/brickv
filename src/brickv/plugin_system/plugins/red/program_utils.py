@@ -192,9 +192,42 @@ class Constants:
     JAVA_START_MODE_MAIN_CLASS = 0
     JAVA_START_MODE_JAR_FILE   = 1
 
+    # must match item order in combo_flavor on JavaScript page
+    JAVASCRIPT_FLAVOR_BROWSER = 0
+    JAVASCRIPT_FLAVOR_NODEJS  = 1
+
+    javascript_flavor_api_names = {
+        JAVASCRIPT_FLAVOR_BROWSER: 'browser',
+        JAVASCRIPT_FLAVOR_NODEJS:  'nodejs'
+    }
+
+    @staticmethod
+    def get_javascript_flavor(javascript_flavor_api_name):
+        try:
+            return get_key_from_value(Constants.javascript_flavor_api_names, javascript_flavor_api_name)
+        except ValueError:
+            return Constants.DEFAULT_JAVASCRIPT_FLAVOR
+
     # must match item order in combo_start_mode on JavaScript page
     JAVASCRIPT_START_MODE_SCRIPT_FILE = 0
     JAVASCRIPT_START_MODE_COMMAND     = 1
+
+    javascript_start_mode_api_names = {
+        JAVASCRIPT_START_MODE_SCRIPT_FILE: 'script_file',
+        JAVASCRIPT_START_MODE_COMMAND:     'command',
+    }
+
+    javascript_start_mode_display_names = {
+        JAVASCRIPT_START_MODE_SCRIPT_FILE: 'Script File',
+        JAVASCRIPT_START_MODE_COMMAND:     'Command',
+    }
+
+    @staticmethod
+    def get_javascript_start_mode(javascript_start_mode_api_name):
+        try:
+            return get_key_from_value(Constants.javascript_start_mode_api_names, javascript_start_mode_api_name)
+        except ValueError:
+            return Constants.DEFAULT_JAVASCRIPT_START_MODE
 
     # must match item order in combo_start_mode on Octave page
     OCTAVE_START_MODE_SCRIPT_FILE = 0
@@ -454,7 +487,7 @@ class Constants:
         return Constants.api_start_mode_display_names[Constants.api_start_modes[start_mode]]
 
     api_scheduler_state_display_name = {
-        REDProgram.SCHEDULER_STATE_STOPPED:  'Stopped',
+        REDProgram.SCHEDULER_STATE_STOPPED: 'Stopped',
         REDProgram.SCHEDULER_STATE_RUNNING: 'Running'
     }
 
@@ -462,6 +495,7 @@ class Constants:
     DEFAULT_CSHARP_START_MODE     = CSHARP_START_MODE_EXECUTABLE
     DEFAULT_DELPHI_START_MODE     = DELPHI_START_MODE_EXECUTABLE
     DEFAULT_JAVA_START_MODE       = JAVA_START_MODE_MAIN_CLASS
+    DEFAULT_JAVASCRIPT_FLAVOR     = JAVASCRIPT_FLAVOR_BROWSER
     DEFAULT_JAVASCRIPT_START_MODE = JAVASCRIPT_START_MODE_SCRIPT_FILE
     DEFAULT_OCTAVE_START_MODE     = OCTAVE_START_MODE_SCRIPT_FILE
     DEFAULT_PERL_START_MODE       = PERL_START_MODE_SCRIPT_FILE

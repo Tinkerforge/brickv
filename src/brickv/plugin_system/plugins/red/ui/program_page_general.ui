@@ -61,7 +61,7 @@
        </item>
        <item>
         <property name="text">
-         <string>JavaScript (Node.js/Browser)</string>
+         <string>JavaScript (Browser/Node.js)</string>
         </property>
        </item>
        <item>
