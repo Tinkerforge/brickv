@@ -1111,6 +1111,10 @@ class REDProcess(REDObject):
         if state_changed_callback is not None:
             state_changed_callback(self)
 
+    def _fake_state_change_callback(self):
+        self.update_state()
+        self._cb_state_changed(self._state, self._timestamp, self._exit_code)
+
     def update(self):
         self.update_command()
         self.update_identity()
@@ -1404,6 +1408,13 @@ class REDProgram(REDObject):
 
         if process_spawned_callback is not None:
             process_spawned_callback(self)
+
+        if self._last_spawned_process != None and \
+           self._last_spawned_process.state != REDProcess.STATE_RUNNING:
+            try:
+                self._last_spawned_process._fake_state_change_callback()
+            except:
+                traceback.print_exc() # FIXME: error handling
 
     def update(self):
         self.update_identifier()
