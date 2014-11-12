@@ -711,13 +711,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             global network_refresh_tasks_remaining
             network_refresh_tasks_remaining = network_refresh_tasks_remaining - 1
 
-            if result.stderr == "":
+            if result != None and result.stderr == "":
                 self.network_all_data['status'] = json.loads(result.stdout)
             else:
                 pass
                 # TODO: Error popup for user?
 
-            if (network_refresh_tasks_remaining == 0):
+            if network_refresh_tasks_remaining == 0:
                 self.twidget_net.setEnabled(True)
                 self.label_working_wait.hide()
                 self.pbar_working_wait.hide()
@@ -730,7 +730,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             global network_refresh_tasks_remaining
             network_refresh_tasks_remaining = network_refresh_tasks_remaining - 1
 
-            if result.stderr == "":
+            if result != None and result.stderr == "":
                 self.network_all_data['interfaces'] = json.loads(result.stdout)
             else:
                 pass
@@ -750,7 +750,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             network_refresh_tasks_remaining = network_refresh_tasks_remaining - 1
 
             self.cbox_net_wireless_ap.clear()
-            if result.stderr == "":
+            if result != None and result.stderr == "":
                 self.network_all_data['scan_result'] = json.loads(result.stdout)
             else:
                 pass
@@ -980,7 +980,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.label_working_wait.hide()
             self.pbar_working_wait.hide()
 
-            if result.stderr == "":
+            if result != None and result.stderr == "":
                 self.network_all_data['status'] = json.loads(result.stdout)
                 self.update_network_widget_data()
             else:
@@ -988,7 +988,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 # TODO: Error popup for user?
 
         def cb_settings_network_set_hostname(result):
-            if result.stderr != "":
+            if result != None and result.stderr != "":
                 self.script_manager.execute_script('settings_network_status',
                                                    cb_settings_network_status,
                                                    [])
@@ -1085,7 +1085,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.twidget_net.setEnabled(True)
             self.label_working_wait.hide()
             self.pbar_working_wait.hide()
-            if result.stderr == "":
+            if result != None and result.stderr == "":
                 QtGui.QMessageBox.information(None,
                                               'Settings | Network | Wireless',
                                               'Wireless connection configuration saved and activated.',
@@ -1152,7 +1152,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.twidget_net.setEnabled(True)
             self.label_working_wait.hide()
             self.pbar_working_wait.hide()
-            if result.stderr == "":
+            if result != None and result.stderr == "":
                 self.update_network_widget_data()
                 QtGui.QMessageBox.information(None,
                                               'Settings | Network | Wireless',
@@ -1209,7 +1209,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.twidget_net.setEnabled(True)
             self.label_working_wait.hide()
             self.pbar_working_wait.hide()
-            if result.stderr == "":
+            if result != None and result.stderr == "":
                 self.network_all_data['scan_result'] = json.loads(result.stdout)
                 if self.network_all_data['scan_result'] is not None and\
                    len(self.network_all_data['scan_result']) > 0:
@@ -1323,7 +1323,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.twidget_net.setEnabled(True)
             self.label_working_wait.hide()
             self.pbar_working_wait.hide()
-            if result.stderr is not None and  result.stderr == "":
+            if result.stderr != None and result.stderr == "":
                 QtGui.QMessageBox.information(None,
                                               'Settings | Network | Wired',
                                               'Wired connection configuration saved and activated.',
@@ -1677,7 +1677,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         def cb_red_brick_time(result):
             try:
-                if result.stderr == '':
+                if result != None and result.stderr == '':
                     self.time_red_old, tz = map(int, result.stdout.split('\n')[:2])
                     if tz < 0:
                         tz_str_red = "UTC" + str(tz)
