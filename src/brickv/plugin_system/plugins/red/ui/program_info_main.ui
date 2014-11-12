@@ -202,7 +202,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox_3">
+        <widget class="QGroupBox" name="group_status">
          <property name="title">
           <string>Status</string>
          </property>

@@ -223,7 +223,16 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.label_first_upload.setText(timestamp_to_date_at_time(first_upload))
         self.label_last_edit.setText(timestamp_to_date_at_time(last_edit))
 
+        if language_api_name == 'javascript':
+            javascript_flavor_api_name = self.program.cast_custom_option_value('javascript.flavor', unicode, '<unknown>')
+            javascript_flavor          = Constants.get_javascript_flavor(javascript_flavor_api_name)
+            javascript_flavor_browser  = javascript_flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER
+        else:
+            javascript_flavor_browser = False
+
         # status
+        self.group_status.setVisible(not javascript_flavor_browser)
+
         process_running = False
 
         if self.program.last_spawned_process != None:
@@ -279,6 +288,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.set_widget_enabled(self.button_continue_schedule, scheduler_stopped and self.program.start_mode != REDProgram.START_MODE_NEVER)
 
         # logs
+        self.group_logs.setVisible(not javascript_flavor_browser)
+
         self.widget_logs.update_ui_state()
 
         # files
@@ -291,6 +302,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             self.widget_language.update_ui_state()
 
         # arguments
+        self.group_arguments.setVisible(not javascript_flavor_browser)
+
         arguments = []
         editable_arguments_offset = max(self.program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
 
@@ -312,6 +325,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.label_environment.setText('\n'.join(environment))
 
         # stdio
+        self.group_stdio.setVisible(not javascript_flavor_browser)
+
         stdin_redirection_pipe  = self.program.stdin_redirection  == REDProgram.STDIO_REDIRECTION_PIPE
         stdin_redirection_file  = self.program.stdin_redirection  == REDProgram.STDIO_REDIRECTION_FILE
         stdout_redirection_file = self.program.stdout_redirection == REDProgram.STDIO_REDIRECTION_FILE
@@ -345,6 +360,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             self.label_stderr_file.setText(unicode(self.program.stderr_file_name))
 
         # schedule
+        self.group_schedule.setVisible(not javascript_flavor_browser)
+
         start_mode_never    = self.program.start_mode == REDProgram.START_MODE_NEVER
         start_mode_always   = self.program.start_mode == REDProgram.START_MODE_ALWAYS
         start_mode_interval = self.program.start_mode == REDProgram.START_MODE_INTERVAL
