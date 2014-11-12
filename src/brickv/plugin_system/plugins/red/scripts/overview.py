@@ -36,6 +36,6 @@ interfaces = psutil.network_io_counters(pernic=True)
 #    del interfaces['lo']
 if 'tunl0' in interfaces:
     del interfaces['tunl0']
-print json.dumps(interfaces)
+print json.dumps(interfaces, separators=(',', ':'))
 
-print json.dumps(all_process_info )
+print json.dumps(all_process_info, separators=(',', ':'))

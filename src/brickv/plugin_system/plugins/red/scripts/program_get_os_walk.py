@@ -29,4 +29,4 @@ except:
     print json.dumps(None)
     exit (0)
 
-print json.dumps(return_os_walk_list)
+print json.dumps(return_os_walk_list, separators=(',', ':'))

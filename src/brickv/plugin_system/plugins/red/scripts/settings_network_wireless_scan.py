@@ -33,4 +33,4 @@ if wlscan_output != "":
             elif lsplitted[0] == "Encryption Method":
                 return_dict[key]['encryption_method'] = lsplitted[1]
 
-print json.dumps(return_dict)
+print json.dumps(return_dict, separators=(',', ':'))

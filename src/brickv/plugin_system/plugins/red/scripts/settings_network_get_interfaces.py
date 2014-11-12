@@ -46,4 +46,4 @@ if len(lwired) > 0:
 if len(wl_links_dict) > 0:
  return_dict['wireless_links'] = wl_links_dict
 
-print json.dumps(return_dict)
+print json.dumps(return_dict, separators=(',', ':'))
