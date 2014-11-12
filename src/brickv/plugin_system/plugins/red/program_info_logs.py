@@ -475,6 +475,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         def cb_program_delete_logs(result):
             if result != None and result.stderr == "":
                 if json.loads(result.stdout):
+                    self.refresh_logs()
                     QMessageBox.information(None,
                                            'Program | Logs',
                                            'Deleted successfully!',
