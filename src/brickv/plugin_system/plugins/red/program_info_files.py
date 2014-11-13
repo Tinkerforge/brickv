@@ -308,7 +308,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 # gets called too fast resulting in unexpected UI behaviour
                 # like signals are not being handled properly
 
-                if file_download_pd:
+                if file_download_pd in locals():
                     if file_download_pd.wasCanceled():
                         return
                     files_remaining = str(len(files_to_download))

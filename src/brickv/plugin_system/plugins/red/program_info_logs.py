@@ -412,7 +412,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                     # gets called too fast resulting in unexpected UI behaviour
                     # like signals are not being handled properly
 
-                    if log_download_pd:
+                    if log_download_pd in locals():
                         if log_download_pd.wasCanceled():
                             return
                         files_remaining = str(len(log_files_to_download['files']))
