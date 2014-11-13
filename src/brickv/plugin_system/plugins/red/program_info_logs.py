@@ -408,6 +408,10 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
             def cb_open(red_file):
                 def cb_read_status(bytes_read, max_length):
+                    # TODO: If the file is too large then this callback
+                    # gets called too fast resulting in unexpected UI behaviour
+                    # like signals are not being handled properly
+
                     if log_download_pd:
                         if log_download_pd.wasCanceled():
                             return
