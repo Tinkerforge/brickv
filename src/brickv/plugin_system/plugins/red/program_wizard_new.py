@@ -90,6 +90,16 @@ class ProgramWizardNew(ProgramWizard):
                 return Constants.PAGE_SUMMARY
             else:
                 return Constants.PAGE_ARGUMENTS
+        elif currentId == Constants.PAGE_PYTHON:
+            if self.get_field('python.start_mode').toInt()[0] == Constants.PYTHON_START_MODE_WEB_INTERFACE:
+                return Constants.PAGE_SUMMARY
+            else:
+                return Constants.PAGE_ARGUMENTS
+        elif currentId == Constants.PAGE_PHP:
+            if self.get_field('php.start_mode').toInt()[0] == Constants.PHP_START_MODE_WEB_INTERFACE:
+                return Constants.PAGE_SUMMARY
+            else:
+                return Constants.PAGE_ARGUMENTS
         elif currentId in Constants.language_pages.values():
             return Constants.PAGE_ARGUMENTS
         elif currentId == Constants.PAGE_ARGUMENTS:

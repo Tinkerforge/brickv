@@ -269,17 +269,20 @@ class Constants:
             return Constants.DEFAULT_PERL_START_MODE
 
     # must match item order in combo_start_mode on PHP page
-    PHP_START_MODE_SCRIPT_FILE = 0
-    PHP_START_MODE_COMMAND     = 1
+    PHP_START_MODE_SCRIPT_FILE   = 0
+    PHP_START_MODE_COMMAND       = 1
+    PHP_START_MODE_WEB_INTERFACE = 2
 
     php_start_mode_api_names = {
-        PHP_START_MODE_SCRIPT_FILE: 'script_file',
-        PHP_START_MODE_COMMAND:     'command',
+        PHP_START_MODE_SCRIPT_FILE:   'script_file',
+        PHP_START_MODE_COMMAND:       'command',
+        PHP_START_MODE_WEB_INTERFACE: 'web_interface',
     }
 
     php_start_mode_display_names = {
-        PHP_START_MODE_SCRIPT_FILE: 'Script File',
-        PHP_START_MODE_COMMAND:     'Command',
+        PHP_START_MODE_SCRIPT_FILE:   'Script File',
+        PHP_START_MODE_COMMAND:       'Command',
+        PHP_START_MODE_WEB_INTERFACE: 'Web Interface',
     }
 
     @staticmethod
@@ -290,20 +293,23 @@ class Constants:
             return Constants.DEFAULT_PHP_START_MODE
 
     # must match item order in combo_start_mode on Python page
-    PYTHON_START_MODE_SCRIPT_FILE = 0
-    PYTHON_START_MODE_MODULE_NAME = 1
-    PYTHON_START_MODE_COMMAND     = 2
+    PYTHON_START_MODE_SCRIPT_FILE   = 0
+    PYTHON_START_MODE_MODULE_NAME   = 1
+    PYTHON_START_MODE_COMMAND       = 2
+    PYTHON_START_MODE_WEB_INTERFACE = 3
 
     python_start_mode_api_names = {
-        PYTHON_START_MODE_SCRIPT_FILE: 'script_file',
-        PYTHON_START_MODE_MODULE_NAME: 'module_name',
-        PYTHON_START_MODE_COMMAND:     'command',
+        PYTHON_START_MODE_SCRIPT_FILE:   'script_file',
+        PYTHON_START_MODE_MODULE_NAME:   'module_name',
+        PYTHON_START_MODE_COMMAND:       'command',
+        PYTHON_START_MODE_WEB_INTERFACE: 'web_interface',
     }
 
     python_start_mode_display_names = {
-        PYTHON_START_MODE_SCRIPT_FILE: 'Script File',
-        PYTHON_START_MODE_MODULE_NAME: 'Module Name',
-        PYTHON_START_MODE_COMMAND:     'Command',
+        PYTHON_START_MODE_SCRIPT_FILE:   'Script File',
+        PYTHON_START_MODE_MODULE_NAME:   'Module Name',
+        PYTHON_START_MODE_COMMAND:       'Command',
+        PYTHON_START_MODE_WEB_INTERFACE: 'Web Interface',
     }
 
     @staticmethod

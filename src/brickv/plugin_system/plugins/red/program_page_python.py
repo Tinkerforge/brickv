@@ -137,6 +137,10 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         executable = self.get_executable()
         start_mode = self.get_field('python.start_mode').toInt()[0]
 
+        # In web interface mode there is nothing to configure at all
+        if start_mode == Constants.PYTHON_START_MODE_WEB_INTERFACE:
+            return ProgramPage.isComplete(self)
+
         if len(executable) == 0:
             return False
 
@@ -155,21 +159,25 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
     def update_ui_state(self):
-        start_mode             = self.get_field('python.start_mode').toInt()[0]
-        start_mode_script_file = start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE
-        start_mode_module_name = start_mode == Constants.PYTHON_START_MODE_MODULE_NAME
-        start_mode_command     = start_mode == Constants.PYTHON_START_MODE_COMMAND
-        show_advanced_options  = self.check_show_advanced_options.checkState() == Qt.Checked
+        start_mode               = self.get_field('python.start_mode').toInt()[0]
+        start_mode_script_file   = start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE
+        start_mode_module_name   = start_mode == Constants.PYTHON_START_MODE_MODULE_NAME
+        start_mode_command       = start_mode == Constants.PYTHON_START_MODE_COMMAND
+        start_mode_web_interface = start_mode == Constants.PYTHON_START_MODE_WEB_INTERFACE
+        show_advanced_options    = self.check_show_advanced_options.checkState() == Qt.Checked
 
-        self.combo_script_file_selector.set_visible(start_mode_script_file)
-        self.label_module_name.setVisible(start_mode_module_name)
-        self.edit_module_name.setVisible(start_mode_module_name)
-        self.label_module_name_help.setVisible(start_mode_module_name)
-        self.label_command.setVisible(start_mode_command)
-        self.edit_command.setVisible(start_mode_command)
-        self.label_command_help.setVisible(start_mode_command)
-        self.combo_working_directory_selector.set_visible(show_advanced_options)
-        self.option_list_editor.set_visible(show_advanced_options)
+        self.combo_version.setVisible(not start_mode_web_interface)
+        self.label_version.setVisible(not start_mode_web_interface)
+        self.check_show_advanced_options.setVisible(not start_mode_web_interface)
+        self.combo_script_file_selector.set_visible(start_mode_script_file and not start_mode_web_interface)
+        self.label_module_name.setVisible(start_mode_module_name and not start_mode_web_interface)
+        self.edit_module_name.setVisible(start_mode_module_name and not start_mode_web_interface)
+        self.label_module_name_help.setVisible(start_mode_module_name and not start_mode_web_interface)
+        self.label_command.setVisible(start_mode_command and not start_mode_web_interface)
+        self.edit_command.setVisible(start_mode_command and not start_mode_web_interface)
+        self.label_command_help.setVisible(start_mode_command and not start_mode_web_interface)
+        self.combo_working_directory_selector.set_visible(show_advanced_options and not start_mode_web_interface)
+        self.option_list_editor.set_visible(show_advanced_options and not start_mode_web_interface)
 
         self.option_list_editor.update_ui_state()
 
@@ -186,10 +194,13 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         }
 
     def get_command(self):
+        start_mode  = self.get_field('python.start_mode').toInt()[0]
+        if start_mode == Constants.PYTHON_START_MODE_WEB_INTERFACE:
+            return None
+
         executable  = self.get_executable()
         arguments   = self.option_list_editor.get_items()
         environment = []
-        start_mode  = self.get_field('python.start_mode').toInt()[0]
 
         if start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE:
             arguments.append(unicode(self.get_field('python.script_file').toString()))

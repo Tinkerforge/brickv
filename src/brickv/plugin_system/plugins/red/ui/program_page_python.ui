@@ -17,7 +17,7 @@
    <item>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="label_version">
        <property name="text">
         <string>Python Version:</string>
        </property>
@@ -69,6 +69,11 @@
        <item>
         <property name="text">
          <string>Command</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Web Interface</string>
         </property>
        </item>
       </widget>
