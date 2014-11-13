@@ -406,26 +406,49 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             selected_item.setText(unicode(name))
 
     def delete_selected_files(self):
+        def cb_program_delete_files_dirs(result):
+            if result == None or len(result.stderr) > 0:
+                QMessageBox.critical(None,
+                                     'Program | Files',
+                                     'Deletion failed.',
+                                     QMessageBox.Ok)
+                return
+
+            if not json.loads(result.stdout):
+                QMessageBox.critical(None,
+                                     'Program | Files',
+                                     'Deletion failed.',
+                                     QMessageBox.Ok)
+                return
+
+            self.refresh_files()
+
+            QMessageBox.information(None,
+                                 'Program | Files',
+                                 'Deleted successfully!',
+                                 QMessageBox.Ok)
+
         selected_indexes = self.tree_files.selectedIndexes()
+
         if len(selected_indexes) == 0:
             return
 
-        selected_indexes_chunked = zip(*[iter(selected_indexes)] * 3)
-
-        dirs_to_delete = []
         files_to_delete = []
+        dirs_to_delete = []
 
-        for selected_index_chunked in selected_indexes_chunked:
-            selected_item = self.tree_files_model.itemFromIndex\
-                            (self.tree_files_proxy_model.mapToSource(selected_index_chunked[0]))
-            path = merge_path(selected_item, unicode(selected_item.text()))
+        for selected_index in selected_indexes:
+            if selected_index.column() == 0:
+                selected_item = self.tree_files_model.itemFromIndex\
+                                (self.tree_files_proxy_model.mapToSource(selected_index))
+                path = merge_path(selected_item, unicode(selected_item.text()))
+    
+                for directory in self.available_directories:
+                    if path in directory and directory not in dirs_to_delete:
+                        dirs_to_delete.append(unicode(os.path.join(self.bin_directory, directory)))
+                for file_path in self.available_files:
+                    if path in file_path and file_path not in files_to_delete:
+                        files_to_delete.append(unicode(os.path.join(self.bin_directory, file_path)))
 
-            for directory in self.available_directories:
-                if path in directory and directory not in dirs_to_delete:
-                    dirs_to_delete.append(directory)
-            for file_path in self.available_files:
-                if path in file_path and file_path not in files_to_delete:
-                    files_to_delete.append(file_path)
-
-        print 'delete_dirs', dirs_to_delete
-        print 'delete_files', files_to_delete
+        self.script_manager.execute_script('program_delete_files_dirs',
+                                           cb_program_delete_files_dirs,
+                                           [json.dumps(files_to_delete), json.dumps(dirs_to_delete)])
