@@ -50,13 +50,11 @@ def expand_directory_walk_to_lists(directory_walk):
 
     return files, sorted(list(directories))
 
-
 def get_file_display_size(size):
     if size < 1024:
         return str(size) + ' Bytes'
     else:
         return str(size / 1024) + ' kiB'
-
 
 def merge_path(item, path):
     parent = item.parent()
@@ -64,7 +62,6 @@ def merge_path(item, path):
         return merge_path(parent, os.path.join(unicode(parent.text()), path))
     else:
         return path
-
 
 def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon):
     def create_last_modified_item(last_modified):
@@ -114,7 +111,6 @@ def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon
     expand(model.invisibleRootItem(), None, directory_walk)
 
     return model
-
 
 class FilesProxyModel(QSortFilterProxyModel):
     # overrides QSortFilterProxyModel.lessThan
@@ -190,7 +186,6 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
                 if directory_walk != None:
                     available_files, available_directories = expand_directory_walk_to_lists(directory_walk)
-
                 return directory_walk, available_files, available_directories
 
             def cb_expand_success(args):
@@ -353,7 +348,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                     file_download_pd.close()
                     print 'download_selected_files cb_open cb_read', result
 
-            red_file.read_async(int(files_to_dqtreeviewownload.values()[0]['s']),
+            red_file.read_async(int(files_to_download.values()[0]['s']),
                                 lambda x: cb_read(red_file, x),
                                 cb_read_status)
 
