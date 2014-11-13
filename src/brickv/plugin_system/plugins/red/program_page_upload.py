@@ -417,8 +417,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         make_options = unicode(self.get_field('c.make_options').toString())
         identifier   = unicode(self.get_field('identifier').toString())
-        #p = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
-        p = os.path.join('/', 'home', 'tf', 'programs' , identifier, 'bin', self.working_directory)
+        p            = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
         self.wizard().script_manager.execute_script('make_helper', cb, [p, make_options])
 
@@ -440,7 +439,6 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         compile_options  = unicode(self.get_field('delphi.compile_options').toString())
         main_source_file = unicode(self.get_field('delphi.main_source_file').toString())
         identifier       = unicode(self.get_field('identifier').toString())
-        #p = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
-        p = os.path.join('/', 'home', 'tf', 'programs' , identifier, 'bin', self.working_directory)
+        p                = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
         self.wizard().script_manager.execute_script('fpc_helper', cb, [p, '{0} {1}'.format(compile_options, main_source_file)])
