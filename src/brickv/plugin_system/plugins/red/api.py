@@ -807,6 +807,12 @@ class REDFileBase(REDObject):
         self._read_async_data = create_object_in_qt_main_thread(REDFileBase.ReadAsyncData, (bytearray(), length_max, callback_status, callback))
         self._session._brick.read_file_async(self.object_id, min(length_max, REDFileBase.ASYNC_BURST_CHUNKS))
 
+    def abort_async_read(self):
+        if self.object_id is None:
+            raise RuntimeError('Cannot write to unattached file object')
+
+        self._session._brick.abort_async_file_read(self.object_id)
+
     @property
     def type(self):               return self._type
     @property
