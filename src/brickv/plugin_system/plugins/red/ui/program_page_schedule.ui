@@ -73,6 +73,9 @@
        <property name="suffix">
         <string> seconds</string>
        </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
        <property name="maximum">
         <number>2147483647</number>
        </property>
