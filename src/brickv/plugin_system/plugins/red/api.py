@@ -635,6 +635,9 @@ class REDFileBase(REDObject):
         if self.object_id != file_id:
             return
 
+        if self._write_async_data == None:
+            return
+
         if error_code != REDError.E_SUCCESS:
             # FIXME: recover seek position on error after successful call?
             self._report_write_async_error(REDError('Could not write to file object {0}'.format(self.object_id), error_code))
@@ -686,6 +689,9 @@ class REDFileBase(REDObject):
 
     def _cb_async_file_read(self, file_id, error_code, buf, length_read):
         if self.object_id != file_id:
+            return
+
+        if self._read_async_data == None:
             return
 
         if error_code != REDError.E_SUCCESS:
@@ -811,7 +817,8 @@ class REDFileBase(REDObject):
         if self.object_id is None:
             raise RuntimeError('Cannot write to unattached file object')
 
-        self._session._brick.abort_async_file_read(self.object_id)
+        if self._read_async_data != None:
+            self._session._brick.abort_async_file_read(self.object_id)
 
     @property
     def type(self):               return self._type
