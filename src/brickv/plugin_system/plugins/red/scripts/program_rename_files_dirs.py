@@ -4,22 +4,12 @@ import os
 import json
 from sys import argv
 
-if len(argv) < 2:
-    print json.dumps(False)
-    exit (0)
-
-rename_list = json.loads(argv[1])
-
-if not isinstance(rename_list, list):
+if len(argv) < 3:
     print json.dumps(False)
     exit(0)
 
-if len(rename_list) != 2:
-    print json.dumps(False)
-    exit(0)
-
-rename_from = unicode(rename_list[0])
-rename_to = unicode(rename_list[1])
+rename_from = unicode(argv[1])
+rename_to = unicode(argv[2])
 
 try:
     if not os.path.exists(rename_from):
@@ -30,8 +20,6 @@ try:
             print json.dumps(False)
             exit(0)
     os.rename(rename_from, rename_to)
+    print json.dumps(True)
 except:
     print json.dumps(False)
-    exit(0)
-
-print json.dumps(True)

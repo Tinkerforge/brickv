@@ -166,11 +166,27 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.set_widget_enabled(self.button_delete_files, selection_count > 0)
 
     def tree_file_item_changed(self, item):
-        _from = self.rename_from
-        _to = self.rename_from.replace(os.path.split(self.rename_from)[1], unicode(item.text()))
-        print unicode(_from)
-        print unicode(_to)
+        def cb_program_rename_files_dirs(result):
+            if result == None or len(result.stderr) > 0 or\
+               not json.loads(result.stdout):
+                QMessageBox.warning(None,
+                                    'Program | Files',
+                                    'Renaming failed.',
+                                    QMessageBox.Ok)
+                return
+
+            QMessageBox.information(None,
+                                    'Program | Files',
+                                    'Renaming successful.',
+                                    QMessageBox.Ok)
+            self.refresh_files()
+
+        _from = os.path.join(self.bin_directory, self.rename_from)
+        _to = os.path.join(self.bin_directory,
+                           self.rename_from.replace(os.path.split(self.rename_from)[1], unicode(item.text())))
         self.rename_from = ""
+        self.script_manager.execute_script('program_rename_files_dirs', cb_program_rename_files_dirs,
+                                           [_from, _to])
 
     def refresh_files(self):
         def cb_directory_walk(result):
@@ -228,12 +244,12 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         def file_download_pd_closed():
             if len(files_to_download) > 0:
                 QMessageBox.warning(None,
-                                    'Program | Filess',
+                                    'Program | Files',
                                     'Download could not finish.',
                                     QMessageBox.Ok)
             else:
                 QMessageBox.information(None,
-                                        'Program | Filess',
+                                        'Program | Files',
                                         'Download complete!',
                                         QMessageBox.Ok)
 
@@ -285,7 +301,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         if len(files_to_download) <= 0:
             QMessageBox.information(None,
-                                    'Program | Filess',
+                                    'Program | Files',
                                     'Download complete!',
                                     QMessageBox.Ok)
             return
