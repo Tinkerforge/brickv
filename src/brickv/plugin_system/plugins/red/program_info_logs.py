@@ -296,10 +296,6 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                            [self.log_directory], max_len=1024*1024)
 
     def load_log_files_for_ops(self, index_list):
-        if len(index_list) % 4 != 0:
-            return False
-
-        index_list_chunked = zip(*[iter(index_list)] * 4)
         logs_download_dict = {'files': {}, 'total_download_size': 0}
 
         def populate_log_download(item_list):
@@ -343,9 +339,18 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             else:
                 pass
 
-        for index_chunk in index_list_chunked:
+        index_rows = []
+
+        for index in index_list:
+            if index.column() == 0:
+                index_rows.append([index,
+                                   index.sibling(index.row(), 1),
+                                   index.sibling(index.row(), 2),
+                                   index.sibling(index.row(), 3)])
+
+        for index_row in index_rows:
             item_list = []
-            for index in index_chunk:
+            for index in index_row:
                 item = self.tree_logs_model.itemFromIndex(self.tree_logs_proxy_model.mapToSource(index))
                 item_list.append(item)
             populate_log_download(item_list)
@@ -370,10 +375,12 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         index_list = self.tree_logs.selectedIndexes()
         self.tree_logs.setColumnHidden(2, True)
         self.tree_logs.setColumnHidden(3, True)
+
         if not index_list:
             return
 
         log_files_to_download = self.load_log_files_for_ops(index_list)
+
         if not log_files_to_download:
             return
 
@@ -392,88 +399,95 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                  QMessageBox.Ok)
             return
 
-        if log_files_download_dir != "":
-            log_download_pd = QProgressDialog(str(len(log_files_to_download['files']))+" file(s) remaining...",
-                                              "Cancel",
-                                              0,
-                                              100,
-                                              self)
-            log_download_pd.setWindowTitle("Download Progress")
-            log_download_pd.setAutoReset(False)
-            log_download_pd.setAutoClose(False)
-            log_download_pd.setMinimumDuration(0)
-            log_download_pd.setValue(0)
+        if log_files_download_dir == "":
+            return
 
-            log_download_pd.canceled.connect(log_download_pd_closed)
+        log_download_pd = QProgressDialog(str(len(log_files_to_download['files']))+" file(s) remaining...",
+                                          "Cancel",
+                                          0,
+                                          100,
+                                          self)
+        log_download_pd.setWindowTitle("Download Progress")
+        log_download_pd.setAutoReset(False)
+        log_download_pd.setAutoClose(False)
+        log_download_pd.setMinimumDuration(0)
+        log_download_pd.setValue(0)
 
-            def cb_open(red_file):
-                def cb_read_status(bytes_read, max_length):
-                    # TODO: If the file is too large then this callback
-                    # gets called too fast resulting in unexpected UI behaviour
-                    # like signals are not being handled properly
+        log_download_pd.canceled.connect(log_download_pd_closed)
 
-                    if log_download_pd:
-                        if log_download_pd.wasCanceled():
-                            return
-                        files_remaining = str(len(log_files_to_download['files']))
-                        current_percent = int(float(bytes_read)/float(max_length) * 100)
-    
-                        log_download_pd.setLabelText(files_remaining+" file(s) remaining...")
-                        log_download_pd.setValue(current_percent)
-    
-                        if current_percent == 100:
-                            log_download_pd.setValue(0)
+        def cb_open(red_file):
+            def cb_read_status(bytes_read, max_length):
+                # TODO: If the file is too large then this callback
+                # gets called too fast resulting in unexpected UI behaviour
+                # like signals are not being handled properly
 
-                def cb_read(red_file, result):
-                    red_file.release()
-                    if result is not None:
-                        # Success
-                        read_file_path = log_files_to_download['files'].keys()[0]
-                        save_file_name = ''.join(read_file_path.split('/')[-1:])
-                        with open(os.path.join(unicode(log_files_download_dir),
-                                               unicode(save_file_name)),
-                                  'wb') as fh_log_write:
-                            fh_log_write.write(result.data)
+                if log_download_pd.wasCanceled():
+                    red_file.abort_async_read()
+                    return
 
-                        if log_download_pd.wasCanceled():
-                            return
+                files_remaining = str(len(log_files_to_download['files']))
+                current_percent = int(float(bytes_read)/float(max_length) * 100)
 
-                        if read_file_path in log_files_to_download['files']:
-                            log_files_to_download['files'].pop(read_file_path, None)
+                log_download_pd.setLabelText(files_remaining+" file(s) remaining...")
+                log_download_pd.setValue(current_percent)
 
-                        if len(log_files_to_download['files']) == 0:
-                            log_download_pd.close()
-                            return
+                if current_percent == 100:
+                    log_download_pd.setValue(0)
 
-                        if not log_download_pd.wasCanceled():
-                            log_download_pd.setLabelText(str(len(log_files_to_download['files']))+" file(s) remaining...")
-                            log_download_pd.setValue(0)
-                            async_call(REDFile(self.session).open,
-                                       (log_files_to_download['files'].keys()[0],
-                                       REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                                       cb_open,
-                                       cb_open_error)
+            def cb_read(red_file, result):
+                red_file.release()
 
-                    else:
-                        # TODO: Error popup for user?
+                if result.error is not None:
+                    return
+
+                if result.data is not None:
+                    # Success
+                    read_file_path = log_files_to_download['files'].keys()[0]
+                    save_file_name = ''.join(read_file_path.split('/')[-1:])
+                    with open(os.path.join(unicode(log_files_download_dir),
+                                           unicode(save_file_name)),
+                              'wb') as fh_log_write:
+                        fh_log_write.write(result.data)
+
+                    if log_download_pd.wasCanceled():
+                        return
+
+                    if read_file_path in log_files_to_download['files']:
+                        log_files_to_download['files'].pop(read_file_path, None)
+
+                    if len(log_files_to_download['files']) == 0:
                         log_download_pd.close()
-                        print 'download_selected_logs cb_open cb_read', result
+                        return
 
-                red_file.read_async(log_files_to_download['files'].values()[0]['size'],
-                                    lambda x: cb_read(red_file, x),
-                                    cb_read_status)
+                    if not log_download_pd.wasCanceled():
+                        log_download_pd.setLabelText(str(len(log_files_to_download['files']))+" file(s) remaining...")
+                        log_download_pd.setValue(0)
+                        async_call(REDFile(self.session).open,
+                                   (log_files_to_download['files'].keys()[0],
+                                   REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                                   cb_open,
+                                   cb_open_error)
 
-            def cb_open_error(result):
-                # TODO: Error popup for user?
-                log_download_pd.close()
-                print 'download_selected_logs cb_open_error', result
+                else:
+                    # TODO: Error popup for user?
+                    log_download_pd.close()
+                    print 'download_selected_logs cb_open cb_read', result
 
-            if len(log_files_to_download['files']) > 0:
-                async_call(REDFile(self.session).open,
-                           (log_files_to_download['files'].keys()[0],
-                           REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                           cb_open,
-                           cb_open_error)
+            red_file.read_async(log_files_to_download['files'].values()[0]['size'],
+                                lambda x: cb_read(red_file, x),
+                                cb_read_status)
+
+        def cb_open_error(result):
+            # TODO: Error popup for user?
+            log_download_pd.close()
+            print 'download_selected_logs cb_open_error', result
+
+        if len(log_files_to_download['files']) > 0:
+            async_call(REDFile(self.session).open,
+                       (log_files_to_download['files'].keys()[0],
+                       REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                       cb_open,
+                       cb_open_error)
 
     def delete_selected_logs(self):
         def cb_program_delete_logs(result):

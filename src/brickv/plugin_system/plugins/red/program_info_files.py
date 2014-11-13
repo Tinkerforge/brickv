@@ -254,25 +254,28 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                         QMessageBox.Ok)
 
         selected_indexes = self.tree_files.selectedIndexes()
+
         if len(selected_indexes) == 0:
             return
 
-        selected_indexes_chunked = zip(*[iter(selected_indexes)] * 3)
+        #selected_indexes_chunked = zip(*[iter(selected_indexes)] * 3)
 
         dirs_to_create = []
         files_to_download = {}
 
-        for selected_index_chunked in selected_indexes_chunked:
-            selected_item = self.tree_files_model.itemFromIndex\
-                (self.tree_files_proxy_model.mapToSource(selected_index_chunked[0]))
-            path = merge_path(selected_item, unicode(selected_item.text()))
-
-            for directory in self.available_directories:
-                if path in directory and directory not in dirs_to_create:
-                    dirs_to_create.append(directory)
-            for file_path in self.available_files:
-                if path in file_path and file_path not in files_to_download:
-                    files_to_download[file_path] = self.available_files[file_path]
+        #for selected_index_chunked in selected_indexes_chunked:
+        for index in selected_indexes:
+            if index.column() == 0:
+                selected_item = self.tree_files_model.itemFromIndex\
+                    (self.tree_files_proxy_model.mapToSource(index))
+                path = merge_path(selected_item, unicode(selected_item.text()))
+    
+                for directory in self.available_directories:
+                    if path in directory and directory not in dirs_to_create:
+                        dirs_to_create.append(directory)
+                for file_path in self.available_files:
+                    if path in file_path and file_path not in files_to_download:
+                        files_to_download[file_path] = self.available_files[file_path]
 
         files_download_dir = unicode(QFileDialog.getExistingDirectory(self, "Choose Download Location"))
 
@@ -324,21 +327,26 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 # gets called too fast resulting in unexpected UI behaviour
                 # like signals are not being handled properly
 
-                if file_download_pd:
-                    if file_download_pd.wasCanceled():
-                        return
-                    files_remaining = str(len(files_to_download))
-                    current_percent = int(float(bytes_read)/float(max_length) * 100)
-    
-                    file_download_pd.setLabelText(files_remaining+" file(s) remaining...")
-                    file_download_pd.setValue(current_percent)
-    
-                    if current_percent == 100:
-                        file_download_pd.setValue(0)
+                if file_download_pd.wasCanceled():
+                    red_file.abort_async_read()
+                    return
+
+                files_remaining = str(len(files_to_download))
+                current_percent = int(float(bytes_read)/float(max_length) * 100)
+
+                file_download_pd.setLabelText(files_remaining+" file(s) remaining...")
+                file_download_pd.setValue(current_percent)
+
+                if current_percent == 100:
+                    file_download_pd.setValue(0)
 
             def cb_read(red_file, result):
                 red_file.release()
-                if result is not None:
+
+                if result.error is not None:
+                    return
+
+                if result.data is not None:
                     # Success
                     read_file_path = unicode(files_to_download.keys()[0])
                     with open(os.path.join(unicode(files_download_dir), read_file_path), 'wb') as fh_file_write:
