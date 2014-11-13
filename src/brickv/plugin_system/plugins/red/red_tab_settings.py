@@ -63,8 +63,6 @@ CBOX_BRICKD_LED_TRIGGER_MMC = 3
 CBOX_BRICKD_LED_TRIGGER_OFF = 4
 CBOX_BRICKD_LED_TRIGGER_ON = 5
 
-network_refresh_tasks_remaining = -1
-
 class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def __init__(self):
         QtGui.QWidget.__init__(self)
@@ -79,8 +77,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         
         self.time_local_old = 0
         self.time_red_old = 0
-
         self.last_index = -1
+        self.network_refresh_tasks_remaining = -1
 
         self.network_all_data = {'status': None,
                                  'interfaces': None,
@@ -194,7 +192,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.cbox_brickd_adv_gt.currentIndexChanged.connect(self.brickd_settings_changed)
         self.sbox_brickd_adv_spi_dly.valueChanged.connect(self.brickd_settings_changed)
         self.sbox_brickd_adv_rs485_dly.valueChanged.connect(self.brickd_settings_changed)
-
 
         # Date/Time buttons
         self.time_sync_button.pressed.connect(self.time_sync_pressed)
@@ -717,8 +714,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.network_button_refresh_enabled(False)
 
         def cb_settings_network_status(result):
-            global network_refresh_tasks_remaining
-            network_refresh_tasks_remaining = network_refresh_tasks_remaining - 1
+            self.network_refresh_tasks_remaining -= 1
 
             if result != None and result.stderr == "":
                 self.network_all_data['status'] = json.loads(result.stdout)
@@ -726,12 +722,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 pass
                 # TODO: Error popup for user?
 
-            if network_refresh_tasks_remaining == 0:
+            if self.network_refresh_tasks_remaining == 0:
                 self.network_refresh_tasks_done()
 
         def cb_settings_network_get_interfaces(result):
-            global network_refresh_tasks_remaining
-            network_refresh_tasks_remaining = network_refresh_tasks_remaining - 1
+            self.network_refresh_tasks_remaining -= 1
 
             if result != None and result.stderr == "":
                 self.network_all_data['interfaces'] = json.loads(result.stdout)
@@ -739,12 +734,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 pass
                 # TODO: Error popup for user?
 
-            if (network_refresh_tasks_remaining == 0):
+            if self.network_refresh_tasks_remaining == 0:
                 self.network_refresh_tasks_done()
 
         def cb_settings_network_wireless_scan(result):
-            global network_refresh_tasks_remaining
-            network_refresh_tasks_remaining = network_refresh_tasks_remaining - 1
+            self.network_refresh_tasks_remaining -= 1
 
             self.cbox_net_wireless_ap.clear()
             if result != None and result.stderr == "":
@@ -753,13 +747,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 pass
                 # TODO: Error popup for user?
 
-            if (network_refresh_tasks_remaining == 0):
+            if self.network_refresh_tasks_remaining == 0:
                 self.network_refresh_tasks_done()
 
         def cb_open_manager_settings(red_file):
             def cb_read(red_file, result):
-                global network_refresh_tasks_remaining
-                network_refresh_tasks_remaining = network_refresh_tasks_remaining - 1
+                self.network_refresh_tasks_remaining -= 1
+
                 red_file.release()
 
                 if result is not None:
@@ -768,24 +762,23 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     # TODO: Error popup for user?
                     print 'cb_open_manager_settings', result
 
-                if (network_refresh_tasks_remaining == 0):
+                if self.network_refresh_tasks_remaining == 0:
                     self.network_refresh_tasks_done()
                 
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
             
         def cb_open_error_manager_settings(result):
-            global network_refresh_tasks_remaining
-            network_refresh_tasks_remaining = network_refresh_tasks_remaining - 1
-            if (network_refresh_tasks_remaining == 0):
-                
+            self.network_refresh_tasks_remaining -= 1
+
+            if self.network_refresh_tasks_remaining == 0:
                 self.network_refresh_tasks_done()
+
             # TODO: Error popup for user?
             print 'cb_open_error_manager_settings', result
 
         def cb_open_wireless_settings(red_file):
             def cb_read(red_file, result):
-                global network_refresh_tasks_remaining
-                network_refresh_tasks_remaining = network_refresh_tasks_remaining - 1
+                self.network_refresh_tasks_remaining -= 1
 
                 red_file.release()
 
@@ -795,15 +788,15 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     # TODO: Error popup for user?
                     print 'cb_open_wireless_settings', result
 
-                if (network_refresh_tasks_remaining == 0):
+                if self.network_refresh_tasks_remaining == 0:
                     self.network_refresh_tasks_done()
                 
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
             
         def cb_open_error_wireless_settings(result):
-            global network_refresh_tasks_remaining
-            network_refresh_tasks_remaining = network_refresh_tasks_remaining - 1
-            if (network_refresh_tasks_remaining == 0):
+            self.network_refresh_tasks_remaining -= 1
+
+            if self.network_refresh_tasks_remaining == 0:
                 self.network_refresh_tasks_done()
 
             self.network_button_refresh_enabled(True)
@@ -812,8 +805,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         def cb_open_wired_settings(red_file):
             def cb_read(red_file, result):
-                global network_refresh_tasks_remaining
-                network_refresh_tasks_remaining = network_refresh_tasks_remaining - 1
+                self.network_refresh_tasks_remaining -= 1
 
                 red_file.release()
 
@@ -823,15 +815,15 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     # TODO: Error popup for user?
                     print 'cb_open_wired_settings', result
 
-                if (network_refresh_tasks_remaining == 0):
+                if self.network_refresh_tasks_remaining == 0:
                     self.network_refresh_tasks_done()
 
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
             
         def cb_open_error_wired_settings(result):
-            global network_refresh_tasks_remaining
-            network_refresh_tasks_remaining = network_refresh_tasks_remaining - 1
-            if (network_refresh_tasks_remaining == 0):
+            self.network_refresh_tasks_remaining -= 1
+
+            if self.network_refresh_tasks_remaining == 0:
                 self.network_refresh_tasks_done()
 
             self.network_button_refresh_enabled(True)
@@ -863,8 +855,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.sbox_net_wireless_dns3.setValue(0)
         self.sbox_net_wireless_dns4.setValue(0)
 
-        global network_refresh_tasks_remaining
-        network_refresh_tasks_remaining= 6
+        self.network_refresh_tasks_remaining = 6
     
         self.twidget_net.setEnabled(False)
         self.label_working_wait.show()
