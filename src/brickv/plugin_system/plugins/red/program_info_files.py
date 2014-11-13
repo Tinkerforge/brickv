@@ -268,10 +268,10 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             path = merge_path(selected_item, unicode(selected_item.text()))
 
             for directory in self.available_directories:
-                if path in directory:
+                if path in directory and directory not in dirs_to_create:
                     dirs_to_create.append(directory)
             for file_path in self.available_files:
-                if path in file_path:
+                if path in file_path and file_path not in files_to_download:
                     files_to_download[file_path] = self.available_files[file_path]
 
         files_download_dir = unicode(QFileDialog.getExistingDirectory(self, "Choose Download Location"))
@@ -324,7 +324,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 # gets called too fast resulting in unexpected UI behaviour
                 # like signals are not being handled properly
 
-                if file_download_pd in locals():
+                if file_download_pd:
                     if file_download_pd.wasCanceled():
                         return
                     files_remaining = str(len(files_to_download))
@@ -391,17 +391,33 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         selected_item = self.tree_files_model.itemFromIndex\
             (self.tree_files_proxy_model.mapToSource(selected_indexes[0]))
-        name, ok = QInputDialog.getText(self, "Rename File/Directory", "", QLineEdit.Normal)
+        name, ok = QInputDialog.getText(self, "Rename File/Directory", "", QLineEdit.Normal,
+                                        unicode(selected_item.text()))
         if ok and name != "":
             self.rename_from = unicode(merge_path(selected_item, unicode(selected_item.text())))
             selected_item.setText(unicode(name))
 
     def delete_selected_files(self):
-        selected_items = self.tree_files.selectedItems()
-
-        if len(selected_items) == 0:
+        selected_indexes = self.tree_files.selectedIndexes()
+        if len(selected_indexes) == 0:
             return
 
-        filenames = [unicode(selected_item.text()) for selected_item in selected_items]
+        selected_indexes_chunked = zip(*[iter(selected_indexes)] * 3)
 
-        print 'delete_selected_files', filenames
+        dirs_to_delete = []
+        files_to_delete = []
+
+        for selected_index_chunked in selected_indexes_chunked:
+            selected_item = self.tree_files_model.itemFromIndex\
+                            (self.tree_files_proxy_model.mapToSource(selected_index_chunked[0]))
+            path = merge_path(selected_item, unicode(selected_item.text()))
+
+            for directory in self.available_directories:
+                if path in directory and directory not in dirs_to_delete:
+                    dirs_to_delete.append(directory)
+            for file_path in self.available_files:
+                if path in file_path and file_path not in files_to_delete:
+                    files_to_delete.append(file_path)
+
+        print 'delete_dirs', dirs_to_delete
+        print 'delete_files', files_to_delete
