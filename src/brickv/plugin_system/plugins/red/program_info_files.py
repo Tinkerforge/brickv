@@ -406,6 +406,9 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             selected_item.setText(unicode(name))
 
     def delete_selected_files(self):
+        def deletion_pd_closed():
+            pass
+
         def cb_program_delete_files_dirs(result):
             if result == None or len(result.stderr) > 0:
                 QMessageBox.critical(None,
@@ -448,6 +451,27 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 for file_path in self.available_files:
                     if path in file_path and file_path not in files_to_delete:
                         files_to_delete.append(unicode(os.path.join(self.bin_directory, file_path)))
+
+        print files_to_delete
+        print dirs_to_delete
+
+        '''
+        deletion_pd = QProgressDialog("Deleting...",
+                                      "Cancel",
+                                      0,
+                                      0,
+                                      self,
+                                      Qt.FramelessWindowHint)
+        deletion_pd.setWindowTitle("Deletion Progress")
+        deletion_pd.setAutoReset(False)
+        deletion_pd.setAutoClose(False)
+        deletion_pd.setMinimumDuration(0)
+        deletion_pd.setCancelButton(0)
+        deletion_pd.canceled.connect(deletion_pd_closed)
+        deletion_pd.setValue(0)
+        '''
+
+        #Qt.Dialog | Qt.FramelessWindowHint | Qt.WindowTitleHint | Qt.CustomizeWindowHint
 
         self.script_manager.execute_script('program_delete_files_dirs',
                                            cb_program_delete_files_dirs,
