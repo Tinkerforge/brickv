@@ -165,9 +165,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.update_ui_state()
 
     def process_spawned(self, program):
-        self.update_ui_state()
-
         self.program.last_spawned_process.state_changed_callback = self.process_state_changed
+
+        self.update_ui_state()
 
     def process_state_changed(self, process):
         self.update_ui_state()
