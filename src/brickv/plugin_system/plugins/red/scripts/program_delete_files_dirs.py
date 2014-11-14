@@ -25,6 +25,8 @@ if len(file_list) <= 0 and\
 if len(file_list) > 0:
     for f in file_list:
         file_path = unicode(f)
+        if not os.path.exists(file_path):
+            continue
         try:
             os.remove(file_path)
         except:
@@ -34,6 +36,8 @@ if len(file_list) > 0:
 if len(dir_list) > 0:
     for d in dir_list:
         dir_path = unicode(d)
+        if not os.path.isdir(dir_path):
+            continue
         try:
             shutil.rmtree(dir_path)
         except:
