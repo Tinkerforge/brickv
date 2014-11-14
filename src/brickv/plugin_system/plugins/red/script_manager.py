@@ -49,6 +49,7 @@ class ScriptData(QtCore.QObject):
         self.max_len = None
         self.decode_output_as_utf8 = True
         self.script_instance = None
+        self.abort = False
 
 class ScriptManager:
     ScriptResult = namedtuple('ScriptResult', 'stdout stderr')
@@ -104,6 +105,7 @@ class ScriptManager:
         # There is nothing we can do anyway.
         try:
             self._init_script(sd)
+            return sd
         except:
             traceback.print_exc()
             if sd.callback is not None:
@@ -112,6 +114,17 @@ class ScriptManager:
             if sd.callback is not None:
                 sd.callback(None) # We are still in GUI thread, use callback instead of signal
             script_data_set.remove(sd)
+
+        return None
+
+    def abort_script(self, sd):
+        if sd.process != None:
+            try:
+                sd.process.kill(REDProcess.SIGNAL_KILL)
+            except:
+                traceback.print_exc()
+        else:
+            sd.abort = True
 
     def _init_script(self, sd):
         if self.scripts[sd.script_name].copied:
@@ -162,7 +175,24 @@ class ScriptManager:
         ScriptManager._call(self.scripts[sd.script_name], sd, None)
         script_data_set.remove(sd)
 
+    def _release_script_data(self, sd):
+        try:
+            sd.process.release()
+            sd.stdout.release()
+            sd.stderr.release()
+        except:
+            traceback.print_exc()
+
+        sd.process = None
+        sd.stdout = None
+        sd.stderr = None
+
     def _execute_after_init(self, sd):
+        if sd.abort:
+            ScriptManager._call(self.scripts[sd.script_name], sd, None)
+            script_data_set.remove(sd)
+            return
+
         try:
             sd.stdout = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, 1024*1024)
             sd.stderr = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, 1024*1024)
@@ -175,28 +205,12 @@ class ScriptManager:
         def state_changed(red_process, sd):
             # TODO: If we want to support returns > 1MB we need to do more work here,
             #       but it may not be necessary.
-            if red_process.state == REDProcess.STATE_ERROR:
-                ScriptManager._call(self.scripts[sd.script_name], sd, None)
-                try:
-                    sd.process.release()
-                    sd.stdout.release()
-                    sd.stderr.release()
-                except:
-                    traceback.print_exc()
-
-                script_data_set.remove(sd)
-            elif red_process.state == REDProcess.STATE_EXITED:
+            if not sd.abort and red_process.state == REDProcess.STATE_EXITED:
                 def cb_stdout_data(result, sd):
                     if result.error != None:
                         ScriptManager._call(self.scripts[sd.script_name], sd, None)
 
-                        try:
-                            sd.process.release()
-                            sd.stdout.release()
-                            sd.stderr.release()
-                        except:
-                            traceback.print_exc()
-
+                        self._release_script_data(sd)
                         script_data_set.remove(sd)
 
                     if sd.decode_output_as_utf8:
@@ -208,13 +222,7 @@ class ScriptManager:
                         if result.error != None:
                             ScriptManager._call(self.scripts[sd.script_name], sd, None)
 
-                        try:
-                            sd.process.release()
-                            sd.stdout.release()
-                            sd.stderr.release()
-                        except:
-                            traceback.print_exc()
-
+                        self._release_script_data(sd)
 
                         if sd.decode_output_as_utf8:
                             err = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
@@ -227,6 +235,10 @@ class ScriptManager:
                     sd.stderr.read_async(sd.max_len, lambda result: cb_stderr_data(result, sd))
 
                 sd.stdout.read_async(sd.max_len, lambda result: cb_stdout_data(result, sd))
+            else:
+                ScriptManager._call(self.scripts[sd.script_name], sd, None)
+                self._release_script_data(sd)
+                script_data_set.remove(sd)
 
         sd.process = REDProcess(self.session)
         sd.process.state_changed_callback = lambda red_process: state_changed(red_process, sd)

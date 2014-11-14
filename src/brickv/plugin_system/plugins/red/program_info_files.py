@@ -176,19 +176,21 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
     def tree_file_item_changed(self, item):
         def cb_program_rename_files_dirs(result):
+            self.refresh_files()
+
             if result == None or len(result.stderr) > 0 or\
                not json.loads(result.stdout):
                 QMessageBox.warning(None,
                                     'Program | Files',
                                     'Renaming failed.',
                                     QMessageBox.Ok)
+                
                 return
 
             QMessageBox.information(None,
                                     'Program | Files',
                                     'Renaming successful.',
                                     QMessageBox.Ok)
-            self.refresh_files()
 
         _from = os.path.join(self.bin_directory, self.rename_from)
         _to = os.path.join(self.bin_directory,
@@ -425,33 +427,53 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             return
 
         if len(name) == 0 or name == '.' or name == '..' or '/' in name:
-            # report error
+            QMessageBox.critical(None,
+                                 'Program | Files',
+                                 'Renaming failed.',
+                                 QMessageBox.Ok)
             return
 
         self.rename_from = unicode(merge_path(selected_item, unicode(selected_item.text())))
         selected_item.setText(unicode(name))
 
     def delete_selected_files(self):
-        def deletion_pd_closed():
-            pass
+        sd = None
+
+        def deletion_pd_canceled():
+            if sd is None:
+                return
+
+            self.script_manager.abort_script(sd)
+
+            QMessageBox.critical(None,
+                                 'Program | Files',
+                                 'Deletion aborted.',
+                                 QMessageBox.Ok)
+
+        deletion_pd = QProgressDialog("Deleting...",
+                                      "Cancel",
+                                      0,
+                                      0,
+                                      self,)
+
+        deletion_pd.setWindowTitle("Deletion in Progress")
+        deletion_pd.setWindowModality(Qt.ApplicationModal)
+        deletion_pd.setMinimumDuration(0)
+        deletion_pd.canceled.connect(deletion_pd_canceled)
+        deletion_pd.setRange(0, 0)
 
         def cb_program_delete_files_dirs(result):
-            print result
-            if result == None or len(result.stderr) > 0:
-                QMessageBox.critical(None,
-                                     'Program | Files',
-                                     'Deletion failed.',
-                                     QMessageBox.Ok)
-                return
-
-            if not json.loads(result.stdout):
-                QMessageBox.critical(None,
-                                     'Program | Files',
-                                     'Deletion failed.',
-                                     QMessageBox.Ok)
-                return
-
+            sd = None
+            deletion_pd.cancel()
             self.refresh_files()
+
+            if result == None or len(result.stderr) > 0 or\
+               not json.loads(result.stdout):
+                QMessageBox.critical(None,
+                                     'Program | Files',
+                                     'Deletion failed.',
+                                     QMessageBox.Ok)
+                return
 
             QMessageBox.information(None,
                                  'Program | Files',
@@ -466,40 +488,45 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         files_to_delete = []
         dirs_to_delete = []
 
+        deletion_pd.show()
+        
+        selected_items = set()
+
         for selected_index in selected_indexes:
             if selected_index.column() == 0:
-                selected_item = self.tree_files_model.itemFromIndex\
-                                (self.tree_files_proxy_model.mapToSource(selected_index))
-                path = merge_path(selected_item, unicode(selected_item.text()))
-    
-                for directory in self.available_directories:
-                    if path in directory and directory not in dirs_to_delete:
-                        dirs_to_delete.append(unicode(os.path.join(self.bin_directory, directory)))
-                for file_path in self.available_files:
-                    if path in file_path and file_path not in files_to_delete:
-                        files_to_delete.append(unicode(os.path.join(self.bin_directory, file_path)))
+                selected_items.add(self.tree_files_model.itemFromIndex\
+                                           (self.tree_files_proxy_model.mapToSource(selected_index)))
+        
+        all_done = False
 
-        '''
-        deletion_pd = QProgressDialog("Deleting...",
-                                      "Cancel",
-                                      0,
-                                      0,
-                                      self,
-                                      Qt.FramelessWindowHint)
-        deletion_pd.setWindowTitle("Deletion Progress")
-        deletion_pd.setAutoReset(False)
-        deletion_pd.setAutoClose(False)
-        deletion_pd.setMinimumDuration(0)
-        deletion_pd.setRange(0, 0)
-        deletion_pd.show()
-        deletion_pd.cancel()
-        deletion_pd.setCancelButton(0)
-        deletion_pd.canceled.connect(deletion_pd_closed)
-        deletion_pd.setValue(0)
-        '''
+        while not all_done:
+            all_done = True
 
-        #Qt.Dialog | Qt.FramelessWindowHint | Qt.WindowTitleHint | Qt.CustomizeWindowHint
+            for selected_item in list(selected_items):
+                item_done = False
+                parent = selected_item.parent()
 
-        self.script_manager.execute_script('program_delete_files_dirs',
-                                           cb_program_delete_files_dirs,
-                                           [json.dumps(files_to_delete), json.dumps(dirs_to_delete)])
+                while not item_done and parent != None:
+                    if parent in selected_items:
+                        selected_items.remove(selected_item)
+                        item_done = True
+                    else:
+                        parent = parent.parent()
+
+                if item_done:
+                    all_done = False
+                    break
+
+        for selected_item in selected_items:
+            path = merge_path(selected_item, unicode(selected_item.text()))
+            item_type = selected_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
+
+            if item_type == ITEM_TYPE_DIRECTORY:
+                dirs_to_delete.append(unicode(os.path.join(self.bin_directory, path)))
+            else:
+                files_to_delete.append(unicode(os.path.join(self.bin_directory, path)))
+
+        sd = self.script_manager.execute_script('program_delete_files_dirs',
+                                                cb_program_delete_files_dirs,
+                                                [json.dumps(files_to_delete),
+                                                 json.dumps(dirs_to_delete)])
