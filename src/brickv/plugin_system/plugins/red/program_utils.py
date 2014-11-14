@@ -164,7 +164,6 @@ class Constants:
 
     # must match item order in combo_start_mode on C/C++ page
     C_START_MODE_EXECUTABLE = 0
-    C_START_MODE_MAKE = 1
 
     # must match item order in combo_start_mode on C# page
     CSHARP_START_MODE_EXECUTABLE = 0

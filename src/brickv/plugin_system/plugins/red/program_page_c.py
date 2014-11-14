@@ -53,19 +53,22 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
         self.setupUi(self)
 
-        self.language = Constants.LANGUAGE_C
+        self.language                          = Constants.LANGUAGE_C
+        self.compile_from_source_help_template = unicode(self.label_compile_from_source_help.text())
 
         self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
         self.registerField('c.start_mode', self.combo_start_mode)
         self.registerField('c.executable', self.combo_executable, 'currentText')
+        self.registerField('c.compile_from_source', self.check_compile_from_source)
         self.registerField('c.working_directory', self.combo_working_directory, 'currentText')
-        self.registerField('c.make_options', self, 'get_make_options')
 
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(self.completeChanged.emit)
+        self.check_compile_from_source.stateChanged.connect(self.update_ui_state)
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
+        # FIXME: how to filter files list for executables
         self.combo_executable_checker         = MandatoryEditableComboBoxChecker(self, self.combo_executable, self.label_executable)
         self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
         self.option_list_editor               = ListWidgetEditor(self.label_options,
@@ -92,12 +95,13 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
             else:
                 gpp = '<b>{0}</b>'.format(versions[1].executable)
 
-            self.label_compiler_available.setText('Available are {0} and {1}'.format(gcc, gpp))
+            self.label_compile_from_source_help.setText(self.compile_from_source_help_template.replace('<GCC>', gcc).replace('<G++>', gpp))
 
         self.get_executable_versions('gcc', cb_gcc_versions)
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_C_START_MODE)
         self.combo_executable.clear()
+        self.check_compile_from_source.setCheckState(Qt.Unchecked)
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
@@ -120,23 +124,24 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
     def update_ui_state(self):
         start_mode            = self.get_field('c.start_mode').toInt()[0]
         start_mode_executable = start_mode == Constants.C_START_MODE_EXECUTABLE
-        start_mode_make       = start_mode == Constants.C_START_MODE_MAKE
+        compile_from_source   = self.check_compile_from_source.checkState() == Qt.Checked
         show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
 
-        self.label_compiler.setVisible(start_mode_make)
-        self.label_compiler_available.setVisible(start_mode_make)
-        self.label_start_executable_help.setVisible(start_mode_executable)
-        self.label_start_make_help.setVisible(start_mode_make)
+        self.combo_executable.setVisible(start_mode_executable)
         self.label_executable_help.setVisible(start_mode_executable)
-        self.label_executable_make_help.setVisible(start_mode_make)
+        self.line1.setVisible(start_mode_executable)
+        self.check_compile_from_source.setVisible(start_mode_executable)
+        self.label_compile_from_source_help.setVisible(start_mode_executable)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
-        self.option_list_editor.set_visible(show_advanced_options and start_mode_make)
+        self.option_list_editor.set_visible(compile_from_source and show_advanced_options)
 
         self.option_list_editor.update_ui_state()
 
-    @pyqtProperty(str)
     def get_make_options(self):
-        return ' '.join(self.option_list_editor.get_items())
+        return self.option_list_editor.get_items()
+
+    def get_html_summary(self):
+        return 'FIXME<br>'
 
     def get_custom_options(self):
         return {}

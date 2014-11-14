@@ -271,9 +271,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.progress_file.setVisible(False)
 
         if self.language_api_name == 'c':
-            start_mode = self.get_field('c.start_mode').toInt()[0]
-
-            if start_mode == Constants.C_START_MODE_MAKE:
+            if self.get_field('c.compile_from_source').toBool():
                 self.compile_make()
                 return
         elif self.language_api_name == 'delphi':
@@ -415,11 +413,10 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.next_step('Calling make...')
 
-        make_options = unicode(self.get_field('c.make_options').toString())
-        identifier   = unicode(self.get_field('identifier').toString())
-        p            = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
+        make_options      = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_make_options()
+        working_directory = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
-        self.wizard().script_manager.execute_script('make_helper', cb, [p, make_options])
+        self.wizard().script_manager.execute_script('make_helper', cb, [working_directory] + make_options)
 
     def compile_fpc(self):
         def cb(result):
@@ -436,9 +433,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.next_step('Calling fpc...')
 
-        compile_options  = unicode(self.get_field('delphi.compile_options').toString())
-        main_source_file = unicode(self.get_field('delphi.main_source_file').toString())
-        identifier       = unicode(self.get_field('identifier').toString())
-        p                = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
+        compile_options   = unicode(self.get_field('delphi.compile_options').toString())
+        main_source_file  = unicode(self.get_field('delphi.main_source_file').toString())
+        working_directory = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
-        self.wizard().script_manager.execute_script('fpc_helper', cb, [p, '{0} {1}'.format(compile_options, main_source_file)])
+        self.wizard().script_manager.execute_script('fpc_helper', cb, [working_directory, '{0} {1}'.format(compile_options, main_source_file)])
