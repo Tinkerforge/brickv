@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>570</width>
-    <height>505</height>
+    <width>506</width>
+    <height>533</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -151,7 +151,7 @@
      <item row="10" column="1">
       <widget class="QLabel" name="label_continue_after_error_help">
        <property name="text">
-        <string>If 'Continue After Error' is enabled then the scheduler ignores errors and continues to start the program automatically regardless of the result from the last program run. Otherwise the scheduler only starts the program automatically again if the last program run exited normally.</string>
+        <string>If enabled then the scheduler ignores errors and continues to start the program automatically regardless of the result from the last program run. Otherwise the scheduler only starts the program automatically again if the last program run exited normally.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
