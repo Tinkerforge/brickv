@@ -8,8 +8,8 @@ if len(argv) < 3:
     print json.dumps(False)
     exit(0)
 
-rename_from = unicode(argv[1])
-rename_to = unicode(argv[2])
+rename_from = argv[1]
+rename_to = argv[2]
 
 try:
     if not os.path.exists(rename_from):
