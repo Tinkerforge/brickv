@@ -61,7 +61,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
         self.registerField('delphi.compile_options', self, 'get_compile_options')
 
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
-        self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
+        self.combo_start_mode.currentIndexChanged.connect(self.completeChanged.emit)
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
         self.combo_executable_selector        = MandatoryEditableComboBoxChecker(self,

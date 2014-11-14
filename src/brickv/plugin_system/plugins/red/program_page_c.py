@@ -63,7 +63,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.registerField('c.make_options', self, 'get_make_options')
 
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
-        self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
+        self.combo_start_mode.currentIndexChanged.connect(self.completeChanged.emit)
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
         self.combo_executable_checker         = MandatoryEditableComboBoxChecker(self, self.combo_executable, self.label_executable)

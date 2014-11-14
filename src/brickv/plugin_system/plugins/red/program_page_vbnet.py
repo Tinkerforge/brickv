@@ -43,7 +43,7 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
         self.registerField('vbnet.working_directory', self.combo_working_directory, 'currentText')
 
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
-        self.combo_start_mode.currentIndexChanged.connect(lambda: self.completeChanged.emit())
+        self.combo_start_mode.currentIndexChanged.connect(self.completeChanged.emit)
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
         self.combo_executable_selector        = MandatoryTypedFileSelector(self,
