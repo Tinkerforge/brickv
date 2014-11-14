@@ -23,7 +23,8 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QVariant
-from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QFileDialog, QProgressDialog, QMessageBox, QSortFilterProxyModel
+from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QFileDialog, \
+                        QProgressDialog, QMessageBox, QSortFilterProxyModel, QApplication
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.ui_program_info_logs import Ui_ProgramInfoLogs
 from brickv.async_call import async_call
@@ -123,6 +124,8 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
             for dir_node in program_dir_walk_result:
                 for f in dir_node['files']:
+                    QApplication.processEvents()
+
                     file_name = f['name']
                     file_size = int(unicode(f['size']))
                     file_path = os.path.join(dir_node['root'], file_name)

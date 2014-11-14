@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt, QDateTime, QVariant
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QAbstractItemView, QLineEdit,\
-                        QSortFilterProxyModel, QFileDialog, QProgressDialog, QMessageBox, QInputDialog
+                        QSortFilterProxyModel, QFileDialog, QProgressDialog, QMessageBox, QInputDialog, QApplication
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
 from brickv.async_call import async_call
@@ -71,6 +71,8 @@ def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon
         return item
 
     def expand(parent_item, name, dw):
+        QApplication.processEvents()
+
         if 'c' in dw:
             if name == None:
                 name_item = parent_item
