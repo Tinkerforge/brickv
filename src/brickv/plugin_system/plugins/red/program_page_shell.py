@@ -159,6 +159,27 @@ class ProgramPageShell(ProgramPage, Ui_ProgramPageShell):
     def get_executable(self):
         return unicode(self.combo_version.itemData(self.get_field('shell.version').toInt()[0]).toString())
 
+    def get_html_summary(self):
+        version           = self.get_field('shell.version').toInt()[0]
+        start_mode        = self.get_field('shell.start_mode').toInt()[0]
+        script_file       = self.get_field('shell.script_file').toString()
+        command           = self.get_field('shell.command').toString()
+        working_directory = self.get_field('shell.working_directory').toString()
+        options           = ' '.join(self.option_list_editor.get_items())
+
+        html  = u'Shell Version: {0}<br/>'.format(Qt.escape(self.combo_version.itemText(version)))
+        html += u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.shell_start_mode_display_names[start_mode]))
+
+        if start_mode == Constants.SHELL_START_MODE_SCRIPT_FILE:
+            html += u'Script File: {0}<br/>'.format(Qt.escape(script_file))
+        elif start_mode == Constants.SHELL_START_MODE_COMMAND:
+            html += u'Command: {0}<br/>'.format(Qt.escape(command))
+
+        html += u'Working Directory: {0}<br/>'.format(Qt.escape(working_directory))
+        html += u'Shell Options: {0}<br/>'.format(Qt.escape(options))
+
+        return html
+
     def get_custom_options(self):
         return {
             'shell.start_mode':  Constants.shell_start_mode_api_names[self.get_field('shell.start_mode').toInt()[0]],

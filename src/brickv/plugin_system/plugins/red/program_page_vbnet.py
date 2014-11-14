@@ -128,6 +128,24 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
     def get_executable(self):
         return unicode(self.combo_version.itemData(self.get_field('vbnet.version').toInt()[0]).toString())
 
+    def get_html_summary(self):
+        version           = self.get_field('vbnet.version').toInt()[0]
+        start_mode        = self.get_field('vbnet.start_mode').toInt()[0]
+        executable        = self.get_field('vbnet.executable').toString()
+        working_directory = self.get_field('vbnet.working_directory').toString()
+        options           = ' '.join(self.option_list_editor.get_items())
+
+        html  = u'Mono Version: {0}<br/>'.format(Qt.escape(self.combo_version.itemText(version)))
+        html += u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.vbnet_start_mode_display_names[start_mode]))
+
+        if start_mode == Constants.VBNET_START_MODE_EXECUTABLE:
+            html += u'Executable: {0}<br/>'.format(Qt.escape(executable))
+
+        html += u'Working Directory: {0}<br/>'.format(Qt.escape(working_directory))
+        html += u'Mono Options: {0}<br/>'.format(Qt.escape(options))
+
+        return html
+
     def get_custom_options(self):
         return {
             'vbnet.start_mode': Constants.vbnet_start_mode_api_names[self.get_field('vbnet.start_mode').toInt()[0]],

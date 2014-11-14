@@ -38,7 +38,9 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
     def initializePage(self):
         self.set_formatted_sub_title(u'The complete configuration of the {language} program [{name}].')
 
-        language_display_name = Constants.language_display_names[self.get_field('language').toInt()[0]]
+        language              = self.get_field('language').toInt()[0]
+        language_display_name = Constants.language_display_names[language]
+        language_api_name     = Constants.language_api_names[language]
 
         # general information
         html  = u'<b>General Information</b><br/>'
@@ -65,7 +67,7 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
 
         # language specific configuration
         html += u'<b>{0} Configuration</b><br/>'.format(Qt.escape(language_display_name))
-        html += u'FIXME<br/>'
+        html += self.wizard().page(Constants.get_language_page(language_api_name)).get_html_summary()
         html += u'<br/>'
 
         if self.wizard().hasVisitedPage(Constants.PAGE_ARGUMENTS):

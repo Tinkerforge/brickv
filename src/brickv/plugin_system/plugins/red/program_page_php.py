@@ -173,6 +173,9 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
     def get_executable(self):
         return unicode(self.combo_version.itemData(self.get_field('php.version').toInt()[0]).toString())
 
+    def get_html_summary(self):
+        return 'FIXME<br>'
+
     def get_custom_options(self):
         return {
             'php.start_mode':  Constants.php_start_mode_api_names[self.get_field('php.start_mode').toInt()[0]],

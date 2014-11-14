@@ -196,6 +196,9 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
     def get_executable(self):
         return unicode(self.combo_flavor.itemData(self.get_field('javascript.flavor').toInt()[0]).toString())
 
+    def get_html_summary(self):
+        return 'FIXME<br>'
+
     def get_custom_options(self):
         return {
             'javascript.flavor':      Constants.javascript_flavor_api_names[self.get_field('javascript.flavor').toInt()[0]],
