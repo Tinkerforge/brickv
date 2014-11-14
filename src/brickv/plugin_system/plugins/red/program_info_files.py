@@ -33,6 +33,10 @@ import os
 import json
 import zlib
 
+USER_ROLE_ITEM_TYPE = Qt.UserRole + 2
+ITEM_TYPE_FILE = 0
+ITEM_TYPE_DIRECTORY = 1
+
 def expand_directory_walk_to_lists(directory_walk):
     files = {}
     directories = set()
@@ -81,6 +85,7 @@ def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon
             else:
                 name_item = QStandardItem(name)
                 name_item.setData(QVariant(folder_icon), Qt.DecorationRole)
+                name_item.setData(QVariant(ITEM_TYPE_DIRECTORY), USER_ROLE_ITEM_TYPE)
 
                 size_item          = QStandardItem('')
                 last_modified_item = create_last_modified_item(int(dw['l']))
@@ -100,6 +105,7 @@ def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon
         else:
             name_item = QStandardItem(name)
             name_item.setData(QVariant(file_icon), Qt.DecorationRole)
+            name_item.setData(QVariant(ITEM_TYPE_FILE), USER_ROLE_ITEM_TYPE)
 
             size      = int(dw['s'])
             size_item = QStandardItem(get_file_display_size(size))
@@ -222,7 +228,9 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 self.tree_files.header().setSortIndicator(0, Qt.AscendingOrder)
 
             def cb_expand_error():
-                pass # FIXME: report error
+                # FIXME: report error
+                self.refresh_in_progress = False
+                self.update_main_ui_state()
 
             async_call(expand_async, result.stdout, cb_expand_success, cb_expand_error)
 
@@ -273,7 +281,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 selected_item = self.tree_files_model.itemFromIndex\
                     (self.tree_files_proxy_model.mapToSource(index))
                 path = merge_path(selected_item, unicode(selected_item.text()))
-    
+
                 for directory in self.available_directories:
                     if path in directory and directory not in dirs_to_create:
                         dirs_to_create.append(directory)
@@ -401,13 +409,27 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if len(selected_indexes) != 3:
             return
 
+        item_type = selected_indexes[0].data(USER_ROLE_ITEM_TYPE).toInt()[0]
+
+        if item_type == ITEM_TYPE_FILE:
+            title = "Rename File"
+        else:
+            title = "Rename Directory"
+
         selected_item = self.tree_files_model.itemFromIndex\
             (self.tree_files_proxy_model.mapToSource(selected_indexes[0]))
-        name, ok = QInputDialog.getText(self, "Rename File/Directory", "", QLineEdit.Normal,
+        name, ok = QInputDialog.getText(self, title, "", QLineEdit.Normal,
                                         unicode(selected_item.text()))
-        if ok and name != "":
-            self.rename_from = unicode(merge_path(selected_item, unicode(selected_item.text())))
-            selected_item.setText(unicode(name))
+
+        if not ok:
+            return
+
+        if len(name) == 0 or name == '.' or name == '..' or '/' in name:
+            # report error
+            return
+
+        self.rename_from = unicode(merge_path(selected_item, unicode(selected_item.text())))
+        selected_item.setText(unicode(name))
 
     def delete_selected_files(self):
         def deletion_pd_closed():
