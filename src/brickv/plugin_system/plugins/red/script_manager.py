@@ -43,11 +43,11 @@ class ScriptData(QtCore.QObject):
         self.process = None
         self.stdout = None
         self.stderr = None
-
         self.script_name = None
         self.callback = None
         self.params = None
         self.max_len = None
+        self.decode_output_as_utf8 = True
         self.script_instance = None
 
 class ScriptManager:
@@ -83,7 +83,7 @@ class ScriptManager:
     # Call with a script name from the scripts/ folder.
     # The stdout and stderr from the script will be given back to callback.
     # If there is an error, callback will return None.
-    def execute_script(self, script_name, callback, params = [], max_len = 65536):
+    def execute_script(self, script_name, callback, params = [], max_len = 65536, decode_output_as_utf8=True):
         if not script_name in self.scripts:
             if callback is not None:
                 callback(None) # We are still in GUI thread, use callback instead of signal
@@ -95,6 +95,7 @@ class ScriptManager:
         sd.callback = callback
         sd.params = params
         sd.max_len = max_len
+        sd.decode_output_as_utf8 = decode_output_as_utf8
 
         if callback is not None:
             sd.script_signal.connect(callback)
@@ -198,7 +199,10 @@ class ScriptManager:
 
                         script_data_set.remove(sd)
 
-                    out = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
+                    if sd.decode_output_as_utf8:
+                        out = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
+                    else:
+                        out = result.data
 
                     def cb_stderr_data(result, sd):
                         if result.error != None:
@@ -212,7 +216,10 @@ class ScriptManager:
                             traceback.print_exc()
 
 
-                        err = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
+                        if sd.decode_output_as_utf8:
+                            err = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
+                        else:
+                            err = result.data
 
                         ScriptManager._call(self.scripts[sd.script_name], sd, self.ScriptResult(out, err))
                         script_data_set.remove(sd)

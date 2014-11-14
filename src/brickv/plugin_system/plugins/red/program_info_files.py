@@ -31,6 +31,7 @@ from brickv.async_call import async_call
 from brickv.program_path import get_program_path
 import os
 import json
+import zlib
 
 def expand_directory_walk_to_lists(directory_walk):
     files = {}
@@ -198,7 +199,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 return # FIXME: report error
 
             def expand_async(data):
-                directory_walk        = json.loads(data)
+                directory_walk        = json.loads(zlib.decompress(buffer(data)).decode('utf-8'))
                 available_files       = {}
                 available_directories = []
 
@@ -237,7 +238,8 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.tree_files.setColumnWidth(1, width2)
 
         self.script_manager.execute_script('directory_walk', cb_directory_walk,
-                                           [self.bin_directory], max_len=1024*1024)
+                                           [self.bin_directory], max_len=1024*1024,
+                                           decode_output_as_utf8=False)
 
     def upload_files(self):
         print 'upload_files'

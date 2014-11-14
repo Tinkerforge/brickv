@@ -3,19 +3,23 @@
 
 import os
 import json
-from sys import argv
+from sys import argv, stdout
+import zlib
 
 return_os_walk_list = []
 
+def output(data):
+    stdout.write(zlib.compress(json.dumps(data, separators=(',', ':'))))
+
 if len(argv) < 2:
-    print json.dumps(None)
-    exit (0)
-if not os.path.isdir(unicode(argv[1])):
-    print json.dumps(None)
-    exit (0)
+    output(None)
+    exit(0)
+if not os.path.isdir(argv[1]):
+    output(None)
+    exit(0)
 
 try:
-    for root, dirs, files in os.walk(unicode(argv[1]), topdown=True):
+    for root, dirs, files in os.walk(argv[1], topdown=True):
         files_with_size = []
         if len(files) > 0:
             for f in files:
@@ -26,7 +30,7 @@ try:
                                     'dirs': dirs,
                                     'files': files_with_size})
 except:
-    print json.dumps(None)
-    exit (0)
+    output(None)
+    exit(0)
 
-print json.dumps(return_os_walk_list, separators=(',', ':'))
+output(return_os_walk_list)

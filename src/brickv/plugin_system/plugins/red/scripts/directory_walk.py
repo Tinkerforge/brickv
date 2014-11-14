@@ -3,15 +3,19 @@
 
 import os
 import json
-from sys import argv
+from sys import argv, stdout
+import zlib
 
 result = {}
 
-if len(argv) < 2 or not os.path.isdir(unicode(argv[1])):
-    print json.dumps(None)
+def output(data):
+    stdout.write(zlib.compress(json.dumps(data, separators=(',', ':'))))
+
+if len(argv) < 2 or not os.path.isdir(argv[1]):
+    output(None)
     exit(0)
 
-base = unicode(argv[1])
+base = argv[1]
 
 try:
     for root, directories, files in os.walk(base):
@@ -29,9 +33,9 @@ try:
         for filename in files:
             absolute           = os.path.join(root, filename)
             st                 = os.lstat(absolute)
-            children[filename] = {'m': st.st_mode, 's': st.st_size, 'l': int(st.st_mtime)}
+            children[filename] = {'s': st.st_size, 'l': int(st.st_mtime)}
 except:
-    print json.dumps(None)
+    output(None)
     exit(0)
 
-print json.dumps(result, separators=(',', ':'))
+output(result)

@@ -31,6 +31,7 @@ from brickv.async_call import async_call
 from brickv.program_path import get_program_path
 import os
 import json
+import zlib
 
 class LogsProxyModel(QSortFilterProxyModel):
     # overrides QSortFilterProxyModel.lessThan
@@ -111,7 +112,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                 return item
 
             try:
-                program_dir_walk_result = json.loads(result.stdout)
+                program_dir_walk_result = json.loads(zlib.decompress(buffer(result.stdout)).decode('utf-8'))
             except:
                 parent_error = [QStandardItem("Error loading files..."),
                                 QStandardItem(""),
@@ -296,7 +297,8 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_model_header)
         self.tree_logs.setColumnWidth(0, width)
         self.script_manager.execute_script('program_get_os_walk', cb_program_get_os_walk,
-                                           [self.log_directory], max_len=1024*1024)
+                                           [self.log_directory], max_len=1024*1024,
+                                           decode_output_as_utf8=False)
 
     def load_log_files_for_ops(self, index_list):
         logs_download_dict = {'files': {}, 'total_download_size': 0}
