@@ -44,6 +44,8 @@ class ProgramWizardEdit(ProgramWizard):
     def get_field(self, name):
         if self.currentId() == Constants.PAGE_GENERAL:
             return ProgramWizard.get_field(self, name)
+        elif name == 'identifier':
+            return QVariant(unicode(self.program.identifier))
         elif name == 'name':
             return QVariant(self.program.cast_custom_option_value('name', unicode, '<unknown>'))
         elif name == 'language':

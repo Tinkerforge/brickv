@@ -49,7 +49,8 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
 
         self.setupUi(self)
 
-        self.language = Constants.LANGUAGE_PHP
+        self.language     = Constants.LANGUAGE_PHP
+        self.url_template = unicode(self.label_url.text())
 
         self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
@@ -92,6 +93,7 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PHP_START_MODE)
         self.combo_script_file_selector.reset()
+        self.label_url.setText(self.url_template.replace('<SERVER>', 'red-brick').replace('<IDENTIFIER>', self.get_field('identifier').toString()))
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
@@ -154,11 +156,15 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
 
         self.combo_version.setVisible(not start_mode_web_interface)
         self.label_version.setVisible(not start_mode_web_interface)
+        self.combo_script_file_selector.set_visible(start_mode_script_file)
+        self.label_command.setVisible(start_mode_command)
+        self.edit_command.setVisible(start_mode_command)
+        self.label_command_help.setVisible(start_mode_command)
+        self.label_web_interface_help.setVisible(start_mode_web_interface)
+        self.label_url_title.setVisible(start_mode_web_interface)
+        self.label_url.setVisible(start_mode_web_interface)
+        self.line.setVisible(not start_mode_web_interface)
         self.check_show_advanced_options.setVisible(not start_mode_web_interface)
-        self.combo_script_file_selector.set_visible(start_mode_script_file and not start_mode_web_interface)
-        self.label_command.setVisible(start_mode_command and not start_mode_web_interface)
-        self.edit_command.setVisible(start_mode_command and not start_mode_web_interface)
-        self.label_command_help.setVisible(start_mode_command and not start_mode_web_interface)
         self.combo_working_directory_selector.set_visible(show_advanced_options and not start_mode_web_interface)
         self.option_list_editor.set_visible(show_advanced_options and not start_mode_web_interface)
 
@@ -176,7 +182,8 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
         }
 
     def get_command(self):
-        start_mode  = self.get_field('php.start_mode').toInt()[0]
+        start_mode = self.get_field('php.start_mode').toInt()[0]
+
         if start_mode == Constants.PHP_START_MODE_WEB_INTERFACE:
             return None
 

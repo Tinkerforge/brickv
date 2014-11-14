@@ -78,7 +78,10 @@ class ProgramPage(QWizardPage):
 
             # if a program exists then this page is used in an edit wizard
             if self.wizard().program != None:
-                set_current_combo_index_from_data(combo_version, unicode(self.wizard().program.executable))
+                executable = unicode(self.wizard().program.executable)
+
+                if len(executable) > 0:
+                    set_current_combo_index_from_data(combo_version, executable)
 
             combo_version.setEnabled(True)
             self.completeChanged.emit()

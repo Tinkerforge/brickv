@@ -224,15 +224,31 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.label_first_upload.setText(timestamp_to_date_at_time(first_upload))
         self.label_last_edit.setText(timestamp_to_date_at_time(last_edit))
 
-        if language_api_name == 'javascript':
+        php_start_mode_web_interface    = False
+        python_start_mode_web_interface = False
+        javascript_flavor_browser       = False
+
+        if language_api_name == 'php':
+            php_start_mode_api_name      = self.program.cast_custom_option_value('php.start_mode', unicode, '<unknown>')
+            php_start_mode               = Constants.get_php_start_mode(php_start_mode_api_name)
+            php_start_mode_web_interface = php_start_mode == Constants.PHP_START_MODE_WEB_INTERFACE
+        elif language_api_name == 'python':
+            python_start_mode_api_name      = self.program.cast_custom_option_value('python.start_mode', unicode, '<unknown>')
+            python_start_mode               = Constants.get_python_start_mode(python_start_mode_api_name)
+            python_start_mode_web_interface = python_start_mode == Constants.PYTHON_START_MODE_WEB_INTERFACE
+        elif language_api_name == 'javascript':
             javascript_flavor_api_name = self.program.cast_custom_option_value('javascript.flavor', unicode, '<unknown>')
             javascript_flavor          = Constants.get_javascript_flavor(javascript_flavor_api_name)
             javascript_flavor_browser  = javascript_flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER
-        else:
-            javascript_flavor_browser = False
+
+        show_status    = not php_start_mode_web_interface and not python_start_mode_web_interface and not javascript_flavor_browser
+        show_logs      = not php_start_mode_web_interface and not python_start_mode_web_interface and not javascript_flavor_browser
+        show_arguments = not php_start_mode_web_interface and not python_start_mode_web_interface and not javascript_flavor_browser
+        show_stdio     = not php_start_mode_web_interface and not python_start_mode_web_interface and not javascript_flavor_browser
+        show_schedule  = not php_start_mode_web_interface and not python_start_mode_web_interface and not javascript_flavor_browser
 
         # status
-        self.group_status.setVisible(not javascript_flavor_browser)
+        self.group_status.setVisible(show_status)
 
         process_running = False
 
@@ -289,7 +305,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.set_widget_enabled(self.button_continue_schedule, scheduler_stopped and self.program.start_mode != REDProgram.START_MODE_NEVER)
 
         # logs
-        self.group_logs.setVisible(not javascript_flavor_browser)
+        self.group_logs.setVisible(show_logs)
 
         self.widget_logs.update_ui_state()
 
@@ -303,7 +319,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             self.widget_language.update_ui_state()
 
         # arguments
-        self.group_arguments.setVisible(not javascript_flavor_browser)
+        self.group_arguments.setVisible(show_arguments)
 
         arguments = []
         editable_arguments_offset = max(self.program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
@@ -326,7 +342,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.label_environment.setText('\n'.join(environment))
 
         # stdio
-        self.group_stdio.setVisible(not javascript_flavor_browser)
+        self.group_stdio.setVisible(show_stdio)
 
         stdin_redirection_pipe  = self.program.stdin_redirection  == REDProgram.STDIO_REDIRECTION_PIPE
         stdin_redirection_file  = self.program.stdin_redirection  == REDProgram.STDIO_REDIRECTION_FILE
@@ -361,7 +377,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             self.label_stderr_file.setText(unicode(self.program.stderr_file_name))
 
         # schedule
-        self.group_schedule.setVisible(not javascript_flavor_browser)
+        self.group_schedule.setVisible(show_schedule)
 
         start_mode_never    = self.program.start_mode == REDProgram.START_MODE_NEVER
         start_mode_always   = self.program.start_mode == REDProgram.START_MODE_ALWAYS
