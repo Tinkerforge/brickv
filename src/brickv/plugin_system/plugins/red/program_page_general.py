@@ -132,7 +132,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         self.edit_identifier.setText(unique_identifier)
 
         if unique_identifier in self.wizard().identifiers:
-            QMessageBox.critical(self, 'Identifier Error',
+            QMessageBox.critical(None, 'Identifier Error',
                                  u'Could not auto-generate unique identifier from program name [{0}] because all tested ones are already in use.'
                                  .format(name))
 
@@ -169,7 +169,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         try:
             program.set_custom_option_value('name', name) # FIXME: async_call
         except REDError as e:
-            QMessageBox.critical(self, 'Edit Error',
+            QMessageBox.critical(None, 'Edit Error',
                                  u'Could not update name of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
             return
@@ -179,7 +179,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         try:
             program.set_custom_option_value('description', description) # FIXME: async_call
         except REDError as e:
-            QMessageBox.critical(self, 'Edit Error',
+            QMessageBox.critical(None, 'Edit Error',
                                  u'Could not update description of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
             return

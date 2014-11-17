@@ -184,7 +184,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                     'Program | Files',
                                     'Renaming failed.',
                                     QMessageBox.Ok)
-                
+
                 return
 
             QMessageBox.information(None,
@@ -489,14 +489,14 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         dirs_to_delete = []
 
         deletion_pd.show()
-        
+
         selected_items = set()
 
         for selected_index in selected_indexes:
             if selected_index.column() == 0:
                 selected_items.add(self.tree_files_model.itemFromIndex\
                                            (self.tree_files_proxy_model.mapToSource(selected_index)))
-        
+
         all_done = False
 
         while not all_done:

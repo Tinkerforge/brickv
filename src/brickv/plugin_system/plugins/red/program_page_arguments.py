@@ -158,7 +158,7 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
         try:
             program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
         except REDError as e:
-            QMessageBox.critical(self, 'Edit Error',
+            QMessageBox.critical(None, 'Edit Error',
                                  u'Could not update arguments and environment of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
             return

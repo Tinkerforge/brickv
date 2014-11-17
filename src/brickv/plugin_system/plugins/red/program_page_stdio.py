@@ -163,7 +163,7 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
                                           stdout_redirection, stdout_file,
                                           stderr_redirection, stderr_file) # FIXME: async_call
         except REDError as e:
-            QMessageBox.critical(self, 'Edit Error',
+            QMessageBox.critical(None, 'Edit Error',
                                  u'Could not update stdio redirection of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
             return

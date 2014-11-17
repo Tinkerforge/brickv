@@ -124,7 +124,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         try:
             program.set_schedule(start_mode, continue_after_error, start_interval, start_fields) # FIXME: async_call
         except REDError as e:
-            QMessageBox.critical(self, 'Edit Error',
+            QMessageBox.critical(None, 'Edit Error',
                                  u'Could not update stdio redirection of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
             return
@@ -132,7 +132,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         try:
             program.set_custom_option_value('started_once_after_upload', False) # FIXME: async_call
         except REDError as e:
-            QMessageBox.critical(self, 'Edit Error',
+            QMessageBox.critical(None, 'Edit Error',
                                  u'Could not update custom options of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
             return

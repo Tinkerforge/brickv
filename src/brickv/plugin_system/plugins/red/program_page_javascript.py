@@ -238,6 +238,6 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
             try:
                 program.set_schedule(REDProgram.START_MODE_NEVER, False, 0, '') # FIXME: async_call
             except REDError as e:
-                QMessageBox.critical(self, 'Edit Error',
+                QMessageBox.critical(None, 'Edit Error',
                                      u'Could not update schedule of program [{0}]:\n\n{1}'
                                      .format(program.cast_custom_option_value('name', unicode, '<unknown>')))

@@ -218,7 +218,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         program_info = selected_items[0].data(Qt.UserRole).toPyObject()
         program      = program_info.program
         name         = program.cast_custom_option_value('name', unicode, '<unknown>')
-        button       = QMessageBox.question(self, 'Delete Program',
+        button       = QMessageBox.question(None, 'Delete Program',
                                             u'Deleting program [{0}] is irreversible. All files of this program will be deleted.'.format(name),
                                             QMessageBox.Ok, QMessageBox.Cancel)
 
@@ -230,11 +230,11 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         try:
             program.purge() # FIXME: async_call
         except REDError as e:
-            QMessageBox.critical(self, 'Delete Error',
+            QMessageBox.critical(None, 'Delete Error',
                                  u'Could not delete program [{0}]:\n\n{1}'.format(name, str(e)))
             return
 
-        QMessageBox.information(self, 'Delete Successful',
+        QMessageBox.information(None, 'Delete Successful',
                                  u'Program [{0}] successful deleted!'.format(name))
 
         self.stacked_container.removeWidget(program_info)

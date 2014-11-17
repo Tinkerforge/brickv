@@ -431,7 +431,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         try:
             self.program.start()
         except REDError as e:
-            QMessageBox.critical(self, 'Start Error',
+            QMessageBox.critical(None, 'Start Error',
                                  u'Could not start program [{0}]:\n\n{1}'
                                  .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
 
@@ -440,7 +440,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             try:
                 self.program.last_spawned_process.kill(REDProcess.SIGNAL_KILL)
             except REDError as e:
-                QMessageBox.critical(self, 'Kill Error',
+                QMessageBox.critical(None, 'Kill Error',
                                      u'Could not kill current process of program [{0}]:\n\n{1}'
                                      .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
 
@@ -448,7 +448,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         try:
             self.program.continue_schedule()
         except REDError as e:
-            QMessageBox.critical(self, 'Schedule Error',
+            QMessageBox.critical(None, 'Schedule Error',
                                  u'Could not continue schedule of program [{0}]:\n\n{1}'
                                  .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
 
@@ -457,7 +457,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             try:
                 self.program.last_spawned_process.stdin.write_async((unicode(self.edit_stdin_pipe_input.text()) + u'\n').encode('utf-8'))
             except REDError as e:
-                QMessageBox.critical(self, 'Pipe Input Error',
+                QMessageBox.critical(None, 'Pipe Input Error',
                                      u'Could not write to stdin of current process of program [{0}]:\n\n{1}'
                                      .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
             else:
