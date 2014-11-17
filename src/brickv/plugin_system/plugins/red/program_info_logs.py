@@ -495,6 +495,13 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                        cb_open_error)
 
     def delete_selected_logs(self):
+        button = QMessageBox.question(None, 'Delete Logs',
+                                      'Irreversibly deleting selected logs.',
+                                      QMessageBox.Ok, QMessageBox.Cancel)
+
+        if button != QMessageBox.Ok:
+            return
+
         def cb_program_delete_logs(result):
             if result != None and result.stderr == "":
                 if json.loads(result.stdout):

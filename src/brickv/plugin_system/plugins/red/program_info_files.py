@@ -438,6 +438,12 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
     def delete_selected_files(self):
         sd = None
+        button = QMessageBox.question(None, 'Delete Files',
+                                      'Irreversibly deleting selected files and directories.',
+                                      QMessageBox.Ok, QMessageBox.Cancel)
+
+        if button != QMessageBox.Ok:
+            return
 
         def deletion_pd_canceled():
             if sd is None:
