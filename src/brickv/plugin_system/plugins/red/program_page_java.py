@@ -102,8 +102,8 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
         self.combo_main_class_checker         = MandatoryEditableComboBoxChecker(self,
-                                                                                 self.combo_main_class,
-                                                                                 self.label_main_class)
+                                                                                 self.label_main_class,
+                                                                                 self.combo_main_class)
         self.combo_jar_file_selector          = MandatoryTypedFileSelector(self,
                                                                            self.label_jar_file,
                                                                            self.combo_jar_file,
@@ -111,8 +111,8 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
                                                                            self.combo_jar_file_type,
                                                                            self.label_jar_file_help)
         self.combo_working_directory_selector = MandatoryDirectorySelector(self,
-                                                                           self.combo_working_directory,
-                                                                           self.label_working_directory)
+                                                                           self.label_working_directory,
+                                                                           self.combo_working_directory)
         # FIXME: allow adding class path entries using a combo box prefilled with avialable .jar files
         self.class_path_list_editor           = ListWidgetEditor(self.label_class_path,
                                                                  self.list_class_path,

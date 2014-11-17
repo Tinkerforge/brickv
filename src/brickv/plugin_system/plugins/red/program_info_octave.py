@@ -57,13 +57,11 @@ class ProgramInfoOctave(ProgramInfo, Ui_ProgramInfoOctave):
         self.get_executable_versions('octave', cb_octave_versions)
 
         # start mode
-        start_mode_api_name = self.program.cast_custom_option_value('octave.start_mode', unicode, '<unknown>')
-        start_mode          = Constants.get_octave_start_mode(start_mode_api_name)
-
-        self.label_start_mode.setText(Constants.octave_start_mode_display_names[start_mode])
-
+        start_mode_api_name    = self.program.cast_custom_option_value('octave.start_mode', unicode, '<unknown>')
+        start_mode             = Constants.get_octave_start_mode(start_mode_api_name)
         start_mode_script_file = start_mode == Constants.OCTAVE_START_MODE_SCRIPT_FILE
 
+        self.label_start_mode.setText(Constants.octave_start_mode_display_names[start_mode])
         self.label_script_file_title.setVisible(start_mode_script_file)
         self.label_script_file.setVisible(start_mode_script_file)
 

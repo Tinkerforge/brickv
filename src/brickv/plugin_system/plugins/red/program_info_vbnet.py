@@ -57,13 +57,11 @@ class ProgramInfoVBNET(ProgramInfo, Ui_ProgramInfoVBNET):
         self.get_executable_versions('mono', cb_mono_versions)
 
         # start mode
-        start_mode_api_name = self.program.cast_custom_option_value('vbnet.start_mode', unicode, '<unknown>')
-        start_mode          = Constants.get_vbnet_start_mode(start_mode_api_name)
-
-        self.label_start_mode.setText(Constants.vbnet_start_mode_display_names[start_mode])
-
+        start_mode_api_name   = self.program.cast_custom_option_value('vbnet.start_mode', unicode, '<unknown>')
+        start_mode            = Constants.get_vbnet_start_mode(start_mode_api_name)
         start_mode_executable = start_mode == Constants.VBNET_START_MODE_EXECUTABLE
 
+        self.label_start_mode.setText(Constants.vbnet_start_mode_display_names[start_mode])
         self.label_executable_title.setVisible(start_mode_executable)
         self.label_executable.setVisible(start_mode_executable)
 

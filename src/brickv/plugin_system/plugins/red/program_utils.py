@@ -778,10 +778,10 @@ class TreeWidgetEditor:
 
 
 class MandatoryLineEditChecker:
-    def __init__(self, page, edit, label, regexp=None): # FIXME: swap edit and label
+    def __init__(self, page, label, edit, regexp=None):
         self.page     = page
-        self.edit     = edit
         self.label    = label
+        self.edit     = edit
         self.regexp   = None
         self.complete = False
 
@@ -810,10 +810,10 @@ class MandatoryLineEditChecker:
 
 
 class MandatoryEditableComboBoxChecker:
-    def __init__(self, page, combo, label): # FIXME: swap combo and label
+    def __init__(self, page, label, combo):
         self.page     = page
-        self.combo    = combo
         self.label    = label
+        self.combo    = combo
         self.complete = False
 
         self.combo.currentIndexChanged.connect(lambda: self.check(True))
@@ -846,7 +846,7 @@ class MandatoryTypedFileSelector:
         self.label_help = label_help
 
         # FIXME
-        self.c1 = MandatoryEditableComboBoxChecker(page, combo_file, label_file)
+        self.c1 = MandatoryEditableComboBoxChecker(page, label_file, combo_file)
         self.c2 = ComboBoxFileEndingChecker(page, combo_file, combo_type)
 
     def set_visible(self, visible):
@@ -882,10 +882,10 @@ class MandatoryTypedFileSelector:
 
 # expects the combo box to be editable
 class MandatoryDirectorySelector:
-    def __init__(self, page, combo, label):
+    def __init__(self, page, label, combo):
         self.page  = page
-        self.combo = combo
         self.label = label
+        self.combo = combo
         self.complete = False
         self.original_items = []
 

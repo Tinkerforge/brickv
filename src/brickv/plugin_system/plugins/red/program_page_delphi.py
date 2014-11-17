@@ -65,10 +65,9 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
         self.combo_executable_selector        = MandatoryEditableComboBoxChecker(self,
-                                                                                 self.combo_executable,
-                                                                                 self.label_executable)
-        self.combo_executable_checker         = ComboBoxFileEndingChecker(self,
-                                                                          self.combo_executable)
+                                                                                 self.label_executable,
+                                                                                 self.combo_executable)
+        self.combo_executable_checker         = ComboBoxFileEndingChecker(self, self.combo_executable)
         self.combo_main_source_file_selector  = MandatoryTypedFileSelector(self,
                                                                            self.label_main_source_file,
                                                                            self.combo_main_source_file,
@@ -76,8 +75,8 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
                                                                            self.combo_main_source_file_type,
                                                                            self.label_main_source_file_help)
         self.combo_working_directory_selector = MandatoryDirectorySelector(self,
-                                                                           self.combo_working_directory,
-                                                                           self.label_working_directory)
+                                                                           self.label_working_directory,
+                                                                           self.combo_working_directory)
         self.option_list_editor               = ListWidgetEditor(self.label_options,
                                                                  self.list_options,
                                                                  self.label_options_help,

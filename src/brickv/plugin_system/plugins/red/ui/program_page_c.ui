@@ -47,14 +47,14 @@
         <string>Executable:</string>
        </property>
        <property name="buddy">
-        <cstring>combo_executable</cstring>
+        <cstring>edit_executable</cstring>
        </property>
       </widget>
      </item>
      <item row="2" column="1" colspan="4">
       <widget class="QLabel" name="label_executable_help">
        <property name="text">
-        <string>The specified executable will be executed. It has to be (cross) compiled for the ARM Hard Float (armhf) architecture. If "Compile From Source" is enabled then use the name of the executable as it will be &lt;b&gt;after&lt;/b&gt; compilation.</string>
+        <string>The specified executable will be executed. It has to be (cross) compiled for the ARM Hard Float (armhf) architecture. If &quot;Compile From Source&quot; is enabled then use the name of the executable as it will be &lt;b&gt;after&lt;/b&gt; compilation.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -108,20 +108,10 @@
      <item row="10" column="1" colspan="4">
       <widget class="QLabel" name="label_options_help">
        <property name="text">
-        <string>This list of options will be passed to Make, if "Compile From Source" is enabled.</string>
+        <string>This list of options will be passed to Make, if &quot;Compile From Source&quot; is enabled.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" colspan="4">
-      <widget class="QComboBox" name="combo_executable">
-       <property name="editable">
-        <bool>true</bool>
-       </property>
-       <property name="insertPolicy">
-        <enum>QComboBox::NoInsert</enum>
        </property>
       </widget>
      </item>
@@ -188,6 +178,9 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="1" colspan="4">
+      <widget class="QLineEdit" name="edit_executable"/>
+     </item>
     </layout>
    </item>
   </layout>
@@ -201,7 +194,7 @@
  </customwidgets>
  <tabstops>
   <tabstop>combo_start_mode</tabstop>
-  <tabstop>combo_executable</tabstop>
+  <tabstop>edit_executable</tabstop>
   <tabstop>check_compile_from_source</tabstop>
   <tabstop>check_show_advanced_options</tabstop>
   <tabstop>combo_working_directory</tabstop>

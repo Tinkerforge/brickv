@@ -59,7 +59,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
         self.registerField('c.start_mode', self.combo_start_mode)
-        self.registerField('c.executable', self.combo_executable, 'currentText')
+        self.registerField('c.executable', self.edit_executable)
         self.registerField('c.compile_from_source', self.check_compile_from_source)
         self.registerField('c.working_directory', self.combo_working_directory, 'currentText')
 
@@ -68,9 +68,12 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.check_compile_from_source.stateChanged.connect(self.update_ui_state)
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
-        # FIXME: how to filter files list for executables
-        self.combo_executable_checker         = MandatoryEditableComboBoxChecker(self, self.combo_executable, self.label_executable)
-        self.combo_working_directory_selector = MandatoryDirectorySelector(self, self.combo_working_directory, self.label_working_directory)
+        self.edit_executable_checker          = MandatoryLineEditChecker(self,
+                                                                         self.label_executable,
+                                                                         self.edit_executable)
+        self.combo_working_directory_selector = MandatoryDirectorySelector(self,
+                                                                           self.label_working_directory,
+                                                                           self.combo_working_directory)
         self.option_list_editor               = ListWidgetEditor(self.label_options,
                                                                  self.list_options,
                                                                  self.label_options_help,
@@ -100,7 +103,6 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.get_executable_versions('gcc', cb_gcc_versions)
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_C_START_MODE)
-        self.combo_executable.clear()
         self.check_compile_from_source.setCheckState(Qt.Unchecked)
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
         self.combo_working_directory_selector.reset()
@@ -116,7 +118,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
-        if not self.combo_executable_checker.complete:
+        if not self.edit_executable_checker.complete:
             return False
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
@@ -127,7 +129,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         compile_from_source   = self.check_compile_from_source.checkState() == Qt.Checked
         show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
 
-        self.combo_executable.setVisible(start_mode_executable)
+        self.edit_executable.setVisible(start_mode_executable)
         self.label_executable_help.setVisible(start_mode_executable)
         self.line1.setVisible(start_mode_executable)
         self.check_compile_from_source.setVisible(start_mode_executable)

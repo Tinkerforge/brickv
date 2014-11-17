@@ -57,14 +57,12 @@ class ProgramInfoPerl(ProgramInfo, Ui_ProgramInfoPerl):
         self.get_executable_versions('perl', cb_perl_versions)
 
         # start mode
-        start_mode_api_name = self.program.cast_custom_option_value('perl.start_mode', unicode, '<unknown>')
-        start_mode          = Constants.get_perl_start_mode(start_mode_api_name)
-
-        self.label_start_mode.setText(Constants.perl_start_mode_display_names[start_mode])
-
+        start_mode_api_name    = self.program.cast_custom_option_value('perl.start_mode', unicode, '<unknown>')
+        start_mode             = Constants.get_perl_start_mode(start_mode_api_name)
         start_mode_script_file = start_mode == Constants.PERL_START_MODE_SCRIPT_FILE
         start_mode_command     = start_mode == Constants.PERL_START_MODE_COMMAND
 
+        self.label_start_mode.setText(Constants.perl_start_mode_display_names[start_mode])
         self.label_script_file_title.setVisible(start_mode_script_file)
         self.label_script_file.setVisible(start_mode_script_file)
         self.label_command_title.setVisible(start_mode_command)

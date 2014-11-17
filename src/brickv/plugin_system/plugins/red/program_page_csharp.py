@@ -69,8 +69,8 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
                                                                            self.combo_executable_type,
                                                                            self.label_executable_help)
         self.combo_working_directory_selector = MandatoryDirectorySelector(self,
-                                                                           self.combo_working_directory,
-                                                                           self.label_working_directory)
+                                                                           self.label_working_directory,
+                                                                           self.combo_working_directory)
         self.option_list_editor               = ListWidgetEditor(self.label_options,
                                                                  self.list_options,
                                                                  self.label_options_help,

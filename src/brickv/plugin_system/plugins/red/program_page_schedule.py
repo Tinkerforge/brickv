@@ -44,7 +44,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.spin_start_interval.valueChanged.connect(self.update_interval_help)
 
-        self.edit_start_fields_checker = MandatoryLineEditChecker(self, self.edit_start_fields, self.label_start_fields,
+        self.edit_start_fields_checker = MandatoryLineEditChecker(self, self.label_start_fields, self.edit_start_fields,
                                                                   '^ *(@\S+|\S+ +\S+ +\S+ +\S+ +\S+) *$')
 
     # overrides QWizardPage.initializePage

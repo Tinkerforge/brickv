@@ -69,8 +69,8 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
                                                                            self.combo_script_file_type,
                                                                            self.label_script_file_help)
         self.combo_working_directory_selector = MandatoryDirectorySelector(self,
-                                                                           self.combo_working_directory,
-                                                                           self.label_working_directory)
+                                                                           self.label_working_directory,
+                                                                           self.combo_working_directory)
         self.option_list_editor               = ListWidgetEditor(self.label_options,
                                                                  self.list_options,
                                                                  self.label_options_help,

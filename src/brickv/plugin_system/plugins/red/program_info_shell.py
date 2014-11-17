@@ -57,14 +57,12 @@ class ProgramInfoShell(ProgramInfo, Ui_ProgramInfoShell):
         self.get_executable_versions('shell', cb_shell_versions)
 
         # start mode
-        start_mode_api_name = self.program.cast_custom_option_value('shell.start_mode', unicode, '<unknown>')
-        start_mode          = Constants.get_shell_start_mode(start_mode_api_name)
-
-        self.label_start_mode.setText(Constants.shell_start_mode_display_names[start_mode])
-
+        start_mode_api_name    = self.program.cast_custom_option_value('shell.start_mode', unicode, '<unknown>')
+        start_mode             = Constants.get_shell_start_mode(start_mode_api_name)
         start_mode_script_file = start_mode == Constants.SHELL_START_MODE_SCRIPT_FILE
         start_mode_command     = start_mode == Constants.SHELL_START_MODE_COMMAND
 
+        self.label_start_mode.setText(Constants.shell_start_mode_display_names[start_mode])
         self.label_script_file_title.setVisible(start_mode_script_file)
         self.label_script_file.setVisible(start_mode_script_file)
         self.label_command_title.setVisible(start_mode_command)

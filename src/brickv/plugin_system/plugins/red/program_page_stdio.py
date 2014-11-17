@@ -50,9 +50,9 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
         self.combo_stderr_redirection.currentIndexChanged.connect(self.update_ui_state)
         self.combo_stderr_redirection.currentIndexChanged.connect(self.emit_complete_changed)
 
-        self.combo_stdin_file_checker = MandatoryEditableComboBoxChecker(self, self.combo_stdin_file, self.label_stdin_file)
-        self.edit_stdout_file_checker = MandatoryLineEditChecker(self, self.edit_stdout_file, self.label_stdout_file)
-        self.edit_stderr_file_checker = MandatoryLineEditChecker(self, self.edit_stderr_file, self.label_stderr_file)
+        self.combo_stdin_file_checker = MandatoryEditableComboBoxChecker(self, self.label_stdin_file, self.combo_stdin_file)
+        self.edit_stdout_file_checker = MandatoryLineEditChecker(self, self.label_stdout_file, self.edit_stdout_file)
+        self.edit_stderr_file_checker = MandatoryLineEditChecker(self, self.label_stderr_file, self.edit_stderr_file)
 
     # overrides QWizardPage.initializePage
     def initializePage(self):

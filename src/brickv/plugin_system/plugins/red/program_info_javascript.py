@@ -69,14 +69,12 @@ class ProgramInfoJavaScript(ProgramInfo, Ui_ProgramInfoJavaScript):
         self.label_options.setVisible(flavor_nodejs and show_advanced_options)
 
         # start mode
-        start_mode_api_name = self.program.cast_custom_option_value('javascript.start_mode', unicode, '<unknown>')
-        start_mode          = Constants.get_javascript_start_mode(start_mode_api_name)
-
-        self.label_start_mode.setText(Constants.javascript_start_mode_display_names[start_mode])
-
+        start_mode_api_name    = self.program.cast_custom_option_value('javascript.start_mode', unicode, '<unknown>')
+        start_mode             = Constants.get_javascript_start_mode(start_mode_api_name)
         start_mode_script_file = start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE
         start_mode_command     = start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND
 
+        self.label_start_mode.setText(Constants.javascript_start_mode_display_names[start_mode])
         self.label_script_file_title.setVisible(flavor_nodejs and start_mode_script_file)
         self.label_script_file.setVisible(flavor_nodejs and start_mode_script_file)
         self.label_command_title.setVisible(flavor_nodejs and start_mode_command)
