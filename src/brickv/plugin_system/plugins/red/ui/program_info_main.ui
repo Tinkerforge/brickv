@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>506</width>
-    <height>728</height>
+    <height>707</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,7 +45,7 @@
         <x>0</x>
         <y>0</y>
         <width>488</width>
-        <height>1360</height>
+        <height>1353</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -215,6 +215,9 @@
                <string>Scheduler</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_7">
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
                <item>
                 <layout class="QGridLayout" name="gridLayout_7">
                  <item row="2" column="0">
@@ -445,15 +448,26 @@
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
            <layout class="QGridLayout" name="gridLayout_3">
-            <item row="1" column="0">
-             <widget class="QPushButton" name="button_edit_language">
-              <property name="text">
-               <string>Edit</string>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="0">
              <layout class="QVBoxLayout" name="layout_language"/>
+            </item>
+            <item row="1" column="0">
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QPushButton" name="button_edit_language">
+                <property name="text">
+                 <string>Edit</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="button_language_action">
+                <property name="text">
+                 <string>&lt;action&gt;</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
@@ -893,6 +907,7 @@
   <tabstop>button_kill_process</tabstop>
   <tabstop>button_continue_schedule</tabstop>
   <tabstop>button_edit_language</tabstop>
+  <tabstop>button_language_action</tabstop>
   <tabstop>check_show_environment</tabstop>
   <tabstop>button_edit_arguments</tabstop>
   <tabstop>edit_stdin_pipe_input</tabstop>

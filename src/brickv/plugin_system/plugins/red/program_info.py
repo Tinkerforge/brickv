@@ -54,3 +54,7 @@ class ProgramInfo(QWidget):
             QTimer.singleShot(100, cb_get)
         else:
             cb_get()
+
+    # to be overriden on language configuratiopn pages
+    def get_language_action(self):
+        return None, 'None'

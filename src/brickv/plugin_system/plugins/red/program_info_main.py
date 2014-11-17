@@ -138,6 +138,10 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         else:
             self.widget_language = None
 
+        self.current_language_action = None
+
+        self.button_language_action.setVisible(False)
+
         # create logs info widget
         context = ProgramInfoContext(self.session, self.script_manager, self.executable_versions, self.program)
 
@@ -318,6 +322,20 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         if self.widget_language != None:
             self.widget_language.update_ui_state()
+
+            language_action, language_action_name = self.widget_language.get_language_action()
+
+            if language_action != self.current_language_action:
+                if self.current_language_action != None:
+                    self.button_language_action.setVisible(False)
+                    self.button_language_action.clicked.disconnect(self.current_language_action)
+
+                if language_action != None:
+                    self.button_language_action.clicked.connect(language_action)
+                    self.button_language_action.setText(language_action_name)
+                    self.button_language_action.setVisible(True)
+
+                self.current_language_action = language_action
 
         # arguments
         self.group_arguments.setVisible(show_arguments)

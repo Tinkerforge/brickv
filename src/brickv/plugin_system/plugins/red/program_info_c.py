@@ -66,3 +66,16 @@ class ProgramInfoC(ProgramInfo, Ui_ProgramInfoC):
 
         # options
         self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('c.options', unicode, [])))
+
+    def recompile_from_source(self):
+        if not self.program.cast_custom_option_value('c.compile_from_source', bool, False):
+            return
+
+        print 'recompile_from_source'
+
+    # overrides ProgramInfo.get_language_action
+    def get_language_action(self):
+        if self.program.cast_custom_option_value('c.compile_from_source', bool, False):
+            return self.recompile_from_source, 'Recompile'
+        else:
+            return ProgramInfo.get_language_action(self)
