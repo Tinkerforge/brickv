@@ -26,12 +26,15 @@ from PyQt4.QtGui import QWidget
 from brickv.plugin_system.plugins.red.program_info import ProgramInfo
 from brickv.plugin_system.plugins.red.program_utils import Constants
 from brickv.plugin_system.plugins.red.ui_program_info_c import Ui_ProgramInfoC
+from brickv.plugin_system.plugins.red.program_info_c_compile import ProgramInfoCCompile
 
 class ProgramInfoC(ProgramInfo, Ui_ProgramInfoC):
     def __init__(self, context, *args, **kwargs):
         ProgramInfo.__init__(self, context, *args, **kwargs)
 
         self.setupUi(self)
+
+        self.compile_dialog = None
 
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
@@ -67,15 +70,16 @@ class ProgramInfoC(ProgramInfo, Ui_ProgramInfoC):
         # options
         self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('c.options', unicode, [])))
 
-    def recompile_from_source(self):
+    def compile_from_source(self):
         if not self.program.cast_custom_option_value('c.compile_from_source', bool, False):
             return
 
-        print 'recompile_from_source'
+        self.compile_dialog = ProgramInfoCCompile(self.script_manager, self.program)
+        self.compile_dialog.show()
 
     # overrides ProgramInfo.get_language_action
     def get_language_action(self):
         if self.program.cast_custom_option_value('c.compile_from_source', bool, False):
-            return self.recompile_from_source, 'Recompile'
+            return self.compile_from_source, 'Compile'
         else:
             return ProgramInfo.get_language_action(self)
