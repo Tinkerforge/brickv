@@ -208,7 +208,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         return unicode(self.combo_version.itemData(self.get_field('java.version').toInt()[0]).toString())
 
     def get_html_summary(self):
-        return 'FIXME<br>'
+        return 'FIXME<br/>'
 
     def get_custom_options(self):
         return {}

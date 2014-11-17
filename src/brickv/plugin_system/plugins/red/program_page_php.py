@@ -174,7 +174,28 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
         return unicode(self.combo_version.itemData(self.get_field('php.version').toInt()[0]).toString())
 
     def get_html_summary(self):
-        return 'FIXME<br>'
+        version           = self.get_field('php.version').toInt()[0]
+        start_mode        = self.get_field('php.start_mode').toInt()[0]
+        script_file       = self.get_field('php.script_file').toString()
+        command           = self.get_field('php.command').toString()
+        working_directory = self.get_field('php.working_directory').toString()
+        options           = ' '.join(self.option_list_editor.get_items())
+
+        if start_mode == Constants.PHP_START_MODE_WEB_INTERFACE:
+            html = u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.php_start_mode_display_names[start_mode]))
+        else:
+            html  = u'PHP Version: {0}<br/>'.format(Qt.escape(self.combo_version.itemText(version)))
+            html += u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.php_start_mode_display_names[start_mode]))
+
+            if start_mode == Constants.PHP_START_MODE_SCRIPT_FILE:
+                html += u'Script File: {0}<br/>'.format(Qt.escape(script_file))
+            elif start_mode == Constants.PHP_START_MODE_COMMAND:
+                html += u'Command: {0}<br/>'.format(Qt.escape(command))
+
+            html += u'Working Directory: {0}<br/>'.format(Qt.escape(working_directory))
+            html += u'PHP Options: {0}<br/>'.format(Qt.escape(options))
+
+        return html
 
     def get_custom_options(self):
         return {

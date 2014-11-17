@@ -152,7 +152,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
         return ' '.join(self.option_list_editor.get_items())
 
     def get_html_summary(self):
-        return 'FIXME<br>'
+        return 'FIXME<br/>'
 
     def get_custom_options(self):
         return {}

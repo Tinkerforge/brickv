@@ -165,7 +165,28 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         return self.option_list_editor.get_items()
 
     def get_html_summary(self):
-        return 'FIXME<br>'
+        start_mode          = self.get_field('c.start_mode').toInt()[0]
+        executable          = self.get_field('c.executable').toString()
+        compile_from_source = self.get_field('c.compile_from_source').toBool()
+        working_directory   = self.get_field('c.working_directory').toString()
+        options             = ' '.join(self.option_list_editor.get_items())
+
+        html = u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.c_start_mode_display_names[start_mode]))
+
+        if start_mode == Constants.C_START_MODE_EXECUTABLE:
+            html += u'Executable: {0}<br/>'.format(Qt.escape(executable))
+
+        if compile_from_source:
+            html += u'Compile From Source: Enabled<br/>'
+        else:
+            html += u'Compile From Source: Disabled<br/>'
+
+        html += u'Working Directory: {0}<br/>'.format(Qt.escape(working_directory))
+
+        if compile_from_source:
+            html += u'Make Options: {0}<br/>'.format(Qt.escape(options))
+
+        return html
 
     def get_custom_options(self):
         return {

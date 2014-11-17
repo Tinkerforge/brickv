@@ -139,9 +139,9 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
 
             if start_mode != Constants.START_MODE_NEVER and start_mode != Constants.START_MODE_ONCE:
                 if self.get_field('continue_after_error').toBool():
-                    html += u'Continue After Error: Yes<br/>'
+                    html += u'Continue After Error: Enabled<br/>'
                 else:
-                    html += u'Continue After Error: No<br/>'
+                    html += u'Continue After Error: Disabled<br/>'
 
             if start_mode == Constants.START_MODE_INTERVAL:
                 html += u'Interval: {0} seconds<br/>'.format(self.get_field('start_interval').toUInt()[0])
