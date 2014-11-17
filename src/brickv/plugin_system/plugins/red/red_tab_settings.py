@@ -524,26 +524,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.brickd_conf['listen.websocket_port'] = '0'
         if not 'authentication.secret' in self.brickd_conf:
             self.brickd_conf['authentication.secret'] = ''
-        if not 'log_level.event' in self.brickd_conf:
-            self.brickd_conf['log_level.event'] = 'info'
-        if not 'log_level.usb' in self.brickd_conf:
-            self.brickd_conf['log_level.usb'] = 'info'
-        if not 'log_level.network' in self.brickd_conf:
-            self.brickd_conf['log_level.network'] = 'info'
-        if not 'log_level.hotplug' in self.brickd_conf:
-            self.brickd_conf['log_level.hotplug'] = 'info'
-        if not 'log_level.hardware' in self.brickd_conf:
-            self.brickd_conf['log_level.hardware'] = 'info'
-        if not 'log_level.websocket' in self.brickd_conf:
-            self.brickd_conf['log_level.websocket'] = 'info'
-        if not 'log_level.red_brick' in self.brickd_conf:
-            self.brickd_conf['log_level.red_brick'] = 'info'
-        if not 'log_level.spi' in self.brickd_conf:
-            self.brickd_conf['log_level.spi'] = 'info'
-        if not 'log_level.rs485' in self.brickd_conf:
-            self.brickd_conf['log_level.rs485'] = 'info'
-        if not 'log_level.other' in self.brickd_conf:
-            self.brickd_conf['log_level.other'] = 'info'
+        if not 'log.level' in self.brickd_conf:
+            self.brickd_conf['log.level'] = 'info'
         if not 'led_trigger.green' in self.brickd_conf:
             self.brickd_conf['led_trigger.green'] = 'heartbeat'
         if not 'led_trigger.red' in self.brickd_conf:
@@ -563,7 +545,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.sbox_brickd_lwsp.setValue(int(self.brickd_conf['listen.websocket_port']))
         self.ledit_brickd_secret.setText(self.brickd_conf['authentication.secret'])
         
-        log_level = self.brickd_conf['log_level.other']
+        log_level = self.brickd_conf['log.level']
         if log_level == 'debug':
             self.cbox_brickd_adv_ll.setCurrentIndex(CBOX_BRICKD_LOG_LEVEL_DEBUG)
         elif log_level == 'info':
@@ -1370,29 +1352,17 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.brickd_conf['listen.plain_port'] = unicode(self.sbox_brickd_lp.value())
         self.brickd_conf['listen.websocket_port'] = unicode(self.sbox_brickd_lwsp.value())
         self.brickd_conf['authentication.secret'] = unicode(self.ledit_brickd_secret.text())
-        
-        def set_all_log_level(level):
-            self.brickd_conf['log_level.event'] = level
-            self.brickd_conf['log_level.usb'] = level
-            self.brickd_conf['log_level.network'] = level
-            self.brickd_conf['log_level.hotplug'] = level
-            self.brickd_conf['log_level.hardware'] = level
-            self.brickd_conf['log_level.websocket'] = level
-            self.brickd_conf['log_level.red_brick'] = level
-            self.brickd_conf['log_level.spi'] = level
-            self.brickd_conf['log_level.rs485'] = level
-            self.brickd_conf['log_level.other'] = level            
-        
+
         # Advanced
         index = self.cbox_brickd_adv_ll.currentIndex()
         if index == CBOX_BRICKD_LOG_LEVEL_ERROR:
-            set_all_log_level('error')
+            self.brickd_conf['log.level'] = 'error'
         elif index == CBOX_BRICKD_LOG_LEVEL_WARN:
-            set_all_log_level('warn')
+            self.brickd_conf['log.level'] = 'warn'
         elif index == CBOX_BRICKD_LOG_LEVEL_INFO:
-            set_all_log_level('info')
+            self.brickd_conf['log.level'] = 'info'
         elif index == CBOX_BRICKD_LOG_LEVEL_DEBUG:
-            set_all_log_level('debug')
+            self.brickd_conf['log.level'] = 'debug'
             
         index = self.cbox_brickd_adv_gt.currentIndex()
         if index == CBOX_BRICKD_LED_TRIGGER_CPU:
