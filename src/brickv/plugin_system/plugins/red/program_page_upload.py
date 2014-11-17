@@ -69,8 +69,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         pass
 
     def log(self, message):
-        self.list_log.addItem(message)
-        self.list_log.scrollToBottom()
+        self.edit_log.appendPlainText(message)
+        self.edit_log.verticalScrollBar().setValue(self.edit_log.verticalScrollBar().maximum())
 
     def next_step(self, message, increase=1, log=True):
         self.progress_total.setValue(self.progress_total.value() + increase)
@@ -399,42 +399,46 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.completeChanged.emit()
 
     def compile_make(self):
-        def cb(result):
-            if result != None and result.stderr == '':
-                for s in result.stdout.split('\n'):
+        def cb_make_helper(result):
+            if result != None and len(result.stderr) == 0:
+                for s in result.stdout.rstrip().split('\n'):
                     self.log(s)
+
                 self.log('...done')
                 self.upload_configuration()
             else:
                 if result != None:
-                    for s in result.stderr.split('\n'):
+                    for s in result.stderr.rstrip().split('\n'):
                         self.log(s)
+
                 self.log('...error')
 
-        self.next_step('Calling make...')
+        self.next_step('Executing make...')
 
         make_options      = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_make_options()
         working_directory = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
-        self.wizard().script_manager.execute_script('make_helper', cb, [working_directory] + make_options)
+        self.wizard().script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options, max_len=1024*1024)
 
     def compile_fpc(self):
-        def cb(result):
+        def cb_fpc_helper(result):
             if result != None and len(result.stderr.split('\n')) < 3:
-                for s in result.stdout.split('\n'):
+                for s in result.stdout.rstrip().split('\n'):
                     self.log(s)
+
                 self.log('...done')
                 self.upload_configuration()
             else:
                 if result != None:
-                    for s in result.stderr.split('\n'):
+                    for s in result.stderr.rstrip().split('\n'):
                         self.log(s)
+
                 self.log('...error')
 
-        self.next_step('Calling fpc...')
+        self.next_step('Executing fpc...')
 
         compile_options   = unicode(self.get_field('delphi.compile_options').toString())
         main_source_file  = unicode(self.get_field('delphi.main_source_file').toString())
         working_directory = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
-        self.wizard().script_manager.execute_script('fpc_helper', cb, [working_directory, '{0} {1}'.format(compile_options, main_source_file)])
+        self.wizard().script_manager.execute_script('fpc_helper', cb_fpc_helper, [working_directory, '{0} {1}'.format(compile_options, main_source_file)], max_len=1024*1024)
