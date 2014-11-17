@@ -53,8 +53,10 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
         self.setupUi(self)
 
-        self.language                          = Constants.LANGUAGE_C
-        self.compile_from_source_help_template = unicode(self.label_compile_from_source_help.text())
+        self.language                               = Constants.LANGUAGE_C
+        self.edit_mode                              = False
+        self.compile_from_source_help_new_template  = unicode(self.label_compile_from_source_help_new.text())
+        self.compile_from_source_help_edit_template = unicode(self.label_compile_from_source_help_edit.text())
 
         self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
@@ -98,7 +100,8 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
             else:
                 gpp = '<b>{0}</b>'.format(versions[1].executable)
 
-            self.label_compile_from_source_help.setText(self.compile_from_source_help_template.replace('<GCC>', gcc).replace('<G++>', gpp))
+            self.label_compile_from_source_help_new.setText(self.compile_from_source_help_new_template.replace('<GCC>', gcc).replace('<G++>', gpp))
+            self.label_compile_from_source_help_edit.setText(self.compile_from_source_help_edit_template.replace('<GCC>', gcc).replace('<G++>', gpp))
 
         self.get_executable_versions('gcc', cb_gcc_versions)
 
@@ -110,7 +113,8 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
         # if a program exists then this page is used in an edit wizard
         if self.wizard().program != None:
-            program = self.wizard().program
+            program        = self.wizard().program
+            self.edit_mode = True
 
             # start mode
             start_mode_api_name = program.cast_custom_option_value('c.start_mode', unicode, '<unknown>')
@@ -133,7 +137,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
             # options
             self.option_list_editor.clear()
 
-            for option in program.cast_custom_option_value_list('csharp.options', unicode, []):
+            for option in program.cast_custom_option_value_list('c.options', unicode, []):
                 self.option_list_editor.add_item(option)
 
         self.update_ui_state()
@@ -155,7 +159,8 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.label_executable_help.setVisible(start_mode_executable)
         self.line1.setVisible(start_mode_executable)
         self.check_compile_from_source.setVisible(start_mode_executable)
-        self.label_compile_from_source_help.setVisible(start_mode_executable)
+        self.label_compile_from_source_help_new.setVisible(start_mode_executable and not self.edit_mode)
+        self.label_compile_from_source_help_edit.setVisible(start_mode_executable and self.edit_mode)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.option_list_editor.set_visible(compile_from_source and show_advanced_options)
 

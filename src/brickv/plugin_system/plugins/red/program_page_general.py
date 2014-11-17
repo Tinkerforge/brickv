@@ -65,7 +65,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
 
         # if a program exists then this page is used in an edit wizard
         if self.wizard().program != None:
-            program = self.wizard().program
+            program        = self.wizard().program
             self.edit_mode = True
 
             self.setSubTitle('Specify name and description for the program.')
