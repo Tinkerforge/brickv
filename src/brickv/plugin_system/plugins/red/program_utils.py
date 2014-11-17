@@ -165,6 +165,21 @@ class Constants:
     # must match item order in combo_start_mode on C/C++ page
     C_START_MODE_EXECUTABLE = 0
 
+    c_start_mode_api_names = {
+        C_START_MODE_EXECUTABLE: 'executable'
+    }
+
+    c_start_mode_display_names = {
+        C_START_MODE_EXECUTABLE: 'Executable'
+    }
+
+    @staticmethod
+    def get_c_start_mode(c_start_mode_api_name):
+        try:
+            return get_key_from_value(Constants.c_start_mode_api_names, c_start_mode_api_name)
+        except ValueError:
+            return Constants.DEFAULT_C_START_MODE
+
     # must match item order in combo_start_mode on C# page
     CSHARP_START_MODE_EXECUTABLE = 0
 

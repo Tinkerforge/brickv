@@ -112,7 +112,29 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         if self.wizard().program != None:
             program = self.wizard().program
 
+            # start mode
+            start_mode_api_name = program.cast_custom_option_value('c.start_mode', unicode, '<unknown>')
+            start_mode          = Constants.get_c_start_mode(start_mode_api_name)
+
+            self.combo_start_mode.setCurrentIndex(start_mode)
+
+            # executable
+            self.edit_executable.setText(program.cast_custom_option_value('c.executable', unicode, ''))
+
+            # compile from source
+            if program.cast_custom_option_value('c.compile_from_source', bool, False):
+                self.check_compile_from_source.setCheckState(Qt.Checked)
+            else:
+                self.check_compile_from_source.setCheckState(Qt.Unchecked)
+
+            # working directory
             self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+
+            # options
+            self.option_list_editor.clear()
+
+            for option in program.cast_custom_option_value_list('csharp.options', unicode, []):
+                self.option_list_editor.add_item(option)
 
         self.update_ui_state()
 
@@ -146,7 +168,12 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         return 'FIXME<br>'
 
     def get_custom_options(self):
-        return {}
+        return {
+            'c.start_mode':          Constants.c_start_mode_api_names[self.get_field('c.start_mode').toInt()[0]],
+            'c.executable':          unicode(self.get_field('c.executable').toString()),
+            'c.compile_from_source': self.get_field('c.compile_from_source').toBool(),
+            'c.options':             self.option_list_editor.get_items()
+        }
 
     def get_command(self):
         executable        = unicode(self.get_field('c.executable').toString())
@@ -158,3 +185,6 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
             executable = os.path.join('./', executable)
 
         return executable, arguments, environment, working_directory
+
+    def apply_program_changes(self):
+        self.apply_program_custom_options_and_command_changes()

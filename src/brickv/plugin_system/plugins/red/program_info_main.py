@@ -28,6 +28,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_info import ProgramInfoContext
 from brickv.plugin_system.plugins.red.program_info_files import ProgramInfoFiles
 from brickv.plugin_system.plugins.red.program_info_logs import ProgramInfoLogs
+from brickv.plugin_system.plugins.red.program_info_c import ProgramInfoC
 from brickv.plugin_system.plugins.red.program_info_csharp import ProgramInfoCSharp
 from brickv.plugin_system.plugins.red.program_info_javascript import ProgramInfoJavaScript
 from brickv.plugin_system.plugins.red.program_info_octave import ProgramInfoOctave
@@ -113,7 +114,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         if language != None:
             language_info_classes = {
-                Constants.LANGUAGE_C:          None,
+                Constants.LANGUAGE_C:          ProgramInfoC,
                 Constants.LANGUAGE_CSHARP:     ProgramInfoCSharp,
                 Constants.LANGUAGE_DELPHI:     None,
                 Constants.LANGUAGE_JAVA:       None,
