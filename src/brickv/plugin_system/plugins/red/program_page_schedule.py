@@ -130,7 +130,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
             return
 
         try:
-            program.set_custom_option_value('started_once_after_upload', 'no') # FIXME: async_call
+            program.set_custom_option_value('started_once_after_upload', False) # FIXME: async_call
         except REDError as e:
             QMessageBox.critical(self, 'Edit Error',
                                  u'Could not update custom options of program [{0}]:\n\n{1}'

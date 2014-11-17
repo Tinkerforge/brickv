@@ -1782,6 +1782,12 @@ class REDProgram(REDObject):
             if not isinstance(name, REDString):
                 name = REDString(self._session).allocate(name)
 
+            if isinstance(value, bool):
+                if value:
+                    value = 'true'
+                else:
+                    value = 'false'
+
             if not isinstance(value, REDString):
                 value = REDString(self._session).allocate(value)
 
@@ -1809,10 +1815,18 @@ class REDProgram(REDObject):
         except KeyError:
             return default
 
-        try:
-            return cast(unicode(string))
-        except ValueError:
-            return default
+        if cast == bool:
+            if unicode(string) == 'true':
+                return True
+            elif unicode(string) == 'false':
+                return False
+            else:
+                return default
+        else:
+            try:
+                return cast(unicode(string))
+            except ValueError:
+                return default
 
     def cast_custom_option_value_list(self, name, cast, default):
         length = self.cast_custom_option_value(name + '.length', int, None)

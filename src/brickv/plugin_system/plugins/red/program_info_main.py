@@ -385,9 +385,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         start_mode_cron     = self.program.start_mode == REDProgram.START_MODE_CRON
 
         start_mode_display_names  = Constants.api_start_mode_display_names.get(self.program.start_mode, '<unknown>')
-        started_once_after_upload = self.program.cast_custom_option_value('started_once_after_upload', unicode, '<unknown>')
+        started_once_after_upload = self.program.cast_custom_option_value('started_once_after_upload', bool, False)
 
-        if started_once_after_upload == 'yes':
+        if started_once_after_upload:
             start_mode_display_names += ' (was started once after upload)'
 
         self.label_start_mode.setText(start_mode_display_names)

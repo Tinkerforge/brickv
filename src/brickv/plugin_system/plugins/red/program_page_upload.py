@@ -377,7 +377,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 self.next_step('Starting...')
 
                 try:
-                    self.program.set_custom_option_value('started_once_after_upload', 'yes') # FIXME: async_call
+                    self.program.set_custom_option_value('started_once_after_upload', True) # FIXME: async_call
                 except REDError as e:
                     self.upload_error('...error: {0}'.format(e))
                     return
