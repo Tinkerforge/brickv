@@ -1441,7 +1441,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.label_net_wireless_association.setText("Not Associated")
 
     def slot_cbox_net_wireless_ap_current_idx_changed(self, idx):
-        _essid = ""
         _bssid = ""
         _essid = unicode(self.cbox_net_wireless_ap.currentText())
 
