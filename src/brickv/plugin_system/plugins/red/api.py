@@ -590,10 +590,15 @@ class REDFileBase(REDObject):
     TYPE_SOCKET    = BrickRED.FILE_TYPE_SOCKET
     TYPE_PIPE      = BrickRED.FILE_TYPE_PIPE
 
+    EVENT_READABLE = BrickRED.FILE_EVENT_READABLE
+    EVENT_WRITABLE = BrickRED.FILE_EVENT_WRITABLE
+
     AsyncReadResult = namedtuple('AsyncReadResult', 'data error')
 
     # Number of chunks written in one async read/write burst
     ASYNC_BURST_CHUNKS = 2000
+
+    _qtcb_events_occurred = QtCore.pyqtSignal(int)
 
     def _initialize(self):
         self._type               = None
@@ -607,26 +612,38 @@ class REDFileBase(REDObject):
         self._modification_time  = None
         self._status_change_time = None
 
+        self.events_occurred_callback = None
+
         self._cb_async_write_cookie     = None
         self._cb_async_read_cookie      = None
+        self._cb_events_occurred_cookie = None
 
         self._write_async_data = None
         self._read_async_data  = None
 
     def _attach_callbacks(self):
+        self._qtcb_events_occurred.connect(self._cb_events_occurred, QtCore.Qt.QueuedConnection)
+
         self._cb_async_write_cookie     = self._session._brick.add_callback(REDBrick.CALLBACK_ASYNC_FILE_WRITE,
                                                                             self._cb_async_write)
         self._cb_async_read_cookie      = self._session._brick.add_callback(REDBrick.CALLBACK_ASYNC_FILE_READ,
                                                                             self._cb_async_read)
+        self._cb_events_occurred_cookie = self._session._brick.add_callback(REDBrick.CALLBACK_FILE_EVENTS_OCCURRED,
+                                                                            self._cb_events_occurred_emit)
 
     def _detach_callbacks(self):
+        self._qtcb_events_occurred.disconnect(self._cb_events_occurred)
+
         self._session._brick.remove_callback(REDBrick.CALLBACK_ASYNC_FILE_WRITE,
                                              self._cb_async_write_cookie)
         self._session._brick.remove_callback(REDBrick.CALLBACK_ASYNC_FILE_READ,
                                              self._cb_async_read_cookie)
+        self._session._brick.remove_callback(REDBrick.CALLBACK_FILE_EVENTS_OCCURRED,
+                                             self._cb_events_occurred_cookie)
 
         self._cb_async_write_cookie     = None
         self._cb_async_read_cookie      = None
+        self._cb_events_occurred_cookie = None
 
     # Unset all of the temporary async data in case of error.
     def _report_write_async_error(self, error):
@@ -726,6 +743,21 @@ class REDFileBase(REDObject):
         if len(self._read_async_data.data) == self._read_async_data.max_length:
             self._report_read_async_error(None)
 
+    def _cb_events_occurred_emit(self, file_id, events):
+        if self.object_id != file_id:
+            return
+
+        # cannot directly use emit function as callback functions, because this
+        # triggers a segfault on the second call for some unknown reason. adding
+        # a method in between helps
+        self._qtcb_events_occurred.emit(events)
+
+    def _cb_events_occurred(self, events):
+        events_occurred_callback = self.events_occurred_callback
+
+        if events_occurred_callback != None:
+            events_occurred_callback(events)
+
     def update(self):
         if self.object_id is None:
             raise RuntimeError('Cannot update unattached file object')
@@ -821,6 +853,15 @@ class REDFileBase(REDObject):
 
         if self._read_async_data != None:
             self._session._brick.abort_async_file_read(self.object_id)
+
+    def set_events(self, events):
+        if self.object_id is None:
+            raise RuntimeError('Cannot set events of unattached file object')
+
+        error_code = self._session._brick.set_file_events(self.object_id, events)
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not set events of file object {0}'.format(self.object_id), error_code)
 
     @property
     def type(self):               return self._type
