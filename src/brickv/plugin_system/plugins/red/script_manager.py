@@ -46,7 +46,7 @@ class ScriptData(QtCore.QObject):
         self.script_name = None
         self.callback = None
         self.params = None
-        self.max_len = None
+        self.max_length = None
         self.decode_output_as_utf8 = True
         self.script_instance = None
         self.abort = False
@@ -84,19 +84,24 @@ class ScriptManager:
     # Call with a script name from the scripts/ folder.
     # The stdout and stderr from the script will be given back to callback.
     # If there is an error, callback will return None.
-    def execute_script(self, script_name, callback, params = [], max_len = 65536, decode_output_as_utf8=True):
+    def execute_script(self, script_name, callback, params=None, max_length=65536,
+                       decode_output_as_utf8=True):
         if not script_name in self.scripts:
             if callback is not None:
                 callback(None) # We are still in GUI thread, use callback instead of signal
                 return
 
+        if params == None:
+            params = []
+
         sd = ScriptData()
-        script_data_set.add(sd)
         sd.script_name = script_name
         sd.callback = callback
         sd.params = params
-        sd.max_len = max_len
+        sd.max_length = max_length
         sd.decode_output_as_utf8 = decode_output_as_utf8
+
+        script_data_set.add(sd)
 
         if callback is not None:
             sd.script_signal.connect(callback)
@@ -232,9 +237,9 @@ class ScriptManager:
                         ScriptManager._call(self.scripts[sd.script_name], sd, self.ScriptResult(out, err))
                         script_data_set.remove(sd)
 
-                    sd.stderr.read_async(sd.max_len, lambda result: cb_stderr_data(result, sd))
+                    sd.stderr.read_async(sd.max_length, lambda result: cb_stderr_data(result, sd))
 
-                sd.stdout.read_async(sd.max_len, lambda result: cb_stdout_data(result, sd))
+                sd.stdout.read_async(sd.max_length, lambda result: cb_stdout_data(result, sd))
             else:
                 ScriptManager._call(self.scripts[sd.script_name], sd, None)
                 self._release_script_data(sd)

@@ -248,7 +248,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.tree_files.setColumnWidth(1, width2)
 
         self.script_manager.execute_script('directory_walk', cb_directory_walk,
-                                           [self.bin_directory], max_len=1024*1024,
+                                           [self.bin_directory], max_length=1024*1024,
                                            decode_output_as_utf8=False)
 
     def upload_files(self):
@@ -391,8 +391,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                     print 'download_selected_files cb_open cb_read', result
 
             red_file.read_async(int(files_to_download.values()[0]['s']),
-                                lambda x: cb_read(red_file, x),
-                                cb_read_status)
+                                lambda x: cb_read(red_file, x), cb_read_status)
 
         def cb_open_error(result):
             # TODO: Error popup for user?

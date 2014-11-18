@@ -418,7 +418,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         make_options      = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_make_options()
         working_directory = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
-        self.wizard().script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options, max_len=1024*1024)
+        self.wizard().script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options, max_length=1024*1024)
 
     def compile_fpc(self):
         def cb_fpc_helper(result):
@@ -441,4 +441,4 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         main_source_file  = unicode(self.get_field('delphi.main_source_file').toString())
         working_directory = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
-        self.wizard().script_manager.execute_script('fpc_helper', cb_fpc_helper, [working_directory, '{0} {1}'.format(compile_options, main_source_file)], max_len=1024*1024)
+        self.wizard().script_manager.execute_script('fpc_helper', cb_fpc_helper, [working_directory, '{0} {1}'.format(compile_options, main_source_file)], max_length=1024*1024)

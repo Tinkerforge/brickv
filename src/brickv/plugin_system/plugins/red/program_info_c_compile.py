@@ -82,7 +82,7 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
         if target != None:
             make_options.append(target)
 
-        self.script_data = self.script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options, max_len=1024*1024)
+        self.script_data = self.script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options, max_length=1024*1024)
 
     def cancel_make_execution(self):
         if self.script_data != None:
