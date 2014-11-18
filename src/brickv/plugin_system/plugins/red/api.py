@@ -933,33 +933,6 @@ class REDFileOrPipeAttacher(REDObject):
         return obj
 
 
-REDFileInfo = namedtuple('REDFileInfo', 'type permissions uid gid length access_timestamp modification_timestamp status_change_timestamp')
-
-def lookup_file_info(session, name, follow_symlink):
-    if not isinstance(name, REDString):
-        name = REDString(session).allocate(name)
-
-    result     = session._brick.lookup_file_info(name, follow_symlink, session._session_id)
-    error_code = result[0]
-
-    if error_code != REDError.E_SUCCESS:
-        raise REDError('Could not lookup file info', error_code)
-
-    return REDFileInfo(result[1:])
-
-
-def lookup_symlink_target(session, name, canonicalize):
-    if not isinstance(name, REDString):
-        name = REDString(session).allocate(name)
-
-    error_code, target_string_id = session._brick.lookup_symlink_target(name, canonicalize, session._session_id)
-
-    if error_code != REDError.E_SUCCESS:
-        raise REDError('Could not lookup symlink target', error_code)
-
-    return _attach_or_release(session, REDString, target_string_id)
-
-
 class REDDirectory(REDObject):
     ENTRY_TYPE_UNKNOWN   = BrickRED.DIRECTORY_ENTRY_TYPE_UNKNOWN
     ENTRY_TYPE_REGULAR   = BrickRED.DIRECTORY_ENTRY_TYPE_REGULAR
