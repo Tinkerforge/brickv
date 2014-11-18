@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-11-07.      #
+# This file was automatically generated on 2014-11-18.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -36,8 +36,7 @@ ReadFile = namedtuple('ReadFile', ['error_code', 'buffer', 'length_read'])
 WriteFile = namedtuple('WriteFile', ['error_code', 'length_written'])
 SetFilePosition = namedtuple('SetFilePosition', ['error_code', 'position'])
 GetFilePosition = namedtuple('FilePosition', ['error_code', 'position'])
-LookupFileInfo = namedtuple('LookupFileInfo', ['error_code', 'type', 'permissions', 'uid', 'gid', 'length', 'access_timestamp', 'modification_timestamp', 'status_change_timestamp'])
-LookupSymlinkTarget = namedtuple('LookupSymlinkTarget', ['error_code', 'target_string_id'])
+GetFileEvents = namedtuple('FileEvents', ['error_code', 'events'])
 OpenDirectory = namedtuple('OpenDirectory', ['error_code', 'directory_id'])
 GetDirectoryName = namedtuple('DirectoryName', ['error_code', 'name_string_id'])
 GetNextDirectoryEntry = namedtuple('NextDirectoryEntry', ['error_code', 'name_string_id', 'type'])
@@ -67,11 +66,12 @@ class BrickRED(Device):
 
     DEVICE_IDENTIFIER = 17
 
-    CALLBACK_ASYNC_FILE_READ = 28
-    CALLBACK_ASYNC_FILE_WRITE = 29
-    CALLBACK_PROCESS_STATE_CHANGED = 44
-    CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED = 64
-    CALLBACK_PROGRAM_PROCESS_SPAWNED = 65
+    CALLBACK_ASYNC_FILE_READ = 30
+    CALLBACK_ASYNC_FILE_WRITE = 31
+    CALLBACK_FILE_EVENTS_OCCURRED = 32
+    CALLBACK_PROCESS_STATE_CHANGED = 45
+    CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED = 65
+    CALLBACK_PROGRAM_PROCESS_SPAWNED = 66
 
     FUNCTION_CREATE_SESSION = 1
     FUNCTION_EXPIRE_SESSION = 2
@@ -100,39 +100,39 @@ class BrickRED(Device):
     FUNCTION_WRITE_FILE_ASYNC = 25
     FUNCTION_SET_FILE_POSITION = 26
     FUNCTION_GET_FILE_POSITION = 27
-    FUNCTION_LOOKUP_FILE_INFO = 30
-    FUNCTION_LOOKUP_SYMLINK_TARGET = 31
-    FUNCTION_OPEN_DIRECTORY = 32
-    FUNCTION_GET_DIRECTORY_NAME = 33
-    FUNCTION_GET_NEXT_DIRECTORY_ENTRY = 34
-    FUNCTION_REWIND_DIRECTORY = 35
-    FUNCTION_CREATE_DIRECTORY = 36
-    FUNCTION_GET_PROCESSES = 37
-    FUNCTION_SPAWN_PROCESS = 38
-    FUNCTION_KILL_PROCESS = 39
-    FUNCTION_GET_PROCESS_COMMAND = 40
-    FUNCTION_GET_PROCESS_IDENTITY = 41
-    FUNCTION_GET_PROCESS_STDIO = 42
-    FUNCTION_GET_PROCESS_STATE = 43
-    FUNCTION_GET_PROGRAMS = 45
-    FUNCTION_DEFINE_PROGRAM = 46
-    FUNCTION_PURGE_PROGRAM = 47
-    FUNCTION_GET_PROGRAM_IDENTIFIER = 48
-    FUNCTION_GET_PROGRAM_ROOT_DIRECTORY = 49
-    FUNCTION_SET_PROGRAM_COMMAND = 50
-    FUNCTION_GET_PROGRAM_COMMAND = 51
-    FUNCTION_SET_PROGRAM_STDIO_REDIRECTION = 52
-    FUNCTION_GET_PROGRAM_STDIO_REDIRECTION = 53
-    FUNCTION_SET_PROGRAM_SCHEDULE = 54
-    FUNCTION_GET_PROGRAM_SCHEDULE = 55
-    FUNCTION_GET_PROGRAM_SCHEDULER_STATE = 56
-    FUNCTION_CONTINUE_PROGRAM_SCHEDULE = 57
-    FUNCTION_START_PROGRAM = 58
-    FUNCTION_GET_LAST_SPAWNED_PROGRAM_PROCESS = 59
-    FUNCTION_GET_CUSTOM_PROGRAM_OPTION_NAMES = 60
-    FUNCTION_SET_CUSTOM_PROGRAM_OPTION_VALUE = 61
-    FUNCTION_GET_CUSTOM_PROGRAM_OPTION_VALUE = 62
-    FUNCTION_REMOVE_CUSTOM_PROGRAM_OPTION = 63
+    FUNCTION_SET_FILE_EVENTS = 28
+    FUNCTION_GET_FILE_EVENTS = 29
+    FUNCTION_OPEN_DIRECTORY = 33
+    FUNCTION_GET_DIRECTORY_NAME = 34
+    FUNCTION_GET_NEXT_DIRECTORY_ENTRY = 35
+    FUNCTION_REWIND_DIRECTORY = 36
+    FUNCTION_CREATE_DIRECTORY = 37
+    FUNCTION_GET_PROCESSES = 38
+    FUNCTION_SPAWN_PROCESS = 39
+    FUNCTION_KILL_PROCESS = 40
+    FUNCTION_GET_PROCESS_COMMAND = 41
+    FUNCTION_GET_PROCESS_IDENTITY = 42
+    FUNCTION_GET_PROCESS_STDIO = 43
+    FUNCTION_GET_PROCESS_STATE = 44
+    FUNCTION_GET_PROGRAMS = 46
+    FUNCTION_DEFINE_PROGRAM = 47
+    FUNCTION_PURGE_PROGRAM = 48
+    FUNCTION_GET_PROGRAM_IDENTIFIER = 49
+    FUNCTION_GET_PROGRAM_ROOT_DIRECTORY = 50
+    FUNCTION_SET_PROGRAM_COMMAND = 51
+    FUNCTION_GET_PROGRAM_COMMAND = 52
+    FUNCTION_SET_PROGRAM_STDIO_REDIRECTION = 53
+    FUNCTION_GET_PROGRAM_STDIO_REDIRECTION = 54
+    FUNCTION_SET_PROGRAM_SCHEDULE = 55
+    FUNCTION_GET_PROGRAM_SCHEDULE = 56
+    FUNCTION_GET_PROGRAM_SCHEDULER_STATE = 57
+    FUNCTION_CONTINUE_PROGRAM_SCHEDULE = 58
+    FUNCTION_START_PROGRAM = 59
+    FUNCTION_GET_LAST_SPAWNED_PROGRAM_PROCESS = 60
+    FUNCTION_GET_CUSTOM_PROGRAM_OPTION_NAMES = 61
+    FUNCTION_SET_CUSTOM_PROGRAM_OPTION_VALUE = 62
+    FUNCTION_GET_CUSTOM_PROGRAM_OPTION_VALUE = 63
+    FUNCTION_REMOVE_CUSTOM_PROGRAM_OPTION = 64
     FUNCTION_GET_IDENTITY = 255
 
     OBJECT_TYPE_STRING = 0
@@ -176,6 +176,8 @@ class BrickRED(Device):
     FILE_ORIGIN_BEGINNING = 0
     FILE_ORIGIN_CURRENT = 1
     FILE_ORIGIN_END = 2
+    FILE_EVENT_READABLE = 1
+    FILE_EVENT_WRITABLE = 2
     DIRECTORY_ENTRY_TYPE_UNKNOWN = 0
     DIRECTORY_ENTRY_TYPE_REGULAR = 1
     DIRECTORY_ENTRY_TYPE_DIRECTORY = 2
@@ -250,10 +252,11 @@ class BrickRED(Device):
         self.response_expected[BrickRED.FUNCTION_WRITE_FILE_ASYNC] = BrickRED.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickRED.FUNCTION_SET_FILE_POSITION] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_FILE_POSITION] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_SET_FILE_EVENTS] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.FUNCTION_GET_FILE_EVENTS] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.CALLBACK_ASYNC_FILE_READ] = BrickRED.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickRED.CALLBACK_ASYNC_FILE_WRITE] = BrickRED.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickRED.FUNCTION_LOOKUP_FILE_INFO] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickRED.FUNCTION_LOOKUP_SYMLINK_TARGET] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickRED.CALLBACK_FILE_EVENTS_OCCURRED] = BrickRED.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickRED.FUNCTION_OPEN_DIRECTORY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_DIRECTORY_NAME] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickRED.FUNCTION_GET_NEXT_DIRECTORY_ENTRY] = BrickRED.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -292,6 +295,7 @@ class BrickRED(Device):
 
         self.callback_formats[BrickRED.CALLBACK_ASYNC_FILE_READ] = 'H B 60B B'
         self.callback_formats[BrickRED.CALLBACK_ASYNC_FILE_WRITE] = 'H B B'
+        self.callback_formats[BrickRED.CALLBACK_FILE_EVENTS_OCCURRED] = 'H H'
         self.callback_formats[BrickRED.CALLBACK_PROCESS_STATE_CHANGED] = 'H B Q B'
         self.callback_formats[BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED] = 'H'
         self.callback_formats[BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED] = 'H'
@@ -467,7 +471,7 @@ class BrickRED(Device):
         
         Returns the object ID of the new file object and the resulting error code.
         """
-        return OpenFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_FILE, (name_string_id, flags, permissions, uid, gid, session_id), 'H H H I I H', 'B H'))
+        return OpenFile(*self.ipcon.send_request(self, BrickRED.FUNCTION_OPEN_FILE, (name_string_id, flags, permissions, uid, gid, session_id), 'H I H I I H', 'B H'))
 
     def create_pipe(self, flags, length, session_id):
         """
@@ -484,7 +488,7 @@ class BrickRED(Device):
         
         Returns the object ID of the new file object and the resulting error code.
         """
-        return CreatePipe(*self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_PIPE, (flags, length, session_id), 'H Q H', 'B H'))
+        return CreatePipe(*self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_PIPE, (flags, length, session_id), 'I Q H', 'B H'))
 
     def get_file_info(self, file_id, session_id):
         """
@@ -512,7 +516,7 @@ class BrickRED(Device):
         
         FIXME: everything except flags and length is invalid if file type is *Pipe*
         """
-        return GetFileInfo(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_INFO, (file_id, session_id), 'H H', 'B B H H H I I Q Q Q Q'))
+        return GetFileInfo(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_INFO, (file_id, session_id), 'H H', 'B B H I H I I Q Q Q Q'))
 
     def read_file(self, file_id, length_to_read):
         """
@@ -623,37 +627,17 @@ class BrickRED(Device):
         """
         return GetFilePosition(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_POSITION, (file_id,), 'H', 'B Q'))
 
-    def lookup_file_info(self, name_string_id, follow_symlink):
+    def set_file_events(self, file_id, events):
         """
-        Returns various information about a file and the resulting error code.
         
-        FIXME: name has to be absolute
-        
-        The information is obtained via the
-        `stat() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html>`__
-        function. If ``follow_symlink`` is *false* then the
-        `lstat() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/stat.html>`__
-        function is used instead.
-        
-        See :func:`GetFileInfo` for a list of possible file types and see
-        :func:`OpenFile` for a list of possible file permissions.
         """
-        return LookupFileInfo(*self.ipcon.send_request(self, BrickRED.FUNCTION_LOOKUP_FILE_INFO, (name_string_id, follow_symlink), 'H ?', 'B B H I I Q Q Q Q'))
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_SET_FILE_EVENTS, (file_id, events), 'H H', 'B')
 
-    def lookup_symlink_target(self, name_string_id, canonicalize, session_id):
+    def get_file_events(self, file_id):
         """
-        Returns the target of a symbolic link and the resulting error code.
         
-        FIXME: name has to be absolute
-        
-        If ``canonicalize`` is *false* then the target of the symbolic link is resolved
-        one level via the
-        `readlink() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/readlink.html>`__
-        function, otherwise it is fully resolved using the
-        `realpath() <http://pubs.opengroup.org/onlinepubs/9699919799/functions/realpath.html>`__
-        function.
         """
-        return LookupSymlinkTarget(*self.ipcon.send_request(self, BrickRED.FUNCTION_LOOKUP_SYMLINK_TARGET, (name_string_id, canonicalize, session_id), 'H ? H', 'B H'))
+        return GetFileEvents(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_FILE_EVENTS, (file_id,), 'H', 'B H'))
 
     def open_directory(self, name_string_id, session_id):
         """
@@ -707,7 +691,7 @@ class BrickRED(Device):
         """
         FIXME: name has to be absolute
         """
-        return self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_DIRECTORY, (name_string_id, flags, permissions, uid, gid), 'H H H I I', 'B')
+        return self.ipcon.send_request(self, BrickRED.FUNCTION_CREATE_DIRECTORY, (name_string_id, flags, permissions, uid, gid), 'H I H I I', 'B')
 
     def get_processes(self, session_id):
         """
