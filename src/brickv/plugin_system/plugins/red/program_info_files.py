@@ -213,6 +213,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
                 if directory_walk != None:
                     available_files, available_directories = expand_directory_walk_to_lists(directory_walk)
+
                 return directory_walk, available_files, available_directories
 
             def cb_expand_success(args):
@@ -223,9 +224,10 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 self.refresh_in_progress   = False
                 self.update_main_ui_state()
 
-                self.tree_files_model.itemChanged.disconnect(self.tree_file_item_changed)
-                expand_directory_walk_to_model(directory_walk, self.tree_files_model, self.folder_icon, self.file_icon)
-                self.tree_files_model.itemChanged.connect(self.tree_file_item_changed)
+                if directory_walk != None:
+                    self.tree_files_model.itemChanged.disconnect(self.tree_file_item_changed)
+                    expand_directory_walk_to_model(directory_walk, self.tree_files_model, self.folder_icon, self.file_icon)
+                    self.tree_files_model.itemChanged.connect(self.tree_file_item_changed)
 
                 self.tree_files.header().setSortIndicator(0, Qt.AscendingOrder)
 
