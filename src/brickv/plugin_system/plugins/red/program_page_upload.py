@@ -400,25 +400,25 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
     def compile_make(self):
         def cb_make_helper(result):
-            if result != None and len(result.stderr) == 0:
+            if result != None:
                 for s in result.stdout.rstrip().split('\n'):
                     self.log(s)
 
-                self.log('...done')
-                self.upload_configuration()
+                if result.exit_code != 0:
+                    self.upload_error('...error')
+                else:
+                    self.log('...done')
+                    self.upload_configuration()
             else:
-                if result != None:
-                    for s in result.stderr.rstrip().split('\n'):
-                        self.log(s)
-
-                self.log('...error')
+                self.upload_error('...error')
 
         self.next_step('Executing make...')
 
         make_options      = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_make_options()
         working_directory = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
-        self.wizard().script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options, max_length=1024*1024)
+        self.wizard().script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options,
+                                                    max_length=1024*1024, redirect_stderr_to_stdout=True)
 
     def compile_fpc(self):
         def cb_fpc_helper(result):

@@ -56,16 +56,15 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
         def cb_make_helper(result):
             self.script_data = None
 
-            if result != None and len(result.stderr) == 0:
+            if result != None:
                 for s in result.stdout.rstrip().split('\n'):
                     self.log(s)
 
-                self.log('...done')
+                if result.exit_code != 0:
+                    self.log('...error')
+                else:
+                    self.log('...done')
             else:
-                if result != None:
-                    for s in result.stderr.rstrip().split('\n'):
-                        self.log(s)
-
                 self.log('...error')
 
             self.button_make.setEnabled(True)
@@ -82,7 +81,8 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
         if target != None:
             make_options.append(target)
 
-        self.script_data = self.script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options, max_length=1024*1024)
+        self.script_data = self.script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options,
+                                                              max_length=1024*1024, redirect_stderr_to_stdout=True)
 
     def cancel_make_execution(self):
         if self.script_data != None:

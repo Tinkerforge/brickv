@@ -41,19 +41,20 @@ class ScriptData(QtCore.QObject):
     def __init__(self):
         QtCore.QObject.__init__(self)
 
-        self.process               = None
-        self.stdout                = None
-        self.stderr                = None
-        self.script_name           = None
-        self.result_callback       = None
-        self.params                = None
-        self.max_length            = None
-        self.decode_output_as_utf8 = True
-        self.script_instance       = None
-        self.abort                 = False
+        self.process                   = None
+        self.stdout                    = None
+        self.stderr                    = None
+        self.script_name               = None
+        self.result_callback           = None
+        self.params                    = None
+        self.max_length                = None
+        self.decode_output_as_utf8     = True
+        self.redirect_stderr_to_stdout = False
+        self.script_instance           = None
+        self.abort                     = False
 
 class ScriptManager:
-    ScriptResult = namedtuple('ScriptResult', 'stdout stderr')
+    ScriptResult = namedtuple('ScriptResult', 'stdout stderr, exit_code')
 
     @staticmethod
     def _call(script, sd, data):
@@ -86,7 +87,7 @@ class ScriptManager:
     # The stdout and stderr from the script will be given back to result_callback.
     # If there is an error, result_callback will report None.
     def execute_script(self, script_name, result_callback, params=None, max_length=65536,
-                       decode_output_as_utf8=True):
+                       decode_output_as_utf8=True, redirect_stderr_to_stdout=False):
         if not script_name in self.scripts:
             if result_callback != None:
                 result_callback(None) # We are still in GUI thread, use result_callback instead of signal
@@ -95,12 +96,13 @@ class ScriptManager:
         if params == None:
             params = []
 
-        sd                       = ScriptData()
-        sd.script_name           = script_name
-        sd.result_callback       = result_callback
-        sd.params                = params
-        sd.max_length            = max_length
-        sd.decode_output_as_utf8 = decode_output_as_utf8
+        sd                           = ScriptData()
+        sd.script_name               = script_name
+        sd.result_callback           = result_callback
+        sd.params                    = params
+        sd.max_length                = max_length
+        sd.decode_output_as_utf8     = decode_output_as_utf8
+        sd.redirect_stderr_to_stdout = redirect_stderr_to_stdout
 
         script_data_set.add(sd)
 
@@ -189,7 +191,9 @@ class ScriptManager:
         try:
             sd.process.release()
             sd.stdout.release()
-            sd.stderr.release()
+
+            if not sd.redirect_stderr_to_stdout:
+                sd.stderr.release()
         except:
             traceback.print_exc()
 
@@ -204,8 +208,12 @@ class ScriptManager:
             return
 
         try:
-            sd.stdout = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, 1024*1024)
-            sd.stderr = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, 1024*1024)
+            sd.stdout = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, sd.max_length)
+
+            if sd.redirect_stderr_to_stdout:
+                sd.stderr = sd.stdout
+            else:
+                sd.stderr = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, sd.max_length)
         except:
             traceback.print_exc()
             ScriptManager._call(self.scripts[sd.script_name], sd, None)
@@ -219,36 +227,47 @@ class ScriptManager:
             if not sd.abort and sd.process.state == REDProcess.STATE_EXITED:
                 def cb_stdout_read(result, sd):
                     if result.error != None:
-                        ScriptManager._call(self.scripts[sd.script_name], sd, None)
-
                         self._release_script_data(sd)
+                        ScriptManager._call(self.scripts[sd.script_name], sd, None)
                         script_data_set.remove(sd)
+                        return
 
                     if sd.decode_output_as_utf8:
                         out = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
                     else:
                         out = result.data
 
-                    def cb_stderr_read(result, sd):
-                        if result.error != None:
-                            ScriptManager._call(self.scripts[sd.script_name], sd, None)
+                    if sd.redirect_stderr_to_stdout:
+                        exit_code = sd.process.exit_code
 
                         self._release_script_data(sd)
-
-                        if sd.decode_output_as_utf8:
-                            err = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
-                        else:
-                            err = result.data
-
-                        ScriptManager._call(self.scripts[sd.script_name], sd, self.ScriptResult(out, err))
+                        ScriptManager._call(self.scripts[sd.script_name], sd, self.ScriptResult(out, None, exit_code))
                         script_data_set.remove(sd)
+                    else:
+                        def cb_stderr_read(result, sd):
+                            if result.error != None:
+                                self._release_script_data(sd)
+                                ScriptManager._call(self.scripts[sd.script_name], sd, None)
+                                script_data_set.remove(sd)
+                                return
 
-                    sd.stderr.read_async(sd.max_length, lambda result: cb_stderr_read(result, sd))
+                            if sd.decode_output_as_utf8:
+                                err = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
+                            else:
+                                err = result.data
+
+                            exit_code = sd.process.exit_code
+
+                            self._release_script_data(sd)
+                            ScriptManager._call(self.scripts[sd.script_name], sd, self.ScriptResult(out, err, exit_code))
+                            script_data_set.remove(sd)
+
+                        sd.stderr.read_async(sd.max_length, lambda result: cb_stderr_read(result, sd))
 
                 sd.stdout.read_async(sd.max_length, lambda result: cb_stdout_read(result, sd))
             else:
-                ScriptManager._call(self.scripts[sd.script_name], sd, None)
                 self._release_script_data(sd)
+                ScriptManager._call(self.scripts[sd.script_name], sd, None)
                 script_data_set.remove(sd)
 
         sd.process                        = REDProcess(self.session)
@@ -287,6 +306,6 @@ class ScriptManager:
                              sd.params, env, '/', 0, 0, self.devnull, sd.stdout, sd.stderr)
         except:
             traceback.print_exc()
-            ScriptManager._call(self.scripts[sd.script_name], sd, None)
             self._release_script_data(sd)
+            ScriptManager._call(self.scripts[sd.script_name], sd, None)
             script_data_set.remove(sd)
