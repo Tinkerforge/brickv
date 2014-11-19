@@ -200,7 +200,21 @@ class Constants:
 
     # must match item order in combo_start_mode on Delphi/Lazarus page
     DELPHI_START_MODE_EXECUTABLE = 0
-    DELPHI_START_MODE_COMPILE    = 1
+
+    delphi_start_mode_api_names = {
+        DELPHI_START_MODE_EXECUTABLE: 'executable'
+    }
+
+    delphi_start_mode_display_names = {
+        DELPHI_START_MODE_EXECUTABLE: 'Executable'
+    }
+
+    @staticmethod
+    def get_delphi_start_mode(delphi_start_mode_api_name):
+        try:
+            return get_key_from_value(Constants.delphi_start_mode_api_names, delphi_start_mode_api_name)
+        except ValueError:
+            return Constants.DEFAULT_DELPHI_START_MODE
 
     # must match item order in combo_start_mode on Java page
     JAVA_START_MODE_MAIN_CLASS = 0

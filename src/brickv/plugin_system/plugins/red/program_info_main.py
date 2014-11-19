@@ -30,6 +30,7 @@ from brickv.plugin_system.plugins.red.program_info_files import ProgramInfoFiles
 from brickv.plugin_system.plugins.red.program_info_logs import ProgramInfoLogs
 from brickv.plugin_system.plugins.red.program_info_c import ProgramInfoC
 from brickv.plugin_system.plugins.red.program_info_csharp import ProgramInfoCSharp
+from brickv.plugin_system.plugins.red.program_info_delphi import ProgramInfoDelphi
 from brickv.plugin_system.plugins.red.program_info_javascript import ProgramInfoJavaScript
 from brickv.plugin_system.plugins.red.program_info_octave import ProgramInfoOctave
 from brickv.plugin_system.plugins.red.program_info_perl import ProgramInfoPerl
@@ -116,7 +117,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             language_info_classes = {
                 Constants.LANGUAGE_C:          ProgramInfoC,
                 Constants.LANGUAGE_CSHARP:     ProgramInfoCSharp,
-                Constants.LANGUAGE_DELPHI:     None,
+                Constants.LANGUAGE_DELPHI:     ProgramInfoDelphi,
                 Constants.LANGUAGE_JAVA:       None,
                 Constants.LANGUAGE_JAVASCRIPT: ProgramInfoJavaScript,
                 Constants.LANGUAGE_OCTAVE:     ProgramInfoOctave,
