@@ -88,4 +88,4 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
             return
 
         self.compile_dialog = ProgramInfoDelphiCompile(self.script_manager, self.program)
-        self.compile_dialog.show()
+        self.compile_dialog.exec_()

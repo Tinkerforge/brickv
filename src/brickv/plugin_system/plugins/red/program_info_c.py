@@ -88,4 +88,4 @@ class ProgramInfoC(ProgramInfo, Ui_ProgramInfoC):
             return
 
         self.compile_dialog = ProgramInfoCCompile(self.script_manager, self.program)
-        self.compile_dialog.show()
+        self.compile_dialog.exec_()

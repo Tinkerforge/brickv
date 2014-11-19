@@ -65,6 +65,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
             'shell':  None
         }
         self.first_tab_on_focus  = True
+        self.tab_is_alive        = True
         self.refresh_in_progress = False
         self.new_program_wizard  = None
 
@@ -94,6 +95,8 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         pass
 
     def tab_destroy(self):
+        self.tab_is_alive = False
+
         if self.new_program_wizard != None:
             self.new_program_wizard.close()
 
@@ -207,17 +210,15 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         context = ProgramWizardContext(self.session, identifiers, self.script_manager, self.image_version_ref, self.executable_versions)
 
         self.new_program_wizard = ProgramWizardNew(context)
-        self.new_program_wizard.finished.connect(self.new_program_wizard_finished)
-        self.new_program_wizard.show()
 
-    def new_program_wizard_finished(self, result):
-        self.new_program_wizard.finished.disconnect(self.new_program_wizard_finished)
-
-        if result == QDialog.Accepted:
+        if self.new_program_wizard.exec_() == QDialog.Accepted:
             self.add_program_to_list(self.new_program_wizard.program)
             self.list_programs.item(self.list_programs.count() - 1).setSelected(True)
 
-        self.button_new.setEnabled(True)
+        if self.tab_is_alive:
+            self.new_program_wizard = None
+
+            self.button_new.setEnabled(True)
 
     def purge_selected_program(self):
         selected_items = self.list_programs.selectedItems()

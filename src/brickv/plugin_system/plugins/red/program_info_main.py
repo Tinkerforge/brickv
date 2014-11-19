@@ -82,6 +82,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.program.process_spawned_callback         = self.process_spawned
 
         self.first_show_event            = True
+        self.tab_is_alive                = True
         self.program_refresh_in_progress = False
 
         self.edit_general_wizard   = None
@@ -179,6 +180,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.update_ui_state()
 
     def close_all_dialogs(self):
+        self.tab_is_alive = False
+
         if self.edit_general_wizard != None:
             self.edit_general_wizard.close()
 
@@ -520,21 +523,20 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.set_edit_buttons_enabled(False)
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
+        page    = ProgramPageGeneral()
 
         self.edit_general_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
-        self.edit_general_wizard.setPage(Constants.PAGE_GENERAL, ProgramPageGeneral())
-        self.edit_general_wizard.finished.connect(self.edit_general_wizard_finished)
-        self.edit_general_wizard.show()
+        self.edit_general_wizard.setPage(Constants.PAGE_GENERAL, page)
 
-    def edit_general_wizard_finished(self, result):
-        self.edit_general_wizard.finished.disconnect(self.edit_general_wizard_finished)
-
-        if result == QDialog.Accepted:
-            self.edit_general_wizard.page(Constants.PAGE_GENERAL).apply_program_changes()
+        if self.edit_general_wizard.exec_() == QDialog.Accepted:
+            page.apply_program_changes()
             self.refresh_info()
             self.name_changed.emit()
 
-        self.set_edit_buttons_enabled(True)
+        if self.tab_is_alive:
+            self.edit_general_wizard = None
+
+            self.set_edit_buttons_enabled(True)
 
     def show_edit_language_wizard(self):
         language_api_name = self.program.cast_custom_option_value('language', unicode, '<unknown>')
@@ -562,74 +564,70 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.set_edit_buttons_enabled(False)
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
+        page    = language_page_classes[language_page]()
 
         self.edit_language_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
-        self.edit_language_wizard.setPage(language_page, language_page_classes[language_page]())
-        self.edit_language_wizard.finished.connect(self.edit_language_wizard_finished)
-        self.edit_language_wizard.show()
+        self.edit_language_wizard.setPage(language_page, page)
 
-    def edit_language_wizard_finished(self, result):
-        self.edit_language_wizard.finished.disconnect(self.edit_language_wizard_finished)
-
-        if result == QDialog.Accepted:
-            self.edit_language_wizard.page(self.edit_language_wizard.pageIds()[0]).apply_program_changes()
+        if self.edit_language_wizard.exec_() == QDialog.Accepted:
+            page.apply_program_changes()
             self.refresh_info()
 
-        self.set_edit_buttons_enabled(True)
+        if self.tab_is_alive:
+            self.edit_language_wizard = None
+
+            self.set_edit_buttons_enabled(True)
 
     def show_edit_arguments_wizard(self):
         self.set_edit_buttons_enabled(False)
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
+        page    = ProgramPageArguments()
 
         self.edit_arguments_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
-        self.edit_arguments_wizard.setPage(Constants.PAGE_ARGUMENTS, ProgramPageArguments())
-        self.edit_arguments_wizard.finished.connect(self.edit_arguments_wizard_finished)
-        self.edit_arguments_wizard.show()
+        self.edit_arguments_wizard.setPage(Constants.PAGE_ARGUMENTS, page)
 
-    def edit_arguments_wizard_finished(self, result):
-        self.edit_arguments_wizard.finished.disconnect(self.edit_arguments_wizard_finished)
-
-        if result == QDialog.Accepted:
-            self.edit_arguments_wizard.page(Constants.PAGE_ARGUMENTS).apply_program_changes()
+        if self.edit_arguments_wizard.exec_() == QDialog.Accepted:
+            page.apply_program_changes()
             self.refresh_info()
 
-        self.set_edit_buttons_enabled(True)
+        if self.tab_is_alive:
+            self.edit_arguments_wizard = None
+
+            self.set_edit_buttons_enabled(True)
 
     def show_edit_stdio_wizard(self):
         self.set_edit_buttons_enabled(False)
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
+        page    = ProgramPageStdio()
 
         self.edit_stdio_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
-        self.edit_stdio_wizard.setPage(Constants.PAGE_STDIO, ProgramPageStdio())
-        self.edit_stdio_wizard.finished.connect(self.edit_stdio_wizard_finished)
-        self.edit_stdio_wizard.show()
+        self.edit_stdio_wizard.setPage(Constants.PAGE_STDIO, page)
 
-    def edit_stdio_wizard_finished(self, result):
-        self.edit_stdio_wizard.finished.disconnect(self.edit_stdio_wizard_finished)
-
-        if result == QDialog.Accepted:
-            self.edit_stdio_wizard.page(Constants.PAGE_STDIO).apply_program_changes()
+        if self.edit_stdio_wizard.exec_() == QDialog.Accepted:
+            page.apply_program_changes()
             self.refresh_info()
 
-        self.set_edit_buttons_enabled(True)
+        if self.tab_is_alive:
+            self.edit_stdio_wizard = None
+
+            self.set_edit_buttons_enabled(True)
 
     def show_edit_schedule_wizard(self):
         self.set_edit_buttons_enabled(False)
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
+        page    = ProgramPageSchedule()
 
         self.edit_schedule_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
-        self.edit_schedule_wizard.setPage(Constants.PAGE_SCHEDULE, ProgramPageSchedule())
-        self.edit_schedule_wizard.finished.connect(self.edit_schedule_wizard_finished)
-        self.edit_schedule_wizard.show()
+        self.edit_schedule_wizard.setPage(Constants.PAGE_SCHEDULE, page)
 
-    def edit_schedule_wizard_finished(self, result):
-        self.edit_schedule_wizard.finished.disconnect(self.edit_schedule_wizard_finished)
-
-        if result == QDialog.Accepted:
-            self.edit_schedule_wizard.page(Constants.PAGE_SCHEDULE).apply_program_changes()
+        if self.edit_schedule_wizard.exec_() == QDialog.Accepted:
+            page.apply_program_changes()
             self.refresh_info()
 
-        self.set_edit_buttons_enabled(True)
+        if self.tab_is_alive:
+            self.edit_schedule_wizard = None
+
+            self.set_edit_buttons_enabled(True)
