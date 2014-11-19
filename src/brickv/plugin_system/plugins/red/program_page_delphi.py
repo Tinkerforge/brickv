@@ -158,7 +158,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
         return {}
 
     def get_command(self):
-        arguments         = self.option_list_editor.get_items()
+        arguments         = []
         environment       = []
         working_directory = unicode(self.get_field('delphi.working_directory').toString())
         start_mode        = self.get_field('delphi.start_mode').toInt()[0]

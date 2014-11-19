@@ -203,7 +203,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
     def get_command(self):
         executable        = unicode(self.get_field('c.executable').toString())
-        arguments         = self.option_list_editor.get_items()
+        arguments         = []
         environment       = []
         working_directory = unicode(self.get_field('c.working_directory').toString())
 
