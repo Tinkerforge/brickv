@@ -24,9 +24,9 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt, QDateTime, QVariant
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QAbstractItemView, QLineEdit,\
-                        QSortFilterProxyModel, QFileDialog, QMessageBox, QInputDialog, QApplication
+                        QSortFilterProxyModel, QFileDialog, QMessageBox, QInputDialog, QApplication, QDialog
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog
+from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog, ExpandingInputDialog
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
 from brickv.async_call import async_call
 from brickv.program_path import get_program_path
@@ -253,6 +253,17 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                            [self.bin_directory], max_length=1024*1024,
                                            decode_output_as_utf8=False)
 
+    def get_selected_name_items(self):
+        selected_indexes    = self.tree_files.selectedIndexes()
+        selected_name_items = []
+
+        for selected_index in selected_indexes:
+            if selected_index.column() == 0:
+                mapped_index = self.tree_files_proxy_model.mapToSource(selected_index)
+                selected_name_items.append(self.tree_files_model.itemFromIndex(mapped_index))
+
+        return selected_name_items
+
     def upload_files(self):
         print 'upload_files'
 
@@ -269,29 +280,24 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                         'Download complete!',
                                         QMessageBox.Ok)
 
-        selected_indexes = self.tree_files.selectedIndexes()
+        selected_name_items = self.get_selected_name_items()
 
-        if len(selected_indexes) == 0:
+        if len(selected_name_items) == 0:
             return
-
-        #selected_indexes_chunked = zip(*[iter(selected_indexes)] * 3)
 
         dirs_to_create = []
         files_to_download = {}
 
-        #for selected_index_chunked in selected_indexes_chunked:
-        for index in selected_indexes:
-            if index.column() == 0:
-                selected_item = self.tree_files_model.itemFromIndex\
-                    (self.tree_files_proxy_model.mapToSource(index))
-                path = merge_path(selected_item, unicode(selected_item.text()))
+        for selected_name_item in selected_name_items:
+            path = merge_path(selected_name_item, unicode(selected_name_item.text()))
 
-                for directory in self.available_directories:
-                    if path in directory and directory not in dirs_to_create:
-                        dirs_to_create.append(directory)
-                for file_path in self.available_files:
-                    if path in file_path and file_path not in files_to_download:
-                        files_to_download[file_path] = self.available_files[file_path]
+            for directory in self.available_directories:
+                if path in directory and directory not in dirs_to_create:
+                    dirs_to_create.append(directory)
+
+            for file_path in self.available_files:
+                if path in file_path and file_path not in files_to_download:
+                    files_to_download[file_path] = self.available_files[file_path]
 
         files_download_dir = unicode(QFileDialog.getExistingDirectory(self, "Choose Download Location"))
 
@@ -405,37 +411,49 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                        cb_open_error)
 
     def rename_selected_file(self):
-        selected_indexes = self.tree_files.selectedIndexes()
-        if len(selected_indexes) != 3:
+        selected_name_items = self.get_selected_name_items()
+
+        if len(selected_name_items) != 1:
             return
 
-        item_type = selected_indexes[0].data(USER_ROLE_ITEM_TYPE).toInt()[0]
+        item_type = selected_name_items[0].data(USER_ROLE_ITEM_TYPE).toInt()[0]
 
         if item_type == ITEM_TYPE_FILE:
-            title = "Rename File"
+            title     = 'Rename File'
+            type_name = 'file'
         else:
-            title = "Rename Directory"
+            title     = 'Rename Directory'
+            type_name = 'directory'
 
-        selected_item = self.tree_files_model.itemFromIndex\
-            (self.tree_files_proxy_model.mapToSource(selected_indexes[0]))
-        name, ok = QInputDialog.getText(self, title, "", QLineEdit.Normal,
-                                        unicode(selected_item.text()))
+        old_name = unicode(selected_name_items[0].text())
 
-        if not ok:
+        dialog = ExpandingInputDialog(None)
+        dialog.setModal(True)
+        dialog.setWindowTitle(title)
+        dialog.setLabelText('Enter new {0} name:'.format(type_name))
+        dialog.setInputMode(QInputDialog.TextInput)
+        dialog.setTextValue(old_name)
+        dialog.setOkButtonText('Rename')
+
+        if dialog.exec_() != QDialog.Accepted:
             return
 
-        if len(name) == 0 or name == '.' or name == '..' or '/' in name:
-            QMessageBox.critical(None,
-                                 'Program | Files',
-                                 'Renaming failed.',
+        new_name = unicode(dialog.textValue())
+
+        if new_name == old_name:
+            return
+
+        if len(new_name) == 0 or new_name == '.' or new_name == '..' or '/' in new_name:
+            QMessageBox.critical(None, title + ' Error',
+                                 'A valid {0} name cannot be empty or be one dot [.] or be two dots [..] or contain a forward slash [/].'.format(type_name),
                                  QMessageBox.Ok)
             return
 
-        self.rename_from = unicode(merge_path(selected_item, unicode(selected_item.text())))
-        selected_item.setText(unicode(name))
+        self.rename_from = merge_path(selected_name_items[0], old_name)
+        selected_name_items[0].setText(new_name)
 
     def delete_selected_files(self):
-        sd = None
+        sd     = None
         button = QMessageBox.question(None, 'Delete Files',
                                       'Irreversibly deleting selected files and directories.',
                                       QMessageBox.Ok, QMessageBox.Cancel)
@@ -480,35 +498,27 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                  'Deleted successfully!',
                                  QMessageBox.Ok)
 
-        selected_indexes = self.tree_files.selectedIndexes()
+        selected_name_items = set(self.get_selected_name_items())
 
-        if len(selected_indexes) == 0:
+        if len(selected_name_items) == 0:
             return
-
-        files_to_delete = []
-        dirs_to_delete = []
 
         deletion_pd.show()
 
-        selected_items = set()
-
-        for selected_index in selected_indexes:
-            if selected_index.column() == 0:
-                selected_items.add(self.tree_files_model.itemFromIndex\
-                                           (self.tree_files_proxy_model.mapToSource(selected_index)))
-
-        all_done = False
+        files_to_delete = []
+        dirs_to_delete  = []
+        all_done        = False
 
         while not all_done:
             all_done = True
 
-            for selected_item in list(selected_items):
+            for selected_name_item in list(selected_name_items):
                 item_done = False
-                parent = selected_item.parent()
+                parent = selected_name_item.parent()
 
                 while not item_done and parent != None:
-                    if parent in selected_items:
-                        selected_items.remove(selected_item)
+                    if parent in selected_name_items:
+                        selected_name_items.remove(selected_name_item)
                         item_done = True
                     else:
                         parent = parent.parent()
@@ -517,9 +527,9 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                     all_done = False
                     break
 
-        for selected_item in selected_items:
-            path = merge_path(selected_item, unicode(selected_item.text()))
-            item_type = selected_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
+        for selected_name_item in selected_name_items:
+            path = merge_path(selected_name_item, unicode(selected_name_item.text()))
+            item_type = selected_name_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
 
             if item_type == ITEM_TYPE_DIRECTORY:
                 dirs_to_delete.append(unicode(posixpath.join(self.bin_directory, path)))
