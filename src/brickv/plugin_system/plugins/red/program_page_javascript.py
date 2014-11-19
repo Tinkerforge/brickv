@@ -211,23 +211,23 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
     def get_command(self):
         flavor = self.get_field('javascript.flavor').toInt()[0]
 
-        if flavor == Constants.JAVASCRIPT_FLAVOR_NODEJS:
-            executable = self.get_executable()
-            arguments   = self.option_list_editor.get_items()
-            environment = ['NODE_PATH=/usr/local/lib/node_modules']
-            start_mode  = self.get_field('javascript.start_mode').toInt()[0]
-
-            if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE:
-                arguments.append(unicode(self.get_field('javascript.script_file').toString()))
-            elif start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND:
-                arguments.append('-e')
-                arguments.append(unicode(self.get_field('javascript.command').toString()))
-
-            working_directory = unicode(self.get_field('javascript.working_directory').toString())
-
-            return executable, arguments, environment, working_directory
-        elif flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER:
+        if flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER:
             return None
+
+        executable  = self.get_executable()
+        arguments   = self.option_list_editor.get_items()
+        environment = ['NODE_PATH=/usr/local/lib/node_modules']
+        start_mode  = self.get_field('javascript.start_mode').toInt()[0]
+
+        if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE:
+            arguments.append(unicode(self.get_field('javascript.script_file').toString()))
+        elif start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND:
+            arguments.append('-e')
+            arguments.append(unicode(self.get_field('javascript.command').toString()))
+
+        working_directory = unicode(self.get_field('javascript.working_directory').toString())
+
+        return executable, arguments, environment, working_directory
 
     def apply_program_changes(self):
         if not self.apply_program_custom_options_and_command_changes():
