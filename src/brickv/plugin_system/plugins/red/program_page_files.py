@@ -55,6 +55,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         self.list_files.clear()
         self.update_ui_state()
 
+    # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
         self.button_remove_selected_files.setEnabled(len(self.list_files.selectedItems()) > 0)
 

@@ -221,6 +221,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         elif index == BOX_INDEX_DATETIME:
             self.time_stop()
 
+    def tab_destroy(self):
+        pass
+
     def update_network_widget_data(self):
         if self.network_all_data['status'] is not None:
             self.ledit_net_gen_hostname.setText\

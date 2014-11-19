@@ -94,11 +94,11 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
                     # TODO: Error popup?
                     self.console.setDisabled(True)
                     self.connect_button.setText("Connect")
-                    self.destroy()
+                    self.tab_destroy()
         else:
             self.console.setDisabled(True)
             self.connect_button.setText("Connect")
-            self.destroy()
+            self.tab_destroy()
 
     def tab_on_focus(self):
         self.console._reset()
@@ -106,7 +106,7 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
     def tab_off_focus(self):
         pass
 
-    def destroy(self):
+    def tab_destroy(self):
         if self.console._session is not None:
             self.console.stop()
             self.console._session = None

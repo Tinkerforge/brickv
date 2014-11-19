@@ -178,6 +178,25 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
     def process_state_changed(self, process):
         self.update_ui_state()
 
+    def close_all_dialogs(self):
+        if self.edit_general_wizard != None:
+            self.edit_general_wizard.close()
+
+        if self.edit_language_wizard != None:
+            self.edit_language_wizard.close()
+
+        if self.edit_arguments_wizard != None:
+            self.edit_arguments_wizard.close()
+
+        if self.edit_stdio_wizard != None:
+            self.edit_stdio_wizard.close()
+
+        if self.edit_schedule_wizard != None:
+            self.edit_schedule_wizard.close()
+
+        if self.widget_language != None:
+            self.widget_language.close_all_dialogs()
+
     def refresh_info(self):
         self.refresh_program()
         self.widget_logs.refresh_logs()

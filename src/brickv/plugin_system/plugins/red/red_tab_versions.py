@@ -107,6 +107,9 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
 
     def tab_off_focus(self):
         pass
+
+    def tab_destroy(self):
+        pass
     
     def version_tab_changed(self, index):
         if not self.tab_data[index]['updated']:

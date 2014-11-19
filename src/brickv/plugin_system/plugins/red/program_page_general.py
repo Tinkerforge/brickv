@@ -92,6 +92,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
                self.get_field('language').toInt()[0] != Constants.LANGUAGE_INVALID and \
                ProgramPage.isComplete(self)
 
+    # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
         auto_generate = self.check_auto_generate.checkState() == Qt.Checked
 

@@ -81,6 +81,9 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.is_tab_on_focus = False
         self.refresh_timer.stop()
 
+    def tab_destroy(self):
+        pass
+
     def refresh_clicked(self):
         self.refresh_timer.stop()
         self.refresh_counter = REFRESH_TIME/REFRESH_TIMEOUT

@@ -32,6 +32,9 @@ class ProgramPage(QWizardPage):
     def get_field(self, name):
         return self.wizard().get_field(name)
 
+    def update_ui_state(self):
+        pass
+
     def set_formatted_sub_title(self, sub_title):
         language = Constants.language_display_names[self.get_field('language').toInt()[0]]
         name     = unicode(Qt.escape(self.get_field('name').toString()))

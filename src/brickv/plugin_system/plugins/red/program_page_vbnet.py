@@ -114,6 +114,7 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
+    # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
         start_mode            = self.get_field('vbnet.start_mode').toInt()[0]
         start_mode_executable = start_mode == Constants.VBNET_START_MODE_EXECUTABLE

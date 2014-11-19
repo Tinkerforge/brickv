@@ -359,3 +359,6 @@ class REDTabExtension(QtGui.QWidget, Ui_REDTabExtension):
 
     def tab_off_focus(self):
         pass
+
+    def tab_destroy(self):
+        pass

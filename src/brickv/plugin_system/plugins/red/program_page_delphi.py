@@ -140,6 +140,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
+    # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
         start_mode            = self.get_field('delphi.start_mode').toInt()[0]
         start_mode_executable = start_mode == Constants.DELPHI_START_MODE_EXECUTABLE

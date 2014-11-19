@@ -85,6 +85,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
 
         return ProgramPage.isComplete(self)
 
+    # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
         start_mode          = self.get_field('start_mode').toInt()[0]
         start_mode_never    = start_mode == Constants.START_MODE_NEVER

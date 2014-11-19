@@ -93,6 +93,16 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
     def tab_off_focus(self):
         pass
 
+    def tab_destroy(self):
+        if self.new_program_wizard != None:
+            self.new_program_wizard.close()
+
+        for i in range(self.stacked_container.count()):
+            widget = self.stacked_container.widget(i)
+
+            if isinstance(widget, ProgramInfoMain):
+                widget.close_all_dialogs()
+
     def update_ui_state(self):
         if self.refresh_in_progress:
             self.progress_refresh.setVisible(True)

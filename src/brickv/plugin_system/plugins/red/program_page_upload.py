@@ -67,6 +67,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     def isComplete(self):
         return self.upload_successful and ProgramPage.isComplete(self)
 
+    # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
         pass
 

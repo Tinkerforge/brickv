@@ -38,6 +38,7 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
 
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 
+    # overrides ProgramInfo.update_ui_state
     def update_ui_state(self):
         show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
         compile_from_source   = self.program.cast_custom_option_value('delphi.compile_from_source', bool, False)
@@ -70,12 +71,10 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
         # make options
         self.label_make_options.setText('\n'.join(self.program.cast_custom_option_value_list('delphi.make_options', unicode, [])))
 
-    def compile_from_source(self):
-        if not self.program.cast_custom_option_value('delphi.compile_from_source', bool, False):
-            return
-
-        self.compile_dialog = ProgramInfoDelphiCompile(self.script_manager, self.program)
-        self.compile_dialog.show()
+    # overrides ProgramInfo.close_all_dialogs
+    def close_all_dialogs(self):
+        if self.compile_dialog != None:
+            self.compile_dialog.close()
 
     # overrides ProgramInfo.get_language_action
     def get_language_action(self):
@@ -83,3 +82,10 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
             return self.compile_from_source, 'Compile'
         else:
             return ProgramInfo.get_language_action(self)
+
+    def compile_from_source(self):
+        if not self.program.cast_custom_option_value('delphi.compile_from_source', bool, False):
+            return
+
+        self.compile_dialog = ProgramInfoDelphiCompile(self.script_manager, self.program)
+        self.compile_dialog.show()

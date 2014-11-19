@@ -172,6 +172,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
+    # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
         flavor                 = self.get_field('javascript.flavor').toInt()[0]
         flavor_nodejs          = flavor == Constants.JAVASCRIPT_FLAVOR_NODEJS

@@ -151,5 +151,6 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
         self.text_summary.setHtml(html)
         self.update_ui_state()
 
+    # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
         pass

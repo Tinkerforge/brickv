@@ -104,6 +104,7 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
     def isComplete(self):
         return self.environment_is_valid and ProgramPage.isComplete(self)
 
+    # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
         show_environment = self.check_show_environment.checkState() == Qt.Checked
 

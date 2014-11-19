@@ -136,6 +136,7 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
 
         return self.combo_working_directory_selector.complete and ProgramPage.isComplete(self)
 
+    # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
         start_mode             = self.get_field('octave.start_mode').toInt()[0]
         start_mode_script_file = start_mode == Constants.OCTAVE_START_MODE_SCRIPT_FILE

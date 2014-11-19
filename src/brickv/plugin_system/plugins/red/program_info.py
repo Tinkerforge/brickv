@@ -39,6 +39,9 @@ class ProgramInfo(QWidget):
     def update_ui_state(self):
         pass
 
+    def close_all_dialogs(self):
+        pass
+
     # to be used on language configuratiopn pages
     def get_executable_versions(self, executable_name, callback):
         def cb_get():

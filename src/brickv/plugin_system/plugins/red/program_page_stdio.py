@@ -106,6 +106,7 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
 
         return ProgramPage.isComplete(self)
 
+    # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
         stdin_redirection                 = self.get_field('stdin_redirection').toInt()[0]
         stdout_redirection                = self.get_field('stdout_redirection').toInt()[0]
