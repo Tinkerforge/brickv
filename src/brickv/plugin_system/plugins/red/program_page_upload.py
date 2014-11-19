@@ -22,6 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QWizard, QApplication
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
@@ -68,8 +69,14 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     def update_ui_state(self):
         pass
 
-    def log(self, message):
-        self.edit_log.appendPlainText(message)
+    def log(self, message, bold=False, pre=False):
+        if bold:
+            self.edit_log.appendHtml('<b>{0}</b>'.format(Qt.escape(message)))
+        elif pre:
+            self.edit_log.appendHtml('<pre>{0}</pre>'.format(message))
+        else:
+            self.edit_log.appendPlainText(message)
+
         self.edit_log.verticalScrollBar().setValue(self.edit_log.verticalScrollBar().maximum())
 
     def next_step(self, message, increase=1, log=True):
@@ -80,7 +87,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             self.log(message)
 
     def upload_error(self, message, defined=True):
-        self.log(message)
+        self.log(message, bold=True)
 
         if defined:
             pass # FIXME: purge program?
@@ -402,7 +409,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         def cb_make_helper(result):
             if result != None:
                 for s in result.stdout.rstrip().split('\n'):
-                    self.log(s)
+                    self.log(s, pre=True)
 
                 if result.exit_code != 0:
                     self.upload_error('...error')

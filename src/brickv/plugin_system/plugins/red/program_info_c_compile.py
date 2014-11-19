@@ -43,8 +43,14 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
         self.button_clean.clicked.connect(lambda: self.execute_make('clean'))
         self.button_cancel.clicked.connect(self.reject)
 
-    def log(self, message):
-        self.edit_log.appendPlainText(message)
+    def log(self, message, bold=False, pre=False):
+        if bold:
+            self.edit_log.appendHtml('<b>{0}</b>'.format(Qt.escape(message)))
+        elif pre:
+            self.edit_log.appendHtml('<pre>{0}</pre>'.format(message))
+        else:
+            self.edit_log.appendPlainText(message)
+
         self.edit_log.verticalScrollBar().setValue(self.edit_log.verticalScrollBar().maximum())
 
     def execute_make(self, target=None):
@@ -58,14 +64,14 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
 
             if result != None:
                 for s in result.stdout.rstrip().split('\n'):
-                    self.log(s)
+                    self.log(s, pre=True)
 
                 if result.exit_code != 0:
-                    self.log('...error')
+                    self.log('...error', bold=True)
                 else:
                     self.log('...done')
             else:
-                self.log('...error')
+                self.log('...error', bold=True)
 
             self.button_make.setEnabled(True)
             self.button_clean.setEnabled(True)
