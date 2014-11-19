@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QDir, QVariant, QDateTime
-from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem
+from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem, QProgressDialog
 from brickv.plugin_system.plugins.red.api import REDProgram
 import re
 import posixpath
@@ -555,6 +555,17 @@ class ExpandingListWidget(QListWidget):
 
         if size.height() < 2000:
             size.setHeight(2000)
+
+        return size
+
+
+class ExpandingProgressDialog(QProgressDialog):
+    # overrides QListWidget.sizeHint
+    def sizeHint(self):
+        size = QProgressDialog.sizeHint(self)
+
+        if size.width() < 400:
+            size.setWidth(400)
 
         return size
 

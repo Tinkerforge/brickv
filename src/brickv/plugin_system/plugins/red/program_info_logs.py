@@ -24,8 +24,9 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt, QVariant
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QFileDialog, \
-                        QProgressDialog, QMessageBox, QSortFilterProxyModel, QApplication
+                        QMessageBox, QSortFilterProxyModel, QApplication
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog
 from brickv.plugin_system.plugins.red.ui_program_info_logs import Ui_ProgramInfoLogs
 from brickv.async_call import async_call
 from brickv.program_path import get_program_path
@@ -408,11 +409,8 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         if log_files_download_dir == "":
             return
 
-        log_download_pd = QProgressDialog(str(len(log_files_to_download['files']))+" file(s) remaining...",
-                                          "Cancel",
-                                          0,
-                                          100,
-                                          self)
+        log_download_pd = ExpandingProgressDialog(str(len(log_files_to_download['files']))+" file(s) remaining...",
+                                                  "Cancel", 0, 100, self)
         log_download_pd.setWindowTitle("Download Progress")
         log_download_pd.setAutoReset(False)
         log_download_pd.setAutoClose(False)

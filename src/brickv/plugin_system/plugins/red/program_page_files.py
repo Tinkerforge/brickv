@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QDir, QVariant
-from PyQt4.QtGui import QIcon, QFileDialog, QListWidgetItem, QProgressDialog, QApplication
+from PyQt4.QtGui import QIcon, QFileDialog, QListWidgetItem, QApplication
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_files import Ui_ProgramPageFiles
@@ -85,10 +85,10 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
             return
 
         uploads = []
-        progress = QProgressDialog(self)
+        progress = ExpandingProgressDialog(self)
         progress.setWindowTitle('New Program')
         progress.setLabelText(u"Collecting content of '{0}'".format(directory))
-        progress.setWindowModality(Qt.WindowModal)
+        progress.setModal(True)
         progress.setMaximum(0)
         progress.setValue(0)
         progress.show()

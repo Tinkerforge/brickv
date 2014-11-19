@@ -39,6 +39,7 @@ class ProgramWizard(QWizard):
         self.canceled            = False
 
         self.setWindowFlags(self.windowFlags() | Qt.Tool)
+        self.setModal(True)
 
         self.rejected.connect(lambda: self.set_canceled(True))
 

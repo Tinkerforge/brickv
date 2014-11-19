@@ -24,8 +24,9 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt, QDateTime, QVariant
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QAbstractItemView, QLineEdit,\
-                        QSortFilterProxyModel, QFileDialog, QProgressDialog, QMessageBox, QInputDialog, QApplication
+                        QSortFilterProxyModel, QFileDialog, QMessageBox, QInputDialog, QApplication
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
 from brickv.async_call import async_call
 from brickv.program_path import get_program_path
@@ -322,11 +323,8 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                     QMessageBox.Ok)
             return
 
-        file_download_pd = QProgressDialog(str(len(files_to_download))+" file(s) remaining...",
-                                          "Cancel",
-                                          0,
-                                          100,
-                                          self)
+        file_download_pd = ExpandingProgressDialog(str(len(files_to_download))+" file(s) remaining...",
+                                                   "Cancel", 0, 100, self)
         file_download_pd.setWindowTitle("Download Progress")
         file_download_pd.setAutoReset(False)
         file_download_pd.setAutoClose(False)
@@ -454,14 +452,10 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                  'Deletion aborted.',
                                  QMessageBox.Ok)
 
-        deletion_pd = QProgressDialog("Deleting...",
-                                      "Cancel",
-                                      0,
-                                      0,
-                                      self,)
+        deletion_pd = ExpandingProgressDialog("Deleting...", "Cancel", 0, 0, self)
 
         deletion_pd.setWindowTitle("Deletion in Progress")
-        deletion_pd.setWindowModality(Qt.ApplicationModal)
+        deletion_pd.setModal(True)
         deletion_pd.setMinimumDuration(0)
         deletion_pd.canceled.connect(deletion_pd_canceled)
         deletion_pd.setRange(0, 0)
