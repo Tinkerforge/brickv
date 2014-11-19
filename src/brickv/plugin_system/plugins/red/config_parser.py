@@ -63,7 +63,7 @@ def parse(data):
         return None
 
     config = ConfigParser.ConfigParser()
-    config.readfp(FakeSectionHeadAndFile(string))
+    config.readfp(FakeSectionHeadAndFile(string.encode('utf-8')))
     try:
         config = dict(config.items('fake_section'))
     except:
@@ -82,7 +82,7 @@ def parse_no_fake(data):
         return None
     
     config = ConfigParser.ConfigParser()
-    config.readfp(StringIO(string))
+    config.readfp(StringIO(string.encode('utf-8')))
 
     return config
 
@@ -96,7 +96,6 @@ def to_string(data):
     config.write(s)
     return s.getvalue().replace('[fake_section]\n', '')
     
-
 def to_string_no_fake(data):
     s = StringIO()
     data.write(s)
