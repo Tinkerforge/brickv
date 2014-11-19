@@ -234,9 +234,6 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
                                  u'Could not delete program [{0}]:\n\n{1}'.format(name, str(e)))
             return
 
-        QMessageBox.information(None, 'Delete Successful',
-                                 u'Program [{0}] successful deleted!'.format(name))
-
         self.stacked_container.removeWidget(program_info)
         self.list_programs.takeItem(self.list_programs.row(selected_items[0]))
         self.update_ui_state()
