@@ -52,8 +52,8 @@ class ProgramInfoC(ProgramInfo, Ui_ProgramInfoC):
         self.label_executable.setVisible(start_mode_executable)
         self.label_working_directory_title.setVisible(show_advanced_options)
         self.label_working_directory.setVisible(show_advanced_options)
-        self.label_options_title.setVisible(compile_from_source and show_advanced_options)
-        self.label_options.setVisible(compile_from_source and show_advanced_options)
+        self.label_make_options_title.setVisible(compile_from_source and show_advanced_options)
+        self.label_make_options.setVisible(compile_from_source and show_advanced_options)
 
         # executable
         self.label_executable.setText(self.program.cast_custom_option_value('c.executable', unicode, ''))
@@ -67,8 +67,8 @@ class ProgramInfoC(ProgramInfo, Ui_ProgramInfoC):
         # working directory
         self.label_working_directory.setText(unicode(self.program.working_directory))
 
-        # options
-        self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('c.options', unicode, [])))
+        # make options
+        self.label_make_options.setText('\n'.join(self.program.cast_custom_option_value_list('c.make_options', unicode, [])))
 
     def compile_from_source(self):
         if not self.program.cast_custom_option_value('c.compile_from_source', bool, False):

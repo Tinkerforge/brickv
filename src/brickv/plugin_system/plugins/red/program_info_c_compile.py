@@ -76,7 +76,7 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
         else:
             self.log('Executing make...')
 
-        make_options      = self.program.cast_custom_option_value_list('c.options', unicode, [])
+        make_options      = self.program.cast_custom_option_value_list('c.make_options', unicode, [])
         working_directory = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
         if target != None:

@@ -21,11 +21,10 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtProperty
-
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_c import Ui_ProgramPageC
+import os
 
 def get_gcc_versions(script_manager, callback):
     def cb_versions(result):
@@ -76,13 +75,13 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.combo_working_directory_selector = MandatoryDirectorySelector(self,
                                                                            self.label_working_directory,
                                                                            self.combo_working_directory)
-        self.option_list_editor               = ListWidgetEditor(self.label_options,
-                                                                 self.list_options,
-                                                                 self.label_options_help,
-                                                                 self.button_add_option,
-                                                                 self.button_remove_option,
-                                                                 self.button_up_option,
-                                                                 self.button_down_option,
+        self.make_option_list_editor          = ListWidgetEditor(self.label_make_options,
+                                                                 self.list_make_options,
+                                                                 self.label_make_options_help,
+                                                                 self.button_add_make_option,
+                                                                 self.button_remove_make_option,
+                                                                 self.button_up_make_option,
+                                                                 self.button_down_make_option,
                                                                  '<new Make option {0}>')
 
     # overrides QWizardPage.initializePage
@@ -109,7 +108,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.check_compile_from_source.setCheckState(Qt.Unchecked)
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
         self.combo_working_directory_selector.reset()
-        self.option_list_editor.reset()
+        self.make_option_list_editor.reset()
 
         # if a program exists then this page is used in an edit wizard
         if self.wizard().program != None:
@@ -134,11 +133,11 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
             # working directory
             self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
 
-            # options
-            self.option_list_editor.clear()
+            # make options
+            self.make_option_list_editor.clear()
 
-            for option in program.cast_custom_option_value_list('c.options', unicode, []):
-                self.option_list_editor.add_item(option)
+            for make_option in program.cast_custom_option_value_list('c.make_options', unicode, []):
+                self.make_option_list_editor.add_item(make_option)
 
         self.update_ui_state()
 
@@ -162,19 +161,19 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.label_compile_from_source_help_new.setVisible(start_mode_executable and not self.edit_mode)
         self.label_compile_from_source_help_edit.setVisible(start_mode_executable and self.edit_mode)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
-        self.option_list_editor.set_visible(compile_from_source and show_advanced_options)
+        self.make_option_list_editor.set_visible(compile_from_source and show_advanced_options)
 
-        self.option_list_editor.update_ui_state()
+        self.make_option_list_editor.update_ui_state()
 
     def get_make_options(self):
-        return self.option_list_editor.get_items()
+        return self.make_option_list_editor.get_items()
 
     def get_html_summary(self):
         start_mode          = self.get_field('c.start_mode').toInt()[0]
         executable          = self.get_field('c.executable').toString()
         compile_from_source = self.get_field('c.compile_from_source').toBool()
         working_directory   = self.get_field('c.working_directory').toString()
-        options             = ' '.join(self.option_list_editor.get_items())
+        make_options        = ' '.join(self.make_option_list_editor.get_items())
 
         html = u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.c_start_mode_display_names[start_mode]))
 
@@ -189,7 +188,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         html += u'Working Directory: {0}<br/>'.format(Qt.escape(working_directory))
 
         if compile_from_source:
-            html += u'Make Options: {0}<br/>'.format(Qt.escape(options))
+            html += u'Make Options: {0}<br/>'.format(Qt.escape(make_options))
 
         return html
 
@@ -198,7 +197,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
             'c.start_mode':          Constants.c_start_mode_api_names[self.get_field('c.start_mode').toInt()[0]],
             'c.executable':          unicode(self.get_field('c.executable').toString()),
             'c.compile_from_source': self.get_field('c.compile_from_source').toBool(),
-            'c.options':             self.option_list_editor.get_items()
+            'c.make_options':        self.make_option_list_editor.get_items()
         }
 
     def get_command(self):
