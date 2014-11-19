@@ -63,12 +63,16 @@ def get_file_display_size(size):
     else:
         return str(size / 1024) + ' kiB'
 
-def merge_path(item, path):
-    parent = item.parent()
-    if parent:
-        return merge_path(parent, os.path.join(unicode(parent.text()), path))
-    else:
-        return path
+def get_full_item_path(item):
+    def expand(item, path):
+        parent = item.parent()
+
+        if parent != None:
+            return expand(parent, posixpath.join(unicode(parent.text()), path))
+        else:
+            return path
+
+    return expand(item, unicode(item.text()))
 
 def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon):
     def create_last_modified_item(last_modified):
@@ -163,7 +167,6 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.tree_files.setColumnWidth(1, 85)
 
         self.tree_files.selectionModel().selectionChanged.connect(self.update_ui_state)
-        self.tree_files_model.itemChanged.connect(self.tree_file_item_changed)
         self.button_upload_files.clicked.connect(self.upload_files)
         self.button_download_files.clicked.connect(self.download_selected_files)
         self.button_rename_file.clicked.connect(self.rename_selected_file)
@@ -175,29 +178,6 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.set_widget_enabled(self.button_download_files, selection_count > 0)
         self.set_widget_enabled(self.button_rename_file, selection_count == 1)
         self.set_widget_enabled(self.button_delete_files, selection_count > 0)
-
-    def tree_file_item_changed(self, item):
-        def cb_program_rename_files_dirs(result):
-            self.refresh_files()
-
-            if result == None or len(result.stderr) > 0 or\
-               not json.loads(result.stdout):
-                QMessageBox.warning(None,
-                                    'Program | Files',
-                                    'Renaming failed.',
-                                    QMessageBox.Ok)
-
-                return
-
-            QMessageBox.information(None,
-                                    'Program | Files',
-                                    'Renaming successful.',
-                                    QMessageBox.Ok)
-
-        old = posixpath.join(self.bin_directory, self.rename_from)
-        new = posixpath.join(self.bin_directory, self.rename_from.replace(posixpath.split(self.rename_from)[1], unicode(item.text())))
-        self.rename_from = ""
-        self.script_manager.execute_script('program_rename_files_dirs', cb_program_rename_files_dirs, [old, new])
 
     def refresh_files(self):
         def cb_directory_walk(result):
@@ -225,9 +205,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 self.update_main_ui_state()
 
                 if directory_walk != None:
-                    self.tree_files_model.itemChanged.disconnect(self.tree_file_item_changed)
                     expand_directory_walk_to_model(directory_walk, self.tree_files_model, self.folder_icon, self.file_icon)
-                    self.tree_files_model.itemChanged.connect(self.tree_file_item_changed)
 
                 self.tree_files.header().setSortIndicator(0, Qt.AscendingOrder)
 
@@ -289,7 +267,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         files_to_download = {}
 
         for selected_name_item in selected_name_items:
-            path = merge_path(selected_name_item, unicode(selected_name_item.text()))
+            path = get_full_item_path(selected_name_item)
 
             for directory in self.available_directories:
                 if path in directory and directory not in dirs_to_create:
@@ -416,7 +394,8 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if len(selected_name_items) != 1:
             return
 
-        item_type = selected_name_items[0].data(USER_ROLE_ITEM_TYPE).toInt()[0]
+        selected_name_item = selected_name_items[0]
+        item_type          = selected_name_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
 
         if item_type == ITEM_TYPE_FILE:
             title     = 'Rename File'
@@ -425,8 +404,9 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             title     = 'Rename Directory'
             type_name = 'directory'
 
-        old_name = unicode(selected_name_items[0].text())
+        old_name = unicode(selected_name_item.text())
 
+        # get new name
         dialog = ExpandingInputDialog(None)
         dialog.setModal(True)
         dialog.setWindowTitle(title)
@@ -443,14 +423,41 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if new_name == old_name:
             return
 
+        # check that new name is valid
         if len(new_name) == 0 or new_name == '.' or new_name == '..' or '/' in new_name:
             QMessageBox.critical(None, title + ' Error',
                                  'A valid {0} name cannot be empty or be one dot [.] or be two dots [..] or contain a forward slash [/].'.format(type_name),
                                  QMessageBox.Ok)
             return
 
-        self.rename_from = merge_path(selected_name_items[0], old_name)
-        selected_name_items[0].setText(new_name)
+        # check that new name is not already in use
+        selected_name_item_parent = selected_name_item.parent()
+
+        if selected_name_item_parent == None:
+            selected_name_item_parent = self.tree_files_model.invisibleRootItem()
+
+        for i in range(selected_name_item_parent.rowCount()):
+            if new_name == selected_name_item_parent.child(i).text():
+                QMessageBox.critical(None, title + ' Error',
+                                     'The new {0} name is already in use.'.format(type_name),
+                                     QMessageBox.Ok)
+                return
+
+        absolute_old_name = posixpath.join(self.bin_directory, get_full_item_path(selected_name_item))
+        absolute_new_name = posixpath.join(posixpath.split(absolute_old_name)[0], new_name)
+
+        def cb_rename(result):
+            if result == None:
+                QMessageBox.critical(None, title + ' Error',
+                                     u'Internal error during {0} rename'.format(type_name))
+            elif result.exit_code != 0:
+                QMessageBox.critical(None, title + ' Error',
+                                     u'Could not rename {0}:\n\n{1}'.format(type_name, result.stderr))
+            else:
+                selected_name_item.setText(new_name)
+
+        self.script_manager.execute_script('rename', cb_rename,
+                                           [absolute_old_name, absolute_new_name])
 
     def delete_selected_files(self):
         sd     = None
@@ -528,7 +535,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                     break
 
         for selected_name_item in selected_name_items:
-            path = merge_path(selected_name_item, unicode(selected_name_item.text()))
+            path      = get_full_item_path(selected_name_item)
             item_type = selected_name_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
 
             if item_type == ITEM_TYPE_DIRECTORY:
