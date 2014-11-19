@@ -25,7 +25,7 @@ Boston, MA 02111-1307, USA.
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_delphi import Ui_ProgramPageDelphi
-import os
+import posixpath
 
 def get_fpc_versions(script_manager, callback):
     def cb_versions(result):
@@ -199,7 +199,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
         working_directory = unicode(self.get_field('delphi.working_directory').toString())
 
         if not executable.startswith('/'):
-            executable = os.path.join('./', executable)
+            executable = posixpath.join('./', executable)
 
         return executable, arguments, environment, working_directory
 

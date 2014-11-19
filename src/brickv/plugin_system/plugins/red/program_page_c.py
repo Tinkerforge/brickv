@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_c import Ui_ProgramPageC
-import os
+import posixpath
 
 def get_gcc_versions(script_manager, callback):
     def cb_versions(result):
@@ -207,7 +207,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         working_directory = unicode(self.get_field('c.working_directory').toString())
 
         if not executable.startswith('/'):
-            executable = os.path.join('./', executable)
+            executable = posixpath.join('./', executable)
 
         return executable, arguments, environment, working_directory
 

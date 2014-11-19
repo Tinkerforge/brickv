@@ -29,6 +29,7 @@ from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_upload import Ui_ProgramPageUpload
 import os
+import posixpath
 import stat
 import time
 
@@ -206,10 +207,10 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.source_size = source_st.st_size
         self.progress_file.setRange(0, self.source_size)
 
-        self.target_name = os.path.join(self.root_directory, 'bin', upload.target)
+        self.target_name = posixpath.join(self.root_directory, 'bin', upload.target)
 
-        if len(os.path.split(upload.target)[0]) > 0:
-            target_directory = os.path.split(self.target_name)[0]
+        if len(posixpath.split(upload.target)[0]) > 0:
+            target_directory = posixpath.split(self.target_name)[0]
 
             try:
                 create_directory(self.wizard().session, target_directory, DIRECTORY_FLAG_RECURSIVE, 0755, 1000, 1000)
@@ -420,7 +421,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.next_step('Executing make...')
 
         make_options      = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_make_options()
-        working_directory = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
+        working_directory = posixpath.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
         self.wizard().script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options,
                                                     max_length=1024*1024, redirect_stderr_to_stdout=True)
@@ -442,7 +443,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.next_step('Executing fpcmake and make...')
 
         make_options      = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_make_options()
-        working_directory = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
+        working_directory = posixpath.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
         self.wizard().script_manager.execute_script('fpcmake_helper', cb_fpcmake_helper, [working_directory] + make_options,
                                                     max_length=1024*1024, redirect_stderr_to_stdout=True)

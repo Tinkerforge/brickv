@@ -28,6 +28,7 @@ from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_files import Ui_ProgramPageFiles
 from brickv.program_path import get_program_path
 import os
+import posixpath
 from collections import namedtuple
 
 Upload = namedtuple('Upload', 'source target')
@@ -94,7 +95,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         for root, directories, files in os.walk(directory):
             for filename in files:
                 source = os.path.join(root, filename)
-                target = os.path.relpath(source, directory)
+                target = unicode(QDir.fromNativeSeparators(os.path.relpath(source, directory)))
                 uploads.append(Upload(source, target))
 
                 # ensure that the UI stays responsive and the keep-alive timer works

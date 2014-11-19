@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 from brickv.plugin_system.plugins.red.api import REDFile, REDPipe, REDProcess
 
 import traceback
-import os
+import posixpath
 from collections import namedtuple
 from PyQt4 import QtCore
 
@@ -157,7 +157,7 @@ class ScriptManager:
 
         try:
             script.file = create_object_in_qt_main_thread(REDFile, (self.session,))
-            script.file.open(os.path.join(SCRIPT_FOLDER, sd.script_name + script.file_ending),
+            script.file.open(posixpath.join(SCRIPT_FOLDER, sd.script_name + script.file_ending),
                              REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0755, 0, 0)
             script.file.write_async(script.script, lambda error: self._init_script_async_write_done(error, sd))
         except:
@@ -302,7 +302,7 @@ class ScriptManager:
 
         try:
             # FIXME: Do we need a timeout here in case that the state_changed callback never comes?
-            sd.process.spawn(os.path.join(SCRIPT_FOLDER, sd.script_name + self.scripts[sd.script_name].file_ending),
+            sd.process.spawn(posixpath.join(SCRIPT_FOLDER, sd.script_name + self.scripts[sd.script_name].file_ending),
                              sd.params, env, '/', 0, 0, self.devnull, sd.stdout, sd.stderr)
         except:
             traceback.print_exc()

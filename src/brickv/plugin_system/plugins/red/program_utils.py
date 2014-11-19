@@ -25,7 +25,7 @@ from PyQt4.QtCore import Qt, QDir, QVariant, QDateTime
 from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem
 from brickv.plugin_system.plugins.red.api import REDProgram
 import re
-import os
+import posixpath
 from collections import namedtuple
 
 ExecutableVersion = namedtuple('ExecutableVersion', 'executable version')
@@ -952,7 +952,7 @@ class MandatoryDirectorySelector:
     # ensure that directory is relative, non-empty and does not start with ..
     def check(self, emit):
         was_complete  = self.complete
-        directory     = unicode(QDir.cleanPath(os.path.join(unicode(self.combo.currentText()), '.')))
+        directory     = unicode(QDir.cleanPath(posixpath.join(unicode(self.combo.currentText()), '.')))
         self.complete = len(directory) > 0 and \
                         not directory.startswith('/') and \
                         directory != './..' and \

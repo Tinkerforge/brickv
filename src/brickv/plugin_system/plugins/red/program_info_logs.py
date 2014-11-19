@@ -30,6 +30,7 @@ from brickv.plugin_system.plugins.red.ui_program_info_logs import Ui_ProgramInfo
 from brickv.async_call import async_call
 from brickv.program_path import get_program_path
 import os
+import posixpath
 import json
 import zlib
 
@@ -54,7 +55,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.program                = context.program
         self.update_main_ui_state   = update_main_ui_state
         self.set_widget_enabled     = set_widget_enabled
-        self.log_directory          = os.path.join(unicode(self.program.root_directory), 'log')
+        self.log_directory          = posixpath.join(unicode(self.program.root_directory), 'log')
         self.refresh_in_progress    = False
         self.file_icon              = QIcon(os.path.join(get_program_path(), "file-icon.png"))
         self.tree_logs_model        = QStandardItemModel(self)

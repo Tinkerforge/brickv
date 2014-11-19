@@ -30,6 +30,7 @@ from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInf
 from brickv.async_call import async_call
 from brickv.program_path import get_program_path
 import os
+import posixpath
 import json
 import zlib
 
@@ -47,7 +48,7 @@ def expand_directory_walk_to_lists(directory_walk):
                 directories.add(root)
 
             for child_name, child_dw in dw['c'].iteritems():
-                expand(os.path.join(root, child_name), child_dw)
+                expand(posixpath.join(root, child_name), child_dw)
         else:
             files[root] = dw
 
@@ -142,7 +143,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.program                 = context.program
         self.update_main_ui_state    = update_main_ui_state
         self.set_widget_enabled      = set_widget_enabled
-        self.bin_directory           = os.path.join(unicode(self.program.root_directory), 'bin')
+        self.bin_directory           = posixpath.join(unicode(self.program.root_directory), 'bin')
         self.refresh_in_progress     = False
         self.available_files         = {}
         self.available_directories   = []
@@ -192,12 +193,10 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                     'Renaming successful.',
                                     QMessageBox.Ok)
 
-        _from = os.path.join(self.bin_directory, self.rename_from)
-        _to = os.path.join(self.bin_directory,
-                           self.rename_from.replace(os.path.split(self.rename_from)[1], unicode(item.text())))
+        old = posixpath.join(self.bin_directory, self.rename_from)
+        new = posixpath.join(self.bin_directory, self.rename_from.replace(posixpath.split(self.rename_from)[1], unicode(item.text())))
         self.rename_from = ""
-        self.script_manager.execute_script('program_rename_files_dirs', cb_program_rename_files_dirs,
-                                           [_from, _to])
+        self.script_manager.execute_script('program_rename_files_dirs', cb_program_rename_files_dirs, [old, new])
 
     def refresh_files(self):
         def cb_directory_walk(result):
@@ -380,7 +379,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                         file_download_pd.setLabelText(str(len(files_to_download))+" file(s) remaining...")
                         file_download_pd.setValue(0)
                         async_call(REDFile(self.session).open,
-                                   (os.path.join(self.bin_directory, files_to_download.keys()[0]),
+                                   (posixpath.join(self.bin_directory, files_to_download.keys()[0]),
                                    REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                                    cb_open,
                                    cb_open_error)
@@ -400,7 +399,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         if len(files_to_download) > 0:
             async_call(REDFile(self.session).open,
-                       (os.path.join(self.bin_directory, files_to_download.keys()[0]),
+                       (posixpath.join(self.bin_directory, files_to_download.keys()[0]),
                        REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                        cb_open,
                        cb_open_error)
@@ -527,9 +526,9 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             item_type = selected_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
 
             if item_type == ITEM_TYPE_DIRECTORY:
-                dirs_to_delete.append(unicode(os.path.join(self.bin_directory, path)))
+                dirs_to_delete.append(unicode(posixpath.join(self.bin_directory, path)))
             else:
-                files_to_delete.append(unicode(os.path.join(self.bin_directory, path)))
+                files_to_delete.append(unicode(posixpath.join(self.bin_directory, path)))
 
         sd = self.script_manager.execute_script('program_delete_files_dirs',
                                                 cb_program_delete_files_dirs,

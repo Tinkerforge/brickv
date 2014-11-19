@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QDialog
 from brickv.plugin_system.plugins.red.ui_program_info_delphi_compile import Ui_ProgramInfoDelphiCompile
-import os
+import posixpath
 import traceback
 
 class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
@@ -82,7 +82,7 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
             self.log('Executing fpcmake and make...')
 
         make_options      = self.program.cast_custom_option_value_list('delphi.make_options', unicode, [])
-        working_directory = os.path.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
+        working_directory = posixpath.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
         if target != None:
             make_options.append(target)
