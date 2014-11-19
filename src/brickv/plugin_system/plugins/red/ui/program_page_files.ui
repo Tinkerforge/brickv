@@ -32,7 +32,7 @@
      <item row="2" column="1">
       <widget class="QPushButton" name="button_add_files">
        <property name="text">
-        <string>Add File</string>
+        <string>Add Files</string>
        </property>
       </widget>
      </item>

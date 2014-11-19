@@ -60,7 +60,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         self.button_remove_selected_files.setEnabled(len(self.list_files.selectedItems()) > 0)
 
     def show_add_files_dialog(self):
-        filenames = QFileDialog.getOpenFileNames(self, "Select files to be uploaded")
+        filenames = QFileDialog.getOpenFileNames(self, 'Add Files')
 
         for filename in filenames:
             filename = unicode(QDir.toNativeSeparators(filename))
@@ -76,7 +76,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
             self.list_files.addItem(item)
 
     def show_add_directory_dialog(self):
-        directory = unicode(QDir.toNativeSeparators(QFileDialog.getExistingDirectory(self, "Select a directory of files to be uploaded")))
+        directory = unicode(QDir.toNativeSeparators(QFileDialog.getExistingDirectory(self, 'Add Directory')))
 
         if len(directory) == 0:
             return
