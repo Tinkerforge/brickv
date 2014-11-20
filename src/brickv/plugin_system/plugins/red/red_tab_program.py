@@ -209,7 +209,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
 
         context = ProgramWizardContext(self.session, identifiers, self.script_manager, self.image_version_ref, self.executable_versions)
 
-        self.new_program_wizard = ProgramWizardNew(context)
+        self.new_program_wizard = ProgramWizardNew(self, context)
 
         if self.new_program_wizard.exec_() == QDialog.Accepted:
             self.add_program_to_list(self.new_program_wizard.program)

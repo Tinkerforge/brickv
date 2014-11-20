@@ -27,8 +27,8 @@ from brickv.plugin_system.plugins.red.program_wizard import ProgramWizard
 from brickv.plugin_system.plugins.red.program_utils import *
 
 class ProgramWizardEdit(ProgramWizard):
-    def __init__(self, context, program, available_files, available_directories, *args, **kwargs):
-        ProgramWizard.__init__(self, context, *args, **kwargs)
+    def __init__(self, parent, context, program, available_files, available_directories):
+        ProgramWizard.__init__(self, parent, context)
 
         self.program               = program
         self.available_files       = available_files

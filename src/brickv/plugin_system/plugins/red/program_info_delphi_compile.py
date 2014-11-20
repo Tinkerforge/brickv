@@ -28,11 +28,11 @@ import posixpath
 import traceback
 
 class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
-    def __init__(self, script_manager, program, *args, **kwargs):
-        QDialog.__init__(self, *args, **kwargs)
+    def __init__(self, parent, script_manager, program):
+        QDialog.__init__(self, parent)
 
         self.setupUi(self)
-        self.setWindowFlags(self.windowFlags() | Qt.Tool)
+        self.setModal(True)
 
         self.script_manager = script_manager
         self.program        = program

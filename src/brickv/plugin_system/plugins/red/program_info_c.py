@@ -87,5 +87,5 @@ class ProgramInfoC(ProgramInfo, Ui_ProgramInfoC):
         if not self.program.cast_custom_option_value('c.compile_from_source', bool, False):
             return
 
-        self.compile_dialog = ProgramInfoCCompile(self.script_manager, self.program)
+        self.compile_dialog = ProgramInfoCCompile(self, self.script_manager, self.program)
         self.compile_dialog.exec_()

@@ -87,5 +87,5 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
         if not self.program.cast_custom_option_value('delphi.compile_from_source', bool, False):
             return
 
-        self.compile_dialog = ProgramInfoDelphiCompile(self.script_manager, self.program)
+        self.compile_dialog = ProgramInfoDelphiCompile(self, self.script_manager, self.program)
         self.compile_dialog.exec_()

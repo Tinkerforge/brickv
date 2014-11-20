@@ -525,7 +525,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
         page    = ProgramPageGeneral()
 
-        self.edit_general_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
+        self.edit_general_wizard = ProgramWizardEdit(self, context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
         self.edit_general_wizard.setPage(Constants.PAGE_GENERAL, page)
 
         if self.edit_general_wizard.exec_() == QDialog.Accepted:
@@ -566,7 +566,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
         page    = language_page_classes[language_page]()
 
-        self.edit_language_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
+        self.edit_language_wizard = ProgramWizardEdit(self, context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories,)
         self.edit_language_wizard.setPage(language_page, page)
 
         if self.edit_language_wizard.exec_() == QDialog.Accepted:
@@ -584,7 +584,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
         page    = ProgramPageArguments()
 
-        self.edit_arguments_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
+        self.edit_arguments_wizard = ProgramWizardEdit(self, context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
         self.edit_arguments_wizard.setPage(Constants.PAGE_ARGUMENTS, page)
 
         if self.edit_arguments_wizard.exec_() == QDialog.Accepted:
@@ -602,7 +602,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
         page    = ProgramPageStdio()
 
-        self.edit_stdio_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
+        self.edit_stdio_wizard = ProgramWizardEdit(self, context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
         self.edit_stdio_wizard.setPage(Constants.PAGE_STDIO, page)
 
         if self.edit_stdio_wizard.exec_() == QDialog.Accepted:
@@ -620,7 +620,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
         page    = ProgramPageSchedule()
 
-        self.edit_schedule_wizard = ProgramWizardEdit(context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
+        self.edit_schedule_wizard = ProgramWizardEdit(self, context, self.program, sorted(self.widget_files.available_files.keys()), self.widget_files.available_directories)
         self.edit_schedule_wizard.setPage(Constants.PAGE_SCHEDULE, page)
 
         if self.edit_schedule_wizard.exec_() == QDialog.Accepted:

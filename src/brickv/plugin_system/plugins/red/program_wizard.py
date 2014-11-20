@@ -28,8 +28,10 @@ from collections import namedtuple
 ProgramWizardContext = namedtuple('ProgramWizardContext', 'session identifiers script_manager image_version_ref executable_versions')
 
 class ProgramWizard(QWizard):
-    def __init__(self, context, *args, **kwargs):
-        QWizard.__init__(self, *args, **kwargs)
+    def __init__(self, parent, context):
+        QWizard.__init__(self, parent)
+
+        self.setModal(True)
 
         self.session             = context.session
         self.identifiers         = context.identifiers
@@ -37,9 +39,6 @@ class ProgramWizard(QWizard):
         self.image_version_ref   = context.image_version_ref
         self.executable_versions = context.executable_versions
         self.canceled            = False
-
-        self.setWindowFlags(self.windowFlags() | Qt.Tool)
-        self.setModal(True)
 
         self.rejected.connect(lambda: self.set_canceled(True))
 
