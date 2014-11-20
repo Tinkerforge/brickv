@@ -70,19 +70,15 @@ class TabWindow(QWidget):
     Callbacks called after the tabbing and before the  untabbing events
     can be registered."""
 
-    def __init__(self, tab_widget, name, window_icon, button_handler, parent=None):
+    def __init__(self, tab_widget, name, button_handler, parent=None):
         super(TabWindow, self).__init__(parent)
 
         self.tab_widget = tab_widget
         self.name = name
-        self.setWindowIcon(window_icon)
-
         self.button = None # see tab()
         self.button_handler = button_handler
-        self.button_icon_default = \
-            QIcon(os.path.join(get_program_path(), "tab-default-icon.png"))
-        self.button_icon_mouse_over = \
-            QIcon(os.path.join(get_program_path(), "tab-mouse-over-icon.png"))
+        self.button_icon_default = QIcon(os.path.join(get_program_path(), "tab-default-icon.png"))
+        self.button_icon_mouse_over = QIcon(os.path.join(get_program_path(), "tab-mouse-over-icon.png"))
 
     def closeEvent(self, event):
         self.tab()

@@ -36,7 +36,6 @@ from brickv.advanced import AdvancedWindow
 from brickv.async_call import async_start_thread, async_next_session
 from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
-from brickv.program_path import get_program_path
 from brickv import config
 from brickv import infos
 from brickv.tab_window import TabWindow
@@ -47,7 +46,6 @@ import sys
 import time
 import gc
 
-
 class MainWindow(QMainWindow, Ui_MainWindow):
     qtcb_enumerate = pyqtSignal(str, str, 'char', type((0,)), type((0,)), int, int)
     qtcb_connected = pyqtSignal(int)
@@ -57,9 +55,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QMainWindow.__init__(self, parent)
 
         self.setupUi(self)
-
-        self.icon = QIcon(os.path.join(get_program_path(), "brickv-icon.png"))
-        self.setWindowIcon(self.icon)
 
         signal.signal(signal.SIGINT, self.exit_brickv)
         signal.signal(signal.SIGTERM, self.exit_brickv)
@@ -389,7 +384,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.show_plugin(uid_text)
 
     def create_tab_window(self, device_info, connected_uid, position):
-        tab_window = TabWindow(self.tab_widget, device_info.name, self.icon, self.untab)
+        tab_window = TabWindow(self.tab_widget, device_info.name, self.untab)
         tab_window._info = device_info
         tab_window.set_callback_on_tab(lambda index:
             self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_PENDING and \

@@ -49,7 +49,7 @@ if not 'brickv' in sys.modules:
         # directory named differently than 'brickv'
         sys.modules['brickv'] = __import__(tail, globals(), locals(), [], -1)
 
-from PyQt4.QtGui import QApplication
+from PyQt4.QtGui import QApplication, QIcon
 from PyQt4.QtCore import QEvent, pyqtSignal
 
 from brickv import config
@@ -67,7 +67,9 @@ class BrickViewer(QApplication):
 
     def __init__(self, *args, **kwargs):
         QApplication.__init__(self, *args, **kwargs)
+
         self.object_creator_signal.connect(self.object_creator_slot)
+        self.setWindowIcon(QIcon(os.path.join(program_path, 'brickv-icon.png')))
 
     def object_creator_slot(self, object_creator):
         object_creator.create()
