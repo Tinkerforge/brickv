@@ -167,6 +167,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.tree_files.setColumnWidth(1, 85)
 
         self.tree_files.selectionModel().selectionChanged.connect(self.update_ui_state)
+        self.tree_files.activated.connect(self.rename_activated_file)
         self.button_upload_files.clicked.connect(self.upload_files)
         self.button_download_files.clicked.connect(self.download_selected_files)
         self.button_rename_file.clicked.connect(self.rename_selected_file)
@@ -388,14 +389,26 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                        cb_open,
                        cb_open_error)
 
+    def rename_activated_file(self, index):
+        if index.column() == 0:
+            mapped_index = self.tree_files_proxy_model.mapToSource(index)
+            name_item    = self.tree_files_model.itemFromIndex(mapped_index)
+            item_type    = name_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
+
+            # only rename files via activation, because diretories are expanded
+            if item_type == ITEM_TYPE_FILE:
+                self.rename_item(name_item)
+
     def rename_selected_file(self):
         selected_name_items = self.get_selected_name_items()
 
         if len(selected_name_items) != 1:
             return
 
-        selected_name_item = selected_name_items[0]
-        item_type          = selected_name_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
+        self.rename_item(selected_name_items[0])
+
+    def rename_item(self, name_item):
+        item_type = name_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
 
         if item_type == ITEM_TYPE_FILE:
             title     = 'Rename File'
@@ -404,7 +417,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             title     = 'Rename Directory'
             type_name = 'directory'
 
-        old_name = unicode(selected_name_item.text())
+        old_name = unicode(name_item.text())
 
         # get new name
         dialog = ExpandingInputDialog(None)
@@ -431,19 +444,19 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             return
 
         # check that new name is not already in use
-        selected_name_item_parent = selected_name_item.parent()
+        name_item_parent = name_item.parent()
 
-        if selected_name_item_parent == None:
-            selected_name_item_parent = self.tree_files_model.invisibleRootItem()
+        if name_item_parent == None:
+            name_item_parent = self.tree_files_model.invisibleRootItem()
 
-        for i in range(selected_name_item_parent.rowCount()):
-            if new_name == selected_name_item_parent.child(i).text():
+        for i in range(name_item_parent.rowCount()):
+            if new_name == name_item_parent.child(i).text():
                 QMessageBox.critical(None, title + ' Error',
                                      'The new {0} name is already in use.'.format(type_name),
                                      QMessageBox.Ok)
                 return
 
-        absolute_old_name = posixpath.join(self.bin_directory, get_full_item_path(selected_name_item))
+        absolute_old_name = posixpath.join(self.bin_directory, get_full_item_path(name_item))
         absolute_new_name = posixpath.join(posixpath.split(absolute_old_name)[0], new_name)
 
         def cb_rename(result):
@@ -454,7 +467,10 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 QMessageBox.critical(None, title + ' Error',
                                      u'Could not rename {0}:\n\n{1}'.format(type_name, result.stderr))
             else:
-                selected_name_item.setText(new_name)
+                name_item.setText(new_name)
+
+                if self.tree_files.header().sortIndicatorSection() == 0:
+                    self.tree_files.header().setSortIndicator(0, self.tree_files.header().sortIndicatorOrder())
 
         self.script_manager.execute_script('rename', cb_rename,
                                            [absolute_old_name, absolute_new_name])
