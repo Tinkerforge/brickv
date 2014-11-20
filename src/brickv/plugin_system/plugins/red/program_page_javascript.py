@@ -26,6 +26,7 @@ from PyQt4.QtCore import QVariant
 from brickv.plugin_system.plugins.red.api import REDProgram
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
+from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.ui_program_page_javascript import Ui_ProgramPageJavaScript
 
 def get_nodejs_versions(script_manager, callback):
@@ -262,6 +263,6 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
             try:
                 program.set_schedule(REDProgram.START_MODE_NEVER, False, 0, '') # FIXME: async_call
             except REDError as e:
-                QMessageBox.critical(None, 'Edit Error',
+                QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                      u'Could not update schedule of program [{0}]:\n\n{1}'
                                      .format(program.cast_custom_option_value('name', unicode, '<unknown>')))

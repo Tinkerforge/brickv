@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QWizardPage
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.program_utils import *
 import time
 
@@ -51,7 +52,7 @@ class ProgramPage(QWizardPage):
         try:
             program.set_custom_option_value('last_edit', int(time.time())) # FIXME: async_call
         except REDError as e:
-            QMessageBox.critical(None, 'Edit Error',
+            QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                  u'Could not update last edit timestamp of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
 
@@ -125,7 +126,7 @@ class ProgramPage(QWizardPage):
         try:
             program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
         except REDError as e:
-            QMessageBox.critical(None, 'Edit Error',
+            QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                  u'Could not update command of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
             return False
@@ -140,7 +141,7 @@ class ProgramPage(QWizardPage):
             try:
                 program.set_custom_option_value(name, value) # FIXME: async_call
             except REDError as e:
-                QMessageBox.critical(None, 'Edit Error',
+                QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                      u'Could not update custom options of program [{0}]:\n\n{1}'
                                      .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
                 return False

@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtCore import Qt
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
+from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.ui_program_page_schedule import Ui_ProgramPageSchedule
 
 class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
@@ -125,7 +126,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         try:
             program.set_schedule(start_mode, continue_after_error, start_interval, start_fields) # FIXME: async_call
         except REDError as e:
-            QMessageBox.critical(None, 'Edit Error',
+            QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                  u'Could not update stdio redirection of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
             return
@@ -133,7 +134,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         try:
             program.set_custom_option_value('started_once_after_upload', False) # FIXME: async_call
         except REDError as e:
-            QMessageBox.critical(None, 'Edit Error',
+            QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                  u'Could not update custom options of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
             return

@@ -26,6 +26,7 @@ from PyQt4.QtCore import Qt, QVariant
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QFileDialog, \
                         QMessageBox, QSortFilterProxyModel, QApplication
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog
 from brickv.plugin_system.plugins.red.ui_program_info_logs import Ui_ProgramInfoLogs
 from brickv.async_call import async_call
@@ -46,7 +47,7 @@ class LogsProxyModel(QSortFilterProxyModel):
 
 
 class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
-    def __init__(self, context, update_main_ui_state, set_widget_enabled, *args, **kwargs):
+    def __init__(self, context, update_main_ui_state, set_widget_enabled, is_alive, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
@@ -56,6 +57,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.program                = context.program
         self.update_main_ui_state   = update_main_ui_state
         self.set_widget_enabled     = set_widget_enabled
+        self.is_alive               = is_alive
         self.log_directory          = posixpath.join(unicode(self.program.root_directory), 'log')
         self.refresh_in_progress    = False
         self.file_icon              = QIcon(os.path.join(get_program_path(), "file-icon.png"))
@@ -367,12 +369,12 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
     def download_selected_logs(self):
         def log_download_pd_closed():
             if len(log_files_to_download['files']) > 0:
-                QMessageBox.warning(None,
+                QMessageBox.warning(get_main_window(),
                                     'Program | Logs',
                                     'Download could not finish.',
                                     QMessageBox.Ok)
             else:
-                QMessageBox.information(None,
+                QMessageBox.information(get_main_window(),
                                         'Program | Logs',
                                         'Download complete!',
                                         QMessageBox.Ok)
@@ -400,7 +402,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             os.remove(os.path.join(unicode(log_files_download_dir),
                                    unicode('write_test_file')))
         except:
-            QMessageBox.critical(None,
+            QMessageBox.critical(get_main_window(),
                                  'Program | Logs',
                                  'Directory not writeable.',
                                  QMessageBox.Ok)
@@ -494,26 +496,26 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                        cb_open_error)
 
     def delete_selected_logs(self):
-        button = QMessageBox.question(None, 'Delete Logs',
+        button = QMessageBox.question(get_main_window(), 'Delete Logs',
                                       'Irreversibly deleting selected logs.',
                                       QMessageBox.Ok, QMessageBox.Cancel)
 
-        if button != QMessageBox.Ok:
+        if not self.is_alive() or button != QMessageBox.Ok:
             return
 
         def cb_program_delete_logs(result):
             if result != None and result.stderr == "":
                 if json.loads(result.stdout):
                     self.refresh_logs()
-                    QMessageBox.information(None,
+                    QMessageBox.information(get_main_window(),
                                            'Program | Logs',
                                            'Deleted successfully!',
-                                                  QMessageBox.Ok)
+                                           QMessageBox.Ok)
                 else:
-                    QMessageBox.critical(None,
+                    QMessageBox.critical(get_main_window(),
                                          'Program | Logs',
                                          'Deletion failed',
-                                               QMessageBox.Ok)
+                                         QMessageBox.Ok)
             else:
                 pass
                 # TODO: Error popup for user?

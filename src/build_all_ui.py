@@ -11,6 +11,6 @@ for f in os.walk(brickv):
         os.system('python build_ui.py')
 
 p = os.path.join(brickv, 'plugin_system', 'plugins')
-print 'calling ' +  p + '/generate.py'
+print 'calling ' + os.path.join(p, 'generate.py')
 os.chdir(p)
 os.system('python generate.py')

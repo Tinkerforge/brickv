@@ -26,6 +26,7 @@ from PyQt4.QtCore import Qt, QVariant, QTimer
 from PyQt4.QtGui import QApplication, QWidget, QDialog, QMessageBox, QListWidgetItem
 from brickv.plugin_system.plugins.red.ui_red_tab_program import Ui_REDTabProgram
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.program_info_main import ProgramInfoMain
 from brickv.plugin_system.plugins.red.program_wizard import ProgramWizardContext
 from brickv.plugin_system.plugins.red.program_wizard_new import ProgramWizardNew
@@ -229,11 +230,11 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         program_info = selected_items[0].data(Qt.UserRole).toPyObject()
         program      = program_info.program
         name         = program.cast_custom_option_value('name', unicode, '<unknown>')
-        button       = QMessageBox.question(None, 'Delete Program',
+        button       = QMessageBox.question(get_main_window(), 'Delete Program',
                                             u'Deleting program [{0}] is irreversible. All files of this program will be deleted.'.format(name),
                                             QMessageBox.Ok, QMessageBox.Cancel)
 
-        if button != QMessageBox.Ok:
+        if not self.tab_is_alive or button != QMessageBox.Ok:
             return
 
         program_info.name_changed.disconnect(self.refresh_program_names)
@@ -241,7 +242,7 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         try:
             program.purge() # FIXME: async_call
         except REDError as e:
-            QMessageBox.critical(None, 'Delete Error',
+            QMessageBox.critical(get_main_window(), 'Delete Program Error',
                                  u'Could not delete program [{0}]:\n\n{1}'.format(name, str(e)))
             return
 

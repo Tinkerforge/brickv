@@ -26,6 +26,7 @@ from PyQt4.QtCore import Qt, QDateTime, QVariant
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QAbstractItemView, QLineEdit,\
                         QSortFilterProxyModel, QFileDialog, QMessageBox, QInputDialog, QApplication, QDialog
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog, ExpandingInputDialog
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
 from brickv.async_call import async_call
@@ -138,7 +139,7 @@ class FilesProxyModel(QSortFilterProxyModel):
 
 
 class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
-    def __init__(self, context, update_main_ui_state, set_widget_enabled, *args, **kwargs):
+    def __init__(self, context, update_main_ui_state, set_widget_enabled, is_alive, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
@@ -148,6 +149,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.program                 = context.program
         self.update_main_ui_state    = update_main_ui_state
         self.set_widget_enabled      = set_widget_enabled
+        self.is_alive                = is_alive
         self.bin_directory           = posixpath.join(unicode(self.program.root_directory), 'bin')
         self.refresh_in_progress     = False
         self.available_files         = {}
@@ -249,12 +251,12 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
     def download_selected_files(self):
         def file_download_pd_closed():
             if len(files_to_download) > 0:
-                QMessageBox.warning(None,
+                QMessageBox.warning(get_main_window(),
                                     'Program | Files',
                                     'Download could not finish.',
                                     QMessageBox.Ok)
             else:
-                QMessageBox.information(None,
+                QMessageBox.information(get_main_window(),
                                         'Program | Files',
                                         'Download complete!',
                                         QMessageBox.Ok)
@@ -297,14 +299,14 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 os.remove(os.path.join(unicode(dir_path),
                                        unicode('write_test_file')))
             except:
-                QMessageBox.critical(None,
+                QMessageBox.critical(get_main_window(),
                                      'Program | Logs',
                                      'Directory not writeable.',
                                      QMessageBox.Ok)
                 return
 
         if len(files_to_download) <= 0:
-            QMessageBox.information(None,
+            QMessageBox.information(get_main_window(),
                                     'Program | Files',
                                     'Download complete!',
                                     QMessageBox.Ok)
@@ -438,7 +440,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         # check that new name is valid
         if len(new_name) == 0 or new_name == '.' or new_name == '..' or '/' in new_name:
-            QMessageBox.critical(None, title + ' Error',
+            QMessageBox.critical(get_main_window(), title + ' Error',
                                  'A valid {0} name cannot be empty or be one dot [.] or be two dots [..] or contain a forward slash [/].'.format(type_name),
                                  QMessageBox.Ok)
             return
@@ -451,7 +453,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         for i in range(name_item_parent.rowCount()):
             if new_name == name_item_parent.child(i).text():
-                QMessageBox.critical(None, title + ' Error',
+                QMessageBox.critical(get_main_window(), title + ' Error',
                                      'The new {0} name is already in use.'.format(type_name),
                                      QMessageBox.Ok)
                 return
@@ -461,10 +463,10 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         def cb_rename(result):
             if result == None:
-                QMessageBox.critical(None, title + ' Error',
+                QMessageBox.critical(get_main_window(), title + ' Error',
                                      u'Internal error during {0} rename'.format(type_name))
             elif result.exit_code != 0:
-                QMessageBox.critical(None, title + ' Error',
+                QMessageBox.critical(get_main_window(), title + ' Error',
                                      u'Could not rename {0}:\n\n{1}'.format(type_name, result.stderr))
             else:
                 name_item.setText(new_name)
@@ -476,11 +478,11 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                            [absolute_old_name, absolute_new_name])
 
     def delete_selected_files(self):
-        button = QMessageBox.question(None, 'Delete Files',
+        button = QMessageBox.question(get_main_window(), 'Delete Files',
                                       'Irreversibly deleting selected files and directories.',
                                       QMessageBox.Ok, QMessageBox.Cancel)
 
-        if button != QMessageBox.Ok:
+        if not self.is_alive() or button != QMessageBox.Ok:
             return
 
         selected_name_items = set(self.get_selected_name_items())
@@ -571,13 +573,13 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             self.refresh_files()
 
             if aborted:
-                QMessageBox.information(None, 'Delete Files',
+                QMessageBox.information(get_main_window(), 'Delete Files',
                                         u'Delete operation was aborted.')
             elif result == None:
-                QMessageBox.critical(None, 'Delete Files Error',
+                QMessageBox.critical(get_main_window(), 'Delete Files Error',
                                      u'Internal error during deletion.')
             elif result.exit_code != 0:
-                QMessageBox.critical(None, 'Delete Files Error',
+                QMessageBox.critical(get_main_window(), 'Delete Files Error',
                                      u'Could not delete selected files/directories:\n\n{0}'.format(result.stderr))
 
         sd_ref[0] = self.script_manager.execute_script('program_delete_files_dirs',

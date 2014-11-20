@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtCore import pyqtSignal, QTimer
 from PyQt4.QtGui import QWidget, QDialog, QMessageBox
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.program_info import ProgramInfoContext
 from brickv.plugin_system.plugins.red.program_info_files import ProgramInfoFiles
 from brickv.plugin_system.plugins.red.program_info_logs import ProgramInfoLogs
@@ -144,16 +145,19 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         self.button_language_action.setVisible(False)
 
+        def is_alive():
+            return self.tab_is_alive
+
         # create logs info widget
         context = ProgramInfoContext(self.session, self.script_manager, self.executable_versions, self.program)
 
-        self.widget_logs = ProgramInfoLogs(context, self.update_ui_state, self.set_widget_enabled)
+        self.widget_logs = ProgramInfoLogs(context, self.update_ui_state, self.set_widget_enabled, is_alive)
         self.layout_logs.addWidget(self.widget_logs)
 
         # create files info widget
         context = ProgramInfoContext(self.session, self.script_manager, self.executable_versions, self.program)
 
-        self.widget_files = ProgramInfoFiles(context, self.update_ui_state, self.set_widget_enabled)
+        self.widget_files = ProgramInfoFiles(context, self.update_ui_state, self.set_widget_enabled, is_alive)
         self.layout_files.addWidget(self.widget_files)
 
         self.update_ui_state()
@@ -454,7 +458,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         try:
             self.program.start()
         except REDError as e:
-            QMessageBox.critical(None, 'Start Error',
+            QMessageBox.critical(get_main_window(), 'Start Error',
                                  u'Could not start program [{0}]:\n\n{1}'
                                  .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
 
@@ -463,7 +467,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             try:
                 self.program.last_spawned_process.kill(REDProcess.SIGNAL_KILL)
             except REDError as e:
-                QMessageBox.critical(None, 'Kill Error',
+                QMessageBox.critical(get_main_window(), 'Kill Error',
                                      u'Could not kill current process of program [{0}]:\n\n{1}'
                                      .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
 
@@ -471,7 +475,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         try:
             self.program.continue_schedule()
         except REDError as e:
-            QMessageBox.critical(None, 'Schedule Error',
+            QMessageBox.critical(get_main_window(), 'Schedule Error',
                                  u'Could not continue schedule of program [{0}]:\n\n{1}'
                                  .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
 
@@ -480,7 +484,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             try:
                 self.program.last_spawned_process.stdin.write_async((unicode(self.edit_stdin_pipe_input.text()) + u'\n').encode('utf-8'))
             except REDError as e:
-                QMessageBox.critical(None, 'Pipe Input Error',
+                QMessageBox.critical(get_main_window(), 'Pipe Input Error',
                                      u'Could not write to stdin of current process of program [{0}]:\n\n{1}'
                                      .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
             else:
