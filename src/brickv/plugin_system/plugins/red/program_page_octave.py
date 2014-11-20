@@ -61,6 +61,7 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(self.completeChanged.emit)
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
+        self.label_spacer.setText('')
 
         self.combo_script_file_selector       = MandatoryTypedFileSelector(self,
                                                                            self.label_script_file,
@@ -145,6 +146,7 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
         self.combo_script_file_selector.set_visible(start_mode_script_file)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.option_list_editor.set_visible(show_advanced_options)
+        self.label_spacer.setVisible(not show_advanced_options)
 
         self.option_list_editor.update_ui_state()
 

@@ -63,6 +63,7 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(self.completeChanged.emit)
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
+        self.label_spacer.setText('')
 
         self.combo_script_file_selector       = MandatoryTypedFileSelector(self,
                                                                            self.label_script_file,
@@ -166,8 +167,9 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
         self.label_url.setVisible(start_mode_web_interface)
         self.line.setVisible(not start_mode_web_interface)
         self.check_show_advanced_options.setVisible(not start_mode_web_interface)
-        self.combo_working_directory_selector.set_visible(show_advanced_options and not start_mode_web_interface)
-        self.option_list_editor.set_visible(show_advanced_options and not start_mode_web_interface)
+        self.combo_working_directory_selector.set_visible(not start_mode_web_interface and show_advanced_options)
+        self.option_list_editor.set_visible(not start_mode_web_interface and show_advanced_options)
+        self.label_spacer.setVisible(start_mode_web_interface or not show_advanced_options)
 
         self.option_list_editor.update_ui_state()
 

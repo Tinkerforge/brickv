@@ -61,6 +61,7 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(self.completeChanged.emit)
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
+        self.label_spacer.setText('')
 
         self.combo_executable_selector        = MandatoryTypedFileSelector(self,
                                                                            self.label_executable,
@@ -143,6 +144,7 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
         self.label_executable_help.setVisible(start_mode_executable)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.option_list_editor.set_visible(show_advanced_options)
+        self.label_spacer.setVisible(not show_advanced_options)
 
         self.option_list_editor.update_ui_state()
 

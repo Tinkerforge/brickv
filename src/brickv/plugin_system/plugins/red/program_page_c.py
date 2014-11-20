@@ -68,6 +68,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.combo_start_mode.currentIndexChanged.connect(self.completeChanged.emit)
         self.check_compile_from_source.stateChanged.connect(self.update_ui_state)
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
+        self.label_spacer.setText('')
 
         self.edit_executable_checker          = MandatoryLineEditChecker(self,
                                                                          self.label_executable,
@@ -163,6 +164,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         self.label_compile_from_source_help_edit.setVisible(start_mode_executable and self.edit_mode)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.make_option_list_editor.set_visible(compile_from_source and show_advanced_options)
+        self.label_spacer.setVisible(not compile_from_source or not show_advanced_options)
 
         self.make_option_list_editor.update_ui_state()
 

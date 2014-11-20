@@ -65,6 +65,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(self.completeChanged.emit)
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
+        self.label_spacer.setText('')
 
         self.combo_script_file_selector       = MandatoryTypedFileSelector(self,
                                                                            self.label_script_file,
@@ -175,6 +176,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
     # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
         flavor                 = self.get_field('javascript.flavor').toInt()[0]
+        flavor_browser         = flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER
         flavor_nodejs          = flavor == Constants.JAVASCRIPT_FLAVOR_NODEJS
         start_mode             = self.get_field('javascript.start_mode').toInt()[0]
         start_mode_script_file = start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE
@@ -191,6 +193,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         self.check_show_advanced_options.setVisible(flavor_nodejs)
         self.combo_working_directory_selector.set_visible(flavor_nodejs and show_advanced_options)
         self.option_list_editor.set_visible(flavor_nodejs and show_advanced_options)
+        self.label_spacer.setVisible(flavor_browser or not show_advanced_options)
 
         self.option_list_editor.update_ui_state()
 
