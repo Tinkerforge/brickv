@@ -4,45 +4,37 @@
 import os
 import json
 import shutil
-from sys import argv
+import sys
 
-if len(argv) < 3:
-    print json.dumps(False)
-    exit (0)
+if len(sys.argv) < 3:
+    sys.stderr.write(unicode('Missing script parameters (internal error)').encode('utf-8'))
+    exit(1)
 
-file_list = json.loads(argv[1])
-dir_list = json.loads(argv[2])
+try:
+    file_list = json.loads(sys.argv[1])
+    dir_list  = json.loads(sys.argv[2])
+except Exception as e:
+    sys.stderr.write(unicode(e).encode('utf-8'))
+    exit(2)
 
-if not isinstance(file_list, list) or\
-   not isinstance(dir_list, list):
-    print json.dumps(False)
-    exit(0)
+if not isinstance(file_list, list) or not isinstance(dir_list, list):
+    sys.stderr.write(unicode('Invalid script parameters (internal error)').encode('utf-8'))
+    exit(1)
 
-if len(file_list) <= 0 and\
-   len(dir_list) <= 0:
-    print json.dumps(False)
-    exit(0)
-
-if len(file_list) > 0:
-    for f in file_list:
-        file_path = unicode(f)
-        if not os.path.exists(file_path):
-            continue
+for file_path in file_list:
+    if os.path.exists(file_path):
         try:
             os.remove(file_path)
-        except:
-            print json.dumps(False)
-            exit(0)
+        except Exception as e:
+            sys.stderr.write(unicode(e).encode('utf-8'))
+            exit(2)
 
-if len(dir_list) > 0:
-    for d in dir_list:
-        dir_path = unicode(d)
-        if not os.path.isdir(dir_path):
-            continue
+for dir_path in dir_list:
+    if os.path.isdir(dir_path):
         try:
             shutil.rmtree(dir_path)
-        except:
-            print json.dumps(False)
-            exit(0)
+        except Exception as e:
+            sys.stderr.write(unicode(e).encode('utf-8'))
+            exit(2)
 
-print json.dumps(True)
+exit(0)

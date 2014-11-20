@@ -476,7 +476,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                            [absolute_old_name, absolute_new_name])
 
     def delete_selected_files(self):
-        sd     = None
+        sd_ref = [None]
         button = QMessageBox.question(None, 'Delete Files',
                                       'Irreversibly deleting selected files and directories.',
                                       QMessageBox.Ok, QMessageBox.Cancel)
@@ -484,49 +484,51 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if button != QMessageBox.Ok:
             return
 
-        def deletion_pd_canceled():
-            if sd is None:
+        def progress_canceled(sd_ref):
+            sd = sd_ref[0]
+
+            if sd == None:
                 return
 
             self.script_manager.abort_script(sd)
 
-            QMessageBox.critical(None,
-                                 'Program | Files',
-                                 'Deletion aborted.',
-                                 QMessageBox.Ok)
+        progress = ExpandingProgressDialog(self)
+        progress.setWindowTitle('Delete Files')
+        progress.setModal(True)
+        progress.setMinimumDuration(0)
+        progress.setRange(0, 0)
+        progress.setLabelText('Collecting files and directories to delete')
+        progress.canceled.connect(lambda: progress_canceled(sd_ref))
 
-        deletion_pd = ExpandingProgressDialog("Deleting...", "Cancel", 0, 0, self)
+        def cb_program_delete_files_dirs(sd_ref, result):
+            sd = sd_ref[0]
 
-        deletion_pd.setWindowTitle("Deletion in Progress")
-        deletion_pd.setModal(True)
-        deletion_pd.setMinimumDuration(0)
-        deletion_pd.canceled.connect(deletion_pd_canceled)
-        deletion_pd.setRange(0, 0)
+            if sd != None:
+                aborted = sd.abort
+            else:
+                aborted = False
 
-        def cb_program_delete_files_dirs(result):
-            sd = None
-            deletion_pd.cancel()
+            sd_ref[0] = None
+
+            progress.cancel()
             self.refresh_files()
 
-            if result == None or len(result.stderr) > 0 or\
-               not json.loads(result.stdout):
-                QMessageBox.critical(None,
-                                     'Program | Files',
-                                     'Deletion failed.',
-                                     QMessageBox.Ok)
-                return
-
-            QMessageBox.information(None,
-                                 'Program | Files',
-                                 'Deleted successfully!',
-                                 QMessageBox.Ok)
+            if aborted:
+                QMessageBox.information(None, 'Delete Files',
+                                        u'Delete operation was aborted.')
+            elif result == None:
+                QMessageBox.critical(None, 'Delete Files Error',
+                                     u'Internal error during deletion.')
+            elif result.exit_code != 0:
+                QMessageBox.critical(None, 'Delete Files Error',
+                                     u'Could not delete selected files/directories:\n\n{0}'.format(result.stderr))
 
         selected_name_items = set(self.get_selected_name_items())
 
         if len(selected_name_items) == 0:
             return
 
-        deletion_pd.show()
+        progress.show()
 
         files_to_delete = []
         dirs_to_delete  = []
@@ -559,7 +561,27 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             else:
                 files_to_delete.append(unicode(posixpath.join(self.bin_directory, path)))
 
-        sd = self.script_manager.execute_script('program_delete_files_dirs',
-                                                cb_program_delete_files_dirs,
-                                                [json.dumps(files_to_delete),
-                                                 json.dumps(dirs_to_delete)])
+        message = 'Deleting '
+
+        if len(files_to_delete) == 1:
+            message += '1 file '
+        elif len(files_to_delete) > 1:
+            message += '{0} files '.format(len(files_to_delete))
+
+        if len(dirs_to_delete) == 1:
+            if len(files_to_delete) > 0:
+                message += 'and '
+
+            message += '1 directory'
+        elif len(dirs_to_delete) > 1:
+            if len(files_to_delete) > 0:
+                message += 'and '
+
+            message += '{0} directories'.format(len(dirs_to_delete))
+
+        progress.setLabelText(message)
+
+        sd_ref[0] = self.script_manager.execute_script('program_delete_files_dirs',
+                                                       lambda result: cb_program_delete_files_dirs(sd_ref, result),
+                                                       [json.dumps(files_to_delete), json.dumps(dirs_to_delete)],
+                                                       execute_as_user=True)

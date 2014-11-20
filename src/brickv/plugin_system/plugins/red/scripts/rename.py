@@ -10,7 +10,8 @@ if len(sys.argv) < 3:
 
 try:
     os.rename(sys.argv[1], sys.argv[2])
-    exit(0)
 except Exception as e:
     sys.stderr.write(unicode(e).encode('utf-8'))
     exit(2)
+
+exit(0)
