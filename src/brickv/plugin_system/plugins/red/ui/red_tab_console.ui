@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>486</width>
-    <height>300</height>
+    <width>565</width>
+    <height>394</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,10 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>Serial Port</string>
+          <string>Serial Port:</string>
+         </property>
+         <property name="buddy">
+          <cstring>combo_serial_port</cstring>
          </property>
         </widget>
        </item>
@@ -60,7 +63,7 @@
      <item>
       <widget class="QPushButton" name="copy_button">
        <property name="text">
-        <string>Copy selection to clipboard</string>
+        <string>Copy Selection To Clipboard</string>
        </property>
       </widget>
      </item>
@@ -94,6 +97,12 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>combo_serial_port</tabstop>
+  <tabstop>refresh_button</tabstop>
+  <tabstop>connect_button</tabstop>
+  <tabstop>copy_button</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

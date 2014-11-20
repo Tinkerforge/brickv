@@ -83,11 +83,12 @@ class TerminalWidget(QWidget):
         self._char_height = [0]*(self._rows+1)
 
 #        self.parent().setTabOrder(self, self)
-        self.setFocusPolicy(Qt.WheelFocus)
+        self.setFocusPolicy(Qt.StrongFocus)
         self.setAutoFillBackground(False)
         self.setAttribute(Qt.WA_OpaquePaintEvent, True)
         self.setCursor(Qt.IBeamCursor)
         font = QFont(font_name)
+        font.setStyleHint(QFont.TypeWriter)
         font.setPixelSize(font_size)
         self.setFont(font)
         self._session = None
@@ -278,13 +279,14 @@ class TerminalWidget(QWidget):
         brush = QBrush(bcol)
         painter.setPen(pen)
         painter.setBrush(brush)
-        for (start_col, start_row, end_col, end_row) in self._selection:
-            x, y = self._pos2pixel(start_col, start_row)
-            width, height = self._pos2pixel(
-                end_col - start_col, end_row - start_row)
-            rect = QRect(x, y, width, height)
-#            painter.drawRect(rect)
-            painter.fillRect(rect, brush)
+        if self._selection != None:
+            for (start_col, start_row, end_col, end_row) in self._selection:
+                x, y = self._pos2pixel(start_col, start_row)
+                width, height = self._pos2pixel(
+                    end_col - start_col, end_row - start_row)
+                rect = QRect(x, y, width, height)
+#                painter.drawRect(rect)
+                painter.fillRect(rect, brush)
 
     def zoom_in(self):
         font = self.font()
@@ -409,9 +411,10 @@ class TerminalWidget(QWidget):
 
     def text_selection(self):
         text = []
-        for (start_col, start_row, end_col, end_row) in self._selection:
-            for row in range(start_row, end_row):
-                text.append(self._text[row][start_col:end_col])
+        if self._selection != None:
+            for (start_col, start_row, end_col, end_row) in self._selection:
+                for row in range(start_row, end_row):
+                    text.append(self._text[row][start_col:end_col])
         return "\n".join(text)
 
     def column_count(self):
