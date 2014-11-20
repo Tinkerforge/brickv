@@ -1052,3 +1052,11 @@ def timestamp_to_date_at_time(timestamp):
     time = QDateTime.fromTime_t(timestamp).toString('HH:mm:ss')
 
     return date + ' at ' + time
+
+def get_file_display_size(size):
+    if size < 1024:
+        return '%d Bytes' % size
+    elif size < 1048576:
+        return '%.1f kiB' % (size / 1024.0)
+    else:
+        return '%.1f MiB' % (size / 1048576.0)

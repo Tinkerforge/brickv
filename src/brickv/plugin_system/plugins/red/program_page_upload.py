@@ -39,12 +39,13 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.setupUi(self)
 
-        # state for async file upload
+        self.edit_mode         = False
         self.upload_successful = False
         self.language_api_name = None
         self.program           = None
         self.root_directory    = None
         self.uploads           = None
+        self.command           = None
         self.target            = None
         self.source            = None
         self.target_name       = None
@@ -61,6 +62,13 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.set_formatted_sub_title(u'Upload the {language} program [{name}].')
+
+        # if a program exists then this page is used in an edit wizard
+        if self.wizard().program != None:
+            self.edit_mode = True
+
+            self.set_formatted_sub_title(u'Upload new files for the {language} program [{name}].')
+
         self.update_ui_state()
 
     # overrides QWizardPage.isComplete
@@ -94,89 +102,123 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if defined:
             pass # FIXME: purge program?
 
+    def get_total_step_count(self):
+        count = 0
+
+        if not self.edit_mode:
+            count += 1 # define new program
+            count += 1 # set custom options
+
+        count += 1 # upload files
+        count += len(self.uploads)
+
+        if not self.edit_mode and self.command != None:
+            count += 1 # set command
+            count += 1 # set more custom options
+
+        if not self.edit_mode and self.wizard().hasVisitedPage(Constants.PAGE_STDIO):
+            count += 1 # set stdio redirection
+
+        if not self.edit_mode and self.wizard().hasVisitedPage(Constants.PAGE_SCHEDULE):
+            count += 1 # set schedule
+
+            if self.get_field('start_mode').toInt()[0] == Constants.START_MODE_ONCE:
+                count += 1 # start once after upload
+
+        count += 1 # upload successful
+
+        return count
+
     def start_upload(self):
         self.button_start_upload.setEnabled(False)
         self.wizard().setOption(QWizard.DisabledBackButtonOnLastPage, True)
 
         self.uploads = self.wizard().page(Constants.PAGE_FILES).get_uploads()
 
-        self.progress_total.setRange(0, 6 + len(self.uploads))
+        if not self.edit_mode:
+            self.language_api_name = Constants.language_api_names[self.get_field('language').toInt()[0]]
+            self.command           = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_command()
+
+        self.progress_total.setRange(0, self.get_total_step_count())
 
         # define new program
-        identifier = str(self.get_field('identifier').toString())
+        if not self.edit_mode:
+            self.next_step('Defining new program...', increase=0)
 
-        self.next_step('Defining new program...', increase=0)
+            identifier = str(self.get_field('identifier').toString())
 
-        try:
-            self.program = REDProgram(self.wizard().session).define(identifier) # FIXME: async_call
-        except REDError as e:
-            self.upload_error('...error: {0}'.format(e), False)
-            return
+            try:
+                self.program = REDProgram(self.wizard().session).define(identifier) # FIXME: async_call
+            except REDError as e:
+                self.upload_error('...error: {0}'.format(e), False)
+                return
 
-        self.log('...done')
+            self.log('...done')
 
         # set custom options
-        self.next_step('Setting custom options...')
+        if not self.edit_mode:
+            self.next_step('Setting custom options...')
 
-        # set custom option: name
-        name = unicode(self.get_field('name').toString())
+            # set custom option: name
+            name = unicode(self.get_field('name').toString())
 
-        try:
-            self.program.set_custom_option_value('name', name) # FIXME: async_call
-        except REDError as e:
-            self.upload_error('...error: {0}'.format(e))
-            return
-
-        # set custom option: language
-        self.language_api_name = Constants.language_api_names[self.get_field('language').toInt()[0]]
-
-        try:
-            self.program.set_custom_option_value('language', self.language_api_name) # FIXME: async_call
-        except REDError as e:
-            self.upload_error('...error: {0}'.format(e))
-            return
-
-        # set custom option: description
-        description = unicode(self.get_field('description').toString())
-
-        try:
-            self.program.set_custom_option_value('description', description) # FIXME: async_call
-        except REDError as e:
-            self.upload_error('...error: {0}'.format(e))
-            return
-
-        # set custom option: first_upload
-        timestamp = int(time.time())
-
-        try:
-            self.program.set_custom_option_value('first_upload', timestamp) # FIXME: async_call
-        except REDError as e:
-            self.upload_error('...error: {0}'.format(e))
-            return
-
-        # set custom option: last_edit
-        try:
-            self.program.set_custom_option_value('last_edit', timestamp) # FIXME: async_call
-        except REDError as e:
-            self.upload_error('...error: {0}'.format(e))
-            return
-
-        # set language specific custom options
-        custom_options = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_custom_options()
-
-        for name, value in custom_options.iteritems():
             try:
-                self.program.set_custom_option_value(name, value) # FIXME: async_call
+                self.program.set_custom_option_value('name', name) # FIXME: async_call
             except REDError as e:
                 self.upload_error('...error: {0}'.format(e))
                 return
 
-        self.log('...done')
+            # set custom option: language
+            try:
+                self.program.set_custom_option_value('language', self.language_api_name) # FIXME: async_call
+            except REDError as e:
+                self.upload_error('...error: {0}'.format(e))
+                return
+
+            # set custom option: description
+            description = unicode(self.get_field('description').toString())
+
+            try:
+                self.program.set_custom_option_value('description', description) # FIXME: async_call
+            except REDError as e:
+                self.upload_error('...error: {0}'.format(e))
+                return
+
+            # set custom option: first_upload
+            timestamp = int(time.time())
+
+            try:
+                self.program.set_custom_option_value('first_upload', timestamp) # FIXME: async_call
+            except REDError as e:
+                self.upload_error('...error: {0}'.format(e))
+                return
+
+            # set custom option: last_edit
+            try:
+                self.program.set_custom_option_value('last_edit', timestamp) # FIXME: async_call
+            except REDError as e:
+                self.upload_error('...error: {0}'.format(e))
+                return
+
+            # set language specific custom options
+            custom_options = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_custom_options()
+
+            for name, value in custom_options.iteritems():
+                try:
+                    self.program.set_custom_option_value(name, value) # FIXME: async_call
+                except REDError as e:
+                    self.upload_error('...error: {0}'.format(e))
+                    return
+
+            self.log('...done')
 
         # upload files
         self.next_step('Uploading files...', log=False)
 
-        self.root_directory = unicode(self.program.root_directory)
+        if self.edit_mode:
+            self.root_directory = unicode(self.wizard().program.root_directory)
+        else:
+            self.root_directory = unicode(self.program.root_directory)
 
         self.progress_file.setRange(0, len(self.uploads))
 
@@ -194,10 +236,6 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.next_step(u'Uploading {0}...'.format(self.source_name))
 
-        self.progress_file.setVisible(True)
-        self.progress_file.setRange(0, 0)
-        self.progress_file.setValue(0)
-
         try:
             source_st = os.stat(self.source_name)
             self.source = open(self.source_name, 'rb')
@@ -206,7 +244,10 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             return
 
         self.source_size = source_st.st_size
+
+        self.progress_file.setVisible(True)
         self.progress_file.setRange(0, self.source_size)
+        self.progress_file.setValue(0)
 
         self.target_name = posixpath.join(self.root_directory, 'bin', upload.target)
 
@@ -214,6 +255,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             target_directory = posixpath.split(self.target_name)[0]
 
             try:
+                # FIXME: keep track of which directories were already created to avoid creating them over and over again
                 create_directory(self.wizard().session, target_directory, DIRECTORY_FLAG_RECURSIVE, 0755, 1000, 1000)
             except REDError as e:
                 self.upload_error("...error creating target directory '{0}': {1}".format(target_directory, e))
@@ -225,6 +267,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             permissions = 0644
 
         try:
+            # FIXME: open file with exclusive flag in edit mode to be able to propmt the user before overwriting files
             self.target = REDFile(self.wizard().session).open(self.target_name,
                                                               REDFile.FLAG_WRITE_ONLY |
                                                               REDFile.FLAG_CREATE |
@@ -279,6 +322,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     def upload_files_done(self):
         self.progress_file.setVisible(False)
 
+        # FIXME: move compile steps after setting mode of the config, so the
+        # program doesn't end up in an half condfigured state if compilation fails
         if self.language_api_name == 'c':
             if self.get_field('c.compile_from_source').toBool():
                 self.compile_make()
@@ -288,16 +333,14 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 self.compile_fpcmake()
                 return
 
-        self.upload_configuration()
+        self.set_configuration()
 
-    def upload_configuration(self):
+    def set_configuration(self):
         # set command
-        command = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_command()
-
-        if command != None:
+        if not self.edit_mode and self.command != None:
             self.next_step('Setting command...')
 
-            executable, arguments, environment, working_directory = command
+            executable, arguments, environment, working_directory = self.command
 
             editable_arguments_offset   = len(arguments)
             editable_environment_offset = len(environment)
@@ -334,7 +377,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             self.log('...done')
 
         # set stdio redirection
-        if self.wizard().hasVisitedPage(Constants.PAGE_STDIO):
+        if not self.edit_mode and self.wizard().hasVisitedPage(Constants.PAGE_STDIO):
             self.next_step('Setting stdio redirection...')
 
             stdin_redirection  = Constants.api_stdin_redirections[self.get_field('stdin_redirection').toInt()[0]]
@@ -355,7 +398,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             self.log('...done')
 
         # set schedule
-        if self.wizard().hasVisitedPage(Constants.PAGE_SCHEDULE):
+        if not self.edit_mode and self.wizard().hasVisitedPage(Constants.PAGE_SCHEDULE):
             self.next_step('Setting schedule...')
 
             start_mode = self.get_field('start_mode').toInt()[0]
@@ -397,6 +440,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
                 self.log('...done')
 
+        # upload successful
         self.next_step('Upload successful!')
 
         self.progress_total.setValue(self.progress_total.maximum())
@@ -415,7 +459,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                     self.upload_error('...error')
                 else:
                     self.log('...done')
-                    self.upload_configuration()
+                    self.set_configuration()
             else:
                 self.upload_error('...error')
 
@@ -437,7 +481,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                     self.upload_error('...error')
                 else:
                     self.log('...done')
-                    self.upload_configuration()
+                    self.set_configuration()
             else:
                 self.upload_error('...error')
 

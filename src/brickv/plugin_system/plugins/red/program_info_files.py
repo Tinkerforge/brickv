@@ -27,7 +27,7 @@ from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QAbst
                         QSortFilterProxyModel, QFileDialog, QMessageBox, QInputDialog, QApplication, QDialog
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.utils import get_main_window
-from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog, ExpandingInputDialog
+from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog, ExpandingInputDialog, get_file_display_size
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
 from brickv.async_call import async_call
 from brickv.program_path import get_program_path
@@ -57,12 +57,6 @@ def expand_directory_walk_to_lists(directory_walk):
     expand('', directory_walk)
 
     return files, sorted(list(directories))
-
-def get_file_display_size(size):
-    if size < 1024:
-        return str(size) + ' Bytes'
-    else:
-        return str(size / 1024) + ' kiB'
 
 def get_full_item_path(item):
     def expand(item, path):
@@ -139,7 +133,7 @@ class FilesProxyModel(QSortFilterProxyModel):
 
 
 class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
-    def __init__(self, context, update_main_ui_state, set_widget_enabled, is_alive, *args, **kwargs):
+    def __init__(self, context, update_main_ui_state, set_widget_enabled, is_alive, show_upload_files_wizard, *args, **kwargs):
         QWidget.__init__(self, *args, **kwargs)
 
         self.setupUi(self)
@@ -170,7 +164,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         self.tree_files.selectionModel().selectionChanged.connect(self.update_ui_state)
         self.tree_files.activated.connect(self.rename_activated_file)
-        self.button_upload_files.clicked.connect(self.upload_files)
+        self.button_upload_files.clicked.connect(show_upload_files_wizard)
         self.button_download_files.clicked.connect(self.download_selected_files)
         self.button_rename_file.clicked.connect(self.rename_selected_file)
         self.button_delete_files.clicked.connect(self.delete_selected_files)
@@ -244,9 +238,6 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 selected_name_items.append(self.tree_files_model.itemFromIndex(mapped_index))
 
         return selected_name_items
-
-    def upload_files(self):
-        print 'upload_files'
 
     def download_selected_files(self):
         def file_download_pd_closed():

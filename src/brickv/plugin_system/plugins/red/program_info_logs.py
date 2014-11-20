@@ -27,7 +27,7 @@ from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QFile
                         QMessageBox, QSortFilterProxyModel, QApplication
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.utils import get_main_window
-from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog
+from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog, get_file_display_size
 from brickv.plugin_system.plugins.red.ui_program_info_logs import Ui_ProgramInfoLogs
 from brickv.async_call import async_call
 from brickv.program_path import get_program_path
@@ -102,12 +102,6 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                 # TODO: Error popup for user?
                 print 'refresh_logs cb_program_get_os_walk', result
                 return
-
-            def get_file_display_size(size):
-                if size < 1024:
-                    return str(size) + ' Bytes'
-                else:
-                    return str(size / 1024) + ' kiB'
 
             def create_file_size_item(size):
                 item = QStandardItem(get_file_display_size(size))

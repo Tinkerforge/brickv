@@ -42,6 +42,7 @@ from brickv.plugin_system.plugins.red.program_info_shell import ProgramInfoShell
 from brickv.plugin_system.plugins.red.program_info_vbnet import ProgramInfoVBNET
 from brickv.plugin_system.plugins.red.program_wizard import ProgramWizardContext
 from brickv.plugin_system.plugins.red.program_wizard_edit import ProgramWizardEdit
+from brickv.plugin_system.plugins.red.program_wizard_upload import ProgramWizardUpload
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.program_page_general import ProgramPageGeneral
 from brickv.plugin_system.plugins.red.program_page_c import ProgramPageC
@@ -87,6 +88,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.program_refresh_in_progress = False
 
         self.edit_general_wizard   = None
+        self.upload_files_wizard   = None
         self.edit_language_wizard  = None
         self.edit_arguments_wizard = None
         self.edit_stdio_wizard     = None
@@ -157,7 +159,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         # create files info widget
         context = ProgramInfoContext(self.session, self.script_manager, self.executable_versions, self.program)
 
-        self.widget_files = ProgramInfoFiles(context, self.update_ui_state, self.set_widget_enabled, is_alive)
+        self.widget_files = ProgramInfoFiles(context, self.update_ui_state, self.set_widget_enabled, is_alive, self.show_upload_files_wizard)
         self.layout_files.addWidget(self.widget_files)
 
         self.update_ui_state()
@@ -188,6 +190,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         if self.edit_general_wizard != None:
             self.edit_general_wizard.close()
+
+        if self.upload_files_wizard != None:
+            self.upload_files_wizard.close()
 
         if self.edit_language_wizard != None:
             self.edit_language_wizard.close()
@@ -539,6 +544,21 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         if self.tab_is_alive:
             self.edit_general_wizard = None
+
+            self.set_edit_buttons_enabled(True)
+
+    def show_upload_files_wizard(self):
+        self.set_edit_buttons_enabled(False)
+
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
+
+        self.upload_files_wizard = ProgramWizardUpload(self, context, self.program)
+
+        if self.upload_files_wizard.exec_() == QDialog.Accepted:
+            self.widget_files.refresh_files()
+
+        if self.tab_is_alive:
+            self.upload_files_wizard = None
 
             self.set_edit_buttons_enabled(True)
 
