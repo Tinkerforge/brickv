@@ -539,4 +539,5 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         if len(file_list) > 0:
             self.script_manager.execute_script('program_delete_logs',
                                                cb_program_delete_logs,
-                                               [json.dumps(file_list)])
+                                               [json.dumps(file_list)],
+                                               execute_as_user=True)

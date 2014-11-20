@@ -52,9 +52,10 @@ class ScriptData(QtCore.QObject):
         self.redirect_stderr_to_stdout = False
         self.script_instance           = None
         self.abort                     = False
+        self.execute_as_user           = False
 
 class ScriptManager:
-    ScriptResult = namedtuple('ScriptResult', 'stdout stderr, exit_code')
+    ScriptResult = namedtuple('ScriptResult', 'stdout stderr exit_code')
 
     @staticmethod
     def _call(script, sd, data):
@@ -87,7 +88,8 @@ class ScriptManager:
     # The stdout and stderr from the script will be given back to result_callback.
     # If there is an error, result_callback will report None.
     def execute_script(self, script_name, result_callback, params=None, max_length=65536,
-                       decode_output_as_utf8=True, redirect_stderr_to_stdout=False):
+                       decode_output_as_utf8=True, redirect_stderr_to_stdout=False,
+                       execute_as_user=False):
         if not script_name in self.scripts:
             if result_callback != None:
                 result_callback(None) # We are still in GUI thread, use result_callback instead of signal
@@ -103,6 +105,7 @@ class ScriptManager:
         sd.max_length                = max_length
         sd.decode_output_as_utf8     = decode_output_as_utf8
         sd.redirect_stderr_to_stdout = redirect_stderr_to_stdout
+        sd.execute_as_user           = execute_as_user
 
         script_data_set.add(sd)
 
@@ -130,13 +133,16 @@ class ScriptManager:
         return None
 
     def abort_script(self, sd):
+        if sd.abort:
+            return
+
+        sd.abort = True
+
         if sd.process != None:
             try:
                 sd.process.kill(REDProcess.SIGNAL_KILL)
             except:
                 traceback.print_exc()
-        else:
-            sd.abort = True
 
     def _init_script(self, sd):
         if self.scripts[sd.script_name].copied:
@@ -300,10 +306,17 @@ class ScriptManager:
         # need to set LANG otherwise python will not correctly handle non-ASCII filenames
         env = ['LANG=en_US.UTF-8']
 
+        if sd.execute_as_user:
+            uid = 1000
+            gid = 1000
+        else:
+            uid = 0
+            gid = 0
+
         try:
             # FIXME: Do we need a timeout here in case that the state_changed callback never comes?
             sd.process.spawn(posixpath.join(SCRIPT_FOLDER, sd.script_name + self.scripts[sd.script_name].file_ending),
-                             sd.params, env, '/', 0, 0, self.devnull, sd.stdout, sd.stderr)
+                             sd.params, env, '/', uid, gid, self.devnull, sd.stdout, sd.stderr)
         except:
             traceback.print_exc()
             self._release_script_data(sd)
