@@ -443,7 +443,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             name_item_parent = self.tree_files_model.invisibleRootItem()
 
         for i in range(name_item_parent.rowCount()):
-            if new_name == name_item_parent.child(i).text():
+            if new_name == unicode(name_item_parent.child(i).text()):
                 QMessageBox.critical(get_main_window(), title + ' Error',
                                      'The new {0} name is already in use.'.format(type_name),
                                      QMessageBox.Ok)
