@@ -201,7 +201,27 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         return unicode(self.combo_flavor.itemData(self.get_field('javascript.flavor').toInt()[0]).toString())
 
     def get_html_summary(self):
-        return 'FIXME<br/>'
+        flavor            = self.get_field('javascript.flavor').toInt()[0]
+        start_mode        = self.get_field('javascript.start_mode').toInt()[0]
+        script_file       = self.get_field('javascript.script_file').toString()
+        command           = self.get_field('javascript.command').toString()
+        working_directory = self.get_field('javascript.working_directory').toString()
+        options           = ' '.join(self.option_list_editor.get_items())
+
+        html = u'JavaScript Flavor: {0}<br/>'.format(Qt.escape(self.combo_flavor.itemText(flavor)))
+
+        if flavor == Constants.JAVASCRIPT_FLAVOR_NODEJS:
+            html += u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.javascript_start_mode_display_names[start_mode]))
+
+            if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE:
+                html += u'Script File: {0}<br/>'.format(Qt.escape(script_file))
+            elif start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND:
+                html += u'Command: {0}<br/>'.format(Qt.escape(command))
+
+            html += u'Working Directory: {0}<br/>'.format(Qt.escape(working_directory))
+            html += u'Node.js Options: {0}<br/>'.format(Qt.escape(options))
+
+        return html
 
     def get_custom_options(self):
         return {

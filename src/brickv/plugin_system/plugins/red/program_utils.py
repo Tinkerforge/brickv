@@ -229,6 +229,11 @@ class Constants:
         JAVASCRIPT_FLAVOR_NODEJS:  'nodejs'
     }
 
+    javascript_flavor_display_name = {
+        JAVASCRIPT_FLAVOR_BROWSER: 'Browser',
+        JAVASCRIPT_FLAVOR_NODEJS:  'Node.js'
+    }
+
     @staticmethod
     def get_javascript_flavor(javascript_flavor_api_name):
         try:
