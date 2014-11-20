@@ -413,7 +413,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         old_name = unicode(name_item.text())
 
         # get new name
-        dialog = ExpandingInputDialog(None)
+        dialog = ExpandingInputDialog(get_main_window())
         dialog.setModal(True)
         dialog.setWindowTitle(title)
         dialog.setLabelText('Enter new {0} name:'.format(type_name))
