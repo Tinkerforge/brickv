@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QDir, QVariant, QDateTime
-from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem, QProgressDialog, QInputDialog
+from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem, QProgressDialog, QProgressBar, QInputDialog
 from brickv.plugin_system.plugins.red.api import REDProgram
 import re
 import posixpath
@@ -565,6 +565,11 @@ class ExpandingListWidget(QListWidget):
 
 
 class ExpandingProgressDialog(QProgressDialog):
+    def hide_progress_text(self):
+        progress = QProgessBar()
+        progress.setTextVisible(False)
+        self.setBar(progress)
+
     # overrides QProgressDialog.sizeHint
     def sizeHint(self):
         size = QProgressDialog.sizeHint(self)

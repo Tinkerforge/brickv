@@ -476,12 +476,16 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                            [absolute_old_name, absolute_new_name])
 
     def delete_selected_files(self):
-        sd_ref = [None]
         button = QMessageBox.question(None, 'Delete Files',
                                       'Irreversibly deleting selected files and directories.',
                                       QMessageBox.Ok, QMessageBox.Cancel)
 
         if button != QMessageBox.Ok:
+            return
+
+        selected_name_items = set(self.get_selected_name_items())
+
+        if len(selected_name_items) == 0:
             return
 
         def progress_canceled(sd_ref):
@@ -492,42 +496,14 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
             self.script_manager.abort_script(sd)
 
+        sd_ref   = [None]
         progress = ExpandingProgressDialog(self)
-        progress.setWindowTitle('Delete Files')
+        progress.hide_progress_text()
         progress.setModal(True)
-        progress.setMinimumDuration(0)
-        progress.setRange(0, 0)
+        progress.setWindowTitle('Delete Files')
         progress.setLabelText('Collecting files and directories to delete')
+        progress.setRange(0, 0)
         progress.canceled.connect(lambda: progress_canceled(sd_ref))
-
-        def cb_program_delete_files_dirs(sd_ref, result):
-            sd = sd_ref[0]
-
-            if sd != None:
-                aborted = sd.abort
-            else:
-                aborted = False
-
-            sd_ref[0] = None
-
-            progress.cancel()
-            self.refresh_files()
-
-            if aborted:
-                QMessageBox.information(None, 'Delete Files',
-                                        u'Delete operation was aborted.')
-            elif result == None:
-                QMessageBox.critical(None, 'Delete Files Error',
-                                     u'Internal error during deletion.')
-            elif result.exit_code != 0:
-                QMessageBox.critical(None, 'Delete Files Error',
-                                     u'Could not delete selected files/directories:\n\n{0}'.format(result.stderr))
-
-        selected_name_items = set(self.get_selected_name_items())
-
-        if len(selected_name_items) == 0:
-            return
-
         progress.show()
 
         files_to_delete = []
@@ -580,6 +556,29 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             message += '{0} directories'.format(len(dirs_to_delete))
 
         progress.setLabelText(message)
+
+        def cb_program_delete_files_dirs(sd_ref, result):
+            sd = sd_ref[0]
+
+            if sd != None:
+                aborted = sd.abort
+            else:
+                aborted = False
+
+            sd_ref[0] = None
+
+            progress.cancel()
+            self.refresh_files()
+
+            if aborted:
+                QMessageBox.information(None, 'Delete Files',
+                                        u'Delete operation was aborted.')
+            elif result == None:
+                QMessageBox.critical(None, 'Delete Files Error',
+                                     u'Internal error during deletion.')
+            elif result.exit_code != 0:
+                QMessageBox.critical(None, 'Delete Files Error',
+                                     u'Could not delete selected files/directories:\n\n{0}'.format(result.stderr))
 
         sd_ref[0] = self.script_manager.execute_script('program_delete_files_dirs',
                                                        lambda result: cb_program_delete_files_dirs(sd_ref, result),
