@@ -52,6 +52,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.target_name         = None
         self.source_name         = None
         self.source_size         = None
+        self.source_display_size = None
         self.last_upload_size    = None
 
         self.setTitle(title_prefix + 'Upload')
@@ -244,11 +245,13 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             self.upload_error(u"...error opening source file '{0}': {1}".format(self.source_name, e))
             return
 
-        self.source_size = source_st.st_size
+        self.source_size         = source_st.st_size
+        self.source_display_size = get_file_display_size(self.source_size)
 
         self.progress_file.setVisible(True)
         self.progress_file.setRange(0, self.source_size)
         self.progress_file.setValue(0)
+        self.progress_file.setFormat(get_file_display_size(0) + ' of ' + self.source_display_size)
 
         self.target_name = posixpath.join(self.root_directory, 'bin', upload.target)
 
@@ -286,7 +289,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     def upload_write_async_cb_status(self, upload_size, upload_of):
         uploaded = self.progress_file.value() + upload_size - self.last_upload_size
         self.progress_file.setValue(uploaded)
-        self.progress_file.setFormat('{0} kiB of {1} kiB'.format(uploaded/1024, self.source_size/1024))
+        self.progress_file.setFormat(get_file_display_size(uploaded) + ' of ' + self.source_display_size)
         self.last_upload_size = upload_size
 
     def upload_write_async_cb_error(self, error):
