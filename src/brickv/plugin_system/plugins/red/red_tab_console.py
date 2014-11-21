@@ -66,11 +66,11 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
         preferred_index = None
         
         for port in ports:
-            # TODO: What is preferred port for mac here?
             if preferred_index is None:
                 if 'ttyACM' in port[0] or \
                    'ttyUSB' in port[0] or \
-                   'RED Brick' in port[0]:
+                   'RED Brick' in port[0] or \
+                   'usbmodem' in port[0]:
                     preferred_index = self.combo_serial_port.count()
 
             if len(port[1]) > 0 and port[0] != port[1]:
@@ -78,8 +78,10 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
             else:
                 self.combo_serial_port.addItem(port[0], port[0])
 
+        self.combo_serial_port.setEnabled(self.combo_serial_port.count() > 0)
+
         if self.combo_serial_port.count() == 0:
-            self.combo_serial_port.addItem('Could not find serial port')
+            self.combo_serial_port.addItem('No serial port found')
         elif preferred_index is not None:
             self.combo_serial_port.setCurrentIndex(preferred_index)
         else:
