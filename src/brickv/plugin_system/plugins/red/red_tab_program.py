@@ -26,7 +26,6 @@ from PyQt4.QtCore import Qt, QVariant, QTimer
 from PyQt4.QtGui import QApplication, QWidget, QDialog, QMessageBox, QListWidgetItem
 from brickv.plugin_system.plugins.red.ui_red_tab_program import Ui_REDTabProgram
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.program_info_main import ProgramInfoMain
 from brickv.plugin_system.plugins.red.program_wizard import ProgramWizardContext
 from brickv.plugin_system.plugins.red.program_wizard_new import ProgramWizardNew
@@ -43,6 +42,7 @@ from brickv.plugin_system.plugins.red.program_page_python import get_python_vers
 from brickv.plugin_system.plugins.red.program_page_ruby import get_ruby_versions
 from brickv.plugin_system.plugins.red.program_page_shell import get_shell_versions
 from brickv.async_call import async_call
+from brickv.utils import get_main_window
 
 class REDTabProgram(QWidget, Ui_REDTabProgram):
     def __init__(self):

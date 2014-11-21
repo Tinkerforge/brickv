@@ -25,7 +25,6 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtCore import pyqtSignal, QTimer
 from PyQt4.QtGui import QWidget, QDialog, QMessageBox
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.program_info import ProgramInfoContext
 from brickv.plugin_system.plugins.red.program_info_files import ProgramInfoFiles
 from brickv.plugin_system.plugins.red.program_info_logs import ProgramInfoLogs
@@ -62,6 +61,7 @@ from brickv.plugin_system.plugins.red.program_page_stdio import ProgramPageStdio
 from brickv.plugin_system.plugins.red.program_page_schedule import ProgramPageSchedule
 from brickv.plugin_system.plugins.red.ui_program_info_main import Ui_ProgramInfoMain
 from brickv.async_call import async_call
+from brickv.utils import get_main_window
 import os
 import json
 

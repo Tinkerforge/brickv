@@ -26,8 +26,8 @@ from PyQt4.QtCore import QVariant
 from brickv.plugin_system.plugins.red.api import REDProgram
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
-from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.ui_program_page_javascript import Ui_ProgramPageJavaScript
+from brickv.utils import get_main_window
 
 def get_nodejs_versions(script_manager, callback):
     def cb_versions(result):

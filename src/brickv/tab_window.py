@@ -28,7 +28,7 @@ from PyQt4.QtGui import QWidget, QAbstractButton, QTabBar, QPainter, \
                         QSizePolicy, QIcon
 
 import os
-from brickv.program_path import get_program_path
+from brickv.utils import get_program_path
 
 class IconButton(QAbstractButton):
     clicked = pyqtSignal()

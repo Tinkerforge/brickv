@@ -25,9 +25,8 @@ from PyQt4.QtCore import Qt, QDir, QVariant
 from PyQt4.QtGui import QIcon, QFileDialog, QListWidgetItem, QApplication
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
-from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.ui_program_page_files import Ui_ProgramPageFiles
-from brickv.program_path import get_program_path
+from brickv.utils import get_main_window, get_program_path
 import os
 import posixpath
 from collections import namedtuple

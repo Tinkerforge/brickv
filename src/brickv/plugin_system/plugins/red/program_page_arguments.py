@@ -23,10 +23,10 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtGui import QMessageBox
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_arguments import Ui_ProgramPageArguments
+from brickv.utils import get_main_window
 
 class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
     def __init__(self, title_prefix='', *args, **kwargs):

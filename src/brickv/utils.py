@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-RED Plugin
+brickv (Brick Viewer)
+Copyright (C) 2011 Bastian Nordmeyer <bastian@tinkerforge.com>
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-utils.py: General RED Brick Utilites
+utils.py: General Utilites
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -22,6 +23,17 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QApplication, QMainWindow
+import os
+import sys
+
+def get_program_path():
+    # from http://www.py2exe.org/index.cgi/WhereAmI
+    if hasattr(sys, 'frozen'):
+        path = sys.executable
+    else:
+        path = __file__
+
+    return str(os.path.dirname(os.path.realpath(unicode(path, sys.getfilesystemencoding()))))
 
 def get_main_window():
     for widget in QApplication.topLevelWidgets():

@@ -25,9 +25,9 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QDialog, QFont, QFileDialog
 from brickv.plugin_system.plugins.red.ui_program_info_logs_view import Ui_ProgramInfoLogsView
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.program_utils import timestamp_to_date_at_time
 from brickv.async_call import async_call
+from brickv.utils import get_main_window
 import posixpath
 
 class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):

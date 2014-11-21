@@ -26,11 +26,10 @@ from PyQt4.QtCore import Qt, QDateTime, QVariant
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QAbstractItemView, QLineEdit,\
                         QSortFilterProxyModel, QFileDialog, QMessageBox, QInputDialog, QApplication, QDialog
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog, ExpandingInputDialog, get_file_display_size
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
 from brickv.async_call import async_call
-from brickv.program_path import get_program_path
+from brickv.utils import get_main_window, get_program_path
 import os
 import posixpath
 import json
