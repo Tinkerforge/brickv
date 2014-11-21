@@ -138,7 +138,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
                     file_name = f['name']
                     file_size = int(unicode(f['size']))
-                    file_path = os.path.join(dir_node['root'], file_name)
+                    file_path = posixpath.join(dir_node['root'], file_name)
                     file_name_parts = file_name.split('_')
 
                     if file_name_parts[0] == "continuous":
