@@ -91,29 +91,34 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
 
     def connect_clicked(self):
         text = self.connect_button.text()
+
         if text == 'Connect':
-            self.console.setDisabled(False)
+            self.combo_serial_port.setEnabled(False)
+            self.refresh_button.setEnabled(False)
+            self.console.setEnabled(True)
             self.connect_button.setText("Disconnect")
             
             port = unicode(self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString())
+
             if self.console._session == None:
                 try:
                     self.console.execute(command=port)
                     self.console.setFocus()
                 except:
                     # TODO: Error popup?
-                    self.console.setDisabled(True)
-                    self.connect_button.setText("Connect")
                     self.destroy_session()
         else:
-            self.console.setDisabled(True)
-            self.connect_button.setText("Connect")
             self.destroy_session()
 
     def destroy_session(self):
-        if self.console._session is not None:
+        if self.console._session != None:
             self.console.stop()
             self.console._session = None
+
+        self.combo_serial_port.setEnabled(True)
+        self.refresh_button.setEnabled(True)
+        self.console.setEnabled(False)
+        self.connect_button.setText("Connect")
 
     def tab_on_focus(self):
         self.console._reset()
