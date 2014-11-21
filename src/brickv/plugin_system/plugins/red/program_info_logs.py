@@ -29,6 +29,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog, get_file_display_size
 from brickv.plugin_system.plugins.red.ui_program_info_logs import Ui_ProgramInfoLogs
+from brickv.plugin_system.plugins.red.program_info_logs_view import ProgramInfoLogsView
 from brickv.async_call import async_call
 from brickv.program_path import get_program_path
 import os
@@ -36,7 +37,8 @@ import posixpath
 import json
 import zlib
 
-USER_ROLE_SIZE     = Qt.UserRole + 3
+USER_ROLE_FILE_NAME = Qt.UserRole + 2
+USER_ROLE_SIZE      = Qt.UserRole + 3
 
 
 class LogsProxyModel(QSortFilterProxyModel):
@@ -62,6 +64,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.is_alive               = is_alive
         self.log_directory          = posixpath.join(unicode(self.program.root_directory), 'log')
         self.refresh_in_progress    = False
+        self.view_dialog            = None
         self.file_icon              = QIcon(os.path.join(get_program_path(), "file-icon.png"))
         self.tree_logs_model        = QStandardItemModel(self)
         self.tree_logs_model_header = ['Date / Time', 'Size']
@@ -73,11 +76,13 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.tree_logs.setColumnWidth(0, 250)
 
         self.tree_logs.selectionModel().selectionChanged.connect(self.update_ui_state)
+        self.tree_logs.activated.connect(self.view_activated_log)
         self.button_download_logs.clicked.connect(self.download_selected_logs)
+        self.button_view_log.clicked.connect(self.view_selected_log)
         self.button_delete_logs.clicked.connect(self.delete_selected_logs)
 
     def update_ui_state(self):
-        has_selection = self.tree_logs.selectionModel().hasSelection()
+        selection_count = len(self.tree_logs.selectionModel().selectedRows())
 
         self.tree_logs.setColumnHidden(2, False)
         self.tree_logs.setColumnHidden(3, False)
@@ -92,8 +97,13 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                 self.set_widget_enabled(self.button_delete_logs, False)
                 return
 
-        self.set_widget_enabled(self.button_download_logs, has_selection)
-        self.set_widget_enabled(self.button_delete_logs, has_selection)
+        self.set_widget_enabled(self.button_download_logs, selection_count > 0)
+        self.set_widget_enabled(self.button_view_log, selection_count == 1 and len(self.get_selected_log_items()) == 1)
+        self.set_widget_enabled(self.button_delete_logs, selection_count > 0)
+
+    def close_all_dialogs(self):
+        if self.view_dialog != None:
+            self.view_dialog.close()
 
     def refresh_logs(self):
         def cb_program_get_os_walk(result):
@@ -147,6 +157,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                             if parent_continuous:
                                 name_item = QStandardItem(file_name_parts[1])
                                 name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
+                                name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
 
                                 parent_continuous.appendRow([name_item,
                                                              create_file_size_item(file_size),
@@ -165,6 +176,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
                                 name_item = QStandardItem(file_name_parts[1])
                                 name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
+                                name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
 
                                 parent_continuous[0].appendRow([name_item,
                                                                 create_file_size_item(file_size),
@@ -202,6 +214,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                 found_parent_time = True
                                 name_item = QStandardItem(file_name_parts[2])
                                 name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
+                                name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
 
                                 parent_date.child(i).appendRow([name_item,
                                                                 create_file_size_item(file_size),
@@ -225,6 +238,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                                    QStandardItem("")])
                             name_item = QStandardItem(file_name_parts[2])
                             name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
+                            name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
 
                             parent_date.child(parent_date.rowCount()-1).appendRow([name_item,
                                                                                    create_file_size_item(file_size),
@@ -245,6 +259,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                                   QStandardItem("")])
                         name_item = QStandardItem(file_name_parts[2])
                         name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
+                        name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
 
                         parent_date[0].child(0).appendRow([name_item,
                                                            create_file_size_item(file_size),
@@ -265,6 +280,22 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.script_manager.execute_script('program_get_os_walk', cb_program_get_os_walk,
                                            [self.log_directory], max_length=1024*1024,
                                            decode_output_as_utf8=False)
+
+    def get_selected_log_items(self):
+        selected_indexes   = self.tree_logs.selectedIndexes()
+        selected_log_items = []
+
+        for selected_index in selected_indexes:
+            if selected_index.column() == 0:
+                mapped_index  = self.tree_logs_proxy_model.mapToSource(selected_index)
+                selected_item = self.tree_logs_model.itemFromIndex(mapped_index)
+                data          = selected_item.data(USER_ROLE_FILE_NAME)
+
+                # FIXME: add USER_ROLE_ITEM_TYPE with DATE/TIME/FILE for this check
+                if data.type() == QVariant.String:
+                    selected_log_items.append(selected_item)
+
+        return selected_log_items
 
     def load_log_files_for_ops(self, index_list):
         logs_download_dict = {'files': {}, 'total_download_size': 0}
@@ -355,7 +386,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         if not log_files_to_download:
             return
 
-        log_files_download_dir = unicode(QFileDialog.getExistingDirectory(self, "Choose Download Location"))
+        log_files_download_dir = unicode(QFileDialog.getExistingDirectory(get_main_window(), "Choose Download Location"))
         try:
             with open(os.path.join(unicode(log_files_download_dir),
                                    unicode('write_test_file')),
@@ -456,6 +487,37 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                        REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                        cb_open,
                        cb_open_error)
+
+    def view_activated_log(self, index):
+        if index.column() == 0:
+            mapped_index = self.tree_logs_proxy_model.mapToSource(index)
+            item         = self.tree_logs_model.itemFromIndex(mapped_index)
+            data         = item.data(USER_ROLE_FILE_NAME)
+
+            # FIXME: add USER_ROLE_ITEM_TYPE with DATE/TIME/FILE for this check
+            if data.type() == QVariant.String:
+                self.view_log(item)
+
+    def view_selected_log(self):
+        selection_count = len(self.tree_logs.selectionModel().selectedRows())
+
+        if selection_count != 1:
+            return
+
+        selected_log_items = self.get_selected_log_items()
+
+        if len(selected_log_items) != 1:
+            return
+
+        self.view_log(selected_log_items[0])
+
+    def view_log(self, item):
+        file_name = posixpath.join(self.log_directory, unicode(item.data(USER_ROLE_FILE_NAME).toString()))
+        file_size = item.index().sibling(item.row(), 1).data(USER_ROLE_SIZE).toInt()[0]
+
+        self.view_dialog = ProgramInfoLogsView(self, self.session, file_name, file_size)
+        self.view_dialog.exec_()
+        self.view_dialog = None
 
     def delete_selected_logs(self):
         button = QMessageBox.question(get_main_window(), 'Delete Logs',

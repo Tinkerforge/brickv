@@ -209,6 +209,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         if self.widget_language != None:
             self.widget_language.close_all_dialogs()
 
+        self.widget_logs.close_all_dialogs()
+        self.widget_files.close_all_dialogs()
+
     def refresh_info(self):
         self.refresh_program()
         self.widget_logs.refresh_logs()

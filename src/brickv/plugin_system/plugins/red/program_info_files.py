@@ -184,6 +184,9 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.set_widget_enabled(self.button_rename_file, selection_count == 1)
         self.set_widget_enabled(self.button_delete_files, selection_count > 0)
 
+    def close_all_dialogs(self):
+        pass
+
     def refresh_files(self):
         def cb_directory_walk(result):
             if result == None or len(result.stderr) > 0:
