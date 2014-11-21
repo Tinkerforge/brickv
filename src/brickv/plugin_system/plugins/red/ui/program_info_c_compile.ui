@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
+    <width>650</width>
     <height>500</height>
    </rect>
   </property>
@@ -59,12 +59,18 @@
        <property name="text">
         <string>Make</string>
        </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item row="1" column="2">
       <widget class="QPushButton" name="button_clean">
        <property name="text">
         <string>Clean</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -78,6 +84,9 @@
        </property>
        <property name="text">
         <string>Cancel</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
