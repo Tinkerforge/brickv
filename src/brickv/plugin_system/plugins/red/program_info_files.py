@@ -44,7 +44,7 @@ ITEM_TYPE_DIRECTORY = 1
 
 
 def expand_directory_walk_to_lists(directory_walk):
-    files = {}
+    files       = {}
     directories = set()
 
     def expand(root, dw):
@@ -186,40 +186,57 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
     def close_all_dialogs(self):
         pass
 
+    def refresh_files_done(self):
+        self.refresh_in_progress = False
+        self.update_main_ui_state()
+
     def refresh_files(self):
         def cb_directory_walk(result):
-            if result == None or len(result.stderr) > 0:
-                self.refresh_in_progress = False
-                self.update_main_ui_state()
-                return # FIXME: report error
+            if result == None or result.exit_code != 0:
+                if result == None or len(result.stderr) == 0:
+                    self.label_error.setText('<b>Error:</b> Internal error occurred')
+                else:
+                    self.label_error.setText('<b>Error:</b> ' + Qt.escape(result.stderr.decode('utf-8')))
+
+                self.label_error.setVisible(True)
+                self.refresh_files_done()
+                return
+
+            self.label_error.setVisible(False)
 
             def expand_async(data):
-                directory_walk        = json.loads(zlib.decompress(buffer(data)).decode('utf-8'))
-                available_files       = {}
-                available_directories = []
+                try:
+                    directory_walk = json.loads(zlib.decompress(buffer(data)).decode('utf-8'))
+                except:
+                    directory_walk = None
 
-                if directory_walk != None:
+                if directory_walk == None or not isinstance(directory_walk, dict):
+                    available_files       = {}
+                    available_directories = []
+                    directory_walk        = None
+                else:
                     available_files, available_directories = expand_directory_walk_to_lists(directory_walk)
 
                 return directory_walk, available_files, available_directories
 
-            def cb_expand_success(args):
-                directory_walk, available_files, available_directories = args
+            def cb_expand_success(result):
+                directory_walk, available_files, available_directories = result
 
                 self.available_files       = available_files
                 self.available_directories = available_directories
-                self.refresh_in_progress   = False
-                self.update_main_ui_state()
 
                 if directory_walk != None:
                     expand_directory_walk_to_model(directory_walk, self.tree_files_model, self.folder_icon, self.file_icon)
+                else:
+                    self.label_error.setText('<b>Error:</b> Received invalid data')
+                    self.label_error.setVisible(True)
 
                 self.tree_files.header().setSortIndicator(0, Qt.AscendingOrder)
+                self.refresh_files_done()
 
             def cb_expand_error():
                 # FIXME: report error
-                self.refresh_in_progress = False
-                self.update_main_ui_state()
+                self.refresh_files_done()
 
             async_call(expand_async, result.stdout, cb_expand_success, cb_expand_error)
 

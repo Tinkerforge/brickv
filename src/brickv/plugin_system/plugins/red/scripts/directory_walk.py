@@ -1,21 +1,18 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
-import os
 import json
-from sys import argv, stdout
+import os
+import sys
 import zlib
 
 result = {}
 
-def output(data):
-    stdout.write(zlib.compress(json.dumps(data, separators=(',', ':'))))
+if len(sys.argv) < 2 or not os.path.isdir(sys.argv[1]):
+    sys.stderr.write(unicode('Missing or invalid script parameters (internal error)').encode('utf-8'))
+    exit(1)
 
-if len(argv) < 2 or not os.path.isdir(argv[1]):
-    output(None)
-    exit(0)
-
-base = argv[1]
+base = sys.argv[1]
 
 try:
     for root, directories, files in os.walk(base):
@@ -34,8 +31,9 @@ try:
             absolute           = os.path.join(root, filename)
             st                 = os.lstat(absolute)
             children[filename] = {'s': st.st_size, 'l': int(st.st_mtime)}
-except:
-    output(None)
-    exit(0)
+except Exception as e:
+    sys.stderr.write(unicode(e).encode('utf-8'))
+    exit(2)
 
-output(result)
+sys.stdout.write(zlib.compress(json.dumps(result, separators=(',', ':'))))
+exit(0)

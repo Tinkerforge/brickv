@@ -83,19 +83,6 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
     def update_ui_state(self):
         selection_count = len(self.tree_logs.selectionModel().selectedRows())
 
-        self.tree_logs.setColumnHidden(2, False)
-        self.tree_logs.setColumnHidden(3, False)
-        item_indexes = self.tree_logs.selectedIndexes()
-        self.tree_logs.setColumnHidden(2, True)
-        self.tree_logs.setColumnHidden(3, True)
-
-        for item_index in item_indexes:
-            item = self.tree_logs_model.itemFromIndex(self.tree_logs_proxy_model.mapToSource(item_index))
-            if item.text() == "PARENT_ERR":
-                self.set_widget_enabled(self.button_download_logs, False)
-                self.set_widget_enabled(self.button_delete_logs, False)
-                return
-
         self.set_widget_enabled(self.button_download_logs, selection_count > 0)
         self.set_widget_enabled(self.button_view_log, selection_count == 1 and len(self.get_selected_log_items()) == 1)
         self.set_widget_enabled(self.button_delete_logs, selection_count > 0)
@@ -104,15 +91,35 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         if self.view_dialog != None:
             self.view_dialog.close()
 
-    def refresh_logs(self):
-        def cb_program_get_os_walk(result):
-            self.refresh_in_progress = False
+    def refresh_logs_done(self):
+        self.refresh_in_progress = False
+        self.update_main_ui_state()
 
-            if result == None or result.stderr != "":
-                self.update_main_ui_state()
-                # TODO: Error popup for user?
-                print 'refresh_logs cb_program_get_os_walk', result
+    def refresh_logs(self):
+        def cb_logs_list(result):
+            if result == None or result.exit_code != 0:
+                if result == None or len(result.stderr) == 0:
+                    self.label_error.setText('<b>Error:</b> Internal error occurred')
+                else:
+                    self.label_error.setText('<b>Error:</b> ' + Qt.escape(result.stderr.decode('utf-8')))
+
+                self.label_error.setVisible(True)
+                self.refresh_logs_done()
                 return
+
+            try:
+                # FIXME: do decompress in an async_call
+                logs_list = json.loads(zlib.decompress(buffer(result.stdout)).decode('utf-8'))
+            except:
+                logs_list = None
+
+            if logs_list == None or not isinstance(logs_list, dict):
+                self.label_error.setText('<b>Error:</b> Received invalid data')
+                self.label_error.setVisible(True)
+                self.refresh_logs_done()
+                return
+
+            self.label_error.setVisible(False)
 
             def create_file_size_item(size):
                 item = QStandardItem(get_file_display_size(size))
@@ -120,25 +127,9 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
                 return item
 
-            try:
-                program_dir_walk_result = json.loads(zlib.decompress(buffer(result.stdout)).decode('utf-8'))
-            except:
-                parent_error = [QStandardItem("Error loading files..."),
-                                QStandardItem(""),
-                                QStandardItem("PARENT_ERR"),
-                                QStandardItem("")]
-                self.tree_logs_model.appendRow(parent_error)
-                self.tree_logs.header().setSortIndicator(0, Qt.DescendingOrder)
-                self.update_main_ui_state()
-                return
-
-            for dir_node in program_dir_walk_result:
-                for f in dir_node['files']:
+            for file_name, file_size in logs_list.iteritems():
                     QApplication.processEvents()
 
-                    file_name = f['name']
-                    file_size = int(unicode(f['size']))
-                    file_path = posixpath.join(dir_node['root'], file_name)
                     file_name_parts = file_name.split('_')
 
                     if file_name_parts[0] == "continuous":
@@ -161,7 +152,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                 parent_continuous.appendRow([name_item,
                                                              create_file_size_item(file_size),
                                                              QStandardItem("LOG_FILE_CONT"),
-                                                             QStandardItem(file_path)])
+                                                             QStandardItem('foobar')])
 
                                 current_size = parent_continuous_size.data(USER_ROLE_SIZE).toInt()[0]
                                 new_file_size = current_size + file_size
@@ -180,7 +171,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                 parent_continuous[0].appendRow([name_item,
                                                                 create_file_size_item(file_size),
                                                                 QStandardItem("LOG_FILE_CONT"),
-                                                                QStandardItem(file_path)])
+                                                                QStandardItem('foobar')])
 
                                 self.tree_logs_model.appendRow(parent_continuous)
 
@@ -218,7 +209,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                 parent_date.child(i).appendRow([name_item,
                                                                 create_file_size_item(file_size),
                                                                 QStandardItem("LOG_FILE"),
-                                                                QStandardItem(file_path)])
+                                                                QStandardItem('foobar')])
                                 current_size = parent_date.child(i, 1).data(USER_ROLE_SIZE).toInt()[0]
                                 new_file_size = current_size + file_size
                                 parent_date.child(i, 1).setText(get_file_display_size(new_file_size))
@@ -242,7 +233,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                             parent_date.child(parent_date.rowCount()-1).appendRow([name_item,
                                                                                    create_file_size_item(file_size),
                                                                                    QStandardItem("LOG_FILE"),
-                                                                                   QStandardItem(file_path)])
+                                                                                   QStandardItem('foobar')])
                             current_parent_size = parent_date_size.data(USER_ROLE_SIZE).toInt()[0]
                             new_parent_file_size = current_parent_size + file_size
                             parent_date_size.setText(get_file_display_size(new_parent_file_size))
@@ -263,11 +254,11 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                         parent_date[0].child(0).appendRow([name_item,
                                                            create_file_size_item(file_size),
                                                            QStandardItem("LOG_FILE"),
-                                                           QStandardItem(file_path)])
+                                                           QStandardItem('foobar')])
                         self.tree_logs_model.appendRow(parent_date)
 
             self.tree_logs.header().setSortIndicator(0, Qt.DescendingOrder)
-            self.update_main_ui_state()
+            self.refresh_logs_done()
 
         self.refresh_in_progress = True
         self.update_main_ui_state()
@@ -276,7 +267,8 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.tree_logs_model.clear()
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_model_header)
         self.tree_logs.setColumnWidth(0, width)
-        self.script_manager.execute_script('program_get_os_walk', cb_program_get_os_walk,
+
+        self.script_manager.execute_script('logs_list', cb_logs_list,
                                            [self.log_directory], max_length=1024*1024,
                                            decode_output_as_utf8=False)
 
@@ -303,40 +295,36 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             if item_list[2].text() == "PARENT_CONT":
                 for i in range(item_list[0].rowCount()):
                     f_size = item_list[0].child(i, 1).data(USER_ROLE_SIZE).toInt()[0] # File size
-                    f_path = unicode(item_list[0].child(i, 3).text()) # File path
+                    f_path = posixpath.join(self.log_directory, unicode(item_list[0].child(i, 0).data(USER_ROLE_FILE_NAME).toString())) # File path
                     if not f_path in logs_download_dict['files']:
                         logs_download_dict['files'][f_path] = {'size': f_size}
-                        logs_download_dict['total_download_size'] = \
-                            logs_download_dict['total_download_size'] + f_size
+                        logs_download_dict['total_download_size'] += f_size
 
             elif item_list[2].text() == "PARENT_DATE":
                 for i in range(item_list[0].rowCount()):
                     parent_time = item_list[0].child(i)
                     for j in range(parent_time.rowCount()):
                         f_size = parent_time.child(j, 1).data(USER_ROLE_SIZE).toInt()[0] # File size
-                        f_path = unicode(parent_time.child(j, 3).text()) # File path
+                        f_path = posixpath.join(self.log_directory, unicode(parent_time.child(j, 0).data(USER_ROLE_FILE_NAME).toString())) # File path
                         if not f_path in logs_download_dict['files']:
                             logs_download_dict['files'][f_path] = {'size': f_size}
-                            logs_download_dict['total_download_size'] = \
-                                logs_download_dict['total_download_size'] + f_size
+                            logs_download_dict['total_download_size'] += f_size
 
             elif item_list[2].text() == "PARENT_TIME":
                 for i in range(item_list[0].rowCount()):
                     f_size = item_list[0].child(i, 1).data(USER_ROLE_SIZE).toInt()[0] # File size
-                    f_path = unicode(item_list[0].child(i, 3).text()) # File path
+                    f_path = posixpath.join(self.log_directory, unicode(item_list[0].child(i, 0).data(USER_ROLE_FILE_NAME).toString())) # File path
                     if not f_path in logs_download_dict['files']:
                         logs_download_dict['files'][f_path] = {'size': f_size}
-                        logs_download_dict['total_download_size'] = \
-                            logs_download_dict['total_download_size'] + f_size
+                        logs_download_dict['total_download_size'] += f_size
 
             elif item_list[2].text() == "LOG_FILE" or \
                  item_list[2].text() == "LOG_FILE_CONT":
                 f_size = item_list[1].data(USER_ROLE_SIZE).toInt()[0] # File size
-                f_path = unicode(item_list[3].text()) # File path
+                f_path = posixpath.join(self.log_directory, unicode(item_list[0].data(USER_ROLE_FILE_NAME).toString())) # File path
                 if not f_path in logs_download_dict['files']:
                     logs_download_dict['files'][f_path] = {'size': f_size}
-                    logs_download_dict['total_download_size'] = \
-                        logs_download_dict['total_download_size'] + f_size
+                    logs_download_dict['total_download_size'] += f_size
             else:
                 pass
 
