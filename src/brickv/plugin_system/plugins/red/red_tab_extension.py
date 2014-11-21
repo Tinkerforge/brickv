@@ -122,7 +122,11 @@ class RS485(QWidget, Ui_RS485):
             self.rs485_type_changed(self.rs485_type.currentIndex())
             popup_fail('Could not open file on RED Brick')
 
-        async_call(new_config['eeprom_file'].open, ('/tmp/new_eeprom_extension_' + str(new_config['extension']) + ".conf", REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0555, 0, 0), lambda x: self.upload_eeprom_data(new_config, x), lambda: cb_file_open_error(new_config))
+        async_call(new_config['eeprom_file'].open,
+                   ('/tmp/new_eeprom_extension_' + str(new_config['extension']) + ".conf",
+                    REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0555, 0, 0),
+                   lambda x: self.upload_eeprom_data(new_config, x),
+                   lambda: cb_file_open_error(new_config))
 
     def upload_eeprom_data(self, new_config, result):
         if not isinstance(result, REDFile):
@@ -248,7 +252,10 @@ class Ethernet(QWidget, Ui_Ethernet):
         def cb_file_open_error(new_config):
             popup_fail('Could not open file on RED Brick')
 
-        async_call(new_config['eeprom_file'].open, ('/tmp/new_eeprom_extension_' + str(new_config['extension']) + ".conf", REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0555, 0, 0), lambda x: self.upload_eeprom_data(new_config, x), lambda: cb_file_open_error(new_config))
+        async_call(new_config['eeprom_file'].open,
+                   ('/tmp/new_eeprom_extension_' + str(new_config['extension']) + ".conf",
+                    REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0555, 0, 0),
+                   lambda x: self.upload_eeprom_data(new_config, x), lambda: cb_file_open_error(new_config))
 
     def upload_eeprom_data(self, new_config, result):
         if not isinstance(result, REDFile):
@@ -352,10 +359,16 @@ class REDTabExtension(QtGui.QWidget, Ui_REDTabExtension):
             self.extension_layout.itemAt(i).widget().setParent(None)
 
         self.red_file[0] = REDFile(self.session)
-        async_call(self.red_file[0].open, ("/tmp/extension_position_0.conf", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0), lambda x: self.cb_file_open(0, x), lambda: self.cb_file_open_error(0))
+        async_call(self.red_file[0].open,
+                   ("/tmp/extension_position_0.conf", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   lambda x: self.cb_file_open(0, x),
+                   lambda: self.cb_file_open_error(0))
 
         self.red_file[1] = REDFile(self.session)
-        async_call(self.red_file[1].open, ("/tmp/extension_position_1.conf", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0), lambda x: self.cb_file_open(1, x), lambda: self.cb_file_open_error(1))
+        async_call(self.red_file[1].open,
+                   ("/tmp/extension_position_1.conf", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   lambda x: self.cb_file_open(1, x),
+                   lambda: self.cb_file_open_error(1))
 
     def tab_off_focus(self):
         pass

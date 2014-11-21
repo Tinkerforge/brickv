@@ -164,7 +164,10 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
     
     def update_language_packages(self, language):
         self.language_packages_file = REDFile(self.session)
-        async_call(self.language_packages_file.open, ("/etc/tf_installed_versions", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0), lambda x: self.update_language_packages_open(language, x), self.update_language_packages_error)
+        async_call(self.language_packages_file.open,
+                   ("/etc/tf_installed_versions", REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   lambda x: self.update_language_packages_open(language, x),
+                   self.update_language_packages_error)
 
     def update_table(self):
         tab_data = self.tab_data[self.tabs.currentIndex()]

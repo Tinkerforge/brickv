@@ -479,10 +479,10 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                 lambda x: cb_read(red_file, x),
                                 cb_read_status)
 
-        def cb_open_error(result):
+        def cb_open_error():
             # TODO: Error popup for user?
             log_download_pd.close()
-            print 'download_selected_logs cb_open_error', result
+            print 'download_selected_logs cb_open_error'
 
         if len(log_files_to_download['files']) > 0:
             async_call(REDFile(self.session).open,

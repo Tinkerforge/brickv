@@ -378,10 +378,10 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             red_file.read_async(int(files_to_download.values()[0]['s']),
                                 lambda x: cb_read(red_file, x), cb_read_status)
 
-        def cb_open_error(result):
+        def cb_open_error():
             # TODO: Error popup for user?
             file_download_pd.close()
-            print 'download_selected_files cb_open_error', result
+            print 'download_selected_files cb_open_error'
 
         if len(files_to_download) > 0:
             async_call(REDFile(self.session).open,
