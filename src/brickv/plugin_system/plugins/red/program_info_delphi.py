@@ -89,3 +89,4 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
 
         self.compile_dialog = ProgramInfoDelphiCompile(self, self.script_manager, self.program)
         self.compile_dialog.exec_()
+        self.compile_dialog = None
