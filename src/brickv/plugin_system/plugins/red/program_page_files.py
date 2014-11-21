@@ -25,6 +25,7 @@ from PyQt4.QtCore import Qt, QDir, QVariant
 from PyQt4.QtGui import QIcon, QFileDialog, QListWidgetItem, QApplication
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
+from brickv.plugin_system.plugins.red.utils import get_main_window
 from brickv.plugin_system.plugins.red.ui_program_page_files import Ui_ProgramPageFiles
 from brickv.program_path import get_program_path
 import os
@@ -72,7 +73,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         self.button_remove_selected_files.setEnabled(len(self.list_files.selectedItems()) > 0)
 
     def show_add_files_dialog(self):
-        filenames = QFileDialog.getOpenFileNames(self, 'Add Files')
+        filenames = QFileDialog.getOpenFileNames(get_main_window(), 'Add Files')
 
         for filename in filenames:
             filename = unicode(QDir.toNativeSeparators(filename))
@@ -90,7 +91,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         self.completeChanged.emit()
 
     def show_add_directory_dialog(self):
-        directory = unicode(QDir.toNativeSeparators(QFileDialog.getExistingDirectory(self, 'Add Directory')))
+        directory = unicode(QDir.toNativeSeparators(QFileDialog.getExistingDirectory(get_main_window(), 'Add Directory')))
 
         if len(directory) == 0:
             return
