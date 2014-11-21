@@ -399,11 +399,16 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             name_item    = self.tree_files_model.itemFromIndex(mapped_index)
             item_type    = name_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
 
-            # only rename files via activation, because diretories are expanded
+            # only rename files via activation, because directories are expanded
             if item_type == ITEM_TYPE_FILE:
                 self.rename_item(name_item)
 
     def rename_selected_file(self):
+        selection_count = len(self.tree_files.selectionModel().selectedRows())
+
+        if selection_count != 1:
+            return
+
         selected_name_items = self.get_selected_name_items()
 
         if len(selected_name_items) != 1:
