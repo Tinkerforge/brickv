@@ -1114,7 +1114,7 @@ class SerialSession(QObject):
             try:
                 d = self.serial.read(1)
             except:
-                traceback.print_exc()
+                #traceback.print_exc()
                 continue
                 
             self.term.write(d)
@@ -1124,7 +1124,8 @@ class SerialSession(QObject):
                 try:
                     self.serial.write(d)
                 except:
-                    traceback.print_exc()
+                    #traceback.print_exc()
+                    pass
 
     def close(self):
         # Stop supervisor thread
@@ -1150,4 +1151,5 @@ class SerialSession(QObject):
             data = self.term.pipe(data)
             self.serial.write(data)
         except:
-            traceback.print_exc()
+            #traceback.print_exc()
+            pass
