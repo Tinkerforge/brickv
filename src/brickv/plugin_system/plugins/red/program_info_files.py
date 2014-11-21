@@ -36,9 +36,13 @@ import posixpath
 import json
 import zlib
 
-USER_ROLE_ITEM_TYPE = Qt.UserRole + 2
-ITEM_TYPE_FILE = 0
+USER_ROLE_ITEM_TYPE     = Qt.UserRole + 2
+USER_ROLE_SIZE          = Qt.UserRole + 3
+USER_ROLE_LAST_MODIFIED = Qt.UserRole + 4
+
+ITEM_TYPE_FILE      = 0
 ITEM_TYPE_DIRECTORY = 1
+
 
 def expand_directory_walk_to_lists(directory_walk):
     files = {}
@@ -58,6 +62,7 @@ def expand_directory_walk_to_lists(directory_walk):
 
     return files, sorted(list(directories))
 
+
 def get_full_item_path(item):
     def expand(item, path):
         parent = item.parent()
@@ -69,10 +74,11 @@ def get_full_item_path(item):
 
     return expand(item, unicode(item.text()))
 
+
 def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon):
     def create_last_modified_item(last_modified):
         item = QStandardItem(QDateTime.fromTime_t(last_modified).toString('yyyy-MM-dd HH:mm:ss'))
-        item.setData(QVariant(last_modified))
+        item.setData(QVariant(last_modified), USER_ROLE_LAST_MODIFIED)
 
         return item
 
@@ -100,7 +106,7 @@ def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon
 
             if size_item != None:
                 size_item.setText(get_file_display_size(size))
-                size_item.setData(QVariant(size))
+                size_item.setData(QVariant(size), USER_ROLE_SIZE)
 
             return size
         else:
@@ -110,7 +116,7 @@ def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon
 
             size      = int(dw['s'])
             size_item = QStandardItem(get_file_display_size(size))
-            size_item.setData(QVariant(size))
+            size_item.setData(QVariant(size), USER_ROLE_SIZE)
 
             last_modified_item = create_last_modified_item(int(dw['l']))
 
@@ -122,12 +128,14 @@ def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon
 
     return model
 
+
 class FilesProxyModel(QSortFilterProxyModel):
     # overrides QSortFilterProxyModel.lessThan
     def lessThan(self, left, right):
-        # size and last modified
-        if left.column() in [1, 2]:
-            return left.data(Qt.UserRole + 1).toInt()[0] < right.data(Qt.UserRole + 1).toInt()[0]
+        if left.column() == 1: # size
+            return left.data(USER_ROLE_SIZE).toInt()[0] < right.data(USER_ROLE_SIZE).toInt()[0]
+        elif left.column() == 2: # last modified
+            return left.data(USER_ROLE_LAST_MODIFIED).toInt()[0] < right.data(USER_ROLE_LAST_MODIFIED).toInt()[0]
 
         return QSortFilterProxyModel.lessThan(self, left, right)
 
