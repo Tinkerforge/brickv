@@ -49,7 +49,7 @@ if not 'brickv' in sys.modules:
         # directory named differently than 'brickv'
         sys.modules['brickv'] = __import__(tail, globals(), locals(), [], -1)
 
-from PyQt4.QtGui import QApplication, QIcon
+from PyQt4.QtGui import QApplication, QIcon, QFont
 from PyQt4.QtCore import QEvent, pyqtSignal
 
 from brickv import config
@@ -85,6 +85,15 @@ def main():
 
     if sys.platform == 'win32':
         argv += ['-style', 'windowsxp']
+
+    if sys.platform == 'darwin':
+        # fix OSX 10.9 font
+        # http://successfulsoftware.net/2013/10/23/fixing-qt-4-for-mac-os-x-10-9-mavericks/
+        # https://bugreports.qt-project.org/browse/QTBUG-32789
+        QFont.insertSubstitution('.Lucida Grande UI', 'Lucida Grande')
+        # fix OSX 10.10 font
+        # https://bugreports.qt-project.org/browse/QTBUG-40833
+        QFont.insertSubstitution('.Helvetica Neue DeskInterface', 'Helvetica Neue')
 
     brick_viewer = BrickViewer(argv)
     main_window = MainWindow()
