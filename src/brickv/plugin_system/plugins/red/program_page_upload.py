@@ -39,19 +39,20 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.setupUi(self)
 
-        self.edit_mode         = False
-        self.upload_successful = False
-        self.language_api_name = None
-        self.program           = None
-        self.root_directory    = None
-        self.uploads           = None
-        self.command           = None
-        self.target            = None
-        self.source            = None
-        self.target_name       = None
-        self.source_name       = None
-        self.source_size       = None
-        self.last_upload_size  = None
+        self.edit_mode           = False
+        self.upload_successful   = False
+        self.language_api_name   = None
+        self.program             = None
+        self.root_directory      = None
+        self.uploads             = None
+        self.command             = None
+        self.created_directories = set()
+        self.target              = None
+        self.source              = None
+        self.target_name         = None
+        self.source_name         = None
+        self.source_size         = None
+        self.last_upload_size    = None
 
         self.setTitle(title_prefix + 'Upload')
 
@@ -254,12 +255,14 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if len(posixpath.split(upload.target)[0]) > 0:
             target_directory = posixpath.split(self.target_name)[0]
 
-            try:
-                # FIXME: keep track of which directories were already created to avoid creating them over and over again
-                create_directory(self.wizard().session, target_directory, DIRECTORY_FLAG_RECURSIVE, 0755, 1000, 1000)
-            except REDError as e:
-                self.upload_error("...error creating target directory '{0}': {1}".format(target_directory, e))
-                return
+            if target_directory not in self.created_directories:
+                try:
+                    create_directory(self.wizard().session, target_directory, DIRECTORY_FLAG_RECURSIVE, 0755, 1000, 1000)
+                except REDError as e:
+                    self.upload_error("...error creating target directory '{0}': {1}".format(target_directory, e))
+                    return
+
+                self.created_directories.add(target_directory)
 
         if (source_st.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)) != 0:
             permissions = 0755
