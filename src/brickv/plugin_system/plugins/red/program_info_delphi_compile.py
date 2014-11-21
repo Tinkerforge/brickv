@@ -38,10 +38,13 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
         self.program        = program
         self.script_data    = None
 
-        self.rejected.connect(self.cancel_make_execution)
-        self.button_make.clicked.connect(lambda: self.execute_make())
-        self.button_clean.clicked.connect(lambda: self.execute_make('clean'))
-        self.button_cancel.clicked.connect(self.reject)
+        self.rejected.connect(self.cancel_fpcmake_execution)
+        self.button_make.clicked.connect(lambda: self.execute_fpcmake())
+        self.button_clean.clicked.connect(lambda: self.execute_fpcmake('clean'))
+        self.button_cancel.clicked.connect(self.cancel_fpcmake_execution)
+        self.button_close.clicked.connect(self.reject)
+
+        self.button_cancel.setEnabled(False)
 
     def log(self, message, bold=False, pre=False):
         if bold:
@@ -53,13 +56,15 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
 
         self.edit_log.verticalScrollBar().setValue(self.edit_log.verticalScrollBar().maximum())
 
-    def execute_make(self, target=None):
+    def execute_fpcmake(self, target=None):
         self.button_make.setEnabled(False)
         self.button_clean.setEnabled(False)
+        self.button_cancel.setEnabled(True)
 
         # FIXME: it would be better to read the output incremental instead of
         #        waiting for make to exit and then display it in a burst
         def cb_fpcmake_helper(result):
+            aborted          = self.script_data.abort
             self.script_data = None
 
             if result != None:
@@ -70,11 +75,14 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
                     self.log('...error', bold=True)
                 else:
                     self.log('...done')
+            elif aborted:
+                self.log('...canceled', bold=True)
             else:
                 self.log('...error', bold=True)
 
             self.button_make.setEnabled(True)
             self.button_clean.setEnabled(True)
+            self.button_cancel.setEnabled(False)
 
         if target != None:
             self.log('Executing fpcmake and make {0}...'.format(target))
@@ -90,9 +98,15 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
         self.script_data = self.script_manager.execute_script('fpcmake_helper', cb_fpcmake_helper, [working_directory] + make_options,
                                                               max_length=1024*1024, redirect_stderr_to_stdout=True)
 
-    def cancel_make_execution(self):
-        if self.script_data != None:
-            try:
-                self.script_manager.abort_script(self.script_data)
-            except:
-                traceback.print_exc()
+    def cancel_fpcmake_execution(self):
+        if self.script_data == None:
+            return
+
+        self.button_make.setEnabled(True)
+        self.button_clean.setEnabled(True)
+        self.button_cancel.setEnabled(False)
+
+        try:
+            self.script_manager.abort_script(self.script_data)
+        except:
+            traceback.print_exc()
