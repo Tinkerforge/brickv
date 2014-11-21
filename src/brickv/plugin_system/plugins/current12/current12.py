@@ -56,7 +56,7 @@ class Current12(PluginBase):
         self.current_label = CurrentLabel('Current: ')
         self.over_label = QLabel('Over Current: No')
         self.calibrate_button = QPushButton('Calibrate')
-        self.calibrate_button.pressed.connect(self.calibrate_pressed)
+        self.calibrate_button.clicked.connect(self.calibrate_clicked)
         
         self.current_value = None
         
@@ -110,7 +110,7 @@ class Current12(PluginBase):
     def cb_over(self):
         self.over_label.setText('Over Current: Yes')
         
-    def calibrate_pressed(self):
+    def calibrate_clicked(self):
         try:
             self.cur.calibrate()
         except ip_connection.Error:

@@ -69,11 +69,11 @@ class GPS(PluginBase, Ui_GPS):
                                    self.qtcb_date_time.emit)
 
         self.format_combobox.currentIndexChanged.connect(self.format_changed)
-        self.show_pos.pressed.connect(self.show_pos_pressed)
-        self.hot_start.pressed.connect(lambda: self.restart_pressed(0))
-        self.warm_start.pressed.connect(lambda: self.restart_pressed(1))
-        self.cold_start.pressed.connect(lambda: self.restart_pressed(2))
-        self.factory_reset.pressed.connect(lambda: self.restart_pressed(3))
+        self.show_pos.clicked.connect(self.show_pos_clicked)
+        self.hot_start.clicked.connect(lambda: self.restart_clicked(0))
+        self.warm_start.clicked.connect(lambda: self.restart_clicked(1))
+        self.cold_start.clicked.connect(lambda: self.restart_clicked(2))
+        self.factory_reset.clicked.connect(lambda: self.restart_clicked(3))
 
         self.had_fix = False
 
@@ -86,7 +86,7 @@ class GPS(PluginBase, Ui_GPS):
         self.last_vdop = 0
         self.last_epe = 0
 
-    def show_pos_pressed(self):
+    def show_pos_clicked(self):
         if self.had_fix:
             google_str = self.last_ns + self.make_dd_dddddd(self.last_lat, True) + '+' + self.last_ew + self.make_dd_dddddd(self.last_long, True)
             QDesktopServices.openUrl(QUrl('https://maps.google.com/maps?q=' + google_str))
@@ -97,7 +97,7 @@ class GPS(PluginBase, Ui_GPS):
     def format_changed(self, index):
         self.cb_coordinates(self.last_lat, self.last_ns, self.last_long, self.last_ew, self.last_pdop, self.last_hdop, self.last_vdop, self.last_epe)
 
-    def restart_pressed(self, restart_type):
+    def restart_clicked(self, restart_type):
         if restart_type > 0:
             self.had_fix = False # don't show cached data
 

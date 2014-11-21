@@ -93,17 +93,17 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         self.parent = parent
         self.tab_widget.currentChanged.connect(self.tab_changed)
-        self.button_serial_port_refresh.pressed.connect(self.refresh_serial_ports)
+        self.button_serial_port_refresh.clicked.connect(self.refresh_serial_ports)
         self.combo_firmware.currentIndexChanged.connect(self.firmware_changed)
-        self.button_firmware_save.pressed.connect(self.firmware_save_pressed)
-        self.button_firmware_browse.pressed.connect(self.firmware_browse_pressed)
-        self.button_uid_load.pressed.connect(self.uid_load_pressed)
-        self.button_uid_save.pressed.connect(self.uid_save_pressed)
+        self.button_firmware_save.clicked.connect(self.firmware_save_clicked)
+        self.button_firmware_browse.clicked.connect(self.firmware_browse_clicked)
+        self.button_uid_load.clicked.connect(self.uid_load_clicked)
+        self.button_uid_save.clicked.connect(self.uid_save_clicked)
         self.combo_brick.currentIndexChanged.connect(self.brick_changed)
         self.combo_port.currentIndexChanged.connect(self.port_changed)
         self.combo_plugin.currentIndexChanged.connect(self.plugin_changed)
-        self.button_plugin_save.pressed.connect(self.plugin_save_pressed)
-        self.button_plugin_browse.pressed.connect(self.plugin_browse_pressed)
+        self.button_plugin_save.clicked.connect(self.plugin_save_clicked)
+        self.button_plugin_browse.clicked.connect(self.plugin_browse_clicked)
 
         self.update_tool_label.hide()
         self.no_connection_label.hide()
@@ -126,8 +126,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.update_tree_view.setSortingEnabled(True)
         self.update_tree_view.header().setSortIndicator(0, Qt.AscendingOrder)
 
-        self.update_button_refresh.pressed.connect(self.refresh_updates_pressed)
-        self.update_button_bricklets.pressed.connect(self.auto_update_bricklets_pressed)
+        self.update_button_refresh.clicked.connect(self.refresh_updates_clicked)
+        self.update_button_bricklets.clicked.connect(self.auto_update_bricklets_clicked)
 
         self.update_ui_state()
 
@@ -397,7 +397,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
     def firmware_changed(self, index):
         self.update_ui_state()
 
-    def firmware_browse_pressed(self):
+    def firmware_browse_clicked(self):
         last_dir = ''
         if len(self.edit_custom_firmware.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(unicode(self.edit_custom_firmware.text().toUtf8(), 'utf-8')))
@@ -410,7 +410,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             self.edit_custom_firmware.setText(file_name)
             self.update_ui_state()
 
-    def firmware_save_pressed(self):
+    def firmware_save_clicked(self):
         port = str(self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString())
 
         try:
@@ -624,7 +624,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not flash Brick')
 
-    def uid_save_pressed(self):
+    def uid_save_clicked(self):
         device, port = self.current_device_and_port()
         uid = str(self.edit_uid.text())
 
@@ -662,7 +662,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         else:
             self.popup_fail('Bricklet', 'Could not write UID: Verification failed')
 
-    def uid_load_pressed(self):
+    def uid_load_clicked(self):
         device, port = self.current_device_and_port()
         try:
             uid = self.parent.ipcon.read_bricklet_uid(device, port)
@@ -844,7 +844,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         return True
 
-    def plugin_save_pressed(self):
+    def plugin_save_clicked(self):
         progress = self.create_progress_bar('Flashing')
         current_text = self.combo_plugin.currentText()
 
@@ -900,7 +900,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         except:
             return None
 
-    def plugin_browse_pressed(self):
+    def plugin_browse_clicked(self):
         last_dir = ''
         if len(self.edit_custom_plugin.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(unicode(self.edit_custom_plugin.text().toUtf8(), 'utf-8')))
@@ -912,7 +912,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         if len(file_name) > 0:
             self.edit_custom_plugin.setText(file_name)
 
-    def auto_update_bricklets_pressed(self):
+    def auto_update_bricklets_clicked(self):
         def brick_for_bricklet(bricklet):
             for device_info in infos.infos.values():
                 if device_info.type == 'brick':
@@ -931,7 +931,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
                     if not plugin:
                         progress.cancel()
-                        self.refresh_updates_pressed()
+                        self.refresh_updates_clicked()
                         return
 
                     brick = brick_for_bricklet(device_info)
@@ -939,7 +939,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                         bricks_to_reset.add(brick)
                     else:
                         progress.cancel()
-                        self.refresh_updates_pressed()
+                        self.refresh_updates_clicked()
                         return
             elif device_info.type == 'brick':
                 for port in device_info.bricklets:
@@ -954,7 +954,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
                         if not plugin:
                             progress.cancel()
-                            self.refresh_updates_pressed()
+                            self.refresh_updates_clicked()
                             return
 
                         brick = brick_for_bricklet(device_info.bricklets[port])
@@ -962,7 +962,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                             bricks_to_reset.add(brick)
                         else:
                             progress.cancel()
-                            self.refresh_updates_pressed()
+                            self.refresh_updates_clicked()
                             return
 
         for brick in bricks_to_reset:
@@ -983,12 +983,12 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
     def tab_changed(self, i):
         if i == 0 and self.refresh_updates_pending:
-            self.refresh_updates_pressed()
+            self.refresh_updates_clicked()
         elif i == 2:
             self.brick_changed(self.combo_brick.currentIndex())
             self.port_changed(self.combo_port.currentIndex())
 
-    def refresh_updates_pressed(self):
+    def refresh_updates_clicked(self):
         if self.tab_widget.currentIndex() != 0:
             self.refresh_updates_pending = True
             return
@@ -1169,9 +1169,9 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             # out false-positive protocol1 errors that were detected due to
             # fast USB unplug
             t = 200
-        QTimer.singleShot(t, lambda: self.refresh_updates_pressed_second_step(is_update, items, protocol1_errors))
+        QTimer.singleShot(t, lambda: self.refresh_updates_clicked_second_step(is_update, items, protocol1_errors))
 
-    def refresh_updates_pressed_second_step(self, is_update, items, protocol1_errors):
+    def refresh_updates_clicked_second_step(self, is_update, items, protocol1_errors):
         protocol1_error_still_there = False
 
         # filter out false-positive protocol1 errors

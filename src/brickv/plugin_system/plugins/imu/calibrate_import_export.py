@@ -37,9 +37,9 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
         self.parent = parent
         self.imu = self.parent.imu
 
-        self.restore_button.pressed.connect(self.restore_pressed)
-        self.export_button.pressed.connect(self.export_pressed)
-        self.import_button.pressed.connect(self.import_pressed)
+        self.restore_button.clicked.connect(self.restore_clicked)
+        self.export_button.clicked.connect(self.export_clicked)
+        self.import_button.clicked.connect(self.import_clicked)
 
     def start(self):
         pass
@@ -61,7 +61,7 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
         progress.setWindowModality(Qt.WindowModal)
         return progress
 
-    def restore_pressed(self):
+    def restore_clicked(self):
         progress = self.create_progress_bar('Factory Calibration')
         uid = self.parent.parent.uid
 
@@ -115,7 +115,7 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
 
         self.popup_ok('Factory Calibration', 'Successfully restored factory calibration')
 
-    def import_pressed(self):
+    def import_clicked(self):
         text = str(self.text_edit.toPlainText())
 
         try:
@@ -133,7 +133,7 @@ Multiplier and Divider are written as "mul/div" """
 
         self.popup_ok('Calibration Import', 'Successfully imported calibration')
 
-    def export_pressed(self):
+    def export_clicked(self):
         text = """# Each line starts with "calibration type:"
 # followed by the x, y and z calibration, separated by a comma.
 # Multiplier and Divider are written as "mul/div"

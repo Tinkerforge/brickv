@@ -194,7 +194,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.sbox_brickd_adv_rs485_dly.valueChanged.connect(self.brickd_settings_changed)
 
         # Date/Time buttons
-        self.time_sync_button.pressed.connect(self.time_sync_pressed)
+        self.time_sync_button.clicked.connect(self.time_sync_clicked)
 
     def tab_on_focus(self):
         self.manager_settings_conf_rfile = REDFile(self.session)
@@ -1655,7 +1655,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.time_date_red.setDateTime(t)
         self.time_time_red.setDateTime(t)
         
-    def time_sync_pressed(self):
+    def time_sync_clicked(self):
         def state_changed(process, t, p):
             if p.state == REDProcess.STATE_ERROR:
                 # TODO: Error popup for user?

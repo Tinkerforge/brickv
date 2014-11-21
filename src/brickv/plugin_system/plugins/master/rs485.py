@@ -85,7 +85,7 @@ class RS485(QWidget, Ui_RS485):
         self.lineedit_slave_address.setText(address_slave_text)
         self.address_spinbox.setValue(self.update_address)
 
-        self.save_button.pressed.connect(self.save_pressed)
+        self.save_button.clicked.connect(self.save_clicked)
         self.rs485_type.currentIndexChanged.connect(self.rs485_type_changed)
 
         self.rs485_type.setCurrentIndex(typ)
@@ -108,7 +108,7 @@ class RS485(QWidget, Ui_RS485):
     def popup_fail(self):
         QMessageBox.critical(self, 'Configuration', 'Could not save configuration.', QMessageBox.Ok)
 
-    def save_pressed(self):
+    def save_clicked(self):
         speed = self.speed_spinbox.value()
         parity_index = self.parity_combobox.currentIndex()
         parity = 'n'

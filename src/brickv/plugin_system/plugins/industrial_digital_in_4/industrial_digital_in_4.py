@@ -64,9 +64,9 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
         self.idi4.register_callback(self.idi4.CALLBACK_INTERRUPT,
                                     self.qtcb_interrupt.emit)
         
-        self.set_group.pressed.connect(self.set_group_pressed)
+        self.set_group.clicked.connect(self.set_group_clicked)
         
-        self.debounce_go.pressed.connect(self.debounce_go_pressed)
+        self.debounce_go.clicked.connect(self.debounce_go_clicked)
         
         self.reconfigure_everything()
         
@@ -163,7 +163,7 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
             i += 1
         return value
     
-    def set_group_pressed(self):
+    def set_group_clicked(self):
         group = ['n', 'n', 'n', 'n']
         for i in range(len(self.groups)):
             text = self.groups[i].currentText()
@@ -182,6 +182,6 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
     def cb_interrupt(self, interrupt_mask, value_mask):
         self.show_new_value(value_mask)
         
-    def debounce_go_pressed(self):
+    def debounce_go_clicked(self):
         time = self.debounce_time.value()
         self.idi4.set_debounce_period(time)

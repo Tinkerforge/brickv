@@ -95,11 +95,11 @@ class PiezoSpeaker(PluginBase):
         
         self.status_label = QLabel('')
         
-        self.beep_button.pressed.connect(self.beep_pressed)
-        self.morse_button.pressed.connect(self.morse_pressed)
-        self.scale_button.pressed.connect(self.scale_pressed)
+        self.beep_button.clicked.connect(self.beep_clicked)
+        self.morse_button.clicked.connect(self.morse_clicked)
+        self.scale_button.clicked.connect(self.scale_clicked)
         self.scale_timer.timeout.connect(self.scale_timeout)
-        self.calibrate_button.pressed.connect(self.calibrate_pressed)
+        self.calibrate_button.clicked.connect(self.calibrate_clicked)
         
         layout = QVBoxLayout(self)
         layout.addLayout(self.frequency_layout)
@@ -138,7 +138,7 @@ class PiezoSpeaker(PluginBase):
         self.scale_button.setDisabled(False)
         self.status_label.setText('')
         
-    def calibrate_pressed(self):
+    def calibrate_clicked(self):
         self.status_label.setText('Calibrating')
         self.status_label.repaint()
         QApplication.processEvents()
@@ -157,7 +157,7 @@ class PiezoSpeaker(PluginBase):
             self.scale_time = 585
             self.scale_timer.stop()
         
-    def scale_pressed(self):
+    def scale_clicked(self):
         self.scale_time = 585
         self.scale_timeout()
         self.scale_timer.start()
@@ -165,7 +165,7 @@ class PiezoSpeaker(PluginBase):
         self.morse_button.setDisabled(True)
         self.scale_button.setDisabled(True)
 
-    def beep_pressed(self):
+    def beep_clicked(self):
         freq = self.frequency_box.value()
         duration = self.beep_box.value()
 
@@ -180,7 +180,7 @@ class PiezoSpeaker(PluginBase):
             self.scale_button.setDisabled(True)
             self.status_label.setText('Beeping...')
 
-    def morse_pressed(self):
+    def morse_clicked(self):
         freq = self.frequency_box.value()
         morse = str(self.morse_edit.text())
         try:

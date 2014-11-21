@@ -88,15 +88,15 @@ class Barometer(PluginBase):
 
         if has_calibrate:
             self.calibrate_button = QPushButton('Calibrate Altitude')
-            self.calibrate_button.pressed.connect(self.calibrate_pressed)
+            self.calibrate_button.clicked.connect(self.calibrate_clicked)
         else:
             self.get_reference_button = QPushButton('Get')
-            self.get_reference_button.pressed.connect(self.get_reference_pressed)
+            self.get_reference_button.clicked.connect(self.get_reference_clicked)
             self.set_reference_button = QPushButton('Set')
-            self.set_reference_button.pressed.connect(self.set_reference_pressed)
+            self.set_reference_button.clicked.connect(self.set_reference_clicked)
             self.reference_label = QLabel('Reference Air Pressure [mbar]:')
             self.reference_edit = QLineEdit()
-            self.get_reference_pressed()
+            self.get_reference_clicked()
             
         if has_averaging:
             self.avg_pressure_box = QSpinBox()
@@ -252,7 +252,7 @@ class Barometer(PluginBase):
     def save_new_averaging(self):
         self.barometer.set_averaging(self.moving_average_pressure, self.average_pressure, self.average_temperature)
 
-    def calibrate_pressed(self):
+    def calibrate_clicked(self):
         try:
             # Call set_reference_air_pressure that has the same function ID as
             # calibrate_altitude the extra parameter will just be ignored
@@ -260,14 +260,14 @@ class Barometer(PluginBase):
         except ip_connection.Error:
             pass
 
-    def get_reference_pressed_async(self, reference):
+    def get_reference_clicked_async(self, reference):
         r = str(reference/1000.0)
         self.reference_edit.setText(r)
         
-    def get_reference_pressed(self):
-        async_call(self.barometer.get_reference_air_pressure, None, self.get_reference_pressed_async, self.increase_error_count)
+    def get_reference_clicked(self):
+        async_call(self.barometer.get_reference_air_pressure, None, self.get_reference_clicked_async, self.increase_error_count)
 
-    def set_reference_pressed(self):
+    def set_reference_clicked(self):
         try:
             r = round(float(self.reference_edit.text())*1000)
         except:

@@ -57,7 +57,7 @@ class Master(PluginBase, Ui_Master):
         
         # Chibi widget
         if self.firmware_version >= (1, 1, 0):
-            self.extension_type_button.pressed.connect(self.extension_pressed)
+            self.extension_type_button.clicked.connect(self.extension_clicked)
             async_call(self.master.is_chibi_present, None, self.is_chibi_present_async, self.increase_error_count)
         else:
             self.extension_type_button.setEnabled(False)
@@ -161,7 +161,7 @@ class Master(PluginBase, Ui_Master):
             sc_str = "%gA" % round(sc/1000.0, 1)   
         self.stack_current_label.setText(sc_str)
         
-    def extension_pressed(self):
+    def extension_clicked(self):
         if self.extension_type is None:
             self.extension_type = ExtensionType(self)
 

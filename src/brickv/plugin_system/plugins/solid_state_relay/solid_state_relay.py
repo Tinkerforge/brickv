@@ -46,8 +46,8 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
         self.ssr.register_callback(self.ssr.CALLBACK_MONOFLOP_DONE,
                                   self.qtcb_monoflop.emit)
         
-        self.ssr_button.pressed.connect(self.ssr_pressed)
-        self.go_button.pressed.connect(self.go_pressed)
+        self.ssr_button.clicked.connect(self.ssr_clicked)
+        self.go_button.clicked.connect(self.go_clicked)
 
         self.monoflop = False
         self.timebefore = 500
@@ -102,7 +102,7 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletSolidStateRelay.DEVICE_IDENTIFIER
 
-    def ssr_pressed(self):
+    def ssr_clicked(self):
         width = self.ssr_button.width()
         if self.ssr_button.minimumWidth() < width:
             self.ssr_button.setMinimumWidth(width)
@@ -125,7 +125,7 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
         self.time_spinbox.setEnabled(True)
         self.state_combobox.setEnabled(True)
 
-    def go_pressed(self):   
+    def go_clicked(self):
         time = self.time_spinbox.value()
         state = self.state_combobox.currentIndex() == 0
         try:

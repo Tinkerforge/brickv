@@ -103,9 +103,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tab_widget.setMovable(True)
         self.tab_widget.tabBar().installEventFilter(self)
 
-        self.button_connect.pressed.connect(self.connect_pressed)
-        self.button_flashing.pressed.connect(self.flashing_pressed)
-        self.button_advanced.pressed.connect(self.advanced_pressed)
+        self.button_connect.clicked.connect(self.connect_clicked)
+        self.button_flashing.clicked.connect(self.flashing_clicked)
+        self.button_advanced.clicked.connect(self.advanced_clicked)
         self.plugin_manager = PluginManager()
 
         # host info
@@ -334,7 +334,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         return True
 
-    def flashing_pressed(self):
+    def flashing_clicked(self):
         first = False
 
         if self.flashing_window is None:
@@ -343,16 +343,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.update_flashing_window()
         self.flashing_window.show()
-        self.flashing_window.refresh_updates_pressed()
+        self.flashing_window.refresh_updates_clicked()
 
-    def advanced_pressed(self):
+    def advanced_clicked(self):
         if self.advanced_window is None:
             self.advanced_window = AdvancedWindow(self)
 
         self.update_advanced_window()
         self.advanced_window.show()
 
-    def connect_pressed(self):
+    def connect_clicked(self):
         if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_DISCONNECTED:
             try:
                 self.last_host = str(self.combo_host.currentText())
@@ -403,7 +403,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             button = QToolButton()
             button.setText(connected_uid)
-            button.pressed.connect(lambda: self.show_plugin(connected_uid))
+            button.clicked.connect(lambda: self.show_plugin(connected_uid))
 
             info_bar.addWidget(button)
             info_bar.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
@@ -420,7 +420,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not device_info.plugin.has_custom_version(label_version_name, label_version):
             label_version_name.setText('FW Version:')
             label_version.setText(infos.get_version_string(device_info.plugin.firmware_version))
-    
+
         info_bar.addWidget(label_version_name)
         info_bar.addWidget(label_version)
 
@@ -778,4 +778,4 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.delayed_refresh_updates_timer.stop()
 
         if self.flashing_window is not None and self.flashing_window.isVisible():
-            self.flashing_window.refresh_updates_pressed()
+            self.flashing_window.refresh_updates_clicked()

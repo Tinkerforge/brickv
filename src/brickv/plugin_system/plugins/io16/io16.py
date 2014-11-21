@@ -81,13 +81,13 @@ class IO16(PluginBase, Ui_IO16):
         self.init_async_generator = self.init_async()
         self.init_async_generator.next()
         
-        self.save_button.pressed.connect(self.save_pressed)
+        self.save_button.clicked.connect(self.save_clicked)
         self.port_box.currentIndexChanged.connect(self.port_changed)
         self.pin_box.currentIndexChanged.connect(self.pin_changed)
         self.direction_box.currentIndexChanged.connect(self.direction_changed)
-        self.debounce_save.pressed.connect(self.debounce_save_pressed)
+        self.debounce_save.clicked.connect(self.debounce_save_clicked)
         self.time_spinbox.valueChanged.connect(self.time_changed)
-        self.go_button.pressed.connect(self.go_pressed)
+        self.go_button.clicked.connect(self.go_clicked)
 
         self.qtcb_monoflop.connect(self.cb_monoflop)
         self.io.register_callback(self.io.CALLBACK_MONOFLOP_DONE,
@@ -218,7 +218,7 @@ class IO16(PluginBase, Ui_IO16):
 
         self.time_spinbox.setValue(self.monoflop_timebefore[port][pin])
 
-    def save_pressed(self):
+    def save_clicked(self):
         port = str(self.port_box.currentText()).lower()
         pin = int(self.pin_box.currentText())
         direction = str(self.direction_box.currentText())[0].lower()
@@ -289,7 +289,7 @@ class IO16(PluginBase, Ui_IO16):
 
         self.update_monoflop_ui_state()
 
-    def debounce_save_pressed(self):
+    def debounce_save_clicked(self):
         debounce = int(str(self.debounce_edit.text()))
         try:
             self.io.set_debounce_period(debounce)
@@ -303,7 +303,7 @@ class IO16(PluginBase, Ui_IO16):
         if not self.monoflop_active[port][pin]:
             self.monoflop_timebefore[port][pin] = time
 
-    def go_pressed(self):
+    def go_clicked(self):
         port = str(self.port_box.currentText()).lower()
         pin = int(self.pin_box.currentText())
 

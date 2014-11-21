@@ -73,7 +73,7 @@ class Ethernet(QWidget, Ui_Ethernet):
             async_call(self.master.get_ethernet_configuration, None, self.get_ethernet_configuration_async, self.parent.increase_error_count)
             async_call(self.master.get_ethernet_status, None, self.get_ethernet_status_init_async, self.parent.increase_error_count)
             self.ethernet_connection.currentIndexChanged.connect(self.connection_changed)
-            self.ethernet_save.pressed.connect(self.save_pressed)
+            self.ethernet_save.clicked.connect(self.save_clicked)
             self.ethernet_mac6 = SpinBoxHex()
             self.ethernet_mac5 = SpinBoxHex()
             self.ethernet_mac4 = SpinBoxHex()
@@ -293,7 +293,7 @@ class Ethernet(QWidget, Ui_Ethernet):
         self.ethernet_count_rx.setText('Count RX: ' + str(status.rx_count))
         self.ethernet_count_tx.setText('Count TX: ' + str(status.tx_count))
 
-    def save_pressed(self):
+    def save_clicked(self):
         port = self.ethernet_port.value()
         connection = self.ethernet_connection.currentIndex()
 

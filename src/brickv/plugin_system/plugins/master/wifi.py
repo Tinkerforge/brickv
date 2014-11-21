@@ -177,11 +177,11 @@ class Wifi(QWidget, Ui_Wifi):
 
         self.wifi_connection.currentIndexChanged.connect(self.connection_changed)
         self.wifi_encryption.currentIndexChanged.connect(self.encryption_changed)
-        self.wifi_save.pressed.connect(self.save_pressed)
-        self.wifi_show_status.pressed.connect(self.show_status_pressed)
-        self.wifi_ca_certificate_browse.pressed.connect(self.ca_certificate_browse_pressed)
-        self.wifi_client_certificate_browse.pressed.connect(self.client_certificate_browse_pressed)
-        self.wifi_private_key_browse.pressed.connect(self.private_key_browse_pressed)
+        self.wifi_save.clicked.connect(self.save_clicked)
+        self.wifi_show_status.clicked.connect(self.show_status_clicked)
+        self.wifi_ca_certificate_browse.clicked.connect(self.ca_certificate_browse_clicked)
+        self.wifi_client_certificate_browse.clicked.connect(self.client_certificate_browse_clicked)
+        self.wifi_private_key_browse.clicked.connect(self.private_key_browse_clicked)
 
         self.connection_changed(0)
         self.encryption_changed(0)
@@ -221,7 +221,7 @@ class Wifi(QWidget, Ui_Wifi):
         else:
             self.wifi_password.setEchoMode(QLineEdit.Password)
 
-    def ca_certificate_browse_pressed(self):
+    def ca_certificate_browse_clicked(self):
         last_dir = ''
         if len(self.wifi_ca_certificate_url.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(unicode(self.wifi_ca_certificate_url.text().toUtf8(), 'utf-8')))
@@ -232,7 +232,7 @@ class Wifi(QWidget, Ui_Wifi):
         if len(file_name) > 0:
             self.wifi_ca_certificate_url.setText(file_name)
 
-    def client_certificate_browse_pressed(self):
+    def client_certificate_browse_clicked(self):
         last_dir = ''
         if len(self.wifi_client_certificate_url.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(unicode(self.wifi_client_certificate_url.text().toUtf8(), 'utf-8')))
@@ -243,7 +243,7 @@ class Wifi(QWidget, Ui_Wifi):
         if len(file_name) > 0:
             self.wifi_client_certificate_url.setText(file_name)
 
-    def private_key_browse_pressed(self):
+    def private_key_browse_clicked(self):
         last_dir = ''
         if len(self.wifi_private_key_url.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(unicode(self.wifi_private_key_url.text().toUtf8(), 'utf-8')))
@@ -467,7 +467,7 @@ class Wifi(QWidget, Ui_Wifi):
     def popup_fail(self, message='Could not save configuration.'):
         QMessageBox.critical(self, 'Configuration', message, QMessageBox.Ok)
 
-    def show_status_pressed(self):
+    def show_status_clicked(self):
         if self.wifi_status is None:
             self.wifi_status = WifiStatus(self)
 
@@ -548,7 +548,7 @@ class Wifi(QWidget, Ui_Wifi):
 
         return True
 
-    def save_pressed(self):
+    def save_clicked(self):
         encryption = self.wifi_encryption.currentIndex()
 
         try:

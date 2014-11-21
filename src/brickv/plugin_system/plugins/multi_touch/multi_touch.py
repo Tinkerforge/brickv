@@ -82,9 +82,9 @@ class MultiTouch(PluginBase, Ui_MultiTouch):
         for cb in self.cbs:
             cb.stateChanged.connect(self.state_changed)
             
-        self.button_recalibrate.pressed.connect(self.recalibrate_pressed)
+        self.button_recalibrate.clicked.connect(self.recalibrate_clicked)
         
-    def recalibrate_pressed(self):
+    def recalibrate_clicked(self):
         value = self.sensitivity_spinbox.value()
         self.mt.set_electrode_sensitivity(value)
         self.mt.recalibrate()

@@ -42,7 +42,7 @@ class CalibrateGyroscopeBias(QWidget, Ui_calibrate_gyroscope_bias):
         self.imu = parent.parent.imu
         
         self.set_default()
-        self.start_button.pressed.connect(self.next_state)
+        self.start_button.clicked.connect(self.next_state)
         self.i = 0
         self.t = 0
         

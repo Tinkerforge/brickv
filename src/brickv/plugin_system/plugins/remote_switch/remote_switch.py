@@ -61,9 +61,9 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
         self.spinbox_dim_value.valueChanged.connect(self.spinbox_dim_value_changed)
         self.slider_dim_value.valueChanged.connect(self.slider_dim_value_changed)
         
-        self.button_switch_on.pressed.connect(lambda: self.button_pressed(1))
-        self.button_switch_off.pressed.connect(lambda: self.button_pressed(0))
-        self.button_dim.pressed.connect(self.dim_pressed)
+        self.button_switch_on.clicked.connect(lambda: self.button_clicked(1))
+        self.button_switch_off.clicked.connect(lambda: self.button_clicked(0))
+        self.button_dim.clicked.connect(self.dim_clicked)
         
         self.type_a_widgets = [self.groupbox_house, self.groupbox_receiver, self.button_switch_on, self.button_switch_off]
         self.type_b_widgets = [self.widget_address, self.widget_unit, self.button_switch_on, self.button_switch_off]
@@ -139,7 +139,7 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
     def destroy(self):
         pass
     
-    def dim_pressed(self):
+    def dim_clicked(self):
         self.button_dim.setEnabled(False)
         self.button_dim.setText("Dimming...")
         
@@ -156,7 +156,7 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
                 
             self.rs.dim_socket_b(address, unit, dim_value)
     
-    def button_pressed(self, switch_to):
+    def button_clicked(self, switch_to):
         self.button_switch_on.setEnabled(False)
         self.button_switch_on.setText("Switching...")
         self.button_switch_off.setEnabled(False)

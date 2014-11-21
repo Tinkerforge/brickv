@@ -64,19 +64,19 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
         async_call(self.ido4.get_available_for_group, None, self.get_available_for_group_aysnc, self.increase_error_count)
         
         def get_button_lambda(button):
-            return lambda: self.pin_button_pressed(button)
+            return lambda: self.pin_button_clicked(button)
         
         for i in range(len(self.pin_buttons)):
-            self.pin_buttons[i].pressed.connect(get_button_lambda(i))
+            self.pin_buttons[i].clicked.connect(get_button_lambda(i))
         
         self.qtcb_monoflop.connect(self.cb_monoflop)
         self.ido4.register_callback(self.ido4.CALLBACK_MONOFLOP_DONE,
                                     self.qtcb_monoflop.emit)
         
-        self.set_group.pressed.connect(self.set_group_pressed)
+        self.set_group.clicked.connect(self.set_group_clicked)
         
         self.monoflop_pin.currentIndexChanged.connect(self.monoflop_pin_changed)
-        self.monoflop_go.pressed.connect(self.monoflop_go_pressed)
+        self.monoflop_go.clicked.connect(self.monoflop_go_clicked)
         self.monoflop_time_before = [1000] * 16
         self.monoflop_pending = [False] * 16
         
@@ -209,7 +209,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
             i += 1
         return value
     
-    def set_group_pressed(self):
+    def set_group_clicked(self):
         group = ['n', 'n', 'n', 'n']
         for i in range(len(self.groups)):
             text = self.groups[i].currentText()
@@ -225,7 +225,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
         self.ido4.set_group(group)
         self.reconfigure_everything()
     
-    def pin_button_pressed(self, button):
+    def pin_button_clicked(self, button):
         value = self.get_current_value()
         if 'High' in self.pin_buttons[button].text():
             value |= (1 << button)
@@ -283,7 +283,7 @@ class IndustrialDigitalOut4(PluginBase, Ui_IndustrialDigitalOut4):
             self.monoflop_time.setValue(self.monoflop_time_before[pin])
             self.monoflop_time.setEnabled(True)
 
-    def monoflop_go_pressed(self):
+    def monoflop_go_clicked(self):
         pin = int(self.monoflop_pin.currentText().replace('Pin ', ''))
         if self.monoflop_pending[pin]:
             time = self.monoflop_time_before[pin]

@@ -90,7 +90,7 @@ class RotaryEncoder(PluginBase):
         
         self.count_label = CountLabel('Count: 0')
         self.reset_button = QPushButton('Reset Count')
-        self.reset_button.pressed.connect(self.reset_pressed)
+        self.reset_button.clicked.connect(self.reset_clicked)
         
         self.encoder_frame = EncoderFrame(self)
         self.encoder_frame.setMinimumSize(220, 220)
@@ -128,7 +128,7 @@ class RotaryEncoder(PluginBase):
         self.count_label.setText(str(count))
         self.encoder_frame.set_count(count)
         
-    def reset_pressed(self):
+    def reset_clicked(self):
         async_call(self.re.get_count, True, None, self.increase_error_count)
         self.cb_count(0)
 

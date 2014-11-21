@@ -110,7 +110,7 @@ class Chibi(QWidget, Ui_Chibi):
         self.chibi_frequency.setCurrentIndex(self.update_chibi_frequency)
         self.chibi_channel.setCurrentIndex(self.update_chibi_channel)
 
-        self.save_button.pressed.connect(self.save_pressed)
+        self.save_button.clicked.connect(self.save_clicked)
         self.chibi_type.currentIndexChanged.connect(self.chibi_type_changed)
         self.chibi_frequency.currentIndexChanged.connect(self.chibi_frequency_changed)
         self.chibi_channel.currentIndexChanged.connect(self.chibi_channel_changed)
@@ -163,7 +163,7 @@ class Chibi(QWidget, Ui_Chibi):
         self.chibi_channel.setCurrentIndex(channel)
         self.chibi_channel.currentIndexChanged.connect(self.chibi_channel_changed)
 
-    def save_pressed(self):
+    def save_clicked(self):
         typ = self.chibi_type.currentIndex()
         frequency = self.chibi_frequency.currentIndex()
         channel = self.chibi_channel.currentIndex()

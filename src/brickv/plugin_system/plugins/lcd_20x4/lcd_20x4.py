@@ -97,11 +97,11 @@ class LCD20x4(PluginBase):
         self.buttonlayout.addWidget(self.b2_label)
         self.buttonlayout.addWidget(self.b3_label)
         
-        self.cursor_button.pressed.connect(self.cursor_pressed)
-        self.blink_button.pressed.connect(self.blink_pressed)
-        self.clear_button.pressed.connect(self.clear_pressed)
-        self.bl_button.pressed.connect(self.bl_pressed)
-        self.text_button.pressed.connect(self.text_pressed)
+        self.cursor_button.clicked.connect(self.cursor_clicked)
+        self.blink_button.clicked.connect(self.blink_clicked)
+        self.clear_button.clicked.connect(self.clear_clicked)
+        self.bl_button.clicked.connect(self.bl_clicked)
+        self.text_button.clicked.connect(self.text_clicked)
         
         if self.firmware_version >= (2, 0, 1):
             line = QFrame()
@@ -125,8 +125,8 @@ class LCD20x4(PluginBase):
                     b.setMinimumSize(25, 25)
                     
                     def get_lambda(i, j):
-                        return lambda: self.char_button_pressed(i, j)
-                    b.pressed.connect(get_lambda(i, j))
+                        return lambda: self.char_button_clicked(i, j)
+                    b.clicked.connect(get_lambda(i, j))
                     
                     self.character_boxes[i].append(b)
                     self.character_boxes_bool[i].append(True)
@@ -145,9 +145,9 @@ class LCD20x4(PluginBase):
             self.char_index_layout.addStretch()
             
             self.char_index_save = QPushButton('Save Character')
-            self.char_index_save.pressed.connect(self.char_index_save_pressed)
+            self.char_index_save.clicked.connect(self.char_index_save_clicked)
             self.char_show = QPushButton('Show all Custom Characters on LCD')
-            self.char_show.pressed.connect(self.show_pressed)
+            self.char_show.clicked.connect(self.show_clicked)
             self.char_save_layout = QVBoxLayout()
             self.char_save_layout.addStretch()
             self.char_save_layout.addLayout(self.char_index_layout)
@@ -187,7 +187,7 @@ class LCD20x4(PluginBase):
 
         layout.addStretch(1)
 
-    def char_button_pressed(self, i, j):
+    def char_button_clicked(self, i, j):
         if self.character_boxes_bool[i][j]:
             self.character_boxes_bool[i][j] = False
             self.character_boxes[i][j].setStyleSheet("background-color: rgb(0, 0, 255)")
@@ -253,7 +253,7 @@ class LCD20x4(PluginBase):
         elif button == 3:
             self.b3_label.setText('Button 3: Released')
     
-    def bl_pressed(self):
+    def bl_clicked(self):
         try:
             if self.bl_button.text() == 'Backlight On':
                 self.lcd.backlight_on()
@@ -269,7 +269,7 @@ class LCD20x4(PluginBase):
         blink = self.blink_button.text() == 'Blink Off'
         return (cursor, blink)
     
-    def cursor_pressed(self):
+    def cursor_clicked(self):
         cursor, blink = self.get_config()
         try:
             self.lcd.set_config(not cursor, blink)
@@ -281,7 +281,7 @@ class LCD20x4(PluginBase):
         else:
             self.cursor_button.setText('Cursor Off')
     
-    def blink_pressed(self):
+    def blink_clicked(self):
         cursor, blink = self.get_config()
         try:
             self.lcd.set_config(cursor, not blink)
@@ -293,13 +293,13 @@ class LCD20x4(PluginBase):
         else:
             self.blink_button.setText('Blink Off')
     
-    def clear_pressed(self):
+    def clear_clicked(self):
         try:
             self.lcd.clear_display()
         except ip_connection.Error:
             return
     
-    def text_pressed(self):
+    def text_clicked(self):
         line = int(self.line_combo.currentText())
         position = int(self.pos_combo.currentText())
         text = unicode(self.text_edit.text().toUtf8(), 'utf-8')
@@ -311,7 +311,7 @@ class LCD20x4(PluginBase):
         except ip_connection.Error:
             return
         
-    def char_index_save_pressed(self):
+    def char_index_save_clicked(self):
         char = [0]*8
         for i in range(len(self.character_boxes)):
             for j in range(len(self.character_boxes[i])):
@@ -321,7 +321,7 @@ class LCD20x4(PluginBase):
         index = int(self.char_index_combo.currentText())
         self.lcd.set_custom_character(index, char)
         
-    def show_pressed(self):
+    def show_clicked(self):
         self.lcd.clear_display()
         line1 = '0:{0} 1:{1} 2:{2} 3:{3}'.format(chr(8), chr(9), chr(10), chr(11))
         line2 = '4:{0} 5:{1} 6:{2} 7:{3}'.format(chr(12), chr(13), chr(14), chr(15))

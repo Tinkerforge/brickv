@@ -71,23 +71,22 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
         
         self.brightness = 7
         self.box_brightness.currentIndexChanged.connect(self.brightness_changed)
-        self.button_start.pressed.connect(self.start_pressed)
+        self.button_start.clicked.connect(self.start_clicked)
         
-        def get_pressed_func(digit, segment):
-            return lambda: self.button_pressed(digit, segment)
+        def get_clicked_func(digit, segment):
+            return lambda: self.button_clicked(digit, segment)
         
         for d in range(4):
             for i in range(7):
                 button = self.digits[d][i]
                 button.setStyleSheet(self.STYLE_OFF);
-                button.pressed.connect(get_pressed_func(d, i))
+                button.clicked.connect(get_clicked_func(d, i))
             
         for i in range(2):
             button = self.points[i]
             button.setStyleSheet(self.STYLE_OFF);
-            button.pressed.connect(get_pressed_func(4, i))
-            
-            
+            button.clicked.connect(get_clicked_func(4, i))
+
         self.counter_timer = QTimer()
         self.counter_timer.timeout.connect(self.update_counter)
         self.counter_timer.setInterval(100)
@@ -99,7 +98,7 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
     def update_counter(self):
         async_call(self.sd4x7.get_segments, None, self.cb_get_segments, self.increase_error_count)
             
-    def start_pressed(self):
+    def start_clicked(self):
         fr = self.box_from.value()
         to = self.box_to.value()
         increment = self.box_increment.value()
@@ -129,7 +128,7 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
                 if self.digit_state[d][s]:
                     self.digits[d][s].setStyleSheet(self.STYLE_ON[self.brightness])
 
-    def button_pressed(self, digit, segment):
+    def button_clicked(self, digit, segment):
         self.counter_timer.stop()
         if digit == 4:
             if self.digit_state[4][0]:

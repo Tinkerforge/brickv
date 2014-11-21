@@ -85,8 +85,8 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
         self.plot_widget_voltage = PlotWidget('Voltage [mV]', plot_list_voltage)
         self.plot_widget_power = PlotWidget('Power [mW]', plot_list_power)
         
-        self.save_cal_button.pressed.connect(self.save_cal_pressed)
-        self.save_conf_button.pressed.connect(self.save_conf_pressed)
+        self.save_cal_button.clicked.connect(self.save_cal_clicked)
+        self.save_conf_button.clicked.connect(self.save_conf_clicked)
         
         layout_plots = QHBoxLayout()
         layout_current = QVBoxLayout()
@@ -186,12 +186,12 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
         self.power_value = power
         self.power_label.setText(str(power)) 
         
-    def save_cal_pressed(self):
+    def save_cal_clicked(self):
         gainmul = self.gainmul_spinbox.value()
         gaindiv = self.gaindiv_spinbox.value()
         self.vc.set_calibration(gainmul, gaindiv)
         
-    def save_conf_pressed(self):
+    def save_conf_clicked(self):
         avg = self.averaging_box.currentIndex()
         vol = self.voltage_box.currentIndex()
         cur = self.current_box.currentIndex()

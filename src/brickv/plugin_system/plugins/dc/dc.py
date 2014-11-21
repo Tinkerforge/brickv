@@ -73,8 +73,8 @@ class DC(PluginBase, Ui_DC):
         self.radio_mode_brake.toggled.connect(self.brake_value_changed)
         self.radio_mode_coast.toggled.connect(self.coast_value_changed)
         
-        self.minimum_voltage_button.pressed.connect(self.minimum_voltage_button_pressed)
-        self.full_brake_button.pressed.connect(self.full_brake_pressed)
+        self.minimum_voltage_button.clicked.connect(self.minimum_voltage_button_clicked)
+        self.full_brake_button.clicked.connect(self.full_brake_clicked)
         self.enable_checkbox.stateChanged.connect(self.enable_state_changed)
         
         self.emergency_signal = None
@@ -213,7 +213,7 @@ class DC(PluginBase, Ui_DC):
             except ip_connection.Error:
                 return
         
-    def full_brake_pressed(self):
+    def full_brake_clicked(self):
         try:
             self.dc.full_brake()
         except ip_connection.Error:
@@ -225,7 +225,7 @@ class DC(PluginBase, Ui_DC):
         except ip_connection.Error:
             return
         
-    def minimum_voltage_button_pressed(self):
+    def minimum_voltage_button_clicked(self):
         qid = QInputDialog(self)
         qid.setInputMode(QInputDialog.IntInput)
         qid.setIntMinimum(5000)

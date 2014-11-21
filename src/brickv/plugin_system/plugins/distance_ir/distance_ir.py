@@ -75,8 +75,8 @@ class DistanceIR(PluginBase):
         self.sample_file = QPushButton("File...");
         self.sample_save = QPushButton("Save");
         
-        self.sample_file.pressed.connect(self.sample_file_pressed)
-        self.sample_save.pressed.connect(self.sample_save_pressed)
+        self.sample_file.clicked.connect(self.sample_file_clicked)
+        self.sample_save.clicked.connect(self.sample_save_clicked)
         
         self.sample_layout.addWidget(self.sample_label)
         self.sample_layout.addWidget(self.sample_edit)
@@ -127,7 +127,7 @@ class DistanceIR(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletDistanceIR.DEVICE_IDENTIFIER
     
-    def sample_file_pressed(self):
+    def sample_file_clicked(self):
         last_dir = ''
         if len(self.sample_edit.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(unicode(self.sample_edit.text().toUtf8(), 'utf-8')))
@@ -178,7 +178,7 @@ class DistanceIR(PluginBase):
         except ip_connection.Error:
             return
         
-    def sample_save_pressed(self):
+    def sample_save_clicked(self):
         x = []
         y = []
         text = self.sample_edit.text()

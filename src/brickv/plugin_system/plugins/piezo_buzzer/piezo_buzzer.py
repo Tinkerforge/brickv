@@ -66,8 +66,8 @@ class PiezoBuzzer(PluginBase):
         
         self.status_label = QLabel('')
         
-        self.beep_button.pressed.connect(self.beep_pressed)
-        self.morse_button.pressed.connect(self.morse_pressed)
+        self.beep_button.clicked.connect(self.beep_clicked)
+        self.morse_button.clicked.connect(self.morse_clicked)
         
         layout = QVBoxLayout(self)
         layout.addLayout(self.beep_layout)
@@ -101,7 +101,7 @@ class PiezoBuzzer(PluginBase):
         self.morse_button.setDisabled(False)
         self.status_label.setText('')
     
-    def beep_pressed(self):
+    def beep_clicked(self):
         duration = int(self.beep_edit.text())
         try:
             self.pb.beep(duration)
@@ -112,7 +112,7 @@ class PiezoBuzzer(PluginBase):
         self.morse_button.setDisabled(True)
         self.status_label.setText('Beeping...')        
         
-    def morse_pressed(self):
+    def morse_clicked(self):
         morse = str(self.morse_edit.text())
         try:
             self.pb.morse_code(morse)

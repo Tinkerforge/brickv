@@ -77,14 +77,14 @@ class Stepper(PluginBase, Ui_Stepper):
 #        self.decay_spin.editingFinished.connect(self.decay_spin_finished)
         
         self.enable_checkbox.stateChanged.connect(self.enable_state_changed)
-        self.forward_button.pressed.connect(self.forward_pressed)
-        self.stop_button.pressed.connect(self.stop_pressed)
-        self.full_brake_button.pressed.connect(self.full_brake_pressed)
-        self.backward_button.pressed.connect(self.backward_pressed)
-        self.to_button.pressed.connect(self.to_button_pressed)
-        self.steps_button.pressed.connect(self.steps_button_pressed)
-        self.motor_current_button.pressed.connect(self.motor_current_button_pressed)
-        self.minimum_motor_voltage_button.pressed.connect(self.minimum_motor_voltage_button_pressed)
+        self.forward_button.clicked.connect(self.forward_clicked)
+        self.stop_button.clicked.connect(self.stop_clicked)
+        self.full_brake_button.clicked.connect(self.full_brake_clicked)
+        self.backward_button.clicked.connect(self.backward_clicked)
+        self.to_button.clicked.connect(self.to_button_clicked)
+        self.steps_button.clicked.connect(self.steps_button_clicked)
+        self.motor_current_button.clicked.connect(self.motor_current_button_clicked)
+        self.minimum_motor_voltage_button.clicked.connect(self.minimum_motor_voltage_button_clicked)
         
         self.mode_dropbox.currentIndexChanged.connect(self.mode_changed)
         
@@ -155,35 +155,35 @@ class Stepper(PluginBase, Ui_Stepper):
         except ip_connection.Error:
             return
         
-    def forward_pressed(self):
+    def forward_clicked(self):
         try:
             self.stepper.drive_forward()
         except ip_connection.Error:
             return
         self.disable_list([self.to_button, self.steps_button])
         
-    def backward_pressed(self):
+    def backward_clicked(self):
         try:
             self.stepper.drive_backward()
         except ip_connection.Error:
             return
         self.disable_list([self.to_button, self.steps_button])
         
-    def stop_pressed(self):
+    def stop_clicked(self):
         try:
             self.stepper.stop()
         except ip_connection.Error:
             return
         self.endis_all(True)
         
-    def full_brake_pressed(self):
+    def full_brake_clicked(self):
         try:
             self.stepper.full_brake()
         except ip_connection.Error:
             return
         self.endis_all(True)
         
-    def to_button_pressed(self):
+    def to_button_clicked(self):
         drive_to = self.to_spin.value()
         try:
             self.stepper.set_target_position(drive_to)
@@ -194,7 +194,7 @@ class Stepper(PluginBase, Ui_Stepper):
                            self.forward_button,
                            self.backward_button])
         
-    def steps_button_pressed(self):
+    def steps_button_clicked(self):
         drive_steps = self.steps_spin.value()
         try:
             self.stepper.set_steps(drive_steps)
@@ -205,7 +205,7 @@ class Stepper(PluginBase, Ui_Stepper):
                            self.forward_button,
                            self.backward_button])
         
-    def motor_current_button_pressed(self):
+    def motor_current_button_clicked(self):
         qid = QInputDialog(self)
         qid.setInputMode(QInputDialog.IntInput)
         qid.setIntMinimum(0)
@@ -217,7 +217,7 @@ class Stepper(PluginBase, Ui_Stepper):
 #                         "<font color=red>Setting this too high can destroy your Motor.</font>")
         qid.open()
         
-    def minimum_motor_voltage_button_pressed(self):
+    def minimum_motor_voltage_button_clicked(self):
         qid = QInputDialog(self)
         qid.setInputMode(QInputDialog.IntInput)
         qid.setIntMinimum(0)

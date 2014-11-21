@@ -41,9 +41,9 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
         self.console = TerminalWidget()
         self.console_layout.insertWidget(1, self.console)
         
-        self.refresh_button.pressed.connect(self.refresh_ports)
-        self.connect_button.pressed.connect(self.connect_pressed)
-        self.copy_button.pressed.connect(self.console.copy_selection_to_clipboard)
+        self.refresh_button.clicked.connect(self.refresh_ports)
+        self.connect_button.clicked.connect(self.connect_clicked)
+        self.copy_button.clicked.connect(self.console.copy_selection_to_clipboard)
         
         # make all elements on this tab non-focusable so the focus has
         # to stay on the console widget
@@ -87,7 +87,7 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
             if index >= 0:
                 self.combo_serial_port.setCurrentIndex(index)
 
-    def connect_pressed(self):
+    def connect_clicked(self):
         text = self.connect_button.text()
         if text == 'Connect':
             self.console.setDisabled(False)

@@ -58,7 +58,7 @@ class RS485(QWidget, Ui_RS485):
 
     def start(self):
         self.rs485_type.currentIndexChanged.connect(self.rs485_type_changed)
-        self.save_button.pressed.connect(self.save_pressed)
+        self.save_button.clicked.connect(self.save_clicked)
 
         # Master address
         address = int(self.config['address'])
@@ -89,7 +89,7 @@ class RS485(QWidget, Ui_RS485):
         slave_address = self.slave_text_to_int(self.config['slave_address'])
         self.lineedit_slave_address.setText(', '.join(map(str, slave_address)))
 
-    def save_pressed(self):
+    def save_clicked(self):
         new_config = {}
 
         new_config['baudrate'] = self.speed_spinbox.value()
@@ -241,9 +241,9 @@ class Ethernet(QWidget, Ui_Ethernet):
         self.ethernet_mac2.setValue(mac[4])
         self.ethernet_mac1.setValue(mac[5])
 
-        self.ethernet_save.pressed.connect(self.save_pressed)
+        self.ethernet_save.clicked.connect(self.save_clicked)
 
-    def save_pressed(self):
+    def save_clicked(self):
         new_config = {}
         new_config['type'] = 4
         new_config['extension'] = self.extension

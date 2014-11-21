@@ -43,7 +43,7 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
         self.brick_infos = []
         
         self.parent = parent
-        self.button_calibrate.pressed.connect(self.calibrate_pressed)
+        self.button_calibrate.clicked.connect(self.calibrate_clicked)
         self.combo_brick.currentIndexChanged.connect(self.brick_changed)
         self.check_enable_calibration.stateChanged.connect(self.enable_calibration_changed)
 
@@ -62,7 +62,7 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
         self.update_calibration()
         self.update_ui_state()
 
-    def calibrate_pressed(self):
+    def calibrate_clicked(self):
         port_names = ['a', 'b', 'c', 'd']
 
         self.parent.ipcon.adc_calibrate(self.current_device(),

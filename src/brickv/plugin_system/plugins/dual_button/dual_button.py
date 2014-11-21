@@ -56,41 +56,41 @@ class DualButton(PluginBase, Ui_DualButton):
         self.button_r = DualButton.RELEASED
         self.button_l = DualButton.RELEASED
         
-        self.button_led_on_button_r.pressed.connect(self.on_button_r_pressed)
-        self.button_led_on_button_l.pressed.connect(self.on_button_l_pressed)
-        self.button_led_off_button_r.pressed.connect(self.off_button_r_pressed)
-        self.button_led_off_button_l.pressed.connect(self.off_button_l_pressed)
-        self.button_toggle_button_r.pressed.connect(self.toggle_button_r_pressed)
-        self.button_toggle_button_l.pressed.connect(self.toggle_button_l_pressed)
+        self.button_led_on_button_r.clicked.connect(self.on_button_r_clicked)
+        self.button_led_on_button_l.clicked.connect(self.on_button_l_clicked)
+        self.button_led_off_button_r.clicked.connect(self.off_button_r_clicked)
+        self.button_led_off_button_l.clicked.connect(self.off_button_l_clicked)
+        self.button_toggle_button_r.clicked.connect(self.toggle_button_r_clicked)
+        self.button_toggle_button_l.clicked.connect(self.toggle_button_l_clicked)
         
         self.count = 0
         
-    def on_button_l_pressed(self):
+    def on_button_l_clicked(self):
         self.led_l = DualButton.ON
         self.button.set_led_state(DualButton.ON, self.led_r)
         self.update_buttons()
         
-    def on_button_r_pressed(self):
+    def on_button_r_clicked(self):
         self.led_r = DualButton.ON
         self.button.set_led_state(self.led_l, DualButton.ON)
         self.update_buttons()
         
-    def off_button_l_pressed(self):
+    def off_button_l_clicked(self):
         self.led_l = DualButton.OFF
         self.button.set_led_state(DualButton.OFF, self.led_r)
         self.update_buttons()
     
-    def off_button_r_pressed(self):
+    def off_button_r_clicked(self):
         self.led_r = DualButton.OFF
         self.button.set_led_state(self.led_l, DualButton.OFF)
         self.update_buttons()
         
-    def toggle_button_l_pressed(self):
+    def toggle_button_l_clicked(self):
         self.led_l = DualButton.AT_OFF
         self.button.set_led_state(DualButton.AT_OFF, self.led_r)
         self.update_buttons()
     
-    def toggle_button_r_pressed(self):
+    def toggle_button_r_clicked(self):
         self.led_r = DualButton.AT_OFF
         self.button.set_led_state(self.led_l, DualButton.AT_OFF)
         self.update_buttons()

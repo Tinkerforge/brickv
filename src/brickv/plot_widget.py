@@ -106,7 +106,7 @@ class PlotWidget(QWidget):
         else:
             self.clear_button = clear_button
 
-        self.clear_button.pressed.connect(self.clear_pressed)
+        self.clear_button.clicked.connect(self.clear_clicked)
         
         layout = QVBoxLayout(self)
         layout.addWidget(self.plot)
@@ -136,6 +136,6 @@ class PlotWidget(QWidget):
             
         self.counter += 1
             
-    def clear_pressed(self):
+    def clear_clicked(self):
         self.plot.clear_graph()
         self.counter = 0

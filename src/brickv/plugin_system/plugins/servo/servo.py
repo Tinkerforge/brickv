@@ -206,7 +206,7 @@ class Servo(PluginBase, Ui_Servo):
         self.degree_min_spin.editingFinished.connect(self.degree_spin_finished)
         self.degree_max_spin.editingFinished.connect(self.degree_spin_finished)
         
-        self.minimum_voltage_button.pressed.connect(self.minimum_voltage_button_pressed)
+        self.minimum_voltage_button.clicked.connect(self.minimum_voltage_button_clicked)
         
         self.qtcb_under_voltage.connect(self.cb_under_voltage)
         self.servo.register_callback(self.servo.CALLBACK_UNDER_VOLTAGE,
@@ -655,7 +655,7 @@ class Servo(PluginBase, Ui_Servo):
         except ip_connection.Error:
             return
 
-    def minimum_voltage_button_pressed(self):
+    def minimum_voltage_button_clicked(self):
         qid = QInputDialog(self)
         qid.setInputMode(QInputDialog.IntInput)
         qid.setIntMinimum(5000)

@@ -53,10 +53,10 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
 
         self.qtcb_frame_rendered.connect(self.cb_frame_rendered)
 
-        self.button_color.pressed.connect(self.color_pressed)
-        self.button_black.pressed.connect(self.black_pressed)
-        self.button_gradient.pressed.connect(self.gradient_pressed)
-        self.button_dot.pressed.connect(self.dot_pressed)
+        self.button_color.clicked.connect(self.color_clicked)
+        self.button_black.clicked.connect(self.black_clicked)
+        self.button_gradient.clicked.connect(self.gradient_clicked)
+        self.button_dot.clicked.connect(self.dot_clicked)
         self.box_frame_duration.valueChanged.connect(self.frame_duration_changed)
 
         if self.has_clock_frequency:
@@ -138,25 +138,25 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
     def frame_duration_changed(self, duration):
         self.led_strip.set_frame_duration(duration)
 
-    def color_pressed(self):
+    def color_clicked(self):
         old_state = self.state
         self.state = self.STATE_COLOR_SINGLE
         if old_state == self.STATE_IDLE:
             self.render_color_single()
 
-    def black_pressed(self):
+    def black_clicked(self):
         old_state = self.state
         self.state = self.STATE_COLOR_BLACK
         if old_state == self.STATE_IDLE:
             self.render_color_black()
 
-    def gradient_pressed(self):
+    def gradient_clicked(self):
         old_state = self.state
         self.state = self.STATE_COLOR_GRADIENT
         if old_state == self.STATE_IDLE:
             self.render_color_gradient()
 
-    def dot_pressed(self):
+    def dot_clicked(self):
         self.dot_counter = 0
         self.dot_direction = 1
         old_state = self.state

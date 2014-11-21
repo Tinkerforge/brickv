@@ -48,11 +48,11 @@ class DualRelay(PluginBase, Ui_DualRelay):
         self.dr.register_callback(self.dr.CALLBACK_MONOFLOP_DONE,
                                   self.qtcb_monoflop.emit)
         
-        self.dr1_button.pressed.connect(self.dr1_pressed)
-        self.dr2_button.pressed.connect(self.dr2_pressed)
+        self.dr1_button.clicked.connect(self.dr1_clicked)
+        self.dr2_button.clicked.connect(self.dr2_clicked)
         
-        self.go1_button.pressed.connect(self.go1_pressed)
-        self.go2_button.pressed.connect(self.go2_pressed)
+        self.go1_button.clicked.connect(self.go1_clicked)
+        self.go2_button.clicked.connect(self.go2_clicked)
 
         self.r1_monoflop = False
         self.r2_monoflop = False
@@ -142,7 +142,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletDualRelay.DEVICE_IDENTIFIER
 
-    def get_state_dr1_pressed(self, state):
+    def get_state_dr1_clicked(self, state):
         dr1, dr2 = state
         
         try:
@@ -155,7 +155,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
         self.time1_spinbox.setEnabled(True)
         self.state1_combobox.setEnabled(True)
         
-    def dr1_pressed(self):
+    def dr1_clicked(self):
         width = self.dr1_button.width()
         if self.dr1_button.minimumWidth() < width:
             self.dr1_button.setMinimumWidth(width)
@@ -167,9 +167,9 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.dr1_button.setText('Switch On')
             self.dr1_image.setPixmap(self.b1_pixmap)
 
-        async_call(self.dr.get_state, None, self.get_state_dr1_pressed, self.increase_error_count)
+        async_call(self.dr.get_state, None, self.get_state_dr1_clicked, self.increase_error_count)
 
-    def get_state_dr2_pressed(self, state):
+    def get_state_dr2_clicked(self, state):
         dr1, dr2 = state
         
         try:
@@ -182,7 +182,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
         self.time2_spinbox.setEnabled(True)
         self.state2_combobox.setEnabled(True)
         
-    def dr2_pressed(self):
+    def dr2_clicked(self):
         width = self.dr2_button.width()
         if self.dr2_button.minimumWidth() < width:
             self.dr2_button.setMinimumWidth(width)
@@ -194,9 +194,9 @@ class DualRelay(PluginBase, Ui_DualRelay):
             self.dr2_button.setText('Switch On')
             self.dr2_image.setPixmap(self.b2_pixmap)
 
-        async_call(self.dr.get_state, None, self.get_state_dr2_pressed, self.increase_error_count)
+        async_call(self.dr.get_state, None, self.get_state_dr2_clicked, self.increase_error_count)
 
-    def go1_pressed(self):   
+    def go1_clicked(self):
         time = self.time1_spinbox.value()
         state = self.state1_combobox.currentIndex() == 0
         try:
@@ -220,7 +220,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
         except ip_connection.Error:
             return
 
-    def go2_pressed(self):
+    def go2_clicked(self):
         time = self.time2_spinbox.value()
         state = self.state2_combobox.currentIndex() == 0
         try:

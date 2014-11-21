@@ -39,7 +39,7 @@ class ExtensionType(QFrame, Ui_extension_type):
 
         self.parent = parent
         self.master = parent.master
-        self.button_type_save.pressed.connect(self.save_pressed)
+        self.button_type_save.clicked.connect(self.save_clicked)
         self.combo_extension.currentIndexChanged.connect(self.index_changed)
 
         self.index_changed(0)
@@ -58,7 +58,7 @@ class ExtensionType(QFrame, Ui_extension_type):
     def index_changed(self, index):
         async_call(self.master.get_extension_type, index, self.index_changed_async, self.parent.increase_error_count)
 
-    def save_pressed(self):
+    def save_clicked(self):
         extension = self.combo_extension.currentIndex()
         typ = self.type_box.currentIndex()
         try:

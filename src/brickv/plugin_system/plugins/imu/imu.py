@@ -186,7 +186,7 @@ in the image above, then press "Save Orientation".""")
         
         self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
 #        self.clear_graphs.clicked.connect(self.clear_graphs_clicked)
-        self.calibrate.clicked.connect(self.calibrate_pressed)
+        self.calibrate.clicked.connect(self.calibrate_clicked)
         self.led_button.clicked.connect(self.led_clicked)
         self.speed_spinbox.editingFinished.connect(self.speed_finished)
         
@@ -380,7 +380,7 @@ in the image above, then press "Save Orientation".""")
         t_str = "%.2f" % (t/100.0)
         self.tem_label.setText(t_str)
         
-    def calibrate_pressed(self):
+    def calibrate_clicked(self):
         self.stop()
         if self.calibrate is None:
             self.calibrate = CalibrateWindow(self)
