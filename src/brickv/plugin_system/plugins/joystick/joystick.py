@@ -121,6 +121,7 @@ class Joystick(PluginBase):
         layout.addWidget(self.calibration_button)
 
     def start(self):
+        async_call(self.js.get_position, None, lambda pos: self.cb_position(*pos), self.increase_error_count)
         async_call(self.js.set_position_callback_period, 20, None, self.increase_error_count)
         
         self.plot_widget.stop = False
