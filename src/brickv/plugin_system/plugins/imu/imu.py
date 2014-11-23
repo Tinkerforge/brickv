@@ -31,62 +31,9 @@ from brickv.plot_widget import PlotWidget
 
 from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy
 from PyQt4.QtCore import Qt, QTimer
-import PyQt4.Qwt5 as Qwt
 
 from brickv.plugin_system.plugins.imu.ui_imu import Ui_IMU
 from brickv.plugin_system.plugins.imu.calibrate_window import CalibrateWindow
-
-class Plot(Qwt.QwtPlot):
-    def __init__(self, y_axis, plot_list, *args):
-        Qwt.QwtPlot.__init__(self, *args)
-        
-        self.setAxisTitle(Qwt.QwtPlot.xBottom, "Time [s]")
-        self.setAxisTitle(Qwt.QwtPlot.yLeft, y_axis)
-        
-        legend = Qwt.QwtLegend()
-        legend.setItemMode(Qwt.QwtLegend.CheckableItem)
-        self.insertLegend(legend, Qwt.QwtPlot.RightLegend)
-        
-        self.setAutoReplot(True)
-        
-        self.curve = []
-        
-        self.data_x = []
-        self.data_y = []
-        
-        for x in plot_list:
-            c = Qwt.QwtPlotCurve(x[0])
-            self.curve.append(c)
-            self.data_x.append([])
-            self.data_y.append([])
-        
-            c.attach(self)
-            c.setPen(x[1])
-            self.show_curve(c, True)
-        
-        self.legendChecked.connect(self.show_curve)
-        
-    def show_curve(self, item, on):
-        item.setVisible(on)
-        widget = self.legend().find(item)
-        if isinstance(widget, Qwt.QwtLegendItem):
-            widget.setChecked(on)
-        self.replot()
-           
-
-    def add_data(self, i, data_x, data_y):
-        self.data_x[i].append(data_x)
-        self.data_y[i].append(data_y)
-        if len(self.data_x[i]) == 600: # 300 = 5 minutes
-            self.data_x[i] = self.data_x[i][10:]
-            self.data_y[i] = self.data_y[i][10:]
-        
-        self.curve[i].setData(self.data_x[i], self.data_y[i])
-        
-    def clear_graph(self):
-        for i in range(len(self.data_x)):
-            self.data_x[i] = []
-            self.data_y[i] = []
 
 class IMU(PluginBase, Ui_IMU):
     def __init__(self, *args):
@@ -142,7 +89,6 @@ class IMU(PluginBase, Ui_IMU):
         self.max_y = 0
         self.max_z = 0
         
-        self.counter = 0
         self.update_counter = 0
         
         self.mag_plot = PlotWidget("Magnetic Field [mG]",
@@ -185,7 +131,6 @@ in the image above, then press "Save Orientation".""")
         self.layout_bottom.addWidget(self.tem_plot)
         
         self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
-#        self.clear_graphs.clicked.connect(self.clear_graphs_clicked)
         self.calibrate.clicked.connect(self.calibrate_clicked)
         self.led_button.clicked.connect(self.led_clicked)
         self.speed_spinbox.editingFinished.connect(self.speed_finished)
@@ -265,14 +210,7 @@ in the image above, then press "Save Orientation".""")
         self.roll = roll
         self.pitch = pitch
         self.yaw = yaw
-        
-    def clear_graphs_clicked(self):
-        self.counter = 0
-        self.mag_plot.clear_graph()
-        self.acc_plot.clear_graph()
-        self.gyr_plot.clear_graph()
-        self.tem_plot.clear_graph()
-        
+
     def led_clicked(self):
         if 'On' in self.led_button.text():
             self.led_button.setText('Turn LEDs Off')
@@ -326,22 +264,6 @@ in the image above, then press "Save Orientation".""")
             self.gyroscope_update(gyr_x, gyr_y, gyr_z)
             self.orientation_update(self.roll, self.pitch, self.yaw)
             self.temperature_update(self.tem)
-
-#            self.gyr_plot.add_data(0, self.counter, gyr_x)
-#            self.gyr_plot.add_data(1, self.counter, gyr_y)
-#            self.gyr_plot.add_data(2, self.counter, gyr_z)
-            
-#            self.acc_plot.add_data(0, self.counter, self.acc_x)
-#            self.acc_plot.add_data(1, self.counter, self.acc_y)
-#            self.acc_plot.add_data(2, self.counter, self.acc_z)
-            
-#            self.mag_plot.add_data(0, self.counter, self.mag_x)
-#            self.mag_plot.add_data(1, self.counter, self.mag_y)
-#            self.mag_plot.add_data(2, self.counter, self.mag_z)
-            
-#            self.tem_plot.add_data(0, self.counter, self.tem/100.0)
-        
-            self.counter += 0.1
         
     def acceleration_update(self, x, y, z):
         x_str = "%g" % x
