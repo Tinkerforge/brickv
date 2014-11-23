@@ -109,6 +109,7 @@ class PlotWidget(QWidget):
         self.clear_button.clicked.connect(self.clear_clicked)
         
         layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.plot)
 
         if clear_button is None:
