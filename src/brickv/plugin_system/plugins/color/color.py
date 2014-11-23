@@ -27,7 +27,7 @@ from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_color import BrickletColor
 from brickv.async_call import async_call
 
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QPainter, QFrame, QBrush, QColor, QCheckBox, QVBoxLayout
+from PyQt4.QtGui import QPushButton, QLabel, QHBoxLayout, QComboBox, QPainter, QFrame, QBrush, QColor, QCheckBox, QVBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
 
 class ColorFrame(QFrame):
@@ -135,17 +135,19 @@ class Color(PluginBase):
         self.current_illuminance = 0
         self.current_color_temperature = 0
 
+        self.clear_graphs_button = QPushButton("Clear Graphs")
+
         plot_list = [['r', Qt.red, self.get_current_r],
                      ['g', Qt.darkGreen, self.get_current_g],
                      ['b', Qt.blue, self.get_current_b],
                      ['c', Qt.black, self.get_current_c]]
-        self.plot_widget = PlotWidget('Color Value', plot_list)
+        self.plot_widget = PlotWidget('Color Value', plot_list, self.clear_graphs_button)
 
         plot_list_illuminance = [['', Qt.red, self.get_current_illuminance_value]]
-        self.plot_widget_illuminance = PlotWidget('Illuminance [Lux]', plot_list_illuminance)
+        self.plot_widget_illuminance = PlotWidget('Illuminance [Lux]', plot_list_illuminance, self.clear_graphs_button)
 
         plot_list_color_temperature = [['', Qt.red, self.get_current_color_temperature_value]]
-        self.plot_widget_color_temperature = PlotWidget('Color Temperature [K]', plot_list_color_temperature)
+        self.plot_widget_color_temperature = PlotWidget('Color Temperature [K]', plot_list_color_temperature, self.clear_graphs_button)
 
         self.gain_label = QLabel('Gain: ')
         self.gain_combo = QComboBox()
@@ -179,7 +181,7 @@ class Color(PluginBase):
         layout_config.addWidget(self.gain_combo)
         layout_config.addWidget(self.conversion_label)
         layout_config.addWidget(self.conversion_combo)
-        layout_config.addStretch()
+        layout_config.addWidget(self.clear_graphs_button, 1)
         layout_config.addWidget(self.light_checkbox)
 
         layout_ht1 = QHBoxLayout()
