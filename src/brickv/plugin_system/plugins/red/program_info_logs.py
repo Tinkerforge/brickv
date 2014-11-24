@@ -84,7 +84,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         selection_count = len(self.tree_logs.selectionModel().selectedRows())
 
         self.set_widget_enabled(self.button_download_logs, selection_count > 0)
-        self.set_widget_enabled(self.button_view_log, selection_count == 1 and len(self.get_selected_log_items()) == 1)
+        self.set_widget_enabled(self.button_view_log, selection_count == 1 and len(self.get_directly_selected_log_items()) == 1)
         self.set_widget_enabled(self.button_delete_logs, selection_count > 0)
 
     def close_all_dialogs(self):
@@ -272,7 +272,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                            [self.log_directory], max_length=1024*1024,
                                            decode_output_as_utf8=False)
 
-    def get_selected_log_items(self):
+    def get_directly_selected_log_items(self):
         selected_indexes   = self.tree_logs.selectedIndexes()
         selected_log_items = []
 
@@ -491,7 +491,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         if selection_count != 1:
             return
 
-        selected_log_items = self.get_selected_log_items()
+        selected_log_items = self.get_directly_selected_log_items()
 
         if len(selected_log_items) != 1:
             return

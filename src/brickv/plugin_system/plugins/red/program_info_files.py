@@ -255,7 +255,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                            [self.bin_directory], max_length=1024*1024,
                                            decode_output_as_utf8=False)
 
-    def get_selected_name_items(self):
+    def get_directly_selected_name_items(self):
         selected_indexes    = self.tree_files.selectedIndexes()
         selected_name_items = []
 
@@ -279,7 +279,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                         'Download complete!',
                                         QMessageBox.Ok)
 
-        selected_name_items = self.get_selected_name_items()
+        selected_name_items = self.get_directly_selected_name_items()
 
         if len(selected_name_items) == 0:
             return
@@ -425,7 +425,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if selection_count != 1:
             return
 
-        selected_name_items = self.get_selected_name_items()
+        selected_name_items = self.get_directly_selected_name_items()
 
         if len(selected_name_items) != 1:
             return
@@ -508,7 +508,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if not self.is_alive() or button != QMessageBox.Ok:
             return
 
-        selected_name_items = set(self.get_selected_name_items())
+        selected_name_items = set(self.get_directly_selected_name_items())
 
         if len(selected_name_items) == 0:
             return
