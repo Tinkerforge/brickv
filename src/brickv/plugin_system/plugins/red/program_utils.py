@@ -29,6 +29,7 @@ import posixpath
 from collections import namedtuple
 
 ExecutableVersion = namedtuple('ExecutableVersion', 'executable version')
+Upload            = namedtuple('Upload', 'source target')
 
 
 def get_key_from_value(dictionary, value):
@@ -1053,6 +1054,7 @@ def timestamp_to_date_at_time(timestamp):
 
     return date + ' at ' + time
 
+# FIXME: the values should be rouned up
 def get_file_display_size(size):
     if size < 1024:
         return '%d Bytes' % size

@@ -895,6 +895,7 @@ class REDFile(REDFileBase):
     FLAG_NON_BLOCKING = BrickRED.FILE_FLAG_NON_BLOCKING
     FLAG_TRUNCATE     = BrickRED.FILE_FLAG_TRUNCATE
     FLAG_TEMPORARY    = BrickRED.FILE_FLAG_TEMPORARY
+    FLAG_REPLACE      = BrickRED.FILE_FLAG_REPLACE
 
     def __repr__(self):
         return '<REDFile object_id: {0}, name: {1}>'.format(self.object_id, repr(self._name))

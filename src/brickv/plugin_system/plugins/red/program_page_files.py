@@ -29,9 +29,6 @@ from brickv.plugin_system.plugins.red.ui_program_page_files import Ui_ProgramPag
 from brickv.utils import get_main_window, get_program_path
 import os
 import posixpath
-from collections import namedtuple
-
-Upload = namedtuple('Upload', 'source target')
 
 class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
     def __init__(self, title_prefix='', *args, **kwargs):

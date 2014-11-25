@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-11-18.      #
+# This file was automatically generated on 2014-11-24.      #
 #                                                           #
 # Bindings Version 2.1.2                                    #
 #                                                           #
@@ -150,6 +150,7 @@ class BrickRED(Device):
     FILE_FLAG_NON_BLOCKING = 64
     FILE_FLAG_TRUNCATE = 128
     FILE_FLAG_TEMPORARY = 256
+    FILE_FLAG_REPLACE = 512
     FILE_PERMISSION_USER_ALL = 448
     FILE_PERMISSION_USER_READ = 256
     FILE_PERMISSION_USER_WRITE = 128
@@ -452,8 +453,9 @@ class BrickRED(Device):
         * NonBlocking = 0x0040 (O_NONBLOCK)
         * Truncate = 0x0080 (O_TRUNC)
         * Temporary = 0x0100
+        * Replace = 0x0200
         
-        FIXME: explain *Temporary* flag
+        FIXME: explain *Temporary* and *Replace* flag
         
         The ``permissions`` parameter takes a ORed combination of the following
         possible file permissions (in octal notation) that match the common UNIX
