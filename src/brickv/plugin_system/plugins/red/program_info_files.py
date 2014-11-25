@@ -464,7 +464,8 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         # check that new name is valid
         if len(new_name) == 0 or new_name == '.' or new_name == '..' or '/' in new_name:
             QMessageBox.critical(get_main_window(), title + ' Error',
-                                 'A valid {0} name cannot be empty or be one dot [.] or be two dots [..] or contain a forward slash [/].'.format(type_name),
+                                 'A valid {0} name cannot be empty, cannot be one dot [.], cannot be two dots [..] and cannot contain a forward slash [/].'
+                                 .format(type_name),
                                  QMessageBox.Ok)
             return
 
