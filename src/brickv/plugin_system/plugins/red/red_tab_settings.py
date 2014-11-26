@@ -160,7 +160,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.cbox_net_intf.currentIndexChanged.connect(self.slot_network_settings_changed)
         self.cbox_net_intf.currentIndexChanged.connect(self.slot_cbox_net_intf_current_idx_changed)
         self.cbox_net_conftype.currentIndexChanged.connect(self.slot_network_settings_changed)
-        self.cbox_net_conftype.currentIndexChanged.connect(self.slot_cbox_net_conftype_curent_idx_changed)
+        self.cbox_net_conftype.currentIndexChanged.connect(self.slot_cbox_net_conftype_current_idx_changed)
         self.cbox_net_wireless_ap.currentIndexChanged.connect(self.slot_network_settings_changed)
         self.cbox_net_wireless_ap.currentIndexChanged.connect(self.slot_cbox_net_wireless_ap_current_idx_changed)
         self.ledit_net_wireless_key.textEdited.connect(self.slot_network_settings_changed)
@@ -403,6 +403,19 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             no_ap_found()
 
     def update_network_gui(self):
+        def update_no_interface_available():
+            self.cbox_net_intf.clear()
+            self.cbox_net_intf.addItem('No interfaces available')
+            self.cbox_net_intf.setItemData(0, QtCore.QVariant(INTERFACE_NOT_FOUND), INTERFACE_TYPE_USER_ROLE)
+            self.cbox_net_intf.setCurrentIndex(0)
+            self.cbox_net_intf.setEnabled(False)
+            self.frame_wireless_conf.hide()
+            self.frame_net_conftype.hide()
+            self.frame_static_ip_conf.hide()
+            self.pbutton_net_activate_intf.setEnabled(False)
+            self.pbutton_net_deactivate_intf.setEnabled(False)
+            self.label_interface_none_active.hide()
+
         # Populating the current network status section and hostname
         if self.network_all_data['status'] is not None:
             self.ledit_net_gen_hostname.setText\
@@ -566,6 +579,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                                QtCore.QVariant(INTERFACE_STATE_INACTIVE),
                                                                INTERFACE_STATE_USER_ROLE)
 
+                if self.cbox_net_intf.count() == 0:
+                    update_no_interface_available()
+                    return
+
+                self.cbox_net_intf.setEnabled(True)
+                self.cbox_net_wireless_ap.setEnabled(True)
+
                 # Select first active interface by default if not then the first item
                 self.cbox_net_intf.setCurrentIndex(-1)
                 for i in range(self.cbox_net_intf.count()):
@@ -584,23 +604,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         if self.network_all_data['interfaces']['wireless'] is None and\
            self.network_all_data['interfaces']['wired'] is None:
-                # Add no interface available
-                self.cbox_net_intf.clear()
-                self.cbox_net_intf.addItem('No interfaces available')
-                self.cbox_net_intf.setItemData(0, QtCore.QVariant(INTERFACE_NOT_FOUND), INTERFACE_TYPE_USER_ROLE)
-                self.cbox_net_intf.setCurrentIndex(0)
-                self.cbox_net_intf.setEnabled(False)
+                update_no_interface_available()
 
         if self.network_all_data['interfaces']['wireless'] is not None and\
              self.network_all_data['interfaces']['wired'] is not None:
                  if len(self.network_all_data['interfaces']['wireless']) <= 0 and\
                     len(self.network_all_data['interfaces']['wired']) <= 0:
-                        # Add no interface available
-                        self.cbox_net_intf.clear()
-                        self.cbox_net_intf.addItem('No interfaces available')
-                        self.cbox_net_intf.setItemData(0, QtCore.QVariant(INTERFACE_NOT_FOUND), INTERFACE_TYPE_USER_ROLE)
-                        self.cbox_net_intf.setCurrentIndex(0)
-                        self.cbox_net_intf.setEnabled(False)
+                        update_no_interface_available()
 
         # Populating wireless fields
         self.update_access_points()
@@ -1512,7 +1522,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         self.pbutton_net_activate_intf.setEnabled(False)
                         self.frame_wireless_conf.show()
                         ap_cidx = self.cbox_net_wireless_ap.currentIndex()
-                        self.slot_cbox_net_wireless_ap_current_idx_changed(ap_cidx)
+                        self.cbox_net_conftype.setCurrentIndex(ap_cidx)
                     else:
                         self.pbutton_net_activate_intf.setEnabled(True)
                         self.frame_wireless_conf.hide()
@@ -1528,7 +1538,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         self.frame_wireless_conf.show()
                         self.frame_net_conftype.show()
                         ap_cidx = self.cbox_net_wireless_ap.currentIndex()
-                        self.slot_cbox_net_wireless_ap_current_idx_changed(ap_cidx)
+                        self.cbox_net_conftype.setCurrentIndex(ap_cidx)
                     else:
                         self.frame_wireless_conf.hide()
                         self.frame_net_conftype.hide()
@@ -1590,7 +1600,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                             self.sbox_net_dns3.setValue(int(dns_array[2]))
                             self.sbox_net_dns4.setValue(int(dns_array[3]))
 
-                        self.slot_cbox_net_conftype_curent_idx_changed(CBOX_NET_CONTYPE_INDEX_STATIC)
+                        self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_STATIC)
                     else:
                         self.sbox_net_ip1.setValue(0)
                         self.sbox_net_ip2.setValue(0)
@@ -1611,7 +1621,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         self.sbox_net_dns2.setValue(0)
                         self.sbox_net_dns3.setValue(0)
                         self.sbox_net_dns4.setValue(0)
-                        self.slot_cbox_net_conftype_curent_idx_changed(CBOX_NET_CONTYPE_INDEX_DHCP)
+                        self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
                 else:
                     # Wired inactive interface
                     self.pbutton_net_activate_intf.setEnabled(True)
@@ -1656,7 +1666,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                             self.sbox_net_dns3.setValue(int(dns_array[2]))
                             self.sbox_net_dns4.setValue(int(dns_array[3]))
 
-                        self.slot_cbox_net_conftype_curent_idx_changed(CBOX_NET_CONTYPE_INDEX_STATIC)
+                        self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_STATIC)
                     else:
                         self.sbox_net_ip1.setValue(0)
                         self.sbox_net_ip2.setValue(0)
@@ -1677,7 +1687,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         self.sbox_net_dns2.setValue(0)
                         self.sbox_net_dns3.setValue(0)
                         self.sbox_net_dns4.setValue(0)
-                        self.slot_cbox_net_conftype_curent_idx_changed(CBOX_NET_CONTYPE_INDEX_DHCP)
+                        self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
  
         interface_name = self.cbox_net_intf.itemData(idx, INTERFACE_NAME_USER_ROLE)
         interface_type = self.cbox_net_intf.itemData(idx, INTERFACE_TYPE_USER_ROLE)
@@ -1701,8 +1711,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         elif interface_type == INTERFACE_WIRED:
             if interface_state == INTERFACE_STATE_ACTIVE:
+                print ("ONE")
                 widget_states_on_interface_selection(INTERFACE_WIRED, True)
             else:
+                print ("TWO")
                 widget_states_on_interface_selection(INTERFACE_WIRED, False)
 
     def slot_cbox_net_wireless_ap_current_idx_changed(self, idx):
@@ -1723,9 +1735,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.label_net_wireless_channel.setText(channel)
 
         if encryption == 'On':
+            self.ledit_net_wireless_key.setEnabled(True)
             self.label_net_wireless_enctype.setText(encryption_method)
         elif encryption == 'Off':
             self.label_net_wireless_enctype.setText('Open')
+            self.ledit_net_wireless_key.setEnabled(False)
         else:
             self.label_net_wireless_enctype.setText('None')
 
@@ -1768,7 +1782,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         else:
             self.ledit_net_wireless_key.setEchoMode(QtGui.QLineEdit.Password)
 
-    def slot_cbox_net_conftype_curent_idx_changed(self, idx):
+    def slot_cbox_net_conftype_current_idx_changed(self, idx):
         if idx == CBOX_NET_CONTYPE_INDEX_STATIC:
             self.frame_static_ip_conf.show()
         else:
