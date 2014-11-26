@@ -1038,6 +1038,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     def cb_settings_network_activate_intf(result):
                         if result != None and result.stderr == "" and result.exit_code == 0:
                             self.show_please_wait(False)
+                            self.slot_network_refresh_clicked()
                             QtGui.QMessageBox.information(None,
                                                           'Settings | Network | Wired',
                                                           'Interface activated.',
