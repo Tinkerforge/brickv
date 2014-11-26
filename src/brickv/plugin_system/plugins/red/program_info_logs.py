@@ -83,6 +83,9 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
     def update_ui_state(self):
         selection_count = len(self.tree_logs.selectionModel().selectedRows())
 
+        self.tree_logs.setColumnHidden(2, True)
+        self.tree_logs.setColumnHidden(3, True)
+
         self.set_widget_enabled(self.button_download_logs, selection_count > 0)
         self.set_widget_enabled(self.button_view_log, selection_count == 1 and len(self.get_directly_selected_log_items()) == 1)
         self.set_widget_enabled(self.button_delete_logs, selection_count > 0)
@@ -500,9 +503,8 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
     def view_log(self, item):
         file_name = posixpath.join(self.log_directory, unicode(item.data(USER_ROLE_FILE_NAME).toString()))
-        file_size = item.index().sibling(item.row(), 1).data(USER_ROLE_SIZE).toInt()[0]
 
-        self.view_dialog = ProgramInfoLogsView(self, self.session, file_name, file_size)
+        self.view_dialog = ProgramInfoLogsView(self, self.session, file_name)
         self.view_dialog.exec_()
         self.view_dialog = None
 

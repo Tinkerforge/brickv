@@ -31,14 +31,13 @@ from brickv.utils import get_main_window
 import posixpath
 
 class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
-    def __init__(self, parent, session, file_name, file_size):
+    def __init__(self, parent, session, file_name):
         QDialog.__init__(self, parent)
 
         self.setupUi(self)
         self.setModal(True)
 
         self.file_name = file_name
-        self.file_size = file_size
         self.log_file  = None
         self.content   = None
 
@@ -57,7 +56,7 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
             self.continuous = False
 
         self.rejected.connect(self.abort_download)
-        self.progress_download.setRange(0, file_size)
+        self.progress_download.setRange(0, 0)
         self.label_date_time.setText(date_time)
         self.button_save.clicked.connect(self.save_content)
         self.button_close.clicked.connect(self.reject)
@@ -107,7 +106,8 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
                 self.edit_content.setFont(font)
                 self.edit_content.setPlainText(content)
 
-            self.log_file.read_async(file_size, cb_read, cb_read_status)
+            self.progress_download.setRange(0, self.log_file.length)
+            self.log_file.read_async(self.log_file.length, cb_read, cb_read_status)
 
         def cb_open_error():
             self.label_download.setVisible(False)
