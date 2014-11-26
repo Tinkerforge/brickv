@@ -461,7 +461,7 @@
                           <item row="0" column="1" colspan="2">
                            <widget class="QLabel" name="label_ap_none_associated">
                             <property name="text">
-                             <string>Connect to an accespoint from the list below</string>
+                             <string>Select an accespoint from the list below</string>
                             </property>
                            </widget>
                           </item>
