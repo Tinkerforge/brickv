@@ -1225,7 +1225,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def slot_set_hostname_clicked(self):
         def cb_settings_network_set_hostname(result):
             self.show_please_wait(False)
-            print result
             if result != None and result.stderr == "":
                 QtGui.QMessageBox.information(None,
                                               'Settings | Network | General',
@@ -1238,6 +1237,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         if self.ledit_net_gen_hostname.displayText():
             try:
                 hostname_new = unicode(self.ledit_net_gen_hostname.displayText())
+                hostname_new.decode('ascii')
             except:
                 QtGui.QMessageBox.critical(None,
                                            'Settings | Network | General',
