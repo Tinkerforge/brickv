@@ -63,6 +63,37 @@ CBOX_BRICKD_LED_TRIGGER_MMC = 3
 CBOX_BRICKD_LED_TRIGGER_OFF = 4
 CBOX_BRICKD_LED_TRIGGER_ON = 5
 
+INTERFACE_NOT_FOUND = 0
+INTERFACE_WIRELESS = 1
+INTERFACE_WIRED = 2
+INTERFACE_STATE_ACTIVE = 3
+INTERFACE_STATE_INACTIVE = 4
+AP_STATUS_ASSOCIATED = 0
+AP_STATUS_NOT_ASSOCIATED = 1
+
+INTERFACE_NAME_USER_ROLE = QtCore.Qt.UserRole + 1
+INTERFACE_TYPE_USER_ROLE = QtCore.Qt.UserRole + 2
+INTERFACE_STATE_USER_ROLE = QtCore.Qt.UserRole + 3
+INTERFACE_WIRED_ADDRESS_CONF_USER_ROLE = QtCore.Qt.UserRole + 4
+INTERFACE_WIRED_IP_USER_ROLE = QtCore.Qt.UserRole + 5
+INTERFACE_WIRED_MASK_USER_ROLE = QtCore.Qt.UserRole + 6
+INTERFACE_WIRED_GATEWAY_USER_ROLE = QtCore.Qt.UserRole + 7
+INTERFACE_WIRED_DNS_USER_ROLE = QtCore.Qt.UserRole + 8
+
+AP_NAME_USER_ROLE = QtCore.Qt.UserRole + 1
+AP_STATUS_USER_ROLE = QtCore.Qt.UserRole + 2
+AP_NETWORK_INDEX_USER_ROLE = QtCore.Qt.UserRole + 3
+AP_CHANNEL_USER_ROLE = QtCore.Qt.UserRole + 4
+AP_ENCRYPTION_USER_ROLE = QtCore.Qt.UserRole + 5
+AP_ENCRYPTION_METHOD_USER_ROLE = QtCore.Qt.UserRole + 6
+AP_KEY_USER_ROLE = QtCore.Qt.UserRole + 7
+AP_BSSID_USER_ROLE = QtCore.Qt.UserRole + 8
+AP_ADDRESS_CONF_USER_ROLE = QtCore.Qt.UserRole + 9
+AP_IP_USER_ROLE = QtCore.Qt.UserRole + 10
+AP_MASK_USER_ROLE = QtCore.Qt.UserRole + 11
+AP_GATEWAY_USER_ROLE = QtCore.Qt.UserRole + 12
+AP_DNS_USER_ROLE = QtCore.Qt.UserRole + 13
+
 class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def __init__(self):
         QtGui.QWidget.__init__(self)
@@ -88,10 +119,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                  'wired_settings': None}
         self.brickd_conf = {}
 
-        self.cbox_net_wired_conftype.addItem("DHCP")
-        self.cbox_net_wired_conftype.addItem("Static")
-        self.cbox_net_wireless_conftype.addItem("DHCP")
-        self.cbox_net_wireless_conftype.addItem("Static")
+        self.cbox_net_conftype.addItem("DHCP")
+        self.cbox_net_conftype.addItem("Static")
         self.cbox_brickd_adv_ll.addItem("Error")
         self.cbox_brickd_adv_ll.addItem("Warn")
         self.cbox_brickd_adv_ll.addItem("Info")
@@ -113,65 +142,46 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         # Tabs
         self.tbox_settings.currentChanged.connect(self.slot_tbox_settings_current_changed)
-        self.twidget_net.currentChanged.connect(self.slot_twidget_net_current_changed)
-        self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRELESS, False)
-        self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRED, False)
 
         # Network Buttons
-        self.pbutton_net_gen_save.clicked.connect(self.slot_network_general_save_clicked)
+        #self.pbutton_net_gen_save.clicked.connect(self.slot_network_general_save_clicked)
         self.pbutton_net_refresh.clicked.connect(self.slot_network_refresh_clicked)
-        self.pbutton_net_wireless_use_intf.clicked.connect(self.slot_network_button_wireless_use_intf_clicked)
+        self.pbutton_net_activate_intf.clicked.connect(self.slot_network_button_activate_intf_clicked)
         self.pbutton_net_wireless_scan.clicked.connect(self.slot_network_button_wireless_scan_clicked)
-        self.pbutton_net_wireless_save.clicked.connect(self.slot_network_wireless_save_clicked)
-        self.pbutton_net_wired_save.clicked.connect(self.slot_network_wired_save_clicked)
+        self.pbutton_set_hostname.clicked.connect(self.slot_set_hostname_clicked)
+        #self.pbutton_net_wireless_save.clicked.connect(self.slot_network_wireless_save_clicked)
+        #self.pbutton_net_wired_save.clicked.connect(self.slot_network_wired_save_clicked)
 
         # Network fields
-        self.label_working_wait.hide()
-        self.pbar_working_wait.hide()
+        self.show_please_wait(False)
+        self.label_interface_none_active.hide()
+        self.label_ap_none_associated.hide()
         self.ledit_net_gen_hostname.textEdited.connect(self.slot_network_settings_changed)
-        self.cbox_net_wireless_intf.currentIndexChanged.connect(self.slot_network_settings_changed)
-        self.cbox_net_wireless_intf.currentIndexChanged.connect(self.slot_cbox_net_wireless_intf_current_idx_changed)
-        self.cbox_net_wireless_conftype.currentIndexChanged.connect(self.slot_network_settings_changed)
+        self.cbox_net_intf.currentIndexChanged.connect(self.slot_network_settings_changed)
+        self.cbox_net_intf.currentIndexChanged.connect(self.slot_cbox_net_intf_current_idx_changed)
+        self.cbox_net_conftype.currentIndexChanged.connect(self.slot_network_settings_changed)
+        self.cbox_net_conftype.currentIndexChanged.connect(self.slot_cbox_net_conftype_curent_idx_changed)
         self.cbox_net_wireless_ap.currentIndexChanged.connect(self.slot_network_settings_changed)
         self.cbox_net_wireless_ap.currentIndexChanged.connect(self.slot_cbox_net_wireless_ap_current_idx_changed)
         self.ledit_net_wireless_key.textEdited.connect(self.slot_network_settings_changed)
         self.ledit_net_wireless_key.setEchoMode(QtGui.QLineEdit.Password)
         self.cbox_net_wireless_key_show.stateChanged.connect(self.slot_net_wireless_key_show_state_changed)
-        self.sbox_net_wireless_ip1.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_ip2.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_ip3.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_ip4.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_mask1.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_mask2.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_mask3.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_mask4.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_gw1.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_gw2.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_gw3.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_gw4.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_dns1.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_dns1.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_dns1.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_dns1.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wireless_dns1.valueChanged.connect(self.slot_network_settings_changed)
-        self.cbox_net_wired_intf.currentIndexChanged.connect(self.slot_network_settings_changed)
-        self.cbox_net_wired_conftype.currentIndexChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_ip1.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_ip2.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_ip3.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_ip4.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_mask1.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_mask2.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_mask3.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_mask4.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_gw1.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_gw2.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_gw3.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_gw4.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_dns1.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_dns2.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_dns3.valueChanged.connect(self.slot_network_settings_changed)
-        self.sbox_net_wired_dns4.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_ip1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_ip2.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_ip3.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_ip4.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_mask1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_mask2.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_mask3.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_mask4.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_gw1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_gw2.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_gw3.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_gw4.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_dns1.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_dns2.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_dns3.valueChanged.connect(self.slot_network_settings_changed)
+        self.sbox_net_dns4.valueChanged.connect(self.slot_network_settings_changed)
 
         # Brick daemon buttons
         self.pbutton_brickd_general_save.clicked.connect(self.slot_brickd_save_clicked)
@@ -224,7 +234,176 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def tab_destroy(self):
         pass
 
-    def update_network_widget_data(self):
+    def show_please_wait(self, state):
+        if state:
+            self.label_working_wait.show()
+            self.pbar_working_wait.show()
+            self.sarea_net.setEnabled(False)
+        else:
+            self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
+            self.sarea_net.setEnabled(True)
+
+    def update_access_points(self):
+        self.cbox_net_wireless_ap.clear()
+        self.label_ap_none_associated.hide()
+
+        def no_ap_found():
+            self.cbox_net_wireless_ap.clear()
+            self.cbox_net_wireless_ap.addItem('No access points found. Scan?')
+            self.cbox_net_wireless_ap.setEnabled(False)
+
+        if self.network_all_data['scan_result'] is not None and\
+           self.network_all_data['interfaces']['wireless'] is not None and\
+           self.network_all_data['interfaces']['wireless_links'] is not None and\
+           self.network_all_data['wireless_settings'] is not None:
+
+                if len(self.network_all_data['scan_result']) <= 0 or\
+                   len(self.network_all_data['interfaces']['wireless']) <= 0:
+                       no_ap_found()
+                       return
+
+                for nidx, apdict in self.network_all_data['scan_result'].iteritems():
+                    self.cbox_net_wireless_ap.addItem(unicode(apdict['essid']))
+
+                    idx_cbox = self.cbox_net_wireless_ap.count() - 1
+                
+                    self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                          QtCore.QVariant(unicode(apdict['essid'])),
+                                                          AP_NAME_USER_ROLE)
+                
+                    self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                          QtCore.QVariant(AP_STATUS_NOT_ASSOCIATED),
+                                                          AP_STATUS_USER_ROLE)
+                
+                    self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                          QtCore.QVariant(nidx),
+                                                          AP_NETWORK_INDEX_USER_ROLE)
+                
+                    self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                          QtCore.QVariant(apdict['channel']),
+                                                          AP_CHANNEL_USER_ROLE)
+                
+                    self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                          QtCore.QVariant(apdict['encryption']),
+                                                          AP_ENCRYPTION_USER_ROLE)
+                
+                    self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                          QtCore.QVariant(apdict['encryption_method']),
+                                                          AP_ENCRYPTION_METHOD_USER_ROLE)
+                
+                    self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                          QtCore.QVariant(apdict['bssid']),
+                                                          AP_BSSID_USER_ROLE)
+                
+                    try:
+                        _key = self.network_all_data['wireless_settings'].get(apdict['bssid'], 'key')
+                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                              QtCore.QVariant(unicode(key)),
+                                                              AP_KEY_USER_ROLE)
+                    except:
+                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                              QtCore.QVariant(''),
+                                                              AP_KEY_USER_ROLE)
+                
+                    # Checking if the accesspoint is associated
+                    for key, value in self.network_all_data['interfaces']['wireless_links'].iteritems():
+                        if unicode(value['essid']) == unicode(apdict['essid']) and value['status']:
+                            ap_associated_found = True
+                            associated_text = unicode(apdict['essid']) + ' (associated)'
+                            self.cbox_net_wireless_ap.setItemText(idx_cbox,
+                                                                  associated_text)
+                            self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                  QtCore.QVariant(AP_STATUS_ASSOCIATED),
+                                                                  AP_STATUS_USER_ROLE)
+                    try:
+                        _ip = self.network_all_data['wireless_settings'].get(apdict['bssid'], 'ip')
+                        if _ip == "" or _ip == "None":
+                            self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                  QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_DHCP),
+                                                                  AP_ADDRESS_CONF_USER_ROLE)
+                            self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                  QtCore.QVariant('0.0.0.0'),
+                                                                  AP_IP_USER_ROLE)
+                        else:
+                            self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                  QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_STATIC),
+                                                                  AP_ADDRESS_CONF_USER_ROLE)
+                            self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                  QtCore.QVariant(_ip),
+                                                                  AP_IP_USER_ROLE)
+                    except:
+                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                              QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_DHCP),
+                                                              AP_ADDRESS_CONF_USER_ROLE)
+                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                              QtCore.QVariant('0.0.0.0'),
+                                                              AP_IP_USER_ROLE)
+                
+                    try:
+                        _mask = self.network_all_data['wireless_settings'].get(apdict['bssid'], 'netmask')
+                        if _mask == "" or _ip == "None":
+                            self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                  QtCore.QVariant('0.0.0.0'),
+                                                                  AP_MASK_USER_ROLE)
+                        else:
+                            self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                  QtCore.QVariant(_mask),
+                                                                  AP_MASK_USER_ROLE)
+                    except:
+                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                  QtCore.QVariant('0.0.0.0'),
+                                                                  AP_MASK_USER_ROLE)
+                
+                    try:
+                        _gw = self.network_all_data['wireless_settings'].get(apdict['bssid'], 'gateway')
+                        if _gw == "" or _gw == "None":
+                            self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                  QtCore.QVariant('0.0.0.0'),
+                                                                  AP_GATEWAY_USER_ROLE)
+                        else:
+                            self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                  QtCore.QVariant(_gw),
+                                                                  AP_GATEWAY_USER_ROLE)
+                    except:
+                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                  QtCore.QVariant('0.0.0.0'),
+                                                                  AP_GATEWAY_USER_ROLE)
+                
+                    try:
+                        _dns = self.network_all_data['wireless_settings'].get(apdict['bssid'], 'dns1')
+                        if _dns == "" or _dns == "None":
+                            self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                  QtCore.QVariant('0.0.0.0'),
+                                                                  AP_DNS_USER_ROLE)
+                        else:
+                            self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                  QtCore.QVariant(_dns),
+                                                                  AP_DNS_USER_ROLE)
+                    except:
+                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                  QtCore.QVariant('0.0.0.0'),
+                                                                  AP_DNS_USER_ROLE)
+                if self.cbox_net_wireless_ap.count() == 0:
+                    no_ap_found()
+                    return
+
+                # Select first associated accesspoint if not then the first item
+                self.cbox_net_wireless_ap.setCurrentIndex(-1)
+                for i in range(self.cbox_net_wireless_ap.count()):
+                    ap_status = self.cbox_net_wireless_ap.itemData(i, AP_STATUS_USER_ROLE).toInt()[0]
+                    if ap_status == AP_STATUS_ASSOCIATED:
+                        self.cbox_net_wireless_ap.setCurrentIndex(i)
+                        break
+                    if i == self.cbox_net_wireless_ap.count() - 1:
+                        self.cbox_net_wireless_ap.setCurrentIndex(0)
+                        self.label_ap_none_associated.show()
+
+        else:
+            no_ap_found()
+
+    def update_network_gui(self):
+        # Populating the current network status section and hostname
         if self.network_all_data['status'] is not None:
             self.ledit_net_gen_hostname.setText\
                 (self.network_all_data['status']['cstat_hostname'])
@@ -255,264 +434,176 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.label_net_gen_cstat_gateway.setText("None")
             self.label_net_gen_cstat_dns.setText("None")
 
-        if self.network_all_data['interfaces'] is not None:
-            if self.network_all_data['interfaces']['wireless'] is not None:
-                self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRELESS, True)
-                self.cbox_net_wireless_intf.clear()
-                for intf in self.network_all_data['interfaces']['wireless']:
-                    self.cbox_net_wireless_intf.addItem(intf)
-            else:
-                self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRELESS, False)
+        self.cbox_net_intf.clear()
 
-            if self.network_all_data['interfaces']['wired'] is not None:
-                self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRED, True)
-                self.cbox_net_wired_intf.clear()
-                for intf in self.network_all_data['interfaces']['wired']:
-                    self.cbox_net_wired_intf.addItem(intf)
-            else:
-                self.twidget_net.setTabEnabled(TAB_INDEX_NETWORK_WIRED, False)
+        if self.network_all_data['interfaces'] is not None and\
+           (self.network_all_data['interfaces']['wireless'] is not None or\
+           self.network_all_data['interfaces']['wired'] is not None or\
+           self.network_all_data['interfaces']['wireless_links'] is not None):
+                active_intf_found = False
 
-            if self.network_all_data['manager_settings'] is not None:
-                try:
-                    _wirelessintf = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface')
-                    if _wirelessintf == "" or _wirelessintf == "None":
-                        self.label_net_wireless_currently_used_intf.setText("None")
-                    else:
-                        self.label_net_wireless_currently_used_intf.setText(_wirelessintf)
-                        for i in range(self.cbox_net_wireless_intf.count()):
-                            if self.cbox_net_wireless_intf.itemText(i) == _wirelessintf:
-                                self.cbox_net_wireless_intf.setCurrentIndex(i)
-                                break
-                except:
-                    pass
-                try:
-                    _wiredintf = self.network_all_data['manager_settings'].get('Settings', 'wired_interface')
-                    if _wiredintf == "" or _wiredintf == "None":
-                        pass
-                    else:
-                        for i in range(self.cbox_net_wired_intf.count()):
-                            if self.cbox_net_wired_intf.itemText(i) == _wiredintf:
-                                self.cbox_net_wired_intf.setCurrentIndex(i)
-                                break
-                except:
-                    pass
+                # Processing wireless interfaces
+                if self.network_all_data['interfaces']['wireless'] is not None and\
+                   len(self.network_all_data['interfaces']['wireless']) > 0:
+                        for intf in self.network_all_data['interfaces']['wireless']:
+                            if intf == self.network_all_data['status']['cstat_intf_active']['name']:
+                                active_intf_found = True
+                                self.cbox_net_intf.addItem(intf+' : Wireless (active)')
+                            else:
+                                self.cbox_net_intf.addItem(intf+' : Wireless')
+        
+                            self.cbox_net_intf.setItemData(self.cbox_net_intf.count() - 1,
+                                                           QtCore.QVariant(unicode(intf)), INTERFACE_NAME_USER_ROLE)
+        
+                            self.cbox_net_intf.setItemData(self.cbox_net_intf.count() - 1,
+                                                           QtCore.QVariant(INTERFACE_WIRELESS), INTERFACE_TYPE_USER_ROLE)
+                            if intf == self.network_all_data['status']['cstat_intf_active']['name']:
+                                self.cbox_net_intf.setItemData(self.cbox_net_intf.count() - 1,
+                                                               QtCore.QVariant(INTERFACE_STATE_ACTIVE),
+                                                               INTERFACE_STATE_USER_ROLE)
+                            else:
+                                self.cbox_net_intf.setItemData(self.cbox_net_intf.count() - 1,
+                                                               QtCore.QVariant(INTERFACE_STATE_INACTIVE),
+                                                               INTERFACE_STATE_USER_ROLE)
 
-        if self.network_all_data['wireless_settings'] is not None:
-            # Populating access points combobox
-            _essid = ""
-            _bssid = ""
-            if self.network_all_data['scan_result'] is not None and len(self.network_all_data['scan_result']) > 0:
-                self.cbox_net_wireless_ap.clear()
-                for nidx, apdict in self.network_all_data['scan_result'].iteritems():
-                    self.cbox_net_wireless_ap.addItem(apdict['essid'])
-            else:
-                self.cbox_net_wireless_ap.clear()
-                self.cbox_net_wireless_ap.addItem("Nothing found. Scan again?")
+                # Processing wired interfaces
+                if self.network_all_data['interfaces']['wired'] is not None and\
+                   len(self.network_all_data['interfaces']['wired']) > 0:
+                        for intf in self.network_all_data['interfaces']['wired']:
+                            if intf == self.network_all_data['status']['cstat_intf_active']['name']:
+                                active_intf_found = True
+                                self.cbox_net_intf.addItem(intf+' : Wired (active)')
+                            else:
+                                self.cbox_net_intf.addItem(intf+' : Wired')
+        
+                            idx_cbox = self.cbox_net_intf.count() - 1
+        
+                            self.cbox_net_intf.setItemData(self.cbox_net_intf.count() - 1,
+                                                           QtCore.QVariant(unicode(intf)), INTERFACE_NAME_USER_ROLE)
+        
+                            self.cbox_net_intf.setItemData(idx_cbox,
+                                                           QtCore.QVariant(INTERFACE_WIRED), INTERFACE_TYPE_USER_ROLE)
 
-            self.cbox_net_wireless_ap.setCurrentIndex(0)
-            
-            _essid = unicode(self.cbox_net_wireless_ap.currentText())
-            _cwlintf = unicode(self.cbox_net_wireless_intf.currentText())
-            if self.network_all_data['interfaces'] is not None and\
-               self.network_all_data['interfaces']['wireless_links'] is not None and\
-               _cwlintf in self.network_all_data['interfaces']['wireless_links'] and\
-               self.network_all_data['interfaces']['wireless_links'][_cwlintf]['status']:
-                self.label_net_wireless_association.setText\
-                    (self.network_all_data['interfaces']['wireless_links'][unicode(_cwlintf)]['essid'])
+                            # Populating wired fields
+                            if self.network_all_data['interfaces']['wired'] is not None and\
+                               len(self.network_all_data['interfaces']['wired']) > 0 and\
+                               self.network_all_data['wired_settings'] is not None:
+                                    try:
+                                        _ip = self.network_all_data['wired_settings'].get('wired-default', 'ip')
+                                        if _ip == "" or _ip == "None":
+                                            self.cbox_net_intf.setItemData(idx_cbox,
+                                                                           QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_DHCP),
+                                                                           INTERFACE_WIRED_ADDRESS_CONF_USER_ROLE)
+                                            self.cbox_net_intf.setItemData(idx_cbox,
+                                                                           QtCore.QVariant('0.0.0.0'),
+                                                                           INTERFACE_WIRED_IP_USER_ROLE)
+                                        else:
+                                            self.cbox_net_intf.setItemData(idx_cbox,
+                                                                           QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_STATIC),
+                                                                           INTERFACE_WIRED_ADDRESS_CONF_USER_ROLE)
+                                            self.cbox_net_intf.setItemData(idx_cbox,
+                                                                           QtCore.QVariant(_ip),
+                                                                           INTERFACE_WIRED_IP_USER_ROLE)
+                                    except:
+                                        self.cbox_net_intf.setItemData(idx_cbox,
+                                                                       QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_DHCP),
+                                                                       INTERFACE_WIRED_ADDRESS_CONF_USER_ROLE)
+                                        self.ccbox_net_intf.setItemData(idx_cbox,
+                                                                        QtCore.QVariant('0.0.0.0'),
+                                                                        INTERFACE_WIRED_IP_USER_ROLE)
+    
+                                    try:
+                                        _mask = self.network_all_data['wired_settings'].get('wired-default', 'netmask')
+                                        if _mask == "" or _mask == "None":
+                                            self.cbox_net_intf.setItemData(idx_cbox,
+                                                                           QtCore.QVariant('0.0.0.0'),
+                                                                           INTERFACE_WIRED_MASK_USER_ROLE)
+                                        else:
+                                            self.cbox_net_intf.setItemData(idx_cbox,
+                                                                           QtCore.QVariant(_mask),
+                                                                           INTERFACE_WIRED_MASK_USER_ROLE)
+                                    except:
+                                        self.cbox_net_intf.setItemData(idx_cbox,
+                                                                       QtCore.QVariant('0.0.0.0'),
+                                                                       INTERFACE_WIRED_MASK_USER_ROLE)
+        
+                                    try:
+                                        _gw = self.network_all_data['wired_settings'].get('wired-default', 'gateway')
+                                        if _gw == "" or _gw == "None":
+                                            self.cbox_net_intf.setItemData(idx_cbox,
+                                                                           QtCore.QVariant('0.0.0.0'),
+                                                                           INTERFACE_WIRED_GATEWAY_USER_ROLE)
+                                        else:
+                                            self.cbox_net_intf.setItemData(idx_cbox,
+                                                                           QtCore.QVariant(_mask),
+                                                                           INTERFACE_WIRED_GATEWAY_USER_ROLE)
+                                    except:
+                                        self.cbox_net_intf.setItemData(idx_cbox,
+                                                                       QtCore.QVariant('0.0.0.0'),
+                                                                       INTERFACE_WIRED_GATEWAY_USER_ROLE)
+                                    
+                                    try:
+                                        _dns = self.network_all_data['wired_settings'].get('wired-default', 'dns1')
+                                        if _dns == "" or _dns == "None":
+                                            self.cbox_net_intf.setItemData(idx_cbox,
+                                                                           QtCore.QVariant('0.0.0.0'),
+                                                                           INTERFACE_WIRED_DNS_USER_ROLE)
+                                        else:
+                                            self.cbox_net_intf.setItemData(idx_cbox,
+                                                                           QtCore.QVariant(_dns),
+                                                                           INTERFACE_WIRED_DNS_USER_ROLE)
+                                    except:
+                                        self.cbox_net_intf.setItemData(idx_cbox,
+                                                                       QtCore.QVariant('0.0.0.0'),
+                                                                       INTERFACE_WIRED_DNS_USER_ROLE)
+                                                                       
+                            if intf == self.network_all_data['status']['cstat_intf_active']['name']:
+                                self.cbox_net_intf.setItemData(idx_cbox,
+                                                               QtCore.QVariant(INTERFACE_STATE_ACTIVE),
+                                                               INTERFACE_STATE_USER_ROLE)
+                            else:
+                                self.cbox_net_intf.setItemData(idx_cbox,
+                                                               QtCore.QVariant(INTERFACE_STATE_INACTIVE),
+                                                               INTERFACE_STATE_USER_ROLE)
 
-            else:
-                self.label_net_wireless_association.setText("Not Associated")
-
-            if _essid != "" and self.network_all_data['scan_result'] is not None:
-                for key, apdict in self.network_all_data['scan_result'].iteritems():
-                    if _essid == apdict['essid']:
-                        _bssid = apdict['bssid']
-
-                        self.label_net_wireless_channel.setText(self.network_all_data['scan_result'][key]['channel'])
-
-                    if self.network_all_data['scan_result'][key]['encryption'] == "On":
-                        if self.network_all_data['scan_result'][key]['encryption_method'] != "WPA" or\
-                           self.network_all_data['scan_result'][key]['encryption_method'] != "WPA1" or \
-                           self.network_all_data['scan_result'][key]['encryption_method'] != "WPA2":
-                            self.label_net_wireless_enctype.setText("WPA 1/2")
-                            self.ledit_net_wireless_key.setDisabled(False)
-                        elif self.network_all_data['scan_result'][key]['encryption'] == "Off":
-                            self.label_net_wireless_enctype.setText("Open")
-                            self.ledit_net_wireless_key.setText("")
-                            self.ledit_net_wireless_key.setDisabled(True)
-                        else:
-                            self.label_net_wireless_enctype.setText("Unsupported")
-                            self.ledit_net_wireless_key.setText("")
-                            self.ledit_net_wireless_key.setDisabled(True)
+                # Select first active interface by default if not then the first item
+                self.cbox_net_intf.setCurrentIndex(-1)
+                for i in range(self.cbox_net_intf.count()):
+                    istate = self.cbox_net_intf.itemData(i, INTERFACE_STATE_USER_ROLE).toInt()[0]
+                    if istate == INTERFACE_STATE_ACTIVE:
+                        self.cbox_net_intf.setCurrentIndex(i)
                         break
+                    if i == self.cbox_net_intf.count() - 1:
+                        self.cbox_net_intf.setCurrentIndex(0)
 
-            if _bssid != "":
-                try:
-                    _key = self.network_all_data['wireless_settings'].get(_bssid, 'key')
-                    if _key == "":
-                        self.ledit_net_wireless_key.setText("")
-                    else:
-                        self.ledit_net_wireless_key.setText(_key)
-                except:
-                    self.ledit_net_wireless_key.setText("")
-
-                try:
-                    _ips = self.network_all_data['wireless_settings'].get(_bssid, 'ip')
-                    if _ips == "" or _ips == "None":
-                        self.cbox_net_wireless_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
-                        self.sbox_net_wireless_ip1.setValue(0)
-                        self.sbox_net_wireless_ip2.setValue(0)
-                        self.sbox_net_wireless_ip3.setValue(0)
-                        self.sbox_net_wireless_ip4.setValue(0)
-                    else:
-                        self.cbox_net_wireless_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_STATIC)
-                        _ips_splitted = _ips.split('.')
-                        self.sbox_net_wireless_ip1.setValue(int(_ips_splitted[0]))
-                        self.sbox_net_wireless_ip2.setValue(int(_ips_splitted[1]))
-                        self.sbox_net_wireless_ip3.setValue(int(_ips_splitted[2]))
-                        self.sbox_net_wireless_ip4.setValue(int(_ips_splitted[3]))
-                except:
-                    self.cbox_net_wireless_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
-                    self.sbox_net_wireless_ip1.setValue(0)
-                    self.sbox_net_wireless_ip2.setValue(0)
-                    self.sbox_net_wireless_ip3.setValue(0)
-                    self.sbox_net_wireless_ip4.setValue(0)
-
-                try:
-                    _mask = self.network_all_data['wireless_settings'].get(_bssid, 'netmask')
-                    if _mask == "" or _mask == "None":
-                        self.sbox_net_wireless_mask1.setValue(0)
-                        self.sbox_net_wireless_mask2.setValue(0)
-                        self.sbox_net_wireless_mask3.setValue(0)
-                        self.sbox_net_wireless_mask4.setValue(0)
-                    else:
-                        _mask_splitted = _mask.split('.')
-                        self.sbox_net_wireless_mask1.setValue(int(_mask_splitted[0]))
-                        self.sbox_net_wireless_mask2.setValue(int(_mask_splitted[1]))
-                        self.sbox_net_wireless_mask3.setValue(int(_mask_splitted[2]))
-                        self.sbox_net_wireless_mask4.setValue(int(_mask_splitted[3]))
-                except:
-                    self.sbox_net_wireless_mask1.setValue(0)
-                    self.sbox_net_wireless_mask2.setValue(0)
-                    self.sbox_net_wireless_mask3.setValue(0)
-                    self.sbox_net_wireless_mask4.setValue(0)
-
-                try:
-                    _gw = self.network_all_data['wireless_settings'].get(_bssid, 'gateway')
-                    if _gw == "" or _gw == "None":
-                        self.sbox_net_wireless_gw1.setValue(0)
-                        self.sbox_net_wireless_gw2.setValue(0)
-                        self.sbox_net_wireless_gw3.setValue(0)
-                        self.sbox_net_wireless_gw4.setValue(0)
-                    else:
-                        _gw_splitted = _gw.split('.')
-                        self.sbox_net_wireless_gw1.setValue(int(_gw_splitted[0]))
-                        self.sbox_net_wireless_gw2.setValue(int(_gw_splitted[1]))
-                        self.sbox_net_wireless_gw3.setValue(int(_gw_splitted[2]))
-                        self.sbox_net_wireless_gw4.setValue(int(_gw_splitted[3]))
-                except:
-                    self.sbox_net_wireless_gw1.setValue(0)
-                    self.sbox_net_wireless_gw2.setValue(0)
-                    self.sbox_net_wireless_gw3.setValue(0)
-                    self.sbox_net_wireless_gw4.setValue(0)
-
-                try:
-                    _dns = self.network_all_data['wireless_settings'].get(_bssid, 'dns1')
-                    if _dns == "" or _dns == "None":
-                        self.sbox_net_wireless_dns1.setValue(0)
-                        self.sbox_net_wireless_dns2.setValue(0)
-                        self.sbox_net_wireless_dns3.setValue(0)
-                        self.sbox_net_wireless_dns4.setValue(0)
-                    else:
-                        _dns_splitted = _dns.split('.')
-                        self.sbox_net_wireless_dns1.setValue(int(_dns_splitted[0]))
-                        self.sbox_net_wireless_dns2.setValue(int(_dns_splitted[1]))
-                        self.sbox_net_wireless_dns3.setValue(int(_dns_splitted[2]))
-                        self.sbox_net_wireless_dns4.setValue(int(_dns_splitted[3]))
-                except:
-                    self.sbox_net_wireless_dns1.setValue(0)
-                    self.sbox_net_wireless_dns2.setValue(0)
-                    self.sbox_net_wireless_dns3.setValue(0)
-                    self.sbox_net_wireless_dns4.setValue(0)
-
-        if self.network_all_data['wired_settings'] is not None:
-            try:
-                _ips = self.network_all_data['wired_settings'].get('wired-default', 'ip')
-                if _ips == "None" or _ips == "":
-                    self.cbox_net_wired_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
-                    self.sbox_net_wired_ip1.setValue(0)
-                    self.sbox_net_wired_ip2.setValue(0)
-                    self.sbox_net_wired_ip3.setValue(0)
-                    self.sbox_net_wired_ip4.setValue(0)
+                # Check if active found if not then add no interfaces active
+                if not active_intf_found:
+                    self.label_interface_none_active.show()
                 else:
-                    self.cbox_net_wired_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_STATIC)
-                    _ips_splitted = _ips.split('.')
-                    self.sbox_net_wired_ip1.setValue(int(_ips_splitted[0]))
-                    self.sbox_net_wired_ip2.setValue(int(_ips_splitted[1]))
-                    self.sbox_net_wired_ip3.setValue(int(_ips_splitted[2]))
-                    self.sbox_net_wired_ip4.setValue(int(_ips_splitted[3]))
-            except:
-                self.cbox_net_wired_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
-                self.sbox_net_wired_ip1.setValue(0)
-                self.sbox_net_wired_ip2.setValue(0)
-                self.sbox_net_wired_ip3.setValue(0)
-                self.sbox_net_wired_ip4.setValue(0)
-            try:
-                _mask = self.network_all_data['wired_settings'].get('wired-default', 'netmask')
-                if _ips == "None" or _ips == "":
-                    self.sbox_net_wired_mask1.setValue(0)
-                    self.sbox_net_wired_mask2.setValue(0)
-                    self.sbox_net_wired_mask3.setValue(0)
-                    self.sbox_net_wired_mask4.setValue(0)
-                else:
-                    _mask_splitted = _mask.split('.')
-                    self.sbox_net_wired_mask1.setValue(int(_mask_splitted[0]))
-                    self.sbox_net_wired_mask2.setValue(int(_mask_splitted[1]))
-                    self.sbox_net_wired_mask3.setValue(int(_mask_splitted[2]))
-                    self.sbox_net_wired_mask4.setValue(int(_mask_splitted[3]))
-            except:
-                self.sbox_net_wired_mask1.setValue(0)
-                self.sbox_net_wired_mask2.setValue(0)
-                self.sbox_net_wired_mask3.setValue(0)
-                self.sbox_net_wired_mask4.setValue(0)
+                    self.label_interface_none_active.hide()
 
-            try:
-                _gw = self.network_all_data['wired_settings'].get('wired-default', 'gateway')
-                if _gw == "None" or _gw == "":
-                    self.sbox_net_wired_gw1.setValue(0)
-                    self.sbox_net_wired_gw2.setValue(0)
-                    self.sbox_net_wired_gw3.setValue(0)
-                    self.sbox_net_wired_gw4.setValue(0)
-                else:
-                    _gw_splitted = _gw.split('.')
-                    self.sbox_net_wired_gw1.setValue(int(_gw_splitted[0]))
-                    self.sbox_net_wired_gw2.setValue(int(_gw_splitted[1]))
-                    self.sbox_net_wired_gw3.setValue(int(_gw_splitted[2]))
-                    self.sbox_net_wired_gw4.setValue(int(_gw_splitted[3]))
-            except:
-                self.sbox_net_wired_gw1.setValue(0)
-                self.sbox_net_wired_gw2.setValue(0)
-                self.sbox_net_wired_gw3.setValue(0)
-                self.sbox_net_wired_gw4.setValue(0)
+        if self.network_all_data['interfaces']['wireless'] is None and\
+           self.network_all_data['interfaces']['wired'] is None:
+                # Add no interface available
+                self.cbox_net_intf.clear()
+                self.cbox_net_intf.addItem('No interfaces available')
+                self.cbox_net_intf.setItemData(0, QtCore.QVariant(INTERFACE_NOT_FOUND), INTERFACE_TYPE_USER_ROLE)
+                self.cbox_net_intf.setCurrentIndex(0)
+                self.cbox_net_intf.setEnabled(False)
 
-            try:
-                _dns = self.network_all_data['wired_settings'].get('wired-default', 'dns1')
-                if _dns == "None" or _dns == "":
-                    self.sbox_net_wired_dns1.setValue(0)
-                    self.sbox_net_wired_dns2.setValue(0)
-                    self.sbox_net_wired_dns3.setValue(0)
-                    self.sbox_net_wired_dns4.setValue(0)
-                else:
-                    _dns_splitted = _dns.split('.')
-                    self.sbox_net_wired_dns1.setValue(int(_dns_splitted[0]))
-                    self.sbox_net_wired_dns2.setValue(int(_dns_splitted[1]))
-                    self.sbox_net_wired_dns3.setValue(int(_dns_splitted[2]))
-                    self.sbox_net_wired_dns4.setValue(int(_dns_splitted[3]))
-            except:
-                self.sbox_net_wired_dns1.setValue(0)
-                self.sbox_net_wired_dns2.setValue(0)
-                self.sbox_net_wired_dns3.setValue(0)
-                self.sbox_net_wired_dns4.setValue(0)
+        if self.network_all_data['interfaces']['wireless'] is not None and\
+             self.network_all_data['interfaces']['wired'] is not None:
+                 if len(self.network_all_data['interfaces']['wireless']) <= 0 and\
+                    len(self.network_all_data['interfaces']['wired']) <= 0:
+                        # Add no interface available
+                        self.cbox_net_intf.clear()
+                        self.cbox_net_intf.addItem('No interfaces available')
+                        self.cbox_net_intf.setItemData(0, QtCore.QVariant(INTERFACE_NOT_FOUND), INTERFACE_TYPE_USER_ROLE)
+                        self.cbox_net_intf.setCurrentIndex(0)
+                        self.cbox_net_intf.setEnabled(False)
+
+        # Populating wireless fields
+        self.update_access_points()
 
     def update_brickd_widget_data(self):
         if self.brickd_conf == None:
@@ -590,17 +681,20 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.sbox_brickd_adv_rs485_dly.setValue(int(self.brickd_conf['poll_delay.rs485']))
 
     def network_show_hide_static_ipconf(self, tidx, contype):
+        pass
+        '''
         if tidx == TAB_INDEX_NETWORK_WIRELESS:
             if contype == CBOX_NET_CONTYPE_INDEX_DHCP:
-                self.frame_net_wireless_staticipconf.hide()
+                self.frame_static_ip_conf.hide()
             elif contype == CBOX_NET_CONTYPE_INDEX_STATIC:
-                self.frame_net_wireless_staticipconf.show()
+                self.frame_static_ip_conf.show()
 
         elif tidx == TAB_INDEX_NETWORK_WIRED:
             if contype == CBOX_NET_CONTYPE_INDEX_DHCP:
                 self.frame_net_wired_staticipconf.hide()
             elif contype == CBOX_NET_CONTYPE_INDEX_STATIC:
                 self.frame_net_wired_staticipconf.show()
+        '''
 
     # The slots
     def slot_tbox_settings_current_changed(self, ctidx):
@@ -616,27 +710,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         if ctidx == BOX_INDEX_NETWORK:
             self.slot_network_refresh_clicked()
 
-            if self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRELESS:
-                self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRELESS,
-                                                     self.cbox_net_wireless_conftype.currentIndex())
-
-            elif self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRED:
-                self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRED,
-                                                     self.cbox_net_wired_conftype.currentIndex())
-
         elif ctidx == BOX_INDEX_BRICKD:
             self.slot_brickd_refresh_clicked()
         elif ctidx == BOX_INDEX_DATETIME:
             self.time_start()
-
-    def slot_twidget_net_current_changed(self, ctidx):
-        if self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRELESS:
-            self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRELESS,
-                                                 self.cbox_net_wireless_conftype.currentIndex())
-            
-        elif self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRED:
-            self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRED,
-                                                 self.cbox_net_wired_conftype.currentIndex())
 
     def network_button_refresh_enabled(self, state):
         self.pbutton_net_refresh.setEnabled(state)
@@ -647,18 +724,12 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.pbutton_net_refresh.setText("Refreshing...")
 
     def network_button_save_enabled(self, state):
-        self.pbutton_net_gen_save.setEnabled(state)
-        self.pbutton_net_wireless_save.setEnabled(state)
-        self.pbutton_net_wired_save.setEnabled(state)
+        self.pbutton_net_save.setEnabled(state)
 
         if state:
-            self.pbutton_net_gen_save.setText("Save")
-            self.pbutton_net_wireless_save.setText("Save")
-            self.pbutton_net_wired_save.setText("Save")
+            self.pbutton_net_save.setText("Save")
         else:
-            self.pbutton_net_gen_save.setText("Saved")
-            self.pbutton_net_wireless_save.setText("Saved")
-            self.pbutton_net_wired_save.setText("Saved")
+            self.pbutton_net_save.setText("Saved")
 
     def brickd_button_refresh_enabled(self, state):
         self.pbutton_brickd_general_refresh.setEnabled(state)
@@ -684,18 +755,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.pbutton_brickd_adv_save.setText("Saved")
 
     def network_refresh_tasks_done(self):
-        self.twidget_net.setEnabled(True)
-        self.label_working_wait.hide()
-        self.pbar_working_wait.hide()
+        self.show_please_wait(False)
         self.network_refresh_tasks_remaining = -1
-        self.update_network_widget_data()
+        self.update_network_gui()
         self.network_button_refresh_enabled(True)
         self.network_button_save_enabled(False)
 
     def slot_network_refresh_clicked(self):
-        if not self.twidget_net.isEnabled():
-            return
-
         self.network_button_refresh_enabled(False)
 
         def cb_settings_network_status(result):
@@ -724,8 +790,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         def cb_settings_network_wireless_scan(result):
             self.network_refresh_tasks_remaining -= 1
-
-            self.cbox_net_wireless_ap.clear()
             if result != None and result.stderr == "":
                 self.network_all_data['scan_result'] = json.loads(result.stdout)
             else:
@@ -817,34 +881,32 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         self.cbox_net_wireless_ap.clear()
         self.cbox_net_wireless_ap.addItem("Scanning...")
-        self.cbox_net_wireless_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
-        self.frame_net_wireless_staticipconf.hide()
+        self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
+        self.frame_static_ip_conf.hide()
         self.label_net_wireless_channel.setText("None")
         self.label_net_wireless_enctype.setText("None")
         self.ledit_net_wireless_key.setText("")
         self.ledit_net_wireless_key.setDisabled(True)
-        self.sbox_net_wireless_ip1.setValue(0)
-        self.sbox_net_wireless_ip2.setValue(0)
-        self.sbox_net_wireless_ip3.setValue(0)
-        self.sbox_net_wireless_ip4.setValue(0)
-        self.sbox_net_wireless_mask1.setValue(0)
-        self.sbox_net_wireless_mask2.setValue(0)
-        self.sbox_net_wireless_mask3.setValue(0)
-        self.sbox_net_wireless_mask4.setValue(0)
-        self.sbox_net_wireless_gw1.setValue(0)
-        self.sbox_net_wireless_gw2.setValue(0)
-        self.sbox_net_wireless_gw3.setValue(0)
-        self.sbox_net_wireless_gw4.setValue(0)
-        self.sbox_net_wireless_dns1.setValue(0)
-        self.sbox_net_wireless_dns2.setValue(0)
-        self.sbox_net_wireless_dns3.setValue(0)
-        self.sbox_net_wireless_dns4.setValue(0)
+        self.sbox_net_ip1.setValue(0)
+        self.sbox_net_ip2.setValue(0)
+        self.sbox_net_ip3.setValue(0)
+        self.sbox_net_ip4.setValue(0)
+        self.sbox_net_mask1.setValue(0)
+        self.sbox_net_mask2.setValue(0)
+        self.sbox_net_mask3.setValue(0)
+        self.sbox_net_mask4.setValue(0)
+        self.sbox_net_gw1.setValue(0)
+        self.sbox_net_gw2.setValue(0)
+        self.sbox_net_gw3.setValue(0)
+        self.sbox_net_gw4.setValue(0)
+        self.sbox_net_dns1.setValue(0)
+        self.sbox_net_dns2.setValue(0)
+        self.sbox_net_dns3.setValue(0)
+        self.sbox_net_dns4.setValue(0)
 
         self.network_refresh_tasks_remaining = 6
-    
-        self.twidget_net.setEnabled(False)
-        self.label_working_wait.show()
-        self.pbar_working_wait.show()
+
+        self.show_please_wait(True)
 
         self.script_manager.execute_script('settings_network_status',
                                            cb_settings_network_status,
@@ -907,13 +969,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.network_button_save_enabled(False)
 
         def cb_settings_network_status(result):
-            self.twidget_net.setEnabled(True)
-            self.label_working_wait.hide()
-            self.pbar_working_wait.hide()
+            self.show_please_wait(False)
 
             if result != None and result.stderr == "":
                 self.network_all_data['status'] = json.loads(result.stdout)
-                self.update_network_widget_data()
+                self.update_network_gui()
             else:
                 pass
                 # TODO: Error popup for user?
@@ -924,14 +984,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                    cb_settings_network_status,
                                                    [])
             else:
-                self.twidget_net.setEnabled(True)
-                self.label_working_wait.hide()
-                self.pbar_working_wait.hide()
+                self.show_please_wait(False)
                 # TODO: Error popup for user?
 
-        self.twidget_net.setEnabled(False)
-        self.label_working_wait.show()
-        self.pbar_working_wait.show()
+        self.show_please_wait(True)
 
         try:
             hostname_new = unicode(self.ledit_net_gen_hostname.displayText())
@@ -941,9 +997,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                        'Invalid new hostname.',
                                        QtGui.QMessageBox.Ok)
             self.ledit_net_gen_hostname.setText(self.network_all_data['status']['cstat_hostname'])
-            self.twidget_net.setEnabled(True)
-            self.label_working_wait.hide()
-            self.pbar_working_wait.hide()
+            self.show_please_wait(False)
             return
 
         self.script_manager.execute_script('settings_network_set_hostname',
@@ -968,31 +1022,31 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             if apdict['essid'] == unicode(self.cbox_net_wireless_ap.currentText()):
                 nidx = key
                 break
-        if self.cbox_net_wireless_conftype.currentIndex() == CBOX_NET_CONTYPE_INDEX_DHCP:
+        if self.cbox_net_conftype.currentIndex() == CBOX_NET_CONTYPE_INDEX_DHCP:
             ip = "None"
             mask = "None"
             gw = "None"
             dns = "None"
         else:
-            ip = '.'.join((str(self.sbox_net_wireless_ip1.value()),
-                           str(self.sbox_net_wireless_ip2.value()),
-                           str(self.sbox_net_wireless_ip3.value()),
-                           str(self.sbox_net_wireless_ip4.value())))
+            ip = '.'.join((str(self.sbox_net_ip1.value()),
+                           str(self.sbox_net_ip2.value()),
+                           str(self.sbox_net_ip3.value()),
+                           str(self.sbox_net_ip4.value())))
 
-            mask = '.'.join((str(self.sbox_net_wireless_mask1.value()),
-                           str(self.sbox_net_wireless_mask2.value()),
-                           str(self.sbox_net_wireless_mask3.value()),
-                           str(self.sbox_net_wireless_mask4.value())))
+            mask = '.'.join((str(self.sbox_net_mask1.value()),
+                           str(self.sbox_net_mask2.value()),
+                           str(self.sbox_net_mask3.value()),
+                           str(self.sbox_net_mask4.value())))
         
-            gw = '.'.join((str(self.sbox_net_wireless_gw1.value()),
-                           str(self.sbox_net_wireless_gw2.value()),
-                           str(self.sbox_net_wireless_gw3.value()),
-                           str(self.sbox_net_wireless_gw4.value())))
+            gw = '.'.join((str(self.sbox_net_gw1.value()),
+                           str(self.sbox_net_gw2.value()),
+                           str(self.sbox_net_gw3.value()),
+                           str(self.sbox_net_gw4.value())))
 
-            dns = '.'.join((str(self.sbox_net_wireless_dns1.value()),
-                           str(self.sbox_net_wireless_dns2.value()),
-                           str(self.sbox_net_wireless_dns3.value()),
-                           str(self.sbox_net_wireless_dns4.value())))
+            dns = '.'.join((str(self.sbox_net_dns1.value()),
+                           str(self.sbox_net_dns2.value()),
+                           str(self.sbox_net_dns3.value()),
+                           str(self.sbox_net_dns4.value())))
         if self.label_net_wireless_enctype.text() == "WPA 1/2":
             enct = "wpa"
             key = self.ledit_net_wireless_key.displayText()
@@ -1013,9 +1067,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         automatic = "True"
 
         def cb_settings_network_wireless_apply(result):
-            self.twidget_net.setEnabled(True)
-            self.label_working_wait.hide()
-            self.pbar_working_wait.hide()
+            self.show_please_wait(False)
             if result != None and result.stderr == "":
                 QtGui.QMessageBox.information(None,
                                               'Settings | Network | Wireless',
@@ -1028,9 +1080,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                            'Error saving wireless connection configuration.',
                                            QtGui.QMessageBox.Ok)
 
-        self.twidget_net.setEnabled(False)
-        self.label_working_wait.show()
-        self.pbar_working_wait.show()
+        self.show_please_wait(True)
 
         def cb_open_ms(config, red_file):
             def cb_write_ms(red_file, result):
@@ -1040,9 +1090,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.network_button_save_enabled(True)
                     # TODO: Error popup for user?
                     print 'cb_open_ms cb_write_ms', result
-                    self.twidget_net.setEnabled(True)
-                    self.label_working_wait.hide()
-                    self.pbar_working_wait.hide()
+                    self.show_please_wait(False)
                 else:
                     self.script_manager.execute_script('settings_network_wireless_apply',
                                                        cb_settings_network_wireless_apply,
@@ -1065,9 +1113,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.brickd_button_save_enabled(True)
             # TODO: Error popup for user?
             print 'cb_open_ms cb_open_ms_error', result
-            self.twidget_net.setEnabled(True)
-            self.label_working_wait.hide()
-            self.pbar_working_wait.hide()
+            self.show_please_wait(False)
 
         async_call(self.manager_settings_conf_rfile.open,
                    (MANAGER_SETTINGS_CONF_PATH,
@@ -1078,13 +1124,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    lambda x: cb_open_ms(config_ms, x),
                    cb_open_ms_error)
 
-    def slot_network_button_wireless_use_intf_clicked(self):
+    def slot_network_button_activate_intf_clicked(self):
         def cb_settings_network_wireless_apply_intf(result):
-            self.twidget_net.setEnabled(True)
-            self.label_working_wait.hide()
-            self.pbar_working_wait.hide()
+            self.show_please_wait(False)
             if result != None and result.stderr == "":
-                self.update_network_widget_data()
+                self.update_network_gui()
                 QtGui.QMessageBox.information(None,
                                               'Settings | Network | Wireless',
                                               'Wireless interface changed.',
@@ -1093,7 +1137,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 pass
                 # TODO: Error popup for user?
 
-        wlintf = unicode(self.cbox_net_wireless_intf.currentText())
+        wlintf = unicode(self.cbox_net_intf.currentText())
         if self.network_all_data['manager_settings'] is not None and\
            wlintf != "":
             self.network_all_data['manager_settings'].set("Settings", "wireless_interface", wlintf)
@@ -1120,11 +1164,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 # TODO: Error popup for user?
                 print 'slot_network_button_wireless_use_intf_clicked cb_open cb_open_error', result
 
-            self.twidget_net.setEnabled(False)
-            self.label_working_wait.show()
-            self.pbar_working_wait.show()
-            self.label_net_wireless_association.setText("None")
-            self.label_net_wireless_currently_used_intf.setText("None")
+            self.show_please_wait(False)
+            #self.label_net_wireless_association.setText("None")
 
             async_call(self.manager_settings_conf_rfile.open,
                        (MANAGER_SETTINGS_CONF_PATH,
@@ -1137,64 +1178,91 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
     def slot_network_button_wireless_scan_clicked(self):
         def cb_settings_network_wireless_scan(result):
-            self.twidget_net.setEnabled(True)
-            self.label_working_wait.hide()
-            self.pbar_working_wait.hide()
+            self.show_please_wait(False)
+            print result
             if result != None and result.stderr == "":
                 self.network_all_data['scan_result'] = json.loads(result.stdout)
-                if self.network_all_data['scan_result'] is not None and\
-                   len(self.network_all_data['scan_result']) > 0:
-                    self.cbox_net_wireless_ap.clear()
-                    for nidx, apdict in self.network_all_data['scan_result'].iteritems():
-                        self.cbox_net_wireless_ap.addItem(apdict['essid'])
-                    self.update_network_widget_data()
-                    QtGui.QMessageBox.information(None,
-                                                  'Settings | Network | Wireless',
-                                                  'Wireless scan finished successfully.',
-                                                  QtGui.QMessageBox.Ok)
-                else:
-                    self.cbox_net_wireless_ap.clear()
-                    self.cbox_net_wireless_ap.addItem("Nothing found. Scan again?")
+                self.update_access_points()
+                QtGui.QMessageBox.information(None,
+                                              'Settings | Network | Wireless',
+                                              'Wireless scan finished.',
+                                              QtGui.QMessageBox.Ok)
             else:
-                print 'cb_settings_network_wireless_scan', result
-                self.cbox_net_wireless_ap.clear()
-                self.cbox_net_wireless_ap.addItem("Error occured. Scan again?")
+                pass
                 # TODO: Error popup for user?
 
+        self.label_ap_none_associated.hide()
         self.cbox_net_wireless_ap.clear()
         self.cbox_net_wireless_ap.addItem("Scanning...")
         self.label_net_wireless_channel.setText("None")
-        self.cbox_net_wireless_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
-        self.frame_net_wireless_staticipconf.hide()
         self.label_net_wireless_enctype.setText("None")
         self.ledit_net_wireless_key.setText("")
-        self.ledit_net_wireless_key.setDisabled(True)
-        self.sbox_net_wireless_ip1.setValue(0)
-        self.sbox_net_wireless_ip2.setValue(0)
-        self.sbox_net_wireless_ip3.setValue(0)
-        self.sbox_net_wireless_ip4.setValue(0)
-        self.sbox_net_wireless_mask1.setValue(0)
-        self.sbox_net_wireless_mask2.setValue(0)
-        self.sbox_net_wireless_mask3.setValue(0)
-        self.sbox_net_wireless_mask4.setValue(0)
-        self.sbox_net_wireless_gw1.setValue(0)
-        self.sbox_net_wireless_gw2.setValue(0)
-        self.sbox_net_wireless_gw3.setValue(0)
-        self.sbox_net_wireless_gw4.setValue(0)
-        self.sbox_net_wireless_dns1.setValue(0)
-        self.sbox_net_wireless_dns2.setValue(0)
-        self.sbox_net_wireless_dns3.setValue(0)
-        self.sbox_net_wireless_dns4.setValue(0)
+        self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
+        self.frame_static_ip_conf.hide()
+        self.sbox_net_ip1.setValue(0)
+        self.sbox_net_ip2.setValue(0)
+        self.sbox_net_ip3.setValue(0)
+        self.sbox_net_ip4.setValue(0)
+        self.sbox_net_mask1.setValue(0)
+        self.sbox_net_mask2.setValue(0)
+        self.sbox_net_mask3.setValue(0)
+        self.sbox_net_mask4.setValue(0)
+        self.sbox_net_gw1.setValue(0)
+        self.sbox_net_gw2.setValue(0)
+        self.sbox_net_gw3.setValue(0)
+        self.sbox_net_gw4.setValue(0)
+        self.sbox_net_dns1.setValue(0)
+        self.sbox_net_dns2.setValue(0)
+        self.sbox_net_dns3.setValue(0)
+        self.sbox_net_dns4.setValue(0)
 
-        self.twidget_net.setEnabled(False)
-        self.label_working_wait.show()
-        self.pbar_working_wait.show()
+        self.show_please_wait(True)
 
         self.script_manager.execute_script('settings_network_wireless_scan',
                                            cb_settings_network_wireless_scan,
                                            [])
 
+    def slot_set_hostname_clicked(self):
+        def cb_settings_network_set_hostname(result):
+            self.show_please_wait(False)
+            print result
+            if result != None and result.stderr == "":
+                QtGui.QMessageBox.information(None,
+                                              'Settings | Network | General',
+                                              'Hostname changed.',
+                                              QtGui.QMessageBox.Ok)
+            else:
+                pass
+                # TODO: Error popup for user?
+        
+        if self.ledit_net_gen_hostname.displayText():
+            try:
+                hostname_new = unicode(self.ledit_net_gen_hostname.displayText())
+            except:
+                QtGui.QMessageBox.critical(None,
+                                           'Settings | Network | General',
+                                           'Invalid new hostname.',
+                                           QtGui.QMessageBox.Ok)
+                self.ledit_net_gen_hostname.setText(self.network_all_data['status']['cstat_hostname'])
+                self.show_please_wait(False)
+                return
+    
+            self.show_please_wait(True)
+    
+            self.script_manager.execute_script('settings_network_set_hostname',
+                                               cb_settings_network_set_hostname,
+                                               [unicode(self.network_all_data['status']['cstat_hostname']),
+                                                hostname_new])
+        else:
+            QtGui.QMessageBox.critical(None,
+                                       'Settings | Network | General',
+                                       'Hostname empty.',
+                                       QtGui.QMessageBox.Ok)
+            self.ledit_net_gen_hostname.setText(self.network_all_data['status']['cstat_hostname'])
+
     def slot_network_wired_save_clicked(self):
+        pass
+        '''
         self.network_button_save_enabled(False)
 
         self.network_all_data['manager_settings'].set('Settings', 'wired_interface', unicode(self.cbox_net_wired_intf.currentText()))
@@ -1251,9 +1319,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             config = config_parser.to_string_no_fake(self.network_all_data['wired_settings'])
 
         def cb_settings_network_wired_apply(result):
-            self.twidget_net.setEnabled(True)
-            self.label_working_wait.hide()
-            self.pbar_working_wait.hide()
+            self.show_please_wait(False)
             if result.stderr != None and result.stderr == "":
                 QtGui.QMessageBox.information(None,
                                               'Settings | Network | Wired',
@@ -1288,9 +1354,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.brickd_button_save_enabled(True)
             # TODO: Error popup for user?
             print 'slot_network_wired_save_clicked cb_open_error', result
-            self.twidget_net.setEnabled(True)
-            self.label_working_wait.hide()
-            self.pbar_working_wait.hide()
+            self.show_please_wait(False)
             QtGui.QMessageBox.critical(None,
                                        'Settings | Network | Wired',
                                        'Error saving wired connection configuration.',
@@ -1322,17 +1386,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         def cb_open_ms_error(result):
             self.brickd_button_save_enabled(True)
             print 'slot_network_wired_save_clicked cb_open_ms_error', result
-            self.twidget_net.setEnabled(True)
-            self.label_working_wait.hide()
-            self.pbar_working_wait.hide()
+            self.show_please_wait(False)
             QtGui.QMessageBox.critical(None,
                                        'Settings | Network | Wired',
                                        'Error saving wired connection configuration.',
                                        QtGui.QMessageBox.Ok)
 
-        self.twidget_net.setEnabled(False)
-        self.label_working_wait.show()
-        self.pbar_working_wait.show()
+        self.show_please_wait(True)
 
         async_call(self.manager_settings_conf_rfile.open,
                    (MANAGER_SETTINGS_CONF_PATH,
@@ -1342,7 +1402,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    REDFile.FLAG_TRUNCATE, 0500, 0, 0),
                    lambda x: cb_open_ms(config, x),
                    cb_open_ms_error)
-
+        '''
     def slot_brickd_save_clicked(self):
         self.brickd_button_save_enabled(False)
 
@@ -1432,133 +1492,275 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    lambda x: cb_open(config, x),
                    cb_open_error)
 
-    def slot_cbox_net_wireless_intf_current_idx_changed(self, idx):
-        _cwlintf = unicode(self.cbox_net_wireless_intf.currentText())
-        if self.network_all_data['interfaces'] is not None and\
-           self.network_all_data['interfaces']['wireless_links'] is not None and\
-           _cwlintf in self.network_all_data['interfaces']['wireless_links'] and\
-           self.network_all_data['interfaces']['wireless_links'][_cwlintf]['status']:
-            self.label_net_wireless_association.setText\
-                (self.network_all_data['interfaces']['wireless_links'][_cwlintf]['essid'])
-        else:
-            self.label_net_wireless_association.setText("Not Associated")
+    def slot_cbox_net_intf_current_idx_changed(self, idx):
+        print "slot_cbox_net_intf_current_idx_changed()", idx
+
+        def widget_states_on_interface_selection(itype, istate):
+            if itype == INTERFACE_WIRELESS:
+                configured_intf = ''
+                try:
+                    configured_intf = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface')
+                except:
+                    # TODO: Show error notification?
+                    pass
+
+                if istate:
+                    # Wireless active interface
+                    self.pbutton_net_deactivate_intf.setEnabled(True)
+
+                    if configured_intf == interface_name:
+                        self.pbutton_net_activate_intf.setEnabled(False)
+                        self.frame_wireless_conf.show()
+                        ap_cidx = self.cbox_net_wireless_ap.currentIndex()
+                        self.slot_cbox_net_wireless_ap_current_idx_changed(ap_cidx)
+                    else:
+                        self.pbutton_net_activate_intf.setEnabled(True)
+                        self.frame_wireless_conf.hide()
+                        self.frame_net_conftype.hide()
+                        self.frame_static_ip_conf.hide()
+                    
+                else:
+                    # Wireless inactive interface
+                    self.pbutton_net_activate_intf.setEnabled(True)
+                    self.pbutton_net_deactivate_intf.setEnabled(False)
+                    
+                    if configured_intf == interface_name:
+                        self.frame_wireless_conf.show()
+                        self.frame_net_conftype.show()
+                        ap_cidx = self.cbox_net_wireless_ap.currentIndex()
+                        self.slot_cbox_net_wireless_ap_current_idx_changed(ap_cidx)
+                    else:
+                        self.frame_wireless_conf.hide()
+                        self.frame_net_conftype.hide()
+                        self.frame_static_ip_conf.hide()
+
+            if itype == INTERFACE_WIRED:
+                configured_intf = ''
+                try:
+                    configured_intf = self.network_all_data['manager_settings'].get('Settings', 'wired_interface')
+                except:
+                    # TODO: Show error notification?
+                    pass
+
+                if istate:
+                    # Wired active interface
+                    self.pbutton_net_deactivate_intf.setEnabled(True)
+
+                    if configured_intf == interface_name:
+                        self.pbutton_net_activate_intf.setEnabled(False)
+                    else:
+                        self.pbutton_net_activate_intf.setEnabled(True)
+                    
+                    self.frame_wireless_conf.hide()
+                    self.frame_net_conftype.show()
+
+                    address_conf = self.cbox_net_intf.itemData(idx, INTERFACE_WIRED_ADDRESS_CONF_USER_ROLE).toInt()[0]
+
+                    if address_conf == CBOX_NET_CONTYPE_INDEX_STATIC:
+                        ip_string = self.cbox_net_intf.itemData(idx, INTERFACE_WIRED_IP_USER_ROLE).toString()
+                        ip_array = ip_string.split('.')
+                        mask_string = self.cbox_net_intf.itemData(idx, INTERFACE_WIRED_MASK_USER_ROLE).toString()
+                        mask_array = mask_string.split('.')
+                        gw_string = self.cbox_net_intf.itemData(idx, INTERFACE_WIRED_GATEWAY_USER_ROLE).toString()
+                        gw_array = gw_string.split('.')
+                        dns_string = self.cbox_net_intf.itemData(idx, INTERFACE_WIRED_DNS_USER_ROLE).toString()
+                        dns_array = dns_string.split('.')
+
+                        if ip_string:
+                            self.sbox_net_ip1.setValue(int(ip_array[0]))
+                            self.sbox_net_ip2.setValue(int(ip_array[1]))
+                            self.sbox_net_ip3.setValue(int(ip_array[2]))
+                            self.sbox_net_ip4.setValue(int(ip_array[3]))
+            
+                        if mask_string:
+                            self.sbox_net_mask1.setValue(int(mask_array[0]))
+                            self.sbox_net_mask2.setValue(int(mask_array[1]))
+                            self.sbox_net_mask3.setValue(int(mask_array[2]))
+                            self.sbox_net_mask4.setValue(int(mask_array[3]))
+            
+                        if gw_string:
+                            self.sbox_net_gw1.setValue(int(gw_array[0]))
+                            self.sbox_net_gw2.setValue(int(gw_array[1]))
+                            self.sbox_net_gw3.setValue(int(gw_array[2]))
+                            self.sbox_net_gw4.setValue(int(gw_array[3]))
+                        
+                        if dns_string:
+                            self.sbox_net_dns1.setValue(int(dns_array[0]))
+                            self.sbox_net_dns2.setValue(int(dns_array[1]))
+                            self.sbox_net_dns3.setValue(int(dns_array[2]))
+                            self.sbox_net_dns4.setValue(int(dns_array[3]))
+
+                        self.slot_cbox_net_conftype_curent_idx_changed(CBOX_NET_CONTYPE_INDEX_STATIC)
+                    else:
+                        self.sbox_net_ip1.setValue(0)
+                        self.sbox_net_ip2.setValue(0)
+                        self.sbox_net_ip3.setValue(0)
+                        self.sbox_net_ip4.setValue(0)
+                        
+                        self.sbox_net_mask1.setValue(0)
+                        self.sbox_net_mask2.setValue(0)
+                        self.sbox_net_mask3.setValue(0)
+                        self.sbox_net_mask4.setValue(0)
+                        
+                        self.sbox_net_gw1.setValue(0)
+                        self.sbox_net_gw2.setValue(0)
+                        self.sbox_net_gw3.setValue(0)
+                        self.sbox_net_gw4.setValue(0)
+                        
+                        self.sbox_net_dns1.setValue(0)
+                        self.sbox_net_dns2.setValue(0)
+                        self.sbox_net_dns3.setValue(0)
+                        self.sbox_net_dns4.setValue(0)
+                        self.slot_cbox_net_conftype_curent_idx_changed(CBOX_NET_CONTYPE_INDEX_DHCP)
+                else:
+                    # Wired inactive interface
+                    self.pbutton_net_activate_intf.setEnabled(True)
+                    self.pbutton_net_deactivate_intf.setEnabled(False)
+
+                    self.frame_wireless_conf.hide()
+                    self.frame_net_conftype.show()
+
+                    address_conf = self.cbox_net_intf.itemData(idx, INTERFACE_WIRED_ADDRESS_CONF_USER_ROLE).toInt()[0]
+
+                    if address_conf == CBOX_NET_CONTYPE_INDEX_STATIC:
+                        ip_string = self.cbox_net_intf.itemData(idx, INTERFACE_WIRED_IP_USER_ROLE).toString()
+                        ip_array = ip_string.split('.')
+                        mask_string = self.cbox_net_intf.itemData(idx, INTERFACE_WIRED_MASK_USER_ROLE).toString()
+                        mask_array = mask_string.split('.')
+                        gw_string = self.cbox_net_intf.itemData(idx, INTERFACE_WIRED_GATEWAY_USER_ROLE).toString()
+                        gw_array = gw_string.split('.')
+                        dns_string = self.cbox_net_intf.itemData(idx, INTERFACE_WIRED_DNS_USER_ROLE).toString()
+                        dns_array = dns_string.split('.')
+
+                        if ip_string:
+                            self.sbox_net_ip1.setValue(int(ip_array[0]))
+                            self.sbox_net_ip2.setValue(int(ip_array[1]))
+                            self.sbox_net_ip3.setValue(int(ip_array[2]))
+                            self.sbox_net_ip4.setValue(int(ip_array[3]))
+            
+                        if ip_string:
+                            self.sbox_net_mask1.setValue(int(mask_array[0]))
+                            self.sbox_net_mask2.setValue(int(mask_array[1]))
+                            self.sbox_net_mask3.setValue(int(mask_array[2]))
+                            self.sbox_net_mask4.setValue(int(mask_array[3]))
+            
+                        if ip_string:
+                            self.sbox_net_gw1.setValue(int(gw_array[0]))
+                            self.sbox_net_gw2.setValue(int(gw_array[1]))
+                            self.sbox_net_gw3.setValue(int(gw_array[2]))
+                            self.sbox_net_gw4.setValue(int(gw_array[3]))
+                        
+                        if ip_string:
+                            self.sbox_net_dns1.setValue(int(dns_array[0]))
+                            self.sbox_net_dns2.setValue(int(dns_array[1]))
+                            self.sbox_net_dns3.setValue(int(dns_array[2]))
+                            self.sbox_net_dns4.setValue(int(dns_array[3]))
+
+                        self.slot_cbox_net_conftype_curent_idx_changed(CBOX_NET_CONTYPE_INDEX_STATIC)
+                    else:
+                        self.sbox_net_ip1.setValue(0)
+                        self.sbox_net_ip2.setValue(0)
+                        self.sbox_net_ip3.setValue(0)
+                        self.sbox_net_ip4.setValue(0)
+                        
+                        self.sbox_net_mask1.setValue(0)
+                        self.sbox_net_mask2.setValue(0)
+                        self.sbox_net_mask3.setValue(0)
+                        self.sbox_net_mask4.setValue(0)
+                        
+                        self.sbox_net_gw1.setValue(0)
+                        self.sbox_net_gw2.setValue(0)
+                        self.sbox_net_gw3.setValue(0)
+                        self.sbox_net_gw4.setValue(0)
+                        
+                        self.sbox_net_dns1.setValue(0)
+                        self.sbox_net_dns2.setValue(0)
+                        self.sbox_net_dns3.setValue(0)
+                        self.sbox_net_dns4.setValue(0)
+                        self.slot_cbox_net_conftype_curent_idx_changed(CBOX_NET_CONTYPE_INDEX_DHCP)
+ 
+        interface_name = self.cbox_net_intf.itemData(idx, INTERFACE_NAME_USER_ROLE)
+        interface_type = self.cbox_net_intf.itemData(idx, INTERFACE_TYPE_USER_ROLE)
+        interface_state = self.cbox_net_intf.itemData(idx, INTERFACE_STATE_USER_ROLE).toInt()[0]
+
+        if interface_type == INTERFACE_NOT_FOUND:
+            self.label_interface_none_active.hide()
+            self.cbox_net_intf.setEnabled(False)
+            self.pbutton_net_activate_intf.setEnabled(False)
+            self.pbutton_net_deactivate_intf.setEnabled(False)
+            self.frame_wireless_conf.hide()
+            self.frame_net_conftype.hide()
+            self.frame_static_ip_conf.hide()
+            return
+
+        elif interface_type == INTERFACE_WIRELESS:
+            if interface_state == INTERFACE_STATE_ACTIVE:
+                widget_states_on_interface_selection(INTERFACE_WIRELESS, True)
+            else:
+                widget_states_on_interface_selection(INTERFACE_WIRELESS, False)
+
+        elif interface_type == INTERFACE_WIRED:
+            if interface_state == INTERFACE_STATE_ACTIVE:
+                widget_states_on_interface_selection(INTERFACE_WIRED, True)
+            else:
+                widget_states_on_interface_selection(INTERFACE_WIRED, False)
 
     def slot_cbox_net_wireless_ap_current_idx_changed(self, idx):
-        _bssid = ""
-        _essid = unicode(self.cbox_net_wireless_ap.currentText())
+        channel = self.cbox_net_wireless_ap.itemData(idx, AP_CHANNEL_USER_ROLE).toString()
+        encryption = self.cbox_net_wireless_ap.itemData(idx, AP_ENCRYPTION_USER_ROLE).toString()
+        encryption_method = self.cbox_net_wireless_ap.itemData(idx, AP_ENCRYPTION_METHOD_USER_ROLE).toString()
+        key = self.cbox_net_wireless_ap.itemData(idx, AP_KEY_USER_ROLE).toString()
+        address_conf = self.cbox_net_wireless_ap.itemData(idx, AP_ADDRESS_CONF_USER_ROLE).toInt()[0]
+        ip_string = self.cbox_net_wireless_ap.itemData(idx, AP_IP_USER_ROLE).toString()
+        mask_string = self.cbox_net_wireless_ap.itemData(idx, AP_MASK_USER_ROLE).toString()
+        gw_string = self.cbox_net_wireless_ap.itemData(idx, AP_GATEWAY_USER_ROLE).toString()
+        dns_string = self.cbox_net_wireless_ap.itemData(idx, AP_DNS_USER_ROLE).toString()
+        ip_array = ip_string.split('.')
+        mask_array = mask_string.split('.')
+        gw_array = gw_string.split('.')
+        dns_array = dns_string.split('.')
+        
+        self.label_net_wireless_channel.setText(channel)
 
-        if _essid != "" and self.network_all_data['wireless_settings'] is not None and\
-           self.network_all_data['scan_result'] is not None:
-            for key, apdict in self.network_all_data['scan_result'].iteritems():
-                if _essid == apdict['essid']:
-                    _bssid = apdict['bssid']
+        if encryption == 'On':
+            self.label_net_wireless_enctype.setText(encryption_method)
+        elif encryption == 'Off':
+            self.label_net_wireless_enctype.setText('Open')
+        else:
+            self.label_net_wireless_enctype.setText('None')
 
-                    self.label_net_wireless_channel.setText(self.network_all_data['scan_result'][key]['channel'])
+        self.ledit_net_wireless_key.setText(unicode(key))
+                
+        if ip_string:
+            self.sbox_net_ip1.setValue(int(ip_array[0]))
+            self.sbox_net_ip2.setValue(int(ip_array[1]))
+            self.sbox_net_ip3.setValue(int(ip_array[2]))
+            self.sbox_net_ip4.setValue(int(ip_array[3]))
 
-                    if self.network_all_data['scan_result'][key]['encryption'] == "On":
-                        if self.network_all_data['scan_result'][key]['encryption_method'] != "WPA" or\
-                           self.network_all_data['scan_result'][key]['encryption_method'] != "WPA1" or \
-                           self.network_all_data['scan_result'][key]['encryption_method'] != "WPA2":
-                            self.label_net_wireless_enctype.setText("WPA 1/2")
-                            self.ledit_net_wireless_key.setDisabled(False)
-                    elif self.network_all_data['scan_result'][key]['encryption'] == "Off":
-                        self.label_net_wireless_enctype.setText("Open")
-                        self.ledit_net_wireless_key.setText("")
-                        self.ledit_net_wireless_key.setDisabled(True)
-                    else:
-                        self.label_net_wireless_enctype.setText("Unsupported")
-                        self.ledit_net_wireless_key.setText("")
-                        self.ledit_net_wireless_key.setDisabled(True)
-                    break
+        if mask_string:
+            self.sbox_net_mask1.setValue(int(mask_array[0]))
+            self.sbox_net_mask2.setValue(int(mask_array[1]))
+            self.sbox_net_mask3.setValue(int(mask_array[2]))
+            self.sbox_net_mask4.setValue(int(mask_array[3]))
 
-            if _bssid != "":
-                try:
-                    _key = self.network_all_data['wireless_settings'].get(_bssid, 'key')
-                    if _key == "":
-                        self.ledit_net_wireless_key.setText("")
-                    else:
-                        self.ledit_net_wireless_key.setText(_key)
-                except:
-                    self.ledit_net_wireless_key.setText("")
+        if gw_string:
+            self.sbox_net_gw1.setValue(int(gw_array[0]))
+            self.sbox_net_gw2.setValue(int(gw_array[1]))
+            self.sbox_net_gw3.setValue(int(gw_array[2]))
+            self.sbox_net_gw4.setValue(int(gw_array[3]))
 
-                try:
-                    _ips = self.network_all_data['wireless_settings'].get(_bssid, 'ip')
-                    if _ips == "" or _ips == "None":
-                        self.cbox_net_wireless_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
-                        self.sbox_net_wireless_ip1.setValue(0)
-                        self.sbox_net_wireless_ip2.setValue(0)
-                        self.sbox_net_wireless_ip3.setValue(0)
-                        self.sbox_net_wireless_ip4.setValue(0)
-                    else:
-                        self.cbox_net_wireless_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_STATIC)
-                        _ips_splitted = _ips.split('.')
-                        self.sbox_net_wireless_ip1.setValue(int(_ips_splitted[0]))
-                        self.sbox_net_wireless_ip2.setValue(int(_ips_splitted[1]))
-                        self.sbox_net_wireless_ip3.setValue(int(_ips_splitted[2]))
-                        self.sbox_net_wireless_ip4.setValue(int(_ips_splitted[3]))
-                except:
-                    self.cbox_net_wireless_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
-                    self.sbox_net_wireless_ip1.setValue(0)
-                    self.sbox_net_wireless_ip2.setValue(0)
-                    self.sbox_net_wireless_ip3.setValue(0)
-                    self.sbox_net_wireless_ip4.setValue(0)
-
-                try:
-                    _mask = self.network_all_data['wireless_settings'].get(_bssid, 'netmask')
-                    if _mask == "" or _mask == "None":
-                        self.sbox_net_wireless_mask1.setValue(0)
-                        self.sbox_net_wireless_mask2.setValue(0)
-                        self.sbox_net_wireless_mask3.setValue(0)
-                        self.sbox_net_wireless_mask4.setValue(0)
-                    else:
-                        _mask_splitted = _mask.split('.')
-                        self.sbox_net_wireless_mask1.setValue(int(_mask_splitted[0]))
-                        self.sbox_net_wireless_mask2.setValue(int(_mask_splitted[1]))
-                        self.sbox_net_wireless_mask3.setValue(int(_mask_splitted[2]))
-                        self.sbox_net_wireless_mask4.setValue(int(_mask_splitted[3]))
-                except:
-                    self.sbox_net_wireless_mask1.setValue(0)
-                    self.sbox_net_wireless_mask2.setValue(0)
-                    self.sbox_net_wireless_mask3.setValue(0)
-                    self.sbox_net_wireless_mask4.setValue(0)
-
-                try:
-                    _gw = self.network_all_data['wireless_settings'].get(_bssid, 'gateway')
-                    if _gw == "" or _gw == "None":
-                        self.sbox_net_wireless_gw1.setValue(0)
-                        self.sbox_net_wireless_gw2.setValue(0)
-                        self.sbox_net_wireless_gw3.setValue(0)
-                        self.sbox_net_wireless_gw4.setValue(0)
-                    else:
-                        _gw_splitted = _gw.split('.')
-                        self.sbox_net_wireless_gw1.setValue(int(_gw_splitted[0]))
-                        self.sbox_net_wireless_gw2.setValue(int(_gw_splitted[1]))
-                        self.sbox_net_wireless_gw3.setValue(int(_gw_splitted[2]))
-                        self.sbox_net_wireless_gw4.setValue(int(_gw_splitted[3]))
-                except:
-                    self.sbox_net_wireless_gw1.setValue(0)
-                    self.sbox_net_wireless_gw2.setValue(0)
-                    self.sbox_net_wireless_gw3.setValue(0)
-                    self.sbox_net_wireless_gw4.setValue(0)
-
-                try:
-                    _dns = self.network_all_data['wireless_settings'].get(_bssid, 'dns1')
-                    if _dns == "" or _dns == "None":
-                        self.sbox_net_wireless_dns1.setValue(0)
-                        self.sbox_net_wireless_dns2.setValue(0)
-                        self.sbox_net_wireless_dns3.setValue(0)
-                        self.sbox_net_wireless_dns4.setValue(0)
-                    else:
-                        _dns_splitted = _dns.split('.')
-                        self.sbox_net_wireless_dns1.setValue(int(_dns_splitted[0]))
-                        self.sbox_net_wireless_dns2.setValue(int(_dns_splitted[1]))
-                        self.sbox_net_wireless_dns3.setValue(int(_dns_splitted[2]))
-                        self.sbox_net_wireless_dns4.setValue(int(_dns_splitted[3]))
-                except:
-                    self.sbox_net_wireless_dns1.setValue(0)
-                    self.sbox_net_wireless_dns2.setValue(0)
-                    self.sbox_net_wireless_dns3.setValue(0)
-                    self.sbox_net_wireless_dns4.setValue(0)
+        if dns_string:
+            self.sbox_net_dns1.setValue(int(dns_array[0]))
+            self.sbox_net_dns2.setValue(int(dns_array[1]))
+            self.sbox_net_dns3.setValue(int(dns_array[2]))
+            self.sbox_net_dns4.setValue(int(dns_array[3]))
+        
+        if address_conf == CBOX_NET_CONTYPE_INDEX_DHCP:
+            self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
+        elif address_conf == CBOX_NET_CONTYPE_INDEX_STATIC:
+            self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_STATIC)
+        else:
+            self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
 
     def slot_net_wireless_key_show_state_changed(self, state):
         if state == QtCore.Qt.Checked:
@@ -1566,24 +1768,20 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         else:
             self.ledit_net_wireless_key.setEchoMode(QtGui.QLineEdit.Password)
 
+    def slot_cbox_net_conftype_curent_idx_changed(self, idx):
+        if idx == CBOX_NET_CONTYPE_INDEX_STATIC:
+            self.frame_static_ip_conf.show()
+        else:
+            self.frame_static_ip_conf.hide()
+
     def slot_network_settings_changed(self):
         self.network_button_save_enabled(True)
-
-        if self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRELESS:
-            self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRELESS,
-                                                 self.cbox_net_wireless_conftype.currentIndex())
-
-        elif self.twidget_net.currentIndex() == TAB_INDEX_NETWORK_WIRED:
-            self.network_show_hide_static_ipconf(TAB_INDEX_NETWORK_WIRED,
-                                                 self.cbox_net_wired_conftype.currentIndex())
 
     def brickd_settings_changed(self, value):
         self.brickd_button_save_enabled(True)
 
-
-
     # ======== date/time settings =========
-    
+
     def time_utc_offset(self):
         if time.localtime(time.time()).tm_isdst and time.daylight:
             return -time.altzone/(60*60)
