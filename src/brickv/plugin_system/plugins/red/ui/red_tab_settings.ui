@@ -42,29 +42,44 @@
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="QLabel" name="label_working_wait">
-            <property name="text">
-             <string>Working, Please wait...</string>
+           <widget class="QFrame" name="frame_working_please_wait">
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
             </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QProgressBar" name="pbar_working_wait">
-            <property name="maximum">
-             <number>0</number>
-            </property>
-            <property name="value">
-             <number>-1</number>
-            </property>
-            <property name="textVisible">
-             <bool>false</bool>
-            </property>
-            <property name="format">
-             <string/>
-            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_10">
+             <item>
+              <widget class="QLabel" name="label_working_wait">
+               <property name="text">
+                <string>Working, Please wait...</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QProgressBar" name="pbar_working_wait">
+               <property name="maximum">
+                <number>0</number>
+               </property>
+               <property name="value">
+                <number>-1</number>
+               </property>
+               <property name="textVisible">
+                <bool>false</bool>
+               </property>
+               <property name="format">
+                <string/>
+               </property>
+              </widget>
+             </item>
+            </layout>
+            <zorder>label_working_wait</zorder>
+            <zorder>label_working_wait</zorder>
+            <zorder>pbar_working_wait</zorder>
            </widget>
           </item>
           <item>
@@ -505,7 +520,7 @@
                       </widget>
                      </item>
                      <item row="0" column="1">
-                      <widget class="QLineEdit" name="ledit_net_gen_hostname">
+                      <widget class="QLineEdit" name="ledit_net_hostname">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                          <horstretch>1</horstretch>
