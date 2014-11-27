@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>570</width>
+    <width>606</width>
     <height>718</height>
    </rect>
   </property>
@@ -181,7 +181,7 @@
           <item row="4" column="1">
            <widget class="QLabel" name="label_stdout_individual_log_help">
             <property name="text">
-             <string>Output data is written to an individual log file (&lt;timestamp&gt;-stdout.log) per program run.</string>
+             <string>Output data is written to an individual log file (&lt;timestamp&gt;_stdout.log) per program run.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -214,7 +214,7 @@
           <item row="5" column="1">
            <widget class="QLabel" name="label_stdout_continuous_log_help">
             <property name="text">
-             <string>Output data is written to a contiuous log file (contiuous-stdout.log).</string>
+             <string>Output data is written to a contiuous log file (contiuous_stdout.log).</string>
             </property>
            </widget>
           </item>
@@ -274,7 +274,7 @@
           <item row="4" column="1">
            <widget class="QLabel" name="label_stderr_individual_log_help">
             <property name="text">
-             <string>Error data is written to an individual log file (&lt;timestamp&gt;-stderr.log) per program run.</string>
+             <string>Error data is written to an individual log file (&lt;timestamp&gt;_stderr.log) per program run.</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -335,7 +335,7 @@
           <item row="5" column="1">
            <widget class="QLabel" name="label_stderr_continuous_log_help">
             <property name="text">
-             <string>Error data is written to a contiuous log file (contiuous-stderr.log).</string>
+             <string>Error data is written to a contiuous log file (contiuous_stderr.log).</string>
             </property>
            </widget>
           </item>
