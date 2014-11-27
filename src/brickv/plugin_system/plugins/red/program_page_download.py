@@ -81,6 +81,8 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
 
         self.edit_new_name_checker = MandatoryLineEditChecker(self, self.label_new_name, self.edit_new_name)
 
+        self.log(u'Downloading to {0}'.format(self.download_directory))
+
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.set_formatted_sub_title(u'Download {0} of the {{language}} program [{{name}}].'.format(self.download_kind))
