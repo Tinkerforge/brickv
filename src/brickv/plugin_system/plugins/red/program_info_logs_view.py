@@ -77,7 +77,7 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
                 self.progress_download.setVisible(False)
 
                 if result.error != None:
-                    self.log(u'Error: ' + unicode(result.error), bold=True)
+                    self.log(u'Error: ' + Qt.escape(unicode(result.error)), bold=True)
                     return
 
                 try:
@@ -144,8 +144,8 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
 
     def log(self, message, bold=False, pre=False):
         if bold:
-            self.edit_content.appendHtml('<b>{0}</b>'.format(Qt.escape(message)))
+            self.edit_content.appendHtml(u'<b>{0}</b>'.format(Qt.escape(message)))
         elif pre:
-            self.edit_content.appendHtml('<pre>{0}</pre>'.format(message))
+            self.edit_content.appendHtml(u'<pre>{0}</pre>'.format(message))
         else:
             self.edit_content.appendPlainText(message)

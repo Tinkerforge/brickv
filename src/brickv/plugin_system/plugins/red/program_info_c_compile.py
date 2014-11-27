@@ -48,9 +48,9 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
 
     def log(self, message, bold=False, pre=False):
         if bold:
-            self.edit_log.appendHtml('<b>{0}</b>'.format(Qt.escape(message)))
+            self.edit_log.appendHtml(u'<b>{0}</b>'.format(Qt.escape(message)))
         elif pre:
-            self.edit_log.appendHtml('<pre>{0}</pre>'.format(message))
+            self.edit_log.appendHtml(u'<pre>{0}</pre>'.format(message))
         else:
             self.edit_log.appendPlainText(message)
 
