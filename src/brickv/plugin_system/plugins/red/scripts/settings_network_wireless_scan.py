@@ -10,9 +10,12 @@ wlscan_cmd = "/usr/bin/wicd-cli --wireless -Sl"
 wlscan_ps = subprocess.Popen(wlscan_cmd, shell=True, stdout=subprocess.PIPE)
 wlscan_output = wlscan_ps.communicate()[0]
 
-if wlscan_output != "":
+len(wlscan_output.splitlines()) > 1
+
+if wlscan_output != "" and len(wlscan_output.splitlines()) > 1:
     return_dict = {}
     _lines = wlscan_output.split('\n')
+    del _lines[0]
     for l in _lines:
         lsplitted = l.split('\t')
         if len(lsplitted) == 1:

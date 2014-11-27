@@ -953,12 +953,12 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.label_net_gen_cstat_dns.setText("None")
                 
                 QtGui.QMessageBox.information(None,
-                                              'Settings | Network | General',
+                                              'Settings | Network',
                                               'Hostname changed.',
                                               QtGui.QMessageBox.Ok)
             else:
                 QtGui.QMessageBox.critical(None,
-                                           'Settings | Network | General',
+                                           'Settings | Network',
                                            'Hostname change failed.',
                                            QtGui.QMessageBox.Ok)
 
@@ -970,7 +970,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                    [])
             else:
                 QtGui.QMessageBox.critical(None,
-                                           'Settings | Network | General',
+                                           'Settings | Network',
                                            'Hostname change failed.',
                                            QtGui.QMessageBox.Ok)
         
@@ -980,7 +980,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 hostname_new.decode('ascii')
             except:
                 QtGui.QMessageBox.critical(None,
-                                           'Settings | Network | General',
+                                           'Settings | Network',
                                            'Invalid new hostname.',
                                            QtGui.QMessageBox.Ok)
                 self.ledit_net_hostname.setText(self.network_all_data['status']['cstat_hostname'])
@@ -995,7 +995,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                 hostname_new])
         else:
             QtGui.QMessageBox.critical(None,
-                                       'Settings | Network | General',
+                                       'Settings | Network',
                                        'Hostname empty.',
                                        QtGui.QMessageBox.Ok)
             self.ledit_net_hostname.setText(self.network_all_data['status']['cstat_hostname'])
@@ -1008,7 +1008,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             print "slot_network_button_activate_intf_clicked()", r
             self.show_please_wait(False)
             QtGui.QMessageBox.critical(None,
-                                       'Settings | Network | Wired',
+                                       'Settings | Network',
                                        'Error activating interface.',
                                        QtGui.QMessageBox.Ok)
 
@@ -1040,7 +1040,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                             self.show_please_wait(False)
                             self.slot_network_refresh_clicked()
                             QtGui.QMessageBox.information(None,
-                                                          'Settings | Network | Wired',
+                                                          'Settings | Network',
                                                           'Interface activated.',
                                                           QtGui.QMessageBox.Ok)
                         else:
@@ -1079,9 +1079,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
        
         cbox_cidx = self.cbox_net_intf.currentIndex()
         interface_name = unicode(self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE).toString())
-        interface_type = unicode(self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE).toString())
+        interface_type = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE).toInt()[0]
 
-        if int(interface_type) == INTERFACE_WIRELESS:
+        if interface_type == INTERFACE_WIRELESS:
             try:
                 configured_intf = unicode(self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', unicode('None')))
             except Exception as e:
@@ -1098,7 +1098,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             else:
                 activate_interface(INTERFACE_WIRELESS, interface_name)
             
-        elif int(interface_type) == INTERFACE_WIRED:
+        elif interface_type == INTERFACE_WIRED:
             try:
                 configured_intf = unicode(self.network_all_data['manager_settings'].get('Settings', 'wired_interface'))
             except Exception as e:
@@ -1117,6 +1117,36 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
     def slot_pbutton_net_deactivate_intf_clicked(self):
         print "pbutton_net_deactivate_intf clicked" 
+
+        def cb_settings_network_deactivate_intf(result):
+            if result != None and result.stderr == "" and result.exit_code == 0:
+                self.slot_network_refresh_clicked
+                self.show_please_wait(False)
+                QtGui.QMessageBox.information(None,
+                                              'Settings | Network',
+                                              'Interface deactivated.',
+                                              QtGui.QMessageBox.Ok)
+            else:
+                self.show_please_wait(False)
+                QtGui.QMessageBox.critical(None,
+                                           'Settings | Network',
+                                           'Interface deactivation failed.',
+                                           QtGui.QMessageBox.Ok)
+
+        cbox_cidx = self.cbox_net_intf.currentIndex()
+        iname = unicode(self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE).toString())
+        itype = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE).toInt()[0]
+        
+        self.show_please_wait(True)
+
+        if itype == INTERFACE_WIRELESS:
+            self.script_manager.execute_script('settings_network_deactivate_intf',
+                                           cb_settings_network_deactivate_intf,
+                                           [iname, 'wireless'])
+        elif itype == INTERFACE_WIRED:
+            self.script_manager.execute_script('settings_network_deactivate_intf',
+                                               cb_settings_network_deactivate_intf,
+                                               [iname, 'wired'])
 
     def slot_network_button_wireless_scan_clicked(self):
         def cb_settings_network_wireless_scan(result):
@@ -1165,47 +1195,61 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                            [])
 
     def slot_network_refresh_clicked(self):
-        def network_refresh_tasks_done():
+        def network_refresh_tasks_done(refresh_all_ok):
             self.show_please_wait(False)
             self.network_refresh_tasks_remaining = -1
-            self.update_network_gui()
             self.network_button_refresh_enabled(True)
             self.network_button_save_enabled(False)
+            if refresh_all_ok:
+                self.update_network_gui()
 
         def cb_settings_network_status(result):
             self.network_refresh_tasks_remaining -= 1
 
-            if result != None and result.stderr == "":
+            if result.stdout and not result.stderr and result.exit_code == 0:
                 self.network_all_data['status'] = json.loads(result.stdout)
+                if self.network_refresh_tasks_remaining == 0:
+                    network_refresh_tasks_done(True)
             else:
-                pass
-                # TODO: Error popup for user?
-
-            if self.network_refresh_tasks_remaining == 0:
-                network_refresh_tasks_done()
+                if self.network_refresh_tasks_remaining == 0:
+                    network_refresh_tasks_done(False)
+    
+                QtGui.QMessageBox.critical(None,
+                                           'Settings | Network',
+                                           'Error executing network status script.',
+                                           QtGui.QMessageBox.Ok)
 
         def cb_settings_network_get_interfaces(result):
             self.network_refresh_tasks_remaining -= 1
 
-            if result != None and result.stderr == "":
+            if result.stdout and not result.stderr and result.exit_code == 0:
                 self.network_all_data['interfaces'] = json.loads(result.stdout)
+                if self.network_refresh_tasks_remaining == 0:
+                    network_refresh_tasks_done(True)
             else:
-                pass
-                # TODO: Error popup for user?
-
-            if self.network_refresh_tasks_remaining == 0:
-                network_refresh_tasks_done()
+                if self.network_refresh_tasks_remaining == 0:
+                    network_refresh_tasks_done(False)
+    
+                QtGui.QMessageBox.critical(None,
+                                           'Settings | Network',
+                                           'Error executing network get interfaces script.',
+                                           QtGui.QMessageBox.Ok)
 
         def cb_settings_network_wireless_scan(result):
             self.network_refresh_tasks_remaining -= 1
-            if result != None and result.stderr == "":
-                self.network_all_data['scan_result'] = json.loads(result.stdout)
-            else:
-                pass
-                # TODO: Error popup for user?
 
-            if self.network_refresh_tasks_remaining == 0:
-                network_refresh_tasks_done()
+            if result.stdout and not result.stderr and result.exit_code == 0:
+                self.network_all_data['scan_result'] = json.loads(result.stdout)
+                if self.network_refresh_tasks_remaining == 0:
+                    network_refresh_tasks_done(True)
+            else:
+                if self.network_refresh_tasks_remaining == 0:
+                    network_refresh_tasks_done(False)
+    
+                QtGui.QMessageBox.critical(None,
+                                           'Settings | Network',
+                                           'Error executing wireless scan script.',
+                                           QtGui.QMessageBox.Ok)
 
         def cb_open_manager_settings(red_file):
             def cb_read(red_file, result):
@@ -1213,25 +1257,31 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
                 red_file.release()
 
-                if result is not None:
+                if result.data is not None and result.error is None:
                     self.network_all_data['manager_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
                 else:
-                    # TODO: Error popup for user?
-                    print 'cb_open_manager_settings', result
+                    self.network_refresh_tasks_remaining -= 1
 
-                if self.network_refresh_tasks_remaining == 0:
-                    network_refresh_tasks_done()
+                    if self.network_refresh_tasks_remaining == 0:
+                        network_refresh_tasks_done(False)
+        
+                    QtGui.QMessageBox.critical(None,
+                                               'Settings | Network',
+                                               'Error reading wired settings file.',
+                                               QtGui.QMessageBox.Ok)
                 
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
             
-        def cb_open_error_manager_settings(result):
+        def cb_open_error_manager_settings():
             self.network_refresh_tasks_remaining -= 1
 
             if self.network_refresh_tasks_remaining == 0:
-                network_refresh_tasks_done()
+                network_refresh_tasks_done(False)
 
-            # TODO: Error popup for user?
-            print 'cb_open_error_manager_settings', result
+            QtGui.QMessageBox.critical(None,
+                                       'Settings | Network',
+                                       'Error opening manager settings file.',
+                                       QtGui.QMessageBox.Ok)
 
         def cb_open_wireless_settings(red_file):
             def cb_read(red_file, result):
@@ -1239,26 +1289,29 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
                 red_file.release()
 
-                if result is not None:
+                if result.data is not None and result.error is None:
                     self.network_all_data['wireless_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
                 else:
-                    # TODO: Error popup for user?
-                    print 'cb_open_wireless_settings', result
+                    if self.network_refresh_tasks_remaining == 0:
+                        network_refresh_tasks_done(False)
+        
+                    QtGui.QMessageBox.critical(None,
+                                               'Settings | Network',
+                                               'Error reading wireless settings file.',
+                                               QtGui.QMessageBox.Ok)
 
-                if self.network_refresh_tasks_remaining == 0:
-                    network_refresh_tasks_done()
-                
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
             
-        def cb_open_error_wireless_settings(result):
+        def cb_open_error_wireless_settings():
             self.network_refresh_tasks_remaining -= 1
 
             if self.network_refresh_tasks_remaining == 0:
-                network_refresh_tasks_done()
+                network_refresh_tasks_done(False)
 
-            self.network_button_refresh_enabled(True)
-            # TODO: Error popup for user?
-            print 'cb_open_error_wireless_settings', result
+            QtGui.QMessageBox.critical(None,
+                                       'Settings | Network',
+                                       'Error opening wireless settings file.',
+                                       QtGui.QMessageBox.Ok)
 
         def cb_open_wired_settings(red_file):
             def cb_read(red_file, result):
@@ -1266,26 +1319,29 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
                 red_file.release()
 
-                if result is not None:
+                if result.data is not None and result.error is None:
                     self.network_all_data['wired_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
                 else:
-                    # TODO: Error popup for user?
-                    print 'cb_open_wired_settings', result
-
-                if self.network_refresh_tasks_remaining == 0:
-                    network_refresh_tasks_done()
+                    if self.network_refresh_tasks_remaining == 0:
+                        network_refresh_tasks_done(False)
+            
+                    QtGui.QMessageBox.critical(None,
+                                               'Settings | Network',
+                                               'Error reading wired settings file.',
+                                               QtGui.QMessageBox.Ok)
 
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
             
-        def cb_open_error_wired_settings(result):
+        def cb_open_error_wired_settings():
             self.network_refresh_tasks_remaining -= 1
 
             if self.network_refresh_tasks_remaining == 0:
-                network_refresh_tasks_done()
+                network_refresh_tasks_done(False)
 
-            self.network_button_refresh_enabled(True)
-            # TODO: Error popup for user?
-            print 'cb_open_error_wired_settings', result
+            QtGui.QMessageBox.critical(None,
+                                       'Settings | Network',
+                                       'Error opening wired settings file.',
+                                       QtGui.QMessageBox.Ok)
 
         self.label_interface_none_active.hide()
         self.cbox_net_intf.clear()
@@ -1588,7 +1644,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     configured_intf = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface')
                 except:
                     # TODO: Show error notification?
-                    pass
+                    return
 
                 if istate:
                     # Wireless active interface
@@ -1609,7 +1665,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     # Wireless inactive interface
                     self.pbutton_net_activate_intf.setEnabled(True)
                     self.pbutton_net_deactivate_intf.setEnabled(False)
-                    
+
                     if configured_intf == interface_name:
                         self.pbutton_net_activate_intf.setEnabled(False)
                         self.frame_wireless_conf.show()
@@ -1627,7 +1683,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     configured_intf = self.network_all_data['manager_settings'].get('Settings', 'wired_interface')
                 except:
                     # TODO: Show error notification?
-                    pass
+                    return
 
                 if istate:
                     # Wired active interface
@@ -1703,6 +1759,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     # Wired inactive interface
                     self.pbutton_net_activate_intf.setEnabled(True)
                     self.pbutton_net_deactivate_intf.setEnabled(False)
+
+                    if configured_intf == interface_name:
+                        self.pbutton_net_activate_intf.setEnabled(False)
 
                     self.frame_wireless_conf.hide()
                     self.frame_net_conftype.show()
