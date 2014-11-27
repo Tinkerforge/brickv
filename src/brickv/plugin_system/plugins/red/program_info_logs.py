@@ -134,54 +134,42 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
                 return item
 
+            def update_file_size_item(item, additional_size):
+                current_size = item.data(USER_ROLE_SIZE).toInt()[0]
+                new_size     = current_size + additional_size
+
+                item.setText(get_file_display_size(new_size))
+                item.setData(QVariant(new_size), USER_ROLE_SIZE)
+
+            continuous_row = None
+            date_rows      = {}
+            time_rows      = {}
+
             for file_name, file_size in logs_list.iteritems():
-                    QApplication.processEvents()
+                QApplication.processEvents()
 
-                    file_name_parts = file_name.split('_')
+                file_name_parts = file_name.split('_')
 
-                    if file_name_parts[0] == "continuous":
-                        if len(file_name_parts) != 2:
-                            continue
-
-                        parent_continuous = None
-                        for i in range(self.tree_logs_model.rowCount()):
-                            if self.tree_logs_model.item(i).data(USER_ROLE_ITEM_TYPE).toInt()[0] == ITEM_TYPE_PARENT_CONT:
-                                parent_continuous = self.tree_logs_model.item(i)
-                                parent_continuous_size = self.tree_logs_model.item(i, 1)
-                                break
-
-                        if file_name_parts[1] in ["stdout.log", "stderr.log"]:
-                            if parent_continuous:
-                                name_item = QStandardItem(file_name_parts[1])
-                                name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
-                                name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
-                                name_item.setData(QVariant(ITEM_TYPE_LOG_FILE_CONT), USER_ROLE_ITEM_TYPE)
-
-                                parent_continuous.appendRow([name_item, create_file_size_item(file_size)])
-
-                                current_size = parent_continuous_size.data(USER_ROLE_SIZE).toInt()[0]
-                                new_file_size = current_size + file_size
-                                parent_continuous_size.setText(get_file_display_size(new_file_size))
-                                parent_continuous_size.setData(QVariant(new_file_size), USER_ROLE_SIZE)
-                            else:
-                                continuous_item = QStandardItem("Continuous")
-                                continuous_item.setData(QVariant(ITEM_TYPE_PARENT_CONT), USER_ROLE_ITEM_TYPE)
-
-                                parent_continuous = [continuous_item, create_file_size_item(file_size)]
-
-                                name_item = QStandardItem(file_name_parts[1])
-                                name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
-                                name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
-                                name_item.setData(QVariant(ITEM_TYPE_LOG_FILE_CONT), USER_ROLE_ITEM_TYPE)
-
-                                parent_continuous[0].appendRow([name_item, create_file_size_item(file_size)])
-
-                                self.tree_logs_model.appendRow(parent_continuous)
-
-                        self.tree_logs.header().setSortIndicator(0, Qt.DescendingOrder)
-                        self.update_ui_state()
+                if file_name_parts[0] == "continuous":
+                    if len(file_name_parts) != 2:
                         continue
 
+                    if continuous_row == None:
+                        continuous_item = QStandardItem("Continuous")
+                        continuous_item.setData(QVariant(ITEM_TYPE_PARENT_CONT), USER_ROLE_ITEM_TYPE)
+
+                        continuous_row = [continuous_item, create_file_size_item(0)]
+
+                        self.tree_logs_model.appendRow(continuous_row)
+
+                    log_item = QStandardItem(file_name_parts[1])
+                    log_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
+                    log_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
+                    log_item.setData(QVariant(ITEM_TYPE_LOG_FILE_CONT), USER_ROLE_ITEM_TYPE)
+
+                    continuous_row[0].appendRow([log_item, create_file_size_item(file_size)])
+                    update_file_size_item(continuous_row[1], file_size)
+                else:
                     if len(file_name_parts) != 3:
                         continue
 
@@ -190,73 +178,40 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                     except ValueError:
                         continue
 
-                    date = QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd')
-                    time = QDateTime.fromTime_t(timestamp).toString('HH:mm:ss')
+                    date      = unicode(QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd'))
+                    time      = unicode(QDateTime.fromTime_t(timestamp).toString('HH:mm:ss'))
+                    date_time = date + 'T' + time
 
-                    parent_date = None
-                    for i in range(self.tree_logs_model.rowCount()):
-                        if self.tree_logs_model.item(i).text() == date:
-                            parent_date = self.tree_logs_model.item(i)
-                            parent_date_size = self.tree_logs_model.item(i, 1)
-                            break
-
-                    if parent_date:
-                        found_parent_time = False
-                        for i in range(parent_date.rowCount()):
-                            if parent_date.child(i).text() == time:
-                                found_parent_time = True
-                                name_item = QStandardItem(file_name_parts[2])
-                                name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
-                                name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
-                                name_item.setData(QVariant(ITEM_TYPE_LOG_FILE), USER_ROLE_ITEM_TYPE)
-
-                                parent_date.child(i).appendRow([name_item, create_file_size_item(file_size)])
-                                current_size = parent_date.child(i, 1).data(USER_ROLE_SIZE).toInt()[0]
-                                new_file_size = current_size + file_size
-                                parent_date.child(i, 1).setText(get_file_display_size(new_file_size))
-                                parent_date.child(i, 1).setData(QVariant(new_file_size), USER_ROLE_SIZE)
-
-                                current_parent_size = parent_date_size.data(USER_ROLE_SIZE).toInt()[0]
-                                new_parent_file_size = current_parent_size + file_size
-                                parent_date_size.setText(get_file_display_size(new_parent_file_size))
-                                parent_date_size.setData(QVariant(new_parent_file_size), USER_ROLE_SIZE)
-                                break
-
-                        if not found_parent_time:
-                            time_item = QStandardItem(time)
-                            time_item.setData(QVariant(ITEM_TYPE_PARENT_TIME), USER_ROLE_ITEM_TYPE)
-
-                            parent_date.appendRow([time_item, create_file_size_item(file_size)])
-
-                            name_item = QStandardItem(file_name_parts[2])
-                            name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
-                            name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
-                            name_item.setData(QVariant(ITEM_TYPE_LOG_FILE), USER_ROLE_ITEM_TYPE)
-
-                            parent_date.child(parent_date.rowCount()-1).appendRow([name_item, create_file_size_item(file_size)])
-
-                            current_parent_size = parent_date_size.data(USER_ROLE_SIZE).toInt()[0]
-                            new_parent_file_size = current_parent_size + file_size
-                            parent_date_size.setText(get_file_display_size(new_parent_file_size))
-                            parent_date_size.setData(QVariant(new_parent_file_size), USER_ROLE_SIZE)
+                    if date in date_rows:
+                        date_row = date_rows[date]
                     else:
                         date_item = QStandardItem(date)
                         date_item.setData(QVariant(ITEM_TYPE_PARENT_DATE), USER_ROLE_ITEM_TYPE)
 
-                        parent_date = [date_item, create_file_size_item(file_size)]
+                        date_row        = [date_item, create_file_size_item(0)]
+                        date_rows[date] = date_row
 
+                        self.tree_logs_model.appendRow(date_row)
+
+                    if date_time in time_rows:
+                        time_row = time_rows[date_time]
+                    else:
                         time_item = QStandardItem(time)
                         time_item.setData(QVariant(ITEM_TYPE_PARENT_TIME), USER_ROLE_ITEM_TYPE)
 
-                        parent_date[0].appendRow([time_item, create_file_size_item(file_size)])
+                        time_row             = [time_item, create_file_size_item(0)]
+                        time_rows[date_time] = time_row
 
-                        name_item = QStandardItem(file_name_parts[2])
-                        name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
-                        name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
-                        name_item.setData(QVariant(ITEM_TYPE_LOG_FILE), USER_ROLE_ITEM_TYPE)
+                        date_row[0].appendRow(time_row)
 
-                        parent_date[0].child(0).appendRow([name_item, create_file_size_item(file_size)])
-                        self.tree_logs_model.appendRow(parent_date)
+                    log_item = QStandardItem(file_name_parts[2])
+                    log_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
+                    log_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
+                    log_item.setData(QVariant(ITEM_TYPE_LOG_FILE), USER_ROLE_ITEM_TYPE)
+
+                    time_row[0].appendRow([log_item, create_file_size_item(file_size)])
+                    update_file_size_item(time_row[1], file_size)
+                    update_file_size_item(date_row[1], file_size)
 
             self.tree_logs.header().setSortIndicator(0, Qt.DescendingOrder)
             self.refresh_logs_done()

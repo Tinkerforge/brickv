@@ -1049,8 +1049,8 @@ def set_current_combo_index_from_data(combo, data):
 
 
 def timestamp_to_date_at_time(timestamp):
-    date = QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd')
-    time = QDateTime.fromTime_t(timestamp).toString('HH:mm:ss')
+    date = unicode(QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd'))
+    time = unicode(QDateTime.fromTime_t(timestamp).toString('HH:mm:ss'))
 
     return date + ' at ' + time
 
