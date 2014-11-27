@@ -134,7 +134,7 @@ class ProgramWizardNew(ProgramWizard):
 
     @property
     def program(self):
-        if self.hasVisitedPage(Constants.PAGE_FILES):
+        if self.hasVisitedPage(Constants.PAGE_UPLOAD):
             return self.page(Constants.PAGE_UPLOAD).program
         else:
             return None
