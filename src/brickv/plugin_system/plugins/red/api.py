@@ -646,7 +646,7 @@ class REDFileBase(REDObject):
         self._cb_events_occurred_cookie = None
 
     # Unset all of the temporary async data in case of error.
-    def _report_write_async_error(self, error):
+    def _report_write_async_result(self, error):
         self._write_async_data._qtcb_result.emit(error)
         self._write_async_data = None
 
@@ -659,7 +659,7 @@ class REDFileBase(REDObject):
 
         if error_code != REDError.E_SUCCESS:
             # FIXME: recover seek position on error after successful call?
-            self._report_write_async_error(REDError('Could not write to file object {0}'.format(self.object_id), error_code))
+            self._report_write_async_result(REDError('Could not write to file object {0}'.format(self.object_id), error_code))
             return
 
         # Remove data of async call. Data of unchecked writes has been removed already.
@@ -668,7 +668,7 @@ class REDFileBase(REDObject):
 
         # If there is no data remaining we are done.
         if self._write_async_data.written >= self._write_async_data.length:
-            self._report_write_async_error(None)
+            self._report_write_async_result(None)
             return
 
         self._next_write_async_burst()
@@ -686,7 +686,7 @@ class REDFileBase(REDObject):
             try:
                 self._session._brick.write_file_unchecked(self.object_id, chunk, length_to_write)
             except Exception as e:
-                self._report_write_async_error(e)
+                self._report_write_async_result(e)
                 return
 
             self._write_async_data.written += length_to_write
@@ -700,9 +700,9 @@ class REDFileBase(REDObject):
             # FIXME: Do we need a timeout here for the case that no callback comes?
             self._session._brick.write_file_async(self.object_id, chunk, length_to_write)
         except Exception as e:
-            self._report_write_async_error(e)
+            self._report_write_async_result(e)
 
-    def _report_read_async_error(self, error):
+    def _report_read_async_result(self, error):
         self._read_async_data._qtcb_result.emit(REDFileBase.AsyncReadResult(self._read_async_data.data, error))
         self._read_async_data = None
 
@@ -714,7 +714,7 @@ class REDFileBase(REDObject):
             return
 
         if error_code != REDError.E_SUCCESS:
-            self._report_read_async_error(REDError('Could not read file object {0}'.format(self.object_id), error_code))
+            self._report_read_async_result(REDError('Could not read file object {0}'.format(self.object_id), error_code))
             return
 
         self._read_async_data.burst_length += length_read
@@ -726,22 +726,34 @@ class REDFileBase(REDObject):
             if len(self._read_async_data.data) != self._read_async_data.max_length and self._read_async_data.burst_length == REDFileBase.ASYNC_BURST_CHUNKS:
                 to_read = min(self._read_async_data.max_length - len(self._read_async_data.data), REDFileBase.ASYNC_BURST_CHUNKS)
                 self._read_async_data.burst_length = 0
-                self._session._brick.read_file_async(self.object_id, to_read)
+
+                try:
+                    # FIXME: Do we need a timeout here for the case that no callback comes?
+                    self._session._brick.read_file_async(self.object_id, to_read)
+                except Exception as e:
+                    self._report_read_async_result(e)
+
                 return
 
             # Return data if length is 0 (i.e. the given length was greater then the file length)
-            self._report_read_async_error(None)
+            self._report_read_async_result(None)
             return
 
         if self._read_async_data.burst_length == REDFileBase.ASYNC_BURST_CHUNKS:
             to_read = min(self._read_async_data.max_length - len(self._read_async_data.data), REDFileBase.ASYNC_BURST_CHUNKS)
             self._read_async_data.burst_length = 0
-            self._session._brick.read_file_async(self.object_id, to_read)
+
+            try:
+                # FIXME: Do we need a timeout here for the case that no callback comes?
+                self._session._brick.read_file_async(self.object_id, to_read)
+            except Exception as e:
+                self._report_read_async_result(e)
+
             return
 
         # And also return data if we read all of the data the user asked for
-        if len(self._read_async_data.data) == self._read_async_data.max_length:
-            self._report_read_async_error(None)
+        if len(self._read_async_data.data) >= self._read_async_data.max_length:
+            self._report_read_async_result(None)
 
     def _cb_events_occurred_emit(self, file_id, events):
         if self.object_id != file_id:

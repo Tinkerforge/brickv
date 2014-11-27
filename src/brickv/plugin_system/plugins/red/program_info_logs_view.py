@@ -80,10 +80,6 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
                     self.log(u'Error: ' + unicode(result.error), bold=True)
                     return
 
-                if result.data == None:
-                    self.log(u'Error: Could not read log file', bold=True)
-                    return
-
                 try:
                     self.content = result.data.decode('utf-8')
                 except UnicodeDecodeError:

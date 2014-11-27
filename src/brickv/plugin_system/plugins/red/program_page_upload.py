@@ -448,13 +448,13 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.log('...skipped')
         self.upload_next_file()
 
-    def upload_write_async_cb_status(self, upload_size, upload_of):
+    def upload_write_async_cb_status(self, upload_size, upload_total):
         uploaded = self.progress_file.value() + upload_size - self.last_upload_size
         self.progress_file.setValue(uploaded)
         self.progress_file.setFormat(get_file_display_size(uploaded) + ' of ' + self.source_display_size)
         self.last_upload_size = upload_size
 
-    def upload_write_async_cb_error(self, error):
+    def upload_write_async_cb_result(self, error):
         if error == None:
             self.upload_write_async()
         else:

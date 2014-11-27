@@ -350,7 +350,7 @@ class REDTabExtension(QtGui.QWidget, Ui_REDTabExtension):
             return
 
         self.red_file[extension] = result
-        self.red_file[extension].read_async(self.red_file[extension].length, lambda x: self.cb_file_read(extension, x), None)
+        self.red_file[extension].read_async(self.red_file[extension].length, lambda x: self.cb_file_read(extension, x))
 
     def tab_on_focus(self):
         self.extensions_found = 0

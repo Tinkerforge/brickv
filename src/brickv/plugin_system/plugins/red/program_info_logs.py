@@ -371,41 +371,37 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             def cb_read(red_file, result):
                 red_file.release()
 
-                if result.error is not None:
-                    return
-
-                if result.data is not None:
-                    # Success
-                    read_file_path = log_files_to_download['files'].keys()[0]
-                    save_file_name = ''.join(read_file_path.split('/')[-1:])
-                    with open(os.path.join(unicode(log_files_download_dir),
-                                           unicode(save_file_name)),
-                              'wb') as fh_log_write:
-                        fh_log_write.write(result.data)
-
-                    if log_download_pd.wasCanceled():
-                        return
-
-                    if read_file_path in log_files_to_download['files']:
-                        log_files_to_download['files'].pop(read_file_path, None)
-
-                    if len(log_files_to_download['files']) == 0:
-                        log_download_pd.close()
-                        return
-
-                    if not log_download_pd.wasCanceled():
-                        log_download_pd.setLabelText(str(len(log_files_to_download['files']))+" file(s) remaining...")
-                        log_download_pd.setValue(0)
-                        async_call(REDFile(self.session).open,
-                                   (log_files_to_download['files'].keys()[0],
-                                   REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                                   cb_open,
-                                   cb_open_error)
-
-                else:
+                if result.error != None:
                     # TODO: Error popup for user?
                     log_download_pd.close()
                     print 'download_selected_logs cb_open cb_read', result
+                    return
+
+                read_file_path = log_files_to_download['files'].keys()[0]
+                save_file_name = ''.join(read_file_path.split('/')[-1:])
+                with open(os.path.join(unicode(log_files_download_dir),
+                                       unicode(save_file_name)),
+                          'wb') as fh_log_write:
+                    fh_log_write.write(result.data)
+
+                if log_download_pd.wasCanceled():
+                    return
+
+                if read_file_path in log_files_to_download['files']:
+                    log_files_to_download['files'].pop(read_file_path, None)
+
+                if len(log_files_to_download['files']) == 0:
+                    log_download_pd.close()
+                    return
+
+                if not log_download_pd.wasCanceled():
+                    log_download_pd.setLabelText(str(len(log_files_to_download['files']))+" file(s) remaining...")
+                    log_download_pd.setValue(0)
+                    async_call(REDFile(self.session).open,
+                               (log_files_to_download['files'].keys()[0],
+                               REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                               cb_open,
+                               cb_open_error)
 
             red_file.read_async(log_files_to_download['files'].values()[0]['size'],
                                 lambda x: cb_read(red_file, x),

@@ -42,12 +42,12 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
 
         self.session        = None # set from RED after construction
         self.script_manager = None # set from RED after construction
-        
+
         self.package_list = [[] for i in range(NUM_TABS)]
-        
+
         self.language_packages = None
         self.language_packages_file = None
-    
+
         languages = "C#/mono", "C/C++", "Delphi/Lazarus", "Java", "JavaScript", "Octave", "Perl", "PHP", "Python", "Ruby", "Shell", "VB.NET"
 
         self.package_list[0].append({'name': 'Brick Daemon', 'version': 'Collecting Data...', 'description': 'Daemon that manages Bricks/Bricklets'})
@@ -55,10 +55,10 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
         self.package_list[0].append({'name': 'RED Brick Image', 'version': 'Collecting Data...', 'description': 'SD card image of RED Brick'})
         for language in languages:
             self.package_list[0].append({'name': 'Bindings ' + language, 'version': 'Collecting Data...', 'description': 'Tinkerforge bindings for ' + language })
-        
+
         for i in range(1, NUM_TABS):
             self.package_list[i].append({'name': 'Collecting Data...', 'version': 'Collecting Data...', 'description': 'Collecting Data...'})
-        
+
         self.tables = [
             self.table_main,
             self.table_csharp,
@@ -70,7 +70,7 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
             self.table_ruby,
         ]
         self.update_funcs = [
-            self.update_main, 
+            self.update_main,
             lambda: self.update_language((1, "mono")),
             lambda: self.update_language((2, "c")),
             lambda: self.update_language((3, "java")),
@@ -81,7 +81,7 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
         ]
 
         self.tab_data = []
-        
+
         self.models = []
         for i in range(NUM_TABS):
             self.models.append(Qt.QStandardItemModel(0, 3, self))
@@ -89,16 +89,16 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
             self.models[i].setHorizontalHeaderItem(1, Qt.QStandardItem("Version"))
             self.models[i].setHorizontalHeaderItem(2, Qt.QStandardItem("Description"))
             self.models[i].setItem(0, 0, Qt.QStandardItem("Collecting data..."))
-            
+
             self.tables[i].setSpan(0, 0, 1, 3)
             self.tables[i].setModel(self.models[i])
             self.tables[i].setColumnWidth(0, DEFAULT_NAME_HEADER_WIDTH)
             self.tables[i].setColumnWidth(1, DEFAULT_VERSION_HEADER_WIDTH)
             self.tables[i].setColumnWidth(2, DEFAULT_DESCRIPTION_HEADER_WIDTH)
             self.tables[i].horizontalHeader().setSortIndicator(1, QtCore.Qt.DescendingOrder)
-            
+
             self.tab_data.append({'table': self.tables[i], 'model': self.models[i], 'list': self.package_list[i], 'update_func': self.update_funcs[i], 'updated': False})
-        
+
         self.tabs.currentChanged.connect(self.version_tab_changed)
 
     def tab_on_focus(self):
@@ -110,7 +110,7 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
 
     def tab_destroy(self):
         pass
-    
+
     def version_tab_changed(self, index):
         if not self.tab_data[index]['updated']:
             self.tab_data[index]['update_func']()
@@ -119,49 +119,51 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
         def cb_update_main(result):
             if result == None:
                 return
-            
+
             versions = result.stdout.split('\n')
             num_versions = len(self.package_list[0])
             if len(versions) < num_versions:
-                # TODO: Error for user? 
+                # TODO: Error for user?
                 return
-            
+
             self.label_version.setText(versions[2])
             for i in range(num_versions):
                 self.package_list[0][i]['version'] = versions[i]
             self.tab_data[0]['updated'] = True
             self.update_table()
-            
+
         self.script_manager.execute_script('versions_main', cb_update_main)
-        
+
     def update_language_table(self, language):
         index = language[0]
         packages = self.language_packages[language[1]]
-        
+
         self.tab_data[index]['list'] = []
         for package in packages['packages']:
             self.tab_data[index]['list'].append({'name': package[0], 'version': package[1], 'description': package[2]})
-            
+
         self.update_table()
-        
+
     def update_language(self, language):
         if self.language_packages == None:
             self.update_language_packages(language)
         else:
             self.update_language_table(language)
-            
+
     def update_language_packages_read(self, language, result):
         self.language_packages_file.release()
-        self.language_packages = json.loads(result.data.decode('utf-8'))
-        self.update_language_table(language)
+
+        if result.error == None:
+            self.language_packages = json.loads(result.data.decode('utf-8'))
+            self.update_language_table(language)
 
     def update_language_packages_open(self, language, result):
         self.language_packages_file.read_async(64000, lambda x: self.update_language_packages_read(language, x))
-    
+
     def update_language_packages_error(self):
         # TODO: Error popup for user?
         pass
-    
+
     def update_language_packages(self, language):
         self.language_packages_file = REDFile(self.session)
         async_call(self.language_packages_file.open,

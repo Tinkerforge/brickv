@@ -96,6 +96,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
             return
 
         uploads = []
+
         progress = ExpandingProgressDialog(self)
         progress.hide_progress_text()
         progress.setWindowTitle('New Program')

@@ -361,38 +361,34 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             def cb_read(red_file, result):
                 red_file.release()
 
-                if result.error is not None:
-                    return
-
-                if result.data is not None:
-                    # Success
-                    read_file_path = unicode(files_to_download.keys()[0])
-                    with open(os.path.join(unicode(files_download_dir), read_file_path), 'wb') as fh_file_write:
-                        fh_file_write.write(result.data)
-
-                    if file_download_pd.wasCanceled():
-                        return
-
-                    if read_file_path in files_to_download:
-                        files_to_download.pop(read_file_path, None)
-
-                    if len(files_to_download) == 0:
-                        file_download_pd.close()
-                        return
-
-                    if not file_download_pd.wasCanceled():
-                        file_download_pd.setLabelText(str(len(files_to_download))+" file(s) remaining...")
-                        file_download_pd.setValue(0)
-                        async_call(REDFile(self.session).open,
-                                   (posixpath.join(self.bin_directory, files_to_download.keys()[0]),
-                                   REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                                   cb_open,
-                                   cb_open_error)
-
-                else:
+                if result.error != None:
                     # TODO: Error popup for user?
                     file_download_pd.close()
                     print 'download_selected_files cb_open cb_read', result
+                    return
+
+                read_file_path = unicode(files_to_download.keys()[0])
+                with open(os.path.join(unicode(files_download_dir), read_file_path), 'wb') as fh_file_write:
+                    fh_file_write.write(result.data)
+
+                if file_download_pd.wasCanceled():
+                    return
+
+                if read_file_path in files_to_download:
+                    files_to_download.pop(read_file_path, None)
+
+                if len(files_to_download) == 0:
+                    file_download_pd.close()
+                    return
+
+                if not file_download_pd.wasCanceled():
+                    file_download_pd.setLabelText(str(len(files_to_download))+" file(s) remaining...")
+                    file_download_pd.setValue(0)
+                    async_call(REDFile(self.session).open,
+                               (posixpath.join(self.bin_directory, files_to_download.keys()[0]),
+                               REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                               cb_open,
+                               cb_open_error)
 
             red_file.read_async(int(files_to_download.values()[0]['s']),
                                 lambda x: cb_read(red_file, x), cb_read_status)
