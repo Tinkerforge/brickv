@@ -48,7 +48,7 @@
         <x>0</x>
         <y>0</y>
         <width>488</width>
-        <height>1353</height>
+        <height>1362</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -218,9 +218,6 @@
                <string>Scheduler</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_7">
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
                <item>
                 <layout class="QGridLayout" name="gridLayout_7">
                  <item row="2" column="0">
