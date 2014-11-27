@@ -28,8 +28,8 @@ from brickv.plugin_system.plugins.red.program_utils import Constants
 from brickv.plugin_system.plugins.red.ui_program_info_perl import Ui_ProgramInfoPerl
 
 class ProgramInfoPerl(ProgramInfo, Ui_ProgramInfoPerl):
-    def __init__(self, context, *args, **kwargs):
-        ProgramInfo.__init__(self, context, *args, **kwargs)
+    def __init__(self, context):
+        ProgramInfo.__init__(self, context)
 
         self.setupUi(self)
 

@@ -31,8 +31,8 @@ import os
 import posixpath
 
 class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
-    def __init__(self, title_prefix='', *args, **kwargs):
-        ProgramPage.__init__(self, *args, **kwargs)
+    def __init__(self, title_prefix=''):
+        ProgramPage.__init__(self)
 
         self.setupUi(self)
 

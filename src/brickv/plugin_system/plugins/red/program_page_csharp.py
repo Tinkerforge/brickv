@@ -44,8 +44,8 @@ def get_mono_versions(script_manager, callback):
 
 
 class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
-    def __init__(self, title_prefix='', *args, **kwargs):
-        ProgramPage.__init__(self, *args, **kwargs)
+    def __init__(self, title_prefix=''):
+        ProgramPage.__init__(self)
 
         self.setupUi(self)
 

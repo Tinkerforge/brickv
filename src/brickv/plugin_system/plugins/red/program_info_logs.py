@@ -57,8 +57,8 @@ class LogsProxyModel(QSortFilterProxyModel):
 
 
 class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
-    def __init__(self, context, update_main_ui_state, set_widget_enabled, is_alive, *args, **kwargs):
-        QWidget.__init__(self, *args, **kwargs)
+    def __init__(self, context, update_main_ui_state, set_widget_enabled, is_alive):
+        QWidget.__init__(self)
 
         self.setupUi(self)
 

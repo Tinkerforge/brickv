@@ -27,8 +27,8 @@ from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_summary import Ui_ProgramPageSummary
 
 class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
-    def __init__(self, title_prefix='', *args, **kwargs):
-        ProgramPage.__init__(self, *args, **kwargs)
+    def __init__(self, title_prefix=''):
+        ProgramPage.__init__(self)
 
         self.setupUi(self)
 

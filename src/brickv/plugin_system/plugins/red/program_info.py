@@ -28,8 +28,8 @@ from collections import namedtuple
 ProgramInfoContext = namedtuple('ProgramInfoContext', 'session script_manager executable_versions program')
 
 class ProgramInfo(QWidget):
-    def __init__(self, context, *args, **kwargs):
-        QWidget.__init__(self, *args, **kwargs)
+    def __init__(self, context):
+        QWidget.__init__(self)
 
         self.session             = context.session
         self.script_manager      = context.script_manager

@@ -28,8 +28,8 @@ from brickv.plugin_system.plugins.red.program_utils import Constants
 from brickv.plugin_system.plugins.red.ui_program_info_php import Ui_ProgramInfoPHP
 
 class ProgramInfoPHP(ProgramInfo, Ui_ProgramInfoPHP):
-    def __init__(self, context, *args, **kwargs):
-        ProgramInfo.__init__(self, context, *args, **kwargs)
+    def __init__(self, context):
+        ProgramInfo.__init__(self, context)
 
         self.setupUi(self)
 

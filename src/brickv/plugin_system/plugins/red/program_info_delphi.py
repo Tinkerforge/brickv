@@ -29,8 +29,8 @@ from brickv.plugin_system.plugins.red.ui_program_info_delphi import Ui_ProgramIn
 from brickv.plugin_system.plugins.red.program_info_delphi_compile import ProgramInfoDelphiCompile
 
 class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
-    def __init__(self, context, *args, **kwargs):
-        ProgramInfo.__init__(self, context, *args, **kwargs)
+    def __init__(self, context):
+        ProgramInfo.__init__(self, context)
 
         self.setupUi(self)
 

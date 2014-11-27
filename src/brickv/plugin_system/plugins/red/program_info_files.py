@@ -140,8 +140,8 @@ class FilesProxyModel(QSortFilterProxyModel):
 
 
 class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
-    def __init__(self, context, update_main_ui_state, set_widget_enabled, is_alive, show_upload_files_wizard, *args, **kwargs):
-        QWidget.__init__(self, *args, **kwargs)
+    def __init__(self, context, update_main_ui_state, set_widget_enabled, is_alive, show_upload_files_wizard):
+        QWidget.__init__(self)
 
         self.setupUi(self)
 

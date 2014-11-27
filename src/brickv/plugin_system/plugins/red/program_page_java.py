@@ -82,8 +82,8 @@ def get_classes_from_class_or_jar(uploads):
 
 
 class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
-    def __init__(self, title_prefix='', *args, **kwargs):
-        ProgramPage.__init__(self, *args, **kwargs)
+    def __init__(self, title_prefix=''):
+        ProgramPage.__init__(self)
 
         self.setupUi(self)
 

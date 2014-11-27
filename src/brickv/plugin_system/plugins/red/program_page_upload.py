@@ -39,8 +39,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     CONFLICT_RESOLUTION_RENAME  = 2
     CONFLICT_RESOLUTION_SKIP    = 3
 
-    def __init__(self, title_prefix='', *args, **kwargs):
-        ProgramPage.__init__(self, *args, **kwargs)
+    def __init__(self, title_prefix=''):
+        ProgramPage.__init__(self)
 
         self.setupUi(self)
 

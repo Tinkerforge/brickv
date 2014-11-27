@@ -44,8 +44,8 @@ def get_shell_versions(script_manager, callback):
 
 
 class ProgramPageShell(ProgramPage, Ui_ProgramPageShell):
-    def __init__(self, title_prefix='', *args, **kwargs):
-        ProgramPage.__init__(self, *args, **kwargs)
+    def __init__(self, title_prefix=''):
+        ProgramPage.__init__(self)
 
         self.setupUi(self)
 

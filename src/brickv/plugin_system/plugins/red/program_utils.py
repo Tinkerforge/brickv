@@ -552,9 +552,6 @@ class Constants:
 
 # workaround miscalculated initial size-hint for initially hidden QListWidgets
 class ExpandingListWidget(QListWidget):
-    def __init__(self, *args, **kwargs):
-        QListWidget.__init__(self, *args, **kwargs)
-
     # overrides QListWidget.sizeHint
     def sizeHint(self):
         size = QListWidget.sizeHint(self)

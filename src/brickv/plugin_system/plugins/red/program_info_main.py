@@ -68,8 +68,8 @@ import json
 class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
     name_changed = pyqtSignal()
 
-    def __init__(self, session, script_manager, image_version_ref, executable_versions, program, *args, **kwargs):
-        QWidget.__init__(self, *args, **kwargs)
+    def __init__(self, session, script_manager, image_version_ref, executable_versions, program):
+        QWidget.__init__(self)
 
         self.setupUi(self)
 

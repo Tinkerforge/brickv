@@ -28,8 +28,8 @@ from brickv.plugin_system.plugins.red.ui_program_page_schedule import Ui_Program
 from brickv.utils import get_main_window
 
 class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
-    def __init__(self, title_prefix='', *args, **kwargs):
-        ProgramPage.__init__(self, *args, **kwargs)
+    def __init__(self, title_prefix=''):
+        ProgramPage.__init__(self)
 
         self.setupUi(self)
 

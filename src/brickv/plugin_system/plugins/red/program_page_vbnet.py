@@ -28,8 +28,8 @@ from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_vbnet import Ui_ProgramPageVBNET
 
 class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
-    def __init__(self, title_prefix='', *args, **kwargs):
-        ProgramPage.__init__(self, *args, **kwargs)
+    def __init__(self, title_prefix=''):
+        ProgramPage.__init__(self)
 
         self.setupUi(self)
 

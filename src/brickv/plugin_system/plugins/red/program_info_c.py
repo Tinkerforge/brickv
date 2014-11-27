@@ -29,8 +29,8 @@ from brickv.plugin_system.plugins.red.ui_program_info_c import Ui_ProgramInfoC
 from brickv.plugin_system.plugins.red.program_info_c_compile import ProgramInfoCCompile
 
 class ProgramInfoC(ProgramInfo, Ui_ProgramInfoC):
-    def __init__(self, context, *args, **kwargs):
-        ProgramInfo.__init__(self, context, *args, **kwargs)
+    def __init__(self, context):
+        ProgramInfo.__init__(self, context)
 
         self.setupUi(self)
 
