@@ -459,8 +459,10 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
     def upload_write_async_cb_status(self, upload_size, upload_total):
         uploaded = self.progress_file.value() + upload_size - self.last_upload_size
+
         self.progress_file.setValue(uploaded)
         self.progress_file.setFormat(get_file_display_size(uploaded) + ' of ' + self.source_display_size)
+
         self.last_upload_size = upload_size
 
     def upload_write_async_cb_result(self, error):
@@ -492,7 +494,10 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.progress_file.setValue(self.progress_file.maximum())
 
         self.target_file.release()
+        self.target_file = None
+
         self.source_file.close()
+        self.source_file = None
 
         self.upload_next_file()
 

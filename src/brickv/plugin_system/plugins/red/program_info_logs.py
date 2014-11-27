@@ -26,7 +26,7 @@ from PyQt4.QtCore import Qt, QVariant, QDateTime
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QFileDialog, \
                         QMessageBox, QSortFilterProxyModel, QApplication
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog, get_file_display_size
+from brickv.plugin_system.plugins.red.program_utils import Download, ExpandingProgressDialog, get_file_display_size
 from brickv.plugin_system.plugins.red.ui_program_info_logs import Ui_ProgramInfoLogs
 from brickv.plugin_system.plugins.red.program_info_logs_view import ProgramInfoLogsView
 from brickv.async_call import async_call
@@ -57,7 +57,7 @@ class LogsProxyModel(QSortFilterProxyModel):
 
 
 class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
-    def __init__(self, context, update_main_ui_state, set_widget_enabled, is_alive):
+    def __init__(self, context, update_main_ui_state, set_widget_enabled, is_alive, show_download_wizard):
         QWidget.__init__(self)
 
         self.setupUi(self)
@@ -68,6 +68,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.update_main_ui_state   = update_main_ui_state
         self.set_widget_enabled     = set_widget_enabled
         self.is_alive               = is_alive
+        self.show_download_wizard   = show_download_wizard
         self.log_directory          = posixpath.join(unicode(self.program.root_directory), 'log')
         self.refresh_in_progress    = False
         self.view_dialog            = None
@@ -244,7 +245,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         return selected_log_items
 
     def load_log_files_for_ops(self, index_list):
-        logs_download_dict = {'files': {}, 'total_download_size': 0}
+        logs_download_dict = {'files': {}, 'total_download_size': 0, 'foobar':[]}
 
         def populate_log_download(item_list):
             item_type = item_list[0].data(USER_ROLE_ITEM_TYPE).toInt()[0]
@@ -252,35 +253,43 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             if item_type == ITEM_TYPE_PARENT_CONT:
                 for i in range(item_list[0].rowCount()):
                     f_size = item_list[0].child(i, 1).data(USER_ROLE_SIZE).toInt()[0] # File size
-                    f_path = posixpath.join(self.log_directory, unicode(item_list[0].child(i, 0).data(USER_ROLE_FILE_NAME).toString())) # File path
+                    file_name = unicode(item_list[0].child(i, 0).data(USER_ROLE_FILE_NAME).toString())
+                    f_path = posixpath.join(self.log_directory, file_name) # File path
                     if not f_path in logs_download_dict['files']:
                         logs_download_dict['files'][f_path] = {'size': f_size}
                         logs_download_dict['total_download_size'] += f_size
+                        logs_download_dict['foobar'].append(file_name)
 
             elif item_type == ITEM_TYPE_PARENT_DATE:
                 for i in range(item_list[0].rowCount()):
                     parent_time = item_list[0].child(i)
                     for j in range(parent_time.rowCount()):
                         f_size = parent_time.child(j, 1).data(USER_ROLE_SIZE).toInt()[0] # File size
-                        f_path = posixpath.join(self.log_directory, unicode(parent_time.child(j, 0).data(USER_ROLE_FILE_NAME).toString())) # File path
+                        file_name = unicode(parent_time.child(j, 0).data(USER_ROLE_FILE_NAME).toString())
+                        f_path = posixpath.join(self.log_directory, file_name) # File path
                         if not f_path in logs_download_dict['files']:
                             logs_download_dict['files'][f_path] = {'size': f_size}
                             logs_download_dict['total_download_size'] += f_size
+                            logs_download_dict['foobar'].append(file_name)
 
             elif item_type == ITEM_TYPE_PARENT_TIME:
                 for i in range(item_list[0].rowCount()):
                     f_size = item_list[0].child(i, 1).data(USER_ROLE_SIZE).toInt()[0] # File size
-                    f_path = posixpath.join(self.log_directory, unicode(item_list[0].child(i, 0).data(USER_ROLE_FILE_NAME).toString())) # File path
+                    file_name = unicode(item_list[0].child(i, 0).data(USER_ROLE_FILE_NAME).toString())
+                    f_path = posixpath.join(self.log_directory, file_name) # File path
                     if not f_path in logs_download_dict['files']:
                         logs_download_dict['files'][f_path] = {'size': f_size}
                         logs_download_dict['total_download_size'] += f_size
+                        logs_download_dict['foobar'].append(file_name)
 
             elif item_type in [ITEM_TYPE_LOG_FILE, ITEM_TYPE_LOG_FILE_CONT]:
                 f_size = item_list[1].data(USER_ROLE_SIZE).toInt()[0] # File size
-                f_path = posixpath.join(self.log_directory, unicode(item_list[0].data(USER_ROLE_FILE_NAME).toString())) # File path
+                file_name = unicode(item_list[0].data(USER_ROLE_FILE_NAME).toString())
+                f_path = posixpath.join(self.log_directory, file_name) # File path
                 if not f_path in logs_download_dict['files']:
                     logs_download_dict['files'][f_path] = {'size': f_size}
                     logs_download_dict['total_download_size'] += f_size
+                    logs_download_dict['foobar'].append(file_name)
 
         index_rows = []
 
@@ -299,125 +308,27 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         return logs_download_dict
 
     def download_selected_logs(self):
-        def log_download_pd_closed():
-            if len(log_files_to_download['files']) > 0:
-                QMessageBox.warning(get_main_window(),
-                                    'Program | Logs',
-                                    'Download could not finish.',
-                                    QMessageBox.Ok)
-            else:
-                QMessageBox.information(get_main_window(),
-                                        'Program | Logs',
-                                        'Download complete!',
-                                        QMessageBox.Ok)
-
         index_list = self.tree_logs.selectedIndexes()
 
-        if not index_list:
+        if len(index_list) == 0:
             return
 
         log_files_to_download = self.load_log_files_for_ops(index_list)
 
-        if not log_files_to_download:
+        if len(log_files_to_download) == 0:
             return
 
-        log_files_download_dir = unicode(QFileDialog.getExistingDirectory(get_main_window(), "Choose Download Location"))
-        try:
-            with open(os.path.join(unicode(log_files_download_dir),
-                                   unicode('write_test_file')),
-                      'wb') as fh_write_test:
-                fh_write_test.write("1")
-            os.remove(os.path.join(unicode(log_files_download_dir),
-                                   unicode('write_test_file')))
-        except:
-            QMessageBox.critical(get_main_window(),
-                                 'Program | Logs',
-                                 'Directory not writeable.',
-                                 QMessageBox.Ok)
+        download_directory = unicode(QFileDialog.getExistingDirectory(get_main_window(), 'Download Logs'))
+
+        if len(download_directory) == 0:
             return
 
-        if log_files_download_dir == "":
-            return
+        downloads = []
 
-        log_download_pd = ExpandingProgressDialog(str(len(log_files_to_download['files']))+" file(s) remaining...",
-                                                  "Cancel", 0, 100, self)
-        log_download_pd.setWindowTitle("Download Progress")
-        log_download_pd.setAutoReset(False)
-        log_download_pd.setAutoClose(False)
-        log_download_pd.setMinimumDuration(0)
-        log_download_pd.setValue(0)
+        for file_name in log_files_to_download['foobar']:
+            downloads.append(Download(file_name, file_name))
 
-        log_download_pd.canceled.connect(log_download_pd_closed)
-
-        def cb_open(red_file):
-            def cb_read_status(bytes_read, max_length):
-                # TODO: If the file is too large then this callback
-                # gets called too fast resulting in unexpected UI behaviour
-                # like signals are not being handled properly
-
-                if log_download_pd.wasCanceled():
-                    red_file.abort_async_read()
-                    return
-
-                files_remaining = str(len(log_files_to_download['files']))
-                current_percent = int(float(bytes_read)/float(max_length) * 100)
-
-                log_download_pd.setLabelText(files_remaining+" file(s) remaining...")
-                log_download_pd.setValue(current_percent)
-
-                if current_percent == 100:
-                    log_download_pd.setValue(0)
-
-            def cb_read(red_file, result):
-                red_file.release()
-
-                if result.error != None:
-                    # TODO: Error popup for user?
-                    log_download_pd.close()
-                    print 'download_selected_logs cb_open cb_read', result
-                    return
-
-                read_file_path = log_files_to_download['files'].keys()[0]
-                save_file_name = ''.join(read_file_path.split('/')[-1:])
-                with open(os.path.join(unicode(log_files_download_dir),
-                                       unicode(save_file_name)),
-                          'wb') as fh_log_write:
-                    fh_log_write.write(result.data)
-
-                if log_download_pd.wasCanceled():
-                    return
-
-                if read_file_path in log_files_to_download['files']:
-                    log_files_to_download['files'].pop(read_file_path, None)
-
-                if len(log_files_to_download['files']) == 0:
-                    log_download_pd.close()
-                    return
-
-                if not log_download_pd.wasCanceled():
-                    log_download_pd.setLabelText(str(len(log_files_to_download['files']))+" file(s) remaining...")
-                    log_download_pd.setValue(0)
-                    async_call(REDFile(self.session).open,
-                               (log_files_to_download['files'].keys()[0],
-                               REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                               cb_open,
-                               cb_open_error)
-
-            red_file.read_async(log_files_to_download['files'].values()[0]['size'],
-                                lambda x: cb_read(red_file, x),
-                                cb_read_status)
-
-        def cb_open_error():
-            # TODO: Error popup for user?
-            log_download_pd.close()
-            print 'download_selected_logs cb_open_error'
-
-        if len(log_files_to_download['files']) > 0:
-            async_call(REDFile(self.session).open,
-                       (log_files_to_download['files'].keys()[0],
-                       REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                       cb_open,
-                       cb_open_error)
+        self.show_download_wizard('logs', download_directory, downloads)
 
     def view_activated_log(self, index):
         if index.column() == 0:

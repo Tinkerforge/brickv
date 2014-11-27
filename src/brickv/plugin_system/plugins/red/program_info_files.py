@@ -196,7 +196,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 if result == None or len(result.stderr) == 0:
                     self.label_error.setText('<b>Error:</b> Internal error occurred')
                 else:
-                    self.label_error.setText('<b>Error:</b> ' + Qt.escape(result.stderr.decode('utf-8')))
+                    self.label_error.setText('<b>Error:</b> ' + Qt.escape(result.stderr.decode('utf-8').strip()))
 
                 self.label_error.setVisible(True)
                 self.refresh_files_done()
@@ -487,7 +487,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                      u'Internal error during {0} rename'.format(type_name))
             elif result.exit_code != 0:
                 QMessageBox.critical(get_main_window(), title + ' Error',
-                                     u'Could not rename {0}:\n\n{1}'.format(type_name, result.stderr))
+                                     u'Could not rename {0}:\n\n{1}'.format(type_name, result.stderr.strip()))
             else:
                 name_item.setText(new_name)
 
@@ -600,7 +600,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                                      u'Internal error during deletion.')
             elif result.exit_code != 0:
                 QMessageBox.critical(get_main_window(), 'Delete Files Error',
-                                     u'Could not delete selected files/directories:\n\n{0}'.format(result.stderr))
+                                     u'Could not delete selected files/directories:\n\n{0}'.format(result.stderr.strip()))
 
         sd_ref[0] = self.script_manager.execute_script('program_delete_files_dirs',
                                                        lambda result: cb_program_delete_files_dirs(sd_ref, result),

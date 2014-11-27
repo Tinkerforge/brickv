@@ -48,5 +48,6 @@ os.system("pyuic4 -o ui_program_page_stdio.py ui/program_page_stdio.ui")
 os.system("pyuic4 -o ui_program_page_schedule.py ui/program_page_schedule.ui")
 os.system("pyuic4 -o ui_program_page_summary.py ui/program_page_summary.ui")
 os.system("pyuic4 -o ui_program_page_upload.py ui/program_page_upload.ui")
+os.system("pyuic4 -o ui_program_page_download.py ui/program_page_download.ui")
 
 os.system("python build_scripts.py")

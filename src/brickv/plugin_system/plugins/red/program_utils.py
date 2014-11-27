@@ -29,11 +29,14 @@ import posixpath
 from collections import namedtuple
 
 ExecutableVersion = namedtuple('ExecutableVersion', 'executable version')
-Upload            = namedtuple('Upload', 'source target')
 
+# source: absolute path on host in host format
+# target: path relative to bin directory on RED Brick in POSIX format
+Upload = namedtuple('Upload', 'source target')
 
-def get_key_from_value(dictionary, value):
-    return dictionary.keys()[dictionary.values().index(value)]
+# source: path relative to bin directory on RED Brick in POSIX format
+# target: path relative to download directory on host in host format
+Download = namedtuple('Download', 'source target')
 
 
 class Constants:
@@ -56,6 +59,7 @@ class Constants:
     PAGE_SCHEDULE   = 1017
     PAGE_SUMMARY    = 1018
     PAGE_UPLOAD     = 1019
+    PAGE_DOWNLOAD   = 1020
 
     # must match item order in combo_language on general page
     LANGUAGE_INVALID    = 0
@@ -1033,6 +1037,10 @@ class ComboBoxFileEndingChecker:
 
         if self.combo_file.count() > 1:
             self.combo_file.clearEditText()
+
+
+def get_key_from_value(dictionary, value):
+    return dictionary.keys()[dictionary.values().index(value)]
 
 
 def set_current_combo_index_from_data(combo, data):

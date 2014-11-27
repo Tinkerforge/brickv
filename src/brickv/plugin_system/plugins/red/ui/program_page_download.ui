@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ProgramPageUpload</class>
- <widget class="QWidget" name="ProgramPageUpload">
+ <class>ProgramPageDownload</class>
+ <widget class="QWidget" name="ProgramPageDownload">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>587</width>
-    <height>718</height>
+    <width>597</width>
+    <height>688</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -99,7 +99,7 @@
      <item row="5" column="1">
       <widget class="QLabel" name="label_replace_help">
        <property name="text">
-        <string>A file named '&lt;FILE&gt;' already exists for this program. Should the existing file be replaced with the new file (Replace), or should the new file be uploaded with a different name (Rename), or should this file be skipped completely (Skip)?</string>
+        <string>A file named '&lt;FILE&gt;' already exists in the download directory. Should the existing file be replaced with the new file (Replace), or should the new file be downloaded with a different name (Rename), or should this file be skipped completely (Skip)?</string>
        </property>
        <property name="textFormat">
         <enum>Qt::PlainText</enum>
@@ -112,8 +112,8 @@
        </property>
       </widget>
      </item>
-     <item row="14" column="1">
-      <widget class="QPushButton" name="button_start_upload">
+     <item row="15" column="1">
+      <widget class="QPushButton" name="button_start_download">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>1</horstretch>
@@ -121,11 +121,11 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Start Upload</string>
+        <string>Start Download</string>
        </property>
       </widget>
      </item>
-     <item row="13" column="0" colspan="2">
+     <item row="14" column="0" colspan="2">
       <widget class="Line" name="line2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -177,7 +177,7 @@
        </property>
       </widget>
      </item>
-     <item row="11" column="1">
+     <item row="12" column="1">
       <widget class="QCheckBox" name="check_remember_decision">
        <property name="text">
         <string>Remember Decision</string>
@@ -185,7 +185,7 @@
       </widget>
      </item>
      <item row="10" column="1">
-      <widget class="QLabel" name="label_new_name_help">
+      <widget class="QLabel" name="label_new_name_help_posix">
        <property name="text">
         <string>A valid new file name cannot be equal to the existing file name, cannot be empty, cannot be one dot [.], cannot be two dots [..] and cannot contain a forward slash [/].</string>
        </property>
@@ -208,7 +208,7 @@
        </item>
       </layout>
      </item>
-     <item row="12" column="1">
+     <item row="13" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="QPushButton" name="button_replace">
@@ -233,6 +233,16 @@
        </item>
       </layout>
      </item>
+     <item row="11" column="1">
+      <widget class="QLabel" name="label_new_name_help_windows">
+       <property name="text">
+        <string>A valid new file name cannot be equal to the existing file name, cannot be empty and cannot contain any special charachter [\/:?*&quot;&lt;&gt;|].</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -246,7 +256,7 @@
   <tabstop>button_replace</tabstop>
   <tabstop>button_rename</tabstop>
   <tabstop>button_skip</tabstop>
-  <tabstop>button_start_upload</tabstop>
+  <tabstop>button_start_download</tabstop>
  </tabstops>
  <resources/>
  <connections/>
