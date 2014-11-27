@@ -37,7 +37,14 @@ import json
 import zlib
 
 USER_ROLE_FILE_NAME = Qt.UserRole + 2
-USER_ROLE_SIZE      = Qt.UserRole + 3
+USER_ROLE_ITEM_TYPE = Qt.UserRole + 3
+USER_ROLE_SIZE      = Qt.UserRole + 4
+
+ITEM_TYPE_PARENT_CONT   = 1
+ITEM_TYPE_PARENT_DATE   = 2
+ITEM_TYPE_PARENT_TIME   = 3
+ITEM_TYPE_LOG_FILE_CONT = 4
+ITEM_TYPE_LOG_FILE      = 5
 
 
 class LogsProxyModel(QSortFilterProxyModel):
@@ -82,9 +89,6 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
     def update_ui_state(self):
         selection_count = len(self.tree_logs.selectionModel().selectedRows())
-
-        self.tree_logs.setColumnHidden(2, True)
-        self.tree_logs.setColumnHidden(3, True)
 
         self.set_widget_enabled(self.button_download_logs, selection_count > 0)
         self.set_widget_enabled(self.button_view_log, selection_count == 1 and len(self.get_directly_selected_log_items()) == 1)
@@ -141,7 +145,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
                         parent_continuous = None
                         for i in range(self.tree_logs_model.rowCount()):
-                            if self.tree_logs_model.item(i).text() == "Continuous":
+                            if self.tree_logs_model.item(i).data(USER_ROLE_ITEM_TYPE).toInt()[0] == ITEM_TYPE_PARENT_CONT:
                                 parent_continuous = self.tree_logs_model.item(i)
                                 parent_continuous_size = self.tree_logs_model.item(i, 1)
                                 break
@@ -151,30 +155,26 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                 name_item = QStandardItem(file_name_parts[1])
                                 name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
                                 name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
+                                name_item.setData(QVariant(ITEM_TYPE_LOG_FILE_CONT), USER_ROLE_ITEM_TYPE)
 
-                                parent_continuous.appendRow([name_item,
-                                                             create_file_size_item(file_size),
-                                                             QStandardItem("LOG_FILE_CONT"),
-                                                             QStandardItem('foobar')])
+                                parent_continuous.appendRow([name_item, create_file_size_item(file_size)])
 
                                 current_size = parent_continuous_size.data(USER_ROLE_SIZE).toInt()[0]
                                 new_file_size = current_size + file_size
                                 parent_continuous_size.setText(get_file_display_size(new_file_size))
                                 parent_continuous_size.setData(QVariant(new_file_size), USER_ROLE_SIZE)
                             else:
-                                parent_continuous = [QStandardItem("Continuous"),
-                                                     create_file_size_item(file_size),
-                                                     QStandardItem("PARENT_CONT"),
-                                                     QStandardItem("")]
+                                continuous_item = QStandardItem("Continuous")
+                                continuous_item.setData(QVariant(ITEM_TYPE_PARENT_CONT), USER_ROLE_ITEM_TYPE)
+
+                                parent_continuous = [continuous_item, create_file_size_item(file_size)]
 
                                 name_item = QStandardItem(file_name_parts[1])
                                 name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
                                 name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
+                                name_item.setData(QVariant(ITEM_TYPE_LOG_FILE_CONT), USER_ROLE_ITEM_TYPE)
 
-                                parent_continuous[0].appendRow([name_item,
-                                                                create_file_size_item(file_size),
-                                                                QStandardItem("LOG_FILE_CONT"),
-                                                                QStandardItem('foobar')])
+                                parent_continuous[0].appendRow([name_item, create_file_size_item(file_size)])
 
                                 self.tree_logs_model.appendRow(parent_continuous)
 
@@ -208,11 +208,9 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                 name_item = QStandardItem(file_name_parts[2])
                                 name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
                                 name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
+                                name_item.setData(QVariant(ITEM_TYPE_LOG_FILE), USER_ROLE_ITEM_TYPE)
 
-                                parent_date.child(i).appendRow([name_item,
-                                                                create_file_size_item(file_size),
-                                                                QStandardItem("LOG_FILE"),
-                                                                QStandardItem('foobar')])
+                                parent_date.child(i).appendRow([name_item, create_file_size_item(file_size)])
                                 current_size = parent_date.child(i, 1).data(USER_ROLE_SIZE).toInt()[0]
                                 new_file_size = current_size + file_size
                                 parent_date.child(i, 1).setText(get_file_display_size(new_file_size))
@@ -225,39 +223,39 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                 break
 
                         if not found_parent_time:
-                            parent_date.appendRow([QStandardItem(time),
-                                                   create_file_size_item(file_size),
-                                                   QStandardItem("PARENT_TIME"),
-                                                   QStandardItem("")])
+                            time_item = QStandardItem(time)
+                            time_item.setData(QVariant(ITEM_TYPE_PARENT_TIME), USER_ROLE_ITEM_TYPE)
+
+                            parent_date.appendRow([time_item, create_file_size_item(file_size)])
+
                             name_item = QStandardItem(file_name_parts[2])
                             name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
                             name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
+                            name_item.setData(QVariant(ITEM_TYPE_LOG_FILE), USER_ROLE_ITEM_TYPE)
 
-                            parent_date.child(parent_date.rowCount()-1).appendRow([name_item,
-                                                                                   create_file_size_item(file_size),
-                                                                                   QStandardItem("LOG_FILE"),
-                                                                                   QStandardItem('foobar')])
+                            parent_date.child(parent_date.rowCount()-1).appendRow([name_item, create_file_size_item(file_size)])
+
                             current_parent_size = parent_date_size.data(USER_ROLE_SIZE).toInt()[0]
                             new_parent_file_size = current_parent_size + file_size
                             parent_date_size.setText(get_file_display_size(new_parent_file_size))
                             parent_date_size.setData(QVariant(new_parent_file_size), USER_ROLE_SIZE)
                     else:
-                        parent_date = [QStandardItem(date),
-                                       create_file_size_item(file_size),
-                                       QStandardItem("PARENT_DATE"),
-                                       QStandardItem("")]
-                        parent_date[0].appendRow([QStandardItem(time),
-                                                  create_file_size_item(file_size),
-                                                  QStandardItem("PARENT_TIME"),
-                                                  QStandardItem("")])
+                        date_item = QStandardItem(date)
+                        date_item.setData(QVariant(ITEM_TYPE_PARENT_DATE), USER_ROLE_ITEM_TYPE)
+
+                        parent_date = [date_item, create_file_size_item(file_size)]
+
+                        time_item = QStandardItem(time)
+                        time_item.setData(QVariant(ITEM_TYPE_PARENT_TIME), USER_ROLE_ITEM_TYPE)
+
+                        parent_date[0].appendRow([time_item, create_file_size_item(file_size)])
+
                         name_item = QStandardItem(file_name_parts[2])
                         name_item.setData(QVariant(self.file_icon), Qt.DecorationRole)
                         name_item.setData(QVariant(file_name), USER_ROLE_FILE_NAME)
+                        name_item.setData(QVariant(ITEM_TYPE_LOG_FILE), USER_ROLE_ITEM_TYPE)
 
-                        parent_date[0].child(0).appendRow([name_item,
-                                                           create_file_size_item(file_size),
-                                                           QStandardItem("LOG_FILE"),
-                                                           QStandardItem('foobar')])
+                        parent_date[0].child(0).appendRow([name_item, create_file_size_item(file_size)])
                         self.tree_logs_model.appendRow(parent_date)
 
             self.tree_logs.header().setSortIndicator(0, Qt.DescendingOrder)
@@ -283,10 +281,9 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             if selected_index.column() == 0:
                 mapped_index  = self.tree_logs_proxy_model.mapToSource(selected_index)
                 selected_item = self.tree_logs_model.itemFromIndex(mapped_index)
-                data          = selected_item.data(USER_ROLE_FILE_NAME)
+                item_type     = selected_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
 
-                # FIXME: add USER_ROLE_ITEM_TYPE with DATE/TIME/FILE for this check
-                if data.type() == QVariant.String:
+                if item_type in [ITEM_TYPE_LOG_FILE, ITEM_TYPE_LOG_FILE_CONT]:
                     selected_log_items.append(selected_item)
 
         return selected_log_items
@@ -295,7 +292,9 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         logs_download_dict = {'files': {}, 'total_download_size': 0}
 
         def populate_log_download(item_list):
-            if item_list[2].text() == "PARENT_CONT":
+            item_type = item_list[0].data(USER_ROLE_ITEM_TYPE).toInt()[0]
+
+            if item_type == ITEM_TYPE_PARENT_CONT:
                 for i in range(item_list[0].rowCount()):
                     f_size = item_list[0].child(i, 1).data(USER_ROLE_SIZE).toInt()[0] # File size
                     f_path = posixpath.join(self.log_directory, unicode(item_list[0].child(i, 0).data(USER_ROLE_FILE_NAME).toString())) # File path
@@ -303,7 +302,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                         logs_download_dict['files'][f_path] = {'size': f_size}
                         logs_download_dict['total_download_size'] += f_size
 
-            elif item_list[2].text() == "PARENT_DATE":
+            elif item_type == ITEM_TYPE_PARENT_DATE:
                 for i in range(item_list[0].rowCount()):
                     parent_time = item_list[0].child(i)
                     for j in range(parent_time.rowCount()):
@@ -313,7 +312,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                             logs_download_dict['files'][f_path] = {'size': f_size}
                             logs_download_dict['total_download_size'] += f_size
 
-            elif item_list[2].text() == "PARENT_TIME":
+            elif item_type == ITEM_TYPE_PARENT_TIME:
                 for i in range(item_list[0].rowCount()):
                     f_size = item_list[0].child(i, 1).data(USER_ROLE_SIZE).toInt()[0] # File size
                     f_path = posixpath.join(self.log_directory, unicode(item_list[0].child(i, 0).data(USER_ROLE_FILE_NAME).toString())) # File path
@@ -321,24 +320,19 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                         logs_download_dict['files'][f_path] = {'size': f_size}
                         logs_download_dict['total_download_size'] += f_size
 
-            elif item_list[2].text() == "LOG_FILE" or \
-                 item_list[2].text() == "LOG_FILE_CONT":
+            elif item_type in [ITEM_TYPE_LOG_FILE, ITEM_TYPE_LOG_FILE_CONT]:
                 f_size = item_list[1].data(USER_ROLE_SIZE).toInt()[0] # File size
                 f_path = posixpath.join(self.log_directory, unicode(item_list[0].data(USER_ROLE_FILE_NAME).toString())) # File path
                 if not f_path in logs_download_dict['files']:
                     logs_download_dict['files'][f_path] = {'size': f_size}
                     logs_download_dict['total_download_size'] += f_size
-            else:
-                pass
 
         index_rows = []
 
         for index in index_list:
             if index.column() == 0:
                 index_rows.append([index,
-                                   index.sibling(index.row(), 1),
-                                   index.sibling(index.row(), 2),
-                                   index.sibling(index.row(), 3)])
+                                   index.sibling(index.row(), 1)])
 
         for index_row in index_rows:
             item_list = []
@@ -362,11 +356,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                                         'Download complete!',
                                         QMessageBox.Ok)
 
-        self.tree_logs.setColumnHidden(2, False)
-        self.tree_logs.setColumnHidden(3, False)
         index_list = self.tree_logs.selectedIndexes()
-        self.tree_logs.setColumnHidden(2, True)
-        self.tree_logs.setColumnHidden(3, True)
 
         if not index_list:
             return
@@ -482,10 +472,9 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         if index.column() == 0:
             mapped_index = self.tree_logs_proxy_model.mapToSource(index)
             item         = self.tree_logs_model.itemFromIndex(mapped_index)
-            data         = item.data(USER_ROLE_FILE_NAME)
+            item_type    = item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
 
-            # FIXME: add USER_ROLE_ITEM_TYPE with DATE/TIME/FILE for this check
-            if data.type() == QVariant.String:
+            if item_type in [ITEM_TYPE_LOG_FILE, ITEM_TYPE_LOG_FILE_CONT]:
                 self.view_log(item)
 
     def view_selected_log(self):
@@ -533,11 +522,8 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                 pass
                 # TODO: Error popup for user?
 
-        self.tree_logs.setColumnHidden(2, False)
-        self.tree_logs.setColumnHidden(3, False)
-        index_list =  self.tree_logs.selectedIndexes()
-        self.tree_logs.setColumnHidden(2, True)
-        self.tree_logs.setColumnHidden(3, True)
+        index_list = self.tree_logs.selectedIndexes()
+
         if not index_list:
             return
 

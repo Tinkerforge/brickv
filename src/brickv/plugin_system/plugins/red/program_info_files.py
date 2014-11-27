@@ -39,8 +39,8 @@ USER_ROLE_ITEM_TYPE     = Qt.UserRole + 2
 USER_ROLE_SIZE          = Qt.UserRole + 3
 USER_ROLE_LAST_MODIFIED = Qt.UserRole + 4
 
-ITEM_TYPE_FILE      = 0
-ITEM_TYPE_DIRECTORY = 1
+ITEM_TYPE_FILE      = 1
+ITEM_TYPE_DIRECTORY = 2
 
 
 def expand_directory_walk_to_lists(directory_walk):
