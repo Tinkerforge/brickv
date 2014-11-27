@@ -13,7 +13,7 @@ return_dict['cstat_gateway'] = None
 return_dict['cstat_dns'] = None
 
 try:
-    hname = socket.gethostname()
+    hname = unicode(socket.gethostname())
     if hname != "":
         return_dict['cstat_hostname'] = hname
 except:
