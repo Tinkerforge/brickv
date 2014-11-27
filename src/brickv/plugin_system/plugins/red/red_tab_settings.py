@@ -147,10 +147,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.pbutton_set_hostname.clicked.connect(self.slot_set_hostname_clicked)
         self.pbutton_net_activate_intf.clicked.connect(self.slot_pbutton_net_activate_intf_clicked)
         self.pbutton_net_deactivate_intf.clicked.connect(self.slot_pbutton_net_deactivate_intf_clicked)
-        self.pbutton_net_wireless_scan.clicked.connect(self.slot_network_button_wireless_scan_clicked)
+        self.pbutton_net_wireless_scan.clicked.connect(self.slot_network_refresh_clicked)
         self.pbutton_net_refresh.clicked.connect(self.slot_network_refresh_clicked)
-        #self.pbutton_net_wireless_save.clicked.connect(self.slot_network_wireless_save_clicked)
-        #self.pbutton_net_wired_save.clicked.connect(self.slot_network_wired_save_clicked)
+        self.pbutton_net_save.clicked.connect(self.slot_network_save_clicked)
 
         # Network fields
         self.frame_working_please_wait.hide()
@@ -240,6 +239,42 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.sarea_net.setEnabled(False)
             self.network_button_refresh_enabled(False)
             self.network_button_save_enabled(False)
+
+            self.label_net_gen_cstat_intf.setText('')
+            self.label_net_gen_cstat_ip.setText('')
+            self.label_net_gen_cstat_mask.setText('')
+            self.label_net_gen_cstat_gateway.setText('')
+            self.label_net_gen_cstat_dns.setText('')
+            self.ledit_net_hostname.setText('')
+
+            self.label_interface_none_active.hide()
+            self.cbox_net_intf.clear()
+            self.label_ap_none_associated.hide()
+            self.cbox_net_wireless_ap.clear()
+            self.label_net_wireless_channel.setText('')
+            self.label_net_wireless_enctype.setText('')
+            self.ledit_net_wireless_key.setText('')
+            self.frame_wireless_conf.hide()
+
+            self.sbox_net_ip1.setValue(0)
+            self.sbox_net_ip2.setValue(0)
+            self.sbox_net_ip3.setValue(0)
+            self.sbox_net_ip4.setValue(0)
+            self.sbox_net_mask1.setValue(0)
+            self.sbox_net_mask2.setValue(0)
+            self.sbox_net_mask3.setValue(0)
+            self.sbox_net_mask4.setValue(0)
+            self.sbox_net_gw1.setValue(0)
+            self.sbox_net_gw2.setValue(0)
+            self.sbox_net_gw3.setValue(0)
+            self.sbox_net_gw4.setValue(0)
+            self.sbox_net_dns1.setValue(0)
+            self.sbox_net_dns2.setValue(0)
+            self.sbox_net_dns3.setValue(0)
+            self.sbox_net_dns4.setValue(0)
+            self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
+            self.frame_static_ip_conf.hide()
+
         else:
             self.frame_working_please_wait.hide()
             self.sarea_net.setEnabled(True)
@@ -796,184 +831,21 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    cb_open,
                    cb_open_error)
 
-    def slot_network_wireless_save_clicked(self):
-        pass
-        '''
-        self.network_button_save_enabled(False)
-
-        self.network_all_data['manager_settings'].set('Settings', 'wired_interface', unicode("None"))
-        config_ms = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
-
-        if self.cbox_net_wireless_ap.currentText() == "Nothing found. Scan again?":
-            QtGui.QMessageBox.critical(None,
-                                       'Settings | Network | Wireless',
-                                       'Please select an access point.',
-                                       QtGui.QMessageBox.Ok)
-            return
-
-        for key, apdict in self.network_all_data['scan_result'].iteritems():
-            if apdict['essid'] == unicode(self.cbox_net_wireless_ap.currentText()):
-                nidx = key
-                break
-        if self.cbox_net_conftype.currentIndex() == CBOX_NET_CONTYPE_INDEX_DHCP:
-            ip = "None"
-            mask = "None"
-            gw = "None"
-            dns = "None"
-        else:
-            ip = '.'.join((str(self.sbox_net_ip1.value()),
-                           str(self.sbox_net_ip2.value()),
-                           str(self.sbox_net_ip3.value()),
-                           str(self.sbox_net_ip4.value())))
-
-            mask = '.'.join((str(self.sbox_net_mask1.value()),
-                           str(self.sbox_net_mask2.value()),
-                           str(self.sbox_net_mask3.value()),
-                           str(self.sbox_net_mask4.value())))
-        
-            gw = '.'.join((str(self.sbox_net_gw1.value()),
-                           str(self.sbox_net_gw2.value()),
-                           str(self.sbox_net_gw3.value()),
-                           str(self.sbox_net_gw4.value())))
-
-            dns = '.'.join((str(self.sbox_net_dns1.value()),
-                           str(self.sbox_net_dns2.value()),
-                           str(self.sbox_net_dns3.value()),
-                           str(self.sbox_net_dns4.value())))
-        if self.label_net_wireless_enctype.text() == "WPA 1/2":
-            enct = "wpa"
-            key = self.ledit_net_wireless_key.displayText()
-        elif self.label_net_wireless_enctype.text() == "Open":
-            enct = "None"
-            key = "None"
-        elif self.label_net_wireless_enctype.text() == "Unsupported":
-            QtGui.QMessageBox.critical(None,
-                                       'Settings | Network | Wireless',
-                                       'Please select an access point with supported encryption.',
-                                       QtGui.QMessageBox.Ok)
-            return
-
-        search_domain = "None"
-        dns_domain = "None"
-        dns2 = "None"
-        dns3 = "None"
-        automatic = "True"
-
-        def cb_settings_network_wireless_apply(result):
-            self.show_please_wait(False)
-            if result != None and result.stderr == "":
-                QtGui.QMessageBox.information(None,
-                                              'Settings | Network | Wireless',
-                                              'Wireless connection configuration saved and activated.',
-                                              QtGui.QMessageBox.Ok)
-            else:
-                # TODO: Error popup for user?
-                QtGui.QMessageBox.critical(None,
-                                           'Settings | Network | Wireless',
-                                           'Error saving wireless connection configuration.',
-                                           QtGui.QMessageBox.Ok)
-
-        self.show_please_wait(True)
-
-        def cb_open_ms(config, red_file):
-            def cb_write_ms(red_file, result):
-                red_file.release()
-
-                if result is not None:
-                    self.network_button_save_enabled(True)
-                    # TODO: Error popup for user?
-                    print 'cb_open_ms cb_write_ms', result
-                    self.show_please_wait(False)
-                else:
-                    self.script_manager.execute_script('settings_network_wireless_apply',
-                                                       cb_settings_network_wireless_apply,
-                                                       [str(nidx),
-                                                        str(ip),
-                                                        str(mask),
-                                                        str(gw),
-                                                        str(dns),
-                                                        str(enct),
-                                                        str(key),
-                                                        str(search_domain),
-                                                        str(dns_domain),
-                                                        str(dns2),
-                                                        str(dns3),
-                                                        str(automatic)])
-
-            red_file.write_async(config_ms, lambda x: cb_write_ms(red_file, x), None)
-
-        def cb_open_ms_error(result):
-            self.brickd_button_save_enabled(True)
-            # TODO: Error popup for user?
-            print 'cb_open_ms cb_open_ms_error', result
-            self.show_please_wait(False)
-
-        async_call(self.manager_settings_conf_rfile.open,
-                   (MANAGER_SETTINGS_CONF_PATH,
-                   REDFile.FLAG_WRITE_ONLY |
-                   REDFile.FLAG_CREATE |
-                   REDFile.FLAG_NON_BLOCKING |
-                   REDFile.FLAG_TRUNCATE, 0500, 0, 0),
-                   lambda x: cb_open_ms(config_ms, x),
-                   cb_open_ms_error)
-        '''
-
     def slot_set_hostname_clicked(self):
-        def cb_settings_network_status(result):
-            if result != None and result.stderr == "":
-                self.network_all_data['status'] = json.loads(result.stdout)
-                if self.network_all_data['status'] is not None:
-                    self.ledit_net_hostname.setText\
-                        (self.network_all_data['status']['cstat_hostname'])
-            
-                    if self.network_all_data['status']['cstat_intf_active']['name'] is not None:
-                        self.label_net_gen_cstat_intf.setText(self.network_all_data['status']['cstat_intf_active']['name'])
-                        self.label_net_gen_cstat_ip.setText(self.network_all_data['status']['cstat_intf_active']['ip'])
-                        self.label_net_gen_cstat_mask.setText(self.network_all_data['status']['cstat_intf_active']['mask'])
-                    else:
-                        self.label_net_gen_cstat_intf.setText("No Address")
-                        self.label_net_gen_cstat_ip.setText("None")
-                        self.label_net_gen_cstat_mask.setText("None")
-            
-                    if self.network_all_data['status']['cstat_gateway'] is not None:
-                        self.label_net_gen_cstat_gateway.setText(self.network_all_data['status']['cstat_gateway'])
-                    else:
-                        self.label_net_gen_cstat_gateway.setText("None")
-                    
-                    if self.network_all_data['status']['cstat_dns'] is not None:
-                        self.label_net_gen_cstat_dns.setText(self.network_all_data['status']['cstat_dns'].strip())
-                    else:
-                        self.label_net_gen_cstat_dns.setText("None")
-                else:
-                    self.ledit_net_hostname.setText("None")
-                    self.label_net_gen_cstat_intf.setText("None")
-                    self.label_net_gen_cstat_ip.setText("None")
-                    self.label_net_gen_cstat_mask.setText("None")
-                    self.label_net_gen_cstat_gateway.setText("None")
-                    self.label_net_gen_cstat_dns.setText("None")
-                
-                QtGui.QMessageBox.information(None,
-                                              'Settings | Network',
-                                              'Hostname changed.',
-                                              QtGui.QMessageBox.Ok)
-            else:
-                QtGui.QMessageBox.critical(None,
-                                           'Settings | Network',
-                                           'Hostname change failed.',
-                                           QtGui.QMessageBox.Ok)
-
         def cb_settings_network_set_hostname(result):
             self.show_please_wait(False)
-            if result != None and result.stderr == "":
-                self.script_manager.execute_script('settings_network_status',
-                                                   cb_settings_network_status,
-                                                   [])
+            if not result.stderr and result.exit_code == 0:
+                self.slot_network_refresh_clicked()
+                QtGui.QMessageBox.information(None,
+                                             'Settings | Network',
+                                             'Hostname changed.',
+                                             QtGui.QMessageBox.Ok)
             else:
                 QtGui.QMessageBox.critical(None,
                                            'Settings | Network',
                                            'Hostname change failed.',
                                            QtGui.QMessageBox.Ok)
-        
+
         if self.ledit_net_hostname.displayText():
             try:
                 hostname_new = unicode(self.ledit_net_hostname.displayText())
@@ -1037,7 +909,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 def cb_write_ms(red_file, result):
                     def cb_settings_network_activate_intf(result):
                         if result != None and result.stderr == "" and result.exit_code == 0:
-                            self.show_please_wait(False)
                             self.slot_network_refresh_clicked()
                             QtGui.QMessageBox.information(None,
                                                           'Settings | Network',
@@ -1120,8 +991,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         def cb_settings_network_deactivate_intf(result):
             if result != None and result.stderr == "" and result.exit_code == 0:
-                self.slot_network_refresh_clicked
-                self.show_please_wait(False)
+                self.slot_network_refresh_clicked()
                 QtGui.QMessageBox.information(None,
                                               'Settings | Network',
                                               'Interface deactivated.',
@@ -1148,52 +1018,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                cb_settings_network_deactivate_intf,
                                                [iname, 'wired'])
 
-    def slot_network_button_wireless_scan_clicked(self):
-        def cb_settings_network_wireless_scan(result):
-            self.show_please_wait(False)
-            print result
-            if result != None and result.stderr == "":
-                self.network_all_data['scan_result'] = json.loads(result.stdout)
-                self.update_access_points()
-                QtGui.QMessageBox.information(None,
-                                              'Settings | Network | Wireless',
-                                              'Wireless scan finished.',
-                                              QtGui.QMessageBox.Ok)
-            else:
-                pass
-                # TODO: Error popup for user?
-
-        self.label_ap_none_associated.hide()
-        self.cbox_net_wireless_ap.clear()
-        self.cbox_net_wireless_ap.addItem("Scanning...")
-        self.label_net_wireless_channel.setText("None")
-        self.label_net_wireless_enctype.setText("None")
-        self.ledit_net_wireless_key.setText("")
-        self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
-        self.frame_static_ip_conf.hide()
-        self.sbox_net_ip1.setValue(0)
-        self.sbox_net_ip2.setValue(0)
-        self.sbox_net_ip3.setValue(0)
-        self.sbox_net_ip4.setValue(0)
-        self.sbox_net_mask1.setValue(0)
-        self.sbox_net_mask2.setValue(0)
-        self.sbox_net_mask3.setValue(0)
-        self.sbox_net_mask4.setValue(0)
-        self.sbox_net_gw1.setValue(0)
-        self.sbox_net_gw2.setValue(0)
-        self.sbox_net_gw3.setValue(0)
-        self.sbox_net_gw4.setValue(0)
-        self.sbox_net_dns1.setValue(0)
-        self.sbox_net_dns2.setValue(0)
-        self.sbox_net_dns3.setValue(0)
-        self.sbox_net_dns4.setValue(0)
-
-        self.show_please_wait(True)
-
-        self.script_manager.execute_script('settings_network_wireless_scan',
-                                           cb_settings_network_wireless_scan,
-                                           [])
-
     def slot_network_refresh_clicked(self):
         def network_refresh_tasks_done(refresh_all_ok):
             self.show_please_wait(False)
@@ -1205,7 +1029,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         def cb_settings_network_status(result):
             self.network_refresh_tasks_remaining -= 1
-
             if result.stdout and not result.stderr and result.exit_code == 0:
                 self.network_all_data['status'] = json.loads(result.stdout)
                 if self.network_refresh_tasks_remaining == 0:
@@ -1221,7 +1044,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         def cb_settings_network_get_interfaces(result):
             self.network_refresh_tasks_remaining -= 1
-
             if result.stdout and not result.stderr and result.exit_code == 0:
                 self.network_all_data['interfaces'] = json.loads(result.stdout)
                 if self.network_refresh_tasks_remaining == 0:
@@ -1237,7 +1059,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         def cb_settings_network_wireless_scan(result):
             self.network_refresh_tasks_remaining -= 1
-
             if result.stdout and not result.stderr and result.exit_code == 0:
                 self.network_all_data['scan_result'] = json.loads(result.stdout)
                 if self.network_refresh_tasks_remaining == 0:
@@ -1343,34 +1164,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                        'Error opening wired settings file.',
                                        QtGui.QMessageBox.Ok)
 
-        self.label_interface_none_active.hide()
-        self.cbox_net_intf.clear()
-        self.label_ap_none_associated.hide()
-        self.cbox_net_wireless_ap.clear()
-        self.cbox_net_wireless_ap.addItem("Scanning...")
-        self.label_net_wireless_channel.setText("None")
-        self.label_net_wireless_enctype.setText("None")
-        self.ledit_net_wireless_key.setText("")
-        self.frame_wireless_conf.hide()
-        self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
-        self.frame_static_ip_conf.hide()
-        self.sbox_net_ip1.setValue(0)
-        self.sbox_net_ip2.setValue(0)
-        self.sbox_net_ip3.setValue(0)
-        self.sbox_net_ip4.setValue(0)
-        self.sbox_net_mask1.setValue(0)
-        self.sbox_net_mask2.setValue(0)
-        self.sbox_net_mask3.setValue(0)
-        self.sbox_net_mask4.setValue(0)
-        self.sbox_net_gw1.setValue(0)
-        self.sbox_net_gw2.setValue(0)
-        self.sbox_net_gw3.setValue(0)
-        self.sbox_net_gw4.setValue(0)
-        self.sbox_net_dns1.setValue(0)
-        self.sbox_net_dns2.setValue(0)
-        self.sbox_net_dns3.setValue(0)
-        self.sbox_net_dns4.setValue(0)
-
         self.network_refresh_tasks_remaining = 6
 
         self.show_please_wait(True)
@@ -1402,8 +1195,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    cb_open_wired_settings,
                    cb_open_error_wired_settings)
 
-    def slot_network_wired_save_clicked(self):
-        pass
+    def slot_network_save_clicked(self):
+        print 'slot_network_save_clicked()'
+
+        #WIRED SAVE
         '''
         self.network_button_save_enabled(False)
 
@@ -1543,6 +1338,127 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    REDFile.FLAG_NON_BLOCKING |
                    REDFile.FLAG_TRUNCATE, 0500, 0, 0),
                    lambda x: cb_open_ms(config, x),
+                   cb_open_ms_error)
+        '''
+
+        #WIRELESS SAVE
+        '''
+        self.network_button_save_enabled(False)
+
+        self.network_all_data['manager_settings'].set('Settings', 'wired_interface', unicode("None"))
+        config_ms = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
+
+        if self.cbox_net_wireless_ap.currentText() == "Nothing found. Scan again?":
+            QtGui.QMessageBox.critical(None,
+                                       'Settings | Network | Wireless',
+                                       'Please select an access point.',
+                                       QtGui.QMessageBox.Ok)
+            return
+
+        for key, apdict in self.network_all_data['scan_result'].iteritems():
+            if apdict['essid'] == unicode(self.cbox_net_wireless_ap.currentText()):
+                nidx = key
+                break
+        if self.cbox_net_conftype.currentIndex() == CBOX_NET_CONTYPE_INDEX_DHCP:
+            ip = "None"
+            mask = "None"
+            gw = "None"
+            dns = "None"
+        else:
+            ip = '.'.join((str(self.sbox_net_ip1.value()),
+                           str(self.sbox_net_ip2.value()),
+                           str(self.sbox_net_ip3.value()),
+                           str(self.sbox_net_ip4.value())))
+
+            mask = '.'.join((str(self.sbox_net_mask1.value()),
+                           str(self.sbox_net_mask2.value()),
+                           str(self.sbox_net_mask3.value()),
+                           str(self.sbox_net_mask4.value())))
+        
+            gw = '.'.join((str(self.sbox_net_gw1.value()),
+                           str(self.sbox_net_gw2.value()),
+                           str(self.sbox_net_gw3.value()),
+                           str(self.sbox_net_gw4.value())))
+
+            dns = '.'.join((str(self.sbox_net_dns1.value()),
+                           str(self.sbox_net_dns2.value()),
+                           str(self.sbox_net_dns3.value()),
+                           str(self.sbox_net_dns4.value())))
+        if self.label_net_wireless_enctype.text() == "WPA 1/2":
+            enct = "wpa"
+            key = self.ledit_net_wireless_key.displayText()
+        elif self.label_net_wireless_enctype.text() == "Open":
+            enct = "None"
+            key = "None"
+        elif self.label_net_wireless_enctype.text() == "Unsupported":
+            QtGui.QMessageBox.critical(None,
+                                       'Settings | Network | Wireless',
+                                       'Please select an access point with supported encryption.',
+                                       QtGui.QMessageBox.Ok)
+            return
+
+        search_domain = "None"
+        dns_domain = "None"
+        dns2 = "None"
+        dns3 = "None"
+        automatic = "True"
+
+        def cb_settings_network_wireless_apply(result):
+            self.show_please_wait(False)
+            if result != None and result.stderr == "":
+                QtGui.QMessageBox.information(None,
+                                              'Settings | Network | Wireless',
+                                              'Wireless connection configuration saved and activated.',
+                                              QtGui.QMessageBox.Ok)
+            else:
+                # TODO: Error popup for user?
+                QtGui.QMessageBox.critical(None,
+                                           'Settings | Network | Wireless',
+                                           'Error saving wireless connection configuration.',
+                                           QtGui.QMessageBox.Ok)
+
+        self.show_please_wait(True)
+
+        def cb_open_ms(config, red_file):
+            def cb_write_ms(red_file, result):
+                red_file.release()
+
+                if result is not None:
+                    self.network_button_save_enabled(True)
+                    # TODO: Error popup for user?
+                    print 'cb_open_ms cb_write_ms', result
+                    self.show_please_wait(False)
+                else:
+                    self.script_manager.execute_script('settings_network_wireless_apply',
+                                                       cb_settings_network_wireless_apply,
+                                                       [str(nidx),
+                                                        str(ip),
+                                                        str(mask),
+                                                        str(gw),
+                                                        str(dns),
+                                                        str(enct),
+                                                        str(key),
+                                                        str(search_domain),
+                                                        str(dns_domain),
+                                                        str(dns2),
+                                                        str(dns3),
+                                                        str(automatic)])
+
+            red_file.write_async(config_ms, lambda x: cb_write_ms(red_file, x), None)
+
+        def cb_open_ms_error(result):
+            self.brickd_button_save_enabled(True)
+            # TODO: Error popup for user?
+            print 'cb_open_ms cb_open_ms_error', result
+            self.show_please_wait(False)
+
+        async_call(self.manager_settings_conf_rfile.open,
+                   (MANAGER_SETTINGS_CONF_PATH,
+                   REDFile.FLAG_WRITE_ONLY |
+                   REDFile.FLAG_CREATE |
+                   REDFile.FLAG_NON_BLOCKING |
+                   REDFile.FLAG_TRUNCATE, 0500, 0, 0),
+                   lambda x: cb_open_ms(config_ms, x),
                    cb_open_ms_error)
         '''
     def slot_brickd_save_clicked(self):

@@ -9,13 +9,13 @@ wlscan_cmd = "/usr/bin/wicd-cli --wireless -Sl"
 
 wlscan_ps = subprocess.Popen(wlscan_cmd, shell=True, stdout=subprocess.PIPE)
 wlscan_output = wlscan_ps.communicate()[0]
+if wlscan_ps.returncode:
+    exit(1)
 
-len(wlscan_output.splitlines()) > 1
+_lines = wlscan_output.splitlines()
 
-if wlscan_output != "" and len(wlscan_output.splitlines()) > 1:
+if wlscan_output != "" and len(_lines) > 0:
     return_dict = {}
-    _lines = wlscan_output.split('\n')
-    del _lines[0]
     for l in _lines:
         lsplitted = l.split('\t')
         if len(lsplitted) == 1:
@@ -29,6 +29,8 @@ if wlscan_output != "" and len(wlscan_output.splitlines()) > 1:
         netdetail_cmd = "/usr/bin/wicd-cli --wireless -n"+key+" -d"
         netdetail_ps = subprocess.Popen(netdetail_cmd, shell=True, stdout=subprocess.PIPE)
         netdetail_output = netdetail_ps.communicate()[0]
+        if netdetail_ps.returncode:
+            exit(1)
         lines = netdetail_output.split('\n')
         for l in lines:
             lsplitted = l.split(': ')

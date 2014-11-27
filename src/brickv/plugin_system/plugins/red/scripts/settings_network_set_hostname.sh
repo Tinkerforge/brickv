@@ -2,7 +2,7 @@
 
 if [ "$#" -lt 2 ]
 then
-    exit 0
+    exit 1
 else
     old=$1
     new=$2

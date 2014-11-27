@@ -27,6 +27,8 @@ if len(lwireless) > 0:
             cmd_get_link = "/sbin/iw dev "+ wl_intf +" link | /usr/bin/head -n2"
             ps_get_link = subprocess.Popen(cmd_get_link, shell=True, stdout=subprocess.PIPE)
             cmd_output = ps_get_link.communicate()[0]
+            if ps_get_link.returncode:
+                exit (1)
             if cmd_output == "Not connected.\n" or cmd_output == "":
                 wl_links_dict[wl_intf] =  {'name': wl_intf,
                                            'status': False,
