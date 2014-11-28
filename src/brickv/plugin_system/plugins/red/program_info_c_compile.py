@@ -96,7 +96,8 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
             make_options.append(target)
 
         self.script_data = self.script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options,
-                                                              max_length=1024*1024, redirect_stderr_to_stdout=True)
+                                                              max_length=1024*1024, redirect_stderr_to_stdout=True,
+                                                              execute_as_user=True)
 
     def cancel_make_execution(self):
         if self.script_data == None:

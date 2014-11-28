@@ -96,7 +96,8 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
             make_options.append(target)
 
         self.script_data = self.script_manager.execute_script('fpcmake_helper', cb_fpcmake_helper, [working_directory] + make_options,
-                                                              max_length=1024*1024, redirect_stderr_to_stdout=True)
+                                                              max_length=1024*1024, redirect_stderr_to_stdout=True,
+                                                              execute_as_user=True)
 
     def cancel_fpcmake_execution(self):
         if self.script_data == None:

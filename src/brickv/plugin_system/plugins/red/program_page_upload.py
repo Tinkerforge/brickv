@@ -677,7 +677,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         working_directory = posixpath.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
         self.wizard().script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options,
-                                                    max_length=1024*1024, redirect_stderr_to_stdout=True)
+                                                    max_length=1024*1024, redirect_stderr_to_stdout=True,
+                                                    execute_as_user=True)
 
     def compile_fpcmake(self):
         def cb_fpcmake_helper(result):
@@ -699,4 +700,5 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         working_directory = posixpath.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
 
         self.wizard().script_manager.execute_script('fpcmake_helper', cb_fpcmake_helper, [working_directory] + make_options,
-                                                    max_length=1024*1024, redirect_stderr_to_stdout=True)
+                                                    max_length=1024*1024, redirect_stderr_to_stdout=True,
+                                                    execute_as_user=True)
