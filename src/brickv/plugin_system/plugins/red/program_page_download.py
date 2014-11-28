@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWizard, QApplication, QPixmap
+from PyQt4.QtGui import QWizard, QApplication, QPixmap, QTextCursor
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
@@ -82,6 +82,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.edit_new_name_checker = MandatoryLineEditChecker(self, self.label_new_name, self.edit_new_name)
 
         self.log(u'Going to download {0} to {1}'.format(self.download_kind, self.download_directory))
+        self.edit_log.moveCursor(QTextCursor.StartOfLine)
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
