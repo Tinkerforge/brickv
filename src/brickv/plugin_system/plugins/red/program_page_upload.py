@@ -353,10 +353,22 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if replace_existing:
             flags |= REDFile.FLAG_REPLACE
 
+        # FIXME: preserving the executable bit this way only works well on
+        #        Linux and Mac OS X hosts. on Windows Python deduces this from
+        #        the file extension. this does not work if the executable is
+        #        cross-compiled and doesn't have the typsical Windows file
+        #        extensions for executables
         if (self.source_stat.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)) != 0:
             permissions = 0755
         else:
             permissions = 0644
+
+        # FIXME: workaround permission problem were this really matters (C/C++
+        #        and Delphi/Lazarus with cross-compiled executables)
+        if not self.edit_mode and \
+           self.language_api_name in ['c', 'delphi'] and \
+           posixpath.normpath(self.command[0]) == posixpath.normpath(self.upload.target):
+            permissions = 0755
 
         try:
             self.target_file = REDFile(self.wizard().session).open(self.target_path, flags,

@@ -252,11 +252,6 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
     def continue_download_file(self, replace_existing=False):
         self.progress_file.setVisible(True)
 
-        """if (self.source_stat.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)) != 0:
-            permissions = 0755
-        else:
-            permissions = 0644"""
-
         if os.path.exists(self.target_path):
             if replace_existing:
                 try:
@@ -269,7 +264,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
                 return
 
         try:
-            self.target_file = open(self.target_path, 'wb') # FIXME: need to set permissions
+            self.target_file = open(self.target_path, 'wb')
         except Exception as e:
             self.download_error('...error opening target file {0}: {1}', self.target_path, e)
             return
@@ -429,6 +424,13 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
 
         self.target_file.close()
         self.target_file = None
+
+        # FIXME: redapid 2.0.0-rc1 has a bug in the permissions translation.
+        #        don't restore permissions until a fixed redapid is released
+        #try:
+        #    os.chmod(self.target_path, self.source_file.permissions)
+        #except:
+        #    pass
 
         self.source_file.release()
         self.source_file = None
