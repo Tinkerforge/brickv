@@ -1446,9 +1446,12 @@ class REDProgram(REDObject):
         self._scheduler_timestamp = timestamp
         self._scheduler_message   = message
 
+        if self._scheduler_message == None:
+            return
+
         scheduler_state_changed_callback = self.scheduler_state_changed_callback
 
-        if scheduler_state_changed_callback is not None:
+        if scheduler_state_changed_callback != None:
             scheduler_state_changed_callback(self)
 
     def _cb_process_spawned_emit(self, program_id):
@@ -1477,13 +1480,15 @@ class REDProgram(REDObject):
         self._last_spawned_process   = process
         self._last_spawned_timestamp = timestamp
 
+        if self._last_spawned_process == None:
+            return
+
         process_spawned_callback = self.process_spawned_callback
 
-        if process_spawned_callback is not None:
+        if process_spawned_callback != None:
             process_spawned_callback(self)
 
-        if self._last_spawned_process != None and \
-           self._last_spawned_process.state != REDProcess.STATE_RUNNING:
+        if self._last_spawned_process.state != REDProcess.STATE_RUNNING:
             try:
                 self._last_spawned_process._fake_state_change_callback()
             except:
