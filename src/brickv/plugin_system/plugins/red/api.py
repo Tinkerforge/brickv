@@ -114,7 +114,7 @@ class REDError(Exception):
 
 class MethodRef:
     def __init__(self, method):
-        self.target_ref = weakref.ref(method.__self__)
+        self.target_ref   = weakref.ref(method.__self__)
         self.function_ref = weakref.ref(method.__func__)
 
     def get(self):
@@ -125,13 +125,13 @@ class REDBrick(BrickRED):
     def __init__(self, *args):
         BrickRED.__init__(self, *args)
 
-        self._active_callbacks = {}
+        self._active_callbacks      = {}
         self._active_callbacks_lock = threading.Lock()
-        self._next_cookie = 1
+        self._next_cookie           = 1
 
     def _dispatch_callback(self, callback_id, *args, **kwargs):
         active_callbacks = self._active_callbacks[callback_id]
-        dead_callbacks = []
+        dead_callbacks   = []
 
         for cookie in list(active_callbacks.keys()):
             try:
@@ -155,7 +155,7 @@ class REDBrick(BrickRED):
 
     def add_callback(self, callback_id, callback_function):
         with self._active_callbacks_lock:
-            cookie = self._next_cookie
+            cookie             = self._next_cookie
             self._next_cookie += 1
 
             if callback_id in self._active_callbacks:
@@ -183,19 +183,15 @@ class REDBrick(BrickRED):
 
 
 class REDSession(QtCore.QObject):
-    KEEP_ALIVE_INTERVAL = 10 # seconds
-    LIFETIME = int(KEEP_ALIVE_INTERVAL * 3.5)
+    KEEP_ALIVE_INTERVAL = 5 # seconds
+    LIFETIME            = 60 # seconds
 
     def __init__(self, brick):
         QtCore.QObject.__init__(self)
 
-        self._brick = brick
-        self._session_id = None
-
-        # FIXME: use a thread here to avoid depending on the main UI thread
-        # which might be blocked for a while by something
-        self._keep_alive_timer = QtCore.QTimer(self)
-        self._keep_alive_timer.timeout.connect(self._keep_session_alive, QtCore.Qt.QueuedConnection)
+        self._brick            = brick
+        self._session_id       = None
+        self._keep_alive_timer = None
 
     def __del__(self):
         self.expire()
@@ -211,6 +207,10 @@ class REDSession(QtCore.QObject):
             print 'REDSession._keep_session_alive: keep_session_alive failed'
             traceback.print_exc()
 
+        self._keep_alive_timer = threading.Timer(REDSession.KEEP_ALIVE_INTERVAL,
+                                                 self._keep_session_alive)
+        self._keep_alive_timer.start()
+
     def create(self):
         self.expire()
 
@@ -221,7 +221,9 @@ class REDSession(QtCore.QObject):
 
         self._session_id = session_id
 
-        self._keep_alive_timer.start(REDSession.KEEP_ALIVE_INTERVAL * 1000)
+        self._keep_alive_timer = threading.Timer(REDSession.KEEP_ALIVE_INTERVAL,
+                                                 self._keep_session_alive)
+        self._keep_alive_timer.start()
 
         return self
 
@@ -231,12 +233,13 @@ class REDSession(QtCore.QObject):
             # expiring an unattached session is allowed and does nothing
             return
 
-        self._keep_alive_timer.stop()
+        if self._keep_alive_timer != None:
+            self._keep_alive_timer.cancel()
 
         # ensure to remove references to REDObject via their added callback methods
         self._brick.remove_all_callbacks()
 
-        session_id = self._session_id
+        session_id       = self._session_id
         self._session_id = None
 
         try:
