@@ -34,6 +34,7 @@ import posixpath
 import stat
 import re
 import sys
+import errno
 
 class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
     CONFLICT_RESOLUTION_REPLACE = 1
@@ -236,6 +237,10 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
             if target_directory not in self.created_directories:
                 try:
                     os.makedirs(target_directory, 0755)
+                except OSError as e:
+                    if e.errno != errno.EEXIST:
+                        self.download_error('...error creating target directory {0}: {1}', target_directory, e)
+                        return
                 except Exception as e:
                     self.download_error('...error creating target directory {0}: {1}', target_directory, e)
                     return
