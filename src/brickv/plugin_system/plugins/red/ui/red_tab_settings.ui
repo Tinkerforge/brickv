@@ -88,9 +88,9 @@
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>-151</y>
+               <y>-95</y>
                <width>674</width>
-               <height>677</height>
+               <height>631</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -132,7 +132,7 @@
                   <layout class="QVBoxLayout" name="verticalLayout_7">
                    <item>
                     <layout class="QGridLayout" name="gridLayout_8">
-                     <item row="6" column="0">
+                     <item row="5" column="0">
                       <spacer name="verticalSpacer_5">
                        <property name="orientation">
                         <enum>Qt::Vertical</enum>
@@ -145,48 +145,14 @@
                        </property>
                       </spacer>
                      </item>
-                     <item row="2" column="1">
-                      <widget class="QComboBox" name="cbox_net_intf">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                         <horstretch>1</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="2" column="2">
-                      <widget class="QPushButton" name="pbutton_net_activate_intf">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="text">
-                        <string>Activate</string>
-                       </property>
-                      </widget>
-                     </item>
                      <item row="0" column="0">
-                      <widget class="QLabel" name="label_3">
-                       <property name="text">
-                        <string>Hostname:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="2" column="0">
                       <widget class="QLabel" name="label_31">
                        <property name="text">
                         <string>Interfaces:</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="2" column="3">
-                      <widget class="QPushButton" name="pbutton_net_deactivate_intf">
-                       <property name="text">
-                        <string>Deactivate</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="5" column="0" colspan="4">
+                     <item row="3" column="0" colspan="3">
                       <widget class="QFrame" name="frame_static_ip_conf">
                        <layout class="QVBoxLayout" name="verticalLayout_16">
                         <property name="spacing">
@@ -368,7 +334,7 @@
                        </layout>
                       </widget>
                      </item>
-                     <item row="3" column="0" colspan="4">
+                     <item row="1" column="0" colspan="3">
                       <widget class="QFrame" name="frame_wireless_conf">
                        <layout class="QGridLayout" name="gridLayout">
                         <property name="margin">
@@ -376,24 +342,7 @@
                         </property>
                         <item row="0" column="0">
                          <layout class="QGridLayout" name="gridLayout_11">
-                          <item row="3" column="1" colspan="2">
-                           <widget class="QLabel" name="label_net_wireless_enctype">
-                            <property name="text">
-                             <string>None</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item row="1" column="1">
-                           <widget class="QComboBox" name="cbox_net_wireless_ap"/>
-                          </item>
-                          <item row="4" column="1">
-                           <widget class="QLineEdit" name="ledit_net_wireless_key">
-                            <property name="enabled">
-                             <bool>false</bool>
-                            </property>
-                           </widget>
-                          </item>
-                          <item row="4" column="2">
+                          <item row="3" column="2">
                            <widget class="QCheckBox" name="cbox_net_wireless_key_show">
                             <property name="text">
                              <string>Show Characters</string>
@@ -401,20 +350,37 @@
                            </widget>
                           </item>
                           <item row="2" column="1" colspan="2">
-                           <widget class="QLabel" name="label_net_wireless_channel">
+                           <widget class="QLabel" name="label_net_wireless_enctype">
                             <property name="text">
-                             <string>None</string>
+                             <string/>
                             </property>
                            </widget>
                           </item>
-                          <item row="1" column="0">
+                          <item row="0" column="1">
+                           <widget class="QComboBox" name="cbox_net_wireless_ap"/>
+                          </item>
+                          <item row="3" column="1">
+                           <widget class="QLineEdit" name="ledit_net_wireless_key">
+                            <property name="enabled">
+                             <bool>false</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="1" column="1" colspan="2">
+                           <widget class="QLabel" name="label_net_wireless_channel">
+                            <property name="text">
+                             <string/>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="0" column="0">
                            <widget class="QLabel" name="label_27">
                             <property name="text">
                              <string>Access Points:</string>
                             </property>
                            </widget>
                           </item>
-                          <item row="5" column="0">
+                          <item row="4" column="0">
                            <spacer name="verticalSpacer">
                             <property name="orientation">
                              <enum>Qt::Vertical</enum>
@@ -427,38 +393,31 @@
                             </property>
                            </spacer>
                           </item>
-                          <item row="4" column="0">
+                          <item row="3" column="0">
                            <widget class="QLabel" name="label_29">
                             <property name="text">
                              <string>Secret Key:</string>
                             </property>
                            </widget>
                           </item>
-                          <item row="2" column="0">
+                          <item row="1" column="0">
                            <widget class="QLabel" name="label_38">
                             <property name="text">
                              <string>Channel:</string>
                             </property>
                            </widget>
                           </item>
-                          <item row="1" column="2">
+                          <item row="0" column="2">
                            <widget class="QPushButton" name="pbutton_net_wireless_scan">
                             <property name="text">
                              <string>Scan</string>
                             </property>
                            </widget>
                           </item>
-                          <item row="3" column="0">
+                          <item row="2" column="0">
                            <widget class="QLabel" name="label_28">
                             <property name="text">
                              <string>Encryption:</string>
-                            </property>
-                           </widget>
-                          </item>
-                          <item row="0" column="1" colspan="2">
-                           <widget class="QLabel" name="label_ap_none_associated">
-                            <property name="text">
-                             <string>Select an accespoint from the list below</string>
                             </property>
                            </widget>
                           </item>
@@ -467,7 +426,7 @@
                        </layout>
                       </widget>
                      </item>
-                     <item row="4" column="0" colspan="4">
+                     <item row="2" column="0" colspan="3">
                       <widget class="QFrame" name="frame_net_conftype">
                        <property name="frameShape">
                         <enum>QFrame::NoFrame</enum>
@@ -482,7 +441,18 @@
                         <item>
                          <layout class="QGridLayout" name="gridLayout_13">
                           <item row="0" column="1">
-                           <widget class="QComboBox" name="cbox_net_conftype"/>
+                           <widget class="QComboBox" name="cbox_net_conftype">
+                            <item>
+                             <property name="text">
+                              <string>DHCP</string>
+                             </property>
+                            </item>
+                            <item>
+                             <property name="text">
+                              <string>Static</string>
+                             </property>
+                            </item>
+                           </widget>
                           </item>
                           <item row="0" column="0">
                            <widget class="QLabel" name="label_22">
@@ -509,15 +479,21 @@
                        </layout>
                       </widget>
                      </item>
-                     <item row="1" column="1" colspan="3">
-                      <widget class="QLabel" name="label_interface_none_active">
-                       <property name="text">
-                        <string>No active interfaces, select one from the list below</string>
+                     <item row="0" column="1" colspan="2">
+                      <widget class="QComboBox" name="cbox_net_intf">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                         <horstretch>1</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
                        </property>
                       </widget>
                      </item>
-                     <item row="0" column="1">
+                     <item row="4" column="1" colspan="2">
                       <widget class="QLineEdit" name="ledit_net_hostname">
+                       <property name="enabled">
+                        <bool>true</bool>
+                       </property>
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                          <horstretch>1</horstretch>
@@ -526,10 +502,10 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="0" column="2" colspan="2">
-                      <widget class="QPushButton" name="pbutton_set_hostname">
+                     <item row="4" column="0">
+                      <widget class="QLabel" name="label_3">
                        <property name="text">
-                        <string>Set</string>
+                        <string>Hostname:</string>
                        </property>
                       </widget>
                      </item>
@@ -569,7 +545,7 @@
                      <item row="1" column="3">
                       <widget class="QLabel" name="label_net_gen_cstat_ip">
                        <property name="text">
-                        <string>None</string>
+                        <string/>
                        </property>
                        <property name="textInteractionFlags">
                         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -592,7 +568,7 @@
                         </sizepolicy>
                        </property>
                        <property name="text">
-                        <string>None</string>
+                        <string/>
                        </property>
                        <property name="textInteractionFlags">
                         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -615,7 +591,7 @@
                      <item row="2" column="3">
                       <widget class="QLabel" name="label_net_gen_cstat_mask">
                        <property name="text">
-                        <string>None</string>
+                        <string/>
                        </property>
                        <property name="textInteractionFlags">
                         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -625,7 +601,7 @@
                      <item row="4" column="3">
                       <widget class="QLabel" name="label_net_gen_cstat_dns">
                        <property name="text">
-                        <string>None</string>
+                        <string/>
                        </property>
                        <property name="textInteractionFlags">
                         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
@@ -635,7 +611,7 @@
                      <item row="3" column="3">
                       <widget class="QLabel" name="label_net_gen_cstat_gateway">
                        <property name="text">
-                        <string>None</string>
+                        <string/>
                        </property>
                        <property name="textInteractionFlags">
                         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
