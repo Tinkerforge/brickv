@@ -542,6 +542,7 @@ class REDFileBase(REDObject):
             self.data    = data
             self.length  = length
             self.written = 0
+            self.abort   = False
 
             if result_callback != None:
                 self._qtcb_result.connect(result_callback, QtCore.Qt.QueuedConnection)
@@ -668,6 +669,10 @@ class REDFileBase(REDObject):
         self._next_write_async_burst()
 
     def _next_write_async_burst(self):
+        if self._write_async_data.abort:
+            self._report_write_async_result(REDError('Could not write to file object {0}'.format(self.object_id), REDError.E_OPERATION_ABORTED))
+            return
+
         unchecked_writes = 0
 
         # do at most ASYNC_BURST_CHUNKS - 1 unchecked writes before the final async write per burst
@@ -867,6 +872,13 @@ class REDFileBase(REDObject):
 
         if self._read_async_data != None:
             self._session._brick.abort_async_file_read(self.object_id)
+
+    def abort_async_write(self):
+        if self.object_id is None:
+            raise RuntimeError('Cannot abort asynchronous read from unattached file object')
+
+        if self._write_async_data != None:
+            self._write_async_data.abort = True
 
     def set_events(self, events):
         if self.object_id is None:

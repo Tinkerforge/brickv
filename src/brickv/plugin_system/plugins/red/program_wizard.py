@@ -38,9 +38,6 @@ class ProgramWizard(QWizard):
         self.script_manager      = context.script_manager
         self.image_version_ref   = context.image_version_ref
         self.executable_versions = context.executable_versions
-        self.canceled            = False
-
-        self.rejected.connect(lambda: self.set_canceled(True))
 
     # overrides QWizard.sizeHint
     def sizeHint(self):
@@ -57,6 +54,3 @@ class ProgramWizard(QWizard):
     # makes QWizard.field virtual
     def get_field(self, name):
         return QWizard.field(self, name)
-
-    def set_canceled(self, canceled):
-        self.canceled = canceled

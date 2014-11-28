@@ -63,6 +63,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.source_display_size             = None
         self.last_upload_size                = None
         self.replace_help_template           = unicode(self.label_replace_help.text())
+        self.canceled                        = False
 
         self.setTitle(title_prefix + 'Upload')
 
@@ -84,6 +85,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.set_formatted_sub_title(u'Upload the {language} program [{name}].')
+
+        self.wizard().rejected.connect(lambda: self.cancel_upload())
 
         # if a program exists then this page is used in an edit wizard
         if self.wizard().program != None:
@@ -118,6 +121,9 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.button_rename.setVisible(self.conflict_resolution_in_progress and rename_new_file)
         self.button_skip.setVisible(self.conflict_resolution_in_progress)
         self.line2.setVisible(self.conflict_resolution_in_progress)
+
+    def cancel_upload(self):
+        self.canceled = True
 
     def check_new_name(self, name):
         name   = unicode(name) # convert QString to unicode
@@ -292,9 +298,12 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.progress_file.setRange(0, len(self.remaining_uploads))
 
-        self.upload_next_file() # FIXME: abort upload once self.wizard().canceled is True
+        self.upload_next_file()
 
     def upload_next_file(self):
+        if self.canceled:
+            return
+
         if len(self.remaining_uploads) == 0:
             self.upload_files_done()
             return
@@ -458,6 +467,14 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.upload_next_file()
 
     def upload_write_async_cb_status(self, upload_size, upload_total):
+        if self.canceled:
+            try:
+                self.target_file.abort_async_write()
+            except:
+                pass
+
+            return
+
         uploaded = self.progress_file.value() + upload_size - self.last_upload_size
 
         self.progress_file.setValue(uploaded)
@@ -466,12 +483,18 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.last_upload_size = upload_size
 
     def upload_write_async_cb_result(self, error):
+        if self.canceled:
+            return
+
         if error == None:
             self.upload_write_async()
         else:
             self.upload_error('...error writing target file {0}: {1}', self.target_path, error)
 
     def upload_write_async(self):
+        if self.canceled:
+            return
+
         try:
             data = self.source_file.read(1000*1000*10) # Read 10mb at a time
         except Exception as e:
@@ -490,6 +513,9 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             self.upload_error('...error writing target file {0}: {1}', self.target_path, e)
 
     def upload_write_async_done(self):
+        if self.canceled:
+            return
+
         self.log('...done')
         self.progress_file.setValue(self.progress_file.maximum())
 

@@ -32,7 +32,6 @@ from brickv.utils import get_program_path
 import os
 import posixpath
 import stat
-import time
 import re
 import sys
 
@@ -63,6 +62,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.remaining_source_size           = None
         self.last_download_size              = None
         self.replace_help_template           = unicode(self.label_replace_help.text())
+        self.canceled                        = False
 
         self.setTitle(title_prefix + 'Download')
 
@@ -81,11 +81,13 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
 
         self.edit_new_name_checker = MandatoryLineEditChecker(self, self.label_new_name, self.edit_new_name)
 
-        self.log(u'Downloading to {0}'.format(self.download_directory))
+        self.log(u'Going to download {0} to {1}'.format(self.download_kind, self.download_directory))
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
         self.set_formatted_sub_title(u'Download {0} of the {{language}} program [{{name}}].'.format(self.download_kind))
+
+        self.wizard().rejected.connect(lambda: self.cancel_download())
 
         self.update_ui_state()
 
@@ -115,6 +117,9 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.button_rename.setVisible(self.conflict_resolution_in_progress and rename_new_file)
         self.button_skip.setVisible(self.conflict_resolution_in_progress)
         self.line2.setVisible(self.conflict_resolution_in_progress)
+
+    def cancel_download(self):
+        self.canceled = True
 
     def check_new_name(self, name):
         name   = unicode(name) # convert QString to unicode
@@ -185,9 +190,12 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
 
         self.progress_file.setRange(0, len(self.remaining_downloads))
 
-        self.download_next_file() # FIXME: abort download once self.wizard().canceled is True
+        self.download_next_file()
 
     def download_next_file(self):
+        if self.canceled:
+            return
+
         if len(self.remaining_downloads) == 0:
             self.download_files_done()
             return
@@ -356,6 +364,14 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.download_next_file()
 
     def download_read_async_cb_status(self, download_size, download_total):
+        if self.canceled:
+            try:
+                self.source_file.abort_async_read()
+            except:
+                pass
+
+            return
+
         downloaded = self.progress_file.value() + download_size - self.last_download_size
 
         self.progress_file.setValue(downloaded)
@@ -364,6 +380,9 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.last_download_size = download_size
 
     def download_read_async_cb_result(self, result):
+        if self.canceled:
+            return
+
         if result.error != None:
             self.download_error('...error reading source file {0}: {1}', self.source_path, result.error)
             return
@@ -382,6 +401,9 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
             self.download_read_async_done()
 
     def download_read_async(self):
+        if self.canceled:
+            return
+
         self.last_download_size = 0
 
         try:
@@ -393,8 +415,11 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
             return
 
     def download_read_async_done(self):
+        if self.canceled:
+            return
+
         self.log('...done')
-        #self.progress_file.setValue(self.progress_file.maximum())
+        self.progress_file.setValue(self.progress_file.maximum())
 
         self.target_file.close()
         self.target_file = None
