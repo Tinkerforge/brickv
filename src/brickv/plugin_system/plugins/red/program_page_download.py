@@ -165,7 +165,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
             string_args.append(Qt.escape(unicode(arg)))
 
         if len(string_args) > 0:
-            message = message.format(*tuple(string_args))
+            message = unicode(message).format(*tuple(string_args))
 
         self.log(message, bold=True)
 
