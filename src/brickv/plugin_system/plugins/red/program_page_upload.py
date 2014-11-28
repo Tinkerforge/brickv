@@ -176,7 +176,10 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             defined = True
 
         if not self.edit_mode and defined:
-            pass # FIXME: purge program?
+            try:
+                self.program.purge() # FIXME: async_call
+            except REDError:
+                pass # FIXME: report this error?
 
     def get_total_step_count(self):
         count = 0
