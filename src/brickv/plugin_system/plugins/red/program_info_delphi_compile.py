@@ -109,4 +109,5 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
         try:
             self.script_manager.abort_script(self.script_data)
         except:
+            print 'ProgramInfoDelphiCompile.cancel_fpcmake_execution: abort_script failed'
             traceback.print_exc()

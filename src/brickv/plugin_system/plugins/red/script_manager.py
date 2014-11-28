@@ -118,6 +118,7 @@ class ScriptManager:
             self._init_script(sd)
             return sd
         except:
+            print 'ScriptManager.execute_script: _init_script failed'
             traceback.print_exc()
 
             if sd.result_callback != None:
@@ -142,6 +143,7 @@ class ScriptManager:
             try:
                 sd.process.kill(REDProcess.SIGNAL_KILL)
             except:
+                print 'ScriptManager.abort_script: sd.process.kill failed'
                 traceback.print_exc()
 
     def _init_script(self, sd):
@@ -167,7 +169,12 @@ class ScriptManager:
                              REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0755, 0, 0)
             script.file.write_async(script.script, lambda error: self._init_script_async_write_done(error, sd))
         except:
-            self.scripts[sd.script_name].copy_lock.release()
+            try:
+                self.scripts[sd.script_name].copy_lock.release()
+            except:
+                pass
+
+            print 'ScriptManager._init_script_async: copy_lock.release failed'
             traceback.print_exc()
             raise
 
@@ -201,6 +208,7 @@ class ScriptManager:
             if not sd.redirect_stderr_to_stdout:
                 sd.stderr.release()
         except:
+            print 'ScriptManager._release_script_data: release failed'
             traceback.print_exc()
 
         sd.process = None
@@ -221,7 +229,9 @@ class ScriptManager:
             else:
                 sd.stderr = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, sd.max_length)
         except:
+            print 'ScriptManager._execute_after_init: REDPipe.create failed'
             traceback.print_exc()
+
             ScriptManager._call(self.scripts[sd.script_name], sd, None)
             script_data_set.remove(sd)
             return
@@ -295,11 +305,13 @@ class ScriptManager:
         try:
             sd.stdout.set_events(REDFile.EVENT_READABLE)
         except:
+            print 'ScriptManager._execute_after_init: sd.stdout.set_events failed'
             traceback.print_exc() # ignore error
 
         try:
             sd.stderr.set_events(REDFile.EVENT_READABLE)
         except:
+            print 'ScriptManager._execute_after_init: sd.stderr.set_events failed'
             traceback.print_exc() # ignore error
         """
 
@@ -318,7 +330,9 @@ class ScriptManager:
             sd.process.spawn(posixpath.join(SCRIPT_FOLDER, sd.script_name + self.scripts[sd.script_name].file_ending),
                              sd.params, env, '/', uid, gid, self.devnull, sd.stdout, sd.stderr)
         except:
+            print 'ScriptManager._execute_after_init: sd.process.spawn failed'
             traceback.print_exc()
+
             self._release_script_data(sd)
             ScriptManager._call(self.scripts[sd.script_name], sd, None)
             script_data_set.remove(sd)

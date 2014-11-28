@@ -143,6 +143,7 @@ class REDBrick(BrickRED):
                 try:
                     callback_function(callback_target, *args, **kwargs)
                 except:
+                    print 'REDBrick._dispatch_callback: callback_function failed'
                     traceback.print_exc()
             else:
                 dead_callbacks.append(cookie)
@@ -207,6 +208,7 @@ class REDSession(QtCore.QObject):
             error_code = self._brick.keep_session_alive(self._session_id, REDSession.LIFETIME)
         except:
             # FIXME: error handling
+            print 'REDSession._keep_session_alive: keep_session_alive failed'
             traceback.print_exc()
 
     def create(self):
@@ -241,6 +243,7 @@ class REDSession(QtCore.QObject):
             self._brick.expire_session_unchecked(session_id)
         except:
             # ignoring IPConnection-level error
+            print 'REDSession.expire: expire_session_unchecked failed'
             traceback.print_exc()
 
     @property
@@ -256,6 +259,7 @@ def _attach_or_release(session, object_class, object_id, extra_object_ids_to_rel
             session._brick.release_object_unchecked(object_id, session._session_id)
         except:
             # ignoring IPConnection-level error
+            print '_attach_or_release: first release_object_unchecked failed'
             traceback.print_exc()
 
         for extra_object_id in extra_object_ids_to_release_on_error:
@@ -263,6 +267,7 @@ def _attach_or_release(session, object_class, object_id, extra_object_ids_to_rel
                 session._brick.release_object_unchecked(extra_object_id, session._session_id)
             except:
                 # ignoring IPConnection-level error
+                print '_attach_or_release: second release_object_unchecked failed'
                 traceback.print_exc()
 
         raise # just re-raise the original exception
@@ -287,6 +292,7 @@ class REDObjectReleaser:
                 self._session._brick.release_object_unchecked(self._object_id, self._session._session_id)
             except:
                 # ignoring IPConnection-level error
+                print 'REDObjectReleaser.release: release_object_unchecked failed'
                 traceback.print_exc()
 
 
@@ -367,6 +373,7 @@ class REDObject(QtCore.QObject):
                 self._session._brick.release_object_unchecked(object_id, self._session._session_id)
             except:
                 # ignoring IPConnection-level error
+                print 'REDObject.release: release_object_unchecked failed'
                 traceback.print_exc()
 
     @property
@@ -992,6 +999,7 @@ class REDFileOrPipeAttacher(REDObject):
                 self._session._brick.release_object_unchecked(name_string_id, self._session._session_id)
             except:
                 # ignoring IPConnection-level error
+                print 'REDFileOrPipeAttacher.attach: release_object_unchecked failed'
                 traceback.print_exc()
 
             obj = _attach_or_release(self._session, REDFile, self.object_id)
@@ -1425,6 +1433,8 @@ class REDProgram(REDObject):
             message = _attach_or_release(self._session, REDString, message_string_id)
         except:
             message = None
+
+            print 'REDProgram._cb_scheduler_state_changed: _attach_or_release failed'
             traceback.print_exc() # FIXME: error handling
 
         self._scheduler_state     = state
@@ -1455,6 +1465,8 @@ class REDProgram(REDObject):
             process = _attach_or_release(self._session, REDProcess, process_id)
         except:
             process = None
+
+            print 'REDProgram._cb_process_spawned: _attach_or_release failed'
             traceback.print_exc() # FIXME: error handling
 
         self._last_spawned_process   = process
@@ -1470,6 +1482,7 @@ class REDProgram(REDObject):
             try:
                 self._last_spawned_process._fake_state_change_callback()
             except:
+                print 'REDProgram._cb_process_spawned: _fake_state_change_callback failed'
                 traceback.print_exc() # FIXME: error handling
 
     def update(self):

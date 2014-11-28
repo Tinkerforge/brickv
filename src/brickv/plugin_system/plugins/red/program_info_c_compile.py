@@ -109,4 +109,5 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
         try:
             self.script_manager.abort_script(self.script_data)
         except:
+            print 'ProgramInfoCCompile.cancel_make_execution: abort_script failed'
             traceback.print_exc()
