@@ -83,7 +83,9 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         if self.image_version_ref[0] == '<unknown>':
             # FIXME: this is should actually be sync to ensure that the image version is known before it'll be used
             def read_image_version():
-                self.image_version_ref[0] = REDFile(self.session).open('/etc/tf_image_version', REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0).read(256)
+                self.image_version_ref[0] = REDFile(self.session).open('/etc/tf_image_version',
+                                                                       REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING,
+                                                                       0, 0, 0).read(256)
 
             async_call(read_image_version, None, None, None)
 
@@ -203,6 +205,14 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
     def show_new_program_wizard(self):
         self.button_new.setEnabled(False)
 
+        if self.stacked_container.count() > 1:
+            current_widget = self.stacked_container.currentWidget()
+        else:
+            current_widget = None
+
+        if current_widget != None:
+            current_widget.set_program_callbacks_enabled(False)
+
         identifiers = []
 
         for i in range(self.list_programs.count()):
@@ -218,6 +228,9 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
 
         if self.tab_is_alive:
             self.new_program_wizard = None
+
+            if current_widget != None:
+                current_widget.set_program_callbacks_enabled(True)
 
             self.button_new.setEnabled(True)
 

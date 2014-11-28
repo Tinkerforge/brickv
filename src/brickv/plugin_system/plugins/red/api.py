@@ -1400,6 +1400,7 @@ class REDProgram(REDObject):
         self._last_spawned_timestamp = None
         self._custom_options         = None
 
+        self.enable_callbacks                 = False
         self.scheduler_state_changed_callback = None
         self.process_spawned_callback         = None
 
@@ -1429,7 +1430,7 @@ class REDProgram(REDObject):
         self._cb_process_spawned_emit_cookie         = None
 
     def _cb_scheduler_state_changed_emit(self, program_id):
-        if self.object_id != program_id:
+        if not self.enable_callbacks or self.object_id != program_id:
             return
 
         # cannot directly use emit function as callback functions, because this
@@ -1464,7 +1465,7 @@ class REDProgram(REDObject):
             scheduler_state_changed_callback(self)
 
     def _cb_process_spawned_emit(self, program_id):
-        if self.object_id != program_id:
+        if not self.enable_callbacks or self.object_id != program_id:
             return
 
         # cannot directly use emit function as callback functions, because this

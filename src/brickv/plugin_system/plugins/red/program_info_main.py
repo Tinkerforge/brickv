@@ -174,7 +174,15 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
             self.first_show_event = False
 
+        self.set_program_callbacks_enabled(True)
+
         QWidget.showEvent(self, event)
+
+    # override QWidget.hideEvent
+    def hideEvent(self, event):
+        self.set_program_callbacks_enabled(False)
+
+        QWidget.hideEvent(self, event)
 
     def scheduler_state_changed(self, program):
         self.update_ui_state()
@@ -216,6 +224,12 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         self.widget_logs.close_all_dialogs()
         self.widget_files.close_all_dialogs()
+
+    def set_program_callbacks_enabled(self, enable):
+        self.program.enable_callbacks = enable
+
+        if enable:
+            self.refresh_program()
 
     def refresh_info(self):
         self.refresh_program()
@@ -651,6 +665,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
     def show_upload_files_wizard(self):
         self.set_edit_buttons_enabled(False)
+        self.set_program_callbacks_enabled(False)
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
@@ -662,10 +677,12 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         if self.tab_is_alive:
             self.upload_files_wizard = None
 
+            self.set_program_callbacks_enabled(True)
             self.set_edit_buttons_enabled(True)
 
     def show_download_wizard(self, download_kind, download_directory, downloads):
         self.set_edit_buttons_enabled(False)
+        self.set_program_callbacks_enabled(False)
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
@@ -675,4 +692,5 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         if self.tab_is_alive:
             self.download_wizard = None
 
+            self.set_program_callbacks_enabled(True)
             self.set_edit_buttons_enabled(True)
