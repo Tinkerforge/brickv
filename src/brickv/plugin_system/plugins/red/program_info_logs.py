@@ -88,6 +88,8 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.button_view_log.clicked.connect(self.view_selected_log)
         self.button_delete_logs.clicked.connect(self.delete_selected_logs)
 
+        self.label_error.setVisible(False)
+
     def update_ui_state(self):
         selection_count = len(self.tree_logs.selectionModel().selectedRows())
 
@@ -315,7 +317,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
         log_files_to_download = self.load_log_files_for_ops(index_list)
 
-        if len(log_files_to_download) == 0:
+        if len(log_files_to_download['foobar']) == 0:
             return
 
         download_directory = unicode(QFileDialog.getExistingDirectory(get_main_window(), 'Download Logs'))
