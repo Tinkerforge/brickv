@@ -112,22 +112,13 @@ class REDError(Exception):
     def error_code(self): return self._error_code
 
 
-class WeakMethod:
+class MethodRef:
     def __init__(self, method):
         self.target_ref = weakref.ref(method.__self__)
-        self.method_ref = weakref.ref(method.__func__)
+        self.function_ref = weakref.ref(method.__func__)
 
-    def __call__(self, *args, **kwargs):
-        target = self.target_ref()
-        method = self.method_ref()
-
-        if target == None or method == None:
-            return None
-        else:
-            return method(target, *args, **kwargs)
-
-    def alive(self):
-        return self.target_ref() != None and self.method_ref() != None
+    def get(self):
+        return self.target_ref(), self.function_ref()
 
 
 class REDBrick(BrickRED):
@@ -144,21 +135,22 @@ class REDBrick(BrickRED):
 
         for cookie in list(active_callbacks.keys()):
             try:
-                callback_function = active_callbacks[cookie]
+                callback_target, callback_function = active_callbacks[cookie].get()
             except KeyError:
                 continue
 
-            if callback_function.alive():
+            if callback_target != None and callback_function != None:
                 try:
-                    callback_function(*args, **kwargs)
+                    callback_function(callback_target, *args, **kwargs)
                 except:
                     traceback.print_exc()
             else:
                 dead_callbacks.append(cookie)
 
-        with self._active_callbacks_lock:
-            for cookie in dead_callbacks:
-                del active_callbacks[cookie]
+        if len(dead_callbacks) > 0:
+            with self._active_callbacks_lock:
+                for cookie in dead_callbacks:
+                    del active_callbacks[cookie]
 
     def add_callback(self, callback_id, callback_function):
         with self._active_callbacks_lock:
@@ -166,9 +158,9 @@ class REDBrick(BrickRED):
             self._next_cookie += 1
 
             if callback_id in self._active_callbacks:
-                self._active_callbacks[callback_id][cookie] = WeakMethod(callback_function)
+                self._active_callbacks[callback_id][cookie] = MethodRef(callback_function)
             else:
-                self._active_callbacks[callback_id] = {cookie: WeakMethod(callback_function)}
+                self._active_callbacks[callback_id] = {cookie: MethodRef(callback_function)}
 
                 self.register_callback(callback_id, functools.partial(self._dispatch_callback, callback_id))
 
