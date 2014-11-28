@@ -546,11 +546,11 @@ class REDFileBase(REDObject):
         _qtcb_result = QtCore.pyqtSignal(object)
         _qtcb_status = QtCore.pyqtSignal(int, int)
 
-        def __init__(self, data, length, result_callback, status_callback):
+        def __init__(self, data, result_callback, status_callback):
             QtCore.QObject.__init__(self)
 
             self.data    = data
-            self.length  = length
+            self.length  = len(data)
             self.written = 0
             self.abort   = False
 
@@ -601,7 +601,7 @@ class REDFileBase(REDObject):
     AsyncReadResult = namedtuple('AsyncReadResult', 'data error')
 
     # Number of chunks written in one async read/write burst
-    ASYNC_BURST_CHUNKS      = 2000
+    ASYNC_BURST_CHUNKS      = 512
     ASYNC_READ_BURST_LENGTH = ASYNC_BURST_CHUNKS * MAX_READ_ASYNC_BUFFER_LENGTH
 
     _qtcb_events_occurred = QtCore.pyqtSignal(int)
@@ -651,7 +651,9 @@ class REDFileBase(REDObject):
         self._cb_async_read_cookie      = None
         self._cb_events_occurred_cookie = None
 
-    # Unset all of the temporary async data in case of error.
+    def _report_write_async_status(self):
+        self._write_async_data._qtcb_status.emit(self._write_async_data.written, self._write_async_data.length)
+
     def _report_write_async_result(self, error):
         self._write_async_data._qtcb_result.emit(error)
         self._write_async_data = None
@@ -670,7 +672,7 @@ class REDFileBase(REDObject):
 
         # Remove data of async call. Data of unchecked writes has been removed already.
         self._write_async_data.written += length_written
-        self._write_async_data._qtcb_status.emit(self._write_async_data.written, self._write_async_data.length)
+        self._report_write_async_status()
 
         # If there is no data remaining we are done.
         if self._write_async_data.written >= self._write_async_data.length:
@@ -712,6 +714,9 @@ class REDFileBase(REDObject):
         except Exception as e:
             self._report_write_async_result(e)
 
+    def _report_read_async_status(self):
+        self._read_async_data._qtcb_status.emit(self._read_async_data.data_length, self._read_async_data.max_length)
+
     def _report_read_async_result(self, error):
         data = bytearray().join(self._read_async_data.data_chunks)
 
@@ -740,7 +745,7 @@ class REDFileBase(REDObject):
         else:
             if self._read_async_data.data_length != self._read_async_data.max_length and \
                self._read_async_data.burst_length == REDFileBase.ASYNC_READ_BURST_LENGTH:
-                self._read_async_data._qtcb_status.emit(self._read_async_data.data_length, self._read_async_data.max_length)
+                self._report_read_async_status()
 
                 to_read = min(self._read_async_data.max_length - self._read_async_data.data_length, REDFileBase.ASYNC_READ_BURST_LENGTH)
                 self._read_async_data.burst_length = 0
@@ -758,7 +763,7 @@ class REDFileBase(REDObject):
             return
 
         if self._read_async_data.burst_length == REDFileBase.ASYNC_READ_BURST_LENGTH:
-            self._read_async_data._qtcb_status.emit(self._read_async_data.data_length, self._read_async_data.max_length)
+            self._report_read_async_status()
 
             to_read = min(self._read_async_data.max_length - self._read_async_data.data_length, REDFileBase.ASYNC_READ_BURST_LENGTH)
             self._read_async_data.burst_length = 0
@@ -773,7 +778,7 @@ class REDFileBase(REDObject):
 
         # And also return data if we read all of the data the user asked for
         if self._read_async_data.data_length >= self._read_async_data.max_length:
-            self._read_async_data._qtcb_status.emit(self._read_async_data.data_length, self._read_async_data.max_length)
+            self._report_read_async_status()
             self._report_read_async_result(None)
 
     def _cb_events_occurred_emit(self, file_id, events):
@@ -839,11 +844,11 @@ class REDFileBase(REDObject):
         if self.object_id is None:
             raise RuntimeError('Cannot write to unattached file object')
 
-        if self._write_async_data is not None:
+        if self._write_async_data != None:
             raise RuntimeError('Another asynchronous write is already in progress')
 
-        d = bytearray(data)
-        self._write_async_data = create_object_in_qt_main_thread(REDFileBase.WriteAsyncData, (d, len(d), result_callback, status_callback))
+        self._write_async_data = create_object_in_qt_main_thread(REDFileBase.WriteAsyncData, (bytearray(data), result_callback, status_callback))
+        self._report_write_async_status()
         self._next_write_async_burst()
 
     def read(self, length):
@@ -874,10 +879,11 @@ class REDFileBase(REDObject):
         if self.object_id is None:
             raise RuntimeError('Cannot read from unattached file object')
 
-        if self._read_async_data is not None:
+        if self._read_async_data != None:
             raise RuntimeError('Another asynchronous read is already in progress')
 
         self._read_async_data = create_object_in_qt_main_thread(REDFileBase.ReadAsyncData, (max_length, result_callback, status_callback))
+        self._report_read_async_status()
         self._session._brick.read_file_async(self.object_id, min(max_length, REDFileBase.ASYNC_READ_BURST_LENGTH))
 
     def abort_async_read(self):
