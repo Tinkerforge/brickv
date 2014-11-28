@@ -568,6 +568,7 @@ class REDFileBase(REDObject):
             self.burst_length = 0
             self.data_length  = 0
             self.data_chunks  = []
+            self.abort        = False
 
             if result_callback != None:
                 self._qtcb_result.connect(result_callback, QtCore.Qt.QueuedConnection)
@@ -721,8 +722,11 @@ class REDFileBase(REDObject):
         if self._read_async_data == None:
             return
 
+        if self._read_async_data.abort:
+            error_code = REDError.E_SUCCESS
+
         if error_code != REDError.E_SUCCESS:
-            self._report_read_async_result(REDError('Could not read file object {0}'.format(self.object_id), error_code))
+            self._report_read_async_result(REDError('Could not read from file object {0}'.format(self.object_id), error_code))
             return
 
         self._read_async_data.burst_length += length_read
@@ -878,6 +882,7 @@ class REDFileBase(REDObject):
             raise RuntimeError('Cannot abort asynchronous read from unattached file object')
 
         if self._read_async_data != None:
+            self._read_async_data.abort = True
             self._session._brick.abort_async_file_read(self.object_id)
 
     def abort_async_write(self):
