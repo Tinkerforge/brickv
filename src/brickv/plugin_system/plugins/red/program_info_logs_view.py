@@ -140,7 +140,10 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
         log_file = self.log_file
 
         if log_file != None:
-            log_file.abort_async_read()
+            try:
+                log_file.abort_async_read()
+            except:
+                pass
 
     def log(self, message, bold=False, pre=False):
         if bold:
