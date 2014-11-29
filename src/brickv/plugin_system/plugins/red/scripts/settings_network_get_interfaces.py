@@ -16,7 +16,7 @@ lwireless = []
 lwired = []
 
 for intf in netifaces.interfaces():
-     if os.path.isdir("/sys/class/net/"+intf+"/wireless"):
+     if os.path.isdir('/sys/class/net/'+intf+'/wireless'):
         lwireless.append(intf)
      else:
         lwired.append(intf)
@@ -24,22 +24,34 @@ for intf in netifaces.interfaces():
 if len(lwireless) > 0:
     return_dict['wireless'] = lwireless
     for wl_intf in lwireless:
-            cmd_get_link = "/sbin/iw dev "+ wl_intf +" link | /usr/bin/head -n2"
-            ps_get_link = subprocess.Popen(cmd_get_link, shell=True, stdout=subprocess.PIPE)
-            cmd_output = ps_get_link.communicate()[0]
-            if ps_get_link.returncode:
-                exit (1)
-            if cmd_output == "Not connected.\n" or cmd_output == "":
-                wl_links_dict[wl_intf] =  {'name': wl_intf,
-                                           'status': False,
-                                           'essid': None,
-                                           'bssid': None}
-            else:
-                cmd_output_first_split = cmd_output.split('\n')
-                wl_links_dict[wl_intf] =  {'name': wl_intf,
-                                           'status': True,
-                                           'essid': cmd_output_first_split[1].strip().split('SSID: ')[1],
-                                           'bssid': cmd_output_first_split[0].strip().split('Connected to ')[1].split(' (')[0]}
+        cmd_get_link = '/sbin/iwconfig '+wl_intf+' | /usr/bin/head -n2'
+        ps_get_link = subprocess.Popen(cmd_get_link, shell=True, stdout=subprocess.PIPE)
+        cmd_output = ps_get_link.communicate()[0]
+        if ps_get_link.returncode:
+            exit (1)
+
+        wl_links_dict[wl_intf] =  {'name': wl_intf,
+                                   'status': False,
+                                   'essid': None,
+                                   'bssid': None}
+
+        cmd_output_lines = cmd_output.splitlines()
+        if len(cmd_output_lines) >= 2 and cmd_output:
+            if 'off/any' in cmd_output_lines[0] or 'unassociated' in cmd_output_lines[0]:
+                continue
+            cmd_output_line0_array = cmd_output_lines[0].split(' ')
+            cmd_output_line1_array = cmd_output_lines[1].split('Access Point: ')
+            if len(cmd_output_line0_array) >= 0:
+                for token in cmd_output_line0_array:
+                    if 'ESSID:' in token:
+                        _associated_essid = token.split(':')[1]
+                        associated_essid = _associated_essid[1:-1]
+                        if len(cmd_output_line1_array) > 0:
+                            associated_bssid = cmd_output_line1_array[-1:]
+                            wl_links_dict[wl_intf] =  {'name': wl_intf,
+                                                       'status': True,
+                                                       'essid': associated_essid,
+                                                       'bssid': associated_bssid}
 
 #remove lo and tunl0 interfaces from interfaces list
 lwired = [x for x in lwired if x!='lo' and x!='tunl0']

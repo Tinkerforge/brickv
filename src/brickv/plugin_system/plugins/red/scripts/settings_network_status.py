@@ -14,7 +14,7 @@ return_dict['cstat_dns'] = None
 
 try:
     hname = unicode(socket.gethostname())
-    if hname != "":
+    if hname != '':
         return_dict['cstat_hostname'] = hname
 except:
     exit(1)
@@ -25,16 +25,16 @@ try:
     intf_ok = ps_get_if_ok.communicate()[0].strip()
     if ps_get_if_ok.returncode:
         exit(1)
-    if intf_ok == "default":
+    if intf_ok == 'default':
         cmd_get_if_active = "ip route | head -1 | awk -F' ' '{print $5}'"
         ps_get_if_active = subprocess.Popen(cmd_get_if_active, shell=True, stdout=subprocess.PIPE)
         intf_active = ps_get_if_active.communicate()[0].strip()
         if ps_get_if_active.returncode:
             exit(1)
     else:
-        intf_active = ""
+        intf_active = ''
 
-    if intf_active != "":
+    if intf_active != '':
         return_dict['cstat_intf_active']['name'] = intf_active
         intf_addrs = netifaces.ifaddresses(intf_active)
         if netifaces.AF_INET in intf_addrs and\
@@ -50,14 +50,14 @@ except:
     exit(1)
 
 try:
-    with open("/etc/resolv.conf", "r") as rcf:
+    with open('/etc/resolv.conf', 'r') as rcf:
         lines = rcf.readlines()
         for i, l in enumerate(lines):
             l_splitted = l.split(' ')
-            if l_splitted[0] == "nameserver" and l_splitted[1] != "":
+            if l_splitted[0] == 'nameserver' and l_splitted[1] != '':
                 return_dict['cstat_dns'] = l_splitted[1]
                 break
 except:
-    exit(1)
+    return_dict['cstat_dns'] = None
 
 print json.dumps(return_dict)
