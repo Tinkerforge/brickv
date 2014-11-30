@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
-import subprocess
+import os
 from sys import argv
 
 if len(argv) < 3:
@@ -12,19 +12,19 @@ itype = unicode(argv[2])
 
 if itype == 'wireless':
     netidx = unicode(argv[3])
-    cmd_wireless = '/sbin/ifconfig '+iname+' up;/bin/sleep 1;\
-                    /usr/bin/wicd-cli --wired -x;/bin/sleep 4;/usr/bin/wicd-cli --wireless -x;/bin/sleep 4;\
-                    /usr/sbin/service wicd restart;/bin/sleep 4;/usr/bin/wicd-cli --wireless -c -n'+netidx
-    ps_wireless = subprocess.Popen(cmd_wireless, shell=True)
-    comm = ps_wireless.communicate()
-    if ps_wireless.returncode:
+    cmd_wireless = '/sbin/ifconfig '+iname+' up &&\
+                    /usr/sbin/service wicd restart &&\
+                    /bin/sleep 5 && /usr/bin/wicd-cli --wireless -c -n'+netidx+' && :'
+    cmd_wireless_code = os.system(cmd_wireless)
+    if cmd_wireless_code:
         exit (1)
 
-if itype == 'wired':
-    cmd_wired = '/sbin/ifconfig '+iname+' up;/bin/sleep 1;\
-                 /usr/bin/wicd-cli --wired -x;/bin/sleep 4;/usr/bin/wicd-cli --wireless -x;/bin/sleep 4;\
-                 /usr/sbin/service wicd restart;/bin/sleep 4;/usr/bin/wicd-cli --wired -c -n0'
-    ps_wired = subprocess.Popen(cmd_wired, shell=True)
-    comm = ps_wired.communicate()
-    if ps_wired.returncode:
+elif itype == 'wired':
+    cmd_wired = '/sbin/ifconfig '+iname+' up &&\
+                 /usr/sbin/service wicd restart &&\
+                 /bin/sleep 5 && /usr/bin/wicd-cli --wired -c -n0 && :'
+    cmd_wired_code = os.system(cmd_wired)
+    if cmd_wired_code:
         exit (1)
+else:
+    exit (1)

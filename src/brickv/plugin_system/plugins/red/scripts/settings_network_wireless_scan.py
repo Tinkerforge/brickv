@@ -11,8 +11,9 @@ if len(argv) < 2:
 iname = unicode(argv[1])
 
 return_dict = None
-wlscan_cmd = '/sbin/ifconfig '+iname+' up;/bin/sleep 1;/usr/sbin/service wicd restart;/bin/sleep 4;/usr/bin/wicd-cli --wireless -Sl'
 
+wlscan_cmd = '/sbin/ifconfig '+iname+' up && /usr/sbin/service wicd restart &&\
+              /bin/sleep 5 && /usr/bin/wicd-cli --wireless -Sl && :'
 wlscan_ps = subprocess.Popen(wlscan_cmd, shell=True, stdout=subprocess.PIPE)
 wlscan_output = wlscan_ps.communicate()[0]
 if wlscan_ps.returncode:
@@ -20,7 +21,7 @@ if wlscan_ps.returncode:
 
 _lines = wlscan_output.splitlines()
 
-if wlscan_output != '' and len(_lines) > 0:
+if wlscan_output and len(_lines) > 0:
     return_dict = {}
     for l in _lines:
         lsplitted = l.split('\t')
