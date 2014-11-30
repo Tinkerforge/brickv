@@ -293,29 +293,23 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.cbox_net_conftype.hide()
 
     def wireless_configuration_gui(self, show):
+        self.label_ch.hide()
+        self.label_net_wireless_channel.hide()
+        self.label_enc.hide()
+        self.label_net_wireless_enctype.hide()
+        self.label_key.hide()
+        self.ledit_net_wireless_key.hide()
+        self.chkbox_net_wireless_key_show.setChecked(False)
+        self.chkbox_net_wireless_key_show.hide()
         if show:
             self.label_ap.show()
             self.cbox_net_wireless_ap.show()
             self.pbutton_net_wireless_scan.show()
-            self.label_ch.show()
-            self.label_net_wireless_channel.show()
-            self.label_enc.show()
-            self.label_net_wireless_enctype.show()
-            self.label_key.show()
-            self.ledit_net_wireless_key.show()
-            self.chkbox_net_wireless_key_show.setChecked(False)
-            self.chkbox_net_wireless_key_show.show()
+            
         else:
             self.label_ap.hide()
             self.cbox_net_wireless_ap.hide()
             self.pbutton_net_wireless_scan.hide()
-            self.label_ch.hide()
-            self.label_net_wireless_channel.hide()
-            self.label_enc.hide()
-            self.label_net_wireless_enctype.hide()
-            self.label_key.hide()
-            self.ledit_net_wireless_key.hide()
-            self.chkbox_net_wireless_key_show.hide()
 
     def show_wireless_configuration(self, show):
         self.cbox_net_wireless_ap.clear()
@@ -388,11 +382,30 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def update_access_points(self):
         self.cbox_net_wireless_ap.clear()
 
+        def ap_found():
+            self.chkbox_net_wireless_key_show.setChecked(False)
+            self.label_ch.show()
+            self.label_net_wireless_channel.show()
+            self.label_enc.show()
+            self.label_net_wireless_enctype.show()
+            self.label_key.show()
+            self.ledit_net_wireless_key.show()
+            self.chkbox_net_wireless_key_show.show()
+            self.cbox_net_wireless_ap.setEnabled(True)
+
         def no_ap_found():
-            self.cbox_net_wireless_ap.clear()
             self.label_net_wireless_channel.setText('')
             self.label_net_wireless_enctype.setText('')
             self.ledit_net_wireless_key.setText('')
+            self.chkbox_net_wireless_key_show.setChecked(False)
+            self.label_ch.hide()
+            self.label_net_wireless_channel.hide()
+            self.label_enc.hide()
+            self.label_net_wireless_enctype.hide()
+            self.label_key.hide()
+            self.ledit_net_wireless_key.hide()
+            self.chkbox_net_wireless_key_show.hide()
+            self.cbox_net_wireless_ap.clear()
             self.cbox_net_wireless_ap.addItem('No access points found. Scan again?')
             self.cbox_net_wireless_ap.setEnabled(False)
 
@@ -536,7 +549,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     no_ap_found()
                     return
 
-                self.cbox_net_wireless_ap.setEnabled(True)
+                ap_found()
 
                 # Select first associated accesspoint if not then the first item
                 self.cbox_net_wireless_ap.setCurrentIndex(-1)
