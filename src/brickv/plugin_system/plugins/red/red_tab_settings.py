@@ -303,6 +303,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.label_net_wireless_enctype.show()
             self.label_key.show()
             self.ledit_net_wireless_key.show()
+            self.chkbox_net_wireless_key_show.setChecked(False)
             self.chkbox_net_wireless_key_show.show()
         else:
             self.label_ap.hide()
