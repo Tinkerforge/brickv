@@ -940,7 +940,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             def cb_read(red_file, result):
                 red_file.release()
 
-                if result is not None:
+                if result.data is not None:
                     self.brickd_conf = config_parser.parse(result.data.decode('utf-8'))
                     self.update_brickd_widget_data()
                 else:
@@ -948,7 +948,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                'Settings | Brickd',
                                                'Error reading brickd config file.',
                                                QtGui.QMessageBox.Ok)
-                    print 'slot_brickd_refresh_clicked cb_open', result
 
                 self.brickd_button_refresh_enabled(True)
                 self.brickd_button_save_enabled(False)
@@ -968,8 +967,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    cb_open_error)
 
     def slot_pbutton_net_wireless_scan_clicked(self):
-        print 'slot_pbutton_net_wireless_scan_clicked'
-
         cbox_cidx = self.cbox_net_intf.currentIndex()
         interface_name = unicode(self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE).toString())
         interface_type = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE).toInt()[0]
@@ -1237,8 +1234,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                            [])
 
     def slot_network_save_clicked(self):
-        print 'slot_network_save_clicked'
-
         cbox_cidx = self.cbox_net_intf.currentIndex()
 
         iname = unicode(self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE).toString())
@@ -1363,7 +1358,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                        'Settings | Network',
                                                        'Error saving configuration.',
                                                        QtGui.QMessageBox.Ok)
-                            print 'slot_brickd_save_clicked cb_open cb_write', result
                         else:
                             if write_wireless_settings:
                                 self.script_manager.execute_script('settings_network_apply',
@@ -1391,8 +1385,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                'Settings | Network',
                                                'Error saving configuration.',
                                                QtGui.QMessageBox.Ok)
-                    
-                    #print 'slot_brickd_save_clicked cb_open_error', result
     
                 config = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
                 write_wireless_settings = False
@@ -1503,7 +1495,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                    'Settings | Network',
                                                    'Error saving configuration.',
                                                    QtGui.QMessageBox.Ok)
-                        print 'slot_brickd_save_clicked cb_open cb_write', result
                     else:
                         if write_wired_settings:
                             self.script_manager.execute_script('settings_network_apply',
@@ -1531,8 +1522,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                            'Settings | Network',
                                            'Error saving configuration.',
                                            QtGui.QMessageBox.Ok)
-                
-                #print 'slot_brickd_save_clicked cb_open_error', result
 
             config = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
             write_wired_settings = False
@@ -1613,7 +1602,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                'Settings | Brickd',
                                                'Error writing brickd config file.',
                                                QtGui.QMessageBox.Ok)
-                    print 'slot_brickd_save_clicked cb_open cb_write', result
                 else:
                     self.script_manager.execute_script('restart_brickd', None)
                     QtGui.QMessageBox.information(None,
@@ -1629,7 +1617,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                        'Settings | Brickd',
                                        'Error opening brickd config file.',
                                        QtGui.QMessageBox.Ok)
-            #print 'slot_brickd_save_clicked cb_open_error', result
 
         async_call(self.brickd_conf_rfile.open,
                    (BRICKD_CONF_PATH,
@@ -1641,8 +1628,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    cb_open_error)
 
     def slot_cbox_net_intf_current_idx_changed(self, idx):
-        print 'slot_cbox_net_intf_current_idx_changed'
-
         interface_name = unicode(self.cbox_net_intf.itemData(idx, INTERFACE_NAME_USER_ROLE).toString())
         interface_type = self.cbox_net_intf.itemData(idx, INTERFACE_TYPE_USER_ROLE).toInt()[0]
 
@@ -1848,7 +1833,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                'Settings | Date/Time',
                                                err_msg,
                                                QtGui.QMessageBox.Ok)
-                    print 'time_start cb_red_brick_time', result.stderr
             except:
                 err_msg = 'Error getting time from red-brick.\n\n'+unicode(result.stderr)
                 QtGui.QMessageBox.critical(None,
