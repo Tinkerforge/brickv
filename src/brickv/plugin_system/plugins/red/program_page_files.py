@@ -111,7 +111,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
                 target = unicode(QDir.fromNativeSeparators(os.path.relpath(source, directory)))
                 uploads.append(Upload(source, target))
 
-                # ensure that the UI stays responsive and the keep-alive timer works
+                # ensure that the UI stays responsive
                 QApplication.processEvents()
 
                 if progress.wasCanceled():

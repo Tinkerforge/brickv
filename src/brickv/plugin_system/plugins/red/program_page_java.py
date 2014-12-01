@@ -27,6 +27,7 @@ from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_java import Ui_ProgramPageJava
 from brickv.plugin_system.plugins.red.javatools.jarinfo import JarInfo
 from brickv.plugin_system.plugins.red.javatools import unpack_class
+from brickv.async_call import async_call
 import posixpath
 
 def get_java_versions(script_manager, callback):
@@ -45,7 +46,7 @@ def get_java_versions(script_manager, callback):
     script_manager.execute_script('java_versions', cb_versions)
 
 
-def get_classes_from_class_or_jar(uploads):
+def get_main_classes_from_class_or_jar(uploads):
     MAIN_ENDING = '.main(java.lang.String[]):void'
 
     def parse_jar(f):
@@ -146,29 +147,72 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
-        identifier    = unicode(self.get_field('identifier').toString())
-        bin_directory = posixpath.join('/', 'home', 'tf', 'programs', identifier, 'bin')
+        program = self.wizard().program
+
+        # if a program exists then this page is used in an edit wizard
+        if program != None:
+            bin_directory = posixpath.join(unicode(program.root_directory), 'bin')
+        else:
+            bin_directory = posixpath.join('/', 'home', 'tf', 'programs', identifier, 'bin')
+
+        jar_filenames = []
 
         for filename in sorted(self.wizard().available_files):
             if filename.endswith('.jar'):
-                self.class_path_list_editor.add_item(posixpath.join(bin_directory, filename))
+                jar_filenames.append(posixpath.join(bin_directory, filename))
+
+        if program == None:
+            for jar_filename in jar_filenames:
+                self.class_path_list_editor.add_item(jar_filename)
+
+        self.class_path_list_editor.set_add_menu_items(['/usr/tinkerforge/bindings/java/Tinkerforge.jar'] + jar_filenames,
+                                                       '<new class path entry>')
 
         self.combo_main_class.clear()
         self.combo_main_class.clearEditText()
 
         # FIXME: make this work in edit mode
-        # FIXME: make get_classes_from_class_or_jar async
         if self.wizard().hasVisitedPage(Constants.PAGE_FILES):
-            for cls in sorted(get_classes_from_class_or_jar(self.wizard().page(Constants.PAGE_FILES).get_uploads())):
-                self.combo_main_class.addItem(cls)
+            uploads = self.wizard().page(Constants.PAGE_FILES).get_uploads()
 
-        if self.combo_main_class.count() > 1:
-            self.combo_main_class.clearEditText()
+            if len(uploads) > 0:
+                progress = ExpandingProgressDialog(self)
+                progress.hide_progress_text()
+                progress.setWindowTitle('New Program')
+                progress.setLabelText('Collecting Java main classes')
+                progress.setModal(True)
+                progress.setRange(0, 0)
+                progress.setCancelButton(None) # FIXME: make this cancelable
+                progress.show()
+
+                def cb_main_classes(main_classes):
+                    for main_class in main_classes:
+                        self.combo_main_class.addItem(main_class)
+
+                    if self.combo_main_class.count() > 1:
+                        self.combo_main_class.clearEditText()
+
+                    progress.cancel()
+
+                    self.combo_main_class.setEnabled(True)
+                    self.completeChanged.emit()
+
+                def cb_main_classes_error():
+                    progress.cancel()
+
+                    self.combo_main_class.clearEditText()
+                    self.combo_main_class.setEnabled(True)
+                    self.completeChanged.emit()
+
+                def get_main_classes_async(uploads):
+                    return sorted(get_main_classes_from_class_or_jar(uploads))
+
+                self.combo_main_class.setEnabled(False)
+
+                async_call(get_main_classes_async, uploads, cb_main_classes, cb_main_classes_error)
 
         # if a program exists then this page is used in an edit wizard
-        if self.wizard().program != None:
-            program = self.wizard().program
-
+        if program != None:
             # start mode
             start_mode_api_name = program.cast_custom_option_value('java.start_mode', unicode, '<unknown>')
             start_mode          = Constants.get_java_start_mode(start_mode_api_name)

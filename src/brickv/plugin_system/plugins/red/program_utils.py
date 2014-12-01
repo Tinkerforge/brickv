@@ -22,10 +22,12 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QDir, QVariant, QDateTime
-from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem, QProgressDialog, QProgressBar, QInputDialog
+from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem, \
+                        QProgressDialog, QProgressBar, QInputDialog, QMenu
 from brickv.plugin_system.plugins.red.api import REDProgram
 import re
 import posixpath
+import functools
 from collections import namedtuple
 
 ExecutableVersion = namedtuple('ExecutableVersion', 'executable version')
@@ -623,6 +625,7 @@ class ListWidgetEditor:
         self.button_down_item   = button_down_item
         self.new_item_text      = new_item_text
         self.new_item_counter   = 1
+        self.menu_add_items     = None
 
         self.list_items.itemSelectionChanged.connect(self.update_ui_state)
         self.button_add_item.clicked.connect(self.add_new_item)
@@ -657,7 +660,24 @@ class ListWidgetEditor:
         self.button_up_item.setVisible(visible)
         self.button_down_item.setVisible(visible)
 
-    def add_item(self, text, edit_item=False):
+    def set_add_menu_items(self, items, empty_item=None):
+        if len(items) > 0:
+            menu_add_items = QMenu()
+
+            if empty_item != None:
+                menu_add_items.addAction(empty_item).triggered.connect(functools.partial(self.add_item, empty_item, edit_item=True))
+                menu_add_items.addSeparator()
+
+            for item in items:
+                menu_add_items.addAction(item).triggered.connect(functools.partial(self.add_item, item, select_item=True))
+
+            self.menu_add_items = menu_add_items
+            self.button_add_item.setMenu(menu_add_items)
+        else:
+            self.button_add_item.setMenu(None)
+            self.menu_add_items = None
+
+    def add_item(self, text, edit_item=False, select_item=False):
         item = QListWidgetItem(text)
         item.setFlags(item.flags() | Qt.ItemIsEditable)
 
@@ -665,6 +685,9 @@ class ListWidgetEditor:
 
         if edit_item:
             self.list_items.editItem(item)
+        elif select_item:
+            self.list_items.setCurrentItem(item)
+            self.list_items.setFocus()
 
         self.update_ui_state()
 
@@ -780,7 +803,7 @@ class TreeWidgetEditor:
         self.button_up_item.setVisible(visible)
         self.button_down_item.setVisible(visible)
 
-    def add_item(self, texts, edit_item=False):
+    def add_item(self, texts, edit_item=False, select_item=False):
         item = QTreeWidgetItem(texts)
         item.setFlags(item.flags() | Qt.ItemIsEditable)
 
@@ -788,6 +811,9 @@ class TreeWidgetEditor:
 
         if edit_item:
             self.tree_items.editItem(item)
+        elif select_item:
+            self.tree_items.setCurrentItem(item)
+            self.tree_items.setFocus()
 
         self.update_ui_state()
 
