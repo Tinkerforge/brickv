@@ -27,7 +27,7 @@ from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_java import Ui_ProgramPageJava
 from brickv.plugin_system.plugins.red.javatools.jarinfo import JarInfo
 from brickv.plugin_system.plugins.red.javatools import unpack_class
-import os
+import posixpath
 
 def get_java_versions(script_manager, callback):
     def cb_versions(result):
@@ -99,6 +99,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(self.completeChanged.emit)
+        self.check_show_class_path.stateChanged.connect(self.update_ui_state)
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
         self.label_spacer.setText('')
 
@@ -145,11 +146,12 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
-        identifier = str(self.get_field('identifier').toString())
-        root_dir = os.path.join('/', 'home', 'tf', 'programs', identifier, 'bin')
-        for f in sorted(self.wizard().available_files):
-            if f.endswith('.jar'):
-                self.class_path_list_editor.add_item(os.path.join(root_dir, f))
+        identifier    = unicode(self.get_field('identifier').toString())
+        bin_directory = posixpath.join('/', 'home', 'tf', 'programs', identifier, 'bin')
+
+        for filename in sorted(self.wizard().available_files):
+            if filename.endswith('.jar'):
+                self.class_path_list_editor.add_item(posixpath.join(bin_directory, filename))
 
         self.combo_main_class.clear()
         self.combo_main_class.clearEditText()
@@ -167,7 +169,32 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         if self.wizard().program != None:
             program = self.wizard().program
 
+            # start mode
+            start_mode_api_name = program.cast_custom_option_value('java.start_mode', unicode, '<unknown>')
+            start_mode          = Constants.get_java_start_mode(start_mode_api_name)
+
+            self.combo_start_mode.setCurrentIndex(start_mode)
+
+            # main class
+            self.combo_main_class_checker.set_current_text(program.cast_custom_option_value('java.main_class', unicode, ''))
+
+            # jar file
+            self.combo_jar_file_selector.set_current_text(program.cast_custom_option_value('java.jar_file', unicode, ''))
+
+            # class path
+            self.class_path_list_editor.clear()
+
+            for class_path_entry in program.cast_custom_option_value_list('java.class_path', unicode, []):
+                self.class_path_list_editor.add_item(class_path_entry)
+
+            # working directory
             self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+
+            # options
+            self.option_list_editor.clear()
+
+            for option in program.cast_custom_option_value_list('java.options', unicode, []):
+                self.option_list_editor.add_item(option)
 
         self.update_ui_state()
 
@@ -194,15 +221,17 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         start_mode            = self.get_field('java.start_mode').toInt()[0]
         start_mode_main_class = start_mode == Constants.JAVA_START_MODE_MAIN_CLASS
         start_mode_jar_file   = start_mode == Constants.JAVA_START_MODE_JAR_FILE
+        show_class_path       = self.check_show_class_path.checkState() == Qt.Checked
         show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
 
         self.label_main_class.setVisible(start_mode_main_class)
         self.combo_main_class.setVisible(start_mode_main_class)
         self.label_main_class_help.setVisible(start_mode_main_class)
         self.combo_jar_file_selector.set_visible(start_mode_jar_file)
+        self.class_path_list_editor.set_visible(show_class_path)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.option_list_editor.set_visible(show_advanced_options)
-        self.label_spacer.setVisible(not show_advanced_options)
+        self.label_spacer.setVisible(not show_class_path and not show_advanced_options)
 
         self.class_path_list_editor.update_ui_state()
         self.option_list_editor.update_ui_state()
@@ -214,7 +243,13 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         return 'FIXME<br/>'
 
     def get_custom_options(self):
-        return {}
+        return {
+            'java.start_mode': Constants.java_start_mode_api_names[self.get_field('java.start_mode').toInt()[0]],
+            'java.main_class': unicode(self.get_field('java.main_class').toString()),
+            'java.jar_file':   unicode(self.get_field('java.jar_file').toString()),
+            'java.class_path': self.class_path_list_editor.get_items(),
+            'java.options':    self.option_list_editor.get_items()
+        }
 
     def get_command(self):
         executable         = self.get_executable()
@@ -235,3 +270,6 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         working_directory = unicode(self.get_field('java.working_directory').toString())
 
         return executable, arguments, environment, working_directory
+
+    def apply_program_changes(self):
+        self.apply_program_custom_options_and_command_changes()

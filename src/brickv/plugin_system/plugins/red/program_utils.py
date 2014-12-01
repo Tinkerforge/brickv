@@ -225,6 +225,23 @@ class Constants:
     JAVA_START_MODE_MAIN_CLASS = 0
     JAVA_START_MODE_JAR_FILE   = 1
 
+    java_start_mode_api_names = {
+        JAVA_START_MODE_MAIN_CLASS: 'main_class',
+        JAVA_START_MODE_JAR_FILE:   'jar_file'
+    }
+
+    java_start_mode_display_names = {
+        JAVA_START_MODE_MAIN_CLASS: 'Main Class',
+        JAVA_START_MODE_JAR_FILE:   'JAR File'
+    }
+
+    @staticmethod
+    def get_java_start_mode(java_start_mode_api_name):
+        try:
+            return get_key_from_value(Constants.java_start_mode_api_names, java_start_mode_api_name)
+        except ValueError:
+            return Constants.DEFAULT_JAVA_START_MODE
+
     # must match item order in combo_flavor on JavaScript page
     JAVASCRIPT_FLAVOR_BROWSER = 0
     JAVASCRIPT_FLAVOR_NODEJS  = 1
@@ -234,7 +251,7 @@ class Constants:
         JAVASCRIPT_FLAVOR_NODEJS:  'nodejs'
     }
 
-    javascript_flavor_display_name = {
+    javascript_flavor_display_names = {
         JAVASCRIPT_FLAVOR_BROWSER: 'Browser',
         JAVASCRIPT_FLAVOR_NODEJS:  'Node.js'
     }
@@ -885,6 +902,19 @@ class MandatoryEditableComboBoxChecker:
         self.combo.editTextChanged.connect(lambda: self.check(True))
 
         self.check(False)
+
+    def set_current_text(self, text):
+        if len(text) == 0:
+            self.combo.clearEditText()
+            return
+
+        i = self.combo.findText(text)
+
+        if i < 0:
+            self.combo.addItem(text)
+            i = self.combo.count() - 1
+
+        self.combo.setCurrentIndex(i)
 
     def check(self, emit):
         was_complete = self.complete
