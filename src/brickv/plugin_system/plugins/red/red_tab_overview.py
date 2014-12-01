@@ -27,6 +27,7 @@ from brickv.plugin_system.plugins.red.api import *
 import json
 from operator import itemgetter
 import time
+import sys
 
 # constants
 REFRESH_TIME = 3000 # in milliseconds
@@ -177,13 +178,21 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
 
         self.label_uptime_value.setText(str(uptime))
 
-        self.pbar_cpu.setFormat("{0}%".format(cpu_percent))
+        pbar_cpu_fmt = "{0}%".format(cpu_percent)
+        pbar_memory_fmt = "{0}% [{1} of {2} MiB]".format(memory_percent, memory_used, memory_total)
+        pbar_storage_fmt = "{0}% [{1} of {2} GiB]".format(storage_percent, storage_used, storage_total)
+
+        if sys.platform == 'darwin':
+            self.label_pbar_cpu.setText(pbar_cpu_fmt)
+            self.label_pbar_memory.setText(pbar_memory_fmt)
+            self.label_pbar_storage.setText(pbar_storage_fmt)
+        else:
+            self.pbar_cpu.setFormat(pbar_cpu_fmt)
+            self.pbar_memory.setFormat(pbar_memory_fmt)
+            self.pbar_storage.setFormat(pbar_storage_fmt)
+
         self.pbar_cpu.setValue(cpu_percent_v)
-
-        self.pbar_memory.setFormat("{0}% [{1} of {2} MiB]".format(memory_percent, memory_used, memory_total))
         self.pbar_memory.setValue(memory_percent_v)
-
-        self.pbar_storage.setFormat("{0}% [{1} of {2} GiB]".format(storage_percent, storage_used, storage_total))
         self.pbar_storage.setValue(storage_percent_v)
 
         self.nic_item_model.removeRows(0, self.nic_item_model.rowCount())

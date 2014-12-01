@@ -85,11 +85,17 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
-          <layout class="QFormLayout" name="formLayout">
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_uptime">
-             <property name="text">
-              <string>Uptime</string>
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="3" column="1">
+            <widget class="QProgressBar" name="pbar_storage">
+             <property name="value">
+              <number>0</number>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="format">
+              <string>Collecting data...</string>
              </property>
             </widget>
            </item>
@@ -100,6 +106,33 @@
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_storage">
+             <property name="text">
+              <string>Storage</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_uptime">
+             <property name="text">
+              <string>Uptime</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QProgressBar" name="pbar_memory">
+             <property name="value">
+              <number>0</number>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="format">
+              <string>Collecting data...</string>
              </property>
             </widget>
            </item>
@@ -130,36 +163,24 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QProgressBar" name="pbar_memory">
-             <property name="value">
-              <number>0</number>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-             <property name="format">
-              <string>Collecting data...</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_storage">
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_pbar_cpu">
              <property name="text">
-              <string>Storage</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <widget class="QProgressBar" name="pbar_storage">
-             <property name="value">
-              <number>0</number>
+           <item row="2" column="2">
+            <widget class="QLabel" name="label_pbar_memory">
+             <property name="text">
+              <string/>
              </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-             <property name="format">
-              <string>Collecting data...</string>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QLabel" name="label_pbar_storage">
+             <property name="text">
+              <string/>
              </property>
             </widget>
            </item>
