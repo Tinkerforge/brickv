@@ -14,7 +14,7 @@ if itype == 'wireless':
     netidx = unicode(argv[3])
     cmd_wireless = '/sbin/ifconfig '+iname+' up &&\
                     /usr/sbin/service wicd restart &&\
-                    /bin/sleep 5 && /usr/bin/wicd-cli --wireless -c -n'+netidx+' && :'
+                    /bin/sleep 3 && /usr/bin/wicd-cli --wireless -c -n'+netidx+' && :'
     cmd_wireless_code = os.system(cmd_wireless)
     if cmd_wireless_code:
         exit (1)
@@ -22,7 +22,7 @@ if itype == 'wireless':
 elif itype == 'wired':
     cmd_wired = '/sbin/ifconfig '+iname+' up &&\
                  /usr/sbin/service wicd restart &&\
-                 /bin/sleep 5 && /usr/bin/wicd-cli --wired -c -n0 && :'
+                 /bin/sleep 3 && /usr/bin/wicd-cli --wired -c -n0 && :'
     cmd_wired_code = os.system(cmd_wired)
     if cmd_wired_code:
         exit (1)

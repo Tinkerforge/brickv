@@ -13,7 +13,7 @@ iname = unicode(argv[1])
 return_dict = None
 
 wlscan_cmd = '/sbin/ifconfig '+iname+' up && /usr/sbin/service wicd restart &&\
-              /bin/sleep 5 && /usr/bin/wicd-cli --wireless -Sl && :'
+              /bin/sleep 3 && /usr/bin/wicd-cli --wireless -Sl && :'
 wlscan_ps = subprocess.Popen(wlscan_cmd, shell=True, stdout=subprocess.PIPE)
 wlscan_output = wlscan_ps.communicate()[0]
 if wlscan_ps.returncode:
