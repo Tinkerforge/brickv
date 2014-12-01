@@ -13,7 +13,8 @@ fi
 
 if [ $1 -eq 1 ]
   then
-    reboot
+    init 6
+#   reboot
 fi
 
 if [ $1 -eq 2 ]
