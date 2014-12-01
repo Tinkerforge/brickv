@@ -31,18 +31,12 @@
        <property name="text">
         <string>Executable:</string>
        </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
       </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_compile_from_source_title">
        <property name="text">
         <string>Compile From Source:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
       </widget>
      </item>
@@ -112,9 +106,6 @@
        </property>
        <property name="textFormat">
         <enum>Qt::PlainText</enum>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
        <property name="textInteractionFlags">
         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
