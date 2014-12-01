@@ -569,6 +569,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         def update_no_interface_available():
             self.cbox_net_intf.clear()
             self.cbox_net_intf.addItem('No interfaces available')
+            self.label_net_gen_cstat_status.setText('No interfaces available')
             self.cbox_net_intf.setEnabled(False)
             self.wireless_configuration_gui(False)
             self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
@@ -775,9 +776,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                             if itype == INTERFACE_TYPE_WIRELESS:
                                 cstat_intf_name = iname+' : Wireless'
                                 if self.network_all_data['interfaces']['wireless_links'][iname]['status']:
-                                    self.label_net_gen_cstat_status.setText('Connected to '+\
-                                                                            self.network_all_data\
-                                                                            ['interfaces']['wireless_links'][iname]['essid'])
+                                    essid = unicode(self.network_all_data['interfaces']['wireless_links'][iname]['essid'])
+                                    self.label_net_gen_cstat_status.setText('Connected to '+essid)
                             else:
                                 cstat_intf_name = iname+' : Wired'
                                 self.label_net_gen_cstat_status.setText('Connected')
