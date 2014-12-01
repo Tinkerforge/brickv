@@ -88,9 +88,9 @@
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>-87</y>
+               <y>0</y>
                <width>674</width>
-               <height>613</height>
+               <height>636</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -435,14 +435,14 @@
                   <layout class="QVBoxLayout" name="verticalLayout_14">
                    <item>
                     <layout class="QGridLayout" name="gridLayout_2">
-                     <item row="3" column="1">
+                     <item row="4" column="0">
                       <widget class="QLabel" name="label_12">
                        <property name="text">
                         <string>Gateway:</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="1" column="3">
+                     <item row="2" column="2">
                       <widget class="QLabel" name="label_net_gen_cstat_ip">
                        <property name="text">
                         <string/>
@@ -452,14 +452,14 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="0" column="1">
+                     <item row="1" column="0">
                       <widget class="QLabel" name="label_8">
                        <property name="text">
                         <string>Interface:</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="0" column="3">
+                     <item row="1" column="2">
                       <widget class="QLabel" name="label_net_gen_cstat_intf">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -475,7 +475,7 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="5" column="1">
+                     <item row="6" column="0">
                       <spacer name="verticalSpacer_6">
                        <property name="orientation">
                         <enum>Qt::Vertical</enum>
@@ -488,7 +488,7 @@
                        </property>
                       </spacer>
                      </item>
-                     <item row="2" column="3">
+                     <item row="3" column="2">
                       <widget class="QLabel" name="label_net_gen_cstat_mask">
                        <property name="text">
                         <string/>
@@ -498,7 +498,7 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="4" column="3">
+                     <item row="5" column="2">
                       <widget class="QLabel" name="label_net_gen_cstat_dns">
                        <property name="text">
                         <string/>
@@ -508,7 +508,7 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="3" column="3">
+                     <item row="4" column="2">
                       <widget class="QLabel" name="label_net_gen_cstat_gateway">
                        <property name="text">
                         <string/>
@@ -518,28 +518,35 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="4" column="1">
+                     <item row="5" column="0">
                       <widget class="QLabel" name="label_30">
                        <property name="text">
                         <string>DNS:</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="1" column="1">
+                     <item row="2" column="0">
                       <widget class="QLabel" name="label_5">
                        <property name="text">
                         <string>IP:</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="2" column="1">
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_2">
+                       <property name="text">
+                        <string>Status:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="0">
                       <widget class="QLabel" name="label_10">
                        <property name="text">
                         <string>Mask:</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="0" column="2">
+                     <item row="1" column="1">
                       <spacer name="horizontalSpacer">
                        <property name="orientation">
                         <enum>Qt::Horizontal</enum>
@@ -551,6 +558,13 @@
                         </size>
                        </property>
                       </spacer>
+                     </item>
+                     <item row="0" column="2">
+                      <widget class="QLabel" name="label_net_gen_cstat_status">
+                       <property name="text">
+                        <string/>
+                       </property>
+                      </widget>
                      </item>
                     </layout>
                    </item>
@@ -584,7 +598,7 @@
              <enum>QTabWidget::South</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="tab_brickd_gen">
              <attribute name="title">
@@ -745,8 +759,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>330</width>
-                   <height>229</height>
+                   <width>668</width>
+                   <height>547</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -1117,8 +1131,43 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>ledit_brickd_secret</tabstop>
+  <tabstop>sarea_net</tabstop>
+  <tabstop>cbox_net_intf</tabstop>
+  <tabstop>cbox_net_wireless_ap</tabstop>
+  <tabstop>pbutton_net_wireless_scan</tabstop>
+  <tabstop>ledit_net_wireless_key</tabstop>
+  <tabstop>chkbox_net_wireless_key_show</tabstop>
+  <tabstop>cbox_net_conftype</tabstop>
+  <tabstop>sbox_net_ip1</tabstop>
+  <tabstop>sbox_net_ip2</tabstop>
+  <tabstop>sbox_net_ip3</tabstop>
+  <tabstop>sbox_net_ip4</tabstop>
+  <tabstop>sbox_net_mask1</tabstop>
+  <tabstop>sbox_net_mask2</tabstop>
+  <tabstop>sbox_net_mask3</tabstop>
+  <tabstop>sbox_net_mask4</tabstop>
+  <tabstop>sbox_net_gw1</tabstop>
+  <tabstop>sbox_net_gw2</tabstop>
+  <tabstop>sbox_net_gw3</tabstop>
+  <tabstop>sbox_net_gw4</tabstop>
+  <tabstop>sbox_net_dns1</tabstop>
+  <tabstop>sbox_net_dns2</tabstop>
+  <tabstop>sbox_net_dns3</tabstop>
+  <tabstop>sbox_net_dns4</tabstop>
+  <tabstop>ledit_net_hostname</tabstop>
+  <tabstop>pbutton_net_refresh</tabstop>
+  <tabstop>pbutton_net_save</tabstop>
   <tabstop>twidget_brickd</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>sbox_brickd_la_ip1</tabstop>
+  <tabstop>sbox_brickd_la_ip2</tabstop>
+  <tabstop>sbox_brickd_la_ip3</tabstop>
+  <tabstop>sbox_brickd_la_ip4</tabstop>
+  <tabstop>sbox_brickd_lp</tabstop>
+  <tabstop>sbox_brickd_lwsp</tabstop>
+  <tabstop>ledit_brickd_secret</tabstop>
+  <tabstop>pbutton_brickd_general_refresh</tabstop>
+  <tabstop>pbutton_brickd_general_save</tabstop>
   <tabstop>scrollArea_5</tabstop>
   <tabstop>cbox_brickd_adv_ll</tabstop>
   <tabstop>sbox_brickd_adv_spi_dly</tabstop>
@@ -1136,15 +1185,6 @@
   <tabstop>time_timezone_red</tabstop>
   <tabstop>time_timezone_local</tabstop>
   <tabstop>time_sync_button</tabstop>
-  <tabstop>pbutton_brickd_general_refresh</tabstop>
-  <tabstop>scrollArea</tabstop>
-  <tabstop>pbutton_brickd_general_save</tabstop>
-  <tabstop>sbox_brickd_la_ip1</tabstop>
-  <tabstop>sbox_brickd_la_ip2</tabstop>
-  <tabstop>sbox_brickd_la_ip3</tabstop>
-  <tabstop>sbox_brickd_la_ip4</tabstop>
-  <tabstop>sbox_brickd_lp</tabstop>
-  <tabstop>sbox_brickd_lwsp</tabstop>
  </tabstops>
  <resources/>
  <connections/>

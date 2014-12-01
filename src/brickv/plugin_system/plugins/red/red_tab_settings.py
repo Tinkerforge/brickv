@@ -340,6 +340,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.label_net_gen_cstat_mask.setText('None')
             self.label_net_gen_cstat_gateway.setText('None')
             self.label_net_gen_cstat_dns.setText('None')
+            self.label_net_gen_cstat_status.setText('None')
             self.ledit_net_hostname.setText('')
 
             self.cbox_net_intf.clear()
@@ -579,6 +580,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.ledit_net_hostname.setText\
                 (self.network_all_data['status']['cstat_hostname'])
 
+            self.label_net_gen_cstat_status.setText(unicode(self.network_all_data['status']['cstat_status']))
+
             if self.network_all_data['status']['cstat_intf_active']['name'] is not None:
                 self.label_net_gen_cstat_ip.setText(self.network_all_data['status']['cstat_intf_active']['ip'])
                 self.label_net_gen_cstat_mask.setText(self.network_all_data['status']['cstat_intf_active']['mask'])
@@ -767,12 +770,17 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         istate = self.cbox_net_intf.itemData(i, INTERFACE_STATE_USER_ROLE).toInt()[0]
                         if istate == INTERFACE_STATE_ACTIVE:
                             self.cbox_net_intf.setCurrentIndex(i)
-                            iname = self.cbox_net_intf.itemData(i, INTERFACE_NAME_USER_ROLE).toString()
+                            iname = unicode(self.cbox_net_intf.itemData(i, INTERFACE_NAME_USER_ROLE).toString())
                             itype = self.cbox_net_intf.itemData(i, INTERFACE_TYPE_USER_ROLE).toInt()[0]
                             if itype == INTERFACE_TYPE_WIRELESS:
                                 cstat_intf_name = iname+' : Wireless'
+                                if self.network_all_data['interfaces']['wireless_links'][iname]['status']:
+                                    self.label_net_gen_cstat_status.setText('Connected to '+\
+                                                                            self.network_all_data\
+                                                                            ['interfaces']['wireless_links'][iname]['essid'])
                             else:
                                 cstat_intf_name = iname+' : Wired'
+                                self.label_net_gen_cstat_status.setText('Connected')
                             self.label_net_gen_cstat_intf.setText(cstat_intf_name)
                             break
                         if i == self.cbox_net_intf.count() - 1:

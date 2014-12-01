@@ -1,6 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
+import os
 import json
 import socket
 import netifaces
@@ -11,6 +12,7 @@ return_dict['cstat_hostname'] = None
 return_dict['cstat_intf_active'] = {'name': None, 'ip': None, 'mask': None}
 return_dict['cstat_gateway'] = None
 return_dict['cstat_dns'] = None
+return_dict['cstat_status'] = None
 
 try:
     hname = unicode(socket.gethostname())
@@ -59,5 +61,14 @@ try:
                 break
 except:
     return_dict['cstat_dns'] = None
+    
+try:
+    if os.path.isfile('/etc/wicd/wireless-settings.conf') or\
+       os.path.isfile('/etc/wicd/wired-settings.conf'):
+           return_dict['cstat_status'] = 'Connecting...'
+    else:
+        return_dict['cstat_status'] = 'Not Configured'
+except:
+    return_dict['cstat_status'] = 'None'
 
 print json.dumps(return_dict)
