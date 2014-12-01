@@ -62,6 +62,11 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.refresh_counter = 0
         self.nic_time = 0
 
+        # For MAC progress bar text fix
+        self.label_pbar_cpu.hide()
+        self.label_pbar_memory.hide()
+        self.label_pbar_storage.hide()
+
         # connecting signals to slots
         self.refresh_timer.timeout.connect(self.cb_refresh)
         self.button_refresh.clicked.connect(self.refresh_clicked)
@@ -183,6 +188,9 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         pbar_storage_fmt = "{0}% [{1} of {2} GiB]".format(storage_percent, storage_used, storage_total)
 
         if sys.platform == 'darwin':
+            self.label_pbar_cpu.show()
+            self.label_pbar_memory.show()
+            self.label_pbar_storage.show()
             self.label_pbar_cpu.setText(pbar_cpu_fmt)
             self.label_pbar_memory.setText(pbar_memory_fmt)
             self.label_pbar_storage.setText(pbar_storage_fmt)
