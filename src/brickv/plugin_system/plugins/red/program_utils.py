@@ -656,6 +656,7 @@ class ListWidgetEditor:
         self.new_item_counter += 1
 
         self.add_item(self.new_item_text.format(counter), edit_item=True)
+        self.list_items.verticalScrollBar().setValue(self.list_items.verticalScrollBar().maximum())
 
     def remove_selected_item(self):
         for item in self.list_items.selectedItems():
@@ -782,6 +783,7 @@ class TreeWidgetEditor:
         self.new_item_counter += 1
 
         self.add_item(texts, edit_item=True)
+        self.tree_items.verticalScrollBar().setValue(self.tree_items.verticalScrollBar().maximum())
 
     def remove_selected_item(self):
         for item in self.tree_items.selectedItems():
