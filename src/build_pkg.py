@@ -42,6 +42,7 @@ import base64
 from distutils.core import setup
 import glob
 import shutil
+import struct
 import brickv.config
 
 DESCRIPTION = 'Brick Viewer'
@@ -212,6 +213,25 @@ os.environ['RESOURCEPATH'] = os.path.dirname(os.path.realpath(__file__))
     else:
         print "Usage: python setup.py py2app build"
 
+# https://github.com/rfk/www.rfk.id.au/blob/master/content/blog/entry/code-signing-py2exe/index.html
+def sign_py2exe(exepath):
+    # First, sign a *copy* of the file so that we know its final size.
+    execopy = os.path.join(os.path.dirname(exepath),
+                           "temp-" + os.path.basename(exepath))
+    shutil.copy2(exepath, execopy)
+    os.system('C:\\codesign\\sign.bat ' + execopy)
+
+    # Figure out the size of the appended signature.
+    comment_size = os.stat(execopy).st_size - os.stat(exepath).st_size
+    os.unlink(execopy)
+
+    # Write the correct comment size as the last two bytes of the file.
+    with open(exepath, "r+") as f:
+        f.seek(-2, os.SEEK_END)
+        f.write(struct.pack("<H", comment_size))
+
+    # Now we can sign the file for real.
+    os.system('C:\\codesign\\sign.bat ' + exepath)
 
 def build_windows_pkg():
     PWD = os.path.dirname(os.path.realpath(__file__))
@@ -236,8 +256,9 @@ def build_windows_pkg():
 
     os.path.walk(os.path.normcase("build_data/windows/"), visitor, (True, os.path.normcase("build_data/windows/")))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'brickv-icon.png')]))
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tabicon-default.png')]))
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tabicon-mouse-over.png')]))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-default-icon.png')]))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-mouse-over-icon.png')]))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'dialog-warning.png')]))
 
     generate_plugin_images()
 
@@ -295,6 +316,10 @@ def build_windows_pkg():
                      }]
     )
 
+    # FIXME: doesn't work yet
+    #if os.path.exists('C:\\codesign\\sign.bat'):
+    #    sign_py2exe('dist\\brickv.exe')
+
     # build nsis
     lines = []
     for line in file('build_data/windows/nsis/brickv_installer.nsi.template', 'rb').readlines():
@@ -304,6 +329,17 @@ def build_windows_pkg():
     file('dist/nsis/brickv_installer.nsi', 'wb').writelines(lines)
 
     os.system('"C:\\Program Files\\NSIS\\makensis.exe" dist\\nsis\\brickv_installer.nsi')
+
+    dist_nsis_dir = os.path.join(os.getcwd(), 'dist', 'nsis')
+    installer = 'brickv_windows_{0}.exe'.format(brickv.config.BRICKV_VERSION.replace('.', '_'))
+
+    if os.path.exists(installer):
+        os.unlink(installer)
+
+    shutil.move(os.path.join(dist_nsis_dir, installer), os.getcwd())
+
+    if os.path.exists('C:\\codesign\\sign.bat'):
+        os.system('C:\\codesign\\sign.bat ' + installer)
 
 
 def build_linux_pkg():
