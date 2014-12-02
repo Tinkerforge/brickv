@@ -200,12 +200,20 @@ class REDSession(QtCore.QObject):
         return '<REDSession session_id: {0}>'.format(self._session_id)
 
     def _keep_session_alive(self):
+        if self._session_id == None:
+            # session is expired, don't keep it alive anymore longer
+            return
+
         try:
             error_code = self._brick.keep_session_alive(self._session_id, REDSession.LIFETIME)
         except:
             # FIXME: error handling
             print 'REDSession._keep_session_alive: keep_session_alive failed'
             traceback.print_exc()
+
+        if self._session_id == None:
+            # session got expired during the keep-alive call, don't keep it alive any longer
+            return
 
         self._keep_alive_timer = threading.Timer(REDSession.KEEP_ALIVE_INTERVAL,
                                                  self._keep_session_alive)
@@ -229,7 +237,7 @@ class REDSession(QtCore.QObject):
 
     # don't call this method with async_call, this is already non-blocking
     def expire(self):
-        if self._session_id is None:
+        if self._session_id == None:
             # expiring an unattached session is allowed and does nothing
             return
 
