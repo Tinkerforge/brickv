@@ -143,6 +143,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_JAVA_START_MODE)
         self.combo_jar_file_selector.reset()
         self.class_path_list_editor.reset()
+        self.check_show_class_path.setCheckState(Qt.Unchecked)
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
