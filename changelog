@@ -120,10 +120,16 @@
        Fix Dual Button Bricklet left/right permutation
        Reduce long-term memory usage by properly removing widgets on device disconnect
 2.1.1: Force Qt to use a more recent UI style on Windows
-       Store port, authentiation options and secret per host and double host history length
+       Store port, authentication options and secret per host and double host history length
        Use a signed Brick bootloader driver on Windows
        Add support for WS2811 and WS2812 to LED Strip Bricklet plugin
 2.1.2: Add support for Color, NFC/RFID and Solid State Relay Bricklet
        Rename main.exe to brickv.exe on Windows
        Make rainbow work better on small LED counts and add moving-dot mode to LED Strip Bricklet plugin
        Allow double click anywhere in a device tree row to jump to the corresponding tab
+2.2.0: Add RED Brick support
+       Allow to rearrange Brick and Bricklet tabs and detach them from the main window
+       Improve UI for NFC/RFID Bricklet read and write operations
+       Windows installer and drivers are signed now
+       Fix occasional bounce of the connect button
+       Fix UI font selection on Mac OS X 10.9 and 10.10
