@@ -29,6 +29,7 @@ from brickv.plugin_system.plugins.red.ui_program_page_files import Ui_ProgramPag
 from brickv.utils import get_main_window, get_program_path
 import os
 import posixpath
+import sys
 
 class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
     def __init__(self, title_prefix=''):
@@ -88,6 +89,15 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
 
     def show_add_directory_dialog(self):
         directory = unicode(QDir.toNativeSeparators(QFileDialog.getExistingDirectory(get_main_window(), 'Add Directory')))
+
+        if len(directory) == 0:
+            return
+
+        # FIXME: on Mac OS X the getExistingDirectory() might return the directory with
+        #        the last part being invalid, try to find the valid part of the directory
+        if sys.platform == 'darwin':
+            while len(directory) > 0 and not os.path.isdir(directory):
+                directory = os.path.split(directory)[0]
 
         if len(directory) == 0:
             return

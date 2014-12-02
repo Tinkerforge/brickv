@@ -35,6 +35,7 @@ import os
 import posixpath
 import json
 import zlib
+import sys
 
 USER_ROLE_FILE_NAME = Qt.UserRole + 2
 USER_ROLE_ITEM_TYPE = Qt.UserRole + 3
@@ -321,6 +322,15 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             return
 
         download_directory = unicode(QFileDialog.getExistingDirectory(get_main_window(), 'Download Logs'))
+
+        if len(download_directory) == 0:
+            return
+
+        # FIXME: on Mac OS X the getExistingDirectory() might return the directory with
+        #        the last part being invalid, try to find the valid part of the directory
+        if sys.platform == 'darwin':
+            while len(download_directory) > 0 and not os.path.isdir(download_directory):
+                download_directory = os.path.split(download_directory)[0]
 
         if len(download_directory) == 0:
             return
