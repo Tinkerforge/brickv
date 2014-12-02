@@ -1194,45 +1194,31 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                        'Error opening wired settings file.',
                                        QtGui.QMessageBox.Ok)
 
-        def cb_settings_network_restart_wicd(result):
-            if not result.stderr and result.exit_code == 0:
-                self.network_refresh_tasks_remaining = 5
-                self.network_refresh_tasks_error_occured = False
-                self.script_manager.execute_script('settings_network_status',
-                                                   cb_settings_network_status,
-                                                   [])
-
-                self.script_manager.execute_script('settings_network_get_interfaces',
-                                                   cb_settings_network_get_interfaces,
-                                                   [])
-        
-                async_call(self.manager_settings_conf_rfile.open,
-                           (MANAGER_SETTINGS_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                           cb_open_manager_settings,
-                           cb_open_error_manager_settings)
-        
-                async_call(self.wireless_settings_conf_rfile.open,
-                           (WIRELESS_SETTINGS_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                           cb_open_wireless_settings,
-                           cb_open_error_wireless_settings)
-        
-                async_call(self.wired_settings_conf_rfile.open,
-                           (WIRED_SETTINGS_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                           cb_open_wired_settings,
-                           cb_open_error_wired_settings)
-            else:
-                self.show_please_wait(WORKING_STATE_DONE)
-                err_msg = 'Error restarting Wicd.\n\n'+unicode(result.stderr)
-                QtGui.QMessageBox.critical(get_main_window(),
-                                           'Settings | Network',
-                                           err_msg,
-                                           QtGui.QMessageBox.Ok)
-
         self.show_please_wait(WORKING_STATE_REFRESH)
 
-        self.script_manager.execute_script('settings_network_restart_wicd',
-                                           cb_settings_network_restart_wicd,
-                                           [])
+        self.network_refresh_tasks_remaining = 5
+        self.network_refresh_tasks_error_occured = False
+
+        self.script_manager.execute_script('settings_network_status',
+                                           cb_settings_network_status)
+
+        self.script_manager.execute_script('settings_network_get_interfaces',
+                                           cb_settings_network_get_interfaces)
+
+        async_call(self.manager_settings_conf_rfile.open,
+                   (MANAGER_SETTINGS_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   cb_open_manager_settings,
+                   cb_open_error_manager_settings)
+
+        async_call(self.wireless_settings_conf_rfile.open,
+                   (WIRELESS_SETTINGS_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   cb_open_wireless_settings,
+                   cb_open_error_wireless_settings)
+
+        async_call(self.wired_settings_conf_rfile.open,
+                   (WIRED_SETTINGS_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   cb_open_wired_settings,
+                   cb_open_error_wired_settings)
 
     def slot_network_save_clicked(self):
         cbox_cidx = self.cbox_net_intf.currentIndex()
@@ -1845,8 +1831,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.time_sync_button.setEnabled(True)
         
         self.script_manager.execute_script('settings_time_get',
-                                           cb_red_brick_time,
-                                           [])
+                                           cb_red_brick_time)
     
     def time_stop(self):
         try:

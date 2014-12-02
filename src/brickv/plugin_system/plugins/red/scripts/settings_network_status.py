@@ -71,7 +71,7 @@ try:
     if status[0] == wicd_misc.NOT_CONNECTED:
         return_dict['cstat_status'] = 'Not connected'
     elif status[0] == wicd_misc.CONNECTING:
-        return_dict['cstat_status'] = 'Connecting ({0})...'.format(status[1][0])
+        return_dict['cstat_status'] = 'Connecting ({0})...'.format(status[1][0][0].upper() + status[1][0][1:])
     elif status[0] == wicd_misc.WIRELESS or status == wicd_misc.WIRED:
         return_dict['cstat_status'] = 'Connected'
     elif status[0] == wicd_misc.SUSPENDED:
