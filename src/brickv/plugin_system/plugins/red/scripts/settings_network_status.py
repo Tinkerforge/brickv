@@ -6,6 +6,8 @@ import json
 import socket
 import netifaces
 import subprocess
+from wicd import dbusmanager as wicd_dbusmanager
+from wicd import misc as wicd_misc
 
 return_dict = {}
 return_dict['cstat_hostname'] = None
@@ -61,13 +63,21 @@ try:
                 break
 except:
     return_dict['cstat_dns'] = None
-    
+
 try:
-    if os.path.isfile('/etc/wicd/wireless-settings.conf') or\
-       os.path.isfile('/etc/wicd/wired-settings.conf'):
-           return_dict['cstat_status'] = 'Connecting...'
+    wicd_dbusmanager.connect_to_dbus()
+    status = wicd_dbusmanager.get_dbus_ifaces()['daemon'].GetConnectionStatus()
+
+    if status[0] == wicd_misc.NOT_CONNECTED:
+        return_dict['cstat_status'] = 'Not connected'
+    elif status[0] == wicd_misc.CONNECTING:
+        return_dict['cstat_status'] = 'Connecting ({0})...'.format(status[1][0])
+    elif status[0] == wicd_misc.WIRELESS or status == wicd_misc.WIRED:
+        return_dict['cstat_status'] = 'Connected'
+    elif status[0] == wicd_misc.SUSPENDED:
+        return_dict['cstat_status'] = 'Suspended'
     else:
-        return_dict['cstat_status'] = 'Not Configured'
+        return_dict['cstat_status'] = 'Unknown ({0})'.format(status[0])
 except:
     return_dict['cstat_status'] = 'None'
 
