@@ -31,6 +31,9 @@
        <property name="value">
         <number>0</number>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
       </widget>
      </item>
      <item row="3" column="0">
@@ -60,6 +63,9 @@
       <widget class="QProgressBar" name="progress_file">
        <property name="value">
         <number>0</number>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
