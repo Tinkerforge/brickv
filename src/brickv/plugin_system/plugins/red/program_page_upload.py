@@ -224,7 +224,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if not self.edit_mode:
             self.next_step('Defining new program...', increase=0)
 
-            identifier = str(self.get_field('identifier').toString())
+            identifier = unicode(self.get_field('identifier').toString())
 
             try:
                 self.program = REDProgram(self.wizard().session).define(identifier) # FIXME: async_call

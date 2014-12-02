@@ -139,7 +139,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
                                  .format(name))
 
     def check_identifier(self, identifier):
-        identifier = str(identifier) # convert QString to ASCII
+        identifier = unicode(identifier) # convert QString to Unicode
         identifier_was_unique = self.identifier_is_unique
 
         if identifier in self.wizard().identifiers:

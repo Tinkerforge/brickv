@@ -153,6 +153,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         if program != None:
             bin_directory = posixpath.join(unicode(program.root_directory), 'bin')
         else:
+            identifier    = unicode(self.get_field('identifier').toString())
             bin_directory = posixpath.join('/', 'home', 'tf', 'programs', identifier, 'bin')
 
         jar_filenames = []
