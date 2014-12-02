@@ -330,7 +330,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
     def show_please_wait(self, state):
         self.frame_working_please_wait.show()
-        self.sarea_net.setEnabled(False)
+        self.sarea_net_content.setEnabled(False)
         self.network_button_refresh_enabled(False)
         self.network_button_save_enabled(False)
 
@@ -377,7 +377,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         elif state == WORKING_STATE_DONE:
             self.work_on_progress = False
             self.frame_working_please_wait.hide()
-            self.sarea_net.setEnabled(True)
+            self.sarea_net_content.setEnabled(True)
             self.network_button_refresh_enabled(True)
             self.network_button_save_enabled(False)
 

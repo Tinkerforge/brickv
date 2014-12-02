@@ -50,6 +50,9 @@
              <enum>QFrame::Raised</enum>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_10">
+             <property name="margin">
+              <number>0</number>
+             </property>
              <item>
               <widget class="QLabel" name="label_working_wait">
                <property name="text">
@@ -84,11 +87,11 @@
             <property name="widgetResizable">
              <bool>true</bool>
             </property>
-            <widget class="QWidget" name="scrollAreaWidgetContents_5">
+            <widget class="QWidget" name="sarea_net_content">
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>-14</y>
+               <y>0</y>
                <width>674</width>
                <height>636</height>
               </rect>
@@ -358,7 +361,7 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="5" column="1" colspan="2">
+                     <item row="5" column="1" colspan="4">
                       <widget class="QComboBox" name="cbox_net_conftype">
                        <item>
                         <property name="text">
@@ -372,7 +375,7 @@
                        </item>
                       </widget>
                      </item>
-                     <item row="0" column="1" colspan="2">
+                     <item row="0" column="1" colspan="4">
                       <widget class="QComboBox" name="cbox_net_intf">
                        <property name="sizePolicy">
                         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -395,14 +398,14 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="2" column="1" colspan="2">
+                     <item row="2" column="1" colspan="4">
                       <widget class="QLabel" name="label_net_wireless_channel">
                        <property name="text">
                         <string/>
                        </property>
                       </widget>
                      </item>
-                     <item row="3" column="1" colspan="2">
+                     <item row="3" column="1" colspan="4">
                       <widget class="QLabel" name="label_net_wireless_enctype">
                        <property name="text">
                         <string/>
@@ -759,8 +762,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>668</width>
-                   <height>547</height>
+                   <width>332</width>
+                   <height>229</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_20">
