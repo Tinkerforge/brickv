@@ -110,7 +110,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         progress = ExpandingProgressDialog(self)
         progress.hide_progress_text()
         progress.setWindowTitle('New Program')
-        progress.setLabelText(u"Collecting content of '{0}'".format(directory))
+        progress.setLabelText(u"Collecting content of {0}".format(directory))
         progress.setModal(True)
         progress.setRange(0, 0)
         progress.show()
