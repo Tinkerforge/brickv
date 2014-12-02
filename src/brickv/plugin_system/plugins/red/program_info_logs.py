@@ -58,25 +58,26 @@ class LogsProxyModel(QSortFilterProxyModel):
 
 
 class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
-    def __init__(self, context, update_main_ui_state, set_widget_enabled, is_alive, show_download_wizard):
+    def __init__(self, context, update_main_ui_state, set_widget_enabled, is_alive, show_download_wizard, set_program_callbacks_enabled):
         QWidget.__init__(self)
 
         self.setupUi(self)
 
-        self.session                = context.session
-        self.script_manager         = context.script_manager
-        self.program                = context.program
-        self.update_main_ui_state   = update_main_ui_state
-        self.set_widget_enabled     = set_widget_enabled
-        self.is_alive               = is_alive
-        self.show_download_wizard   = show_download_wizard
-        self.log_directory          = posixpath.join(unicode(self.program.root_directory), 'log')
-        self.refresh_in_progress    = False
-        self.view_dialog            = None
-        self.file_icon              = QIcon(os.path.join(get_program_path(), "file-icon.png"))
-        self.tree_logs_model        = QStandardItemModel(self)
-        self.tree_logs_model_header = ['Date / Time', 'Size']
-        self.tree_logs_proxy_model  = LogsProxyModel(self)
+        self.session                       = context.session
+        self.script_manager                = context.script_manager
+        self.program                       = context.program
+        self.update_main_ui_state          = update_main_ui_state
+        self.set_widget_enabled            = set_widget_enabled
+        self.is_alive                      = is_alive
+        self.show_download_wizard          = show_download_wizard
+        self.set_program_callbacks_enabled = set_program_callbacks_enabled
+        self.log_directory                 = posixpath.join(unicode(self.program.root_directory), 'log')
+        self.refresh_in_progress           = False
+        self.view_dialog                   = None
+        self.file_icon                     = QIcon(os.path.join(get_program_path(), "file-icon.png"))
+        self.tree_logs_model               = QStandardItemModel(self)
+        self.tree_logs_model_header        = ['Date / Time', 'Size']
+        self.tree_logs_proxy_model         = LogsProxyModel(self)
 
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_model_header)
         self.tree_logs_proxy_model.setSourceModel(self.tree_logs_model)
@@ -367,9 +368,14 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
     def view_log(self, item):
         file_name = posixpath.join(self.log_directory, unicode(item.data(USER_ROLE_FILE_NAME).toString()))
 
+        self.set_program_callbacks_enabled(False)
+
         self.view_dialog = ProgramInfoLogsView(self, self.session, file_name)
         self.view_dialog.exec_()
         self.view_dialog = None
+
+        if self.is_alive():
+            self.set_program_callbacks_enabled(True)
 
     def delete_selected_logs(self):
         button = QMessageBox.question(get_main_window(), 'Delete Logs',

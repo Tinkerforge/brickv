@@ -156,7 +156,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         # create logs info widget
         context = ProgramInfoContext(self.session, self.script_manager, self.executable_versions, self.program)
 
-        self.widget_logs = ProgramInfoLogs(context, self.update_ui_state, self.set_widget_enabled, is_alive, self.show_download_wizard)
+        self.widget_logs = ProgramInfoLogs(context, self.update_ui_state, self.set_widget_enabled, is_alive, self.show_download_wizard, self.set_program_callbacks_enabled)
         self.layout_logs.addWidget(self.widget_logs)
 
         # create files info widget
@@ -565,9 +565,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             self.refresh_info()
             self.name_changed.emit()
 
-        if self.tab_is_alive:
-            self.edit_general_wizard = None
+        self.edit_general_wizard = None
 
+        if self.tab_is_alive:
             self.set_edit_buttons_enabled(True)
 
     def show_edit_language_wizard(self):
@@ -605,9 +605,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             page.apply_program_changes()
             self.refresh_info()
 
-        if self.tab_is_alive:
-            self.edit_language_wizard = None
+        self.edit_language_wizard = None
 
+        if self.tab_is_alive:
             self.set_edit_buttons_enabled(True)
 
     def show_edit_arguments_wizard(self):
@@ -623,9 +623,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             page.apply_program_changes()
             self.refresh_info()
 
-        if self.tab_is_alive:
-            self.edit_arguments_wizard = None
+        self.edit_arguments_wizard = None
 
+        if self.tab_is_alive:
             self.set_edit_buttons_enabled(True)
 
     def show_edit_stdio_wizard(self):
@@ -641,9 +641,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             page.apply_program_changes()
             self.refresh_info()
 
-        if self.tab_is_alive:
-            self.edit_stdio_wizard = None
+        self.edit_stdio_wizard = None
 
+        if self.tab_is_alive:
             self.set_edit_buttons_enabled(True)
 
     def show_edit_schedule_wizard(self):
@@ -659,9 +659,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             page.apply_program_changes()
             self.refresh_info()
 
-        if self.tab_is_alive:
-            self.edit_schedule_wizard = None
+        self.edit_schedule_wizard = None
 
+        if self.tab_is_alive:
             self.set_edit_buttons_enabled(True)
 
     def show_upload_files_wizard(self):
@@ -675,9 +675,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         if self.upload_files_wizard.exec_() == QDialog.Accepted:
             self.widget_files.refresh_files()
 
-        if self.tab_is_alive:
-            self.upload_files_wizard = None
+        self.upload_files_wizard = None
 
+        if self.tab_is_alive:
             self.set_program_callbacks_enabled(True)
             self.set_edit_buttons_enabled(True)
 
@@ -689,9 +689,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         self.download_wizard = ProgramWizardDownload(self, context, self.program, download_kind, download_directory, downloads)
         self.download_wizard.exec_()
+        self.download_wizard = None
 
         if self.tab_is_alive:
-            self.download_wizard = None
-
             self.set_program_callbacks_enabled(True)
             self.set_edit_buttons_enabled(True)
