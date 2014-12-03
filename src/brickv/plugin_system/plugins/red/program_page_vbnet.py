@@ -78,9 +78,9 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
         self.option_list_editor.reset()
 
         # if a program exists then this page is used in an edit wizard
-        if self.wizard().program != None:
-            program = self.wizard().program
+        program = self.wizard().program
 
+        if program != None:
             # start mode
             start_mode_api_name = program.cast_custom_option_value('vbnet.start_mode', unicode, '<unknown>')
             start_mode          = Constants.get_vbnet_start_mode(start_mode_api_name)

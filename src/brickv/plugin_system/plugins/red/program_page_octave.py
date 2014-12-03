@@ -100,9 +100,9 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
             self.option_list_editor.add_item(unicode('--no-window-system'))
 
         # if a program exists then this page is used in an edit wizard
-        if self.wizard().program != None:
-            program = self.wizard().program
+        program = self.wizard().program
 
+        if program != None:
             # start mode
             start_mode_api_name = program.cast_custom_option_value('octave.start_mode', unicode, '<unknown>')
             start_mode          = Constants.get_octave_start_mode(start_mode_api_name)

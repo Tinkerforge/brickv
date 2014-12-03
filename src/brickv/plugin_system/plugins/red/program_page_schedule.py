@@ -55,9 +55,9 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_START_MODE)
 
         # if a program exists then this page is used in an edit wizard
-        if self.wizard().program != None:
-            program = self.wizard().program
+        program = self.wizard().program
 
+        if program != None:
             self.combo_start_mode.removeItem(Constants.START_MODE_ONCE)
 
             start_mode = Constants.get_start_mode(program.start_mode)
