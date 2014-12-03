@@ -26,7 +26,7 @@ from PyQt4.QtGui import QIcon, QFileDialog, QListWidgetItem, QApplication
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_files import Ui_ProgramPageFiles
-from brickv.utils import get_main_window, get_program_path
+from brickv.utils import get_main_window, get_resources_path
 import os
 import posixpath
 import sys
@@ -38,8 +38,8 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         self.setupUi(self)
 
         self.edit_mode   = False
-        self.folder_icon = QIcon(os.path.join(get_program_path(), "folder-icon.png"))
-        self.file_icon   = QIcon(os.path.join(get_program_path(), "file-icon.png"))
+        self.folder_icon = QIcon(os.path.join(get_resources_path(), "folder-icon.png"))
+        self.file_icon   = QIcon(os.path.join(get_resources_path(), "file-icon.png"))
 
         self.setTitle(title_prefix + 'Files')
 

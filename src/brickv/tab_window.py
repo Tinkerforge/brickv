@@ -28,7 +28,7 @@ from PyQt4.QtGui import QWidget, QAbstractButton, QTabBar, QPainter, \
                         QSizePolicy, QIcon
 
 import os
-from brickv.utils import get_program_path
+from brickv.utils import get_resources_path
 
 class IconButton(QAbstractButton):
     clicked = pyqtSignal()
@@ -77,8 +77,8 @@ class TabWindow(QWidget):
         self.name = name
         self.button = None # see tab()
         self.button_handler = button_handler
-        self.button_icon_default = QIcon(os.path.join(get_program_path(), "tab-default-icon.png"))
-        self.button_icon_mouse_over = QIcon(os.path.join(get_program_path(), "tab-mouse-over-icon.png"))
+        self.button_icon_default = QIcon(os.path.join(get_resources_path(), "tab-default-icon.png"))
+        self.button_icon_mouse_over = QIcon(os.path.join(get_resources_path(), "tab-mouse-over-icon.png"))
 
     def closeEvent(self, event):
         self.tab()

@@ -102,6 +102,7 @@ def build_macosx_pkg():
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-mouse-over-icon.png')]))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'file-icon.png')]))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'folder-icon.png')]))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'dialog-warning.png')]))
 
     def delete_old():
         BUILD_PATH = os.path.join(PWD, "build")
@@ -259,6 +260,8 @@ def build_windows_pkg():
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'brickv-icon.png')]))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-default-icon.png')]))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-mouse-over-icon.png')]))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'file-icon.png')]))
+    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'folder-icon.png')]))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'dialog-warning.png')]))
 
     generate_plugin_images()

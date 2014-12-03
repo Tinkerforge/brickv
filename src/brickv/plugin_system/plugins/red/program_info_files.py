@@ -23,13 +23,15 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QDateTime, QVariant, QDir
-from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QAbstractItemView, QLineEdit,\
-                        QSortFilterProxyModel, QFileDialog, QMessageBox, QInputDialog, QApplication, QDialog
+from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, \
+                        QAbstractItemView, QLineEdit, QSortFilterProxyModel, \
+                        QFileDialog, QMessageBox, QInputDialog, QApplication, QDialog
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.program_utils import Download, ExpandingProgressDialog, ExpandingInputDialog, get_file_display_size
+from brickv.plugin_system.plugins.red.program_utils import Download, ExpandingProgressDialog, \
+                                                           ExpandingInputDialog, get_file_display_size
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
 from brickv.async_call import async_call
-from brickv.utils import get_main_window, get_program_path
+from brickv.utils import get_main_window, get_resources_path
 import os
 import posixpath
 import json
@@ -157,8 +159,8 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.refresh_in_progress     = False
         self.available_files         = []
         self.available_directories   = []
-        self.folder_icon             = QIcon(os.path.join(get_program_path(), "folder-icon.png"))
-        self.file_icon               = QIcon(os.path.join(get_program_path(), "file-icon.png"))
+        self.folder_icon             = QIcon(os.path.join(get_resources_path(), "folder-icon.png"))
+        self.file_icon               = QIcon(os.path.join(get_resources_path(), "file-icon.png"))
         self.tree_files_model        = QStandardItemModel(self)
         self.tree_files_model_header = ['Name', 'Size', 'Last Modified']
         self.tree_files_proxy_model  = FilesProxyModel(self)

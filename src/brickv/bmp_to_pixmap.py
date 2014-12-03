@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 
 import os
 import sys
-from brickv.utils import get_program_path
+from brickv.utils import get_resources_path
 
 from PyQt4.QtGui import QPixmap, QColor
 from PyQt4.QtCore import Qt, QByteArray
@@ -40,7 +40,7 @@ def bmp_to_pixmap(path):
         pixmap = QPixmap()
         pixmap.loadFromData(data, image_data[path][0])
     else:
-        absolute_path = os.path.join(get_program_path(), path)
+        absolute_path = os.path.join(get_resources_path(), path)
         pixmap = QPixmap(absolute_path)
 
     mask1 = pixmap.createMaskFromColor(QColor(0xFF, 0x00, 0xF0), Qt.MaskInColor)

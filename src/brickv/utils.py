@@ -35,6 +35,12 @@ def get_program_path():
 
     return str(os.path.dirname(os.path.realpath(unicode(path, sys.getfilesystemencoding()))))
 
+def get_resources_path():
+    if sys.platform == "darwin" and hasattr(sys, 'frozen'):
+        return os.path.join(os.path.split(get_program_path())[0], 'Resources')
+    else:
+        return get_program_path()
+
 def get_main_window():
     for widget in QApplication.topLevelWidgets():
         if isinstance(widget, QMainWindow):

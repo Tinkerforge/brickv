@@ -30,8 +30,14 @@ import logging
 # from http://www.py2exe.org/index.cgi/WhereAmI
 if hasattr(sys, "frozen"):
     program_path = str(os.path.dirname(os.path.realpath(unicode(sys.executable, sys.getfilesystemencoding()))))
+
+    if sys.platform == "darwin":
+        resources_path = os.path.join(os.path.split(program_path)[0], 'Resources')
+    else:
+        resources_path = program_path
 else:
     program_path = str(os.path.dirname(os.path.realpath(unicode(__file__, sys.getfilesystemencoding()))))
+    resources_path = program_path
 
 # add program_path so OpenGL is properly imported
 sys.path.insert(0, program_path)
@@ -69,7 +75,7 @@ class BrickViewer(QApplication):
         QApplication.__init__(self, *args, **kwargs)
 
         self.object_creator_signal.connect(self.object_creator_slot)
-        self.setWindowIcon(QIcon(os.path.join(program_path, 'brickv-icon.png')))
+        self.setWindowIcon(QIcon(os.path.join(resources_path, 'brickv-icon.png')))
 
     def object_creator_slot(self, object_creator):
         object_creator.create()
