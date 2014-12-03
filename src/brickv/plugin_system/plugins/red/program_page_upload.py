@@ -321,7 +321,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             self.source_stat = os.stat(self.source_path)
             self.source_file = open(self.source_path, 'rb')
         except Exception as e:
-            self.upload_error('...error opening source file {0}: {1}', self.source_path, e)
+            self.upload_error('...error: Could not open source file {0}: {1}', self.source_path, e)
             return
 
         self.source_display_size = get_file_display_size(self.source_stat.st_size)
@@ -341,7 +341,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 try:
                     create_directory(self.wizard().session, target_directory, DIRECTORY_FLAG_RECURSIVE, 0755, 1000, 1000)
                 except REDError as e:
-                    self.upload_error('...error creating target directory {0}: {1}', target_directory, e)
+                    self.upload_error('...error: Could not create target directory {0}: {1}', target_directory, e)
                     return
 
                 self.created_directories.add(target_directory)
@@ -380,7 +380,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             if e.error_code == REDError.E_ALREADY_EXISTS:
                 self.start_conflict_resolution()
             else:
-                self.upload_error('...error opening target file {0}: {1}', self.target_path, e)
+                self.upload_error('...error: Could not open target file {0}: {1}', self.target_path, e)
 
             return
 
@@ -504,7 +504,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if error == None:
             self.upload_write_async()
         else:
-            self.upload_error('...error writing target file {0}: {1}', self.target_path, error)
+            self.upload_error('...error: Could not write to target file {0}: {1}', self.target_path, error)
 
     def upload_write_async(self):
         if self.canceled:
@@ -513,7 +513,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         try:
             data = self.source_file.read(1000*1000*10) # Read 10mb at a time
         except Exception as e:
-            self.upload_error('...error reading source file {0}: {1}', self.source_path, e)
+            self.upload_error('...error: Could not read from source file {0}: {1}', self.source_path, e)
             return
 
         if len(data) == 0:
@@ -525,7 +525,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         try:
             self.target_file.write_async(data, self.upload_write_async_cb_result, self.upload_write_async_cb_status)
         except REDError as e:
-            self.upload_error('...error writing target file {0}: {1}', self.target_path, e)
+            self.upload_error('...error: Could not write to target file {0}: {1}', self.target_path, e)
 
     def upload_write_async_done(self):
         if self.canceled:

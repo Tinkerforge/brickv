@@ -217,7 +217,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
                                                                    REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING,
                                                                    0, 1000, 1000) # FIXME: async_call
         except REDError as e:
-            self.download_error('...error opening source file {0}: {1}', self.source_path, e)
+            self.download_error('...error: Could not open source file {0}: {1}', self.source_path, e)
             return
 
         self.source_display_size   = get_file_display_size(self.source_file.length)
@@ -239,10 +239,10 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
                     os.makedirs(target_directory, 0755)
                 except OSError as e:
                     if e.errno != errno.EEXIST:
-                        self.download_error('...error creating target directory {0}: {1}', target_directory, e)
+                        self.download_error('...error: Could not create target directory {0}: {1}', target_directory, e)
                         return
                 except Exception as e:
-                    self.download_error('...error creating target directory {0}: {1}', target_directory, e)
+                    self.download_error('...error: Could not create target directory {0}: {1}', target_directory, e)
                     return
 
                 self.created_directories.add(target_directory)
@@ -257,7 +257,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
                 try:
                     os.remove(self.target_path)
                 except Exception as e:
-                    self.download_error('...error replacing target file {0}: {1}', self.target_path, e)
+                    self.download_error('...error: Could not replace target file {0}: {1}', self.target_path, e)
                     return
             else:
                 self.start_conflict_resolution()
@@ -266,7 +266,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         try:
             self.target_file = open(self.target_path, 'wb')
         except Exception as e:
-            self.download_error('...error opening target file {0}: {1}', self.target_path, e)
+            self.download_error('...error: Could not open target file {0}: {1}', self.target_path, e)
             return
 
         self.download_read_async()
@@ -385,13 +385,13 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
             return
 
         if result.error != None:
-            self.download_error('...error reading source file {0}: {1}', self.source_path, result.error)
+            self.download_error('...error: Could not read from source file {0}: {1}', self.source_path, result.error)
             return
 
         try:
             self.target_file.write(result.data)
         except Exception as e:
-            self.download_error('...error writing target file {0}: {1}', self.target_path, e)
+            self.download_error('...error: Could not write to target file {0}: {1}', self.target_path, e)
             return
 
         self.remaining_source_size -= len(result.data)
@@ -412,7 +412,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
                                         self.download_read_async_cb_result,
                                         self.download_read_async_cb_status)
         except REDError as e:
-            self.download_error('...error reading source file {0}: {1}', self.source_path, e)
+            self.download_error('...error: Could not read from source file {0}: {1}', self.source_path, e)
             return
 
     def download_read_async_done(self):
