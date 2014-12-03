@@ -138,6 +138,7 @@ def build_macosx_pkg():
                                  'distutils',
                                  'setuptools',
                                  'email',
+                                 'matplotlib',
                                  'PyQt4.QtDeclarative',
                                  'PyQt4.QtDesigner',
                                  'PyQt4.QtHelp',
