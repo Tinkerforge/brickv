@@ -54,11 +54,6 @@
          <string>Cron</string>
         </property>
        </item>
-       <item>
-        <property name="text">
-         <string>Once After Upload</string>
-        </property>
-       </item>
       </widget>
      </item>
      <item row="2" column="1">

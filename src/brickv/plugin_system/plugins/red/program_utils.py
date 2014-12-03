@@ -65,21 +65,23 @@ class Constants:
 
     # must match item order in combo_language on general page
     LANGUAGE_INVALID    = 0
-    LANGUAGE_C          = 1
-    LANGUAGE_CSHARP     = 2
-    LANGUAGE_DELPHI     = 3
-    LANGUAGE_JAVA       = 4
-    LANGUAGE_JAVASCRIPT = 5
-    LANGUAGE_OCTAVE     = 6
-    LANGUAGE_PERL       = 7
-    LANGUAGE_PHP        = 8
-    LANGUAGE_PYTHON     = 9
-    LANGUAGE_RUBY       = 10
-    LANGUAGE_SHELL      = 11
-    LANGUAGE_VBNET      = 12
+    LANGUAGE_SEPARATOR  = 1 # horizontal line in combo box
+    LANGUAGE_C          = 2
+    LANGUAGE_CSHARP     = 3
+    LANGUAGE_DELPHI     = 4
+    LANGUAGE_JAVA       = 5
+    LANGUAGE_JAVASCRIPT = 6
+    LANGUAGE_OCTAVE     = 7
+    LANGUAGE_PERL       = 8
+    LANGUAGE_PHP        = 9
+    LANGUAGE_PYTHON     = 10
+    LANGUAGE_RUBY       = 11
+    LANGUAGE_SHELL      = 12
+    LANGUAGE_VBNET      = 13
 
     language_display_names = {
         LANGUAGE_INVALID:    '<invalid>',
+        LANGUAGE_SEPARATOR:  '<separator>',
         LANGUAGE_C:          'C/C++',
         LANGUAGE_CSHARP:     'C#',
         LANGUAGE_DELPHI:     'Delphi/Lazarus',
@@ -96,6 +98,7 @@ class Constants:
 
     language_api_names = {
         LANGUAGE_INVALID:    '<invalid>',
+        LANGUAGE_SEPARATOR:  '<separator>',
         LANGUAGE_C:          'c',
         LANGUAGE_CSHARP:     'csharp',
         LANGUAGE_DELPHI:     'delphi',
@@ -139,6 +142,7 @@ class Constants:
 
     arguments_help = {
         LANGUAGE_INVALID:    '<invalid>',
+        LANGUAGE_SEPARATOR:  '<separator>',
         LANGUAGE_C:          'This list of arguments will be passed to the main() function.',
         LANGUAGE_CSHARP:     'This list of arguments will be passed to the Main() method.',
         LANGUAGE_DELPHI:     'This list of arguments will be available as ParamStr array.',
@@ -155,6 +159,7 @@ class Constants:
 
     language_file_ending = { # endswith XXX sorted by file ending index
         LANGUAGE_INVALID:    [],
+        LANGUAGE_SEPARATOR:  [],
         LANGUAGE_C:          [''],
         LANGUAGE_CSHARP:     ['', '.exe'],
         LANGUAGE_DELPHI:     ['', ('.pas', '.pp')],
@@ -521,11 +526,12 @@ class Constants:
         return Constants.api_stderr_redirection_display_names[Constants.api_stderr_redirections[stderr_redirection]]
 
     # must match item order in combo_start_mode on schedule page
-    START_MODE_NEVER    = 0
-    START_MODE_ALWAYS   = 1
-    START_MODE_INTERVAL = 2
-    START_MODE_CRON     = 3
-    START_MODE_ONCE     = 4 # never + start from upload page
+    START_MODE_NEVER     = 0
+    START_MODE_ALWAYS    = 1
+    START_MODE_INTERVAL  = 2
+    START_MODE_CRON      = 3
+    START_MODE_SEPARATOR = 4 # horizontal line in combo box
+    START_MODE_ONCE      = 5 # never + start from upload page
 
     api_start_modes = {
         START_MODE_NEVER:    REDProgram.START_MODE_NEVER,

@@ -43,6 +43,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         self.setSubTitle('Specify name, identifier, programming language and description for the program.')
 
         self.edit_identifier.setValidator(QRegExpValidator(QRegExp('^[a-zA-Z0-9_][a-zA-Z0-9._-]{2,}$'), self))
+        self.combo_language.insertSeparator(Constants.LANGUAGE_SEPARATOR)
 
         self.registerField('name', self.edit_name)
         self.registerField('identifier', self.edit_identifier)

@@ -58,8 +58,6 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         program = self.wizard().program
 
         if program != None:
-            self.combo_start_mode.removeItem(Constants.START_MODE_ONCE)
-
             start_mode = Constants.get_start_mode(program.start_mode)
 
             self.combo_start_mode.setCurrentIndex(start_mode)
@@ -73,6 +71,9 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
 
             if program.start_mode == REDProgram.START_MODE_CRON:
                 self.edit_start_fields.setText(unicode(program.start_fields))
+        elif self.combo_start_mode.count() <= Constants.START_MODE_SEPARATOR:
+            self.combo_start_mode.insertSeparator(Constants.START_MODE_SEPARATOR)
+            self.combo_start_mode.insertItem(Constants.START_MODE_ONCE, 'Once After Upload')
 
         self.update_ui_state()
         self.update_interval_help()
