@@ -576,7 +576,7 @@ class Constants:
     DEFAULT_STDIN_REDIRECTION     = STDIN_REDIRECTION_PIPE
     DEFAULT_STDOUT_REDIRECTION    = STDOUT_REDIRECTION_CONTINUOUS_LOG
     DEFAULT_STDERR_REDIRECTION    = STDERR_REDIRECTION_STDOUT
-    DEFAULT_START_MODE            = START_MODE_INTERVAL # FIXME: switch back to ALWAYS once a redapid with sufficent inter-spawn delay is released
+    DEFAULT_START_MODE            = START_MODE_ALWAYS
 
 
 # workaround miscalculated initial size-hint for initially hidden QListWidgets
