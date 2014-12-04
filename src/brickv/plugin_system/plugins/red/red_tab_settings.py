@@ -122,6 +122,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.network_refresh_tasks_remaining = -1
         self.network_refresh_tasks_error_occured = False
         self.work_on_progress = False
+        self.restore_wireless_interface = ''
 
         self.network_all_data = {'status': None,
                                  'interfaces': None,
@@ -986,19 +987,62 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         interface_type = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE).toInt()[0]
 
         if interface_type == INTERFACE_TYPE_WIRELESS:
-            def cb_settings_network_wireless_scan(result):
+            def cb_open_wlintf_restore(config, red_file):
+                def cb_write(red_file, result):
+                    red_file.release()
+                    self.cbox_net_wireless_ap.clear()
+                    self.show_please_wait(WORKING_STATE_DONE)
+                    if result is not None:
+                        QtGui.QMessageBox.critical(get_main_window(),
+                                                   'Settings | Network',
+                                                   'Wireless interface restore failed, could not write to manager settings file.',
+                                                   QtGui.QMessageBox.Ok)
+                    else:
+                        self.update_access_points()
+                        QtGui.QMessageBox.information(get_main_window(),
+                                                      'Settings | Network',
+                                                      'Scan finished.',
+                                                      QtGui.QMessageBox.Ok)
+
+                red_file.write_async(config, lambda x: cb_write(red_file, x), None)
+
+            def cb_open_error_wlintf_restore():
                 self.cbox_net_wireless_ap.clear()
                 self.show_please_wait(WORKING_STATE_DONE)
-    
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           'Settings | Network',
+                                           'Wireless interface restore failed, could not open manager settings file.',
+                                           QtGui.QMessageBox.Ok)
+
+            def cb_settings_network_wireless_scan(result):
                 if result.stdout and not result.stderr and result.exit_code == 0:
+                    try:
+                        # Restore wireless interface after scan
+                        self.network_all_data['manager_settings'].set('Settings', 'wireless_interface', self.restore_wireless_interface)
+                        config = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
+                    except Exception as e:
+                        self.cbox_net_wireless_ap.clear()
+                        self.show_please_wait(WORKING_STATE_DONE)
+                        err_msg = 'Wireless interface restore failed.\n\n'+unicode(e)
+                        QtGui.QMessageBox.critical(get_main_window(),
+                                                   'Settings | Network',
+                                                   err_msg,
+                                                   QtGui.QMessageBox.Ok)
+                        return
+
                     self.network_all_data['scan_result'] = json.loads(result.stdout)
-                    self.update_access_points()
-    
-                    QtGui.QMessageBox.information(get_main_window(),
-                                                  'Settings | Network',
-                                                  'Scan finished.',
-                                                  QtGui.QMessageBox.Ok)
+
+                    async_call(self.manager_settings_conf_rfile.open,
+                               (MANAGER_SETTINGS_CONF_PATH,
+                               REDFile.FLAG_WRITE_ONLY |
+                               REDFile.FLAG_CREATE |
+                               REDFile.FLAG_NON_BLOCKING |
+                               REDFile.FLAG_TRUNCATE, 0500, 0, 0),
+                               lambda x: cb_open_wlintf_restore(config, x),
+                               cb_open_error_wlintf_restore)
                 else:
+                    self.cbox_net_wireless_ap.clear()
+                    self.show_please_wait(WORKING_STATE_DONE)
                     err_msg = 'Wireless scan failed\n\n'+unicode(result.stderr)
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
@@ -1031,6 +1075,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                            QtGui.QMessageBox.Ok)
 
             try:
+                # Saving currently configured wireless interface
+                self.restore_wireless_interface = unicode(self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', ''))
                 self.network_all_data['manager_settings'].set('Settings', 'wireless_interface', interface_name)
                 config = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
             except Exception as e:
