@@ -690,6 +690,8 @@ class ListWidgetEditor:
         self.list_items.addItem(item)
 
         if edit_item:
+            self.list_items.setCurrentItem(item)
+            self.list_items.setFocus()
             self.list_items.editItem(item)
         elif select_item:
             self.list_items.setCurrentItem(item)
@@ -816,6 +818,8 @@ class TreeWidgetEditor:
         self.tree_items.addTopLevelItem(item)
 
         if edit_item:
+            self.tree_items.setCurrentItem(item)
+            self.tree_items.setFocus()
             self.tree_items.editItem(item)
         elif select_item:
             self.tree_items.setCurrentItem(item)
