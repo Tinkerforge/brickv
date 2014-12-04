@@ -609,7 +609,7 @@ class REDFileBase(REDObject):
     AsyncReadResult = namedtuple('AsyncReadResult', 'data error')
 
     # Number of chunks written in one async read/write burst
-    ASYNC_BURST_CHUNKS      = 512
+    ASYNC_BURST_CHUNKS      = 50
     ASYNC_READ_BURST_LENGTH = ASYNC_BURST_CHUNKS * MAX_READ_ASYNC_BUFFER_LENGTH
 
     _qtcb_events_occurred = QtCore.pyqtSignal(int)
@@ -710,7 +710,7 @@ class REDFileBase(REDObject):
                 return
 
             self._write_async_data.written += length_to_write
-            unchecked_writes += 1
+            unchecked_writes               += 1
 
         chunk, length_to_write = _get_zero_padded_chunk(self._write_async_data.data,
                                                         REDFileBase.MAX_WRITE_ASYNC_BUFFER_LENGTH,
@@ -745,49 +745,39 @@ class REDFileBase(REDObject):
             self._report_read_async_result(REDError('Could not read from file object {0}'.format(self.object_id), error_code))
             return
 
+        if length_read == 0:
+            # no more data to read, report the result
+            self._report_read_async_result(None)
+            return
+
         self._read_async_data.burst_length += length_read
         self._read_async_data.data_length  += length_read
 
-        if length_read > 0:
-            self._read_async_data.data_chunks.append(bytearray(buf[:length_read]))
-        else:
-            if self._read_async_data.data_length != self._read_async_data.max_length and \
-               self._read_async_data.burst_length == REDFileBase.ASYNC_READ_BURST_LENGTH:
-                self._report_read_async_status()
+        self._read_async_data.data_chunks.append(bytearray(buf[:length_read]))
 
-                to_read = min(self._read_async_data.max_length - self._read_async_data.data_length, REDFileBase.ASYNC_READ_BURST_LENGTH)
-                self._read_async_data.burst_length = 0
-
-                try:
-                    # FIXME: Do we need a timeout here for the case that no callback comes?
-                    self._session._brick.read_file_async(self.object_id, to_read)
-                except Exception as e:
-                    self._report_read_async_result(e)
-
-                return
-
-            # Return data if length is 0 (i.e. the given length was greater then the file length)
-            self._report_read_async_result(None)
-            return
-
-        if self._read_async_data.burst_length == REDFileBase.ASYNC_READ_BURST_LENGTH:
-            self._report_read_async_status()
-
-            to_read = min(self._read_async_data.max_length - self._read_async_data.data_length, REDFileBase.ASYNC_READ_BURST_LENGTH)
-            self._read_async_data.burst_length = 0
-
-            try:
-                # FIXME: Do we need a timeout here for the case that no callback comes?
-                self._session._brick.read_file_async(self.object_id, to_read)
-            except Exception as e:
-                self._report_read_async_result(e)
-
-            return
-
-        # And also return data if we read all of the data the user asked for
         if self._read_async_data.data_length >= self._read_async_data.max_length:
+            # read max_length data, report the result
             self._report_read_async_status()
             self._report_read_async_result(None)
+        elif self._read_async_data.burst_length == REDFileBase.ASYNC_READ_BURST_LENGTH:
+            # burst finished, start next one
+            self._report_read_async_status()
+            self._next_read_async_burst()
+
+    def _next_read_async_burst(self):
+        remaining_length = self._read_async_data.max_length - self._read_async_data.data_length
+
+        if remaining_length < 0:
+            return
+
+        length_to_read                     = min(remaining_length, REDFileBase.ASYNC_READ_BURST_LENGTH)
+        self._read_async_data.burst_length = 0
+
+        try:
+            # FIXME: Do we need a timeout here for the case that no callback comes?
+            self._session._brick.read_file_async(self.object_id, length_to_read)
+        except Exception as e:
+            self._report_read_async_result(e)
 
     def _cb_events_occurred_emit(self, file_id, events):
         if self.object_id != file_id:
@@ -855,7 +845,9 @@ class REDFileBase(REDObject):
         if self._write_async_data != None:
             raise RuntimeError('Another asynchronous write is already in progress')
 
-        self._write_async_data = create_object_in_qt_main_thread(REDFileBase.WriteAsyncData, (bytearray(data), result_callback, status_callback))
+        self._write_async_data = create_object_in_qt_main_thread(REDFileBase.WriteAsyncData,
+                                                                 (bytearray(data), result_callback, status_callback))
+
         self._report_write_async_status()
         self._next_write_async_burst()
 
@@ -866,8 +858,7 @@ class REDFileBase(REDObject):
         data = bytearray()
 
         while length > 0:
-            length_to_read = min(length, REDFileBase.MAX_READ_BUFFER_LENGTH)
-
+            length_to_read                 = min(length, REDFileBase.MAX_READ_BUFFER_LENGTH)
             error_code, chunk, length_read = self._session._brick.read_file(self.object_id, length_to_read)
 
             if error_code != REDError.E_SUCCESS:
@@ -890,9 +881,11 @@ class REDFileBase(REDObject):
         if self._read_async_data != None:
             raise RuntimeError('Another asynchronous read is already in progress')
 
-        self._read_async_data = create_object_in_qt_main_thread(REDFileBase.ReadAsyncData, (max_length, result_callback, status_callback))
+        self._read_async_data = create_object_in_qt_main_thread(REDFileBase.ReadAsyncData,
+                                                                (max_length, result_callback, status_callback))
+
         self._report_read_async_status()
-        self._session._brick.read_file_async(self.object_id, min(max_length, REDFileBase.ASYNC_READ_BURST_LENGTH))
+        self._next_read_async_burst()
 
     def abort_async_read(self):
         if self.object_id is None:

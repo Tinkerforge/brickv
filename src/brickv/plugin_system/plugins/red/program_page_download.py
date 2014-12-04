@@ -61,6 +61,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.source_path                     = None # abolsute path on RED Brick in POSIX format
         self.source_display_size             = None
         self.remaining_source_size           = None
+        self.progress_file_next_update       = None
         self.last_download_size              = None
         self.replace_help_template           = unicode(self.label_replace_help.text())
         self.canceled                        = False
@@ -227,6 +228,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.progress_file.setRange(0, self.source_file.length)
         self.progress_file.setFormat(get_file_display_size(0) + ' of ' + self.source_display_size)
         self.progress_file.setValue(0)
+        self.progress_file_next_update = 0
 
         self.target_path = os.path.join(self.download_directory, self.download.target)
 
@@ -373,10 +375,11 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
 
             return
 
-        downloaded = self.progress_file.value() + download_size - self.last_download_size
+        self.progress_file_next_update += download_size - self.last_download_size
 
-        self.progress_file.setValue(downloaded)
-        self.progress_file.setFormat(get_file_display_size(downloaded) + ' of ' + self.source_display_size)
+        if self.progress_file.value() / (100 * 1024) != self.progress_file_next_update / (100 * 1024):
+            self.progress_file.setValue(self.progress_file_next_update)
+            self.progress_file.setFormat(get_file_display_size(self.progress_file_next_update) + ' of ' + self.source_display_size)
 
         self.last_download_size = download_size
 

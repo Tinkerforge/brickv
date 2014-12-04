@@ -62,6 +62,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.source_stat                     = None
         self.source_display_size             = None
         self.last_upload_size                = None
+        self.progress_file_next_update       = 0
         self.replace_help_template           = unicode(self.label_replace_help.text())
         self.warnings                        = 0
         self.canceled                        = False
@@ -505,10 +506,11 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
             return
 
-        uploaded = self.progress_file.value() + upload_size - self.last_upload_size
+        self.progress_file_next_update += upload_size - self.last_upload_size
 
-        self.progress_file.setValue(uploaded)
-        self.progress_file.setFormat(get_file_display_size(uploaded) + ' of ' + self.source_display_size)
+        if self.progress_file.value() / (100 * 1024) != self.progress_file_next_update / (100 * 1024):
+            self.progress_file.setValue(self.progress_file_next_update)
+            self.progress_file.setFormat(get_file_display_size(self.progress_file_next_update) + ' of ' + self.source_display_size)
 
         self.last_upload_size = upload_size
 
