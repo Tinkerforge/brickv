@@ -45,9 +45,9 @@ if len(lwireless) > 0:
                 for token in cmd_output_line0_array:
                     if 'ESSID:' in token:
                         _associated_essid = token.split(':')[1]
-                        associated_essid = _associated_essid[1:-1]
+                        associated_essid = unicode(_associated_essid[1:-1])
                         if len(cmd_output_line1_array) > 0:
-                            associated_bssid = cmd_output_line1_array[-1:]
+                            associated_bssid = cmd_output_line1_array[-1:][0].strip()
                             wl_links_dict[wl_intf] =  {'name': wl_intf,
                                                        'status': True,
                                                        'essid': associated_essid,

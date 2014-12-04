@@ -71,6 +71,10 @@ INTERFACE_STATE_ACTIVE = 1
 INTERFACE_STATE_INACTIVE = 2
 AP_STATUS_ASSOCIATED = 1
 AP_STATUS_NOT_ASSOCIATED = 2
+AP_STATUS_NONE = 3
+AP_ENC_METHOD_WPA1 = 1
+AP_ENC_METHOD_WPA2 = 2
+AP_ENC_METHOD_UNSUPPORTED = 3
 
 INTERFACE_NAME_USER_ROLE = QtCore.Qt.UserRole + 1
 INTERFACE_TYPE_USER_ROLE = QtCore.Qt.UserRole + 2
@@ -80,10 +84,6 @@ INTERFACE_TYPE_WIRED_IP_USER_ROLE = QtCore.Qt.UserRole + 5
 INTERFACE_TYPE_WIRED_MASK_USER_ROLE = QtCore.Qt.UserRole + 6
 INTERFACE_TYPE_WIRED_GATEWAY_USER_ROLE = QtCore.Qt.UserRole + 7
 INTERFACE_TYPE_WIRED_DNS_USER_ROLE = QtCore.Qt.UserRole + 8
-
-AP_ENC_METHOD_WPA1 = 1
-AP_ENC_METHOD_WPA2 = 2
-AP_ENC_METHOD_UNSUPPORTED = 3
 
 AP_NAME_USER_ROLE = QtCore.Qt.UserRole + 1
 AP_STATUS_USER_ROLE = QtCore.Qt.UserRole + 2
@@ -126,6 +126,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.network_all_data = {'status': None,
                                  'interfaces': None,
                                  'scan_result': None,
+                                 'scan_result_cache': None,
                                  'manager_settings': None,
                                  'wireless_settings': None,
                                  'wired_settings': None}
@@ -315,6 +316,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def show_wireless_configuration(self, show):
         self.cbox_net_wireless_ap.clear()
         self.cbox_net_wireless_ap.addItem('Scan to get access points...')
+        self.cbox_net_wireless_ap.setItemData(0,
+                                              QtCore.QVariant(AP_STATUS_NONE),
+                                              AP_STATUS_USER_ROLE)
         self.cbox_net_wireless_ap.setEnabled(False)
         self.label_net_wireless_channel.setText('')
         self.label_net_wireless_enctype.setText('')
@@ -349,6 +353,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             
             self.cbox_net_wireless_ap.clear()
             self.cbox_net_wireless_ap.addItem('')
+            self.cbox_net_wireless_ap.setItemData(0,
+                                                  QtCore.QVariant(AP_STATUS_NONE),
+                                                  AP_STATUS_USER_ROLE)
             self.cbox_net_wireless_ap.setEnabled(False)
             self.label_net_wireless_channel.setText('')
             self.label_net_wireless_enctype.setText('')
@@ -363,6 +370,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.work_on_progress = True
             self.cbox_net_wireless_ap.clear()
             self.cbox_net_wireless_ap.addItem('Scanning...')
+            self.cbox_net_wireless_ap.setItemData(0,
+                                                  QtCore.QVariant(AP_STATUS_NONE),
+                                                  AP_STATUS_USER_ROLE)
             self.cbox_net_wireless_ap.setEnabled(False)
             self.label_net_wireless_channel.setText('')
             self.label_net_wireless_enctype.setText('')
@@ -409,6 +419,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.chkbox_net_wireless_key_show.hide()
             self.cbox_net_wireless_ap.clear()
             self.cbox_net_wireless_ap.addItem('No access points found. Scan again?')
+            self.cbox_net_wireless_ap.setItemData(0,
+                                                  QtCore.QVariant(AP_STATUS_NONE),
+                                                  AP_STATUS_USER_ROLE)
             self.cbox_net_wireless_ap.setEnabled(False)
 
         if self.network_all_data['scan_result'] is not None and\
@@ -1065,11 +1078,12 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 else:
                     self.network_refresh_tasks_error_occured = True
 
-                err_msg = 'Error executing network status script.\n\n'+unicode(result.stderr)
-                QtGui.QMessageBox.critical(get_main_window(),
-                                           'Settings | Network',
-                                           err_msg,
-                                           QtGui.QMessageBox.Ok)
+                if result.stderr:
+                    err_msg = 'Error executing network status script.\n\n'+unicode(result.stderr)
+                    QtGui.QMessageBox.critical(get_main_window(),
+                                               'Settings | Network',
+                                               err_msg,
+                                               QtGui.QMessageBox.Ok)
 
         def cb_settings_network_get_interfaces(result):
             self.network_refresh_tasks_remaining -= 1
@@ -1083,11 +1097,31 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 else:
                     self.network_refresh_tasks_error_occured = True
 
-                err_msg = 'Error executing network get interfaces script.\n\n'+unicode(result.stderr)
-                QtGui.QMessageBox.critical(get_main_window(),
-                                           'Settings | Network',
-                                           err_msg,
-                                           QtGui.QMessageBox.Ok)
+                if result.stderr:
+                    err_msg = 'Error executing network get interfaces script.\n\n'+unicode(result.stderr)
+                    QtGui.QMessageBox.critical(get_main_window(),
+                                               'Settings | Network',
+                                               err_msg,
+                                               QtGui.QMessageBox.Ok)
+
+        def cb_settings_network_wireless_scan_cache(result):
+            self.network_refresh_tasks_remaining -= 1
+            if result.stdout and not result.stderr and result.exit_code == 0 and not self.network_refresh_tasks_error_occured:
+                self.network_all_data['scan_result_cache'] = json.loads(result.stdout)
+                if self.network_refresh_tasks_remaining == 0:
+                    network_refresh_tasks_done(True)
+            else:
+                if self.network_refresh_tasks_remaining == 0:
+                    network_refresh_tasks_done(False)
+                else:
+                    self.network_refresh_tasks_error_occured = True
+
+                if result.stderr:
+                    err_msg = 'Error executing wireless scan cache script.\n\n'+unicode(result.stderr)
+                    QtGui.QMessageBox.critical(None,
+                                               'Settings | Network',
+                                               err_msg,
+                                               QtGui.QMessageBox.Ok)
 
         def cb_open_manager_settings(red_file):
             def cb_read(red_file, result):
@@ -1196,7 +1230,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         self.show_please_wait(WORKING_STATE_REFRESH)
 
-        self.network_refresh_tasks_remaining = 5
+        self.network_refresh_tasks_remaining = 6
         self.network_refresh_tasks_error_occured = False
 
         self.script_manager.execute_script('settings_network_status',
@@ -1204,6 +1238,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         self.script_manager.execute_script('settings_network_get_interfaces',
                                            cb_settings_network_get_interfaces)
+        
+        self.script_manager.execute_script('settings_network_wireless_scan_cache',
+                                           cb_settings_network_wireless_scan_cache,
+                                           [])
 
         async_call(self.manager_settings_conf_rfile.open,
                    (MANAGER_SETTINGS_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
@@ -1317,7 +1355,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     else:
                         self.network_all_data['wireless_settings'].set(bssid, 'encryption_method', 'WPA2')
                 else:
-                    self.network_all_data['wireless_settings'].set(bssid, 'encryption', 'False')
+                    self.network_all_data['wireless_settings'].remove_option(bssid, 'encryption')
+                    self.network_all_data['wireless_settings'].remove_option(bssid, 'enctype')
+                    self.network_all_data['wireless_settings'].remove_option(bssid, 'encryption_method')
+                    self.network_all_data['wireless_settings'].remove_option(bssid, 'key')
                 
                 def cb_settings_network_apply(result):
                     self.show_please_wait(WORKING_STATE_DONE)
@@ -1619,13 +1660,191 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         interface_type = self.cbox_net_intf.itemData(idx, INTERFACE_TYPE_USER_ROLE).toInt()[0]
 
         if interface_type == INTERFACE_TYPE_WIRELESS:
-            # Set AP list to currently associated
-            for i in range(self.cbox_net_wireless_ap.count()):
-                ap_associated_state = self.cbox_net_wireless_ap.itemData(i, AP_STATUS_USER_ROLE).toInt()[0]
-                if ap_associated_state == AP_STATUS_ASSOCIATED:
-                    self.cbox_net_wireless_ap.setCurrentIndex(i)
-                    break
-            self.show_wireless_configuration(True)
+            ap_stat = self.cbox_net_wireless_ap.itemData(0, AP_STATUS_USER_ROLE).toInt()[0]
+            if self.cbox_net_wireless_ap.count() == 1 and\
+               ap_stat == AP_STATUS_NONE and\
+               self.network_all_data['scan_result_cache'] is not None and\
+               self.network_all_data['interfaces'] is not None and\
+               self.network_all_data['interfaces']['wireless_links'] is not None and\
+               self.network_all_data['wireless_settings'] is not None and\
+               self.network_all_data['interfaces']['wireless_links'][interface_name]['status']:
+                    bssid = unicode(self.network_all_data['interfaces']\
+                                                         ['wireless_links']\
+                                                         [interface_name]\
+                                                         ['bssid'])
+                                                         
+                    essid = unicode(self.network_all_data['interfaces']\
+                                                         ['wireless_links']\
+                                                         [interface_name]\
+                                                         ['essid'])
+                    broke = False
+                    for idx, key in enumerate(self.network_all_data['scan_result_cache']):
+                        if self.network_all_data['scan_result_cache'][key]['essid'] == essid:
+                            if self.network_all_data['wireless_settings'].has_section(bssid):
+                                self.label_ap.show()
+                                self.cbox_net_wireless_ap.show()
+                                self.pbutton_net_wireless_scan.show()
+                                self.label_ch.show()
+                                self.label_net_wireless_channel.show()
+                                self.label_enc.show()
+                                self.label_net_wireless_enctype.show()
+                                self.label_key.show()
+                                self.ledit_net_wireless_key.show()
+                                self.chkbox_net_wireless_key_show.setChecked(False)
+                                self.chkbox_net_wireless_key_show.show()
+                                self.cbox_net_wireless_ap.setEnabled(True)
+                                self.address_configuration_gui(True)
+
+                                self.cbox_net_wireless_ap.clear()
+                                self.cbox_net_wireless_ap.addItem(essid)
+
+                                idx_cbox = 0
+                                nidx = key
+                                channel = unicode(self.network_all_data['scan_result_cache'][key]['channel'])
+                                encryption = unicode(self.network_all_data['scan_result_cache'][key]['encryption'])
+
+                                if encryption != 'Off':
+                                    encryption_method = unicode\
+                                        (self.network_all_data['scan_result_cache'][key]['encryption_method'])
+    
+                                self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                      QtCore.QVariant(essid),
+                                                                      AP_NAME_USER_ROLE)
+                            
+                                self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                      QtCore.QVariant(AP_STATUS_ASSOCIATED),
+                                                                      AP_STATUS_USER_ROLE)
+                            
+                                self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                      QtCore.QVariant(nidx),
+                                                                      AP_NETWORK_INDEX_USER_ROLE)
+                            
+                                self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                      QtCore.QVariant(channel),
+                                                                      AP_CHANNEL_USER_ROLE)
+                            
+                                self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                      QtCore.QVariant(encryption),
+                                                                      AP_ENCRYPTION_USER_ROLE)
+            
+                                if encryption != 'Off':
+                                    if encryption_method == 'WPA1':
+                                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant(AP_ENC_METHOD_WPA1),
+                                                                              AP_ENCRYPTION_METHOD_USER_ROLE)
+                                    elif encryption_method == 'WPA2':
+                                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant(AP_ENC_METHOD_WPA2),
+                                                                              AP_ENCRYPTION_METHOD_USER_ROLE)
+                                    else:
+                                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant(AP_ENC_METHOD_UNSUPPORTED),
+                                                                              AP_ENCRYPTION_METHOD_USER_ROLE)
+                                self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                      bssid,
+                                                                      AP_BSSID_USER_ROLE)
+                            
+                                try:
+                                    _key = self.network_all_data['wireless_settings'].get(bssid, 'key', '')
+                                    self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                          QtCore.QVariant(unicode(_key)),
+                                                                          AP_KEY_USER_ROLE)
+                                except:
+                                    self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                          QtCore.QVariant(''),
+                                                                          AP_KEY_USER_ROLE)
+    
+                                try:
+                                    _ip = self.network_all_data['wireless_settings'].get(bssid, 'ip', '')
+                                    if _ip == '' or _ip == 'None':
+                                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_DHCP),
+                                                                              AP_ADDRESS_CONF_USER_ROLE)
+                                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant('0.0.0.0'),
+                                                                              AP_IP_USER_ROLE)
+                                    else:
+                                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_STATIC),
+                                                                              AP_ADDRESS_CONF_USER_ROLE)
+                                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant(_ip),
+                                                                              AP_IP_USER_ROLE)
+                                except:
+                                    self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                          QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_DHCP),
+                                                                          AP_ADDRESS_CONF_USER_ROLE)
+                                    self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                          QtCore.QVariant('0.0.0.0'),
+                                                                          AP_IP_USER_ROLE)
+                            
+                                try:
+                                    _mask = self.network_all_data['wireless_settings'].get(bssid, 'netmask', '')
+                                    if _mask == '' or _ip == 'None':
+                                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant('0.0.0.0'),
+                                                                              AP_MASK_USER_ROLE)
+                                    else:
+                                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant(_mask),
+                                                                              AP_MASK_USER_ROLE)
+                                except:
+                                    self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant('0.0.0.0'),
+                                                                              AP_MASK_USER_ROLE)
+                            
+                                try:
+                                    _gw = self.network_all_data['wireless_settings'].get(bssid, 'gateway', '')
+                                    if _gw == '' or _gw == 'None':
+                                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant('0.0.0.0'),
+                                                                              AP_GATEWAY_USER_ROLE)
+                                    else:
+                                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant(_gw),
+                                                                              AP_GATEWAY_USER_ROLE)
+                                except:
+                                    self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant('0.0.0.0'),
+                                                                              AP_GATEWAY_USER_ROLE)
+                            
+                                try:
+                                    _dns = self.network_all_data['wireless_settings'].get(bssid, 'dns1', '')
+                                    if _dns == '' or _dns == 'None':
+                                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant('0.0.0.0'),
+                                                                              AP_DNS_USER_ROLE)
+                                    else:
+                                        self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant(_dns),
+                                                                              AP_DNS_USER_ROLE)
+                                except:
+                                    self.cbox_net_wireless_ap.setItemData(idx_cbox,
+                                                                              QtCore.QVariant('0.0.0.0'),
+                                                                              AP_DNS_USER_ROLE)
+
+                                # Initiate an index change
+                                self.cbox_net_wireless_ap.setCurrentIndex(-1)
+                                self.cbox_net_wireless_ap.setCurrentIndex(0)
+
+                                broke = True
+                                break
+
+                    if not broke:
+                        self.show_wireless_configuration(True)
+                        for i in range(self.cbox_net_wireless_ap.count()):
+                            ap_associated_state = self.cbox_net_wireless_ap.itemData(i, AP_STATUS_USER_ROLE).toInt()[0]
+                            if ap_associated_state == AP_STATUS_ASSOCIATED:
+                                self.cbox_net_wireless_ap.setCurrentIndex(i)
+                                break
+            else:
+                # Set AP list to currently associated
+                self.show_wireless_configuration(True)
+                for i in range(self.cbox_net_wireless_ap.count()):
+                    ap_associated_state = self.cbox_net_wireless_ap.itemData(i, AP_STATUS_USER_ROLE).toInt()[0]
+                    if ap_associated_state == AP_STATUS_ASSOCIATED:
+                        self.cbox_net_wireless_ap.setCurrentIndex(i)
+                        break
 
         else:
             self.show_wireless_configuration(False)
