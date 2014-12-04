@@ -63,6 +63,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.source_display_size             = None
         self.last_upload_size                = None
         self.replace_help_template           = unicode(self.label_replace_help.text())
+        self.warnings                        = 0
         self.canceled                        = False
 
         self.setTitle(title_prefix + 'Upload')
@@ -158,6 +159,19 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         if log:
             self.log(message)
+
+    def upload_warning(self, message, *args, **kwargs):
+        self.warnings += 1
+
+        string_args = []
+
+        for arg in args:
+            string_args.append(Qt.escape(unicode(arg)))
+
+        if len(string_args) > 0:
+            message = unicode(message).format(*tuple(string_args))
+
+        self.log(message, bold=True)
 
     def upload_error(self, message, *args, **kwargs):
         string_args = []
@@ -308,7 +322,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             return
 
         if len(self.remaining_uploads) == 0:
-            self.upload_files_done()
+            self.progress_file.setVisible(False)
+            self.set_configuration()
             return
 
         self.upload            = self.remaining_uploads[0]
@@ -542,22 +557,6 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.upload_next_file()
 
-    def upload_files_done(self):
-        self.progress_file.setVisible(False)
-
-        # FIXME: move compile steps after setting mode of the config, so the
-        # program doesn't end up in an half condfigured state if compilation fails
-        if self.language_api_name == 'c':
-            if self.get_field('c.compile_from_source').toBool():
-                self.compile_make()
-                return
-        elif self.language_api_name == 'delphi':
-            if self.get_field('delphi.compile_from_source').toBool():
-                self.compile_fpcmake()
-                return
-
-        self.set_configuration()
-
     def set_configuration(self):
         # set command
         if not self.edit_mode and self.command != None:
@@ -620,6 +619,16 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
             self.log('...done')
 
+        if self.language_api_name == 'c' and self.get_field('c.compile_from_source').toBool():
+            self.compile_make()
+            return
+        elif self.language_api_name == 'delphi' and self.get_field('delphi.compile_from_source').toBool():
+            self.compile_fpcmake()
+            return
+
+        self.set_schedule()
+
+    def set_schedule(self):
         # set schedule
         if not self.edit_mode and self.wizard().hasVisitedPage(Constants.PAGE_SCHEDULE):
             self.next_step('Setting schedule...')
@@ -663,8 +672,15 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
                 self.log('...done')
 
-        # upload successful
-        self.next_step('Upload successful!')
+        self.upload_done()
+
+    def upload_done(self):
+        if self.warnings == 1:
+            self.next_step('Upload finished with 1 warning!')
+        elif self.warnings > 1:
+            self.next_step('Upload finished with {0} warnings!'.format(self.warnings))
+        else:
+            self.next_step('Upload successful!')
 
         self.progress_total.setValue(self.progress_total.maximum())
 
@@ -679,12 +695,14 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                     self.log(s, pre=True)
 
                 if result.exit_code != 0:
-                    self.upload_error('...error')
+                    self.upload_warning('...warning: Could not compile source code')
+                    self.upload_done()
                 else:
                     self.log('...done')
-                    self.set_configuration()
+                    self.set_schedule()
             else:
-                self.upload_error('...error')
+                self.upload_warning('...warning: Could not execute fpcmake helper script')
+                self.upload_done()
 
         self.next_step('Executing make...')
 
@@ -702,12 +720,14 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                     self.log(s, pre=True)
 
                 if result.exit_code != 0:
-                    self.upload_error('...error')
+                    self.upload_warning('...warning: Could not compile source code')
+                    self.upload_done()
                 else:
                     self.log('...done')
-                    self.set_configuration()
+                    self.set_schedule()
             else:
-                self.upload_error('...error')
+                self.upload_warning('...warning: Could not execute fpcmake helper script')
+                self.upload_done()
 
         self.next_step('Executing fpcmake and make...')
 
