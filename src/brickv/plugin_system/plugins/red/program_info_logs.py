@@ -377,6 +377,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         if self.is_alive():
             self.set_program_callbacks_enabled(True)
 
+    # FIXME: make this work like delete_selected_files
     def delete_selected_logs(self):
         button = QMessageBox.question(get_main_window(), 'Delete Logs',
                                       'Irreversibly deleting selected logs.',
@@ -386,21 +387,14 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             return
 
         def cb_program_delete_logs(result):
-            if result != None and result.stderr == "":
-                if json.loads(result.stdout):
-                    self.refresh_logs()
-                    QMessageBox.information(get_main_window(),
-                                           'Program | Logs',
-                                           'Deleted successfully!',
-                                           QMessageBox.Ok)
-                else:
-                    QMessageBox.critical(get_main_window(),
-                                         'Program | Logs',
-                                         'Deletion failed',
-                                         QMessageBox.Ok)
-            else:
-                pass
-                # TODO: Error popup for user?
+            self.refresh_logs()
+
+            if result == None:
+                QMessageBox.critical(get_main_window(), 'Delete Logs Error',
+                                     u'Internal error during deletion.')
+            elif result.exit_code != 0:
+                QMessageBox.critical(get_main_window(), 'Delete Logs Error',
+                                     u'Could not delete selected logs:\n\n{0}'.format(result.stderr.strip()))
 
         index_list = self.tree_logs.selectedIndexes()
 

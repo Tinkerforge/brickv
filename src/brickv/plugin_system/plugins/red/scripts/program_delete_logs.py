@@ -3,27 +3,28 @@
 
 import os
 import json
-from sys import argv
+import sys
 
-if len(argv) < 2:
-    print json.dumps(False)
-    exit (0)
+if len(sys.argv) < 2:
+    sys.stderr.write(unicode('Missing script parameters (internal error)').encode('utf-8'))
+    exit(1)
 
-file_list = json.loads(argv[1])
+try:
+    file_list = json.loads(sys.argv[1])
+except Exception as e:
+    sys.stderr.write(unicode(e).encode('utf-8'))
+    exit(2)
 
 if not isinstance(file_list, list):
-    print json.dumps(False)
-    exit(0)
+    sys.stderr.write(unicode('Invalid script parameters (internal error)').encode('utf-8'))
+    exit(1)
 
-if len(file_list) <= 0:
-    print json.dumps(False)
-    exit(0)
+for file_path in file_list:
+    if os.path.exists(file_path):
+        try:
+            os.remove(file_path)
+        except Exception as e:
+            sys.stderr.write(unicode(e).encode('utf-8'))
+            exit(2)
 
-for f in file_list:
-    try:
-        os.remove(f)
-    except:
-        print json.dumps(False)
-        exit(0)
-
-print json.dumps(True)
+exit(0)
