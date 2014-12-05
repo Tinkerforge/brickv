@@ -37,6 +37,9 @@ from brickv.plugin_system.plugins.red import config_parser
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
 
+NETWORK_STAT_REFRESH_TIME = 3000 # in milliseconds
+NETWORK_STAT_REFRESH_TIMEOUT = 500 # in milliseconds
+
 MANAGER_SETTINGS_CONF_PATH = '/etc/wicd/manager-settings.conf'
 WIRELESS_SETTINGS_CONF_PATH = '/etc/wicd/wireless-settings.conf'
 WIRED_SETTINGS_CONF_PATH = '/etc/wicd/wired-settings.conf'
@@ -112,6 +115,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.session        = None # set from RED after construction
         self.script_manager = None # set from RED after construction
 
+        self.is_tab_on_focus = False
+
+        self.network_stat_refresh_counter = 0
+        self.network_stat_refresh_timer = Qt.QTimer(self)
         self.time_refresh_timer = QtCore.QTimer()
         self.time_refresh_timer.setInterval(1000)
         self.time_refresh_timer.timeout.connect(self.time_refresh)
@@ -121,7 +128,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.last_index = -1
         self.network_refresh_tasks_remaining = -1
         self.network_refresh_tasks_error_occured = False
-        self.work_on_progress = False
+        self.work_in_progress = False
+        self.network_stat_work_in_progress = False
         self.restore_wireless_interface = ''
 
         self.network_all_data = {'status': None,
@@ -152,19 +160,22 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         # Signals and slots
 
+        # Timers
+        self.network_stat_refresh_timer.timeout.connect(self.cb_network_stat_refresh)
+
         # Tabs
         self.tbox_settings.currentChanged.connect(self.slot_tbox_settings_current_changed)
 
         # Network Buttons
         self.pbutton_net_wireless_scan.clicked.connect(self.slot_pbutton_net_wireless_scan_clicked)
-        self.pbutton_net_refresh.clicked.connect(self.slot_network_refresh_clicked)
-        self.pbutton_net_save.clicked.connect(self.slot_network_save_clicked)
+        self.pbutton_net_conf_refresh.clicked.connect(self.slot_network_conf_refresh_clicked)
+        self.pbutton_net_connect.clicked.connect(self.slot_network_connect_clicked)
+        self.pbutton_net_stat_refresh.clicked.connect(self.slot_network_stat_refresh_clicked)
 
         # Network fields
         self.address_configuration_gui(False)
         self.static_ip_configuration_gui(False)
         self.frame_working_please_wait.hide()
-        self.ledit_net_hostname.setReadOnly(True)
         self.cbox_net_intf.currentIndexChanged.connect(self.slot_network_settings_changed)
         self.cbox_net_intf.currentIndexChanged.connect(self.slot_cbox_net_intf_current_idx_changed)
         self.cbox_net_conftype.currentIndexChanged.connect(self.slot_network_settings_changed)
@@ -215,33 +226,121 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.time_sync_button.clicked.connect(self.time_sync_clicked)
 
     def tab_on_focus(self):
+        self.is_tab_on_focus = True
+
         self.manager_settings_conf_rfile = REDFile(self.session)
         self.wired_settings_conf_rfile = REDFile(self.session)
         self.wireless_settings_conf_rfile = REDFile(self.session)
         self.brickd_conf_rfile = REDFile(self.session)
 
         index = self.tbox_settings.currentIndex()
+
         if index == BOX_INDEX_NETWORK:
-            if not self.work_on_progress:
-                self.slot_network_refresh_clicked()
+            if not self.network_stat_work_in_progress:
+                self.pbutton_net_stat_refresh.setText('Collecting data...')
+                self.pbutton_net_stat_refresh.setDisabled(True)
+                self.network_stat_work_in_progress = True
+                self.script_manager.execute_script('settings_network_status',
+                                                   self.cb_settings_network_status)
+            if not self.work_in_progress:
+                self.slot_network_conf_refresh_clicked()
         elif index == BOX_INDEX_BRICKD:
             self.slot_brickd_refresh_clicked()
         elif index == BOX_INDEX_DATETIME:
             self.time_start()
 
     def tab_off_focus(self):
+        self.is_tab_on_focus = False
+
         index = self.tbox_settings.currentIndex()
         self.last_index = index
 
         if index == BOX_INDEX_BRICKD:
             pass
         elif index == BOX_INDEX_NETWORK:
-            pass
+            self.network_stat_refresh_timer.stop()
         elif index == BOX_INDEX_DATETIME:
             self.time_stop()
 
     def tab_destroy(self):
         pass
+
+    def cb_settings_network_status(self, result):
+        self.network_stat_work_in_progress = False
+
+        #check if the tab is still on view or not
+        if not self.is_tab_on_focus:
+            self.network_stat_refresh_timer.stop()
+            return
+
+        self.network_stat_refresh_counter = 0
+        self.network_stat_refresh_timer.start(NETWORK_STAT_REFRESH_TIMEOUT)
+
+        if result.stdout and\
+           not result.stderr and\
+           result.exit_code == 0 and\
+           not self.network_refresh_tasks_error_occured:
+                self.network_all_data['status'] = json.loads(result.stdout)
+
+                # Populating the current network status section and hostname
+                if self.network_all_data['status'] is not None:
+                    self.label_net_hostname.setText\
+                        (self.network_all_data['status']['cstat_hostname'])
+                
+                    self.label_net_gen_cstat_status.setText(unicode(self.network_all_data['status']['cstat_status']))
+                
+                    if self.network_all_data['status']['cstat_intf_active']['name'] is not None:
+                        if self.network_all_data['status']['cstat_intf_active']['type'] == INTERFACE_TYPE_WIRELESS:
+                            intf_stat_str = unicode(self.network_all_data['status']['cstat_intf_active']['name'])+\
+                                            ' : Wireless'
+                            self.label_net_gen_cstat_intf.setText(intf_stat_str)
+                        else:
+                            intf_stat_str = unicode(self.network_all_data['status']['cstat_intf_active']['name'])+\
+                                            ' : Wired'
+                            self.label_net_gen_cstat_intf.setText(intf_stat_str)
+
+                        self.label_net_gen_cstat_ip.setText(self.network_all_data['status']['cstat_intf_active']['ip'])
+                        self.label_net_gen_cstat_mask.setText(self.network_all_data['status']['cstat_intf_active']['mask'])
+                    else:
+                        self.label_net_gen_cstat_intf.setText('None')
+                        self.label_net_gen_cstat_ip.setText('None')
+                        self.label_net_gen_cstat_mask.setText('None')
+                
+                    if self.network_all_data['status']['cstat_gateway'] is not None:
+                        self.label_net_gen_cstat_gateway.setText(self.network_all_data['status']['cstat_gateway'])
+                    else:
+                        self.label_net_gen_cstat_gateway.setText('None')
+                    
+                    if self.network_all_data['status']['cstat_dns'] is not None:
+                        self.label_net_gen_cstat_dns.setText(self.network_all_data['status']['cstat_dns'].strip())
+                    else:
+                        self.label_net_gen_cstat_dns.setText('None')
+                else:
+                    self.label_net_hostname.setText('')
+                    self.label_net_gen_cstat_intf.setText('None')
+                    self.label_net_gen_cstat_ip.setText('None')
+                    self.label_net_gen_cstat_mask.setText('None')
+                    self.label_net_gen_cstat_gateway.setText('None')
+                    self.label_net_gen_cstat_dns.setText('None')
+        else:
+            return
+
+    def cb_network_stat_refresh(self):
+        self.network_stat_refresh_counter += 1
+        if self.network_stat_refresh_counter >= NETWORK_STAT_REFRESH_TIME/NETWORK_STAT_REFRESH_TIMEOUT:
+            self.network_stat_refresh_counter = 0
+            self.network_stat_refresh_timer.stop()
+            self.pbutton_net_stat_refresh.setText('Collecting data...')
+            self.pbutton_net_stat_refresh.setDisabled(True)
+            if not self.network_stat_work_in_progress:
+                self.network_stat_work_in_progress = True
+                self.script_manager.execute_script('settings_network_status',
+                                                   self.cb_settings_network_status)
+        else:
+            self.network_stat_work_in_progress = False
+            self.pbutton_net_stat_refresh.setDisabled(False)
+            self.pbutton_net_stat_refresh.setText('Refresh in ' +\
+                str((NETWORK_STAT_REFRESH_TIME/NETWORK_STAT_REFRESH_TIMEOUT - self.network_stat_refresh_counter)/2.0) + "...")
 
     def static_ip_configuration_gui(self, show):
         if show:
@@ -335,19 +434,12 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
     def show_please_wait(self, state):
         self.frame_working_please_wait.show()
-        self.sarea_net_content.setEnabled(False)
+        self.gbox_net_config.setEnabled(False)
         self.network_button_refresh_enabled(False)
-        self.network_button_save_enabled(False)
+        self.network_button_connect_enabled(False)
 
         if state == WORKING_STATE_REFRESH:
-            self.work_on_progress = True
-            self.label_net_gen_cstat_intf.setText('None')
-            self.label_net_gen_cstat_ip.setText('None')
-            self.label_net_gen_cstat_mask.setText('None')
-            self.label_net_gen_cstat_gateway.setText('None')
-            self.label_net_gen_cstat_dns.setText('None')
-            self.label_net_gen_cstat_status.setText('None')
-            self.ledit_net_hostname.setText('')
+            self.work_in_progress = True
 
             self.cbox_net_intf.clear()
             self.cbox_net_intf.setEnabled(False)
@@ -368,7 +460,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.address_configuration_gui(False)
 
         elif state == WORKING_STATE_SCAN:
-            self.work_on_progress = True
+            self.work_in_progress = True
             self.cbox_net_wireless_ap.clear()
             self.cbox_net_wireless_ap.addItem('Scanning...')
             self.cbox_net_wireless_ap.setItemData(0,
@@ -381,16 +473,16 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.ledit_net_wireless_key.setText('')
 
         elif state == WORKING_STATE_SAVE:
-            self.work_on_progress = True
+            self.work_in_progress = True
             self.network_button_refresh_enabled(True)
-            self.network_button_save_enabled(True)
+            self.network_button_connect_enabled(True)
 
         elif state == WORKING_STATE_DONE:
-            self.work_on_progress = False
+            self.work_in_progress = False
             self.frame_working_please_wait.hide()
-            self.sarea_net_content.setEnabled(True)
+            self.gbox_net_config.setEnabled(True)
             self.network_button_refresh_enabled(True)
-            self.network_button_save_enabled(False)
+            self.network_button_connect_enabled(False)
 
     def update_access_points(self):
         self.cbox_net_wireless_ap.clear()
@@ -584,44 +676,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         def update_no_interface_available():
             self.cbox_net_intf.clear()
             self.cbox_net_intf.addItem('No interfaces available')
-            self.label_net_gen_cstat_status.setText('No interfaces available')
             self.cbox_net_intf.setEnabled(False)
             self.wireless_configuration_gui(False)
             self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
             self.address_configuration_gui(False)
             self.static_ip_configuration_gui(False)
-
-        # Populating the current network status section and hostname
-        if self.network_all_data['status'] is not None:
-            self.ledit_net_hostname.setText\
-                (self.network_all_data['status']['cstat_hostname'])
-
-            self.label_net_gen_cstat_status.setText(unicode(self.network_all_data['status']['cstat_status']))
-
-            if self.network_all_data['status']['cstat_intf_active']['name'] is not None:
-                self.label_net_gen_cstat_ip.setText(self.network_all_data['status']['cstat_intf_active']['ip'])
-                self.label_net_gen_cstat_mask.setText(self.network_all_data['status']['cstat_intf_active']['mask'])
-            else:
-                self.label_net_gen_cstat_intf.setText('None')
-                self.label_net_gen_cstat_ip.setText('None')
-                self.label_net_gen_cstat_mask.setText('None')
-
-            if self.network_all_data['status']['cstat_gateway'] is not None:
-                self.label_net_gen_cstat_gateway.setText(self.network_all_data['status']['cstat_gateway'])
-            else:
-                self.label_net_gen_cstat_gateway.setText('None')
-            
-            if self.network_all_data['status']['cstat_dns'] is not None:
-                self.label_net_gen_cstat_dns.setText(self.network_all_data['status']['cstat_dns'].strip())
-            else:
-                self.label_net_gen_cstat_dns.setText('None')
-        else:
-            self.ledit_net_hostname.setText('')
-            self.label_net_gen_cstat_intf.setText('None')
-            self.label_net_gen_cstat_ip.setText('None')
-            self.label_net_gen_cstat_mask.setText('None')
-            self.label_net_gen_cstat_gateway.setText('None')
-            self.label_net_gen_cstat_dns.setText('None')
 
         # Populating available interfaces
         self.cbox_net_intf.clear()
@@ -776,11 +835,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                 
                 if self.cbox_net_intf.count() <= 0:
                     update_no_interface_available()
-                    self.label_net_gen_cstat_intf.setText('None')
                     return
                 else:
                     # Select first active interface by default if not then the first item
-                    self.label_net_gen_cstat_intf.setText('None')
                     self.cbox_net_intf.setCurrentIndex(-1)
                     for i in range(self.cbox_net_intf.count()):
                         istate = self.cbox_net_intf.itemData(i, INTERFACE_STATE_USER_ROLE).toInt()[0]
@@ -788,15 +845,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                             self.cbox_net_intf.setCurrentIndex(i)
                             iname = unicode(self.cbox_net_intf.itemData(i, INTERFACE_NAME_USER_ROLE).toString())
                             itype = self.cbox_net_intf.itemData(i, INTERFACE_TYPE_USER_ROLE).toInt()[0]
-                            if itype == INTERFACE_TYPE_WIRELESS:
-                                cstat_intf_name = iname+' : Wireless'
-                                if self.network_all_data['interfaces']['wireless_links'][iname]['status']:
-                                    essid = unicode(self.network_all_data['interfaces']['wireless_links'][iname]['essid'])
-                                    self.label_net_gen_cstat_status.setText('Connected to '+essid)
-                            else:
-                                cstat_intf_name = iname+' : Wired'
-                                self.label_net_gen_cstat_status.setText('Connected')
-                            self.label_net_gen_cstat_intf.setText(cstat_intf_name)
                             break
                         if i == self.cbox_net_intf.count() - 1:
                             self.cbox_net_intf.setCurrentIndex(0)
@@ -900,8 +948,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.last_index = ctidx
 
         if ctidx == BOX_INDEX_NETWORK:
-            if not self.work_on_progress:
-                self.slot_network_refresh_clicked()
+            if not self.work_in_progress:
+                self.slot_network_conf_refresh_clicked()
 
         elif ctidx == BOX_INDEX_BRICKD:
             self.slot_brickd_refresh_clicked()
@@ -910,20 +958,20 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.time_start()
 
     def network_button_refresh_enabled(self, state):
-        self.pbutton_net_refresh.setEnabled(state)
+        self.pbutton_net_conf_refresh.setEnabled(state)
 
         if state:
-            self.pbutton_net_refresh.setText('Refresh')
+            self.pbutton_net_conf_refresh.setText('Refresh')
         else:
-            self.pbutton_net_refresh.setText('Refreshing...')
+            self.pbutton_net_conf_refresh.setText('Refreshing...')
 
-    def network_button_save_enabled(self, state):
-        self.pbutton_net_save.setEnabled(state)
+    def network_button_connect_enabled(self, state):
+        self.pbutton_net_connect.setEnabled(state)
 
         if state:
-            self.pbutton_net_save.setText('Save')
+            self.pbutton_net_connect.setText('Connect')
         else:
-            self.pbutton_net_save.setText('Saved')
+            self.pbutton_net_connect.setText('Connecting...')
 
     def brickd_button_refresh_enabled(self, state):
         self.pbutton_brickd_general_refresh.setEnabled(state)
@@ -935,12 +983,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         else:
             self.pbutton_brickd_general_refresh.setText('Refreshing...')
             self.pbutton_brickd_adv_refresh.setText('Refreshing...')
-        
-    
+
     def brickd_button_save_enabled(self, state):
         self.pbutton_brickd_general_save.setEnabled(state)
         self.pbutton_brickd_adv_save.setEnabled(state)
-        
+
         if state:
             self.pbutton_brickd_general_save.setText('Save')
             self.pbutton_brickd_adv_save.setText('Save')
@@ -1104,32 +1151,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                        'Scan only possible for wireless interfaces.',
                                        QtGui.QMessageBox.Ok)
 
-    def slot_network_refresh_clicked(self):
+    def slot_network_conf_refresh_clicked(self):
         def network_refresh_tasks_done(refresh_all_ok):
             self.show_please_wait(WORKING_STATE_DONE)
             self.network_refresh_tasks_remaining = -1
             self.network_refresh_tasks_error_occured = False
             if refresh_all_ok:
                 self.update_network_gui()
-
-        def cb_settings_network_status(result):
-            self.network_refresh_tasks_remaining -= 1
-            if result.stdout and not result.stderr and result.exit_code == 0 and not self.network_refresh_tasks_error_occured:
-                self.network_all_data['status'] = json.loads(result.stdout)
-                if self.network_refresh_tasks_remaining == 0:
-                    network_refresh_tasks_done(True)
-            else:
-                if self.network_refresh_tasks_remaining == 0:
-                    network_refresh_tasks_done(False)
-                else:
-                    self.network_refresh_tasks_error_occured = True
-
-                if result.stderr:
-                    err_msg = 'Error executing network status script.\n\n'+unicode(result.stderr)
-                    QtGui.QMessageBox.critical(get_main_window(),
-                                               'Settings | Network',
-                                               err_msg,
-                                               QtGui.QMessageBox.Ok)
 
         def cb_settings_network_get_interfaces(result):
             self.network_refresh_tasks_remaining -= 1
@@ -1276,15 +1304,12 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         self.show_please_wait(WORKING_STATE_REFRESH)
 
-        self.network_refresh_tasks_remaining = 6
+        self.network_refresh_tasks_remaining = 5
         self.network_refresh_tasks_error_occured = False
-
-        self.script_manager.execute_script('settings_network_status',
-                                           cb_settings_network_status)
 
         self.script_manager.execute_script('settings_network_get_interfaces',
                                            cb_settings_network_get_interfaces)
-        
+
         self.script_manager.execute_script('settings_network_wireless_scan_cache',
                                            cb_settings_network_wireless_scan_cache,
                                            [])
@@ -1304,7 +1329,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    cb_open_wired_settings,
                    cb_open_error_wired_settings)
 
-    def slot_network_save_clicked(self):
+    def slot_network_connect_clicked(self):
         cbox_cidx = self.cbox_net_intf.currentIndex()
 
         iname = unicode(self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE).toString())
@@ -1318,7 +1343,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             enc_method = self.cbox_net_wireless_ap.itemData(cbox_ap_cidx, AP_ENCRYPTION_METHOD_USER_ROLE).toInt()[0]
             if not apname:
                 self.show_please_wait(WORKING_STATE_DONE)
-                self.network_button_save_enabled(True)
+                self.network_button_connect_enabled(True)
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
                                            'Configure an access point first.',
@@ -1326,7 +1351,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 return
             elif enc_method == AP_ENC_METHOD_UNSUPPORTED:
                 self.show_please_wait(WORKING_STATE_DONE)
-                self.network_button_save_enabled(True)
+                self.network_button_connect_enabled(True)
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
                                            'Encryption method not supported.',
@@ -1409,13 +1434,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 def cb_settings_network_apply(result):
                     self.show_please_wait(WORKING_STATE_DONE)
                     if not result.stderr and result.exit_code == 0:
-                        self.slot_network_refresh_clicked()
+                        self.slot_network_conf_refresh_clicked()
                         QtGui.QMessageBox.information(get_main_window(),
                                                       'Settings | Network',
                                                       'Configuration saved.',
                                                       QtGui.QMessageBox.Ok)
                     else:
-                        self.network_button_save_enabled(True)
+                        self.network_button_connect_enabled(True)
                         err_msg = 'Error saving configuration.\n\n'+unicode(result.stderr)
                         QtGui.QMessageBox.critical(get_main_window(),
                                                    'Settings | Network',
@@ -1427,7 +1452,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         red_file.release()
                         if result is not None:
                             self.show_please_wait(WORKING_STATE_DONE)
-                            self.network_button_save_enabled(True)
+                            self.network_button_connect_enabled(True)
                             QtGui.QMessageBox.critical(get_main_window(),
                                                        'Settings | Network',
                                                        'Error saving configuration.',
@@ -1453,7 +1478,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         
                 def cb_open_error():
                     self.show_please_wait(WORKING_STATE_DONE)
-                    self.network_button_save_enabled(True)
+                    self.network_button_connect_enabled(True)
                     
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
@@ -1491,7 +1516,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.network_all_data['wired_settings'].set('wired-default', 'default', 'True')
                 except:
                     self.show_please_wait(WORKING_STATE_DONE)
-                    self.network_button_save_enabled(True)
+                    self.network_button_connect_enabled(True)
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
                                                'Error saving configuration.',
@@ -1536,7 +1561,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.network_all_data['wired_settings'].set('wired-default', 'default', 'True')
                 except:
                     self.show_please_wait(WORKING_STATE_DONE)
-                    self.network_button_save_enabled(True)
+                    self.network_button_connect_enabled(True)
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
                                                'Error saving configuration.',
@@ -1546,13 +1571,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             def cb_settings_network_apply(result):
                     self.show_please_wait(WORKING_STATE_DONE)
                     if not result.stderr and result.exit_code == 0:
-                        self.slot_network_refresh_clicked()
+                        self.slot_network_conf_refresh_clicked()
                         QtGui.QMessageBox.information(get_main_window(),
                                                       'Settings | Network',
                                                       'Configuration saved.',
                                                       QtGui.QMessageBox.Ok)
                     else:
-                        self.network_button_save_enabled(True)
+                        self.network_button_connect_enabled(True)
                         err_msg = 'Error saving configuration.\n\n'+unicode(result.stderr)
                         QtGui.QMessageBox.critical(get_main_window(),
                                                    'Settings | Network',
@@ -1564,7 +1589,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     red_file.release()
                     if result is not None:
                         self.show_please_wait(WORKING_STATE_DONE)
-                        self.network_button_save_enabled(True)
+                        self.network_button_connect_enabled(True)
                         QtGui.QMessageBox.critical(get_main_window(),
                                                    'Settings | Network',
                                                    'Error saving configuration.',
@@ -1590,7 +1615,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     
             def cb_open_error():
                 self.show_please_wait(WORKING_STATE_DONE)
-                self.network_button_save_enabled(True)
+                self.network_button_connect_enabled(True)
                 
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
@@ -1608,6 +1633,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                        REDFile.FLAG_TRUNCATE, 0500, 0, 0),
                        lambda x: cb_open(config, write_wired_settings, x),
                        cb_open_error)
+
+    def slot_network_stat_refresh_clicked(self):
+        self.network_stat_refresh_timer.stop()
+        self.network_stat_refresh_counter = NETWORK_STAT_REFRESH_TIME/NETWORK_STAT_REFRESH_TIMEOUT
+        self.cb_network_stat_refresh()
 
     def slot_brickd_save_clicked(self):
         self.brickd_button_save_enabled(False)
@@ -2035,7 +2065,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.static_ip_configuration_gui(False)
 
     def slot_network_settings_changed(self):
-        self.network_button_save_enabled(True)
+        self.network_button_connect_enabled(True)
 
     def brickd_settings_changed(self, value):
         self.brickd_button_save_enabled(True)

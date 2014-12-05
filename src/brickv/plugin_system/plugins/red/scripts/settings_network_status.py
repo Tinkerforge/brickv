@@ -11,7 +11,7 @@ from wicd import misc as wicd_misc
 
 return_dict = {}
 return_dict['cstat_hostname'] = None
-return_dict['cstat_intf_active'] = {'name': None, 'ip': None, 'mask': None}
+return_dict['cstat_intf_active'] = {'name': None, 'type': None, 'ip': None, 'mask': None}
 return_dict['cstat_gateway'] = None
 return_dict['cstat_dns'] = None
 return_dict['cstat_status'] = None
@@ -40,6 +40,13 @@ try:
 
     if intf_active != '':
         return_dict['cstat_intf_active']['name'] = intf_active
+        for intf in netifaces.interfaces():
+            if intf == intf_active:
+                if os.path.isdir('/sys/class/net/'+intf_active+'/wireless'):
+                    return_dict['cstat_intf_active']['type'] = 1
+                else:
+                    return_dict['cstat_intf_active']['type'] = 2
+                break
         intf_addrs = netifaces.ifaddresses(intf_active)
         if netifaces.AF_INET in intf_addrs and\
            'addr' in intf_addrs[netifaces.AF_INET][0] and\
