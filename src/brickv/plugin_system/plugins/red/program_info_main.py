@@ -85,6 +85,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.program.scheduler_state_changed_callback = self.scheduler_state_changed
         self.program.process_spawned_callback         = self.process_spawned
 
+        if self.program.last_spawned_process != None:
+            self.program.last_spawned_process.state_changed_callback = self.process_state_changed
+
         self.first_show_event            = True
         self.tab_is_alive                = True
         self.program_refresh_in_progress = False
@@ -490,6 +493,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
                                  u'Could not start program [{0}]:\n\n{1}'
                                  .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), str(e)))
 
+    # FIXME: either send SIGINT before SIGKILL, or add a dedicated button for SIGINT
     def kill_process(self):
         if self.program.last_spawned_process != None:
             try:
