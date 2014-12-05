@@ -107,7 +107,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         if self.refresh_counter >= REFRESH_TIME/REFRESH_TIMEOUT:
             self.refresh_counter = 0
             self.refresh_timer.stop()
-            self.button_refresh.setText('Colleting data...')
+            self.button_refresh.setText('Collecting data...')
             self.button_refresh.setDisabled(True)
             self.script_manager.execute_script('overview',
                                                self.cb_state_changed)
