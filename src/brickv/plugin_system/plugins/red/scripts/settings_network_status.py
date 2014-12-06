@@ -79,7 +79,22 @@ try:
         return_dict['cstat_status'] = 'Not connected'
     elif status[0] == wicd_misc.CONNECTING:
         return_dict['cstat_status'] = 'Connecting ({0})...'.format(status[1][0][0].upper() + status[1][0][1:])
-    elif status[0] == wicd_misc.WIRELESS or status == wicd_misc.WIRED:
+    elif status[0] == wicd_misc.WIRELESS:
+        try:
+            iwconfig = wicd_dbusmanager.get_dbus_ifaces()['wireless'].GetIwconfig()
+            ap = unicode(wicd_dbusmanager.get_dbus_ifaces()['wireless'].GetCurrentNetwork(iwconfig))
+        except:
+            return_dict['cstat_status'] = '-'
+        else:
+            if ap != 'None':
+                ap_array = ap.split('"')
+                if len(ap_array) > 1:
+                    return_dict['cstat_status'] = 'Connected to '+ap_array[0]
+                else:
+                    return_dict['cstat_status'] = 'Connected to '+ap
+            else:
+                return_dict['cstat_status'] = '-'
+    elif status == wicd_misc.WIRED:
         return_dict['cstat_status'] = 'Connected'
     elif status[0] == wicd_misc.SUSPENDED:
         return_dict['cstat_status'] = 'Suspended'
