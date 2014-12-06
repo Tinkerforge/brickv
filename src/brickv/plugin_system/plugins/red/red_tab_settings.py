@@ -302,26 +302,26 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         self.label_net_gen_cstat_ip.setText(self.network_all_data['status']['cstat_intf_active']['ip'])
                         self.label_net_gen_cstat_mask.setText(self.network_all_data['status']['cstat_intf_active']['mask'])
                     else:
-                        self.label_net_gen_cstat_intf.setText('None')
-                        self.label_net_gen_cstat_ip.setText('None')
-                        self.label_net_gen_cstat_mask.setText('None')
+                        self.label_net_gen_cstat_intf.setText('-')
+                        self.label_net_gen_cstat_ip.setText('-')
+                        self.label_net_gen_cstat_mask.setText('-')
                 
                     if self.network_all_data['status']['cstat_gateway'] is not None:
                         self.label_net_gen_cstat_gateway.setText(self.network_all_data['status']['cstat_gateway'])
                     else:
-                        self.label_net_gen_cstat_gateway.setText('None')
+                        self.label_net_gen_cstat_gateway.setText('-')
                     
                     if self.network_all_data['status']['cstat_dns'] is not None:
                         self.label_net_gen_cstat_dns.setText(self.network_all_data['status']['cstat_dns'].strip())
                     else:
-                        self.label_net_gen_cstat_dns.setText('None')
+                        self.label_net_gen_cstat_dns.setText('-')
                 else:
                     self.label_net_hostname.setText('')
-                    self.label_net_gen_cstat_intf.setText('None')
-                    self.label_net_gen_cstat_ip.setText('None')
-                    self.label_net_gen_cstat_mask.setText('None')
-                    self.label_net_gen_cstat_gateway.setText('None')
-                    self.label_net_gen_cstat_dns.setText('None')
+                    self.label_net_gen_cstat_intf.setText('-')
+                    self.label_net_gen_cstat_ip.setText('-')
+                    self.label_net_gen_cstat_mask.setText('-')
+                    self.label_net_gen_cstat_gateway.setText('-')
+                    self.label_net_gen_cstat_dns.setText('-')
         else:
             return
 

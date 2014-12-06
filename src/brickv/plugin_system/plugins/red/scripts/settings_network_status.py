@@ -86,6 +86,6 @@ try:
     else:
         return_dict['cstat_status'] = 'Unknown ({0})'.format(status[0])
 except:
-    return_dict['cstat_status'] = 'None'
+    return_dict['cstat_status'] = '-'
 
 print json.dumps(return_dict)
