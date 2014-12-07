@@ -526,6 +526,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                        return
 
                 for nidx, apdict in self.network_all_data['scan_result'].iteritems():
+                    if not unicode(apdict['essid']):
+                        continue
+
                     self.cbox_net_wireless_ap.addItem(unicode(apdict['essid']))
 
                     idx_cbox = self.cbox_net_wireless_ap.count() - 1
