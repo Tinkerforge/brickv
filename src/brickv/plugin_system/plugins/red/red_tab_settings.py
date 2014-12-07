@@ -1344,6 +1344,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 bssid = unicode(self.cbox_net_wireless_ap.itemData(cbox_ap_cidx, AP_BSSID_USER_ROLE).toString())
                 key = unicode(self.ledit_net_wireless_key.text())
                 
+                iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', iname)
                 self.network_all_data['manager_settings'].set('Settings', 'wireless_interface', iname)
 
                 # Check BSSID section
@@ -1440,7 +1441,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                             if write_wireless_settings:
                                 self.script_manager.execute_script('settings_network_apply',
                                                                    cb_settings_network_apply,
-                                                                   [iname, 'wireless', netidx])
+                                                                   [iname, iname_previous, 'wireless', netidx])
                             else:
                                 config = config_parser.to_string_no_fake(self.network_all_data['wireless_settings'])
                                 write_wireless_settings = True
@@ -1505,6 +1506,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 # Save wired static config
                 self.show_please_wait(WORKING_STATE_SAVE)
                 try:
+                    iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wired_interface', iname)
                     self.network_all_data['manager_settings'].set('Settings', 'wired_interface', iname)
                     
                     ip = '.'.join((str(self.sbox_net_ip1.value()),
@@ -1577,7 +1579,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         if write_wired_settings:
                             self.script_manager.execute_script('settings_network_apply',
                                                                cb_settings_network_apply,
-                                                               [iname, 'wired'])
+                                                               [iname, iname_previous, 'wired'])
                         else:
                             config = config_parser.to_string_no_fake(self.network_all_data['wired_settings'])
                             write_wired_settings = True
