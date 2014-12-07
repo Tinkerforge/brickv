@@ -137,10 +137,10 @@ class Color(PluginBase):
 
         self.clear_graphs_button = QPushButton("Clear Graphs")
 
-        plot_list = [['r', Qt.red, self.get_current_r],
-                     ['g', Qt.darkGreen, self.get_current_g],
-                     ['b', Qt.blue, self.get_current_b],
-                     ['c', Qt.black, self.get_current_c]]
+        plot_list = [['R', Qt.red, self.get_current_r],
+                     ['G', Qt.darkGreen, self.get_current_g],
+                     ['B', Qt.blue, self.get_current_b],
+                     ['C', Qt.black, self.get_current_c]]
         self.plot_widget = PlotWidget('Color Value', plot_list, self.clear_graphs_button)
 
         plot_list_illuminance = [['', Qt.red, self.get_current_illuminance_value]]
