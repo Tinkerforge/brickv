@@ -746,7 +746,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                 try:
                                     _ip = self.network_all_data['wired_settings'].get('wired-default', 'ip', 'None')
                                 except:
-                                    _ip == 'None'
+                                    _ip = 'None'
                     
                                 if _ip == 'None':
                                     self.cbox_net_intf.setItemData(idx_cbox,
@@ -1347,7 +1347,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 bssid = unicode(self.cbox_net_wireless_ap.itemData(cbox_ap_cidx, AP_BSSID_USER_ROLE).toString())
                 key = unicode(self.ledit_net_wireless_key.text())
                 
-                iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', iname)
+                iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', 'None')
                 self.network_all_data['manager_settings'].set('Settings', 'wireless_interface', iname)
 
                 # Check BSSID section
@@ -1430,8 +1430,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                    err_msg,
                                                    QtGui.QMessageBox.Ok)
 
-                def cb_open(config, write_wireless_settings, red_file):
-                    def cb_write(red_file, write_wireless_settings, result):
+                def cb_open(config, write_wireless_settings, red_file, iname_previous):
+                    def cb_write(red_file, write_wireless_settings, result, iname_previous):
                         red_file.release()
                         if result is not None:
                             self.show_please_wait(WORKING_STATE_DONE)
@@ -1454,10 +1454,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                            REDFile.FLAG_CREATE |
                                            REDFile.FLAG_NON_BLOCKING |
                                            REDFile.FLAG_TRUNCATE, 0500, 0, 0),
-                                           lambda x: cb_open(config, write_wireless_settings, x),
+                                           lambda x: cb_open(config, write_wireless_settings, x, iname_previous),
                                            cb_open_error)
     
-                    red_file.write_async(config, lambda x: cb_write(red_file, write_wireless_settings, x), None)
+                    red_file.write_async(config, lambda x: cb_write(red_file, write_wireless_settings, x, iname_previous), None)
         
                 def cb_open_error():
                     self.show_please_wait(WORKING_STATE_DONE)
@@ -1477,11 +1477,17 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                            REDFile.FLAG_CREATE |
                            REDFile.FLAG_NON_BLOCKING |
                            REDFile.FLAG_TRUNCATE, 0500, 0, 0),
-                           lambda x: cb_open(config, write_wireless_settings, x),
+                           lambda x: cb_open(config, write_wireless_settings, x, iname_previous),
                            cb_open_error)
 
         # Wired
-        elif itype == INTERFACE_TYPE_WIRED:
+        else:
+            iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wired_interface', '')
+            
+            # Check default wired profile section
+            if not self.network_all_data['wired_settings'].has_section('wired-default'):
+                self.network_all_data['wired_settings'].add_section('wired-default')
+            
             if self.cbox_net_conftype.currentIndex() == CBOX_NET_CONTYPE_INDEX_DHCP:
                 # Save wired DHCP config
                 self.show_please_wait(WORKING_STATE_SAVE)
@@ -1509,7 +1515,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 # Save wired static config
                 self.show_please_wait(WORKING_STATE_SAVE)
                 try:
-                    iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wired_interface', iname)
                     self.network_all_data['manager_settings'].set('Settings', 'wired_interface', iname)
                     
                     ip = '.'.join((str(self.sbox_net_ip1.value()),
@@ -1568,8 +1573,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                    err_msg,
                                                    QtGui.QMessageBox.Ok)
 
-            def cb_open(config, write_wired_settings, red_file):
-                def cb_write(red_file, write_wired_settings, result):
+            def cb_open(config, write_wired_settings, red_file, iname_previous):
+                def cb_write(red_file, write_wired_settings, result, iname_previous):
                     red_file.release()
                     if result is not None:
                         self.show_please_wait(WORKING_STATE_DONE)
@@ -1592,10 +1597,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                        REDFile.FLAG_CREATE |
                                        REDFile.FLAG_NON_BLOCKING |
                                        REDFile.FLAG_TRUNCATE, 0500, 0, 0),
-                                       lambda x: cb_open(config, write_wired_settings, x),
+                                       lambda x: cb_open(config, write_wired_settings, x, iname_previous),
                                        cb_open_error)
 
-                red_file.write_async(config, lambda x: cb_write(red_file, write_wired_settings, x), None)
+                red_file.write_async(config, lambda x: cb_write(red_file, write_wired_settings, x, iname_previous), None)
     
             def cb_open_error():
                 self.show_please_wait(WORKING_STATE_DONE)
@@ -1608,14 +1613,14 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
             config = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
             write_wired_settings = False
-
+    
             async_call(self.manager_settings_conf_rfile.open,
                        (MANAGER_SETTINGS_CONF_PATH,
                        REDFile.FLAG_WRITE_ONLY |
                        REDFile.FLAG_CREATE |
                        REDFile.FLAG_NON_BLOCKING |
                        REDFile.FLAG_TRUNCATE, 0500, 0, 0),
-                       lambda x: cb_open(config, write_wired_settings, x),
+                       lambda x: cb_open(config, write_wired_settings, x, iname_previous),
                        cb_open_error)
 
     def slot_network_stat_refresh_clicked(self):
