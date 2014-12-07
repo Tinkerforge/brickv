@@ -130,7 +130,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.network_refresh_tasks_error_occured = False
         self.work_in_progress = False
         self.network_stat_work_in_progress = False
-        self.restore_wireless_interface = ''
 
         self.network_all_data = {'status': None,
                                  'interfaces': None,
@@ -690,8 +689,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
            (self.network_all_data['interfaces']['wireless'] is not None or\
            self.network_all_data['interfaces']['wired'] is not None or\
            self.network_all_data['interfaces']['wireless_links'] is not None):
-                #active_intf_found = False
-
                 # Processing wireless interfaces
                 if self.network_all_data['interfaces']['wireless'] is not None and\
                    len(self.network_all_data['interfaces']['wireless']) > 0:
@@ -1034,98 +1031,27 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         interface_type = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE).toInt()[0]
 
         if interface_type == INTERFACE_TYPE_WIRELESS:
-            def cb_open_wlintf_restore(config, red_file):
-                def cb_write(red_file, result):
-                    red_file.release()
-                    self.cbox_net_wireless_ap.clear()
-                    self.show_please_wait(WORKING_STATE_DONE)
-                    if result is not None:
-                        QtGui.QMessageBox.critical(get_main_window(),
-                                                   'Settings | Network',
-                                                   'Wireless interface restore failed, could not write to manager settings file.',
-                                                   QtGui.QMessageBox.Ok)
-                    else:
-                        self.update_access_points()
-                        QtGui.QMessageBox.information(get_main_window(),
-                                                      'Settings | Network',
-                                                      'Scan finished.',
-                                                      QtGui.QMessageBox.Ok)
-
-                red_file.write_async(config, lambda x: cb_write(red_file, x), None)
-
-            def cb_open_error_wlintf_restore():
+            def cb_settings_network_wireless_scan(result):
                 self.cbox_net_wireless_ap.clear()
                 self.show_please_wait(WORKING_STATE_DONE)
-                QtGui.QMessageBox.critical(get_main_window(),
-                                           'Settings | Network',
-                                           'Wireless interface restore failed, could not open manager settings file.',
-                                           QtGui.QMessageBox.Ok)
-
-            def cb_settings_network_wireless_scan(result):
+                if not self.is_tab_on_focus:
+                    return
                 if result.stdout and not result.stderr and result.exit_code == 0:
-                    try:
-                        # Restore wireless interface after scan
-                        self.network_all_data['manager_settings'].set('Settings', 'wireless_interface', self.restore_wireless_interface)
-                        config = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
-                    except Exception as e:
-                        self.cbox_net_wireless_ap.clear()
-                        self.show_please_wait(WORKING_STATE_DONE)
-                        err_msg = 'Wireless interface restore failed.\n\n'+unicode(e)
-                        QtGui.QMessageBox.critical(get_main_window(),
-                                                   'Settings | Network',
-                                                   err_msg,
-                                                   QtGui.QMessageBox.Ok)
-                        return
-
                     self.network_all_data['scan_result'] = json.loads(result.stdout)
-
-                    async_call(self.manager_settings_conf_rfile.open,
-                               (MANAGER_SETTINGS_CONF_PATH,
-                               REDFile.FLAG_WRITE_ONLY |
-                               REDFile.FLAG_CREATE |
-                               REDFile.FLAG_NON_BLOCKING |
-                               REDFile.FLAG_TRUNCATE, 0500, 0, 0),
-                               lambda x: cb_open_wlintf_restore(config, x),
-                               cb_open_error_wlintf_restore)
+                    self.update_access_points()
+                    QtGui.QMessageBox.information(get_main_window(),
+                                               'Settings | Network',
+                                               'Scan finished',
+                                               QtGui.QMessageBox.Ok)
                 else:
-                    self.cbox_net_wireless_ap.clear()
-                    self.show_please_wait(WORKING_STATE_DONE)
                     err_msg = 'Wireless scan failed\n\n'+unicode(result.stderr)
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
                                                err_msg,
                                                QtGui.QMessageBox.Ok)
-
-            def cb_open(config, red_file):
-                def cb_write(red_file, result):
-                    red_file.release()
-                    if result is not None:
-                        self.cbox_net_wireless_ap.clear()
-                        self.show_please_wait(WORKING_STATE_DONE)
-                        QtGui.QMessageBox.critical(get_main_window(),
-                                                   'Settings | Network',
-                                                   'Wireless scan failed, could not write to manager settings file.',
-                                                   QtGui.QMessageBox.Ok)
-                    else:
-                        self.script_manager.execute_script('settings_network_wireless_scan',
-                                                           cb_settings_network_wireless_scan,
-                                                           [interface_name])
-
-                red_file.write_async(config, lambda x: cb_write(red_file, x), None)
-
-            def cb_open_error():
-                self.cbox_net_wireless_ap.clear()
-                self.show_please_wait(WORKING_STATE_DONE)
-                QtGui.QMessageBox.critical(get_main_window(),
-                                           'Settings | Network',
-                                           'Wireless scan failed, could not open manager settings file.',
-                                           QtGui.QMessageBox.Ok)
-
             try:
                 # Saving currently configured wireless interface
-                self.restore_wireless_interface = unicode(self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', ''))
-                self.network_all_data['manager_settings'].set('Settings', 'wireless_interface', interface_name)
-                config = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
+                wlintf_restore_to = unicode(self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', ''))
             except Exception as e:
                 err_msg = 'Wireless scan failed\n\n'+unicode(e)
                 QtGui.QMessageBox.critical(get_main_window(),
@@ -1136,14 +1062,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
             self.show_please_wait(WORKING_STATE_SCAN)
 
-            async_call(self.manager_settings_conf_rfile.open,
-                       (MANAGER_SETTINGS_CONF_PATH,
-                       REDFile.FLAG_WRITE_ONLY |
-                       REDFile.FLAG_CREATE |
-                       REDFile.FLAG_NON_BLOCKING |
-                       REDFile.FLAG_TRUNCATE, 0500, 0, 0),
-                       lambda x: cb_open(config, x),
-                       cb_open_error)
+            self.script_manager.execute_script('settings_network_wireless_scan',
+                                               cb_settings_network_wireless_scan,
+                                               [interface_name, wlintf_restore_to])
 
         else:
             QtGui.QMessageBox.critical(get_main_window(),
@@ -1159,7 +1080,32 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             if refresh_all_ok:
                 self.update_network_gui()
 
+        def cb_settings_network_status(result):
+            if not self.is_tab_on_focus:
+                self.show_please_wait(WORKING_STATE_DONE)
+                return
+            self.network_refresh_tasks_remaining -= 1
+            if result.stdout and not result.stderr and result.exit_code == 0 and not self.network_refresh_tasks_error_occured:
+                self.network_all_data['status'] = json.loads(result.stdout)
+                if self.network_refresh_tasks_remaining == 0:
+                    network_refresh_tasks_done(True)
+            else:
+                if self.network_refresh_tasks_remaining == 0:
+                    network_refresh_tasks_done(False)
+                else:
+                    self.network_refresh_tasks_error_occured = True
+
+                if result.stderr:
+                    err_msg = 'Error executing network status script.\n\n'+unicode(result.stderr)
+                    QtGui.QMessageBox.critical(get_main_window(),
+                                               'Settings | Network',
+                                               err_msg,
+                                               QtGui.QMessageBox.Ok)
+
         def cb_settings_network_get_interfaces(result):
+            if not self.is_tab_on_focus:
+                self.show_please_wait(WORKING_STATE_DONE)
+                return
             self.network_refresh_tasks_remaining -= 1
             if result.stdout and not result.stderr and result.exit_code == 0 and not self.network_refresh_tasks_error_occured:
                 self.network_all_data['interfaces'] = json.loads(result.stdout)
@@ -1179,6 +1125,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                QtGui.QMessageBox.Ok)
 
         def cb_settings_network_wireless_scan_cache(result):
+            if not self.is_tab_on_focus:
+                self.show_please_wait(WORKING_STATE_DONE)
+                return
             self.network_refresh_tasks_remaining -= 1
             if result.stdout and not result.stderr and result.exit_code == 0 and not self.network_refresh_tasks_error_occured:
                 self.network_all_data['scan_result_cache'] = json.loads(result.stdout)
@@ -1198,7 +1147,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                QtGui.QMessageBox.Ok)
 
         def cb_open_manager_settings(red_file):
+            if not self.is_tab_on_focus:
+                self.show_please_wait(WORKING_STATE_DONE)
+                return
             def cb_read(red_file, result):
+                if not self.is_tab_on_focus:
+                    self.show_please_wait(WORKING_STATE_DONE)
+                    return
                 self.network_refresh_tasks_remaining -= 1
 
                 red_file.release()
@@ -1221,6 +1176,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
             
         def cb_open_error_manager_settings():
+            if not self.is_tab_on_focus:
+                self.show_please_wait(WORKING_STATE_DONE)
+                return
             self.network_refresh_tasks_remaining -= 1
             if self.network_refresh_tasks_remaining == 0:
                 network_refresh_tasks_done(False)
@@ -1233,7 +1191,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                        QtGui.QMessageBox.Ok)
 
         def cb_open_wireless_settings(red_file):
+            if not self.is_tab_on_focus:
+                self.show_please_wait(WORKING_STATE_DONE)
+                return
             def cb_read(red_file, result):
+                if not self.is_tab_on_focus:
+                    self.show_please_wait(WORKING_STATE_DONE)
+                    return
                 self.network_refresh_tasks_remaining -= 1
 
                 red_file.release()
@@ -1256,6 +1220,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
             
         def cb_open_error_wireless_settings():
+            if not self.is_tab_on_focus:
+                self.show_please_wait(WORKING_STATE_DONE)
+                return
             self.network_refresh_tasks_remaining -= 1
             if self.network_refresh_tasks_remaining == 0:
                 network_refresh_tasks_done(False)
@@ -1268,7 +1235,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                        QtGui.QMessageBox.Ok)
 
         def cb_open_wired_settings(red_file):
+            if not self.is_tab_on_focus:
+                self.show_please_wait(WORKING_STATE_DONE)
+                return
             def cb_read(red_file, result):
+                if not self.is_tab_on_focus:
+                    self.show_please_wait(WORKING_STATE_DONE)
+                    return
                 self.network_refresh_tasks_remaining -= 1
 
                 red_file.release()
@@ -1291,6 +1264,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
 
         def cb_open_error_wired_settings():
+            if not self.is_tab_on_focus:
+                self.show_please_wait(WORKING_STATE_DONE)
+                return
             self.network_refresh_tasks_remaining -= 1
             if self.network_refresh_tasks_remaining == 0:
                 network_refresh_tasks_done(False)
@@ -1304,8 +1280,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         self.show_please_wait(WORKING_STATE_REFRESH)
 
-        self.network_refresh_tasks_remaining = 5
+        self.network_refresh_tasks_remaining = 6
         self.network_refresh_tasks_error_occured = False
+
+        self.script_manager.execute_script('settings_network_status',
+                                           cb_settings_network_status)
 
         self.script_manager.execute_script('settings_network_get_interfaces',
                                            cb_settings_network_get_interfaces)
