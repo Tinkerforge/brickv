@@ -39,7 +39,7 @@
             <enum>Qt::LeftToRight</enum>
            </property>
            <property name="text">
-            <string>Enable</string>
+            <string>Enable Stepper Motor</string>
            </property>
           </widget>
          </item>
