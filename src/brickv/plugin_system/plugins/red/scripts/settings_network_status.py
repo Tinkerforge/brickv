@@ -99,7 +99,10 @@ try:
     elif status[0] == wicd_misc.SUSPENDED:
         return_dict['cstat_status'] = 'Suspended'
     else:
-        return_dict['cstat_status'] = 'Unknown ({0})'.format(status[0])
+        if status[0] == 3:
+            return_dict['cstat_status'] = 'Connected'
+        else:
+            return_dict['cstat_status'] = 'Unknown ({0})'.format(status[0])
 except:
     return_dict['cstat_status'] = '-'
 
