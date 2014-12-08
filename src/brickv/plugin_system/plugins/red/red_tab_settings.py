@@ -37,8 +37,7 @@ from brickv.plugin_system.plugins.red import config_parser
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
 
-NETWORK_STAT_REFRESH_TIME = 3000 # in milliseconds
-NETWORK_STAT_REFRESH_TIMEOUT = 500 # in milliseconds
+NETWORK_STAT_REFRESH_INTERVAL = 3000 # in milliseconds
 
 MANAGER_SETTINGS_CONF_PATH = '/etc/wicd/manager-settings.conf'
 WIRELESS_SETTINGS_CONF_PATH = '/etc/wicd/wireless-settings.conf'
@@ -117,7 +116,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         self.is_tab_on_focus = False
 
-        self.network_stat_refresh_counter = 0
         self.network_stat_refresh_timer = Qt.QTimer(self)
         self.time_refresh_timer = QtCore.QTimer()
         self.time_refresh_timer.setInterval(1000)
@@ -169,7 +167,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.pbutton_net_wireless_scan.clicked.connect(self.slot_pbutton_net_wireless_scan_clicked)
         self.pbutton_net_conf_refresh.clicked.connect(self.slot_network_conf_refresh_clicked)
         self.pbutton_net_connect.clicked.connect(self.slot_network_connect_clicked)
-        self.pbutton_net_stat_refresh.clicked.connect(self.slot_network_stat_refresh_clicked)
 
         # Network fields
         self.address_configuration_gui(False)
@@ -236,11 +233,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         if index == BOX_INDEX_NETWORK:
             if not self.network_stat_work_in_progress:
-                self.pbutton_net_stat_refresh.setText('Collecting data...')
-                self.pbutton_net_stat_refresh.setDisabled(True)
-                self.network_stat_work_in_progress = True
-                self.script_manager.execute_script('settings_network_status',
-                                                   self.cb_settings_network_status)
+                self.cb_network_stat_refresh()
             if not self.work_in_progress:
                 self.slot_network_conf_refresh_clicked()
         elif index == BOX_INDEX_BRICKD:
@@ -258,6 +251,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             pass
         elif index == BOX_INDEX_NETWORK:
             self.network_stat_refresh_timer.stop()
+            self.network_stat_refresh_timer.stop()
         elif index == BOX_INDEX_DATETIME:
             self.time_stop()
 
@@ -265,20 +259,14 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         pass
 
     def cb_settings_network_status(self, result):
+        self.network_stat_refresh_timer.stop()
         self.network_stat_work_in_progress = False
 
         #check if the tab is still on view or not
         if not self.is_tab_on_focus:
-            self.network_stat_refresh_timer.stop()
             return
 
-        self.network_stat_refresh_counter = 0
-        self.network_stat_refresh_timer.start(NETWORK_STAT_REFRESH_TIMEOUT)
-
-        if result.stdout and\
-           not result.stderr and\
-           result.exit_code == 0 and\
-           not self.network_refresh_tasks_error_occured:
+        if result.stdout and not result.stderr and result.exit_code == 0:
                 self.network_all_data['status'] = json.loads(result.stdout)
 
                 # Populating the current network status section and hostname
@@ -321,25 +309,15 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.label_net_gen_cstat_mask.setText('-')
                     self.label_net_gen_cstat_gateway.setText('-')
                     self.label_net_gen_cstat_dns.setText('-')
-        else:
-            return
+
+        self.network_stat_refresh_timer.start(NETWORK_STAT_REFRESH_INTERVAL)
 
     def cb_network_stat_refresh(self):
-        self.network_stat_refresh_counter += 1
-        if self.network_stat_refresh_counter >= NETWORK_STAT_REFRESH_TIME/NETWORK_STAT_REFRESH_TIMEOUT:
-            self.network_stat_refresh_counter = 0
-            self.network_stat_refresh_timer.stop()
-            self.pbutton_net_stat_refresh.setText('Collecting data...')
-            self.pbutton_net_stat_refresh.setDisabled(True)
-            if not self.network_stat_work_in_progress:
-                self.network_stat_work_in_progress = True
-                self.script_manager.execute_script('settings_network_status',
-                                                   self.cb_settings_network_status)
-        else:
-            self.network_stat_work_in_progress = False
-            self.pbutton_net_stat_refresh.setDisabled(False)
-            self.pbutton_net_stat_refresh.setText('Refresh in ' +\
-                str((NETWORK_STAT_REFRESH_TIME/NETWORK_STAT_REFRESH_TIMEOUT - self.network_stat_refresh_counter)/2.0) + "...")
+        self.network_stat_refresh_timer.stop()
+        if not self.network_stat_work_in_progress and self.is_tab_on_focus:
+            self.network_stat_work_in_progress = True
+            self.script_manager.execute_script('settings_network_status',
+                                               self.cb_settings_network_status)
 
     def static_ip_configuration_gui(self, show):
         if show:
@@ -950,6 +928,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         if ctidx == BOX_INDEX_NETWORK:
             if not self.work_in_progress:
                 self.slot_network_conf_refresh_clicked()
+            if not self.network_stat_work_in_progress:
+                self.cb_network_stat_refresh()
 
         elif ctidx == BOX_INDEX_BRICKD:
             self.slot_brickd_refresh_clicked()
@@ -1622,11 +1602,6 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                        REDFile.FLAG_TRUNCATE, 0500, 0, 0),
                        lambda x: cb_open(config, write_wired_settings, x, iname_previous),
                        cb_open_error)
-
-    def slot_network_stat_refresh_clicked(self):
-        self.network_stat_refresh_timer.stop()
-        self.network_stat_refresh_counter = NETWORK_STAT_REFRESH_TIME/NETWORK_STAT_REFRESH_TIMEOUT
-        self.cb_network_stat_refresh()
 
     def slot_brickd_save_clicked(self):
         self.brickd_button_save_enabled(False)

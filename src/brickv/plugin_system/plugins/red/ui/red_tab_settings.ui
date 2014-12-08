@@ -52,7 +52,7 @@
                <x>0</x>
                <y>0</y>
                <width>674</width>
-               <height>724</height>
+               <height>680</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -471,7 +471,7 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="9" column="0">
+                     <item row="7" column="0">
                       <spacer name="verticalSpacer_6">
                        <property name="orientation">
                         <enum>Qt::Vertical</enum>
@@ -546,27 +546,6 @@
                       <widget class="QLabel" name="label_10">
                        <property name="text">
                         <string>Mask:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="8" column="0" colspan="3">
-                      <layout class="QHBoxLayout" name="horizontalLayout_10">
-                       <item>
-                        <widget class="QPushButton" name="pbutton_net_stat_refresh">
-                         <property name="enabled">
-                          <bool>false</bool>
-                         </property>
-                         <property name="text">
-                          <string>Collecting data...</string>
-                         </property>
-                        </widget>
-                       </item>
-                      </layout>
-                     </item>
-                     <item row="7" column="0" colspan="3">
-                      <widget class="Line" name="line_4">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
                        </property>
                       </widget>
                      </item>
