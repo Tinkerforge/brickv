@@ -29,12 +29,110 @@ from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
 
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFileDialog, QApplication, QPolygonF, QMessageBox
-from PyQt4.QtCore import pyqtSignal, Qt, QPointF
-from PyQt4.Qwt5 import QwtSpline
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
+                        QLineEdit, QFileDialog, QApplication, QMessageBox
+from PyQt4.QtCore import pyqtSignal, Qt
 
 import os
 import sys
+
+# this class is directly based on the QwtSpline class from the Qwt library
+class NaturalSpline:
+    def __init__(self):
+        self.points = []
+        self.a = []
+        self.b = []
+        self.c = []
+
+    def set_points(self, points):
+        length = len(points)
+
+        if length < 3:
+            return False
+
+        a = [0.0] * (length - 1)
+        b = [0.0] * (length - 1)
+        c = [0.0] * (length - 1)
+        h = [0.0] * (length - 1)
+
+        for i in range(length - 1):
+            h[i] = points[i + 1][0] - points[i][0]
+
+            if h[i] <= 0:
+                return False;
+
+        d = [0.0] * (length - 1)
+        dy1 = (points[1][1] - points[0][1]) / h[0]
+
+        for i in range(1, length - 1):
+            c[i] = h[i]
+            b[i] = h[i]
+            a[i] = 2.0 * (h[i - 1] + h[i])
+            dy2 = (points[i + 1][1] - points[i][1]) / h[i]
+            d[i] = 6.0 * (dy1 - dy2)
+            dy1 = dy2
+
+
+        for i in range(1, length - 2):
+            c[i] /= a[i]
+            a[i + 1] -= b[i] * c[i]
+
+        s = [0.0] * length
+        s[1] = d[1]
+
+        for i in range(2, length - 1):
+            s[i] = d[i] - c[i - 1] * s[i - 1]
+
+        s[length - 2] = -s[length - 2] / a[length - 2]
+
+        for i in reversed(range(1, length - 2)):
+            s[i] = - ( s[i] + b[i] * s[i+1] ) / a[i]
+
+        s[length - 1] = s[0] = 0.0
+
+        for i in range(length - 1):
+            a[i] = (s[i+1] - s[i]) / (6.0 * h[i])
+            b[i] = 0.5 * s[i]
+            c[i] = (points[i+1][1] - points[i][1]) / h[i] - (s[i + 1] + 2.0 * s[i]) * h[i] / 6.0
+
+        self.points = points
+        self.a = a
+        self.b = b
+        self.c = c
+
+        return True
+
+    def get_index(self, x):
+        points = self.points
+        length = len(points)
+
+        if x <= points[0][0]:
+            i1 = 0
+        elif x >= points[length - 2][0]:
+            i1 = length - 2
+        else:
+            i1 = 0
+            i2 = length - 2
+            i3 = 0
+
+            while i2 - i1 > 1:
+                i3 = i1 + ((i2 - i1) >> 1)
+
+                if points[i3][0] > x:
+                    i2 = i3
+                else:
+                    i1 = i3
+
+        return i1
+
+    def get_value(self, x):
+        if len(self.a) == 0:
+            return 0.0
+
+        i = self.get_index(x)
+        delta = x - self.points[i][0]
+
+        return (((self.a[i] * delta) + self.b[i]) * delta + self.c[i]) * delta + self.points[i][1]
 
 class AnalogLabel(QLabel):
     def setText(self, text):
@@ -140,20 +238,19 @@ class DistanceIR(PluginBase):
             self.sample_edit.setText(file_name)
 
     def sample_interpolate(self, x, y):
-        spline = QwtSpline()
-        points = QPolygonF()
+        spline = NaturalSpline()
+        points = []
 
         for point in zip(x, y):
-            points.append(QPointF(*point))
+            points.append((float(point[0]), float(point[1])))
 
-        spline.setSplineType(QwtSpline.Natural)
-        spline.setPoints(points)
+        spline.set_points(points)
 
         px = range(0, 2**12, DistanceIR.DIVIDER)
         py = []
 
         for X in px:
-            py.append(spline.value(X))
+            py.append(spline.get_value(X))
 
         for i in range(x[0]/DistanceIR.DIVIDER):
             py[i] = y[0]

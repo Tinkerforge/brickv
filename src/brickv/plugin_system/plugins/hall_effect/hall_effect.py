@@ -29,7 +29,6 @@ from brickv.plot_widget import PlotWidget
 from brickv.plugin_system.plugins.hall_effect.ui_hall_effect import Ui_HallEffect
 
 from PyQt4.QtCore import pyqtSignal, Qt
-import PyQt4.Qwt5 as Qwt
 
 class HallEffect(PluginBase, Ui_HallEffect):
     qtcb_edge_count = pyqtSignal(int, bool)
@@ -48,8 +47,8 @@ class HallEffect(PluginBase, Ui_HallEffect):
         self.current_value = None
 
         plot_list = [['', Qt.red, self.get_current_value]]
-        axis_scales = [(Qwt.QwtPlot.yLeft, 0, 1, 1)]
-        self.plot_widget = PlotWidget('Value', plot_list, axis_scales=axis_scales)
+        self.plot_widget = PlotWidget('Value', plot_list)
+        self.plot_widget.set_fixed_y_axis(0, 1, 1, 1)
 
         self.combo_edge_type.activated.connect(self.edge_changed)
         self.spin_debounce.editingFinished.connect(self.debounce_changed)

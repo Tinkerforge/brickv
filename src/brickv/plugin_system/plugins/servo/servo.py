@@ -26,10 +26,10 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.brick_servo import BrickServo
 from brickv.async_call import async_call
+from brickv.knob_widget import KnobWidget
 
 from PyQt4.QtGui import QLabel, QWidget, QColor, QPainter, QSizePolicy, QInputDialog, QErrorMessage
 from PyQt4.QtCore import Qt, QRect, QTimer, pyqtSignal, QThread
-import PyQt4.Qwt5 as Qwt
 
 from brickv.plugin_system.plugins.servo.ui_servo import Ui_Servo
 
@@ -100,28 +100,14 @@ class ColorBar(QWidget):
 
         painter.restore()
 
-class PositionKnob(Qwt.QwtKnob):
+class PositionKnob(KnobWidget):
     def __init__(self):
-        Qwt.QwtKnob.__init__(self)
-        class DummyScaleDraw(Qwt.QwtRoundScaleDraw):
-            def drawTick(self, painter, val, length):
-                pass
+        KnobWidget.__init__(self)
 
-            def drawBackbone(self, painter):
-                pass
-
-            def drawLabel(self, painter, val):
-                pass
-
-        self.setScaleDraw(DummyScaleDraw())
-        self.setTotalAngle(180)
-        self.setRange(-90, 90)
-        self.setKnobWidth(30)
-        self.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
-        self.setMinimumSize(30, 30)
-        self.setMaximumSize(30, 30)
-        self.setContentsMargins(0, 0, 0, 0)
-        self.setReadOnly(True)
+        self.set_total_angle(180)
+        self.set_range(-90, 90)
+        self.set_knob_radius(15)
+        self.set_scale_visible(False)
 
 class Servo(PluginBase, Ui_Servo):
     qtcb_under_voltage = pyqtSignal(int)
@@ -309,8 +295,9 @@ class Servo(PluginBase, Ui_Servo):
         self.position_slider.setMaximum(deg_max)
         self.position_spin.setMinimum(deg_min)
         self.position_spin.setMaximum(deg_max)
-        self.position_list[i].setTotalAngle((deg_max - deg_min)/100)
-        self.position_list[i].setRange(deg_min/100, deg_max/100)
+
+        self.position_list[i].set_total_angle((deg_max - deg_min)/100)
+        self.position_list[i].set_range(deg_min/100, deg_max/100)
 
     def get_pulse_width_async(self, pulse):
         pulse_min, pulse_max = pulse
@@ -357,7 +344,7 @@ class Servo(PluginBase, Ui_Servo):
         self.minimum_voltage_label.setText(mv_str)
 
     def position_update(self, i, pos):
-        self.position_list[i].setValue(pos/100)
+        self.position_list[i].set_value(pos/100)
 
     def velocity_update(self, i, vel):
         self.velocity_list[i].set_height(vel*100/0xFFFF)
@@ -629,11 +616,11 @@ class Servo(PluginBase, Ui_Servo):
         self.position_spin.setMaximum(max)
         if servo == 255:
             for i in range(7):
-                self.position_list[i].setTotalAngle((max - min)/100)
-                self.position_list[i].setRange(min/100, max/100)
+                self.position_list[i].set_total_angle((max - min)/100)
+                self.position_list[i].set_range(min/100, max/100)
         else:
-            self.position_list[servo].setTotalAngle((max - min)/100)
-            self.position_list[servo].setRange(min/100, max/100)
+            self.position_list[servo].set_total_angle((max - min)/100)
+            self.position_list[servo].set_range(min/100, max/100)
 
         try:
             self.servo.set_degree(servo, min, max)

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 IMU Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 imu.py: IMU Plugin implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -38,7 +38,7 @@ from brickv.plugin_system.plugins.imu.calibrate_window import CalibrateWindow
 class IMU(PluginBase, Ui_IMU):
     def __init__(self, *args):
         PluginBase.__init__(self, 'IMU Brick', BrickIMU, *args)
-        
+
         self.setupUi(self)
 
         self.imu = self.device
@@ -60,64 +60,63 @@ class IMU(PluginBase, Ui_IMU):
         self.qua_y = 0
         self.qua_z = 0
         self.qua_w = 0
-        
+
         self.old_time = 0
-        
+
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
-        
-        self.imu.register_callback(self.imu.CALLBACK_ALL_DATA, 
+
+        self.imu.register_callback(self.imu.CALLBACK_ALL_DATA,
                                    self.all_data_callback)
         self.imu.register_callback(self.imu.CALLBACK_ORIENTATION,
                                    self.orientation_callback)
         self.imu.register_callback(self.imu.CALLBACK_QUATERNION,
                                    self.quaternion_callback)
-        
+
         # Import IMUGLWidget here, not global. If globally included we get
         # 'No OpenGL_accelerate module loaded: No module named OpenGL_accelerate'
-        # as soon as IMU is set as device_class in __init__. 
+        # as soon as IMU is set as device_class in __init__.
         # No idea why this happens, doesn't make sense.
         try:
             from .imu_gl_widget import IMUGLWidget
         except:
             from imu_gl_widget import IMUGLWidget
-        
+
         self.imu_gl = IMUGLWidget(self)
         self.imu_gl.setMinimumSize(150, 150)
         self.imu_gl.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.min_x = 0
         self.min_y = 0
         self.min_z = 0
-        self.max_x = 0 
+        self.max_x = 0
         self.max_y = 0
         self.max_z = 0
-        
+
         self.update_counter = 0
-        
-        self.mag_plot = PlotWidget("Magnetic Field [mG]",
-                             [["X", Qt.red, self.get_mag_x],
-                              ["Y", Qt.darkGreen, self.get_mag_y],
-                              ["Z", Qt.blue, self.get_mag_z]],
-                                   self.clear_graphs)
-        self.acc_plot = PlotWidget("Acceleration [mG]",
-                             [["X", Qt.red, self.get_acc_x],
-                              ["Y", Qt.darkGreen, self.get_acc_y],
-                              ["Z", Qt.blue, self.get_acc_z]],
-                                   self.clear_graphs)
-        self.gyr_plot = PlotWidget("Angular Velocity [%c/s]" % 0xB0,
-                             [["X", Qt.red, self.get_gyr_x],
-                              ["Y", Qt.darkGreen, self.get_gyr_y],
-                              ["Z", Qt.blue, self.get_gyr_z]],
-                                   self.clear_graphs)
-        
-        self.tem_plot = PlotWidget("Temperature [%cC]" % 0xB0,
-                             [["t", Qt.red, self.get_tem]],
-                             self.clear_graphs)
-        
-        self.mag_plot.setMinimumSize(250, 200)
-        self.acc_plot.setMinimumSize(250, 200)
-        self.gyr_plot.setMinimumSize(250, 200)
-        self.tem_plot.setMinimumSize(250, 200)
+
+        self.mag_plot_widget = PlotWidget("Magnetic Field [mG]",
+                                          [["X", Qt.red, self.get_mag_x],
+                                           ["Y", Qt.darkGreen, self.get_mag_y],
+                                           ["Z", Qt.blue, self.get_mag_z]],
+                                          self.clear_graphs)
+        self.acc_plot_widget = PlotWidget("Acceleration [mG]",
+                                          [["X", Qt.red, self.get_acc_x],
+                                           ["Y", Qt.darkGreen, self.get_acc_y],
+                                           ["Z", Qt.blue, self.get_acc_z]],
+                                          self.clear_graphs)
+        self.gyr_plot_widget = PlotWidget("Angular Velocity [%c/s]" % 0xB0,
+                                          [["X", Qt.red, self.get_gyr_x],
+                                           ["Y", Qt.darkGreen, self.get_gyr_y],
+                                           ["Z", Qt.blue, self.get_gyr_z]],
+                                          self.clear_graphs)
+        self.tem_plot_widget = PlotWidget("Temperature [%cC]" % 0xB0,
+                                          [["t", Qt.red, self.get_tem]],
+                                          self.clear_graphs)
+
+        self.mag_plot_widget.setMinimumSize(250, 200)
+        self.acc_plot_widget.setMinimumSize(250, 200)
+        self.gyr_plot_widget.setMinimumSize(250, 200)
+        self.tem_plot_widget.setMinimumSize(250, 200)
 
         self.orientation_label = QLabel("""Position your IMU Brick as shown \
 in the image above, then press "Save Orientation".""")
@@ -126,18 +125,18 @@ in the image above, then press "Save Orientation".""")
         self.gl_layout = QVBoxLayout()
         self.gl_layout.addWidget(self.imu_gl)
         self.gl_layout.addWidget(self.orientation_label)
-        
-        self.layout_top.addWidget(self.gyr_plot)
-        self.layout_top.addWidget(self.acc_plot)
-        self.layout_top.addWidget(self.mag_plot)
+
+        self.layout_top.addWidget(self.gyr_plot_widget)
+        self.layout_top.addWidget(self.acc_plot_widget)
+        self.layout_top.addWidget(self.mag_plot_widget)
         self.layout_bottom.addLayout(self.gl_layout)
-        self.layout_bottom.addWidget(self.tem_plot)
-        
+        self.layout_bottom.addWidget(self.tem_plot_widget)
+
         self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
         self.calibrate.clicked.connect(self.calibrate_clicked)
         self.led_button.clicked.connect(self.led_clicked)
         self.speed_spinbox.editingFinished.connect(self.speed_finished)
-        
+
         self.calibrate = None
         self.alive = True
 
@@ -150,20 +149,20 @@ in the image above, then press "Save Orientation".""")
         async_call(self.imu.set_orientation_period, 100, None, self.increase_error_count)
         async_call(self.imu.set_quaternion_period, 50, None, self.increase_error_count)
         self.update_timer.start(50)
-        
+
         async_call(self.imu.get_convergence_speed, None, self.speed_spinbox.setValue, self.increase_error_count)
-        
-        self.mag_plot.stop = False
-        self.acc_plot.stop = False
-        self.gyr_plot.stop = False
-        self.tem_plot.stop = False
-        
+
+        self.mag_plot_widget.stop = False
+        self.acc_plot_widget.stop = False
+        self.gyr_plot_widget.stop = False
+        self.tem_plot_widget.stop = False
+
     def stop(self):
-        self.mag_plot.stop = True
-        self.acc_plot.stop = True
-        self.gyr_plot.stop = True
-        self.tem_plot.stop = True
-        
+        self.mag_plot_widget.stop = True
+        self.acc_plot_widget.stop = True
+        self.gyr_plot_widget.stop = True
+        self.tem_plot_widget.stop = True
+
         self.update_timer.stop()
         async_call(self.imu.set_all_data_period, 0, None, self.increase_error_count)
         async_call(self.imu.set_orientation_period, 0, None, self.increase_error_count)
@@ -190,7 +189,7 @@ in the image above, then press "Save Orientation".""")
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickIMU.DEVICE_IDENTIFIER
-        
+
     def all_data_callback(self, acc_x, acc_y, acc_z, mag_x, mag_y, mag_z, gyr_x, gyr_y, gyr_z, tem):
         self.acc_x = acc_x
         self.acc_y = acc_y
@@ -202,13 +201,13 @@ in the image above, then press "Save Orientation".""")
         self.gyr_y = gyr_y
         self.gyr_z = gyr_z
         self.tem = tem
-        
+
     def quaternion_callback(self, qua_x, qua_y, qua_z, qua_w):
         self.qua_x = qua_x
         self.qua_y = qua_y
         self.qua_z = qua_z
         self.qua_w = qua_w
-        
+
     def orientation_callback(self, roll, pitch, yaw):
         self.roll = roll
         self.pitch = pitch
@@ -221,53 +220,53 @@ in the image above, then press "Save Orientation".""")
         elif 'Off' in self.led_button.text():
             self.led_button.setText('Turn LEDs On')
             self.imu.leds_off()
-            
+
     def get_acc_x(self):
         return self.acc_x
-        
+
     def get_acc_y(self):
         return self.acc_y
-    
+
     def get_acc_z(self):
         return self.acc_z
-            
+
     def get_mag_x(self):
         return self.mag_x
-        
+
     def get_mag_y(self):
         return self.mag_y
-    
+
     def get_mag_z(self):
         return self.mag_z
-            
+
     def get_gyr_x(self):
         return self.gyr_x/14.375
-        
+
     def get_gyr_y(self):
         return self.gyr_y/14.375
-    
+
     def get_gyr_z(self):
         return self.gyr_z/14.375
-    
+
     def get_tem(self):
         return self.tem/100.0
-        
+
     def update_data(self):
         self.update_counter += 1
-        
+
         self.imu_gl.update(self.qua_x, self.qua_y, self.qua_z, self.qua_w)
-        
+
         if self.update_counter % 2:
             gyr_x = self.gyr_x/14.375
             gyr_y = self.gyr_y/14.375
             gyr_z = self.gyr_z/14.375
-            
+
             self.acceleration_update(self.acc_x, self.acc_y, self.acc_z)
             self.magnetometer_update(self.mag_x, self.mag_y, self.mag_z)
             self.gyroscope_update(gyr_x, gyr_y, gyr_z)
             self.orientation_update(self.roll, self.pitch, self.yaw)
             self.temperature_update(self.tem)
-        
+
     def acceleration_update(self, x, y, z):
         x_str = "%g" % x
         y_str = "%g" % y
@@ -275,7 +274,7 @@ in the image above, then press "Save Orientation".""")
         self.acc_y_label.setText(y_str)
         self.acc_x_label.setText(x_str)
         self.acc_z_label.setText(z_str)
-        
+
     def magnetometer_update(self, x, y, z):
         # Earth magnetic field. 0.5 Gauss
         x_str = "%g" % x
@@ -284,7 +283,7 @@ in the image above, then press "Save Orientation".""")
         self.mag_x_label.setText(x_str)
         self.mag_y_label.setText(y_str)
         self.mag_z_label.setText(z_str)
-        
+
     def gyroscope_update(self, x, y, z):
         x_str = "%g" % int(x)
         y_str = "%g" % int(y)
@@ -292,7 +291,7 @@ in the image above, then press "Save Orientation".""")
         self.gyr_x_label.setText(x_str)
         self.gyr_y_label.setText(y_str)
         self.gyr_z_label.setText(z_str)
-        
+
     def orientation_update(self, r, p, y):
         r_str = "%g" % (r/100)
         p_str = "%g" % (p/100)
@@ -300,11 +299,11 @@ in the image above, then press "Save Orientation".""")
         self.roll_label.setText(r_str)
         self.pitch_label.setText(p_str)
         self.yaw_label.setText(y_str)
-        
+
     def temperature_update(self, t):
         t_str = "%.2f" % (t/100.0)
         self.tem_label.setText(t_str)
-        
+
     def calibrate_clicked(self):
         self.stop()
         if self.calibrate is None:

@@ -264,17 +264,17 @@ class DC(PluginBase, Ui_DC):
             
         self.current_label.setText(cc_str)
 
-    
     def update_velocity(self, value):
-        if value != self.speedometer.value():
-            self.speedometer.set_velocity(value)
+        self.speedometer.set_velocity(value)
         
     def get_velocity_async(self, velocity):
         if not self.velocity_slider.isSliderDown():
             if velocity != self.velocity_slider.sliderPosition():
                 self.velocity_slider.setSliderPosition(velocity)
                 self.velocity_spin.setValue(velocity)
-        
+
+        self.speedometer.set_velocity(velocity)
+
     def get_acceleration_async(self, acceleration):
         if not self.acceleration_slider.isSliderDown():
             if acceleration != self.acceleration_slider.sliderPosition():
@@ -312,8 +312,7 @@ class DC(PluginBase, Ui_DC):
         async_call(self.dc.get_encoder_config, None, self.get_encoder_config_async, self.increase_error_count)
         async_call(self.dc.get_encoder_pid_config, None, self.get_encoder_pid_config_async, self.increase_error_count)
         async_call(self.dc.is_encoder_enabled, None, self.is_encoder_enabled_async, self.increase_error_count)
-        
-        
+
     def update_start(self):
         async_call(self.dc.get_drive_mode, None, self.drive_mode_update, self.increase_error_count)
         async_call(self.dc.get_velocity, None, self.get_velocity_async, self.increase_error_count)
