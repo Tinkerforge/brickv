@@ -15,7 +15,7 @@ if itype == 'wireless':
     netidx = unicode(argv[4])
     if iname_previous and iname_previous != 'None':
         cmd_wireless = '/usr/bin/wicd-cli --wireless -x && /bin/sleep 5 &&\
-                        /sbin/ifconfig '+iname_previous+' down && /bin/sleep 1 &&\
+                        /sbin/ifconfig '+iname_previous+' down && /bin/sleep 1;\
                         /usr/sbin/service wicd restart && /bin/sleep 5 &&\
                         /usr/bin/wicd-cli --wireless -c -n'+netidx+' && :'
     else:
@@ -29,7 +29,7 @@ if itype == 'wireless':
 elif itype == 'wired':
     if iname_previous and iname_previous != 'None':
         cmd_wired = '/usr/bin/wicd-cli --wired -x && /bin/sleep 5 &&\
-                     /sbin/ifconfig '+iname_previous+' down && /bin/sleep 1 &&\
+                     /sbin/ifconfig '+iname_previous+' down && /bin/sleep 1;\
                      /usr/sbin/service wicd restart && /bin/sleep 5 &&\
                      /usr/bin/wicd-cli --wired -c -n0 && :'
     else:
