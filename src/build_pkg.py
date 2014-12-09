@@ -221,7 +221,7 @@ def sign_py2exe(exepath):
     execopy = os.path.join(os.path.dirname(exepath),
                            "temp-" + os.path.basename(exepath))
     shutil.copy2(exepath, execopy)
-    os.system('C:\\codesign\\sign.bat ' + execopy)
+    os.system('X:\\sign.bat ' + execopy)
 
     # Figure out the size of the appended signature.
     comment_size = os.stat(execopy).st_size - os.stat(exepath).st_size
@@ -233,7 +233,7 @@ def sign_py2exe(exepath):
         f.write(struct.pack("<H", comment_size))
 
     # Now we can sign the file for real.
-    os.system('C:\\codesign\\sign.bat ' + exepath)
+    os.system('X:\\sign.bat ' + exepath)
 
 def build_windows_pkg():
     PWD = os.path.dirname(os.path.realpath(__file__))
@@ -314,7 +314,7 @@ def build_windows_pkg():
     )
 
     # FIXME: doesn't work yet
-    #if os.path.exists('C:\\codesign\\sign.bat'):
+    #if os.path.exists('X:\\sign.bat'):
     #    sign_py2exe('dist\\brickv.exe')
 
     # build nsis
@@ -335,8 +335,8 @@ def build_windows_pkg():
 
     shutil.move(os.path.join(dist_nsis_dir, installer), os.getcwd())
 
-    if os.path.exists('C:\\codesign\\sign.bat'):
-        os.system('C:\\codesign\\sign.bat ' + installer)
+    if os.path.exists('X:\\sign.bat'):
+        os.system('X:\\sign.bat ' + installer)
 
 
 def build_linux_pkg():
