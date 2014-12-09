@@ -129,6 +129,7 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
             return
 
         try:
+            # FIXME: add progress dialog if content is bigger than some megabytes
             f.write(self.content)
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save Log Error',
