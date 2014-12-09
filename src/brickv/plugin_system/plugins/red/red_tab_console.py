@@ -30,7 +30,7 @@ from brickv.samba import get_serial_ports
 
 class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
     append_text_signal = QtCore.pyqtSignal(str)
-    
+
     def __init__(self):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
@@ -40,11 +40,11 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
 
         self.console = TerminalWidget()
         self.console_layout.insertWidget(1, self.console)
-        
+
         self.refresh_button.clicked.connect(self.refresh_ports)
         self.connect_button.clicked.connect(self.connect_clicked)
         self.copy_button.clicked.connect(self.console.copy_selection_to_clipboard)
-        
+
         # make all elements on this tab non-focusable so the focus has
         # to stay on the console widget
         self.combo_serial_port.setFocusPolicy(QtCore.Qt.NoFocus)
@@ -52,7 +52,7 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
         self.refresh_button.setFocusPolicy(QtCore.Qt.NoFocus)
         self.copy_button.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setFocusPolicy(QtCore.Qt.NoFocus)
-        
+
         self.refresh_ports()
 
     def refresh_ports(self):
@@ -64,7 +64,7 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
             ports = []
 
         preferred_index = None
-        
+
         for port in ports:
             if preferred_index is None:
                 if 'ttyACM' in port[0] or \
@@ -93,20 +93,29 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
         text = self.connect_button.text()
 
         if text == 'Connect':
-            self.combo_serial_port.setEnabled(False)
-            self.refresh_button.setEnabled(False)
-            self.console.setEnabled(True)
-            self.connect_button.setText("Disconnect")
-            
-            port = unicode(self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString())
+            def cb_pkill_ttyGS0(result):
+                if result == None or result.exit_code != 0:
+                    # FIXME: report error
+                    return
 
-            if self.console._session == None:
-                try:
-                    self.console.execute(command=port)
-                    self.console.setFocus()
-                except:
-                    # TODO: Error popup?
-                    self.destroy_session()
+                self.combo_serial_port.setEnabled(False)
+                self.refresh_button.setEnabled(False)
+                self.console.setEnabled(True)
+                self.connect_button.setText("Disconnect")
+
+                port = unicode(self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString())
+
+                if self.console._session == None:
+                    try:
+                        self.console.execute(command=port)
+                        self.console.setFocus()
+                    except:
+                        # TODO: Error popup?
+                        self.destroy_session()
+
+            # kill everything running on ttyGS0 with force, this ensures that no hanging
+            # process blocks ttyGS0 and that we get a clean shell instance
+            self.script_manager.execute_script('pkill_ttyGS0', cb_pkill_ttyGS0, ['SIGKILL'])
         else:
             self.destroy_session()
 
@@ -114,6 +123,12 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
         if self.console._session != None:
             self.console.stop()
             self.console._session = None
+
+            def cb_pkill_ttyGS0(result):
+                pass
+
+            # ask everything running on ttyGS0 to exit
+            self.script_manager.execute_script('pkill_ttyGS0', cb_pkill_ttyGS0, ['SIGTERM'])
 
         self.combo_serial_port.setEnabled(True)
         self.refresh_button.setEnabled(True)
