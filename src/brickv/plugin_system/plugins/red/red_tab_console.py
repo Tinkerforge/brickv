@@ -93,11 +93,7 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
         text = self.connect_button.text()
 
         if text == 'Connect':
-            def cb_pkill_ttyGS0(result):
-                if result == None or result.exit_code != 0:
-                    # FIXME: report error
-                    return
-
+            def open_console():
                 self.combo_serial_port.setEnabled(False)
                 self.refresh_button.setEnabled(False)
                 self.console.setEnabled(True)
@@ -113,9 +109,19 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
                         # TODO: Error popup?
                         self.destroy_session()
 
+            def cb_pkill_ttyGS0(result):
+                if result == None or result.exit_code not in [0, 1]: # 0 == no error, 1 == nothing killed
+                    # FIXME: report error
+                    return
+
+                open_console()
+
+            # FIXME: disable this for now as it doesn't work reliable. init
+            #        seems to stop spawning getty for a while after some kills
             # kill everything running on ttyGS0 with force, this ensures that no hanging
             # process blocks ttyGS0 and that we get a clean shell instance
-            self.script_manager.execute_script('pkill_ttyGS0', cb_pkill_ttyGS0, ['SIGKILL'])
+            #self.script_manager.execute_script('pkill_ttyGS0', cb_pkill_ttyGS0, ['SIGKILL'])
+            open_console()
         else:
             self.destroy_session()
 
@@ -127,8 +133,10 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
             def cb_pkill_ttyGS0(result):
                 pass
 
+            # FIXME: disable this for now as it doesn't work reliable. init
+            #        seems to stop spawning getty for a while after some kills
             # ask everything running on ttyGS0 to exit
-            self.script_manager.execute_script('pkill_ttyGS0', cb_pkill_ttyGS0, ['SIGTERM'])
+            #self.script_manager.execute_script('pkill_ttyGS0', cb_pkill_ttyGS0, ['SIGTERM'])
 
         self.combo_serial_port.setEnabled(True)
         self.refresh_button.setEnabled(True)
