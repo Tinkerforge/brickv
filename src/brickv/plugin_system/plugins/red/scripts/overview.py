@@ -26,16 +26,13 @@ for p in psutil.process_iter():
                     'mem': int(p.get_memory_percent() * 10)}
     all_process_info.append(process_dict)
 
-print psutil.used_phymem()
+print psutil.used_phymem() - psutil.phymem_buffers() - psutil.cached_phymem()
 print psutil.TOTAL_PHYMEM
 print du.used
 print du.total
 
 interfaces = psutil.network_io_counters(pernic=True)
-#remove lo and tunl0 interfaces from list
-#if 'lo' in interfaces:
-#    del interfaces['lo']
-if 'tunl0' in interfaces:
+if 'tunl0' in interfaces: # ignore tunl0 interface
     del interfaces['tunl0']
 print json.dumps(interfaces, separators=(',', ':'))
 
