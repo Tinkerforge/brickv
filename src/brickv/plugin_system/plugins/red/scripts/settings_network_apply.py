@@ -19,7 +19,7 @@ if itype == 'wireless':
     netidx = unicode(argv[4])
 
     cmd_wireless = '/usr/bin/wicd-cli --wireless -x && /bin/sleep 5 &&\
-                    /usr/sbin/service wicd restart && /bin/sleep 5 &&\
+                    /usr/sbin/service wicd restart && /bin/sleep 8 &&\
                     /usr/bin/wicd-cli --wireless -c -n'+netidx+' && :'
     cmd_wireless_code = os.system(cmd_wireless)
     if cmd_wireless_code:
