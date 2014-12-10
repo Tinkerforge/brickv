@@ -150,7 +150,7 @@ class ScriptManager:
         if self.scripts[sd.script_name].copied:
             return self._execute_after_init(sd)
 
-        async_call(self._init_script_async, sd, lambda: self._init_script_done(sd), lambda: self._init_script_error(sd))
+        async_call(self._init_script_async, sd, lambda execute: self._init_script_done(execute, sd), lambda: self._init_script_error(sd))
 
     def _init_script_async(self, sd):
         script = self.scripts[sd.script_name]
@@ -161,7 +161,7 @@ class ScriptManager:
         # copy the script in the meantime. if not it's our turn to copy it
         if script.copied:
             script.copy_lock.release()
-            return
+            return True
 
         try:
             script.file = create_object_in_qt_main_thread(REDFile, (self.session,))
@@ -177,6 +177,8 @@ class ScriptManager:
             print 'ScriptManager._init_script_async: copy_lock.release failed'
             traceback.print_exc()
             raise
+        finally:
+            return False
 
     def _init_script_async_write_done(self, error, sd):
         script = self.scripts[sd.script_name]
@@ -189,12 +191,13 @@ class ScriptManager:
         if error == None:
             self._execute_after_init(sd)
         else:
-            print '_init_script_async_write_done', unicode(error)
+            print 'ScriptManager._init_script_async_write_done', unicode(error)
             ScriptManager._call(script, sd, None)
             script_data_set.remove(sd)
 
-    def _init_script_done(self, sd):
-        self._execute_after_init(sd)
+    def _init_script_done(self, execute, sd):
+        if execute:
+            self._execute_after_init(sd)
 
     def _init_script_error(self, sd):
         ScriptManager._call(self.scripts[sd.script_name], sd, None)
