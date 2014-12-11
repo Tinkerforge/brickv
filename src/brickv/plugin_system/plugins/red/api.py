@@ -186,12 +186,13 @@ class REDSession(QtCore.QObject):
     KEEP_ALIVE_INTERVAL = 5 # seconds
     LIFETIME            = 60 # seconds
 
-    def __init__(self, brick):
+    def __init__(self, brick, increase_error_count):
         QtCore.QObject.__init__(self)
 
-        self._brick            = brick
-        self._session_id       = None
-        self._keep_alive_timer = None
+        self._brick               = brick
+        self._session_id          = None
+        self._keep_alive_timer    = None
+        self.increase_error_count = increase_error_count
 
     def __del__(self):
         self.expire()
@@ -1440,6 +1441,7 @@ class REDProgram(REDObject):
         self._qtcb_scheduler_state_changed.emit()
 
     def _cb_scheduler_state_changed(self):
+        # FIXME: add try/except
         error_code, state, timestamp, message_string_id = self._session._brick.get_program_scheduler_state(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
@@ -1475,6 +1477,7 @@ class REDProgram(REDObject):
         self._qtcb_process_spawned.emit()
 
     def _cb_process_spawned(self):
+        # FIXME: add try/except
         error_code, process_id, timestamp = self._session._brick.get_last_spawned_program_process(self.object_id, self._session._session_id)
 
         if error_code != REDError.E_SUCCESS:
