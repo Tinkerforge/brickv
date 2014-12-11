@@ -197,26 +197,11 @@
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <layout class="QGridLayout" name="glayout_process">
-           <item row="1" column="0" rowspan="2" colspan="6">
-            <widget class="QTableView" name="tview_process">
-             <property name="editTriggers">
-              <set>QAbstractItemView::NoEditTriggers</set>
+           <item row="0" column="2">
+            <widget class="QLabel" name="label_based_on">
+             <property name="text">
+              <string>processes based on</string>
              </property>
-             <property name="alternatingRowColors">
-              <bool>true</bool>
-             </property>
-             <property name="selectionBehavior">
-              <enum>QAbstractItemView::SelectRows</enum>
-             </property>
-             <property name="sortingEnabled">
-              <bool>true</bool>
-             </property>
-             <attribute name="verticalHeaderVisible">
-              <bool>false</bool>
-             </attribute>
-             <attribute name="verticalHeaderHighlightSections">
-              <bool>true</bool>
-             </attribute>
             </widget>
            </item>
            <item row="0" column="0">
@@ -225,6 +210,9 @@
               <string>Top</string>
              </property>
             </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QComboBox" name="cbox_based_on"/>
            </item>
            <item row="0" column="1">
             <widget class="QSpinBox" name="sbox_number_of_process">
@@ -238,16 +226,6 @@
               <number>5</number>
              </property>
             </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QLabel" name="label_based_on">
-             <property name="text">
-              <string>processes based on</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3">
-            <widget class="QComboBox" name="cbox_based_on"/>
            </item>
            <item row="0" column="4">
             <widget class="QLabel" name="label_usage">
@@ -272,6 +250,19 @@
              </property>
             </spacer>
            </item>
+           <item row="1" column="0" colspan="6">
+            <widget class="QTreeView" name="tview_process">
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="rootIsDecorated">
+              <bool>false</bool>
+             </property>
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
         </layout>
@@ -286,22 +277,16 @@
          <item>
           <layout class="QGridLayout" name="glayout_nic">
            <item row="0" column="0">
-            <widget class="QTableView" name="tview_nic">
+            <widget class="QTreeView" name="tview_nic">
              <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
              </property>
-             <property name="alternatingRowColors">
-              <bool>true</bool>
-             </property>
-             <property name="selectionBehavior">
-              <enum>QAbstractItemView::SelectRows</enum>
+             <property name="rootIsDecorated">
+              <bool>false</bool>
              </property>
              <property name="sortingEnabled">
               <bool>true</bool>
              </property>
-             <attribute name="verticalHeaderVisible">
-              <bool>false</bool>
-             </attribute>
             </widget>
            </item>
           </layout>

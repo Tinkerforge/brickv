@@ -60,14 +60,14 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
             self.package_list[i].append({'name': 'Collecting Data...', 'version': 'Collecting Data...', 'description': 'Collecting Data...'})
 
         self.tables = [
-            self.table_main,
-            self.table_csharp,
-            self.table_c,
-            self.table_java,
-            self.table_perl,
-            self.table_php,
-            self.table_python,
-            self.table_ruby,
+            self.tree_main,
+            self.tree_csharp,
+            self.tree_c,
+            self.tree_java,
+            self.tree_perl,
+            self.tree_php,
+            self.tree_python,
+            self.tree_ruby,
         ]
         self.update_funcs = [
             self.update_main,
@@ -90,12 +90,10 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
             self.models[i].setHorizontalHeaderItem(2, Qt.QStandardItem("Description"))
             self.models[i].setItem(0, 0, Qt.QStandardItem("Collecting data..."))
 
-            self.tables[i].setSpan(0, 0, 1, 3)
             self.tables[i].setModel(self.models[i])
             self.tables[i].setColumnWidth(0, DEFAULT_NAME_HEADER_WIDTH)
             self.tables[i].setColumnWidth(1, DEFAULT_VERSION_HEADER_WIDTH)
             self.tables[i].setColumnWidth(2, DEFAULT_DESCRIPTION_HEADER_WIDTH)
-            self.tables[i].horizontalHeader().setSortIndicator(1, QtCore.Qt.DescendingOrder)
 
             self.tab_data.append({'table': self.tables[i], 'model': self.models[i], 'list': self.package_list[i], 'update_func': self.update_funcs[i], 'updated': False})
 

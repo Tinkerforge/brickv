@@ -71,8 +71,8 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.refresh_timer.timeout.connect(self.cb_refresh)
         self.button_refresh.clicked.connect(self.refresh_clicked)
         self.cbox_based_on.currentIndexChanged.connect(self.change_process_sort_order)
-        self.tview_nic_horizontal_header.sortIndicatorChanged.connect(self.cb_tview_nic_sort_indicator_changed)
-        self.tview_process_horizontal_header.sortIndicatorChanged.connect(self.cb_tview_process_sort_indicator_changed)
+        self.tview_nic.header().sectionClicked.connect(self.cb_tview_nic_sort_indicator_changed)
+        self.tview_process.header().sectionClicked.connect(self.cb_tview_process_sort_indicator_changed)
 
     def tab_on_focus(self):
         self.button_refresh.setText('Collecting data...')
@@ -97,9 +97,9 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
 
     def change_process_sort_order(self):
         if self.cbox_based_on.currentIndex() == 0:
-            self.tview_process.horizontalHeader().setSortIndicator(3, QtCore.Qt.DescendingOrder)
+            self.tview_process.header().setSortIndicator(3, QtCore.Qt.DescendingOrder)
         elif self.cbox_based_on.currentIndex() == 1:
-            self.tview_process.horizontalHeader().setSortIndicator(4, QtCore.Qt.DescendingOrder)
+            self.tview_process.header().setSortIndicator(4, QtCore.Qt.DescendingOrder)
 
     # the callbacks
     def cb_refresh(self):
@@ -204,7 +204,6 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.pbar_storage.setValue(storage_percent_v)
 
         self.nic_item_model.removeRows(0, self.nic_item_model.rowCount())
-        self.tview_nic.clearSpans()
 
         def _get_nic_transfer_rate(bytes_now, bytes_previous, delta_time):
             return "%.1f" % float(((bytes_now - bytes_previous) / delta_time) / 1000)
@@ -236,11 +235,10 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
             self.nic_previous_bytes[str(key)] = {'sent': nic_data_dict[key][0],
                                                  'received': nic_data_dict[key][1]}
 
-        self.tview_nic.horizontalHeader().setSortIndicator(self.tview_nic_previous_sort['column_index'],
-                                                           self.tview_nic_previous_sort['order'])
+        self.nic_item_model.sort(self.tview_nic_previous_sort['column_index'],
+                                 self.tview_nic_previous_sort['order'])
 
         self.process_item_model.removeRows(0, self.process_item_model.rowCount())
-        self.tview_process.clearSpans()
 
         if self.cbox_based_on.currentIndex() == 0:
             processes_data_list_sorted = sorted(processes_data_list,
@@ -273,14 +271,16 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
             _item_mem.setData(QtCore.QVariant(mem))
             self.process_item_model.setItem(i, 4, _item_mem)
 
-        self.tview_process.horizontalHeader().setSortIndicator(self.tview_process_previous_sort['column_index'],
-                                                               self.tview_process_previous_sort['order'])
+        self.process_item_model.sort(self.tview_process_previous_sort['column_index'],
+                                     self.tview_process_previous_sort['order'])
 
-    def cb_tview_nic_sort_indicator_changed(self, column_index, order):
-        self.tview_nic_previous_sort = {'column_index': column_index, 'order': order}
+    def cb_tview_nic_sort_indicator_changed(self, column_index):
+        self.tview_nic_previous_sort = {'column_index': column_index,\
+                                        'order': self.tview_nic.header().sortIndicatorOrder()}
 
-    def cb_tview_process_sort_indicator_changed(self, column_index, order):
-        self.tview_process_previous_sort = {'column_index': column_index, 'order': order}
+    def cb_tview_process_sort_indicator_changed(self, column_index):
+        self.tview_process_previous_sort = {'column_index': column_index,\
+                                            'order': self.tview_nic.header().sortIndicatorOrder()}
 
     #tab specific functions
     def bytes2human(self, n):
@@ -299,15 +299,17 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.nic_item_model.setHorizontalHeaderItem(0, Qt.QStandardItem("Interface"))
         self.nic_item_model.setHorizontalHeaderItem(1, Qt.QStandardItem("Download"))
         self.nic_item_model.setHorizontalHeaderItem(2, Qt.QStandardItem("Upload"))
-        self.tview_nic.setSpan(0, 0, 1, 3)
         self.nic_item_model.setItem(0, 0, Qt.QStandardItem("Collecting data..."))
         self.tview_nic.setModel(self.nic_item_model)
         self.tview_nic.setColumnWidth(0, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(1, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(2, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
-        self.tview_nic.horizontalHeader().setSortIndicator(1, QtCore.Qt.DescendingOrder)
+        self.tview_nic.header().setSortIndicator(1, QtCore.Qt.DescendingOrder)
         self.tview_nic_previous_sort = {'column_index': 1, 'order': QtCore.Qt.DescendingOrder}
-        self.tview_nic_horizontal_header = self.tview_nic.horizontalHeader()
+        self.nic_item_model.sort(self.tview_nic_previous_sort['column_index'],
+                                 self.tview_nic_previous_sort['order'])
+        self.tview_nic_previous_sort = {'column_index': self.tview_nic_previous_sort['column_index'],\
+                                        'order': self.tview_nic_previous_sort['order']}
         self.nic_previous_bytes = {}
 
     def setup_tview_process(self):
@@ -317,7 +319,6 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.process_item_model.setHorizontalHeaderItem(2, Qt.QStandardItem("User"))
         self.process_item_model.setHorizontalHeaderItem(3, Qt.QStandardItem("CPU"))
         self.process_item_model.setHorizontalHeaderItem(4, Qt.QStandardItem("Memory"))
-        self.tview_process.setSpan(0, 0, 1, 5)
         self.process_item_model.setItem(0, 0, Qt.QStandardItem("Collecting data..."))
         self.process_item_proxy_model = ProcessesProxyModel(self)
         self.process_item_proxy_model.setSourceModel(self.process_item_model)
@@ -327,9 +328,12 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.tview_process.setColumnWidth(2, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER)
         self.tview_process.setColumnWidth(3, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER)
         self.tview_process.setColumnWidth(4, DEFAULT_TVIEW_PROCESS_HEADER_WIDTH_OTHER)
-        self.tview_process.horizontalHeader().setSortIndicator(3, QtCore.Qt.DescendingOrder)
+        self.tview_process.header().setSortIndicator(3, QtCore.Qt.DescendingOrder)
         self.tview_process_previous_sort = {'column_index': 3, 'order': QtCore.Qt.DescendingOrder}
-        self.tview_process_horizontal_header = self.tview_process.horizontalHeader()
+        self.process_item_model.sort(self.tview_process_previous_sort['column_index'],
+                                     self.tview_process_previous_sort['order'])
+        self.tview_process_previous_sort = {'column_index': self.tview_process_previous_sort['column_index'],\
+                                            'order': self.tview_process_previous_sort['order']}
         self.cbox_based_on.addItem("CPU")
         self.cbox_based_on.addItem("Memory")
 
@@ -343,6 +347,5 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.tview_nic.setColumnWidth(0, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(1, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
         self.tview_nic.setColumnWidth(2, DEFAULT_TVIEW_NIC_HEADER_WIDTH)
-        self.tview_nic.setSpan(0, 0, 1, 3)
-        self.tview_nic.horizontalHeader().setSortIndicator(self.tview_nic_previous_sort['column_index'],
-                                                           self.tview_nic_previous_sort['order'])
+        self.tview_nic.header().setSortIndicator(self.tview_nic_previous_sort['column_index'],
+                                                 self.tview_nic_previous_sort['order'])
