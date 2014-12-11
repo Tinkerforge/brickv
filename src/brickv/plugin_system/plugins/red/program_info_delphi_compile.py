@@ -25,7 +25,6 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QDialog
 from brickv.plugin_system.plugins.red.ui_program_info_delphi_compile import Ui_ProgramInfoDelphiCompile
 import posixpath
-import traceback
 
 class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
     def __init__(self, parent, script_manager, program):
@@ -107,8 +106,4 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
         self.button_clean.setEnabled(True)
         self.button_cancel.setEnabled(False)
 
-        try:
-            self.script_manager.abort_script(self.script_data)
-        except:
-            print 'ProgramInfoDelphiCompile.cancel_fpcmake_execution: abort_script failed'
-            traceback.print_exc()
+        self.script_manager.abort_script(self.script_data)

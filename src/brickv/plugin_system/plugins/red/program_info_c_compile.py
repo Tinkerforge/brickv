@@ -25,7 +25,6 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QDialog
 from brickv.plugin_system.plugins.red.ui_program_info_c_compile import Ui_ProgramInfoCCompile
 import posixpath
-import traceback
 
 class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
     def __init__(self, parent, script_manager, program):
@@ -107,8 +106,4 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
         self.button_clean.setEnabled(True)
         self.button_cancel.setEnabled(False)
 
-        try:
-            self.script_manager.abort_script(self.script_data)
-        except:
-            print 'ProgramInfoCCompile.cancel_make_execution: abort_script failed'
-            traceback.print_exc()
+        self.script_manager.abort_script(self.script_data)
