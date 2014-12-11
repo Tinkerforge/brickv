@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>876</width>
-    <height>879</height>
+    <height>866</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,7 @@
            <x>0</x>
            <y>0</y>
            <width>838</width>
-           <height>748</height>
+           <height>735</height>
           </rect>
          </property>
          <attribute name="label">
@@ -52,7 +52,7 @@
                <x>0</x>
                <y>0</y>
                <width>818</width>
-               <height>728</height>
+               <height>715</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -174,6 +174,9 @@
                        <property name="text">
                         <string>Gateway:</string>
                        </property>
+                       <property name="buddy">
+                        <cstring>sbox_net_gw1</cstring>
+                       </property>
                       </widget>
                      </item>
                      <item row="8" column="1" colspan="2">
@@ -213,6 +216,9 @@
                        <property name="text">
                         <string>Mask:</string>
                        </property>
+                       <property name="buddy">
+                        <cstring>sbox_net_mask1</cstring>
+                       </property>
                       </widget>
                      </item>
                      <item row="1" column="1" colspan="2">
@@ -247,12 +253,18 @@
                        <property name="alignment">
                         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                        </property>
+                       <property name="buddy">
+                        <cstring>tree_net_wireless_ap</cstring>
+                       </property>
                       </widget>
                      </item>
                      <item row="1" column="0">
                       <widget class="QLabel" name="label_31">
                        <property name="text">
                         <string>Interfaces:</string>
+                       </property>
+                       <property name="buddy">
+                        <cstring>cbox_net_intf</cstring>
                        </property>
                       </widget>
                      </item>
@@ -261,12 +273,18 @@
                        <property name="text">
                         <string>Address Configuration:</string>
                        </property>
+                       <property name="buddy">
+                        <cstring>cbox_net_conftype</cstring>
+                       </property>
                       </widget>
                      </item>
                      <item row="4" column="0">
                       <widget class="QLabel" name="label_key">
                        <property name="text">
                         <string>Secret Key:</string>
+                       </property>
+                       <property name="buddy">
+                        <cstring>ledit_net_wireless_key</cstring>
                        </property>
                       </widget>
                      </item>
@@ -288,6 +306,9 @@
                       <widget class="QLabel" name="label_dns">
                        <property name="text">
                         <string>DNS:</string>
+                       </property>
+                       <property name="buddy">
+                        <cstring>sbox_net_dns1</cstring>
                        </property>
                       </widget>
                      </item>
@@ -375,6 +396,9 @@
                       <widget class="QLabel" name="label_ip">
                        <property name="text">
                         <string>IP:</string>
+                       </property>
+                       <property name="buddy">
+                        <cstring>sbox_net_ip1</cstring>
                        </property>
                       </widget>
                      </item>
@@ -562,7 +586,7 @@
            <x>0</x>
            <y>0</y>
            <width>838</width>
-           <height>748</height>
+           <height>735</height>
           </rect>
          </property>
          <attribute name="label">
@@ -593,7 +617,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>796</width>
-                   <height>677</height>
+                   <height>664</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -604,6 +628,9 @@
                       <property name="text">
                        <string>Listen Address</string>
                       </property>
+                      <property name="buddy">
+                       <cstring>sbox_brickd_la_ip1</cstring>
+                      </property>
                      </widget>
                     </item>
                     <item row="0" column="2">
@@ -613,7 +640,7 @@
                       </property>
                      </widget>
                     </item>
-                    <item row="2" column="1">
+                    <item row="2" column="1" colspan="4">
                      <widget class="QSpinBox" name="sbox_brickd_lwsp">
                       <property name="maximum">
                        <number>65535</number>
@@ -645,6 +672,9 @@
                       <property name="text">
                        <string>Port</string>
                       </property>
+                      <property name="buddy">
+                       <cstring>sbox_brickd_lp</cstring>
+                      </property>
                      </widget>
                     </item>
                     <item row="0" column="3">
@@ -661,7 +691,7 @@
                       </property>
                      </widget>
                     </item>
-                    <item row="1" column="1">
+                    <item row="1" column="1" colspan="4">
                      <widget class="QSpinBox" name="sbox_brickd_lp">
                       <property name="maximum">
                        <number>65535</number>
@@ -672,6 +702,9 @@
                      <widget class="QLabel" name="label_16">
                       <property name="text">
                        <string>WebSocket Port</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>sbox_brickd_lwsp</cstring>
                       </property>
                      </widget>
                     </item>
@@ -700,6 +733,9 @@
                      <widget class="QLabel" name="label">
                       <property name="text">
                        <string>Authentication Secret</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>ledit_brickd_secret</cstring>
                       </property>
                      </widget>
                     </item>
@@ -736,8 +772,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>330</width>
-                   <height>229</height>
+                   <width>796</width>
+                   <height>664</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -747,6 +783,9 @@
                      <widget class="QLabel" name="label_13">
                       <property name="text">
                        <string>Log Level</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>cbox_brickd_adv_ll</cstring>
                       </property>
                      </widget>
                     </item>
@@ -786,12 +825,18 @@
                       <property name="text">
                        <string>Green LED Trigger</string>
                       </property>
+                      <property name="buddy">
+                       <cstring>cbox_brickd_adv_gt</cstring>
+                      </property>
                      </widget>
                     </item>
                     <item row="3" column="0">
                      <widget class="QLabel" name="label_18">
                       <property name="text">
                        <string>Red LED Trigger</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>cbox_brickd_adv_rt</cstring>
                       </property>
                      </widget>
                     </item>
@@ -808,14 +853,20 @@
                     <item row="1" column="0">
                      <widget class="QLabel" name="label_14">
                       <property name="text">
-                       <string>SPI Poll Delay [microseconds]</string>
+                       <string>SPI Poll Delay</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>sbox_brickd_adv_spi_dly</cstring>
                       </property>
                      </widget>
                     </item>
                     <item row="2" column="0">
                      <widget class="QLabel" name="label_17">
                       <property name="text">
-                       <string>RS485 Poll Delay [microseconds]</string>
+                       <string>RS485 Poll Delay</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>sbox_brickd_adv_rs485_dly</cstring>
                       </property>
                      </widget>
                     </item>
@@ -824,6 +875,9 @@
                     </item>
                     <item row="1" column="1">
                      <widget class="QSpinBox" name="sbox_brickd_adv_spi_dly">
+                      <property name="suffix">
+                       <string> microseconds</string>
+                      </property>
                       <property name="minimum">
                        <number>50</number>
                       </property>
@@ -834,6 +888,9 @@
                     </item>
                     <item row="2" column="1">
                      <widget class="QSpinBox" name="sbox_brickd_adv_rs485_dly">
+                      <property name="suffix">
+                       <string> microseconds</string>
+                      </property>
                       <property name="minimum">
                        <number>50</number>
                       </property>
@@ -873,11 +930,11 @@
            <x>0</x>
            <y>0</y>
            <width>838</width>
-           <height>748</height>
+           <height>735</height>
           </rect>
          </property>
          <attribute name="label">
-          <string>Date/Time</string>
+          <string>Date / Time</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_13">
           <item>
@@ -904,7 +961,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>796</width>
-                   <height>677</height>
+                   <height>664</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -923,6 +980,9 @@
                            <property name="text">
                             <string>Date</string>
                            </property>
+                           <property name="buddy">
+                            <cstring>time_date_red</cstring>
+                           </property>
                           </widget>
                          </item>
                          <item row="2" column="0">
@@ -930,12 +990,18 @@
                            <property name="text">
                             <string>Time</string>
                            </property>
+                           <property name="buddy">
+                            <cstring>time_time_red</cstring>
+                           </property>
                           </widget>
                          </item>
                          <item row="3" column="0">
                           <widget class="QLabel" name="label_33">
                            <property name="text">
                             <string>Timezone</string>
+                           </property>
+                           <property name="buddy">
+                            <cstring>time_timezone_red</cstring>
                            </property>
                           </widget>
                          </item>
@@ -1002,6 +1068,9 @@
                            <property name="text">
                             <string>Date</string>
                            </property>
+                           <property name="buddy">
+                            <cstring>time_date_local</cstring>
+                           </property>
                           </widget>
                          </item>
                          <item row="2" column="1">
@@ -1022,12 +1091,18 @@
                            <property name="text">
                             <string>Time</string>
                            </property>
+                           <property name="buddy">
+                            <cstring>time_time_local</cstring>
+                           </property>
                           </widget>
                          </item>
                          <item row="2" column="0">
                           <widget class="QLabel" name="label_36">
                            <property name="text">
                             <string>Timezone</string>
+                           </property>
+                           <property name="buddy">
+                            <cstring>time_timezone_local</cstring>
                            </property>
                           </widget>
                          </item>
@@ -1117,8 +1192,27 @@
  <tabstops>
   <tabstop>sarea_net</tabstop>
   <tabstop>cbox_net_intf</tabstop>
+  <tabstop>tree_net_wireless_ap</tabstop>
+  <tabstop>pbutton_net_wireless_scan</tabstop>
   <tabstop>ledit_net_wireless_key</tabstop>
+  <tabstop>chkbox_net_wireless_key_show</tabstop>
   <tabstop>cbox_net_conftype</tabstop>
+  <tabstop>sbox_net_ip1</tabstop>
+  <tabstop>sbox_net_ip2</tabstop>
+  <tabstop>sbox_net_ip3</tabstop>
+  <tabstop>sbox_net_ip4</tabstop>
+  <tabstop>sbox_net_mask1</tabstop>
+  <tabstop>sbox_net_mask2</tabstop>
+  <tabstop>sbox_net_mask3</tabstop>
+  <tabstop>sbox_net_mask4</tabstop>
+  <tabstop>sbox_net_gw1</tabstop>
+  <tabstop>sbox_net_gw2</tabstop>
+  <tabstop>sbox_net_gw3</tabstop>
+  <tabstop>sbox_net_gw4</tabstop>
+  <tabstop>sbox_net_dns1</tabstop>
+  <tabstop>sbox_net_dns2</tabstop>
+  <tabstop>sbox_net_dns3</tabstop>
+  <tabstop>sbox_net_dns4</tabstop>
   <tabstop>pbutton_net_conf_refresh</tabstop>
   <tabstop>pbutton_net_connect</tabstop>
   <tabstop>twidget_brickd</tabstop>
