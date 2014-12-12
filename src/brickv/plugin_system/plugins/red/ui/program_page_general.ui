@@ -164,7 +164,7 @@
      <item row="2" column="1">
       <widget class="QCheckBox" name="check_auto_generate">
        <property name="text">
-        <string>Auto-generate unique identifier</string>
+        <string>Auto-Generate Unique Identifier</string>
        </property>
        <property name="checked">
         <bool>true</bool>
