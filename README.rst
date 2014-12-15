@@ -11,7 +11,6 @@ The following libraries are required:
 * python
 * python-qt4
 * python-qt4-gl
-* python-qwt5-qt4
 * python-opengl
 * python-serial
 * pyqt4-dev-tools
@@ -22,7 +21,7 @@ On Windows you will also need:
 
 On Debian based Linux distributions try::
 
- sudo apt-get install python python-qt4 python-qt4-gl python-qwt5-qt4 python-opengl python-serial pyqt4-dev-tools
+ sudo apt-get install python python-qt4 python-qt4-gl python-opengl python-serial pyqt4-dev-tools
 
 First you have to build the Qt .ui files (you'll need ``pyuic4`` for that), you
 can do this with ``python build_all_ui.py`` in ``src/``. After that you should
