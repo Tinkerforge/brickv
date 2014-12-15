@@ -148,6 +148,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.label_auto_reconnects.hide()
         self.auto_reconnects = 0
 
+        # RED Session losts
+        self.label_red_session_losts.hide()
+        self.red_session_losts = 0
+
     # override QMainWindow.closeEvent
     def closeEvent(self, event):
         self.exit_brickv()
@@ -281,6 +285,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def do_disconnect(self):
         self.auto_reconnects = 0
         self.label_auto_reconnects.hide()
+
+        self.red_session_losts = 0
+        self.label_red_session_losts.hide()
 
         self.reset_view()
         async_next_session()
@@ -519,7 +526,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def cb_enumerate(self, uid, connected_uid, position,
                      hardware_version, firmware_version,
                      device_identifier, enumeration_type):
-
         # because the enumerate callback is decoupled by a signal/slot, strings
         # arrive here as QStrings, convert them back to normal Python strings
         uid = str(uid)
@@ -590,6 +596,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.update_tree_view()
 
+    def hack_to_remove_red_brick_tab(self, red_brick_uid):
+        for device_info in infos.get_device_infos():
+            if device_info.uid == red_brick_uid:
+                self.tab_widget.setCurrentIndex(0)
+                self.remove_device_info(device_info.uid)
+
+                self.red_session_losts += 1
+                self.label_red_session_losts.setText('RED Brick Session Lost Count: {0}'.format(self.red_session_losts))
+                self.label_red_session_losts.show()
+
+                break
+
+        self.update_tree_view()
+
     def cb_connected(self, connect_reason):
         self.disconnect_times = []
 
@@ -598,6 +618,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if connect_reason == IPConnection.CONNECT_REASON_REQUEST:
             self.auto_reconnects = 0
             self.label_auto_reconnects.hide()
+
+            self.red_session_losts = 0
+            self.label_red_session_losts.hide()
 
             self.ipcon.set_auto_reconnect(True)
 
@@ -653,6 +676,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if disconnect_reason == IPConnection.DISCONNECT_REASON_REQUEST:
             self.auto_reconnects = 0
             self.label_auto_reconnects.hide()
+
+            self.red_session_losts = 0
+            self.label_red_session_losts.hide()
 
         if disconnect_reason == IPConnection.DISCONNECT_REASON_REQUEST or not self.ipcon.get_auto_reconnect():
             self.update_ui_state()

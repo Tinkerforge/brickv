@@ -210,7 +210,7 @@ class ScriptManager:
             except:
                 pass
 
-            sd.stdout  = None
+            sd.stdout = None
 
         if sd.stderr != None and not sd.redirect_stderr_to_stdout:
             try:

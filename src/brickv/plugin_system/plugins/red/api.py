@@ -25,10 +25,12 @@ from collections import namedtuple
 import functools
 import weakref
 import threading
+import time
 from brickv.bindings.ip_connection import Error
 from PyQt4 import QtCore
 from brickv.bindings.brick_red import BrickRED
 from brickv.object_creator import create_object_in_qt_main_thread
+from brickv.utils import get_main_window
 
 class REDError(Exception):
     E_SUCCESS                  = 0
@@ -122,9 +124,10 @@ class MethodRef:
 
 
 class REDBrick(BrickRED):
-    def __init__(self, *args):
-        BrickRED.__init__(self, *args)
+    def __init__(self, uid, *args):
+        BrickRED.__init__(self, uid, *args)
 
+        self._uid_str               = uid
         self._active_callbacks      = {}
         self._active_callbacks_lock = threading.Lock()
         self._next_cookie           = 1
@@ -185,12 +188,17 @@ class REDSession(QtCore.QObject):
     KEEP_ALIVE_INTERVAL = 5 # seconds
     LIFETIME            = 60 # seconds
 
+    _qtcb_lost = QtCore.pyqtSignal(str)
+
     def __init__(self, brick, increase_error_count):
         QtCore.QObject.__init__(self)
+
+        self._qtcb_lost.connect(get_main_window().hack_to_remove_red_brick_tab)
 
         self._brick               = brick
         self._session_id          = None
         self._keep_alive_timer    = None
+        self._last_keep_alive     = 0
         self.increase_error_count = increase_error_count
 
     def __del__(self):
@@ -206,12 +214,18 @@ class REDSession(QtCore.QObject):
 
         try:
             error_code = self._brick.keep_session_alive(self._session_id, REDSession.LIFETIME)
+            self._last_keep_alive = time.time() # FIXME: use time.monotonic() in Python 3
         except Error:
             # just report IPConnection-level error, but don't re-raise it
             self.increase_error_count()
 
         if self._session_id == None:
             # session got expired during the keep-alive call, don't keep it alive any longer
+            return
+
+        # FIXME: use time.monotonic() in Python 3
+        if abs(time.time() - self._last_keep_alive) > (REDSession.LIFETIME - REDSession.KEEP_ALIVE_INTERVAL * 2):
+            self._qtcb_lost.emit(self._brick._uid_str)
             return
 
         self._keep_alive_timer = threading.Timer(REDSession.KEEP_ALIVE_INTERVAL,
