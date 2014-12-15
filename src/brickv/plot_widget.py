@@ -385,23 +385,23 @@ class Plot(QWidget):
                              Qt.cyan)
 
         # draw scales
-        min_y_axis = self.y_scale.value_min
-        max_y_axis = self.y_scale.value_max
+        y_min_scale = self.y_scale.value_min
+        y_max_scale = self.y_scale.value_max
 
         factor_x = float(curve_width) / self.history_length_x
-        factor_y = float(curve_height - 1) / max(max_y_axis - min_y_axis, EPSILON) # -1 to accommodate the 1px width of the curve
+        factor_y = float(curve_height - 1) / max(y_max_scale - y_min_scale, EPSILON) # -1 to accommodate the 1px width of the curve
 
         self.draw_x_scale(painter, factor_x)
         self.draw_y_scale(painter, curve_height, factor_y)
 
         # draw curves
-        if self.min_x != None:
+        if self.x_min != None:
             painter.save()
             painter.translate(self.y_scale.total_width + self.curve_to_scale,
                               self.y_scale_height_offset + curve_height - 1) # -1 to accommodate the 1px width of the curve
             painter.scale(1, -1)
 
-            min_x = self.min_x
+            x_min = self.x_min
             drawLine = painter.drawLine
 
             for c in range(len(self.curves_x)):
@@ -410,14 +410,14 @@ class Plot(QWidget):
 
                 curve_x = self.curves_x[c]
                 curve_y = self.curves_y[c]
-                last_x = round((curve_x[0] - min_x) * factor_x)
-                last_y = round((curve_y[0] - min_y_axis) * factor_y)
+                last_x = round((curve_x[0] - x_min) * factor_x)
+                last_y = round((curve_y[0] - y_min_scale) * factor_y)
 
                 painter.setPen(self.plots[c][1])
 
                 for i in range(1, len(curve_x)):
-                    x = round((curve_x[i] - min_x) * factor_x)
-                    y = round((curve_y[i] - min_y_axis) * factor_y)
+                    x = round((curve_x[i] - x_min) * factor_x)
+                    y = round((curve_y[i] - y_min_scale) * factor_y)
 
                     drawLine(last_x, last_y, x, y)
 
@@ -437,15 +437,15 @@ class Plot(QWidget):
         offset_x = self.y_scale.total_width + self.curve_to_scale
         offset_y = self.height() - self.x_scale.total_height
 
-        if self.min_x != None:
-            min_x = self.min_x
+        if self.x_min != None:
+            x_min = self.x_min
         else:
-            min_x = 0
+            x_min = 0
 
         painter.save()
         painter.translate(offset_x, offset_y)
 
-        self.x_scale.draw(painter, factor, min_x, self.history_length_x)
+        self.x_scale.draw(painter, factor, x_min, self.history_length_x)
 
         painter.restore()
 
@@ -462,110 +462,113 @@ class Plot(QWidget):
 
     # NOTE: assumes that x is a timestamp in seconds that constantly grows
     def add_data(self, c, x, y):
-        if self.type_y == None:
-            self.type_y = type(y)
+        if self.y_type == None:
+            self.y_type = type(y)
 
         x = float(x)
         y = float(y)
 
-        last_min_y = self.min_y
-        last_max_y = self.max_y
+        last_y_min = self.y_min
+        last_y_max = self.y_max
 
-        if self.min_x == None:
-            self.min_x = x
+        if self.x_min == None:
+            self.x_min = x
 
         if self.curves_visible[c]:
-            if self.min_y == None:
-                self.min_y = y
+            if self.y_min == None:
+                self.y_min = y
             else:
-                self.min_y = min(self.min_y, y)
+                self.y_min = min(self.y_min, y)
 
-            if self.max_y == None:
-                self.max_y = y
+            if self.y_max == None:
+                self.y_max = y
             else:
-                self.max_y = max(self.max_y, y)
+                self.y_max = max(self.y_max, y)
 
         self.curves_x[c].append(x)
         self.curves_y[c].append(y)
 
-        if self.curves_min_x[c] == None:
-            self.curves_min_x[c] = x
+        if self.curves_x_min[c] == None:
+            self.curves_x_min[c] = x
 
-        if self.curves_min_y[c] == None:
-            self.curves_min_y[c] = y
+        if self.curves_y_min[c] == None:
+            self.curves_y_min[c] = y
         else:
-            self.curves_min_y[c] = min(self.curves_min_y[c], y)
+            self.curves_y_min[c] = min(self.curves_y_min[c], y)
 
-        if self.curves_max_y[c] == None:
-            self.curves_max_y[c] = y
+        if self.curves_y_max[c] == None:
+            self.curves_y_max[c] = y
         else:
-            self.curves_max_y[c] = max(self.curves_max_y[c], y)
+            self.curves_y_max[c] = max(self.curves_y_max[c], y)
 
         if len(self.curves_x[c]) > 0 and (self.curves_x[c][-1] - self.curves_x[c][0]) >= self.history_length_x:
             self.curves_x[c] = self.curves_x[c][10:] # remove first second
             self.curves_y[c] = self.curves_y[c][10:] # remove first second
 
             if len(self.curves_x[c]) > 0:
-                self.curves_min_x[c] = self.curves_x[c][0]
+                self.curves_x_min[c] = self.curves_x[c][0]
             else:
-                self.curves_min_x[c] = None
+                self.curves_x_min[c] = None
 
-            self.curves_min_y[c] = min(self.curves_y[c])
-            self.curves_max_y[c] = max(self.curves_y[c])
+            self.curves_y_min[c] = min(self.curves_y[c])
+            self.curves_y_max[c] = max(self.curves_y[c])
 
-            self.update_min_x_min_max_y()
+            self.update_x_min_y_min_max()
 
-        if self.curves_visible[c] and (last_min_y != self.min_y or last_max_y != self.max_y):
-            self.update_min_max_y_axis()
+        if self.curves_visible[c] and (last_y_min != self.y_min or last_y_max != self.y_max):
+            self.update_y_min_max_scale()
 
         self.update()
 
-    def update_min_x_min_max_y(self):
-        self.min_x = min(self.curves_min_x)
+    def update_x_min_y_min_max(self):
+        self.x_min = min(self.curves_x_min)
 
         if sum(map(int, self.curves_visible)) > 0:
-            self.min_y = min([curve_min_y for k, curve_min_y in enumerate(self.curves_min_y) if self.curves_visible[k]])
-            self.max_y = max([curve_max_y for k, curve_max_y in enumerate(self.curves_max_y) if self.curves_visible[k]])
+            self.y_min = min([curve_y_min for k, curve_y_min in enumerate(self.curves_y_min) if self.curves_visible[k]])
+            self.y_max = max([curve_y_max for k, curve_y_max in enumerate(self.curves_y_max) if self.curves_visible[k]])
         else:
-            self.min_y = None
-            self.max_y = None
+            self.y_min = None
+            self.y_max = None
 
-    def update_min_max_y_axis(self):
-        if self.min_y == None or self.max_y == None:
-            min_y = -1.0
-            max_y = 1.0
+    def update_y_min_max_scale(self):
+        if self.y_scale_fixed:
+            return
+
+        if self.y_min == None or self.y_max == None:
+            y_min = -1.0
+            y_max = 1.0
         else:
-            min_y = self.min_y
-            max_y = self.max_y
+            y_min = self.y_min
+            y_max = self.y_max
 
-        delta_y = abs(max_y - min_y)
+        delta_y = abs(y_max - y_min)
 
         # if there is no delta then force some to get a y-axis with some ticks
         if delta_y < EPSILON:
             delta_y = 2.0
-            min_y -= 1.0
-            max_y += 1.0
+            y_min -= 1.0
+            y_max += 1.0
 
         # start with the biggest power of 10 that is smaller than delta-y
-        axis_y_step_size = 10.0 ** math.floor(math.log(delta_y, 10.0))
-        axis_y_step_divisions = 5
+        step_size = 10.0 ** math.floor(math.log(delta_y, 10.0))
+        step_subdivision_count = 5
 
         # the divisors are chosen in way to produce the sequence
         # 100.0, 50.0, 20.0, 10.0, 5.0, 2.0, 1.0, 0.5, 0.2, 0.1, 0.05 etc
         divisors = [2.0, 2.5, 2.0]
-        divisions = [5, 4, 5]
+        subdivisions = [5, 4, 5]
         d = 0
 
-        if self.type_y == int:
-            min_axis_y_step_size = 1.0
+        if self.y_type == int:
+            step_size_min = 1.0
         else:
-            min_axis_y_step_size = EPSILON
+            step_size_min = EPSILON
 
         # decrease y-axis step-size until it divides delta-y in 4 or more parts
-        while fuzzy_geq(axis_y_step_size / divisors[d % len(divisors)], min_axis_y_step_size) \
-              and delta_y / axis_y_step_size < 4.0:
-            axis_y_step_size /= divisors[d % len(divisors)]
-            axis_y_step_divisions = divisions[d % len(divisions)]
+        while fuzzy_geq(step_size / divisors[d % len(divisors)], step_size_min) \
+              and delta_y / step_size < 4.0:
+            step_size /= divisors[d % len(divisors)]
+            step_subdivision_count = subdivisions[d % len(subdivisions)]
             d += 1
 
         if d == 0:
@@ -574,46 +577,43 @@ class Plot(QWidget):
             d += 1
 
         # increase y-axis step-size until it divides delta-y in 8 or less parts
-        while delta_y / axis_y_step_size > 8.0:
-            axis_y_step_divisions = divisions[d % len(divisions)]
+        while delta_y / step_size > 8.0:
+            step_subdivision_count = subdivisions[d % len(subdivisions)]
             d -= 1
-            axis_y_step_size *= divisors[d % len(divisors)]
+            step_size *= divisors[d % len(divisors)]
 
         # ensure that the y-axis endpoints are multiple of the step-size
-        self.min_y_axis = math.floor(min_y / axis_y_step_size) * axis_y_step_size
-        self.max_y_axis = math.ceil(max_y / axis_y_step_size) * axis_y_step_size
+        y_min_scale = math.floor(y_min / step_size) * step_size
+        y_max_scale = math.ceil(y_max / step_size) * step_size
 
         # fix rounding (?) errors from floor/ceil scaling
-        while fuzzy_leq(self.min_y_axis + axis_y_step_size, min_y):
-            self.min_y_axis += axis_y_step_size
+        while fuzzy_leq(y_min_scale + step_size, y_min):
+            y_min_scale += step_size
 
-        while fuzzy_geq(self.max_y_axis - axis_y_step_size, max_y):
-            self.max_y_axis -= axis_y_step_size
+        while fuzzy_geq(y_max_scale - step_size, y_max):
+            y_max_scale -= step_size
 
         # if the y-axis endpoints are identical then force them 4 steps apart
-        if fuzzy_eq(self.min_y_axis, self.max_y_axis):
-            self.min_y_axis -= 2.0 * axis_y_step_size
-            self.max_y_axis += 2.0 * axis_y_step_size
+        if fuzzy_eq(y_min_scale, y_max_scale):
+            y_min_scale -= 2.0 * step_size
+            y_max_scale += 2.0 * step_size
 
-        self.axis_y_step_size = axis_y_step_size
-        self.axis_y_step_divisions = axis_y_step_divisions
-
-        if not self.y_scale_fixed:
-            self.y_scale.update_tick_config(self.min_y_axis, self.max_y_axis, self.axis_y_step_size, self.axis_y_step_divisions)
+        self.y_scale.update_tick_config(y_min_scale, y_max_scale,
+                                        step_size, step_subdivision_count)
 
     def show_curve(self, c, show):
         if self.curves_visible[c] == show:
             return
 
-        last_min_y = self.min_y
-        last_max_y = self.max_y
+        last_y_min = self.y_min
+        last_y_max = self.y_max
 
         self.curves_visible[c] = show
 
-        self.update_min_x_min_max_y()
+        self.update_x_min_y_min_max()
 
-        if last_min_y != self.min_y or last_max_y != self.max_y:
-            self.update_min_max_y_axis()
+        if last_y_min != self.y_min or last_y_max != self.y_max:
+            self.update_y_min_max_scale()
 
         self.update()
 
@@ -621,26 +621,21 @@ class Plot(QWidget):
         self.curves_visible = [] # per curve visibility
         self.curves_x = [] # per curve x values
         self.curves_y = [] # per curve y values
-        self.curves_min_x = [] # per curve minimum x value
-        self.curves_min_y = [] # per curve minimum y value
-        self.curves_max_y = [] # per curve maximum y value
-        self.min_x = None # minimum x value over all curves
-        self.min_y = None # minimum y value over all curves
-        self.max_y = None # maximum y value over all curves
-        self.min_y_axis = None
-        self.max_y_axis = None
-        self.axis_y_step_size = None
-        self.axis_y_step_divisions = None
-        self.axis_y_to_str = istr
-        self.type_y = None
+        self.curves_x_min = [] # per curve minimum x value
+        self.curves_y_min = [] # per curve minimum y value
+        self.curves_y_max = [] # per curve maximum y value
+        self.x_min = None # minimum x value over all curves
+        self.y_min = None # minimum y value over all curves
+        self.y_max = None # maximum y value over all curves
+        self.y_type = None
 
         for plot in self.plots:
             self.curves_visible.append(True)
             self.curves_x.append([])
             self.curves_y.append([])
-            self.curves_min_x.append(None)
-            self.curves_min_y.append(None)
-            self.curves_max_y.append(None)
+            self.curves_x_min.append(None)
+            self.curves_y_min.append(None)
+            self.curves_y_max.append(None)
 
         self.update()
 

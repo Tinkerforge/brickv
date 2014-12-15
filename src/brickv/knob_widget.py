@@ -91,7 +91,7 @@ class KnobWidget(QWidget):
             knob_radius = self.knob_radius
 
         # ensure that the center point is in the middle of a pixel to ensure
-        # that exact vertial and horizantal ticks are drawn exactly 1px width
+        # that exact vertial and horizantal ticks are drawn exactly 1px wide
         x = math.floor(width / 2.0) + 0.5
         y = math.floor(height / 2.0) + 0.5
 
@@ -176,7 +176,11 @@ class KnobWidget(QWidget):
                                  0, -knob_radius - self.knob_to_scale - self.tick_size_large)
 
                 if self.scale_text_visible:
-                    p = painter.worldTransform().map(QPoint(0, -knob_radius - self.knob_to_scale - self.tick_size_large - self.tick_to_text - self.text_radius))
+                    p = painter.worldTransform().map(QPoint(0, -knob_radius - \
+                                                               self.knob_to_scale - \
+                                                               self.tick_size_large - \
+                                                               self.tick_to_text - \
+                                                               self.text_radius))
 
                 painter.restore()
 
@@ -230,7 +234,11 @@ class KnobWidget(QWidget):
             else:
                 self.text_radius = 0
 
-            additional_radius = self.knob_to_scale + self.tick_size_large + self.tick_to_text + self.text_radius * 2 + self.text_to_border
+            additional_radius = self.knob_to_scale + \
+                                self.tick_size_large + \
+                                self.tick_to_text + \
+                                self.text_radius * 2 + \
+                                self.text_to_border
         else:
             additional_radius = self.knob_scaleless_to_border
 
