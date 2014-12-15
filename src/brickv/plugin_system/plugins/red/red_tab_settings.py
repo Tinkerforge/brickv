@@ -126,7 +126,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.time_refresh_timer = QtCore.QTimer()
         self.time_refresh_timer.setInterval(1000)
         self.time_refresh_timer.timeout.connect(self.time_refresh)
-        
+
         self.time_local_old = 0
         self.time_red_old = 0
         self.last_index = -1
@@ -203,7 +203,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.pbutton_brickd_general_refresh.clicked.connect(self.slot_brickd_refresh_clicked)
         self.pbutton_brickd_adv_save.clicked.connect(self.slot_brickd_save_clicked)
         self.pbutton_brickd_adv_refresh.clicked.connect(self.slot_brickd_refresh_clicked)
-        
+
         # Brick daemon fields
         self.sbox_brickd_la_ip1.valueChanged.connect(self.brickd_settings_changed)
         self.sbox_brickd_la_ip2.valueChanged.connect(self.brickd_settings_changed)
@@ -278,9 +278,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 if self.network_all_data['status'] is not None:
                     self.label_net_hostname.setText\
                         (self.network_all_data['status']['cstat_hostname'])
-                
+
                     self.label_net_gen_cstat_status.setText(unicode(self.network_all_data['status']['cstat_status']))
-                
+
                     if self.network_all_data['status']['cstat_intf_active']['name'] is not None:
                         if self.network_all_data['status']['cstat_intf_active']['type'] == INTERFACE_TYPE_WIRELESS:
                             intf_stat_str = unicode(self.network_all_data['status']['cstat_intf_active']['name'])+\
@@ -297,12 +297,12 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         self.label_net_gen_cstat_intf.setText('-')
                         self.label_net_gen_cstat_ip.setText('-')
                         self.label_net_gen_cstat_mask.setText('-')
-                
+
                     if self.network_all_data['status']['cstat_gateway'] is not None:
                         self.label_net_gen_cstat_gateway.setText(self.network_all_data['status']['cstat_gateway'])
                     else:
                         self.label_net_gen_cstat_gateway.setText('-')
-                    
+
                     if self.network_all_data['status']['cstat_dns'] is not None:
                         self.label_net_gen_cstat_dns.setText(self.network_all_data['status']['cstat_dns'].strip())
                     else:
@@ -440,7 +440,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.chkbox_net_wireless_key_show.setChecked(False)
         def no_ap_found():
             self.ledit_net_wireless_key.setText('')
-            self.chkbox_net_wireless_key_show.setChecked(False) 
+            self.chkbox_net_wireless_key_show.setChecked(False)
             self.ap_tree_model_clear_add_item(None)
             item = QtGui.QStandardItem('No access points found. Scan again?')
             item.setData(QtCore.QVariant(AP_COL),
@@ -464,13 +464,13 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 for nidx, apdict in scan_data.iteritems():
                     if not unicode(apdict['essid']):
                         continue
-                    
+
                     essid = unicode(apdict['essid'])
                     bssid = unicode(apdict['bssid'])
                     channel = unicode(apdict['channel'])
                     encryption = unicode(apdict['encryption'])
                     encryption_method = unicode(apdict['encryption_method'])
-        
+
                     ap_item = QtGui.QStandardItem(essid)
                     ap_item.setData(QtCore.QVariant(AP_COL),
                                     AP_COL_USER_ROLE)
@@ -486,7 +486,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                     AP_CHANNEL_USER_ROLE)
 
                     channel_item = QtGui.QStandardItem(channel)
-        
+
                     if encryption == 'Off':
                         encryption_method_item = QtGui.QStandardItem('Open')
                     else:
@@ -502,7 +502,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                             encryption_method_item = QtGui.QStandardItem('Unsupported')
                             ap_item.setData(QtCore.QVariant(AP_ENC_METHOD_UNSUPPORTED),
                                             AP_ENCRYPTION_METHOD_USER_ROLE)
-        
+
                     try:
                         _key = self.network_all_data['wireless_settings'].get(bssid, 'key', '')
                         ap_item.setData(QtCore.QVariant(unicode(_key)),
@@ -510,7 +510,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     except:
                         ap_item.setData(QtCore.QVariant(''),
                                         AP_KEY_USER_ROLE)
-                
+
                     # Checking if the access point is associated
                     ap_item.setData(QtCore.QVariant(AP_STATUS_NOT_ASSOCIATED),
                                     AP_STATUS_USER_ROLE)
@@ -536,7 +536,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                         AP_ADDRESS_CONF_USER_ROLE)
                         ap_item.setData(QtCore.QVariant('0.0.0.0'),
                                         AP_IP_USER_ROLE)
-                
+
                     try:
                         _mask = self.network_all_data['wireless_settings'].get(bssid, 'netmask', '')
                         if _mask == '' or _ip == 'None':
@@ -548,7 +548,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     except:
                         ap_item.setData(QtCore.QVariant('0.0.0.0'),
                                         AP_MASK_USER_ROLE)
-                
+
                     try:
                         _gw = self.network_all_data['wireless_settings'].get(bssid, 'gateway', '')
                         if _gw == '' or _gw == 'None':
@@ -560,7 +560,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     except:
                         ap_item.setData(QtCore.QVariant('0.0.0.0'),
                                         AP_GATEWAY_USER_ROLE)
-                
+
                     try:
                         _dns = self.network_all_data['wireless_settings'].get(bssid, 'dns1', '')
                         if _dns == '' or _dns == 'None':
@@ -616,10 +616,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    len(self.network_all_data['interfaces']['wireless']) > 0:
                         for intf in self.network_all_data['interfaces']['wireless']:
                             self.cbox_net_intf.addItem(intf+' : Wireless')
-                            
+
                             self.cbox_net_intf.setItemData(self.cbox_net_intf.count() - 1,
                                                            QtCore.QVariant(unicode(intf)), INTERFACE_NAME_USER_ROLE)
-        
+
                             self.cbox_net_intf.setItemData(self.cbox_net_intf.count() - 1,
                                                            QtCore.QVariant(INTERFACE_TYPE_WIRELESS), INTERFACE_TYPE_USER_ROLE)
 
@@ -642,9 +642,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
                         for intf in self.network_all_data['interfaces']['wired']:
                             self.cbox_net_intf.addItem(intf+' : Wired')
-                    
+
                             idx_cbox = self.cbox_net_intf.count() - 1
-                            
+
                             if intf == self.network_all_data['status']['cstat_intf_active']['name']:
                                 self.cbox_net_intf.setItemData(idx_cbox,
                                                                QtCore.QVariant(INTERFACE_STATE_ACTIVE),
@@ -653,20 +653,20 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                 self.cbox_net_intf.setItemData(idx_cbox,
                                                                QtCore.QVariant(INTERFACE_STATE_INACTIVE),
                                                                INTERFACE_STATE_USER_ROLE)
-                    
+
                             self.cbox_net_intf.setItemData(self.cbox_net_intf.count() - 1,
                                                            QtCore.QVariant(unicode(intf)), INTERFACE_NAME_USER_ROLE)
-                    
+
                             self.cbox_net_intf.setItemData(idx_cbox,
                                                            QtCore.QVariant(INTERFACE_TYPE_WIRED), INTERFACE_TYPE_USER_ROLE)
-                    
+
                             # Populating wired interface fields
                             if cwintf == intf:
                                 try:
                                     _ip = self.network_all_data['wired_settings'].get('wired-default', 'ip', 'None')
                                 except:
                                     _ip = 'None'
-                    
+
                                 if _ip == 'None':
                                     self.cbox_net_intf.setItemData(idx_cbox,
                                                                    QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_DHCP),
@@ -704,7 +704,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                         self.cbox_net_intf.setItemData(idx_cbox,
                                                                        QtCore.QVariant('0.0.0.0'),
                                                                        INTERFACE_TYPE_WIRED_MASK_USER_ROLE)
-                                                                  
+
                                     try:
                                         _gw = self.network_all_data['wired_settings'].get('wired-default', 'gateway', '')
                                         if _gw == '' or _gw == 'None':
@@ -719,8 +719,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                         self.cbox_net_intf.setItemData(idx_cbox,
                                                                        QtCore.QVariant('0.0.0.0'),
                                                                        INTERFACE_TYPE_WIRED_GATEWAY_USER_ROLE)
-                               
-                                        
+
+
                                     try:
                                         _dns = self.network_all_data['wired_settings'].get('wired-default', 'dns1', '')
                                         if _dns == '' or _dns == 'None':
@@ -751,7 +751,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                 self.cbox_net_intf.setItemData(idx_cbox,
                                                               QtCore.QVariant('0.0.0.0'),
                                                               INTERFACE_TYPE_WIRED_DNS_USER_ROLE)
-                                
+
                 if self.cbox_net_intf.count() <= 0:
                     update_no_interface_available()
                     return
@@ -809,11 +809,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.sbox_brickd_la_ip2.setValue(int(l_addr[1]))
         self.sbox_brickd_la_ip3.setValue(int(l_addr[2]))
         self.sbox_brickd_la_ip4.setValue(int(l_addr[3]))
-        
+
         self.sbox_brickd_lp.setValue(int(self.brickd_conf['listen.plain_port']))
         self.sbox_brickd_lwsp.setValue(int(self.brickd_conf['listen.websocket_port']))
         self.ledit_brickd_secret.setText(self.brickd_conf['authentication.secret'])
-        
+
         log_level = self.brickd_conf['log.level']
         if log_level == 'debug':
             self.cbox_brickd_adv_ll.setCurrentIndex(CBOX_BRICKD_LOG_LEVEL_DEBUG)
@@ -823,7 +823,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.cbox_brickd_adv_ll.setCurrentIndex(CBOX_BRICKD_LOG_LEVEL_WARN)
         elif log_level == 'error':
             self.cbox_brickd_adv_ll.setCurrentIndex(CBOX_BRICKD_LOG_LEVEL_ERROR)
-        
+
         trigger_green = self.brickd_conf['led_trigger.green']
         if trigger_green == 'cpu':
             self.cbox_brickd_adv_gt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_CPU)
@@ -837,7 +837,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.cbox_brickd_adv_gt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_OFF)
         elif trigger_green == 'on':
             self.cbox_brickd_adv_gt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_ON)
-            
+
         trigger_red = self.brickd_conf['led_trigger.red']
         if trigger_red == 'cpu':
             self.cbox_brickd_adv_rt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_CPU)
@@ -851,7 +851,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.cbox_brickd_adv_rt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_OFF)
         elif trigger_red == 'on':
             self.cbox_brickd_adv_rt.setCurrentIndex(CBOX_BRICKD_LED_TRIGGER_ON)
-        
+
         self.sbox_brickd_adv_spi_dly.setValue(int(self.brickd_conf['poll_delay.spi']))
         self.sbox_brickd_adv_rs485_dly.setValue(int(self.brickd_conf['poll_delay.rs485']))
 
@@ -863,7 +863,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             pass
         elif self.last_index == BOX_INDEX_DATETIME:
             self.time_stop()
-            
+
         self.last_index = ctidx
 
         if ctidx == BOX_INDEX_NETWORK:
@@ -897,7 +897,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def brickd_button_refresh_enabled(self, state):
         self.pbutton_brickd_general_refresh.setEnabled(state)
         self.pbutton_brickd_adv_refresh.setEnabled(state)
-        
+
         if state:
             self.pbutton_brickd_general_refresh.setText('Refresh')
             self.pbutton_brickd_adv_refresh.setText('Refresh')
@@ -934,9 +934,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
                 self.brickd_button_refresh_enabled(True)
                 self.brickd_button_save_enabled(False)
-                
+
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
-            
+
         def cb_open_error():
             self.brickd_button_refresh_enabled(True)
             QtGui.QMessageBox.critical(get_main_window(),
@@ -1095,7 +1095,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                QtGui.QMessageBox.Ok)
 
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
-            
+
         def cb_open_error_manager_settings():
             if not self.is_tab_on_focus:
                 self.show_please_wait(WORKING_STATE_DONE)
@@ -1139,7 +1139,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                                QtGui.QMessageBox.Ok)
 
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
-            
+
         def cb_open_error_wireless_settings():
             if not self.is_tab_on_focus:
                 self.show_please_wait(WORKING_STATE_DONE)
@@ -1234,9 +1234,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         # Wireless
         if itype == INTERFACE_TYPE_WIRELESS:
             self.show_please_wait(WORKING_STATE_SAVE)
-            
+
             index_list = self.tree_net_wireless_ap.selectedIndexes()
-            
+
             ap_item = None
             for i in range(len(index_list)):
                 item = self.ap_tree_model.itemFromIndex(index_list[i])
@@ -1247,7 +1247,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         break
                 except:
                     continue
-            
+
             if ap_item:
                 apname = unicode(ap_item.data(AP_NAME_USER_ROLE).toString())
                 enc_method = ap_item.data(AP_ENCRYPTION_METHOD_USER_ROLE).toInt()[0]
@@ -1279,7 +1279,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 netidx = unicode(ap_item.data(AP_NETWORK_INDEX_USER_ROLE).toString())
                 essid = apname
                 bssid = unicode(ap_item.data(AP_BSSID_USER_ROLE).toString())
-                
+
 
                 iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', 'None')
                 self.network_all_data['manager_settings'].set('Settings', 'wireless_interface', iname)
@@ -1292,7 +1292,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.network_all_data['wireless_settings'].set(bssid, 'essid', essid)
                 self.network_all_data['wireless_settings'].set(bssid, 'bssid', bssid)
                 self.network_all_data['wireless_settings'].set(bssid, 'use_static_dns', 'False')
-                
+
                 self.network_all_data['wireless_settings'].set(bssid, 'broadcast', 'None')
                 self.network_all_data['wireless_settings'].set(bssid, 'search_domain', 'None')
                 self.network_all_data['wireless_settings'].set(bssid, 'dns_domain', 'None')
@@ -1311,34 +1311,34 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                    str(self.sbox_net_ip2.value()),
                                    str(self.sbox_net_ip3.value()),
                                    str(self.sbox_net_ip4.value())))
-                    
+
                     mask = '.'.join((str(self.sbox_net_mask1.value()),
                                      str(self.sbox_net_mask2.value()),
                                      str(self.sbox_net_mask3.value()),
                                      str(self.sbox_net_mask4.value())))
-                    
+
                     gw = '.'.join((str(self.sbox_net_gw1.value()),
                                    str(self.sbox_net_gw2.value()),
                                    str(self.sbox_net_gw3.value()),
                                    str(self.sbox_net_gw4.value())))
-                    
+
                     dns = '.'.join((str(self.sbox_net_dns1.value()),
                                     str(self.sbox_net_dns2.value()),
                                     str(self.sbox_net_dns3.value()),
                                     str(self.sbox_net_dns4.value())))
-                    
+
                     self.network_all_data['wireless_settings'].set(bssid, 'ip', ip)
                     self.network_all_data['wireless_settings'].set(bssid, 'netmask', mask)
                     self.network_all_data['wireless_settings'].set(bssid, 'gateway', gw)
                     self.network_all_data['wireless_settings'].set(bssid, 'dns1', dns)
                     self.network_all_data['wireless_settings'].set(bssid, 'use_static_dns', 'True')
-                    
+
 
                 if enc == 'On':
                     self.network_all_data['wireless_settings'].set(bssid, 'encryption', 'True')
                     self.network_all_data['wireless_settings'].set(bssid, 'enctype', 'wpa')
                     self.network_all_data['wireless_settings'].set(bssid, 'key', key)
-                        
+
                     if enc_method == AP_ENC_METHOD_WPA1:
                         self.network_all_data['wireless_settings'].set(bssid, 'encryption_method', 'WPA1')
                     else:
@@ -1348,7 +1348,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.network_all_data['wireless_settings'].remove_option(bssid, 'enctype')
                     self.network_all_data['wireless_settings'].remove_option(bssid, 'encryption_method')
                     self.network_all_data['wireless_settings'].remove_option(bssid, 'key')
-                
+
                 def cb_settings_network_apply(result):
                     self.show_please_wait(WORKING_STATE_DONE)
                     if not result.stderr and result.exit_code == 0:
@@ -1389,20 +1389,20 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                            REDFile.FLAG_TRUNCATE, 0500, 0, 0),
                                            lambda x: cb_open(config, write_wireless_settings, x, iname_previous),
                                            cb_open_error)
-    
+
                     red_file.write_async(config, lambda x: cb_write(red_file, write_wireless_settings, x, iname_previous), None)
-        
+
                 def cb_open_error():
                     self.show_please_wait(WORKING_STATE_DONE)
-                    
+
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
                                                'Error saving configuration.',
                                                QtGui.QMessageBox.Ok)
-    
+
                 config = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
                 write_wireless_settings = False
-    
+
                 async_call(self.manager_settings_conf_rfile.open,
                            (MANAGER_SETTINGS_CONF_PATH,
                            REDFile.FLAG_WRITE_ONLY |
@@ -1415,11 +1415,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         # Wired
         else:
             iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wired_interface', '')
-            
+
             # Check default wired profile section
             if not self.network_all_data['wired_settings'].has_section('wired-default'):
                 self.network_all_data['wired_settings'].add_section('wired-default')
-            
+
             if self.cbox_net_conftype.currentIndex() == CBOX_NET_CONTYPE_INDEX_DHCP:
                 # Save wired DHCP config
                 self.show_please_wait(WORKING_STATE_SAVE)
@@ -1447,22 +1447,22 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.show_please_wait(WORKING_STATE_SAVE)
                 try:
                     self.network_all_data['manager_settings'].set('Settings', 'wired_interface', iname)
-                    
+
                     ip = '.'.join((str(self.sbox_net_ip1.value()),
                                    str(self.sbox_net_ip2.value()),
                                    str(self.sbox_net_ip3.value()),
                                    str(self.sbox_net_ip4.value())))
-                    
+
                     mask = '.'.join((str(self.sbox_net_mask1.value()),
                                      str(self.sbox_net_mask2.value()),
                                      str(self.sbox_net_mask3.value()),
                                      str(self.sbox_net_mask4.value())))
-                    
+
                     gw = '.'.join((str(self.sbox_net_gw1.value()),
                                    str(self.sbox_net_gw2.value()),
                                    str(self.sbox_net_gw3.value()),
                                    str(self.sbox_net_gw4.value())))
-                    
+
                     dns = '.'.join((str(self.sbox_net_dns1.value()),
                                     str(self.sbox_net_dns2.value()),
                                     str(self.sbox_net_dns3.value()),
@@ -1529,10 +1529,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                        cb_open_error)
 
                 red_file.write_async(config, lambda x: cb_write(red_file, write_wired_settings, x, iname_previous), None)
-    
+
             def cb_open_error():
                 self.show_please_wait(WORKING_STATE_DONE)
-                
+
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
                                            'Error saving configuration.',
@@ -1540,7 +1540,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
             config = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
             write_wired_settings = False
-    
+
             async_call(self.manager_settings_conf_rfile.open,
                        (MANAGER_SETTINGS_CONF_PATH,
                        REDFile.FLAG_WRITE_ONLY |
@@ -1573,7 +1573,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.brickd_conf['log.level'] = 'info'
         elif index == CBOX_BRICKD_LOG_LEVEL_DEBUG:
             self.brickd_conf['log.level'] = 'debug'
-            
+
         index = self.cbox_brickd_adv_gt.currentIndex()
         if index == CBOX_BRICKD_LED_TRIGGER_CPU:
             self.brickd_conf['led_trigger.green'] = 'cpu'
@@ -1587,7 +1587,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.brickd_conf['led_trigger.green'] = 'off'
         elif index == CBOX_BRICKD_LED_TRIGGER_ON:
             self.brickd_conf['led_trigger.green'] = 'on'
-        
+
         index = self.cbox_brickd_adv_rt.currentIndex()
         if index == CBOX_BRICKD_LED_TRIGGER_CPU:
             self.brickd_conf['led_trigger.red'] = 'cpu'
@@ -1601,10 +1601,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.brickd_conf['led_trigger.red'] = 'off'
         elif index == CBOX_BRICKD_LED_TRIGGER_ON:
             self.brickd_conf['led_trigger.red'] = 'on'
-            
+
         self.brickd_conf['poll_delay.spi'] = str(self.sbox_brickd_adv_spi_dly.value())
         self.brickd_conf['poll_delay.rs485'] = str(self.sbox_brickd_adv_rs485_dly.value())
-        
+
         config = config_parser.to_string(self.brickd_conf)
 
         def cb_open(config, red_file):
@@ -1664,17 +1664,17 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.sbox_net_ip2.setValue(0)
                 self.sbox_net_ip3.setValue(0)
                 self.sbox_net_ip4.setValue(0)
-                
+
                 self.sbox_net_mask1.setValue(0)
                 self.sbox_net_mask2.setValue(0)
                 self.sbox_net_mask3.setValue(0)
                 self.sbox_net_mask4.setValue(0)
-                
+
                 self.sbox_net_gw1.setValue(0)
                 self.sbox_net_gw2.setValue(0)
                 self.sbox_net_gw3.setValue(0)
                 self.sbox_net_gw4.setValue(0)
-                
+
                 self.sbox_net_dns1.setValue(0)
                 self.sbox_net_dns2.setValue(0)
                 self.sbox_net_dns3.setValue(0)
@@ -1695,19 +1695,19 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.sbox_net_ip2.setValue(int(ip_array[1]))
                     self.sbox_net_ip3.setValue(int(ip_array[2]))
                     self.sbox_net_ip4.setValue(int(ip_array[3]))
-    
+
                 if ip_string:
                     self.sbox_net_mask1.setValue(int(mask_array[0]))
                     self.sbox_net_mask2.setValue(int(mask_array[1]))
                     self.sbox_net_mask3.setValue(int(mask_array[2]))
                     self.sbox_net_mask4.setValue(int(mask_array[3]))
-    
+
                 if ip_string:
                     self.sbox_net_gw1.setValue(int(gw_array[0]))
                     self.sbox_net_gw2.setValue(int(gw_array[1]))
                     self.sbox_net_gw3.setValue(int(gw_array[2]))
                     self.sbox_net_gw4.setValue(int(gw_array[3]))
-                
+
                 if ip_string:
                     self.sbox_net_dns1.setValue(int(dns_array[0]))
                     self.sbox_net_dns2.setValue(int(dns_array[1]))
@@ -1746,7 +1746,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     mask_array = mask_string.split('.')
                     gw_array = gw_string.split('.')
                     dns_array = dns_string.split('.')
-            
+
                     if encryption == 'On':
                         if encryption_method == AP_ENC_METHOD_WPA1:
                             self.ledit_net_wireless_key.setEnabled(True)
@@ -1766,19 +1766,19 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                         self.sbox_net_ip2.setValue(int(ip_array[1]))
                         self.sbox_net_ip3.setValue(int(ip_array[2]))
                         self.sbox_net_ip4.setValue(int(ip_array[3]))
-            
+
                     if mask_string:
                         self.sbox_net_mask1.setValue(int(mask_array[0]))
                         self.sbox_net_mask2.setValue(int(mask_array[1]))
                         self.sbox_net_mask3.setValue(int(mask_array[2]))
                         self.sbox_net_mask4.setValue(int(mask_array[3]))
-            
+
                     if gw_string:
                         self.sbox_net_gw1.setValue(int(gw_array[0]))
                         self.sbox_net_gw2.setValue(int(gw_array[1]))
                         self.sbox_net_gw3.setValue(int(gw_array[2]))
                         self.sbox_net_gw4.setValue(int(gw_array[3]))
-            
+
                     if dns_string:
                         self.sbox_net_dns1.setValue(int(dns_array[0]))
                         self.sbox_net_dns2.setValue(int(dns_array[1]))
@@ -1815,80 +1815,78 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def time_utc_offset(self):
         if time.localtime(time.time()).tm_isdst and time.daylight:
             return -time.altzone/(60*60)
-        
+
         return -time.timezone/(60*60)
-    
+
     def time_start(self):
         self.time_sync_button.setEnabled(False)
 
         def cb_red_brick_time(result):
-            try:
-                if result != None and result.stderr == '':
-                    self.time_red_old, tz = map(int, result.stdout.split('\n')[:2])
-                    if tz < 0:
-                        tz_str_red = 'UTC' + str(tz)
-                    else:
-                        tz_str_red = 'UTC+' + str(tz)
-                    self.time_timezone_red.setText(tz_str_red)
-                    
-                    self.time_local_old = int(time.time())
-                    tz = self.time_utc_offset()
-                    if tz < 0:
-                        tz_str_local = 'UTC' + str(tz)
-                    else:
-                        tz_str_local = 'UTC+' + str(tz)
-                    
-                    self.time_timezone_local.setText(tz_str_local)
-                    self.time_update_gui()
-                    
-                    self.time_refresh_timer.start()
-                    
-                    if (self.time_red_old == self.time_local_old) and (tz_str_local == tz_str_red):
-                        self.time_sync_button.setEnabled(False)
-                    else:
-                        self.time_sync_button.setEnabled(True)
-                        
-                    return
-                else:
-                    err_msg = 'Error getting time from red-brick.\n\n'+unicode(result.stderr)
-                    QtGui.QMessageBox.critical(get_main_window(),
-                                               'Settings | Date/Time',
-                                               err_msg,
-                                               QtGui.QMessageBox.Ok)
-            except:
-                err_msg = 'Error getting time from red-brick.\n\n'+unicode(result.stderr)
+            if result == None and len(result.stderr) > 0:
+                err_msg = 'Error getting time from red-brick:\n\n'+unicode(result.stderr)
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Date/Time',
                                            err_msg,
                                            QtGui.QMessageBox.Ok)
-                traceback.print_exc()
-            
+                return
+
+            try:
+                self.time_red_old, tz = map(int, result.stdout.split('\n')[:2])
+                if tz < 0:
+                    tz_str_red = 'UTC' + str(tz)
+                else:
+                    tz_str_red = 'UTC+' + str(tz)
+                self.time_timezone_red.setText(tz_str_red)
+
+                self.time_local_old = int(time.time())
+                tz = self.time_utc_offset()
+                if tz < 0:
+                    tz_str_local = 'UTC' + str(tz)
+                else:
+                    tz_str_local = 'UTC+' + str(tz)
+
+                self.time_timezone_local.setText(tz_str_local)
+                self.time_update_gui()
+
+                self.time_refresh_timer.start()
+
+                if (self.time_red_old == self.time_local_old) and (tz_str_local == tz_str_red):
+                    self.time_sync_button.setEnabled(False)
+                else:
+                    self.time_sync_button.setEnabled(True)
+            except Exception as e:
+                err_msg = 'Error parsing time from red-brick:\n\n'+unicode(e)
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           'Settings | Date/Time',
+                                           err_msg,
+                                           QtGui.QMessageBox.Ok)
+
             self.time_sync_button.setEnabled(True)
-        
+
         self.script_manager.execute_script('settings_time_get',
                                            cb_red_brick_time)
-    
+
     def time_stop(self):
         try:
             self.time_refresh_timer.stop()
         except:
-            traceback.print_exc()
-            
+            pass
+
     def time_refresh(self):
         self.time_local_old += 1
         self.time_red_old += 1
-        
+
         self.time_update_gui()
-        
+
     def time_update_gui(self):
         t = QtCore.QDateTime.fromTime_t(self.time_local_old)
         self.time_date_local.setDateTime(t)
         self.time_time_local.setDateTime(t)
-        
+
         t = QtCore.QDateTime.fromTime_t(self.time_red_old)
         self.time_date_red.setDateTime(t)
         self.time_time_red.setDateTime(t)
-        
+
     def time_sync_clicked(self):
         def state_changed(process, t, p):
             if p.state == REDProcess.STATE_ERROR:
@@ -1902,9 +1900,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     self.time_timezone_red.setText(self.time_timezone_local.text())
                 elif t == 1: #time
                     self.time_red_old = self.time_local_old
-                    
+
                 process.release()
-                
+
             if (self.time_red_old == self.time_local_old) and (self.time_timezone_red.text() == self.time_timezone_local.text()):
                 self.time_sync_button.setEnabled(False)
             else:
@@ -1915,7 +1913,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             tz_str = str(tz)
         else:
             tz_str = '+' + str(tz)
-            
+
         set_tz_str = ('/bin/ln -sf /usr/share/zoneinfo/Etc/GMT' + tz_str + ' /etc/localtime').split(' ')
         red_process_tz = REDProcess(self.session)
         red_process_tz.state_changed_callback = lambda x: state_changed(red_process_tz, 0, x)

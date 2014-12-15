@@ -23,7 +23,6 @@ Boston, MA 02111-1307, USA.
 
 from brickv.plugin_system.plugins.red.api import REDFile, REDPipe, REDProcess
 
-import traceback
 import posixpath
 from collections import namedtuple
 from PyQt4 import QtCore
@@ -118,9 +117,6 @@ class ScriptManager:
             self._init_script(sd)
             return sd
         except:
-            print 'ScriptManager.execute_script: _init_script failed'
-            traceback.print_exc()
-
             if sd.result_callback != None:
                 sd.qtcb_result.disconnect(sd.result_callback)
 
@@ -143,8 +139,7 @@ class ScriptManager:
             try:
                 sd.process.kill(REDProcess.SIGNAL_KILL)
             except:
-                print 'ScriptManager.abort_script: sd.process.kill failed'
-                traceback.print_exc()
+                pass
 
     def _init_script(self, sd):
         if self.scripts[sd.script_name].copied:
@@ -174,8 +169,6 @@ class ScriptManager:
             except:
                 pass
 
-            print 'ScriptManager._init_script_async: copy_lock.release failed'
-            traceback.print_exc()
             raise
         finally:
             return False
@@ -191,7 +184,6 @@ class ScriptManager:
         if error == None:
             self._execute_after_init(sd)
         else:
-            print 'ScriptManager._init_script_async_write_done', unicode(error)
             ScriptManager._call(script, sd, None)
             script_data_set.remove(sd)
 
@@ -204,22 +196,33 @@ class ScriptManager:
         script_data_set.remove(sd)
 
     def _release_script_data(self, sd):
-        try:
-            sd.process.release()
-            sd.stdout.release()
+        if sd.process != None:
+            try:
+                sd.process.release()
+            except:
+                pass
 
-            if not sd.redirect_stderr_to_stdout:
+            sd.process = None
+
+        if sd.stdout != None:
+            try:
+                sd.stdout.release()
+            except:
+                pass
+
+            sd.stdout  = None
+
+        if sd.stderr != None and not sd.redirect_stderr_to_stdout:
+            try:
                 sd.stderr.release()
-        except:
-            print 'ScriptManager._release_script_data: release failed'
-            traceback.print_exc()
+            except:
+                pass
 
-        sd.process = None
-        sd.stdout  = None
-        sd.stderr  = None
+            sd.stderr  = None
 
     def _execute_after_init(self, sd):
         if sd.abort:
+            self._release_script_data(sd)
             ScriptManager._call(self.scripts[sd.script_name], sd, None)
             script_data_set.remove(sd)
             return
@@ -232,9 +235,7 @@ class ScriptManager:
             else:
                 sd.stderr = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, sd.max_length)
         except:
-            print 'ScriptManager._execute_after_init: REDPipe.create failed'
-            traceback.print_exc()
-
+            self._release_script_data(sd)
             ScriptManager._call(self.scripts[sd.script_name], sd, None)
             script_data_set.remove(sd)
             return
@@ -308,14 +309,12 @@ class ScriptManager:
         try:
             sd.stdout.set_events(REDFile.EVENT_READABLE)
         except:
-            print 'ScriptManager._execute_after_init: sd.stdout.set_events failed'
-            traceback.print_exc() # ignore error
+            pass
 
         try:
             sd.stderr.set_events(REDFile.EVENT_READABLE)
         except:
-            print 'ScriptManager._execute_after_init: sd.stderr.set_events failed'
-            traceback.print_exc() # ignore error
+            pass
         """
 
         # need to set LANG otherwise python will not correctly handle non-ASCII filenames
@@ -333,9 +332,6 @@ class ScriptManager:
             sd.process.spawn(posixpath.join(SCRIPT_FOLDER, sd.script_name + self.scripts[sd.script_name].file_ending),
                              sd.params, env, '/', uid, gid, self.devnull, sd.stdout, sd.stderr)
         except:
-            print 'ScriptManager._execute_after_init: sd.process.spawn failed'
-            traceback.print_exc()
-
             self._release_script_data(sd)
             ScriptManager._call(self.scripts[sd.script_name], sd, None)
             script_data_set.remove(sd)
