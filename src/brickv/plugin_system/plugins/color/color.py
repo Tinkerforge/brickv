@@ -395,7 +395,7 @@ class Color(PluginBase):
         self.cb_illuminance(illuminance)
 
     def cb_color_temperature_get(self, color_temperature):
-        self.cb_illuminance(color_temperature)
+        self.cb_color_temperature(color_temperature)
 
     def cb_color(self, r, g, b, c):
         self.current_color = (r, g, b, c)
