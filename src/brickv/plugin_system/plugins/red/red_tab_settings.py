@@ -271,7 +271,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         if not self.is_tab_on_focus:
             return
 
-        if result.stdout and not result.stderr and result.exit_code == 0:
+        if result and result.stdout and not result.stderr and result.exit_code == 0:
                 self.network_all_data['status'] = json.loads(result.stdout)
 
                 # Populating the current network status section and hostname
@@ -923,7 +923,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             def cb_read(red_file, result):
                 red_file.release()
 
-                if result.data is not None:
+                if result and result.data is not None:
                     self.brickd_conf = config_parser.parse(result.data.decode('utf-8'))
                     self.update_brickd_widget_data()
                 else:
@@ -959,7 +959,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.show_please_wait(WORKING_STATE_DONE)
                 if not self.is_tab_on_focus:
                     return
-                if result.stdout and not result.stderr and result.exit_code == 0:
+                if result and result.stdout and not result.stderr and result.exit_code == 0:
                     self.network_all_data['scan_result'] = json.loads(result.stdout)
                     self.update_access_points(self.network_all_data['scan_result'])
                     QtGui.QMessageBox.information(get_main_window(),
@@ -1008,17 +1008,18 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.show_please_wait(WORKING_STATE_DONE)
                 return
             self.network_refresh_tasks_remaining -= 1
-            if result.stdout and not result.stderr and result.exit_code == 0 and not self.network_refresh_tasks_error_occured:
-                self.network_all_data['status'] = json.loads(result.stdout)
-                if self.network_refresh_tasks_remaining == 0:
-                    network_refresh_tasks_done(True)
+            if result and result.stdout and not result.stderr and result.exit_code == 0 and\
+                   not self.network_refresh_tasks_error_occured:
+                    self.network_all_data['status'] = json.loads(result.stdout)
+                    if self.network_refresh_tasks_remaining == 0:
+                        network_refresh_tasks_done(True)
             else:
                 if self.network_refresh_tasks_remaining == 0:
                     network_refresh_tasks_done(False)
                 else:
                     self.network_refresh_tasks_error_occured = True
 
-                if result.stderr:
+                if result and result.stderr:
                     err_msg = 'Error executing network status script.\n\n'+unicode(result.stderr)
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
@@ -1030,14 +1031,15 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.show_please_wait(WORKING_STATE_DONE)
                 return
             self.network_refresh_tasks_remaining -= 1
-            if result.stdout and not result.stderr and result.exit_code == 0 and not self.network_refresh_tasks_error_occured:
-                self.network_all_data['interfaces'] = json.loads(result.stdout)
-                self.script_manager.execute_script('settings_network_wireless_scan_cache',
-                                                   cb_settings_network_wireless_scan_cache,
-                                                   [])
+            if result and result.stdout and not result.stderr and result.exit_code == 0 and\
+               not self.network_refresh_tasks_error_occured:
+                    self.network_all_data['interfaces'] = json.loads(result.stdout)
+                    self.script_manager.execute_script('settings_network_wireless_scan_cache',
+                                                       cb_settings_network_wireless_scan_cache,
+                                                       [])
             else:
                 self.network_refresh_tasks_error_occured = True
-                if result.stderr:
+                if result and result.stderr:
                     err_msg = 'Error executing network get interfaces script.\n\n'+unicode(result.stderr)
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
@@ -1049,18 +1051,19 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.show_please_wait(WORKING_STATE_DONE)
                 return
             self.network_refresh_tasks_remaining -= 1
-            if result.stdout and not result.stderr and result.exit_code == 0 and not self.network_refresh_tasks_error_occured:
-                self.network_all_data['scan_result_cache'] = json.loads(result.stdout)
-                self.update_access_points(self.network_all_data['scan_result_cache'])
-                if self.network_refresh_tasks_remaining == 0:
-                    network_refresh_tasks_done(True)
+            if result and result.stdout and not result.stderr and result.exit_code == 0 and\
+               not self.network_refresh_tasks_error_occured:
+                    self.network_all_data['scan_result_cache'] = json.loads(result.stdout)
+                    self.update_access_points(self.network_all_data['scan_result_cache'])
+                    if self.network_refresh_tasks_remaining == 0:
+                        network_refresh_tasks_done(True)
             else:
                 if self.network_refresh_tasks_remaining == 0:
                     network_refresh_tasks_done(False)
                 else:
                     self.network_refresh_tasks_error_occured = True
 
-                if result.stderr:
+                if result and result.stderr:
                     err_msg = 'Error executing wireless scan cache script.\n\n'+unicode(result.stderr)
                     QtGui.QMessageBox.critical(None,
                                                'Settings | Network',
@@ -1079,10 +1082,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
                 red_file.release()
 
-                if result.data is not None and result.error is None and not self.network_refresh_tasks_error_occured:
-                    self.network_all_data['manager_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
-                    if self.network_refresh_tasks_remaining == 0:
-                        network_refresh_tasks_done(True)
+                if result and result.data is not None and result.error is None and\
+                   not self.network_refresh_tasks_error_occured:
+                        self.network_all_data['manager_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
+                        if self.network_refresh_tasks_remaining == 0:
+                            network_refresh_tasks_done(True)
                 else:
                     if self.network_refresh_tasks_remaining == 0:
                         network_refresh_tasks_done(False)
@@ -1123,10 +1127,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
                 red_file.release()
 
-                if result.data is not None and result.error is None and not self.network_refresh_tasks_error_occured:
-                    self.network_all_data['wireless_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
-                    if self.network_refresh_tasks_remaining == 0:
-                        network_refresh_tasks_done(True)
+                if result and result.data is not None and result.error is None and\
+                   not self.network_refresh_tasks_error_occured:
+                        self.network_all_data['wireless_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
+                        if self.network_refresh_tasks_remaining == 0:
+                            network_refresh_tasks_done(True)
                 else:
                     if self.network_refresh_tasks_remaining == 0:
                         network_refresh_tasks_done(False)
@@ -1167,10 +1172,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
                 red_file.release()
 
-                if result.data is not None and result.error is None and not self.network_refresh_tasks_error_occured:
-                    self.network_all_data['wired_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
-                    if self.network_refresh_tasks_remaining == 0:
-                        network_refresh_tasks_done(True)
+                if result and result.data is not None and result.error is None and\
+                   not self.network_refresh_tasks_error_occured:
+                        self.network_all_data['wired_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
+                        if self.network_refresh_tasks_remaining == 0:
+                            network_refresh_tasks_done(True)
                 else:
                     if self.network_refresh_tasks_remaining == 0:
                         network_refresh_tasks_done(False)
@@ -1351,7 +1357,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
                 def cb_settings_network_apply(result):
                     self.show_please_wait(WORKING_STATE_DONE)
-                    if not result.stderr and result.exit_code == 0:
+                    if result and not result.stderr and result.exit_code == 0:
                         self.slot_network_conf_refresh_clicked()
                         QtGui.QMessageBox.information(get_main_window(),
                                                       'Settings | Network',
@@ -1489,7 +1495,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
             def cb_settings_network_apply(result):
                     self.show_please_wait(WORKING_STATE_DONE)
-                    if not result.stderr and result.exit_code == 0:
+                    if result and not result.stderr and result.exit_code == 0:
                         self.slot_network_conf_refresh_clicked()
                         QtGui.QMessageBox.information(get_main_window(),
                                                       'Settings | Network',
@@ -1822,7 +1828,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.time_sync_button.setEnabled(False)
 
         def cb_red_brick_time(result):
-            if result == None and len(result.stderr) > 0:
+            if not result or result.stderr:
                 err_msg = 'Error getting time from red-brick:\n\n'+unicode(result.stderr)
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Date/Time',
