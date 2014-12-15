@@ -47,58 +47,282 @@ def fuzzy_eq(a, b):
     return abs(a - b) < EPSILON
 
 def fuzzy_leq(a, b):
-    return a < b or abs(a - b) < EPSILON
+    return a < b or fuzzy_eq(a, b)
 
 def fuzzy_geq(a, b):
-    return a > b or abs(a - b) < EPSILON
+    return a > b or fuzzy_eq(a, b)
+
+class Scale:
+    def __init__(self, tick_text_font, title_text_font):
+        self.axis_line_thickness = 1 # px, fixed
+
+        self.tick_mark_thickness = 1 # px, fixed
+        self.tick_mark_size_small = 5 # px, fixed
+        self.tick_mark_size_medium = 7 # px, fixed
+        self.tick_mark_size_large = 9 # px, fixed
+
+        self.tick_text_font = tick_text_font
+        self.tick_text_font_metrics = QFontMetrics(self.tick_text_font)
+        self.tick_text_height = self.tick_text_font_metrics.boundingRect('0123456789').height()
+        self.tick_text_height_half = int(math.ceil(self.tick_text_height / 2.0))
+
+        self.tick_value_to_str = istr
+
+        self.title_text_font = title_text_font
+        self.title_text_font_metrics = QFontMetrics(self.title_text_font)
+
+class XScale(Scale):
+    def __init__(self, tick_text_font, title_text_font, title_text):
+        Scale.__init__(self, tick_text_font, title_text_font)
+
+        self.tick_mark_to_tick_text = 0 # px, fixed
+
+        self.tick_text_to_title_text = 4 # px, fixed
+
+        self.title_text = title_text
+        self.title_text_height = self.title_text_font_metrics.boundingRect(self.title_text).height()
+        self.title_text_to_border = 2 # px, fixed
+
+        self.total_height = self.axis_line_thickness + \
+                            self.tick_mark_size_large + \
+                            self.tick_mark_to_tick_text + \
+                            self.tick_text_height + \
+                            self.tick_text_to_title_text + \
+                            self.title_text_height + \
+                            self.title_text_to_border # px, fixed
+
+    def draw(self, painter, factor, tick_value_min, tick_count):
+        factor_int = int(math.floor(factor))
+        text_flags = Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignBottom
+
+        # axis line
+        axis_line_length = int(math.floor(factor * tick_count))
+
+        painter.drawLine(0, 0, axis_line_length - 1, 0)
+
+        # ticks
+        tick_text_y = self.axis_line_thickness + \
+                      self.tick_mark_size_large + \
+                      self.tick_mark_to_tick_text
+        tick_text_width = factor_int + self.tick_mark_thickness + factor_int
+        tick_text_height = self.tick_text_height
+
+        painter.setFont(self.tick_text_font)
+
+        for i in range(tick_count):
+            x = round(factor * i)
+            tick_value = int(tick_value_min + i)
+
+            if (tick_value % 5) == 0:
+                tick_mark_size = self.tick_mark_size_large
+                tick_text_x = x - factor_int
+
+                if DEBUG:
+                    painter.fillRect(tick_text_x, tick_text_y,
+                                     tick_text_width, tick_text_height,
+                                     Qt.yellow)
+
+                painter.drawText(tick_text_x, tick_text_y,
+                                 tick_text_width, tick_text_height,
+                                 text_flags,
+                                 self.tick_value_to_str(tick_value))
+            else:
+                tick_mark_size = self.tick_mark_size_small
+
+            painter.drawLine(x, 0, x, tick_mark_size)
+
+        # title
+        title_text_x = 0
+        title_text_y = self.axis_line_thickness + \
+                       self.tick_mark_size_large + \
+                       self.tick_mark_to_tick_text + \
+                       self.tick_text_height + \
+                       self.tick_text_to_title_text
+        title_text_width = axis_line_length
+        title_text_height = self.title_text_height
+
+        if DEBUG:
+            painter.fillRect(title_text_x, title_text_y,
+                             title_text_width, title_text_height,
+                             Qt.yellow)
+
+        painter.setFont(self.title_text_font)
+        painter.drawText(title_text_x, title_text_y,
+                         title_text_width, title_text_height,
+                         text_flags, self.title_text)
+
+class YScale(Scale):
+    def __init__(self, tick_text_font, title_text_font, title_text):
+        Scale.__init__(self, tick_text_font, title_text_font)
+
+        self.value_min = None # set by update_tick_config
+        self.value_max = None # set by update_tick_config
+
+        self.step_size = None # set by update_tick_config
+        self.step_subdivision_count = None # set by update_tick_config
+
+        self.tick_mark_to_tick_text = 3 # px, fixed
+
+        self.tick_text_to_title_text = 7 # px, fixed
+        self.tick_text_max_width = 10 # px, initial value, calculated in update_tick_config
+
+        self.title_text = title_text
+        self.title_text_to_border = 2 # px, fixed
+        self.title_text_height = None # set by update_title_text_height
+        self.title_text_pixmap = None
+
+        self.total_width = None # set by update_total_width
+
+        self.update_title_text_height(1000)
+        self.update_tick_config(-1.0, 1.0, 1.0, 5)
+
+    def update_tick_config(self, value_min, value_max, step_size, step_subdivision_count):
+        self.value_min = value_min
+        self.value_max = value_max
+        self.step_size = step_size
+        self.step_subdivision_count = step_subdivision_count
+
+        if fuzzy_geq(self.step_size, 1.0):
+            self.tick_value_to_str = istr
+        else:
+            self.tick_value_to_str = fstr
+
+        value = self.value_min
+        tick_text_max_width = self.tick_text_font_metrics.width(self.tick_value_to_str(value))
+
+        while fuzzy_leq(value, self.value_max):
+            tick_text_max_width = max(tick_text_max_width, self.tick_text_font_metrics.width(self.tick_value_to_str(value)))
+            value += self.step_size
+
+        self.tick_text_max_width = tick_text_max_width
+
+        self.update_total_width()
+
+    def update_title_text_height(self, max_width):
+        self.title_text_height = self.title_text_font_metrics.boundingRect(0, 0, max_width, 1000,
+                                                                           Qt.TextWordWrap | Qt.AlignHCenter | Qt.AlignTop,
+                                                                           self.title_text).height()
+
+        self.update_total_width()
+
+    def update_total_width(self):
+        self.total_width = self.axis_line_thickness + \
+                           self.tick_mark_size_large + \
+                           self.tick_mark_to_tick_text + \
+                           self.tick_text_max_width + \
+                           self.tick_text_to_title_text + \
+                           self.title_text_height + \
+                           self.title_text_to_border
+
+    def draw(self, painter, height, factor):
+        # axis line
+        painter.drawLine(-self.axis_line_thickness, 0, -self.axis_line_thickness, -height + 1)
+
+        # ticks
+        painter.setFont(self.tick_text_font)
+
+        tick_text_x = -self.axis_line_thickness - \
+                      self.tick_mark_size_large - \
+                      self.tick_mark_to_tick_text - \
+                      self.tick_text_max_width
+        tick_text_width = self.tick_text_max_width
+        tick_text_height = self.tick_text_height_half * 2
+
+        value = self.value_min
+
+        while fuzzy_leq(value, self.value_max):
+            y = -int(round((value - self.value_min) * factor))
+
+            painter.drawLine(-self.axis_line_thickness, y,
+                             -self.axis_line_thickness - self.tick_mark_size_large, y)
+
+            tick_text_y = y - self.tick_text_height_half
+
+            if DEBUG:
+                painter.fillRect(tick_text_x, tick_text_y,
+                                 tick_text_width, tick_text_height,
+                                 Qt.yellow)
+
+            painter.drawText(tick_text_x, tick_text_y, tick_text_width, tick_text_height,
+                             Qt.TextDontClip | Qt.AlignRight | Qt.AlignVCenter,
+                             self.tick_value_to_str(value))
+
+
+            for i in range(1, self.step_subdivision_count):
+                subvalue = value + (self.step_size * i / self.step_subdivision_count)
+
+                if not fuzzy_leq(subvalue, self.value_max):
+                    break
+
+                suby = -int(round((subvalue - self.value_min) * factor))
+
+                if i % 2 == 0 and self.step_subdivision_count % 2 == 0:
+                    tick_mark_size = self.tick_mark_size_medium
+                else:
+                    tick_mark_size = self.tick_mark_size_small
+
+                painter.drawLine(-self.axis_line_thickness, suby,
+                                 -self.axis_line_thickness - tick_mark_size, suby)
+
+            value += self.step_size
+
+        # title
+        title_width = height
+        title_height = self.title_text_height
+
+        if self.title_text_pixmap == None or self.title_text_pixmap.size() != QSize(title_width, title_height):
+            self.title_text_pixmap = QPixmap(title_width, title_height)
+
+            if DEBUG:
+                self.title_text_pixmap.fill(Qt.yellow)
+            else:
+                self.title_text_pixmap.fill(QColor(0, 0, 0, 0))
+
+            title_painter = QPainter(self.title_text_pixmap)
+            title_painter.setFont(self.title_text_font)
+            title_painter.drawText(0, 0, title_width, title_height,
+                                  Qt.TextWordWrap | Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignTop,
+                                  self.title_text)
+            title_painter = None
+
+        painter.save()
+        painter.rotate(-90)
+
+        title_x = -1
+        title_y = -self.axis_line_thickness - \
+                  self.tick_mark_size_large - \
+                  self.tick_mark_to_tick_text - \
+                  self.tick_text_max_width - \
+                  self.tick_text_to_title_text - \
+                  title_height
+
+        painter.drawPixmap(title_x, title_y, self.title_text_pixmap)
+
+        painter.restore()
 
 class Plot(QWidget):
-    def __init__(self, parent, axis_y_name, plots, axis_scales):
+    def __init__(self, parent, y_scale_title_text, plots):
         QWidget.__init__(self, parent)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.plots = plots
         self.history_length_x = 20 # seconds
-        self.curve_outer_border = 5 # px
+        self.curve_outer_border = 5 # px, fixed
+        self.curve_to_scale = 8 # px, fixed
         self.cross_hair_visible = False
 
-        self.tick_size_small = 5 # px
-        self.tick_size_medium = 7 # px
-        self.tick_size_large = 9 # px
-        self.tick_to_text_x = 1 # px
-        self.tick_to_text_y = 3 # px
-        self.tick_font = self.font()
-        self.tick_font_metrics = QFontMetrics(self.tick_font)
-        self.tick_font_height = self.tick_font_metrics.boundingRect('0123456789').height()
-        self.tick_font_height_half = int(math.ceil(self.tick_font_height / 2.0))
-        self.tick_font_max_width = 10 # px, just an initial value, dynamically calculated based on y-axis ticks
+        self.tick_text_font = self.font()
 
-        self.axis_x_name = 'Time [s]'
-        self.axis_x_name_to_tick_text = 4 # px
-        self.axis_x_name_to_border = 2 # px
-        self.axis_y_name = axis_y_name
-        self.axis_y_name_to_tick_text = 7 # px
-        self.axis_y_name_to_border = 2 # px
-        self.axis_font = self.font()
-        self.axis_font.setPointSize(round(self.axis_font.pointSize() * 1.2))
-        self.axis_font.setBold(True)
-        self.axis_font_metrics = QFontMetrics(self.axis_font)
-        self.axis_x_font_height = self.axis_font_metrics.boundingRect(self.axis_x_name).height()
-        self.axis_y_font_height = 16 # px, just an initial value, dynamically calculated based on y-axis name
-        self.axis_y_name_pixmap = None
+        self.title_text_font = self.font()
+        self.title_text_font.setPointSize(round(self.title_text_font.pointSize() * 1.2))
+        self.title_text_font.setBold(True)
 
-        self.fixed_min_y_axis = None
-        self.fixed_max_y_axis = None
-        self.axis_y_fixed = False
-        self.axis_y_fixed_step_size = None
-        self.axis_y_fixed_step_divisions = None
+        self.x_scale = XScale(self.tick_text_font, self.title_text_font, 'Time [s]')
 
-        self.axis_x_height = self.tick_size_large + self.tick_to_text_x + self.tick_font_height + \
-                             self.axis_x_name_to_tick_text + self.axis_x_font_height + self.axis_x_name_to_border
-        self.axis_y_width = 50 # px, just an initial value, dynamically calculated based on y-axis ticks
-        self.axis_y_height_offset = max(self.curve_outer_border, self.tick_font_height_half) # px, from top
-        self.axis_to_curve = 8 # px
+        self.y_scale = YScale(self.tick_text_font, self.title_text_font, y_scale_title_text)
+        self.y_scale_fixed = False
+        self.y_scale_height_offset = max(self.curve_outer_border, self.y_scale.tick_text_height_half) # px, from top
 
         self.clear_graph()
 
@@ -109,12 +333,9 @@ class Plot(QWidget):
     # override QWidget.resizeEvent
     def resizeEvent(self, event):
         height = event.size().height()
-        axis_y_name_width = height - self.axis_y_height_offset - self.axis_x_height - self.axis_to_curve
-        self.axis_y_font_height = self.axis_font_metrics.boundingRect(0, 0, axis_y_name_width, 1000,
-                                                                      Qt.TextWordWrap | Qt.AlignHCenter | Qt.AlignTop,
-                                                                      self.axis_y_name).height()
+        max_width = height - self.y_scale_height_offset - self.x_scale.total_height - self.curve_to_scale
 
-        self.update_axis_y_width()
+        self.y_scale.update_title_text_height(max_width)
 
         QWidget.resizeEvent(self, event)
 
@@ -123,17 +344,17 @@ class Plot(QWidget):
         painter = QPainter(self)
         width = self.width()
         height = self.height()
-        curve_width = width - self.axis_y_width - self.axis_to_curve - self.curve_outer_border
-        curve_height = height - self.axis_y_height_offset - self.axis_x_height - self.axis_to_curve
+        curve_width = width - self.y_scale.total_width - self.curve_to_scale - self.curve_outer_border
+        curve_height = height - self.y_scale_height_offset - self.x_scale.total_height - self.curve_to_scale
 
         if DEBUG:
             painter.fillRect(0, 0, width, height, Qt.green)
 
         # fill canvas
-        canvas_x = self.axis_y_width + self.axis_to_curve - self.curve_outer_border
-        canvas_y = self.axis_y_height_offset - self.curve_outer_border
-        canvas_width = curve_width + 2 * self.curve_outer_border
-        canvas_height = curve_height + 2 * self.curve_outer_border
+        canvas_x = self.y_scale.total_width + self.curve_to_scale - self.curve_outer_border
+        canvas_y = self.y_scale_height_offset - self.curve_outer_border
+        canvas_width = self.curve_outer_border + curve_width + self.curve_outer_border
+        canvas_height = self.curve_outer_border + curve_height + self.curve_outer_border
 
         painter.fillRect(canvas_x, canvas_y, canvas_width, canvas_height,
                          QColor(245, 245, 245))
@@ -157,35 +378,27 @@ class Plot(QWidget):
         painter.setPen(Qt.black)
 
         if DEBUG:
-            painter.fillRect(self.axis_y_width + self.axis_to_curve,
-                             self.axis_y_height_offset,
+            painter.fillRect(self.y_scale.total_width + self.curve_to_scale,
+                             self.y_scale_height_offset,
                              curve_width,
                              curve_height,
                              Qt.cyan)
 
         # draw scales
-        scale_x = float(curve_width) / self.history_length_x
+        min_y_axis = self.y_scale.value_min
+        max_y_axis = self.y_scale.value_max
 
-        if self.min_x != None:
-            if self.axis_y_fixed:
-                min_y_axis = self.fixed_min_y_axis
-                max_y_axis = self.fixed_max_y_axis
-            else:
-                min_y_axis = self.min_y_axis
-                max_y_axis = self.max_y_axis
+        factor_x = float(curve_width) / self.history_length_x
+        factor_y = float(curve_height - 1) / max(max_y_axis - min_y_axis, EPSILON) # -1 to accommodate the 1px width of the curve
 
-            scale_y = float(curve_height - 1) / max(max_y_axis - min_y_axis, EPSILON) # -1 to accommodate the 1px width of the curve
-        else:
-            scale_y = 1.0
-
-        self.draw_axis_x(painter, curve_width, scale_x)
-        self.draw_axis_y(painter, curve_height, scale_y)
+        self.draw_x_scale(painter, factor_x)
+        self.draw_y_scale(painter, curve_height, factor_y)
 
         # draw curves
         if self.min_x != None:
             painter.save()
-            painter.translate(self.axis_y_width + self.axis_to_curve,
-                              self.axis_y_height_offset + curve_height - 1) # -1 to accommodate the 1px width of the curve
+            painter.translate(self.y_scale.total_width + self.curve_to_scale,
+                              self.y_scale_height_offset + curve_height - 1) # -1 to accommodate the 1px width of the curve
             painter.scale(1, -1)
 
             min_x = self.min_x
@@ -197,14 +410,14 @@ class Plot(QWidget):
 
                 curve_x = self.curves_x[c]
                 curve_y = self.curves_y[c]
-                last_x = round((curve_x[0] - min_x) * scale_x)
-                last_y = round((curve_y[0] - min_y_axis) * scale_y)
+                last_x = round((curve_x[0] - min_x) * factor_x)
+                last_y = round((curve_y[0] - min_y_axis) * factor_y)
 
                 painter.setPen(self.plots[c][1])
 
                 for i in range(1, len(curve_x)):
-                    x = round((curve_x[i] - min_x) * scale_x)
-                    y = round((curve_y[i] - min_y_axis) * scale_y)
+                    x = round((curve_x[i] - min_x) * factor_x)
+                    y = round((curve_y[i] - min_y_axis) * factor_y)
 
                     drawLine(last_x, last_y, x, y)
 
@@ -213,163 +426,37 @@ class Plot(QWidget):
 
             painter.restore()
 
-    def set_fixed_y_axis(self, minimum, maximum, step_size, step_divisions):
-        self.fixed_min_y_axis = float(minimum)
-        self.fixed_max_y_axis = float(maximum)
-        self.axis_y_fixed = True
-        self.axis_y_fixed_step_size = float(step_size)
-        self.axis_y_fixed_step_divisions = int(step_divisions)
+    def set_fixed_y_scale(self, value_min, value_max, step_size, step_division_count):
+        self.y_scale_fixed = True
+        self.y_scale.update_tick_config(value_min, value_max, step_size, step_division_count)
 
     def get_legend_offset_y(self): # px, from top
-        return max(self.tick_font_height_half - self.curve_outer_border, 0)
+        return max(self.y_scale.tick_text_height_half - self.curve_outer_border, 0)
 
-    def draw_axis_x(self, painter, curve_width, scale_x):
-        offset_x = self.axis_y_width + self.axis_to_curve
-        offset_y = self.height() - self.axis_x_height
-        scale_x_int = math.floor(scale_x)
-
-        painter.drawLine(offset_x, offset_y, offset_x + curve_width - 1, offset_y)
+    def draw_x_scale(self, painter, factor):
+        offset_x = self.y_scale.total_width + self.curve_to_scale
+        offset_y = self.height() - self.x_scale.total_height
 
         if self.min_x != None:
             min_x = self.min_x
         else:
             min_x = 0
 
-        painter.setFont(self.tick_font)
+        painter.save()
+        painter.translate(offset_x, offset_y)
 
-        for i in range(self.history_length_x):
-            x = offset_x + round(i * scale_x)
-            s = int(min_x + i)
+        self.x_scale.draw(painter, factor, min_x, self.history_length_x)
 
-            if (s % 5) == 0:
-                time_x = x - scale_x_int
-                time_y = offset_y + self.tick_size_large
-                time_width = scale_x_int * 2 + 1 # +1 to accommodate the 1px width of the tick
-                time_height = self.tick_to_text_x + self.tick_font_height
+        painter.restore()
 
-                if DEBUG:
-                    painter.fillRect(time_x, time_y, time_width, time_height, Qt.yellow)
-
-                painter.drawLine(x, offset_y, x, offset_y + self.tick_size_large)
-                painter.drawText(time_x, time_y, time_width, time_height,
-                                 Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignBottom, istr(s))
-            else:
-                painter.drawLine(x, offset_y, x, offset_y + self.tick_size_small)
-
-        name_x = offset_x
-        name_y = offset_y + self.tick_size_large + self.tick_to_text_x + self.tick_font_height + self.axis_x_name_to_tick_text
-        name_width = curve_width
-        name_height = self.axis_x_font_height
-
-        if DEBUG:
-            painter.fillRect(name_x, name_y, name_width, name_height, Qt.yellow)
-
-        painter.setFont(self.axis_font)
-        painter.drawText(name_x, name_y, name_width, name_height,
-                         Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignBottom,
-                         self.axis_x_name)
-
-    def draw_axis_y(self, painter, curve_height, scale_y):
-        offset_x = self.axis_y_width - 1 # -1 to accommodate the 1px width of the axis
-        offset_y = self.height() - self.axis_x_height - self.axis_to_curve - 1
-
-        if self.axis_y_fixed:
-            min_y_axis = self.fixed_min_y_axis
-            max_y_axis = self.fixed_max_y_axis
-            axis_y_step_size = self.axis_y_fixed_step_size
-            axis_y_step_divisions = self.axis_y_fixed_step_divisions
-        else:
-            if self.min_y_axis != None:
-                min_y_axis = self.min_y_axis
-            else:
-                min_y_axis = -1.0
-
-            if self.max_y_axis != None:
-                max_y_axis = self.max_y_axis
-            else:
-                max_y_axis = 1.0
-
-            if self.axis_y_step_size != None:
-                axis_y_step_size = self.axis_y_step_size
-            else:
-                axis_y_step_size = 1.0
-
-            if self.axis_y_step_divisions != None:
-                axis_y_step_divisions = self.axis_y_step_divisions
-            else:
-                axis_y_step_divisions = 5
-
-        # draw axis line
-        painter.drawLine(offset_x, offset_y, offset_x, offset_y - curve_height + 1) # +1 to accommodate the 1px width of the curve
-
-        y_axis = min_y_axis
-
-        if DEBUG:
-            painter.fillRect(0, 0, self.axis_y_name_to_border, curve_height, Qt.darkGreen)
-            painter.fillRect(self.axis_y_name_to_border + self.axis_y_font_height, 0,
-                             self.axis_y_name_to_tick_text, curve_height, Qt.darkGreen)
-
-        # draw ticks
-        painter.setFont(self.tick_font)
-
-        while fuzzy_leq(y_axis, max_y_axis):
-            y = offset_y - int(round((y_axis - min_y_axis) * scale_y))
-
-            painter.drawLine(offset_x - self.tick_size_large, y, offset_x, y)
-
-            tick_text_x = 0
-            tick_text_y = y - self.tick_font_height_half
-            tick_text_width = offset_x - self.tick_size_large - self.tick_to_text_y
-            tick_text_height = self.tick_font_height_half * 2
-
-            if DEBUG:
-                painter.fillRect(tick_text_x, tick_text_y, tick_text_width, tick_text_height, Qt.cyan)
-                painter.fillRect(tick_text_x + tick_text_width - self.tick_font_max_width, tick_text_y,
-                                 self.tick_font_max_width, tick_text_height, QColor(255,0,0,64))
-
-            painter.drawText(tick_text_x, tick_text_y, tick_text_width, tick_text_height,
-                             Qt.TextDontClip | Qt.AlignRight | Qt.AlignVCenter,
-                             self.axis_y_to_str(y_axis))
-
-            for i in range(1, axis_y_step_divisions):
-                sub_y_axis = y_axis + (axis_y_step_size * i / axis_y_step_divisions)
-
-                if not fuzzy_leq(sub_y_axis, max_y_axis):
-                    break
-
-                y = offset_y - int(round((sub_y_axis - min_y_axis) * scale_y))
-
-                if i % 2 == 0 and axis_y_step_divisions % 2 == 0:
-                    tick_size = self.tick_size_medium
-                else:
-                    tick_size = self.tick_size_small
-
-                painter.drawLine(offset_x - tick_size, y, offset_x, y)
-
-            y_axis += axis_y_step_size
-
-        # draw name
-        name_width = curve_height
-        name_height = self.axis_y_font_height
-
-        if self.axis_y_name_pixmap == None or self.axis_y_name_pixmap.size() != QSize(name_width, name_height):
-            self.axis_y_name_pixmap = QPixmap(name_width, name_height)
-            self.axis_y_name_pixmap.fill(QColor(0, 0, 0, 0))
-
-            name_painter = QPainter(self.axis_y_name_pixmap)
-            name_painter.setFont(self.axis_font)
-            name_painter.drawText(0, 0, name_width, name_height,
-                                  Qt.TextWordWrap | Qt.TextDontClip | Qt.AlignHCenter | Qt.AlignTop,
-                                  self.axis_y_name)
-            name_painter = None
+    def draw_y_scale(self, painter, height, factor):
+        offset_x = self.y_scale.total_width
+        offset_y = self.height() - self.x_scale.total_height - self.curve_to_scale - 1
 
         painter.save()
-        painter.rotate(-90)
+        painter.translate(offset_x, offset_y)
 
-        name_x = -offset_y - 1
-        name_y = self.axis_y_name_to_border
-
-        painter.drawPixmap(name_x, name_y, self.axis_y_name_pixmap)
+        self.y_scale.draw(painter, height, factor)
 
         painter.restore()
 
@@ -511,26 +598,8 @@ class Plot(QWidget):
         self.axis_y_step_size = axis_y_step_size
         self.axis_y_step_divisions = axis_y_step_divisions
 
-        # find maximum tick text width
-        if fuzzy_geq(self.axis_y_step_size, 1.0):
-            self.axis_y_to_str = istr
-        else:
-            self.axis_y_to_str = fstr
-
-        y_axis = self.min_y_axis
-        tick_font_max_width = self.tick_font_metrics.width(self.axis_y_to_str(y_axis))
-
-        while fuzzy_leq(y_axis, self.max_y_axis):
-            tick_font_max_width = max(tick_font_max_width, self.tick_font_metrics.width(self.axis_y_to_str(y_axis)))
-            y_axis += self.axis_y_step_size
-
-        self.tick_font_max_width = tick_font_max_width
-
-        self.update_axis_y_width()
-
-    def update_axis_y_width(self):
-        self.axis_y_width = self.tick_size_large + self.tick_to_text_y + self.tick_font_max_width + \
-                            self.axis_y_name_to_tick_text + self.axis_y_font_height + self.axis_y_name_to_border + 1 # +1 to accommodate the 1px width of the axis
+        if not self.y_scale_fixed:
+            self.y_scale.update_tick_config(self.min_y_axis, self.max_y_axis, self.axis_y_step_size, self.axis_y_step_divisions)
 
     def show_curve(self, c, show):
         if self.curves_visible[c] == show:
@@ -575,16 +644,15 @@ class Plot(QWidget):
 
         self.update()
 
-
 class PlotWidget(QWidget):
-    def __init__(self, y_axis_name, plots, clear_button=None, parent=None, axis_scales=None):
+    def __init__(self, y_scale_title_text, plots, clear_button=None, parent=None):
         QWidget.__init__(self, parent)
 
         self.setMinimumSize(300, 250)
 
         self.stop = True
-        self.plot = Plot(self, y_axis_name, plots, axis_scales)
-        self.set_fixed_y_axis = self.plot.set_fixed_y_axis
+        self.plot = Plot(self, y_scale_title_text, plots)
+        self.set_fixed_y_scale = self.plot.set_fixed_y_scale
         self.plot_buttons = []
         self.first_show = True
 

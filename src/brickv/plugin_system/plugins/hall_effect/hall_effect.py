@@ -48,7 +48,7 @@ class HallEffect(PluginBase, Ui_HallEffect):
 
         plot_list = [['', Qt.red, self.get_current_value]]
         self.plot_widget = PlotWidget('Value', plot_list)
-        self.plot_widget.set_fixed_y_axis(0, 1, 1, 1)
+        self.plot_widget.set_fixed_y_scale(0, 1, 1, 1)
 
         self.combo_edge_type.activated.connect(self.edge_changed)
         self.spin_debounce.editingFinished.connect(self.debounce_changed)
