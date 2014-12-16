@@ -67,3 +67,7 @@ class ProgramWizardUpload(ProgramWizard):
             return QVariant(language)
         else:
             return ProgramWizard.get_field(self, name)
+
+    @property
+    def upload_successful(self):
+        return self.page(Constants.PAGE_UPLOAD).upload_successful

@@ -675,8 +675,9 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
 
         self.upload_files_wizard = ProgramWizardUpload(self, context, self.program)
+        self.upload_files_wizard.exec_()
 
-        if self.upload_files_wizard.exec_() == QDialog.Accepted:
+        if self.upload_files_wizard.upload_successful:
             self.widget_files.refresh_files()
 
         self.upload_files_wizard = None

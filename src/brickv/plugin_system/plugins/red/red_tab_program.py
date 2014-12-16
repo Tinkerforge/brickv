@@ -222,7 +222,9 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
 
         self.new_program_wizard = ProgramWizardNew(self, context)
 
-        if self.new_program_wizard.exec_() == QDialog.Accepted:
+        self.new_program_wizard.exec_()
+
+        if self.new_program_wizard.upload_successful:
             self.add_program_to_list(self.new_program_wizard.program)
             self.list_programs.item(self.list_programs.count() - 1).setSelected(True)
 

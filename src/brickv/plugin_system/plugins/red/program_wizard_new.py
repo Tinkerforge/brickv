@@ -134,7 +134,8 @@ class ProgramWizardNew(ProgramWizard):
 
     @property
     def program(self):
-        if self.hasVisitedPage(Constants.PAGE_UPLOAD):
-            return self.page(Constants.PAGE_UPLOAD).program
-        else:
-            return None
+        return self.page(Constants.PAGE_UPLOAD).program
+
+    @property
+    def upload_successful(self):
+        return self.page(Constants.PAGE_UPLOAD).upload_successful
