@@ -24,10 +24,11 @@ Boston, MA 02111-1307, USA.
 from PyQt4 import QtCore, Qt, QtGui
 from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOverview
 from brickv.plugin_system.plugins.red.api import *
-import json
 from operator import itemgetter
+import json
 import time
 import sys
+import zlib
 
 # constants
 REFRESH_TIME = 3000 # in milliseconds
@@ -78,9 +79,9 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.button_refresh.setText('Collecting data...')
         self.button_refresh.setDisabled(True)
         self.is_tab_on_focus = True
-        self.script_manager.execute_script('overview',
-                                           self.cb_state_changed,
-                                           ["0.1"])
+        self.script_manager.execute_script('overview', self.cb_state_changed,
+                                           ["0.1"], max_length=1024*1024,
+                                           decode_output_as_utf8=False)
         self.reset_tview_nic()
 
     def tab_off_focus(self):
@@ -109,31 +110,28 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
             self.refresh_timer.stop()
             self.button_refresh.setText('Collecting data...')
             self.button_refresh.setDisabled(True)
-            self.script_manager.execute_script('overview',
-                                               self.cb_state_changed)
+            self.script_manager.execute_script('overview', self.cb_state_changed,
+                                               max_length=1024*1024, decode_output_as_utf8=False)
         else:
             self.button_refresh.setDisabled(False)
             self.button_refresh.setText('Refresh in ' + str((REFRESH_TIME/REFRESH_TIMEOUT - self.refresh_counter)/2.0) + "...")
 
     def cb_state_changed(self, result):
-        #check if the tab is still on view or not
+        # check if the tab is still on view or not
         if not self.is_tab_on_focus:
             self.refresh_timer.stop()
             return
 
         self.refresh_counter = 0
         self.refresh_timer.start(REFRESH_TIMEOUT)
-        if result == None:
+
+        if result == None or result.exit_code != 0:
             return
 
         try:
-            csv_tokens = result.stdout.split('\n')
-            for i, t in enumerate(csv_tokens):
-                if t == "" and i < len(csv_tokens) - 1:
-                    return
+            data = json.loads(zlib.decompress(buffer(result.stdout)).decode('utf-8'))
 
-            _uptime = csv_tokens[0]
-            days, days_remainder = divmod(int(_uptime), 24 * 60 * 60)
+            days, days_remainder = divmod(int(data['uptime']), 24 * 60 * 60)
             hours, hours_remainder = divmod(days_remainder, 60 * 60)
             minutes, _ = divmod(hours_remainder, 60)
             uptime = ''
@@ -161,21 +159,21 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
             else:
                 uptime += ' minutes'
 
-            cpu_percent = csv_tokens[1]
-            cpu_percent_v = int(csv_tokens[1].split('.')[0])
+            cpu_percent = data['cpu_used']
+            cpu_percent_v = int(data['cpu_used'])
 
-            memory_used = self.bytes2human(int(csv_tokens[2]))
-            memory_total = self.bytes2human(int(csv_tokens[3]))
+            memory_used = self.bytes2human(int(data['mem_used']))
+            memory_total = self.bytes2human(int(data['mem_total']))
             memory_percent = str("%.1f" % ((float(memory_used) / float(memory_total)) * 100))
             memory_percent_v = int(memory_percent.split('.')[0])
 
-            storage_used = self.bytes2human(int(csv_tokens[4]))
-            storage_total = self.bytes2human(int(csv_tokens[5]))
+            storage_used = self.bytes2human(int(data['disk_used']))
+            storage_total = self.bytes2human(int(data['disk_total']))
             storage_percent = str("%.1f" % ((float(storage_used) / float(storage_total)) * 100))
             storage_percent_v = int(storage_percent.split('.')[0])
 
-            nic_data_dict = json.loads(csv_tokens[6])
-            processes_data_list = json.loads(csv_tokens[7])
+            nic_data_dict = data['ifaces']
+            processes_data_list = data['processes']
         except:
             # some parsing error due to malfromed or incomplete output occured.
             # ignore it and wait for the next update
@@ -206,7 +204,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         self.nic_item_model.removeRows(0, self.nic_item_model.rowCount())
 
         def _get_nic_transfer_rate(bytes_now, bytes_previous, delta_time):
-            return "%.1f" % float(((bytes_now - bytes_previous) / delta_time) / 1000)
+            return "%.1f" % float(((bytes_now - bytes_previous) / delta_time) / 1024)
 
         new_time = time.time()
         delta = new_time - self.nic_time
@@ -229,8 +227,8 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
                                                      delta)
 
                 self.nic_item_model.setItem(i, 0, Qt.QStandardItem(key))
-                self.nic_item_model.setItem(i, 1, Qt.QStandardItem(download_rate + " KB/s"))
-                self.nic_item_model.setItem(i, 2, Qt.QStandardItem(upload_rate + " KB/s"))
+                self.nic_item_model.setItem(i, 1, Qt.QStandardItem(download_rate + " KiB/s"))
+                self.nic_item_model.setItem(i, 2, Qt.QStandardItem(upload_rate + " KiB/s"))
 
             self.nic_previous_bytes[str(key)] = {'sent': nic_data_dict[key][0],
                                                  'received': nic_data_dict[key][1]}
@@ -252,14 +250,21 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
         processes_data_list_sorted = processes_data_list_sorted[:self.sbox_number_of_process.value()]
 
         for i, p in enumerate(processes_data_list_sorted):
-            _item_cmd = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['cmd']))
-            self.process_item_model.setItem(i, 0, _item_cmd)
+            name = unicode(processes_data_list_sorted[i]['name'])
+            cmdline = unicode(processes_data_list_sorted[i]['cmd'])
+
+            if len(cmdline) == 0:
+                cmdline = name
+
+            _item_name = Qt.QStandardItem(name)
+            _item_name.setToolTip(cmdline)
+            self.process_item_model.setItem(i, 0, _item_name)
 
             _item_pid = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['pid']))
             self.process_item_model.setItem(i, 1, _item_pid)
 
-            _item_usr = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['usr']))
-            self.process_item_model.setItem(i, 2, _item_usr)
+            _item_user = Qt.QStandardItem(unicode(processes_data_list_sorted[i]['user']))
+            self.process_item_model.setItem(i, 2, _item_user)
 
             cpu = processes_data_list_sorted[i]['cpu']
             _item_cpu = Qt.QStandardItem(unicode(cpu / 10.0)+'%')
@@ -314,7 +319,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
 
     def setup_tview_process(self):
         self.process_item_model = Qt.QStandardItemModel(0, 5, self)
-        self.process_item_model.setHorizontalHeaderItem(0, Qt.QStandardItem("Command"))
+        self.process_item_model.setHorizontalHeaderItem(0, Qt.QStandardItem("Name"))
         self.process_item_model.setHorizontalHeaderItem(1, Qt.QStandardItem("PID"))
         self.process_item_model.setHorizontalHeaderItem(2, Qt.QStandardItem("User"))
         self.process_item_model.setHorizontalHeaderItem(3, Qt.QStandardItem("CPU"))
