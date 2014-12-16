@@ -346,6 +346,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.progress_file.setRange(0, self.source_stat.st_size)
         self.progress_file.setFormat(get_file_display_size(0) + ' of ' + self.source_display_size)
         self.progress_file.setValue(0)
+        self.progress_file_next_update = 0
 
         self.target_path = posixpath.join(self.root_directory, 'bin', self.upload.target)
 
