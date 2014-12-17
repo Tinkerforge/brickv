@@ -71,10 +71,10 @@ class DistanceIR(PluginBase):
         self.analog_label = AnalogLabel('Analog value: ')
         self.sample_layout = QHBoxLayout()
         self.sample_label = QLabel('Sample Points:')
-        self.sample_edit = QLineEdit();
-        self.sample_file = QPushButton("File...");
-        self.sample_save = QPushButton("Save");
-        
+        self.sample_edit = QLineEdit()
+        self.sample_file = QPushButton("File...")
+        self.sample_save = QPushButton("Save")
+
         self.sample_file.clicked.connect(self.sample_file_clicked)
         self.sample_save.clicked.connect(self.sample_save_clicked)
 

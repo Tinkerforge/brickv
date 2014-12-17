@@ -44,11 +44,11 @@ class ReflectivityFrame(QFrame):
         self.reflectivity = 0
         self.setMinimumSize(self.SIZE_X, self.SIZE_Y)
         self.setMaximumSize(self.SIZE_X, self.SIZE_Y)
-        
-        self.gradient = QLinearGradient(0.0, 0.0, 0.0, self.SIZE_Y);
-        self.gradient.setColorAt(0, Qt.white);
-        self.gradient.setColorAt(1, Qt.black);
-        
+
+        self.gradient = QLinearGradient(0.0, 0.0, 0.0, self.SIZE_Y)
+        self.gradient.setColorAt(0, Qt.white)
+        self.gradient.setColorAt(1, Qt.black)
+
     def set_reflectivity(self, r):
         self.reflectivity = self.SIZE_Y - r*self.SIZE_Y/4095.0
         self.repaint()

@@ -67,7 +67,7 @@ class LCD16x2(PluginBase):
         self.line_pos_layout.addStretch()
 
         self.text_label = QLabel('Text: ')
-        self.text_edit = QLineEdit();
+        self.text_edit = QLineEdit()
         self.text_edit.setMaxLength(LCD16x2.MAX_POSITION)
         self.text_button = QPushButton('Send Text')
         self.text_layout = QHBoxLayout()
