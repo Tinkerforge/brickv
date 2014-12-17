@@ -162,7 +162,7 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
         except REDError as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                  u'Could not update arguments and environment of program [{0}]:\n\n{1}'
-                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
+                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))
             return
 
         self.set_last_edit_timestamp()

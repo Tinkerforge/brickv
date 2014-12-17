@@ -54,7 +54,7 @@ class ProgramPage(QWizardPage):
         except REDError as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                  u'Could not update last edit timestamp of program [{0}]:\n\n{1}'
-                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
+                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))
 
     # to be used on language configuration pages
     def get_executable_versions(self, executable_name, callback):
@@ -128,7 +128,7 @@ class ProgramPage(QWizardPage):
         except REDError as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                  u'Could not update command of program [{0}]:\n\n{1}'
-                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
+                                 .format(program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))
             return False
 
         # custom options
@@ -143,7 +143,7 @@ class ProgramPage(QWizardPage):
             except REDError as e:
                 QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                      u'Could not update custom options of program [{0}]:\n\n{1}'
-                                     .format(program.cast_custom_option_value('name', unicode, '<unknown>')))
+                                     .format(program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))
                 return False
 
         self.set_last_edit_timestamp()
