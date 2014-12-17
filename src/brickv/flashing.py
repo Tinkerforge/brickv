@@ -58,7 +58,7 @@ def error_to_name(e):
     else:
         return e.message
 
-class ProgressWrapper:
+class ProgressWrapper(object):
     def __init__(self, progress):
         self.progress = progress
 

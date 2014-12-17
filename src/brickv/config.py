@@ -5,7 +5,7 @@
 import sys
 from brickv.config_common import *
 
-class HostInfo:
+class HostInfo(object):
     host = DEFAULT_HOST
     port = DEFAULT_PORT
     use_authentication = DEFAULT_USE_AUTHENTICATION

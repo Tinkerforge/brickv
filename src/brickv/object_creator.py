@@ -32,15 +32,15 @@ def create_object_in_qt_main_thread(cls, data):
     oc = ObjectCreator(cls, data)
     QtCore.QCoreApplication.instance().object_creator_signal.emit(oc)
     oc.semaphore.acquire()
-    return oc.object
+    return oc.obj
 
-class ObjectCreator:
+class ObjectCreator(object):
     def __init__(self, cls, data):
-        self.cls = cls 
+        self.cls = cls
         self.data = data
         self.semaphore = threading.Semaphore(0)
-        self.object = None
-        
+        self.obj = None
+
     def create(self):
-        self.object = self.cls(*self.data)
+        self.obj = self.cls(*self.data)
         self.semaphore.release()

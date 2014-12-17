@@ -53,7 +53,7 @@ class ScriptData(QtCore.QObject):
         self.abort                     = False
         self.execute_as_user           = False
 
-class ScriptManager:
+class ScriptManager(object):
     ScriptResult = namedtuple('ScriptResult', 'stdout stderr exit_code')
 
     @staticmethod

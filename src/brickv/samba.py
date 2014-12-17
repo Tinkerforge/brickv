@@ -141,7 +141,7 @@ class SAMBAException(Exception):
 class SAMBARebootError(SAMBAException):
     pass
 
-class SAMBA:
+class SAMBA(object):
     def __init__(self, port_name, progress=None):
         self.current_mode = None
         self.progress = progress

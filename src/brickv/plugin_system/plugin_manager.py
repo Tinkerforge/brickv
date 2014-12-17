@@ -27,7 +27,7 @@ from brickv.plugin_system.unknown import Unknown
 from brickv.plugin_system.plugins import device_classes
 import traceback
 
-class PluginManager:
+class PluginManager(object):
     def __init__(self):
         self.plugins = device_classes
 
