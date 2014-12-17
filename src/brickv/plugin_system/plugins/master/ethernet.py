@@ -26,8 +26,8 @@ from PyQt4.QtGui import QWidget, QMessageBox, QSpinBox, QRegExpValidator, QLabel
 from PyQt4.QtCore import QRegExp, QString, Qt
 
 from brickv.plugin_system.plugins.master.ui_ethernet import Ui_Ethernet
-
 from brickv.async_call import async_call
+from brickv.utils import get_main_window
 
 class SpinBoxHex(QSpinBox):
     def __init__(self, parent=None):
@@ -358,7 +358,7 @@ class Ethernet(QWidget, Ui_Ethernet):
             async_call(self.master.get_ethernet_status, None, self.get_ethernet_status_async, self.parent.increase_error_count)
             
     def popup_ok(self, message='Successfully saved configuration.\nNew configuration will be used after reset of the Master Brick.'):
-        QMessageBox.information(self, "Configuration", message, QMessageBox.Ok)
+        QMessageBox.information(get_main_window(), "Configuration", message, QMessageBox.Ok)
 
     def popup_fail(self, message='Could not save configuration'):
-        QMessageBox.critical(self, "Configuration", message, QMessageBox.Ok)
+        QMessageBox.critical(get_main_window(), "Configuration", message, QMessageBox.Ok)

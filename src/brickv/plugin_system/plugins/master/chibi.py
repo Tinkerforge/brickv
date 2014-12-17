@@ -27,8 +27,8 @@ from brickv.bindings.ip_connection import IPConnection
 from PyQt4.QtGui import QWidget, QMessageBox
 
 from brickv.plugin_system.plugins.master.ui_chibi import Ui_Chibi
-
 from brickv.async_call import async_call
+from brickv.utils import get_main_window
 from brickv import infos
 
 class Chibi(QWidget, Ui_Chibi):
@@ -125,10 +125,10 @@ class Chibi(QWidget, Ui_Chibi):
         self.new_max_count()
 
     def popup_ok(self):
-        QMessageBox.information(self, "Configuration", 'Successfully saved configuration.\nNew configuration will be used after reset of the Master Brick.', QMessageBox.Ok)
+        QMessageBox.information(get_main_window(), "Configuration", 'Successfully saved configuration.\nNew configuration will be used after reset of the Master Brick.', QMessageBox.Ok)
 
     def popup_fail(self):
-        QMessageBox.critical(self, "Configuration", "Could not save configuration.", QMessageBox.Ok)
+        QMessageBox.critical(get_main_window(), "Configuration", "Could not save configuration.", QMessageBox.Ok)
 
     def new_max_count(self):
         channel = int(self.chibi_channel.currentText())

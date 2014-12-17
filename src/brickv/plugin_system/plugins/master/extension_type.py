@@ -26,8 +26,8 @@ from PyQt4.QtGui import QFrame, QMessageBox
 from PyQt4.QtCore import Qt
 
 from brickv.plugin_system.plugins.master.ui_extension_type import Ui_extension_type
-
 from brickv.async_call import async_call
+from brickv.utils import get_main_window
 
 class ExtensionType(QFrame, Ui_extension_type):
     def __init__(self, parent):
@@ -45,10 +45,10 @@ class ExtensionType(QFrame, Ui_extension_type):
         self.index_changed(0)
 
     def popup_ok(self):
-        QMessageBox.information(self, "Extension Type", "Successfully saved extension type", QMessageBox.Ok)
+        QMessageBox.information(get_main_window(), "Extension Type", "Successfully saved extension type", QMessageBox.Ok)
 
     def popup_fail(self):
-        QMessageBox.critical(self, "Extension Type", "Could not save extension type", QMessageBox.Ok)
+        QMessageBox.critical(get_main_window(), "Extension Type", "Could not save extension type", QMessageBox.Ok)
 
     def index_changed_async(self, ext):
         if ext < 0 or ext > (self.type_box.count() - 1):

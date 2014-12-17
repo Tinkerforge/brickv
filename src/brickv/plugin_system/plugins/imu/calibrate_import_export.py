@@ -27,6 +27,7 @@ from PyQt4.QtCore import Qt
 
 from brickv.plugin_system.plugins.imu.ui_calibrate_import_export import Ui_calibrate_import_export
 from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
+from brickv.utils import get_main_window
 
 class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
     def __init__(self, parent):
@@ -48,10 +49,10 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
         pass
 
     def popup_ok(self, title, message):
-        QMessageBox.information(self, title, message, QMessageBox.Ok)
+        QMessageBox.information(get_main_window(), title, message, QMessageBox.Ok)
 
     def popup_fail(self, title, message):
-        QMessageBox.critical(self, title, message, QMessageBox.Ok)
+        QMessageBox.critical(get_main_window(), title, message, QMessageBox.Ok)
 
     def create_progress_bar(self, title):
         progress = QProgressDialog(self)

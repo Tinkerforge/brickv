@@ -27,6 +27,7 @@ from brickv.plot_widget import PlotWidget
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
 from brickv.async_call import async_call
+from brickv.utils import get_main_window
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QFileDialog, QApplication, QPolygonF, QMessageBox
 from PyQt4.QtCore import pyqtSignal, Qt, QPointF
@@ -199,7 +200,7 @@ class DistanceIR(PluginBase):
                     continue
 
                 if ':' not in line:
-                    QMessageBox.critical(self, "Sample points",
+                    QMessageBox.critical(get_main_window(), "Sample points",
                                          "Sample points file is malformed (error code 1)",
                                          QMessageBox.Ok)
                     return
@@ -207,7 +208,7 @@ class DistanceIR(PluginBase):
                 s = line.split(':')
 
                 if len(s) != 2:
-                    QMessageBox.critical(self, "Sample points",
+                    QMessageBox.critical(get_main_window(), "Sample points",
                                          "Sample points file is malformed (error code 2)",
                                          QMessageBox.Ok)
                     return
@@ -216,7 +217,7 @@ class DistanceIR(PluginBase):
                     x.append(int(s[1]))
                     y.append(int(s[0]))
                 except:
-                    QMessageBox.critical(self, "Sample points",
+                    QMessageBox.critical(get_main_window(), "Sample points",
                                          "Sample points file is malformed (error code 3)",
                                          QMessageBox.Ok)
                     return

@@ -25,14 +25,14 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtGui import QWidget, QMessageBox, QFileDialog, QProgressDialog, QLineEdit
 from PyQt4.QtCore import Qt
 
+from brickv.plugin_system.plugins.master.ui_wifi import Ui_Wifi
+from brickv.plugin_system.plugins.master.wifi_status import WifiStatus
+from brickv.async_call import async_call
+from brickv.utils import get_main_window
+
 import os
 import time
 import sys
-
-from brickv.plugin_system.plugins.master.ui_wifi import Ui_Wifi
-
-from brickv.plugin_system.plugins.master.wifi_status import WifiStatus
-from brickv.async_call import async_call
 
 class Wifi(QWidget, Ui_Wifi):
     def __init__(self, parent):
@@ -462,10 +462,10 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_encryption.setCurrentIndex(index)
 
     def popup_ok(self, message='Successfully saved configuration.\nNew configuration will be used after reset of the Master Brick.'):
-        QMessageBox.information(self, 'Configuration', message, QMessageBox.Ok)
+        QMessageBox.information(get_main_window(), 'Configuration', message, QMessageBox.Ok)
 
     def popup_fail(self, message='Could not save configuration.'):
-        QMessageBox.critical(self, 'Configuration', message, QMessageBox.Ok)
+        QMessageBox.critical(get_main_window(), 'Configuration', message, QMessageBox.Ok)
 
     def show_status_clicked(self):
         if self.wifi_status is None:
@@ -490,7 +490,7 @@ class Wifi(QWidget, Ui_Wifi):
                 certificate_file = map(ord, file(cert_path, 'rb').read()) # Convert certificate to list of bytes
                 certificate_length = len(certificate_file)
                 if certificate_length > 6*1024:
-                    QMessageBox.critical(self, "Save", "Certificate too big (max size: 6kB).", QMessageBox.Ok)
+                    QMessageBox.critical(get_main_window(), "Save", "Certificate too big (max size: 6kB).", QMessageBox.Ok)
                     return []
 
                 return certificate_file
