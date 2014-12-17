@@ -35,10 +35,8 @@ from brickv import infos
 import sys
 import os
 import urllib2
-import re
 import time
 import struct
-from xml.etree.ElementTree import fromstring as etreefromstring
 from serial import SerialException
 
 LATEST_VERSIONS_URL = 'http://download.tinkerforge.com/latest_versions.txt'

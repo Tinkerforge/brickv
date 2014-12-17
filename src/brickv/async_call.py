@@ -26,7 +26,6 @@ from PyQt4.QtGui import QApplication
 from PyQt4.QtCore import QThread, QEvent
 from threading import Lock
 import logging
-import traceback
 from brickv.bindings import ip_connection
 
 try:

@@ -28,7 +28,6 @@ from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget
 from brickv.plugin_system.plugins.hall_effect.ui_hall_effect import Ui_HallEffect
 
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
 import PyQt4.Qwt5 as Qwt
 

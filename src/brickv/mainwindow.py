@@ -22,12 +22,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import pyqtSignal, QVariant, Qt, QTimer, QEvent
+from PyQt4.QtCore import pyqtSignal, Qt, QTimer, QEvent
 from PyQt4.QtGui import QApplication, QMainWindow, QMessageBox, \
-                        QPushButton, QWidget, QHBoxLayout, QVBoxLayout, \
+                        QPushButton, QHBoxLayout, QVBoxLayout, \
                         QLabel, QFrame, QSpacerItem, QSizePolicy, \
                         QStandardItemModel, QStandardItem, QToolButton, \
-                        QLineEdit, QCursor, QIcon, QMenu, QToolButton
+                        QLineEdit, QCursor, QMenu, QToolButton
 from brickv.ui_mainwindow import Ui_MainWindow
 from brickv.plugin_system.plugin_manager import PluginManager
 from brickv.bindings.ip_connection import IPConnection
@@ -40,7 +40,6 @@ from brickv import config
 from brickv import infos
 from brickv.tab_window import TabWindow
 
-import os
 import signal
 import sys
 import time

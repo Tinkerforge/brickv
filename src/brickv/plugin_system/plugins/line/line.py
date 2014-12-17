@@ -27,7 +27,7 @@ from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_line import BrickletLine
 from brickv.async_call import async_call
 
-from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout, QFrame, QColor, QPainter, QBrush, QLinearGradient
+from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout, QFrame, QPainter, QBrush, QLinearGradient
 from PyQt4.QtCore import pyqtSignal, Qt
 
 class ReflectivityLabel(QLabel):
