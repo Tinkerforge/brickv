@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import QVariant
+from PyQt4.QtGui import QMessageBox
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
