@@ -212,29 +212,20 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
                     def expand_async(data):
                         try:
-                            main_classes1 = json.loads(zlib.decompress(buffer(data)).decode('utf-8'))
+                            main_classes = json.loads(zlib.decompress(buffer(data)).decode('utf-8'))
 
-                            if not isinstance(main_classes1, dict):
-                                main_classes1 = {}
+                            if not isinstance(main_classes, dict):
+                                main_classes = {}
                         except:
-                            main_classes1 = {}
+                            main_classes = {}
 
-                        main_classes2 = {}
-
-                        for filename, classes in main_classes1.items():
-                            for cls in classes:
-                                if cls in main_classes2:
-                                    main_classes2[cls].append(filename)
-                                else:
-                                    main_classes2[cls] = [filename]
-
-                        return main_classes2
+                        return main_classes
 
                     def cb_expand_success(main_classes):
                         self.combo_main_class.clear()
 
-                        for main_class in sorted(main_classes.keys()):
-                            self.combo_main_class.addItem(main_class, QVariant(main_classes[main_class]))
+                        for cls in sorted(main_classes.keys()):
+                            self.combo_main_class.addItem(cls, QVariant(main_classes[cls]))
 
                         self.combo_main_class_checker.set_current_text(program.cast_custom_option_value('java.main_class', unicode, ''))
                         done()

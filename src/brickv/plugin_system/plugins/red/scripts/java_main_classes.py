@@ -20,6 +20,8 @@ base = sys.argv[1]
 
 try:
     for root, directories, files in os.walk(base):
+        relative_root = os.path.relpath(root, base)
+
         for filename in files:
             if filename.endswith('.jar'):
                 absolute = os.path.join(root, filename)
@@ -29,19 +31,18 @@ try:
                 except:
                     continue
 
-                if len(classes) > 0:
-                    result[absolute] = classes
+                relative = os.path.join(relative_root, filename)
+
+                for cls in classes:
+                    result.setdefault(cls, []).append(relative)
             elif filename.endswith('.class'):
                 try:
                     classes = get_class_file_main_classes(os.path.join(root, filename))
                 except:
                     continue
-                
-                if len(classes) > 0:
-                    if root in result:
-                        result[root].extend(classes)
-                    else:
-                        result[root] = classes
+
+                for cls in classes:
+                    result.setdefault(cls, []).append(relative_root)
 except Exception as e:
     sys.stderr.write(unicode(e).encode('utf-8'))
     exit(3)
