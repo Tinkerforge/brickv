@@ -22,11 +22,13 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import QVariant, QTimer
+from PyQt4.QtGui import QInputDialog, QDialog, QMessageBox
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_java import Ui_ProgramPageJava
 from brickv.plugin_system.plugins.red.java_utils import get_jar_file_main_classes, get_class_file_main_classes
 from brickv.async_call import async_call
+from brickv.utils import get_main_window
 import posixpath
 import json
 import zlib
@@ -74,7 +76,9 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
         self.setupUi(self)
 
-        self.language = Constants.LANGUAGE_JAVA
+        self.language              = Constants.LANGUAGE_JAVA
+        self.bin_directory         = '/tmp'
+        self.class_path_candidates = []
 
         self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
@@ -87,6 +91,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_start_mode.currentIndexChanged.connect(self.update_ui_state)
         self.combo_start_mode.currentIndexChanged.connect(self.completeChanged.emit)
         self.check_show_class_path.stateChanged.connect(self.update_ui_state)
+        self.button_add_class_path_entry.clicked.connect(self.add_class_path_entry)
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
         self.label_main_class_error.setVisible(False)
         self.label_spacer.setText('')
@@ -106,7 +111,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.class_path_list_editor           = ListWidgetEditor(self.label_class_path,
                                                                  self.list_class_path,
                                                                  self.label_class_path_help,
-                                                                 self.button_add_class_path_entry,
+                                                                 None,
                                                                  self.button_remove_class_path_entry,
                                                                  self.button_up_class_path_entry,
                                                                  self.button_down_class_path_entry,
@@ -134,31 +139,40 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
+        # if a program exists then this page is used in an edit wizard
         program = self.wizard().program
 
-        # if a program exists then this page is used in an edit wizard
         if program != None:
-            bin_directory = posixpath.join(unicode(program.root_directory), 'bin')
+            self.bin_directory = posixpath.join(unicode(program.root_directory), 'bin')
         else:
-            identifier    = unicode(self.get_field('identifier').toString())
-            bin_directory = posixpath.join('/', 'home', 'tf', 'programs', identifier, 'bin')
+            identifier         = unicode(self.get_field('identifier').toString())
+            self.bin_directory = posixpath.join('/', 'home', 'tf', 'programs', identifier, 'bin')
 
-        jar_filenames = []
+        # collect class path entries
+        self.class_path_candidates = ['.']
 
         for filename in sorted(self.wizard().available_files):
-            if filename.endswith('.jar'):
-                jar_filenames.append(posixpath.join(bin_directory, filename))
+            directroy = posixpath.split(filename)[0]
 
-        if program == None:
-            for jar_filename in jar_filenames:
-                self.class_path_list_editor.add_item(jar_filename)
+            if len(directroy) > 0 and directroy not in self.class_path_candidates:
+                self.class_path_candidates.append(directroy)
 
-        self.class_path_list_editor.set_add_menu_items(['/usr/tinkerforge/bindings/java/Tinkerforge.jar'] + jar_filenames,
-                                                       '<new class path entry>')
+            if filename.endswith('.class') or filename.endswith('.properties'):
+                if program == None:
+                    self.class_path_list_editor.add_item(directroy)
+            elif filename.endswith('.jar'):
+                self.class_path_candidates.append(filename)
+
+                if program == None:
+                    self.class_path_list_editor.add_item(filename)
+
+        self.class_path_list_editor.add_item('/usr/tinkerforge/bindings/java/Tinkerforge.jar')
+        self.class_path_candidates.append('/usr/tinkerforge/bindings/java/Tinkerforge.jar')
 
         self.combo_main_class.clear()
         self.combo_main_class.clearEditText()
 
+        # collect main classes
         if program != None:
             self.combo_main_class.setEnabled(False)
 
@@ -239,7 +253,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
                 sd_ref[0] = self.wizard().script_manager.execute_script('java_main_classes',
                                                                         lambda result: cb_java_main_classes(sd_ref, result),
-                                                                        [bin_directory], max_length=1024*1024,
+                                                                        [self.bin_directory], max_length=1024*1024,
                                                                         decode_output_as_utf8=False)
 
             # need to decouple this with a timer, otherwise it's executed at
@@ -354,12 +368,36 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.label_main_class_help.setVisible(start_mode_main_class)
         self.combo_jar_file_selector.set_visible(start_mode_jar_file)
         self.class_path_list_editor.set_visible(show_class_path)
+        self.button_add_class_path_entry.setVisible(show_class_path)
         self.combo_working_directory_selector.set_visible(show_advanced_options)
         self.option_list_editor.set_visible(show_advanced_options)
         self.label_spacer.setVisible(not show_class_path and not show_advanced_options)
 
         self.class_path_list_editor.update_ui_state()
         self.option_list_editor.update_ui_state()
+
+    def add_class_path_entry(self):
+        dialog = ExpandingInputDialog(self)
+        dialog.setModal(True)
+        dialog.setWindowTitle('Add Class Path Entry')
+        dialog.setLabelText('Enter/Choose new class path entry:')
+        dialog.setOkButtonText('Add')
+        dialog.setComboBoxItems(self.class_path_candidates)
+        dialog.setComboBoxEditable(True)
+        dialog.setTextValue('')
+
+        if dialog.exec_() != QDialog.Accepted:
+            return
+
+        entry = unicode(dialog.textValue())
+
+        if len(entry) == 0:
+            QMessageBox.critical(get_main_window(), 'Add Class Path Entry Error',
+                                 'A valid class path entry cannot be empty.',
+                                 QMessageBox.Ok)
+            return
+
+        self.class_path_list_editor.add_item(entry, select_item=True)
 
     def get_executable(self):
         return unicode(self.combo_version.itemData(self.get_field('java.version').toInt()[0]).toString())
@@ -384,7 +422,15 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         class_path_entries = self.class_path_list_editor.get_items()
 
         if len(class_path_entries) > 0:
-            arguments += ['-cp', ':'.join(class_path_entries)]
+            absolute_entries = []
+
+            for filename in class_path_entries:
+                if not filename.startswith('/'):
+                    absolute_entries.append(posixpath.join(self.bin_directory, filename))
+                else:
+                    absolute_entries.append(filename)
+
+            arguments += ['-cp', ':'.join(absolute_entries)]
 
         if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS:
             arguments.append(unicode(self.get_field('java.main_class').toString()))

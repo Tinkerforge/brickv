@@ -631,10 +631,12 @@ class ListWidgetEditor:
         self.button_down_item   = button_down_item
         self.new_item_text      = new_item_text
         self.new_item_counter   = 1
-        self.menu_add_items     = None
 
         self.list_items.itemSelectionChanged.connect(self.update_ui_state)
-        self.button_add_item.clicked.connect(self.add_new_item)
+
+        if self.button_add_item != None:
+            self.button_add_item.clicked.connect(self.add_new_item)
+
         self.button_remove_item.clicked.connect(self.remove_selected_item)
         self.button_up_item.clicked.connect(self.up_selected_item)
         self.button_down_item.clicked.connect(self.down_selected_item)
@@ -661,27 +663,13 @@ class ListWidgetEditor:
         self.label_items.setVisible(visible)
         self.list_items.setVisible(visible)
         self.label_items_help.setVisible(visible)
-        self.button_add_item.setVisible(visible)
+
+        if self.button_add_item != None:
+            self.button_add_item.setVisible(visible)
+
         self.button_remove_item.setVisible(visible)
         self.button_up_item.setVisible(visible)
         self.button_down_item.setVisible(visible)
-
-    def set_add_menu_items(self, items, empty_item=None):
-        if len(items) > 0:
-            menu_add_items = QMenu()
-
-            if empty_item != None:
-                menu_add_items.addAction(empty_item).triggered.connect(functools.partial(self.add_item, empty_item, edit_item=True))
-                menu_add_items.addSeparator()
-
-            for item in items:
-                menu_add_items.addAction(item).triggered.connect(functools.partial(self.add_item, item, select_item=True))
-
-            self.menu_add_items = menu_add_items
-            self.button_add_item.setMenu(menu_add_items)
-        else:
-            self.button_add_item.setMenu(None)
-            self.menu_add_items = None
 
     def add_item(self, text, edit_item=False, select_item=False):
         item = QListWidgetItem(text)
