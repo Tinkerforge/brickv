@@ -403,7 +403,27 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         return unicode(self.combo_version.itemData(self.get_field('java.version').toInt()[0]).toString())
 
     def get_html_summary(self):
-        return 'FIXME<br/>'
+        version           = self.get_field('java.version').toInt()[0]
+        start_mode        = self.get_field('java.start_mode').toInt()[0]
+        main_class        = self.get_field('java.main_class').toString()
+        jar_file          = self.get_field('java.jar_file').toString()
+        working_directory = self.get_field('java.working_directory').toString()
+        class_path        = ':'.join(self.class_path_list_editor.get_items())
+        options           = ' '.join(self.option_list_editor.get_items())
+
+        html  = u'Java Version: {0}<br/>'.format(Qt.escape(self.combo_version.itemText(version)))
+        html += u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.java_start_mode_display_names[start_mode]))
+
+        if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS:
+            html += u'Main Class: {0}<br/>'.format(Qt.escape(main_class))
+        elif start_mode == Constants.JAVA_START_MODE_JAR_FILE:
+            html += u'JAR File: {0}<br/>'.format(Qt.escape(jar_file))
+
+        html += u'Class Path: {0}<br/>'.format(Qt.escape(class_path))
+        html += u'Working Directory: {0}<br/>'.format(Qt.escape(working_directory))
+        html += u'JVM Options: {0}<br/>'.format(Qt.escape(options))
+
+        return html
 
     def get_custom_options(self):
         return {
