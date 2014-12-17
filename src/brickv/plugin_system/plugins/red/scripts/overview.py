@@ -5,6 +5,7 @@ import psutil
 import sys
 import json
 import zlib
+import os
 
 result = {}
 
@@ -24,7 +25,11 @@ else:
     result['cpu_used'] = psutil.cpu_percent(float(sys.argv[1]))
 
 all_process_info = []
+own_pid = os.getpid()
 for p in psutil.process_iter():
+    if p.pid == own_pid:
+        continue
+
     process_dict = {'cmd': ' '.join(p.cmdline),
                     'name': p.name,
                     'pid': p.pid,
