@@ -1,6 +1,6 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
-brickv (Brick Viewer) 
+brickv (Brick Viewer)
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
 Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
@@ -8,8 +8,8 @@ Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
 advanced.py: GUI for advanced features
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -41,7 +41,7 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
         self.button_calibrate.setEnabled(False)
 
         self.brick_infos = []
-        
+
         self.parent = parent
         self.button_calibrate.clicked.connect(self.calibrate_clicked)
         self.combo_brick.currentIndexChanged.connect(self.brick_changed)
@@ -67,7 +67,7 @@ class AdvancedWindow(QFrame, Ui_widget_advanced):
 
         self.parent.ipcon.adc_calibrate(self.current_device(),
                                         port_names[self.combo_port.currentIndex()])
-        
+
         self.update_calibration()
 
     def current_device(self):

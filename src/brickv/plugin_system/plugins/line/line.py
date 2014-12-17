@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Line Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 line.py: Line Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -29,17 +29,17 @@ from brickv.async_call import async_call
 
 from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout, QFrame, QColor, QPainter, QBrush, QLinearGradient
 from PyQt4.QtCore import pyqtSignal, Qt
-    
+
 class ReflectivityLabel(QLabel):
     def setText(self, text):
         text = "Reflectivity: " + text
         super(ReflectivityLabel, self).setText(text)
-        
+
 class ReflectivityFrame(QFrame):
     SIZE_X = 400
     SIZE_Y = 100
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         QFrame.__init__(self, parent)
         self.reflectivity = 0
         self.setMinimumSize(self.SIZE_X, self.SIZE_Y)
@@ -52,7 +52,7 @@ class ReflectivityFrame(QFrame):
     def set_reflectivity(self, r):
         self.reflectivity = self.SIZE_Y - r*self.SIZE_Y/4095.0
         self.repaint()
-        
+
     def paintEvent(self, event):
         qp = QPainter()
         qp.begin(self)
@@ -63,32 +63,32 @@ class ReflectivityFrame(QFrame):
         qp.setPen(Qt.red)
         qp.drawLine(0, self.reflectivity, self.SIZE_X, self.reflectivity)
         qp.end()
-    
+
 class Line(PluginBase):
     qtcb_reflectivity = pyqtSignal(int)
-    
+
     def __init__(self, *args):
         PluginBase.__init__(self, 'Line Bricklet', BrickletLine, *args)
 
         self.line = self.device
-        
+
         self.qtcb_reflectivity.connect(self.cb_reflectivity)
         self.line.register_callback(self.line.CALLBACK_REFLECTIVITY,
-                                    self.qtcb_reflectivity.emit) 
-        
+                                    self.qtcb_reflectivity.emit)
+
         self.reflectivity_label = ReflectivityLabel()
         self.rf = ReflectivityFrame()
-        
+
         self.current_value = None
-        
+
         plot_list = [['', Qt.red, self.get_current_value]]
         self.plot_widget = PlotWidget('Reflectivity', plot_list)
-        
+
         layout_h = QHBoxLayout()
         layout_h.addStretch()
         layout_h.addWidget(self.reflectivity_label)
         layout_h.addStretch()
-        
+
         layout_h2 = QHBoxLayout()
         layout_h2.addStretch()
         layout_h2.addWidget(self.rf)
@@ -98,24 +98,24 @@ class Line(PluginBase):
         layout.addLayout(layout_h)
         layout.addLayout(layout_h2)
         layout.addWidget(self.plot_widget)
-        
+
     def cb_reflectivity(self, reflectivity):
         self.current_value = reflectivity
         self.rf.set_reflectivity(reflectivity)
         self.reflectivity_label.setText(str(reflectivity))
-        
+
     def get_current_value(self):
         return self.current_value
 
     def start(self):
         async_call(self.line.get_reflectivity, None, self.cb_reflectivity, self.increase_error_count)
         async_call(self.line.set_reflectivity_callback_period, 100, None, self.increase_error_count)
-        
+
         self.plot_widget.stop = False
-        
+
     def stop(self):
         async_call(self.line.set_reflectivity_callback_period, 0, None, self.increase_error_count)
-        
+
         self.plot_widget.stop = True
 
     def destroy(self):

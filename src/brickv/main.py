@@ -1,15 +1,15 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
-brickv (Brick Viewer) 
+brickv (Brick Viewer)
 Copyright (C) 2013-2014 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2009-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 main.py: Entry file for Brick Viewer
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,

@@ -272,48 +272,48 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             return
 
         if result and result.stdout and not result.stderr and result.exit_code == 0:
-                self.network_all_data['status'] = json.loads(result.stdout)
+            self.network_all_data['status'] = json.loads(result.stdout)
 
-                # Populating the current network status section and hostname
-                if self.network_all_data['status'] is not None:
-                    self.label_net_hostname.setText\
-                        (self.network_all_data['status']['cstat_hostname'])
+            # Populating the current network status section and hostname
+            if self.network_all_data['status'] is not None:
+                self.label_net_hostname.setText\
+                    (self.network_all_data['status']['cstat_hostname'])
 
-                    self.label_net_gen_cstat_status.setText(unicode(self.network_all_data['status']['cstat_status']))
+                self.label_net_gen_cstat_status.setText(unicode(self.network_all_data['status']['cstat_status']))
 
-                    if self.network_all_data['status']['cstat_intf_active']['name'] is not None:
-                        if self.network_all_data['status']['cstat_intf_active']['type'] == INTERFACE_TYPE_WIRELESS:
-                            intf_stat_str = unicode(self.network_all_data['status']['cstat_intf_active']['name'])+\
-                                            ' : Wireless'
-                            self.label_net_gen_cstat_intf.setText(intf_stat_str)
-                        else:
-                            intf_stat_str = unicode(self.network_all_data['status']['cstat_intf_active']['name'])+\
-                                            ' : Wired'
-                            self.label_net_gen_cstat_intf.setText(intf_stat_str)
-
-                        self.label_net_gen_cstat_ip.setText(self.network_all_data['status']['cstat_intf_active']['ip'])
-                        self.label_net_gen_cstat_mask.setText(self.network_all_data['status']['cstat_intf_active']['mask'])
+                if self.network_all_data['status']['cstat_intf_active']['name'] is not None:
+                    if self.network_all_data['status']['cstat_intf_active']['type'] == INTERFACE_TYPE_WIRELESS:
+                        intf_stat_str = unicode(self.network_all_data['status']['cstat_intf_active']['name'])+\
+                                        ' : Wireless'
+                        self.label_net_gen_cstat_intf.setText(intf_stat_str)
                     else:
-                        self.label_net_gen_cstat_intf.setText('-')
-                        self.label_net_gen_cstat_ip.setText('-')
-                        self.label_net_gen_cstat_mask.setText('-')
+                        intf_stat_str = unicode(self.network_all_data['status']['cstat_intf_active']['name'])+\
+                                        ' : Wired'
+                        self.label_net_gen_cstat_intf.setText(intf_stat_str)
 
-                    if self.network_all_data['status']['cstat_gateway'] is not None:
-                        self.label_net_gen_cstat_gateway.setText(self.network_all_data['status']['cstat_gateway'])
-                    else:
-                        self.label_net_gen_cstat_gateway.setText('-')
-
-                    if self.network_all_data['status']['cstat_dns'] is not None:
-                        self.label_net_gen_cstat_dns.setText(self.network_all_data['status']['cstat_dns'].strip())
-                    else:
-                        self.label_net_gen_cstat_dns.setText('-')
+                    self.label_net_gen_cstat_ip.setText(self.network_all_data['status']['cstat_intf_active']['ip'])
+                    self.label_net_gen_cstat_mask.setText(self.network_all_data['status']['cstat_intf_active']['mask'])
                 else:
-                    self.label_net_hostname.setText('')
                     self.label_net_gen_cstat_intf.setText('-')
                     self.label_net_gen_cstat_ip.setText('-')
                     self.label_net_gen_cstat_mask.setText('-')
+
+                if self.network_all_data['status']['cstat_gateway'] is not None:
+                    self.label_net_gen_cstat_gateway.setText(self.network_all_data['status']['cstat_gateway'])
+                else:
                     self.label_net_gen_cstat_gateway.setText('-')
+
+                if self.network_all_data['status']['cstat_dns'] is not None:
+                    self.label_net_gen_cstat_dns.setText(self.network_all_data['status']['cstat_dns'].strip())
+                else:
                     self.label_net_gen_cstat_dns.setText('-')
+            else:
+                self.label_net_hostname.setText('')
+                self.label_net_gen_cstat_intf.setText('-')
+                self.label_net_gen_cstat_ip.setText('-')
+                self.label_net_gen_cstat_mask.setText('-')
+                self.label_net_gen_cstat_gateway.setText('-')
+                self.label_net_gen_cstat_dns.setText('-')
 
         self.network_stat_refresh_timer.start(NETWORK_STAT_REFRESH_INTERVAL)
 
@@ -450,146 +450,146 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.ap_tree_model_clear_add_item(item)
             self.tree_net_wireless_ap.setEnabled(False)
 
-        if scan_data and\
-           self.network_all_data['interfaces']['wireless'] and\
+        if scan_data and \
+           self.network_all_data['interfaces']['wireless'] and \
            self.network_all_data['interfaces']['wireless_links']:
 
-                if len(scan_data) <= 0 or\
-                   len(self.network_all_data['interfaces']['wireless']) <= 0:
-                       no_ap_found()
-                       return
+            if len(scan_data) <= 0 or \
+               len(self.network_all_data['interfaces']['wireless']) <= 0:
+                   no_ap_found()
+                   return
 
-                self.ap_tree_model_clear_add_item(None)
+            self.ap_tree_model_clear_add_item(None)
 
-                for nidx, apdict in scan_data.iteritems():
-                    if not unicode(apdict['essid']):
-                        continue
+            for nidx, apdict in scan_data.iteritems():
+                if not unicode(apdict['essid']):
+                    continue
 
-                    essid = unicode(apdict['essid'])
-                    bssid = unicode(apdict['bssid'])
-                    channel = unicode(apdict['channel'])
-                    encryption = unicode(apdict['encryption'])
-                    encryption_method = unicode(apdict['encryption_method'])
+                essid = unicode(apdict['essid'])
+                bssid = unicode(apdict['bssid'])
+                channel = unicode(apdict['channel'])
+                encryption = unicode(apdict['encryption'])
+                encryption_method = unicode(apdict['encryption_method'])
 
-                    ap_item = QtGui.QStandardItem(essid)
-                    ap_item.setData(QtCore.QVariant(AP_COL),
-                                    AP_COL_USER_ROLE)
-                    ap_item.setData(QtCore.QVariant(encryption),
-                                    AP_ENCRYPTION_USER_ROLE)
-                    ap_item.setData(QtCore.QVariant(essid),
-                                    AP_NAME_USER_ROLE)
-                    ap_item.setData(QtCore.QVariant(bssid),
-                                    AP_BSSID_USER_ROLE)
-                    ap_item.setData(QtCore.QVariant(nidx),
-                                    AP_NETWORK_INDEX_USER_ROLE)
-                    ap_item.setData(QtCore.QVariant(channel),
-                                    AP_CHANNEL_USER_ROLE)
+                ap_item = QtGui.QStandardItem(essid)
+                ap_item.setData(QtCore.QVariant(AP_COL),
+                                AP_COL_USER_ROLE)
+                ap_item.setData(QtCore.QVariant(encryption),
+                                AP_ENCRYPTION_USER_ROLE)
+                ap_item.setData(QtCore.QVariant(essid),
+                                AP_NAME_USER_ROLE)
+                ap_item.setData(QtCore.QVariant(bssid),
+                                AP_BSSID_USER_ROLE)
+                ap_item.setData(QtCore.QVariant(nidx),
+                                AP_NETWORK_INDEX_USER_ROLE)
+                ap_item.setData(QtCore.QVariant(channel),
+                                AP_CHANNEL_USER_ROLE)
 
-                    channel_item = QtGui.QStandardItem(channel)
+                channel_item = QtGui.QStandardItem(channel)
 
-                    if encryption == 'Off':
-                        encryption_method_item = QtGui.QStandardItem('Open')
+                if encryption == 'Off':
+                    encryption_method_item = QtGui.QStandardItem('Open')
+                else:
+                    if encryption_method == 'WPA1':
+                        encryption_method_item = QtGui.QStandardItem('WPA1')
+                        ap_item.setData(QtCore.QVariant(AP_ENC_METHOD_WPA1),
+                                        AP_ENCRYPTION_METHOD_USER_ROLE)
+                    elif encryption_method == 'WPA2':
+                        encryption_method_item = QtGui.QStandardItem('WPA2')
+                        ap_item.setData(QtCore.QVariant(AP_ENC_METHOD_WPA2),
+                                        AP_ENCRYPTION_METHOD_USER_ROLE)
                     else:
-                        if encryption_method == 'WPA1':
-                            encryption_method_item = QtGui.QStandardItem('WPA1')
-                            ap_item.setData(QtCore.QVariant(AP_ENC_METHOD_WPA1),
-                                            AP_ENCRYPTION_METHOD_USER_ROLE)
-                        elif encryption_method == 'WPA2':
-                            encryption_method_item = QtGui.QStandardItem('WPA2')
-                            ap_item.setData(QtCore.QVariant(AP_ENC_METHOD_WPA2),
-                                            AP_ENCRYPTION_METHOD_USER_ROLE)
-                        else:
-                            encryption_method_item = QtGui.QStandardItem('Unsupported')
-                            ap_item.setData(QtCore.QVariant(AP_ENC_METHOD_UNSUPPORTED),
-                                            AP_ENCRYPTION_METHOD_USER_ROLE)
+                        encryption_method_item = QtGui.QStandardItem('Unsupported')
+                        ap_item.setData(QtCore.QVariant(AP_ENC_METHOD_UNSUPPORTED),
+                                        AP_ENCRYPTION_METHOD_USER_ROLE)
 
-                    try:
-                        _key = self.network_all_data['wireless_settings'].get(bssid, 'key', '')
-                        ap_item.setData(QtCore.QVariant(unicode(_key)),
-                                        AP_KEY_USER_ROLE)
-                    except:
-                        ap_item.setData(QtCore.QVariant(''),
-                                        AP_KEY_USER_ROLE)
+                try:
+                    _key = self.network_all_data['wireless_settings'].get(bssid, 'key', '')
+                    ap_item.setData(QtCore.QVariant(unicode(_key)),
+                                    AP_KEY_USER_ROLE)
+                except:
+                    ap_item.setData(QtCore.QVariant(''),
+                                    AP_KEY_USER_ROLE)
 
-                    # Checking if the access point is associated
-                    ap_item.setData(QtCore.QVariant(AP_STATUS_NOT_ASSOCIATED),
-                                    AP_STATUS_USER_ROLE)
-                    for key, value in self.network_all_data['interfaces']['wireless_links'].iteritems():
-                        if (unicode(value['bssid']) == unicode(bssid)) and value['status']:
-                            ap_item.setData(QtCore.QVariant(AP_STATUS_ASSOCIATED),
-                                            AP_STATUS_USER_ROLE)
-                            break
-                    try:
-                        _ip = self.network_all_data['wireless_settings'].get(bssid, 'ip', '')
-                        if _ip == '' or _ip == 'None':
-                            ap_item.setData(QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_DHCP),
-                                            AP_ADDRESS_CONF_USER_ROLE)
-                            ap_item.setData(QtCore.QVariant('0.0.0.0'),
-                                            AP_IP_USER_ROLE)
-                        else:
-                            ap_item.setData(QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_STATIC),
-                                            AP_ADDRESS_CONF_USER_ROLE)
-                            ap_item.setData(QtCore.QVariant(_ip),
-                                            AP_IP_USER_ROLE)
-                    except:
+                # Checking if the access point is associated
+                ap_item.setData(QtCore.QVariant(AP_STATUS_NOT_ASSOCIATED),
+                                AP_STATUS_USER_ROLE)
+                for key, value in self.network_all_data['interfaces']['wireless_links'].iteritems():
+                    if (unicode(value['bssid']) == unicode(bssid)) and value['status']:
+                        ap_item.setData(QtCore.QVariant(AP_STATUS_ASSOCIATED),
+                                        AP_STATUS_USER_ROLE)
+                        break
+                try:
+                    _ip = self.network_all_data['wireless_settings'].get(bssid, 'ip', '')
+                    if _ip == '' or _ip == 'None':
                         ap_item.setData(QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_DHCP),
                                         AP_ADDRESS_CONF_USER_ROLE)
                         ap_item.setData(QtCore.QVariant('0.0.0.0'),
                                         AP_IP_USER_ROLE)
+                    else:
+                        ap_item.setData(QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_STATIC),
+                                        AP_ADDRESS_CONF_USER_ROLE)
+                        ap_item.setData(QtCore.QVariant(_ip),
+                                        AP_IP_USER_ROLE)
+                except:
+                    ap_item.setData(QtCore.QVariant(CBOX_NET_CONTYPE_INDEX_DHCP),
+                                    AP_ADDRESS_CONF_USER_ROLE)
+                    ap_item.setData(QtCore.QVariant('0.0.0.0'),
+                                    AP_IP_USER_ROLE)
 
-                    try:
-                        _mask = self.network_all_data['wireless_settings'].get(bssid, 'netmask', '')
-                        if _mask == '' or _ip == 'None':
-                            ap_item.setData(QtCore.QVariant('0.0.0.0'),
-                                            AP_MASK_USER_ROLE)
-                        else:
-                            ap_item.setData(QtCore.QVariant(_mask),
-                                            AP_MASK_USER_ROLE)
-                    except:
+                try:
+                    _mask = self.network_all_data['wireless_settings'].get(bssid, 'netmask', '')
+                    if _mask == '' or _ip == 'None':
                         ap_item.setData(QtCore.QVariant('0.0.0.0'),
                                         AP_MASK_USER_ROLE)
+                    else:
+                        ap_item.setData(QtCore.QVariant(_mask),
+                                        AP_MASK_USER_ROLE)
+                except:
+                    ap_item.setData(QtCore.QVariant('0.0.0.0'),
+                                    AP_MASK_USER_ROLE)
 
-                    try:
-                        _gw = self.network_all_data['wireless_settings'].get(bssid, 'gateway', '')
-                        if _gw == '' or _gw == 'None':
-                            ap_item.setData(QtCore.QVariant('0.0.0.0'),
-                                            AP_GATEWAY_USER_ROLE)
-                        else:
-                            ap_item.setData(QtCore.QVariant(_gw),
-                                            AP_GATEWAY_USER_ROLE)
-                    except:
+                try:
+                    _gw = self.network_all_data['wireless_settings'].get(bssid, 'gateway', '')
+                    if _gw == '' or _gw == 'None':
                         ap_item.setData(QtCore.QVariant('0.0.0.0'),
                                         AP_GATEWAY_USER_ROLE)
+                    else:
+                        ap_item.setData(QtCore.QVariant(_gw),
+                                        AP_GATEWAY_USER_ROLE)
+                except:
+                    ap_item.setData(QtCore.QVariant('0.0.0.0'),
+                                    AP_GATEWAY_USER_ROLE)
 
-                    try:
-                        _dns = self.network_all_data['wireless_settings'].get(bssid, 'dns1', '')
-                        if _dns == '' or _dns == 'None':
-                            ap_item.setData(QtCore.QVariant('0.0.0.0'),
-                                            AP_DNS_USER_ROLE)
-                        else:
-                            ap_item.setData(QtCore.QVariant(_dns),
-                                            AP_DNS_USER_ROLE)
-                    except:
+                try:
+                    _dns = self.network_all_data['wireless_settings'].get(bssid, 'dns1', '')
+                    if _dns == '' or _dns == 'None':
                         ap_item.setData(QtCore.QVariant('0.0.0.0'),
                                         AP_DNS_USER_ROLE)
+                    else:
+                        ap_item.setData(QtCore.QVariant(_dns),
+                                        AP_DNS_USER_ROLE)
+                except:
+                    ap_item.setData(QtCore.QVariant('0.0.0.0'),
+                                    AP_DNS_USER_ROLE)
 
-                    self.ap_tree_model.appendRow([ap_item, channel_item, encryption_method_item])
+                self.ap_tree_model.appendRow([ap_item, channel_item, encryption_method_item])
 
-                if self.ap_tree_model.rowCount() <= 0:
-                    no_ap_found()
-                    return
+            if self.ap_tree_model.rowCount() <= 0:
+                no_ap_found()
+                return
 
-                ap_found()
+            ap_found()
 
-                # Select first associated accesspoint if not then the first item
-                for i in range(self.ap_tree_model.rowCount()):
-                    item = self.ap_tree_model.item(i)
-                    ap_status = item.data(AP_STATUS_USER_ROLE).toInt()[0]
-                    if ap_status == AP_STATUS_ASSOCIATED:
-                        self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(i,0))
-                        break
-                    if i == self.ap_tree_model.rowCount()- 1:
-                        self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(0,0))
+            # Select first associated accesspoint if not then the first item
+            for i in range(self.ap_tree_model.rowCount()):
+                item = self.ap_tree_model.item(i)
+                ap_status = item.data(AP_STATUS_USER_ROLE).toInt()[0]
+                if ap_status == AP_STATUS_ASSOCIATED:
+                    self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(i, 0))
+                    break
+                if i == self.ap_tree_model.rowCount()- 1:
+                    self.tree_net_wireless_ap.setCurrentIndex(self.ap_tree_model.index(0, 0))
         else:
             no_ap_found()
 
@@ -1235,7 +1235,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         cbox_cidx = self.cbox_net_intf.currentIndex()
 
         iname = unicode(self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE).toString())
-        itype =  self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE).toInt()[0]
+        itype = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE).toInt()[0]
 
         # Wireless
         if itype == INTERFACE_TYPE_WIRELESS:

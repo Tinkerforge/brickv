@@ -26,7 +26,7 @@ from brickv import config
 
 UID_BRICKV = '$BRICKV'
 UID_BRICKD = '$BRICKD'
-    
+
 class AbstractInfo(object):
     type = 'abstract'
     url_part = ''
@@ -43,11 +43,11 @@ class PluginInfo(AbstractInfo):
 
 class ToolInfo(AbstractInfo):
     type = 'tool'
-    
+
     def __repr__(self):
         return """{0}:
-  version installed: {1}, 
-  version latest: {2}, 
+  version installed: {1},
+  version latest: {2},
   url_part: {3}
 """.format(self.name, self.firmware_version_installed,
            self.firmware_version_latest, self.url_part)
@@ -66,15 +66,15 @@ class DeviceInfo(AbstractInfo):
 
     def __repr__(self):
         return """{0} ({1}):
-  connected UID: {2}, 
-  position: {3}, 
-  fw version installed: {4}, 
-  fw version latest: {5}, 
-  hw version: {6}, 
-  device identifier: {7}, 
-  protocol version: {8}, 
-  url_part: {9}, 
-  plugin: {10}, 
+  connected UID: {2},
+  position: {3},
+  fw version installed: {4},
+  fw version latest: {5},
+  hw version: {6},
+  device identifier: {7},
+  protocol version: {8},
+  url_part: {9},
+  plugin: {10},
   tab_window: {11}
 """.format(self.name, self.uid, self.connected_uid, self.position,
            self.firmware_version_installed, self.firmware_version_latest,
@@ -95,13 +95,13 @@ class DeviceInfo(AbstractInfo):
 
 class BrickletInfo(DeviceInfo):
     type = 'bricklet'
-    
+
 class BrickInfo(DeviceInfo):
     type = 'brick'
-    
+
     def __init__(self):
         self.bricklets = {'a': None, 'b': None}
-    
+
     def __repr__(self):
         a = 'Not connected'
         b = 'Not connected'
@@ -109,7 +109,7 @@ class BrickInfo(DeviceInfo):
             a = '{0} ({1})'.format(self.bricklets['a'].name, self.bricklets['a'].uid)
         if self.bricklets['b'] != None:
             b = '{0} ({1})'.format(self.bricklets['b'].name, self.bricklets['b'].uid)
-            
+
         return super(BrickInfo, self).__repr__() + """  Bricklets:
    a: {0}
    b: {1}
@@ -118,7 +118,7 @@ class BrickInfo(DeviceInfo):
 class BrickMasterInfo(BrickInfo):
     def __init__(self):
         self.bricklets = {'a': None, 'b': None, 'c': None, 'd': None}
-    
+
     def __repr__(self):
         a = 'Not connected'
         b = 'Not connected'
@@ -137,7 +137,7 @@ class BrickMasterInfo(BrickInfo):
    a: {0}
    b: {1}
    c: {2}
-   d: {3} 
+   d: {3}
 """.format(a, b, c, d)
 
 class BrickREDInfo(BrickInfo):

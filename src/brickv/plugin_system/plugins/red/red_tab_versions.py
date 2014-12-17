@@ -54,7 +54,7 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
         self.package_list[0].append({'name': 'RED Brick API Daemon', 'version': 'Collecting Data...', 'description': 'Daemon that implements RED Brick API'})
         self.package_list[0].append({'name': 'RED Brick Image', 'version': 'Collecting Data...', 'description': 'SD card image of RED Brick'})
         for language in languages:
-            self.package_list[0].append({'name': 'Bindings ' + language, 'version': 'Collecting Data...', 'description': 'Tinkerforge bindings for ' + language })
+            self.package_list[0].append({'name': 'Bindings ' + language, 'version': 'Collecting Data...', 'description': 'Tinkerforge bindings for ' + language})
 
         for i in range(1, NUM_TABS):
             self.package_list[i].append({'name': 'Collecting Data...', 'version': 'Collecting Data...', 'description': 'Collecting Data...'})

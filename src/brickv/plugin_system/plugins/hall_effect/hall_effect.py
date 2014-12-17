@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 Hall Effect Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 hall_effect.py: Hall Effect Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -31,21 +31,21 @@ from brickv.plugin_system.plugins.hall_effect.ui_hall_effect import Ui_HallEffec
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
 import PyQt4.Qwt5 as Qwt
-    
+
 class HallEffect(PluginBase, Ui_HallEffect):
     qtcb_edge_count = pyqtSignal(int, bool)
-    
+
     def __init__(self, *args):
         PluginBase.__init__(self, 'Hall Effect Bricklet', BrickletHallEffect, *args)
 
         self.setupUi(self)
 
         self.hf = self.device
-        
+
         self.qtcb_edge_count.connect(self.cb_edge_count)
         self.hf.register_callback(self.hf.CALLBACK_EDGE_COUNT,
-                                  self.qtcb_edge_count.emit) 
-        
+                                  self.qtcb_edge_count.emit)
+
         self.current_value = None
 
         plot_list = [['', Qt.red, self.get_current_value]]
@@ -54,22 +54,22 @@ class HallEffect(PluginBase, Ui_HallEffect):
 
         self.combo_edge_type.activated.connect(self.edge_changed)
         self.spin_debounce.editingFinished.connect(self.debounce_changed)
-        
+
         self.main_layout.insertWidget(1, self.plot_widget)
-        
+
     def debounce_changed(self):
         self.hf.set_edge_count_config(self.combo_edge_type.currentIndex(), self.spin_debounce.value())
-        
+
     def edge_changed(self, value):
         self.hf.set_edge_count_config(self.combo_edge_type.currentIndex(), self.spin_debounce.value())
-        
+
     def cb_edge_count(self, count, value):
         self.label_edge_count.setText(str(count))
         if value:
             self.current_value = 1
         else:
             self.current_value = 0
-    
+
     def get_current_value(self):
         return self.current_value
 
@@ -92,12 +92,12 @@ class HallEffect(PluginBase, Ui_HallEffect):
         async_call(self.hf.set_edge_count_callback_period, 50, None, self.increase_error_count)
         async_call(self.hf.get_edge_count, False, self.get_edge_count_async, self.increase_error_count)
         async_call(self.hf.get_value, None, self.get_value_async, self.increase_error_count)
-        
+
         self.plot_widget.stop = False
-        
+
     def stop(self):
         async_call(self.hf.set_edge_count_callback_period, 0, None, self.increase_error_count)
-        
+
         self.plot_widget.stop = True
 
     def destroy(self):

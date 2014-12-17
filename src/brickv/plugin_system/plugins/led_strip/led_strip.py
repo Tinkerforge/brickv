@@ -84,7 +84,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         self.voltage_timer.timeout.connect(self.update_voltage)
         self.voltage_timer.setInterval(1000)
 
-    def chip_type_index_changed(self, index, only_config = False):
+    def chip_type_index_changed(self, index, only_config=False):
         chip = 2801
         if index == 0:
             chip = 2801

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
 LCD16x2 Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
@@ -7,8 +7,8 @@ Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 humidity.py: LCD 16x2 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -36,29 +36,29 @@ class LCD16x2(PluginBase):
     MAX_POSITION = 16
     qtcb_pressed = pyqtSignal(int)
     qtcb_released = pyqtSignal(int)
-    
+
     def __init__(self, *args):
         PluginBase.__init__(self, 'LCD 16x2 Bricklet', BrickletLCD16x2, *args)
-        
+
         self.lcd = self.device
-        
+
         self.qtcb_pressed.connect(self.cb_pressed)
         self.lcd.register_callback(self.lcd.CALLBACK_BUTTON_PRESSED,
                                    self.qtcb_pressed.emit)
         self.qtcb_released.connect(self.cb_released)
         self.lcd.register_callback(self.lcd.CALLBACK_BUTTON_RELEASED,
                                    self.qtcb_released.emit)
-        
+
         self.line_label = QLabel('Line: ')
         self.line_combo = QComboBox()
         for i  in range(LCD16x2.MAX_LINE):
             self.line_combo.addItem(str(i))
-        
+
         self.pos_label = QLabel('Position: ')
         self.pos_combo = QComboBox()
         for i  in range(LCD16x2.MAX_POSITION):
             self.pos_combo.addItem(str(i))
-        
+
         self.line_pos_layout = QHBoxLayout()
         self.line_pos_layout.addWidget(self.line_label)
         self.line_pos_layout.addWidget(self.line_combo)
@@ -74,42 +74,42 @@ class LCD16x2(PluginBase):
         self.text_layout.addWidget(self.text_label)
         self.text_layout.addWidget(self.text_edit)
         self.text_layout.addWidget(self.text_button)
-        
+
         self.clear_button = QPushButton("Clear Display")
-        
+
         self.bl_button = QPushButton()
         self.cursor_button = QPushButton()
         self.blink_button = QPushButton()
-            
+
         self.onofflayout = QHBoxLayout()
         self.onofflayout.addWidget(self.bl_button)
         self.onofflayout.addWidget(self.cursor_button)
         self.onofflayout.addWidget(self.blink_button)
-            
+
         self.b0_label = QLabel('Button 0: Released,')
         self.b1_label = QLabel('Button 1: Released,')
         self.b2_label = QLabel('Button 2: Released')
-        
+
         self.buttonlayout = QHBoxLayout()
         self.buttonlayout.addWidget(self.b0_label)
         self.buttonlayout.addWidget(self.b1_label)
         self.buttonlayout.addWidget(self.b2_label)
-        
+
         self.cursor_button.clicked.connect(self.cursor_clicked)
         self.blink_button.clicked.connect(self.blink_clicked)
         self.clear_button.clicked.connect(self.clear_clicked)
         self.bl_button.clicked.connect(self.bl_clicked)
         self.text_button.clicked.connect(self.text_clicked)
-        
+
         if self.firmware_version >= (2, 0, 1):
             line = QFrame()
             line.setFrameShape(QFrame.HLine)
             line.setFrameShadow(QFrame.Sunken)
-            
+
             gridlayout = QGridLayout()
             gridlayout.setHorizontalSpacing(2)
             gridlayout.setVerticalSpacing(2)
-                    
+
             self.character_boxes_bool = []
             self.character_boxes = []
             for i in range(5):
@@ -121,27 +121,27 @@ class LCD16x2(PluginBase):
                     b.setStyleSheet("background-color: rgb(255, 255, 255)")
                     b.setMaximumSize(25, 25)
                     b.setMinimumSize(25, 25)
-                    
+
                     def get_lambda(i, j):
                         return lambda: self.char_button_clicked(i, j)
                     b.clicked.connect(get_lambda(i, j))
-                    
+
                     self.character_boxes[i].append(b)
                     self.character_boxes_bool[i].append(True)
                     gridlayout.addWidget(b, j, i)
-                    
+
             self.char_index_label = QLabel('Index:')
             self.char_index_combo = QComboBox()
             self.char_index_combo.currentIndexChanged.connect(self.char_index_changed)
             for i in range(8):
                 self.char_index_combo.addItem(str(i))
-                
+
             self.char_index_layout = QHBoxLayout()
             self.char_index_layout.addStretch()
             self.char_index_layout.addWidget(self.char_index_label)
             self.char_index_layout.addWidget(self.char_index_combo)
             self.char_index_layout.addStretch()
-            
+
             self.char_index_save = QPushButton('Save Character')
             self.char_index_save.clicked.connect(self.char_index_save_clicked)
             self.char_show = QPushButton('Show all Custom Characters on LCD')
@@ -163,7 +163,7 @@ class LCD16x2(PluginBase):
             grid_stretch_layout.addLayout(gridlayout)
             grid_stretch_layout.addLayout(self.char_save_layout)
             grid_stretch_layout.addStretch()
-            
+
             self.char_main_layout = QHBoxLayout()
             self.char_main_layout.addStretch()
             self.char_main_layout.addLayout(grid_stretch_layout)
@@ -175,12 +175,12 @@ class LCD16x2(PluginBase):
         layout.addWidget(self.clear_button)
         layout.addLayout(self.onofflayout)
         layout.addLayout(self.buttonlayout)
-        
+
         if self.firmware_version >= (2, 0, 1):
             layout.addWidget(line)
             layout.addLayout(self.char_main_layout)
         layout.addStretch(1)
-        
+
     def char_button_clicked(self, i, j):
         if self.character_boxes_bool[i][j]:
             self.character_boxes_bool[i][j] = False
@@ -194,23 +194,23 @@ class LCD16x2(PluginBase):
             self.bl_button.setText('Backlight Off')
         else:
             self.bl_button.setText('Backlight On')
-            
+
     def get_config_async(self, config):
         cursor, blink = config
         if cursor:
             self.cursor_button.setText('Cursor Off')
         else:
             self.cursor_button.setText('Cursor On')
-            
+
         if blink:
             self.blink_button.setText('Blink Off')
         else:
             self.blink_button.setText('Blink On')
-                
+
     def start(self):
         async_call(self.lcd.is_backlight_on, None, self.is_backlight_on_async, self.increase_error_count)
         async_call(self.lcd.get_config, None, self.get_config_async, self.increase_error_count)
-        
+
     def stop(self):
         pass
 
@@ -223,7 +223,7 @@ class LCD16x2(PluginBase):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletLCD16x2.DEVICE_IDENTIFIER
-    
+
     def cb_pressed(self, button):
         if button == 0:
             self.b0_label.setText('Button 0: Pressed,')
@@ -231,7 +231,7 @@ class LCD16x2(PluginBase):
             self.b1_label.setText('Button 1: Pressed,')
         elif button == 2:
             self.b2_label.setText('Button 2: Pressed')
-        
+
     def cb_released(self, button):
         if button == 0:
             self.b0_label.setText('Button 0: Released,')
@@ -239,7 +239,7 @@ class LCD16x2(PluginBase):
             self.b1_label.setText('Button 1: Released,')
         elif button == 2:
             self.b2_label.setText('Button 2: Released')
-    
+
     def bl_clicked(self):
         try:
             if self.bl_button.text() == 'Backlight On':
@@ -250,24 +250,24 @@ class LCD16x2(PluginBase):
                 self.bl_button.setText('Backlight On')
         except ip_connection.Error:
             return
-    
+
     def get_config(self):
         cursor = self.cursor_button.text() == 'Cursor Off'
         blink = self.blink_button.text() == 'Blink Off'
         return (cursor, blink)
-    
+
     def cursor_clicked(self):
         cursor, blink = self.get_config()
         try:
             self.lcd.set_config(not cursor, blink)
         except ip_connection.Error:
             return
-        
+
         if cursor:
             self.cursor_button.setText('Cursor On')
         else:
             self.cursor_button.setText('Cursor Off')
-    
+
     def blink_clicked(self):
         cursor, blink = self.get_config()
         try:
@@ -279,13 +279,13 @@ class LCD16x2(PluginBase):
             self.blink_button.setText('Blink On')
         else:
             self.blink_button.setText('Blink Off')
-    
+
     def clear_clicked(self):
         try:
             self.lcd.clear_display()
         except ip_connection.Error:
             return
-    
+
     def text_clicked(self):
         line = int(self.line_combo.currentText())
         position = int(self.pos_combo.currentText())
@@ -304,17 +304,17 @@ class LCD16x2(PluginBase):
             for j in range(len(self.character_boxes[i])):
                 if self.character_boxes_bool[i][j]:
                     char[j] |= 1 << (4 - i)
-                    
+
         index = int(self.char_index_combo.currentText())
         self.lcd.set_custom_character(index, char)
-        
+
     def show_clicked(self):
         self.lcd.clear_display()
         line1 = '0:{0} 1:{1} 2:{2} 3:{3}'.format(chr(8), chr(9), chr(10), chr(11))
         line2 = '4:{0} 5:{1} 6:{2} 7:{3}'.format(chr(12), chr(13), chr(14), chr(15))
         self.lcd.write_line(0, 0, line1)
         self.lcd.write_line(1, 0, line2)
-    
+
     def custom_character_async(self, characters):
         for i in range(len(self.character_boxes)):
             for j in range(len(self.character_boxes[i])):
@@ -324,6 +324,6 @@ class LCD16x2(PluginBase):
                 else:
                     self.character_boxes_bool[4-i][j] = False
                     self.character_boxes[4-i][j].setStyleSheet("background-color: rgb(0, 0, 255)")
-    
+
     def char_index_changed(self, index):
         async_call(self.lcd.get_custom_character, (index,), self.custom_character_async, self.increase_error_count)
