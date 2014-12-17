@@ -191,11 +191,14 @@ def has_main_method(class_file):
 
     return None
 
-def get_jar_file_main_classes(filename):
+def get_jar_file_main_classes(filename, abort_ref=[False]):
     with zipfile.ZipFile(filename, 'r') as jar_file:
         main_classes = []
 
         for entry in jar_file.namelist():
+            if abort_ref[0]:
+                break
+
             if not entry.endswith('.class'):
                 continue
 

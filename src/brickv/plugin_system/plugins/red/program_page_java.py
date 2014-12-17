@@ -47,13 +47,16 @@ def get_java_versions(script_manager, callback):
     script_manager.execute_script('java_versions', cb_versions)
 
 
-def get_main_classes_from_class_or_jar(uploads):
+def get_main_classes_from_class_or_jar(uploads, abort_ref):
     main_classes = []
 
     for upload in uploads:
+        if abort_ref[0]:
+            break
+
         if upload.source.endswith('.jar'):
             try:
-                main_classes.extend(get_jar_file_main_classes(upload.source))
+                main_classes.extend(get_jar_file_main_classes(upload.source, abort_ref))
             except:
                 pass
         elif upload.source.endswith('.class'):
@@ -160,20 +163,42 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             self.combo_main_class.setEnabled(False)
 
             def get_main_classes():
+                def progress_canceled(sd_ref):
+                    sd = sd_ref[0]
+
+                    if sd == None:
+                        return
+
+                    self.wizard().script_manager.abort_script(sd)
+
+                sd_ref   = [None]
                 progress = ExpandingProgressDialog(self.wizard())
                 progress.hide_progress_text()
                 progress.setWindowTitle('Edit Program')
                 progress.setLabelText('Collecting Java main classes')
                 progress.setModal(True)
                 progress.setRange(0, 0)
-                progress.setCancelButton(None) # FIXME: make this cancelable
+                progress.canceled.connect(lambda: progress_canceled(sd_ref))
                 progress.show()
 
-                def cb_java_main_classes(result):
+                def cb_java_main_classes(sd_ref, result):
+                    sd = sd_ref[0]
+
+                    if sd != None:
+                        aborted = sd.abort
+                    else:
+                        aborted = False
+
+                    sd_ref[0] = None
+
                     def done():
                         progress.cancel()
                         self.combo_main_class.setEnabled(True)
                         self.completeChanged.emit()
+
+                    if aborted:
+                        done()
+                        return
 
                     if result == None or result.exit_code != 0:
                         if result == None or len(result.stderr) == 0:
@@ -221,9 +246,10 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
                     async_call(expand_async, result.stdout, cb_expand_success, cb_expand_error)
 
-                self.wizard().script_manager.execute_script('java_main_classes', cb_java_main_classes,
-                                                            [bin_directory], max_length=1024*1024,
-                                                            decode_output_as_utf8=False)
+                sd_ref[0] = self.wizard().script_manager.execute_script('java_main_classes',
+                                                                        lambda result: cb_java_main_classes(sd_ref, result),
+                                                                        [bin_directory], max_length=1024*1024,
+                                                                        decode_output_as_utf8=False)
 
             # need to decouple this with a timer, otherwise it's executed at
             # a time where the progress bar cannot properly enter model state
@@ -233,13 +259,17 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             uploads = self.wizard().page(Constants.PAGE_FILES).get_uploads()
 
             if len(uploads) > 0:
+                def progress_canceled(abort_ref):
+                    abort_ref[0] = True
+
+                abort_ref = [False]
                 progress = ExpandingProgressDialog(self)
                 progress.hide_progress_text()
                 progress.setWindowTitle('New Program')
                 progress.setLabelText('Collecting Java main classes')
                 progress.setModal(True)
                 progress.setRange(0, 0)
-                progress.setCancelButton(None) # FIXME: make this cancelable
+                progress.canceled.connect(lambda: progress_canceled(abort_ref))
                 progress.show()
 
                 def cb_main_classes(main_classes):
@@ -255,6 +285,9 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
                     self.completeChanged.emit()
 
                 def cb_main_classes_error():
+                    self.label_main_class_error.setText('<b>Error:</b> Internal async error occurred')
+                    self.label_main_class_error.setVisible(True)
+
                     progress.cancel()
 
                     self.combo_main_class.clearEditText()
@@ -262,7 +295,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
                     self.completeChanged.emit()
 
                 def get_main_classes_async(uploads):
-                    return sorted(get_main_classes_from_class_or_jar(uploads))
+                    return sorted(get_main_classes_from_class_or_jar(uploads, abort_ref))
 
                 self.combo_main_class.setEnabled(False)
 
