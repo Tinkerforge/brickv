@@ -108,7 +108,7 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
             for value in parsed:
                 self.imu.set_calibration(value[0], value[1])
         except:
-            self.popup_fail('Factory Calibration', text)
+            self.popup_fail('Factory Calibration', 'Could not apply calibration')
             return
 
         self.parent.refresh_values()

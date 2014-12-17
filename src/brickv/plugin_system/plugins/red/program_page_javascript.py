@@ -259,6 +259,11 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
             return
 
         # stop scheduler if switching to browser flavor
+        program = self.wizard().program
+
+        if program == None:
+            return
+
         if self.get_field('javascript.flavor').toInt()[0] == Constants.JAVASCRIPT_FLAVOR_BROWSER:
             try:
                 program.set_schedule(REDProgram.START_MODE_NEVER, False, 0, '') # FIXME: async_call

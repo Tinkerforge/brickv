@@ -282,14 +282,14 @@ def _attach_or_release(session, object_class, object_id, extra_object_ids_to_rel
             session._brick.release_object_unchecked(object_id, session._session_id)
         except:
             # just report IPConnection-level error, but don't re-raise it
-            self._session.increase_error_count()
+            session.increase_error_count()
 
         for extra_object_id in extra_object_ids_to_release_on_error:
             try:
                 session._brick.release_object_unchecked(extra_object_id, session._session_id)
             except:
                 # just report IPConnection-level error, but don't re-raise it
-                self._session.increase_error_count()
+                session.increase_error_count()
 
         raise # just re-raise the original exception
 
@@ -1200,7 +1200,7 @@ def create_directory(session, name, flags, permissions, uid, gid):
     try:
         error_code = session._brick.create_directory(name.object_id, flags, permissions, uid, gid)
     except Error:
-        self._session.increase_error_count()
+        session.increase_error_count()
         raise
 
     if error_code != REDError.E_SUCCESS:
@@ -1476,7 +1476,7 @@ def get_processes(session):
     try:
         error_code, processes_list_id = session._brick.get_processes(session._session_id)
     except Error:
-        self._session.increase_error_count()
+        session.increase_error_count()
         raise
 
     if error_code != REDError.E_SUCCESS:
@@ -2169,7 +2169,7 @@ def get_programs(session):
     try:
         error_code, programs_list_id = session._brick.get_programs(session._session_id)
     except Error:
-        self._session.increase_error_count()
+        session.increase_error_count()
         raise
 
     if error_code != REDError.E_SUCCESS:
