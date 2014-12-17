@@ -271,19 +271,16 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
             # Populating the current network status section and hostname
             if self.network_all_data['status'] is not None:
-                self.label_net_hostname.setText\
-                    (self.network_all_data['status']['cstat_hostname'])
+                self.label_net_hostname.setText(self.network_all_data['status']['cstat_hostname'])
 
                 self.label_net_gen_cstat_status.setText(unicode(self.network_all_data['status']['cstat_status']))
 
                 if self.network_all_data['status']['cstat_intf_active']['name'] is not None:
                     if self.network_all_data['status']['cstat_intf_active']['type'] == INTERFACE_TYPE_WIRELESS:
-                        intf_stat_str = unicode(self.network_all_data['status']['cstat_intf_active']['name'])+\
-                                        ' : Wireless'
+                        intf_stat_str = unicode(self.network_all_data['status']['cstat_intf_active']['name']) + ' : Wireless'
                         self.label_net_gen_cstat_intf.setText(intf_stat_str)
                     else:
-                        intf_stat_str = unicode(self.network_all_data['status']['cstat_intf_active']['name'])+\
-                                        ' : Wired'
+                        intf_stat_str = unicode(self.network_all_data['status']['cstat_intf_active']['name']) + ' : Wired'
                         self.label_net_gen_cstat_intf.setText(intf_stat_str)
 
                     self.label_net_gen_cstat_ip.setText(self.network_all_data['status']['cstat_intf_active']['ip'])
@@ -451,8 +448,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
             if len(scan_data) <= 0 or \
                len(self.network_all_data['interfaces']['wireless']) <= 0:
-                   no_ap_found()
-                   return
+                no_ap_found()
+                return
 
             self.ap_tree_model_clear_add_item(None)
 
@@ -601,10 +598,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         # Populating available interfaces
         self.cbox_net_intf.clear()
 
-        if self.network_all_data['interfaces'] is not None and\
-           self.network_all_data['status'] is not None and\
-           (self.network_all_data['interfaces']['wireless'] is not None or\
-           self.network_all_data['interfaces']['wired'] is not None or\
+        if self.network_all_data['interfaces'] is not None and \
+           self.network_all_data['status'] is not None and \
+           (self.network_all_data['interfaces']['wireless'] is not None or \
+           self.network_all_data['interfaces']['wired'] is not None or \
            self.network_all_data['interfaces']['wireless_links'] is not None):
                 # Processing wireless interfaces
                 if self.network_all_data['interfaces']['wireless'] is not None and\
@@ -1003,11 +1000,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.show_please_wait(WORKING_STATE_DONE)
                 return
             self.network_refresh_tasks_remaining -= 1
-            if result and result.stdout and not result.stderr and result.exit_code == 0 and\
-                   not self.network_refresh_tasks_error_occured:
-                    self.network_all_data['status'] = json.loads(result.stdout)
-                    if self.network_refresh_tasks_remaining == 0:
-                        network_refresh_tasks_done(True)
+            if result and result.stdout and not result.stderr and result.exit_code == 0 and \
+               not self.network_refresh_tasks_error_occured:
+                self.network_all_data['status'] = json.loads(result.stdout)
+                if self.network_refresh_tasks_remaining == 0:
+                    network_refresh_tasks_done(True)
             else:
                 if self.network_refresh_tasks_remaining == 0:
                     network_refresh_tasks_done(False)
@@ -1026,12 +1023,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.show_please_wait(WORKING_STATE_DONE)
                 return
             self.network_refresh_tasks_remaining -= 1
-            if result and result.stdout and not result.stderr and result.exit_code == 0 and\
+            if result and result.stdout and not result.stderr and result.exit_code == 0 and \
                not self.network_refresh_tasks_error_occured:
-                    self.network_all_data['interfaces'] = json.loads(result.stdout)
-                    self.script_manager.execute_script('settings_network_wireless_scan_cache',
-                                                       cb_settings_network_wireless_scan_cache,
-                                                       [])
+                self.network_all_data['interfaces'] = json.loads(result.stdout)
+                self.script_manager.execute_script('settings_network_wireless_scan_cache',
+                                                   cb_settings_network_wireless_scan_cache)
             else:
                 self.network_refresh_tasks_error_occured = True
                 if result and result.stderr:
@@ -1046,12 +1042,12 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                 self.show_please_wait(WORKING_STATE_DONE)
                 return
             self.network_refresh_tasks_remaining -= 1
-            if result and result.stdout and not result.stderr and result.exit_code == 0 and\
+            if result and result.stdout and not result.stderr and result.exit_code == 0 and \
                not self.network_refresh_tasks_error_occured:
-                    self.network_all_data['scan_result_cache'] = json.loads(result.stdout)
-                    self.update_access_points(self.network_all_data['scan_result_cache'])
-                    if self.network_refresh_tasks_remaining == 0:
-                        network_refresh_tasks_done(True)
+                self.network_all_data['scan_result_cache'] = json.loads(result.stdout)
+                self.update_access_points(self.network_all_data['scan_result_cache'])
+                if self.network_refresh_tasks_remaining == 0:
+                    network_refresh_tasks_done(True)
             else:
                 if self.network_refresh_tasks_remaining == 0:
                     network_refresh_tasks_done(False)
@@ -1077,11 +1073,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
                 red_file.release()
 
-                if result and result.data is not None and result.error is None and\
+                if result and result.data is not None and result.error is None and \
                    not self.network_refresh_tasks_error_occured:
-                        self.network_all_data['manager_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
-                        if self.network_refresh_tasks_remaining == 0:
-                            network_refresh_tasks_done(True)
+                    self.network_all_data['manager_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
+                    if self.network_refresh_tasks_remaining == 0:
+                        network_refresh_tasks_done(True)
                 else:
                     if self.network_refresh_tasks_remaining == 0:
                         network_refresh_tasks_done(False)
@@ -1122,11 +1118,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
                 red_file.release()
 
-                if result and result.data is not None and result.error is None and\
+                if result and result.data is not None and result.error is None and \
                    not self.network_refresh_tasks_error_occured:
-                        self.network_all_data['wireless_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
-                        if self.network_refresh_tasks_remaining == 0:
-                            network_refresh_tasks_done(True)
+                    self.network_all_data['wireless_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
+                    if self.network_refresh_tasks_remaining == 0:
+                        network_refresh_tasks_done(True)
                 else:
                     if self.network_refresh_tasks_remaining == 0:
                         network_refresh_tasks_done(False)
@@ -1167,11 +1163,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
                 red_file.release()
 
-                if result and result.data is not None and result.error is None and\
+                if result and result.data is not None and result.error is None and \
                    not self.network_refresh_tasks_error_occured:
-                        self.network_all_data['wired_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
-                        if self.network_refresh_tasks_remaining == 0:
-                            network_refresh_tasks_done(True)
+                    self.network_all_data['wired_settings'] = config_parser.parse_no_fake(result.data.decode('utf-8'))
+                    if self.network_refresh_tasks_remaining == 0:
+                        network_refresh_tasks_done(True)
                 else:
                     if self.network_refresh_tasks_remaining == 0:
                         network_refresh_tasks_done(False)
@@ -1489,19 +1485,19 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                     return
 
             def cb_settings_network_apply(result):
-                    self.show_please_wait(WORKING_STATE_DONE)
-                    if result and not result.stderr and result.exit_code == 0:
-                        self.slot_network_conf_refresh_clicked()
-                        QtGui.QMessageBox.information(get_main_window(),
-                                                      'Settings | Network',
-                                                      'Configuration saved.',
-                                                      QtGui.QMessageBox.Ok)
-                    else:
-                        err_msg = 'Error saving configuration.\n\n'+unicode(result.stderr)
-                        QtGui.QMessageBox.critical(get_main_window(),
-                                                   'Settings | Network',
-                                                   err_msg,
-                                                   QtGui.QMessageBox.Ok)
+                self.show_please_wait(WORKING_STATE_DONE)
+                if result and not result.stderr and result.exit_code == 0:
+                    self.slot_network_conf_refresh_clicked()
+                    QtGui.QMessageBox.information(get_main_window(),
+                                                  'Settings | Network',
+                                                  'Configuration saved.',
+                                                  QtGui.QMessageBox.Ok)
+                else:
+                    err_msg = 'Error saving configuration.\n\n'+unicode(result.stderr)
+                    QtGui.QMessageBox.critical(get_main_window(),
+                                               'Settings | Network',
+                                               err_msg,
+                                               QtGui.QMessageBox.Ok)
 
             def cb_open(config, write_wired_settings, red_file, iname_previous):
                 def cb_write(red_file, write_wired_settings, result, iname_previous):

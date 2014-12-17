@@ -48,7 +48,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         self.spin_start_interval.valueChanged.connect(self.update_interval_help)
 
         self.edit_start_fields_checker = MandatoryLineEditChecker(self, self.label_start_fields, self.edit_start_fields,
-                                                                  '^ *(@\S+|\S+ +\S+ +\S+ +\S+ +\S+) *$')
+                                                                  r'^ *(@\S+|\S+ +\S+ +\S+ +\S+ +\S+) *$')
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
@@ -85,7 +85,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
 
         if start_mode == Constants.START_MODE_CRON and \
            not self.edit_start_fields_checker.complete:
-                return False
+            return False
 
         return ProgramPage.isComplete(self)
 

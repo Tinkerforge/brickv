@@ -337,8 +337,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
                     self.label_program_current_state.setText('Not running, last run exited with an error (exit code: {0}) on {1}'
                                                             .format(self.program.last_spawned_process.exit_code, date_at_time))
             elif self.program.last_spawned_process.state == REDProcess.STATE_KILLED:
-                    self.label_program_current_state.setText('Not running, last run was killed (signal: {0}) on {1}'
-                                                             .format(self.program.last_spawned_process.exit_code, date_at_time))
+                self.label_program_current_state.setText('Not running, last run was killed (signal: {0}) on {1}'
+                                                         .format(self.program.last_spawned_process.exit_code, date_at_time))
             elif self.program.last_spawned_process.state == REDProcess.STATE_STOPPED:
                 self.label_program_current_state.setText('Stopped on {0}'.format(date_at_time)) # FIXME: show continue button?
 
