@@ -23,6 +23,8 @@ Boston, MA 02111-1307, USA.
 
 # totally stripped down version of the python-javatools (LGPL) package
 # by Christopher O'Brien <obriencj@gmail.com>
+#
+# https://github.com/obriencj/python-javatools
 
 import zipfile
 import struct

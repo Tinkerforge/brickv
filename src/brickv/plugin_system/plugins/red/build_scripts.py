@@ -35,7 +35,24 @@ try:
     scripts = glob.glob(build_script_path + '/scripts/*.py')
 
     for script in scripts:
-        ret = os.system('pyminifier ' + script + ' > ' + script + '_minified')
+        lines = []
+
+        with open(script) as f:
+            for line in f.readlines():
+                if line.startswith('### SCRIPT-INCLUDE: '):
+                    include = line.replace('### SCRIPT-INCLUDE:', '').strip()
+                    include = os.path.join(build_script_path, 'scripts', include)
+
+                    with open(include) as i:
+                        lines.extend(i.readlines())
+                else:
+                    lines.append(line)
+
+        with open(script + '_prepared', 'w') as f:
+            f.writelines(lines)
+
+        ret = os.system('pyminifier ' + script + '_prepared > ' + script + '_minified')
+
         if ret != 0:
             print('----> Could not minify scripts, please install https://github.com/liftoff/pyminifier if you want to make a release version.')
             print('----> I will use the non-minified versions for now.')
@@ -45,8 +62,11 @@ try:
     scripts.extend(glob.glob(build_script_path + '/scripts/*.sh'))
 
     for i, script in enumerate(scripts):
-        if use_minified and script.endswith(".py"):
-            path = script + '_minified'
+        if script.endswith('.py'):
+            if use_minified:
+                path = script + '_minified'
+            else:
+                path = script + '_prepared'
         else:
             path = script
         with open(path) as f:

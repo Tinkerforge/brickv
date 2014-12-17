@@ -2,6 +2,7 @@
 ui_*.py
 _scripts.py
 *.py_minified
+*.py_prepared
 src/build
 src/dist
 src/brickv/plugin_images.py
