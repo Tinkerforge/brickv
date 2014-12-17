@@ -90,6 +90,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         self.firmware_infos = {}
         self.plugin_infos = {}
         self.brick_infos = []
+        self.refresh_updates_pending = False
 
         self.parent = parent
         self.tab_widget.currentChanged.connect(self.tab_changed)
