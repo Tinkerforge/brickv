@@ -273,7 +273,10 @@ class REDSession(QtCore.QObject):
     def session_id(self): return self._session_id
 
 
-def _attach_or_release(session, object_class, object_id, extra_object_ids_to_release_on_error=[]):
+def _attach_or_release(session, object_class, object_id, extra_object_ids_to_release_on_error=None):
+    if extra_object_ids_to_release_on_error == None:
+        extra_object_ids_to_release_on_error = []
+
     try:
         object_class_instance = create_object_in_qt_main_thread(object_class, (session,))
         obj = object_class_instance.attach(object_id)
@@ -297,8 +300,8 @@ def _attach_or_release(session, object_class, object_id, extra_object_ids_to_rel
 
 
 class REDObjectReleaser(object):
-    def __init__(self, object, object_id, session):
-        self._object_ref  = weakref.ref(object, self.release)
+    def __init__(self, obj, object_id, session):
+        self._object_ref  = weakref.ref(obj, self.release)
         self._object_id   = object_id
         self._session     = session
         self.armed        = True
@@ -526,7 +529,7 @@ class REDList(REDObject):
 
         for i in range(length):
             try:
-                error_code, item_object_id, type = self._session._brick.get_list_item(self.object_id, i, self._session._session_id)
+                error_code, item_object_id, type_ = self._session._brick.get_list_item(self.object_id, i, self._session._session_id)
             except Error:
                 self._session.increase_error_count()
                 raise
@@ -535,9 +538,9 @@ class REDList(REDObject):
                 raise REDError('Could not get item at index {0} of list object {1}'.format(i, self.object_id), error_code)
 
             try:
-                wrapper_class = REDObject._subclasses[type]
+                wrapper_class = REDObject._subclasses[type_]
             except KeyError:
-                raise TypeError('List object {0} contains item with unknown type {1} at index {2}'.format(self.object_id, type, i))
+                raise TypeError('List object {0} contains item with unknown type {1} at index {2}'.format(self.object_id, type_, i))
 
             items.append(_attach_or_release(self._session, wrapper_class, item_object_id))
 
@@ -844,7 +847,7 @@ class REDFileBase(REDObject):
             raise RuntimeError('Cannot update unattached file object')
 
         try:
-            error_code, type, name_string_id, flags, permissions, uid, gid, \
+            error_code, type_, name_string_id, flags, permissions, uid, gid, \
             length, access_time, modification_time, status_change_time = self._session._brick.get_file_info(self.object_id, self._session._session_id)
         except Error:
             self._session.increase_error_count()
@@ -853,12 +856,12 @@ class REDFileBase(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get information for file object {0}'.format(self.object_id), error_code)
 
-        if type == REDFileBase.TYPE_PIPE:
+        if type_ == REDFileBase.TYPE_PIPE:
             name = None
         else:
             name = _attach_or_release(self._session, REDString, name_string_id)
 
-        self._type               = type
+        self._type               = type_
         self._name               = name
         self._flags              = flags
         self._permissions        = permissions
@@ -1078,7 +1081,7 @@ class REDFileOrPipeAttacher(REDObject):
         REDObject.attach(object_id, False)
 
         try:
-            error_code, type, name_string_id, _, _, _, _, _, _, _, _ = self._session._brick.get_file_info(self.object_id, self._session._session_id)
+            error_code, type_, name_string_id, _, _, _, _, _, _, _, _ = self._session._brick.get_file_info(self.object_id, self._session._session_id)
         except Error:
             self._session.increase_error_count()
             raise
@@ -1086,7 +1089,7 @@ class REDFileOrPipeAttacher(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not get information for file object {0}'.format(self.object_id), error_code)
 
-        if type == REDFileBase.TYPE_PIPE:
+        if type_ == REDFileBase.TYPE_PIPE:
             obj = _attach_or_release(self._session, REDPipe, self.object_id)
         else:
             try:
@@ -1150,7 +1153,7 @@ class REDDirectory(REDObject):
 
         while True:
             try:
-                error_code, name_string_id, type = self._session._brick.get_next_directory_entry(self.object_id, self._session._session_id)
+                error_code, name_string_id, type_ = self._session._brick.get_next_directory_entry(self.object_id, self._session._session_id)
             except Error:
                 self._session.increase_error_count()
                 raise
@@ -1161,7 +1164,7 @@ class REDDirectory(REDObject):
             if error_code != REDError.E_SUCCESS:
                 raise REDError('Could not get next entry of directory object {0}'.format(self.object_id), error_code)
 
-            entries.append((_attach_or_release(self._session, REDString, name_string_id), type))
+            entries.append((_attach_or_release(self._session, REDString, name_string_id), type_))
 
         self._entries = entries
 

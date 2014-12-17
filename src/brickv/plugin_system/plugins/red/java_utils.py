@@ -113,15 +113,15 @@ def unpack_cpool(class_file):
             skip = False
             items.append((None, None))
         else:
-            type = unpack_B(class_file)
-            value = unpack_cpool_value_by_type[type](class_file)
+            type_ = unpack_B(class_file)
+            value = unpack_cpool_value_by_type[type_](class_file)
 
-            items.append((type, value))
+            items.append((type_, value))
 
-            if main_ref == None and type == CONST_UTF8 and value == 'main':
+            if main_ref == None and type_ == CONST_UTF8 and value == 'main':
                 main_ref = i + 1
 
-            skip = type in skip_types
+            skip = type_ in skip_types
 
     return items, main_ref
 
@@ -191,7 +191,10 @@ def has_main_method(class_file):
 
     return None
 
-def get_jar_file_main_classes(filename, abort_ref=[False]):
+def get_jar_file_main_classes(filename, abort_ref=None):
+    if abort_ref == None:
+        abort_ref = [False]
+
     with zipfile.ZipFile(filename, 'r') as jar_file:
         main_classes = []
 
