@@ -21,14 +21,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import QVariant
+from PyQt4.QtCore import QVariant, QTimer
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_java import Ui_ProgramPageJava
-from brickv.plugin_system.plugins.red.javatools.jarinfo import JarInfo
-from brickv.plugin_system.plugins.red.javatools import unpack_class
+from brickv.plugin_system.plugins.red.java_utils import get_jar_file_main_classes, get_class_file_main_classes
 from brickv.async_call import async_call
 import posixpath
+import json
+import zlib
 
 def get_java_versions(script_manager, callback):
     def cb_versions(result):
@@ -47,37 +48,19 @@ def get_java_versions(script_manager, callback):
 
 
 def get_main_classes_from_class_or_jar(uploads):
-    MAIN_ENDING = '.main(java.lang.String[]):void'
-
-    def parse_jar(f):
-        try:
-            with JarInfo(filename=f) as ji:
-                return ji.get_provides()
-        except:
-            pass
-
-        return []
-
-    def parse_class(f):
-        try:
-            with open(f) as cf:
-                return unpack_class(cf).get_provides()
-        except:
-            pass
-
-        return []
-
-    classes = []
     main_classes = []
+
     for upload in uploads:
         if upload.source.endswith('.jar'):
-            classes.extend(parse_jar(upload.source))
+            try:
+                main_classes.extend(get_jar_file_main_classes(upload.source))
+            except:
+                pass
         elif upload.source.endswith('.class'):
-            classes.extend(parse_class(upload.source))
-
-    for cls in classes:
-        if cls.endswith(MAIN_ENDING):
-            main_classes.append(cls.replace(MAIN_ENDING, ''))
+            try:
+                main_classes.extend(get_class_file_main_classes(upload.source))
+            except:
+                pass
 
     return main_classes
 
@@ -102,6 +85,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_start_mode.currentIndexChanged.connect(self.completeChanged.emit)
         self.check_show_class_path.stateChanged.connect(self.update_ui_state)
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
+        self.label_main_class_error.setVisible(False)
         self.label_spacer.setText('')
 
         self.combo_main_class_checker         = MandatoryEditableComboBoxChecker(self,
@@ -116,7 +100,6 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_working_directory_selector = MandatoryDirectorySelector(self,
                                                                            self.label_working_directory,
                                                                            self.combo_working_directory)
-        # FIXME: allow adding class path entries using a combo box prefilled with avialable .jar files
         self.class_path_list_editor           = ListWidgetEditor(self.label_class_path,
                                                                  self.list_class_path,
                                                                  self.label_class_path_help,
@@ -173,8 +156,80 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_main_class.clear()
         self.combo_main_class.clearEditText()
 
-        # FIXME: make this work in edit mode
-        if self.wizard().hasVisitedPage(Constants.PAGE_FILES):
+        if program != None:
+            self.combo_main_class.setEnabled(False)
+
+            def get_main_classes():
+                progress = ExpandingProgressDialog(self.wizard())
+                progress.hide_progress_text()
+                progress.setWindowTitle('Edit Program')
+                progress.setLabelText('Collecting Java main classes')
+                progress.setModal(True)
+                progress.setRange(0, 0)
+                progress.setCancelButton(None) # FIXME: make this cancelable
+                progress.show()
+
+                def cb_java_main_classes(result):
+                    def done():
+                        progress.cancel()
+                        self.combo_main_class.setEnabled(True)
+                        self.completeChanged.emit()
+
+                    if result == None or result.exit_code != 0:
+                        if result == None or len(result.stderr) == 0:
+                            self.label_main_class_error.setText('<b>Error:</b> Internal script error occurred')
+                        else:
+                            self.label_main_class_error.setText('<b>Error:</b> ' + Qt.escape(result.stderr.decode('utf-8').strip()))
+
+                        self.label_main_class_error.setVisible(True)
+                        done()
+                        return
+
+                    def expand_async(data):
+                        try:
+                            main_classes1 = json.loads(zlib.decompress(buffer(data)).decode('utf-8'))
+
+                            if not isinstance(main_classes1, dict):
+                                main_classes1 = {}
+                        except:
+                            main_classes1 = {}
+
+                        main_classes2 = {}
+
+                        for filename, classes in main_classes1.items():
+                            for cls in classes:
+                                if cls in main_classes2:
+                                    main_classes2[cls].append(filename)
+                                else:
+                                    main_classes2[cls] = [filename]
+
+                        return main_classes2
+
+                    def cb_expand_success(main_classes):
+                        self.combo_main_class.clear()
+
+                        for main_class in sorted(main_classes.keys()):
+                            self.combo_main_class.addItem(main_class, QVariant(main_classes[main_class]))
+
+                        self.combo_main_class_checker.set_current_text(program.cast_custom_option_value('java.main_class', unicode, ''))
+                        done()
+
+                    def cb_expand_error():
+                        self.label_main_class_error.setText('<b>Error:</b> Internal async error occurred')
+                        self.label_main_class_error.setVisible(True)
+                        done()
+
+                    async_call(expand_async, result.stdout, cb_expand_success, cb_expand_error)
+
+                self.wizard().script_manager.execute_script('java_main_classes', cb_java_main_classes,
+                                                            [bin_directory], max_length=1024*1024,
+                                                            decode_output_as_utf8=False)
+
+            # need to decouple this with a timer, otherwise it's executed at
+            # a time where the progress bar cannot properly enter model state
+            # to block the parent widget
+            QTimer.singleShot(0, get_main_classes)
+        elif self.wizard().hasVisitedPage(Constants.PAGE_FILES):
             uploads = self.wizard().page(Constants.PAGE_FILES).get_uploads()
 
             if len(uploads) > 0:

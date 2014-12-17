@@ -199,7 +199,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         def cb_directory_walk(result):
             if result == None or result.exit_code != 0:
                 if result == None or len(result.stderr) == 0:
-                    self.label_error.setText('<b>Error:</b> Internal error occurred')
+                    self.label_error.setText('<b>Error:</b> Internal script error occurred')
                 else:
                     self.label_error.setText('<b>Error:</b> ' + Qt.escape(result.stderr.decode('utf-8').strip()))
 
@@ -240,7 +240,8 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 self.refresh_files_done()
 
             def cb_expand_error():
-                # FIXME: report error
+                self.label_error.setText('<b>Error:</b> Internal async error occurred')
+                self.label_error.setVisible(True)
                 self.refresh_files_done()
 
             async_call(expand_async, result.stdout, cb_expand_success, cb_expand_error)

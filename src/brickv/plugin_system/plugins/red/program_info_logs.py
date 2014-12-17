@@ -111,7 +111,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         def cb_logs_list(result):
             if result == None or result.exit_code != 0:
                 if result == None or len(result.stderr) == 0:
-                    self.label_error.setText('<b>Error:</b> Internal error occurred')
+                    self.label_error.setText('<b>Error:</b> Internal script error occurred')
                 else:
                     self.label_error.setText('<b>Error:</b> ' + Qt.escape(result.stderr.decode('utf-8')))
 
