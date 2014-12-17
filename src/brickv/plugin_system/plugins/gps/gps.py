@@ -26,7 +26,7 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_gps import BrickletGPS
 
 from PyQt4.QtGui import QDesktopServices
-from PyQt4.QtCore import pyqtSignal, QUrl, QTimer
+from PyQt4.QtCore import pyqtSignal, QUrl
 
 from brickv.async_call import async_call
 

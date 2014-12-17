@@ -23,10 +23,9 @@ Boston, MA 02111-1307, USA.
 """
 
 from brickv.plugin_system.plugin_base import PluginBase
-from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QRegExpValidator
+from PyQt4.QtGui import QSpinBox, QRegExpValidator
 from PyQt4.QtCore import pyqtSignal, Qt, QRegExp, QString
         
 from brickv.bindings.bricklet_nfc_rfid import BrickletNFCRFID

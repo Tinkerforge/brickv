@@ -38,7 +38,7 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
         self.script_data    = None
 
         self.rejected.connect(self.cancel_make_execution)
-        self.button_make.clicked.connect(lambda: self.execute_make())
+        self.button_make.clicked.connect(self.execute_make)
         self.button_clean.clicked.connect(lambda: self.execute_make('clean'))
         self.button_cancel.clicked.connect(self.cancel_make_execution)
         self.button_close.clicked.connect(self.reject)

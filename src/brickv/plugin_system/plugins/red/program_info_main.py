@@ -64,8 +64,6 @@ from brickv.plugin_system.plugins.red.program_page_schedule import ProgramPageSc
 from brickv.plugin_system.plugins.red.ui_program_info_main import Ui_ProgramInfoMain
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
-import os
-import json
 
 class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
     name_changed = pyqtSignal()

@@ -23,11 +23,10 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt, QDir, QVariant, QDateTime
 from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem, \
-                        QProgressDialog, QProgressBar, QInputDialog, QMenu
+                        QProgressDialog, QProgressBar, QInputDialog
 from brickv.plugin_system.plugins.red.api import REDProgram
 import re
 import posixpath
-import functools
 from collections import namedtuple
 
 ExecutableVersion = namedtuple('ExecutableVersion', 'executable version')

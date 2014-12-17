@@ -341,10 +341,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         return True
 
     def flashing_clicked(self):
-        first = False
-
         if self.flashing_window is None:
-            first = True
             self.flashing_window = FlashingWindow(self)
 
         self.update_flashing_window()

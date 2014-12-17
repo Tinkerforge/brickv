@@ -2,14 +2,12 @@
 import time
 
 from PyQt4.QtCore import QRect, Qt, pyqtSignal, pyqtSlot
-from PyQt4.QtGui import (
-    QApplication, QClipboard, QWidget, QPainter, QFont, QBrush, QColor,
-    QPen, QPixmap, QImage, QContextMenuEvent)
+from PyQt4.QtGui import QApplication, QClipboard, QWidget, QPainter, QFont, \
+                        QBrush, QColor, QPen, QPixmap,  QContextMenuEvent
 
 from .backend import SerialSession
 
 DEBUG = False
-
 
 class TerminalWidget(QWidget):
 

@@ -147,7 +147,7 @@ class RED(PluginBase, Ui_RED):
     # the callbacks
     def cb_red_tab_widget_current_changed(self, tab_index):
         for index, tab in enumerate(self.tabs_list):
-            if (index == tab_index):
+            if index == tab_index:
                 tab.tab_on_focus()
             else:
                 tab.tab_off_focus()

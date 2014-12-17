@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWizard, QApplication, QPixmap, QTextCursor
+from PyQt4.QtGui import QWizard, QPixmap, QTextCursor
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
@@ -31,7 +31,6 @@ from brickv.plugin_system.plugins.red.ui_program_page_download import Ui_Program
 from brickv.utils import get_resources_path
 import os
 import posixpath
-import stat
 import re
 import sys
 import errno
@@ -90,7 +89,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
     def initializePage(self):
         self.set_formatted_sub_title(u'Download {0} of the {{language}} program [{{name}}].'.format(self.download_kind))
 
-        self.wizard().rejected.connect(lambda: self.cancel_download())
+        self.wizard().rejected.connect(self.cancel_download)
 
         self.update_ui_state()
 

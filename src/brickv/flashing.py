@@ -1091,7 +1091,6 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 parent[0].setData(device_uid, Qt.UserRole)
                 items.append(parent)
 
-                brick_got_removed = False
                 for port in device_info.bricklets:
                     if not device_info.bricklets[port] or device_info.bricklets[port].protocol_version == 1:
                         try:

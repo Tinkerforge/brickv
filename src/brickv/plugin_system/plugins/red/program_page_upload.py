@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWizard, QApplication, QPixmap
+from PyQt4.QtGui import QWizard, QPixmap
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
@@ -88,7 +88,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     def initializePage(self):
         self.set_formatted_sub_title(u'Upload the {language} program [{name}].')
 
-        self.wizard().rejected.connect(lambda: self.cancel_upload())
+        self.wizard().rejected.connect(self.cancel_upload)
 
         # if a program exists then this page is used in an edit wizard
         if self.wizard().program != None:

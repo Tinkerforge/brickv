@@ -28,7 +28,7 @@ from brickv.bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDu
 from brickv.async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox
-from PyQt4.QtCore import pyqtSignal, Qt, QTimer
+from PyQt4.QtCore import pyqtSignal, Qt
 
 class CurrentLabel(QLabel):
     def setText(self, text):

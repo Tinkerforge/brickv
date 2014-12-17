@@ -72,7 +72,7 @@ class ColorBar(QWidget):
         painter.setClipping(True)
         #painter.fillRect(rect, QBrush(self.dark))
 
-        if (self.orientation == Qt.Horizontal):
+        if self.orientation == Qt.Horizontal:
             num_intervalls = rect.width()
         else:
             num_intervalls = rect.height()

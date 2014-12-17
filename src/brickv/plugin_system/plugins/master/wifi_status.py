@@ -40,8 +40,7 @@ class WifiStatus(QFrame, Ui_wifi_status):
         self.update_status()
 
     def update_status_async(self, status):
-        self.status = status
-        mac, bssid, channel, rssi, ip, sub, gw, rx, tx, state = self.status
+        mac, bssid, channel, rssi, ip, sub, gw, rx, tx, state = status
 
         self.wifi_status_mac.setText("%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x" % mac[::-1])
         self.wifi_status_bssid.setText("%2.2x:%2.2x:%2.2x:%2.2x:%2.2x:%2.2x" % bssid[::-1])

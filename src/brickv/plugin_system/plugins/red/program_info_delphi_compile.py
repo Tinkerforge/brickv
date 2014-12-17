@@ -38,7 +38,7 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
         self.script_data    = None
 
         self.rejected.connect(self.cancel_fpcmake_execution)
-        self.button_make.clicked.connect(lambda: self.execute_fpcmake())
+        self.button_make.clicked.connect(self.execute_fpcmake)
         self.button_clean.clicked.connect(lambda: self.execute_fpcmake('clean'))
         self.button_cancel.clicked.connect(self.cancel_fpcmake_execution)
         self.button_close.clicked.connect(self.reject)

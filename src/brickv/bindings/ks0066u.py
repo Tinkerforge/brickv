@@ -26,7 +26,7 @@ import types
 
 def unicode_to_ks0066u(string):
     if sys.hexversion < 0x03000000:
-        byte = lambda x: chr(x)
+        byte = chr
         ks0066u = ''
 
         if type(string) != types.UnicodeType:

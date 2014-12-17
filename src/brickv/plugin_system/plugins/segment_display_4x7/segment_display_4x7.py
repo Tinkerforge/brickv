@@ -79,12 +79,12 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
         for d in range(4):
             for i in range(7):
                 button = self.digits[d][i]
-                button.setStyleSheet(self.STYLE_OFF);
+                button.setStyleSheet(self.STYLE_OFF)
                 button.clicked.connect(get_clicked_func(d, i))
             
         for i in range(2):
             button = self.points[i]
-            button.setStyleSheet(self.STYLE_OFF);
+            button.setStyleSheet(self.STYLE_OFF)
             button.clicked.connect(get_clicked_func(4, i))
 
         self.counter_timer = QTimer()
@@ -106,7 +106,7 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
         
         self.counter_timer.start()
         
-        if ((length == 0) or (increment == 0) or (increment > 0 and fr > to) or (increment < 0 and fr < to)):
+        if (length == 0) or (increment == 0) or (increment > 0 and fr > to) or (increment < 0 and fr < to):
             return
         
         self.sd4x7.start_counter(fr, to, increment, length)

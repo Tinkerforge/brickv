@@ -27,7 +27,6 @@ from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_stdio import Ui_ProgramPageStdio
 from brickv.utils import get_main_window
-import os
 
 class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
     def __init__(self, title_prefix=''):

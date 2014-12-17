@@ -8,16 +8,13 @@
 
 import array
 import threading
-import traceback
 import serial
 
 from PyQt4.QtCore import pyqtSignal, QObject
 
 __version__ = "0.1"
 
-
 class Terminal(object):
-
     def __init__(self, w, h):
         self.w = w
         self.h = h
@@ -683,13 +680,13 @@ class Terminal(object):
     def csi_IL(self, p):
         # Insert line
         p = self.vt100_parse_params(p, [1])
-        if (self.cy >= self.scroll_area_y0 and self.cy < self.scroll_area_y1):
+        if self.cy >= self.scroll_area_y0 and self.cy < self.scroll_area_y1:
             self.scroll_area_down(self.cy, self.scroll_area_y1, max(1, p[0]))
 
     def csi_DL(self, p):
         # Delete line
         p = self.vt100_parse_params(p, [1])
-        if (self.cy >= self.scroll_area_y0 and self.cy < self.scroll_area_y1):
+        if self.cy >= self.scroll_area_y0 and self.cy < self.scroll_area_y1:
             self.scroll_area_up(self.cy, self.scroll_area_y1, max(1, p[0]))
 
     def csi_DCH(self, p):
@@ -1114,7 +1111,6 @@ class SerialSession(QObject):
             try:
                 d = self.serial.read(1)
             except:
-                #traceback.print_exc()
                 continue
                 
             self.term.write(d)
@@ -1124,7 +1120,6 @@ class SerialSession(QObject):
                 try:
                     self.serial.write(d)
                 except:
-                    #traceback.print_exc()
                     pass
 
     def close(self):
@@ -1151,5 +1146,4 @@ class SerialSession(QObject):
             data = self.term.pipe(data)
             self.serial.write(data)
         except:
-            #traceback.print_exc()
             pass

@@ -51,10 +51,10 @@ class EncoderFrame(QFrame):
     def paintEvent(self, event):
         qp = QPainter()
         qp.begin(self)
-        qp.translate(self.width()/2, self.height()/2);
+        qp.translate(self.width()/2, self.height()/2)
         for i in range(24):
-            qp.drawLine(88, 0, 96, 0);
-            qp.rotate(15.0);
+            qp.drawLine(88, 0, 96, 0)
+            qp.rotate(15.0)
             
         qp.rotate(((self.count % 24)*15+270)%360)
         qp.drawLine(50, 0, 80, 0)

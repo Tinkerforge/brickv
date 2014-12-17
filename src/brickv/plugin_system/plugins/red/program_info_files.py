@@ -24,8 +24,8 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt, QDateTime, QVariant, QDir
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, \
-                        QAbstractItemView, QLineEdit, QSortFilterProxyModel, \
-                        QFileDialog, QMessageBox, QInputDialog, QApplication, QDialog
+                        QSortFilterProxyModel,  QFileDialog, QMessageBox, \
+                        QInputDialog, QApplication, QDialog
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import Download, ExpandingProgressDialog, \
                                                            ExpandingInputDialog, get_file_display_size
@@ -260,17 +260,6 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.script_manager.execute_script('directory_walk', cb_directory_walk,
                                            [self.bin_directory], max_length=1024*1024,
                                            decode_output_as_utf8=False)
-
-    def get_directly_selected_name_items(self):
-        selected_indexes    = self.tree_files.selectedIndexes()
-        selected_name_items = []
-
-        for selected_index in selected_indexes:
-            if selected_index.column() == 0:
-                mapped_index = self.tree_files_proxy_model.mapToSource(selected_index)
-                selected_name_items.append(self.tree_files_model.itemFromIndex(mapped_index))
-
-        return selected_name_items
 
     def get_directly_selected_name_items(self):
         selected_indexes    = self.tree_files.selectedIndexes()

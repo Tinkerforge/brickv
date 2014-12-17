@@ -83,11 +83,11 @@ class Wifi(QWidget, Ui_Wifi):
         if parent.firmware_version >= (2, 2, 0):
             self.wifi_use_auth.stateChanged.connect(self.wifi_auth_changed)
             self.wifi_show_characters.stateChanged.connect(self.wifi_show_characters_changed)
-            
+
             self.wifi_show_characters.hide()
             self.wifi_secret_label.hide()
             self.wifi_secret.hide()
-            
+
             async_call(self.master.get_wifi_authentication_secret, None, self.get_wifi_authentication_secret_async, self.parent.increase_error_count)
         else:
             self.wifi_use_auth.setText("Use Authentication (FW Version >= 2.2.0 required)")
@@ -101,7 +101,7 @@ class Wifi(QWidget, Ui_Wifi):
     def destroy(self):
         if self.wifi_status:
             self.wifi_status.close()
-        
+
     def get_wifi_authentication_secret_async(self, secret):
         self.wifi_secret.setText(secret)
         if secret == '':
@@ -118,7 +118,7 @@ class Wifi(QWidget, Ui_Wifi):
                 self.wifi_secret.setEchoMode(QLineEdit.Normal)
             else:
                 self.wifi_secret.setEchoMode(QLineEdit.Password)
-            
+
     def wifi_auth_changed(self, state):
         if state == Qt.Checked:
             self.wifi_show_characters.show()
@@ -133,7 +133,7 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_secret_label.hide()
             self.wifi_secret.hide()
             self.wifi_secret.setText('')
-        
+
     def wifi_show_characters_changed(self, state):
         if state == Qt.Checked:
             self.wifi_secret.setEchoMode(QLineEdit.Normal)
@@ -193,7 +193,7 @@ class Wifi(QWidget, Ui_Wifi):
         ssid = ssid.replace('\0', '')
         self.connection = connection
 
-        self.wifi_ssid.setText(ssid);
+        self.wifi_ssid.setText(ssid)
         self.wifi_connection.setCurrentIndex(connection)
         self.wifi_ip1.setValue(ip[0])
         self.wifi_ip2.setValue(ip[1])
