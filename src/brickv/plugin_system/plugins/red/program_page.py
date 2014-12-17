@@ -51,7 +51,7 @@ class ProgramPage(QWizardPage):
 
         try:
             program.set_custom_option_value('last_edit', int(time.time())) # FIXME: async_call
-        except REDError as e:
+        except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                  u'Could not update last edit timestamp of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))
@@ -125,7 +125,7 @@ class ProgramPage(QWizardPage):
 
         try:
             program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
-        except REDError as e:
+        except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                  u'Could not update command of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))
@@ -140,7 +140,7 @@ class ProgramPage(QWizardPage):
         for name, value in custom_options.iteritems():
             try:
                 program.set_custom_option_value(name, value) # FIXME: async_call
-            except REDError as e:
+            except (Error, REDError) as e:
                 QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                      u'Could not update custom options of program [{0}]:\n\n{1}'
                                      .format(program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))

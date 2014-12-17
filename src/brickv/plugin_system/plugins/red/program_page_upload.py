@@ -193,7 +193,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if not self.edit_mode and defined:
             try:
                 self.program.purge() # FIXME: async_call
-            except REDError:
+            except (Error, REDError):
                 pass # FIXME: report this error?
 
     def get_total_step_count(self):
@@ -243,7 +243,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
             try:
                 self.program = REDProgram(self.wizard().session).define(identifier) # FIXME: async_call
-            except REDError as e:
+            except (Error, REDError) as e:
                 self.upload_error('...error: {0}', e, defined=False)
                 return
 
@@ -258,14 +258,14 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
             try:
                 self.program.set_custom_option_value('name', name) # FIXME: async_call
-            except REDError as e:
+            except (Error, REDError) as e:
                 self.upload_error('...error: {0}', e)
                 return
 
             # set custom option: language
             try:
                 self.program.set_custom_option_value('language', self.language_api_name) # FIXME: async_call
-            except REDError as e:
+            except (Error, REDError) as e:
                 self.upload_error('...error: {0}', e)
                 return
 
@@ -274,7 +274,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
             try:
                 self.program.set_custom_option_value('description', description) # FIXME: async_call
-            except REDError as e:
+            except (Error, REDError) as e:
                 self.upload_error('...error: {0}', e)
                 return
 
@@ -283,14 +283,14 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
             try:
                 self.program.set_custom_option_value('first_upload', timestamp) # FIXME: async_call
-            except REDError as e:
+            except (Error, REDError) as e:
                 self.upload_error('...error: {0}', e)
                 return
 
             # set custom option: last_edit
             try:
                 self.program.set_custom_option_value('last_edit', timestamp) # FIXME: async_call
-            except REDError as e:
+            except (Error, REDError) as e:
                 self.upload_error('...error: {0}', e)
                 return
 
@@ -300,7 +300,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             for name, value in custom_options.iteritems():
                 try:
                     self.program.set_custom_option_value(name, value) # FIXME: async_call
-                except REDError as e:
+                except (Error, REDError) as e:
                     self.upload_error('...error: {0}', e)
                     return
 
@@ -357,7 +357,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             if target_directory not in self.created_directories:
                 try:
                     create_directory(self.wizard().session, target_directory, DIRECTORY_FLAG_RECURSIVE, 0755, 1000, 1000)
-                except REDError as e:
+                except (Error, REDError) as e:
                     self.upload_error('...error: Could not create target directory {0}: {1}', target_directory, e)
                     return
 
@@ -393,7 +393,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         try:
             self.target_file = REDFile(self.wizard().session).open(self.target_path, flags,
                                                                    permissions, 1000, 1000) # FIXME: async_call
-        except REDError as e:
+        except (Error, REDError) as e:
             if e.error_code == REDError.E_ALREADY_EXISTS:
                 self.start_conflict_resolution()
             else:
@@ -423,7 +423,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                                                           timestamp_to_date_at_time(int(target_file.modification_time))))
 
                 target_file.release()
-            except REDError as e:
+            except (Error, REDError) as e:
                 self.label_existing_stats.setText(u'<b>Error</b>: Could not open target file: {0}', Qt.escape(unicode(e)))
 
             self.label_new_stats.setText('{0}, last modified on {1}'
@@ -542,7 +542,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         try:
             self.target_file.write_async(data, self.upload_write_async_cb_result, self.upload_write_async_cb_status)
-        except REDError as e:
+        except (Error, REDError) as e:
             self.upload_error('...error: Could not write to target file {0}: {1}', self.target_path, e)
 
     def upload_write_async_done(self):
@@ -576,7 +576,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
             try:
                 self.program.set_command(executable, arguments, environment, working_directory) # FIXME: async_call
-            except REDError as e:
+            except (Error, REDError) as e:
                 self.upload_error('...error: {0}', e)
                 return
 
@@ -588,14 +588,14 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             # set custom option: editable_arguments_offset
             try:
                 self.program.set_custom_option_value('editable_arguments_offset', str(editable_arguments_offset)) # FIXME: async_call
-            except REDError as e:
+            except (Error, REDError) as e:
                 self.upload_error('...error: {0}', e)
                 return
 
             # set custom option: editable_environment_offset
             try:
                 self.program.set_custom_option_value('editable_environment_offset', str(editable_environment_offset)) # FIXME: async_call
-            except REDError as e:
+            except (Error, REDError) as e:
                 self.upload_error('...error: {0}', e)
                 return
 
@@ -616,7 +616,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 self.program.set_stdio_redirection(stdin_redirection, stdin_file,
                                                    stdout_redirection, stdout_file,
                                                    stderr_redirection, stderr_file) # FIXME: async_call
-            except REDError as e:
+            except (Error, REDError) as e:
                 self.upload_error('...error: {0}', e)
                 return
 
@@ -651,7 +651,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
             try:
                 self.program.set_schedule(api_start_mode, continue_after_error, start_interval, start_fields) # FIXME: async_call
-            except REDError as e:
+            except (Error, REDError) as e:
                 self.upload_error('...error: {0}', e)
                 return
 
@@ -663,13 +663,13 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
                 try:
                     self.program.set_custom_option_value('started_once_after_upload', True) # FIXME: async_call
-                except REDError as e:
+                except (Error, REDError) as e:
                     self.upload_error('...error: {0}', e)
                     return
 
                 try:
                     self.program.start() # FIXME: async_call
-                except REDError as e:
+                except (Error, REDError) as e:
                     self.upload_error('...error: {0}', e)
                     return
 

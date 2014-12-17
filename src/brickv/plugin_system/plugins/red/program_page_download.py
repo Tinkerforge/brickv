@@ -217,7 +217,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
             self.source_file = REDFile(self.wizard().session).open(self.source_path,
                                                                    REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING,
                                                                    0, 1000, 1000) # FIXME: async_call
-        except REDError as e:
+        except (Error, REDError) as e:
             self.download_error('...error: Could not open source file {0}: {1}', self.source_path, e)
             return
 
@@ -414,7 +414,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
             self.source_file.read_async(min(self.remaining_source_size, 1000*1000*10), # Read 10mb at a time
                                         self.download_read_async_cb_result,
                                         self.download_read_async_cb_status)
-        except REDError as e:
+        except (Error, REDError) as e:
             self.download_error('...error: Could not read from source file {0}: {1}', self.source_path, e)
             return
 

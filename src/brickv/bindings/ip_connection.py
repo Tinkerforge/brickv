@@ -101,7 +101,7 @@ class Error(Exception):
         self.description = description
 
     def __str__(self):
-        return str(self.value) + ': ' + str(self.description)
+        return str(self.description) + ' (' + str(self.value) + ')'
 
 class Device:
     RESPONSE_EXPECTED_INVALID_FUNCTION_ID = 0

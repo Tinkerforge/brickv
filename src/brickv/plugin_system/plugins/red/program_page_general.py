@@ -171,7 +171,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
 
         try:
             program.set_custom_option_value('name', name) # FIXME: async_call
-        except REDError as e:
+        except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                  u'Could not update name of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))
@@ -181,7 +181,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
 
         try:
             program.set_custom_option_value('description', description) # FIXME: async_call
-        except REDError as e:
+        except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Edit Program Error',
                                  u'Could not update description of program [{0}]:\n\n{1}'
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))
