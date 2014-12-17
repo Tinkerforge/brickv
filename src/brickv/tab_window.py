@@ -79,6 +79,8 @@ class TabWindow(QWidget):
         self.button_handler = button_handler
         self.button_icon_default = QIcon(os.path.join(get_resources_path(), "tab-default-icon.png"))
         self.button_icon_mouse_over = QIcon(os.path.join(get_resources_path(), "tab-mouse-over-icon.png"))
+        self.cb_on_tab = None
+        self.cb_on_untab = None
 
     def closeEvent(self, event):
         self.tab()
@@ -87,7 +89,7 @@ class TabWindow(QWidget):
     def untab(self):
         index = self.tab_widget.indexOf(self)
         if index > -1:
-            if hasattr(self, 'cb_on_untab') and self.cb_on_untab:
+            if self.cb_on_untab != None:
                 self.cb_on_untab(index)
 
             self.tab_widget.removeTab(index)
@@ -109,7 +111,7 @@ class TabWindow(QWidget):
             self.button.clicked.connect(lambda:
                                         self.button_handler(self.tab_widget.indexOf(self)))
 
-            if hasattr(self, 'cb_on_tab') and self.cb_on_tab:
+            if self.cb_on_tab != None:
                 self.cb_on_tab(index)
 
     def set_callback_on_tab(self, callback):

@@ -39,6 +39,11 @@ class Chibi(QWidget, Ui_Chibi):
 
         self.parent = parent
         self.master = parent.master
+        self.update_address = 0
+        self.update_chibi_slave_address = 0
+        self.update_chibi_master_address = 0
+        self.update_chibi_frequency = 0
+        self.update_chibi_channel = 0
 
         if parent.firmware_version >= (1, 1, 0):
             self.update_generator = self.init_update()

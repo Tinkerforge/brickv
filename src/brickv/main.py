@@ -62,11 +62,9 @@ from brickv import config
 from brickv.mainwindow import MainWindow
 from brickv.async_call import ASYNC_EVENT, async_event_handler
 
-logging.basicConfig( 
-    level = config.LOGGING_LEVEL, 
-    format = config.LOGGING_FORMAT,
-    datefmt = config.LOGGING_DATEFMT
-)
+logging.basicConfig(level=config.LOGGING_LEVEL,
+                    format=config.LOGGING_FORMAT,
+                    datefmt=config.LOGGING_DATEFMT)
 
 class BrickViewer(QApplication):
     object_creator_signal = pyqtSignal(object)
@@ -81,10 +79,10 @@ class BrickViewer(QApplication):
         object_creator.create()
 
     def notify(self, receiver, event):
-        if event.type() > QEvent.User:
-            if event.type() == ASYNC_EVENT:
-                async_event_handler()
-        return super(BrickViewer, self).notify(receiver, event)
+        if event.type() > QEvent.User and event.type() == ASYNC_EVENT:
+            async_event_handler()
+
+        return QApplication.notify(self, receiver, event)
 
 def main():
     argv = sys.argv

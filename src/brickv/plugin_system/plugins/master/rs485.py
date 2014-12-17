@@ -38,6 +38,8 @@ class RS485(QWidget, Ui_RS485):
 
         self.parent = parent
         self.master = parent.master
+        self.update_address = 0
+        self.update_address_slave = 0
 
         if parent.firmware_version >= (1, 2, 0):
             async_call(self.master.get_rs485_configuration, None, self.get_rs485_configuration_async, self.parent.increase_error_count)

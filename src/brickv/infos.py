@@ -100,6 +100,8 @@ class BrickInfo(DeviceInfo):
     type = 'brick'
 
     def __init__(self):
+        DeviceInfo.__init__(self)
+
         self.bricklets = {'a': None, 'b': None}
 
     def __repr__(self):
@@ -117,6 +119,8 @@ class BrickInfo(DeviceInfo):
 
 class BrickMasterInfo(BrickInfo):
     def __init__(self):
+        BrickInfo.__init__(self)
+
         self.bricklets = {'a': None, 'b': None, 'c': None, 'd': None}
 
     def __repr__(self):
@@ -132,8 +136,8 @@ class BrickMasterInfo(BrickInfo):
             c = '{0} ({1})'.format(self.bricklets['c'].name, self.bricklets['c'].uid)
         if self.bricklets['d'] != None:
             d = '{0} ({1})'.format(self.bricklets['d'].name, self.bricklets['d'].uid)
-            
-        return super(BrickInfo, self).__repr__() + """  Bricklets:
+
+        return BrickInfo.__repr__(self) + """  Bricklets:
    a: {0}
    b: {1}
    c: {2}
@@ -142,6 +146,8 @@ class BrickMasterInfo(BrickInfo):
 
 class BrickREDInfo(BrickInfo):
     def __init__(self):
+        BrickInfo.__init__(self)
+
         self.bricklets = {}
 
 def get_version_string(version_tuple):
