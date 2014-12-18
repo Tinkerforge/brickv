@@ -25,7 +25,11 @@ try:
     with open('/sys/block/mmcblk0/size') as f_card_size:
         card_size = f_card_size.readline()
         return_dict['card_size'] = int(card_size.strip())
-    
+
+    with open('/sys/block/mmcblk0/mmcblk0p1/start') as f_p1_start:
+        p1_start = f_p1_start.readline()
+        return_dict['p1_start'] = int(p1_start.strip())
+
     with open('/sys/block/mmcblk0/mmcblk0p1/size') as f_p1_size:
         p1_size = f_p1_size.readline()
         return_dict['p1_size'] = int(p1_size.strip())

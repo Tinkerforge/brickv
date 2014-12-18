@@ -25,8 +25,8 @@ Boston, MA 02111-1307, USA.
 import json
 import sys
 import time
+import math
 from PyQt4 import Qt, QtCore, QtGui
-
 from brickv.plugin_system.plugins.red.ui_red_tab_settings import Ui_REDTabSettings
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red import config_parser
@@ -273,9 +273,17 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             return
 
         if result and result.stdout and not result.stderr and result.exit_code == 0:
-            size_dict = json.loads(result.stdout)
+            try:
+                size_dict = json.loads(result.stdout)
+                p1_start = float(size_dict['p1_start'])
+                p1_size = float(size_dict['p1_size'])
+                card_size = float(size_dict['card_size'])
+            except:
+                p1_start = 0
+                p1_size = 100
+                card_size = 100
 
-            percentage_utilization_v = int((float(size_dict['p1_size']) / float(size_dict['card_size'])) * 100.0)
+            percentage_utilization_v = min(int(math.ceil((p1_size / (card_size - p1_start)) * 100.0)), 100)
             percentage_utilization = unicode(percentage_utilization_v)
 
             self.pbar_fs_capacity_utilization.setEnabled(True)
@@ -285,7 +293,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
             self.pbar_fs_capacity_utilization.setValue(percentage_utilization_v)
 
-            if percentage_utilization_v >= 90:
+            if percentage_utilization_v >= 95:
                 self.pbutton_fs_expand.setEnabled(False)
                 self.tb_fs_expand_info.hide()
                 self.label_fs_spacer.show()
