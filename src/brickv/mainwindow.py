@@ -599,7 +599,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.remove_device_info(device_info.uid)
 
                 self.red_session_losts += 1
-                self.label_red_session_losts.setText('RED Brick Session Lost Count: {0}'.format(self.red_session_losts))
+                self.label_red_session_losts.setText('RED Brick Session Loss Count: {0}'.format(self.red_session_losts))
                 self.label_red_session_losts.show()
 
                 break
