@@ -916,6 +916,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             def cb_restart_reboot_shutdown(result):
                 self.pbutton_fs_expand.setEnabled(False)
                 if result:
+                    err_msg = ''
                     if result.stderr:
                         err_msg = unicode(result.stderr)
 
