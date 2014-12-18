@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 import json
+import sys
 import time
 from PyQt4 import Qt, QtCore, QtGui
 
@@ -43,6 +44,7 @@ BRICKD_CONF_PATH = '/etc/brickd.conf'
 BOX_INDEX_NETWORK = 0
 BOX_INDEX_BRICKD = 1
 BOX_INDEX_DATETIME = 2
+BOX_INDEX_FILESYSTEM = 3
 TAB_INDEX_NETWORK_GENERAL = 0
 TAB_INDEX_NETWORK_WIRELESS = 1
 TAB_INDEX_NETWORK_WIRED = 2
@@ -139,6 +141,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                  'wired_settings': None}
         self.brickd_conf = {}
 
+        # For MAC progress bar text fix
+        self.tb_fs_expand_info.hide()
+        self.label_pbar_fs_capacity_utilization.hide()
+
         self.cbox_brickd_adv_ll.addItem('Error')
         self.cbox_brickd_adv_ll.addItem('Warn')
         self.cbox_brickd_adv_ll.addItem('Info')
@@ -216,6 +222,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         # Date/Time buttons
         self.time_sync_button.clicked.connect(self.time_sync_clicked)
 
+        # File system buttons
+        self.pbutton_fs_expand.clicked.connect(self.slot_fs_expand_clicked)
+
     def tab_on_focus(self):
         self.is_tab_on_focus = True
 
@@ -235,6 +244,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.slot_brickd_refresh_clicked()
         elif index == BOX_INDEX_DATETIME:
             self.time_start()
+        elif index == BOX_INDEX_FILESYSTEM:
+            self.script_manager.execute_script('settings_fs_expand_check',
+                                               self.cb_settings_fs_expand_check,
+                                               ['/dev/mmcblk0'])
 
     def tab_off_focus(self):
         self.is_tab_on_focus = False
@@ -252,6 +265,56 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
     def tab_destroy(self):
         pass
+
+    def cb_settings_fs_expand_check(self, result):
+        if not self.is_tab_on_focus:
+            return
+
+        if result and result.stdout and not result.stderr and result.exit_code == 0:
+            size_dict = json.loads(result.stdout)
+
+            percentage_utilization_v = int((float(size_dict['p1_size']) / float(size_dict['card_size'])) * 100.0)
+            percentage_utilization = unicode(percentage_utilization_v)
+
+            self.pbar_fs_capacity_utilization.setEnabled(True)
+
+            self.pbar_fs_capacity_utilization.setMinimum(0)
+            self.pbar_fs_capacity_utilization.setMaximum(100)
+
+            self.pbar_fs_capacity_utilization.setValue(percentage_utilization_v)
+
+            if percentage_utilization_v >= 90:
+                self.pbutton_fs_expand.setEnabled(False)
+                self.tb_fs_expand_info.hide()
+            else:
+                self.pbutton_fs_expand.setEnabled(True)
+                self.tb_fs_expand_info.show()
+
+            pbar_fs_capacity_utilization_fmt = "Using {0}% of total capacity".format(percentage_utilization)
+
+            if sys.platform == 'darwin':
+                self.label_pbar_fs_capacity_utilization.show()
+                self.label_pbar_fs_capacity_utilization.setText(pbar_fs_capacity_utilization_fmt)
+            else:
+                self.pbar_fs_capacity_utilization.setFormat(pbar_fs_capacity_utilization_fmt)
+        else:
+            self.tb_fs_expand_info.hide()
+            self.label_pbar_fs_capacity_utilization.hide()
+            self.pbar_fs_capacity_utilization.setMinimum(0)
+            self.pbar_fs_capacity_utilization.setMaximum(100)
+            self.pbar_fs_capacity_utilization.setValue(0)
+            self.pbar_fs_capacity_utilization.setFormat('')
+            self.pbar_fs_capacity_utilization.setEnabled(False)
+
+            err_msg = ''
+            if result.stderr:
+                err_msg = unicode(result.stderr)
+
+            self.pbutton_fs_expand.setEnabled(False)
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       'Settings | File System',
+                                       'Error getting partition information.\n\n'+err_msg,
+                                       QtGui.QMessageBox.Ok)
 
     def ap_tree_model_clear_add_item(self, item):
         self.ap_tree_model.removeRows(0, self.ap_tree_model.rowCount())
@@ -848,6 +911,38 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.sbox_brickd_adv_rs485_dly.setValue(int(self.brickd_conf['poll_delay.rs485']))
 
     # The slots
+    def slot_fs_expand_clicked (self):
+        def cb_settings_fs_expand(result):
+            def cb_restart_reboot_shutdown(result):
+                self.pbutton_fs_expand.setEnabled(False)
+                if result:
+                    if result.stderr:
+                        err_msg = unicode(result.stderr)
+
+                    QtGui.QMessageBox.critical(get_main_window(),
+                                               'Settings | File System',
+                                               'Error rebooting RED Brick.\n\n'+err_msg,
+                                               QtGui.QMessageBox.Ok)
+
+            if result and result.stdout and not result.stderr and result.exit_code == 0:
+                self.script_manager.execute_script('restart_reboot_shutdown',
+                                                   cb_restart_reboot_shutdown,
+                                                   [unicode(1)])
+            else:
+                self.pbutton_fs_expand.setEnabled(True)
+
+                err_msg = ''
+                if result.stderr:
+                    err_msg = unicode(result.stderr)
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           'Settings | File System',
+                                           'Error expanding file system.\n\n'+err_msg,
+                                           QtGui.QMessageBox.Ok)
+
+        self.pbutton_fs_expand.setEnabled(False)
+        self.script_manager.execute_script('settings_fs_expand',
+                                           cb_settings_fs_expand)
+
     def slot_tbox_settings_current_changed(self, ctidx):
         if self.last_index == BOX_INDEX_BRICKD:
             pass
@@ -869,6 +964,10 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         elif ctidx == BOX_INDEX_DATETIME:
             self.time_start()
+        elif ctidx == BOX_INDEX_FILESYSTEM:
+            self.script_manager.execute_script('settings_fs_expand_check',
+                                               self.cb_settings_fs_expand_check,
+                                               ['/dev/mmcblk0'])
 
     def network_button_refresh_enabled(self, state):
         self.pbutton_net_conf_refresh.setEnabled(state)
