@@ -915,15 +915,18 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         def cb_settings_fs_expand(result):
             def cb_restart_reboot_shutdown(result):
                 self.pbutton_fs_expand.setEnabled(False)
-                if result:
-                    err_msg = ''
-                    if result.stderr:
-                        err_msg = unicode(result.stderr)
-
-                    QtGui.QMessageBox.critical(get_main_window(),
-                                               'Settings | File System',
-                                               'Error rebooting RED Brick.\n\n'+err_msg,
-                                               QtGui.QMessageBox.Ok)
+                if result is not None:
+                    if not result.stderr and result.exit_code == 0:
+                        pass
+                    else:
+                        err_msg = ''
+                        if result.stderr:
+                            err_msg = unicode(result.stderr)
+    
+                        QtGui.QMessageBox.critical(get_main_window(),
+                                                   'Settings | File System',
+                                                   'Error rebooting RED Brick.\n\n'+err_msg,
+                                                   QtGui.QMessageBox.Ok)
 
             if result and result.stdout and not result.stderr and result.exit_code == 0:
                 self.script_manager.execute_script('restart_reboot_shutdown',
