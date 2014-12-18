@@ -145,6 +145,8 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.tb_fs_expand_info.hide()
         self.label_pbar_fs_capacity_utilization.hide()
 
+        self.label_fs_spacer.setText('')
+
         self.cbox_brickd_adv_ll.addItem('Error')
         self.cbox_brickd_adv_ll.addItem('Warn')
         self.cbox_brickd_adv_ll.addItem('Info')
@@ -286,9 +288,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             if percentage_utilization_v >= 90:
                 self.pbutton_fs_expand.setEnabled(False)
                 self.tb_fs_expand_info.hide()
+                self.label_fs_spacer.show()
             else:
                 self.pbutton_fs_expand.setEnabled(True)
                 self.tb_fs_expand_info.show()
+                self.label_fs_spacer.hide()
 
             pbar_fs_capacity_utilization_fmt = "Using {0}% of total capacity".format(percentage_utilization)
 
