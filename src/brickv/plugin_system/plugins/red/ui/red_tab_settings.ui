@@ -34,7 +34,7 @@
            <x>0</x>
            <y>0</y>
            <width>838</width>
-           <height>735</height>
+           <height>704</height>
           </rect>
          </property>
          <attribute name="label">
@@ -52,7 +52,7 @@
                <x>0</x>
                <y>0</y>
                <width>818</width>
-               <height>715</height>
+               <height>684</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -586,7 +586,7 @@
            <x>0</x>
            <y>0</y>
            <width>838</width>
-           <height>735</height>
+           <height>704</height>
           </rect>
          </property>
          <attribute name="label">
@@ -617,7 +617,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>796</width>
-                   <height>664</height>
+                   <height>633</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -772,8 +772,8 @@
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>796</width>
-                   <height>664</height>
+                   <width>312</width>
+                   <height>229</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -930,7 +930,7 @@
            <x>0</x>
            <y>0</y>
            <width>838</width>
-           <height>735</height>
+           <height>704</height>
           </rect>
          </property>
          <attribute name="label">
@@ -961,7 +961,7 @@
                    <x>0</x>
                    <y>0</y>
                    <width>796</width>
-                   <height>664</height>
+                   <height>633</height>
                   </rect>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -1179,6 +1179,88 @@
              </layout>
             </widget>
            </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="page">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>838</width>
+           <height>704</height>
+          </rect>
+         </property>
+         <attribute name="label">
+          <string>File System</string>
+         </attribute>
+         <layout class="QVBoxLayout" name="verticalLayout_12">
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QTextBrowser" name="tb_fs_expand_info">
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Plain</enum>
+              </property>
+              <property name="lineWidth">
+               <number>0</number>
+              </property>
+              <property name="html">
+               <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Depending on the image size and the capacity of the SD card you might not be using the total capacity of the SD card. In this case expanding the file system will provide you with some extra storage space.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Important:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;1. Make sure the RED Brick is powered from a reliable power source during the expansion process and do not power it off during the expansion process. This could damage the SD card and the data in it.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;2. Extra available storage will only be available after a reboot. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QProgressBar" name="pbar_fs_capacity_utilization">
+              <property name="value">
+               <number>24</number>
+              </property>
+              <property name="format">
+               <string>Using %p% of total capacity</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="line">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pbutton_fs_expand">
+              <property name="text">
+               <string>Expand</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
