@@ -166,21 +166,21 @@
            <item row="1" column="2">
             <widget class="QLabel" name="label_pbar_cpu">
              <property name="text">
-              <string/>
+              <string>&lt;cpu&gt;</string>
              </property>
             </widget>
            </item>
            <item row="2" column="2">
             <widget class="QLabel" name="label_pbar_memory">
              <property name="text">
-              <string/>
+              <string>&lt;memory&gt;</string>
              </property>
             </widget>
            </item>
            <item row="3" column="2">
             <widget class="QLabel" name="label_pbar_storage">
              <property name="text">
-              <string/>
+              <string>&lt;storage&gt;</string>
              </property>
             </widget>
            </item>
