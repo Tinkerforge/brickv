@@ -6,7 +6,7 @@ import subprocess
 from sys import argv
 
 if len(argv) < 2:
-    exit (1)
+    exit(1)
 
 block_device = unicode(argv[1])
 return_dict = {}
@@ -16,7 +16,7 @@ ps_get_part = subprocess.Popen(cmd_get_part, shell=True, stdout=subprocess.PIPE)
 cmd_output = ps_get_part.communicate()[0]
 
 if ps_get_part.returncode:
-    exit (1)
+    exit(1)
 else:
     if len(cmd_output.splitlines()) != 2:
         exit(1)
@@ -30,7 +30,7 @@ try:
         p1_size = f_p1_size.readline()
         return_dict['p1_size'] = int(p1_size.strip())
 except:
-    print json.dumps(None)
+    print(json.dumps(None))
     exit(1)
 
-print json.dumps(return_dict)
+print(json.dumps(return_dict, separators=(',', ':')))

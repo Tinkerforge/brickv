@@ -81,7 +81,7 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
                 chunk = response.read(1024)
 
             response.close()
-        except urllib2.HTTPError, e:
+        except urllib2.HTTPError as e:
             if e.code == 404:
                 progress.cancel()
                 self.popup_ok('Factory Calibration', 'No factory calibration available')

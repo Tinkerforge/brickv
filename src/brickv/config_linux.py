@@ -22,8 +22,12 @@ Boston, MA 02111-1307, USA.
 """
 
 from brickv.config_common import *
-import ConfigParser
 import os
+
+try:
+    import configparser
+except:
+    import ConfigParser as configparser # Python 2 fallback
 
 XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME')
 
@@ -35,22 +39,23 @@ else:
 CONFIG_DIRNAME = os.path.dirname(CONFIG_FILENAME)
 
 def get_config_value(section, option, default):
-    scp = ConfigParser.SafeConfigParser()
+    scp = configparser.SafeConfigParser()
     scp.read(CONFIG_FILENAME)
     try:
         return scp.get(section, option)
-    except ConfigParser.Error:
+    except configparser.Error:
         return default
 
 def set_config_value(section, option, value):
-    scp = ConfigParser.SafeConfigParser()
+    scp = configparser.SafeConfigParser()
     scp.read(CONFIG_FILENAME)
     if not scp.has_section(section):
         scp.add_section(section)
     scp.set(section, option, value)
     if not os.path.exists(CONFIG_DIRNAME):
         os.makedirs(CONFIG_DIRNAME)
-    scp.write(file(CONFIG_FILENAME, 'wb'))
+    with open(CONFIG_FILENAME, 'wb') as f:
+        scp.write(f)
 
 def get_host_info_strings(count):
     host_info_strings = []

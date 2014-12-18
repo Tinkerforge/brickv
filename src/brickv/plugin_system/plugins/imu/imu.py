@@ -77,7 +77,10 @@ class IMU(PluginBase, Ui_IMU):
         # 'No OpenGL_accelerate module loaded: No module named OpenGL_accelerate'
         # as soon as IMU is set as device_class in __init__. 
         # No idea why this happens, doesn't make sense.
-        from imu_gl_widget import IMUGLWidget
+        try:
+            from .imu_gl_widget import IMUGLWidget
+        except:
+            from imu_gl_widget import IMUGLWidget
         
         self.imu_gl = IMUGLWidget(self)
         self.imu_gl.setMinimumSize(150, 150)

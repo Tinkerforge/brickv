@@ -208,7 +208,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 self.combo_firmware.addItem(SELECT)
                 self.combo_firmware.insertSeparator(self.combo_firmware.count())
 
-            for firmware_info in sorted(self.firmware_infos.values(), cmp=lambda x, y: cmp(x.name, y.name)):
+            for firmware_info in sorted(self.firmware_infos.values(), key=lambda x: x.name):
                 name = '{0} ({1}.{2}.{3})'.format(firmware_info.name, *firmware_info.firmware_version_latest)
                 self.combo_firmware.addItem(name, firmware_info.url_part)
 
@@ -220,7 +220,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 self.combo_plugin.addItem(SELECT)
                 self.combo_plugin.insertSeparator(self.combo_plugin.count())
 
-            for plugin_info in sorted(self.plugin_infos.values(), cmp=lambda x, y: cmp(x.name, y.name)):
+            for plugin_info in sorted(self.plugin_infos.values(), key=lambda x: x.name):
                 name = '{0} ({1}.{2}.{3})'.format(plugin_info.name, *plugin_info.firmware_version_latest)
                 self.combo_plugin.addItem(name, plugin_info.url_part)
 
@@ -414,11 +414,11 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         try:
             samba = SAMBA(port)
-        except SAMBAException, e:
+        except SAMBAException as e:
             self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not connect to Brick: {0}'.format(str(e)))
             return
-        except SerialException, e:
+        except SerialException as e:
             self.refresh_serial_ports()
             self.popup_fail('Brick', str(e)[0].upper() + str(e)[1:])
             return
@@ -442,7 +442,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             firmware_file_name = unicode(firmware_file_name.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
 
             try:
-                firmware = file(firmware_file_name, 'rb').read()
+                with open(firmware_file_name, 'rb') as f:
+                    firmware = f.read()
             except IOError:
                 progress.cancel()
                 self.popup_fail('Brick', 'Could not read firmware file')
@@ -507,7 +508,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
             try:
                 imu_uid = base58encode(uid64_to_uid32(samba.read_uid64()))
-            except SerialException, e:
+            except SerialException as e:
                 progress.cancel()
                 self.popup_fail('Brick', 'Could read UID of IMU Brick: {0}'.format(str(e)))
                 return
@@ -534,7 +535,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                         chunk = response.read(1024)
 
                     response.close()
-                except urllib2.HTTPError, e:
+                except urllib2.HTTPError as e:
                     if e.code == 404:
                         imu_calibration_text = None
                         self.popup_ok('IMU Brick', 'No factory calibration for IMU Brick [{0}] available'.format(imu_uid))
@@ -855,7 +856,8 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             plugin_file_name = unicode(plugin_file_name.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
 
             try:
-                plugin = map(ord, file(plugin_file_name, 'rb').read()) # Convert plugin to list of bytes
+                with open(plugin_file_name, 'rb') as f:
+                    plugin = map(ord, f.read()) # Convert plugin to list of bytes
             except IOError:
                 progress.cancel()
                 self.popup_fail('Bricklet', 'Could not read plugin file')
@@ -1054,7 +1056,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
         except:
             infos.infos[infos.UID_BRICKV].firmware_version_latest = (0, 0, 0)
 
-        for device_info in sorted(infos.infos.values(), cmp=lambda x, y: cmp(x.name, y.name)):
+        for device_info in sorted(infos.infos.values(), key=lambda x: x.name):
             if device_info.type == 'brick':
                 try:
                     device_info.firmware_version_latest = self.firmware_infos[device_info.url_part].firmware_version_latest

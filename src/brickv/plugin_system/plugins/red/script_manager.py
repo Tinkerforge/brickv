@@ -161,7 +161,7 @@ class ScriptManager(object):
         try:
             script.file = create_object_in_qt_main_thread(REDFile, (self.session,))
             script.file.open(posixpath.join(SCRIPT_FOLDER, sd.script_name + script.file_ending),
-                             REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0755, 0, 0)
+                             REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0o755, 0, 0)
             script.file.write_async(script.script, lambda error: self._init_script_async_write_done(error, sd))
             return False
         except:

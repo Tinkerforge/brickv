@@ -237,7 +237,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
 
             if target_directory not in self.created_directories:
                 try:
-                    os.makedirs(target_directory, 0755)
+                    os.makedirs(target_directory, 0o755)
                 except OSError as e:
                     if e.errno != errno.EEXIST:
                         self.download_error('...error: Could not create target directory {0}: {1}', target_directory, e)

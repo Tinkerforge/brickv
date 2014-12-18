@@ -22,7 +22,11 @@ Boston, MA 02111-1307, USA.
 """
 
 from brickv.config_common import *
-import _winreg as winreg
+
+try:
+    import winreg
+except:
+    import _winreg as winreg # Python 2 fallback
 
 KEY_NAME = 'Software\\Tinkerforge\\Brickv'
 

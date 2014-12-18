@@ -29,8 +29,8 @@ def unicode_to_ks0066u(string):
         byte = chr
         ks0066u = ''
 
-        if type(string) != types.UnicodeType:
-            code_points = unicode(string, 'UTF-8')
+        if type(string) != unicode:
+            code_points = unicode(string, 'utf-8')
         else:
             code_points = string
     else:

@@ -198,13 +198,13 @@ class GPS(PluginBase, Ui_GPS):
 
         return u'{0}° {1}’ {2}.{3}’’'.format(dd_str, mm_str, ss_str, sss_str)
 
-    def cb_coordinates(self, lat, ns, long, ew, pdop, hdop, vdop, epe):
+    def cb_coordinates(self, lat, ns, long_, ew, pdop, hdop, vdop, epe):
         if not self.had_fix:
             return
 
         self.last_lat = lat
         self.last_ns = ns
-        self.last_long = long
+        self.last_long = long_
         self.last_ew = ew
         self.last_pdop = pdop
         self.last_hdop = hdop
@@ -229,11 +229,11 @@ class GPS(PluginBase, Ui_GPS):
         else:
             self.ew.setText(ew)
             if self.format_combobox.currentIndex() == 0:
-                self.longitude.setText(self.make_ddmmss_sss(long))
+                self.longitude.setText(self.make_ddmmss_sss(long_))
             elif self.format_combobox.currentIndex() == 1:
-                self.longitude.setText(self.make_dd_dddddd(long))
+                self.longitude.setText(self.make_dd_dddddd(long_))
             elif self.format_combobox.currentIndex() == 2:
-                self.longitude.setText(self.make_ddmm_mmmmm(long))
+                self.longitude.setText(self.make_ddmm_mmmmm(long_))
 
         str_pdop = '%.2f' % (pdop/100.0,)
         str_hdop = '%.2f' % (hdop/100.0,)

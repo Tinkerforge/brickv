@@ -29,9 +29,9 @@ import logging
 from brickv.bindings import ip_connection
 
 try:
-    from Queue import Queue
-except ImportError:
     from queue import Queue
+except:
+    from Queue import Queue # Python 2 fallback
 
 ASYNC_EVENT = 12345
 

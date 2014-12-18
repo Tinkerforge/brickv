@@ -9,5 +9,5 @@ def time_utc_offset():
     
     return -time.timezone/(60*60)
 
-print int(time.time())
-print time_utc_offset()
+print(int(time.time()))
+print(time_utc_offset())

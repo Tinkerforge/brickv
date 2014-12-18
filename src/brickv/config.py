@@ -40,13 +40,13 @@ def legacy_get_remember_secret(): return DEFAULT_REMEMBER_SECRET
 def legacy_set_remember_secret(remember): pass
 
 if sys.platform.startswith('linux') or sys.platform.startswith('freebsd'):
-    from config_linux import *
+    from brickv.config_linux import *
 elif sys.platform == 'darwin':
-    from config_macosx import *
+    from brickv.config_macosx import *
 elif sys.platform == 'win32':
-    from config_windows import *
+    from brickv.config_windows import *
 else:
-    print "Unsupported platform: " + sys.platform
+    print("Unsupported platform: " + sys.platform)
 
 def get_host_infos(count):
     host_infos = []

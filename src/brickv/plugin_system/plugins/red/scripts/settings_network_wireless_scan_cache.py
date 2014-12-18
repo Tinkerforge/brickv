@@ -37,4 +37,4 @@ for network_id in range(0, wireless.GetNumberOfNetworks()):
     except:
         pass
 
-print json.dumps(return_dict, separators=(',', ':'))
+print(json.dumps(return_dict, separators=(',', ':')))

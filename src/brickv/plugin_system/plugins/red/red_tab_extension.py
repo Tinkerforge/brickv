@@ -124,7 +124,7 @@ class RS485(QWidget, Ui_RS485):
 
         async_call(new_config['eeprom_file'].open,
                    ('/tmp/new_eeprom_extension_' + str(new_config['extension']) + ".conf",
-                    REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0555, 0, 0),
+                    REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0o555, 0, 0),
                    lambda x: self.upload_eeprom_data(new_config, x),
                    lambda: cb_file_open_error(new_config))
 
@@ -254,7 +254,7 @@ class Ethernet(QWidget, Ui_Ethernet):
 
         async_call(new_config['eeprom_file'].open,
                    ('/tmp/new_eeprom_extension_' + str(new_config['extension']) + ".conf",
-                    REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0555, 0, 0),
+                    REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0o555, 0, 0),
                    lambda x: self.upload_eeprom_data(new_config, x), lambda: cb_file_open_error(new_config))
 
     def upload_eeprom_data(self, new_config, result):

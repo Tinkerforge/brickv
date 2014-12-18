@@ -1486,7 +1486,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                            REDFile.FLAG_WRITE_ONLY |
                                            REDFile.FLAG_CREATE |
                                            REDFile.FLAG_NON_BLOCKING |
-                                           REDFile.FLAG_TRUNCATE, 0500, 0, 0),
+                                           REDFile.FLAG_TRUNCATE, 0o500, 0, 0),
                                            lambda x: cb_open(config, write_wireless_settings, x, iname_previous),
                                            cb_open_error)
 
@@ -1508,7 +1508,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                            REDFile.FLAG_WRITE_ONLY |
                            REDFile.FLAG_CREATE |
                            REDFile.FLAG_NON_BLOCKING |
-                           REDFile.FLAG_TRUNCATE, 0500, 0, 0),
+                           REDFile.FLAG_TRUNCATE, 0o500, 0, 0),
                            lambda x: cb_open(config, write_wireless_settings, x, iname_previous),
                            cb_open_error)
 
@@ -1624,7 +1624,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                                        REDFile.FLAG_WRITE_ONLY |
                                        REDFile.FLAG_CREATE |
                                        REDFile.FLAG_NON_BLOCKING |
-                                       REDFile.FLAG_TRUNCATE, 0500, 0, 0),
+                                       REDFile.FLAG_TRUNCATE, 0o500, 0, 0),
                                        lambda x: cb_open(config, write_wired_settings, x, iname_previous),
                                        cb_open_error)
 
@@ -1646,7 +1646,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                        REDFile.FLAG_WRITE_ONLY |
                        REDFile.FLAG_CREATE |
                        REDFile.FLAG_NON_BLOCKING |
-                       REDFile.FLAG_TRUNCATE, 0500, 0, 0),
+                       REDFile.FLAG_TRUNCATE, 0o500, 0, 0),
                        lambda x: cb_open(config, write_wired_settings, x, iname_previous),
                        cb_open_error)
 
@@ -1738,7 +1738,7 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
                    REDFile.FLAG_WRITE_ONLY |
                    REDFile.FLAG_CREATE |
                    REDFile.FLAG_NON_BLOCKING |
-                   REDFile.FLAG_TRUNCATE, 0500, 0, 0),
+                   REDFile.FLAG_TRUNCATE, 0o500, 0, 0),
                    lambda x: cb_open(config, x),
                    cb_open_error)
 

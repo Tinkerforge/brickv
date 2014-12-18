@@ -148,7 +148,7 @@ class SAMBA(object):
 
         try:
             self.port = Serial(port_name, 115200, timeout=5)
-        except SerialException, e:
+        except SerialException as e:
             if '[Errno 13]' in str(e):
                 raise SAMBAException("No permission to open serial port")
             else:

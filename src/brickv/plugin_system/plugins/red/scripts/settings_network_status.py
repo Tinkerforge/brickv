@@ -106,4 +106,4 @@ try:
 except:
     return_dict['cstat_status'] = '-'
 
-print json.dumps(return_dict)
+print(json.dumps(return_dict, separators=(',', ':')))

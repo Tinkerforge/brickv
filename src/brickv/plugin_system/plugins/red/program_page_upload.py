@@ -356,7 +356,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
             if target_directory not in self.created_directories:
                 try:
-                    create_directory(self.wizard().session, target_directory, DIRECTORY_FLAG_RECURSIVE, 0755, 1000, 1000)
+                    create_directory(self.wizard().session, target_directory, DIRECTORY_FLAG_RECURSIVE, 0o755, 1000, 1000)
                 except (Error, REDError) as e:
                     self.upload_error('...error: Could not create target directory {0}: {1}', target_directory, e)
                     return
@@ -379,16 +379,16 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         #        cross-compiled and doesn't have the typsical Windows file
         #        extensions for executables
         if (self.source_stat.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)) != 0:
-            permissions = 0755
+            permissions = 0o755
         else:
-            permissions = 0644
+            permissions = 0o644
 
         # FIXME: workaround permission problem were this really matters (C/C++
         #        and Delphi/Lazarus with cross-compiled executables)
         if not self.edit_mode and \
            self.language_api_name in ['c', 'delphi'] and \
            posixpath.normpath(self.command[0]) == posixpath.normpath(self.upload.target):
-            permissions = 0755
+            permissions = 0o755
 
         try:
             self.target_file = REDFile(self.wizard().session).open(self.target_path, flags,

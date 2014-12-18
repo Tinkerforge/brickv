@@ -166,7 +166,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.do_disconnect()
 
         if signl != None and frme != None:
-            print "Received SIGINT or SIGTERM, shutting down."
+            print("Received SIGINT or SIGTERM, shutting down.")
             sys.exit()
 
     def host_index_changed(self, i):
@@ -757,7 +757,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_tree_view(self):
         self.tree_view_model.clear()
 
-        for info in sorted(infos.infos.values(), cmp=lambda x, y: cmp(x.name, y.name)):
+        for info in sorted(infos.infos.values(), key=lambda x: x.name):
             if info.type == 'brick':
                 parent = [QStandardItem(info.name),
                           QStandardItem(info.uid),

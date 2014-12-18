@@ -28,8 +28,10 @@ try:
 except:
     from StringIO import StringIO
 
-import ConfigParser
-
+try:
+    import configparser
+except:
+    import ConfigParser as configparser # Python 2 fallback
 
 class FakeSectionHeadAndFile(object):
     def __init__(self, string):
@@ -62,7 +64,7 @@ def parse(data):
     else:
         return None
 
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config.readfp(FakeSectionHeadAndFile(string.encode('utf-8')))
     try:
         config = dict(config.items('fake_section'))
@@ -81,13 +83,13 @@ def parse_no_fake(data):
     else:
         return None
     
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config.readfp(StringIO(string.encode('utf-8')))
 
     return config
 
 def to_string(data):
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser()
     config.add_section('fake_section')
     for key, value in data.items():
         config.set('fake_section', key, value)
