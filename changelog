@@ -133,3 +133,11 @@
        Windows installer and drivers are signed now
        Fix occasional bounce of the connect button
        Fix UI font selection on Mac OS X 10.9 and 10.10
+2.2.1: Exclude file system cache from memory value on RED Brick overview tab
+       Show full list of available wireless networks instead of using a drop-down box on RED Brick network tab
+       Use timeout counter to show RED Brick timeout errors
+       Fix file progress display on RED Brick program upload dialog
+       Add Java main class discovery for already created RED Brick Java programs and make it abortable
+       Improve Java class path handling for RED Brick Java programs
+       Add missing Java part of RED Brick program upload summary
+       Add RED Brick file system settings tab to do file system expansion
