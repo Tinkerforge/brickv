@@ -33,7 +33,7 @@ DEFAULT_NAME_HEADER_WIDTH = 200
 DEFAULT_VERSION_HEADER_WIDTH = 100
 DEFAULT_DESCRIPTION_HEADER_WIDTH = 300
 
-NUM_TABS = 8
+NUM_TABS = 12
 
 class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
     def __init__(self):
@@ -61,23 +61,31 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
 
         self.tables = [
             self.tree_main,
-            self.tree_csharp,
             self.tree_c,
+            self.tree_csharp,
+            self.tree_delphi,
             self.tree_java,
+            self.tree_javascript,
+            self.tree_matlab,
             self.tree_perl,
             self.tree_php,
             self.tree_python,
             self.tree_ruby,
+            self.tree_shell
         ]
         self.update_funcs = [
             self.update_main,
-            lambda: self.update_language((1, "mono")),
-            lambda: self.update_language((2, "c")),
-            lambda: self.update_language((3, "java")),
-            lambda: self.update_language((4, "perl")),
-            lambda: self.update_language((5, "php")),
-            lambda: self.update_language((6, "python")),
-            lambda: self.update_language((7, "ruby")),
+            lambda: self.update_language((1, "c")),
+            lambda: self.update_language((2, "mono")),
+            lambda: self.update_language((3, "delphi")),
+            lambda: self.update_language((4, "java")),
+            lambda: self.update_language((5, "node")),
+            lambda: self.update_language((6, "matlab")),
+            lambda: self.update_language((7, "perl")),
+            lambda: self.update_language((8, "php")),
+            lambda: self.update_language((9, "python")),
+            lambda: self.update_language((10, "ruby")),
+            lambda: self.update_language((11, "shell"))
         ]
 
         self.tab_data = []

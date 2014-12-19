@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>723</width>
-    <height>471</height>
+    <width>902</width>
+    <height>579</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,29 +26,6 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QTreeView" name="tree_main">
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="alternatingRowColors">
-          <bool>true</bool>
-         </property>
-         <property name="rootIsDecorated">
-          <bool>false</bool>
-         </property>
-         <property name="sortingEnabled">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tab_5">
-      <attribute name="title">
-       <string>C#/VB.NET/mono</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
-       <item>
-        <widget class="QTreeView" name="tree_csharp">
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
          </property>
@@ -88,6 +65,46 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_5">
+      <attribute name="title">
+       <string>C#/VB.NET/mono</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QTreeView" name="tree_csharp">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="rootIsDecorated">
+          <bool>false</bool>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_9">
+      <attribute name="title">
+       <string>Delphi/Lazarus</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_9">
+       <item>
+        <widget class="QTreeView" name="tree_delphi">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tab_4">
       <attribute name="title">
        <string>Java</string>
@@ -105,6 +122,40 @@
           <bool>false</bool>
          </property>
          <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_10">
+      <attribute name="title">
+       <string>JavaScript</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_10">
+       <item>
+        <widget class="QTreeView" name="tree_javascript">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_11">
+      <attribute name="title">
+       <string>MATLAB/Octave</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_11">
+       <item>
+        <widget class="QTreeView" name="tree_matlab">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
           <bool>true</bool>
          </property>
         </widget>
@@ -197,6 +248,23 @@
           <bool>false</bool>
          </property>
          <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_12">
+      <attribute name="title">
+       <string>Shell</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_12">
+       <item>
+        <widget class="QTreeView" name="tree_shell">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="alternatingRowColors">
           <bool>true</bool>
          </property>
         </widget>
