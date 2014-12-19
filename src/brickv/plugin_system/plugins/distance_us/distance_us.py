@@ -61,7 +61,6 @@ class DistanceUS(PluginBase):
         layout = QVBoxLayout(self)
         layout.addLayout(layout_h1)
         layout.addWidget(self.plot_widget)
-        layout.addStretch()
 
     def start(self):
         async_call(self.dist.get_distance_value, None, self.cb_distance, self.increase_error_count)
