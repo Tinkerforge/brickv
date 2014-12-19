@@ -5,6 +5,7 @@ import os
 os.system("pyuic4 -o ui_red.py ui/red.ui")
 os.system("pyuic4 -o ui_red_tab_overview.py ui/red_tab_overview.ui")
 os.system("pyuic4 -o ui_red_tab_settings.py ui/red_tab_settings.ui")
+os.system("pyuic4 -o ui_red_tab_settings_network.py ui/red_tab_settings_network.ui")
 os.system("pyuic4 -o ui_red_tab_settings_brickd.py ui/red_tab_settings_brickd.ui")
 os.system("pyuic4 -o ui_red_tab_settings_datetime.py ui/red_tab_settings_datetime.ui")
 os.system("pyuic4 -o ui_red_tab_settings_file_system.py ui/red_tab_settings_file_system.ui")
