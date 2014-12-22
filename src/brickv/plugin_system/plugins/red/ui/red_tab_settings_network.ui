@@ -383,7 +383,7 @@
                <widget class="QComboBox" name="cbox_net_intf"/>
               </item>
               <item row="1" column="2">
-               <widget class="QCheckBox" name="checkBox">
+               <widget class="QCheckBox" name="chkbox_ap_mode">
                 <property name="text">
                  <string>Access Point Mode</string>
                 </property>
