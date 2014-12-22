@@ -383,22 +383,11 @@
                <widget class="QComboBox" name="cbox_net_intf"/>
               </item>
               <item row="1" column="2">
-               <layout class="QHBoxLayout" name="horizontalLayout_4">
-                <item>
-                 <widget class="QRadioButton" name="rbutton_client_mode">
-                  <property name="text">
-                   <string>Client Mode</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="rbutton_ap_mode">
-                  <property name="text">
-                   <string>Access Point Mode</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <widget class="QCheckBox" name="checkBox">
+                <property name="text">
+                 <string>Access Point Mode</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
