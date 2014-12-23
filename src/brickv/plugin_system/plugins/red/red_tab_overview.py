@@ -164,12 +164,12 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
 
             memory_used = self.bytes2human(int(data['mem_used']))
             memory_total = self.bytes2human(int(data['mem_total']))
-            memory_percent = str("%.1f" % ((float(memory_used) / float(memory_total)) * 100))
+            memory_percent = "%.1f" % ((float(memory_used) / float(memory_total)) * 100)
             memory_percent_v = int(memory_percent.split('.')[0])
 
             storage_used = self.bytes2human(int(data['disk_used']))
             storage_total = self.bytes2human(int(data['disk_total']))
-            storage_percent = str("%.1f" % ((float(storage_used) / float(storage_total)) * 100))
+            storage_percent = "%.1f" % ((float(storage_used) / float(storage_total)) * 100)
             storage_percent_v = int(storage_percent.split('.')[0])
 
             nic_data_dict = data['ifaces']

@@ -26,7 +26,7 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.async_call import async_call
 
 from PyQt4.QtGui import QSpinBox, QRegExpValidator
-from PyQt4.QtCore import pyqtSignal, Qt, QRegExp, QString
+from PyQt4.QtCore import pyqtSignal, Qt, QRegExp
         
 from brickv.bindings.bricklet_nfc_rfid import BrickletNFCRFID
 
@@ -49,7 +49,7 @@ class SpinBoxHex(QSpinBox):
         return text.toInt(16)[0]
 
     def textFromValue(self, value):
-        s = QString.number(value, base=16).toUpper()
+        s = hex(value).replace('0x', '').upper()
         if len(s) == 1:
             s = '0' + s
 

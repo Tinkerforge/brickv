@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWidget, QMessageBox, QSpinBox, QRegExpValidator, QLabel, QLineEdit
-from PyQt4.QtCore import QRegExp, QString, Qt
+from PyQt4.QtCore import QRegExp, Qt
 
 from brickv.plugin_system.plugins.master.ui_ethernet import Ui_Ethernet
 from brickv.async_call import async_call
@@ -46,7 +46,7 @@ class SpinBoxHex(QSpinBox):
         return text.toInt(16)[0]
 
     def textFromValue(self, value):
-        s = QString.number(value, base=16).toUpper()
+        s = hex(value).replace('0x', '').upper()
         if len(s) == 1:
             s = '0' + s
             
