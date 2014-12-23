@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2014-12-19.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -61,7 +61,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickRED(Device):
     """
-    Device for running user programs standalone on the stack
+    Device for executing user programs standalone
     """
 
     DEVICE_IDENTIFIER = 17
