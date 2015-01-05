@@ -9,6 +9,7 @@ os.system("pyuic4 -o ui_red_tab_settings_network.py ui/red_tab_settings_network.
 os.system("pyuic4 -o ui_red_tab_settings_brickd.py ui/red_tab_settings_brickd.ui")
 os.system("pyuic4 -o ui_red_tab_settings_datetime.py ui/red_tab_settings_datetime.ui")
 os.system("pyuic4 -o ui_red_tab_settings_file_system.py ui/red_tab_settings_file_system.ui")
+os.system("pyuic4 -o ui_red_tab_settings_services.py ui/red_tab_settings_services.ui")
 os.system("pyuic4 -o ui_red_tab_program.py ui/red_tab_program.ui")
 os.system("pyuic4 -o ui_red_tab_console.py ui/red_tab_console.ui")
 os.system("pyuic4 -o ui_red_tab_versions.py ui/red_tab_versions.ui")

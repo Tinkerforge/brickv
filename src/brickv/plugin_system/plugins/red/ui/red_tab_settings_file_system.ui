@@ -82,7 +82,7 @@
         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Depending on the image size and the capacity of the Micro-SD card you might not be using the total capacity of the Micro-SD card. In this case expanding the file system will provide you with some extra storage space. &lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Important:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;1. Make sure the RED Brick is powered from a reliable power source during the expansion process and do not power it off during the expansion process. This could damage the Micro-SD card and the data in it. &lt;/p&gt;&lt;p&gt;2. After clicking the Expand button the file system will be expanded and RED Brick will automatically reboot. This process may take a moment. &lt;/p&gt;&lt;p&gt;3. Additional storage will only be available after a reboot. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="textFormat">
-        <enum>Qt::RichText</enum>
+        <enum>Qt::AutoText</enum>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
