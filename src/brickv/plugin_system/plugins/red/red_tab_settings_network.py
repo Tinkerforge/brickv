@@ -304,6 +304,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         self.network_button_refresh_enabled(False)
 
         if state == WORKING_STATE_REFRESH:
+            self.chkbox_ap_mode.hide()
             self.work_in_progress = True
             self.cbox_net_intf.clear()
             self.cbox_net_intf.setEnabled(False)

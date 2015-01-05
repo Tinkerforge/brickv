@@ -32,6 +32,7 @@ BOX_INDEX_NETWORK = 0
 BOX_INDEX_BRICKD = 1
 BOX_INDEX_DATETIME = 2
 BOX_INDEX_FILESYSTEM = 3
+BOX_INDEX_SERVICES = 4
 
 class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
     def __init__(self):
@@ -42,9 +43,9 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
         self.script_manager = None # set from RED after construction
 
         self.is_tab_on_focus = False
-        
+
         self.box_list = []
-        
+
         for i in range(self.tbox_settings.count()):
             self.box_list.append(self.tbox_settings.widget(i))
 
@@ -68,11 +69,11 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
             self.box_list[BOX_INDEX_DATETIME].tab_on_focus()
         elif index == BOX_INDEX_FILESYSTEM:
             self.box_list[BOX_INDEX_FILESYSTEM].tab_on_focus()
+        elif index == BOX_INDEX_SERVICES:
+            self.box_list[BOX_INDEX_SERVICES].tab_on_focus()
 
     def tab_off_focus(self):
         self.is_tab_on_focus = False
-
-        index = self.tbox_settings.currentIndex()
 
         for i in range(self.tbox_settings.count()):
             self.box_list[i].tab_off_focus()

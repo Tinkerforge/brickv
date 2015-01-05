@@ -317,7 +317,8 @@ class ScriptManager(object):
         """
 
         # need to set LANG otherwise python will not correctly handle non-ASCII filenames
-        env = ['LANG=en_US.UTF-8']
+        # also set a sensible PATH so scripts can find basic command without an absolute path
+        env = ['LANG=en_US.UTF-8', 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin']
 
         if sd.execute_as_user:
             uid = 1000
