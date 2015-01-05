@@ -66,7 +66,7 @@ class CalibrateWindow(QFrame, Ui_widget_calibrate):
         self.tab_widget.addTab(self.cal_mag, "Magnetometer")
         self.tab_widget.addTab(self.cal_gyr_bias, "Gyroscope Bias")
         self.tab_widget.addTab(self.cal_gyr_gain, "Gyroscope Gain")
-        self.tab_widget.addTab(self.cal_imex, "Im/Export")
+        self.tab_widget.addTab(self.cal_imex, "Import / Export")
         
         self.vlayout.addWidget(self.tab_widget)
         

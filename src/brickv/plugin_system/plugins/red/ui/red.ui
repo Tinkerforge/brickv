@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>566</width>
-    <height>359</height>
+    <height>644</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -52,6 +52,11 @@
        <string>Extension</string>
       </attribute>
      </widget>
+     <widget class="REDTabImportExport" name="tab_importexport">
+      <attribute name="title">
+       <string>Import / Export</string>
+      </attribute>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -91,6 +96,12 @@
    <class>REDTabExtension</class>
    <extends>QWidget</extends>
    <header location="global">brickv.plugin_system.plugins.red.red_tab_extension</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>REDTabImportExport</class>
+   <extends>QWidget</extends>
+   <header location="global">brickv.plugin_system.plugins.red.red_tab_importexport</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
