@@ -4,7 +4,7 @@ RED Plugin
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
-red_tab_settings_file_system.py: RED settings file system tab implementation
+red_tab_settings_filesystem.py: RED settings file system tab implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -27,7 +27,7 @@ import sys
 import time
 import math
 from PyQt4 import Qt, QtCore, QtGui
-from brickv.plugin_system.plugins.red.ui_red_tab_settings_file_system import Ui_REDTabSettingsFileSystem
+from brickv.plugin_system.plugins.red.ui_red_tab_settings_filesystem import Ui_REDTabSettingsFileSystem
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red import config_parser
 from brickv.async_call import async_call
@@ -39,7 +39,7 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
     def __init__(self):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
-        
+
         self.session        = None # Set from RED Tab Settings
         self.script_manager = None # Set from RED Tab Settings
 
@@ -47,9 +47,8 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
 
         # For OSX progress bar text fix
         self.label_fs_expand_info.hide()
+        self.line.hide()
         self.label_pbar_fs_capacity_utilization.hide()
-
-        self.label_fs_spacer.setText('')
 
         # Signals/slots
         self.pbutton_fs_expand.clicked.connect(self.slot_fs_expand_clicked)
@@ -95,11 +94,11 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
             if percentage_utilization_v >= 95:
                 self.pbutton_fs_expand.setEnabled(False)
                 self.label_fs_expand_info.hide()
-                self.label_fs_spacer.show()
+                self.line.hide()
             else:
                 self.pbutton_fs_expand.setEnabled(True)
                 self.label_fs_expand_info.show()
-                self.label_fs_spacer.hide()
+                self.line.show()
 
             pbar_fs_capacity_utilization_fmt = "Using {0}% of total capacity".format(percentage_utilization)
 
@@ -110,6 +109,7 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
                 self.pbar_fs_capacity_utilization.setFormat(pbar_fs_capacity_utilization_fmt)
         else:
             self.label_fs_expand_info.hide()
+            self.line.hide()
             self.label_pbar_fs_capacity_utilization.hide()
             self.pbar_fs_capacity_utilization.setMinimum(0)
             self.pbar_fs_capacity_utilization.setMaximum(100)
@@ -139,7 +139,7 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
                         err_msg = ''
                         if result.stderr:
                             err_msg = unicode(result.stderr)
-    
+
                         QtGui.QMessageBox.critical(get_main_window(),
                                                    'Settings | File System',
                                                    'Error rebooting RED Brick.\n\n'+err_msg,

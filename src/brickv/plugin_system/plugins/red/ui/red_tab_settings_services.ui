@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>703</width>
-    <height>566</height>
+    <height>521</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,6 +18,9 @@
     <widget class="QLabel" name="label_info">
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The checkboxes below can be used to enable or disable certain services during system boot. Initially these checkboxes show the current status of the services. Disabling services can make the system boot faster. &lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Important:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;After clicking the Save button the system will reboot, which is required for the new settings to be applied.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -98,13 +101,21 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>248</height>
+       <height>0</height>
       </size>
      </property>
     </spacer>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>chkbox_gpu</tabstop>
+  <tabstop>chkbox_desktopenv</tabstop>
+  <tabstop>chkbox_webserver</tabstop>
+  <tabstop>chkbox_splashscreen</tabstop>
+  <tabstop>pbutton_services_save</tabstop>
+  <tabstop>pbutton_services_refresh</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -6,259 +6,238 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>780</width>
-    <height>577</height>
+    <width>644</width>
+    <height>390</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QTabWidget" name="twidget_datetime">
-     <property name="tabPosition">
-      <enum>QTabWidget::South</enum>
-     </property>
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="tab_timedate_gen">
-      <attribute name="title">
-       <string>General</string>
-      </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_9">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="QScrollArea" name="scrollArea_8">
-         <property name="widgetResizable">
-          <bool>true</bool>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>RED Brick</string>
          </property>
-         <widget class="QWidget" name="scrollAreaWidgetContents_9">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>738</width>
-            <height>506</height>
-           </rect>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_11">
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
-             <item>
-              <widget class="QGroupBox" name="groupBox_3">
-               <property name="title">
-                <string>RED Brick</string>
-               </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_7">
-                <item>
-                 <layout class="QGridLayout" name="gridLayout_7">
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_19">
-                    <property name="text">
-                     <string>Date</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>time_date_red</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="0">
-                   <widget class="QLabel" name="label_20">
-                    <property name="text">
-                     <string>Time</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>time_time_red</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="3" column="0">
-                   <widget class="QLabel" name="label_33">
-                    <property name="text">
-                     <string>Timezone</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>time_timezone_red</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QDateEdit" name="time_date_red">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="readOnly">
-                     <bool>true</bool>
-                    </property>
-                    <property name="displayFormat">
-                     <string>dd. MMMM yyyy</string>
-                    </property>
-                    <property name="calendarPopup">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="3" column="1">
-                   <widget class="QLineEdit" name="time_timezone_red">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="text">
-                     <string>Collecting data...</string>
-                    </property>
-                    <property name="readOnly">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="1">
-                   <widget class="QTimeEdit" name="time_time_red">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="readOnly">
-                     <bool>true</bool>
-                    </property>
-                    <property name="displayFormat">
-                     <string>HH:mm:ss</string>
-                    </property>
-                    <property name="calendarPopup">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QGroupBox" name="groupBox_2">
-               <property name="title">
-                <string>Local</string>
-               </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_8">
-                <item>
-                 <layout class="QGridLayout" name="gridLayout_10">
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_34">
-                    <property name="text">
-                     <string>Date</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>time_date_local</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="1">
-                   <widget class="QLineEdit" name="time_timezone_local">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="text">
-                     <string>Collecting data...</string>
-                    </property>
-                    <property name="readOnly">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_35">
-                    <property name="text">
-                     <string>Time</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>time_time_local</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="0">
-                   <widget class="QLabel" name="label_36">
-                    <property name="text">
-                     <string>Timezone</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>time_timezone_local</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QDateEdit" name="time_date_local">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="readOnly">
-                     <bool>true</bool>
-                    </property>
-                    <property name="displayFormat">
-                     <string>dd. MMMM yyyy</string>
-                    </property>
-                    <property name="calendarPopup">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QTimeEdit" name="time_time_local">
-                    <property name="enabled">
-                     <bool>true</bool>
-                    </property>
-                    <property name="readOnly">
-                     <bool>true</bool>
-                    </property>
-                    <property name="displayFormat">
-                     <string>HH:mm:ss</string>
-                    </property>
-                    <property name="calendarPopup">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="Line" name="line_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="time_sync_button">
-             <property name="text">
-              <string>Sync</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_7">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <layout class="QGridLayout" name="gridLayout_7">
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_19">
+              <property name="text">
+               <string>Date</string>
+              </property>
+              <property name="buddy">
+               <cstring>time_date_red</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_20">
+              <property name="text">
+               <string>Time</string>
+              </property>
+              <property name="buddy">
+               <cstring>time_time_red</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_33">
+              <property name="text">
+               <string>Timezone</string>
+              </property>
+              <property name="buddy">
+               <cstring>time_timezone_red</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QDateEdit" name="time_date_red">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+              <property name="displayFormat">
+               <string>dd. MMMM yyyy</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="time_timezone_red">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Collecting data...</string>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QTimeEdit" name="time_time_red">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+              <property name="displayFormat">
+               <string>HH:mm:ss</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Local</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <layout class="QGridLayout" name="gridLayout_10">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_34">
+              <property name="text">
+               <string>Date</string>
+              </property>
+              <property name="buddy">
+               <cstring>time_date_local</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="time_timezone_local">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="text">
+               <string>Collecting data...</string>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_35">
+              <property name="text">
+               <string>Time</string>
+              </property>
+              <property name="buddy">
+               <cstring>time_time_local</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_36">
+              <property name="text">
+               <string>Timezone</string>
+              </property>
+              <property name="buddy">
+               <cstring>time_timezone_local</cstring>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QDateEdit" name="time_date_local">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+              <property name="displayFormat">
+               <string>dd. MMMM yyyy</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QTimeEdit" name="time_time_local">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+              <property name="displayFormat">
+               <string>HH:mm:ss</string>
+              </property>
+              <property name="calendarPopup">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
-     </widget>
-    </widget>
+     </item>
+     <item>
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="time_sync_button">
+       <property name="text">
+        <string>Sync</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_7">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
   </layout>
+  <zorder>verticalSpacer_7</zorder>
+  <zorder>verticalLayoutWidget</zorder>
  </widget>
+ <tabstops>
+  <tabstop>time_date_red</tabstop>
+  <tabstop>time_date_local</tabstop>
+  <tabstop>time_time_red</tabstop>
+  <tabstop>time_time_local</tabstop>
+  <tabstop>time_timezone_red</tabstop>
+  <tabstop>time_timezone_local</tabstop>
+  <tabstop>time_sync_button</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

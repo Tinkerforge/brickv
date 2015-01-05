@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>876</width>
-    <height>865</height>
+    <width>516</width>
+    <height>425</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -33,8 +33,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>838</width>
-           <height>672</height>
+           <width>478</width>
+           <height>232</height>
           </rect>
          </property>
          <attribute name="label">
@@ -67,13 +67,13 @@
           <string>Date / Time</string>
          </attribute>
         </widget>
-        <widget class="REDTabSettingsFileSystem" name="box_file_system">
+        <widget class="REDTabSettingsFileSystem" name="box_filesystem">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>98</width>
-           <height>28</height>
+           <width>478</width>
+           <height>232</height>
           </rect>
          </property>
          <attribute name="label">
@@ -104,7 +104,7 @@
   <customwidget>
    <class>REDTabSettingsFileSystem</class>
    <extends>QWidget</extends>
-   <header location="global">brickv.plugin_system.plugins.red.red_tab_settings_file_system</header>
+   <header location="global">brickv.plugin_system.plugins.red.red_tab_settings_filesystem</header>
    <container>1</container>
   </customwidget>
   <customwidget>
