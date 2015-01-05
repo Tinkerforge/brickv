@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2013-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2013-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2009-2013 Olaf Lüke <olaf@tinkerforge.com>
 
 main.py: Entry file for Brick Viewer
@@ -22,6 +22,9 @@ License along with this program; if not, write to the
 Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
+
+import sip
+sip.setapi('QString', 2)
 
 import os
 import sys

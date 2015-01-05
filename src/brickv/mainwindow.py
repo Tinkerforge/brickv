@@ -2,7 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 mainwindow.py: New/Removed Bricks are handled here and plugins shown if clicked
 
@@ -240,10 +240,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if i < 0:
             return
 
-        #self.host_infos[i].host = str(self.combo_host.currentText())
+        #self.host_infos[i].host = self.combo_host.currentText()
         self.host_infos[i].port = self.spinbox_port.value()
         self.host_infos[i].use_authentication = self.checkbox_authentication.isChecked()
-        self.host_infos[i].secret = str(self.edit_secret.text())
+        self.host_infos[i].secret = self.edit_secret.text()
         self.host_infos[i].remember_secret = self.checkbox_remember_secret.isChecked()
 
     def remove_all_device_infos(self):
@@ -309,7 +309,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             return True
 
         try:
-            secret = str(self.edit_secret.text()).encode('ascii')
+            secret = self.edit_secret.text().encode('ascii')
         except:
             self.do_disconnect()
 
@@ -358,7 +358,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def connect_clicked(self):
         if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_DISCONNECTED:
             try:
-                self.last_host = str(self.combo_host.currentText())
+                self.last_host = self.combo_host.currentText()
                 self.button_connect.setDisabled(True)
                 self.button_connect.setText("Connecting ...")
                 self.button_connect.repaint()
@@ -377,7 +377,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         uid_index = index.sibling(index.row(), 1)
 
         if uid_index.isValid():
-            uid_text = str(uid_index.data().toString())
+            uid_text = uid_index.data().toString()
             self.show_plugin(uid_text)
 
     def create_tab_window(self, device_info, connected_uid, position):
@@ -522,11 +522,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def cb_enumerate(self, uid, connected_uid, position,
                      hardware_version, firmware_version,
                      device_identifier, enumeration_type):
-        # because the enumerate callback is decoupled by a signal/slot, strings
-        # arrive here as QStrings, convert them back to normal Python strings
-        uid = str(uid)
-        connected_uid = str(connected_uid)
-
         if self.ipcon.get_connection_state() != IPConnection.CONNECTION_STATE_CONNECTED:
             # ignore enumerate callbacks that arrived after the connection got closed
             return

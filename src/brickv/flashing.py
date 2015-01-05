@@ -3,7 +3,7 @@
 brickv (Brick Viewer)
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
-Copyright (C) 2012 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 flashing.py: GUI for flashing features
 
@@ -410,10 +410,10 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             self.update_ui_state()
 
     def firmware_save_clicked(self):
-        port = str(self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString())
+        port_name = self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString()
 
         try:
-            samba = SAMBA(port)
+            samba = SAMBA(port_name)
         except SAMBAException as e:
             self.refresh_serial_ports()
             self.popup_fail('Brick', 'Could not connect to Brick: {0}'.format(str(e)))
@@ -449,7 +449,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 self.popup_fail('Brick', 'Could not read firmware file')
                 return
         else:
-            url_part = str(self.combo_firmware.itemData(self.combo_firmware.currentIndex()).toString())
+            url_part = self.combo_firmware.itemData(self.combo_firmware.currentIndex()).toString()
             name = self.firmware_infos[url_part].name
             version = self.firmware_infos[url_part].firmware_version_latest
 
@@ -626,7 +626,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
     def uid_save_clicked(self):
         device, port = self.current_device_and_port()
-        uid = str(self.edit_uid.text())
+        uid = self.edit_uid.text()
 
         if len(uid) == 0:
             self.popup_fail('Bricklet', 'UID cannot be empty')
@@ -700,7 +700,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             self.combo_plugin.setCurrentIndex(0)
             return
 
-        url_part = str(self.combo_port.itemData(index).toString())
+        url_part = self.combo_port.itemData(index).toString()
 
         if len(url_part) == 0:
             self.combo_plugin.setCurrentIndex(0)
@@ -863,7 +863,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 self.popup_fail('Bricklet', 'Could not read plugin file')
                 return
         else:
-            url_part = str(self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString())
+            url_part = self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString()
             name = self.plugin_infos[url_part].name
             version = self.plugin_infos[url_part].firmware_version_latest
             plugin = self.download_bricklet_plugin(progress, url_part, name, version)
@@ -872,8 +872,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
 
         # Flash plugin
         device, port = self.current_device_and_port()
-
-        url_part = str(self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString())
+        url_part = self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString()
 
         if current_text == CUSTOM:
             if not self.write_bricklet_plugin(plugin, device, port, os.path.split(plugin_file_name)[-1], progress):
@@ -1180,7 +1179,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
                 protocol1_error_still_there = True
                 continue
             for i in range(len(items)):
-                if str(items[i][0].data(Qt.UserRole).toString()) == device_uid:
+                if items[i][0].data(Qt.UserRole).toString() == device_uid:
                     del items[i]
                     break
 

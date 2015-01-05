@@ -247,7 +247,6 @@ class YScale(Scale):
                              Qt.TextDontClip | Qt.AlignRight | Qt.AlignVCenter,
                              self.tick_value_to_str(value))
 
-
             for i in range(1, self.step_subdivision_count):
                 subvalue = value + (self.step_size * i / self.step_subdivision_count)
 

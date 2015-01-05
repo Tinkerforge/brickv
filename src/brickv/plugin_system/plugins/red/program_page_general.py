@@ -114,10 +114,8 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         if self.check_auto_generate.checkState() != Qt.Checked or self.edit_mode:
             return
 
-        name = unicode(name) # convert QString to Unicode
-
         # ensure the identifier matches ^[a-zA-Z0-9_][a-zA-Z0-9._-]{2,}$
-        identifier = str(re.sub('[^a-zA-Z0-9._-]', '_', name)).lstrip('-.')
+        identifier = re.sub('[^a-zA-Z0-9._-]', '_', name).lstrip('-.')
 
         unique_identifier = identifier
         counter = 1
@@ -140,7 +138,6 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
                                  .format(name))
 
     def check_identifier(self, identifier):
-        identifier = unicode(identifier) # convert QString to Unicode
         identifier_was_unique = self.identifier_is_unique
 
         if identifier in self.wizard().identifiers:
