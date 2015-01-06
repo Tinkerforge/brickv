@@ -160,7 +160,7 @@ class ProgramPageShell(ProgramPage, Ui_ProgramPageShell):
         self.option_list_editor.update_ui_state()
 
     def get_executable(self):
-        return unicode(self.combo_version.itemData(self.get_field('shell.version').toInt()[0]).toString())
+        return self.combo_version.itemData(self.get_field('shell.version').toInt()[0]).toString()
 
     def get_html_summary(self):
         version           = self.get_field('shell.version').toInt()[0]
@@ -186,8 +186,8 @@ class ProgramPageShell(ProgramPage, Ui_ProgramPageShell):
     def get_custom_options(self):
         return {
             'shell.start_mode':  Constants.shell_start_mode_api_names[self.get_field('shell.start_mode').toInt()[0]],
-            'shell.script_file': unicode(self.get_field('shell.script_file').toString()),
-            'shell.command':     unicode(self.get_field('shell.command').toString()),
+            'shell.script_file': self.get_field('shell.script_file').toString(),
+            'shell.command':     self.get_field('shell.command').toString(),
             'shell.options':     self.option_list_editor.get_items()
         }
 
@@ -198,12 +198,12 @@ class ProgramPageShell(ProgramPage, Ui_ProgramPageShell):
         start_mode  = self.get_field('shell.start_mode').toInt()[0]
 
         if start_mode == Constants.SHELL_START_MODE_SCRIPT_FILE:
-            arguments.append(unicode(self.get_field('shell.script_file').toString()))
+            arguments.append(self.get_field('shell.script_file').toString())
         elif start_mode == Constants.SHELL_START_MODE_COMMAND:
             arguments.append('-c')
-            arguments.append(unicode(self.get_field('shell.command').toString()))
+            arguments.append(self.get_field('shell.command').toString())
 
-        working_directory = unicode(self.get_field('shell.working_directory').toString())
+        working_directory = self.get_field('shell.working_directory').toString()
 
         return executable, arguments, environment, working_directory
 

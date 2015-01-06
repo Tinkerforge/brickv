@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2013-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2009-2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2013-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 main.py: Entry file for Brick Viewer
 
@@ -32,14 +32,14 @@ import logging
 
 # from http://www.py2exe.org/index.cgi/WhereAmI
 if hasattr(sys, "frozen"):
-    program_path = str(os.path.dirname(os.path.realpath(unicode(sys.executable, sys.getfilesystemencoding()))))
+    program_path = os.path.dirname(os.path.realpath(unicode(sys.executable, sys.getfilesystemencoding())))
 
     if sys.platform == "darwin":
         resources_path = os.path.join(os.path.split(program_path)[0], 'Resources')
     else:
         resources_path = program_path
 else:
-    program_path = str(os.path.dirname(os.path.realpath(unicode(__file__, sys.getfilesystemencoding()))))
+    program_path = os.path.dirname(os.path.realpath(unicode(__file__, sys.getfilesystemencoding())))
     resources_path = program_path
 
 # add program_path so OpenGL is properly imported

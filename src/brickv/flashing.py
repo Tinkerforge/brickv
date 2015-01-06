@@ -399,7 +399,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
     def firmware_browse_clicked(self):
         last_dir = ''
         if len(self.edit_custom_firmware.text()) > 0:
-            last_dir = os.path.dirname(os.path.realpath(unicode(self.edit_custom_firmware.text().toUtf8(), 'utf-8')))
+            last_dir = os.path.dirname(os.path.realpath(self.edit_custom_firmware.text()))
 
         file_name = QFileDialog.getOpenFileName(self,
                                                 'Open Firmware',
@@ -439,7 +439,6 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             return
         elif current_text == CUSTOM:
             firmware_file_name = self.edit_custom_firmware.text()
-            firmware_file_name = unicode(firmware_file_name.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
 
             try:
                 with open(firmware_file_name, 'rb') as f:
@@ -853,7 +852,6 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
             return
         elif current_text == CUSTOM:
             plugin_file_name = self.edit_custom_plugin.text()
-            plugin_file_name = unicode(plugin_file_name.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
 
             try:
                 with open(plugin_file_name, 'rb') as f:
@@ -903,7 +901,7 @@ class FlashingWindow(QFrame, Ui_widget_flashing):
     def plugin_browse_clicked(self):
         last_dir = ''
         if len(self.edit_custom_plugin.text()) > 0:
-            last_dir = os.path.dirname(os.path.realpath(unicode(self.edit_custom_plugin.text().toUtf8(), 'utf-8')))
+            last_dir = os.path.dirname(os.path.realpath(self.edit_custom_plugin.text()))
 
         file_name = QFileDialog.getOpenFileName(self,
                                                 'Open Plugin',

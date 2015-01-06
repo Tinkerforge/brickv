@@ -147,8 +147,7 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
 
             if result and result.stdout and not result.stderr and result.exit_code == 0:
                 self.script_manager.execute_script('restart_reboot_shutdown',
-                                                   cb_restart_reboot_shutdown,
-                                                   [unicode(1)])
+                                                   cb_restart_reboot_shutdown, ['1'])
             else:
                 self.pbutton_fs_expand.setEnabled(True)
 

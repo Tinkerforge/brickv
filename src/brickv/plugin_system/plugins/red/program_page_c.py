@@ -54,8 +54,8 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
         self.language                               = Constants.LANGUAGE_C
         self.edit_mode                              = False
-        self.compile_from_source_help_new_template  = unicode(self.label_compile_from_source_help_new.text())
-        self.compile_from_source_help_edit_template = unicode(self.label_compile_from_source_help_edit.text())
+        self.compile_from_source_help_new_template  = self.label_compile_from_source_help_new.text()
+        self.compile_from_source_help_edit_template = self.label_compile_from_source_help_edit.text()
 
         self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
@@ -198,16 +198,16 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
     def get_custom_options(self):
         return {
             'c.start_mode':          Constants.c_start_mode_api_names[self.get_field('c.start_mode').toInt()[0]],
-            'c.executable':          unicode(self.get_field('c.executable').toString()),
+            'c.executable':          self.get_field('c.executable').toString(),
             'c.compile_from_source': self.get_field('c.compile_from_source').toBool(),
             'c.make_options':        self.make_option_list_editor.get_items()
         }
 
     def get_command(self):
-        executable        = unicode(self.get_field('c.executable').toString())
+        executable        = self.get_field('c.executable').toString()
         arguments         = []
         environment       = []
-        working_directory = unicode(self.get_field('c.working_directory').toString())
+        working_directory = self.get_field('c.working_directory').toString()
 
         if not executable.startswith('/'):
             executable = posixpath.join('./', executable)

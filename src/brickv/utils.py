@@ -33,7 +33,7 @@ def get_program_path():
     else:
         path = __file__
 
-    return str(os.path.dirname(os.path.realpath(unicode(path, sys.getfilesystemencoding()))))
+    return os.path.dirname(os.path.realpath(unicode(path, sys.getfilesystemencoding())))
 
 def get_resources_path():
     if sys.platform == "darwin" and hasattr(sys, 'frozen'):

@@ -179,7 +179,7 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
             # ignore it and wait for the next update
             return
 
-        self.label_uptime_value.setText(str(uptime))
+        self.label_uptime_value.setText(uptime)
 
         pbar_cpu_fmt = "{0}%".format(cpu_percent)
         pbar_memory_fmt = "{0}% [{1} of {2} MiB]".format(memory_percent, memory_used, memory_total)
@@ -230,8 +230,8 @@ class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
                 self.nic_item_model.setItem(i, 1, Qt.QStandardItem(download_rate + " KiB/s"))
                 self.nic_item_model.setItem(i, 2, Qt.QStandardItem(upload_rate + " KiB/s"))
 
-            self.nic_previous_bytes[str(key)] = {'sent': nic_data_dict[key][0],
-                                                 'received': nic_data_dict[key][1]}
+            self.nic_previous_bytes[key] = {'sent': nic_data_dict[key][0],
+                                            'received': nic_data_dict[key][1]}
 
         self.nic_item_model.sort(self.tview_nic_previous_sort['column_index'],
                                  self.tview_nic_previous_sort['order'])

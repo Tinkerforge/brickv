@@ -177,7 +177,7 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
 
             self.rs.switch_socket_b(address, unit, switch_to)
         elif self.combo_type.currentText() == 'C Switch':
-            system_code = str(self.combo_system_code.currentText())[0]
+            system_code = self.combo_system_code.currentText()[0]
             device_code = self.spinbox_device_code.value()
             self.rs.switch_socket_c(system_code, device_code, switch_to)
 

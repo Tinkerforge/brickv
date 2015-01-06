@@ -26,7 +26,8 @@ from PyQt4.QtCore import Qt, QVariant, QDateTime
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QFileDialog, \
                         QMessageBox, QSortFilterProxyModel, QApplication
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.program_utils import Download, get_file_display_size
+from brickv.plugin_system.plugins.red.program_utils import Download, get_file_display_size, \
+                                                           timestamp_to_date_at_time
 from brickv.plugin_system.plugins.red.ui_program_info_logs import Ui_ProgramInfoLogs
 from brickv.plugin_system.plugins.red.program_info_logs_view import ProgramInfoLogsView
 from brickv.utils import get_main_window, get_resources_path
@@ -182,9 +183,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                     except ValueError:
                         continue
 
-                    date      = unicode(QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd'))
-                    time      = unicode(QDateTime.fromTime_t(timestamp).toString('HH:mm:ss'))
-                    date_time = date + 'T' + time
+                    date_time = timestamp_to_date_at_time(timestamp, glue='T')
 
                     if date in date_rows:
                         date_row = date_rows[date]
@@ -256,7 +255,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             if item_type == ITEM_TYPE_PARENT_CONT:
                 for i in range(item_list[0].rowCount()):
                     f_size = item_list[0].child(i, 1).data(USER_ROLE_SIZE).toInt()[0] # File size
-                    file_name = unicode(item_list[0].child(i, 0).data(USER_ROLE_FILE_NAME).toString())
+                    file_name = item_list[0].child(i, 0).data(USER_ROLE_FILE_NAME).toString()
                     f_path = posixpath.join(self.log_directory, file_name) # File path
                     if not f_path in logs_download_dict['files']:
                         logs_download_dict['files'][f_path] = {'size': f_size}
@@ -268,7 +267,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                     parent_time = item_list[0].child(i)
                     for j in range(parent_time.rowCount()):
                         f_size = parent_time.child(j, 1).data(USER_ROLE_SIZE).toInt()[0] # File size
-                        file_name = unicode(parent_time.child(j, 0).data(USER_ROLE_FILE_NAME).toString())
+                        file_name = parent_time.child(j, 0).data(USER_ROLE_FILE_NAME).toString()
                         f_path = posixpath.join(self.log_directory, file_name) # File path
                         if not f_path in logs_download_dict['files']:
                             logs_download_dict['files'][f_path] = {'size': f_size}
@@ -278,7 +277,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             elif item_type == ITEM_TYPE_PARENT_TIME:
                 for i in range(item_list[0].rowCount()):
                     f_size = item_list[0].child(i, 1).data(USER_ROLE_SIZE).toInt()[0] # File size
-                    file_name = unicode(item_list[0].child(i, 0).data(USER_ROLE_FILE_NAME).toString())
+                    file_name = item_list[0].child(i, 0).data(USER_ROLE_FILE_NAME).toString()
                     f_path = posixpath.join(self.log_directory, file_name) # File path
                     if not f_path in logs_download_dict['files']:
                         logs_download_dict['files'][f_path] = {'size': f_size}
@@ -287,7 +286,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
             elif item_type in [ITEM_TYPE_LOG_FILE, ITEM_TYPE_LOG_FILE_CONT]:
                 f_size = item_list[1].data(USER_ROLE_SIZE).toInt()[0] # File size
-                file_name = unicode(item_list[0].data(USER_ROLE_FILE_NAME).toString())
+                file_name = item_list[0].data(USER_ROLE_FILE_NAME).toString()
                 f_path = posixpath.join(self.log_directory, file_name) # File path
                 if not f_path in logs_download_dict['files']:
                     logs_download_dict['files'][f_path] = {'size': f_size}
@@ -321,7 +320,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         if len(log_files_to_download['foobar']) == 0:
             return
 
-        download_directory = unicode(QFileDialog.getExistingDirectory(get_main_window(), 'Download Logs'))
+        download_directory = QFileDialog.getExistingDirectory(get_main_window(), 'Download Logs')
 
         if len(download_directory) == 0:
             return
@@ -365,7 +364,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.view_log(selected_log_items[0])
 
     def view_log(self, item):
-        file_name = posixpath.join(self.log_directory, unicode(item.data(USER_ROLE_FILE_NAME).toString()))
+        file_name = posixpath.join(self.log_directory, item.data(USER_ROLE_FILE_NAME).toString())
 
         self.set_program_callbacks_enabled(False)
 

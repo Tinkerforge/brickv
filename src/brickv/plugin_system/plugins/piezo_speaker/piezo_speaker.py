@@ -182,7 +182,7 @@ class PiezoSpeaker(PluginBase):
 
     def morse_clicked(self):
         freq = self.frequency_box.value()
-        morse = str(self.morse_edit.text())
+        morse = self.morse_edit.text()
         try:
             self.ps.morse_code(morse, freq)
         except ip_connection.Error:

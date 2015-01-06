@@ -164,8 +164,7 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
                                                    QtGui.QMessageBox.Ok)
 
             self.script_manager.execute_script('restart_reboot_shutdown',
-                                               cb_restart_reboot_shutdown,
-                                               [unicode(1)])
+                                               cb_restart_reboot_shutdown, ['1'])
         else:
             err_msg = 'Error saving services status.\n\n'+unicode(result.stderr)
             QtGui.QMessageBox.critical(get_main_window(),

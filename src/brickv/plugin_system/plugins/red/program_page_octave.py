@@ -91,12 +91,12 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
         self.check_show_advanced_options.setCheckState(Qt.Unchecked)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
-        self.option_list_editor.add_item(unicode('--silent'))
+        self.option_list_editor.add_item('--silent')
 
         self.is_full_image = 'full' in self.wizard().image_version_ref[0]
 
         if not self.is_full_image:
-            self.option_list_editor.add_item(unicode('--no-window-system'))
+            self.option_list_editor.add_item('--no-window-system')
 
         # if a program exists then this page is used in an edit wizard
         program = self.wizard().program
@@ -150,7 +150,7 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
         self.option_list_editor.update_ui_state()
 
     def get_executable(self):
-        return unicode(self.combo_version.itemData(self.get_field('octave.version').toInt()[0]).toString())
+        return self.combo_version.itemData(self.get_field('octave.version').toInt()[0]).toString()
 
     def get_html_summary(self):
         version           = self.get_field('octave.version').toInt()[0]
@@ -173,7 +173,7 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
     def get_custom_options(self):
         return {
             'octave.start_mode':  Constants.octave_start_mode_api_names[self.get_field('octave.start_mode').toInt()[0]],
-            'octave.script_file': unicode(self.get_field('octave.script_file').toString()),
+            'octave.script_file': self.get_field('octave.script_file').toString(),
             'octave.options':     self.option_list_editor.get_items()
         }
 
@@ -184,12 +184,12 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
         start_mode  = self.get_field('octave.start_mode').toInt()[0]
 
         if self.is_full_image:
-            environment.append(unicode('DISPLAY=:0'))
+            environment.append('DISPLAY=:0')
 
         if start_mode == Constants.OCTAVE_START_MODE_SCRIPT_FILE:
-            arguments.append(unicode(self.get_field('octave.script_file').toString()))
+            arguments.append(self.get_field('octave.script_file').toString())
 
-        working_directory = unicode(self.get_field('octave.working_directory').toString())
+        working_directory = self.get_field('octave.working_directory').toString()
 
         return executable, arguments, environment, working_directory
 

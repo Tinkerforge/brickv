@@ -148,7 +148,7 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
         self.option_list_editor.update_ui_state()
 
     def get_executable(self):
-        return unicode(self.combo_version.itemData(self.get_field('csharp.version').toInt()[0]).toString())
+        return self.combo_version.itemData(self.get_field('csharp.version').toInt()[0]).toString()
 
     def get_html_summary(self):
         version           = self.get_field('csharp.version').toInt()[0]
@@ -171,7 +171,7 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
     def get_custom_options(self):
         return {
             'csharp.start_mode': Constants.csharp_start_mode_api_names[self.get_field('csharp.start_mode').toInt()[0]],
-            'csharp.executable': unicode(self.get_field('csharp.executable').toString()),
+            'csharp.executable': self.get_field('csharp.executable').toString(),
             'csharp.options':    self.option_list_editor.get_items()
         }
 
@@ -182,9 +182,9 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
         start_mode  = self.get_field('csharp.start_mode').toInt()[0]
 
         if start_mode == Constants.CSHARP_START_MODE_EXECUTABLE:
-            arguments.append(unicode(self.get_field('csharp.executable').toString()))
+            arguments.append(self.get_field('csharp.executable').toString())
 
-        working_directory = unicode(self.get_field('csharp.working_directory').toString())
+        working_directory = self.get_field('csharp.working_directory').toString()
 
         return executable, arguments, environment, working_directory
 

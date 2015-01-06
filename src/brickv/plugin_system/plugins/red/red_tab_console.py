@@ -99,7 +99,7 @@ class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
                 self.console.setEnabled(True)
                 self.connect_button.setText("Disconnect")
 
-                port = unicode(self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString())
+                port = self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString()
 
                 if self.console._session == None:
                     try:

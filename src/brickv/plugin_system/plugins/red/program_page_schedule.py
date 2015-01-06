@@ -35,7 +35,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
 
         self.setupUi(self)
 
-        self.interval_help_template = unicode(self.label_start_mode_interval_help.text())
+        self.interval_help_template = self.label_start_mode_interval_help.text()
 
         self.setTitle(title_prefix + 'Schedule')
 
@@ -124,7 +124,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         start_mode           = Constants.api_start_modes[self.get_field('start_mode').toInt()[0]]
         continue_after_error = self.get_field('continue_after_error').toBool()
         start_interval       = self.get_field('start_interval').toUInt()[0]
-        start_fields         = unicode(self.get_field('start_fields').toString())
+        start_fields         = self.get_field('start_fields').toString()
 
         try:
             program.set_schedule(start_mode, continue_after_error, start_interval, start_fields) # FIXME: async_call

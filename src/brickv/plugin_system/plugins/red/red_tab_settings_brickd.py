@@ -234,9 +234,9 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
                         str(self.sbox_brickd_la_ip3.value()),
                         str(self.sbox_brickd_la_ip4.value())))
         self.brickd_conf['listen.address'] = adr
-        self.brickd_conf['listen.plain_port'] = unicode(self.sbox_brickd_lp.value())
-        self.brickd_conf['listen.websocket_port'] = unicode(self.sbox_brickd_lwsp.value())
-        self.brickd_conf['authentication.secret'] = unicode(self.ledit_brickd_secret.text())
+        self.brickd_conf['listen.plain_port'] = str(self.sbox_brickd_lp.value())
+        self.brickd_conf['listen.websocket_port'] = str(self.sbox_brickd_lwsp.value())
+        self.brickd_conf['authentication.secret'] = self.ledit_brickd_secret.text()
 
         index = self.cbox_brickd_ll.currentIndex()
         if index == CBOX_BRICKD_LOG_LEVEL_ERROR:

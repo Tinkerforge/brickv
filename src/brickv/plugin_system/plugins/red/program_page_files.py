@@ -73,7 +73,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         filenames = QFileDialog.getOpenFileNames(get_main_window(), 'Add Files')
 
         for filename in filenames:
-            filename = unicode(QDir.toNativeSeparators(filename))
+            filename = QDir.toNativeSeparators(filename)
 
             if len(self.list_files.findItems(filename, Qt.MatchFixedString)) > 0:
                 continue
@@ -88,7 +88,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         self.completeChanged.emit()
 
     def show_add_directory_dialog(self):
-        directory = unicode(QDir.toNativeSeparators(QFileDialog.getExistingDirectory(get_main_window(), 'Add Directory')))
+        directory = QDir.toNativeSeparators(QFileDialog.getExistingDirectory(get_main_window(), 'Add Directory'))
 
         if len(directory) == 0:
             return
@@ -118,7 +118,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         for root, directories, files in os.walk(directory):
             for filename in files:
                 source = os.path.join(root, filename)
-                target = unicode(QDir.fromNativeSeparators(os.path.relpath(source, directory)))
+                target = QDir.fromNativeSeparators(os.path.relpath(source, directory))
                 uploads.append(Upload(source, target))
 
                 # ensure that the UI stays responsive

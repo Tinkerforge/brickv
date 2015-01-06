@@ -2,6 +2,7 @@
 """
 IMU Plugin
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 calibrate_import_export.py: IMU Calibration Import/Export implementation
 
@@ -117,7 +118,7 @@ class CalibrateImportExport(QWidget, Ui_calibrate_import_export):
         self.popup_ok('Factory Calibration', 'Successfully restored factory calibration')
 
     def import_clicked(self):
-        text = str(self.text_edit.toPlainText())
+        text = self.text_edit.toPlainText()
 
         try:
             for value in parse_imu_calibration(text):

@@ -51,8 +51,8 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
 
         self.language                               = Constants.LANGUAGE_DELPHI
         self.edit_mode                              = False
-        self.compile_from_source_help_new_template  = unicode(self.label_compile_from_source_help_new.text())
-        self.compile_from_source_help_edit_template = unicode(self.label_compile_from_source_help_edit.text())
+        self.compile_from_source_help_new_template  = self.label_compile_from_source_help_new.text()
+        self.compile_from_source_help_edit_template = self.label_compile_from_source_help_edit.text()
 
         self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
@@ -190,16 +190,16 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
     def get_custom_options(self):
         return {
             'delphi.start_mode':          Constants.delphi_start_mode_api_names[self.get_field('delphi.start_mode').toInt()[0]],
-            'delphi.executable':          unicode(self.get_field('delphi.executable').toString()),
+            'delphi.executable':          self.get_field('delphi.executable').toString(),
             'delphi.compile_from_source': self.get_field('delphi.compile_from_source').toBool(),
             'delphi.make_options':        self.make_option_list_editor.get_items()
         }
 
     def get_command(self):
-        executable        = unicode(self.get_field('delphi.executable').toString())
+        executable        = self.get_field('delphi.executable').toString()
         arguments         = []
         environment       = []
-        working_directory = unicode(self.get_field('delphi.working_directory').toString())
+        working_directory = self.get_field('delphi.working_directory').toString()
 
         if not executable.startswith('/'):
             executable = posixpath.join('./', executable)

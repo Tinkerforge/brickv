@@ -164,7 +164,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         if program == None:
             return
 
-        name = unicode(self.get_field('name').toString())
+        name = self.get_field('name').toString()
 
         try:
             program.set_custom_option_value('name', name) # FIXME: async_call
@@ -174,7 +174,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))
             return
 
-        description = unicode(self.get_field('description').toString())
+        description = self.get_field('description').toString()
 
         try:
             program.set_custom_option_value('description', description) # FIXME: async_call

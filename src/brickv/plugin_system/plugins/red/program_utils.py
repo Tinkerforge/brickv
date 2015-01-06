@@ -643,7 +643,7 @@ class ListWidgetEditor(object):
         self.original_items = []
 
         for row in range(self.list_items.count()):
-            self.original_items.append(unicode(self.list_items.item(row).text()))
+            self.original_items.append(self.list_items.item(row).text())
 
     def update_ui_state(self):
         has_selection = len(self.list_items.selectedItems()) > 0
@@ -738,7 +738,7 @@ class ListWidgetEditor(object):
         items = []
 
         for row in range(self.list_items.count()):
-            items.append(unicode(self.list_items.item(row).text()))
+            items.append(self.list_items.item(row).text())
 
         return items
 
@@ -772,7 +772,7 @@ class TreeWidgetEditor(object):
             item = []
 
             for column in range(child.columnCount()):
-                item.append(unicode(child.text(column)))
+                item.append(child.text(column))
 
             self.original_items.append(item)
 
@@ -875,7 +875,7 @@ class TreeWidgetEditor(object):
             item = []
 
             for column in range(child.columnCount()):
-                item.append(unicode(child.text(column)))
+                item.append(child.text(column))
 
             items.append(item)
 
@@ -899,7 +899,7 @@ class MandatoryLineEditChecker(object):
 
     def check(self, emit):
         was_complete = self.complete
-        text = unicode(self.edit.text())
+        text = self.edit.text()
         self.complete = len(text) > 0
 
         if self.complete and self.regexp != None:
@@ -1008,7 +1008,7 @@ class MandatoryDirectorySelector(object):
         self.original_items = []
 
         for i in range(combo.count()):
-            self.original_items.append(unicode(combo.itemText(i)))
+            self.original_items.append(combo.itemText(i))
 
         self.combo.currentIndexChanged.connect(lambda: self.check(True))
         self.combo.editTextChanged.connect(lambda: self.check(True))
@@ -1041,7 +1041,7 @@ class MandatoryDirectorySelector(object):
     # ensure that directory is relative, non-empty and does not start with ..
     def check(self, emit):
         was_complete  = self.complete
-        directory     = unicode(QDir.cleanPath(posixpath.join(unicode(self.combo.currentText()), '.')))
+        directory     = QDir.cleanPath(posixpath.join(self.combo.currentText(), '.'))
         self.complete = len(directory) > 0 and \
                         not directory.startswith('/') and \
                         directory != './..' and \
@@ -1108,11 +1108,12 @@ def set_current_combo_index_from_data(combo, data):
         combo.setCurrentIndex(combo.count() - 1)
 
 
-def timestamp_to_date_at_time(timestamp):
-    date = unicode(QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd'))
-    time = unicode(QDateTime.fromTime_t(timestamp).toString('HH:mm:ss'))
+def timestamp_to_date_at_time(timestamp, glue=' at '):
+    date = QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd')
+    time = QDateTime.fromTime_t(timestamp).toString('HH:mm:ss')
 
-    return date + ' at ' + time
+    return date + glue + time
+
 
 # FIXME: the values should be rouned up
 def get_file_display_size(size):

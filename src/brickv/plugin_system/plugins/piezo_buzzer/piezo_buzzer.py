@@ -113,7 +113,7 @@ class PiezoBuzzer(PluginBase):
         self.status_label.setText('Beeping...')        
         
     def morse_clicked(self):
-        morse = str(self.morse_edit.text())
+        morse = self.morse_edit.text()
         try:
             self.pb.morse_code(morse)
         except ip_connection.Error:

@@ -320,7 +320,7 @@ class TerminalWidget(QWidget):
         if self._session == None:
             return
 
-        text = unicode(event.text())
+        text = event.text()
         key = event.key()
         modifiers = event.modifiers()
         ctrl = modifiers == Qt.ControlModifier
@@ -366,7 +366,7 @@ class TerminalWidget(QWidget):
         elif button == Qt.MiddleButton:
             self._press_pos = None
             self._selection = None
-            text = unicode(self._clipboard.text(QClipboard.Selection))
+            text = self._clipboard.text(QClipboard.Selection)
             self.send(text.encode("utf-8"))
             # self.update_screen()
 

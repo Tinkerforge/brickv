@@ -32,7 +32,7 @@ class ProgramInfoPython(ProgramInfo, Ui_ProgramInfoPython):
 
         self.setupUi(self)
 
-        self.url_template = unicode(self.label_url.text())
+        self.url_template = self.label_url.text()
 
         self.check_show_advanced_options.stateChanged.connect(self.update_ui_state)
 

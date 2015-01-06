@@ -159,7 +159,7 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
         self.option_list_editor.update_ui_state()
 
     def get_executable(self):
-        return unicode(self.combo_version.itemData(self.get_field('ruby.version').toInt()[0]).toString())
+        return self.combo_version.itemData(self.get_field('ruby.version').toInt()[0]).toString()
 
     def get_html_summary(self):
         version           = self.get_field('ruby.version').toInt()[0]
@@ -185,8 +185,8 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
     def get_custom_options(self):
         return {
             'ruby.start_mode':  Constants.ruby_start_mode_api_names[self.get_field('ruby.start_mode').toInt()[0]],
-            'ruby.script_file': unicode(self.get_field('ruby.script_file').toString()),
-            'ruby.command':     unicode(self.get_field('ruby.command').toString()),
+            'ruby.script_file': self.get_field('ruby.script_file').toString(),
+            'ruby.command':     self.get_field('ruby.command').toString(),
             'ruby.options':     self.option_list_editor.get_items()
         }
 
@@ -197,12 +197,12 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
         start_mode  = self.get_field('ruby.start_mode').toInt()[0]
 
         if start_mode == Constants.RUBY_START_MODE_SCRIPT_FILE:
-            arguments.append(unicode(self.get_field('ruby.script_file').toString()))
+            arguments.append(self.get_field('ruby.script_file').toString())
         elif start_mode == Constants.RUBY_START_MODE_COMMAND:
             arguments.append('-e')
-            arguments.append(unicode(self.get_field('ruby.command').toString()))
+            arguments.append(self.get_field('ruby.command').toString())
 
-        working_directory = unicode(self.get_field('ruby.working_directory').toString())
+        working_directory = self.get_field('ruby.working_directory').toString()
 
         return executable, arguments, environment, working_directory
 

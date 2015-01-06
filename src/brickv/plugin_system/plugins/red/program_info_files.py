@@ -70,11 +70,11 @@ def get_full_item_path(item):
         parent = item.parent()
 
         if parent != None:
-            return expand(parent, posixpath.join(unicode(parent.text()), path))
+            return expand(parent, posixpath.join(parent.text(), path))
         else:
             return path
 
-    return expand(item, unicode(item.text()))
+    return expand(item, item.text())
 
 
 def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon):
@@ -289,7 +289,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             elif item_type == ITEM_TYPE_FILE:
                 file_name = get_full_item_path(name_item)
 
-                downloads.append(Download(file_name, unicode(QDir.toNativeSeparators(file_name))))
+                downloads.append(Download(file_name, QDir.toNativeSeparators(file_name)))
 
         for selected_name_item in selected_name_items:
             expand(selected_name_item)
@@ -297,7 +297,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if len(downloads) == 0:
             return
 
-        download_directory = unicode(QFileDialog.getExistingDirectory(get_main_window(), 'Download Files'))
+        download_directory = QFileDialog.getExistingDirectory(get_main_window(), 'Download Files')
 
         if len(download_directory) == 0:
             return
@@ -346,7 +346,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             title     = 'Rename Directory'
             type_name = 'directory'
 
-        old_name = unicode(name_item.text())
+        old_name = name_item.text()
 
         # get new name
         dialog = ExpandingInputDialog(get_main_window())
@@ -360,7 +360,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if dialog.exec_() != QDialog.Accepted:
             return
 
-        new_name = unicode(dialog.textValue())
+        new_name = dialog.textValue()
 
         if new_name == old_name:
             return
@@ -380,7 +380,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             name_item_parent = self.tree_files_model.invisibleRootItem()
 
         for i in range(name_item_parent.rowCount()):
-            if new_name == unicode(name_item_parent.child(i).text()):
+            if new_name == name_item_parent.child(i).text():
                 QMessageBox.critical(get_main_window(), title + ' Error',
                                      'The new {0} name is already in use.'.format(type_name),
                                      QMessageBox.Ok)
@@ -463,9 +463,9 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             item_type = selected_name_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
 
             if item_type == ITEM_TYPE_DIRECTORY:
-                dirs_to_delete.append(unicode(posixpath.join(self.bin_directory, path)))
+                dirs_to_delete.append(posixpath.join(self.bin_directory, path))
             else:
-                files_to_delete.append(unicode(posixpath.join(self.bin_directory, path)))
+                files_to_delete.append(posixpath.join(self.bin_directory, path))
 
         message = 'Deleting '
 

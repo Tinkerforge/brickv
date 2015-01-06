@@ -63,7 +63,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.source_display_size             = None
         self.last_upload_size                = None
         self.progress_file_next_update       = 0
-        self.replace_help_template           = unicode(self.label_replace_help.text())
+        self.replace_help_template           = self.label_replace_help.text()
         self.warnings                        = 0
         self.canceled                        = False
 
@@ -128,7 +128,6 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.canceled = True
 
     def check_new_name(self, name):
-        name   = unicode(name) # convert QString to unicode
         target = posixpath.split(self.upload.target)[1]
 
         if len(name) == 0:
@@ -239,7 +238,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if not self.edit_mode:
             self.next_step('Defining new program...', increase=0)
 
-            identifier = unicode(self.get_field('identifier').toString())
+            identifier = self.get_field('identifier').toString()
 
             try:
                 self.program = REDProgram(self.wizard().session).define(identifier) # FIXME: async_call
@@ -254,7 +253,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             self.next_step('Setting custom options...')
 
             # set custom option: name
-            name = unicode(self.get_field('name').toString())
+            name = self.get_field('name').toString()
 
             try:
                 self.program.set_custom_option_value('name', name) # FIXME: async_call
@@ -270,7 +269,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 return
 
             # set custom option: description
-            description = unicode(self.get_field('description').toString())
+            description = self.get_field('description').toString()
 
             try:
                 self.program.set_custom_option_value('description', description) # FIXME: async_call
@@ -430,7 +429,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                                          .format(self.source_display_size,
                                                  timestamp_to_date_at_time(int(self.source_stat.st_mtime))))
 
-            self.label_replace_help.setText(self.replace_help_template.replace('<FILE>', unicode(Qt.escape(self.upload.target))))
+            self.label_replace_help.setText(self.replace_help_template.replace('<FILE>', Qt.escape(self.upload.target)))
 
             if self.auto_conflict_resolution == ProgramPageUpload.CONFLICT_RESOLUTION_RENAME:
                 self.check_rename_new_file.setCheckState(Qt.Checked)
@@ -470,7 +469,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if not self.conflict_resolution_in_progress or self.check_rename_new_file.checkState() != Qt.Checked:
             return
 
-        self.rename_upload_target(unicode(self.edit_new_name.text()))
+        self.rename_upload_target(self.edit_new_name.text())
         self.log(u'...uploading as {0}'.format(self.upload.target))
 
         if self.check_remember_decision.checkState() == Qt.Checked:
@@ -608,9 +607,9 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             stdin_redirection  = Constants.api_stdin_redirections[self.get_field('stdin_redirection').toInt()[0]]
             stdout_redirection = Constants.api_stdout_redirections[self.get_field('stdout_redirection').toInt()[0]]
             stderr_redirection = Constants.api_stderr_redirections[self.get_field('stderr_redirection').toInt()[0]]
-            stdin_file         = unicode(self.get_field('stdin_file').toString())
-            stdout_file        = unicode(self.get_field('stdout_file').toString())
-            stderr_file        = unicode(self.get_field('stderr_file').toString())
+            stdin_file         = self.get_field('stdin_file').toString()
+            stdout_file        = self.get_field('stdout_file').toString()
+            stderr_file        = self.get_field('stderr_file').toString()
 
             try:
                 self.program.set_stdio_redirection(stdin_redirection, stdin_file,
@@ -647,7 +646,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
             continue_after_error = self.get_field('continue_after_error').toBool()
             start_interval       = self.get_field('start_interval').toUInt()[0]
-            start_fields         = unicode(self.get_field('start_fields').toString())
+            start_fields         = self.get_field('start_fields').toString()
 
             try:
                 self.program.set_schedule(api_start_mode, continue_after_error, start_interval, start_fields) # FIXME: async_call

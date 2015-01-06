@@ -200,7 +200,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         self.option_list_editor.update_ui_state()
 
     def get_executable(self):
-        return unicode(self.combo_flavor.itemData(self.get_field('javascript.flavor').toInt()[0]).toString())
+        return self.combo_flavor.itemData(self.get_field('javascript.flavor').toInt()[0]).toString()
 
     def get_html_summary(self):
         flavor            = self.get_field('javascript.flavor').toInt()[0]
@@ -229,8 +229,8 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         return {
             'javascript.flavor':      Constants.javascript_flavor_api_names[self.get_field('javascript.flavor').toInt()[0]],
             'javascript.start_mode':  Constants.javascript_start_mode_api_names[self.get_field('javascript.start_mode').toInt()[0]],
-            'javascript.script_file': unicode(self.get_field('javascript.script_file').toString()),
-            'javascript.command':     unicode(self.get_field('javascript.command').toString()),
+            'javascript.script_file': self.get_field('javascript.script_file').toString(),
+            'javascript.command':     self.get_field('javascript.command').toString(),
             'javascript.options':     self.option_list_editor.get_items()
         }
 
@@ -246,12 +246,12 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         start_mode  = self.get_field('javascript.start_mode').toInt()[0]
 
         if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE:
-            arguments.append(unicode(self.get_field('javascript.script_file').toString()))
+            arguments.append(self.get_field('javascript.script_file').toString())
         elif start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND:
             arguments.append('-e')
-            arguments.append(unicode(self.get_field('javascript.command').toString()))
+            arguments.append(self.get_field('javascript.command').toString())
 
-        working_directory = unicode(self.get_field('javascript.working_directory').toString())
+        working_directory = self.get_field('javascript.working_directory').toString()
 
         return executable, arguments, environment, working_directory
 

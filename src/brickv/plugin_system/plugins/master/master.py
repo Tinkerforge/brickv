@@ -83,7 +83,7 @@ class Master(PluginBase, Ui_Master):
             self.tab_widget.addTab(ethernet, 'Ethernet')
             self.tab_widget.show()
             self.num_extensions += 1
-            self.extension_label.setText("" + str(self.num_extensions) + " Present")
+            self.extension_label.setText(str(self.num_extensions) + " Present")
             self.label_no_extension.hide()
 
     def is_wifi_present_async(self, present):
@@ -93,7 +93,7 @@ class Master(PluginBase, Ui_Master):
             self.tab_widget.addTab(wifi, 'WIFI')
             self.tab_widget.show()
             self.num_extensions += 1
-            self.extension_label.setText("" + str(self.num_extensions) + " Present")
+            self.extension_label.setText(str(self.num_extensions) + " Present")
             self.label_no_extension.hide()
             
     def is_rs485_present_async(self, present):
@@ -103,7 +103,7 @@ class Master(PluginBase, Ui_Master):
             self.tab_widget.addTab(rs485, 'RS485')
             self.tab_widget.show()
             self.num_extensions += 1
-            self.extension_label.setText("" + str(self.num_extensions) + " Present")
+            self.extension_label.setText(str(self.num_extensions) + " Present")
             self.label_no_extension.hide()
             
     def is_chibi_present_async(self, present):
@@ -113,7 +113,7 @@ class Master(PluginBase, Ui_Master):
             self.tab_widget.addTab(chibi, 'Chibi')
             self.tab_widget.show()
             self.num_extensions += 1
-            self.extension_label.setText("" + str(self.num_extensions) + " Present")
+            self.extension_label.setText(str(self.num_extensions) + " Present")
             self.label_no_extension.hide()
 
     def start(self):

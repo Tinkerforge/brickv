@@ -54,7 +54,7 @@
      </widget>
      <widget class="REDTabImportExport" name="tab_importexport">
       <attribute name="title">
-       <string>Import / Export</string>
+       <string>Import/Export</string>
       </attribute>
      </widget>
     </widget>

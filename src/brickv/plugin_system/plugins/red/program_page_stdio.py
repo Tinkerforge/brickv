@@ -155,9 +155,9 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
         stdin_redirection  = Constants.api_stdin_redirections[self.get_field('stdin_redirection').toInt()[0]]
         stdout_redirection = Constants.api_stdout_redirections[self.get_field('stdout_redirection').toInt()[0]]
         stderr_redirection = Constants.api_stderr_redirections[self.get_field('stderr_redirection').toInt()[0]]
-        stdin_file         = unicode(self.get_field('stdin_file').toString())
-        stdout_file        = unicode(self.get_field('stdout_file').toString())
-        stderr_file        = unicode(self.get_field('stderr_file').toString())
+        stdin_file         = self.get_field('stdin_file').toString()
+        stdout_file        = self.get_field('stdout_file').toString()
+        stderr_file        = self.get_field('stderr_file').toString()
 
         try:
             program.set_stdio_redirection(stdin_redirection, stdin_file,

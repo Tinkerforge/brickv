@@ -190,7 +190,7 @@ class IO4(PluginBase, Ui_IO4):
 
     def save_clicked(self):
         pin = int(self.pin_box.currentText())
-        direction = str(self.direction_box.currentText())[0].lower()
+        direction = self.direction_box.currentText()[0].lower()
         if direction == 'o':
             value = self.value_box.currentText() == 'High'
             self.port_value[pin].setText(self.value_box.currentText())
@@ -219,7 +219,7 @@ class IO4(PluginBase, Ui_IO4):
                     self.port_value[i].setText('Low')
     
     def pin_changed(self, pin):
-        if str(self.port_direction[pin].text()) == 'Input':
+        if self.port_direction[pin].text() == 'Input':
             index = 0
         else:
             index = 1
@@ -237,7 +237,7 @@ class IO4(PluginBase, Ui_IO4):
             self.value_box.addItem('High')
             self.value_box.addItem('Low')
 
-            if str(self.port_config[pin].text()) == 'High':
+            if self.port_config[pin].text() == 'High':
                 self.value_box.setCurrentIndex(0)
             else:
                 self.value_box.setCurrentIndex(1)
@@ -245,7 +245,7 @@ class IO4(PluginBase, Ui_IO4):
             self.value_box.addItem('Pull-Up')
             self.value_box.addItem('Default')
 
-            if str(self.port_config[pin].text()) == 'Pull-Up':
+            if self.port_config[pin].text() == 'Pull-Up':
                 self.value_box.setCurrentIndex(0)
             else:
                 self.value_box.setCurrentIndex(1)
@@ -253,7 +253,7 @@ class IO4(PluginBase, Ui_IO4):
         self.update_monoflop_ui_state()
 
     def debounce_save_clicked(self):
-        debounce = int(str(self.debounce_edit.text()))
+        debounce = int(self.debounce_edit.text())
         try:
             self.io.set_debounce_period(debounce)
         except ip_connection.Error:

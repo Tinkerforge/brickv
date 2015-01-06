@@ -2,6 +2,7 @@
 """
 IMU Plugin
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 calibrate_window.py: IMU calibration implementation
 
@@ -66,7 +67,7 @@ class CalibrateWindow(QFrame, Ui_widget_calibrate):
         self.tab_widget.addTab(self.cal_mag, "Magnetometer")
         self.tab_widget.addTab(self.cal_gyr_bias, "Gyroscope Bias")
         self.tab_widget.addTab(self.cal_gyr_gain, "Gyroscope Gain")
-        self.tab_widget.addTab(self.cal_imex, "Import / Export")
+        self.tab_widget.addTab(self.cal_imex, "Import/Export")
         
         self.vlayout.addWidget(self.tab_widget)
         

@@ -229,7 +229,7 @@ class DistanceIR(PluginBase):
     def sample_file_clicked(self):
         last_dir = ''
         if len(self.sample_edit.text()) > 0:
-            last_dir = os.path.dirname(os.path.realpath(unicode(self.sample_edit.text().toUtf8(), 'utf-8')))
+            last_dir = os.path.dirname(os.path.realpath(self.sample_edit.text()))
         file_name = QFileDialog.getOpenFileName(self,
                                                 "Open Sample Point file",
                                                 last_dir,
@@ -279,10 +279,9 @@ class DistanceIR(PluginBase):
     def sample_save_clicked(self):
         x = []
         y = []
-        text = self.sample_edit.text()
-        text = unicode(text.toUtf8(), 'utf-8').encode(sys.getfilesystemencoding())
+        filename = self.sample_edit.text()
 
-        with open(text, 'rb') as f:
+        with open(filename, 'rb') as f:
             for line in f:
                 c = line.find('#')
                 if c != -1:

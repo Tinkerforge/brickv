@@ -159,7 +159,7 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
         self.option_list_editor.update_ui_state()
 
     def get_executable(self):
-        return unicode(self.combo_version.itemData(self.get_field('perl.version').toInt()[0]).toString())
+        return self.combo_version.itemData(self.get_field('perl.version').toInt()[0]).toString()
 
     def get_html_summary(self):
         version           = self.get_field('perl.version').toInt()[0]
@@ -185,8 +185,8 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
     def get_custom_options(self):
         return {
             'perl.start_mode':  Constants.perl_start_mode_api_names[self.get_field('perl.start_mode').toInt()[0]],
-            'perl.script_file': unicode(self.get_field('perl.script_file').toString()),
-            'perl.command':     unicode(self.get_field('perl.command').toString()),
+            'perl.script_file': self.get_field('perl.script_file').toString(),
+            'perl.command':     self.get_field('perl.command').toString(),
             'perl.options':     self.option_list_editor.get_items()
         }
 
@@ -197,12 +197,12 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
         start_mode  = self.get_field('perl.start_mode').toInt()[0]
 
         if start_mode == Constants.PERL_START_MODE_SCRIPT_FILE:
-            arguments.append(unicode(self.get_field('perl.script_file').toString()))
+            arguments.append(self.get_field('perl.script_file').toString())
         elif start_mode == Constants.PERL_START_MODE_COMMAND:
             arguments.append('-e')
-            arguments.append(unicode(self.get_field('perl.command').toString()))
+            arguments.append(self.get_field('perl.command').toString())
 
-        working_directory = unicode(self.get_field('perl.working_directory').toString())
+        working_directory = self.get_field('perl.working_directory').toString()
 
         return executable, arguments, environment, working_directory
 

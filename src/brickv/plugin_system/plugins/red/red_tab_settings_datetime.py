@@ -157,7 +157,8 @@ class REDTabSettingsDateTime(QtGui.QWidget, Ui_REDTabSettingsDateTime):
 
                 process.release()
 
-            if (self.time_red_old == self.time_local_old) and (self.time_timezone_red.text() == self.time_timezone_local.text()):
+            if self.time_red_old == self.time_local_old and \
+               self.time_timezone_red.text() == self.time_timezone_local.text():
                 self.time_sync_button.setEnabled(False)
             else:
                 self.time_sync_button.setEnabled(True)

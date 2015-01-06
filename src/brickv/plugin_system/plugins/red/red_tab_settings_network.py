@@ -668,7 +668,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                         istate = self.cbox_net_intf.itemData(i, INTERFACE_STATE_USER_ROLE).toInt()[0]
                         if istate == INTERFACE_STATE_ACTIVE:
                             self.cbox_net_intf.setCurrentIndex(i)
-                            iname = unicode(self.cbox_net_intf.itemData(i, INTERFACE_NAME_USER_ROLE).toString())
+                            iname = self.cbox_net_intf.itemData(i, INTERFACE_NAME_USER_ROLE).toString()
                             itype = self.cbox_net_intf.itemData(i, INTERFACE_TYPE_USER_ROLE).toInt()[0]
                             break
                         if i == self.cbox_net_intf.count() - 1:
@@ -704,7 +704,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
     def slot_pbutton_net_wireless_scan_clicked(self):
         cbox_cidx = self.cbox_net_intf.currentIndex()
-        interface_name = unicode(self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE).toString())
+        interface_name = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE).toString()
         interface_type = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE).toInt()[0]
 
         if interface_type == INTERFACE_TYPE_WIRELESS:
@@ -986,7 +986,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
     def slot_network_connect_clicked(self):
         cbox_cidx = self.cbox_net_intf.currentIndex()
 
-        iname = unicode(self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE).toString())
+        iname = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_NAME_USER_ROLE).toString()
         itype = self.cbox_net_intf.itemData(cbox_cidx, INTERFACE_TYPE_USER_ROLE).toInt()[0]
 
         # Wireless
@@ -1007,10 +1007,10 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                     continue
 
             if ap_item:
-                apname = unicode(ap_item.data(AP_NAME_USER_ROLE).toString())
+                apname = ap_item.data(AP_NAME_USER_ROLE).toString()
                 enc_method = ap_item.data(AP_ENCRYPTION_METHOD_USER_ROLE).toInt()[0]
-                enc = unicode(ap_item.data(AP_ENCRYPTION_USER_ROLE).toString())
-                key = unicode(self.ledit_net_wireless_key.text())
+                enc = ap_item.data(AP_ENCRYPTION_USER_ROLE).toString()
+                key = self.ledit_net_wireless_key.text()
 
             if not apname:
                 self.show_please_wait(WORKING_STATE_DONE)
@@ -1034,10 +1034,9 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 return
             else:
                 address_conf = self.cbox_net_conftype.currentIndex()
-                netidx = unicode(ap_item.data(AP_NETWORK_INDEX_USER_ROLE).toString())
+                netidx = ap_item.data(AP_NETWORK_INDEX_USER_ROLE).toString()
                 essid = apname
-                bssid = unicode(ap_item.data(AP_BSSID_USER_ROLE).toString())
-
+                bssid = ap_item.data(AP_BSSID_USER_ROLE).toString()
 
                 iname_previous = self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', 'None')
                 self.network_all_data['manager_settings'].set('Settings', 'wireless_interface', iname)
@@ -1309,7 +1308,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                        cb_open_error)
 
     def slot_cbox_net_intf_current_idx_changed(self, idx):
-        interface_name = unicode(self.cbox_net_intf.itemData(idx, INTERFACE_NAME_USER_ROLE).toString())
+        interface_name = self.cbox_net_intf.itemData(idx, INTERFACE_NAME_USER_ROLE).toString()
         interface_type = self.cbox_net_intf.itemData(idx, INTERFACE_TYPE_USER_ROLE).toInt()[0]
 
         if interface_type == INTERFACE_TYPE_WIRELESS:
@@ -1403,13 +1402,13 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                     address_conf = item.data(AP_ADDRESS_CONF_USER_ROLE).toInt()[0]
 
                     encryption_method = item.data(AP_ENCRYPTION_METHOD_USER_ROLE).toInt()[0]
-                    channel = unicode(item.data(AP_CHANNEL_USER_ROLE).toString())
-                    encryption = unicode(item.data(AP_ENCRYPTION_USER_ROLE).toString())
-                    key = unicode(item.data(AP_KEY_USER_ROLE).toString())
-                    ip_string = unicode(item.data(AP_IP_USER_ROLE).toString())
-                    mask_string = unicode(item.data(AP_MASK_USER_ROLE).toString())
-                    gw_string = unicode(item.data(AP_GATEWAY_USER_ROLE).toString())
-                    dns_string = unicode(item.data(AP_DNS_USER_ROLE).toString())
+                    channel = item.data(AP_CHANNEL_USER_ROLE).toString()
+                    encryption = item.data(AP_ENCRYPTION_USER_ROLE).toString()
+                    key = item.data(AP_KEY_USER_ROLE).toString()
+                    ip_string = item.data(AP_IP_USER_ROLE).toString()
+                    mask_string = item.data(AP_MASK_USER_ROLE).toString()
+                    gw_string = item.data(AP_GATEWAY_USER_ROLE).toString()
+                    dns_string = item.data(AP_DNS_USER_ROLE).toString()
                     ip_array = ip_string.split('.')
                     mask_array = mask_string.split('.')
                     gw_array = gw_string.split('.')

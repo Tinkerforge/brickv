@@ -512,7 +512,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
     def send_stdin_pipe_input(self):
         if self.program.last_spawned_process != None and self.program.last_spawned_process.stdin != None:
             try:
-                self.program.last_spawned_process.stdin.write_async((unicode(self.edit_stdin_pipe_input.text()) + u'\n').encode('utf-8'))
+                self.program.last_spawned_process.stdin.write_async((self.edit_stdin_pipe_input.text() + u'\n').encode('utf-8'))
             except (Error, REDError) as e:
                 QMessageBox.critical(get_main_window(), 'Pipe Input Error',
                                      u'Could not write to stdin of current process of program [{0}]:\n\n{1}'

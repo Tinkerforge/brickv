@@ -51,7 +51,7 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         self.setupUi(self)
 
         self.language     = Constants.LANGUAGE_PYTHON
-        self.url_template = unicode(self.label_url.text())
+        self.url_template = self.label_url.text()
 
         self.setTitle('{0}{1} Configuration'.format(title_prefix, Constants.language_display_names[self.language]))
 
@@ -190,7 +190,7 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         self.option_list_editor.update_ui_state()
 
     def get_executable(self):
-        return unicode(self.combo_version.itemData(self.get_field('python.version').toInt()[0]).toString())
+        return self.combo_version.itemData(self.get_field('python.version').toInt()[0]).toString()
 
     def get_html_summary(self):
         version           = self.get_field('python.version').toInt()[0]
@@ -222,9 +222,9 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
     def get_custom_options(self):
         return {
             'python.start_mode':  Constants.python_start_mode_api_names[self.get_field('python.start_mode').toInt()[0]],
-            'python.script_file': unicode(self.get_field('python.script_file').toString()),
-            'python.module_name': unicode(self.get_field('python.module_name').toString()),
-            'python.command':     unicode(self.get_field('python.command').toString()),
+            'python.script_file': self.get_field('python.script_file').toString(),
+            'python.module_name': self.get_field('python.module_name').toString(),
+            'python.command':     self.get_field('python.command').toString(),
             'python.options':     self.option_list_editor.get_items()
         }
 
@@ -239,15 +239,15 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         environment = []
 
         if start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE:
-            arguments.append(unicode(self.get_field('python.script_file').toString()))
+            arguments.append(self.get_field('python.script_file').toString())
         elif start_mode == Constants.PYTHON_START_MODE_MODULE_NAME:
             arguments.append('-m')
-            arguments.append(unicode(self.get_field('python.module_name').toString()))
+            arguments.append(self.get_field('python.module_name').toString())
         elif start_mode == Constants.PYTHON_START_MODE_COMMAND:
             arguments.append('-c')
-            arguments.append(unicode(self.get_field('python.command').toString()))
+            arguments.append(self.get_field('python.command').toString())
 
-        working_directory = unicode(self.get_field('python.working_directory').toString())
+        working_directory = self.get_field('python.working_directory').toString()
 
         return executable, arguments, environment, working_directory
 

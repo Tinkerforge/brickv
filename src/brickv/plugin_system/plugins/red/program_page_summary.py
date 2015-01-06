@@ -44,7 +44,7 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
 
         # general information
         html  = u'<b>General Information</b><br/>'
-        html += u'Name: {0}<br/>'.format(Qt.escape(unicode(self.get_field('name').toString())))
+        html += u'Name: {0}<br/>'.format(Qt.escape(self.get_field('name').toString()))
         html += u'Identifier: {0}<br/>'.format(Qt.escape(self.get_field('identifier').toString()))
         html += u'Language: {0}<br/>'.format(Qt.escape(language_display_name))
         html += u'Description: {0}<br/>'.format(Qt.escape(self.get_field('description').toString()))

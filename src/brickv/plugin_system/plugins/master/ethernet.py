@@ -250,13 +250,13 @@ class Ethernet(QWidget, Ui_Ethernet):
         connection = self.ethernet_connection.currentIndex()
 
         try:
-            secret = str(self.ethernet_secret.text()).encode('ascii')
+            secret = self.ethernet_secret.text().encode('ascii')
         except:
             self.popup_fail('Secret cannot contain non-ASCII characters')
             return
 
         try:
-            hostname = str(self.ethernet_hostname.text()).encode('ascii')
+            hostname = self.ethernet_hostname.text().encode('ascii')
         except:
             self.popup_fail('Hostname cannot contain non-ASCII characters')
             return

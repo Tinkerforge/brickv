@@ -204,7 +204,7 @@ class IO16(PluginBase, Ui_IO16):
         self.update_monoflop_ui_state()
 
     def update_monoflop_ui_state(self):
-        port = str(self.port_box.currentText()).lower()
+        port = self.port_box.currentText().lower()
         pin = int(self.pin_box.currentText())
 
         if self.port_direction[port][pin].text() == 'Output' and \
@@ -219,9 +219,9 @@ class IO16(PluginBase, Ui_IO16):
         self.time_spinbox.setValue(self.monoflop_timebefore[port][pin])
 
     def save_clicked(self):
-        port = str(self.port_box.currentText()).lower()
+        port = self.port_box.currentText().lower()
         pin = int(self.pin_box.currentText())
-        direction = str(self.direction_box.currentText())[0].lower()
+        direction = self.direction_box.currentText()[0].lower()
         if direction == 'o':
             value = self.value_box.currentText() == 'High'
             self.port_value[port][pin].setText(self.value_box.currentText())
@@ -253,9 +253,9 @@ class IO16(PluginBase, Ui_IO16):
         self.pin_changed(int(self.pin_box.currentText()))
                     
     def pin_changed(self, pin):
-        port = str(self.port_box.currentText()).lower()
+        port = self.port_box.currentText().lower()
         
-        if str(self.port_direction[port][pin].text()) == 'Input':
+        if self.port_direction[port][pin].text() == 'Input':
             index = 0
         else:
             index = 1
@@ -265,7 +265,7 @@ class IO16(PluginBase, Ui_IO16):
         self.update_monoflop_ui_state()
         
     def direction_changed(self, direction):
-        port = str(self.port_box.currentText()).lower()
+        port = self.port_box.currentText().lower()
         pin = int(self.pin_box.currentText())
         
         self.value_box.clear()
@@ -274,7 +274,7 @@ class IO16(PluginBase, Ui_IO16):
             self.value_box.addItem('High')
             self.value_box.addItem('Low')
 
-            if str(self.port_config[port][pin].text()) == 'High':
+            if self.port_config[port][pin].text() == 'High':
                 self.value_box.setCurrentIndex(0)
             else:
                 self.value_box.setCurrentIndex(1)
@@ -282,7 +282,7 @@ class IO16(PluginBase, Ui_IO16):
             self.value_box.addItem('Pull-Up')
             self.value_box.addItem('Default')
 
-            if str(self.port_config[port][pin].text()) == 'Pull-Up':
+            if self.port_config[port][pin].text() == 'Pull-Up':
                 self.value_box.setCurrentIndex(0)
             else:
                 self.value_box.setCurrentIndex(1)
@@ -290,21 +290,21 @@ class IO16(PluginBase, Ui_IO16):
         self.update_monoflop_ui_state()
 
     def debounce_save_clicked(self):
-        debounce = int(str(self.debounce_edit.text()))
+        debounce = int(self.debounce_edit.text())
         try:
             self.io.set_debounce_period(debounce)
         except ip_connection.Error:
             return
 
     def time_changed(self, time):
-        port = str(self.port_box.currentText()).lower()
+        port = self.port_box.currentText().lower()
         pin = int(self.pin_box.currentText())
 
         if not self.monoflop_active[port][pin]:
             self.monoflop_timebefore[port][pin] = time
 
     def go_clicked(self):
-        port = str(self.port_box.currentText()).lower()
+        port = self.port_box.currentText().lower()
         pin = int(self.pin_box.currentText())
 
         if self.value_box.currentText() == 'High':
@@ -335,7 +335,7 @@ class IO16(PluginBase, Ui_IO16):
                 self.monoflop_active[port][pin] = False
                 self.port_time[port][pin].setText('0')
 
-                if port == str(self.port_box.currentText()).lower() and \
+                if port == self.port_box.currentText().lower() and \
                    pin == int(self.pin_box.currentText()):
                     self.time_spinbox.setValue(self.monoflop_timebefore[port][pin])
                     self.time_spinbox.setEnabled(True)
@@ -348,7 +348,7 @@ class IO16(PluginBase, Ui_IO16):
                     self.port_config[port][pin].setText('Low')
 
     def update_async(self, port, pin, monoflop):
-        selected_port = str(self.port_box.currentText()).lower()
+        selected_port = self.port_box.currentText().lower()
         selected_pin = int(self.pin_box.currentText())
         
         _, _, time_remaining = monoflop

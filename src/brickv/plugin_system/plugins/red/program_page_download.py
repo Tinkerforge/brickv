@@ -62,7 +62,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.remaining_source_size           = None
         self.progress_file_next_update       = None
         self.last_download_size              = None
-        self.replace_help_template           = unicode(self.label_replace_help.text())
+        self.replace_help_template           = self.label_replace_help.text()
         self.canceled                        = False
 
         self.setTitle(title_prefix + 'Download')
@@ -124,7 +124,6 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.canceled = True
 
     def check_new_name(self, name):
-        name   = unicode(name) # convert QString to unicode
         target = os.path.split(self.download.target)[1]
 
         if len(name) == 0:
@@ -337,7 +336,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         if not self.conflict_resolution_in_progress or self.check_rename_new_file.checkState() != Qt.Checked:
             return
 
-        self.rename_download_target(unicode(self.edit_new_name.text()))
+        self.rename_download_target(self.edit_new_name.text())
         self.log(u'...downloading as {0}'.format(self.download.target))
 
         if self.check_remember_decision.checkState() == Qt.Checked:

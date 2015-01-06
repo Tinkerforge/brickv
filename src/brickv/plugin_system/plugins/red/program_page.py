@@ -38,7 +38,7 @@ class ProgramPage(QWizardPage):
 
     def set_formatted_sub_title(self, sub_title):
         language = Constants.language_display_names[self.get_field('language').toInt()[0]]
-        name     = unicode(Qt.escape(self.get_field('name').toString()))
+        name     = Qt.escape(self.get_field('name').toString())
 
         self.setSubTitle(sub_title.format(**{'language': language, 'name': name}))
 

@@ -145,7 +145,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         if program != None:
             self.bin_directory = posixpath.join(unicode(program.root_directory), 'bin')
         else:
-            identifier         = unicode(self.get_field('identifier').toString())
+            identifier         = self.get_field('identifier').toString()
             self.bin_directory = posixpath.join('/', 'home', 'tf', 'programs', identifier, 'bin')
 
         # collect class path entries
@@ -389,7 +389,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         if dialog.exec_() != QDialog.Accepted:
             return
 
-        entry = unicode(dialog.textValue())
+        entry = dialog.textValue()
 
         if len(entry) == 0:
             QMessageBox.critical(get_main_window(), 'Add Class Path Entry Error',
@@ -400,7 +400,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.class_path_list_editor.add_item(entry, select_item=True)
 
     def get_executable(self):
-        return unicode(self.combo_version.itemData(self.get_field('java.version').toInt()[0]).toString())
+        return self.combo_version.itemData(self.get_field('java.version').toInt()[0]).toString()
 
     def get_html_summary(self):
         version           = self.get_field('java.version').toInt()[0]
@@ -428,8 +428,8 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
     def get_custom_options(self):
         return {
             'java.start_mode': Constants.java_start_mode_api_names[self.get_field('java.start_mode').toInt()[0]],
-            'java.main_class': unicode(self.get_field('java.main_class').toString()),
-            'java.jar_file':   unicode(self.get_field('java.jar_file').toString()),
+            'java.main_class': self.get_field('java.main_class').toString(),
+            'java.jar_file':   self.get_field('java.jar_file').toString(),
             'java.class_path': self.class_path_list_editor.get_items(),
             'java.options':    self.option_list_editor.get_items()
         }
@@ -453,12 +453,12 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             arguments += ['-cp', ':'.join(absolute_entries)]
 
         if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS:
-            arguments.append(unicode(self.get_field('java.main_class').toString()))
+            arguments.append(self.get_field('java.main_class').toString())
         elif start_mode == Constants.JAVA_START_MODE_JAR_FILE:
             arguments.append('-jar')
-            arguments.append(unicode(self.get_field('java.jar_file').toString()))
+            arguments.append(self.get_field('java.jar_file').toString())
 
-        working_directory = unicode(self.get_field('java.working_directory').toString())
+        working_directory = self.get_field('java.working_directory').toString()
 
         return executable, arguments, environment, working_directory
 
