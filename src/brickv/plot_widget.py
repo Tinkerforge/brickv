@@ -52,7 +52,7 @@ def fuzzy_leq(a, b):
 def fuzzy_geq(a, b):
     return a > b or fuzzy_eq(a, b)
 
-class Scale:
+class Scale(object):
     def __init__(self, tick_text_font, title_text_font):
         self.axis_line_thickness = 1 # px, fixed
 

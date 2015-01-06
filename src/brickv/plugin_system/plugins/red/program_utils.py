@@ -1060,7 +1060,7 @@ class MandatoryDirectorySelector(object):
 
 class ComboBoxFileEndingChecker(object):
     class NoEndingCheckRequired(object):
-        class NoIndexChangeRequired:
+        class NoIndexChangeRequired(object):
             def connect(self, *args, **kwargs):
                 return
         currentIndexChanged = NoIndexChangeRequired()

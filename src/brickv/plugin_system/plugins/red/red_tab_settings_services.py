@@ -96,13 +96,13 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
                    services_check_result['desktopenv'] is None or \
                    services_check_result['webserver'] is None or \
                    services_check_result['splashscreen'] is None:
-                        self.all_checkbox(False)
-                        QtGui.QMessageBox.critical(get_main_window(),
-                                                   'Settings | Services',
-                                                   'Error getting current services status.',
-                                                   QtGui.QMessageBox.Ok)
-                        
-                        return
+                    self.all_checkbox(False)
+                    QtGui.QMessageBox.critical(get_main_window(),
+                                               'Settings | Services',
+                                               'Error getting current services status.',
+                                               QtGui.QMessageBox.Ok)
+
+                    return
                 else:
                     self.all_checkbox(True)
                     if services_check_result['gpu']:

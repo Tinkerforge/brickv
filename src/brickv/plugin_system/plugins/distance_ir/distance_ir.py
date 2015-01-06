@@ -36,7 +36,7 @@ from PyQt4.QtCore import pyqtSignal, Qt
 import os
 
 # this class is directly based on the QwtSpline class from the Qwt library
-class NaturalSpline:
+class NaturalSpline(object):
     def __init__(self):
         self.points = []
         self.a = []
@@ -58,7 +58,7 @@ class NaturalSpline:
             h[i] = points[i + 1][0] - points[i][0]
 
             if h[i] <= 0:
-                return False;
+                return False
 
         d = [0.0] * (length - 1)
         dy1 = (points[1][1] - points[0][1]) / h[0]
@@ -70,7 +70,6 @@ class NaturalSpline:
             dy2 = (points[i + 1][1] - points[i][1]) / h[i]
             d[i] = 6.0 * (dy1 - dy2)
             dy1 = dy2
-
 
         for i in range(1, length - 2):
             c[i] /= a[i]

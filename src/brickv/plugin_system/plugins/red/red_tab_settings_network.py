@@ -512,8 +512,8 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         if self.network_all_data['interfaces'] is not None and \
            self.network_all_data['status'] is not None and \
            (self.network_all_data['interfaces']['wireless'] is not None or \
-           self.network_all_data['interfaces']['wired'] is not None or \
-           self.network_all_data['interfaces']['wireless_links'] is not None):
+            self.network_all_data['interfaces']['wired'] is not None or \
+            self.network_all_data['interfaces']['wireless_links'] is not None):
                 # Processing wireless interfaces
                 if self.network_all_data['interfaces']['wireless'] is not None and\
                    len(self.network_all_data['interfaces']['wireless']) > 0:
@@ -673,15 +673,15 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
                 self.cbox_net_intf.setEnabled(True)
 
-        elif self.network_all_data['interfaces']['wireless'] is None and\
-           self.network_all_data['interfaces']['wired'] is None:
-                update_no_interface_available()
+        elif self.network_all_data['interfaces']['wireless'] is None and \
+             self.network_all_data['interfaces']['wired'] is None:
+            update_no_interface_available()
 
-        elif self.network_all_data['interfaces']['wireless'] is not None and\
+        elif self.network_all_data['interfaces']['wireless'] is not None and \
              self.network_all_data['interfaces']['wired'] is not None:
-                 if len(self.network_all_data['interfaces']['wireless']) <= 0 and\
-                    len(self.network_all_data['interfaces']['wired']) <= 0:
-                        update_no_interface_available()
+            if len(self.network_all_data['interfaces']['wireless']) <= 0 and \
+               len(self.network_all_data['interfaces']['wired']) <= 0:
+                update_no_interface_available()
 
     def network_button_refresh_enabled(self, state):
         self.pbutton_net_conf_refresh.setEnabled(state)

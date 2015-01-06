@@ -269,7 +269,6 @@ class SAMBA(object):
             offset = 0
 
             while len(ic_prefix) < ic_prefix_length:
-                address = ic_prefix_address + offset
                 ic_prefix += self.read_word(ic_prefix_address + offset)
                 offset += 4
 
