@@ -3,6 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 red_tab_settings.py: RED settings tab implementation
 
@@ -44,46 +45,35 @@ class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
 
         self.is_tab_on_focus = False
 
-        self.box_list = []
+        self.tab_list = []
 
-        for i in range(self.tbox_settings.count()):
-            self.box_list.append(self.tbox_settings.widget(i))
+        for i in range(self.tab_widget.count()):
+            self.tab_list.append(self.tab_widget.widget(i))
 
         # Boxes
-        self.tbox_settings.currentChanged.connect(self.slot_tbox_settings_current_changed)
+        self.tab_widget.currentChanged.connect(self.slot_tab_widget_current_changed)
 
     def tab_on_focus(self):
         self.is_tab_on_focus = True
 
-        for index in range(0, self.tbox_settings.count()):
-            self.box_list[index].session = self.session
-            self.box_list[index].script_manager = self.script_manager
+        for tab in self.tab_list:
+            tab.session = self.session
+            tab.script_manager = self.script_manager
 
-        index = self.tbox_settings.currentIndex()
-
-        if index == BOX_INDEX_NETWORK:
-            self.box_list[BOX_INDEX_NETWORK].tab_on_focus()
-        elif index == BOX_INDEX_BRICKD:
-            self.box_list[BOX_INDEX_BRICKD].tab_on_focus()
-        elif index == BOX_INDEX_DATETIME:
-            self.box_list[BOX_INDEX_DATETIME].tab_on_focus()
-        elif index == BOX_INDEX_FILESYSTEM:
-            self.box_list[BOX_INDEX_FILESYSTEM].tab_on_focus()
-        elif index == BOX_INDEX_SERVICES:
-            self.box_list[BOX_INDEX_SERVICES].tab_on_focus()
+        self.tab_widget.currentWidget().tab_on_focus()
 
     def tab_off_focus(self):
         self.is_tab_on_focus = False
 
-        for i in range(self.tbox_settings.count()):
-            self.box_list[i].tab_off_focus()
+        for tab in self.tab_list:
+            tab.tab_off_focus()
 
     def tab_destroy(self):
         pass
 
-    def slot_tbox_settings_current_changed(self, ctidx):
-        for i in range(self.tbox_settings.count()):
+    def slot_tab_widget_current_changed(self, ctidx):
+        for i in range(self.tab_widget.count()):
             if i == ctidx:
-                self.box_list[i].tab_on_focus()
+                self.tab_list[i].tab_on_focus()
             else:
-                self.box_list[i].tab_off_focus()
+                self.tab_list[i].tab_off_focus()

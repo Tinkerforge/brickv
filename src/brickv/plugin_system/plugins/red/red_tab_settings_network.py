@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 red_tab_settings_network.py: RED settings network tab implementation
 
@@ -284,7 +285,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         if show:
             self.label_ap.show()
             self.tree_net_wireless_ap.show()
-            self.pbutton_net_wireless_scan.show()
+            self.widget_scan.show()
             self.label_key.show()
             self.ledit_net_wireless_key.show()
             self.chkbox_net_wireless_key_show.setChecked(False)
@@ -292,7 +293,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         else:
             self.label_ap.hide()
             self.tree_net_wireless_ap.hide()
-            self.pbutton_net_wireless_scan.hide()
+            self.widget_scan.hide()
             self.label_key.hide()
             self.ledit_net_wireless_key.hide()
             self.chkbox_net_wireless_key_show.setChecked(False)
@@ -344,16 +345,16 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             self.tree_net_wireless_ap.setEnabled(True)
             self.chkbox_net_wireless_key_show.setChecked(False)
         def no_ap_found():
+            self.tree_net_wireless_ap.setEnabled(True)
             self.ledit_net_wireless_key.setText('')
             self.chkbox_net_wireless_key_show.setChecked(False)
             self.ap_tree_model_clear_add_item(None)
             item = QtGui.QStandardItem('No access points found. Scan again?')
-            item.setData(QtCore.QVariant(AP_COL),
-                         AP_COL_USER_ROLE)
-            item.setData(QtCore.QVariant(AP_STATUS_NONE),
-                         AP_STATUS_USER_ROLE)
+            item.setData(QtCore.QVariant(AP_COL), AP_COL_USER_ROLE)
+            item.setData(QtCore.QVariant(AP_STATUS_NONE), AP_STATUS_USER_ROLE)
+            item.setEnabled(False)
+            item.setSelectable(False)
             self.ap_tree_model_clear_add_item(item)
-            self.tree_net_wireless_ap.setEnabled(False)
 
         if scan_data and \
            self.network_all_data['interfaces']['wireless'] and \

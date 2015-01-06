@@ -6,338 +6,250 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>405</height>
+    <width>474</width>
+    <height>553</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QTabWidget" name="twidget_brickd">
-     <property name="tabPosition">
-      <enum>QTabWidget::South</enum>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
      </property>
-     <property name="currentIndex">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="tab_brickd_gen">
-      <attribute name="title">
-       <string>General</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>454</width>
+        <height>533</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QScrollArea" name="scrollArea">
-         <property name="widgetResizable">
-          <bool>true</bool>
-         </property>
-         <widget class="QWidget" name="scrollAreaWidgetContents">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>658</width>
-            <height>334</height>
-           </rect>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_5">
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="0" column="2">
+          <widget class="QSpinBox" name="sbox_brickd_la_ip2">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" colspan="4">
+          <widget class="QSpinBox" name="sbox_brickd_lwsp">
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QSpinBox" name="sbox_brickd_la_ip1">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_15">
+           <property name="text">
+            <string>Port:</string>
+           </property>
+           <property name="buddy">
+            <cstring>sbox_brickd_lp</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QSpinBox" name="sbox_brickd_la_ip3">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QSpinBox" name="sbox_brickd_la_ip4">
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="4">
+          <widget class="QSpinBox" name="sbox_brickd_lp">
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_16">
+           <property name="text">
+            <string>WebSocket Port:</string>
+           </property>
+           <property name="buddy">
+            <cstring>sbox_brickd_lwsp</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0" colspan="5">
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
            <item>
-            <layout class="QGridLayout" name="gridLayout_4">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_7">
-               <property name="text">
-                <string>Listen Address:</string>
-               </property>
-               <property name="buddy">
-                <cstring>sbox_brickd_la_ip1</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2">
-              <widget class="QSpinBox" name="sbox_brickd_la_ip2">
-               <property name="maximum">
-                <number>255</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1" colspan="4">
-              <widget class="QSpinBox" name="sbox_brickd_lwsp">
-               <property name="maximum">
-                <number>65535</number>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="0">
-              <spacer name="verticalSpacer_11">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="0" column="1">
-              <widget class="QSpinBox" name="sbox_brickd_la_ip1">
-               <property name="maximum">
-                <number>255</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_15">
-               <property name="text">
-                <string>Port:</string>
-               </property>
-               <property name="buddy">
-                <cstring>sbox_brickd_lp</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="3">
-              <widget class="QSpinBox" name="sbox_brickd_la_ip3">
-               <property name="maximum">
-                <number>255</number>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="4">
-              <widget class="QSpinBox" name="sbox_brickd_la_ip4">
-               <property name="maximum">
-                <number>255</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1" colspan="4">
-              <widget class="QSpinBox" name="sbox_brickd_lp">
-               <property name="maximum">
-                <number>65535</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_16">
-               <property name="text">
-                <string>WebSocket Port:</string>
-               </property>
-               <property name="buddy">
-                <cstring>sbox_brickd_lwsp</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="0" colspan="5">
-              <layout class="QHBoxLayout" name="horizontalLayout_5">
-               <item>
-                <widget class="QPushButton" name="pbutton_brickd_general_refresh">
-                 <property name="text">
-                  <string>Refresh</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pbutton_brickd_general_save">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>Saved</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label">
-               <property name="text">
-                <string>Authentication Secret:</string>
-               </property>
-               <property name="buddy">
-                <cstring>ledit_brickd_secret</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1" colspan="4">
-              <widget class="QLineEdit" name="ledit_brickd_secret"/>
-             </item>
-             <item row="4" column="0" colspan="5">
-              <widget class="Line" name="line_5">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-            </layout>
+            <widget class="QPushButton" name="pbutton_brickd_refresh">
+             <property name="text">
+              <string>Refresh</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pbutton_brickd_save">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="text">
+              <string>Save</string>
+             </property>
+            </widget>
            </item>
           </layout>
-         </widget>
-        </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Authentication Secret:</string>
+           </property>
+           <property name="buddy">
+            <cstring>ledit_brickd_secret</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" colspan="4">
+          <widget class="QLineEdit" name="ledit_brickd_secret"/>
+         </item>
+         <item row="9" column="0" colspan="5">
+          <widget class="Line" name="line_5">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_13">
+           <property name="text">
+            <string>Log Level:</string>
+           </property>
+           <property name="buddy">
+            <cstring>cbox_brickd_ll</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1" colspan="4">
+          <widget class="QComboBox" name="cbox_brickd_ll">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_14">
+           <property name="text">
+            <string>SPI Poll Delay:</string>
+           </property>
+           <property name="buddy">
+            <cstring>sbox_brickd_spi_dly</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_17">
+           <property name="text">
+            <string>RS485 Poll Delay:</string>
+           </property>
+           <property name="buddy">
+            <cstring>sbox_brickd_rs485_dly</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="label_18">
+           <property name="text">
+            <string>Red LED Trigger:</string>
+           </property>
+           <property name="buddy">
+            <cstring>cbox_brickd_rt</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="label_21">
+           <property name="text">
+            <string>Green LED Trigger:</string>
+           </property>
+           <property name="buddy">
+            <cstring>cbox_brickd_gt</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1" colspan="4">
+          <widget class="QComboBox" name="cbox_brickd_gt"/>
+         </item>
+         <item row="7" column="1" colspan="4">
+          <widget class="QComboBox" name="cbox_brickd_rt"/>
+         </item>
+         <item row="6" column="1" colspan="4">
+          <widget class="QSpinBox" name="sbox_brickd_rs485_dly">
+           <property name="suffix">
+            <string> microseconds</string>
+           </property>
+           <property name="minimum">
+            <number>50</number>
+           </property>
+           <property name="maximum">
+            <number>2000000</number>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1" colspan="4">
+          <widget class="QSpinBox" name="sbox_brickd_spi_dly">
+           <property name="suffix">
+            <string> microseconds</string>
+           </property>
+           <property name="minimum">
+            <number>50</number>
+           </property>
+           <property name="maximum">
+            <number>2000000</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Listen Address:</string>
+           </property>
+           <property name="buddy">
+            <cstring>sbox_brickd_la_ip1</cstring>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tab_brickd_adv">
-      <attribute name="title">
-       <string>Advanced</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_19">
        <item>
-        <widget class="QScrollArea" name="scrollArea_5">
-         <property name="widgetResizable">
-          <bool>true</bool>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-         <widget class="QWidget" name="scrollAreaWidgetContents_4">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>658</width>
-            <height>334</height>
-           </rect>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_20">
-           <item>
-            <layout class="QGridLayout" name="gridLayout_6">
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_13">
-               <property name="text">
-                <string>Log Level:</string>
-               </property>
-               <property name="buddy">
-                <cstring>cbox_brickd_adv_ll</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="6" column="0" colspan="2">
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
-               <item>
-                <widget class="QPushButton" name="pbutton_brickd_adv_refresh">
-                 <property name="text">
-                  <string>Refresh</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pbutton_brickd_adv_save">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>Saved</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item row="5" column="0" colspan="2">
-              <widget class="Line" name="line_7">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QComboBox" name="cbox_brickd_adv_rt"/>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="label_21">
-               <property name="text">
-                <string>Green LED Trigger:</string>
-               </property>
-               <property name="buddy">
-                <cstring>cbox_brickd_adv_gt</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_18">
-               <property name="text">
-                <string>Red LED Trigger:</string>
-               </property>
-               <property name="buddy">
-                <cstring>cbox_brickd_adv_rt</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QComboBox" name="cbox_brickd_adv_ll">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>1</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_14">
-               <property name="text">
-                <string>SPI Poll Delay:</string>
-               </property>
-               <property name="buddy">
-                <cstring>sbox_brickd_adv_spi_dly</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_17">
-               <property name="text">
-                <string>RS485 Poll Delay:</string>
-               </property>
-               <property name="buddy">
-                <cstring>sbox_brickd_adv_rs485_dly</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QComboBox" name="cbox_brickd_adv_gt"/>
-             </item>
-             <item row="1" column="1">
-              <widget class="QSpinBox" name="sbox_brickd_adv_spi_dly">
-               <property name="suffix">
-                <string> microseconds</string>
-               </property>
-               <property name="minimum">
-                <number>50</number>
-               </property>
-               <property name="maximum">
-                <number>2000000</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QSpinBox" name="sbox_brickd_adv_rs485_dly">
-               <property name="suffix">
-                <string> microseconds</string>
-               </property>
-               <property name="minimum">
-                <number>50</number>
-               </property>
-               <property name="maximum">
-                <number>2000000</number>
-               </property>
-              </widget>
-             </item>
-             <item row="7" column="0">
-              <spacer name="verticalSpacer_4">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </widget>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -346,7 +258,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>twidget_brickd</tabstop>
   <tabstop>scrollArea</tabstop>
   <tabstop>sbox_brickd_la_ip1</tabstop>
   <tabstop>sbox_brickd_la_ip2</tabstop>
@@ -355,16 +266,13 @@
   <tabstop>sbox_brickd_lp</tabstop>
   <tabstop>sbox_brickd_lwsp</tabstop>
   <tabstop>ledit_brickd_secret</tabstop>
-  <tabstop>pbutton_brickd_general_refresh</tabstop>
-  <tabstop>pbutton_brickd_general_save</tabstop>
-  <tabstop>scrollArea_5</tabstop>
-  <tabstop>cbox_brickd_adv_ll</tabstop>
-  <tabstop>sbox_brickd_adv_spi_dly</tabstop>
-  <tabstop>sbox_brickd_adv_rs485_dly</tabstop>
-  <tabstop>cbox_brickd_adv_rt</tabstop>
-  <tabstop>cbox_brickd_adv_gt</tabstop>
-  <tabstop>pbutton_brickd_adv_refresh</tabstop>
-  <tabstop>pbutton_brickd_adv_save</tabstop>
+  <tabstop>cbox_brickd_ll</tabstop>
+  <tabstop>sbox_brickd_spi_dly</tabstop>
+  <tabstop>sbox_brickd_rs485_dly</tabstop>
+  <tabstop>cbox_brickd_rt</tabstop>
+  <tabstop>cbox_brickd_gt</tabstop>
+  <tabstop>pbutton_brickd_refresh</tabstop>
+  <tabstop>pbutton_brickd_save</tabstop>
  </tabstops>
  <resources/>
  <connections/>

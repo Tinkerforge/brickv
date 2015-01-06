@@ -6,100 +6,123 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>703</width>
-    <height>566</height>
+    <width>513</width>
+    <height>581</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QGridLayout" name="gridLayout_5">
-     <item row="4" column="0">
-      <widget class="Line" name="line_4">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout_13">
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>493</width>
+        <height>561</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QProgressBar" name="pbar_fs_capacity_utilization">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="maximum">
-          <number>0</number>
-         </property>
-         <property name="value">
-          <number>0</number>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-         <property name="format">
-          <string/>
-         </property>
-        </widget>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="4" column="0">
+          <widget class="Line" name="line_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_13">
+           <item>
+            <widget class="QProgressBar" name="pbar_fs_capacity_utilization">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="maximum">
+              <number>0</number>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="format">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_pbar_fs_capacity_utilization">
+             <property name="text">
+              <string>&lt;capacity-utilization&gt;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="5" column="0">
+          <widget class="QPushButton" name="pbutton_fs_expand">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Expand</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_fs_expand_info">
+           <property name="text">
+            <string>&lt;html&gt;&lt;body&gt;&lt;p&gt;Depending on the image size and the capacity of the Micro-SD card you might not be using the total capacity of the Micro-SD card. In this case expanding the file system will provide you with some extra storage space. &lt;/p&gt;&lt;p&gt;&lt;b&gt;Important:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;1. Make sure the RED Brick is powered from a reliable power source during the expansion process and do not power it off during the expansion process. This could damage the Micro-SD card and the data in it. &lt;/p&gt;&lt;p&gt;2. After clicking the Expand button the file system will be expanded and RED Brick will automatically reboot. This process may take a moment. &lt;/p&gt;&lt;p&gt;3. Additional storage will only be available after a reboot. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QLabel" name="label_pbar_fs_capacity_utilization">
-         <property name="text">
-          <string>&lt;capacity-utilization&gt;</string>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
-        </widget>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
-     </item>
-     <item row="5" column="0">
-      <widget class="QPushButton" name="pbutton_fs_expand">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Expand</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_fs_expand_info">
-       <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Depending on the image size and the capacity of the Micro-SD card you might not be using the total capacity of the Micro-SD card. In this case expanding the file system will provide you with some extra storage space. &lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Important:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;1. Make sure the RED Brick is powered from a reliable power source during the expansion process and do not power it off during the expansion process. This could damage the Micro-SD card and the data in it. &lt;/p&gt;&lt;p&gt;2. After clicking the Expand button the file system will be expanded and RED Brick will automatically reboot. This process may take a moment. &lt;/p&gt;&lt;p&gt;3. Additional storage will only be available after a reboot. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-       <property name="wordWrap">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>0</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="1" column="0">
-      <widget class="Line" name="line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-    </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>pbutton_fs_expand</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

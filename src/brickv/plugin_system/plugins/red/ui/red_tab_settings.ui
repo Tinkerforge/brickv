@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
-    <height>425</height>
+    <width>570</width>
+    <height>461</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,87 +15,35 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QFrame" name="frame_settings">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+    <widget class="QTabWidget" name="tab_widget">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QToolBox" name="tbox_settings">
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <widget class="REDTabSettingsNetwork" name="box_network">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>478</width>
-           <height>232</height>
-          </rect>
-         </property>
-         <attribute name="label">
-          <string>Network</string>
-         </attribute>
-        </widget>
-        <widget class="REDTabSettingsBrickd" name="box_brickd">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>98</width>
-           <height>28</height>
-          </rect>
-         </property>
-         <attribute name="label">
-          <string>Brick Daemon</string>
-         </attribute>
-        </widget>
-        <widget class="REDTabSettingsDatetime" name="box_datetime">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>98</width>
-           <height>28</height>
-          </rect>
-         </property>
-         <attribute name="label">
-          <string>Date / Time</string>
-         </attribute>
-        </widget>
-        <widget class="REDTabSettingsFileSystem" name="box_filesystem">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>478</width>
-           <height>232</height>
-          </rect>
-         </property>
-         <attribute name="label">
-          <string>File System</string>
-         </attribute>
-        </widget>
-        <widget class="REDTabSettingsServices" name="box_services">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>98</width>
-           <height>28</height>
-          </rect>
-         </property>
-         <attribute name="label">
-          <string>Services</string>
-         </attribute>
-        </widget>
-       </widget>
-      </item>
-     </layout>
+     <widget class="REDTabSettingsNetwork" name="tab_network">
+      <attribute name="title">
+       <string>Network</string>
+      </attribute>
+     </widget>
+     <widget class="REDTabSettingsBrickd" name="tab_brickd">
+      <attribute name="title">
+       <string>Brick Daemon</string>
+      </attribute>
+     </widget>
+     <widget class="REDTabSettingsDateTime" name="tab_datetime">
+      <attribute name="title">
+       <string>Date/Time</string>
+      </attribute>
+     </widget>
+     <widget class="REDTabSettingsFileSystem" name="tab_filesystem">
+      <attribute name="title">
+       <string>File System</string>
+      </attribute>
+     </widget>
+     <widget class="REDTabSettingsServices" name="tab_services">
+      <attribute name="title">
+       <string>Services</string>
+      </attribute>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -108,7 +56,7 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>REDTabSettingsDatetime</class>
+   <class>REDTabSettingsDateTime</class>
    <extends>QWidget</extends>
    <header location="global">brickv.plugin_system.plugins.red.red_tab_settings_datetime</header>
    <container>1</container>

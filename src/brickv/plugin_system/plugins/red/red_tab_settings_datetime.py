@@ -3,6 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 red_tab_settings_datetime.py: RED settings datetime tab implementation
 
@@ -27,7 +28,7 @@ import sys
 import time
 import math
 from PyQt4 import Qt, QtCore, QtGui
-from brickv.plugin_system.plugins.red.ui_red_tab_settings_datetime import Ui_REDTabSettingsDatetime
+from brickv.plugin_system.plugins.red.ui_red_tab_settings_datetime import Ui_REDTabSettingsDateTime
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red import config_parser
 from brickv.async_call import async_call
@@ -35,7 +36,7 @@ from brickv.utils import get_main_window
 
 # Constants
 
-class REDTabSettingsDatetime(QtGui.QWidget, Ui_REDTabSettingsDatetime):
+class REDTabSettingsDateTime(QtGui.QWidget, Ui_REDTabSettingsDateTime):
     def __init__(self):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
