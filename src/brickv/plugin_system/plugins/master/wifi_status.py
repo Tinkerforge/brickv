@@ -37,6 +37,8 @@ class WifiStatus(QFrame, Ui_wifi_status):
         self.parent = parent
         self.master = self.parent.master
 
+        self.button_close.clicked.connect(self.close)
+
         self.update_status()
 
     def update_status_async(self, status):
