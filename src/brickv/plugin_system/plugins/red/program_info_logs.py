@@ -26,8 +26,7 @@ from PyQt4.QtCore import Qt, QVariant, QDateTime
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QFileDialog, \
                         QMessageBox, QSortFilterProxyModel, QApplication
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.program_utils import Download, get_file_display_size, \
-                                                           timestamp_to_date_at_time
+from brickv.plugin_system.plugins.red.program_utils import Download, get_file_display_size
 from brickv.plugin_system.plugins.red.ui_program_info_logs import Ui_ProgramInfoLogs
 from brickv.plugin_system.plugins.red.program_info_logs_view import ProgramInfoLogsView
 from brickv.utils import get_main_window, get_resources_path
@@ -183,7 +182,9 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
                     except ValueError:
                         continue
 
-                    date_time = timestamp_to_date_at_time(timestamp, glue='T')
+                    date      = QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd')
+                    time      = QDateTime.fromTime_t(timestamp).toString('HH:mm:ss')
+                    date_time = date + 'T' + time
 
                     if date in date_rows:
                         date_row = date_rows[date]

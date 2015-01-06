@@ -1108,11 +1108,11 @@ def set_current_combo_index_from_data(combo, data):
         combo.setCurrentIndex(combo.count() - 1)
 
 
-def timestamp_to_date_at_time(timestamp, glue=' at '):
+def timestamp_to_date_at_time(timestamp):
     date = QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd')
     time = QDateTime.fromTime_t(timestamp).toString('HH:mm:ss')
 
-    return date + glue + time
+    return date + ' at ' + time
 
 
 # FIXME: the values should be rouned up
