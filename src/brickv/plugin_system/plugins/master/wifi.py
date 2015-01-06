@@ -32,7 +32,6 @@ from brickv.utils import get_main_window
 
 import os
 import time
-import sys
 
 class Wifi(QWidget, Ui_Wifi):
     def __init__(self, parent):

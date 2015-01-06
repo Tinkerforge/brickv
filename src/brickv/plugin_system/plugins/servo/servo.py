@@ -28,7 +28,7 @@ from brickv.bindings.brick_servo import BrickServo
 from brickv.async_call import async_call
 from brickv.knob_widget import KnobWidget
 
-from PyQt4.QtGui import QLabel, QWidget, QColor, QPainter, QSizePolicy, QInputDialog, QErrorMessage
+from PyQt4.QtGui import QLabel, QWidget, QColor, QPainter, QInputDialog, QErrorMessage
 from PyQt4.QtCore import Qt, QRect, QTimer, pyqtSignal, QThread
 
 from brickv.plugin_system.plugins.servo.ui_servo import Ui_Servo

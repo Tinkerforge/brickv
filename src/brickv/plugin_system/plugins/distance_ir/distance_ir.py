@@ -34,7 +34,6 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
 from PyQt4.QtCore import pyqtSignal, Qt
 
 import os
-import sys
 
 # this class is directly based on the QwtSpline class from the Qwt library
 class NaturalSpline:

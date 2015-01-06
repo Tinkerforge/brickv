@@ -23,9 +23,6 @@ Boston, MA 02111-1307, USA.
 """
 
 import json
-import sys
-import time
-import math
 from PyQt4 import Qt, QtCore, QtGui
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_network import Ui_REDTabSettingsNetwork
 from brickv.plugin_system.plugins.red.api import *

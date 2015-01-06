@@ -32,7 +32,6 @@ from brickv.samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_por
 from brickv.infos import get_version_string
 from brickv import infos
 
-import sys
 import os
 import urllib2
 import time

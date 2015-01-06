@@ -24,7 +24,6 @@ Boston, MA 02111-1307, USA.
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
-from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_linear_poti import BrickletLinearPoti
 from brickv.async_call import async_call
 

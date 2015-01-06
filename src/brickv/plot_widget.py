@@ -23,9 +23,9 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
-                        QPushButton, QPainter, QSizePolicy, QFont, QFontMetrics, \
+                        QPushButton, QPainter, QSizePolicy, QFontMetrics, \
                         QPixmap, QIcon, QColor, QCursor, QPen
-from PyQt4.QtCore import QTimer, Qt, QPointF, QSize
+from PyQt4.QtCore import QTimer, Qt, QSize
 import math
 import functools
 
