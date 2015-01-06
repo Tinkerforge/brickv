@@ -176,7 +176,7 @@ class Chibi(QWidget, Ui_Chibi):
             channel += 1
         address = self.address_spinbox.value()
         address_master = self.master_address_spinbox.value()
-        address_slave_text = str(self.lineedit_slave_address.text().replace(' ', ''))
+        address_slave_text = self.lineedit_slave_address.text().replace(' ', '')
         if address_slave_text == '':
             address_slave = []
         else:
@@ -233,15 +233,17 @@ class Chibi(QWidget, Ui_Chibi):
 
     def chibi_type_changed(self, index):
         if index == 0:
-            self.label_slave_address.hide()
-            self.lineedit_slave_address.hide()
             self.label_master_address.show()
             self.master_address_spinbox.show()
+            self.label_slave_addresses.hide()
+            self.lineedit_slave_address.hide()
+            self.label_slave_addresses_help.hide()
         else:
             self.label_master_address.hide()
             self.master_address_spinbox.hide()
-            self.label_slave_address.show()
+            self.label_slave_addresses.show()
             self.lineedit_slave_address.show()
+            self.label_slave_addresses_help.show()
 
     def signal_strength_update(self, ss):
         ss_str = "%g dBm"  % (ss,)

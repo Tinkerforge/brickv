@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>606</width>
+    <height>443</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QLabel" name="extension_label">
+      <widget class="QLabel" name="label_status">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
          <horstretch>0</horstretch>
@@ -27,10 +27,19 @@
        <property name="text">
         <string>Discovering Extensions...</string>
        </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="extension_layout"/>
+      <widget class="QTabWidget" name="tab_widget">
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>dummy</string>
+        </attribute>
+       </widget>
+      </widget>
      </item>
     </layout>
    </item>

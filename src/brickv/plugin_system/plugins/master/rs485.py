@@ -85,7 +85,7 @@ class RS485(QWidget, Ui_RS485):
             if infos.infos[self.parent.uid].enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED:
                 self.parent.ipcon.enumerate()
 
-        self.lineedit_slave_address.setText(address_slave_text)
+        self.lineedit_slave_addresses.setText(address_slave_text)
         self.address_spinbox.setValue(self.update_address)
 
         self.save_button.clicked.connect(self.save_clicked)
@@ -129,7 +129,7 @@ class RS485(QWidget, Ui_RS485):
         else:
             address = 0
 
-        address_slave_text = str(self.lineedit_slave_address.text().replace(' ', ''))
+        address_slave_text = self.lineedit_slave_addresses.text().replace(' ', '')
         if address_slave_text == '':
             address_slave = []
         else:
@@ -158,15 +158,17 @@ class RS485(QWidget, Ui_RS485):
 
     def rs485_type_changed(self, index):
         if index == 0:
-            self.label_slave_address.hide()
-            self.lineedit_slave_address.hide()
-            self.label.show()
+            self.label_address.show()
             self.address_spinbox.show()
+            self.label_slave_addresses.hide()
+            self.lineedit_slave_addresses.hide()
+            self.label_slave_addresses_help.hide()
         else:
-            self.label_slave_address.show()
-            self.lineedit_slave_address.show()
-            self.label.hide()
+            self.label_address.hide()
             self.address_spinbox.hide()
+            self.label_slave_addresses.show()
+            self.lineedit_slave_addresses.show()
+            self.label_slave_addresses_help.show()
 
     def update_data(self):
         pass

@@ -2,7 +2,7 @@
 """
 Master Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 ethernet.py: Ethernet for Master Plugin implementation
 
@@ -22,35 +22,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QWidget, QMessageBox, QSpinBox, QRegExpValidator, QLabel, QLineEdit
+from PyQt4.QtGui import QWidget, QMessageBox, QLineEdit
 from PyQt4.QtCore import QRegExp, Qt
 
 from brickv.plugin_system.plugins.master.ui_ethernet import Ui_Ethernet
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
-
-class SpinBoxHex(QSpinBox):
-    def __init__(self, parent=None):
-        super(SpinBoxHex, self).__init__(parent)
-        self.validator = QRegExpValidator(QRegExp("[0-9A-Fa-f]{1,2}"), self)
-        self.setRange(0, 255)
-
-    def fixCase(self, text):
-        self.lineEdit().setText(text.toUpper())
-
-
-    def validate(self, text, pos):
-        return self.validator.validate(text, pos)
-
-    def valueFromText(self, text):
-        return text.toInt(16)[0]
-
-    def textFromValue(self, value):
-        s = hex(value).replace('0x', '').upper()
-        if len(s) == 1:
-            s = '0' + s
-            
-        return s
 
 class Ethernet(QWidget, Ui_Ethernet):
     def __init__(self, parent):
@@ -74,23 +51,6 @@ class Ethernet(QWidget, Ui_Ethernet):
             async_call(self.master.get_ethernet_status, None, self.get_ethernet_status_init_async, self.parent.increase_error_count)
             self.ethernet_connection.currentIndexChanged.connect(self.connection_changed)
             self.ethernet_save.clicked.connect(self.save_clicked)
-            self.ethernet_mac6 = SpinBoxHex()
-            self.ethernet_mac5 = SpinBoxHex()
-            self.ethernet_mac4 = SpinBoxHex()
-            self.ethernet_mac3 = SpinBoxHex()
-            self.ethernet_mac2 = SpinBoxHex()
-            self.ethernet_mac1 = SpinBoxHex()
-            self.mac_layout.addWidget(self.ethernet_mac6)
-            self.mac_layout.addWidget(QLabel(':'))
-            self.mac_layout.addWidget(self.ethernet_mac5)
-            self.mac_layout.addWidget(QLabel(':'))
-            self.mac_layout.addWidget(self.ethernet_mac4)
-            self.mac_layout.addWidget(QLabel(':'))
-            self.mac_layout.addWidget(self.ethernet_mac3)
-            self.mac_layout.addWidget(QLabel(':'))
-            self.mac_layout.addWidget(self.ethernet_mac2)
-            self.mac_layout.addWidget(QLabel(':'))
-            self.mac_layout.addWidget(self.ethernet_mac1)
 
         if parent.firmware_version >= (2, 2, 0):
             async_call(self.master.get_ethernet_websocket_configuration, None, self.get_ethernet_websocket_configuration_async, self.parent.increase_error_count)
@@ -137,7 +97,7 @@ class Ethernet(QWidget, Ui_Ethernet):
                 self.ethernet_secret.setEchoMode(QLineEdit.Normal)
             else:
                 self.ethernet_secret.setEchoMode(QLineEdit.Password)
-            
+
     def ethernet_auth_changed(self, state):
         if state == Qt.Checked:
             self.ethernet_show_characters.show()
@@ -152,88 +112,83 @@ class Ethernet(QWidget, Ui_Ethernet):
             self.ethernet_secret_label.hide()
             self.ethernet_secret.hide()
             self.ethernet_secret.setText('')
-        
+
     def ethernet_show_characters_changed(self, state):
         if state == Qt.Checked:
             self.ethernet_secret.setEchoMode(QLineEdit.Normal)
         else:
             self.ethernet_secret.setEchoMode(QLineEdit.Password)
-            
+
     def ethernet_port_changed(self, value):
         if self.parent.firmware_version < (2, 2, 0):
             return
-        
+
         if self.ethernet_websocket_port.value() == value:
             if self.last_port < value:
                 value += 1
             else:
                 value -= 1
-            
+
             if value < 0:
                 value = 1
             if value > 0xFFFF:
                 value = 0xFFFE
-                
+
             self.ethernet_port.setValue(value)
-            
+
         self.last_port = value
-             
+
     def ethernet_websocket_port_changed(self, value):
         if self.ethernet_port.value() == value:
             if self.last_websocket_port < value:
                 value += 1
             else:
                 value -= 1
-                
+
             if value < 0:
                 value = 1
             if value > 0xFFFF:
                 value = 0xFFFE
-                
+
             self.ethernet_websocket_port.setValue(value)
-            
+
         self.last_websocket_port = value
-            
+
     def socket_connections_changed(self, value):
         self.ethernet_websocket_connections.setValue(7 - value)
-    
+
     def websocket_connections_changed(self, value):
         self.ethernet_socket_connections.setValue(7 - value)
-            
-    def connection_changed(self, index):
-        if index == 0:
-            self.disable_ips()
-        else:
-            self.enable_ips()
 
-    def disable_ips(self):
-        self.ethernet_ip1.setEnabled(False)
-        self.ethernet_ip2.setEnabled(False)
-        self.ethernet_ip3.setEnabled(False)
-        self.ethernet_ip4.setEnabled(False)
-        self.ethernet_sub1.setEnabled(False)
-        self.ethernet_sub2.setEnabled(False)
-        self.ethernet_sub3.setEnabled(False)
-        self.ethernet_sub4.setEnabled(False)
-        self.ethernet_gw1.setEnabled(False)
-        self.ethernet_gw2.setEnabled(False)
-        self.ethernet_gw3.setEnabled(False)
-        self.ethernet_gw4.setEnabled(False)
-        
-    def enable_ips(self):
-        self.ethernet_ip1.setEnabled(True)
-        self.ethernet_ip2.setEnabled(True)
-        self.ethernet_ip3.setEnabled(True)
-        self.ethernet_ip4.setEnabled(True)
-        self.ethernet_sub1.setEnabled(True)
-        self.ethernet_sub2.setEnabled(True)
-        self.ethernet_sub3.setEnabled(True)
-        self.ethernet_sub4.setEnabled(True)
-        self.ethernet_gw1.setEnabled(True)
-        self.ethernet_gw2.setEnabled(True)
-        self.ethernet_gw3.setEnabled(True)
-        self.ethernet_gw4.setEnabled(True)
-        
+    def connection_changed(self, index):
+        self.set_ips_visible(index != 0)
+
+    def set_ips_visible(self, visible):
+        self.ethernet_ip_label.setVisible(visible)
+        self.ethernet_ip1.setVisible(visible)
+        self.ethernet_dot1.setVisible(visible)
+        self.ethernet_ip2.setVisible(visible)
+        self.ethernet_dot2.setVisible(visible)
+        self.ethernet_ip3.setVisible(visible)
+        self.ethernet_dot3.setVisible(visible)
+        self.ethernet_ip4.setVisible(visible)
+        self.ethernet_sub_label.setVisible(visible)
+        self.ethernet_sub1.setVisible(visible)
+        self.ethernet_dot4.setVisible(visible)
+        self.ethernet_sub2.setVisible(visible)
+        self.ethernet_dot5.setVisible(visible)
+        self.ethernet_sub3.setVisible(visible)
+        self.ethernet_dot6.setVisible(visible)
+        self.ethernet_sub4.setVisible(visible)
+        self.ethernet_gw_label.setVisible(visible)
+        self.ethernet_gw1.setVisible(visible)
+        self.ethernet_dot7.setVisible(visible)
+        self.ethernet_gw2.setVisible(visible)
+        self.ethernet_dot8.setVisible(visible)
+        self.ethernet_gw3.setVisible(visible)
+        self.ethernet_dot9.setVisible(visible)
+        self.ethernet_gw4.setVisible(visible)
+
     def get_ethernet_websocket_configuration_async(self, ws_conf):
         self.ethernet_websocket_port.setValue(ws_conf.port)
         self.ethernet_socket_connections.setValue(7 - ws_conf.sockets)
@@ -242,10 +197,7 @@ class Ethernet(QWidget, Ui_Ethernet):
     def get_ethernet_configuration_async(self, configuration):
         self.last_configuration = configuration
         self.ethernet_connection.setCurrentIndex(configuration.connection)
-        if configuration.connection == 0:
-            self.disable_ips()
-        else:
-            self.enable_ips()
+        self.set_ips_visible(configuration.connection != 0)
         self.ethernet_port.setValue(configuration.port)
 
     def get_ethernet_status_init_async(self, status):
@@ -261,18 +213,18 @@ class Ethernet(QWidget, Ui_Ethernet):
         self.ethernet_gw2.setValue(status.gateway[2])
         self.ethernet_gw3.setValue(status.gateway[1])
         self.ethernet_gw4.setValue(status.gateway[0])
-        
+
         self.ethernet_mac1.setValue(status.mac_address[5])
         self.ethernet_mac2.setValue(status.mac_address[4])
         self.ethernet_mac3.setValue(status.mac_address[3])
         self.ethernet_mac4.setValue(status.mac_address[2])
         self.ethernet_mac5.setValue(status.mac_address[1])
         self.ethernet_mac6.setValue(status.mac_address[0])
-        
+
         self.ethernet_hostname.setText(status.hostname)
-        
+
         self.get_ethernet_status_async(status)
-        
+
     def get_ethernet_status_async(self, status):
         if self.ethernet_connection.currentIndex() == 0:
             self.ethernet_ip1.setValue(status.ip[3])
@@ -290,8 +242,8 @@ class Ethernet(QWidget, Ui_Ethernet):
 
         self.last_status = status
 
-        self.ethernet_count_rx.setText('Count RX: ' + str(status.rx_count))
-        self.ethernet_count_tx.setText('Count TX: ' + str(status.tx_count))
+        self.ethernet_count_rx.setText(str(status.rx_count))
+        self.ethernet_count_tx.setText(str(status.tx_count))
 
     def save_clicked(self):
         port = self.ethernet_port.value()
@@ -308,7 +260,7 @@ class Ethernet(QWidget, Ui_Ethernet):
         except:
             self.popup_fail('Hostname cannot contain non-ASCII characters')
             return
-        
+
         if connection == 0:
             ip = (0, 0, 0, 0)
             gw = (0, 0, 0, 0)
@@ -317,14 +269,14 @@ class Ethernet(QWidget, Ui_Ethernet):
             ip = (self.ethernet_ip4.value(), self.ethernet_ip3.value(), self.ethernet_ip2.value(), self.ethernet_ip1.value())
             gw = (self.ethernet_gw4.value(), self.ethernet_gw3.value(), self.ethernet_gw2.value(), self.ethernet_gw1.value())
             sub = (self.ethernet_sub4.value(), self.ethernet_sub3.value(), self.ethernet_sub2.value(), self.ethernet_sub1.value())
-        
+
         mac = (self.ethernet_mac6.value(), self.ethernet_mac5.value(), self.ethernet_mac4.value(),
                self.ethernet_mac3.value(), self.ethernet_mac2.value(), self.ethernet_mac1.value())
-            
+
         self.master.set_ethernet_configuration(connection, ip, sub, gw, port)
         self.master.set_ethernet_hostname(hostname)
         self.master.set_ethernet_mac_address(mac)
-        
+
         if self.parent.firmware_version >= (2, 2, 0):
             port_websocket = self.ethernet_websocket_port.value()
             websocket_connections = self.ethernet_websocket_connections.value()
@@ -356,7 +308,7 @@ class Ethernet(QWidget, Ui_Ethernet):
         if self.update_data_counter == 10:
             self.update_data_counter = 0
             async_call(self.master.get_ethernet_status, None, self.get_ethernet_status_async, self.parent.increase_error_count)
-            
+
     def popup_ok(self, message='Successfully saved configuration.\nNew configuration will be used after reset of the Master Brick.'):
         QMessageBox.information(get_main_window(), "Configuration", message, QMessageBox.Ok)
 

@@ -54,7 +54,9 @@ class Master(PluginBase, Ui_Master):
         self.num_extensions = 0
 
         self.extension_label.setText("None Present")
-        
+        self.tab_widget.removeTab(0)
+        self.tab_widget.hide()
+
         # Chibi widget
         if self.firmware_version >= (1, 1, 0):
             self.extension_type_button.clicked.connect(self.extension_clicked)
@@ -78,33 +80,41 @@ class Master(PluginBase, Ui_Master):
         if present:
             ethernet = Ethernet(self)
             self.extensions.append(ethernet)
-            self.extension_layout.addWidget(ethernet)
+            self.tab_widget.addTab(ethernet, 'Ethernet')
+            self.tab_widget.show()
             self.num_extensions += 1
             self.extension_label.setText("" + str(self.num_extensions) + " Present")
+            self.label_no_extension.hide()
 
     def is_wifi_present_async(self, present):
         if present:
             wifi = Wifi(self)
             self.extensions.append(wifi)
-            self.extension_layout.addWidget(wifi)
+            self.tab_widget.addTab(wifi, 'WIFI')
+            self.tab_widget.show()
             self.num_extensions += 1
             self.extension_label.setText("" + str(self.num_extensions) + " Present")
+            self.label_no_extension.hide()
             
     def is_rs485_present_async(self, present):
         if present:
             rs485 = RS485(self)
             self.extensions.append(rs485)
-            self.extension_layout.addWidget(rs485)
+            self.tab_widget.addTab(rs485, 'RS485')
+            self.tab_widget.show()
             self.num_extensions += 1
             self.extension_label.setText("" + str(self.num_extensions) + " Present")
+            self.label_no_extension.hide()
             
     def is_chibi_present_async(self, present):
         if present:
             chibi = Chibi(self)
             self.extensions.append(chibi)
-            self.extension_layout.addWidget(chibi)
+            self.tab_widget.addTab(chibi, 'Chibi')
+            self.tab_widget.show()
             self.num_extensions += 1
             self.extension_label.setText("" + str(self.num_extensions) + " Present")
+            self.label_no_extension.hide()
 
     def start(self):
         self.update_timer.start(1000)
