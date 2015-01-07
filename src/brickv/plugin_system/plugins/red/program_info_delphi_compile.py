@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_info_delphi_compile.py: Program Delphi Compile Info Widget
 
@@ -38,7 +38,7 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
         self.script_data    = None
 
         self.rejected.connect(self.cancel_fpcmake_execution)
-        self.button_make.clicked.connect(self.execute_fpcmake)
+        self.button_make.clicked.connect(lambda: self.execute_fpcmake(None))
         self.button_clean.clicked.connect(lambda: self.execute_fpcmake('clean'))
         self.button_cancel.clicked.connect(self.cancel_fpcmake_execution)
         self.button_close.clicked.connect(self.reject)
@@ -55,7 +55,7 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
 
         self.edit_log.verticalScrollBar().setValue(self.edit_log.verticalScrollBar().maximum())
 
-    def execute_fpcmake(self, target=None):
+    def execute_fpcmake(self, target): # target = None for default
         self.button_make.setEnabled(False)
         self.button_clean.setEnabled(False)
         self.button_cancel.setEnabled(True)
