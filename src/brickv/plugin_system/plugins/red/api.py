@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 api.py: RED Brick API wrapper
 
@@ -787,7 +787,7 @@ class REDFileBase(REDObject):
             return
 
         if self._read_async_data.abort:
-            error_code = REDError.E_SUCCESS
+            error_code = REDError.E_OPERATION_ABORTED
 
         if error_code != REDError.E_SUCCESS:
             self._report_read_async_result(REDError('Could not read from file object {0}'.format(self.object_id), error_code))
