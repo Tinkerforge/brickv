@@ -48,7 +48,7 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
         self.language_packages = None
         self.language_packages_file = None
 
-        languages = "C#/mono", "C/C++", "Delphi/Lazarus", "Java", "JavaScript", "Octave", "Perl", "PHP", "Python", "Ruby", "Shell", "VB.NET"
+        languages = "C#/Mono", "C/C++", "Delphi/Lazarus", "Java", "JavaScript", "Octave", "Perl", "PHP", "Python", "Ruby", "Shell", "VB.NET"
 
         self.package_list[0].append({'name': 'Brick Daemon', 'version': 'Collecting Data...', 'description': 'Daemon that manages Bricks/Bricklets'})
         self.package_list[0].append({'name': 'RED Brick API Daemon', 'version': 'Collecting Data...', 'description': 'Daemon that implements RED Brick API'})
