@@ -15,7 +15,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QTabWidget" name="red_tab_widget">
+    <widget class="QTabWidget" name="tab_widget">
      <property name="tabPosition">
       <enum>QTabWidget::West</enum>
      </property>

@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 red_tab_overview.py: RED overview tab implementation
 
@@ -22,6 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4 import QtCore, Qt, QtGui
+from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOverview
 from brickv.plugin_system.plugins.red.api import *
 from operator import itemgetter
@@ -46,13 +48,11 @@ class ProcessesProxyModel(QtGui.QSortFilterProxyModel):
 
         return QtGui.QSortFilterProxyModel.lessThan(self, left, right)
 
-class REDTabOverview(QtGui.QWidget, Ui_REDTabOverview):
+class REDTabOverview(REDTab, Ui_REDTabOverview):
     def __init__(self):
-        QtGui.QWidget.__init__(self)
-        self.setupUi(self)
+        REDTab.__init__(self)
 
-        self.session        = None # set from RED after construction
-        self.script_manager = None # set from RED after construction
+        self.setupUi(self)
 
         self.is_tab_on_focus = False
 

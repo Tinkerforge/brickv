@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 red_tab_settings_services.py: RED settings services tab implementation
 
@@ -31,15 +32,15 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        self.session        = None # Set from RED Tab Settings
-        self.script_manager = None # Set from RED Tab Settings
+        self.session        = None # Set from REDTabSettings
+        self.script_manager = None # Set from REDTabSettings
 
         self.is_tab_on_focus = False
 
-        self.apply_dict = {'gpu'         :None,
-                           'desktopenv'  :None,
-                           'webserver'   :None,
-                           'splashscreen':None}
+        self.apply_dict = {'gpu':          None,
+                           'desktopenv':   None,
+                           'webserver':    None,
+                           'splashscreen': None}
 
         self.pbutton_services_save.clicked.connect(self.slot_pbutton_services_save_clicked)
         self.pbutton_services_refresh.clicked.connect(self.slot_pbutton_services_refresh_clicked)

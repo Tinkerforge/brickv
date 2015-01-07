@@ -420,6 +420,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # firmware version
         label_version_name = QLabel('Version:')
         label_version = QLabel('...')
+
         if not device_info.plugin.has_custom_version(label_version_name, label_version):
             label_version_name.setText('FW Version:')
             label_version.setText(infos.get_version_string(device_info.plugin.firmware_version))

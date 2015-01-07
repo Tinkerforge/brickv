@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
 
 red_tab_versions.py: RED versions tab implementation
 
@@ -22,6 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4 import Qt, QtCore, QtGui
+from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_versions import Ui_REDTabVersions
 from brickv.plugin_system.plugins.red.api import *
 
@@ -35,13 +37,11 @@ DEFAULT_DESCRIPTION_HEADER_WIDTH = 300
 
 NUM_TABS = 12
 
-class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
+class REDTabVersions(REDTab, Ui_REDTabVersions):
     def __init__(self):
-        QtGui.QWidget.__init__(self)
-        self.setupUi(self)
+        REDTab.__init__(self)
 
-        self.session        = None # set from RED after construction
-        self.script_manager = None # set from RED after construction
+        self.setupUi(self)
 
         self.package_list = [[] for i in range(NUM_TABS)]
 
@@ -103,7 +103,11 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
             self.tables[i].setColumnWidth(1, DEFAULT_VERSION_HEADER_WIDTH)
             self.tables[i].setColumnWidth(2, DEFAULT_DESCRIPTION_HEADER_WIDTH)
 
-            self.tab_data.append({'table': self.tables[i], 'model': self.models[i], 'list': self.package_list[i], 'update_func': self.update_funcs[i], 'updated': False})
+            self.tab_data.append({'table':       self.tables[i],
+                                  'model':       self.models[i],
+                                  'list':        self.package_list[i],
+                                  'update_func': self.update_funcs[i],
+                                  'updated':     False})
 
         self.tabs.currentChanged.connect(self.version_tab_changed)
 
@@ -128,13 +132,14 @@ class REDTabVersions(QtGui.QWidget, Ui_REDTabVersions):
 
             versions = result.stdout.split('\n')
             num_versions = len(self.package_list[0])
+
             if len(versions) < num_versions:
                 # TODO: Error for user?
                 return
 
-            self.label_version.setText(versions[2])
             for i in range(num_versions):
                 self.package_list[0][i]['version'] = versions[i]
+
             self.tab_data[0]['updated'] = True
             self.update_table()
 

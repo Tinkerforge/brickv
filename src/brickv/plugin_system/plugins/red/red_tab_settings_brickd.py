@@ -48,10 +48,8 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
         
-        self.session        = None # Set from RED Tab Settings
-        self.script_manager = None # Set from RED Tab Settings
-
-        self.is_tab_on_focus = False
+        self.session        = None # Set from REDTabSettings
+        self.script_manager = None # Set from REDTabSettings
 
         self.brickd_conf = {}
 
@@ -89,12 +87,11 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
         self.sbox_brickd_rs485_dly.valueChanged.connect(self.brickd_settings_changed)
 
     def tab_on_focus(self):
-        self.is_tab_on_focus = True
         self.brickd_conf_rfile = REDFile(self.session)
         self.slot_brickd_refresh_clicked()
 
     def tab_off_focus(self):
-        self.is_tab_on_focus = False
+        pass
 
     def tab_destroy(self):
         pass

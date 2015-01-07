@@ -2,7 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
-Copyright (C) 2014 Matthias <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 red_tab_program.py: RED program tab implementation
 
@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt, QVariant, QTimer
 from PyQt4.QtGui import QApplication, QWidget, QMessageBox, QListWidgetItem
+from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_program import Ui_REDTabProgram
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_info_main import ProgramInfoMain
@@ -44,14 +45,12 @@ from brickv.plugin_system.plugins.red.program_page_shell import get_shell_versio
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
 
-class REDTabProgram(QWidget, Ui_REDTabProgram):
+class REDTabProgram(REDTab, Ui_REDTabProgram):
     def __init__(self):
-        QWidget.__init__(self)
+        REDTab.__init__(self)
+
         self.setupUi(self)
 
-        self.session             = None # set from RED after construction
-        self.script_manager      = None # set from RED after construction
-        self.image_version_ref   = ['<unknown>']
         self.executable_versions = {
             'fpc':    None,
             'gcc':    None,
@@ -80,17 +79,9 @@ class REDTabProgram(QWidget, Ui_REDTabProgram):
         self.update_ui_state()
 
     def tab_on_focus(self):
-        if self.image_version_ref[0] == '<unknown>':
-            # FIXME: this is should actually be sync to ensure that the image version is known before it'll be used
-            def read_image_version():
-                self.image_version_ref[0] = REDFile(self.session).open('/etc/tf_image_version',
-                                                                       REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING,
-                                                                       0, 0, 0).read(256)
-
-            async_call(read_image_version, None, None, None)
-
         if self.first_tab_on_focus:
             self.first_tab_on_focus = False
+
             QTimer.singleShot(1, self.refresh_program_list)
             QTimer.singleShot(1, self.refresh_executable_versions)
 

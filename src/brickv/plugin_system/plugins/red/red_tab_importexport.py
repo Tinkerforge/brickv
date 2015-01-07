@@ -21,23 +21,40 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4 import Qt, QtCore, QtGui
+from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_importexport import Ui_REDTabImportExport
-from brickv.plugin_system.plugins.red.api import *
 
-class REDTabImportExport(QtGui.QWidget, Ui_REDTabImportExport):
+class REDTabImportExport(REDTab, Ui_REDTabImportExport):
     def __init__(self):
-        QtGui.QWidget.__init__(self)
+        REDTab.__init__(self)
+
         self.setupUi(self)
 
-        self.session        = None # set from RED after construction
-        self.script_manager = None # set from RED after construction
+        self.tabs = []
+
+        for i in range(self.tab_widget.count()):
+            self.tabs.append(self.tab_widget.widget(i))
+
+        self.tab_widget.currentChanged.connect(self.tab_widget_current_changed)
 
     def tab_on_focus(self):
-        pass
+        for tab in self.tabs:
+            tab.session           = self.session
+            tab.script_manager    = self.script_manager
+            tab.image_version_ref = self.image_version_ref
+
+        self.tab_widget.currentWidget().tab_on_focus()
 
     def tab_off_focus(self):
-        pass
+        for tab in self.tabs:
+            tab.tab_off_focus()
 
     def tab_destroy(self):
         pass
+
+    def tab_widget_current_changed(self, index):
+        for i, tab in enumerate(self.tabs):
+            if i == index:
+                tab.tab_on_focus()
+            else:
+                tab.tab_off_focus()

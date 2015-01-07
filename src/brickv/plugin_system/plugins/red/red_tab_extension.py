@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 red_tab_extension.py: RED extension configuration
 
@@ -22,6 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4 import QtGui
+from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_extension import Ui_REDTabExtension
 from brickv.plugin_system.plugins.red.api import *
 
@@ -265,13 +267,11 @@ class Ethernet(QWidget, Ui_Ethernet):
 
         new_config['eeprom_file'].write_async(map(chr, data), lambda x: cb_error(new_config, x), None)
 
-class REDTabExtension(QtGui.QWidget, Ui_REDTabExtension):
+class REDTabExtension(REDTab, Ui_REDTabExtension):
     def __init__(self):
-        QtGui.QWidget.__init__(self)
-        self.setupUi(self)
+        REDTab.__init__(self)
 
-        self.session        = None # set from RED after construction
-        self.script_manager = None # set from RED after construction
+        self.setupUi(self)
 
         self.red_file = [None, None]
         self.config_read_counter = 0

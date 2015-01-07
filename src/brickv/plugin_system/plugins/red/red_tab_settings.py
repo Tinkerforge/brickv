@@ -23,57 +23,40 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4 import QtGui
+from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_settings import Ui_REDTabSettings
-from brickv.plugin_system.plugins.red.api import *
-from brickv.utils import get_main_window
 
-# Indexes
-BOX_INDEX_NETWORK = 0
-BOX_INDEX_BRICKD = 1
-BOX_INDEX_DATETIME = 2
-BOX_INDEX_FILESYSTEM = 3
-BOX_INDEX_SERVICES = 4
-
-class REDTabSettings(QtGui.QWidget, Ui_REDTabSettings):
+class REDTabSettings(REDTab, Ui_REDTabSettings):
     def __init__(self):
-        QtGui.QWidget.__init__(self)
+        REDTab.__init__(self)
+
         self.setupUi(self)
 
-        self.session        = None # set from RED after construction
-        self.script_manager = None # set from RED after construction
-
-        self.is_tab_on_focus = False
-
-        self.tab_list = []
+        self.tabs = []
 
         for i in range(self.tab_widget.count()):
-            self.tab_list.append(self.tab_widget.widget(i))
+            self.tabs.append(self.tab_widget.widget(i))
 
-        # Boxes
-        self.tab_widget.currentChanged.connect(self.slot_tab_widget_current_changed)
+        self.tab_widget.currentChanged.connect(self.tab_widget_current_changed)
 
     def tab_on_focus(self):
-        self.is_tab_on_focus = True
-
-        for tab in self.tab_list:
-            tab.session = self.session
-            tab.script_manager = self.script_manager
+        for tab in self.tabs:
+            tab.session           = self.session
+            tab.script_manager    = self.script_manager
+            tab.image_version_ref = self.image_version_ref
 
         self.tab_widget.currentWidget().tab_on_focus()
 
     def tab_off_focus(self):
-        self.is_tab_on_focus = False
-
-        for tab in self.tab_list:
+        for tab in self.tabs:
             tab.tab_off_focus()
 
     def tab_destroy(self):
         pass
 
-    def slot_tab_widget_current_changed(self, ctidx):
-        for i in range(self.tab_widget.count()):
-            if i == ctidx:
-                self.tab_list[i].tab_on_focus()
+    def tab_widget_current_changed(self, index):
+        for i, tab in enumerate(self.tabs):
+            if i == index:
+                tab.tab_on_focus()
             else:
-                self.tab_list[i].tab_off_focus()
+                tab.tab_off_focus()

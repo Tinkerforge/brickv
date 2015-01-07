@@ -34,10 +34,8 @@ class REDTabSettingsDateTime(QtGui.QWidget, Ui_REDTabSettingsDateTime):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
         
-        self.session        = None # Set from RED Tab Settings
-        self.script_manager = None # Set from RED Tab Settings
-
-        self.is_tab_on_focus = False
+        self.session        = None # Set from REDTabSettings
+        self.script_manager = None # Set from REDTabSettings
 
         self.time_refresh_timer = QtCore.QTimer()
         self.time_refresh_timer.setInterval(1000)
@@ -49,11 +47,9 @@ class REDTabSettingsDateTime(QtGui.QWidget, Ui_REDTabSettingsDateTime):
         self.time_sync_button.clicked.connect(self.time_sync_clicked)
 
     def tab_on_focus(self):
-        self.is_tab_on_focus = True
         self.time_start()
 
     def tab_off_focus(self):
-        self.is_tab_on_focus = False
         self.time_stop()
 
     def tab_destroy(self):

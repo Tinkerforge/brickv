@@ -35,8 +35,8 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
 
-        self.session        = None # Set from RED Tab Settings
-        self.script_manager = None # Set from RED Tab Settings
+        self.session        = None # Set from REDTabSettings
+        self.script_manager = None # Set from REDTabSettings
 
         self.is_tab_on_focus = False
 

@@ -3,6 +3,7 @@
 RED Plugin
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 red_tab_console.py: RED console tab implementation
 
@@ -23,20 +24,19 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4 import Qt, QtCore, QtGui
+from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_console import Ui_REDTabConsole
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.pyqterm import TerminalWidget
 from brickv.samba import get_serial_ports
 
-class REDTabConsole(QtGui.QWidget, Ui_REDTabConsole):
+class REDTabConsole(REDTab, Ui_REDTabConsole):
     append_text_signal = QtCore.pyqtSignal(str)
 
     def __init__(self):
-        QtGui.QWidget.__init__(self)
-        self.setupUi(self)
+        REDTab.__init__(self)
 
-        self.session        = None # set from RED after construction
-        self.script_manager = None # set from RED after construction
+        self.setupUi(self)
 
         self.console = TerminalWidget()
         self.console_layout.insertWidget(1, self.console)
