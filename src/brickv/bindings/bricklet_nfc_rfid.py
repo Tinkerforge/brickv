@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-01-07.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -128,9 +128,10 @@ class BrickletNFCRFID(Device):
         
         To get the tag ID of a tag the approach is as follows:
         
-        * Call :func:`RequestTagID`
-        * Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or :func:`StateChanged`)
-        * Call :func:`GetTagID`
+        1. Call :func:`RequestTagID`
+        2. Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or
+           :func:`StateChanged`)
+        3. Call :func:`GetTagID`
         """
         return GetTagID(*self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_GET_TAG_ID, (), '', 'B B 7B'))
 
@@ -182,13 +183,15 @@ class BrickletNFCRFID(Device):
         
         The approach to read or write a Mifare Classic page is as follows:
         
-        * Call :func:`RequestTagID`
-        * Wait for state to change to *RequestTagIDReady* (see :func:`GetState`
-          or :func:`StateChanged`)
-        * Call :func:`GetTagID` and check if tag ID is correct
-        * Call :func:`AuthenticateMifareClassicPage` with page and key for the page
-        * Wait for state to change to *AuthenticatingMifareClassicPageReady*
-        * Call :func:`RequestPage` or :func`WritePage` to read/write page
+        1. Call :func:`RequestTagID`
+        2. Wait for state to change to *RequestTagIDReady* (see :func:`GetState`
+           or :func:`StateChanged`)
+        3. If looking for a specific tag then call :func:`GetTagID` and check if the
+           expected tag was found, if it was not found got back to step 1
+        4. Call :func:`AuthenticateMifareClassicPage` with page and key for the page
+        5. Wait for state to change to *AuthenticatingMifareClassicPageReady* (see
+           :func:`GetState` or :func:`StateChanged`)
+        6. Call :func:`RequestPage` or :func:`WritePage` to read/write page
         """
         self.ipcon.send_request(self, BrickletNFCRFID.FUNCTION_AUTHENTICATE_MIFARE_CLASSIC_PAGE, (page, key_number, key), 'H B 6B', '')
 
@@ -203,11 +206,14 @@ class BrickletNFCRFID(Device):
         
         The general approach for writing to a tag is as follows:
         
-        * Call :func:`RequestTagID`
-        * Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or :func:`StateChanged`)
-        * Call :func:`GetTagID` and check if tag ID is correct
-        * Call :func:`WritePage` with page number and data
-        * Wait for state to change to *WritePageReady*
+        1. Call :func:`RequestTagID`
+        2. Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or
+           :func:`StateChanged`)
+        3. If looking for a specific tag then call :func:`GetTagID` and check if the
+           expected tag was found, if it was not found got back to step 1
+        4. Call :func:`WritePage` with page number and data
+        5. Wait for state to change to *WritePageReady* (see :func:`GetState` or
+           :func:`StateChanged`)
         
         If you use a Mifare Classic tag you have to authenticate a page before you
         can write to it. See :func:`AuthenticateMifareClassicPage`.
@@ -227,12 +233,15 @@ class BrickletNFCRFID(Device):
         
         The general approach for reading a tag is as follows:
         
-        * Call :func:`RequestTagID`
-        * Wait for state to change to *RequestTagIDReady* (see :func:`GetState` or :func:`StateChanged`)
-        * Call :func:`GetTagID` and check if tag ID is correct
-        * Call :func:`RequestPage` with page number
-        * Wait for state to change to *RequestPageReady*
-        * Call :func:`GetPage` to retrieve the page from the buffer
+        1. Call :func:`RequestTagID`
+        2. Wait for state to change to *RequestTagIDReady* (see :func:`GetState`
+           or :func:`StateChanged`)
+        3. If looking for a specific tag then call :func:`GetTagID` and check if the
+           expected tag was found, if it was not found got back to step 1
+        4. Call :func:`RequestPage` with page number
+        5. Wait for state to change to *RequestPageReady* (see :func:`GetState`
+           or :func:`StateChanged`)
+        6. Call :func:`GetPage` to retrieve the page from the buffer
         
         If you use a Mifare Classic tag you have to authenticate a page before you
         can read it. See :func:`AuthenticateMifareClassicPage`.
