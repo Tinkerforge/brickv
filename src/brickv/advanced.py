@@ -23,18 +23,18 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.ui_advanced import Ui_widget_advanced
+from brickv.ui_advanced import Ui_AdvancedWindow
 
 from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QFrame
+from PyQt4.QtGui import QDialog
 
 from brickv import infos
 
 NO_BRICK = 'No Brick found'
 
-class AdvancedWindow(QFrame, Ui_widget_advanced):
+class AdvancedWindow(QDialog, Ui_AdvancedWindow):
     def __init__(self, parent):
-        QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
+        QDialog.__init__(self, parent)
 
         self.setupUi(self)
 
