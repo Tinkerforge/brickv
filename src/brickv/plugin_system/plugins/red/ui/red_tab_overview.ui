@@ -112,14 +112,14 @@
            <item row="3" column="0">
             <widget class="QLabel" name="label_storage">
              <property name="text">
-              <string>Storage</string>
+              <string>Storage:</string>
              </property>
             </widget>
            </item>
            <item row="0" column="0">
             <widget class="QLabel" name="label_uptime">
              <property name="text">
-              <string>Uptime</string>
+              <string>Uptime:</string>
              </property>
             </widget>
            </item>
@@ -139,7 +139,7 @@
            <item row="1" column="0">
             <widget class="QLabel" name="label_cpu">
              <property name="text">
-              <string>CPU</string>
+              <string>CPU:</string>
              </property>
             </widget>
            </item>
@@ -159,7 +159,7 @@
            <item row="2" column="0">
             <widget class="QLabel" name="label_memory">
              <property name="text">
-              <string>Memory</string>
+              <string>Memory:</string>
              </property>
             </widget>
            </item>

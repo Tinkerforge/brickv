@@ -6,15 +6,36 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>754</width>
-    <height>394</height>
+    <width>549</width>
+    <height>368</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>REDTabSettings</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout"/>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tab_widget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="REDTabImportExportSystemLogs" name="tab_systemlogs">
+      <attribute name="title">
+       <string>System Logs</string>
+      </attribute>
+     </widget>
+    </widget>
+   </item>
+  </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>REDTabImportExportSystemLogs</class>
+   <extends>QWidget</extends>
+   <header location="global">brickv.plugin_system.plugins.red.red_tab_importexport_systemlogs</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

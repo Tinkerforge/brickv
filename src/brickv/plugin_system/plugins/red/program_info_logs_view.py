@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_info_logs_view.py: Program Logs View Widget
 
@@ -63,9 +63,7 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
 
         self.button_save.setEnabled(False)
 
-        def cb_open(log_file):
-            self.log_file = log_file
-
+        def cb_open(dummy):
             def cb_read_status(bytes_read, max_length):
                 self.progress_download.setValue(bytes_read)
 
@@ -110,7 +108,9 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
             self.progress_download.setVisible(False)
             self.log(u'Error: Could not open log file', bold=True)
 
-        async_call(REDFile(session).open,
+        self.log_file = REDFile(session)
+
+        async_call(self.log_file.open,
                    (file_name, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                    cb_open, cb_open_error)
 
@@ -133,7 +133,7 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
             f.write(self.content)
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save Log Error',
-                                 u"Could write to {0}:\n\n{1}".format(file_name, unicode(e)))
+                                 u"Could not write to {0}:\n\n{1}".format(file_name, unicode(e)))
 
         f.close()
 
