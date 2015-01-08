@@ -132,7 +132,6 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         self.pbutton_net_connect.clicked.connect(self.slot_network_connect_clicked)
 
         # Network fields
-        self.chkbox_ap_mode.hide()
         self.address_configuration_gui(False)
         self.static_ip_configuration_gui(False)
         self.frame_working_please_wait.hide()
@@ -302,7 +301,6 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         self.network_button_refresh_enabled(False)
 
         if state == WORKING_STATE_REFRESH:
-            self.chkbox_ap_mode.hide()
             self.work_in_progress = True
             self.cbox_net_intf.clear()
             self.cbox_net_intf.setEnabled(False)
@@ -1309,7 +1307,6 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         interface_type = self.cbox_net_intf.itemData(idx, INTERFACE_TYPE_USER_ROLE).toInt()[0]
 
         if interface_type == INTERFACE_TYPE_WIRELESS:
-            self.chkbox_ap_mode.show()
             self.wireless_configuration_gui(True)
 
             if self.ap_tree_model.rowCount() > 0:
@@ -1317,7 +1314,6 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             else:
                 self.address_configuration_gui(False)
         elif interface_type == INTERFACE_TYPE_WIRED:
-            self.chkbox_ap_mode.hide()
             self.address_configuration_gui(True)
             self.wireless_configuration_gui(False)
 

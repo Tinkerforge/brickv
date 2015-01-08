@@ -31,6 +31,34 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <layout class="QGridLayout" name="gridLayout">
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="chkbox_gpu">
+           <property name="text">
+            <string>Enable GPU</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QCheckBox" name="chkbox_webserver">
+           <property name="text">
+            <string>Start Web Server</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QCheckBox" name="chkbox_splashscreen">
+           <property name="text">
+            <string>Show Splash Screen</string>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_info">
            <property name="text">
@@ -51,13 +79,6 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
-          <widget class="QCheckBox" name="chkbox_gpu">
-           <property name="text">
-            <string>Enable GPU</string>
-           </property>
-          </widget>
-         </item>
          <item row="3" column="0">
           <widget class="QCheckBox" name="chkbox_desktopenv">
            <property name="text">
@@ -65,28 +86,7 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
-          <widget class="QCheckBox" name="chkbox_webserver">
-           <property name="text">
-            <string>Start Web Server</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QCheckBox" name="chkbox_splashscreen">
-           <property name="text">
-            <string>Show Splash Screen</string>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
-          <widget class="Line" name="line">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="0">
+         <item row="8" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <item>
             <widget class="QPushButton" name="pbutton_services_refresh">
@@ -109,6 +109,13 @@
             </widget>
            </item>
           </layout>
+         </item>
+         <item row="6" column="0">
+          <widget class="QCheckBox" name="chkbox_ap">
+           <property name="text">
+            <string>Access Point Mode</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

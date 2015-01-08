@@ -24,6 +24,11 @@
        <string>Network</string>
       </attribute>
      </widget>
+     <widget class="REDTabSettingsAP" name="tab_ap">
+      <attribute name="title">
+       <string>Access Point</string>
+      </attribute>
+     </widget>
      <widget class="REDTabSettingsBrickd" name="tab_brickd">
       <attribute name="title">
        <string>Brick Daemon</string>
@@ -77,6 +82,12 @@
    <class>REDTabSettingsServices</class>
    <extends>QWidget</extends>
    <header location="global">brickv.plugin_system.plugins.red.red_tab_settings_services</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>REDTabSettingsAP</class>
+   <extends>QWidget</extends>
+   <header location="global">brickv.plugin_system.plugins.red.red_tab_settings_ap</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

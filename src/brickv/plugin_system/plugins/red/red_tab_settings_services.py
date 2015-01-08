@@ -38,10 +38,11 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
 
         self.is_tab_on_focus = False
 
-        self.apply_dict = {'gpu':          None,
-                           'desktopenv':   None,
-                           'webserver':    None,
-                           'splashscreen': None}
+        self.apply_dict = {'gpu'         : None,
+                           'desktopenv'  : None,
+                           'webserver'   : None,
+                           'splashscreen': None,
+                           'ap'          : None}
 
         self.pbutton_services_save.clicked.connect(self.slot_pbutton_services_save_clicked)
         self.pbutton_services_refresh.clicked.connect(self.slot_pbutton_services_refresh_clicked)
@@ -50,6 +51,7 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         self.chkbox_desktopenv.stateChanged.connect(self.service_config_changed)
         self.chkbox_webserver.stateChanged.connect(self.service_config_changed)
         self.chkbox_splashscreen.stateChanged.connect(self.service_config_changed)
+        self.chkbox_ap.stateChanged.connect(self.service_config_changed)
 
         self.all_checkbox(False)
 
@@ -59,19 +61,23 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
             self.chkbox_desktopenv.setEnabled(True)
             self.chkbox_webserver.setEnabled(True)
             self.chkbox_splashscreen.setEnabled(True)
+            self.chkbox_ap.setEnabled(True)
             self.chkbox_gpu.setChecked(False)
             self.chkbox_desktopenv.setChecked(False)
             self.chkbox_webserver.setChecked(False)
             self.chkbox_splashscreen.setChecked(False)
+            self.chkbox_ap.setChecked(False)
         else:
             self.chkbox_gpu.setChecked(False)
             self.chkbox_desktopenv.setChecked(False)
             self.chkbox_webserver.setChecked(False)
             self.chkbox_splashscreen.setChecked(False)
+            self.chkbox_ap.setChecked(False)
             self.chkbox_gpu.setEnabled(False)
             self.chkbox_desktopenv.setEnabled(False)
             self.chkbox_webserver.setEnabled(False)
             self.chkbox_splashscreen.setEnabled(False)
+            self.chkbox_ap.setEnabled(False)
 
     def tab_on_focus(self):
         self.is_tab_on_focus = True
@@ -97,7 +103,8 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
                 if services_check_result['gpu'] is None or \
                    services_check_result['desktopenv'] is None or \
                    services_check_result['webserver'] is None or \
-                   services_check_result['splashscreen'] is None:
+                   services_check_result['splashscreen'] is None or \
+                   services_check_result['ap'] is None:
                     self.all_checkbox(False)
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Services',
@@ -126,6 +133,12 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
                         self.chkbox_splashscreen.setChecked(True)
                     else:
                         self.chkbox_splashscreen.setChecked(False)
+
+                    if services_check_result['ap']:
+                        self.chkbox_ap.setChecked(True)
+                    else:
+                        self.chkbox_ap.setChecked(False)
+
                     self.pbutton_services_save.setEnabled(False)
         else:
             err_msg = 'Error getting current services status.\n\n'+unicode(result.stderr)
@@ -135,12 +148,11 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
                                        QtGui.QMessageBox.Ok)
 
     def cb_settings_services_apply(self, result):
-        print result
-
         self.chkbox_gpu.setEnabled(True)
         self.chkbox_desktopenv.setEnabled(True)
         self.chkbox_webserver.setEnabled(True)
         self.chkbox_splashscreen.setEnabled(True)
+        self.chkbox_ap.setEnabled(True)
 
         self.pbutton_services_save.setText('Save')
         self.pbutton_services_save.setEnabled(True)
@@ -172,7 +184,6 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         self.pbutton_services_save.setEnabled(True)
 
     def slot_pbutton_services_save_clicked(self):
-        print 'slot_pbutton_services_save_clicked'
         if self.chkbox_gpu.isChecked():
             self.apply_dict['gpu'] = True
         else:
@@ -192,11 +203,17 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
             self.apply_dict['splashscreen'] = True
         else:
             self.apply_dict['splashscreen'] = False
+        
+        if self.chkbox_ap.isChecked():
+            self.apply_dict['ap'] = True
+        else:
+            self.apply_dict['ap'] = False
 
         self.chkbox_gpu.setEnabled(False)
         self.chkbox_desktopenv.setEnabled(False)
         self.chkbox_webserver.setEnabled(False)
         self.chkbox_splashscreen.setEnabled(False)
+        self.chkbox_ap.setEnabled(False)
 
         self.pbutton_services_save.setText('Saving...')
         self.pbutton_services_save.setEnabled(False)
