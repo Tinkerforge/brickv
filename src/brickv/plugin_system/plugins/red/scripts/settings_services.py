@@ -81,7 +81,7 @@ if command == 'CHECK':
                     else:
                         return_dict['splashscreen'] = False
 
-        if os.path.isfile('/etc/tf_x_enabled'):
+        if os.path.isfile('/etc/tf_x11_enabled'):
             return_dict['desktopenv'] = True
         else:
             return_dict['desktopenv'] = False
@@ -143,11 +143,11 @@ elif command == 'APPLY':
                 fd_fbconf.write(sunxifb_fbdev_config)
 
         if apply_dict['desktopenv']:
-            with open('/etc/tf_x_enabled', 'w') as fd_x_en:
+            with open('/etc/tf_x11_enabled', 'w') as fd_x11_enabled:
                 pass
         else:
-            if os.path.isfile('/etc/tf_x_enabled'):
-                os.remove('/etc/tf_x_enabled')
+            if os.path.isfile('/etc/tf_x11_enabled'):
+                os.remove('/etc/tf_x11_enabled')
 
         if apply_dict['webserver']:
             if os.system('/usr/sbin/update-rc.d apache2 defaults'):
