@@ -2,7 +2,7 @@
 """
 Master Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 wifi.py: Wifi for Master Plugin implementation
 
@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWidget, QMessageBox, QFileDialog, QProgressDialog, QLineEdit
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, QDir
 
 from brickv.plugin_system.plugins.master.ui_wifi import Ui_Wifi
 from brickv.plugin_system.plugins.master.wifi_status import WifiStatus
@@ -221,37 +221,37 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_password.setEchoMode(QLineEdit.Password)
 
     def ca_certificate_browse_clicked(self):
-        last_dir = ''
         if len(self.wifi_ca_certificate_url.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(self.wifi_ca_certificate_url.text()))
+        else:
+            last_dir = QDir.toNativeSeparators(QDir.homePath())
 
-        file_name = QFileDialog.getOpenFileName(self,
-                                                'Open CA Certificate',
-                                                last_dir)
-        if len(file_name) > 0:
-            self.wifi_ca_certificate_url.setText(file_name)
+        filename = QFileDialog.getOpenFileName(get_main_window(), 'Open CA Certificate', last_dir)
+
+        if len(filename) > 0:
+            self.wifi_ca_certificate_url.setText(QDir.toNativeSeparators(filename))
 
     def client_certificate_browse_clicked(self):
-        last_dir = ''
         if len(self.wifi_client_certificate_url.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(self.wifi_client_certificate_url.text()))
+        else:
+            last_dir = QDir.toNativeSeparators(QDir.homePath())
 
-        file_name = QFileDialog.getOpenFileName(self,
-                                                'Open Client Certificate',
-                                                last_dir)
-        if len(file_name) > 0:
-            self.wifi_client_certificate_url.setText(file_name)
+        filename = QFileDialog.getOpenFileName(get_main_window(), 'Open Client Certificate', last_dir)
+
+        if len(filename) > 0:
+            self.wifi_client_certificate_url.setText(QDir.toNativeSeparators(filename))
 
     def private_key_browse_clicked(self):
-        last_dir = ''
         if len(self.wifi_private_key_url.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(self.wifi_private_key_url.text()))
+        else:
+            last_dir = QDir.toNativeSeparators(QDir.homePath())
 
-        file_name = QFileDialog.getOpenFileName(self,
-                                                'Open Private Key',
-                                                last_dir)
-        if len(file_name) > 0:
-            self.wifi_private_key_url.setText(file_name)
+        filename = QFileDialog.getOpenFileName(get_main_window(), 'Open Private Key', last_dir)
+
+        if len(filename) > 0:
+            self.wifi_private_key_url.setText(QDir.toNativeSeparators(filename))
 
     def encryption_changed(self, index):
         if self.wifi_encryption.currentText() in 'WPA/WPA2':

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 program_info_files.py: Program Files Info Widget
@@ -164,6 +164,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.tree_files_model        = QStandardItemModel(self)
         self.tree_files_model_header = ['Name', 'Size', 'Last Modified']
         self.tree_files_proxy_model  = FilesProxyModel(self)
+        self.last_download_directory = QDir.toNativeSeparators(QDir.homePath())
 
         self.tree_files_model.setHorizontalHeaderLabels(self.tree_files_model_header)
         self.tree_files_proxy_model.setSourceModel(self.tree_files_model)
@@ -287,9 +288,9 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 for i in range(name_item.rowCount()):
                     expand(name_item.child(i, 0))
             elif item_type == ITEM_TYPE_FILE:
-                file_name = get_full_item_path(name_item)
+                filename = get_full_item_path(name_item)
 
-                downloads.append(Download(file_name, QDir.toNativeSeparators(file_name)))
+                downloads.append(Download(filename, QDir.toNativeSeparators(filename)))
 
         for selected_name_item in selected_name_items:
             expand(selected_name_item)
@@ -297,10 +298,13 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if len(downloads) == 0:
             return
 
-        download_directory = QFileDialog.getExistingDirectory(get_main_window(), 'Download Files')
+        download_directory = QFileDialog.getExistingDirectory(get_main_window(), 'Download Files',
+                                                              self.last_download_directory)
 
         if len(download_directory) == 0:
             return
+
+        download_directory = QDir.toNativeSeparators(download_directory)
 
         # FIXME: on Mac OS X the getExistingDirectory() might return the directory with
         #        the last part being invalid, try to find the valid part of the directory
@@ -310,6 +314,8 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         if len(download_directory) == 0:
             return
+
+        self.last_download_directory = download_directory
 
         self.show_download_wizard('files', download_directory, downloads)
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 program_info_logs.py: Program Logs Info Widget
@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QVariant, QDateTime
+from PyQt4.QtCore import Qt, QVariant, QDateTime, QDir
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QFileDialog, \
                         QMessageBox, QSortFilterProxyModel, QApplication
 from brickv.plugin_system.plugins.red.api import *
@@ -77,6 +77,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.tree_logs_model               = QStandardItemModel(self)
         self.tree_logs_model_header        = ['Date / Time', 'Size']
         self.tree_logs_proxy_model         = LogsProxyModel(self)
+        self.last_download_directory       = QDir.toNativeSeparators(QDir.homePath())
 
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_model_header)
         self.tree_logs_proxy_model.setSourceModel(self.tree_logs_model)
@@ -321,10 +322,13 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         if len(log_files_to_download['foobar']) == 0:
             return
 
-        download_directory = QFileDialog.getExistingDirectory(get_main_window(), 'Download Logs')
+        download_directory = QFileDialog.getExistingDirectory(get_main_window(), 'Download Logs',
+                                                              self.last_download_directory)
 
         if len(download_directory) == 0:
             return
+
+        download_directory = QDir.toNativeSeparators(download_directory)
 
         # FIXME: on Mac OS X the getExistingDirectory() might return the directory with
         #        the last part being invalid, try to find the valid part of the directory
@@ -334,6 +338,8 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
         if len(download_directory) == 0:
             return
+
+        self.last_download_directory = download_directory
 
         downloads = []
 

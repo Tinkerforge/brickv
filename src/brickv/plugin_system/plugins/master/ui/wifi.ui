@@ -733,7 +733,7 @@ WEP: 10 or 26 hexadecimal digits</string>
            <item>
             <widget class="QPushButton" name="wifi_ca_certificate_browse">
              <property name="text">
-              <string>Browse...</string>
+              <string>Browse</string>
              </property>
             </widget>
            </item>
@@ -747,7 +747,7 @@ WEP: 10 or 26 hexadecimal digits</string>
            <item>
             <widget class="QPushButton" name="wifi_client_certificate_browse">
              <property name="text">
-              <string>Browse...</string>
+              <string>Browse</string>
              </property>
             </widget>
            </item>
@@ -761,7 +761,7 @@ WEP: 10 or 26 hexadecimal digits</string>
            <item>
             <widget class="QPushButton" name="wifi_private_key_browse">
              <property name="text">
-              <string>Browse...</string>
+              <string>Browse</string>
              </property>
             </widget>
            </item>

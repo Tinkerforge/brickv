@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, QDir
 from PyQt4.QtGui import QDialog, QFont, QFileDialog, QMessageBox
 from brickv.plugin_system.plugins.red.ui_program_info_logs_view import Ui_ProgramInfoLogsView
 from brickv.plugin_system.plugins.red.api import *
@@ -29,30 +29,33 @@ from brickv.plugin_system.plugins.red.program_utils import timestamp_to_date_at_
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
 import posixpath
+import os
 
 class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
-    def __init__(self, parent, session, file_name):
+    def __init__(self, parent, session, source_name):
         QDialog.__init__(self, parent)
 
         self.setupUi(self)
         self.setModal(True)
 
-        self.file_name = file_name
-        self.log_file  = None
-        self.content   = None
+        self.source_name   = source_name
+        self.last_filename = os.path.join(QDir.toNativeSeparators(QDir.homePath()),
+                                          posixpath.split(source_name)[1])
+        self.log_file      = None
+        self.content       = None
 
-        file_name_parts = posixpath.split(file_name)[1].split('_')
+        source_name_parts = posixpath.split(source_name)[1].split('_')
 
-        if file_name_parts[0] == 'continuous':
-            date_time       = 'Continuous ({0})'.format(file_name_parts[1])
+        if source_name_parts[0] == 'continuous':
+            date_time       = 'Continuous ({0})'.format(source_name_parts[1])
             self.continuous = True
         else:
             try:
-                timestamp = int(file_name_parts[1].split('+')[0]) / 1000000
+                timestamp = int(source_name_parts[1].split('+')[0]) / 1000000
             except ValueError:
                 timestamp = 0
 
-            date_time       = '{0} ({1})'.format(timestamp_to_date_at_time(timestamp), file_name_parts[2])
+            date_time       = '{0} ({1})'.format(timestamp_to_date_at_time(timestamp), source_name_parts[2])
             self.continuous = False
 
         self.rejected.connect(self.abort_download)
@@ -111,21 +114,23 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
         self.log_file = REDFile(session)
 
         async_call(self.log_file.open,
-                   (file_name, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   (source_name, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                    cb_open, cb_open_error)
 
     def save_content(self):
-        file_name = QFileDialog.getSaveFileName(get_main_window(), 'Save Log',
-                                                posixpath.split(self.file_name)[1])
+        filename = QFileDialog.getSaveFileName(get_main_window(), 'Save Log', self.last_filename)
 
-        if len(file_name) == 0:
+        if len(filename) == 0:
             return
 
+        filename           = QDir.toNativeSeparators(filename)
+        self.last_filename = filename
+
         try:
-            f = open(file_name, 'wb')
+            f = open(filename, 'wb')
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save Log Error',
-                                 u"Could not open {0} for writing:\n\n{1}".format(file_name, unicode(e)))
+                                 u"Could not open {0} for writing:\n\n{1}".format(filename, unicode(e)))
             return
 
         try:
@@ -133,7 +138,7 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
             f.write(self.content)
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save Log Error',
-                                 u"Could not write to {0}:\n\n{1}".format(file_name, unicode(e)))
+                                 u"Could not write to {0}:\n\n{1}".format(filename, unicode(e)))
 
         f.close()
 

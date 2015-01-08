@@ -812,7 +812,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
                 if result and result.stderr:
                     err_msg = 'Error executing wireless scan cache script.\n\n'+unicode(result.stderr)
-                    QtGui.QMessageBox.critical(None,
+                    QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
                                                err_msg,
                                                QtGui.QMessageBox.Ok)

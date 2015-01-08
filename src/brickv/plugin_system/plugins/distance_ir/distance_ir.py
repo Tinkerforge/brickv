@@ -2,9 +2,9 @@
 """
 Distance IR Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
-distance.py: Distance IR Plugin Implementation
+distance_ir.py: Distance IR Plugin Implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ from brickv.utils import get_main_window
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
                         QLineEdit, QFileDialog, QApplication, QMessageBox
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import pyqtSignal, Qt, QDir
 
 import os
 
@@ -169,7 +169,7 @@ class DistanceIR(PluginBase):
         self.sample_layout = QHBoxLayout()
         self.sample_label = QLabel('Sample Points:')
         self.sample_edit = QLineEdit()
-        self.sample_file = QPushButton("File...")
+        self.sample_file = QPushButton("Browse")
         self.sample_save = QPushButton("Save")
 
         self.sample_file.clicked.connect(self.sample_file_clicked)
@@ -225,15 +225,15 @@ class DistanceIR(PluginBase):
         return device_identifier == BrickletDistanceIR.DEVICE_IDENTIFIER
 
     def sample_file_clicked(self):
-        last_dir = ''
         if len(self.sample_edit.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(self.sample_edit.text()))
-        file_name = QFileDialog.getOpenFileName(self,
-                                                "Open Sample Point file",
-                                                last_dir,
-                                                "")
-        if len(file_name) > 0:
-            self.sample_edit.setText(file_name)
+        else:
+            last_dir = QDir.toNativeSeparators(QDir.homePath())
+
+        filename = QFileDialog.getOpenFileName(get_main_window(), "Open Sample Points", last_dir)
+
+        if len(filename) > 0:
+            self.sample_edit.setText(QDir.toNativeSeparators(filename))
 
     def sample_interpolate(self, x, y):
         spline = NaturalSpline()

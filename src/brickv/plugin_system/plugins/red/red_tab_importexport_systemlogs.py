@@ -21,19 +21,22 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, QDir
 from PyQt4.QtGui import QWidget, QPlainTextEdit, QTextOption, QFont, QFileDialog, QMessageBox
 from brickv.plugin_system.plugins.red.ui_red_tab_importexport_systemlogs import Ui_REDTabImportExportSystemLogs
 from brickv.plugin_system.plugins.red.api import *
 from brickv.async_call import async_call
+from brickv.utils import get_main_window
 import posixpath
+import os
 
 class SystemLog(object):
     def __init__(self, display_name):
-        self.display_name = display_name
-        self.file_name    = posixpath.join('/', 'var', 'log', display_name) # FIXME: need to handle rotated logs
-        self.content      = ''
-        self.edit         = QPlainTextEdit()
+        self.display_name  = display_name
+        self.source_name   = posixpath.join('/', 'var', 'log', display_name) # FIXME: need to handle rotated logs
+        self.last_filename = os.path.join(QDir.toNativeSeparators(QDir.homePath()), display_name)
+        self.content       = ''
+        self.edit          = QPlainTextEdit()
 
         self.edit.setUndoRedoEnabled(False)
         self.edit.setReadOnly(True)
@@ -105,7 +108,7 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
         self.progress_download.setVisible(True)
         self.button_cancel.setVisible(True)
         self.button_refresh.setEnabled(False)
-        self.label_download.setText('Downloading ' + log.file_name)
+        self.label_download.setText('Downloading ' + log.source_name)
 
         def done():
             self.label_download.setVisible(False)
@@ -156,23 +159,25 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
         self.log_file = REDFile(self.session)
 
         async_call(self.log_file.open,
-                   (log.file_name, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   (log.source_name, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                    cb_open, cb_open_error)
 
     def save_log(self):
-        log       = self.logs[self.combo_log.currentIndex()]
-        content   = log.content
-        file_name = QFileDialog.getSaveFileName(get_main_window(), 'Save System Log',
-                                                posixpath.split(log.file_name)[1])
+        log      = self.logs[self.combo_log.currentIndex()]
+        content  = log.content
+        filename = QFileDialog.getSaveFileName(get_main_window(), 'Save System Log', log.last_filename)
 
-        if len(file_name) == 0:
+        if len(filename) == 0:
             return
 
+        filename          = QDir.toNativeSeparators(filename)
+        log.last_filename = filename
+
         try:
-            f = open(file_name, 'wb')
+            f = open(filename, 'wb')
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save System Log Error',
-                                 u"Could not open {0} for writing:\n\n{1}".format(file_name, unicode(e)))
+                                 u"Could not open {0} for writing:\n\n{1}".format(filename, unicode(e)))
             return
 
         try:
@@ -180,7 +185,7 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
             f.write(content)
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save System Log Error',
-                                 u"Could not write to {0}:\n\n{1}".format(file_name, unicode(e)))
+                                 u"Could not write to {0}:\n\n{1}".format(filename, unicode(e)))
 
         f.close()
 

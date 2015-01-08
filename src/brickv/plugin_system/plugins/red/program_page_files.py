@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_page_files.py: Program Wizard Files Page
 
@@ -37,9 +37,10 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
 
         self.setupUi(self)
 
-        self.edit_mode   = False
-        self.folder_icon = QIcon(os.path.join(get_resources_path(), "folder-icon.png"))
-        self.file_icon   = QIcon(os.path.join(get_resources_path(), "file-icon.png"))
+        self.edit_mode      = False
+        self.folder_icon    = QIcon(os.path.join(get_resources_path(), "folder-icon.png"))
+        self.file_icon      = QIcon(os.path.join(get_resources_path(), "file-icon.png"))
+        self.last_directory = QDir.toNativeSeparators(QDir.homePath())
 
         self.setTitle(title_prefix + 'Files')
 
@@ -70,7 +71,10 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         self.button_remove_selected_files.setEnabled(len(self.list_files.selectedItems()) > 0)
 
     def show_add_files_dialog(self):
-        filenames = QFileDialog.getOpenFileNames(get_main_window(), 'Add Files')
+        filenames = QFileDialog.getOpenFileNames(get_main_window(), 'Add Files', self.last_directory)
+
+        if len(filenames) > 0:
+            self.last_directory = os.path.split(QDir.toNativeSeparators(filenames[0]))[0]
 
         for filename in filenames:
             filename = QDir.toNativeSeparators(filename)
@@ -88,10 +92,12 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         self.completeChanged.emit()
 
     def show_add_directory_dialog(self):
-        directory = QDir.toNativeSeparators(QFileDialog.getExistingDirectory(get_main_window(), 'Add Directory'))
+        directory = QFileDialog.getExistingDirectory(get_main_window(), 'Add Directory', self.last_directory)
 
         if len(directory) == 0:
             return
+
+        directory = QDir.toNativeSeparators(directory)
 
         # FIXME: on Mac OS X the getExistingDirectory() might return the directory with
         #        the last part being invalid, try to find the valid part of the directory
@@ -101,6 +107,8 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
 
         if len(directory) == 0:
             return
+
+        self.last_directory = directory
 
         if len(self.list_files.findItems(os.path.join(directory, '*'), Qt.MatchFixedString)) > 0:
             return

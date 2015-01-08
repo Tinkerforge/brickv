@@ -24,10 +24,12 @@ Boston, MA 02111-1307, USA.
 """
 
 from brickv.ui_flashing import Ui_FlashingWindow
-from brickv.bindings.ip_connection import IPConnection, Error, base58encode, base58decode, BASE58, uid64_to_uid32
+from brickv.bindings.ip_connection import IPConnection, Error, base58encode, \
+                                          base58decode, BASE58, uid64_to_uid32
 from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
-from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QApplication, QColor, QDialog, QFileDialog, QMessageBox, QProgressDialog, QStandardItemModel, QStandardItem, QBrush
+from PyQt4.QtCore import Qt, QTimer, QDir
+from PyQt4.QtGui import QApplication, QColor, QDialog, QFileDialog, QMessageBox, \
+                        QProgressDialog, QStandardItemModel, QStandardItem, QBrush
 from brickv.samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_ports
 from brickv.infos import get_version_string
 from brickv import infos
@@ -396,17 +398,15 @@ class FlashingWindow(QDialog, Ui_FlashingWindow):
         self.update_ui_state()
 
     def firmware_browse_clicked(self):
-        last_dir = ''
         if len(self.edit_custom_firmware.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(self.edit_custom_firmware.text()))
+        else:
+            last_dir = QDir.toNativeSeparators(QDir.homePath())
 
-        file_name = QFileDialog.getOpenFileName(self,
-                                                'Open Firmware',
-                                                last_dir,
-                                                '*.bin')
-        if len(file_name) > 0:
-            self.edit_custom_firmware.setText(file_name)
-            self.update_ui_state()
+        filename = QFileDialog.getOpenFileName(get_main_window(), 'Open Firmware', last_dir, '*.bin')
+
+        if len(filename) > 0:
+            self.edit_custom_firmware.setText(QDir.toNativeSeparators(filename))
 
     def firmware_save_clicked(self):
         port_name = self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString()
@@ -898,16 +898,15 @@ class FlashingWindow(QDialog, Ui_FlashingWindow):
             return None
 
     def plugin_browse_clicked(self):
-        last_dir = ''
+        last_dir = QDir.toNativeSeparators(QDir.homePath())
+
         if len(self.edit_custom_plugin.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(self.edit_custom_plugin.text()))
 
-        file_name = QFileDialog.getOpenFileName(self,
-                                                'Open Plugin',
-                                                last_dir,
-                                                '*.bin')
-        if len(file_name) > 0:
-            self.edit_custom_plugin.setText(file_name)
+        filename = QFileDialog.getOpenFileName(get_main_window(), 'Open Plugin', last_dir, '*.bin')
+
+        if len(filename) > 0:
+            self.edit_custom_plugin.setText(QDir.toNativeSeparators(filename))
 
     def auto_update_bricklets_clicked(self):
         def brick_for_bricklet(bricklet):
