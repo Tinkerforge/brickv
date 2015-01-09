@@ -41,11 +41,46 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
         self.is_tab_on_focus = False
 
+        self.ap_mode = False
+        self.label_ap_disabled.hide()
+
     def tab_on_focus(self):
         self.is_tab_on_focus = True
+        
+        def cb_settings_network_ap_mode_check(result):
+            if result and not result.stderr and result.exit_code == 0:
+                ap_mode_check = json.loads(result.stdout)
+                if ap_mode_check['ap_enabled'] is None:
+                    QtGui.QMessageBox.critical(get_main_window(),
+                                               'Settings | Access Point',
+                                               'Error checking access point mode.',
+                                               QtGui.QMessageBox.Ok)
+                elif ap_mode_check['ap_enabled']:
+                    self.ap_mode_enabled()
+                else:
+                    self.ap_mode_disabled()
+            else:
+                err_msg = 'Error checking access point mode\n\n'+unicode(result.stderr)
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           'Settings | Access Point',
+                                           err_msg,
+                                           QtGui.QMessageBox.Ok)
+
+        self.script_manager.execute_script('settings_network_ap_mode_check',
+                                           cb_settings_network_ap_mode_check)
 
     def tab_off_focus(self):
         self.is_tab_on_focus = False
 
     def tab_destroy(self):
         pass
+
+    def ap_mode_enabled(self):
+        self.ap_mode = True
+        self.label_ap_disabled.hide()
+        self.sarea_ap.setEnabled(True)
+
+    def ap_mode_disabled(self):
+        self.ap_mode = False
+        self.label_ap_disabled.show()
+        self.sarea_ap.setEnabled(False)

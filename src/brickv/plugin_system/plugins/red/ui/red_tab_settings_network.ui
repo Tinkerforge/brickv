@@ -6,16 +6,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>659</width>
-    <height>983</height>
+    <width>810</width>
+    <height>842</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
-    <widget class="QScrollArea" name="scrollArea">
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_net_disabled">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Important:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;To be able to use the network as client mode you must disable wireless access point mode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QScrollArea" name="sarea_net">
      <property name="widgetResizable">
       <bool>true</bool>
      </property>
@@ -23,9 +30,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>639</width>
-        <height>963</height>
+        <y>-33</y>
+        <width>774</width>
+        <height>803</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -243,7 +250,7 @@
               <item row="6" column="0">
                <widget class="QLabel" name="label_mask">
                 <property name="text">
-                 <string>Mask:</string>
+                 <string>Subnet Mask:</string>
                 </property>
                 <property name="buddy">
                  <cstring>sbox_net_mask1</cstring>
@@ -270,7 +277,7 @@
               <item row="3" column="0">
                <widget class="QLabel" name="label_key">
                 <property name="text">
-                 <string>Secret Key:</string>
+                 <string>WPA Key:</string>
                 </property>
                 <property name="buddy">
                  <cstring>ledit_net_wireless_key</cstring>
@@ -390,6 +397,9 @@
                     <widget class="QPushButton" name="pbutton_net_wireless_scan">
                      <property name="text">
                       <string>Scan</string>
+                     </property>
+                     <property name="flat">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -548,7 +558,7 @@
               <item row="3" column="0">
                <widget class="QLabel" name="label_10">
                 <property name="text">
-                 <string>Mask:</string>
+                 <string>Subnet Mask:</string>
                 </property>
                </widget>
               </item>
@@ -593,7 +603,7 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>scrollArea</tabstop>
+  <tabstop>sarea_net</tabstop>
   <tabstop>cbox_net_intf</tabstop>
   <tabstop>tree_net_wireless_ap</tabstop>
   <tabstop>pbutton_net_wireless_scan</tabstop>

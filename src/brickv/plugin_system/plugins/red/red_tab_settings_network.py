@@ -102,6 +102,9 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         self.network_refresh_tasks_error_occured = False
         self.work_in_progress = False
         self.network_stat_work_in_progress = False
+        self.ap_mode = False
+
+        self.label_net_disabled.hide()
 
         self.network_all_data = {'status': None,
                                  'interfaces': None,
@@ -145,7 +148,48 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
     def tab_on_focus(self):
         self.is_tab_on_focus = True
-        
+
+        def cb_settings_network_ap_mode_check(result):
+            if result and not result.stderr and result.exit_code == 0:
+                ap_mode_check = json.loads(result.stdout)
+                if ap_mode_check['ap_enabled'] is None:
+                    QtGui.QMessageBox.critical(get_main_window(),
+                                               'Settings | Network',
+                                               'Error checking access point mode.',
+                                               QtGui.QMessageBox.Ok)
+                elif ap_mode_check['ap_enabled']:
+                    self.ap_mode_enabled()
+                else:
+                    self.ap_mode_disabled()
+            else:
+                err_msg = 'Error checking access point mode\n\n'+unicode(result.stderr)
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           'Settings | Network',
+                                           err_msg,
+                                           QtGui.QMessageBox.Ok)
+
+        self.script_manager.execute_script('settings_network_ap_mode_check',
+                                           cb_settings_network_ap_mode_check)
+
+    def tab_off_focus(self):
+        self.is_tab_on_focus = False
+        self.network_stat_refresh_timer.stop()
+
+    def tab_destroy(self):
+        pass
+
+    def ap_mode_enabled(self):
+        self.ap_mode= True
+        self.address_configuration_gui(False)
+        self.wireless_configuration_gui(False)
+        self.label_net_disabled.show()
+        self.sarea_net.setEnabled(False)
+
+    def ap_mode_disabled(self):
+        self.ap_mode = False
+        self.label_net_disabled.hide()
+        self.sarea_net.setEnabled(True)
+
         self.manager_settings_conf_rfile = REDFile(self.session)
         self.wired_settings_conf_rfile = REDFile(self.session)
         self.wireless_settings_conf_rfile = REDFile(self.session)
@@ -154,13 +198,6 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             self.cb_network_stat_refresh()
         if not self.work_in_progress:
             self.slot_network_conf_refresh_clicked()
-
-    def tab_off_focus(self):
-        self.is_tab_on_focus = False
-        self.network_stat_refresh_timer.stop()
-
-    def tab_destroy(self):
-        pass
 
     def ap_tree_model_clear_add_item(self, item):
         self.ap_tree_model.removeRows(0, self.ap_tree_model.rowCount())
@@ -172,7 +209,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         self.network_stat_work_in_progress = False
 
         #check if the tab is still on view or not
-        if not self.is_tab_on_focus:
+        if not self.is_tab_on_focus and self.ap_mode:
             return
 
         if result and result.stdout and not result.stderr and result.exit_code == 0:

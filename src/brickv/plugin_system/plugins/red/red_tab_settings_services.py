@@ -134,10 +134,13 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
                     else:
                         self.chkbox_splashscreen.setChecked(False)
 
-                    if services_check_result['ap']:
+                    if services_check_result['ap'] == True:
                         self.chkbox_ap.setChecked(True)
+                    elif services_check_result['ap'] == False:
+                        self.chkbox_ap.setChecked(False)
                     else:
                         self.chkbox_ap.setChecked(False)
+                        self.chkbox_ap.setEnabled(False)
 
                     self.pbutton_services_save.setEnabled(False)
         else:

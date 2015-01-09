@@ -5,6 +5,7 @@ import os
 import json
 import subprocess
 import time
+import netifaces
 from sys import argv
 
 if len(argv) < 2:
@@ -90,11 +91,27 @@ if command == 'CHECK':
             return_dict['gpu'] = False
         else:
             return_dict['gpu'] = True
-        
-        if os.path.isfile('/etc/tf_ap_enabled'):
-            return_dict['ap'] = True
+
+        ap_possible = False
+        for intf in netifaces.interfaces():
+            if os.path.isdir('/sys/class/net/'+intf+'/wireless'):
+                with open('/etc/tf_image_version','r') as fd_tf_img_ver:
+                    line = fd_tf_img_ver.readline()
+                    if line:
+                        l_split = line.strip().split(' (')
+                        if len(l_split) > 1:
+                            img_ver = float(l_split[0])
+                            if img_ver > 1.3:
+                                ap_possible = True
+                                break
+
+        if ap_possible:
+            if os.path.isfile('/etc/tf_ap_enabled'):
+                return_dict['ap'] = True
+            else:
+                return_dict['ap'] = False
         else:
-            return_dict['ap'] = False
+            return_dict['ap'] = -1
 
         print json.dumps(return_dict)
 
