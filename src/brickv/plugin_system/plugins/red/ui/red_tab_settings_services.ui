@@ -62,7 +62,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_info">
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The checkboxes below can be used to enable or disable certain services during system boot. Initially these checkboxes show the current status of the services. Disabling services can make the system boot faster.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Important:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;1. After clicking the Save button the system will reboot, which is required for the new settings to be applied.&lt;/p&gt;&lt;p&gt;2. Access point mode is only possible when the current image version is 1.x or greater and there is atleast one wireless interface present.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The checkboxes below can be used to enable or disable certain services during system boot. Initially these checkboxes show the current status of the services. Disabling services can make the system boot faster.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Important:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;1. After clicking the Save button the system will reboot, which is required for the new settings to be applied.&lt;/p&gt;&lt;p&gt;2. Access point mode is only possible for image versions 1.x and later.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

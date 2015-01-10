@@ -149,27 +149,37 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
     def tab_on_focus(self):
         self.is_tab_on_focus = True
 
-        def cb_settings_network_ap_mode_check(result):
+        def cb_settings_network_ap_check(result):
             if result and not result.stderr and result.exit_code == 0:
                 ap_mode_check = json.loads(result.stdout)
-                if ap_mode_check['ap_enabled'] is None:
-                    QtGui.QMessageBox.critical(get_main_window(),
-                                               'Settings | Network',
-                                               'Error checking access point mode.',
-                                               QtGui.QMessageBox.Ok)
-                elif ap_mode_check['ap_enabled']:
-                    self.ap_mode_enabled()
+                if ap_mode_check['ap_image_version'] is None or \
+                   ap_mode_check['ap_interface'] is None or \
+                   ap_mode_check['ap_enabled'] is None:
+                        self.address_configuration_gui(False)
+                        self.wireless_configuration_gui(False)
+                        self.sarea_net.setEnabled(False)
+                        QtGui.QMessageBox.critical(get_main_window(),
+                                                   'Settings | Network',
+                                                   'Error checking access point mode.',
+                                                   QtGui.QMessageBox.Ok)
+                elif ap_mode_check['ap_image_version'] and \
+                     ap_mode_check['ap_interface'] and \
+                     ap_mode_check['ap_enabled']:
+                        self.ap_mode_enabled()
                 else:
                     self.ap_mode_disabled()
             else:
                 err_msg = 'Error checking access point mode\n\n'+unicode(result.stderr)
+                self.address_configuration_gui(False)
+                self.wireless_configuration_gui(False)
+                self.sarea_net.setEnabled(False)
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
                                            err_msg,
                                            QtGui.QMessageBox.Ok)
 
-        self.script_manager.execute_script('settings_network_ap_mode_check',
-                                           cb_settings_network_ap_mode_check)
+        self.script_manager.execute_script('settings_network_ap_check',
+                                           cb_settings_network_ap_check)
 
     def tab_off_focus(self):
         self.is_tab_on_focus = False
