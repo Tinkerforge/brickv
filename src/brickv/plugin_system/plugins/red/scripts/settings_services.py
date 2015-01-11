@@ -12,7 +12,7 @@ if len(argv) < 2:
 
 command = unicode(argv[1])
 
-sunxifb_fbdev_config = '''
+SUNXI_FBDEV_X11_DRIVER_CONF = '''
 # This is a minimal sample config file, which can be copied to
 # /etc/X11/xorg.conf in order to make the Xorg server pick up
 # and load xf86-video-fbturbo driver installed in the system.
@@ -32,7 +32,7 @@ Section "Device"
 EndSection
 '''
 
-sunxifb_fbturbo_config = '''
+SUNXI_FBTURBO_X11_DRIVER_CONF = '''
 # This is a minimal sample config file, which can be copied to
 # /etc/X11/xorg.conf in order to make the Xorg server pick up
 # and load xf86-video-fbturbo driver installed in the system.
@@ -50,6 +50,11 @@ Section "Device"
         Option          "SwapbuffersWait" "true"
         Option          "AccelMethod" "G2D"
 EndSection
+'''
+
+INTERFACES_CONF = '''# interfaces(5) file used by ifup(8) and ifdown(8)
+auto lo
+iface lo inet loopback
 '''
 
 if command == 'CHECK':
@@ -136,7 +141,7 @@ elif command == 'APPLY':
                 os.remove('/etc/modprobe.d/mali-blacklist.conf')
 
             with open('/usr/share/X11/xorg.conf.d/99-sunxifb.conf', 'w') as fd_fbconf:
-                fd_fbconf.write(sunxifb_fbturbo_config)
+                fd_fbconf.write(SUNXI_FBTURBO_X11_DRIVER_CONF)
 
         else:
             lines = []
@@ -153,7 +158,7 @@ elif command == 'APPLY':
                 fd_w_malibl.write('blacklist mali')
             
             with open('/usr/share/X11/xorg.conf.d/99-sunxifb.conf', 'w') as fd_fbconf:
-                fd_fbconf.write(sunxifb_fbdev_config)
+                fd_fbconf.write(SUNXI_FBDEV_X11_DRIVER_CONF)
 
         if apply_dict['desktopenv']:
             with open('/etc/tf_x11_enabled', 'w') as fd_x11_enabled:
@@ -178,10 +183,30 @@ elif command == 'APPLY':
         
         if apply_dict['ap']:
             with open('/etc/tf_ap_enabled', 'w') as fd_ap_enabled:
-                pass
+                if os.system('/usr/sbin/update-rc.d hostapd defaults'):
+                    exit(1)
+    
+                if os.system('/usr/sbin/update-rc.d dnsmasq defaults'):
+                    exit(1)
+
+                if os.system('/usr/sbin/update-rc.d -f wicd remove'):
+                    exit(1)
+
         else:
             if os.path.isfile('/etc/tf_ap_enabled'):
                 os.remove('/etc/tf_ap_enabled')
+
+            if os.system('/usr/sbin/update-rc.d -f hostapd remove'):
+                exit(1)
+
+            if os.system('/usr/sbin/update-rc.d -f dnsmasq remove'):
+                exit(1)
+            
+            if os.system('/usr/sbin/update-rc.d wicd defaults'):
+                exit(1)
+            
+            with open('/etc/network/interfaces', 'w') as fd_interfaces:
+                    fd_interfaces.write(INTERFACES_CONF)
 
     except:
         exit(1)

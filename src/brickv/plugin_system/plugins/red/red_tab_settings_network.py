@@ -149,7 +149,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
     def tab_on_focus(self):
         self.is_tab_on_focus = True
 
-        def cb_settings_network_ap_check(result):
+        def cb_settings_network_apmode_check(result):
             if result and not result.stderr and result.exit_code == 0:
                 ap_mode_check = json.loads(result.stdout)
                 if ap_mode_check['ap_image_version'] is None or \
@@ -178,8 +178,8 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                            err_msg,
                                            QtGui.QMessageBox.Ok)
 
-        self.script_manager.execute_script('settings_network_ap_check',
-                                           cb_settings_network_ap_check)
+        self.script_manager.execute_script('settings_network_apmode_check',
+                                           cb_settings_network_apmode_check)
 
     def tab_off_focus(self):
         self.is_tab_on_focus = False
