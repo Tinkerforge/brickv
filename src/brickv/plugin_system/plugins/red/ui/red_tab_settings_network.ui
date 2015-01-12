@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>810</width>
-    <height>842</height>
+    <width>705</width>
+    <height>623</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,10 @@
    <item row="0" column="0">
     <widget class="QLabel" name="label_net_disabled">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Important:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;To be able to use the network as client mode you must disable wireless access point mode.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Important:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;To connect the RED Brick to another network the access point service must be disabled from the services tab.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -30,8 +33,8 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-33</y>
-        <width>774</width>
+        <y>0</y>
+        <width>669</width>
         <height>803</height>
        </rect>
       </property>
@@ -50,6 +53,12 @@
                <widget class="QTreeView" name="tree_net_wireless_ap">
                 <property name="enabled">
                  <bool>true</bool>
+                </property>
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>1</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
                 <property name="minimumSize">
                  <size>
@@ -359,7 +368,7 @@
                  <item>
                   <widget class="QLabel" name="label_working_wait">
                    <property name="text">
-                    <string>Working, Please wait...</string>
+                    <string>Working, please wait...</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignCenter</set>
@@ -422,14 +431,7 @@
                </widget>
               </item>
               <item row="1" column="1" colspan="2">
-               <widget class="QComboBox" name="cbox_net_intf">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                  <horstretch>1</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
+               <widget class="QComboBox" name="cbox_net_intf"/>
               </item>
              </layout>
             </item>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>803</width>
-    <height>783</height>
+    <width>709</width>
+    <height>711</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,10 +30,7 @@
       <bool>true</bool>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;To be able to use the access point mode you must have a wireless interface and the access point service must be enabled from the services tab.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Important:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wireless access point feature is only available on image version 1.4 and later.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::RichText</enum>
+      <string>&lt;html&gt;&lt;body&gt;&lt;p&gt;To be able to use the RED Brick as wireless access point you must have a wireless interface and the access point service must be enabled from the services tab.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Important:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The wireless access point feature is only available on image version 1.4 and later.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
@@ -50,8 +47,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>783</width>
-        <height>611</height>
+        <width>689</width>
+        <height>539</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
@@ -86,6 +83,9 @@
         <widget class="QLabel" name="label">
          <property name="text">
           <string>IP:</string>
+         </property>
+         <property name="buddy">
+          <cstring>sbox_ap_intf_ip1</cstring>
          </property>
         </widget>
        </item>
@@ -139,6 +139,9 @@
          <property name="text">
           <string>Channel:</string>
          </property>
+         <property name="buddy">
+          <cstring>sbox_ap_channel</cstring>
+         </property>
         </widget>
        </item>
        <item row="4" column="1" colspan="2">
@@ -181,6 +184,9 @@
          <property name="text">
           <string>SSID:</string>
          </property>
+         <property name="buddy">
+          <cstring>ledit_ap_ssid</cstring>
+         </property>
         </widget>
        </item>
        <item row="13" column="1" colspan="2">
@@ -220,12 +226,18 @@
          <property name="text">
           <string>WPA Key:</string>
          </property>
+         <property name="buddy">
+          <cstring>ledit_ap_wpa_key</cstring>
+         </property>
         </widget>
        </item>
        <item row="12" column="0">
         <widget class="QLabel" name="label_7">
          <property name="text">
           <string>DHCP Pool End:</string>
+         </property>
+         <property name="buddy">
+          <cstring>sbox_ap_pool_end1</cstring>
          </property>
         </widget>
        </item>
@@ -243,6 +255,9 @@
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Subnet Mask:</string>
+         </property>
+         <property name="buddy">
+          <cstring>sbox_ap_intf_mask1</cstring>
          </property>
         </widget>
        </item>
@@ -290,6 +305,9 @@
          <property name="text">
           <string>DHCP Pool Start:</string>
          </property>
+         <property name="buddy">
+          <cstring>sbox_ap_pool_start1</cstring>
+         </property>
         </widget>
        </item>
        <item row="9" column="0" colspan="3">
@@ -311,12 +329,18 @@
          <property name="text">
           <string>Interface:</string>
          </property>
+         <property name="buddy">
+          <cstring>cbox_ap_interface</cstring>
+         </property>
         </widget>
        </item>
        <item row="10" column="0">
         <widget class="QLabel" name="label_4">
          <property name="text">
           <string>Domain:</string>
+         </property>
+         <property name="buddy">
+          <cstring>ledit_ap_domain</cstring>
          </property>
         </widget>
        </item>
@@ -349,6 +373,9 @@
         <widget class="QLabel" name="label_8">
          <property name="text">
           <string>DHCP Subnet Mask:</string>
+         </property>
+         <property name="buddy">
+          <cstring>sbox_ap_pool_mask1</cstring>
          </property>
         </widget>
        </item>
@@ -405,7 +432,7 @@
    <item row="0" column="0">
     <widget class="QLabel" name="label_applying">
      <property name="text">
-      <string>Working, Please wait...</string>
+      <string>Working, please wait...</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -414,6 +441,39 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>sarea_ap</tabstop>
+  <tabstop>cbox_ap_interface</tabstop>
+  <tabstop>sbox_ap_intf_ip1</tabstop>
+  <tabstop>sbox_ap_intf_ip2</tabstop>
+  <tabstop>sbox_ap_intf_ip3</tabstop>
+  <tabstop>sbox_ap_intf_ip4</tabstop>
+  <tabstop>sbox_ap_intf_mask1</tabstop>
+  <tabstop>sbox_ap_intf_mask2</tabstop>
+  <tabstop>sbox_ap_intf_mask3</tabstop>
+  <tabstop>sbox_ap_intf_mask4</tabstop>
+  <tabstop>ledit_ap_ssid</tabstop>
+  <tabstop>chkbox_ap_ssid_hidden</tabstop>
+  <tabstop>ledit_ap_wpa_key</tabstop>
+  <tabstop>chkbox_ap_wpa_key_show</tabstop>
+  <tabstop>sbox_ap_channel</tabstop>
+  <tabstop>chkbox_ap_enable_dns_dhcp</tabstop>
+  <tabstop>ledit_ap_domain</tabstop>
+  <tabstop>sbox_ap_pool_start1</tabstop>
+  <tabstop>sbox_ap_pool_start2</tabstop>
+  <tabstop>sbox_ap_pool_start3</tabstop>
+  <tabstop>sbox_ap_pool_start4</tabstop>
+  <tabstop>sbox_ap_pool_end1</tabstop>
+  <tabstop>sbox_ap_pool_end2</tabstop>
+  <tabstop>sbox_ap_pool_end3</tabstop>
+  <tabstop>sbox_ap_pool_end4</tabstop>
+  <tabstop>sbox_ap_pool_mask1</tabstop>
+  <tabstop>sbox_ap_pool_mask2</tabstop>
+  <tabstop>sbox_ap_pool_mask3</tabstop>
+  <tabstop>sbox_ap_pool_mask4</tabstop>
+  <tabstop>pbutton_ap_refresh</tabstop>
+  <tabstop>pbutton_ap_apply</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
