@@ -32,6 +32,7 @@ from PyQt4.QtGui import QApplication, QColor, QDialog, QFileDialog, QMessageBox,
                         QProgressDialog, QStandardItemModel, QStandardItem, QBrush
 from brickv.samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_ports
 from brickv.infos import get_version_string
+from brickv.utils import get_main_window
 from brickv import infos
 
 import os
