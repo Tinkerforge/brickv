@@ -268,10 +268,7 @@ try:
     if os.system('/usr/sbin/update-rc.d hostapd defaults'):
         exit(1)
 
-    if os.system('/usr/sbin/service hostapd restart'):
-        exit(1)
-
-    if os.system('/usr/sbin/service networking restart'):
+    if os.system('/usr/sbin/service networking restart; /usr/sbin/service hostapd restart'):
         exit(1)
 
 except Exception as e:
