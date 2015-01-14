@@ -155,7 +155,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 if ap_mode_check['ap_enabled'] is None:
                     self.address_configuration_gui(False)
                     self.wireless_configuration_gui(False)
-                    self.sarea_net.setEnabled(False)
+                    self.sarea_net.hide()
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
                                                'Error checking access point mode.',
@@ -168,7 +168,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 err_msg = 'Error checking access point mode\n\n'+unicode(result.stderr)
                 self.address_configuration_gui(False)
                 self.wireless_configuration_gui(False)
-                self.sarea_net.setEnabled(False)
+                self.sarea_net.hide()
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
                                            err_msg,
@@ -189,12 +189,12 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         self.address_configuration_gui(False)
         self.wireless_configuration_gui(False)
         self.label_net_disabled.show()
-        self.sarea_net.setEnabled(False)
+        self.sarea_net.hide()
 
     def ap_mode_disabled(self):
         self.ap_mode = False
         self.label_net_disabled.hide()
-        self.sarea_net.setEnabled(True)
+        self.sarea_net.show()
 
         self.manager_settings_conf_rfile = REDFile(self.session)
         self.wired_settings_conf_rfile = REDFile(self.session)
