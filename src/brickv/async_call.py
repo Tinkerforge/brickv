@@ -2,7 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 async_call.py: Asynchronous call for Brick/Bricklet functions
 
@@ -26,6 +26,7 @@ from PyQt4.QtGui import QApplication
 from PyQt4.QtCore import QThread, QEvent
 from threading import Lock
 import logging
+import functools
 from brickv.bindings import ip_connection
 
 try:
@@ -40,14 +41,17 @@ async_event_queue = Queue()
 async_session_lock = Lock()
 async_session_id = 1
 
-def async_call(func_to_call, parameter=None, return_ok=None, return_error=None):
+def async_call(func_to_call, parameter=None, result_callback=None,
+               error_callback=None, report_exception=False):
     with async_session_lock:
-        async_call_queue.put((func_to_call, parameter, return_ok, return_error, async_session_id))
+        async_call_queue.put((func_to_call, parameter, result_callback,
+                              error_callback, report_exception, async_session_id))
 
 def async_event_handler():
     while not async_event_queue.empty():
         try:
             func = async_event_queue.get(False, 0)
+
             if func:
                 func()
         except StopIteration:
@@ -70,25 +74,31 @@ def async_start_thread(parent):
 
         def run(self):
             while True:
-                func_to_call, parameter, return_ok, return_error, session_id = async_call_queue.get()
+                func_to_call, parameter, result_callback, error_callback, \
+                report_exception, session_id = async_call_queue.get()
+
                 if not func_to_call:
                     continue
 
-                return_value = None
+                result = None
+
                 try:
                     if parameter == None:
-                        return_value = func_to_call()
+                        result = func_to_call()
                     elif isinstance(parameter, tuple):
-                        return_value = func_to_call(*parameter)
+                        result = func_to_call(*parameter)
                     else:
-                        return_value = func_to_call(parameter)
+                        result = func_to_call(parameter)
                 except Exception as e:
                     with async_session_lock:
                         if session_id != async_session_id:
                             continue
 
-                    if return_error != None:
-                        async_event_queue.put(return_error)
+                    if error_callback != None:
+                        if report_exception:
+                            async_event_queue.put(functools.partial(error_callback, e))
+                        else:
+                            async_event_queue.put(error_callback)
 
                         if isinstance(e, ip_connection.Error):
                             # clear the async call queue if an IPConnection
@@ -100,21 +110,19 @@ def async_start_thread(parent):
                         QApplication.postEvent(self, QEvent(ASYNC_EVENT))
                         continue
 
-                if return_ok != None:
+                if result_callback != None:
                     with async_session_lock:
                         if session_id != async_session_id:
                             continue
 
-                    if return_value == None:
-                        async_event_queue.put(return_ok)
-                        QApplication.postEvent(self, QEvent(ASYNC_EVENT))
+                    if result == None:
+                        async_event_queue.put(result_callback)
                     else:
-                        def return_lambda(return_ok, value):
-                            return lambda: return_ok(value)
+                        async_event_queue.put(functools.partial(result_callback, result))
 
-                        async_event_queue.put(return_lambda(return_ok, return_value))
-                        QApplication.postEvent(self, QEvent(ASYNC_EVENT))
+                    QApplication.postEvent(self, QEvent(ASYNC_EVENT))
 
     async_thread = AsyncThread(parent)
     async_thread.start()
+
     return async_thread
