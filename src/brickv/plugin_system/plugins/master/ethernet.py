@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QWidget, QMessageBox, QLineEdit
-from PyQt4.QtCore import QRegExp, Qt
+from PyQt4.QtCore import Qt
 
 from brickv.plugin_system.plugins.master.ui_ethernet import Ui_Ethernet
 from brickv.async_call import async_call

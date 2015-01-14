@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4 import Qt, QtCore, QtGui
+from PyQt4.QtGui import QStandardItemModel, QStandardItem
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_versions import Ui_REDTabVersions
 from brickv.plugin_system.plugins.red.api import *
@@ -92,11 +92,11 @@ class REDTabVersions(REDTab, Ui_REDTabVersions):
 
         self.models = []
         for i in range(NUM_TABS):
-            self.models.append(Qt.QStandardItemModel(0, 3, self))
-            self.models[i].setHorizontalHeaderItem(0, Qt.QStandardItem("Package"))
-            self.models[i].setHorizontalHeaderItem(1, Qt.QStandardItem("Version"))
-            self.models[i].setHorizontalHeaderItem(2, Qt.QStandardItem("Description"))
-            self.models[i].setItem(0, 0, Qt.QStandardItem("Collecting data..."))
+            self.models.append(QStandardItemModel(0, 3, self))
+            self.models[i].setHorizontalHeaderItem(0, QStandardItem("Package"))
+            self.models[i].setHorizontalHeaderItem(1, QStandardItem("Version"))
+            self.models[i].setHorizontalHeaderItem(2, QStandardItem("Description"))
+            self.models[i].setItem(0, 0, QStandardItem("Collecting data..."))
 
             self.tables[i].setModel(self.models[i])
             self.tables[i].setColumnWidth(0, DEFAULT_NAME_HEADER_WIDTH)
@@ -190,6 +190,6 @@ class REDTabVersions(REDTab, Ui_REDTabVersions):
             for j, item_name in enumerate(['name', 'version', 'description']):
                 item = tab_data['model'].item(i, j)
                 if item == None:
-                    tab_data['model'].setItem(i, j, Qt.QStandardItem(p[item_name]))
+                    tab_data['model'].setItem(i, j, QStandardItem(p[item_name]))
                 else:
                     tab_data['model'].item(i, j).setText(p[item_name])

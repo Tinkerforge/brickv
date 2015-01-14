@@ -437,13 +437,13 @@ class SAMBA(object):
 
         return response[2:-1]
 
-    def write_bytes(self, address, bytes):
+    def write_bytes(self, address, bytes_):
         self.change_mode('T')
 
         try:
             # FIXME: writes '33337777BBBBFFFF' instead of '0123456789ABCDEF'
-            self.port.write('S%X,%X#' % (address, len(bytes)))
-            self.port.write(bytes)
+            self.port.write('S%X,%X#' % (address, len(bytes_)))
+            self.port.write(bytes_)
         except:
             raise SAMBAException('Write error while writing to address 0x%08X' % address)
 
