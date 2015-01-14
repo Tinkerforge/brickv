@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_wizard_upload.py: Upload Files Wizard
 
@@ -51,7 +51,7 @@ class ProgramWizardUpload(ProgramWizard):
     # overrides ProgramWizard.get_field
     def get_field(self, name):
         if name == 'identifier':
-            return QVariant(unicode(self.program.identifier))
+            return QVariant(self.program.identifier)
         elif name == 'name':
             return QVariant(self.program.cast_custom_option_value('name', unicode, '<unknown>'))
         elif name == 'language':

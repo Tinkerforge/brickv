@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_info_c.py: Program C/C++ Info Widget
 
@@ -65,7 +65,7 @@ class ProgramInfoC(ProgramInfo, Ui_ProgramInfoC):
             self.label_compile_from_source.setText('Disabled')
 
         # working directory
-        self.label_working_directory.setText(unicode(self.program.working_directory))
+        self.label_working_directory.setText(self.program.working_directory)
 
         # make options
         self.label_make_options.setText('\n'.join(self.program.cast_custom_option_value_list('c.make_options', unicode, [])))

@@ -142,9 +142,9 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
                 first_upload = program.cast_custom_option_value('first_upload', int, 0)
 
                 if first_upload in sorted_programs:
-                    sorted_programs[first_upload][unicode(program.identifier)] = program
+                    sorted_programs[first_upload][program.identifier] = program
                 else:
-                    sorted_programs[first_upload] = {unicode(program.identifier): program}
+                    sorted_programs[first_upload] = {program.identifier: program}
 
             for first_upload in sorted(sorted_programs.keys()):
                 for identifier in sorted(sorted_programs[first_upload].keys()):
@@ -207,7 +207,7 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
         identifiers = []
 
         for i in range(self.list_programs.count()):
-            identifiers.append(unicode(self.list_programs.item(i).data(Qt.UserRole).toPyObject().program.identifier))
+            identifiers.append(self.list_programs.item(i).data(Qt.UserRole).toPyObject().program.identifier)
 
         context = ProgramWizardContext(self.session, identifiers, self.script_manager, self.image_version_ref, self.executable_versions)
 

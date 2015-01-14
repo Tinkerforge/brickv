@@ -89,7 +89,7 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
             self.log('Executing fpcmake and make...')
 
         make_options      = self.program.cast_custom_option_value_list('delphi.make_options', unicode, [])
-        working_directory = posixpath.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
+        working_directory = posixpath.join(self.program.root_directory, 'bin', self.program.working_directory)
 
         if target != None:
             make_options.append(target)

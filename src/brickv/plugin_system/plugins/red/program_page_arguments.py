@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_page_arguments.py: Program Wizard Arguments Page
 
@@ -81,13 +81,12 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
             editable_arguments_offset = max(program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
 
             for argument in program.arguments.items[editable_arguments_offset:]:
-                self.argument_list_editor.add_item(unicode(argument))
+                self.argument_list_editor.add_item(argument)
 
             self.environment_list_editor.clear()
             editable_environment_offset = max(program.cast_custom_option_value('editable_environment_offset', int, 0), 0)
 
             for variable in program.environment.items[editable_environment_offset:]:
-                variable = unicode(variable)
                 i = variable.find('=')
 
                 if i < 0:

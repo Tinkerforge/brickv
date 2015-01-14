@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_info_php.py: Program PHP Info Widget
 
@@ -42,10 +42,8 @@ class ProgramInfoPHP(ProgramInfo, Ui_ProgramInfoPHP):
 
         # version
         def cb_php_versions(versions):
-            executable = unicode(self.program.executable)
-
             for version in versions:
-                if version.executable == executable:
+                if version.executable == self.program.executable:
                     self.label_version.setText(version.version)
                     return
 
@@ -86,7 +84,7 @@ class ProgramInfoPHP(ProgramInfo, Ui_ProgramInfoPHP):
         self.label_url.setText(self.url_template.replace('<SERVER>', 'red-brick').replace('<IDENTIFIER>', unicode(self.program.identifier)))
 
         # working directory
-        self.label_working_directory.setText(unicode(self.program.working_directory))
+        self.label_working_directory.setText(self.program.working_directory)
 
         # options
         self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('php.options', unicode, [])))

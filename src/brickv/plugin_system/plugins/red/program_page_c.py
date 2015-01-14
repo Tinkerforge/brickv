@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_page_c.py: Program Wizard C/C++ Page
 
@@ -132,7 +133,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
                 self.check_compile_from_source.setCheckState(Qt.Unchecked)
 
             # working directory
-            self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+            self.combo_working_directory_selector.set_current_text(program.working_directory)
 
             # make options
             self.make_option_list_editor.clear()

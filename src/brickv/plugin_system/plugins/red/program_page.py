@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_page.py: Program Wizard Page
 
@@ -82,7 +82,7 @@ class ProgramPage(QWizardPage):
 
             # if a program exists then this page is used in an edit wizard
             if self.wizard().program != None:
-                executable = unicode(self.wizard().program.executable)
+                executable = self.wizard().program.executable
 
                 if len(executable) > 0:
                     set_current_combo_index_from_data(combo_version, executable)

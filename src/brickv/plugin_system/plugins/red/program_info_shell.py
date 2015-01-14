@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_info_shell.py: Program Shell Info Widget
 
@@ -45,10 +45,8 @@ class ProgramInfoShell(ProgramInfo, Ui_ProgramInfoShell):
 
         # version
         def cb_shell_versions(versions):
-            executable = unicode(self.program.executable)
-
             for version in versions:
-                if version.executable == executable:
+                if version.executable == self.program.executable:
                     self.label_version.setText(version.version)
                     return
 
@@ -75,7 +73,7 @@ class ProgramInfoShell(ProgramInfo, Ui_ProgramInfoShell):
         self.label_command.setText(self.program.cast_custom_option_value('shell.command', unicode, '<unknown>'))
 
         # working directory
-        self.label_working_directory.setText(unicode(self.program.working_directory))
+        self.label_working_directory.setText(self.program.working_directory)
 
         # options
         self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('shell.options', unicode, [])))

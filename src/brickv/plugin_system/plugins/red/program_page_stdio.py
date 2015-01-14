@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_page_stdio.py: Program Wizard Stdio Page
 
@@ -76,13 +76,13 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
             self.combo_stderr_redirection.setCurrentIndex(stderr_redirection)
 
             if program.stdin_redirection == REDProgram.STDIO_REDIRECTION_FILE:
-                self.combo_stdin_file.lineEdit().setText(unicode(program.stdin_file_name))
+                self.combo_stdin_file.lineEdit().setText(program.stdin_file_name)
 
             if program.stdout_redirection == REDProgram.STDIO_REDIRECTION_FILE:
-                self.edit_stdout_file.setText(unicode(program.stdout_file_name))
+                self.edit_stdout_file.setText(program.stdout_file_name)
 
             if program.stdin_redirection == REDProgram.STDIO_REDIRECTION_FILE:
-                self.edit_stderr_file.setText(unicode(program.stderr_file_name))
+                self.edit_stderr_file.setText(program.stderr_file_name)
 
         self.update_ui_state()
 

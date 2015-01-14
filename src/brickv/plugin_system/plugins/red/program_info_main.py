@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 program_info_main.py: Program Info Main Widget
@@ -78,7 +78,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.image_version_ref   = image_version_ref
         self.executable_versions = executable_versions
         self.program             = program
-        self.root_directory      = unicode(self.program.root_directory)
+        self.root_directory      = self.program.root_directory
 
         self.program.scheduler_state_changed_callback = self.scheduler_state_changed
         self.program.process_spawned_callback         = self.process_spawned
@@ -279,7 +279,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             language_display_name = '<unknown>'
 
         self.label_name.setText(name)
-        self.label_identifier.setText(unicode(self.program.identifier))
+        self.label_identifier.setText(self.program.identifier)
         self.label_language.setText(language_display_name)
         self.label_description.setText(description)
         self.label_first_upload.setText(timestamp_to_date_at_time(first_upload))
@@ -357,7 +357,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.label_last_scheduler_state_change.setText(timestamp_to_date_at_time(self.program.scheduler_timestamp))
 
         if self.program.scheduler_message != None:
-            self.label_last_scheduler_message.setText(unicode(self.program.scheduler_message))
+            self.label_last_scheduler_message.setText(self.program.scheduler_message)
         else:
             self.label_last_scheduler_message.setText('None')
 
@@ -400,7 +400,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         editable_arguments_offset = max(self.program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
 
         for argument in self.program.arguments.items[editable_arguments_offset:]:
-            arguments.append(unicode(argument))
+            arguments.append(argument)
 
         self.label_arguments.setText('\n'.join(arguments))
 
@@ -408,7 +408,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         editable_environment_offset = max(self.program.cast_custom_option_value('editable_environment_offset', int, 0), 0)
 
         for variable in self.program.environment.items[editable_environment_offset:]:
-            environment.append(unicode(variable))
+            environment.append(variable)
 
         show_environment = self.check_show_environment.checkState() == Qt.Checked
 
@@ -435,21 +435,21 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.set_widget_enabled(self.button_send_stdin_pipe_input, process_running)
 
         if stdin_redirection_file:
-            self.label_stdin_file.setText(unicode(self.program.stdin_file_name))
+            self.label_stdin_file.setText(self.program.stdin_file_name)
 
         self.label_stdout_target.setText(Constants.api_stdout_redirection_display_names.get(self.program.stdout_redirection, '<unknown>'))
         self.label_stdout_file_title.setVisible(stdout_redirection_file)
         self.label_stdout_file.setVisible(stdout_redirection_file)
 
         if stdout_redirection_file:
-            self.label_stdout_file.setText(unicode(self.program.stdout_file_name))
+            self.label_stdout_file.setText(self.program.stdout_file_name)
 
         self.label_stderr_target.setText(Constants.api_stderr_redirection_display_names.get(self.program.stderr_redirection, '<unknown>'))
         self.label_stderr_file_title.setVisible(stderr_redirection_file)
         self.label_stderr_file.setVisible(stderr_redirection_file)
 
         if stderr_redirection_file:
-            self.label_stderr_file.setText(unicode(self.program.stderr_file_name))
+            self.label_stderr_file.setText(self.program.stderr_file_name)
 
         # schedule
         self.group_schedule.setVisible(show_schedule)
@@ -473,7 +473,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.label_start_fields.setVisible(start_mode_cron)
 
         if start_mode_cron:
-            self.label_start_fields.setText(unicode(self.program.start_fields))
+            self.label_start_fields.setText(self.program.start_fields)
 
         self.label_continue_after_error_title.setVisible(not start_mode_never)
         self.label_continue_after_error.setVisible(not start_mode_never)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_page_general.py: Program Wizard General Page
 
@@ -73,7 +73,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
             self.setSubTitle('Specify name and description for the program.')
 
             self.edit_name.setText(program.cast_custom_option_value('name', unicode, '<unknown>'))
-            self.edit_identifier.setText(unicode(program.identifier))
+            self.edit_identifier.setText(program.identifier)
             self.text_description.setPlainText(program.cast_custom_option_value('description', unicode, ''))
 
             language_api_name = program.cast_custom_option_value('language', unicode, '<unknown>')

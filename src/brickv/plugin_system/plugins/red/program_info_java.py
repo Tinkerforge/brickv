@@ -49,10 +49,8 @@ class ProgramInfoJava(ProgramInfo, Ui_ProgramInfoJava):
 
         # version
         def cb_java_versions(versions):
-            executable = unicode(self.program.executable)
-
             for version in versions:
-                if version.executable == executable:
+                if version.executable == self.program.executable:
                     self.label_version.setText(version.version)
                     return
 
@@ -82,7 +80,7 @@ class ProgramInfoJava(ProgramInfo, Ui_ProgramInfoJava):
         self.label_class_path.setText('\n'.join(self.program.cast_custom_option_value_list('java.class_path', unicode, [])))
 
         # working directory
-        self.label_working_directory.setText(unicode(self.program.working_directory))
+        self.label_working_directory.setText(self.program.working_directory)
 
         # options
         self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('java.options', unicode, [])))

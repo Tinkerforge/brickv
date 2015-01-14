@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
 
 program_page_upload.py: Program Wizard Upload Page
@@ -309,9 +309,9 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.next_step('Uploading files...', log=False)
 
         if self.edit_mode:
-            self.root_directory = unicode(self.wizard().program.root_directory)
+            self.root_directory = self.wizard().program.root_directory
         else:
-            self.root_directory = unicode(self.program.root_directory)
+            self.root_directory = self.program.root_directory
 
         self.progress_file.setRange(0, len(self.remaining_uploads))
 
@@ -709,7 +709,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.next_step('Executing make...')
 
         make_options      = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_make_options()
-        working_directory = posixpath.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
+        working_directory = posixpath.join(self.program.root_directory, 'bin', self.program.working_directory)
 
         self.wizard().script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options,
                                                     max_length=1024*1024, redirect_stderr_to_stdout=True,
@@ -734,7 +734,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.next_step('Executing fpcmake and make...')
 
         make_options      = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_make_options()
-        working_directory = posixpath.join(unicode(self.program.root_directory), 'bin', unicode(self.program.working_directory))
+        working_directory = posixpath.join(self.program.root_directory, 'bin', self.program.working_directory)
 
         self.wizard().script_manager.execute_script('fpcmake_helper', cb_fpcmake_helper, [working_directory] + make_options,
                                                     max_length=1024*1024, redirect_stderr_to_stdout=True,

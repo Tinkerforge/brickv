@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_page_java.py: Program Wizard Java Page
 
@@ -143,7 +143,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         program = self.wizard().program
 
         if program != None:
-            self.bin_directory = posixpath.join(unicode(program.root_directory), 'bin')
+            self.bin_directory = posixpath.join(program.root_directory, 'bin')
         else:
             identifier         = self.get_field('identifier').toString()
             self.bin_directory = posixpath.join('/', 'home', 'tf', 'programs', identifier, 'bin')
@@ -327,7 +327,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
                 self.class_path_list_editor.add_item(class_path_entry)
 
             # working directory
-            self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+            self.combo_working_directory_selector.set_current_text(program.working_directory)
 
             # options
             self.option_list_editor.clear()

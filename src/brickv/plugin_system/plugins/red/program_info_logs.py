@@ -70,7 +70,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.is_alive                      = is_alive
         self.show_download_wizard          = show_download_wizard
         self.set_program_callbacks_enabled = set_program_callbacks_enabled
-        self.log_directory                 = posixpath.join(unicode(self.program.root_directory), 'log')
+        self.log_directory                 = posixpath.join(self.program.root_directory, 'log')
         self.refresh_in_progress           = False
         self.view_dialog                   = None
         self.file_icon                     = QIcon(os.path.join(get_resources_path(), "file-icon.png"))

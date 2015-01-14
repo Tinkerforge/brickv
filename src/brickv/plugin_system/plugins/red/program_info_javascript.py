@@ -48,10 +48,8 @@ class ProgramInfoJavaScript(ProgramInfo, Ui_ProgramInfoJavaScript):
             self.label_flavor.setText('Client-Side')
         elif flavor_nodejs:
             def cb_nodejs_versions(versions):
-                executable = unicode(self.program.executable)
-
                 for version in versions:
-                    if version.executable == executable:
+                    if version.executable == self.program.executable:
                         self.label_flavor.setText('Server-Side (Node.js {0})'.format(version.version))
                         return
 
@@ -87,7 +85,7 @@ class ProgramInfoJavaScript(ProgramInfo, Ui_ProgramInfoJavaScript):
         self.label_command.setText(self.program.cast_custom_option_value('javascript.command', unicode, '<unknown>'))
 
         # working directory
-        self.label_working_directory.setText(unicode(self.program.working_directory))
+        self.label_working_directory.setText(self.program.working_directory)
 
         # options
         self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('javascript.options', unicode, [])))

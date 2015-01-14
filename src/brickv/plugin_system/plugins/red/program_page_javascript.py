@@ -2,7 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_page_javascript.py: Program Wizard JavaScript Page
 
@@ -113,7 +113,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
                 if flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER:
                     executable = '/bin/false'
                 else:
-                    executable = unicode(program.executable)
+                    executable = program.executable
 
                 set_current_combo_index_from_data(self.combo_flavor, executable)
 
@@ -145,7 +145,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
             self.edit_command.setText(program.cast_custom_option_value('javascript.command', unicode, ''))
 
             # working directory
-            self.combo_working_directory_selector.set_current_text(unicode(program.working_directory))
+            self.combo_working_directory_selector.set_current_text(program.working_directory)
 
             # options
             self.option_list_editor.clear()

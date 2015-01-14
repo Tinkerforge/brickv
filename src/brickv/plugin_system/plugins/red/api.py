@@ -500,6 +500,13 @@ class REDString(REDObject):
     def data(self): return self._data
 
 
+def _red_string_to_unicode(red_string):
+    if red_string != None:
+        return unicode(red_string)
+    else:
+        return None
+
+
 class REDList(REDObject):
     def __repr__(self):
         return '<REDList object_id: {0}>'.format(self.object_id)
@@ -580,7 +587,16 @@ class REDList(REDObject):
         return self
 
     @property
-    def items(self): return self._items
+    def items(self):
+        items = []
+
+        for item in self._items:
+            if isinstance(item, REDString):
+                items.append(unicode(item))
+            else:
+                items.append(item)
+
+        return items
 
 
 def _get_zero_padded_chunk(data, max_chunk_length, start = 0):
@@ -984,7 +1000,7 @@ class REDFileBase(REDObject):
     @property
     def type(self):               return self._type
     @property
-    def name(self):               return self._name
+    def name(self):               return _red_string_to_unicode(self._name)
     @property
     def flags(self):              return self._flags
     @property
@@ -1188,9 +1204,9 @@ class REDDirectory(REDObject):
         return self
 
     @property
-    def name(self):    return self._name
+    def name(self):    return _red_string_to_unicode(self._name)
     @property
-    def entries(self): return self._entries
+    def entries(self): return [unicode(entry) for entry in self._entries]
 
 
 DIRECTORY_FLAG_RECURSIVE = BrickRED.DIRECTORY_FLAG_RECURSIVE
@@ -1448,13 +1464,13 @@ class REDProcess(REDObject):
             raise REDError('Could not kill process object {0}'.format(self.object_id), error_code)
 
     @property
-    def executable(self):        return self._executable
+    def executable(self):        return _red_string_to_unicode(self._executable)
     @property
     def arguments(self):         return self._arguments
     @property
     def environment(self):       return self._environment
     @property
-    def working_directory(self): return self._working_directory
+    def working_directory(self): return _red_string_to_unicode(self._working_directory)
     @property
     def pid(self):               return self._pid
     @property
@@ -1842,7 +1858,7 @@ class REDProgram(REDObject):
         custom_option_names = _attach_or_release(self._session, REDList, custom_option_names_list_id)
         custom_options      = {}
 
-        for name in custom_option_names.items:
+        for name in custom_option_names._items:
             try:
                 error_code, custom_option_value_string_id = \
                 self._session._brick.get_custom_program_option_value(self.object_id, name.object_id, self._session._session_id)
@@ -2123,29 +2139,29 @@ class REDProgram(REDObject):
         return values
 
     @property
-    def identifier(self):             return self._identifier
+    def identifier(self):             return _red_string_to_unicode(self._identifier)
     @property
-    def root_directory(self):         return self._root_directory
+    def root_directory(self):         return _red_string_to_unicode(self._root_directory)
     @property
-    def executable(self):             return self._executable
+    def executable(self):             return _red_string_to_unicode(self._executable)
     @property
     def arguments(self):              return self._arguments
     @property
     def environment(self):            return self._environment
     @property
-    def working_directory(self):      return self._working_directory
+    def working_directory(self):      return _red_string_to_unicode(self._working_directory)
     @property
     def stdin_redirection(self):      return self._stdin_redirection
     @property
-    def stdin_file_name(self):        return self._stdin_file_name
+    def stdin_file_name(self):        return _red_string_to_unicode(self._stdin_file_name)
     @property
     def stdout_redirection(self):     return self._stdout_redirection
     @property
-    def stdout_file_name(self):       return self._stdout_file_name
+    def stdout_file_name(self):       return _red_string_to_unicode(self._stdout_file_name)
     @property
     def stderr_redirection(self):     return self._stderr_redirection
     @property
-    def stderr_file_name(self):       return self._stderr_file_name
+    def stderr_file_name(self):       return _red_string_to_unicode(self._stderr_file_name)
     @property
     def start_mode(self):             return self._start_mode
     @property
@@ -2153,19 +2169,17 @@ class REDProgram(REDObject):
     @property
     def start_interval(self):         return self._start_interval
     @property
-    def start_fields(self):           return self._start_fields
+    def start_fields(self):           return _red_string_to_unicode(self._start_fields)
     @property
     def scheduler_state(self):        return self._scheduler_state
     @property
     def scheduler_timestamp(self):    return self._scheduler_timestamp
     @property
-    def scheduler_message(self):      return self._scheduler_message
+    def scheduler_message(self):      return _red_string_to_unicode(self._scheduler_message)
     @property
     def last_spawned_process(self):   return self._last_spawned_process
     @property
     def last_spawned_timestamp(self): return self._last_spawned_timestamp
-    @property
-    def custom_options(self):         return self._custom_options
 
 
 def get_programs(session):

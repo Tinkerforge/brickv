@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
 
 program_page_download.py: Program Wizard Download Page
@@ -187,7 +187,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         # download files
         self.next_step(u'Downloading {0}...'.format(self.download_kind), log=False)
 
-        self.root_directory = unicode(self.wizard().program.root_directory)
+        self.root_directory = self.wizard().program.root_directory
 
         self.progress_file.setRange(0, len(self.remaining_downloads))
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_page_schedule.py: Program Wizard Schedule Page
 
@@ -71,7 +71,7 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
             self.spin_start_interval.setValue(program.start_interval)
 
             if program.start_mode == REDProgram.START_MODE_CRON:
-                self.edit_start_fields.setText(unicode(program.start_fields))
+                self.edit_start_fields.setText(program.start_fields)
         elif self.combo_start_mode.count() <= Constants.START_MODE_SEPARATOR:
             self.combo_start_mode.insertSeparator(Constants.START_MODE_SEPARATOR)
             self.combo_start_mode.insertItem(Constants.START_MODE_ONCE, 'Once After Upload')

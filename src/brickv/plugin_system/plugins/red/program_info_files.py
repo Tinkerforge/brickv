@@ -155,7 +155,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.set_widget_enabled      = set_widget_enabled
         self.is_alive                = is_alive
         self.show_download_wizard    = show_download_wizard
-        self.bin_directory           = posixpath.join(unicode(self.program.root_directory), 'bin')
+        self.bin_directory           = posixpath.join(self.program.root_directory, 'bin')
         self.refresh_in_progress     = False
         self.available_files         = []
         self.available_directories   = []

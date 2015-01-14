@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_info_perl.py: Program Perl Info Widget
 
@@ -45,10 +45,8 @@ class ProgramInfoPerl(ProgramInfo, Ui_ProgramInfoPerl):
 
         # version
         def cb_perl_versions(versions):
-            executable = unicode(self.program.executable)
-
             for version in versions:
-                if version.executable == executable:
+                if version.executable == self.program.executable:
                     self.label_version.setText(version.version)
                     return
 
@@ -75,7 +73,7 @@ class ProgramInfoPerl(ProgramInfo, Ui_ProgramInfoPerl):
         self.label_command.setText(self.program.cast_custom_option_value('perl.command', unicode, '<unknown>'))
 
         # working directory
-        self.label_working_directory.setText(unicode(self.program.working_directory))
+        self.label_working_directory.setText(self.program.working_directory)
 
         # options
         self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('perl.options', unicode, [])))

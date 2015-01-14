@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_wizard_edit.py: Edit Program Wizard
 
@@ -44,7 +44,7 @@ class ProgramWizardEdit(ProgramWizard):
         if self.currentId() == Constants.PAGE_GENERAL:
             return ProgramWizard.get_field(self, name)
         elif name == 'identifier':
-            return QVariant(unicode(self.program.identifier))
+            return QVariant(self.program.identifier)
         elif name == 'name':
             return QVariant(self.program.cast_custom_option_value('name', unicode, '<unknown>'))
         elif name == 'language':

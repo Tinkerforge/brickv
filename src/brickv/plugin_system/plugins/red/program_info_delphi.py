@@ -65,7 +65,7 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
             self.label_compile_from_source.setText('Disabled')
 
         # working directory
-        self.label_working_directory.setText(unicode(self.program.working_directory))
+        self.label_working_directory.setText(self.program.working_directory)
 
         # make options
         self.label_make_options.setText('\n'.join(self.program.cast_custom_option_value_list('delphi.make_options', unicode, [])))
