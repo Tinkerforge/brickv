@@ -516,8 +516,8 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                             dns_dhcp_enabled = True
                             dhcp_range_start = '192.168.42.50'
                             dhcp_range_end = '192.168.42.254'
-                            server_name = 'RED-Brick'
-                            domain = 'red-brick.local'
+                            server_name = 'red-brick'
+                            domain = 'tf.local'
                             dhcp_option_netmask = '255.255.255.0'
 
                             lines = dnsmasq_conf.splitlines()
