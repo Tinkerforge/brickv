@@ -32,7 +32,7 @@ from brickv.utils import get_main_window
 
 BUTTON_STATE_DEFAULT = 1
 BUTTON_STATE_REFRESH = 2
-BUTTON_STATE_APPLY   = 3
+BUTTON_STATE_SAVE    = 3
 
 AP_INTERFACE_IP_USER_ROLE = QtCore.Qt.UserRole + 1
 AP_INTERFACE_MASK_USER_ROLE = QtCore.Qt.UserRole + 2
@@ -53,23 +53,23 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
         self.is_tab_on_focus = False
 
-        self.applying = False
+        self.saving = False
         self.label_ap_unsupported.hide()
         self.label_ap_disabled.hide()
-        self.label_applying.hide()
-        self.pbar_applying.hide()
+        self.label_working_wait.hide()
+        self.pbar_working_wait.hide()
         self.sarea_ap.hide()
 
         self.cbox_ap_interface.currentIndexChanged.connect(self.slot_cbox_ap_interface_current_index_changed)
         self.chkbox_ap_wpa_key_show.stateChanged.connect(self.slot_chkbox_ap_wpa_key_show_state_changed)
         self.chkbox_ap_enable_dns_dhcp.stateChanged.connect(self.slot_chkbox_ap_enable_dns_dhcp_state_changed)
         self.pbutton_ap_refresh.clicked.connect(self.slot_pbutton_ap_refresh_clicked)
-        self.pbutton_ap_apply.clicked.connect(self.slot_pbutton_ap_apply_clicked)
+        self.pbutton_ap_save.clicked.connect(self.slot_pbutton_ap_save_clicked)
 
     def tab_on_focus(self):
         self.is_tab_on_focus = True
 
-        if self.applying:
+        if self.saving:
             return
 
         if self.image_version.number < (1, 4):
@@ -90,16 +90,16 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
         if state == BUTTON_STATE_DEFAULT:
             self.pbutton_ap_refresh.setEnabled(True)
             self.pbutton_ap_refresh.setText('Refresh')
-            self.pbutton_ap_apply.setText('Apply')
+            self.pbutton_ap_save.setText('Save')
 
         elif state == BUTTON_STATE_REFRESH:
             self.pbutton_ap_refresh.setText('Refreshing...')
             self.pbutton_ap_refresh.setEnabled(False)
-            self.pbutton_ap_apply.setText('Apply')
+            self.pbutton_ap_save.setText('Save')
 
         else:
             self.pbutton_ap_refresh.setText('Refresh')
-            self.pbutton_ap_apply.setText('Applying...')
+            self.pbutton_ap_save.setText('Saving...')
 
     def dns_dhcp_gui(self, enable):
         if enable:
@@ -224,11 +224,11 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
         self.script_manager.execute_script('settings_network_apmode_check',
                                            cb_settings_network_apmode_check)
 
-    def slot_pbutton_ap_apply_clicked(self):
+    def slot_pbutton_ap_save_clicked(self):
         def cb_settings_network_apmode_apply(result):
-            self.label_applying.hide()
-            self.pbar_applying.hide()
-            self.applying = False
+            self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
+            self.saving = False
             self.sarea_ap.setEnabled(True)
             self.update_button_text_state(BUTTON_STATE_DEFAULT)
 
@@ -237,10 +237,10 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
                 QtGui.QMessageBox.information(get_main_window(),
                                               'Settings | Access Point',
-                                              'Access point settings applied.',
+                                              'Access point settings saved.',
                                               QtGui.QMessageBox.Ok)
             else:
-                err_msg = 'Error applying access point settings.\n\n' + result.stderr
+                err_msg = 'Error saving access point settings.\n\n' + result.stderr
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
                                            err_msg,
@@ -365,20 +365,20 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             apply_dict['dhcp_end']         = dhcp_end
             apply_dict['dhcp_mask']        = dhcp_mask
 
-            self.applying = True
-            self.label_applying.show()
-            self.pbar_applying.show()
+            self.saving = True
+            self.label_working_wait.show()
+            self.pbar_working_wait.show()
             self.sarea_ap.setEnabled(False)
-            self.update_button_text_state(BUTTON_STATE_APPLY)
+            self.update_button_text_state(BUTTON_STATE_SAVE)
 
             self.script_manager.execute_script('settings_network_apmode_apply',
                                                cb_settings_network_apmode_apply,
                                                [json.dumps(apply_dict)])
 
         except Exception as e:
-            self.label_applying.hide()
-            self.pbar_applying.hide()
-            self.applying = False
+            self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
+            self.saving = False
             self.sarea_ap.show()
             self.update_button_text_state(BUTTON_STATE_DEFAULT)
             err_msg = 'Error occured while processing input data.\n\n' + str(e)
