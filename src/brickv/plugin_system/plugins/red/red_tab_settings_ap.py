@@ -62,12 +62,14 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
         self.cbox_ap_interface.currentIndexChanged.connect(self.slot_cbox_ap_interface_current_index_changed)
         self.chkbox_ap_wpa_key_show.stateChanged.connect(self.slot_chkbox_ap_wpa_key_show_state_changed)
-        self.chkbox_ap_enable_dns_dhcp.stateChanged.connect(self.slot_chkbox_ap_enable_dns_dhcp_state_changed)
+        self.chkbox_ap_enable_dns_dhcp.stateChanged.connect(self.update_ui_state)
         self.pbutton_ap_refresh.clicked.connect(self.slot_pbutton_ap_refresh_clicked)
         self.pbutton_ap_save.clicked.connect(self.slot_pbutton_ap_save_clicked)
 
     def tab_on_focus(self):
         self.is_tab_on_focus = True
+
+        self.update_ui_state()
 
         if self.saving:
             return
@@ -101,51 +103,62 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             self.pbutton_ap_refresh.setText('Refresh')
             self.pbutton_ap_save.setText('Saving...')
 
-    def dns_dhcp_gui(self, enable):
-        if enable:
-            self.label_ap_server_name.show()
-            self.ledit_ap_server_name.show()
-            self.label_ap_domain.show()
-            self.ledit_ap_domain.show()
-            self.label_ap_pool_start.show()
-            self.sbox_ap_pool_start1.show()
-            self.sbox_ap_pool_start2.show()
-            self.sbox_ap_pool_start3.show()
-            self.sbox_ap_pool_start4.show()
+    def update_ui_state(self):
+        has_interface = self.cbox_ap_interface.count() > 0
+        dhcp_visible = has_interface and self.chkbox_ap_enable_dns_dhcp.isChecked()
 
-            self.label_ap_pool_end.show()
-            self.sbox_ap_pool_end1.show()
-            self.sbox_ap_pool_end2.show()
-            self.sbox_ap_pool_end3.show()
-            self.sbox_ap_pool_end4.show()
+        self.label_interface.setVisible(has_interface)
+        self.cbox_ap_interface.setVisible(has_interface)
 
-            self.label_ap_pool_mask.show()
-            self.sbox_ap_pool_mask1.show()
-            self.sbox_ap_pool_mask2.show()
-            self.sbox_ap_pool_mask3.show()
-            self.sbox_ap_pool_mask4.show()
-        else:
-            self.label_ap_server_name.hide()
-            self.ledit_ap_server_name.hide()
-            self.label_ap_domain.hide()
-            self.ledit_ap_domain.hide()
-            self.label_ap_pool_start.hide()
-            self.sbox_ap_pool_start1.hide()
-            self.sbox_ap_pool_start2.hide()
-            self.sbox_ap_pool_start3.hide()
-            self.sbox_ap_pool_start4.hide()
+        self.label_ip.setVisible(has_interface)
+        self.sbox_ap_intf_ip1.setVisible(has_interface)
+        self.sbox_ap_intf_ip2.setVisible(has_interface)
+        self.sbox_ap_intf_ip3.setVisible(has_interface)
+        self.sbox_ap_intf_ip4.setVisible(has_interface)
 
-            self.label_ap_pool_end.hide()
-            self.sbox_ap_pool_end1.hide()
-            self.sbox_ap_pool_end2.hide()
-            self.sbox_ap_pool_end3.hide()
-            self.sbox_ap_pool_end4.hide()
+        self.label_subnet_mask.setVisible(has_interface)
+        self.sbox_ap_intf_mask1.setVisible(has_interface)
+        self.sbox_ap_intf_mask2.setVisible(has_interface)
+        self.sbox_ap_intf_mask3.setVisible(has_interface)
+        self.sbox_ap_intf_mask4.setVisible(has_interface)
 
-            self.label_ap_pool_mask.hide()
-            self.sbox_ap_pool_mask1.hide()
-            self.sbox_ap_pool_mask2.hide()
-            self.sbox_ap_pool_mask3.hide()
-            self.sbox_ap_pool_mask4.hide()
+        self.label_ssid.setVisible(has_interface)
+        self.ledit_ap_ssid.setVisible(has_interface)
+        self.chkbox_ap_ssid_hidden.setVisible(has_interface)
+
+        self.label_wpa_key.setVisible(has_interface)
+        self.ledit_ap_wpa_key.setVisible(has_interface)
+        self.chkbox_ap_wpa_key_show.setVisible(has_interface)
+
+        self.label_channel.setVisible(has_interface)
+        self.sbox_ap_channel.setVisible(has_interface)
+
+        self.line.setVisible(has_interface)
+        self.chkbox_ap_enable_dns_dhcp.setVisible(has_interface)
+
+        self.label_ap_server_name.setVisible(dhcp_visible)
+        self.ledit_ap_server_name.setVisible(dhcp_visible)
+        self.label_ap_domain.setVisible(dhcp_visible)
+        self.ledit_ap_domain.setVisible(dhcp_visible)
+        self.label_ap_pool_start.setVisible(dhcp_visible)
+        self.sbox_ap_pool_start1.setVisible(dhcp_visible)
+        self.sbox_ap_pool_start2.setVisible(dhcp_visible)
+        self.sbox_ap_pool_start3.setVisible(dhcp_visible)
+        self.sbox_ap_pool_start4.setVisible(dhcp_visible)
+
+        self.label_ap_pool_end.setVisible(dhcp_visible)
+        self.sbox_ap_pool_end1.setVisible(dhcp_visible)
+        self.sbox_ap_pool_end2.setVisible(dhcp_visible)
+        self.sbox_ap_pool_end3.setVisible(dhcp_visible)
+        self.sbox_ap_pool_end4.setVisible(dhcp_visible)
+
+        self.label_ap_pool_mask.setVisible(dhcp_visible)
+        self.sbox_ap_pool_mask1.setVisible(dhcp_visible)
+        self.sbox_ap_pool_mask2.setVisible(dhcp_visible)
+        self.sbox_ap_pool_mask3.setVisible(dhcp_visible)
+        self.sbox_ap_pool_mask4.setVisible(dhcp_visible)
+
+        self.line2.setVisible(has_interface)
 
     def slot_cbox_ap_interface_current_index_changed(self, index):
         ip = self.cbox_ap_interface.itemData(index, AP_INTERFACE_IP_USER_ROLE).toString()
@@ -180,12 +193,6 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
         else:
             self.ledit_ap_wpa_key.setEchoMode(QtGui.QLineEdit.Password)
 
-    def slot_chkbox_ap_enable_dns_dhcp_state_changed(self, state):
-        if state == QtCore.Qt.Checked:
-            self.dns_dhcp_gui(True)
-        else:
-            self.dns_dhcp_gui(False)
-
     def slot_pbutton_ap_refresh_clicked(self):
         def cb_settings_network_apmode_status(result):
             self.update_button_text_state(BUTTON_STATE_DEFAULT)
@@ -203,21 +210,22 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                    ap_mode_status['ap_first_time'] is None or \
                    ap_mode_status['ap_incomplete_config'] is None or \
                    ap_mode_status['ap_hardware_or_config_problem'] is None:
-                        self.label_ap_status.setText('-')
-                        QtGui.QMessageBox.critical(get_main_window(),
-                                                   'Settings | Access Point',
-                                                   'Error checking access point mode.',
-                                                   QtGui.QMessageBox.Ok)
+                    self.label_ap_status.setText('-')
+                    QtGui.QMessageBox.critical(get_main_window(),
+                                               'Settings | Access Point',
+                                               'Error checking access point mode.',
+                                               QtGui.QMessageBox.Ok)
                 elif not ap_mode_status['ap_incomplete_config'] and \
                      not ap_mode_status['ap_hardware_or_config_problem']:
                         self.label_ap_status.setText('Active')
                 elif ap_mode_status['ap_first_time']:
-                    self.label_ap_status.setText('Inactive - Select an interface and save')
+                    self.label_ap_status.setText('Inactive - Select an interface and click save')
                 elif ap_mode_status['ap_incomplete_config']:
-                    self.label_ap_status.setText('Inactive - Incomplete configuration, check your configuration and save')
+                    self.label_ap_status.setText('Inactive - Incomplete configuration, check your configuration and click save')
                 elif ap_mode_status['ap_hardware_or_config_problem']:
                     self.label_ap_status.setText('Inactive - Hardware not supported or wrong configuration')
 
+                self.update_ui_state()
                 self.read_config_files()
             else:
                 self.label_ap_status.setText('-')
@@ -410,14 +418,12 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                 ap_mode_interfaces = json.loads(result.stdout)
 
                                 if len(ap_mode_interfaces) <= 0:
-                                    self.cbox_ap_interface.clear()
                                     self.label_ap_status.setText('Inactive - No wireless interface available')
-                                    self.cbox_ap_interface.addItem('No wireless interface available')
-                                    self.cbox_ap_interface.setEnabled(False)
+                                    self.cbox_ap_interface.clear()
                                     self.pbutton_ap_save.setEnabled(False)
+                                    self.update_ui_state()
                                     return
 
-                                self.cbox_ap_interface.setEnabled(True)
                                 self.pbutton_ap_save.setEnabled(True)
                                 self.cbox_ap_interface.clear()
 
@@ -470,6 +476,8 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                                            'Settings | Access Point',
                                                            err_msg,
                                                            QtGui.QMessageBox.Ok)
+
+                            self.update_ui_state()
 
                         hostapd_conf = result.data.decode('utf-8')
 
@@ -524,6 +532,8 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                                err_msg,
                                                QtGui.QMessageBox.Ok)
 
+                self.update_ui_state()
+
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
 
         def cb_open_error_hostapd_conf():
@@ -532,6 +542,8 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                        'Settings | Access Point',
                                        err_msg,
                                        QtGui.QMessageBox.Ok)
+
+            self.update_ui_state()
 
         def cb_open_dnsmasq_conf(red_file):
             def cb_read(red_file, result):
@@ -623,6 +635,8 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                                err_msg,
                                                QtGui.QMessageBox.Ok)
 
+                self.update_ui_state()
+
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
 
         def cb_open_error_dnsmasq_conf():
@@ -631,6 +645,8 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                        'Settings | Access Point',
                                        err_msg,
                                        QtGui.QMessageBox.Ok)
+
+            self.update_ui_state()
 
         async_call(self.hostapd_conf_rfile.open,
                    (HOSTAPD_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
