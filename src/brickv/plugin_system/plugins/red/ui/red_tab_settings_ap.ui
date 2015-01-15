@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="4" column="0">
+   <item row="5" column="0">
     <widget class="QProgressBar" name="pbar_applying">
      <property name="maximum">
       <number>0</number>
@@ -24,7 +24,7 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="0">
+   <item row="8" column="0">
     <widget class="QScrollArea" name="sarea_ap">
      <property name="widgetResizable">
       <bool>true</bool>
@@ -35,7 +35,7 @@
         <x>0</x>
         <y>0</y>
         <width>674</width>
-        <height>554</height>
+        <height>531</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
@@ -219,7 +219,7 @@
         </widget>
        </item>
        <item row="13" column="0">
-        <widget class="QLabel" name="label_7">
+        <widget class="QLabel" name="label_ap_pool_end">
          <property name="text">
           <string>DHCP Pool End:</string>
          </property>
@@ -288,7 +288,7 @@
         </widget>
        </item>
        <item row="12" column="0">
-        <widget class="QLabel" name="label_6">
+        <widget class="QLabel" name="label_ap_pool_start">
          <property name="text">
           <string>DHCP Pool Start:</string>
          </property>
@@ -322,7 +322,7 @@
         </widget>
        </item>
        <item row="11" column="0">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="label_ap_domain">
          <property name="text">
           <string>Domain:</string>
          </property>
@@ -357,7 +357,7 @@
         </widget>
        </item>
        <item row="14" column="0">
-        <widget class="QLabel" name="label_8">
+        <widget class="QLabel" name="label_ap_pool_mask">
          <property name="text">
           <string>DHCP Subnet Mask:</string>
          </property>
@@ -413,7 +413,7 @@
         </widget>
        </item>
        <item row="10" column="0">
-        <widget class="QLabel" name="label_12">
+        <widget class="QLabel" name="label_ap_server_name">
          <property name="text">
           <string>Server Name:</string>
          </property>
@@ -426,7 +426,7 @@
      </widget>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="label_applying">
      <property name="text">
       <string>Working, please wait...</string>
@@ -436,7 +436,20 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_ap_discovering">
+     <property name="text">
+      <string>Discovering service configuration...</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
     <widget class="QLabel" name="label_ap_disabled">
      <property name="enabled">
       <bool>true</bool>
@@ -452,10 +465,10 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
+   <item row="1" column="0">
     <widget class="QLabel" name="label_ap_unsupported">
      <property name="text">
-      <string>Image Version &gt;= 1.4 required for access point service.</string>
+      <string>Access point service requires Image Version &gt;= 1.4</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
