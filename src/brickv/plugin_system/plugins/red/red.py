@@ -26,11 +26,11 @@ from PyQt4.QtGui import QLabel, QVBoxLayout
 from PyQt4.QtCore import Qt
 
 from brickv.plugin_system.plugin_base import PluginBase
-
 from brickv.plugin_system.plugins.red.ui_red import Ui_RED
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 from brickv.async_call import async_call
+import re
 
 class RED(PluginBase, Ui_RED):
     def __init__(self, *args):
@@ -51,7 +51,7 @@ class RED(PluginBase, Ui_RED):
 
             return
 
-        self.image_version_ref = ['<unknown>']
+        self.image_version_ref = ['<unknown>', (0, 0), '<unknown>']
         self.label_version     = None
         self.script_manager    = ScriptManager(self.session)
         self.tabs              = []
@@ -87,10 +87,18 @@ class RED(PluginBase, Ui_RED):
                                      0, 0, 0).read(256).decode('utf-8').strip()
 
             def cb_success(image_version):
-                self.image_version_ref[0] = image_version
-
                 if self.label_version != None:
                     self.label_version.setText(image_version)
+
+                m = re.match(r'(\d+)\.(\d+)\s+\((.+)\)', image_version)
+
+                if m != None:
+                    try:
+                        self.image_version_ref[0] = image_version
+                        self.image_version_ref[1] = (int(m.group(1)), int(m.group(2)))
+                        self.image_version_ref[2] = m.group(3)
+                    except:
+                        pass
 
             async_call(read_image_version_async, REDFile(self.session), cb_success, None)
 
