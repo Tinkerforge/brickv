@@ -141,6 +141,7 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
                     else:
                         self.chkbox_ap.setChecked(False)
                         self.chkbox_ap.setEnabled(False)
+                        self.chkbox_ap.setText('Access Point Mode (Image Versiom >= 1.4 required)')
 
                     self.pbutton_services_save.setEnabled(False)
         else:

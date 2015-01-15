@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>709</width>
-    <height>711</height>
+    <width>694</width>
+    <height>674</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0">
+   <item row="5" column="0">
     <widget class="QProgressBar" name="pbar_applying">
      <property name="maximum">
       <number>0</number>
@@ -24,20 +24,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_ap_disabled">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;body&gt;&lt;p&gt;To be able to use the RED Brick as wireless access point you must have a wireless interface and the access point service must be enabled from the services tab.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Important:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;The wireless access point feature is only available on image version 1.4 and later.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
+   <item row="8" column="0">
     <widget class="QScrollArea" name="sarea_ap">
      <property name="widgetResizable">
       <bool>true</bool>
@@ -47,8 +34,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>689</width>
-        <height>539</height>
+        <width>674</width>
+        <height>531</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
@@ -439,10 +426,49 @@
      </widget>
     </widget>
    </item>
-   <item row="0" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="label_applying">
      <property name="text">
       <string>Working, please wait...</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_ap_discovering">
+     <property name="text">
+      <string>Discovering service configuration...</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_ap_disabled">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>Access point service is disabled.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_ap_unsupported">
+     <property name="text">
+      <string>Access point service requires Image Version &gt;= 1.4</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>

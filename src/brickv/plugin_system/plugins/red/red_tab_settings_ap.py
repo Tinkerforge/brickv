@@ -42,19 +42,23 @@ DNSMASQ_CONF_PATH = '/etc/dnsmasq.conf'
 class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
     def __init__(self):
         QtGui.QWidget.__init__(self)
+
         self.setupUi(self)
-        
-        self.session        = None # Set from REDTabSettings
-        self.script_manager = None # Set from REDTabSettings
+
+        self.session           = None # Set from REDTabSettings
+        self.script_manager    = None # Set from REDTabSettings
+        self.image_version_ref = None # Set from REDTabSettings
 
         self.is_tab_on_focus = False
 
         self.applying = False
         self.ap_mode = False
+        self.label_ap_unsupported.hide()
         self.label_ap_disabled.hide()
         self.label_applying.hide()
         self.pbar_applying.hide()
-        
+        self.sarea_ap.hide()
+
         self.cbox_ap_interface.currentIndexChanged.connect(self.slot_cbox_ap_interface_current_index_changed)
         self.chkbox_ap_wpa_key_show.stateChanged.connect(self.slot_chkbox_ap_wpa_key_show_state_changed)
         self.chkbox_ap_enable_dns_dhcp.stateChanged.connect(self.slot_chkbox_ap_enable_dns_dhcp_state_changed)
@@ -63,11 +67,16 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
     def tab_on_focus(self):
         self.is_tab_on_focus = True
-        
+
         if self.applying:
             return
 
-        self.slot_pbutton_ap_refresh_clicked()
+        if self.image_version_ref[1] < (1, 4):
+            self.label_ap_discovering.hide()
+            self.label_ap_unsupported.show()
+            self.sarea_ap.hide()
+        else:
+            self.slot_pbutton_ap_refresh_clicked()
 
     def tab_off_focus(self):
         self.is_tab_on_focus = False
@@ -97,12 +106,12 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             self.sbox_ap_pool_start2.setEnabled(True)
             self.sbox_ap_pool_start3.setEnabled(True)
             self.sbox_ap_pool_start4.setEnabled(True)
-            
+
             self.sbox_ap_pool_end1.setEnabled(True)
             self.sbox_ap_pool_end2.setEnabled(True)
             self.sbox_ap_pool_end3.setEnabled(True)
             self.sbox_ap_pool_end4.setEnabled(True)
-            
+
             self.sbox_ap_pool_mask1.setEnabled(True)
             self.sbox_ap_pool_mask2.setEnabled(True)
             self.sbox_ap_pool_mask3.setEnabled(True)
@@ -113,12 +122,12 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             self.sbox_ap_pool_start2.setEnabled(False)
             self.sbox_ap_pool_start3.setEnabled(False)
             self.sbox_ap_pool_start4.setEnabled(False)
-            
+
             self.sbox_ap_pool_end1.setEnabled(False)
             self.sbox_ap_pool_end2.setEnabled(False)
             self.sbox_ap_pool_end3.setEnabled(False)
             self.sbox_ap_pool_end4.setEnabled(False)
-            
+
             self.sbox_ap_pool_mask1.setEnabled(False)
             self.sbox_ap_pool_mask2.setEnabled(False)
             self.sbox_ap_pool_mask3.setEnabled(False)
@@ -134,18 +143,18 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             ip2 = ip_list[1]
             ip3 = ip_list[2]
             ip4 = ip_list[3]
-            
+
             mask_list = mask.split('.')
             mask1 = mask_list[0]
             mask2 = mask_list[1]
             mask3 = mask_list[2]
             mask4 = mask_list[3]
-            
+
             self.sbox_ap_intf_ip1.setValue(int(ip1))
             self.sbox_ap_intf_ip2.setValue(int(ip2))
             self.sbox_ap_intf_ip3.setValue(int(ip3))
             self.sbox_ap_intf_ip4.setValue(int(ip4))
-            
+
             self.sbox_ap_intf_mask1.setValue(int(mask1))
             self.sbox_ap_intf_mask2.setValue(int(mask2))
             self.sbox_ap_intf_mask3.setValue(int(mask3))
@@ -172,6 +181,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
             if result and not result.stderr and result.exit_code == 0:
                 ap_mode_check = json.loads(result.stdout)
+
                 if ap_mode_check['ap_interface'] is None or \
                    ap_mode_check['ap_enabled'] is None or \
                    ap_mode_check['ap_active'] is None:
@@ -206,7 +216,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
         self.script_manager.execute_script('settings_network_apmode_check',
                                            cb_settings_network_apmode_check)
 
-    def slot_pbutton_ap_apply_clicked(self):      
+    def slot_pbutton_ap_apply_clicked(self):
         def cb_settings_network_apmode_apply(result):
             self.label_applying.hide()
             self.pbar_applying.hide()
@@ -248,22 +258,22 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             interface_mask = self.cbox_ap_interface.itemData(self.cbox_ap_interface.currentIndex(),
                                                              AP_INTERFACE_MASK_USER_ROLE).toString()
             ssid = self.ledit_ap_ssid.text()
-            
+
             if self.chkbox_ap_ssid_hidden.checkState() == QtCore.Qt.Checked:
                 ssid_hidden = True
             else:
                 ssid_hidden = False
-            
+
             wpa_key = self.ledit_ap_wpa_key.text()
             channel = unicode(self.sbox_ap_channel.value())
-            
+
             if self.chkbox_ap_enable_dns_dhcp.checkState() == QtCore.Qt.Checked:
                 enabled_dns_dhcp =  True
             else:
                 enabled_dns_dhcp =  False
-            
+
             server_name = self.ledit_ap_server_name.text()
-            
+
             domain = self.ledit_ap_domain.text()
 
             dhcp_start_list = []
@@ -272,14 +282,14 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             dhcp_start_list.append(unicode(self.sbox_ap_pool_start3.value()))
             dhcp_start_list.append(unicode(self.sbox_ap_pool_start4.value()))
             dhcp_start = '.'.join(dhcp_start_list)
-            
+
             dhcp_end_list = []
             dhcp_end_list.append(unicode(self.sbox_ap_pool_end1.value()))
             dhcp_end_list.append(unicode(self.sbox_ap_pool_end2.value()))
             dhcp_end_list.append(unicode(self.sbox_ap_pool_end3.value()))
             dhcp_end_list.append(unicode(self.sbox_ap_pool_end4.value()))
             dhcp_end = '.'.join(dhcp_end_list)
-            
+
             dhcp_mask_list = []
             dhcp_mask_list.append(unicode(self.sbox_ap_pool_mask1.value()))
             dhcp_mask_list.append(unicode(self.sbox_ap_pool_mask2.value()))
@@ -307,7 +317,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                            'WPA key empty.',
                                            QtGui.QMessageBox.Ok)
                 return
-            
+
             elif not server_name:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
@@ -361,13 +371,14 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
     def ap_mode_enabled(self):
         self.ap_mode = True
+        self.label_ap_discovering.hide()
         self.label_ap_disabled.hide()
         self.sarea_ap.show()
 
         self.hostapd_conf_rfile = REDFile(self.session)
         self.dnsmasq_conf_rfile = REDFile(self.session)
         self.interfaces_conf_rfile = REDFile(self.session)
-        
+
         def cb_open_hostapd_conf(red_file):
             def cb_read(red_file, result):
                 red_file.release()
@@ -380,7 +391,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                         def cb_settings_network_apmode_get_interfaces(result):
                             if not self.is_tab_on_focus:
                                 return
-                        
+
                             if result and not result.stderr and result.exit_code == 0:
                                 ap_mode_interfaces = json.loads(result.stdout)
 
@@ -437,7 +448,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                                            QtGui.QMessageBox.Ok)
 
                         hostapd_conf = result.data.decode('utf-8')
-                        
+
                         if hostapd_conf:
                             lines = hostapd_conf.splitlines()
 
@@ -449,22 +460,22 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
                             for l in lines:
                                 l_split = l.strip().split('=')
-    
+
                                 if len(l_split) != 2:
                                     continue
-    
+
                                 if l_split[0].strip(' ') == 'interface':
                                     interface = l_split[1].strip(' ')
-    
+
                                 elif l_split[0].strip(' ') == 'ssid':
                                     ssid = l_split[1].strip(' ')
-                                
+
                                 elif l_split[0].strip(' ') == 'channel':
                                     channel = l_split[1].strip(' ')
-                                
+
                                 elif l_split[0].strip(' ') == 'ignore_broadcast_ssid':
                                     ssid_hidden = l_split[1].strip(' ')
-                                
+
                                 elif l_split[0].strip(' ') == 'wpa_passphrase':
                                     wpa_key = l_split[1]
 
@@ -529,7 +540,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                     dns_dhcp_enabled = False
 
                                 l_split = l.strip().split('=')
-    
+
                                 if len(l_split) != 2:
                                     continue
 
@@ -537,21 +548,21 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                     dhcp_range = l_split[1].strip(' ').split(',')
                                     dhcp_range_start = dhcp_range[0]
                                     dhcp_range_end = dhcp_range[1]
-    
+
                                 elif l_split[0].strip(' ') == 'address':
                                     l_split1 = l_split[1].split('/')
                                     if len(l_split1) == 3:
                                         server_name = l_split1[1]
-    
+
                                 elif l_split[0].strip(' ') == 'domain':
                                     domain= l_split[1].strip(' ')
-                                
+
                                 elif l_split[0].strip(' ') == 'dhcp-option':
                                     dhcp_option = l_split[1].strip(' ').split(',')
                                     if len(dhcp_option) == 2:
                                         if dhcp_option[0].strip(' ') == 'option:netmask':
                                             dhcp_option_netmask = dhcp_option[1]
-                            
+
                             if dns_dhcp_enabled:
                                 self.chkbox_ap_enable_dns_dhcp.setCheckState(QtCore.Qt.Unchecked)
                                 self.chkbox_ap_enable_dns_dhcp.setCheckState(QtCore.Qt.Checked)
@@ -568,17 +579,17 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                             dhcp_range_start_list = dhcp_range_start.split('.')
                             dhcp_range_end_list = dhcp_range_end.split('.')
                             dhcp_option_netmask_list = dhcp_option_netmask.split('.')
-                            
+
                             self.sbox_ap_pool_start1.setValue(int(dhcp_range_start_list[0]))
                             self.sbox_ap_pool_start2.setValue(int(dhcp_range_start_list[1]))
                             self.sbox_ap_pool_start3.setValue(int(dhcp_range_start_list[2]))
                             self.sbox_ap_pool_start4.setValue(int(dhcp_range_start_list[3]))
-                            
+
                             self.sbox_ap_pool_end1.setValue(int(dhcp_range_end_list[0]))
                             self.sbox_ap_pool_end2.setValue(int(dhcp_range_end_list[1]))
                             self.sbox_ap_pool_end3.setValue(int(dhcp_range_end_list[2]))
                             self.sbox_ap_pool_end4.setValue(int(dhcp_range_end_list[3]))
-                            
+
                             self.sbox_ap_pool_mask1.setValue(int(dhcp_option_netmask_list[0]))
                             self.sbox_ap_pool_mask2.setValue(int(dhcp_option_netmask_list[1]))
                             self.sbox_ap_pool_mask3.setValue(int(dhcp_option_netmask_list[2]))
@@ -605,7 +616,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                        'Settings | Access Point',
                                        err_msg,
                                        QtGui.QMessageBox.Ok)
-        
+
         async_call(self.hostapd_conf_rfile.open,
                    (HOSTAPD_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                    cb_open_hostapd_conf,
@@ -618,5 +629,6 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
     def ap_mode_disabled(self):
         self.ap_mode = False
+        self.label_ap_discovering.hide()
         self.label_ap_disabled.show()
         self.sarea_ap.hide()

@@ -6,25 +6,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>705</width>
-    <height>623</height>
+    <width>699</width>
+    <height>669</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+   <item row="1" column="0">
     <widget class="QLabel" name="label_net_disabled">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Important:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;To connect the RED Brick to another network the access point service must be disabled from the services tab.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>Network configuration is disabled while access point service is enabled.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
      <property name="wordWrap">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QScrollArea" name="sarea_net">
      <property name="widgetResizable">
       <bool>true</bool>
@@ -34,7 +37,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>669</width>
+        <width>663</width>
         <height>803</height>
        </rect>
       </property>
@@ -600,6 +603,19 @@
        </item>
       </layout>
      </widget>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_net_discovering">
+     <property name="text">
+      <string>Discovering service configuration...</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
   </layout>

@@ -69,11 +69,7 @@
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
-           <string>Select a program from the list to inspect and modify it.
-
-Click the &quot;Refresh&quot; button to update the list of available programs.
-
-Click the &quot;New&quot; button to create a new program.</string>
+           <string>Click the &quot;New&quot; button to create a new program.</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
