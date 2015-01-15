@@ -49,11 +49,11 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
         self.session        = None # Set from REDTabSettings
         self.script_manager = None # Set from REDTabSettings
         self.image_version  = None # Set from REDTabSettings
+        self.service_state  = None # Set from REDTabSettings
 
         self.is_tab_on_focus = False
 
         self.applying = False
-        self.ap_mode = False
         self.label_ap_unsupported.hide()
         self.label_ap_disabled.hide()
         self.label_applying.hide()
@@ -73,10 +73,11 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             return
 
         if self.image_version.number < (1, 4):
-            self.label_ap_discovering.hide()
             self.label_ap_unsupported.show()
-            self.sarea_ap.hide()
+        elif not self.service_state.ap:
+            self.label_ap_disabled.show()
         else:
+            self.sarea_ap.show()
             self.slot_pbutton_ap_refresh_clicked()
 
     def tab_off_focus(self):
@@ -184,24 +185,19 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                 ap_mode_check = json.loads(result.stdout)
 
                 if ap_mode_check['ap_interface'] is None or \
-                   ap_mode_check['ap_enabled'] is None or \
                    ap_mode_check['ap_active'] is None:
-                        self.label_ap_status.setText('-')
-                        QtGui.QMessageBox.critical(get_main_window(),
-                                                   'Settings | Access Point',
-                                                   'Error checking access point mode.',
-                                                   QtGui.QMessageBox.Ok)
-                elif ap_mode_check['ap_enabled']:
-                        if ap_mode_check['ap_active']:
-                            self.label_ap_status.setText('Active')
-                        else:
-                            self.label_ap_status.setText('Inactive')
-
-                        self.ap_mode_enabled()
-                else:
                     self.label_ap_status.setText('-')
-                    self.ap_mode_disabled()
+                    QtGui.QMessageBox.critical(get_main_window(),
+                                               'Settings | Access Point',
+                                               'Error checking access point mode.',
+                                               QtGui.QMessageBox.Ok)
+                else:
+                    if ap_mode_check['ap_active']:
+                        self.label_ap_status.setText('Active')
+                    else:
+                        self.label_ap_status.setText('Inactive')
 
+                    self.read_config_files()
             else:
                 self.label_ap_status.setText('-')
                 self.update_button_text_state(BUTTON_STATE_DEFAULT)
@@ -380,12 +376,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                        err_msg,
                                        QtGui.QMessageBox.Ok)
 
-    def ap_mode_enabled(self):
-        self.ap_mode = True
-        self.label_ap_discovering.hide()
-        self.label_ap_disabled.hide()
-        self.sarea_ap.show()
-
+    def read_config_files(self):
         self.hostapd_conf_rfile = REDFile(self.session)
         self.dnsmasq_conf_rfile = REDFile(self.session)
         self.interfaces_conf_rfile = REDFile(self.session)
@@ -637,9 +628,3 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                    (DNSMASQ_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                    cb_open_dnsmasq_conf,
                    cb_open_error_dnsmasq_conf)
-
-    def ap_mode_disabled(self):
-        self.ap_mode = False
-        self.label_ap_discovering.hide()
-        self.label_ap_disabled.show()
-        self.sarea_ap.hide()

@@ -25,27 +25,70 @@ Boston, MA 02111-1307, USA.
 
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_settings import Ui_REDTabSettings
+import json
+
+class ServiceState(object):
+    fetched      = False
+    gpu          = None
+    desktopenv   = None
+    webserver    = None
+    splashscreen = None
+    ap           = None
 
 class REDTabSettings(REDTab, Ui_REDTabSettings):
     def __init__(self):
         REDTab.__init__(self)
 
+        self.tabs          = []
+        self.service_state = ServiceState()
+
         self.setupUi(self)
 
-        self.tabs = []
+        self.tab_widget.hide()
 
         for i in range(self.tab_widget.count()):
             self.tabs.append(self.tab_widget.widget(i))
 
         self.tab_widget.currentChanged.connect(self.tab_widget_current_changed)
 
+    def cb_settings_services_check(self, result):
+        if result and result.stdout and not result.stderr and result.exit_code == 0:
+            services_check_result = json.loads(result.stdout)
+
+            if services_check_result:
+                if services_check_result['gpu'] is None or \
+                   services_check_result['desktopenv'] is None or \
+                   services_check_result['webserver'] is None or \
+                   services_check_result['splashscreen'] is None or \
+                   services_check_result['ap'] is None:
+                    self.label_discovering.setText('Error getting current services status.')
+                else:
+                    self.service_state.fetched      = True
+                    self.service_state.gpu          = services_check_result['gpu']
+                    self.service_state.desktopenv   = services_check_result['desktopenv']
+                    self.service_state.webserver    = services_check_result['webserver']
+                    self.service_state.splashscreen = services_check_result['splashscreen']
+                    self.service_state.ap           = services_check_result['ap']
+
+                    self.label_discovering.hide()
+                    self.tab_widget.show()
+                    self.tab_widget.currentWidget().tab_on_focus()
+        else:
+            self.label_discovering.setText('Error getting current services status.\n\n' + unicode(result.stderr))
+
     def tab_on_focus(self):
         for tab in self.tabs:
             tab.session        = self.session
             tab.script_manager = self.script_manager
             tab.image_version  = self.image_version
+            tab.service_state  = self.service_state
 
-        self.tab_widget.currentWidget().tab_on_focus()
+        if not self.service_state.fetched:
+            self.script_manager.execute_script('settings_services',
+                                               self.cb_settings_services_check,
+                                               ['CHECK'])
+        else:
+            self.tab_widget.currentWidget().tab_on_focus()
 
     def tab_off_focus(self):
         for tab in self.tabs:

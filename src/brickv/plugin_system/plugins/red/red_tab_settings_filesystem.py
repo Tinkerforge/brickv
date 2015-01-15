@@ -37,6 +37,8 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
 
         self.session        = None # Set from REDTabSettings
         self.script_manager = None # Set from REDTabSettings
+        self.image_version  = None # Set from REDTabSettings
+        self.service_state  = None # Set from REDTabSettings
 
         self.is_tab_on_focus = False
 

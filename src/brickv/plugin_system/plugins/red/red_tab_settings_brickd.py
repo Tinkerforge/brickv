@@ -50,6 +50,8 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
         
         self.session        = None # Set from REDTabSettings
         self.script_manager = None # Set from REDTabSettings
+        self.image_version  = None # Set from REDTabSettings
+        self.service_state  = None # Set from REDTabSettings
 
         self.brickd_conf = {}
 

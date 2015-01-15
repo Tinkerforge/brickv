@@ -36,6 +36,8 @@ class REDTabSettingsDateTime(QtGui.QWidget, Ui_REDTabSettingsDateTime):
         
         self.session        = None # Set from REDTabSettings
         self.script_manager = None # Set from REDTabSettings
+        self.image_version  = None # Set from REDTabSettings
+        self.service_state  = None # Set from REDTabSettings
 
         self.time_refresh_timer = QtCore.QTimer()
         self.time_refresh_timer.setInterval(1000)

@@ -86,34 +86,20 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <item>
-            <widget class="QPushButton" name="pbutton_services_refresh">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Refreshing...</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pbutton_services_save">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="text">
-              <string>Save</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
          <item row="6" column="0">
           <widget class="QCheckBox" name="chkbox_ap">
            <property name="text">
             <string>Access Point Mode</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QPushButton" name="pbutton_services_save">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Save</string>
            </property>
           </widget>
          </item>
@@ -144,7 +130,7 @@
   <tabstop>chkbox_desktopenv</tabstop>
   <tabstop>chkbox_webserver</tabstop>
   <tabstop>chkbox_splashscreen</tabstop>
-  <tabstop>pbutton_services_refresh</tabstop>
+  <tabstop>chkbox_ap</tabstop>
   <tabstop>pbutton_services_save</tabstop>
  </tabstops>
  <resources/>

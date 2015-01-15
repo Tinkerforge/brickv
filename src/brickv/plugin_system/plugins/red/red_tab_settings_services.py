@@ -31,125 +31,40 @@ import json
 class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
     def __init__(self):
         QtGui.QWidget.__init__(self)
+
         self.setupUi(self)
 
         self.session        = None # Set from REDTabSettings
         self.script_manager = None # Set from REDTabSettings
-
-        self.is_tab_on_focus = False
-
-        self.apply_dict = {'gpu'         : None,
-                           'desktopenv'  : None,
-                           'webserver'   : None,
-                           'splashscreen': None,
-                           'ap'          : None}
-
-        self.pbutton_services_save.clicked.connect(self.slot_pbutton_services_save_clicked)
-        self.pbutton_services_refresh.clicked.connect(self.slot_pbutton_services_refresh_clicked)
+        self.image_version  = None # Set from REDTabSettings
+        self.service_state  = None # Set from REDTabSettings
 
         self.chkbox_gpu.stateChanged.connect(self.service_config_changed)
         self.chkbox_desktopenv.stateChanged.connect(self.service_config_changed)
         self.chkbox_webserver.stateChanged.connect(self.service_config_changed)
         self.chkbox_splashscreen.stateChanged.connect(self.service_config_changed)
         self.chkbox_ap.stateChanged.connect(self.service_config_changed)
-
-        self.all_checkbox(False)
-
-    def all_checkbox(self, state):
-        if state:
-            self.chkbox_gpu.setEnabled(True)
-            self.chkbox_desktopenv.setEnabled(True)
-            self.chkbox_webserver.setEnabled(True)
-            self.chkbox_splashscreen.setEnabled(True)
-            self.chkbox_ap.setEnabled(True)
-            self.chkbox_gpu.setChecked(False)
-            self.chkbox_desktopenv.setChecked(False)
-            self.chkbox_webserver.setChecked(False)
-            self.chkbox_splashscreen.setChecked(False)
-            self.chkbox_ap.setChecked(False)
-        else:
-            self.chkbox_gpu.setChecked(False)
-            self.chkbox_desktopenv.setChecked(False)
-            self.chkbox_webserver.setChecked(False)
-            self.chkbox_splashscreen.setChecked(False)
-            self.chkbox_ap.setChecked(False)
-            self.chkbox_gpu.setEnabled(False)
-            self.chkbox_desktopenv.setEnabled(False)
-            self.chkbox_webserver.setEnabled(False)
-            self.chkbox_splashscreen.setEnabled(False)
-            self.chkbox_ap.setEnabled(False)
+        self.pbutton_services_save.clicked.connect(self.slot_pbutton_services_save_clicked)
 
     def tab_on_focus(self):
-        self.is_tab_on_focus = True
-        self.all_checkbox(False)
-        self.slot_pbutton_services_refresh_clicked()
+        self.chkbox_gpu.setChecked(self.service_state.gpu)
+        self.chkbox_desktopenv.setChecked(self.service_state.desktopenv)
+        self.chkbox_webserver.setChecked(self.service_state.webserver)
+        self.chkbox_splashscreen.setChecked(self.service_state.splashscreen)
+
+        if self.image_version.number < (1, 4):
+            self.chkbox_ap.setText('Access Point Mode (Image Version >= 1.4 required)')
+            self.chkbox_ap.setEnabled(False)
+        else:
+            self.chkbox_ap.setChecked(self.service_state.ap)
+
+        self.pbutton_services_save.setEnabled(False)
 
     def tab_off_focus(self):
-        self.is_tab_on_focus = False
+        pass
 
     def tab_destroy(self):
         pass
-
-    def cb_settings_services_check(self, result):
-        if not self.is_tab_on_focus:
-            return
-
-        self.pbutton_services_refresh.setEnabled(True)
-        self.pbutton_services_refresh.setText('Refresh')
-
-        if result and result.stdout and not result.stderr and result.exit_code == 0:
-            services_check_result = json.loads(result.stdout)
-            if services_check_result:
-                if services_check_result['gpu'] is None or \
-                   services_check_result['desktopenv'] is None or \
-                   services_check_result['webserver'] is None or \
-                   services_check_result['splashscreen'] is None or \
-                   services_check_result['ap'] is None:
-                    self.all_checkbox(False)
-                    QtGui.QMessageBox.critical(get_main_window(),
-                                               'Settings | Services',
-                                               'Error getting current services status.',
-                                               QtGui.QMessageBox.Ok)
-
-                    return
-                else:
-                    self.all_checkbox(True)
-                    if services_check_result['gpu']:
-                        self.chkbox_gpu.setChecked(True)
-                    else:
-                        self.chkbox_gpu.setChecked(False)
-
-                    if services_check_result['desktopenv']:
-                        self.chkbox_desktopenv.setChecked(True)
-                    else:
-                        self.chkbox_desktopenv.setChecked(False)
-
-                    if services_check_result['webserver']:
-                        self.chkbox_webserver.setChecked(True)
-                    else:
-                        self.chkbox_webserver.setChecked(False)
-
-                    if services_check_result['splashscreen']:
-                        self.chkbox_splashscreen.setChecked(True)
-                    else:
-                        self.chkbox_splashscreen.setChecked(False)
-
-                    if services_check_result['ap'] == True:
-                        self.chkbox_ap.setChecked(True)
-                    elif services_check_result['ap'] == False:
-                        self.chkbox_ap.setChecked(False)
-                    else:
-                        self.chkbox_ap.setChecked(False)
-                        self.chkbox_ap.setEnabled(False)
-                        self.chkbox_ap.setText('Access Point Mode (Image Version >= 1.4 required)')
-
-                    self.pbutton_services_save.setEnabled(False)
-        else:
-            err_msg = 'Error getting current services status.\n\n'+unicode(result.stderr)
-            QtGui.QMessageBox.critical(get_main_window(),
-                                       'Settings | Services',
-                                       err_msg,
-                                       QtGui.QMessageBox.Ok)
 
     def cb_settings_services_apply(self, result):
         self.chkbox_gpu.setEnabled(True)
@@ -158,18 +73,15 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         self.chkbox_splashscreen.setEnabled(True)
         self.chkbox_ap.setEnabled(True)
 
-        self.pbutton_services_save.setText('Save')
-        self.pbutton_services_save.setEnabled(True)
-        self.pbutton_services_refresh.setEnabled(True)
-
         if result and result.stdout and not result.stderr and result.exit_code == 0:
             def cb_restart_reboot_shutdown(result):
                 if result is not None:
                     if not result.stderr and result.exit_code == 0:
                         pass
                     else:
+                        self.pbutton_services_save.setText('Save')
+                        self.pbutton_services_save.setEnabled(True)
                         err_msg = 'Error rebooting RED Brick.\n\n'+unicode(result.stderr)
-    
                         QtGui.QMessageBox.critical(get_main_window(),
                                                    'Settings | Services',
                                                    err_msg,
@@ -178,6 +90,8 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
             self.script_manager.execute_script('restart_reboot_shutdown',
                                                cb_restart_reboot_shutdown, ['1'])
         else:
+            self.pbutton_services_save.setText('Save')
+            self.pbutton_services_save.setEnabled(True)
             err_msg = 'Error saving services status.\n\n'+unicode(result.stderr)
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Services',
@@ -188,30 +102,13 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         self.pbutton_services_save.setEnabled(True)
 
     def slot_pbutton_services_save_clicked(self):
-        if self.chkbox_gpu.isChecked():
-            self.apply_dict['gpu'] = True
-        else:
-            self.apply_dict['gpu'] = False
+        state = {}
 
-        if self.chkbox_desktopenv.isChecked():
-            self.apply_dict['desktopenv'] = True
-        else:
-            self.apply_dict['desktopenv'] = False
-
-        if self.chkbox_webserver.isChecked():
-            self.apply_dict['webserver'] = True
-        else:
-            self.apply_dict['webserver'] = False
-
-        if self.chkbox_splashscreen.isChecked():
-            self.apply_dict['splashscreen'] = True
-        else:
-            self.apply_dict['splashscreen'] = False
-        
-        if self.chkbox_ap.isChecked():
-            self.apply_dict['ap'] = True
-        else:
-            self.apply_dict['ap'] = False
+        state['gpu']          = self.chkbox_gpu.isChecked()
+        state['desktopenv']   = self.chkbox_desktopenv.isChecked()
+        state['webserver']    = self.chkbox_webserver.isChecked()
+        state['splashscreen'] = self.chkbox_splashscreen.isChecked()
+        state['ap']           = self.chkbox_ap.isChecked()
 
         self.chkbox_gpu.setEnabled(False)
         self.chkbox_desktopenv.setEnabled(False)
@@ -221,17 +118,7 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
 
         self.pbutton_services_save.setText('Saving...')
         self.pbutton_services_save.setEnabled(False)
-        self.pbutton_services_refresh.setEnabled(False)
 
         self.script_manager.execute_script('settings_services',
                                            self.cb_settings_services_apply,
-                                           ['APPLY', unicode(json.dumps(self.apply_dict))])
-
-    def slot_pbutton_services_refresh_clicked(self):
-        self.all_checkbox(False)
-        self.pbutton_services_save.setEnabled(False)
-        self.pbutton_services_refresh.setText('Refreshing...')
-        self.pbutton_services_refresh.setEnabled(False)
-        self.script_manager.execute_script('settings_services',
-                                           self.cb_settings_services_check,
-                                           ['CHECK'])
+                                           ['APPLY', unicode(json.dumps(state))])

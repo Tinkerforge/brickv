@@ -7,7 +7,6 @@ import netifaces
 import psutil
 
 return_dict = {'ap_interface': None,
-               'ap_enabled':   None,
                'ap_active':    None}
 
 try:
@@ -18,11 +17,6 @@ try:
         else:
             return_dict['ap_interface'] = False
 
-    if os.path.isfile('/etc/tf_ap_enabled'):
-        return_dict['ap_enabled'] = True
-    else:
-        return_dict['ap_enabled'] = False
-    
     if not return_dict['ap_interface']:
         return_dict['ap_active'] = False
     else:

@@ -96,23 +96,10 @@ if command == 'CHECK':
         else:
             return_dict['gpu'] = True
 
-        image_version_ok = False
-        with open('/etc/tf_image_version','r') as fd_tf_img_ver:
-            line = fd_tf_img_ver.readline()
-            if line:
-                l_split = line.strip().split(' (')
-                if len(l_split) > 1:
-                    img_ver = float(l_split[0])
-                    if img_ver > 1.3:
-                        image_version_ok = True
-
-        if image_version_ok:
-            if os.path.isfile('/etc/tf_ap_enabled'):
-                return_dict['ap'] = True
-            else:
-                return_dict['ap'] = False
+        if os.path.isfile('/etc/tf_ap_enabled'):
+            return_dict['ap'] = True
         else:
-            return_dict['ap'] = -1
+            return_dict['ap'] = False
 
         print json.dumps(return_dict)
 
