@@ -3,7 +3,7 @@
 brickv (Brick Viewer)
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
-Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 advanced.py: GUI for advanced features
 
@@ -79,7 +79,7 @@ class AdvancedWindow(QDialog, Ui_AdvancedWindow):
     def update_calibration(self):
         device = self.current_device()
 
-        if device is None:
+        if device is None or self.combo_port.count() == 0:
             self.label_offset.setText('-')
             self.label_gain.setText('-')
         else:
@@ -105,10 +105,9 @@ class AdvancedWindow(QDialog, Ui_AdvancedWindow):
                 self.combo_port.addItem('{0}: {1}'.format(key.upper(), info.bricklets[key].get_combo_item()))
 
         self.update_ui_state()
+        self.update_calibration()
 
-        if self.combo_port.count() > 0:
-            self.update_calibration()
-        else:
+        if self.combo_port.count() == 0:
             self.check_enable_calibration.setChecked(False)
 
     def enable_calibration_changed(self, state):
