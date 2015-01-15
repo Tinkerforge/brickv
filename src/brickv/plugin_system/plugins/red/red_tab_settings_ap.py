@@ -420,6 +420,16 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                             if result and not result.stderr and result.exit_code == 0:
                                 ap_mode_interfaces = json.loads(result.stdout)
 
+                                if len(ap_mode_interfaces) <= 0:
+                                    self.cbox_ap_interface.clear()
+                                    self.label_ap_status.setText('Inactive - No wireless interface available')
+                                    self.cbox_ap_interface.addItem('No wireless interface available')
+                                    self.cbox_ap_interface.setEnabled(False)
+                                    self.pbutton_ap_save.setEnabled(False)
+                                    return
+
+                                self.cbox_ap_interface.setEnabled(True)
+                                self.pbutton_ap_save.setEnabled(True)
                                 self.cbox_ap_interface.clear()
 
                                 self.cbox_ap_interface.currentIndexChanged.disconnect()
