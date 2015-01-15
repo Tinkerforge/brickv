@@ -187,32 +187,40 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             self.dns_dhcp_gui(False)
 
     def slot_pbutton_ap_refresh_clicked(self):
-        def cb_settings_network_apmode_check(result):
+        def cb_settings_network_apmode_status(result):
             self.update_button_text_state(BUTTON_STATE_DEFAULT)
+            self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
+            self.sarea_ap.setEnabled(True)
 
             if not self.is_tab_on_focus:
                 return
 
             if result and not result.stderr and result.exit_code == 0:
-                ap_mode_check = json.loads(result.stdout)
+                ap_mode_status = json.loads(result.stdout)
 
-                if ap_mode_check['ap_interface'] is None or \
-                   ap_mode_check['ap_active'] is None:
-                    self.label_ap_status.setText('-')
-                    QtGui.QMessageBox.critical(get_main_window(),
-                                               'Settings | Access Point',
-                                               'Error checking access point mode.',
-                                               QtGui.QMessageBox.Ok)
-                else:
-                    if ap_mode_check['ap_active']:
+                if ap_mode_status is None or \
+                   ap_mode_status['ap_first_time'] is None or \
+                   ap_mode_status['ap_incomplete_config'] is None or \
+                   ap_mode_status['ap_hardware_or_config_problem'] is None:
+                        self.label_ap_status.setText('-')
+                        QtGui.QMessageBox.critical(get_main_window(),
+                                                   'Settings | Access Point',
+                                                   'Error checking access point mode.',
+                                                   QtGui.QMessageBox.Ok)
+                elif not ap_mode_status['ap_incomplete_config'] and \
+                     not ap_mode_status['ap_hardware_or_config_problem']:
                         self.label_ap_status.setText('Active')
-                    else:
-                        self.label_ap_status.setText('Inactive')
+                elif ap_mode_status['ap_first_time']:
+                    self.label_ap_status.setText('Inactive - Select an interface and save')
+                elif ap_mode_status['ap_incomplete_config']:
+                    self.label_ap_status.setText('Inactive - Incomplete configuration, check your configuration and save')
+                elif ap_mode_status['ap_hardware_or_config_problem']:
+                    self.label_ap_status.setText('Inactive - Hardware not supported or wrong configuration')
 
-                    self.read_config_files()
+                self.read_config_files()
             else:
                 self.label_ap_status.setText('-')
-                self.update_button_text_state(BUTTON_STATE_DEFAULT)
                 err_msg = 'Error checking access point mode\n\n'+unicode(result.stderr)
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
@@ -220,9 +228,12 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                            QtGui.QMessageBox.Ok)
 
         self.update_button_text_state(BUTTON_STATE_REFRESH)
+        self.label_working_wait.show()
+        self.pbar_working_wait.show()
+        self.sarea_ap.setEnabled(False)
 
-        self.script_manager.execute_script('settings_network_apmode_check',
-                                           cb_settings_network_apmode_check)
+        self.script_manager.execute_script('settings_network_apmode_status',
+                                           cb_settings_network_apmode_status)
 
     def slot_pbutton_ap_save_clicked(self):
         def cb_settings_network_apmode_apply(result):

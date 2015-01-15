@@ -465,7 +465,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>sarea_ap</tabstop>
   <tabstop>cbox_ap_interface</tabstop>
   <tabstop>sbox_ap_intf_ip1</tabstop>
   <tabstop>sbox_ap_intf_ip2</tabstop>
