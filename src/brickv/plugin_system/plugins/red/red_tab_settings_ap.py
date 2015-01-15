@@ -190,8 +190,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                                    'Settings | Access Point',
                                                    'Error checking access point mode.',
                                                    QtGui.QMessageBox.Ok)
-                elif ap_mode_check['ap_interface'] and \
-                     ap_mode_check['ap_enabled']:
+                elif ap_mode_check['ap_enabled']:
                         if ap_mode_check['ap_active']:
                             self.label_ap_status.setText('Active')
                         else:
