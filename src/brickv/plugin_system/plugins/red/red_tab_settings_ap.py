@@ -242,19 +242,19 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                       'dhcp_end'        : None,
                       'dhcp_mask'       : None}
         try:
-            interface = unicode(self.cbox_ap_interface.currentText())
-            interface_ip = unicode(self.cbox_ap_interface.itemData(self.cbox_ap_interface.currentIndex(),
-                                                                   AP_INTERFACE_IP_USER_ROLE).toString())
-            interface_mask = unicode(self.cbox_ap_interface.itemData(self.cbox_ap_interface.currentIndex(),
-                                                                     AP_INTERFACE_MASK_USER_ROLE).toString())
-            ssid = unicode(self.ledit_ap_ssid.text())
+            interface = self.cbox_ap_interface.currentText()
+            interface_ip = self.cbox_ap_interface.itemData(self.cbox_ap_interface.currentIndex(),
+                                                           AP_INTERFACE_IP_USER_ROLE).toString()
+            interface_mask = self.cbox_ap_interface.itemData(self.cbox_ap_interface.currentIndex(),
+                                                             AP_INTERFACE_MASK_USER_ROLE).toString()
+            ssid = self.ledit_ap_ssid.text()
             
             if self.chkbox_ap_ssid_hidden.checkState() == QtCore.Qt.Checked:
                 ssid_hidden = True
             else:
                 ssid_hidden = False
             
-            wpa_key = unicode(self.ledit_ap_wpa_key.text())
+            wpa_key = self.ledit_ap_wpa_key.text()
             channel = unicode(self.sbox_ap_channel.value())
             
             if self.chkbox_ap_enable_dns_dhcp.checkState() == QtCore.Qt.Checked:
@@ -262,9 +262,9 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             else:
                 enabled_dns_dhcp =  False
             
-            server_name = unicode(self.ledit_ap_server_name.text())
+            server_name = self.ledit_ap_server_name.text()
             
-            domain = unicode(self.ledit_ap_domain.text())
+            domain = self.ledit_ap_domain.text()
 
             dhcp_start_list = []
             dhcp_start_list.append(unicode(self.sbox_ap_pool_start1.value()))

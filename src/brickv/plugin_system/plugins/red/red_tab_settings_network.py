@@ -1430,7 +1430,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                     if enc == 'On':
                         self.ledit_net_wireless_key.setEnabled(True)
                         ap_key = item.data(AP_KEY_USER_ROLE).toString()
-                        self.ledit_net_wireless_key.setText(unicode(ap_key))
+                        self.ledit_net_wireless_key.setText(ap_key)
                     else:
                         self.ledit_net_wireless_key.setText('')
                         self.ledit_net_wireless_key.setEnabled(False)
@@ -1453,10 +1453,10 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                     if encryption == 'On':
                         if encryption_method == AP_ENC_METHOD_WPA1:
                             self.ledit_net_wireless_key.setEnabled(True)
-                            self.ledit_net_wireless_key.setText(unicode(key))
+                            self.ledit_net_wireless_key.setText(key)
                         elif encryption_method == AP_ENC_METHOD_WPA2:
                             self.ledit_net_wireless_key.setEnabled(True)
-                            self.ledit_net_wireless_key.setText(unicode(key))
+                            self.ledit_net_wireless_key.setText(key)
                         else:
                             self.ledit_net_wireless_key.setEnabled(False)
                             self.ledit_net_wireless_key.setText('')
