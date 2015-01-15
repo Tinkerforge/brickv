@@ -93,7 +93,8 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
         self.option_list_editor.reset()
         self.option_list_editor.add_item('--silent')
 
-        self.is_full_image = 'full' in self.wizard().image_version_ref[0]
+        # FIXME: check if X11 service is enabled instead
+        self.is_full_image = self.wizard().image_version.flavor == 'full'
 
         if not self.is_full_image:
             self.option_list_editor.add_item('--no-window-system')

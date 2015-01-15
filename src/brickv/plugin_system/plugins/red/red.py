@@ -32,6 +32,11 @@ from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 from brickv.async_call import async_call
 import re
 
+class ImageVersion(object):
+    string = None
+    number = (0, 0)
+    flavor = None
+
 class RED(PluginBase, Ui_RED):
     def __init__(self, *args):
         PluginBase.__init__(self, 'RED Brick', REDBrick, *args)
@@ -51,19 +56,21 @@ class RED(PluginBase, Ui_RED):
 
             return
 
-        self.image_version_ref = ['<unknown>', (0, 0), '<unknown>']
-        self.label_version     = None
-        self.script_manager    = ScriptManager(self.session)
-        self.tabs              = []
+        self.image_version  = ImageVersion()
+        self.label_version  = None
+        self.script_manager = ScriptManager(self.session)
+        self.tabs           = []
 
         self.setupUi(self)
+
+        self.tab_widget.hide()
 
         for i in range(self.tab_widget.count()):
             tab = self.tab_widget.widget(i)
 
-            tab.session           = self.session
-            tab.script_manager    = self.script_manager
-            tab.image_version_ref = self.image_version_ref
+            tab.session        = self.session
+            tab.script_manager = self.script_manager
+            tab.image_version  = self.image_version
 
             self.tabs.append(tab)
 
@@ -78,7 +85,7 @@ class RED(PluginBase, Ui_RED):
         if self.session == None:
             return
 
-        if self.image_version_ref[0] == '<unknown>':
+        if self.image_version.string == None:
             # FIXME: this is should actually be sync to ensure that the image
             #        version is known before it'll be used
             def read_image_version_async(red_file):
@@ -94,15 +101,19 @@ class RED(PluginBase, Ui_RED):
 
                 if m != None:
                     try:
-                        self.image_version_ref[0] = image_version
-                        self.image_version_ref[1] = (int(m.group(1)), int(m.group(2)))
-                        self.image_version_ref[2] = m.group(3)
+                        self.image_version.string = image_version
+                        self.image_version.number = (int(m.group(1)), int(m.group(2)))
+                        self.image_version.flavor = m.group(3)
                     except:
                         pass
 
-            async_call(read_image_version_async, REDFile(self.session), cb_success, None)
+                self.label_discovering.hide()
+                self.tab_widget.show()
+                self.tab_widget_current_changed(self.tab_widget.currentIndex())
 
-        self.tab_widget_current_changed(self.tab_widget.currentIndex())
+            async_call(read_image_version_async, REDFile(self.session), cb_success, None)
+        else:
+            self.tab_widget_current_changed(self.tab_widget.currentIndex())
 
     def stop(self):
         if self.session == None:
@@ -156,8 +167,8 @@ class RED(PluginBase, Ui_RED):
 
         self.label_version = label_version
 
-        if self.image_version_ref[0] != '<unknown>':
-            self.label_version.setText(self.image_version_ref[0])
+        if self.image_version.string != None:
+            self.label_version.setText(self.image_version.string)
 
         return True
 

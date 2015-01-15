@@ -28,9 +28,9 @@ class REDTab(QWidget):
         QWidget.__init__(self, parent)
 
         # will be set from RED after construction
-        self.session           = None
-        self.script_manager    = None
-        self.image_version_ref = None
+        self.session        = None
+        self.script_manager = None
+        self.image_version  = None
 
     def tab_on_focus(self):
         raise NotImplementedError()

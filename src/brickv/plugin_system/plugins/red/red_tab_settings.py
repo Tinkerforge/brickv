@@ -41,9 +41,9 @@ class REDTabSettings(REDTab, Ui_REDTabSettings):
 
     def tab_on_focus(self):
         for tab in self.tabs:
-            tab.session           = self.session
-            tab.script_manager    = self.script_manager
-            tab.image_version_ref = self.image_version_ref
+            tab.session        = self.session
+            tab.script_manager = self.script_manager
+            tab.image_version  = self.image_version
 
         self.tab_widget.currentWidget().tab_on_focus()
 

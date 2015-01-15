@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
+Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
 
 red_tab_settings_ap.py: RED settings access point tab implementation
 
@@ -45,9 +46,9 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
         self.setupUi(self)
 
-        self.session           = None # Set from REDTabSettings
-        self.script_manager    = None # Set from REDTabSettings
-        self.image_version_ref = None # Set from REDTabSettings
+        self.session        = None # Set from REDTabSettings
+        self.script_manager = None # Set from REDTabSettings
+        self.image_version  = None # Set from REDTabSettings
 
         self.is_tab_on_focus = False
 
@@ -71,7 +72,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
         if self.applying:
             return
 
-        if self.image_version_ref[1] < (1, 4):
+        if self.image_version.number < (1, 4):
             self.label_ap_discovering.hide()
             self.label_ap_unsupported.show()
             self.sarea_ap.hide()

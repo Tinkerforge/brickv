@@ -91,9 +91,9 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         QtGui.QWidget.__init__(self)
         self.setupUi(self)
         
-        self.session           = None # Set from REDTabSettings
-        self.script_manager    = None # Set from REDTabSettings
-        self.image_version_ref = None # Set from REDTabSettings
+        self.session        = None # Set from REDTabSettings
+        self.script_manager = None # Set from REDTabSettings
+        self.image_version  = None # Set from REDTabSettings
 
         self.is_tab_on_focus = False
 
@@ -151,7 +151,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
     def tab_on_focus(self):
         self.is_tab_on_focus = True
 
-        if self.image_version_ref[1] < (1, 4):
+        if self.image_version.number < (1, 4):
             self.ap_mode_disabled()
         else:
             def cb_settings_network_apmode_check(result):

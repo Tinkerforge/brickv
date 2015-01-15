@@ -122,7 +122,7 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
             self.button_delete.setEnabled(has_selection)
 
     def add_program_to_list(self, program):
-        program_info = ProgramInfoMain(self.session, self.script_manager, self.image_version_ref, self.executable_versions, program)
+        program_info = ProgramInfoMain(self.session, self.script_manager, self.image_version, self.executable_versions, program)
         program_info.name_changed.connect(self.refresh_program_names)
 
         item = QListWidgetItem(program.cast_custom_option_value('name', unicode, '<unknown>'))
@@ -209,7 +209,7 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
         for i in range(self.list_programs.count()):
             identifiers.append(self.list_programs.item(i).data(Qt.UserRole).toPyObject().program.identifier)
 
-        context = ProgramWizardContext(self.session, identifiers, self.script_manager, self.image_version_ref, self.executable_versions)
+        context = ProgramWizardContext(self.session, identifiers, self.script_manager, self.image_version, self.executable_versions)
 
         self.new_program_wizard = ProgramWizardNew(self, context)
 

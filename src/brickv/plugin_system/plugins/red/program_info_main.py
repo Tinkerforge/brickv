@@ -68,14 +68,14 @@ from brickv.utils import get_main_window
 class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
     name_changed = pyqtSignal()
 
-    def __init__(self, session, script_manager, image_version_ref, executable_versions, program):
+    def __init__(self, session, script_manager, image_version, executable_versions, program):
         QWidget.__init__(self)
 
         self.setupUi(self)
 
         self.session             = session
         self.script_manager      = script_manager
-        self.image_version_ref   = image_version_ref
+        self.image_version       = image_version
         self.executable_versions = executable_versions
         self.program             = program
         self.root_directory      = self.program.root_directory
@@ -556,7 +556,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
     def show_edit_general_wizard(self):
         self.set_edit_buttons_enabled(False)
 
-        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version, self.executable_versions)
         page    = ProgramPageGeneral()
 
         self.edit_general_wizard = ProgramWizardEdit(self, context, self.program, self.widget_files.available_files, self.widget_files.available_directories)
@@ -597,7 +597,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         self.set_edit_buttons_enabled(False)
 
-        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version, self.executable_versions)
         page    = language_page_classes[language_page]()
 
         self.edit_language_wizard = ProgramWizardEdit(self, context, self.program, self.widget_files.available_files, self.widget_files.available_directories,)
@@ -615,7 +615,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
     def show_edit_arguments_wizard(self):
         self.set_edit_buttons_enabled(False)
 
-        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version, self.executable_versions)
         page    = ProgramPageArguments()
 
         self.edit_arguments_wizard = ProgramWizardEdit(self, context, self.program, self.widget_files.available_files, self.widget_files.available_directories)
@@ -633,7 +633,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
     def show_edit_stdio_wizard(self):
         self.set_edit_buttons_enabled(False)
 
-        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version, self.executable_versions)
         page    = ProgramPageStdio()
 
         self.edit_stdio_wizard = ProgramWizardEdit(self, context, self.program, self.widget_files.available_files, self.widget_files.available_directories)
@@ -651,7 +651,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
     def show_edit_schedule_wizard(self):
         self.set_edit_buttons_enabled(False)
 
-        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version, self.executable_versions)
         page    = ProgramPageSchedule()
 
         self.edit_schedule_wizard = ProgramWizardEdit(self, context, self.program, self.widget_files.available_files, self.widget_files.available_directories)
@@ -670,7 +670,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.set_edit_buttons_enabled(False)
         self.set_program_callbacks_enabled(False)
 
-        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version, self.executable_versions)
 
         self.upload_files_wizard = ProgramWizardUpload(self, context, self.program)
         self.upload_files_wizard.exec_()
@@ -688,7 +688,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.set_edit_buttons_enabled(False)
         self.set_program_callbacks_enabled(False)
 
-        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version_ref, self.executable_versions)
+        context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version, self.executable_versions)
 
         self.download_wizard = ProgramWizardDownload(self, context, self.program, download_kind, download_directory, downloads)
         self.download_wizard.exec_()

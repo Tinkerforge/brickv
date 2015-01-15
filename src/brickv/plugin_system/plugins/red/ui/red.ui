@@ -13,7 +13,20 @@
   <property name="windowTitle">
    <string>RED</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label_discovering">
+     <property name="text">
+      <string>Discovering Image Version...</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
    <item>
     <widget class="QTabWidget" name="tab_widget">
      <property name="tabPosition">
