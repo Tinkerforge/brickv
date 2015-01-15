@@ -268,10 +268,7 @@ class Servo(PluginBase, Ui_Servo):
         self.period_slider.setValue(per)
 
     def is_enabled_async(self, ena):
-        if ena:
-            self.enable_checkbox.setCheckState(Qt.Checked)
-        else:
-            self.enable_checkbox.setCheckState(Qt.Unchecked)
+        self.enable_checkbox.setChecked(ena)
 
     def get_position_async(self, pos):
         self.position_spin.setValue(pos)
@@ -308,7 +305,7 @@ class Servo(PluginBase, Ui_Servo):
     def update_servo_specific(self):
         i = self.selected_servo()
         if i == 255:
-            self.enable_checkbox.setCheckState(Qt.Unchecked)
+            self.enable_checkbox.setChecked(False)
             return
 
         async_call(self.servo.get_position, i, self.get_position_async, self.increase_error_count)

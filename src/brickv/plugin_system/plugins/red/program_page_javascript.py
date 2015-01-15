@@ -124,7 +124,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_JAVASCRIPT_START_MODE)
         self.combo_script_file_selector.reset()
-        self.check_show_advanced_options.setCheckState(Qt.Unchecked)
+        self.check_show_advanced_options.setChecked(False)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
@@ -183,7 +183,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         start_mode             = self.get_field('javascript.start_mode').toInt()[0]
         start_mode_script_file = start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE
         start_mode_command     = start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND
-        show_advanced_options  = self.check_show_advanced_options.checkState() == Qt.Checked
+        show_advanced_options  = self.check_show_advanced_options.isChecked()
 
         self.label_start_mode.setVisible(flavor_nodejs)
         self.combo_start_mode.setVisible(flavor_nodejs)

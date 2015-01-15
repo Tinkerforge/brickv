@@ -37,8 +37,8 @@ class ProgramInfoJava(ProgramInfo, Ui_ProgramInfoJava):
 
     # overrides ProgramInfo.update_ui_state
     def update_ui_state(self):
-        show_class_path       = self.check_show_class_path.checkState() == Qt.Checked
-        show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
+        show_class_path       = self.check_show_class_path.isChecked()
+        show_advanced_options = self.check_show_advanced_options.isChecked()
 
         self.label_class_path_title.setVisible(show_class_path)
         self.label_class_path.setVisible(show_class_path)

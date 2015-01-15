@@ -288,17 +288,11 @@ class DC(PluginBase, Ui_DC):
                 self.frequency_spin.setValue(frequency)
         
     def is_enabled_async(self, enabled):
-        if enabled:
-            self.enable_checkbox.setCheckState(Qt.Checked)
-        else:
-            self.enable_checkbox.setCheckState(Qt.Unchecked)
-            
+        self.enable_checkbox.setChecked(enabled)
+
     def is_encoder_enabled_async(self, enabled):
-        if enabled:
-            self.enable_encoder_checkbox.setCheckState(Qt.Checked)
-        else:
-            self.enable_encoder_checkbox.setCheckState(Qt.Unchecked)
-            
+        self.enable_encoder_checkbox.setChecked(enabled)
+
     def get_encoder_config_async(self, cpr):
         self.cpr_spinbox.setValue(cpr)
     

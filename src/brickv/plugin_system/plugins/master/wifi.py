@@ -107,12 +107,12 @@ class Wifi(QWidget, Ui_Wifi):
             self.wifi_show_characters.hide()
             self.wifi_secret_label.hide()
             self.wifi_secret.hide()
-            self.wifi_use_auth.setChecked(Qt.Unchecked)
+            self.wifi_use_auth.setChecked(False)
         else:
             self.wifi_show_characters.show()
             self.wifi_secret_label.show()
             self.wifi_secret.show()
-            self.wifi_use_auth.setChecked(Qt.Checked)
+            self.wifi_use_auth.setChecked(True)
             if self.wifi_show_characters.isChecked():
                 self.wifi_secret.setEchoMode(QLineEdit.Normal)
             else:

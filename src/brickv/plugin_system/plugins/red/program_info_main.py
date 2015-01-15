@@ -410,7 +410,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         for variable in self.program.environment.items[editable_environment_offset:]:
             environment.append(variable)
 
-        show_environment = self.check_show_environment.checkState() == Qt.Checked
+        show_environment = self.check_show_environment.isChecked()
 
         self.label_environment_title.setVisible(show_environment)
         self.label_environment.setVisible(show_environment)

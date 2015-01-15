@@ -133,13 +133,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.checkbox_remember_secret.hide()
         self.checkbox_remember_secret.stateChanged.connect(self.remember_secret_state_changed)
 
-        if self.host_infos[0].use_authentication:
-            self.checkbox_authentication.setCheckState(Qt.Checked)
-
+        self.checkbox_authentication.setChecked(self.host_infos[0].use_authentication)
         self.edit_secret.setText(self.host_infos[0].secret)
-
-        if self.host_infos[0].remember_secret:
-            self.checkbox_remember_secret.setCheckState(Qt.Checked)
+        self.checkbox_remember_secret.setChecked(self.host_infos[0].remember_secret)
 
         self.host_index_changing = False
 
@@ -176,18 +172,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.host_index_changing = True
 
         self.spinbox_port.setValue(self.host_infos[i].port)
-
-        if self.host_infos[i].use_authentication:
-            self.checkbox_authentication.setCheckState(Qt.Checked)
-        else:
-            self.checkbox_authentication.setCheckState(Qt.Unchecked)
-
+        self.checkbox_authentication.setChecked(self.host_infos[i].use_authentication)
         self.edit_secret.setText(self.host_infos[i].secret)
-
-        if self.host_infos[i].remember_secret:
-            self.checkbox_remember_secret.setCheckState(Qt.Checked)
-        else:
-            self.checkbox_remember_secret.setCheckState(Qt.Unchecked)
+        self.checkbox_remember_secret.setChecked(self.host_infos[i].remember_secret)
 
         self.host_index_changing = False
 

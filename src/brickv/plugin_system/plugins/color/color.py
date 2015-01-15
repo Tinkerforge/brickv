@@ -284,13 +284,10 @@ class Color(PluginBase):
         self.color_temperature_frame.set_color(r, g, b)
 
     def cb_light_on(self, light):
-        if light == BrickletColor.LIGHT_ON:
-            self.light_checkbox.setCheckState(2)
-        else:
-            self.light_checkbox.setCheckState(0)
+        self.light_checkbox.setChecked(light == BrickletColor.LIGHT_ON)
 
     def light_state_changed(self, state):
-        if state == 2:
+        if state == Qt.Checked:
             self.color.light_on()
         else:
             self.color.light_off()

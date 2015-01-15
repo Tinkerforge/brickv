@@ -288,22 +288,11 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             interface_mask = '.'.join(interface_mask_list)
 
             ssid = self.ledit_ap_ssid.text()
-
-            if self.chkbox_ap_ssid_hidden.checkState() == QtCore.Qt.Checked:
-                ssid_hidden = True
-            else:
-                ssid_hidden = False
-
+            ssid_hidden = self.chkbox_ap_ssid_hidden.isChecked()
             wpa_key = self.ledit_ap_wpa_key.text()
             channel = unicode(self.sbox_ap_channel.value())
-
-            if self.chkbox_ap_enable_dns_dhcp.checkState() == QtCore.Qt.Checked:
-                enabled_dns_dhcp =  True
-            else:
-                enabled_dns_dhcp =  False
-
+            enabled_dns_dhcp = self.chkbox_ap_enable_dns_dhcp.isChecked()
             server_name = self.ledit_ap_server_name.text()
-
             domain = self.ledit_ap_domain.text()
 
             dhcp_start_list = []
@@ -517,11 +506,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                             self.script_manager.execute_script('settings_network_apmode_get_interfaces',
                                                                cb_settings_network_apmode_get_interfaces)
                             self.ledit_ap_ssid.setText(ssid)
-
-                            if ssid_hidden == '0':
-                                self.chkbox_ap_ssid_hidden.setCheckState(QtCore.Qt.Unchecked)
-                            else:
-                                self.chkbox_ap_ssid_hidden.setCheckState(QtCore.Qt.Checked)
+                            self.chkbox_ap_ssid_hidden.setChecked(ssid_hidden != '0')
 
                             self.sbox_ap_channel.setValue(int(channel))
                             self.ledit_ap_wpa_key.setText(wpa_key)
@@ -598,12 +583,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                         if dhcp_option[0].strip(' ') == 'option:netmask':
                                             dhcp_option_netmask = dhcp_option[1]
 
-                            if dns_dhcp_enabled:
-                                self.chkbox_ap_enable_dns_dhcp.setCheckState(QtCore.Qt.Unchecked)
-                                self.chkbox_ap_enable_dns_dhcp.setCheckState(QtCore.Qt.Checked)
-                            else:
-                                self.chkbox_ap_enable_dns_dhcp.setCheckState(QtCore.Qt.Checked)
-                                self.chkbox_ap_enable_dns_dhcp.setCheckState(QtCore.Qt.Unchecked)
+                            self.chkbox_ap_enable_dns_dhcp.setChecked(dns_dhcp_enabled)
 
                             if server_name:
                                 self.ledit_ap_server_name.setText(server_name)

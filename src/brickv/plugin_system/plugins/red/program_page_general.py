@@ -96,7 +96,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
 
     # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
-        auto_generate = self.check_auto_generate.checkState() == Qt.Checked
+        auto_generate = self.check_auto_generate.isChecked()
 
         self.auto_generate_identifier(self.edit_name.text())
 
@@ -111,7 +111,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         self.label_language_help.setEnabled(not self.edit_mode)
 
     def auto_generate_identifier(self, name):
-        if self.check_auto_generate.checkState() != Qt.Checked or self.edit_mode:
+        if not self.check_auto_generate.isChecked() or self.edit_mode:
             return
 
         # ensure the identifier matches ^[a-zA-Z0-9_][a-zA-Z0-9._-]{2,}$

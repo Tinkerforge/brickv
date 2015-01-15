@@ -38,7 +38,7 @@ class ProgramInfoPython(ProgramInfo, Ui_ProgramInfoPython):
 
     # overrides ProgramInfo.update_ui_state
     def update_ui_state(self):
-        show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
+        show_advanced_options = self.check_show_advanced_options.isChecked()
 
         # version
         def cb_python_versions(versions):

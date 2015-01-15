@@ -72,7 +72,7 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_VBNET_START_MODE)
         self.combo_executable_selector.reset()
-        self.check_show_advanced_options.setCheckState(Qt.Unchecked)
+        self.check_show_advanced_options.setChecked(False)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
@@ -118,7 +118,7 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
     def update_ui_state(self):
         start_mode            = self.get_field('vbnet.start_mode').toInt()[0]
         start_mode_executable = start_mode == Constants.VBNET_START_MODE_EXECUTABLE
-        show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
+        show_advanced_options = self.check_show_advanced_options.isChecked()
 
         self.combo_executable_selector.set_visible(start_mode_executable)
         self.combo_working_directory_selector.set_visible(show_advanced_options)

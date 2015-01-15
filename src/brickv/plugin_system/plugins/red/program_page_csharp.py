@@ -88,7 +88,7 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_CSHARP_START_MODE)
         self.combo_executable_selector.reset()
-        self.check_show_advanced_options.setCheckState(Qt.Unchecked)
+        self.check_show_advanced_options.setChecked(False)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
@@ -134,7 +134,7 @@ class ProgramPageCSharp(ProgramPage, Ui_ProgramPageCSharp):
     def update_ui_state(self):
         start_mode            = self.get_field('csharp.start_mode').toInt()[0]
         start_mode_executable = start_mode == Constants.CSHARP_START_MODE_EXECUTABLE
-        show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
+        show_advanced_options = self.check_show_advanced_options.isChecked()
 
         self.label_executable.setVisible(start_mode_executable)
         self.label_executable_type.setVisible(start_mode_executable)

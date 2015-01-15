@@ -314,13 +314,13 @@ class Stepper(PluginBase, Ui_Stepper):
         
     def is_enabled_async(self, enabled):
         if enabled:
-            if self.enable_checkbox.checkState() != Qt.Checked:
+            if not self.enable_checkbox.isChecked():
                 self.endis_all(True)
-                self.enable_checkbox.setCheckState(Qt.Checked)
+                self.enable_checkbox.setChecked(True)
         else:
-            if self.enable_checkbox.checkState() != Qt.Unchecked:
+            if self.enable_checkbox.isChecked():
                 self.endis_all(False)
-                self.enable_checkbox.setCheckState(Qt.Unchecked)
+                self.enable_checkbox.setChecked(False)
         
     def update_start(self):
         async_call(self.stepper.get_max_velocity, None, self.get_max_velocity_async, self.increase_error_count)

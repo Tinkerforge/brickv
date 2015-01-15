@@ -109,7 +109,7 @@ class AdvancedWindow(QDialog, Ui_AdvancedWindow):
         if self.combo_port.count() > 0:
             self.update_calibration()
         else:
-            self.check_enable_calibration.setChecked(Qt.Unchecked)
+            self.check_enable_calibration.setChecked(False)
 
     def enable_calibration_changed(self, state):
         self.button_calibrate.setEnabled(state == Qt.Checked)

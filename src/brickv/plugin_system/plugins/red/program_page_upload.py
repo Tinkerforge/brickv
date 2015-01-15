@@ -104,7 +104,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
     # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
-        rename_new_file = self.check_rename_new_file.checkState() == Qt.Checked
+        rename_new_file = self.check_rename_new_file.isChecked()
 
         self.line1.setVisible(self.conflict_resolution_in_progress)
         self.label_replace_icon.setVisible(self.conflict_resolution_in_progress)
@@ -430,12 +430,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                                                  timestamp_to_date_at_time(int(self.source_stat.st_mtime))))
 
             self.label_replace_help.setText(self.replace_help_template.replace('<FILE>', Qt.escape(self.upload.target)))
-
-            if self.auto_conflict_resolution == ProgramPageUpload.CONFLICT_RESOLUTION_RENAME:
-                self.check_rename_new_file.setCheckState(Qt.Checked)
-            else:
-                self.check_rename_new_file.setCheckState(Qt.Unchecked)
-
+            self.check_rename_new_file.setChecked(self.auto_conflict_resolution == ProgramPageUpload.CONFLICT_RESOLUTION_RENAME)
             self.edit_new_name.setText('') # force a new-name check
             self.edit_new_name.setText(posixpath.split(self.upload.target)[1])
 
@@ -443,12 +438,12 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             self.update_ui_state()
 
     def resolve_conflict_by_replace(self):
-        if not self.conflict_resolution_in_progress or self.check_rename_new_file.checkState() != Qt.Unchecked:
+        if not self.conflict_resolution_in_progress or self.check_rename_new_file.isChecked():
             return
 
         self.log(u'...replacing {0}'.format(self.upload.target))
 
-        if self.check_remember_decision.checkState() == Qt.Checked:
+        if self.check_remember_decision.isChecked():
             self.auto_conflict_resolution = ProgramPageUpload.CONFLICT_RESOLUTION_REPLACE
         else:
             self.auto_conflict_resolution = None
@@ -466,13 +461,13 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.target_path = posixpath.join(self.root_directory, 'bin', self.upload.target)
 
     def resolve_conflict_by_rename(self):
-        if not self.conflict_resolution_in_progress or self.check_rename_new_file.checkState() != Qt.Checked:
+        if not self.conflict_resolution_in_progress or not self.check_rename_new_file.isChecked():
             return
 
         self.rename_upload_target(self.edit_new_name.text())
         self.log(u'...uploading as {0}'.format(self.upload.target))
 
-        if self.check_remember_decision.checkState() == Qt.Checked:
+        if self.check_remember_decision.isChecked():
             self.auto_conflict_resolution = ProgramPageUpload.CONFLICT_RESOLUTION_RENAME
         else:
             self.auto_conflict_resolution = None
@@ -486,7 +481,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if not self.conflict_resolution_in_progress:
             return
 
-        if self.check_remember_decision.checkState() == Qt.Checked:
+        if self.check_remember_decision.isChecked():
             self.auto_conflict_resolution = ProgramPageUpload.CONFLICT_RESOLUTION_SKIP
         else:
             self.auto_conflict_resolution = None

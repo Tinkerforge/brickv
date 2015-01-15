@@ -92,7 +92,7 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_RUBY_START_MODE)
         self.combo_script_file_selector.reset()
-        self.check_show_advanced_options.setCheckState(Qt.Unchecked)
+        self.check_show_advanced_options.setChecked(False)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
@@ -146,7 +146,7 @@ class ProgramPageRuby(ProgramPage, Ui_ProgramPageRuby):
         start_mode             = self.get_field('ruby.start_mode').toInt()[0]
         start_mode_script_file = start_mode == Constants.RUBY_START_MODE_SCRIPT_FILE
         start_mode_command     = start_mode == Constants.RUBY_START_MODE_COMMAND
-        show_advanced_options  = self.check_show_advanced_options.checkState() == Qt.Checked
+        show_advanced_options  = self.check_show_advanced_options.isChecked()
 
         self.combo_script_file_selector.set_visible(start_mode_script_file)
         self.label_command.setVisible(start_mode_command)

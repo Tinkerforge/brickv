@@ -88,7 +88,7 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_OCTAVE_START_MODE)
         self.combo_script_file_selector.reset()
-        self.check_show_advanced_options.setCheckState(Qt.Unchecked)
+        self.check_show_advanced_options.setChecked(False)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
         self.option_list_editor.add_item('--silent')
@@ -141,7 +141,7 @@ class ProgramPageOctave(ProgramPage, Ui_ProgramPageOctave):
     def update_ui_state(self):
         start_mode             = self.get_field('octave.start_mode').toInt()[0]
         start_mode_script_file = start_mode == Constants.OCTAVE_START_MODE_SCRIPT_FILE
-        show_advanced_options  = self.check_show_advanced_options.checkState() == Qt.Checked
+        show_advanced_options  = self.check_show_advanced_options.isChecked()
 
         self.combo_script_file_selector.set_visible(start_mode_script_file)
         self.combo_working_directory_selector.set_visible(show_advanced_options)

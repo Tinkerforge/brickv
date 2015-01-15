@@ -134,8 +134,8 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_JAVA_START_MODE)
         self.combo_jar_file_selector.reset()
         self.class_path_list_editor.reset()
-        self.check_show_class_path.setCheckState(Qt.Unchecked)
-        self.check_show_advanced_options.setCheckState(Qt.Unchecked)
+        self.check_show_class_path.setChecked(False)
+        self.check_show_advanced_options.setChecked(False)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
@@ -360,8 +360,8 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         start_mode            = self.get_field('java.start_mode').toInt()[0]
         start_mode_main_class = start_mode == Constants.JAVA_START_MODE_MAIN_CLASS
         start_mode_jar_file   = start_mode == Constants.JAVA_START_MODE_JAR_FILE
-        show_class_path       = self.check_show_class_path.checkState() == Qt.Checked
-        show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
+        show_class_path       = self.check_show_class_path.isChecked()
+        show_advanced_options = self.check_show_advanced_options.isChecked()
 
         self.label_main_class.setVisible(start_mode_main_class)
         self.combo_main_class.setVisible(start_mode_main_class)

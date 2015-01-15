@@ -87,12 +87,12 @@ class Ethernet(QWidget, Ui_Ethernet):
             self.ethernet_show_characters.hide()
             self.ethernet_secret_label.hide()
             self.ethernet_secret.hide()
-            self.ethernet_use_auth.setChecked(Qt.Unchecked)
+            self.ethernet_use_auth.setChecked(False)
         else:
             self.ethernet_show_characters.show()
             self.ethernet_secret_label.show()
             self.ethernet_secret.show()
-            self.ethernet_use_auth.setChecked(Qt.Checked)
+            self.ethernet_use_auth.setChecked(True)
             if self.ethernet_show_characters.isChecked():
                 self.ethernet_secret.setEchoMode(QLineEdit.Normal)
             else:

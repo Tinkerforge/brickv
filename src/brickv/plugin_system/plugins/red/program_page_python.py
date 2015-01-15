@@ -100,7 +100,7 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PYTHON_START_MODE)
         self.combo_script_file_selector.reset()
         self.label_url.setText(self.url_template.replace('<SERVER>', 'red-brick').replace('<IDENTIFIER>', self.get_field('identifier').toString()))
-        self.check_show_advanced_options.setCheckState(Qt.Unchecked)
+        self.check_show_advanced_options.setChecked(False)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
 
@@ -167,7 +167,7 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         start_mode_module_name   = start_mode == Constants.PYTHON_START_MODE_MODULE_NAME
         start_mode_command       = start_mode == Constants.PYTHON_START_MODE_COMMAND
         start_mode_web_interface = start_mode == Constants.PYTHON_START_MODE_WEB_INTERFACE
-        show_advanced_options    = self.check_show_advanced_options.checkState() == Qt.Checked
+        show_advanced_options    = self.check_show_advanced_options.isChecked()
 
         self.combo_version.setVisible(not start_mode_web_interface)
         self.label_version.setVisible(not start_mode_web_interface)

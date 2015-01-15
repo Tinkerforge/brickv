@@ -59,15 +59,8 @@ class ProgramPageSchedule(ProgramPage, Ui_ProgramPageSchedule):
         program = self.wizard().program
 
         if program != None:
-            start_mode = Constants.get_start_mode(program.start_mode)
-
-            self.combo_start_mode.setCurrentIndex(start_mode)
-
-            if program.continue_after_error:
-                self.check_continue_after_error.setCheckState(Qt.Checked)
-            else:
-                self.check_continue_after_error.setCheckState(Qt.Unchecked)
-
+            self.combo_start_mode.setCurrentIndex(Constants.get_start_mode(program.start_mode))
+            self.check_continue_after_error.setChecked(program.continue_after_error)
             self.spin_start_interval.setValue(program.start_interval)
 
             if program.start_mode == REDProgram.START_MODE_CRON:

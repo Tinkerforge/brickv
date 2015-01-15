@@ -36,7 +36,7 @@ class ProgramInfoRuby(ProgramInfo, Ui_ProgramInfoRuby):
 
     # overrides ProgramInfo.update_ui_state
     def update_ui_state(self):
-        show_advanced_options = self.check_show_advanced_options.checkState() == Qt.Checked
+        show_advanced_options = self.check_show_advanced_options.isChecked()
 
         self.label_working_directory_title.setVisible(show_advanced_options)
         self.label_working_directory.setVisible(show_advanced_options)
