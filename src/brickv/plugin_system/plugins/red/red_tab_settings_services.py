@@ -48,7 +48,13 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
 
     def tab_on_focus(self):
         self.chkbox_gpu.setChecked(self.service_state.gpu)
-        self.chkbox_desktopenv.setChecked(self.service_state.desktopenv)
+
+        if self.image_version.number < (1, 4):
+            self.chkbox_desktopenv.setChecked(self.image_version.flavor == 'full')
+            self.chkbox_desktopenv.setEnabled(False)
+        else:
+            self.chkbox_desktopenv.setChecked(self.service_state.desktopenv)
+
         self.chkbox_webserver.setChecked(self.service_state.webserver)
         self.chkbox_splashscreen.setChecked(self.service_state.splashscreen)
 
