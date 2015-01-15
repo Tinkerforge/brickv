@@ -253,10 +253,21 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                       'dhcp_mask'       : None}
         try:
             interface = self.cbox_ap_interface.currentText()
-            interface_ip = self.cbox_ap_interface.itemData(self.cbox_ap_interface.currentIndex(),
-                                                           AP_INTERFACE_IP_USER_ROLE).toString()
-            interface_mask = self.cbox_ap_interface.itemData(self.cbox_ap_interface.currentIndex(),
-                                                             AP_INTERFACE_MASK_USER_ROLE).toString()
+            
+            interface_ip_list = []
+            interface_ip_list.append(unicode(self.sbox_ap_intf_ip1.value()))
+            interface_ip_list.append(unicode(self.sbox_ap_intf_ip2.value()))
+            interface_ip_list.append(unicode(self.sbox_ap_intf_ip3.value()))
+            interface_ip_list.append(unicode(self.sbox_ap_intf_ip4.value()))
+            interface_ip = '.'.join(interface_ip_list)
+
+            interface_mask_list = []
+            interface_mask_list.append(unicode(self.sbox_ap_intf_mask1.value()))
+            interface_mask_list.append(unicode(self.sbox_ap_intf_mask2.value()))
+            interface_mask_list.append(unicode(self.sbox_ap_intf_mask3.value()))
+            interface_mask_list.append(unicode(self.sbox_ap_intf_mask4.value()))
+            interface_mask = '.'.join(interface_mask_list)
+
             ssid = self.ledit_ap_ssid.text()
 
             if self.chkbox_ap_ssid_hidden.checkState() == QtCore.Qt.Checked:
