@@ -139,8 +139,6 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
         self.line.setVisible(has_interface)
         self.chkbox_ap_enable_dns_dhcp.setVisible(has_interface)
 
-        self.label_ap_server_name.setVisible(dhcp_visible)
-        self.ledit_ap_server_name.setVisible(dhcp_visible)
         self.label_ap_domain.setVisible(dhcp_visible)
         self.ledit_ap_domain.setVisible(dhcp_visible)
         self.label_ap_pool_start.setVisible(dhcp_visible)
@@ -278,7 +276,6 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                       'wpa_key'         : None,
                       'channel'         : None,
                       'enabled_dns_dhcp': None,
-                      'server_name'     : None,
                       'domain'          : None,
                       'dhcp_start'      : None,
                       'dhcp_end'        : None,
@@ -309,22 +306,6 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             self.sarea_ap.show()
             self.update_button_text_state(BUTTON_STATE_DEFAULT)
             err_msg = 'WPA key must not contain non-ASCII characters'
-
-            QtGui.QMessageBox.critical(get_main_window(),
-                                       'Settings | Access Point',
-                                       err_msg,
-                                       QtGui.QMessageBox.Ok)
-            return
-
-        try:
-            self.ledit_ap_server_name.text().encode('ascii')
-        except:
-            self.label_working_wait.hide()
-            self.pbar_working_wait.hide()
-            self.saving = False
-            self.sarea_ap.show()
-            self.update_button_text_state(BUTTON_STATE_DEFAULT)
-            err_msg = 'Server name must not contain non-ASCII characters'
 
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Access Point',
@@ -370,7 +351,6 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             wpa_key = self.ledit_ap_wpa_key.text()
             channel = unicode(self.sbox_ap_channel.value())
             enabled_dns_dhcp = self.chkbox_ap_enable_dns_dhcp.isChecked()
-            server_name = self.ledit_ap_server_name.text()
             domain = self.ledit_ap_domain.text()
 
             dhcp_start_list = []
@@ -415,13 +395,6 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                            QtGui.QMessageBox.Ok)
                 return
 
-            elif not server_name:
-                QtGui.QMessageBox.critical(get_main_window(),
-                                           'Settings | Access Point',
-                                           'Server name empty.',
-                                           QtGui.QMessageBox.Ok)
-                return
-
             elif not domain:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
@@ -437,7 +410,6 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             apply_dict['wpa_key']          = wpa_key
             apply_dict['channel']          = channel
             apply_dict['enabled_dns_dhcp'] = enabled_dns_dhcp
-            apply_dict['server_name']      = server_name
             apply_dict['domain']           = domain
             apply_dict['dhcp_start']       = dhcp_start
             apply_dict['dhcp_end']         = dhcp_end
@@ -634,8 +606,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                             dns_dhcp_enabled = True
                             dhcp_range_start = '192.168.42.50'
                             dhcp_range_end = '192.168.42.254'
-                            server_name = 'red-brick'
-                            domain = 'tf.local'
+                            domain = 'red-brick-ap'
                             dhcp_option_netmask = '255.255.255.0'
 
                             lines = dnsmasq_conf.splitlines()
@@ -656,11 +627,6 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                     dhcp_range_start = dhcp_range[0]
                                     dhcp_range_end = dhcp_range[1]
 
-                                elif l_split[0].strip(' ') == 'address':
-                                    l_split1 = l_split[1].split('/')
-                                    if len(l_split1) == 3:
-                                        server_name = l_split1[1]
-
                                 elif l_split[0].strip(' ') == 'domain':
                                     domain= l_split[1].strip(' ')
 
@@ -671,9 +637,6 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                             dhcp_option_netmask = dhcp_option[1]
 
                             self.chkbox_ap_enable_dns_dhcp.setChecked(dns_dhcp_enabled)
-
-                            if server_name:
-                                self.ledit_ap_server_name.setText(server_name)
 
                             if domain:
                                 self.ledit_ap_domain.setText(domain)
