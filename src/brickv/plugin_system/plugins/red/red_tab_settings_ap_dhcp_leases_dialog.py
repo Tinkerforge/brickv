@@ -51,6 +51,9 @@ class REDTabSettingsAPDhcpLeasesDialog(QtGui.QDialog, Ui_REDTabSettingsAPDhcpLea
     def slot_pbutton_ap_leases_refresh_clicked(self):
         def cb_open_dnsmasq_leases(red_file):
             def cb_read(red_file, result):
+                self.pbutton_ap_leases_refresh.setText('Refresh')
+                self.pbutton_ap_leases_refresh.setEnabled(True)
+
                 red_file.release()
 
                 if result and result.data and not result.error:
@@ -89,7 +92,8 @@ class REDTabSettingsAPDhcpLeasesDialog(QtGui.QDialog, Ui_REDTabSettingsAPDhcpLea
                     self.tview_ap_leases.setColumnWidth(2, DEFAULT_TVIEW_IP_HEADER_WIDTH)
                     self.tview_ap_leases.setColumnWidth(3, DEFAULT_TVIEW_EXPIRATION_HEADER_WIDTH)
                 else:
-                    self.tview_ap_leases.setEnabled(False)
+                    self.pbutton_ap_leases_refresh.setText('Refresh')
+                    self.pbutton_ap_leases_refresh.setEnabled(True)
                     err_msg = 'Error reading dnsmasq leases file\n\n'+result.error
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Access Point',
@@ -99,12 +103,16 @@ class REDTabSettingsAPDhcpLeasesDialog(QtGui.QDialog, Ui_REDTabSettingsAPDhcpLea
             red_file.read_async(4096, lambda x: cb_read(red_file, x))
 
         def cb_open_error_dnsmasq_leases():
-            self.tview_ap_leases.setEnabled(False)
+            self.pbutton_ap_leases_refresh.setText('Refresh')
+            self.pbutton_ap_leases_refresh.setEnabled(True)
             err_msg = 'Error opening dnsmasq leases file'
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Access Point',
                                        err_msg,
                                        QtGui.QMessageBox.Ok)
+
+        self.pbutton_ap_leases_refresh.setText('Refreshing...')
+        self.pbutton_ap_leases_refresh.setEnabled(False)
 
         dnsmasq_leases_rfile = REDFile(self.session)
         async_call(dnsmasq_leases_rfile.open,
