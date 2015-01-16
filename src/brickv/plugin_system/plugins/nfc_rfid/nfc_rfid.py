@@ -2,7 +2,7 @@
 """
 NFC/RFID Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 nfc_rfid.py: NFC/RFID Plugin Implementation
 
@@ -24,36 +24,13 @@ Boston, MA 02111-1307, USA.
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.async_call import async_call
+from brickv.spin_box_hex import SpinBoxHex
 
 from PyQt4.QtGui import QSpinBox, QRegExpValidator
 from PyQt4.QtCore import pyqtSignal, Qt, QRegExp
         
 from brickv.bindings.bricklet_nfc_rfid import BrickletNFCRFID
-
 from brickv.plugin_system.plugins.nfc_rfid.ui_nfc_rfid import Ui_NFCRFID
-
-class SpinBoxHex(QSpinBox):
-    def __init__(self, parent=None, default_value=255):
-        super(SpinBoxHex, self).__init__(parent)
-        self.validator = QRegExpValidator(QRegExp("[0-9A-Fa-f]{1,2}"), self)
-        self.setRange(0, 255)
-        self.setValue(default_value)
-
-    def fixCase(self, text):
-        self.lineEdit().setText(text.toUpper())
-
-    def validate(self, text, pos):
-        return self.validator.validate(text, pos)
-
-    def valueFromText(self, text):
-        return text.toInt(16)[0]
-
-    def textFromValue(self, value):
-        s = hex(value).replace('0x', '').upper()
-        if len(s) == 1:
-            s = '0' + s
-
-        return s
 
 class NFCRFID(PluginBase, Ui_NFCRFID):
     qtcb_state = pyqtSignal(int, bool)

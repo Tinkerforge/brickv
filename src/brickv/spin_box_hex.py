@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-Master Plugin
+brickv (Brick Viewer)
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
-spin_box_hex.py: SpinBoxHex for Master Plugin implementation
+spin_box_hex.py: SpinBoxHex implementation
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -33,7 +33,7 @@ class SpinBoxHex(QSpinBox):
         self.setRange(0, 255)
 
     def fixCase(self, text):
-        self.lineEdit().setText(text.toUpper())
+        self.lineEdit().setText(text.upper())
 
     def validate(self, text, pos):
         return self.validator.validate(text, pos)

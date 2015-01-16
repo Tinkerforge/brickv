@@ -195,7 +195,7 @@
   <customwidget>
    <class>SpinBoxHex</class>
    <extends>QSpinBox</extends>
-   <header location="global">brickv.plugin_system.plugins.master.spin_box_hex</header>
+   <header location="global">brickv.spin_box_hex</header>
   </customwidget>
  </customwidgets>
  <tabstops>
