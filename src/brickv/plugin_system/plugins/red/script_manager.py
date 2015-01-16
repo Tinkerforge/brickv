@@ -2,6 +2,7 @@
 """
 RED Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 script_manager.py: Manage RED Brick scripts
 
@@ -53,9 +54,9 @@ class ScriptData(QtCore.QObject):
         self.abort                     = False
         self.execute_as_user           = False
 
-class ScriptManager(object):
-    ScriptResult = namedtuple('ScriptResult', 'stdout stderr exit_code')
+ScriptResult = namedtuple('ScriptResult', 'stdout stderr exit_code')
 
+class ScriptManager(object):
     @staticmethod
     def _call(script, sd, data):
         if data == None:
@@ -219,11 +220,14 @@ class ScriptManager(object):
 
             sd.stderr  = None
 
+    def _report_result_and_cleanup(self, sd, result):
+        self._release_script_data(sd)
+        ScriptManager._call(self.scripts[sd.script_name], sd, result)
+        script_data_set.remove(sd)
+
     def _execute_after_init(self, sd):
         if sd.abort:
-            self._release_script_data(sd)
-            ScriptManager._call(self.scripts[sd.script_name], sd, None)
-            script_data_set.remove(sd)
+            self._report_result_and_cleanup(sd, None)
             return
 
         try:
@@ -234,9 +238,7 @@ class ScriptManager(object):
             else:
                 sd.stderr = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, sd.max_length)
         except:
-            self._release_script_data(sd)
-            ScriptManager._call(self.scripts[sd.script_name], sd, None)
-            script_data_set.remove(sd)
+            self._report_result_and_cleanup(sd, None)
             return
 
         # NOTE: this function will be called on the UI thread
@@ -246,9 +248,7 @@ class ScriptManager(object):
             if not sd.abort and sd.process.state == REDProcess.STATE_EXITED:
                 def cb_stdout_read(result, sd):
                     if result.error != None:
-                        self._release_script_data(sd)
-                        ScriptManager._call(self.scripts[sd.script_name], sd, None)
-                        script_data_set.remove(sd)
+                        self._report_result_and_cleanup(sd, None)
                         return
 
                     if sd.decode_output_as_utf8:
@@ -259,15 +259,11 @@ class ScriptManager(object):
                     if sd.redirect_stderr_to_stdout:
                         exit_code = sd.process.exit_code
 
-                        self._release_script_data(sd)
-                        ScriptManager._call(self.scripts[sd.script_name], sd, self.ScriptResult(out, None, exit_code))
-                        script_data_set.remove(sd)
+                        self._report_result_and_cleanup(sd, ScriptResult(out, None, exit_code))
                     else:
                         def cb_stderr_read(result, sd):
                             if result.error != None:
-                                self._release_script_data(sd)
-                                ScriptManager._call(self.scripts[sd.script_name], sd, None)
-                                script_data_set.remove(sd)
+                                self._report_result_and_cleanup(sd, None)
                                 return
 
                             if sd.decode_output_as_utf8:
@@ -277,17 +273,13 @@ class ScriptManager(object):
 
                             exit_code = sd.process.exit_code
 
-                            self._release_script_data(sd)
-                            ScriptManager._call(self.scripts[sd.script_name], sd, self.ScriptResult(out, err, exit_code))
-                            script_data_set.remove(sd)
+                            self._report_result_and_cleanup(sd, ScriptResult(out, err, exit_code))
 
                         sd.stderr.read_async(sd.max_length, lambda result: cb_stderr_read(result, sd))
 
                 sd.stdout.read_async(sd.max_length, lambda result: cb_stdout_read(result, sd))
             else:
-                self._release_script_data(sd)
-                ScriptManager._call(self.scripts[sd.script_name], sd, None)
-                script_data_set.remove(sd)
+                self._report_result_and_cleanup(sd, None)
 
         sd.process                        = REDProcess(self.session)
         sd.process.state_changed_callback = lambda x: cb_process_state_changed(sd)
@@ -332,6 +324,4 @@ class ScriptManager(object):
             sd.process.spawn(posixpath.join(SCRIPT_FOLDER, sd.script_name + self.scripts[sd.script_name].file_ending),
                              sd.params, env, '/', uid, gid, self.devnull, sd.stdout, sd.stderr)
         except:
-            self._release_script_data(sd)
-            ScriptManager._call(self.scripts[sd.script_name], sd, None)
-            script_data_set.remove(sd)
+            self._report_result_and_cleanup(sd, None)
