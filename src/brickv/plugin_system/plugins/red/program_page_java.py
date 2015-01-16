@@ -177,33 +177,34 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             self.combo_main_class.setEnabled(False)
 
             def get_main_classes():
-                def progress_canceled(sd_ref):
-                    sd = sd_ref[0]
+                def progress_canceled(script_instance_ref):
+                    script_instance = script_instance_ref[0]
 
-                    if sd == None:
+                    if script_instance == None:
                         return
 
-                    self.wizard().script_manager.abort_script(sd)
+                    self.wizard().script_manager.abort_script(script_instance)
 
-                sd_ref   = [None]
+                script_instance_ref = [None]
+
                 progress = ExpandingProgressDialog(self.wizard())
                 progress.hide_progress_text()
                 progress.setWindowTitle('Edit Program')
                 progress.setLabelText('Collecting Java main classes')
                 progress.setModal(True)
                 progress.setRange(0, 0)
-                progress.canceled.connect(lambda: progress_canceled(sd_ref))
+                progress.canceled.connect(lambda: progress_canceled(script_instance_ref))
                 progress.show()
 
-                def cb_java_main_classes(sd_ref, result):
-                    sd = sd_ref[0]
+                def cb_java_main_classes(script_instance_ref, result):
+                    script_instance = script_instance_ref[0]
 
-                    if sd != None:
-                        aborted = sd.abort
+                    if script_instance != None:
+                        aborted = script_instance.abort
                     else:
                         aborted = False
 
-                    sd_ref[0] = None
+                    script_instance_ref[0] = None
 
                     def done():
                         progress.cancel()
@@ -251,10 +252,10 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
                     async_call(expand_async, result.stdout, cb_expand_success, cb_expand_error)
 
-                sd_ref[0] = self.wizard().script_manager.execute_script('java_main_classes',
-                                                                        lambda result: cb_java_main_classes(sd_ref, result),
-                                                                        [self.bin_directory], max_length=1024*1024,
-                                                                        decode_output_as_utf8=False)
+                script_instance_ref[0] = self.wizard().script_manager.execute_script('java_main_classes',
+                                                                                     lambda result: cb_java_main_classes(script_instance_ref, result),
+                                                                                     [self.bin_directory], max_length=1024*1024,
+                                                                                     decode_output_as_utf8=False)
 
             # need to decouple this with a timer, otherwise it's executed at
             # a time where the progress bar cannot properly enter model state

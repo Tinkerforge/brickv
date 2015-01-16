@@ -33,9 +33,9 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
         self.setupUi(self)
         self.setModal(True)
 
-        self.script_manager = script_manager
-        self.program        = program
-        self.script_data    = None
+        self.script_manager  = script_manager
+        self.program         = program
+        self.script_instance = None
 
         self.rejected.connect(self.cancel_make_execution)
         self.button_make.clicked.connect(lambda: self.execute_make(None))
@@ -63,8 +63,8 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
         # FIXME: it would be better to read the output incremental instead of
         #        waiting for make to exit and then display it in a burst
         def cb_make_helper(result):
-            aborted          = self.script_data.abort
-            self.script_data = None
+            aborted = self.script_instance.abort
+            self.script_instance = None
 
             if result != None:
                 for s in result.stdout.rstrip().split('\n'):
@@ -94,16 +94,16 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
         if target != None:
             make_options.append(target)
 
-        self.script_data = self.script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options,
-                                                              max_length=1024*1024, redirect_stderr_to_stdout=True,
-                                                              execute_as_user=True)
+        self.script_instance = self.script_manager.execute_script('make_helper', cb_make_helper, [working_directory] + make_options,
+                                                                  max_length=1024*1024, redirect_stderr_to_stdout=True,
+                                                                  execute_as_user=True)
 
     def cancel_make_execution(self):
-        if self.script_data == None:
+        if self.script_instance == None:
             return
 
         self.button_make.setEnabled(True)
         self.button_clean.setEnabled(True)
         self.button_cancel.setEnabled(False)
 
-        self.script_manager.abort_script(self.script_data)
+        self.script_manager.abort_script(self.script_instance)

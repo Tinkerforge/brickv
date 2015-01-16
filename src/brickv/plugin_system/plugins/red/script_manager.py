@@ -26,20 +26,20 @@ from brickv.plugin_system.plugins.red.api import REDFile, REDPipe, REDProcess
 
 import posixpath
 from collections import namedtuple
-from PyQt4 import QtCore
+from PyQt4.QtCore import QObject, pyqtSignal
 
 from brickv.async_call import async_call
 from brickv.object_creator import create_object_in_qt_main_thread
 
 SCRIPT_FOLDER = '/usr/local/scripts'
 
-script_data_set = set()
+script_instances = set()
 
-class ScriptData(QtCore.QObject):
-    qtcb_result = QtCore.pyqtSignal(object)
+class ScriptInstance(QObject):
+    qtcb_result = pyqtSignal(object)
 
     def __init__(self):
-        QtCore.QObject.__init__(self)
+        QObject.__init__(self)
 
         self.process                   = None
         self.stdout                    = None
@@ -50,7 +50,6 @@ class ScriptData(QtCore.QObject):
         self.max_length                = None
         self.decode_output_as_utf8     = True
         self.redirect_stderr_to_stdout = False
-        self.script_instance           = None
         self.abort                     = False
         self.execute_as_user           = False
 
@@ -58,12 +57,12 @@ ScriptResult = namedtuple('ScriptResult', 'stdout stderr exit_code')
 
 class ScriptManager(object):
     @staticmethod
-    def _call(script, sd, data):
+    def _call(script, si, data):
         if data == None:
             script.copied = False
 
-        sd.qtcb_result.emit(data)
-        sd.qtcb_result.disconnect(sd.result_callback)
+        si.qtcb_result.emit(data)
+        si.qtcb_result.disconnect(si.result_callback)
 
     def __init__(self, session):
         self.session = session
@@ -71,10 +70,10 @@ class ScriptManager(object):
         self.devnull = REDFile(self.session).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0)
         self.scripts = {}
 
-        # We can't use copy.deepycopy directly on scripts, since deep-copy does not work on QObject.
-        # Instead we create a new Script/QObjects here.
-        # This is way more efficient anyway, since we can shallow-copy script and file_ending
-        # while just reinitializing the rest
+        # We can't use copy.deepycopy directly on scripts, since deep-copy does
+        # not work on QObject. Instead we create a new Script/QObjects here.
+        # This is way more efficient anyway, since we can shallow-copy script
+        # and file_ending while just reinitializing the rest
         from brickv.plugin_system.plugins.red._scripts import scripts, Script
         for key, value in scripts.items():
             self.scripts[key] = Script(value.script, value.file_ending)
@@ -98,58 +97,58 @@ class ScriptManager(object):
         if params == None:
             params = []
 
-        sd                           = ScriptData()
-        sd.script_name               = script_name
-        sd.result_callback           = result_callback
-        sd.params                    = params
-        sd.max_length                = max_length
-        sd.decode_output_as_utf8     = decode_output_as_utf8
-        sd.redirect_stderr_to_stdout = redirect_stderr_to_stdout
-        sd.execute_as_user           = execute_as_user
+        si                           = ScriptInstance()
+        si.script_name               = script_name
+        si.result_callback           = result_callback
+        si.params                    = params
+        si.max_length                = max_length
+        si.decode_output_as_utf8     = decode_output_as_utf8
+        si.redirect_stderr_to_stdout = redirect_stderr_to_stdout
+        si.execute_as_user           = execute_as_user
 
-        script_data_set.add(sd)
+        script_instances.add(si)
 
-        if sd.result_callback != None:
-            sd.qtcb_result.connect(sd.result_callback)
+        if si.result_callback != None:
+            si.qtcb_result.connect(si.result_callback)
 
         # We just let all exceptions fall through to here and give up.
         # There is nothing we can do anyway.
         try:
-            self._init_script(sd)
-            return sd
+            self._init_script(si)
+            return si
         except:
-            if sd.result_callback != None:
-                sd.qtcb_result.disconnect(sd.result_callback)
+            if si.result_callback != None:
+                si.qtcb_result.disconnect(si.result_callback)
 
-            self.scripts[sd.script_name].copied = False
+            self.scripts[si.script_name].copied = False
 
-            if sd.result_callback != None:
-                sd.result_callback(None) # We are still in GUI thread, use result_callback instead of signal
+            if si.result_callback != None:
+                si.result_callback(None) # We are still in GUI thread, use result_callback instead of signal
 
-            script_data_set.remove(sd)
+            script_instances.remove(si)
 
         return None
 
-    def abort_script(self, sd):
-        if sd.abort:
+    def abort_script(self, si):
+        if si.abort:
             return
 
-        sd.abort = True
+        si.abort = True
 
-        if sd.process != None:
+        if si.process != None:
             try:
-                sd.process.kill(REDProcess.SIGNAL_KILL)
+                si.process.kill(REDProcess.SIGNAL_KILL)
             except:
                 pass
 
-    def _init_script(self, sd):
-        if self.scripts[sd.script_name].copied:
-            return self._execute_after_init(sd)
+    def _init_script(self, si):
+        if self.scripts[si.script_name].copied:
+            return self._execute_after_init(si)
 
-        async_call(self._init_script_async, sd, lambda execute: self._init_script_done(execute, sd), lambda: self._init_script_error(sd))
+        async_call(self._init_script_async, si, lambda execute: self._init_script_done(execute, si), lambda: self._init_script_error(si))
 
-    def _init_script_async(self, sd):
-        script = self.scripts[sd.script_name]
+    def _init_script_async(self, si):
+        script = self.scripts[si.script_name]
 
         script.copy_lock.acquire()
 
@@ -161,20 +160,20 @@ class ScriptManager(object):
 
         try:
             script.file = create_object_in_qt_main_thread(REDFile, (self.session,))
-            script.file.open(posixpath.join(SCRIPT_FOLDER, sd.script_name + script.file_ending),
+            script.file.open(posixpath.join(SCRIPT_FOLDER, si.script_name + script.file_ending),
                              REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0o755, 0, 0)
-            script.file.write_async(script.script, lambda error: self._init_script_async_write_done(error, sd))
+            script.file.write_async(script.script, lambda error: self._init_script_async_write_done(error, si))
             return False
         except:
             try:
-                self.scripts[sd.script_name].copy_lock.release()
+                self.scripts[si.script_name].copy_lock.release()
             except:
                 pass
 
             raise
 
-    def _init_script_async_write_done(self, error, sd):
-        script = self.scripts[sd.script_name]
+    def _init_script_async_write_done(self, error, si):
+        script = self.scripts[si.script_name]
 
         script.file.release()
         script.file = None
@@ -182,128 +181,128 @@ class ScriptManager(object):
         script.copy_lock.release()
 
         if error == None:
-            self._execute_after_init(sd)
+            self._execute_after_init(si)
         else:
-            ScriptManager._call(script, sd, None)
-            script_data_set.remove(sd)
+            ScriptManager._call(script, si, None)
+            script_instances.remove(si)
 
-    def _init_script_done(self, execute, sd):
+    def _init_script_done(self, execute, si):
         if execute:
-            self._execute_after_init(sd)
+            self._execute_after_init(si)
 
-    def _init_script_error(self, sd):
-        ScriptManager._call(self.scripts[sd.script_name], sd, None)
-        script_data_set.remove(sd)
+    def _init_script_error(self, si):
+        ScriptManager._call(self.scripts[si.script_name], si, None)
+        script_instances.remove(si)
 
-    def _release_script_data(self, sd):
-        if sd.process != None:
+    def _release_script_data(self, si):
+        if si.process != None:
             try:
-                sd.process.release()
+                si.process.release()
             except:
                 pass
 
-            sd.process = None
+            si.process = None
 
-        if sd.stdout != None:
+        if si.stdout != None:
             try:
-                sd.stdout.release()
+                si.stdout.release()
             except:
                 pass
 
-            sd.stdout = None
+            si.stdout = None
 
-        if sd.stderr != None and not sd.redirect_stderr_to_stdout:
+        if si.stderr != None and not si.redirect_stderr_to_stdout:
             try:
-                sd.stderr.release()
+                si.stderr.release()
             except:
                 pass
 
-            sd.stderr  = None
+            si.stderr  = None
 
-    def _report_result_and_cleanup(self, sd, result):
-        self._release_script_data(sd)
-        ScriptManager._call(self.scripts[sd.script_name], sd, result)
-        script_data_set.remove(sd)
+    def _report_result_and_cleanup(self, si, result):
+        self._release_script_data(si)
+        ScriptManager._call(self.scripts[si.script_name], si, result)
+        script_instances.remove(si)
 
-    def _execute_after_init(self, sd):
-        if sd.abort:
-            self._report_result_and_cleanup(sd, None)
+    def _execute_after_init(self, si):
+        if si.abort:
+            self._report_result_and_cleanup(si, None)
             return
 
         try:
-            sd.stdout = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, sd.max_length)
+            si.stdout = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, si.max_length)
 
-            if sd.redirect_stderr_to_stdout:
-                sd.stderr = sd.stdout
+            if si.redirect_stderr_to_stdout:
+                si.stderr = si.stdout
             else:
-                sd.stderr = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, sd.max_length)
+                si.stderr = REDPipe(self.session).create(REDPipe.FLAG_NON_BLOCKING_READ, si.max_length)
         except:
-            self._report_result_and_cleanup(sd, None)
+            self._report_result_and_cleanup(si, None)
             return
 
         # NOTE: this function will be called on the UI thread
-        def cb_process_state_changed(sd):
+        def cb_process_state_changed(si):
             # TODO: If we want to support returns > 1MB we need to do more work here,
             #       but it may not be necessary.
-            if not sd.abort and sd.process.state == REDProcess.STATE_EXITED:
-                def cb_stdout_read(result, sd):
+            if not si.abort and si.process.state == REDProcess.STATE_EXITED:
+                def cb_stdout_read(result, si):
                     if result.error != None:
-                        self._report_result_and_cleanup(sd, None)
+                        self._report_result_and_cleanup(si, None)
                         return
 
-                    if sd.decode_output_as_utf8:
+                    if si.decode_output_as_utf8:
                         out = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
                     else:
                         out = result.data
 
-                    if sd.redirect_stderr_to_stdout:
-                        exit_code = sd.process.exit_code
+                    if si.redirect_stderr_to_stdout:
+                        exit_code = si.process.exit_code
 
-                        self._report_result_and_cleanup(sd, ScriptResult(out, None, exit_code))
+                        self._report_result_and_cleanup(si, ScriptResult(out, None, exit_code))
                     else:
-                        def cb_stderr_read(result, sd):
+                        def cb_stderr_read(result, si):
                             if result.error != None:
-                                self._report_result_and_cleanup(sd, None)
+                                self._report_result_and_cleanup(si, None)
                                 return
 
-                            if sd.decode_output_as_utf8:
+                            if si.decode_output_as_utf8:
                                 err = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
                             else:
                                 err = result.data
 
-                            exit_code = sd.process.exit_code
+                            exit_code = si.process.exit_code
 
-                            self._report_result_and_cleanup(sd, ScriptResult(out, err, exit_code))
+                            self._report_result_and_cleanup(si, ScriptResult(out, err, exit_code))
 
-                        sd.stderr.read_async(sd.max_length, lambda result: cb_stderr_read(result, sd))
+                        si.stderr.read_async(si.max_length, lambda result: cb_stderr_read(result, si))
 
-                sd.stdout.read_async(sd.max_length, lambda result: cb_stdout_read(result, sd))
+                si.stdout.read_async(si.max_length, lambda result: cb_stdout_read(result, si))
             else:
-                self._report_result_and_cleanup(sd, None)
+                self._report_result_and_cleanup(si, None)
 
-        sd.process                        = REDProcess(self.session)
-        sd.process.state_changed_callback = lambda x: cb_process_state_changed(sd)
+        si.process                        = REDProcess(self.session)
+        si.process.state_changed_callback = lambda x: cb_process_state_changed(si)
 
         # FIXME: do incremental reads on the output
         """
         # NOTE: this function will be called on the UI thread
-        def cb_stdout_events_occurred(sd):
-            print 'cb_stdout_events_occurred', sd.script_name
+        def cb_stdout_events_occurred(si):
+            print 'cb_stdout_events_occurred', si.script_name
 
         # NOTE: this function will be called on the UI thread
-        def cb_stderr_events_occurred(sd):
-            print 'cb_stderr_events_occurred', sd.script_name
+        def cb_stderr_events_occurred(si):
+            print 'cb_stderr_events_occurred', si.script_name
 
-        sd.stdout.events_occurred_callback = lambda x: cb_stdout_events_occurred(sd)
-        sd.stderr.events_occurred_callback = lambda x: cb_stderr_events_occurred(sd)
+        si.stdout.events_occurred_callback = lambda x: cb_stdout_events_occurred(si)
+        si.stderr.events_occurred_callback = lambda x: cb_stderr_events_occurred(si)
 
         try:
-            sd.stdout.set_events(REDFile.EVENT_READABLE)
+            si.stdout.set_events(REDFile.EVENT_READABLE)
         except:
             pass
 
         try:
-            sd.stderr.set_events(REDFile.EVENT_READABLE)
+            si.stderr.set_events(REDFile.EVENT_READABLE)
         except:
             pass
         """
@@ -312,7 +311,7 @@ class ScriptManager(object):
         # also set a sensible PATH so scripts can find basic command without an absolute path
         env = ['LANG=en_US.UTF-8', 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin']
 
-        if sd.execute_as_user:
+        if si.execute_as_user:
             uid = 1000
             gid = 1000
         else:
@@ -321,7 +320,7 @@ class ScriptManager(object):
 
         try:
             # FIXME: Do we need a timeout here in case that the state_changed callback never comes?
-            sd.process.spawn(posixpath.join(SCRIPT_FOLDER, sd.script_name + self.scripts[sd.script_name].file_ending),
-                             sd.params, env, '/', uid, gid, self.devnull, sd.stdout, sd.stderr)
+            si.process.spawn(posixpath.join(SCRIPT_FOLDER, si.script_name + self.scripts[si.script_name].file_ending),
+                             si.params, env, '/', uid, gid, self.devnull, si.stdout, si.stderr)
         except:
-            self._report_result_and_cleanup(sd, None)
+            self._report_result_and_cleanup(si, None)

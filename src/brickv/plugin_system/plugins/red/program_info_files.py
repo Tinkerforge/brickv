@@ -424,22 +424,23 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if len(selected_name_items) == 0:
             return
 
-        def progress_canceled(sd_ref):
-            sd = sd_ref[0]
+        def progress_canceled(script_instance_ref):
+            script_instance = script_instance_ref[0]
 
-            if sd == None:
+            if script_instance == None:
                 return
 
-            self.script_manager.abort_script(sd)
+            self.script_manager.abort_script(script_instance)
 
-        sd_ref   = [None]
+        script_instance_ref = [None]
+
         progress = ExpandingProgressDialog(self)
         progress.hide_progress_text()
         progress.setModal(True)
         progress.setWindowTitle('Delete Files')
         progress.setLabelText('Collecting files and directories to delete')
         progress.setRange(0, 0)
-        progress.canceled.connect(lambda: progress_canceled(sd_ref))
+        progress.canceled.connect(lambda: progress_canceled(script_instance_ref))
         progress.show()
 
         files_to_delete = []
@@ -493,15 +494,15 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         progress.setLabelText(message)
 
-        def cb_program_delete_files_dirs(sd_ref, result):
-            sd = sd_ref[0]
+        def cb_program_delete_files_dirs(script_instance_ref, result):
+            script_instance = script_instance_ref[0]
 
-            if sd != None:
-                aborted = sd.abort
+            if script_instance != None:
+                aborted = script_instance.abort
             else:
                 aborted = False
 
-            sd_ref[0] = None
+            script_instance_ref[0] = None
 
             progress.cancel()
             self.refresh_files()
@@ -516,7 +517,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 QMessageBox.critical(get_main_window(), 'Delete Files Error',
                                      u'Could not delete selected files/directories:\n\n{0}'.format(result.stderr.strip()))
 
-        sd_ref[0] = self.script_manager.execute_script('program_delete_files_dirs',
-                                                       lambda result: cb_program_delete_files_dirs(sd_ref, result),
-                                                       [json.dumps(files_to_delete), json.dumps(dirs_to_delete)],
-                                                       execute_as_user=True)
+        script_instance_ref[0] = self.script_manager.execute_script('program_delete_files_dirs',
+                                                                    lambda result: cb_program_delete_files_dirs(script_instance_ref, result),
+                                                                    [json.dumps(files_to_delete), json.dumps(dirs_to_delete)],
+                                                                    execute_as_user=True)
