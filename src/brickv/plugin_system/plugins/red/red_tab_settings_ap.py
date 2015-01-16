@@ -29,6 +29,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red import config_parser
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
+from brickv.plugin_system.plugins.red.red_tab_settings_ap_dhcp_leases_dialog import REDTabSettingsAPDhcpLeasesDialog
 
 BUTTON_STATE_DEFAULT = 1
 BUTTON_STATE_REFRESH = 2
@@ -66,6 +67,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
         self.chkbox_ap_enable_dns_dhcp.stateChanged.connect(self.update_ui_state)
         self.pbutton_ap_refresh.clicked.connect(self.slot_pbutton_ap_refresh_clicked)
         self.pbutton_ap_save.clicked.connect(self.slot_pbutton_ap_save_clicked)
+        self.pbutton_ap_show_dhcp_leases.clicked.connect(self.slot_pbutton_ap_show_dhcp_leases_clicked)
 
     def tab_on_focus(self):
         self.is_tab_on_focus = True
@@ -281,6 +283,71 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                       'dhcp_start'      : None,
                       'dhcp_end'        : None,
                       'dhcp_mask'       : None}
+        
+        try:
+            self.ledit_ap_ssid.text().encode('ascii')
+        except:
+            self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
+            self.saving = False
+            self.sarea_ap.show()
+            self.update_button_text_state(BUTTON_STATE_DEFAULT)
+            err_msg = 'SSID must not contain non-ASCII characters'
+
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       'Settings | Access Point',
+                                       err_msg,
+                                       QtGui.QMessageBox.Ok)
+            return
+        
+        try:
+            self.ledit_ap_wpa_key.text().encode('ascii')
+        except:
+            self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
+            self.saving = False
+            self.sarea_ap.show()
+            self.update_button_text_state(BUTTON_STATE_DEFAULT)
+            err_msg = 'WPA key must not contain non-ASCII characters'
+
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       'Settings | Access Point',
+                                       err_msg,
+                                       QtGui.QMessageBox.Ok)
+            return
+
+        try:
+            self.ledit_ap_server_name.text().encode('ascii')
+        except:
+            self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
+            self.saving = False
+            self.sarea_ap.show()
+            self.update_button_text_state(BUTTON_STATE_DEFAULT)
+            err_msg = 'Server name must not contain non-ASCII characters'
+
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       'Settings | Access Point',
+                                       err_msg,
+                                       QtGui.QMessageBox.Ok)
+            return
+
+        try:
+            self.ledit_ap_domain.text().encode('ascii')
+        except:
+            self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
+            self.saving = False
+            self.sarea_ap.show()
+            self.update_button_text_state(BUTTON_STATE_DEFAULT)
+            err_msg = 'Domain must not contain non-ASCII characters'
+
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       'Settings | Access Point',
+                                       err_msg,
+                                       QtGui.QMessageBox.Ok)
+            return
+
         try:
             interface = self.cbox_ap_interface.currentText()
             
@@ -398,6 +465,11 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                                        'Settings | Access Point',
                                        err_msg,
                                        QtGui.QMessageBox.Ok)
+
+    def slot_pbutton_ap_show_dhcp_leases_clicked(self):
+        leases_dialog = REDTabSettingsAPDhcpLeasesDialog(self, self.session)
+        leases_dialog.setModal(True)
+        leases_dialog.show()
 
     def read_config_files(self):
         self.hostapd_conf_rfile = REDFile(self.session)

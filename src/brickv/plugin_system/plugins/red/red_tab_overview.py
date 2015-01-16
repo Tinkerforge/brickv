@@ -217,7 +217,6 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
                 self.nic_item_model.setItem(i, 1, QtGui.QStandardItem("Collecting data..."))
                 self.nic_item_model.setItem(i, 2, QtGui.QStandardItem("Collecting data..."))
             else:
-
                 download_rate = _get_nic_transfer_rate(nic_data_dict[key][1],
                                                        self.nic_previous_bytes[key]['received'],
                                                        delta)
