@@ -273,13 +273,17 @@ class REDSession(QtCore.QObject):
     def session_id(self): return self._session_id
 
 
-def _attach_or_release(session, object_class, object_id, extra_object_ids_to_release_on_error=None):
+def _attach_or_release(session, object_class, object_id, extra_object_ids_to_release_on_error=None, extra_parameters=None):
     if extra_object_ids_to_release_on_error == None:
         extra_object_ids_to_release_on_error = []
 
+    parameters = (session,)
+
+    if extra_parameters != None:
+        parameters += extra_parameters
+
     try:
-        object_class_instance = create_object_in_qt_main_thread(object_class, (session,))
-        obj = object_class_instance.attach(object_id)
+        obj = create_object_in_qt_main_thread(object_class, parameters).attach(object_id)
     except:
         try:
             session._brick.release_object_unchecked(object_id, session._session_id)
@@ -511,6 +515,11 @@ class REDList(REDObject):
     def __repr__(self):
         return '<REDList object_id: {0}>'.format(self.object_id)
 
+    def __init__(self, session, forced_wrapper_class=None):
+        REDObject.__init__(self, session)
+
+        self._forced_wrapper_class = forced_wrapper_class
+
     def _initialize(self):
         self._items = None
 
@@ -544,10 +553,13 @@ class REDList(REDObject):
             if error_code != REDError.E_SUCCESS:
                 raise REDError('Could not get item at index {0} of list object {1}'.format(i, self.object_id), error_code)
 
-            try:
-                wrapper_class = REDObject._subclasses[type_]
-            except KeyError:
-                raise TypeError('List object {0} contains item with unknown type {1} at index {2}'.format(self.object_id, type_, i))
+            if self._forced_wrapper_class != None:
+                wrapper_class = self._forced_wrapper_class
+            else:
+                try:
+                    wrapper_class = REDObject._subclasses[type_]
+                except KeyError:
+                    raise TypeError('List object {0} contains item with unknown type {1} at index {2}'.format(self.object_id, type_, i))
 
             items.append(_attach_or_release(self._session, wrapper_class, item_object_id))
 
@@ -1091,10 +1103,13 @@ class REDFileOrPipeAttacher(REDObject):
     def _detach_callbacks(self):
         pass
 
+    def update(self):
+        pass
+
     def attach(self, object_id):
         self.release()
 
-        REDObject.attach(object_id, False)
+        REDObject.attach(self, object_id, False)
 
         try:
             error_code, type_, name_string_id, _, _, _, _, _, _, _, _ = self._session._brick.get_file_info(self.object_id, self._session._session_id)
@@ -1501,10 +1516,147 @@ def get_processes(session):
     if error_code != REDError.E_SUCCESS:
         raise REDError('Could not get processes list object', error_code)
 
-    return _attach_or_release(session, REDList, processes_list_id)
+    return _attach_or_release(session, REDList, processes_list_id).items
 
 
-class REDProgram(REDObject):
+class REDProgramBase(REDObject):
+    def _initialize(self):
+        self._identifier     = None
+        self._custom_options = None
+
+    def update(self):
+        self.update_identifier()
+        self.update_custom_options()
+
+    def update_identifier(self):
+        if self.object_id is None:
+            raise RuntimeError('Cannot update unattached program object')
+
+        try:
+            error_code, identifier_string_id = self._session._brick.get_program_identifier(self.object_id, self._session._session_id)
+        except Error:
+            self._session.increase_error_count()
+            raise
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get identifier of program object {0}'.format(self.object_id), error_code)
+
+        self._identifier = _attach_or_release(self._session, REDString, identifier_string_id)
+
+    def update_custom_options(self):
+        if self.object_id is None:
+            raise RuntimeError('Cannot update unattached program object')
+
+        try:
+            error_code, custom_option_names_list_id = self._session._brick.get_custom_program_option_names(self.object_id, self._session._session_id)
+        except Error:
+            self._session.increase_error_count()
+            raise
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get list of custom option names of program object {0}'.format(self.object_id), error_code)
+
+        custom_option_names = _attach_or_release(self._session, REDList, custom_option_names_list_id)
+        custom_options      = {}
+
+        for name in custom_option_names._items:
+            try:
+                error_code, custom_option_value_string_id = \
+                self._session._brick.get_custom_program_option_value(self.object_id, name.object_id, self._session._session_id)
+            except Error:
+                self._session.increase_error_count()
+                raise
+
+            if error_code != REDError.E_SUCCESS:
+                raise REDError('Could not get custom option value of program object {0}'.format(self.object_id), error_code)
+
+            custom_options[unicode(name)] = _attach_or_release(self._session, REDString, custom_option_value_string_id)
+
+        self._custom_options = custom_options
+
+    def set_custom_option_value(self, name, value):
+        if self.object_id is None:
+            raise RuntimeError('Cannot set custom option for unattached program object')
+
+        if isinstance(value, list):
+            self.set_custom_option_value_list(name, value)
+        else:
+            if not isinstance(name, REDString):
+                name = REDString(self._session).allocate(name)
+
+            if isinstance(value, bool):
+                if value:
+                    value = 'true'
+                else:
+                    value = 'false'
+
+            if not isinstance(value, REDString):
+                value = REDString(self._session).allocate(value)
+
+            try:
+                error_code = self._session._brick.set_custom_program_option_value(self.object_id, name.object_id, value.object_id)
+            except Error:
+                self._session.increase_error_count()
+                raise
+
+            if error_code != REDError.E_SUCCESS:
+                raise REDError('Could not set custom option for program object {0}'.format(self.object_id), error_code)
+
+            self._custom_options[unicode(name)] = value
+
+    def set_custom_option_value_list(self, name, values):
+        if self.object_id is None:
+            raise RuntimeError('Cannot set custom option for unattached program object')
+
+        # FIXME: remove all custom options that start with <name>.item* to ensure that
+        #        shrinking a list doesn't leaf old items behind
+        for i, value in enumerate(values):
+            self.set_custom_option_value(name + '.item' + str(i), unicode(value))
+
+        self.set_custom_option_value(name + '.length', unicode(len(values)))
+
+    def cast_custom_option_value(self, name, cast, default):
+        try:
+            string = self._custom_options[unicode(name)]
+        except KeyError:
+            return default
+
+        if cast == bool:
+            if unicode(string) == 'true':
+                return True
+            elif unicode(string) == 'false':
+                return False
+            else:
+                return default
+        else:
+            try:
+                return cast(unicode(string))
+            except ValueError:
+                return default
+
+    def cast_custom_option_value_list(self, name, cast, default):
+        length = self.cast_custom_option_value(name + '.length', int, None)
+
+        if length == None:
+            return default
+
+        values = []
+
+        for i in range(max(length, 0)):
+            value = self.cast_custom_option_value(name + '.item' + str(i), cast, None)
+
+            if value == None:
+                return default
+
+            values.append(value)
+
+        return values
+
+    @property
+    def identifier(self): return _red_string_to_unicode(self._identifier)
+
+
+class REDProgram(REDProgramBase):
     STDIO_REDIRECTION_DEV_NULL       = BrickRED.PROGRAM_STDIO_REDIRECTION_DEV_NULL
     STDIO_REDIRECTION_PIPE           = BrickRED.PROGRAM_STDIO_REDIRECTION_PIPE
     STDIO_REDIRECTION_FILE           = BrickRED.PROGRAM_STDIO_REDIRECTION_FILE
@@ -1527,7 +1679,8 @@ class REDProgram(REDObject):
         return '<REDProgram object_id: {0}, identifier: {1}>'.format(self.object_id, self._identifier)
 
     def _initialize(self):
-        self._identifier             = None
+        REDProgramBase._initialize(self)
+
         self._root_directory         = None
         self._executable             = None
         self._arguments              = None
@@ -1548,7 +1701,6 @@ class REDProgram(REDObject):
         self._scheduler_message      = None
         self._last_spawned_process   = None
         self._last_spawned_timestamp = None
-        self._custom_options         = None
 
         self.enable_callbacks                 = False
         self.scheduler_state_changed_callback = None
@@ -1662,21 +1814,6 @@ class REDProgram(REDObject):
         self.update_scheduler_state()
         self.update_last_spawned_process()
         self.update_custom_options()
-
-    def update_identifier(self):
-        if self.object_id is None:
-            raise RuntimeError('Cannot update unattached program object')
-
-        try:
-            error_code, identifier_string_id = self._session._brick.get_program_identifier(self.object_id, self._session._session_id)
-        except Error:
-            self._session.increase_error_count()
-            raise
-
-        if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get identifier of program object {0}'.format(self.object_id), error_code)
-
-        self._identifier = _attach_or_release(self._session, REDString, identifier_string_id)
 
     def update_root_directory(self):
         if self.object_id is None:
@@ -1841,37 +1978,6 @@ class REDProgram(REDObject):
 
         if self._last_spawned_process != None:
             self._last_spawned_process.state_changed_callback = state_changed_callback
-
-    def update_custom_options(self):
-        if self.object_id is None:
-            raise RuntimeError('Cannot update unattached program object')
-
-        try:
-            error_code, custom_option_names_list_id = self._session._brick.get_custom_program_option_names(self.object_id, self._session._session_id)
-        except Error:
-            self._session.increase_error_count()
-            raise
-
-        if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get list of custom option names of program object {0}'.format(self.object_id), error_code)
-
-        custom_option_names = _attach_or_release(self._session, REDList, custom_option_names_list_id)
-        custom_options      = {}
-
-        for name in custom_option_names._items:
-            try:
-                error_code, custom_option_value_string_id = \
-                self._session._brick.get_custom_program_option_value(self.object_id, name.object_id, self._session._session_id)
-            except Error:
-                self._session.increase_error_count()
-                raise
-
-            if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not get custom option value of program object {0}'.format(self.object_id), error_code)
-
-            custom_options[unicode(name)] = _attach_or_release(self._session, REDString, custom_option_value_string_id)
-
-        self._custom_options = custom_options
 
     def define(self, identifier):
         self.release()
@@ -2060,86 +2166,6 @@ class REDProgram(REDObject):
         if error_code != REDError.E_SUCCESS:
             raise REDError('Could not start program object {0} now'.format(self.object_id), error_code)
 
-    def set_custom_option_value(self, name, value):
-        if self.object_id is None:
-            raise RuntimeError('Cannot set custom option for unattached program object')
-
-        if isinstance(value, list):
-            self.set_custom_option_value_list(name, value)
-        else:
-            if not isinstance(name, REDString):
-                name = REDString(self._session).allocate(name)
-
-            if isinstance(value, bool):
-                if value:
-                    value = 'true'
-                else:
-                    value = 'false'
-
-            if not isinstance(value, REDString):
-                value = REDString(self._session).allocate(value)
-
-            try:
-                error_code = self._session._brick.set_custom_program_option_value(self.object_id, name.object_id, value.object_id)
-            except Error:
-                self._session.increase_error_count()
-                raise
-
-            if error_code != REDError.E_SUCCESS:
-                raise REDError('Could not set custom option for program object {0}'.format(self.object_id), error_code)
-
-            self._custom_options[unicode(name)] = value
-
-    def set_custom_option_value_list(self, name, values):
-        if self.object_id is None:
-            raise RuntimeError('Cannot set custom option for unattached program object')
-
-        # FIXME: remove all custom options that start with <name>.item* to ensure that
-        #        shrinking a list doesn't leaf old items behind
-        for i, value in enumerate(values):
-            self.set_custom_option_value(name + '.item' + str(i), unicode(value))
-
-        self.set_custom_option_value(name + '.length', unicode(len(values)))
-
-    def cast_custom_option_value(self, name, cast, default):
-        try:
-            string = self._custom_options[unicode(name)]
-        except KeyError:
-            return default
-
-        if cast == bool:
-            if unicode(string) == 'true':
-                return True
-            elif unicode(string) == 'false':
-                return False
-            else:
-                return default
-        else:
-            try:
-                return cast(unicode(string))
-            except ValueError:
-                return default
-
-    def cast_custom_option_value_list(self, name, cast, default):
-        length = self.cast_custom_option_value(name + '.length', int, None)
-
-        if length == None:
-            return default
-
-        values = []
-
-        for i in range(max(length, 0)):
-            value = self.cast_custom_option_value(name + '.item' + str(i), cast, None)
-
-            if value == None:
-                return default
-
-            values.append(value)
-
-        return values
-
-    @property
-    def identifier(self):             return _red_string_to_unicode(self._identifier)
     @property
     def root_directory(self):         return _red_string_to_unicode(self._root_directory)
     @property
@@ -2182,6 +2208,21 @@ class REDProgram(REDObject):
     def last_spawned_timestamp(self): return self._last_spawned_timestamp
 
 
+class REDSimpleProgram(REDProgramBase):
+    def __repr__(self):
+        return '<REDProgram object_id: {0}, identifier: {1}>'.format(self.object_id, self._identifier)
+
+    def _attach_callbacks(self):
+        pass
+
+    def _detach_callbacks(self):
+        pass
+
+    def update(self):
+        self.update_identifier()
+        self.update_custom_options()
+
+
 def get_programs(session):
     try:
         error_code, programs_list_id = session._brick.get_programs(session._session_id)
@@ -2192,7 +2233,20 @@ def get_programs(session):
     if error_code != REDError.E_SUCCESS:
         raise REDError('Could not get programs list object', error_code)
 
-    return _attach_or_release(session, REDList, programs_list_id)
+    return _attach_or_release(session, REDList, programs_list_id).items
+
+
+def get_simple_programs(session):
+    try:
+        error_code, programs_list_id = session._brick.get_programs(session._session_id)
+    except Error:
+        session.increase_error_count()
+        raise
+
+    if error_code != REDError.E_SUCCESS:
+        raise REDError('Could not get programs list object', error_code)
+
+    return _attach_or_release(session, REDList, programs_list_id, extra_parameters=(REDSimpleProgram,)).items
 
 
 REDObject._subclasses = {

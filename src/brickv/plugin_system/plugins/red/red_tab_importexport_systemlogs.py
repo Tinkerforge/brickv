@@ -59,6 +59,7 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
 
         self.session        = None # Set from REDTabImportExport
         self.script_manager = None # Set from REDTabImportExport
+        self.image_version  = None # Set from REDTabImportExport
         self.log_file       = None
         self.logs           = [
             SystemLog('brickd.log'),

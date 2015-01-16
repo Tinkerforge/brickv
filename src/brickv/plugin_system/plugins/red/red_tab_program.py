@@ -132,7 +132,7 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
 
     def refresh_program_list(self):
         def refresh_async():
-            return get_programs(self.session).items
+            return get_programs(self.session)
 
         def cb_success(programs):
             sorted_programs = {}
