@@ -17,6 +17,8 @@ os.system("pyuic4 -o ui_red_tab_versions.py ui/red_tab_versions.ui")
 os.system("pyuic4 -o ui_red_tab_extension.py ui/red_tab_extension.ui")
 os.system("pyuic4 -o ui_red_tab_extension_ethernet.py ui/red_tab_extension_ethernet.ui")
 os.system("pyuic4 -o ui_red_tab_importexport.py ui/red_tab_importexport.ui")
+os.system("pyuic4 -o ui_red_tab_importexport_import.py ui/red_tab_importexport_import.ui")
+os.system("pyuic4 -o ui_red_tab_importexport_export.py ui/red_tab_importexport_export.ui")
 os.system("pyuic4 -o ui_red_tab_importexport_systemlogs.py ui/red_tab_importexport_systemlogs.ui")
 
 os.system("pyuic4 -o ui_program_info_main.py ui/program_info_main.ui")
