@@ -26,7 +26,6 @@ from brickv.plugin_system.plugins.red.ui_red_tab_settings_ap_dhcp_leases_dialog 
 from brickv.plugin_system.plugins.red.api import *
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
-import time
 
 DNSMASQ_LEASES_FILE = '/var/lib/misc/dnsmasq.leases'
 
@@ -63,7 +62,7 @@ class REDTabSettingsAPDhcpLeasesDialog(QtGui.QDialog, Ui_REDTabSettingsAPDhcpLea
                     leases_lines = leases_content.splitlines()
 
                     leases_model = QtGui.QStandardItemModel(0, 3, self)
-                    leases_model.setHorizontalHeaderItem(0, QtGui.QStandardItem("Host Name"))
+                    leases_model.setHorizontalHeaderItem(0, QtGui.QStandardItem("Hostname"))
                     leases_model.setHorizontalHeaderItem(1, QtGui.QStandardItem("MAC"))
                     leases_model.setHorizontalHeaderItem(2, QtGui.QStandardItem("IP"))
                     leases_model.setHorizontalHeaderItem(3, QtGui.QStandardItem("Expiration"))
@@ -78,8 +77,7 @@ class REDTabSettingsAPDhcpLeasesDialog(QtGui.QDialog, Ui_REDTabSettingsAPDhcpLea
                                 continue
                 
                             if j == 0:
-                                leases_model.setItem(i, 3, QtGui.QStandardItem(time.strftime('%Y-%m-%d %H:%M:%S',
-                                                                                             time.localtime(float(l_split[j])))))
+                                leases_model.setItem(i, 3, QtGui.QStandardItem(QtCore.QDateTime.fromTime_t(int(l_split[j])).toString('yyyy-MM-dd HH:mm:ss')))
                             elif j == 3:
                                 leases_model.setItem(i, 0, QtGui.QStandardItem(l_split[j]))
                             else:
