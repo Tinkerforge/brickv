@@ -22,20 +22,18 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QFrame, QMessageBox
+from PyQt4.QtGui import QDialog, QMessageBox
 from PyQt4.QtCore import Qt
 
-from brickv.plugin_system.plugins.master.ui_extension_type import Ui_extension_type
+from brickv.plugin_system.plugins.master.ui_extension_type import Ui_ExtensionType
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
 
-class ExtensionType(QFrame, Ui_extension_type):
+class ExtensionType(QDialog, Ui_ExtensionType):
     def __init__(self, parent):
-        QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
+        QDialog.__init__(self, parent)
 
         self.setupUi(self)
-
-        self.setWindowTitle("Configure Extension Type")
 
         self.parent = parent
         self.master = parent.master
