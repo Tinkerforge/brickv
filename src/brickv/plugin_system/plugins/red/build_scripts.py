@@ -3,6 +3,7 @@
 
 """
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
 
 build_script.py: Make _scripts.py from scripts/ folder and minify python code
 
@@ -30,7 +31,7 @@ print("Adding RED Brick scripts:")
 
 try:
     use_minified = True
-    script_content = {}
+    script_data = []
     build_script_path = os.path.dirname(os.path.realpath(__file__))
     scripts = glob.glob(os.path.join(build_script_path, 'scripts', '*.py'))
 
@@ -67,47 +68,21 @@ try:
                 path = script + '_prepared'
         else:
             path = script
+
         with open(path) as f:
-            name = os.path.split(script)[-1][0:-3]
-            file_ending = script[-3:]
+            name, extension = os.path.splitext(os.path.split(script)[-1])
             content = f.read()
-            class Script:
-                def __init__(self, script, file_ending, copied = False, file = None, script_instances = None):
-                    self.script = script
-                    self.file_ending = file_ending
-                    self.copied = copied
-                    self.file = file
-                    if script_instances == None:
-                        self.script_instances = []
-                    else:
-                        self.script_instances = script_instances
 
-                def __repr__(self):
-                    return 'Script(' + repr(self.script) + ', "' + str(self.file_ending) + '")'
+            script_data.append((name, extension, content))
 
-            script_content[name] = Script(content, file_ending)
             print(" " + str(i) + ") " + name)
 
     with open(os.path.join(build_script_path, '_scripts.py'), 'w') as f:
         f.write('# -*- coding: utf-8 -*-\n')
         f.write('# This file is generated, don\'t edit it. Edit the files in the scripts/ folder.\n')
         f.write('\n')
-        f.write('from threading import Lock\n')
-        f.write('\n')
-        f.write('class Script:\n')
-        f.write('    def __init__(self, script, file_ending, copied = False, file = None, script_instances = None):\n')
-        f.write('        self.script = script\n')
-        f.write('        self.file_ending = file_ending\n')
-        f.write('        self.copied = copied\n')
-        f.write('        self.file = file\n')
-        f.write('        if script_instances == None:\n')
-        f.write('            self.script_instances = []\n')
-        f.write('        else:\n')
-        f.write('            self.script_instances = script_instances\n')
-        f.write('        self.copy_lock = Lock()\n')
-        f.write('\n')
-        f.write('scripts = ')
-        f.write(repr(script_content).replace('\\n# Created by pyminifier (https://github.com/liftoff/pyminifier)\\n\\n', ''))
+        f.write('script_data = ')
+        f.write(repr(script_data).replace('\\n# Created by pyminifier (https://github.com/liftoff/pyminifier)\\n\\n', ''))
 except:
     print("Exception during script parsing, there will be no scripts available.")
     traceback.print_exc()
@@ -117,5 +92,5 @@ except:
         f.write('# -*- coding: utf-8 -*-\n')
         f.write('# This file is generated, don\'t edit it. Edit the files in the scripts/ folder.\n')
         f.write('\n')
-        f.write('# scripts dict is empty because of an exception during generation\n')
-        f.write('scripts = {}')
+        f.write('# script data list is empty because of an exception during generation\n')
+        f.write('script_data = []')

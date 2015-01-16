@@ -23,17 +23,26 @@ Boston, MA 02111-1307, USA.
 """
 
 from brickv.plugin_system.plugins.red.api import REDFile, REDPipe, REDProcess
-
 import posixpath
 from collections import namedtuple
 from PyQt4.QtCore import QObject, pyqtSignal
-
+from threading import Lock
 from brickv.async_call import async_call
 from brickv.object_creator import create_object_in_qt_main_thread
+from brickv.plugin_system.plugins.red._scripts import script_data
 
 SCRIPT_FOLDER = '/usr/local/scripts'
 
 script_instances = set()
+
+class Script(object):
+    def __init__(self, name, extension, content):
+        self.name        = name
+        self.extension   = extension
+        self.content     = content
+        self.uploaded    = False
+        self.upload_lock = Lock()
+        self.red_file    = None
 
 class ScriptInstance(QObject):
     qtcb_result = pyqtSignal(object)
@@ -41,10 +50,10 @@ class ScriptInstance(QObject):
     def __init__(self):
         QObject.__init__(self)
 
+        self.script                    = None
         self.process                   = None
         self.stdout                    = None
         self.stderr                    = None
-        self.script_name               = None
         self.result_callback           = None
         self.params                    = None
         self.max_length                = None
@@ -53,30 +62,51 @@ class ScriptInstance(QObject):
         self.abort                     = False
         self.execute_as_user           = False
 
+    def release(self):
+        if self.process != None:
+            try:
+                self.process.release()
+            except:
+                pass
+
+            self.process = None
+
+        if self.stdout != None:
+            try:
+                self.stdout.release()
+            except:
+                pass
+
+            self.stdout = None
+
+        if self.stderr != None and not self.redirect_stderr_to_stdout:
+            try:
+                self.stderr.release()
+            except:
+                pass
+
+            self.stderr = None
+
+    def report_result(self, result):
+        # if result is None then the and error during script upload
+        # occurred and the upload has to be done again
+        if result == None:
+            self.script.uploaded = False
+
+        self.qtcb_result.emit(result)
+        self.qtcb_result.disconnect(self.result_callback)
+
 ScriptResult = namedtuple('ScriptResult', 'stdout stderr exit_code')
 
 class ScriptManager(object):
-    @staticmethod
-    def _call(script, si, data):
-        if data == None:
-            script.copied = False
-
-        si.qtcb_result.emit(data)
-        si.qtcb_result.disconnect(si.result_callback)
-
     def __init__(self, session):
         self.session = session
-        # FIXME: This is blocking the GUI!
-        self.devnull = REDFile(self.session).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0)
+        self.devnull = REDFile(self.session).open('/dev/null', REDFile.FLAG_READ_ONLY, 0, 0, 0) # FIXME: This is blocking the GUI!
         self.scripts = {}
 
-        # We can't use copy.deepycopy directly on scripts, since deep-copy does
-        # not work on QObject. Instead we create a new Script/QObjects here.
-        # This is way more efficient anyway, since we can shallow-copy script
-        # and file_ending while just reinitializing the rest
-        from brickv.plugin_system.plugins.red._scripts import scripts, Script
-        for key, value in scripts.items():
-            self.scripts[key] = Script(value.script, value.file_ending)
+        for sd in script_data:
+            name, extension, content = sd
+            self.scripts[name] = Script(name, extension, content)
 
     def destroy(self):
         # ensure to release all REDObjects
@@ -98,7 +128,7 @@ class ScriptManager(object):
             params = []
 
         si                           = ScriptInstance()
-        si.script_name               = script_name
+        si.script                    = self.scripts[script_name]
         si.result_callback           = result_callback
         si.params                    = params
         si.max_length                = max_length
@@ -120,7 +150,7 @@ class ScriptManager(object):
             if si.result_callback != None:
                 si.qtcb_result.disconnect(si.result_callback)
 
-            self.scripts[si.script_name].copied = False
+            si.script.uploaded = False
 
             if si.result_callback != None:
                 si.result_callback(None) # We are still in GUI thread, use result_callback instead of signal
@@ -142,48 +172,44 @@ class ScriptManager(object):
                 pass
 
     def _init_script(self, si):
-        if self.scripts[si.script_name].copied:
+        if si.script.uploaded:
             return self._execute_after_init(si)
 
         async_call(self._init_script_async, si, lambda execute: self._init_script_done(execute, si), lambda: self._init_script_error(si))
 
     def _init_script_async(self, si):
-        script = self.scripts[si.script_name]
+        si.script.upload_lock.acquire()
 
-        script.copy_lock.acquire()
-
-        # recheck the copied flag, maybe someone else managed to
-        # copy the script in the meantime. if not it's our turn to copy it
-        if script.copied:
-            script.copy_lock.release()
+        # recheck the uploaded flag, maybe someone else managed to upload
+        # the script in the meantime. if not it's our turn to upload it
+        if si.script.uploaded:
+            si.script.upload_lock.release()
             return True
 
         try:
-            script.file = create_object_in_qt_main_thread(REDFile, (self.session,))
-            script.file.open(posixpath.join(SCRIPT_FOLDER, si.script_name + script.file_ending),
-                             REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0o755, 0, 0)
-            script.file.write_async(script.script, lambda error: self._init_script_async_write_done(error, si))
+            si.script.red_file = create_object_in_qt_main_thread(REDFile, (self.session,))
+            si.script.red_file.open(posixpath.join(SCRIPT_FOLDER, si.script.name + si.script.extension),
+                                    REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0o755, 0, 0)
+            si.script.red_file.write_async(si.script.content, lambda error: self._init_script_async_write_done(error, si))
             return False
         except:
             try:
-                self.scripts[si.script_name].copy_lock.release()
+                si.script.upload_lock.release()
             except:
                 pass
 
             raise
 
     def _init_script_async_write_done(self, error, si):
-        script = self.scripts[si.script_name]
-
-        script.file.release()
-        script.file = None
-        script.copied = True
-        script.copy_lock.release()
+        si.script.red_file.release()
+        si.script.red_file = None
+        si.script.uploaded = True
+        si.script.upload_lock.release()
 
         if error == None:
             self._execute_after_init(si)
         else:
-            ScriptManager._call(script, si, None)
+            si.report_result(None)
             script_instances.remove(si)
 
     def _init_script_done(self, execute, si):
@@ -191,37 +217,12 @@ class ScriptManager(object):
             self._execute_after_init(si)
 
     def _init_script_error(self, si):
-        ScriptManager._call(self.scripts[si.script_name], si, None)
+        si.report_result(None)
         script_instances.remove(si)
 
-    def _release_script_data(self, si):
-        if si.process != None:
-            try:
-                si.process.release()
-            except:
-                pass
-
-            si.process = None
-
-        if si.stdout != None:
-            try:
-                si.stdout.release()
-            except:
-                pass
-
-            si.stdout = None
-
-        if si.stderr != None and not si.redirect_stderr_to_stdout:
-            try:
-                si.stderr.release()
-            except:
-                pass
-
-            si.stderr  = None
-
     def _report_result_and_cleanup(self, si, result):
-        self._release_script_data(si)
-        ScriptManager._call(self.scripts[si.script_name], si, result)
+        si.release()
+        si.report_result(result)
         script_instances.remove(si)
 
     def _execute_after_init(self, si):
@@ -287,11 +288,11 @@ class ScriptManager(object):
         """
         # NOTE: this function will be called on the UI thread
         def cb_stdout_events_occurred(si):
-            print 'cb_stdout_events_occurred', si.script_name
+            print 'cb_stdout_events_occurred', si.script.name
 
         # NOTE: this function will be called on the UI thread
         def cb_stderr_events_occurred(si):
-            print 'cb_stderr_events_occurred', si.script_name
+            print 'cb_stderr_events_occurred', si.script.name
 
         si.stdout.events_occurred_callback = lambda x: cb_stdout_events_occurred(si)
         si.stderr.events_occurred_callback = lambda x: cb_stderr_events_occurred(si)
@@ -320,7 +321,7 @@ class ScriptManager(object):
 
         try:
             # FIXME: Do we need a timeout here in case that the state_changed callback never comes?
-            si.process.spawn(posixpath.join(SCRIPT_FOLDER, si.script_name + self.scripts[si.script_name].file_ending),
+            si.process.spawn(posixpath.join(SCRIPT_FOLDER, si.script.name + si.script.extension),
                              si.params, env, '/', uid, gid, self.devnull, si.stdout, si.stderr)
         except:
             self._report_result_and_cleanup(si, None)
