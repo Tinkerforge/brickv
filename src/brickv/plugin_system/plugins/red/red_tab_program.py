@@ -72,7 +72,6 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
         self.splitter.setSizes([150, 400])
         self.list_programs.itemSelectionChanged.connect(self.update_ui_state)
         self.button_refresh.clicked.connect(self.refresh_program_list)
-        self.button_refresh.clicked.connect(self.refresh_executable_versions)
         self.button_new.clicked.connect(self.show_new_program_wizard)
         self.button_delete.clicked.connect(self.purge_selected_program)
 
