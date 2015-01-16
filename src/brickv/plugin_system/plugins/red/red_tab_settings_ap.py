@@ -54,6 +54,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
         self.is_tab_on_focus = False
 
         self.saving = False
+        self.pbutton_ap_show_dhcp_leases.hide()
         self.label_ap_unsupported.hide()
         self.label_ap_disabled.hide()
         self.label_working_wait.hide()
@@ -157,6 +158,8 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
         self.sbox_ap_pool_mask2.setVisible(dhcp_visible)
         self.sbox_ap_pool_mask3.setVisible(dhcp_visible)
         self.sbox_ap_pool_mask4.setVisible(dhcp_visible)
+
+        self.pbutton_ap_show_dhcp_leases.setVisible(dhcp_visible)
 
         self.line2.setVisible(has_interface)
 

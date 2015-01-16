@@ -521,6 +521,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         def update_no_interface_available():
             self.cbox_net_intf.clear()
             self.cbox_net_intf.addItem('No interfaces available')
+            self.pbutton_net_connect.setEnabled(False)
             self.cbox_net_intf.setEnabled(False)
             self.wireless_configuration_gui(False)
             self.cbox_net_conftype.setCurrentIndex(CBOX_NET_CONTYPE_INDEX_DHCP)
@@ -682,6 +683,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 else:
                     # Select first active interface by default if not then the first item
                     self.cbox_net_intf.setCurrentIndex(-1)
+                    self.pbutton_net_connect.setEnabled(True)
                     for i in range(self.cbox_net_intf.count()):
                         istate = self.cbox_net_intf.itemData(i, INTERFACE_STATE_USER_ROLE).toInt()[0]
                         if istate == INTERFACE_STATE_ACTIVE:
@@ -1045,9 +1047,10 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                            QtGui.QMessageBox.Ok)
                 return
             elif enc == 'On' and not key:
+                self.show_please_wait(WORKING_STATE_DONE)
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
-                                           'Please provide a secret key.',
+                                           'Please provide WPA key.',
                                            QtGui.QMessageBox.Ok)
                 return
             else:
