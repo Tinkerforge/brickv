@@ -81,8 +81,10 @@ class REDTabSettings(REDTab, Ui_REDTabSettings):
                             self.label_discovering.hide()
                             self.tab_widget.show()
                             self.tab_widget.currentWidget().tab_on_focus()
-                else:
+                elif result and result.stderr:
                     self.label_discovering.setText('Error getting current services status.\n\n' + unicode(result.stderr))
+                else:
+                    self.label_discovering.setText('Error getting current services status.')
 
             self.script_manager.execute_script('settings_services',
                                                cb_settings_services_check,
