@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>766</width>
-    <height>478</height>
+    <width>761</width>
+    <height>317</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,6 +18,12 @@
     <widget class="QTreeView" name="tview_ap_leases">
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
+     <property name="selectionMode">
+      <enum>QAbstractItemView::NoSelection</enum>
      </property>
      <property name="rootIsDecorated">
       <bool>false</bool>
@@ -31,6 +37,9 @@
        <property name="text">
         <string>Refresh</string>
        </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -38,12 +47,20 @@
        <property name="text">
         <string>Close</string>
        </property>
+       <property name="default">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tview_ap_leases</tabstop>
+  <tabstop>pbutton_ap_leases_refresh</tabstop>
+  <tabstop>pbutton_ap_leases_close</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
