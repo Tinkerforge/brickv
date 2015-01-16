@@ -23,7 +23,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.ui_advanced import Ui_AdvancedWindow
+from brickv.ui_advanced import Ui_Advanced
 
 from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QDialog
@@ -32,7 +32,7 @@ from brickv import infos
 
 NO_BRICK = 'No Brick found'
 
-class AdvancedWindow(QDialog, Ui_AdvancedWindow):
+class AdvancedWindow(QDialog, Ui_Advanced):
     def __init__(self, parent):
         QDialog.__init__(self, parent)
 

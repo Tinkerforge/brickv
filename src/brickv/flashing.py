@@ -23,7 +23,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.ui_flashing import Ui_FlashingWindow
+from brickv.ui_flashing import Ui_Flashing
 from brickv.bindings.ip_connection import IPConnection, Error, base58encode, \
                                           base58decode, BASE58, uid64_to_uid32
 from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
@@ -80,7 +80,7 @@ class ProgressWrapper(object):
     def setMaximum(self, value):
         self.progress.setMaximum(value)
 
-class FlashingWindow(QDialog, Ui_FlashingWindow):
+class FlashingWindow(QDialog, Ui_Flashing):
     def __init__(self, parent):
         QDialog.__init__(self, parent)
 

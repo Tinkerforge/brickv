@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>wifi_status</class>
- <widget class="QWidget" name="wifi_status">
+ <class>WifiStatus</class>
+ <widget class="QDialog" name="WifiStatus">
   <property name="geometry">
    <rect>
     <x>0</x>

@@ -22,15 +22,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QFrame
+from PyQt4.QtGui import QDialog
 from PyQt4.QtCore import Qt
 
-from brickv.plugin_system.plugins.master.ui_wifi_status import Ui_wifi_status
+from brickv.plugin_system.plugins.master.ui_wifi_status import Ui_WifiStatus
 from brickv.async_call import async_call
 
-class WifiStatus(QFrame, Ui_wifi_status):
+class WifiStatus(QDialog, Ui_WifiStatus):
     def __init__(self, parent):
-        QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
+        QDialog.__init__(self, parent)
 
         self.setupUi(self)
 
