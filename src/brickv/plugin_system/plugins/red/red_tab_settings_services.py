@@ -47,9 +47,18 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         self.pbutton_services_save.clicked.connect(self.slot_pbutton_services_save_clicked)
 
     def tab_on_focus(self):
+        self.chkbox_gpu.setEnabled(True)
+        self.chkbox_desktopenv.setEnabled(True)
+        self.chkbox_webserver.setEnabled(True)
+        self.chkbox_splashscreen.setEnabled(True)
+        self.chkbox_ap.setEnabled(True)
+        self.pbutton_services_save.setText('Save')
+        self.pbutton_services_save.setEnabled(False)
+
         self.chkbox_gpu.setChecked(self.service_state.gpu)
 
         if self.image_version.number < (1, 4):
+            self.chkbox_ap.setText('Start Desktop Environment (Image Version >= 1.4 required)')
             self.chkbox_desktopenv.setChecked(self.image_version.flavor == 'full')
             self.chkbox_desktopenv.setEnabled(False)
         else:
@@ -64,8 +73,6 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         else:
             self.chkbox_ap.setChecked(self.service_state.ap)
 
-        self.pbutton_services_save.setEnabled(False)
-
     def tab_off_focus(self):
         pass
 
@@ -73,20 +80,12 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         pass
 
     def cb_settings_services_apply(self, result):
-        self.chkbox_gpu.setEnabled(True)
-        self.chkbox_desktopenv.setEnabled(True)
-        self.chkbox_webserver.setEnabled(True)
-        self.chkbox_splashscreen.setEnabled(True)
-        self.chkbox_ap.setEnabled(True)
-
         if result and result.stdout and not result.stderr and result.exit_code == 0:
             def cb_restart_reboot_shutdown(result):
                 if result is not None:
                     if not result.stderr and result.exit_code == 0:
                         pass
                     else:
-                        self.pbutton_services_save.setText('Save')
-                        self.pbutton_services_save.setEnabled(True)
                         err_msg = 'Error rebooting RED Brick.\n\n'+unicode(result.stderr)
                         QtGui.QMessageBox.critical(get_main_window(),
                                                    'Settings | Services',
@@ -96,8 +95,6 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
             self.script_manager.execute_script('restart_reboot_shutdown',
                                                cb_restart_reboot_shutdown, ['1'])
         else:
-            self.pbutton_services_save.setText('Save')
-            self.pbutton_services_save.setEnabled(True)
             err_msg = 'Error saving services status.\n\n'+unicode(result.stderr)
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Services',
