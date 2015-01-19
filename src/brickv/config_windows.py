@@ -43,14 +43,14 @@ def get_registry_value(name, default):
         finally:
             winreg.CloseKey(reg)
 
-def set_registry_value(name, type, value):
+def set_registry_value(name, type_, value):
     try:
         reg = winreg.CreateKey(winreg.HKEY_CURRENT_USER, KEY_NAME)
     except WindowsError:
         logging.warn('Could not create registry key: HKCU\\{0}'.format(KEY_NAME))
     else:
         try:
-            winreg.SetValueEx(reg, name, 0, type, value)
+            winreg.SetValueEx(reg, name, 0, type_, value)
         except:
             logging.warn('Could not set registry value: HKCU\\{0}\\{1}'.format(KEY_NAME, name))
         finally:

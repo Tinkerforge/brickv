@@ -1106,7 +1106,7 @@ class REDFileOrPipeAttacher(REDObject):
     def update(self):
         pass
 
-    def attach(self, object_id):
+    def attach(self, object_id, update=True):
         self.release()
 
         REDObject.attach(self, object_id, False)
@@ -1152,6 +1152,12 @@ class REDDirectory(REDObject):
     def _initialize(self):
         self._name    = None
         self._entries = None
+
+    def _attach_callbacks(self):
+        pass
+
+    def _detach_callbacks(self):
+        pass
 
     def update(self):
         if self.object_id is None:
@@ -1523,10 +1529,6 @@ class REDProgramBase(REDObject):
     def _initialize(self):
         self._identifier     = None
         self._custom_options = None
-
-    def update(self):
-        self.update_identifier()
-        self.update_custom_options()
 
     def update_identifier(self):
         if self.object_id is None:
@@ -2210,7 +2212,7 @@ class REDProgram(REDProgramBase):
 
 class REDSimpleProgram(REDProgramBase):
     def __repr__(self):
-        return '<REDProgram object_id: {0}, identifier: {1}>'.format(self.object_id, self._identifier)
+        return '<REDSimpleProgram object_id: {0}, identifier: {1}>'.format(self.object_id, self._identifier)
 
     def _attach_callbacks(self):
         pass
