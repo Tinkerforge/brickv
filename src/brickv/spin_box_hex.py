@@ -22,18 +22,16 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QSpinBox, QRegExpValidator
 from PyQt4.QtCore import QRegExp
+from PyQt4.QtGui import QSpinBox, QRegExpValidator
 
 class SpinBoxHex(QSpinBox):
     def __init__(self, parent=None):
-        super(SpinBoxHex, self).__init__(parent)
+        QSpinBox.__init__(self, parent)
 
         self.validator = QRegExpValidator(QRegExp("[0-9A-Fa-f]{1,2}"), self)
-        self.setRange(0, 255)
 
-    def fixCase(self, text):
-        self.lineEdit().setText(text.upper())
+        self.setRange(0, 255)
 
     def validate(self, text, pos):
         return self.validator.validate(text, pos)
