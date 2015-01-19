@@ -28,7 +28,6 @@ from threading import Lock
 from collections import namedtuple
 import logging
 import functools
-import traceback
 from brickv.bindings import ip_connection
 
 try:

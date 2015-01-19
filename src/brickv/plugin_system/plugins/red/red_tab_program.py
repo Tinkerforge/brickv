@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QApplication, QWidget, QMessageBox, QListWidgetItem
+from PyQt4.QtGui import QApplication, QMessageBox, QListWidgetItem
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_program import Ui_REDTabProgram
 from brickv.plugin_system.plugins.red.api import *

@@ -23,10 +23,9 @@ Boston, MA 02111-1307, USA.
 """
 
 import json
-from PyQt4 import Qt, QtCore, QtGui
+from PyQt4 import QtCore, QtGui
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_ap import Ui_REDTabSettingsAP
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red import config_parser
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
 from brickv.plugin_system.plugins.red.red_tab_settings_ap_dhcp_leases_dialog import REDTabSettingsAPDhcpLeasesDialog

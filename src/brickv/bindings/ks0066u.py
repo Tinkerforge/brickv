@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 KS0066U Utilities
-Copyright (C) 2012 Matthias Botle <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Botle <matthias@tinkerforge.com>
 
 ks0066u.py: KS0066U LCD Charset Converter
 
@@ -22,7 +22,6 @@ Boston, MA 02111-1307, USA.
 """
 
 import sys
-import types
 
 def unicode_to_ks0066u(string):
     if sys.hexversion < 0x03000000:

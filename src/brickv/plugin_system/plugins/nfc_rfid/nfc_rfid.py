@@ -26,9 +26,8 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.async_call import async_call
 from brickv.spin_box_hex import SpinBoxHex
 
-from PyQt4.QtGui import QSpinBox, QRegExpValidator
-from PyQt4.QtCore import pyqtSignal, Qt, QRegExp
-        
+from PyQt4.QtCore import pyqtSignal, Qt
+
 from brickv.bindings.bricklet_nfc_rfid import BrickletNFCRFID
 from brickv.plugin_system.plugins.nfc_rfid.ui_nfc_rfid import Ui_NFCRFID
 
