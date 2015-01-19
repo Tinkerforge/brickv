@@ -37,8 +37,8 @@ class ProgramPage(QWizardPage):
         pass
 
     def set_formatted_sub_title(self, sub_title):
-        language = Constants.language_display_names[self.get_field('language').toInt()[0]]
-        name     = Qt.escape(self.get_field('name').toString())
+        language = Constants.language_display_names[self.get_field('language')]
+        name     = Qt.escape(self.get_field('name'))
 
         self.setSubTitle(sub_title.format(**{'language': language, 'name': name}))
 
@@ -78,7 +78,7 @@ class ProgramPage(QWizardPage):
             combo_version.clear()
 
             for version in versions:
-                combo_version.addItem(version.version, QVariant(version.executable))
+                combo_version.addItem(version.version, version.executable)
 
             # if a program exists then this page is used in an edit wizard
             if self.wizard().program != None:

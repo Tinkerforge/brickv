@@ -99,7 +99,7 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
                 self.console.setEnabled(True)
                 self.connect_button.setText("Disconnect")
 
-                port = self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString()
+                port = self.combo_serial_port.itemData(self.combo_serial_port.currentIndex())
 
                 if self.console._session == None:
                     try:

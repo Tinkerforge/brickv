@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 
 import sip
 sip.setapi('QString', 2)
+sip.setapi('QVariant', 2)
 
 import os
 import sys

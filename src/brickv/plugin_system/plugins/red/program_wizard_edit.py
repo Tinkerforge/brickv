@@ -21,7 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import QVariant
 from brickv.plugin_system.plugins.red.program_wizard import ProgramWizard
 from brickv.plugin_system.plugins.red.program_utils import *
 
@@ -44,17 +43,15 @@ class ProgramWizardEdit(ProgramWizard):
         if self.currentId() == Constants.PAGE_GENERAL:
             return ProgramWizard.get_field(self, name)
         elif name == 'identifier':
-            return QVariant(self.program.identifier)
+            return self.program.identifier
         elif name == 'name':
-            return QVariant(self.program.cast_custom_option_value('name', unicode, '<unknown>'))
+            return self.program.cast_custom_option_value('name', unicode, '<unknown>')
         elif name == 'language':
             language_api_name = self.program.cast_custom_option_value('language', unicode, '<unknown>')
 
             try:
-                language = Constants.get_language(language_api_name)
+                return Constants.get_language(language_api_name)
             except:
-                language = Constants.LANGUAGE_INVALID
-
-            return QVariant(language)
+                return Constants.LANGUAGE_INVALID
         else:
             return ProgramWizard.get_field(self, name)

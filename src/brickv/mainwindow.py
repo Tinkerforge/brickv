@@ -364,7 +364,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         uid_index = index.sibling(index.row(), 1)
 
         if uid_index.isValid():
-            uid_text = uid_index.data().toString()
+            uid_text = uid_index.data()
             self.show_plugin(uid_text)
 
     def create_tab_window(self, device_info, connected_uid, position):

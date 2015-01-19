@@ -93,7 +93,7 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PHP_START_MODE)
         self.combo_script_file_selector.reset()
-        self.label_url.setText(self.url_template.replace('<SERVER>', 'red-brick').replace('<IDENTIFIER>', self.get_field('identifier').toString()))
+        self.label_url.setText(self.url_template.replace('<SERVER>', 'red-brick').replace('<IDENTIFIER>', self.get_field('identifier')))
         self.check_show_advanced_options.setChecked(False)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
@@ -128,7 +128,7 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
     # overrides QWizardPage.isComplete
     def isComplete(self):
         executable = self.get_executable()
-        start_mode = self.get_field('php.start_mode').toInt()[0]
+        start_mode = self.get_field('php.start_mode')
 
         # In web interface mode there is nothing to configure at all
         if start_mode == Constants.PYTHON_START_MODE_WEB_INTERFACE:
@@ -149,7 +149,7 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
 
     # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
-        start_mode               = self.get_field('php.start_mode').toInt()[0]
+        start_mode               = self.get_field('php.start_mode')
         start_mode_script_file   = start_mode == Constants.PHP_START_MODE_SCRIPT_FILE
         start_mode_command       = start_mode == Constants.PHP_START_MODE_COMMAND
         start_mode_web_interface = start_mode == Constants.PHP_START_MODE_WEB_INTERFACE
@@ -173,14 +173,14 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
         self.option_list_editor.update_ui_state()
 
     def get_executable(self):
-        return self.combo_version.itemData(self.get_field('php.version').toInt()[0]).toString()
+        return self.combo_version.itemData(self.get_field('php.version'))
 
     def get_html_summary(self):
-        version           = self.get_field('php.version').toInt()[0]
-        start_mode        = self.get_field('php.start_mode').toInt()[0]
-        script_file       = self.get_field('php.script_file').toString()
-        command           = self.get_field('php.command').toString()
-        working_directory = self.get_field('php.working_directory').toString()
+        version           = self.get_field('php.version')
+        start_mode        = self.get_field('php.start_mode')
+        script_file       = self.get_field('php.script_file')
+        command           = self.get_field('php.command')
+        working_directory = self.get_field('php.working_directory')
         options           = ' '.join(self.option_list_editor.get_items())
 
         if start_mode == Constants.PHP_START_MODE_WEB_INTERFACE:
@@ -201,14 +201,14 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
 
     def get_custom_options(self):
         return {
-            'php.start_mode':  Constants.php_start_mode_api_names[self.get_field('php.start_mode').toInt()[0]],
-            'php.script_file': self.get_field('php.script_file').toString(),
-            'php.command':     self.get_field('php.command').toString(),
+            'php.start_mode':  Constants.php_start_mode_api_names[self.get_field('php.start_mode')],
+            'php.script_file': self.get_field('php.script_file'),
+            'php.command':     self.get_field('php.command'),
             'php.options':     self.option_list_editor.get_items()
         }
 
     def get_command(self):
-        start_mode = self.get_field('php.start_mode').toInt()[0]
+        start_mode = self.get_field('php.start_mode')
 
         if start_mode == Constants.PHP_START_MODE_WEB_INTERFACE:
             return None
@@ -218,12 +218,12 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
         environment = []
 
         if start_mode == Constants.PHP_START_MODE_SCRIPT_FILE:
-            arguments.append(self.get_field('php.script_file').toString())
+            arguments.append(self.get_field('php.script_file'))
         elif start_mode == Constants.PHP_START_MODE_COMMAND:
             arguments.append('-r')
-            arguments.append(self.get_field('php.command').toString())
+            arguments.append(self.get_field('php.command'))
 
-        working_directory = self.get_field('php.working_directory').toString()
+        working_directory = self.get_field('php.working_directory')
 
         return executable, arguments, environment, working_directory
 

@@ -44,7 +44,7 @@ class ProcessesProxyModel(QtGui.QSortFilterProxyModel):
     def lessThan(self, left, right):
         # cpu and mem
         if left.column() in [3, 4]:
-            return left.data(QtCore.Qt.UserRole + 1).toInt()[0] < right.data(QtCore.Qt.UserRole + 1).toInt()[0]
+            return left.data(QtCore.Qt.UserRole + 1) < right.data(QtCore.Qt.UserRole + 1)
 
         return QtGui.QSortFilterProxyModel.lessThan(self, left, right)
 
@@ -267,12 +267,12 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
 
             cpu = p['cpu']
             item_cpu = QtGui.QStandardItem(unicode(cpu / 10.0)+'%')
-            item_cpu.setData(QtCore.QVariant(cpu))
+            item_cpu.setData(cpu)
             self.process_item_model.setItem(i, 3, item_cpu)
 
             mem = p['mem']
             item_mem = QtGui.QStandardItem(unicode(mem / 10.0)+'%')
-            item_mem.setData(QtCore.QVariant(mem))
+            item_mem.setData(mem)
             self.process_item_model.setItem(i, 4, item_mem)
 
         self.process_item_model.sort(self.tview_process_previous_sort['column_index'],

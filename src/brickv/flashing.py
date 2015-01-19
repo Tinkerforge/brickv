@@ -410,7 +410,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.edit_custom_firmware.setText(QDir.toNativeSeparators(filename))
 
     def firmware_save_clicked(self):
-        port_name = self.combo_serial_port.itemData(self.combo_serial_port.currentIndex()).toString()
+        port_name = self.combo_serial_port.itemData(self.combo_serial_port.currentIndex())
 
         try:
             samba = SAMBA(port_name)
@@ -448,7 +448,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 self.popup_fail('Brick', 'Could not read firmware file')
                 return
         else:
-            url_part = self.combo_firmware.itemData(self.combo_firmware.currentIndex()).toString()
+            url_part = self.combo_firmware.itemData(self.combo_firmware.currentIndex())
             name = self.firmware_infos[url_part].name
             version = self.firmware_infos[url_part].firmware_version_latest
 
@@ -699,9 +699,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
             self.combo_plugin.setCurrentIndex(0)
             return
 
-        url_part = self.combo_port.itemData(index).toString()
+        url_part = self.combo_port.itemData(index)
 
-        if len(url_part) == 0:
+        if url_part == None or len(url_part) == 0:
             self.combo_plugin.setCurrentIndex(0)
             return
 
@@ -861,16 +861,16 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 self.popup_fail('Bricklet', 'Could not read plugin file')
                 return
         else:
-            url_part = self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString()
+            url_part = self.combo_plugin.itemData(self.combo_plugin.currentIndex())
             name = self.plugin_infos[url_part].name
             version = self.plugin_infos[url_part].firmware_version_latest
             plugin = self.download_bricklet_plugin(progress, url_part, name, version)
+
             if not plugin:
                 return
 
         # Flash plugin
         device, port = self.current_device_and_port()
-        url_part = self.combo_plugin.itemData(self.combo_plugin.currentIndex()).toString()
 
         if current_text == CUSTOM:
             if not self.write_bricklet_plugin(plugin, device, port, os.path.split(plugin_file_name)[-1], progress):
@@ -1176,7 +1176,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 protocol1_error_still_there = True
                 continue
             for i in range(len(items)):
-                if items[i][0].data(Qt.UserRole).toString() == device_uid:
+                if items[i][0].data(Qt.UserRole) == device_uid:
                     del items[i]
                     break
 

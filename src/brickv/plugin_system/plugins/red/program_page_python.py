@@ -99,7 +99,7 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
 
         self.combo_start_mode.setCurrentIndex(Constants.DEFAULT_PYTHON_START_MODE)
         self.combo_script_file_selector.reset()
-        self.label_url.setText(self.url_template.replace('<SERVER>', 'red-brick').replace('<IDENTIFIER>', self.get_field('identifier').toString()))
+        self.label_url.setText(self.url_template.replace('<SERVER>', 'red-brick').replace('<IDENTIFIER>', self.get_field('identifier')))
         self.check_show_advanced_options.setChecked(False)
         self.combo_working_directory_selector.reset()
         self.option_list_editor.reset()
@@ -137,7 +137,7 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
     # overrides QWizardPage.isComplete
     def isComplete(self):
         executable = self.get_executable()
-        start_mode = self.get_field('python.start_mode').toInt()[0]
+        start_mode = self.get_field('python.start_mode')
 
         # In web interface mode there is nothing to configure at all
         if start_mode == Constants.PYTHON_START_MODE_WEB_INTERFACE:
@@ -162,7 +162,7 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
 
     # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
-        start_mode               = self.get_field('python.start_mode').toInt()[0]
+        start_mode               = self.get_field('python.start_mode')
         start_mode_script_file   = start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE
         start_mode_module_name   = start_mode == Constants.PYTHON_START_MODE_MODULE_NAME
         start_mode_command       = start_mode == Constants.PYTHON_START_MODE_COMMAND
@@ -190,15 +190,15 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         self.option_list_editor.update_ui_state()
 
     def get_executable(self):
-        return self.combo_version.itemData(self.get_field('python.version').toInt()[0]).toString()
+        return self.combo_version.itemData(self.get_field('python.version'))
 
     def get_html_summary(self):
-        version           = self.get_field('python.version').toInt()[0]
-        start_mode        = self.get_field('python.start_mode').toInt()[0]
-        script_file       = self.get_field('python.script_file').toString()
-        module_name       = self.get_field('python.module_name').toString()
-        command           = self.get_field('python.command').toString()
-        working_directory = self.get_field('python.working_directory').toString()
+        version           = self.get_field('python.version')
+        start_mode        = self.get_field('python.start_mode')
+        script_file       = self.get_field('python.script_file')
+        module_name       = self.get_field('python.module_name')
+        command           = self.get_field('python.command')
+        working_directory = self.get_field('python.working_directory')
         options           = ' '.join(self.option_list_editor.get_items())
 
         if start_mode == Constants.PYTHON_START_MODE_WEB_INTERFACE:
@@ -221,15 +221,15 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
 
     def get_custom_options(self):
         return {
-            'python.start_mode':  Constants.python_start_mode_api_names[self.get_field('python.start_mode').toInt()[0]],
-            'python.script_file': self.get_field('python.script_file').toString(),
-            'python.module_name': self.get_field('python.module_name').toString(),
-            'python.command':     self.get_field('python.command').toString(),
+            'python.start_mode':  Constants.python_start_mode_api_names[self.get_field('python.start_mode')],
+            'python.script_file': self.get_field('python.script_file'),
+            'python.module_name': self.get_field('python.module_name'),
+            'python.command':     self.get_field('python.command'),
             'python.options':     self.option_list_editor.get_items()
         }
 
     def get_command(self):
-        start_mode = self.get_field('python.start_mode').toInt()[0]
+        start_mode = self.get_field('python.start_mode')
 
         if start_mode == Constants.PYTHON_START_MODE_WEB_INTERFACE:
             return None
@@ -239,15 +239,15 @@ class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
         environment = []
 
         if start_mode == Constants.PYTHON_START_MODE_SCRIPT_FILE:
-            arguments.append(self.get_field('python.script_file').toString())
+            arguments.append(self.get_field('python.script_file'))
         elif start_mode == Constants.PYTHON_START_MODE_MODULE_NAME:
             arguments.append('-m')
-            arguments.append(self.get_field('python.module_name').toString())
+            arguments.append(self.get_field('python.module_name'))
         elif start_mode == Constants.PYTHON_START_MODE_COMMAND:
             arguments.append('-c')
-            arguments.append(self.get_field('python.command').toString())
+            arguments.append(self.get_field('python.command'))
 
-        working_directory = self.get_field('python.working_directory').toString()
+        working_directory = self.get_field('python.working_directory')
 
         return executable, arguments, environment, working_directory
 

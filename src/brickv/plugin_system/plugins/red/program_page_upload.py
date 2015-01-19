@@ -215,7 +215,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if not self.edit_mode and self.wizard().hasVisitedPage(Constants.PAGE_SCHEDULE):
             count += 1 # set schedule
 
-            if self.get_field('start_mode').toInt()[0] == Constants.START_MODE_ONCE:
+            if self.get_field('start_mode') == Constants.START_MODE_ONCE:
                 count += 1 # start once after upload
 
         count += 1 # upload successful
@@ -229,7 +229,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.remaining_uploads = self.wizard().page(Constants.PAGE_FILES).get_uploads()
 
         if not self.edit_mode:
-            self.language_api_name = Constants.language_api_names[self.get_field('language').toInt()[0]]
+            self.language_api_name = Constants.language_api_names[self.get_field('language')]
             self.command           = self.wizard().page(Constants.get_language_page(self.language_api_name)).get_command()
 
         self.progress_total.setRange(0, self.get_total_step_count())
@@ -238,7 +238,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if not self.edit_mode:
             self.next_step('Defining new program...', increase=0)
 
-            identifier = self.get_field('identifier').toString()
+            identifier = self.get_field('identifier')
 
             try:
                 self.program = REDProgram(self.wizard().session).define(identifier) # FIXME: async_call
@@ -253,7 +253,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             self.next_step('Setting custom options...')
 
             # set custom option: name
-            name = self.get_field('name').toString()
+            name = self.get_field('name')
 
             try:
                 self.program.set_custom_option_value('name', name) # FIXME: async_call
@@ -269,7 +269,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 return
 
             # set custom option: description
-            description = self.get_field('description').toString()
+            description = self.get_field('description')
 
             try:
                 self.program.set_custom_option_value('description', description) # FIXME: async_call
@@ -599,12 +599,12 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if not self.edit_mode and self.wizard().hasVisitedPage(Constants.PAGE_STDIO):
             self.next_step('Setting stdio redirection...')
 
-            stdin_redirection  = Constants.api_stdin_redirections[self.get_field('stdin_redirection').toInt()[0]]
-            stdout_redirection = Constants.api_stdout_redirections[self.get_field('stdout_redirection').toInt()[0]]
-            stderr_redirection = Constants.api_stderr_redirections[self.get_field('stderr_redirection').toInt()[0]]
-            stdin_file         = self.get_field('stdin_file').toString()
-            stdout_file        = self.get_field('stdout_file').toString()
-            stderr_file        = self.get_field('stderr_file').toString()
+            stdin_redirection  = Constants.api_stdin_redirections[self.get_field('stdin_redirection')]
+            stdout_redirection = Constants.api_stdout_redirections[self.get_field('stdout_redirection')]
+            stderr_redirection = Constants.api_stderr_redirections[self.get_field('stderr_redirection')]
+            stdin_file         = self.get_field('stdin_file')
+            stdout_file        = self.get_field('stdout_file')
+            stderr_file        = self.get_field('stderr_file')
 
             try:
                 self.program.set_stdio_redirection(stdin_redirection, stdin_file,
@@ -616,10 +616,10 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
             self.log('...done')
 
-        if self.language_api_name == 'c' and self.get_field('c.compile_from_source').toBool():
+        if self.language_api_name == 'c' and self.get_field('c.compile_from_source'):
             self.compile_make()
             return
-        elif self.language_api_name == 'delphi' and self.get_field('delphi.compile_from_source').toBool():
+        elif self.language_api_name == 'delphi' and self.get_field('delphi.compile_from_source'):
             self.compile_fpcmake()
             return
 
@@ -630,7 +630,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if not self.edit_mode and self.wizard().hasVisitedPage(Constants.PAGE_SCHEDULE):
             self.next_step('Setting schedule...')
 
-            start_mode = self.get_field('start_mode').toInt()[0]
+            start_mode = self.get_field('start_mode')
 
             if start_mode == Constants.START_MODE_ONCE:
                 api_start_mode          = REDProgram.START_MODE_NEVER
@@ -639,9 +639,9 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 api_start_mode          = Constants.api_start_modes[start_mode]
                 start_once_after_upload = False
 
-            continue_after_error = self.get_field('continue_after_error').toBool()
-            start_interval       = self.get_field('start_interval').toUInt()[0]
-            start_fields         = self.get_field('start_fields').toString()
+            continue_after_error = self.get_field('continue_after_error')
+            start_interval       = self.get_field('start_interval')
+            start_fields         = self.get_field('start_fields')
 
             try:
                 self.program.set_schedule(api_start_mode, continue_after_error, start_interval, start_fields) # FIXME: async_call

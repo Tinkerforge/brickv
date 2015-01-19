@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import QVariant, QTimer
+from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import QDialog, QMessageBox
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
@@ -145,7 +145,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         if program != None:
             self.bin_directory = posixpath.join(program.root_directory, 'bin')
         else:
-            identifier         = self.get_field('identifier').toString()
+            identifier         = self.get_field('identifier')
             self.bin_directory = posixpath.join('/', 'home', 'tf', 'programs', identifier, 'bin')
 
         # collect class path entries
@@ -240,7 +240,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
                         self.combo_main_class.clear()
 
                         for cls in sorted(main_classes.keys()):
-                            self.combo_main_class.addItem(cls, QVariant(main_classes[cls]))
+                            self.combo_main_class.addItem(cls, main_classes[cls])
 
                         self.combo_main_class_checker.set_current_text(program.cast_custom_option_value('java.main_class', unicode, ''))
                         done()
@@ -341,7 +341,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
     # overrides QWizardPage.isComplete
     def isComplete(self):
         executable = self.get_executable()
-        start_mode = self.get_field('java.start_mode').toInt()[0]
+        start_mode = self.get_field('java.start_mode')
 
         if len(executable) == 0:
             return False
@@ -358,7 +358,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
     # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
-        start_mode            = self.get_field('java.start_mode').toInt()[0]
+        start_mode            = self.get_field('java.start_mode')
         start_mode_main_class = start_mode == Constants.JAVA_START_MODE_MAIN_CLASS
         start_mode_jar_file   = start_mode == Constants.JAVA_START_MODE_JAR_FILE
         show_class_path       = self.check_show_class_path.isChecked()
@@ -401,14 +401,14 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         self.class_path_list_editor.add_item(entry, select_item=True)
 
     def get_executable(self):
-        return self.combo_version.itemData(self.get_field('java.version').toInt()[0]).toString()
+        return self.combo_version.itemData(self.get_field('java.version'))
 
     def get_html_summary(self):
-        version           = self.get_field('java.version').toInt()[0]
-        start_mode        = self.get_field('java.start_mode').toInt()[0]
-        main_class        = self.get_field('java.main_class').toString()
-        jar_file          = self.get_field('java.jar_file').toString()
-        working_directory = self.get_field('java.working_directory').toString()
+        version           = self.get_field('java.version')
+        start_mode        = self.get_field('java.start_mode')
+        main_class        = self.get_field('java.main_class')
+        jar_file          = self.get_field('java.jar_file')
+        working_directory = self.get_field('java.working_directory')
         class_path        = ':'.join(self.class_path_list_editor.get_items())
         options           = ' '.join(self.option_list_editor.get_items())
 
@@ -428,9 +428,9 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
     def get_custom_options(self):
         return {
-            'java.start_mode': Constants.java_start_mode_api_names[self.get_field('java.start_mode').toInt()[0]],
-            'java.main_class': self.get_field('java.main_class').toString(),
-            'java.jar_file':   self.get_field('java.jar_file').toString(),
+            'java.start_mode': Constants.java_start_mode_api_names[self.get_field('java.start_mode')],
+            'java.main_class': self.get_field('java.main_class'),
+            'java.jar_file':   self.get_field('java.jar_file'),
             'java.class_path': self.class_path_list_editor.get_items(),
             'java.options':    self.option_list_editor.get_items()
         }
@@ -439,7 +439,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
         executable         = self.get_executable()
         arguments          = self.option_list_editor.get_items()
         environment        = []
-        start_mode         = self.get_field('java.start_mode').toInt()[0]
+        start_mode         = self.get_field('java.start_mode')
         class_path_entries = self.class_path_list_editor.get_items()
 
         if len(class_path_entries) > 0:
@@ -454,12 +454,12 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             arguments += ['-cp', ':'.join(absolute_entries)]
 
         if start_mode == Constants.JAVA_START_MODE_MAIN_CLASS:
-            arguments.append(self.get_field('java.main_class').toString())
+            arguments.append(self.get_field('java.main_class'))
         elif start_mode == Constants.JAVA_START_MODE_JAR_FILE:
             arguments.append('-jar')
-            arguments.append(self.get_field('java.jar_file').toString())
+            arguments.append(self.get_field('java.jar_file'))
 
-        working_directory = self.get_field('java.working_directory').toString()
+        working_directory = self.get_field('java.working_directory')
 
         return executable, arguments, environment, working_directory
 

@@ -22,7 +22,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import QVariant
 from PyQt4.QtGui import QMessageBox
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
@@ -101,8 +100,8 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
                 node_version_str = ''
 
             self.combo_flavor.clear()
-            self.combo_flavor.addItem('Client-Side (Browser)', QVariant('/bin/false'))
-            self.combo_flavor.addItem('Server-Side (Node.js{0})'.format(node_version_str), QVariant(versions[0].executable))
+            self.combo_flavor.addItem('Client-Side (Browser)', '/bin/false')
+            self.combo_flavor.addItem('Server-Side (Node.js{0})'.format(node_version_str), versions[0].executable)
 
             # if a program exists then this page is used in an edit wizard
             if self.wizard().program != None:
@@ -157,9 +156,9 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
-        flavor     = self.get_field('javascript.flavor').toInt()[0] != 0
+        flavor     = self.get_field('javascript.flavor') != 0
         executable = self.get_executable()
-        start_mode = self.get_field('javascript.start_mode').toInt()[0]
+        start_mode = self.get_field('javascript.start_mode')
 
         if flavor == Constants.JAVASCRIPT_FLAVOR_NODEJS:
             if len(executable) == 0:
@@ -177,10 +176,10 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
 
     # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
-        flavor                 = self.get_field('javascript.flavor').toInt()[0]
+        flavor                 = self.get_field('javascript.flavor')
         flavor_browser         = flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER
         flavor_nodejs          = flavor == Constants.JAVASCRIPT_FLAVOR_NODEJS
-        start_mode             = self.get_field('javascript.start_mode').toInt()[0]
+        start_mode             = self.get_field('javascript.start_mode')
         start_mode_script_file = start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE
         start_mode_command     = start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND
         show_advanced_options  = self.check_show_advanced_options.isChecked()
@@ -200,14 +199,14 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         self.option_list_editor.update_ui_state()
 
     def get_executable(self):
-        return self.combo_flavor.itemData(self.get_field('javascript.flavor').toInt()[0]).toString()
+        return self.combo_flavor.itemData(self.get_field('javascript.flavor'))
 
     def get_html_summary(self):
-        flavor            = self.get_field('javascript.flavor').toInt()[0]
-        start_mode        = self.get_field('javascript.start_mode').toInt()[0]
-        script_file       = self.get_field('javascript.script_file').toString()
-        command           = self.get_field('javascript.command').toString()
-        working_directory = self.get_field('javascript.working_directory').toString()
+        flavor            = self.get_field('javascript.flavor')
+        start_mode        = self.get_field('javascript.start_mode')
+        script_file       = self.get_field('javascript.script_file')
+        command           = self.get_field('javascript.command')
+        working_directory = self.get_field('javascript.working_directory')
         options           = ' '.join(self.option_list_editor.get_items())
 
         html = u'JavaScript Flavor: {0}<br/>'.format(Qt.escape(self.combo_flavor.itemText(flavor)))
@@ -227,15 +226,15 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
 
     def get_custom_options(self):
         return {
-            'javascript.flavor':      Constants.javascript_flavor_api_names[self.get_field('javascript.flavor').toInt()[0]],
-            'javascript.start_mode':  Constants.javascript_start_mode_api_names[self.get_field('javascript.start_mode').toInt()[0]],
-            'javascript.script_file': self.get_field('javascript.script_file').toString(),
-            'javascript.command':     self.get_field('javascript.command').toString(),
+            'javascript.flavor':      Constants.javascript_flavor_api_names[self.get_field('javascript.flavor')],
+            'javascript.start_mode':  Constants.javascript_start_mode_api_names[self.get_field('javascript.start_mode')],
+            'javascript.script_file': self.get_field('javascript.script_file'),
+            'javascript.command':     self.get_field('javascript.command'),
             'javascript.options':     self.option_list_editor.get_items()
         }
 
     def get_command(self):
-        flavor = self.get_field('javascript.flavor').toInt()[0]
+        flavor = self.get_field('javascript.flavor')
 
         if flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER:
             return None
@@ -243,15 +242,15 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         executable  = self.get_executable()
         arguments   = self.option_list_editor.get_items()
         environment = ['NODE_PATH=/usr/local/lib/node_modules']
-        start_mode  = self.get_field('javascript.start_mode').toInt()[0]
+        start_mode  = self.get_field('javascript.start_mode')
 
         if start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE:
-            arguments.append(self.get_field('javascript.script_file').toString())
+            arguments.append(self.get_field('javascript.script_file'))
         elif start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND:
             arguments.append('-e')
-            arguments.append(self.get_field('javascript.command').toString())
+            arguments.append(self.get_field('javascript.command'))
 
-        working_directory = self.get_field('javascript.working_directory').toString()
+        working_directory = self.get_field('javascript.working_directory')
 
         return executable, arguments, environment, working_directory
 
@@ -265,7 +264,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
         if program == None:
             return
 
-        if self.get_field('javascript.flavor').toInt()[0] == Constants.JAVASCRIPT_FLAVOR_BROWSER:
+        if self.get_field('javascript.flavor') == Constants.JAVASCRIPT_FLAVOR_BROWSER:
             try:
                 program.set_schedule(REDProgram.START_MODE_NEVER, False, 0, '') # FIXME: async_call
             except (Error, REDError) as e:

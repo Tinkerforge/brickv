@@ -149,7 +149,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
     # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
-        start_mode            = self.get_field('c.start_mode').toInt()[0]
+        start_mode            = self.get_field('c.start_mode')
         start_mode_executable = start_mode == Constants.C_START_MODE_EXECUTABLE
         compile_from_source   = self.check_compile_from_source.isChecked()
         show_advanced_options = self.check_show_advanced_options.isChecked()
@@ -170,10 +170,10 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
         return self.make_option_list_editor.get_items()
 
     def get_html_summary(self):
-        start_mode          = self.get_field('c.start_mode').toInt()[0]
-        executable          = self.get_field('c.executable').toString()
-        compile_from_source = self.get_field('c.compile_from_source').toBool()
-        working_directory   = self.get_field('c.working_directory').toString()
+        start_mode          = self.get_field('c.start_mode')
+        executable          = self.get_field('c.executable')
+        compile_from_source = self.get_field('c.compile_from_source')
+        working_directory   = self.get_field('c.working_directory')
         make_options        = ' '.join(self.make_option_list_editor.get_items())
 
         html = u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.c_start_mode_display_names[start_mode]))
@@ -195,17 +195,17 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
 
     def get_custom_options(self):
         return {
-            'c.start_mode':          Constants.c_start_mode_api_names[self.get_field('c.start_mode').toInt()[0]],
-            'c.executable':          self.get_field('c.executable').toString(),
-            'c.compile_from_source': self.get_field('c.compile_from_source').toBool(),
+            'c.start_mode':          Constants.c_start_mode_api_names[self.get_field('c.start_mode')],
+            'c.executable':          self.get_field('c.executable'),
+            'c.compile_from_source': self.get_field('c.compile_from_source'),
             'c.make_options':        self.make_option_list_editor.get_items()
         }
 
     def get_command(self):
-        executable        = self.get_field('c.executable').toString()
+        executable        = self.get_field('c.executable')
         arguments         = []
         environment       = []
-        working_directory = self.get_field('c.working_directory').toString()
+        working_directory = self.get_field('c.working_directory')
 
         if not executable.startswith('/'):
             executable = posixpath.join('./', executable)

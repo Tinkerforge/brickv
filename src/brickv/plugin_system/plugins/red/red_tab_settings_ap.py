@@ -164,8 +164,8 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
         self.line2.setVisible(has_interface)
 
     def slot_cbox_ap_interface_current_index_changed(self, index):
-        ip = self.cbox_ap_interface.itemData(index, AP_INTERFACE_IP_USER_ROLE).toString()
-        mask = self.cbox_ap_interface.itemData(index, AP_INTERFACE_MASK_USER_ROLE).toString()
+        ip = self.cbox_ap_interface.itemData(index, AP_INTERFACE_IP_USER_ROLE)
+        mask = self.cbox_ap_interface.itemData(index, AP_INTERFACE_MASK_USER_ROLE)
 
         if ip and mask:
             ip_list = ip.split('.')
@@ -482,21 +482,21 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
                                     if ap_mode_interfaces[intf]['ip']:
                                         self.cbox_ap_interface.setItemData(current_item_index,
-                                                                           QtCore.QVariant(ap_mode_interfaces[intf]['ip']),
+                                                                           ap_mode_interfaces[intf]['ip'],
                                                                            AP_INTERFACE_IP_USER_ROLE)
                                     else:
                                         self.cbox_ap_interface.setItemData(current_item_index,
-                                                                           QtCore.QVariant('192.168.42.1'),
+                                                                           '192.168.42.1',
                                                                            AP_INTERFACE_IP_USER_ROLE)
 
                                     if ap_mode_interfaces[intf]['mask']:
                                         self.cbox_ap_interface.setItemData(current_item_index,
-                                                                           QtCore.QVariant(ap_mode_interfaces[intf]['mask']),
+                                                                           ap_mode_interfaces[intf]['mask'],
                                                                            AP_INTERFACE_MASK_USER_ROLE)
 
                                     else:
                                         self.cbox_ap_interface.setItemData(current_item_index,
-                                                                           QtCore.QVariant('255.255.255.0'),
+                                                                           '255.255.255.0',
                                                                            AP_INTERFACE_MASK_USER_ROLE)
                                 self.cbox_ap_interface.setCurrentIndex(-1)
                                 self.cbox_ap_interface.currentIndexChanged.connect(self.slot_cbox_ap_interface_current_index_changed)

@@ -126,7 +126,7 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
     # overrides QWizardPage.isComplete
     def isComplete(self):
         executable = self.get_executable()
-        start_mode = self.get_field('perl.start_mode').toInt()[0]
+        start_mode = self.get_field('perl.start_mode')
 
         if len(executable) == 0:
             return False
@@ -143,7 +143,7 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
 
     # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
-        start_mode             = self.get_field('perl.start_mode').toInt()[0]
+        start_mode             = self.get_field('perl.start_mode')
         start_mode_script_file = start_mode == Constants.PERL_START_MODE_SCRIPT_FILE
         start_mode_command     = start_mode == Constants.PERL_START_MODE_COMMAND
         show_advanced_options  = self.check_show_advanced_options.isChecked()
@@ -159,14 +159,14 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
         self.option_list_editor.update_ui_state()
 
     def get_executable(self):
-        return self.combo_version.itemData(self.get_field('perl.version').toInt()[0]).toString()
+        return self.combo_version.itemData(self.get_field('perl.version'))
 
     def get_html_summary(self):
-        version           = self.get_field('perl.version').toInt()[0]
-        start_mode        = self.get_field('perl.start_mode').toInt()[0]
-        script_file       = self.get_field('perl.script_file').toString()
-        command           = self.get_field('perl.command').toString()
-        working_directory = self.get_field('perl.working_directory').toString()
+        version           = self.get_field('perl.version')
+        start_mode        = self.get_field('perl.start_mode')
+        script_file       = self.get_field('perl.script_file')
+        command           = self.get_field('perl.command')
+        working_directory = self.get_field('perl.working_directory')
         options           = ' '.join(self.option_list_editor.get_items())
 
         html  = u'Perl Version: {0}<br/>'.format(Qt.escape(self.combo_version.itemText(version)))
@@ -184,9 +184,9 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
 
     def get_custom_options(self):
         return {
-            'perl.start_mode':  Constants.perl_start_mode_api_names[self.get_field('perl.start_mode').toInt()[0]],
-            'perl.script_file': self.get_field('perl.script_file').toString(),
-            'perl.command':     self.get_field('perl.command').toString(),
+            'perl.start_mode':  Constants.perl_start_mode_api_names[self.get_field('perl.start_mode')],
+            'perl.script_file': self.get_field('perl.script_file'),
+            'perl.command':     self.get_field('perl.command'),
             'perl.options':     self.option_list_editor.get_items()
         }
 
@@ -194,15 +194,15 @@ class ProgramPagePerl(ProgramPage, Ui_ProgramPagePerl):
         executable  = self.get_executable()
         arguments   = self.option_list_editor.get_items()
         environment = []
-        start_mode  = self.get_field('perl.start_mode').toInt()[0]
+        start_mode  = self.get_field('perl.start_mode')
 
         if start_mode == Constants.PERL_START_MODE_SCRIPT_FILE:
-            arguments.append(self.get_field('perl.script_file').toString())
+            arguments.append(self.get_field('perl.script_file'))
         elif start_mode == Constants.PERL_START_MODE_COMMAND:
             arguments.append('-e')
-            arguments.append(self.get_field('perl.command').toString())
+            arguments.append(self.get_field('perl.command'))
 
-        working_directory = self.get_field('perl.working_directory').toString()
+        working_directory = self.get_field('perl.working_directory')
 
         return executable, arguments, environment, working_directory
 

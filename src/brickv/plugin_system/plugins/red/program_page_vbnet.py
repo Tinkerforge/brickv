@@ -103,7 +103,7 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
     # overrides QWizardPage.isComplete
     def isComplete(self):
         executable = self.get_executable()
-        start_mode = self.get_field('vbnet.start_mode').toInt()[0]
+        start_mode = self.get_field('vbnet.start_mode')
 
         if len(executable) == 0:
             return False
@@ -116,7 +116,7 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
 
     # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
-        start_mode            = self.get_field('vbnet.start_mode').toInt()[0]
+        start_mode            = self.get_field('vbnet.start_mode')
         start_mode_executable = start_mode == Constants.VBNET_START_MODE_EXECUTABLE
         show_advanced_options = self.check_show_advanced_options.isChecked()
 
@@ -128,13 +128,13 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
         self.option_list_editor.update_ui_state()
 
     def get_executable(self):
-        return self.combo_version.itemData(self.get_field('vbnet.version').toInt()[0]).toString()
+        return self.combo_version.itemData(self.get_field('vbnet.version'))
 
     def get_html_summary(self):
-        version           = self.get_field('vbnet.version').toInt()[0]
-        start_mode        = self.get_field('vbnet.start_mode').toInt()[0]
-        executable        = self.get_field('vbnet.executable').toString()
-        working_directory = self.get_field('vbnet.working_directory').toString()
+        version           = self.get_field('vbnet.version')
+        start_mode        = self.get_field('vbnet.start_mode')
+        executable        = self.get_field('vbnet.executable')
+        working_directory = self.get_field('vbnet.working_directory')
         options           = ' '.join(self.option_list_editor.get_items())
 
         html  = u'Mono Version: {0}<br/>'.format(Qt.escape(self.combo_version.itemText(version)))
@@ -150,8 +150,8 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
 
     def get_custom_options(self):
         return {
-            'vbnet.start_mode': Constants.vbnet_start_mode_api_names[self.get_field('vbnet.start_mode').toInt()[0]],
-            'vbnet.executable': self.get_field('vbnet.executable').toString(),
+            'vbnet.start_mode': Constants.vbnet_start_mode_api_names[self.get_field('vbnet.start_mode')],
+            'vbnet.executable': self.get_field('vbnet.executable'),
             'vbnet.options':    self.option_list_editor.get_items()
         }
 
@@ -159,12 +159,12 @@ class ProgramPageVBNET(ProgramPage, Ui_ProgramPageVBNET):
         executable  = self.get_executable()
         arguments   = self.option_list_editor.get_items()
         environment = []
-        start_mode  = self.get_field('vbnet.start_mode').toInt()[0]
+        start_mode  = self.get_field('vbnet.start_mode')
 
         if start_mode == Constants.VBNET_START_MODE_EXECUTABLE:
-            arguments.append(self.get_field('vbnet.executable').toString())
+            arguments.append(self.get_field('vbnet.executable'))
 
-        working_directory = self.get_field('vbnet.working_directory').toString()
+        working_directory = self.get_field('vbnet.working_directory')
 
         return executable, arguments, environment, working_directory
 

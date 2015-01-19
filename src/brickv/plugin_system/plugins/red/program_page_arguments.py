@@ -62,7 +62,7 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
 
     # overrides QWizardPage.initializePage
     def initializePage(self):
-        language = self.get_field('language').toInt()[0]
+        language = self.get_field('language')
 
         self.set_formatted_sub_title(u'Specify the arguments to be passed to the {language} program [{name}] and its environment.')
 

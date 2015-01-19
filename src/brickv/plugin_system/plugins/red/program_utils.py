@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QDir, QVariant, QDateTime
+from PyQt4.QtCore import Qt, QDir, QDateTime
 from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem, \
                         QProgressDialog, QProgressBar, QInputDialog
 from brickv.plugin_system.plugins.red.api import REDProgram
@@ -1099,12 +1099,12 @@ def get_key_from_value(dictionary, value):
 
 
 def set_current_combo_index_from_data(combo, data):
-    i = combo.findData(QVariant(data))
+    i = combo.findData(data)
 
     if i >= 0:
         combo.setCurrentIndex(i)
     else:
-        combo.addItem('<unknown>', QVariant(data))
+        combo.addItem('<unknown>', data)
         combo.setCurrentIndex(combo.count() - 1)
 
 

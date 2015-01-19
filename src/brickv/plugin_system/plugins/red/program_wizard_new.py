@@ -77,24 +77,24 @@ class ProgramWizardNew(ProgramWizard):
         if currentId == Constants.PAGE_GENERAL:
             return Constants.PAGE_FILES
         elif currentId == Constants.PAGE_FILES:
-            language = self.get_field('language').toInt()[0]
+            language = self.get_field('language')
 
             try:
                 return Constants.language_pages[language]
             except KeyError:
                 return Constants.PAGE_GENERAL
         elif currentId == Constants.PAGE_JAVASCRIPT:
-            if self.get_field('javascript.flavor').toInt()[0] == Constants.JAVASCRIPT_FLAVOR_BROWSER:
+            if self.get_field('javascript.flavor') == Constants.JAVASCRIPT_FLAVOR_BROWSER:
                 return Constants.PAGE_SUMMARY
             else:
                 return Constants.PAGE_ARGUMENTS
         elif currentId == Constants.PAGE_PYTHON:
-            if self.get_field('python.start_mode').toInt()[0] == Constants.PYTHON_START_MODE_WEB_INTERFACE:
+            if self.get_field('python.start_mode') == Constants.PYTHON_START_MODE_WEB_INTERFACE:
                 return Constants.PAGE_SUMMARY
             else:
                 return Constants.PAGE_ARGUMENTS
         elif currentId == Constants.PAGE_PHP:
-            if self.get_field('php.start_mode').toInt()[0] == Constants.PHP_START_MODE_WEB_INTERFACE:
+            if self.get_field('php.start_mode') == Constants.PHP_START_MODE_WEB_INTERFACE:
                 return Constants.PAGE_SUMMARY
             else:
                 return Constants.PAGE_ARGUMENTS

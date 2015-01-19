@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QDir, QVariant
+from PyQt4.QtCore import Qt, QDir
 from PyQt4.QtGui import QIcon, QFileDialog, QListWidgetItem, QApplication
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
@@ -85,8 +85,8 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
             uploads = [Upload(filename, os.path.split(filename)[1])]
 
             item = QListWidgetItem(filename)
-            item.setData(Qt.UserRole, QVariant(uploads))
-            item.setData(Qt.DecorationRole, QVariant(self.file_icon))
+            item.setData(Qt.UserRole, uploads)
+            item.setData(Qt.DecorationRole, self.file_icon)
             self.list_files.addItem(item)
 
         self.completeChanged.emit()
@@ -143,8 +143,8 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         # FIXME: maybe add a warning if the directory contains very many files or large amounts of data
 
         item = QListWidgetItem(os.path.join(directory, '*'))
-        item.setData(Qt.UserRole, QVariant(uploads))
-        item.setData(Qt.DecorationRole, QVariant(self.folder_icon))
+        item.setData(Qt.UserRole, uploads)
+        item.setData(Qt.DecorationRole, self.folder_icon)
         self.list_files.addItem(item)
 
         self.completeChanged.emit()
@@ -178,6 +178,6 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         uploads = []
 
         for row in range(self.list_files.count()):
-            uploads += self.list_files.item(row).data(Qt.UserRole).toPyObject()
+            uploads += self.list_files.item(row).data(Qt.UserRole)
 
         return uploads

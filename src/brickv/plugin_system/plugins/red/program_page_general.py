@@ -91,7 +91,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         return self.edit_name_checker.complete and \
                self.edit_identifier_checker.complete and \
                self.identifier_is_unique and \
-               self.get_field('language').toInt()[0] != Constants.LANGUAGE_INVALID and \
+               self.get_field('language') != Constants.LANGUAGE_INVALID and \
                ProgramPage.isComplete(self)
 
     # overrides ProgramPage.update_ui_state
@@ -164,7 +164,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         if program == None:
             return
 
-        name = self.get_field('name').toString()
+        name = self.get_field('name')
 
         try:
             program.set_custom_option_value('name', name) # FIXME: async_call
@@ -174,7 +174,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
                                  .format(program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))
             return
 
-        description = self.get_field('description').toString()
+        description = self.get_field('description')
 
         try:
             program.set_custom_option_value('description', description) # FIXME: async_call

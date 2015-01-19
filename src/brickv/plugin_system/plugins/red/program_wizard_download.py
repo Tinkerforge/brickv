@@ -42,17 +42,15 @@ class ProgramWizardDownload(ProgramWizard):
     # overrides ProgramWizard.get_field
     def get_field(self, name):
         if name == 'identifier':
-            return QVariant(self.program.identifier)
+            return self.program.identifier
         elif name == 'name':
-            return QVariant(self.program.cast_custom_option_value('name', unicode, '<unknown>'))
+            return self.program.cast_custom_option_value('name', unicode, '<unknown>')
         elif name == 'language':
             language_api_name = self.program.cast_custom_option_value('language', unicode, '<unknown>')
 
             try:
-                language = Constants.get_language(language_api_name)
+                return Constants.get_language(language_api_name)
             except:
-                language = Constants.LANGUAGE_INVALID
-
-            return QVariant(language)
+                return Constants.LANGUAGE_INVALID
         else:
             return ProgramWizard.get_field(self, name)

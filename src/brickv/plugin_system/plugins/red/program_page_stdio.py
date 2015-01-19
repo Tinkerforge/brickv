@@ -88,9 +88,9 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
-        stdin_redirection  = self.get_field('stdin_redirection').toInt()[0]
-        stdout_redirection = self.get_field('stdout_redirection').toInt()[0]
-        stderr_redirection = self.get_field('stderr_redirection').toInt()[0]
+        stdin_redirection  = self.get_field('stdin_redirection')
+        stdout_redirection = self.get_field('stdout_redirection')
+        stderr_redirection = self.get_field('stderr_redirection')
 
         if stdin_redirection == Constants.STDIN_REDIRECTION_FILE and \
            not self.combo_stdin_file_checker.complete:
@@ -108,9 +108,9 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
 
     # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
-        stdin_redirection                 = self.get_field('stdin_redirection').toInt()[0]
-        stdout_redirection                = self.get_field('stdout_redirection').toInt()[0]
-        stderr_redirection                = self.get_field('stderr_redirection').toInt()[0]
+        stdin_redirection                 = self.get_field('stdin_redirection')
+        stdout_redirection                = self.get_field('stdout_redirection')
+        stderr_redirection                = self.get_field('stderr_redirection')
         stdin_redirection_dev_null        = stdin_redirection  == Constants.STDIN_REDIRECTION_DEV_NULL
         stdin_redirection_pipe            = stdin_redirection  == Constants.STDIN_REDIRECTION_PIPE
         stdin_redirection_file            = stdin_redirection  == Constants.STDIN_REDIRECTION_FILE
@@ -152,12 +152,12 @@ class ProgramPageStdio(ProgramPage, Ui_ProgramPageStdio):
         if program == None:
             return
 
-        stdin_redirection  = Constants.api_stdin_redirections[self.get_field('stdin_redirection').toInt()[0]]
-        stdout_redirection = Constants.api_stdout_redirections[self.get_field('stdout_redirection').toInt()[0]]
-        stderr_redirection = Constants.api_stderr_redirections[self.get_field('stderr_redirection').toInt()[0]]
-        stdin_file         = self.get_field('stdin_file').toString()
-        stdout_file        = self.get_field('stdout_file').toString()
-        stderr_file        = self.get_field('stderr_file').toString()
+        stdin_redirection  = Constants.api_stdin_redirections[self.get_field('stdin_redirection')]
+        stdout_redirection = Constants.api_stdout_redirections[self.get_field('stdout_redirection')]
+        stderr_redirection = Constants.api_stderr_redirections[self.get_field('stderr_redirection')]
+        stdin_file         = self.get_field('stdin_file')
+        stdout_file        = self.get_field('stdout_file')
+        stderr_file        = self.get_field('stderr_file')
 
         try:
             program.set_stdio_redirection(stdin_redirection, stdin_file,

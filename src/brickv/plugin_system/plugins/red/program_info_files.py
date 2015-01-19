@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QDateTime, QVariant, QDir
+from PyQt4.QtCore import Qt, QDateTime, QDir
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, \
                         QSortFilterProxyModel,  QFileDialog, QMessageBox, \
                         QInputDialog, QApplication, QDialog
@@ -80,7 +80,7 @@ def get_full_item_path(item):
 def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon):
     def create_last_modified_item(last_modified):
         item = QStandardItem(QDateTime.fromTime_t(last_modified).toString('yyyy-MM-dd HH:mm:ss'))
-        item.setData(QVariant(last_modified), USER_ROLE_LAST_MODIFIED)
+        item.setData(last_modified, USER_ROLE_LAST_MODIFIED)
 
         return item
 
@@ -93,8 +93,8 @@ def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon
                 size_item = None
             else:
                 name_item = QStandardItem(name)
-                name_item.setData(QVariant(folder_icon), Qt.DecorationRole)
-                name_item.setData(QVariant(ITEM_TYPE_DIRECTORY), USER_ROLE_ITEM_TYPE)
+                name_item.setData(folder_icon, Qt.DecorationRole)
+                name_item.setData(ITEM_TYPE_DIRECTORY, USER_ROLE_ITEM_TYPE)
 
                 size_item          = QStandardItem('')
                 last_modified_item = create_last_modified_item(int(dw['l']))
@@ -108,17 +108,17 @@ def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon
 
             if size_item != None:
                 size_item.setText(get_file_display_size(size))
-                size_item.setData(QVariant(size), USER_ROLE_SIZE)
+                size_item.setData(size, USER_ROLE_SIZE)
 
             return size
         else:
             name_item = QStandardItem(name)
-            name_item.setData(QVariant(file_icon), Qt.DecorationRole)
-            name_item.setData(QVariant(ITEM_TYPE_FILE), USER_ROLE_ITEM_TYPE)
+            name_item.setData(file_icon, Qt.DecorationRole)
+            name_item.setData(ITEM_TYPE_FILE, USER_ROLE_ITEM_TYPE)
 
             size      = int(dw['s'])
             size_item = QStandardItem(get_file_display_size(size))
-            size_item.setData(QVariant(size), USER_ROLE_SIZE)
+            size_item.setData(size, USER_ROLE_SIZE)
 
             last_modified_item = create_last_modified_item(int(dw['l']))
 
@@ -135,9 +135,9 @@ class FilesProxyModel(QSortFilterProxyModel):
     # overrides QSortFilterProxyModel.lessThan
     def lessThan(self, left, right):
         if left.column() == 1: # size
-            return left.data(USER_ROLE_SIZE).toInt()[0] < right.data(USER_ROLE_SIZE).toInt()[0]
+            return left.data(USER_ROLE_SIZE) < right.data(USER_ROLE_SIZE)
         elif left.column() == 2: # last modified
-            return left.data(USER_ROLE_LAST_MODIFIED).toInt()[0] < right.data(USER_ROLE_LAST_MODIFIED).toInt()[0]
+            return left.data(USER_ROLE_LAST_MODIFIED) < right.data(USER_ROLE_LAST_MODIFIED)
 
         return QSortFilterProxyModel.lessThan(self, left, right)
 
@@ -282,7 +282,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         downloads = []
 
         def expand(name_item):
-            item_type = name_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
+            item_type = name_item.data(USER_ROLE_ITEM_TYPE)
 
             if item_type == ITEM_TYPE_DIRECTORY:
                 for i in range(name_item.rowCount()):
@@ -323,7 +323,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if index.column() == 0:
             mapped_index = self.tree_files_proxy_model.mapToSource(index)
             name_item    = self.tree_files_model.itemFromIndex(mapped_index)
-            item_type    = name_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
+            item_type    = name_item.data(USER_ROLE_ITEM_TYPE)
 
             # only rename files via activation, because directories are expanded
             if item_type == ITEM_TYPE_FILE:
@@ -343,7 +343,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.rename_item(selected_name_items[0])
 
     def rename_item(self, name_item):
-        item_type = name_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
+        item_type = name_item.data(USER_ROLE_ITEM_TYPE)
 
         if item_type == ITEM_TYPE_FILE:
             title     = 'Rename File'
@@ -467,7 +467,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         for selected_name_item in selected_name_items:
             path      = get_full_item_path(selected_name_item)
-            item_type = selected_name_item.data(USER_ROLE_ITEM_TYPE).toInt()[0]
+            item_type = selected_name_item.data(USER_ROLE_ITEM_TYPE)
 
             if item_type == ITEM_TYPE_DIRECTORY:
                 dirs_to_delete.append(posixpath.join(self.bin_directory, path))

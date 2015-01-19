@@ -38,16 +38,16 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
     def initializePage(self):
         self.set_formatted_sub_title(u'The complete configuration of the {language} program [{name}].')
 
-        language              = self.get_field('language').toInt()[0]
+        language              = self.get_field('language')
         language_display_name = Constants.language_display_names[language]
         language_api_name     = Constants.language_api_names[language]
 
         # general information
         html  = u'<b>General Information</b><br/>'
-        html += u'Name: {0}<br/>'.format(Qt.escape(self.get_field('name').toString()))
-        html += u'Identifier: {0}<br/>'.format(Qt.escape(self.get_field('identifier').toString()))
+        html += u'Name: {0}<br/>'.format(Qt.escape(self.get_field('name')))
+        html += u'Identifier: {0}<br/>'.format(Qt.escape(self.get_field('identifier')))
         html += u'Language: {0}<br/>'.format(Qt.escape(language_display_name))
-        html += u'Description: {0}<br/>'.format(Qt.escape(self.get_field('description').toString()))
+        html += u'Description: {0}<br/>'.format(Qt.escape(self.get_field('description')))
         html += u'<br/>'
 
         # files
@@ -105,22 +105,22 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
         if self.wizard().hasVisitedPage(Constants.PAGE_STDIO):
             html += u'<b>Stdio Redirection</b><br/>'
 
-            stdin_redirection  = self.get_field('stdin_redirection').toInt()[0]
-            stdout_redirection = self.get_field('stdout_redirection').toInt()[0]
-            stderr_redirection = self.get_field('stderr_redirection').toInt()[0]
+            stdin_redirection  = self.get_field('stdin_redirection')
+            stdout_redirection = self.get_field('stdout_redirection')
+            stderr_redirection = self.get_field('stderr_redirection')
 
             if stdin_redirection == Constants.STDIN_REDIRECTION_FILE:
-                html += u'Standard Input: {0}<br/>'.format(self.get_field('stdin_file').toString())
+                html += u'Standard Input: {0}<br/>'.format(self.get_field('stdin_file'))
             else:
                 html += u'Standard Input: {0}<br/>'.format(Constants.get_stdin_redirection_display_name(stdin_redirection))
 
             if stdout_redirection == Constants.STDOUT_REDIRECTION_FILE:
-                html += u'Standard Output: {0}<br/>'.format(self.get_field('stdout_file').toString())
+                html += u'Standard Output: {0}<br/>'.format(self.get_field('stdout_file'))
             else:
                 html += u'Standard Output: {0}<br/>'.format(Constants.get_stdout_redirection_display_name(stdout_redirection))
 
             if stderr_redirection == Constants.STDERR_REDIRECTION_FILE:
-                html += u'Standard Error: {0}<br/>'.format(self.get_field('stderr_file').toString())
+                html += u'Standard Error: {0}<br/>'.format(self.get_field('stderr_file'))
             else:
                 html += u'Standard Error: {0}<br/>'.format(Constants.get_stderr_redirection_display_name(stderr_redirection))
 
@@ -130,7 +130,7 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
         if self.wizard().hasVisitedPage(Constants.PAGE_SCHEDULE):
             html += u'<b>Schedule</b><br/>'
 
-            start_mode = self.get_field('start_mode').toInt()[0]
+            start_mode = self.get_field('start_mode')
 
             if start_mode == Constants.START_MODE_ONCE:
                 html += u'Mode: Once After Upload<br/>'
@@ -138,15 +138,15 @@ class ProgramPageSummary(ProgramPage, Ui_ProgramPageSummary):
                 html += u'Mode: {0}<br/>'.format(Constants.get_start_mode_display_name(start_mode))
 
             if start_mode != Constants.START_MODE_NEVER and start_mode != Constants.START_MODE_ONCE:
-                if self.get_field('continue_after_error').toBool():
+                if self.get_field('continue_after_error'):
                     html += u'Continue After Error: Enabled<br/>'
                 else:
                     html += u'Continue After Error: Disabled<br/>'
 
             if start_mode == Constants.START_MODE_INTERVAL:
-                html += u'Interval: {0} seconds<br/>'.format(self.get_field('start_interval').toUInt()[0])
+                html += u'Interval: {0} seconds<br/>'.format(self.get_field('start_interval'))
             elif start_mode == Constants.START_MODE_CRON:
-                html += u'Fields: {0}<br/>'.format(self.get_field('start_fields').toString())
+                html += u'Fields: {0}<br/>'.format(self.get_field('start_fields'))
 
         self.text_summary.setHtml(html)
         self.update_ui_state()

@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QTimer, QVariant
+from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QWidget, QListWidgetItem
 from brickv.plugin_system.plugins.red.ui_red_tab_importexport_export import Ui_REDTabImportExportExport
 from brickv.plugin_system.plugins.red.api import *
@@ -89,7 +89,7 @@ class REDTabImportExportExport(QWidget, Ui_REDTabImportExportExport):
                     program = sorted_programs[first_upload][identifier]
 
                     item = QListWidgetItem(program.cast_custom_option_value('name', unicode, '<unknown>'))
-                    item.setData(Qt.UserRole, QVariant(identifier))
+                    item.setData(Qt.UserRole, identifier)
 
                     self.list_programs.addItem(item)
 

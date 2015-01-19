@@ -140,7 +140,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
 
     # overrides ProgramPage.update_ui_state
     def update_ui_state(self):
-        start_mode            = self.get_field('delphi.start_mode').toInt()[0]
+        start_mode            = self.get_field('delphi.start_mode')
         start_mode_executable = start_mode == Constants.DELPHI_START_MODE_EXECUTABLE
         compile_from_source   = self.check_compile_from_source.isChecked()
         show_advanced_options = self.check_show_advanced_options.isChecked()
@@ -161,10 +161,10 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
         return self.make_option_list_editor.get_items()
 
     def get_html_summary(self):
-        start_mode          = self.get_field('delphi.start_mode').toInt()[0]
-        executable          = self.get_field('delphi.executable').toString()
-        compile_from_source = self.get_field('delphi.compile_from_source').toBool()
-        working_directory   = self.get_field('delphi.working_directory').toString()
+        start_mode          = self.get_field('delphi.start_mode')
+        executable          = self.get_field('delphi.executable')
+        compile_from_source = self.get_field('delphi.compile_from_source')
+        working_directory   = self.get_field('delphi.working_directory')
         make_options        = ' '.join(self.make_option_list_editor.get_items())
 
         html = u'Start Mode: {0}<br/>'.format(Qt.escape(Constants.delphi_start_mode_display_names[start_mode]))
@@ -186,17 +186,17 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
 
     def get_custom_options(self):
         return {
-            'delphi.start_mode':          Constants.delphi_start_mode_api_names[self.get_field('delphi.start_mode').toInt()[0]],
-            'delphi.executable':          self.get_field('delphi.executable').toString(),
-            'delphi.compile_from_source': self.get_field('delphi.compile_from_source').toBool(),
+            'delphi.start_mode':          Constants.delphi_start_mode_api_names[self.get_field('delphi.start_mode')],
+            'delphi.executable':          self.get_field('delphi.executable'),
+            'delphi.compile_from_source': self.get_field('delphi.compile_from_source'),
             'delphi.make_options':        self.make_option_list_editor.get_items()
         }
 
     def get_command(self):
-        executable        = self.get_field('delphi.executable').toString()
+        executable        = self.get_field('delphi.executable')
         arguments         = []
         environment       = []
-        working_directory = self.get_field('delphi.working_directory').toString()
+        working_directory = self.get_field('delphi.working_directory')
 
         if not executable.startswith('/'):
             executable = posixpath.join('./', executable)
