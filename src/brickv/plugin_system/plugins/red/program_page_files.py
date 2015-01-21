@@ -22,11 +22,12 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QDir
-from PyQt4.QtGui import QIcon, QFileDialog, QListWidgetItem, QApplication
+from PyQt4.QtGui import QIcon, QListWidgetItem, QApplication
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_files import Ui_ProgramPageFiles
-from brickv.utils import get_main_window, get_resources_path
+from brickv.utils import get_main_window, get_resources_path, get_home_path, \
+                         get_open_file_names, get_existing_directory
 import os
 import posixpath
 import sys
@@ -40,7 +41,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         self.edit_mode      = False
         self.folder_icon    = QIcon(os.path.join(get_resources_path(), "folder-icon.png"))
         self.file_icon      = QIcon(os.path.join(get_resources_path(), "file-icon.png"))
-        self.last_directory = QDir.toNativeSeparators(QDir.homePath())
+        self.last_directory = get_home_path()
 
         self.setTitle(title_prefix + 'Files')
 
@@ -71,14 +72,12 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         self.button_remove_selected_files.setEnabled(len(self.list_files.selectedItems()) > 0)
 
     def show_add_files_dialog(self):
-        filenames = QFileDialog.getOpenFileNames(get_main_window(), 'Add Files', self.last_directory)
+        filenames = get_open_file_names(get_main_window(), 'Add Files', self.last_directory)
 
         if len(filenames) > 0:
-            self.last_directory = os.path.split(QDir.toNativeSeparators(filenames[0]))[0]
+            self.last_directory = os.path.split(filenames[0])[0]
 
         for filename in filenames:
-            filename = QDir.toNativeSeparators(filename)
-
             if len(self.list_files.findItems(filename, Qt.MatchFixedString)) > 0:
                 continue
 
@@ -92,18 +91,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         self.completeChanged.emit()
 
     def show_add_directory_dialog(self):
-        directory = QFileDialog.getExistingDirectory(get_main_window(), 'Add Directory', self.last_directory)
-
-        if len(directory) == 0:
-            return
-
-        directory = QDir.toNativeSeparators(directory)
-
-        # FIXME: on Mac OS X the getExistingDirectory() might return the directory with
-        #        the last part being invalid, try to find the valid part of the directory
-        if sys.platform == 'darwin':
-            while len(directory) > 0 and not os.path.isdir(directory):
-                directory = os.path.split(directory)[0]
+        directory = get_existing_directory(get_main_window(), 'Add Directory', self.last_directory)
 
         if len(directory) == 0:
             return

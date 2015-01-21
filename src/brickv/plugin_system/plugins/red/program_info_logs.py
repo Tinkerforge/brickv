@@ -22,14 +22,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QDateTime, QDir
-from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, QFileDialog, \
+from PyQt4.QtCore import Qt, QDateTime
+from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, \
                         QMessageBox, QSortFilterProxyModel, QApplication
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import Download, get_file_display_size
 from brickv.plugin_system.plugins.red.ui_program_info_logs import Ui_ProgramInfoLogs
 from brickv.plugin_system.plugins.red.program_info_logs_view import ProgramInfoLogsView
-from brickv.utils import get_main_window, get_resources_path
+from brickv.utils import get_main_window, get_resources_path, get_home_path, get_existing_directory
 import os
 import posixpath
 import json
@@ -57,7 +57,8 @@ class LogsProxyModel(QSortFilterProxyModel):
 
 
 class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
-    def __init__(self, context, update_main_ui_state, set_widget_enabled, is_alive, show_download_wizard, set_program_callbacks_enabled):
+    def __init__(self, context, update_main_ui_state, set_widget_enabled, is_alive,
+                 show_download_wizard, set_program_callbacks_enabled):
         QWidget.__init__(self)
 
         self.setupUi(self)
@@ -75,9 +76,9 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.view_dialog                   = None
         self.file_icon                     = QIcon(os.path.join(get_resources_path(), "file-icon.png"))
         self.tree_logs_model               = QStandardItemModel(self)
-        self.tree_logs_model_header        = ['Date / Time', 'Size']
+        self.tree_logs_model_header        = ['Date/Time', 'Size']
         self.tree_logs_proxy_model         = LogsProxyModel(self)
-        self.last_download_directory       = QDir.toNativeSeparators(QDir.homePath())
+        self.last_download_directory       = get_home_path()
 
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_model_header)
         self.tree_logs_proxy_model.setSourceModel(self.tree_logs_model)
@@ -96,7 +97,8 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         selection_count = len(self.tree_logs.selectionModel().selectedRows())
 
         self.set_widget_enabled(self.button_download_logs, selection_count > 0)
-        self.set_widget_enabled(self.button_view_log, selection_count == 1 and len(self.get_directly_selected_log_items()) == 1)
+        self.set_widget_enabled(self.button_view_log, selection_count == 1 and \
+                                len(self.get_directly_selected_log_items()) == 1)
         self.set_widget_enabled(self.button_delete_logs, selection_count > 0)
 
     def close_all_dialogs(self):
@@ -322,19 +324,8 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         if len(log_files_to_download['foobar']) == 0:
             return
 
-        download_directory = QFileDialog.getExistingDirectory(get_main_window(), 'Download Logs',
-                                                              self.last_download_directory)
-
-        if len(download_directory) == 0:
-            return
-
-        download_directory = QDir.toNativeSeparators(download_directory)
-
-        # FIXME: on Mac OS X the getExistingDirectory() might return the directory with
-        #        the last part being invalid, try to find the valid part of the directory
-        if sys.platform == 'darwin':
-            while len(download_directory) > 0 and not os.path.isdir(download_directory):
-                download_directory = os.path.split(download_directory)[0]
+        download_directory = get_existing_directory(get_main_window(), 'Download Logs',
+                                                    self.last_download_directory)
 
         if len(download_directory) == 0:
             return

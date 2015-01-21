@@ -24,14 +24,14 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt, QDateTime, QDir
 from PyQt4.QtGui import QIcon, QWidget, QStandardItemModel, QStandardItem, \
-                        QSortFilterProxyModel,  QFileDialog, QMessageBox, \
-                        QInputDialog, QApplication, QDialog
+                        QSortFilterProxyModel, QMessageBox, QInputDialog, \
+                        QApplication, QDialog
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import Download, ExpandingProgressDialog, \
                                                            ExpandingInputDialog, get_file_display_size
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
 from brickv.async_call import async_call
-from brickv.utils import get_main_window, get_resources_path
+from brickv.utils import get_main_window, get_resources_path, get_home_path, get_existing_directory
 import os
 import posixpath
 import json
@@ -164,7 +164,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.tree_files_model        = QStandardItemModel(self)
         self.tree_files_model_header = ['Name', 'Size', 'Last Modified']
         self.tree_files_proxy_model  = FilesProxyModel(self)
-        self.last_download_directory = QDir.toNativeSeparators(QDir.homePath())
+        self.last_download_directory = get_home_path()
 
         self.tree_files_model.setHorizontalHeaderLabels(self.tree_files_model_header)
         self.tree_files_proxy_model.setSourceModel(self.tree_files_model)
@@ -298,19 +298,8 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if len(downloads) == 0:
             return
 
-        download_directory = QFileDialog.getExistingDirectory(get_main_window(), 'Download Files',
-                                                              self.last_download_directory)
-
-        if len(download_directory) == 0:
-            return
-
-        download_directory = QDir.toNativeSeparators(download_directory)
-
-        # FIXME: on Mac OS X the getExistingDirectory() might return the directory with
-        #        the last part being invalid, try to find the valid part of the directory
-        if sys.platform == 'darwin':
-            while len(download_directory) > 0 and not os.path.isdir(download_directory):
-                download_directory = os.path.split(download_directory)[0]
+        download_directory = get_existing_directory(get_main_window(), 'Download Files',
+                                                    self.last_download_directory)
 
         if len(download_directory) == 0:
             return

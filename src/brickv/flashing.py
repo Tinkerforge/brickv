@@ -27,12 +27,12 @@ from brickv.ui_flashing import Ui_Flashing
 from brickv.bindings.ip_connection import IPConnection, Error, base58encode, \
                                           base58decode, BASE58, uid64_to_uid32
 from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
-from PyQt4.QtCore import Qt, QTimer, QDir
-from PyQt4.QtGui import QApplication, QColor, QDialog, QFileDialog, QMessageBox, \
+from PyQt4.QtCore import Qt, QTimer
+from PyQt4.QtGui import QApplication, QColor, QDialog, QMessageBox, \
                         QProgressDialog, QStandardItemModel, QStandardItem, QBrush
 from brickv.samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_ports
 from brickv.infos import get_version_string
-from brickv.utils import get_main_window
+from brickv.utils import get_main_window, get_home_path, get_open_file_name
 from brickv import infos
 
 import os
@@ -402,12 +402,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
         if len(self.edit_custom_firmware.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(self.edit_custom_firmware.text()))
         else:
-            last_dir = QDir.toNativeSeparators(QDir.homePath())
+            last_dir = get_home_path()
 
-        filename = QFileDialog.getOpenFileName(get_main_window(), 'Open Firmware', last_dir, '*.bin')
+        filename = get_open_file_name(get_main_window(), 'Open Firmware', last_dir, '*.bin')
 
         if len(filename) > 0:
-            self.edit_custom_firmware.setText(QDir.toNativeSeparators(filename))
+            self.edit_custom_firmware.setText(filename)
 
     def firmware_save_clicked(self):
         port_name = self.combo_serial_port.itemData(self.combo_serial_port.currentIndex())
@@ -899,15 +899,15 @@ class FlashingWindow(QDialog, Ui_Flashing):
             return None
 
     def plugin_browse_clicked(self):
-        last_dir = QDir.toNativeSeparators(QDir.homePath())
+        last_dir = get_home_path()
 
         if len(self.edit_custom_plugin.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(self.edit_custom_plugin.text()))
 
-        filename = QFileDialog.getOpenFileName(get_main_window(), 'Open Plugin', last_dir, '*.bin')
+        filename = get_open_file_name(get_main_window(), 'Open Plugin', last_dir, '*.bin')
 
         if len(filename) > 0:
-            self.edit_custom_plugin.setText(QDir.toNativeSeparators(filename))
+            self.edit_custom_plugin.setText(filename)
 
     def auto_update_bricklets_clicked(self):
         def brick_for_bricklet(bricklet):

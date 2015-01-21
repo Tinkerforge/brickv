@@ -22,17 +22,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
+                        QLineEdit, QApplication, QMessageBox
+from PyQt4.QtCore import pyqtSignal, Qt
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
 from brickv.async_call import async_call
-from brickv.utils import get_main_window
-
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
-                        QLineEdit, QFileDialog, QApplication, QMessageBox
-from PyQt4.QtCore import pyqtSignal, Qt, QDir
-
+from brickv.utils import get_main_window, get_home_path, get_open_file_name
 import os
 
 # this class is directly based on the QwtSpline class from the Qwt library
@@ -228,12 +226,12 @@ class DistanceIR(PluginBase):
         if len(self.sample_edit.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(self.sample_edit.text()))
         else:
-            last_dir = QDir.toNativeSeparators(QDir.homePath())
+            last_dir = get_home_path()
 
-        filename = QFileDialog.getOpenFileName(get_main_window(), "Open Sample Points", last_dir)
+        filename = get_open_file_name(get_main_window(), "Open Sample Points", last_dir)
 
         if len(filename) > 0:
-            self.sample_edit.setText(QDir.toNativeSeparators(filename))
+            self.sample_edit.setText(filename)
 
     def sample_interpolate(self, x, y):
         spline = NaturalSpline()

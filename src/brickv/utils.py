@@ -22,7 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QApplication, QMainWindow
+from PyQt4.QtCore import QDir
+from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog
 import os
 import sys
 
@@ -40,6 +41,47 @@ def get_resources_path():
         return os.path.join(os.path.split(get_program_path())[0], 'Resources')
     else:
         return get_program_path()
+
+def get_home_path():
+    return QDir.toNativeSeparators(QDir.homePath())
+
+def get_open_file_name(*args, **kwargs):
+    filename = QFileDialog.getOpenFileName(*args, **kwargs)
+
+    if len(filename) > 0:
+        filename = QDir.toNativeSeparators(filename)
+
+    return filename
+
+def get_open_file_names(*args, **kwargs):
+    filenames = []
+
+    for filename in QFileDialog.getOpenFileNames(*args, **kwargs):
+        filenames.append(QDir.toNativeSeparators(filename))
+
+    return filenames
+
+def get_save_file_name(*args, **kwargs):
+    filename = QFileDialog.getSaveFileName(*args, **kwargs)
+
+    if len(filename) > 0:
+        filename = QDir.toNativeSeparators(filename)
+
+    return filename
+
+def get_existing_directory(*args, **kwargs):
+    directory = QFileDialog.getExistingDirectory(*args, **kwargs)
+
+    if len(directory) > 0:
+        directory = QDir.toNativeSeparators(directory)
+
+        # FIXME: on Mac OS X the getExistingDirectory() might return the directory with
+        #        the last part being invalid, try to find the valid part of the directory
+        if sys.platform == 'darwin':
+            while len(directory) > 0 and not os.path.isdir(directory):
+                directory = os.path.split(directory)[0]
+
+    return directory
 
 def get_main_window():
     for widget in QApplication.topLevelWidgets():

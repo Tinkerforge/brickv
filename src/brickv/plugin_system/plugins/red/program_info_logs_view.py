@@ -21,13 +21,13 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QDir
-from PyQt4.QtGui import QDialog, QFont, QFileDialog, QMessageBox
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QDialog, QFont, QMessageBox
 from brickv.plugin_system.plugins.red.ui_program_info_logs_view import Ui_ProgramInfoLogsView
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import timestamp_to_date_at_time
 from brickv.async_call import async_call
-from brickv.utils import get_main_window
+from brickv.utils import get_main_window, get_home_path, get_save_file_name
 import posixpath
 import os
 
@@ -39,8 +39,7 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
         self.setModal(True)
 
         self.source_name   = source_name
-        self.last_filename = os.path.join(QDir.toNativeSeparators(QDir.homePath()),
-                                          posixpath.split(source_name)[1])
+        self.last_filename = os.path.join(get_home_path(), posixpath.split(source_name)[1])
         self.log_file      = None
         self.content       = None
 
@@ -118,12 +117,11 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
                    cb_open, cb_open_error)
 
     def save_content(self):
-        filename = QFileDialog.getSaveFileName(get_main_window(), 'Save Log', self.last_filename)
+        filename = get_save_file_name(get_main_window(), 'Save Log', self.last_filename)
 
         if len(filename) == 0:
             return
 
-        filename           = QDir.toNativeSeparators(filename)
         self.last_filename = filename
 
         try:
