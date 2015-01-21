@@ -35,6 +35,34 @@ import re
 import sys
 import errno
 
+class ChunkedDownloader(ChunkedDownloaderBase):
+    def __init__(self, page):
+        ChunkedDownloaderBase.__init__(self, page.wizard().session)
+
+        self.page = page
+
+    def report_error(self, message, *args):
+        self.page.download_error('...error: ' + message, *args)
+
+    def set_progress_maximum(self, maximum):
+        self.page.progress_file.setRange(0, maximum)
+
+    def get_progress_value(self):
+        return self.page.progress_file.value()
+
+    def set_progress_value(self, value, message):
+        self.page.progress_file.setValue(value)
+        self.page.progress_file.setFormat(message)
+
+    def done(self):
+        self.page.downloader = None
+
+        self.page.log('...done')
+        self.page.progress_file.setValue(self.page.progress_file.maximum())
+
+        self.page.download_next_file()
+
+
 class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
     CONFLICT_RESOLUTION_REPLACE = 1
     CONFLICT_RESOLUTION_RENAME  = 2
@@ -54,14 +82,8 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.remaining_downloads             = downloads
         self.download                        = None
         self.created_directories             = set()
-        self.target_file                     = None
-        self.source_file                     = None
         self.target_path                     = None # abolsute path on host in host format
-        self.source_path                     = None # abolsute path on RED Brick in POSIX format
-        self.source_display_size             = None
-        self.remaining_source_size           = None
-        self.progress_file_next_update       = None
-        self.last_download_size              = None
+        self.chunked_downloader              = None
         self.replace_help_template           = self.label_replace_help.text()
         self.canceled                        = False
 
@@ -122,6 +144,9 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
 
     def cancel_download(self):
         self.canceled = True
+
+        if self.chunked_downloader != None:
+            self.chunked_downloader.canceled = True
 
     def check_new_name(self, name):
         target = os.path.split(self.download.target)[1]
@@ -205,28 +230,16 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.remaining_downloads = self.remaining_downloads[1:]
 
         if self.download_kind == 'logs':
-            self.source_path = posixpath.join(self.root_directory, 'log', self.download.source)
+            source_path = posixpath.join(self.root_directory, 'log', self.download.source)
         else:
-            self.source_path = posixpath.join(self.root_directory, 'bin', self.download.source)
+            source_path = posixpath.join(self.root_directory, 'bin', self.download.source)
 
         self.next_step(u'Downloading {0}...'.format(self.download.source))
 
-        try:
-            self.source_file = REDFile(self.wizard().session).open(self.source_path,
-                                                                   REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING,
-                                                                   0, 1000, 1000) # FIXME: async_call
-        except (Error, REDError) as e:
-            self.download_error('...error: Could not open source file {0}: {1}', self.source_path, e)
+        self.chunked_downloader = ChunkedDownloader(self)
+
+        if not self.chunked_downloader.prepare(source_path):
             return
-
-        self.source_display_size   = get_file_display_size(self.source_file.length)
-        self.remaining_source_size = self.source_file.length
-
-        self.progress_file.setVisible(True)
-        self.progress_file.setRange(0, self.source_file.length)
-        self.progress_file.setFormat(get_file_display_size(0) + ' of ' + self.source_display_size)
-        self.progress_file.setValue(0)
-        self.progress_file_next_update = 0
 
         self.target_path = os.path.join(self.download_directory, self.download.target)
 
@@ -250,8 +263,6 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.continue_download_file()
 
     def continue_download_file(self, replace_existing=False):
-        self.progress_file.setVisible(True)
-
         if os.path.exists(self.target_path):
             if replace_existing:
                 try:
@@ -263,13 +274,9 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
                 self.start_conflict_resolution()
                 return
 
-        try:
-            self.target_file = open(self.target_path, 'wb')
-        except Exception as e:
-            self.download_error('...error: Could not open target file {0}: {1}', self.target_path, e)
-            return
+        self.progress_file.setVisible(True)
 
-        self.download_read_async()
+        self.chunked_downloader.start(self.target_path)
 
     def start_conflict_resolution(self):
         self.log(u'...target file {0} already exists'.format(self.target_path))
@@ -293,8 +300,8 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
                 self.label_existing_stats.setText(u'<b>Error</b>: Could not get informarion for target file: {0}', Qt.escape(unicode(e)))
 
             self.label_new_stats.setText('{0}, last modified on {1}'
-                                         .format(self.source_display_size,
-                                                 timestamp_to_date_at_time(int(self.source_file.modification_time))))
+                                         .format(self.chunked_downloader.source_display_size,
+                                                 timestamp_to_date_at_time(int(self.chunked_downloader.source_file.modification_time))))
 
             self.label_replace_help.setText(self.replace_help_template.replace('<FILE>', unicode(Qt.escape(self.download.target))))
             self.check_rename_new_file.setChecked(self.auto_conflict_resolution == ProgramPageDownload.CONFLICT_RESOLUTION_RENAME)
@@ -357,80 +364,6 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.update_ui_state()
 
         self.log('...skipped')
-        self.download_next_file()
-
-    def download_read_async_cb_status(self, download_size, download_total):
-        if self.canceled:
-            try:
-                self.source_file.abort_async_read()
-            except:
-                pass
-
-            return
-
-        self.progress_file_next_update += download_size - self.last_download_size
-
-        if self.progress_file.value() / (100 * 1024) != self.progress_file_next_update / (100 * 1024):
-            self.progress_file.setValue(self.progress_file_next_update)
-            self.progress_file.setFormat(get_file_display_size(self.progress_file_next_update) + ' of ' + self.source_display_size)
-
-        self.last_download_size = download_size
-
-    def download_read_async_cb_result(self, result):
-        if self.canceled:
-            return
-
-        if result.error != None:
-            self.download_error('...error: Could not read from source file {0}: {1}', self.source_path, result.error)
-            return
-
-        try:
-            self.target_file.write(result.data)
-        except Exception as e:
-            self.download_error('...error: Could not write to target file {0}: {1}', self.target_path, e)
-            return
-
-        self.remaining_source_size -= len(result.data)
-
-        if self.remaining_source_size > 0:
-            self.download_read_async()
-        else:
-            self.download_read_async_done()
-
-    def download_read_async(self):
-        if self.canceled:
-            return
-
-        self.last_download_size = 0
-
-        try:
-            self.source_file.read_async(min(self.remaining_source_size, 1000*1000*10), # Read 10mb at a time
-                                        self.download_read_async_cb_result,
-                                        self.download_read_async_cb_status)
-        except (Error, REDError) as e:
-            self.download_error('...error: Could not read from source file {0}: {1}', self.source_path, e)
-            return
-
-    def download_read_async_done(self):
-        if self.canceled:
-            return
-
-        self.log('...done')
-        self.progress_file.setValue(self.progress_file.maximum())
-
-        self.target_file.close()
-        self.target_file = None
-
-        # FIXME: redapid 2.0.0-rc1 has a bug in the permissions translation.
-        #        don't restore permissions until a fixed redapid is released
-        #try:
-        #    os.chmod(self.target_path, self.source_file.permissions)
-        #except:
-        #    pass
-
-        self.source_file.release()
-        self.source_file = None
-
         self.download_next_file()
 
     def download_files_done(self):

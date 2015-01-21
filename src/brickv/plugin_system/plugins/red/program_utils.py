@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtCore import Qt, QDir, QDateTime
 from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem, \
                         QProgressDialog, QProgressBar, QInputDialog
-from brickv.plugin_system.plugins.red.api import REDProgram
+from brickv.plugin_system.plugins.red.api import *
 import re
 import posixpath
 from collections import namedtuple
@@ -1092,6 +1092,138 @@ class ComboBoxFileEndingChecker(object):
 
         if self.combo_file.count() > 1:
             self.combo_file.clearEditText()
+
+
+class ChunkedDownloaderBase(object):
+    def __init__(self, session):
+        self.session               = session
+        self.source_file           = None
+        self.target_file           = None
+        self.source_path           = None # abolsute path on RED Brick in POSIX format
+        self.target_path           = None # abolsute path on host in host format
+        self.source_display_size   = None
+        self.remaining_source_size = None
+        self.next_progress_update  = None
+        self.last_download_size    = None
+        self.canceled              = False
+
+    def download_read_async(self):
+        if self.canceled:
+            return
+
+        self.last_download_size = 0
+
+        try:
+            self.source_file.read_async(min(self.remaining_source_size, 1000*1000*10), # Read 10mb at a time
+                                        self.download_read_async_cb_result,
+                                        self.download_read_async_cb_status)
+        except (Error, REDError) as e:
+            self.report_error('Could not read from source file {0}: {1}', self.source_path, e)
+            return
+
+    def download_read_async_cb_result(self, result):
+        if self.canceled:
+            return
+
+        if result.error != None:
+            self.report_error('Could not read from source file {0}: {1}', self.source_path, result.error)
+            return
+
+        try:
+            self.target_file.write(result.data)
+        except Exception as e:
+            self.report_error('Could not write to target file {0}: {1}', self.target_path, e)
+            return
+
+        self.remaining_source_size -= len(result.data)
+
+        if self.remaining_source_size > 0:
+            self.download_read_async()
+        else:
+            self.download_read_async_done()
+
+    def download_read_async_cb_status(self, download_size, download_total):
+        if self.canceled:
+            try:
+                self.source_file.abort_async_read()
+            except:
+                pass
+
+            return
+
+        self.next_progress_update += download_size - self.last_download_size
+
+        if self.get_progress_value() / (100 * 1024) != self.next_progress_update / (100 * 1024):
+            self.set_progress_value(self.next_progress_update,
+                                    get_file_display_size(self.next_progress_update) + \
+                                    ' of ' + self.source_display_size)
+
+        self.last_download_size = download_size
+
+    def download_read_async_done(self):
+        if self.canceled:
+            return
+
+        self.target_file.close()
+        self.target_file = None
+
+        # FIXME: redapid 2.0.0-rc1 has a bug in the permissions translation.
+        #        don't restore permissions until a fixed redapid is released
+        #try:
+        #    os.chmod(self.target_path, self.source_file.permissions)
+        #except:
+        #    pass
+
+        self.source_file.release()
+        self.source_file = None
+
+        self.done()
+
+    def prepare(self, source_path):
+        self.source_path = source_path
+
+        try:
+            self.source_file = REDFile(self.session).open(self.source_path,
+                                                          REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING,
+                                                          0, 0, 0) # FIXME: async_call
+        except (Error, REDError) as e:
+            self.report_error('Could not open source file {0}: {1}', self.source_path, e)
+            return False
+
+        self.source_display_size   = get_file_display_size(self.source_file.length)
+        self.remaining_source_size = self.source_file.length
+        self.next_progress_update  = 0
+
+        self.set_progress_maximum(self.source_file.length)
+        self.set_progress_value(0, get_file_display_size(0) + ' of ' + self.source_display_size)
+
+        return True
+
+    def start(self, target_path):
+        self.target_path = target_path
+
+        try:
+            self.target_file = open(self.target_path, 'wb')
+        except Exception as e:
+            self.report_error('Could not open target file {0}: {1}', self.target_path, e)
+            return False
+
+        self.download_read_async()
+
+    def report_error(self, message, *args):
+        pass
+
+    def set_progress_maximum(self, maximum):
+        pass
+
+    def get_progress_value(self):
+        return 0
+
+    def set_progress_value(self, value, message):
+        pass
+
+    def done(self):
+        pass
 
 
 def get_key_from_value(dictionary, value):
