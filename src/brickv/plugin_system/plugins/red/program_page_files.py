@@ -112,6 +112,9 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         progress.show()
 
         for root, directories, files in os.walk(directory):
+            if progress.wasCanceled():
+                break
+
             for filename in files:
                 source = os.path.join(root, filename)
                 target = QDir.fromNativeSeparators(os.path.relpath(source, directory))
