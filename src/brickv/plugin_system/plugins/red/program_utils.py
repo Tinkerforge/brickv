@@ -591,10 +591,17 @@ class ExpandingListWidget(QListWidget):
 
 
 class ExpandingProgressDialog(QProgressDialog):
-    def hide_progress_text(self):
-        progress = QProgressBar(self)
-        progress.setTextVisible(False)
-        self.setBar(progress)
+    def __init__(self, parent=None):
+        QProgressDialog.__init__(self, parent)
+
+        self.progress = QProgressBar(self)
+        self.setBar(self.progress)
+
+    def set_progress_text_visible(self, visible):
+        self.progress.setTextVisible(visible)
+
+    def set_progress_text(self, text):
+        self.progress.setFormat(text)
 
     # overrides QProgressDialog.sizeHint
     def sizeHint(self):

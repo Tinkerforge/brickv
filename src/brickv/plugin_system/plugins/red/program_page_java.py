@@ -188,7 +188,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
                     self.wizard().script_manager.abort_script(script_instance)
 
                 progress = ExpandingProgressDialog(self.wizard())
-                progress.hide_progress_text()
+                progress.set_progress_text_visible(False)
                 progress.setWindowTitle('Edit Program')
                 progress.setLabelText('Collecting Java main classes')
                 progress.setModal(True)
@@ -270,7 +270,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
                 abort_ref = [False]
                 progress = ExpandingProgressDialog(self)
-                progress.hide_progress_text()
+                progress.set_progress_text_visible(False)
                 progress.setWindowTitle('New Program')
                 progress.setLabelText('Collecting Java main classes')
                 progress.setModal(True)

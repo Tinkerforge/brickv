@@ -104,7 +104,7 @@ class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
         uploads = []
 
         progress = ExpandingProgressDialog(self)
-        progress.hide_progress_text()
+        progress.set_progress_text_visible(False)
         progress.setWindowTitle('New Program')
         progress.setLabelText(u"Collecting content of {0}".format(directory))
         progress.setModal(True)
