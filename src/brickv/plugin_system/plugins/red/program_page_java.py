@@ -177,7 +177,9 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             self.combo_main_class.setEnabled(False)
 
             def get_main_classes():
-                def progress_canceled(script_instance_ref):
+                script_instance_ref = [None]
+
+                def progress_canceled():
                     script_instance = script_instance_ref[0]
 
                     if script_instance == None:
@@ -185,15 +187,13 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
                     self.wizard().script_manager.abort_script(script_instance)
 
-                script_instance_ref = [None]
-
                 progress = ExpandingProgressDialog(self.wizard())
                 progress.hide_progress_text()
                 progress.setWindowTitle('Edit Program')
                 progress.setLabelText('Collecting Java main classes')
                 progress.setModal(True)
                 progress.setRange(0, 0)
-                progress.canceled.connect(lambda: progress_canceled(script_instance_ref))
+                progress.canceled.connect(progress_canceled)
                 progress.show()
 
                 def cb_java_main_classes(script_instance_ref, result):

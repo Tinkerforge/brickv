@@ -413,7 +413,9 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if len(selected_name_items) == 0:
             return
 
-        def progress_canceled(script_instance_ref):
+        script_instance_ref = [None]
+
+        def progress_canceled():
             script_instance = script_instance_ref[0]
 
             if script_instance == None:
@@ -421,15 +423,13 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
             self.script_manager.abort_script(script_instance)
 
-        script_instance_ref = [None]
-
         progress = ExpandingProgressDialog(self)
-        progress.hide_progress_text()
+        progress.set_progress_text_visible(False)
         progress.setModal(True)
         progress.setWindowTitle('Delete Files')
         progress.setLabelText('Collecting files and directories to delete')
         progress.setRange(0, 0)
-        progress.canceled.connect(lambda: progress_canceled(script_instance_ref))
+        progress.canceled.connect(progress_canceled)
         progress.show()
 
         files_to_delete = []

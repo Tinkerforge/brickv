@@ -55,7 +55,7 @@ class ChunkedDownloader(ChunkedDownloaderBase):
         self.page.progress_file.setFormat(message)
 
     def done(self):
-        self.page.downloader = None
+        self.page.chunked_downloader = None
 
         self.page.log('...done')
         self.page.progress_file.setValue(self.page.progress_file.maximum())
@@ -145,8 +145,10 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
     def cancel_download(self):
         self.canceled = True
 
-        if self.chunked_downloader != None:
-            self.chunked_downloader.canceled = True
+        chunked_downloader = self.chunked_downloader
+
+        if chunked_downloader != None:
+            chunked_downloader.canceled = True
 
     def check_new_name(self, name):
         target = os.path.split(self.download.target)[1]

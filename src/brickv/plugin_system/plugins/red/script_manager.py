@@ -175,7 +175,15 @@ class ScriptManager(object):
         if si.script.uploaded:
             return self._execute_after_init(si)
 
-        async_call(self._init_script_async, si, lambda execute: self._init_script_done(execute, si), lambda: self._init_script_error(si))
+        def cb_success(execute):
+            if execute:
+                self._execute_after_init(si)
+
+        def cb_error():
+            si.report_result(None)
+            script_instances.remove(si)
+
+        async_call(self._init_script_async, si, cb_success, cb_error)
 
     def _init_script_async(self, si):
         si.script.upload_lock.acquire()
@@ -211,14 +219,6 @@ class ScriptManager(object):
         else:
             si.report_result(None)
             script_instances.remove(si)
-
-    def _init_script_done(self, execute, si):
-        if execute:
-            self._execute_after_init(si)
-
-    def _init_script_error(self, si):
-        si.report_result(None)
-        script_instances.remove(si)
 
     def _report_result_and_cleanup(self, si, result):
         si.release()

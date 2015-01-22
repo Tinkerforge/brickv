@@ -99,11 +99,13 @@ class ProgramInfoCCompile(QDialog, Ui_ProgramInfoCCompile):
                                                                   execute_as_user=True)
 
     def cancel_make_execution(self):
-        if self.script_instance == None:
+        script_instance = self.script_instance
+
+        if script_instance == None:
             return
 
         self.button_make.setEnabled(True)
         self.button_clean.setEnabled(True)
         self.button_cancel.setEnabled(False)
 
-        self.script_manager.abort_script(self.script_instance)
+        self.script_manager.abort_script(script_instance)
