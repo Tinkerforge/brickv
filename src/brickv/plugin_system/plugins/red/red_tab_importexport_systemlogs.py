@@ -112,6 +112,9 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
         self.label_download.setText('Downloading ' + log.source_name)
 
         def done():
+            self.log_file.release()
+            self.log_file = None
+
             self.label_download.setVisible(False)
             self.progress_download.setVisible(False)
             self.button_cancel.setVisible(False)
@@ -122,9 +125,6 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
                 self.progress_download.setValue(bytes_read)
 
             def cb_read(result):
-                self.log_file.release()
-                self.log_file = None
-
                 done()
 
                 if result.error != None:
