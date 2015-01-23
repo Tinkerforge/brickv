@@ -25,6 +25,7 @@ from PyQt4.QtCore import Qt, QDir, QDateTime
 from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem, \
                         QProgressDialog, QProgressBar, QInputDialog
 from brickv.plugin_system.plugins.red.api import *
+from brickv.async_call import async_call
 import re
 import posixpath
 from collections import namedtuple
@@ -1262,3 +1263,44 @@ def get_file_display_size(size):
         return '%.1f kiB' % (size / 1024.0)
     else:
         return '%.1f MiB' % (size / 1048576.0)
+
+
+class TextFile(object):
+    ERROR_KIND_OPEN = 1
+    ERROR_KIND_READ = 2
+    ERROR_KIND_UTF8 = 3
+
+    # the content_callback is called with the content of the file decoded as UTF-8.
+    # the error_callback is called with an error kind and Exception object
+    @staticmethod
+    def read_async(session, name, content_callback, error_callback, max_read_length=1024*1024):
+        def cb_open(red_file):
+            def cb_read(result):
+                red_file.release()
+
+                if result.error != None:
+                    if error_callback != None:
+                        error_callback(TextFile.ERROR_KIND_READ, result.error)
+
+                    return
+
+                try:
+                    content = result.data.decode('utf-8')
+                except UnicodeDecodeError as e:
+                    if error_callback != None:
+                        error_callback(TextFile.ERROR_KIND_UTF8, e)
+
+                    return
+
+                if content_callback != None:
+                    content_callback(content)
+
+            red_file.read_async(max_read_length, cb_read)
+
+        def cb_open_error(error):
+            if error_callback != None:
+                error_callback(TextFile.ERROR_KIND_OPEN, error)
+
+        async_call(REDFile(session).open,
+                   (name, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   cb_open, cb_open_error, report_exception=True)
