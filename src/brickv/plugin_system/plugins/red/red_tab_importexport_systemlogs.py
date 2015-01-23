@@ -64,7 +64,7 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
         self.logs           = [
             SystemLog('brickd.log'),
             SystemLog('redapid.log'),
-            SystemLog('dmesg'),
+            SystemLog('messages'),
             SystemLog('syslog'),
             SystemLog('kern.log'),
             SystemLog('daemon.log'),
