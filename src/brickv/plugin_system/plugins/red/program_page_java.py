@@ -196,7 +196,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
                 progress.canceled.connect(progress_canceled)
                 progress.show()
 
-                def cb_java_main_classes(script_instance_ref, result):
+                def cb_java_main_classes(result):
                     script_instance = script_instance_ref[0]
 
                     if script_instance != None:
@@ -252,8 +252,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
                     async_call(expand_async, result.stdout, cb_expand_success, cb_expand_error)
 
-                script_instance_ref[0] = self.wizard().script_manager.execute_script('java_main_classes',
-                                                                                     lambda result: cb_java_main_classes(script_instance_ref, result),
+                script_instance_ref[0] = self.wizard().script_manager.execute_script('java_main_classes', cb_java_main_classes,
                                                                                      [self.bin_directory], max_length=1024*1024,
                                                                                      decode_output_as_utf8=False)
 
@@ -265,17 +264,18 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
             uploads = self.wizard().page(Constants.PAGE_FILES).get_uploads()
 
             if len(uploads) > 0:
-                def progress_canceled(abort_ref):
+                abort_ref = [False]
+
+                def progress_canceled():
                     abort_ref[0] = True
 
-                abort_ref = [False]
                 progress = ExpandingProgressDialog(self)
                 progress.set_progress_text_visible(False)
                 progress.setWindowTitle('New Program')
                 progress.setLabelText('Collecting Java main classes')
                 progress.setModal(True)
                 progress.setRange(0, 0)
-                progress.canceled.connect(lambda: progress_canceled(abort_ref))
+                progress.canceled.connect(progress_canceled)
                 progress.show()
 
                 def cb_main_classes(main_classes):
