@@ -246,7 +246,7 @@ class ScriptManager(object):
             # TODO: If we want to support returns > 1MB we need to do more work here,
             #       but it may not be necessary.
             if not si.abort and si.process.state == REDProcess.STATE_EXITED:
-                def cb_stdout_read(result, si):
+                def cb_stdout_read(result):
                     if result.error != None:
                         self._report_result_and_cleanup(si, None)
                         return
@@ -261,7 +261,7 @@ class ScriptManager(object):
 
                         self._report_result_and_cleanup(si, ScriptResult(out, None, exit_code))
                     else:
-                        def cb_stderr_read(result, si):
+                        def cb_stderr_read(result):
                             if result.error != None:
                                 self._report_result_and_cleanup(si, None)
                                 return
@@ -275,9 +275,9 @@ class ScriptManager(object):
 
                             self._report_result_and_cleanup(si, ScriptResult(out, err, exit_code))
 
-                        si.stderr.read_async(si.max_length, lambda result: cb_stderr_read(result, si))
+                        si.stderr.read_async(si.max_length, cb_stderr_read)
 
-                si.stdout.read_async(si.max_length, lambda result: cb_stdout_read(result, si))
+                si.stdout.read_async(si.max_length, cb_stdout_read)
             else:
                 self._report_result_and_cleanup(si, None)
 

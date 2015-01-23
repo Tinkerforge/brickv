@@ -676,6 +676,8 @@ class REDFileBase(REDObject):
     EVENT_READABLE = BrickRED.FILE_EVENT_READABLE
     EVENT_WRITABLE = BrickRED.FILE_EVENT_WRITABLE
 
+    # data is always a bytearray containing the read data.
+    # on success error is None, on failure error is an Exception object
     AsyncReadResult = namedtuple('AsyncReadResult', 'data error')
 
     # Number of chunks written in one async read/write burst
@@ -942,7 +944,7 @@ class REDFileBase(REDObject):
         data = bytearray()
 
         while length > 0:
-            length_to_read                 = min(length, REDFileBase.MAX_READ_BUFFER_LENGTH)
+            length_to_read = min(length, REDFileBase.MAX_READ_BUFFER_LENGTH)
 
             try:
                 error_code, chunk, length_read = self._session._brick.read_file(self.object_id, length_to_read)
@@ -962,7 +964,6 @@ class REDFileBase(REDObject):
 
         return data
 
-    # calls "result_callback" with data of length min("max_length", "length_of_file")
     def read_async(self, max_length, result_callback, status_callback=None):
         if self.object_id is None:
             raise RuntimeError('Cannot read from unattached file object')
