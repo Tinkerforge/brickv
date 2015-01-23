@@ -79,7 +79,7 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
         self.button_refresh.setText('Collecting data...')
         self.button_refresh.setDisabled(True)
         self.is_tab_on_focus = True
-        self.script_manager.execute_script('overview', self.cb_state_changed,
+        self.script_manager.execute_script('overview', self.cb_overview,
                                            ["0.1"], max_length=1024*1024,
                                            decode_output_as_utf8=False)
         self.reset_tview_nic()
@@ -110,13 +110,13 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
             self.refresh_timer.stop()
             self.button_refresh.setText('Collecting data...')
             self.button_refresh.setDisabled(True)
-            self.script_manager.execute_script('overview', self.cb_state_changed,
+            self.script_manager.execute_script('overview', self.cb_overview,
                                                max_length=1024*1024, decode_output_as_utf8=False)
         else:
             self.button_refresh.setDisabled(False)
             self.button_refresh.setText('Refresh in ' + str((REFRESH_TIME/REFRESH_TIMEOUT - self.refresh_counter)/2.0) + "...")
 
-    def cb_state_changed(self, result):
+    def cb_overview(self, result):
         # check if the tab is still on view or not
         if not self.is_tab_on_focus:
             self.refresh_timer.stop()

@@ -7,6 +7,21 @@ import json
 import zlib
 import os
 
+if psutil.version_info >= (2, 1, 0): # image version >= 1.4 (jessie)
+    def get_cmdline(p):
+        return p.cmdline()
+    def get_name(p):
+        return p.name()
+    def get_username(p):
+        return p.username()
+else: # image version < 1.4 (wheezy)
+    def get_cmdline(p):
+        return p.cmdline
+    def get_name(p):
+        return p.name
+    def get_username(p):
+        return p.username
+
 result = {}
 
 with open("/proc/uptime", "r") as utf:
@@ -30,10 +45,10 @@ for p in psutil.process_iter():
     if p.pid == own_pid:
         continue
 
-    process_dict = {'cmd': ' '.join(p.cmdline),
-                    'name': p.name,
+    process_dict = {'cmd': ' '.join(get_cmdline(p)),
+                    'name': get_name(p),
                     'pid': p.pid,
-                    'user': p.username,
+                    'user': get_username(p),
                     'cpu': int(p.get_cpu_percent(interval=0) * 10),
                     'mem': int(p.get_memory_percent() * 10)}
     all_process_info.append(process_dict)
