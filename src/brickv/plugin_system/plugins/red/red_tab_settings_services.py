@@ -91,6 +91,14 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
                                                    'Settings | Services',
                                                    err_msg,
                                                    QtGui.QMessageBox.Ok)
+                        self.chkbox_gpu.setEnabled(True)
+                        self.chkbox_desktopenv.setEnabled(True)
+                        self.chkbox_webserver.setEnabled(True)
+                        self.chkbox_splashscreen.setEnabled(True)
+                        self.chkbox_ap.setEnabled(True)
+                        
+                        self.pbutton_services_save.setText('Save')
+                        self.pbutton_services_save.setEnabled(True)
 
             self.script_manager.execute_script('restart_reboot_shutdown',
                                                cb_restart_reboot_shutdown, ['1'])
@@ -100,6 +108,14 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
                                        'Settings | Services',
                                        err_msg,
                                        QtGui.QMessageBox.Ok)
+            self.chkbox_gpu.setEnabled(True)
+            self.chkbox_desktopenv.setEnabled(True)
+            self.chkbox_webserver.setEnabled(True)
+            self.chkbox_splashscreen.setEnabled(True)
+            self.chkbox_ap.setEnabled(True)
+            
+            self.pbutton_services_save.setText('Save')
+            self.pbutton_services_save.setEnabled(True)
 
     def service_config_changed(self, state):
         self.pbutton_services_save.setEnabled(True)
