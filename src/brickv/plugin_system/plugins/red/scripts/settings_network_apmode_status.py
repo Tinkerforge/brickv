@@ -36,9 +36,9 @@ try:
         hostapd_running = False
         dnsmasq_running = False
         for p in psutil.process_iter():
-            if p.name == 'hostapd':
+            if p.name() == 'hostapd':
                 hostapd_running = True
-            elif p.name == 'dnsmasq':
+            elif p.name() == 'dnsmasq':
                 dnsmasq_running = True
 
         if hostapd_running and dnsmasq_running:
