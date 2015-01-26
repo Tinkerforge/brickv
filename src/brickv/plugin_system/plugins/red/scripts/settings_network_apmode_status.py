@@ -6,6 +6,13 @@ import json
 import netifaces
 import psutil
 
+if psutil.version_info >= (2, 1, 0): # image version >= 1.4 (jessie)
+    def get_name(p):
+        return p.name()
+else: # image version < 1.4 (wheezy)
+    def get_name(p):
+        return p.name
+
 return_dict = {'ap_first_time'                 : None,
                'ap_incomplete_config'          : None,
                'ap_hardware_or_config_problem' : None}
@@ -36,9 +43,9 @@ try:
         hostapd_running = False
         dnsmasq_running = False
         for p in psutil.process_iter():
-            if p.name() == 'hostapd':
+            if get_name(p) == 'hostapd':
                 hostapd_running = True
-            elif p.name() == 'dnsmasq':
+            elif get_name(p) == 'dnsmasq':
                 dnsmasq_running = True
 
         if hostapd_running and dnsmasq_running:
