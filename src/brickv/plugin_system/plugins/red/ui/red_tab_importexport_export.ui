@@ -16,7 +16,7 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="1" column="1">
+     <item row="0" column="1">
       <widget class="QListWidget" name="list_programs">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -32,7 +32,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
+     <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
         <string>Programs:</string>
@@ -45,55 +45,28 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item row="4" column="1">
       <widget class="QPushButton" name="button_export">
        <property name="text">
         <string>Export</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" colspan="2">
+     <item row="3" column="0" colspan="2">
       <widget class="Line" name="line">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Export To:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-       </property>
-       <property name="buddy">
-        <cstring>edit_file</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QLineEdit" name="edit_file"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="button_browse_file">
-         <property name="text">
-          <string>Browse</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="3" column="1">
+     <item row="2" column="1">
       <widget class="QPushButton" name="button_refresh_programs">
        <property name="text">
         <string>Refresh</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="1" column="1">
       <widget class="QProgressBar" name="progress_refresh_programs">
        <property name="maximum">
         <number>0</number>
@@ -111,8 +84,6 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>edit_file</tabstop>
-  <tabstop>button_browse_file</tabstop>
   <tabstop>list_programs</tabstop>
   <tabstop>button_refresh_programs</tabstop>
   <tabstop>button_export</tabstop>
