@@ -161,41 +161,45 @@ elif command == 'APPLY':
                 os.remove('/etc/tf_x11_enabled')
 
         if apply_dict['webserver']:
-            if os.system('/usr/sbin/update-rc.d apache2 defaults') != 0:
+            if os.system('/usr/sbin/systemctl enable apache2') != 0:
                 exit(6)
         else:
-            if os.system('/usr/sbin/update-rc.d -f apache2 remove') != 0:
+            if os.system('/usr/sbin/systemctl disable apache2') != 0:
                 exit(7)
 
         if apply_dict['splashscreen']:
-            if os.system('/usr/sbin/update-rc.d asplashscreen start runlvl S 1') != 0:
+            if os.system('/usr/sbin/systemctl enable asplashscreen') != 0:
+                exit(8)
+            if os.system('/usr/sbin/systemctl enable killasplashscreen') != 0:
                 exit(8)
         else:
-            if os.system('/usr/sbin/update-rc.d -f asplashscreen remove') != 0:
+            if os.system('/usr/sbin/systemctl disable asplashscreen') != 0:
+                exit(9)
+            if os.system('/usr/sbin/systemctl disable killasplashscreen') != 0:
                 exit(9)
 
         if apply_dict['ap']:
             with open('/etc/tf_ap_enabled', 'w') as fd_ap_enabled:
-                if os.system('/usr/sbin/update-rc.d hostapd defaults') != 0:
+                if os.system('/usr/sbin/systemctl enable hostapd') != 0:
                     exit(10)
 
-                if os.system('/usr/sbin/update-rc.d dnsmasq defaults') != 0:
+                if os.system('/usr/sbin/systemctl enable dnsmasq') != 0:
                     exit(11)
 
-                if os.system('/usr/sbin/update-rc.d -f wicd remove') != 0:
+                if os.system('/usr/sbin/systemctl disable wicd') != 0:
                     exit(12)
 
         else:
             if os.path.isfile('/etc/tf_ap_enabled'):
                 os.remove('/etc/tf_ap_enabled')
 
-            if os.system('/usr/sbin/update-rc.d -f hostapd remove') != 0:
+            if os.system('/usr/sbin/systemctl disable hostapd') != 0:
                 exit(13)
 
-            if os.system('/usr/sbin/update-rc.d -f dnsmasq remove') != 0:
+            if os.system('/usr/sbin/systemctl disable dnsmasq') != 0:
                 exit(14)
 
-            if os.system('/usr/sbin/update-rc.d wicd defaults') != 0:
+            if os.system('/usr/sbin/systemctl enable wicd ') != 0:
                 exit(15)
 
             with open('/etc/network/interfaces', 'w') as fd_interfaces:
