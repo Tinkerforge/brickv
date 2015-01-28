@@ -32,7 +32,7 @@ def get_python_versions(script_manager, callback):
 
         if okay:
             try:
-                versions = result.stderr.split('\n')
+                versions = result.stdout.split('\n')
                 callback([ExecutableVersion('/usr/bin/python2', versions[0].split(' ')[1]),
                           ExecutableVersion('/usr/bin/python3', versions[1].split(' ')[1])])
                 return
@@ -44,7 +44,7 @@ def get_python_versions(script_manager, callback):
         callback([ExecutableVersion('/usr/bin/python2', '2.7'),
                   ExecutableVersion('/usr/bin/python3', '3.x')])
 
-    script_manager.execute_script('python_versions', cb_versions)
+    script_manager.execute_script('python_versions', cb_versions, redirect_stderr_to_stdout=True)
 
 
 class ProgramPagePython(ProgramPage, Ui_ProgramPagePython):
