@@ -5,13 +5,13 @@ import sys
 import os
 
 if len(sys.argv) < 3:
-    sys.stderr.write(unicode('Missing script parameters (internal error)').encode('utf-8'))
-    exit(1)
+    sys.stderr.write(u'Missing parameters'.encode('utf-8'))
+    exit(2)
 
 try:
     os.rename(sys.argv[1], sys.argv[2])
 except Exception as e:
     sys.stderr.write(unicode(e).encode('utf-8'))
-    exit(2)
+    exit(3)
 
 exit(0)

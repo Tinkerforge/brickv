@@ -26,6 +26,7 @@ from PyQt4 import QtCore, QtGui
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_overview import Ui_REDTabOverview
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.script_manager import check_script_result
 from operator import itemgetter
 import json
 import time
@@ -62,6 +63,8 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
         self.refresh_timer = QtCore.QTimer(self)
         self.refresh_counter = 0
         self.nic_time = 0
+
+        self.label_error.hide()
 
         # For MAC progress bar text fix
         self.label_pbar_cpu.hide()
@@ -125,8 +128,14 @@ class REDTabOverview(REDTab, Ui_REDTabOverview):
         self.refresh_counter = 0
         self.refresh_timer.start(REFRESH_TIMEOUT)
 
-        if result == None or result.exit_code != 0:
+        okay, message = check_script_result(result, decode_stderr=True)
+
+        if not okay:
+            self.label_error.setText('<b>Error:</b> ' + QtCore.Qt.escape(message))
+            self.label_error.show()
             return
+
+        self.label_error.hide()
 
         try:
             data = json.loads(zlib.decompress(buffer(result.stdout)).decode('utf-8'))

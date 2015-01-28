@@ -13,8 +13,8 @@ import zlib
 result = {}
 
 if len(sys.argv) < 2 or not os.path.isdir(sys.argv[1]):
-    sys.stderr.write(unicode('Missing or invalid script parameters (internal error)').encode('utf-8'))
-    exit(1)
+    sys.stderr.write(u'Missing or invalid parameters'.encode('utf-8'))
+    exit(2)
 
 base = sys.argv[1]
 

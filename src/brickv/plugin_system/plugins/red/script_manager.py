@@ -26,10 +26,12 @@ from brickv.plugin_system.plugins.red.api import REDFile, REDPipe, REDProcess
 import posixpath
 from collections import namedtuple
 from PyQt4.QtCore import QObject, pyqtSignal
+from PyQt4.QtGui import QMessageBox
 from threading import Lock
 from brickv.async_call import async_call
 from brickv.object_creator import create_object_in_qt_main_thread
 from brickv.plugin_system.plugins.red._scripts import script_data
+from brickv.utils import get_main_window
 
 SCRIPT_FOLDER = '/usr/local/scripts'
 
@@ -96,6 +98,7 @@ class ScriptInstance(QObject):
         self.qtcb_result.emit(result)
         self.qtcb_result.disconnect(self.result_callback)
 
+# stdout and stderr are either strings or None (UTF-8 decode error)
 ScriptResult = namedtuple('ScriptResult', 'stdout stderr exit_code')
 
 class ScriptManager(object):
@@ -252,14 +255,17 @@ class ScriptManager(object):
                         return
 
                     if si.decode_output_as_utf8:
-                        out = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
+                        try:
+                            out = result.data.decode('utf-8')
+                        except UnicodeDecodeError:
+                            out = None
                     else:
                         out = result.data
 
                     if si.redirect_stderr_to_stdout:
                         exit_code = si.process.exit_code
 
-                        self._report_result_and_cleanup(si, ScriptResult(out, None, exit_code))
+                        self._report_result_and_cleanup(si, ScriptResult(out, u'', exit_code))
                     else:
                         def cb_stderr_read(result):
                             if result.error != None:
@@ -267,7 +273,10 @@ class ScriptManager(object):
                                 return
 
                             if si.decode_output_as_utf8:
-                                err = result.data.decode('utf-8') # NOTE: assuming scripts return UTF-8
+                                try:
+                                    err = result.data.decode('utf-8')
+                                except UnicodeDecodeError:
+                                    err = None
                             else:
                                 err = result.data
 
@@ -325,3 +334,35 @@ class ScriptManager(object):
                              si.params, env, '/', uid, gid, self.devnull, si.stdout, si.stderr)
         except:
             self._report_result_and_cleanup(si, None)
+
+def check_script_result(result, decode_stderr=False):
+    if result == None:
+        return (False, u'Script error 1001: Internal error')
+    elif result.stdout == None:
+        return (False, u'Script error 1002: Stdout not UTF-8 encoded')
+    elif result.stderr == None:
+        return (False, u'Script error 1003: Stderr not UTF-8 encoded')
+    elif result.exit_code != 0:
+        if decode_stderr:
+            try:
+                stderr = result.stderr.decode('utf-8').strip()
+            except UnicodeDecodeError:
+                stderr = u'<error message not UTF-8 encoded>'
+        else:
+            stderr = result.stderr.strip()
+
+        if len(stderr) == 0:
+            stderr = u'<empty error message>'
+
+        return (False, u'Script error {0}: {1}'.format(result.exit_code, stderr))
+    else:
+        return (True, None)
+
+def report_script_result(result, title, message_header, decode_stderr=False):
+    okay, message = check_script_result(result, decode_stderr)
+
+    if okay:
+        return True
+    else:
+        QMessageBox.critical(get_main_window(), title, message_header + u':\n\n' + message)
+        return False

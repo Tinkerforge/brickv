@@ -24,10 +24,13 @@ Boston, MA 02111-1307, USA.
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_python import Ui_ProgramPagePython
+from brickv.plugin_system.plugins.red.script_manager import check_script_result
 
 def get_python_versions(script_manager, callback):
     def cb_versions(result):
-        if result != None:
+        okay, _ = check_script_result(result)
+
+        if okay:
             try:
                 versions = result.stderr.split('\n')
                 callback([ExecutableVersion('/usr/bin/python2', versions[0].split(' ')[1]),

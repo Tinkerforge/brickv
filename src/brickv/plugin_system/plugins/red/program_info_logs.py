@@ -29,6 +29,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import Download, get_file_display_size
 from brickv.plugin_system.plugins.red.ui_program_info_logs import Ui_ProgramInfoLogs
 from brickv.plugin_system.plugins.red.program_info_logs_view import ProgramInfoLogsView
+from brickv.plugin_system.plugins.red.script_manager import check_script_result, report_script_result
 from brickv.utils import get_main_window, get_resources_path, get_home_path, get_existing_directory
 import os
 import posixpath
@@ -111,12 +112,10 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
     def refresh_logs(self):
         def cb_logs_list(result):
-            if result == None or result.exit_code != 0:
-                if result == None or len(result.stderr) == 0:
-                    self.label_error.setText('<b>Error:</b> Internal script error occurred')
-                else:
-                    self.label_error.setText('<b>Error:</b> ' + Qt.escape(result.stderr.decode('utf-8')))
+            okay, message = check_script_result(result, decode_stderr=True)
 
+            if not okay:
+                self.label_error.setText('<b>Error:</b> ' + Qt.escape(message))
                 self.label_error.setVisible(True)
                 self.refresh_logs_done()
                 return
@@ -384,13 +383,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
         def cb_program_delete_logs(result):
             self.refresh_logs()
-
-            if result == None:
-                QMessageBox.critical(get_main_window(), 'Delete Logs Error',
-                                     u'Internal error during deletion.')
-            elif result.exit_code != 0:
-                QMessageBox.critical(get_main_window(), 'Delete Logs Error',
-                                     u'Could not delete selected logs:\n\n{0}'.format(result.stderr.strip()))
+            report_script_result(result, 'Delete Logs Error', 'Could not delete selected logs')
 
         index_list = self.tree_logs.selectedIndexes()
 

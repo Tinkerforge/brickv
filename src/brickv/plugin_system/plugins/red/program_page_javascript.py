@@ -27,11 +27,14 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_javascript import Ui_ProgramPageJavaScript
+from brickv.plugin_system.plugins.red.script_manager import check_script_result
 from brickv.utils import get_main_window
 
 def get_nodejs_versions(script_manager, callback):
     def cb_versions(result):
-        if result != None:
+        okay, _ = check_script_result(result)
+
+        if okay:
             try:
                 version = result.stdout.split('\n')[0].replace('v', '')
                 callback([ExecutableVersion('/usr/local/bin/node', version)])

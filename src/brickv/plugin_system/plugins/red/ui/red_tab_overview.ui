@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>541</width>
-    <height>630</height>
+    <width>679</width>
+    <height>620</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -79,14 +79,14 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>521</width>
-        <height>575</height>
+        <width>643</width>
+        <height>696</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QGroupBox" name="gbox_process">
            <property name="title">
             <string>Processes</string>
@@ -177,7 +177,7 @@
            </layout>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="3" column="0">
           <widget class="QGroupBox" name="gbox_network">
            <property name="title">
             <string>Network Interfaces</string>
@@ -215,7 +215,7 @@
            </layout>
           </widget>
          </item>
-         <item row="0" column="0">
+         <item row="1" column="0">
           <widget class="QGroupBox" name="gbox_status">
            <property name="title">
             <string>Status</string>
@@ -324,6 +324,16 @@
              </layout>
             </item>
            </layout>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_error">
+           <property name="text">
+            <string>&lt;error&gt;</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
         </layout>

@@ -331,6 +331,9 @@
        <property name="text">
         <string>&lt;main-class-error&gt;</string>
        </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>

@@ -30,6 +30,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import Download, ExpandingProgressDialog, \
                                                            ExpandingInputDialog, get_file_display_size
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
+from brickv.plugin_system.plugins.red.script_manager import check_script_result, report_script_result
 from brickv.async_call import async_call
 from brickv.utils import get_main_window, get_resources_path, get_home_path, get_existing_directory
 import os
@@ -198,12 +199,10 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
     def refresh_files(self):
         def cb_directory_walk(result):
-            if result == None or result.exit_code != 0:
-                if result == None or len(result.stderr) == 0:
-                    self.label_error.setText('<b>Error:</b> Internal script error occurred')
-                else:
-                    self.label_error.setText('<b>Error:</b> ' + Qt.escape(result.stderr.decode('utf-8').strip()))
+            okay, message = check_script_result(result, decode_stderr=True)
 
+            if not okay:
+                self.label_error.setText('<b>Error:</b> ' + Qt.escape(message))
                 self.label_error.setVisible(True)
                 self.refresh_files_done()
                 return
@@ -241,7 +240,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
                 self.refresh_files_done()
 
             def cb_expand_error():
-                self.label_error.setText('<b>Error:</b> Internal async error occurred')
+                self.label_error.setText('<b>Error:</b> Internal async error')
                 self.label_error.setVisible(True)
                 self.refresh_files_done()
 
@@ -383,17 +382,13 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         absolute_new_name = posixpath.join(posixpath.split(absolute_old_name)[0], new_name)
 
         def cb_rename(result):
-            if result == None:
-                QMessageBox.critical(get_main_window(), title + ' Error',
-                                     u'Internal error during {0} rename'.format(type_name))
-            elif result.exit_code != 0:
-                QMessageBox.critical(get_main_window(), title + ' Error',
-                                     u'Could not rename {0}:\n\n{1}'.format(type_name, result.stderr.strip()))
-            else:
-                name_item.setText(new_name)
+            if not report_script_result(result, title + ' Error', u'Could not rename {0}'.format(type_name)):
+                return
 
-                if self.tree_files.header().sortIndicatorSection() == 0:
-                    self.tree_files.header().setSortIndicator(0, self.tree_files.header().sortIndicatorOrder())
+            name_item.setText(new_name)
+
+            if self.tree_files.header().sortIndicatorSection() == 0:
+                self.tree_files.header().setSortIndicator(0, self.tree_files.header().sortIndicatorOrder())
 
         self.script_manager.execute_script('rename', cb_rename,
                                            [absolute_old_name, absolute_new_name])
@@ -497,12 +492,9 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
             if aborted:
                 QMessageBox.information(get_main_window(), 'Delete Files',
                                         u'Delete operation was aborted.')
-            elif result == None:
-                QMessageBox.critical(get_main_window(), 'Delete Files Error',
-                                     u'Internal error during deletion.')
-            elif result.exit_code != 0:
-                QMessageBox.critical(get_main_window(), 'Delete Files Error',
-                                     u'Could not delete selected files/directories:\n\n{0}'.format(result.stderr.strip()))
+                return
+
+            report_script_result(result, 'Delete Files Error', 'Could not delete selected files/directories:')
 
         script_instance_ref[0] = self.script_manager.execute_script('program_delete_files_dirs',
                                                                     lambda result: cb_program_delete_files_dirs(script_instance_ref, result),

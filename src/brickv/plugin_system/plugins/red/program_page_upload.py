@@ -687,19 +687,25 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
     def compile_make(self):
         def cb_make_helper(result):
-            if result != None:
-                for s in result.stdout.rstrip().split('\n'):
-                    self.log(s, pre=True)
-
-                if result.exit_code != 0:
-                    self.upload_warning('...warning: Could not compile source code')
-                    self.upload_done()
-                else:
-                    self.log('...done')
-                    self.set_schedule()
-            else:
-                self.upload_warning('...warning: Could not execute fpcmake helper script')
+            if result == None:
+                self.upload_warning('...warning: Could not execute make helper script')
                 self.upload_done()
+                return
+
+            if result.stdout == None:
+                self.upload_warning('...warning: Output of make helper script is not UTF-8 encoded')
+                self.upload_done()
+                return
+
+            for s in result.stdout.rstrip().split('\n'):
+                self.log(s, pre=True)
+
+            if result.exit_code != 0:
+                self.upload_warning('...warning: Could not compile source code')
+                self.upload_done()
+            else:
+                self.log('...done')
+                self.set_schedule()
 
         self.next_step('Executing make...')
 
@@ -712,19 +718,25 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
     def compile_fpcmake(self):
         def cb_fpcmake_helper(result):
-            if result != None:
-                for s in result.stdout.rstrip().split('\n'):
-                    self.log(s, pre=True)
-
-                if result.exit_code != 0:
-                    self.upload_warning('...warning: Could not compile source code')
-                    self.upload_done()
-                else:
-                    self.log('...done')
-                    self.set_schedule()
-            else:
+            if result == None:
                 self.upload_warning('...warning: Could not execute fpcmake helper script')
                 self.upload_done()
+                return
+
+            if result.stdout == None:
+                self.upload_warning('...warning: Output of fpcmake helper script is not UTF-8 encoded')
+                self.upload_done()
+                return
+
+            for s in result.stdout.rstrip().split('\n'):
+                self.log(s, pre=True)
+
+            if result.exit_code != 0:
+                self.upload_warning('...warning: Could not compile source code')
+                self.upload_done()
+            else:
+                self.log('...done')
+                self.set_schedule()
 
         self.next_step('Executing fpcmake and make...')
 

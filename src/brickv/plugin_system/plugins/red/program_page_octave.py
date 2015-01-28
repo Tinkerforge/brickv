@@ -25,10 +25,13 @@ Boston, MA 02111-1307, USA.
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_octave import Ui_ProgramPageOctave
+from brickv.plugin_system.plugins.red.script_manager import check_script_result
 
 def get_octave_versions(script_manager, callback):
     def cb_versions(result):
-        if result != None:
+        okay, _ = check_script_result(result)
+
+        if okay:
             try:
                 version = result.stdout.split('\n')[0].split(' ')[-1]
                 callback([ExecutableVersion('/usr/bin/octave', version)])

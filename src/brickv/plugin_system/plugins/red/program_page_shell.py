@@ -25,10 +25,13 @@ Boston, MA 02111-1307, USA.
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_shell import Ui_ProgramPageShell
+from brickv.plugin_system.plugins.red.script_manager import check_script_result
 
 def get_shell_versions(script_manager, callback):
     def cb_versions(result):
-        if result != None:
+        okay, _ = check_script_result(result)
+
+        if okay:
             try:
                 version = (' '.join(result.stdout.split('\n')[0].split(' ')[:-1])).replace('version ', '')
                 callback([ExecutableVersion('/bin/bash', version)])

@@ -27,6 +27,7 @@ from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_java import Ui_ProgramPageJava
 from brickv.plugin_system.plugins.red.java_utils import get_jar_file_main_classes, get_class_file_main_classes
+from brickv.plugin_system.plugins.red.script_manager import check_script_result
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
 import posixpath
@@ -35,7 +36,9 @@ import zlib
 
 def get_java_versions(script_manager, callback):
     def cb_versions(result):
-        if result != None:
+        okay, _ = check_script_result(result)
+
+        if okay:
             try:
                 version = result.stderr.split('\n')[1].split(' ')[5].replace(')', '')
                 callback([ExecutableVersion('/usr/bin/java', version)])
@@ -215,12 +218,10 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
                         done()
                         return
 
-                    if result == None or result.exit_code != 0:
-                        if result == None or len(result.stderr) == 0:
-                            self.label_main_class_error.setText('<b>Error:</b> Internal script error occurred')
-                        else:
-                            self.label_main_class_error.setText('<b>Error:</b> ' + Qt.escape(result.stderr.decode('utf-8').strip()))
+                    okay, message = check_script_result(result, decode_stderr=True)
 
+                    if not okay:
+                        self.label_main_class_error.setText('<b>Error:</b> ' + Qt.escape(message))
                         self.label_main_class_error.setVisible(True)
                         done()
                         return
@@ -246,7 +247,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
                         done()
 
                     def cb_expand_error():
-                        self.label_main_class_error.setText('<b>Error:</b> Internal async error occurred')
+                        self.label_main_class_error.setText('<b>Error:</b> Internal async error')
                         self.label_main_class_error.setVisible(True)
                         done()
 
@@ -291,7 +292,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
                     self.completeChanged.emit()
 
                 def cb_main_classes_error():
-                    self.label_main_class_error.setText('<b>Error:</b> Internal async error occurred')
+                    self.label_main_class_error.setText('<b>Error:</b> Internal async error')
                     self.label_main_class_error.setVisible(True)
 
                     progress.cancel()

@@ -27,6 +27,7 @@ import time
 from PyQt4 import QtCore, QtGui
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_datetime import Ui_REDTabSettingsDateTime
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.script_manager import report_script_result
 from brickv.utils import get_main_window
 
 class REDTabSettingsDateTime(QtGui.QWidget, Ui_REDTabSettingsDateTime):
@@ -67,12 +68,7 @@ class REDTabSettingsDateTime(QtGui.QWidget, Ui_REDTabSettingsDateTime):
         self.time_sync_button.setEnabled(False)
 
         def cb_red_brick_time(result):
-            if not result or result.stderr:
-                err_msg = 'Error getting time from red-brick:\n\n'+unicode(result.stderr)
-                QtGui.QMessageBox.critical(get_main_window(),
-                                           'Settings | Date/Time',
-                                           err_msg,
-                                           QtGui.QMessageBox.Ok)
+            if not report_script_result(result, 'Settings | Date/Time', 'Error getting time from RED Brick'):
                 return
 
             try:
@@ -106,8 +102,7 @@ class REDTabSettingsDateTime(QtGui.QWidget, Ui_REDTabSettingsDateTime):
 
             self.time_sync_button.setEnabled(True)
 
-        self.script_manager.execute_script('settings_time_get',
-                                           cb_red_brick_time)
+        self.script_manager.execute_script('settings_time_get', cb_red_brick_time)
 
     def time_stop(self):
         try:
