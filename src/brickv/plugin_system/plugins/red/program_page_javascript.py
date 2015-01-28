@@ -159,7 +159,7 @@ class ProgramPageJavaScript(ProgramPage, Ui_ProgramPageJavaScript):
 
     # overrides QWizardPage.isComplete
     def isComplete(self):
-        flavor     = self.get_field('javascript.flavor') != 0
+        flavor     = self.get_field('javascript.flavor')
         executable = self.get_executable()
         start_mode = self.get_field('javascript.start_mode')
 
