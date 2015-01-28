@@ -121,6 +121,7 @@ elif command == 'APPLY':
 
         if apply_dict['gpu']:
             lines = []
+
             with open('/etc/modules', 'r') as fd_r_modules:
                 lines = fd_r_modules.readlines()
                 for i, l in enumerate(lines):
@@ -140,6 +141,7 @@ elif command == 'APPLY':
             lines = []
             with open('/etc/modules', 'r') as fd_r_modules:
                 lines = fd_r_modules.readlines()
+
                 for i, l in enumerate(lines):
                     if l.strip() == 'mali':
                         lines[i] = '#'+l
@@ -161,46 +163,50 @@ elif command == 'APPLY':
                 os.remove('/etc/tf_x11_enabled')
 
         if apply_dict['webserver']:
-            if os.system('/usr/sbin/systemctl enable apache2') != 0:
+            if os.system('/bin/systemctl enable apache2') != 0:
                 exit(6)
         else:
-            if os.system('/usr/sbin/systemctl disable apache2') != 0:
+            if os.system('/bin/systemctl disable apache2') != 0:
                 exit(7)
 
         if apply_dict['splashscreen']:
-            if os.system('/usr/sbin/systemctl enable asplashscreen') != 0:
+            if os.system('/bin/systemctl enable asplashscreen') != 0:
                 exit(8)
-            if os.system('/usr/sbin/systemctl enable killasplashscreen') != 0:
-                exit(8)
+
+            if os.system('/bin/systemctl enable killasplashscreen') != 0:
+                exit(9)
         else:
-            if os.system('/usr/sbin/systemctl disable asplashscreen') != 0:
-                exit(9)
-            if os.system('/usr/sbin/systemctl disable killasplashscreen') != 0:
-                exit(9)
+            if os.system('/bin/systemctl disable asplashscreen') != 0:
+                exit(10)
+
+            if os.system('/bin/systemctl disable killasplashscreen') != 0:
+                exit(11)
 
         if apply_dict['ap']:
             with open('/etc/tf_ap_enabled', 'w') as fd_ap_enabled:
-                if os.system('/usr/sbin/systemctl enable hostapd') != 0:
-                    exit(10)
+                pass
 
-                if os.system('/usr/sbin/systemctl enable dnsmasq') != 0:
-                    exit(11)
+            if os.system('/bin/systemctl enable hostapd') != 0:
+                exit(12)
 
-                if os.system('/usr/sbin/systemctl disable wicd') != 0:
-                    exit(12)
+            if os.system('/bin/systemctl enable dnsmasq') != 0:
+                exit(13)
+
+            if os.system('/bin/systemctl disable wicd') != 0:
+                exit(14)
 
         else:
             if os.path.isfile('/etc/tf_ap_enabled'):
                 os.remove('/etc/tf_ap_enabled')
 
-            if os.system('/usr/sbin/systemctl disable hostapd') != 0:
-                exit(13)
-
-            if os.system('/usr/sbin/systemctl disable dnsmasq') != 0:
-                exit(14)
-
-            if os.system('/usr/sbin/systemctl enable wicd ') != 0:
+            if os.system('/bin/systemctl disable hostapd') != 0:
                 exit(15)
+
+            if os.system('/bin/systemctl disable dnsmasq') != 0:
+                exit(16)
+
+            if os.system('/bin/systemctl enable wicd ') != 0:
+                exit(17)
 
             with open('/etc/network/interfaces', 'w') as fd_interfaces:
                 fd_interfaces.write(INTERFACES_CONF)
@@ -209,8 +215,8 @@ elif command == 'APPLY':
 
     except Exception as e:
         sys.stderr.write(unicode(e).encode('utf-8'))
-        exit(16)
+        exit(18)
 
 else:
     sys.stderr.write(u'Invalid parameters'.encode('utf-8'))
-    exit(17)
+    exit(19)
