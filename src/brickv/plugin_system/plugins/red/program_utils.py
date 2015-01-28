@@ -27,6 +27,7 @@ from PyQt4.QtGui import QListWidget, QListWidgetItem, QTreeWidgetItem, \
 from brickv.plugin_system.plugins.red.api import *
 from brickv.async_call import async_call
 import re
+import os
 import posixpath
 from collections import namedtuple
 
@@ -1132,6 +1133,9 @@ class ChunkedDownloaderBase(object):
 
     def download_read_async_cb_result(self, result):
         if self.canceled:
+            if isinstance(result.error, REDError) and result.error.error_code == REDError.E_OPERATION_ABORTED:
+                self.download_read_async_cleanup()
+
             return
 
         if result.error != None:
@@ -1170,23 +1174,32 @@ class ChunkedDownloaderBase(object):
                                     get_file_display_size(self.next_progress_update) + \
                                     ' of ' + self.source_display_size)
 
-    def download_read_async_done(self):
-        if self.canceled:
-            return
-
+    def download_read_async_cleanup(self):
         self.target_file.close()
         self.target_file = None
 
-        # FIXME: redapid 2.0.0-rc1 has a bug in the permissions translation.
-        #        don't restore permissions until a fixed redapid is released
-        #try:
-        #    os.chmod(self.target_path, self.source_file.permissions)
-        #except:
-        #    pass
+        if self.canceled:
+            try:
+                os.remove(self.target_path)
+            except:
+                pass
+        else:
+            pass
+            # FIXME: redapid 2.0.0-rc1 has a bug in the permissions translation.
+            #        don't restore permissions until a fixed redapid is released
+            #try:
+            #    os.chmod(self.target_path, self.source_file.permissions)
+            #except:
+            #    pass
 
         self.source_file.release()
         self.source_file = None
 
+    def download_read_async_done(self):
+        if self.canceled:
+            return
+
+        self.download_read_async_cleanup()
         self.done()
 
     def prepare(self, source_path):
