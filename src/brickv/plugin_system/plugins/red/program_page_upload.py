@@ -375,7 +375,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         # FIXME: preserving the executable bit this way only works well on
         #        Linux and Mac OS X hosts. on Windows Python deduces this from
         #        the file extension. this does not work if the executable is
-        #        cross-compiled and doesn't have the typsical Windows file
+        #        cross-compiled and doesn't have the typical Windows file
         #        extensions for executables
         if (self.source_stat.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)) != 0:
             permissions = 0o755

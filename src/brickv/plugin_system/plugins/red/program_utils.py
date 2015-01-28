@@ -28,6 +28,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.async_call import async_call
 import re
 import os
+import stat
 import posixpath
 from collections import namedtuple
 
@@ -1184,13 +1185,15 @@ class ChunkedDownloaderBase(object):
             except:
                 pass
         else:
-            pass
-            # FIXME: redapid 2.0.0-rc1 has a bug in the permissions translation.
-            #        don't restore permissions until a fixed redapid is released
-            #try:
-            #    os.chmod(self.target_path, self.source_file.permissions)
-            #except:
-            #    pass
+            if (self.source_file.permissions & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)) != 0:
+                permissions = 0o755
+            else:
+                permissions = 0o644
+
+            try:
+                os.chmod(self.target_path, permissions)
+            except:
+                pass
 
         self.source_file.release()
         self.source_file = None
