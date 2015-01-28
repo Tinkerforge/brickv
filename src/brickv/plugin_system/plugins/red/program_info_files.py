@@ -364,8 +364,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         if len(new_name) == 0 or new_name == '.' or new_name == '..' or '/' in new_name:
             QMessageBox.critical(get_main_window(), title + ' Error',
                                  'A valid {0} name cannot be empty, cannot be one dot [.], cannot be two dots [..] and cannot contain a forward slash [/].'
-                                 .format(type_name),
-                                 QMessageBox.Ok)
+                                 .format(type_name))
             return
 
         # check that new name is not already in use
@@ -377,8 +376,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         for i in range(name_item_parent.rowCount()):
             if new_name == name_item_parent.child(i).text():
                 QMessageBox.critical(get_main_window(), title + ' Error',
-                                     'The new {0} name is already in use.'.format(type_name),
-                                     QMessageBox.Ok)
+                                     'The new {0} name is already in use.'.format(type_name))
                 return
 
         absolute_old_name = posixpath.join(self.bin_directory, get_full_item_path(name_item))

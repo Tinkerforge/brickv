@@ -37,10 +37,10 @@ from brickv.plugin_system.plugins.red import config_parser
 from brickv.utils import get_main_window
 
 def popup_ok(msg):
-    QMessageBox.information(get_main_window(), 'Configuration', msg, QMessageBox.Ok)
+    QMessageBox.information(get_main_window(), 'Configuration', msg)
 
 def popup_fail(msg):
-    QMessageBox.critical(get_main_window(), 'Configuration', msg, QMessageBox.Ok)
+    QMessageBox.critical(get_main_window(), 'Configuration', msg)
 
 class RS485(QWidget, Ui_RS485):
     def __init__(self, parent, extension, config):

@@ -216,8 +216,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                     self.label_ap_status.setText('-')
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Access Point',
-                                               'Error checking access point mode.',
-                                               QtGui.QMessageBox.Ok)
+                                               'Error checking access point mode.')
                 elif not ap_mode_status['ap_incomplete_config'] and \
                      not ap_mode_status['ap_hardware_or_config_problem']:
                         self.label_ap_status.setText('Active')
@@ -232,11 +231,9 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                 self.read_config_files()
             else:
                 self.label_ap_status.setText('-')
-                err_msg = 'Error checking access point mode\n\n'+unicode(result.stderr)
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
-                                           err_msg,
-                                           QtGui.QMessageBox.Ok)
+                                           'Error checking access point mode:\n\n' + result.stderr)
 
         self.update_button_text_state(BUTTON_STATE_REFRESH)
         self.label_working_wait.show()
@@ -259,13 +256,11 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
                 QtGui.QMessageBox.information(get_main_window(),
                                               'Settings | Access Point',
-                                              'Access point settings saved.',
-                                              QtGui.QMessageBox.Ok)
+                                              'Access point settings saved.')
             else:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
-                                           'Error saving access point settings:\n\n' + result.stderr,
-                                           QtGui.QMessageBox.Ok)
+                                           'Error saving access point settings:\n\n' + result.stderr)
 
         apply_dict = {'interface'       : None,
                       'interface_ip'    : None,
@@ -293,8 +288,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
-                                           message,
-                                           QtGui.QMessageBox.Ok)
+                                           message)
                 return False
 
         if not check_ascii(self.ledit_ap_ssid.text(),
@@ -357,29 +351,25 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             if not interface:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
-                                           'Interface empty.',
-                                           QtGui.QMessageBox.Ok)
+                                           'Interface empty.')
                 return
 
             elif not ssid:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
-                                           'SSID empty.',
-                                           QtGui.QMessageBox.Ok)
+                                           'SSID empty.')
                 return
 
             elif not wpa_key:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
-                                           'WPA key empty.',
-                                           QtGui.QMessageBox.Ok)
+                                           'WPA key empty.')
                 return
 
             elif not domain:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
-                                           'DNS Domain empty.',
-                                           QtGui.QMessageBox.Ok)
+                                           'DNS Domain empty.')
                 return
 
             apply_dict['interface']        = interface
@@ -413,8 +403,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Access Point',
-                                       'Error occured while processing input data:\n\n' + str(e),
-                                       QtGui.QMessageBox.Ok)
+                                       'Error occured while processing input data:\n\n' + unicode(e))
 
     def slot_pbutton_ap_show_dhcp_leases_clicked(self):
         leases_dialog = REDTabSettingsAPDhcpLeasesDialog(self, self.session)
@@ -489,8 +478,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                 else:
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Access Point',
-                                               'Error getting access point interfaces:\n\n' + result.stderr,
-                                               QtGui.QMessageBox.Ok)
+                                               'Error getting access point interfaces:\n\n' + result.stderr)
 
                 self.update_ui_state()
 
@@ -533,8 +521,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             except Exception as e:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
-                                           'Error parsing hostapd.conf file:\n\n' + unicode(e),
-                                           QtGui.QMessageBox.Ok)
+                                           'Error parsing hostapd.conf file:\n\n' + unicode(e))
 
             self.update_ui_state()
 
@@ -601,8 +588,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             except Exception as e:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
-                                           'Error parsing dnsmasq.conf file:\n\n' + unicode(e),
-                                           QtGui.QMessageBox.Ok)
+                                           'Error parsing dnsmasq.conf file:\n\n' + unicode(e))
 
             self.update_ui_state()
 
@@ -617,8 +603,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Access Point',
-                                       'Error {0} {1} file:\n\n{2}'.format(kind_text[kind], title, unicode(error)),
-                                       QtGui.QMessageBox.Ok)
+                                       'Error {0} {1} file:\n\n{2}'.format(kind_text[kind], title, unicode(error)))
 
         TextFile.read_async(self.session, HOSTAPD_CONF_PATH,
                             cb_hostapd_conf_content,

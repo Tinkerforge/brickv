@@ -86,11 +86,9 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
                     if not result.stderr and result.exit_code == 0:
                         pass
                     else:
-                        err_msg = 'Error rebooting RED Brick.\n\n'+unicode(result.stderr)
                         QtGui.QMessageBox.critical(get_main_window(),
                                                    'Settings | Services',
-                                                   err_msg,
-                                                   QtGui.QMessageBox.Ok)
+                                                   'Error rebooting RED Brick:\n\n' + result.stderr)
                         self.chkbox_gpu.setEnabled(True)
                         self.chkbox_desktopenv.setEnabled(True)
                         self.chkbox_webserver.setEnabled(True)
@@ -103,11 +101,9 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
             self.script_manager.execute_script('restart_reboot_shutdown',
                                                cb_restart_reboot_shutdown, ['1'])
         else:
-            err_msg = 'Error saving services status.\n\n'+unicode(result.stderr)
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Services',
-                                       err_msg,
-                                       QtGui.QMessageBox.Ok)
+                                       'Error saving services status:\n\n' + result.stderr)
             self.chkbox_gpu.setEnabled(True)
             self.chkbox_desktopenv.setEnabled(True)
             self.chkbox_webserver.setEnabled(True)

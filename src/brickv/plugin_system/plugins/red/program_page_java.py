@@ -394,8 +394,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
 
         if len(entry) == 0:
             QMessageBox.critical(get_main_window(), 'Add Class Path Entry Error',
-                                 'A valid class path entry cannot be empty.',
-                                 QMessageBox.Ok)
+                                 'A valid class path entry cannot be empty.')
             return
 
         self.class_path_list_editor.add_item(entry, select_item=True)

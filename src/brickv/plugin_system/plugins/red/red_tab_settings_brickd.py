@@ -201,8 +201,7 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
                 else:
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Brickd',
-                                               'Error reading brickd config file.',
-                                               QtGui.QMessageBox.Ok)
+                                               'Error reading brickd config file.')
 
                 self.brickd_button_refresh_enabled(True)
                 self.brickd_button_save_enabled(False)
@@ -213,8 +212,7 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
             self.brickd_button_refresh_enabled(True)
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Brickd',
-                                       'Error opening brickd config file.',
-                                       QtGui.QMessageBox.Ok)
+                                       'Error opening brickd config file.')
 
         async_call(self.brickd_conf_rfile.open,
                    (BRICKD_CONF_PATH, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
@@ -284,14 +282,12 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
                     self.brickd_button_save_enabled(True)
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Brickd',
-                                               'Error writing brickd config file.',
-                                               QtGui.QMessageBox.Ok)
+                                               'Error writing brickd config file.')
                 else:
                     self.script_manager.execute_script('restart_brickd', None)
                     QtGui.QMessageBox.information(get_main_window(),
                                                   'Settings | Brick Daemon',
-                                                  'Saved configuration successfully, restarting brickd.',
-                                                  QtGui.QMessageBox.Ok)
+                                                  'Saved configuration successfully, restarting brickd.')
 
             red_file.write_async(config, lambda x: cb_write(red_file, x), None)
 
@@ -299,8 +295,7 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
             self.brickd_button_save_enabled(True)
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Brickd',
-                                       'Error opening brickd config file.',
-                                       QtGui.QMessageBox.Ok)
+                                       'Error opening brickd config file.')
 
         async_call(self.brickd_conf_rfile.open,
                    (BRICKD_CONF_PATH,

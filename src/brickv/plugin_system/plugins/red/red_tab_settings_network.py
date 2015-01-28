@@ -687,24 +687,19 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                     self.network_all_data['scan_result'] = json.loads(result.stdout)
                     self.update_access_points(self.network_all_data['scan_result'])
                     QtGui.QMessageBox.information(get_main_window(),
-                                               'Settings | Network',
-                                               'Scan finished',
-                                               QtGui.QMessageBox.Ok)
+                                                  'Settings | Network',
+                                                  'Scan finished')
                 else:
-                    err_msg = 'Wireless scan failed\n\n'+unicode(result.stderr)
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
-                                               err_msg,
-                                               QtGui.QMessageBox.Ok)
+                                               'Wireless scan failed:\n\n' + result.stderr)
             try:
                 # Saving currently configured wireless interface
                 wlintf_restore_to = unicode(self.network_all_data['manager_settings'].get('Settings', 'wireless_interface', ''))
             except Exception as e:
-                err_msg = 'Wireless scan failed\n\n'+unicode(e)
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
-                                           err_msg,
-                                           QtGui.QMessageBox.Ok)
+                                           'Wireless scan failed:\n\n' + unicode(e))
                 return
 
             self.show_please_wait(WORKING_STATE_SCAN)
@@ -716,8 +711,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         else:
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Network',
-                                       'Scan only possible for wireless interfaces.',
-                                       QtGui.QMessageBox.Ok)
+                                       'Scan only possible for wireless interfaces.')
 
     def slot_network_conf_refresh_clicked(self):
         def network_refresh_task_done(successful):
@@ -751,8 +745,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 if result and result.stderr:
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
-                                               'Error executing network status script:\n\n' + unicode(result.stderr),
-                                               QtGui.QMessageBox.Ok)
+                                               'Error executing network status script:\n\n' + result.stderr)
 
         def cb_settings_network_get_interfaces(result):
             if not self.is_tab_on_focus:
@@ -775,8 +768,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 if result and result.stderr:
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
-                                               'Error executing network get interfaces script:\n\n' + unicode(result.stderr),
-                                               QtGui.QMessageBox.Ok)
+                                               'Error executing network get interfaces script:\n\n' + result.stderr)
 
         def cb_settings_network_wireless_scan_cache(result):
             if not self.is_tab_on_focus:
@@ -797,8 +789,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 if result and result.stderr:
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
-                                               'Error executing wireless scan cache script:\n\n' + unicode(result.stderr),
-                                               QtGui.QMessageBox.Ok)
+                                               'Error executing wireless scan cache script:\n\n' + result.stderr)
 
         def cb_text_file_content(key, content):
             if not self.is_tab_on_focus:
@@ -830,8 +821,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Network',
-                                       'Error {0} {1} file:\n\n{2}'.format(kind_text[kind], title, unicode(error)),
-                                       QtGui.QMessageBox.Ok)
+                                       'Error {0} {1} file:\n\n{2}'.format(kind_text[kind], title, unicode(error)))
 
         self.show_please_wait(WORKING_STATE_REFRESH)
 
@@ -889,22 +879,19 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 self.show_please_wait(WORKING_STATE_DONE)
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
-                                           'Configure an access point first.',
-                                           QtGui.QMessageBox.Ok)
+                                           'Configure an access point first.')
                 return
             elif enc_method == AP_ENC_METHOD_UNSUPPORTED:
                 self.show_please_wait(WORKING_STATE_DONE)
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
-                                           'Encryption method not supported.',
-                                           QtGui.QMessageBox.Ok)
+                                           'Encryption method not supported.')
                 return
             elif enc == 'On' and not key:
                 self.show_please_wait(WORKING_STATE_DONE)
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
-                                           'Please provide WPA key.',
-                                           QtGui.QMessageBox.Ok)
+                                           'Please provide WPA key.')
                 return
             else:
                 address_conf = self.cbox_net_conftype.currentIndex()
@@ -964,7 +951,6 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                     self.network_all_data['wireless_settings'].set(bssid, 'dns1', dns)
                     self.network_all_data['wireless_settings'].set(bssid, 'use_static_dns', 'True')
 
-
                 if enc == 'On':
                     self.network_all_data['wireless_settings'].set(bssid, 'encryption', 'True')
                     self.network_all_data['wireless_settings'].set(bssid, 'enctype', 'wpa')
@@ -986,14 +972,11 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                         self.slot_network_conf_refresh_clicked()
                         QtGui.QMessageBox.information(get_main_window(),
                                                       'Settings | Network',
-                                                      'Configuration saved.',
-                                                      QtGui.QMessageBox.Ok)
+                                                      'Configuration saved.')
                     else:
-                        err_msg = 'Error saving configuration.\n\n'+unicode(result.stderr)
                         QtGui.QMessageBox.critical(get_main_window(),
                                                    'Settings | Network',
-                                                   err_msg,
-                                                   QtGui.QMessageBox.Ok)
+                                                   'Error saving configuration:\n\n' + result.stderr)
 
                 def cb_open(config, write_wireless_settings, red_file, iname_previous):
                     def cb_write(red_file, write_wireless_settings, result, iname_previous):
@@ -1002,8 +985,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                             self.show_please_wait(WORKING_STATE_DONE)
                             QtGui.QMessageBox.critical(get_main_window(),
                                                        'Settings | Network',
-                                                       'Error saving configuration.',
-                                                       QtGui.QMessageBox.Ok)
+                                                       'Error saving configuration.')
                         else:
                             if write_wireless_settings:
                                 self.script_manager.execute_script('settings_network_apply',
@@ -1028,8 +1010,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
-                                               'Error saving configuration.',
-                                               QtGui.QMessageBox.Ok)
+                                               'Error saving configuration.')
 
                 config = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
                 write_wireless_settings = False
@@ -1070,8 +1051,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                     self.show_please_wait(WORKING_STATE_DONE)
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
-                                               'Error saving configuration.',
-                                               QtGui.QMessageBox.Ok)
+                                               'Error saving configuration.')
                     return
             else:
                 # Save wired static config
@@ -1114,8 +1094,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                     self.show_please_wait(WORKING_STATE_DONE)
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
-                                               'Error saving configuration.',
-                                               QtGui.QMessageBox.Ok)
+                                               'Error saving configuration.')
                     return
 
             def cb_settings_network_apply(result):
@@ -1124,14 +1103,11 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                     self.slot_network_conf_refresh_clicked()
                     QtGui.QMessageBox.information(get_main_window(),
                                                   'Settings | Network',
-                                                  'Configuration saved.',
-                                                  QtGui.QMessageBox.Ok)
+                                                  'Configuration saved.')
                 else:
-                    err_msg = 'Error saving configuration.\n\n'+unicode(result.stderr)
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Network',
-                                               err_msg,
-                                               QtGui.QMessageBox.Ok)
+                                               'Error saving configuration:\n\n' + result.stderr)
 
             def cb_open(config, write_wired_settings, red_file, iname_previous):
                 def cb_write(red_file, write_wired_settings, result, iname_previous):
@@ -1140,8 +1116,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                         self.show_please_wait(WORKING_STATE_DONE)
                         QtGui.QMessageBox.critical(get_main_window(),
                                                    'Settings | Network',
-                                                   'Error saving configuration.',
-                                                   QtGui.QMessageBox.Ok)
+                                                   'Error saving configuration.')
                     else:
                         if write_wired_settings:
                             self.script_manager.execute_script('settings_network_apply',
@@ -1166,8 +1141,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
-                                           'Error saving configuration.',
-                                           QtGui.QMessageBox.Ok)
+                                           'Error saving configuration.')
 
             config = config_parser.to_string_no_fake(self.network_all_data['manager_settings'])
             write_wired_settings = False

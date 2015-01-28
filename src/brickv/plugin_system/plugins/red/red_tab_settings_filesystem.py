@@ -114,15 +114,10 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
             self.pbar_fs_capacity_utilization.setFormat('')
             self.pbar_fs_capacity_utilization.setEnabled(False)
 
-            err_msg = ''
-            if result.stderr:
-                err_msg = unicode(result.stderr)
-
             self.pbutton_fs_expand.setEnabled(False)
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | File System',
-                                       'Error getting partition information.\n\n'+err_msg,
-                                       QtGui.QMessageBox.Ok)
+                                       'Error getting partition information:\n\n' + result.stderr)
 
     # The slots
     def slot_fs_expand_clicked (self):
@@ -133,14 +128,9 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
                     if not result.stderr and result.exit_code == 0:
                         pass
                     else:
-                        err_msg = ''
-                        if result.stderr:
-                            err_msg = unicode(result.stderr)
-
                         QtGui.QMessageBox.critical(get_main_window(),
                                                    'Settings | File System',
-                                                   'Error rebooting RED Brick.\n\n'+err_msg,
-                                                   QtGui.QMessageBox.Ok)
+                                                   'Error rebooting RED Brick:\n\n' + result.stderr)
 
             if result and result.stdout and not result.stderr and result.exit_code == 0:
                 self.script_manager.execute_script('restart_reboot_shutdown',
@@ -148,13 +138,9 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
             else:
                 self.pbutton_fs_expand.setEnabled(True)
 
-                err_msg = ''
-                if result.stderr:
-                    err_msg = unicode(result.stderr)
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | File System',
-                                           'Error expanding file system.\n\n'+err_msg,
-                                           QtGui.QMessageBox.Ok)
+                                           'Error expanding file system:\n\n' + result.stderr)
 
         self.pbutton_fs_expand.setEnabled(False)
         self.script_manager.execute_script('settings_fs_expand',
