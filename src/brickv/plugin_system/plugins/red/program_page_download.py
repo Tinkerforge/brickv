@@ -47,9 +47,6 @@ class ChunkedDownloader(ChunkedDownloaderBase):
     def set_progress_maximum(self, maximum):
         self.page.progress_file.setRange(0, maximum)
 
-    def get_progress_value(self):
-        return self.page.progress_file.value()
-
     def set_progress_value(self, value, message):
         self.page.progress_file.setValue(value)
         self.page.progress_file.setFormat(message)

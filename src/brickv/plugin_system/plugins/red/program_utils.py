@@ -1111,6 +1111,7 @@ class ChunkedDownloaderBase(object):
         self.target_path           = None # abolsute path on host in host format
         self.source_display_size   = None
         self.remaining_source_size = None
+        self.current_progress      = None
         self.next_progress_update  = None
         self.last_download_size    = None
         self.canceled              = False
@@ -1160,13 +1161,14 @@ class ChunkedDownloaderBase(object):
             return
 
         self.next_progress_update += download_size - self.last_download_size
+        self.last_download_size    = download_size
 
-        if self.get_progress_value() / (100 * 1024) != self.next_progress_update / (100 * 1024):
+        if self.current_progress / (100 * 1024) != self.next_progress_update / (100 * 1024):
+            self.current_progress = self.next_progress_update
+
             self.set_progress_value(self.next_progress_update,
                                     get_file_display_size(self.next_progress_update) + \
                                     ' of ' + self.source_display_size)
-
-        self.last_download_size = download_size
 
     def download_read_async_done(self):
         if self.canceled:
@@ -1200,6 +1202,7 @@ class ChunkedDownloaderBase(object):
 
         self.source_display_size   = get_file_display_size(self.source_file.length)
         self.remaining_source_size = self.source_file.length
+        self.current_progress      = 0
         self.next_progress_update  = 0
 
         self.set_progress_maximum(self.source_file.length)
@@ -1223,9 +1226,6 @@ class ChunkedDownloaderBase(object):
 
     def set_progress_maximum(self, maximum):
         pass
-
-    def get_progress_value(self):
-        return 0
 
     def set_progress_value(self, value, message):
         pass
