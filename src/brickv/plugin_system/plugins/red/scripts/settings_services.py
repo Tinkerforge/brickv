@@ -5,12 +5,13 @@ import os
 import json
 import subprocess
 import time
-from sys import argv
+import sys
 
-if len(argv) < 2:
-    exit (1)
+if len(sys.argv) < 2:
+    sys.stderr.write(u'Missing parameters'.encode('utf-8'))
+    exit(2)
 
-command = unicode(argv[1])
+command = sys.argv[1]
 
 SUNXI_FBDEV_X11_DRIVER_CONF = '''
 # This is a minimal sample config file, which can be copied to
@@ -61,8 +62,10 @@ if command == 'CHECK':
     try:
         cmd = '/sbin/chkconfig | awk -F " " \'{print $1 "<==>" $2}\''
         cmd_ps = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+
         if cmd_ps.returncode:
-            exit(1)
+            exit(3)
+
         init_script_list_str = cmd_ps.communicate()[0].strip()
         init_script_list_list = init_script_list_str.splitlines()
         return_dict = {'gpu'         : None,
@@ -101,17 +104,20 @@ if command == 'CHECK':
         else:
             return_dict['ap'] = False
 
-        print json.dumps(return_dict)
+        sys.stdout.write(json.dumps(return_dict, separators=(',', ':')))
+        exit(0)
 
-    except:
-        exit(1)
+    except Exception as e:
+        sys.stderr.write(unicode(e).encode('utf-8'))
+        exit(4)
 
 elif command == 'APPLY':
-    if len(argv) < 3:
-        exit (1)
+    if len(sys.argv) < 3:
+        sys.stderr.write(u'Missing parameters'.encode('utf-8'))
+        exit(5)
 
     try:
-        apply_dict = json.loads(unicode(argv[2]))
+        apply_dict = json.loads(sys.argv[2])
 
         if apply_dict['gpu']:
             lines = []
@@ -143,7 +149,7 @@ elif command == 'APPLY':
 
             with open('/etc/modprobe.d/mali-blacklist.conf', 'w') as fd_w_malibl:
                 fd_w_malibl.write('blacklist mali')
-            
+
             with open('/usr/share/X11/xorg.conf.d/99-sunxifb.conf', 'w') as fd_fbconf:
                 fd_fbconf.write(SUNXI_FBDEV_X11_DRIVER_CONF)
 
@@ -155,48 +161,52 @@ elif command == 'APPLY':
                 os.remove('/etc/tf_x11_enabled')
 
         if apply_dict['webserver']:
-            if os.system('/usr/sbin/update-rc.d apache2 defaults'):
-                exit(1)
+            if os.system('/usr/sbin/update-rc.d apache2 defaults') != 0:
+                exit(6)
         else:
-            if os.system('/usr/sbin/update-rc.d -f apache2 remove'):
-                exit(1)
+            if os.system('/usr/sbin/update-rc.d -f apache2 remove') != 0:
+                exit(7)
 
         if apply_dict['splashscreen']:
-            if os.system('/usr/sbin/update-rc.d asplashscreen start runlvl S 1'):
-                exit(1)
+            if os.system('/usr/sbin/update-rc.d asplashscreen start runlvl S 1') != 0:
+                exit(8)
         else:
-            if os.system('/usr/sbin/update-rc.d -f asplashscreen remove'):
-                exit(1)
-        
+            if os.system('/usr/sbin/update-rc.d -f asplashscreen remove') != 0:
+                exit(9)
+
         if apply_dict['ap']:
             with open('/etc/tf_ap_enabled', 'w') as fd_ap_enabled:
-                if os.system('/usr/sbin/update-rc.d hostapd defaults'):
-                    exit(1)
-    
-                if os.system('/usr/sbin/update-rc.d dnsmasq defaults'):
-                    exit(1)
+                if os.system('/usr/sbin/update-rc.d hostapd defaults') != 0:
+                    exit(10)
 
-                if os.system('/usr/sbin/update-rc.d -f wicd remove'):
-                    exit(1)
+                if os.system('/usr/sbin/update-rc.d dnsmasq defaults') != 0:
+                    exit(11)
+
+                if os.system('/usr/sbin/update-rc.d -f wicd remove') != 0:
+                    exit(12)
 
         else:
             if os.path.isfile('/etc/tf_ap_enabled'):
                 os.remove('/etc/tf_ap_enabled')
 
-            if os.system('/usr/sbin/update-rc.d -f hostapd remove'):
-                exit(1)
+            if os.system('/usr/sbin/update-rc.d -f hostapd remove') != 0:
+                exit(13)
 
-            if os.system('/usr/sbin/update-rc.d -f dnsmasq remove'):
-                exit(1)
-            
-            if os.system('/usr/sbin/update-rc.d wicd defaults'):
-                exit(1)
-            
+            if os.system('/usr/sbin/update-rc.d -f dnsmasq remove') != 0:
+                exit(14)
+
+            if os.system('/usr/sbin/update-rc.d wicd defaults') != 0:
+                exit(15)
+
             with open('/etc/network/interfaces', 'w') as fd_interfaces:
-                    fd_interfaces.write(INTERFACES_CONF)
+                fd_interfaces.write(INTERFACES_CONF)
 
-    except:
-        exit(1)
+        exit(0)
+
+    except Exception as e:
+        sys.stderr.write(unicode(e).encode('utf-8'))
+        exit(16)
 
 else:
-    exit(1)
+    sys.stderr.write(u'Invalid parameters'.encode('utf-8'))
+    exit(17)

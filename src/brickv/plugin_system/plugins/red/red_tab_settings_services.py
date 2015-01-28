@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4 import QtGui
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_services import Ui_REDTabSettingsServices
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.script_manager import report_script_result
 from brickv.utils import get_main_window
 import json
 
@@ -80,38 +81,27 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         pass
 
     def cb_settings_services_apply(self, result):
-        if result and result.stdout and not result.stderr and result.exit_code == 0:
-            def cb_restart_reboot_shutdown(result):
-                if result is not None:
-                    if not result.stderr and result.exit_code == 0:
-                        pass
-                    else:
-                        QtGui.QMessageBox.critical(get_main_window(),
-                                                   'Settings | Services',
-                                                   'Error rebooting RED Brick:\n\n' + result.stderr)
-                        self.chkbox_gpu.setEnabled(True)
-                        self.chkbox_desktopenv.setEnabled(True)
-                        self.chkbox_webserver.setEnabled(True)
-                        self.chkbox_splashscreen.setEnabled(True)
-                        self.chkbox_ap.setEnabled(True)
-                        
-                        self.pbutton_services_save.setText('Save')
-                        self.pbutton_services_save.setEnabled(True)
-
-            self.script_manager.execute_script('restart_reboot_shutdown',
-                                               cb_restart_reboot_shutdown, ['1'])
-        else:
-            QtGui.QMessageBox.critical(get_main_window(),
-                                       'Settings | Services',
-                                       'Error saving services status:\n\n' + result.stderr)
+        def done():
             self.chkbox_gpu.setEnabled(True)
             self.chkbox_desktopenv.setEnabled(True)
             self.chkbox_webserver.setEnabled(True)
             self.chkbox_splashscreen.setEnabled(True)
             self.chkbox_ap.setEnabled(True)
-            
+
             self.pbutton_services_save.setText('Save')
             self.pbutton_services_save.setEnabled(True)
+
+        if not report_script_result(result, 'Settings | Services', 'Error saving services status'):
+            done()
+            return
+
+        def cb_restart_reboot_shutdown(result):
+            if not report_script_result(result, 'Settings | Services', 'Error rebooting RED Brick'):
+                done()
+                return
+
+        self.script_manager.execute_script('restart_reboot_shutdown',
+                                           cb_restart_reboot_shutdown, ['1'])
 
     def service_config_changed(self, state):
         self.pbutton_services_save.setEnabled(True)
@@ -136,4 +126,4 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
 
         self.script_manager.execute_script('settings_services',
                                            self.cb_settings_services_apply,
-                                           ['APPLY', unicode(json.dumps(state))])
+                                           ['APPLY', json.dumps(state)])
