@@ -150,7 +150,10 @@ class SAMBA(object):
             self.port = Serial(port_name, 115200, timeout=5)
         except SerialException as e:
             if '[Errno 13]' in str(e):
-                raise SAMBAException("No permission to open serial port")
+                if sys.platform.startswith('linux'):
+                    raise SAMBAException("No permission to open serial port, try starting Brick Viewer as root")
+                else:
+                    raise SAMBAException("No permission to open serial port")
             else:
                 raise e
 
