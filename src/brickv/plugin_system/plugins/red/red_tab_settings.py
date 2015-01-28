@@ -78,6 +78,9 @@ class REDTabSettings(REDTab, Ui_REDTabSettings):
                             self.service_state.splashscreen = services_check_result['splashscreen']
                             self.service_state.ap           = services_check_result['ap']
 
+                            if self.image_version.number < (1, 4):
+                                self.service_state.desktopenv = self.image_version.flavor == 'full'
+
                             self.label_discovering.hide()
                             self.tab_widget.show()
                             self.tab_widget.currentWidget().tab_on_focus()
