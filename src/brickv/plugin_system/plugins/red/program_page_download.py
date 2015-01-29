@@ -42,7 +42,7 @@ class ChunkedDownloader(ChunkedDownloaderBase):
         self.page = page
 
     def report_error(self, message, *args):
-        self.page.download_error('...error: ' + message, *args)
+        self.page.download_error(u'...error: ' + message, *args)
 
     def set_progress_maximum(self, maximum):
         self.page.progress_file.setRange(0, maximum)
@@ -140,8 +140,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
         self.line2.setVisible(self.conflict_resolution_in_progress)
 
     def cancel_download(self):
-        self.canceled = True
-
+        self.canceled      = True
         chunked_downloader = self.chunked_downloader
 
         if chunked_downloader != None:
@@ -274,7 +273,6 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
                 return
 
         self.progress_file.setVisible(True)
-
         self.chunked_downloader.start(self.target_path)
 
     def start_conflict_resolution(self):

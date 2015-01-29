@@ -34,6 +34,30 @@ import posixpath
 import stat
 import time
 
+class ChunkedUploader(ChunkedUploaderBase):
+    def __init__(self, page):
+        ChunkedUploaderBase.__init__(self, page.wizard().session)
+
+        self.page = page
+
+    def report_error(self, message, *args):
+        self.page.upload_error(u'...error: ' + message, *args)
+
+    def set_progress_maximum(self, maximum):
+        self.page.progress_file.setRange(0, maximum)
+
+    def set_progress_value(self, value, message):
+        self.page.progress_file.setValue(value)
+        self.page.progress_file.setFormat(message)
+
+    def done(self):
+        self.page.chunked_uploader = None
+
+        self.page.log('...done')
+        self.page.progress_file.setValue(self.page.progress_file.maximum())
+
+        self.page.upload_next_file()
+
 class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
     CONFLICT_RESOLUTION_REPLACE = 1
     CONFLICT_RESOLUTION_RENAME  = 2
@@ -55,14 +79,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.upload                          = None
         self.command                         = None
         self.created_directories             = set()
-        self.target_file                     = None
-        self.source_file                     = None
         self.target_path                     = None # abolsute path on RED Brick in POSIX format
-        self.source_path                     = None # abolsute path on host in host format
-        self.source_stat                     = None
-        self.source_display_size             = None
-        self.last_upload_size                = None
-        self.progress_file_next_update       = 0
+        self.chunked_uploader                = None
         self.replace_help_template           = self.label_replace_help.text()
         self.warnings                        = 0
         self.canceled                        = False
@@ -125,7 +143,11 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.line2.setVisible(self.conflict_resolution_in_progress)
 
     def cancel_upload(self):
-        self.canceled = True
+        self.canceled    = True
+        chunked_uploader = self.chunked_uploader
+
+        if chunked_uploader != None:
+            chunked_uploader.canceled = True
 
     def check_new_name(self, name):
         target = posixpath.split(self.upload.target)[1]
@@ -328,24 +350,21 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.upload            = self.remaining_uploads[0]
         self.remaining_uploads = self.remaining_uploads[1:]
-        self.source_path       = self.upload.source
+        source_path            = self.upload.source
 
-        self.next_step(u'Uploading {0}...'.format(self.source_path))
+        self.next_step(u'Uploading {0}...'.format(source_path))
 
         try:
-            self.source_stat = os.stat(self.source_path)
-            self.source_file = open(self.source_path, 'rb')
+            self.source_stat = os.stat(source_path)
+            self.source_file = open(source_path, 'rb')
         except Exception as e:
-            self.upload_error('...error: Could not open source file {0}: {1}', self.source_path, e)
+            self.upload_error('...error: Could not open source file {0}: {1}', source_path, e)
             return
 
-        self.source_display_size = get_file_display_size(self.source_stat.st_size)
+        self.chunked_uploader = ChunkedUploader(self)
 
-        self.progress_file.setVisible(True)
-        self.progress_file.setRange(0, self.source_stat.st_size)
-        self.progress_file.setFormat(get_file_display_size(0) + ' of ' + self.source_display_size)
-        self.progress_file.setValue(0)
-        self.progress_file_next_update = 0
+        if not self.chunked_uploader.prepare(source_path):
+            return
 
         self.target_path = posixpath.join(self.root_directory, 'bin', self.upload.target)
 
@@ -365,8 +384,6 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.continue_upload_file()
 
     def continue_upload_file(self, replace_existing=False):
-        self.progress_file.setVisible(True)
-
         flags = REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_EXCLUSIVE
 
         if replace_existing:
@@ -400,7 +417,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
             return
 
-        self.upload_write_async()
+        self.progress_file.setVisible(True)
+        self.chunked_uploader.start(self.target_path, self.target_file)
 
     def start_conflict_resolution(self):
         self.log(u'...target file {0} already exists'.format(self.upload.target))
@@ -426,8 +444,8 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 self.label_existing_stats.setText(u'<b>Error</b>: Could not open target file: {0}', Qt.escape(unicode(e)))
 
             self.label_new_stats.setText('{0}, last modified on {1}'
-                                         .format(self.source_display_size,
-                                                 timestamp_to_date_at_time(int(self.source_stat.st_mtime))))
+                                         .format(self.chunked_uploader.source_display_size,
+                                                 timestamp_to_date_at_time(int(self.chunked_uploader.source_stat.st_mtime))))
 
             self.label_replace_help.setText(self.replace_help_template.replace('<FILE>', Qt.escape(self.upload.target)))
             self.check_rename_new_file.setChecked(self.auto_conflict_resolution == ProgramPageUpload.CONFLICT_RESOLUTION_RENAME)
@@ -490,68 +508,6 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.update_ui_state()
 
         self.log('...skipped')
-        self.upload_next_file()
-
-    def upload_write_async_cb_status(self, upload_size, upload_total):
-        if self.canceled:
-            try:
-                self.target_file.abort_async_write()
-            except:
-                pass
-
-            return
-
-        self.progress_file_next_update += upload_size - self.last_upload_size
-
-        if self.progress_file.value() / (100 * 1024) != self.progress_file_next_update / (100 * 1024):
-            self.progress_file.setValue(self.progress_file_next_update)
-            self.progress_file.setFormat(get_file_display_size(self.progress_file_next_update) + ' of ' + self.source_display_size)
-
-        self.last_upload_size = upload_size
-
-    def upload_write_async_cb_result(self, error):
-        if self.canceled:
-            return
-
-        if error == None:
-            self.upload_write_async()
-        else:
-            self.upload_error('...error: Could not write to target file {0}: {1}', self.target_path, error)
-
-    def upload_write_async(self):
-        if self.canceled:
-            return
-
-        try:
-            data = self.source_file.read(1000*1000*10) # Read 10mb at a time
-        except Exception as e:
-            self.upload_error('...error: Could not read from source file {0}: {1}', self.source_path, e)
-            return
-
-        if len(data) == 0:
-            self.upload_write_async_done()
-            return
-
-        self.last_upload_size = 0
-
-        try:
-            self.target_file.write_async(data, self.upload_write_async_cb_result, self.upload_write_async_cb_status)
-        except (Error, REDError) as e:
-            self.upload_error('...error: Could not write to target file {0}: {1}', self.target_path, e)
-
-    def upload_write_async_done(self):
-        if self.canceled:
-            return
-
-        self.log('...done')
-        self.progress_file.setValue(self.progress_file.maximum())
-
-        self.target_file.release()
-        self.target_file = None
-
-        self.source_file.close()
-        self.source_file = None
-
         self.upload_next_file()
 
     def set_configuration(self):
