@@ -28,6 +28,7 @@ import math
 from PyQt4 import  QtGui
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_filesystem import Ui_REDTabSettingsFileSystem
 from brickv.plugin_system.plugins.red.api import *
+from brickv.plugin_system.plugins.red.script_manager import report_script_result
 from brickv.utils import get_main_window
 
 class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
@@ -67,44 +68,8 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
         if not self.is_tab_on_focus:
             return
 
-        if result and result.stdout and not result.stderr and result.exit_code == 0:
-            try:
-                size_dict = json.loads(result.stdout)
-                p1_start = float(size_dict['p1_start'])
-                p1_size = float(size_dict['p1_size'])
-                card_size = float(size_dict['card_size'])
-            except:
-                p1_start = 0
-                p1_size = 100
-                card_size = 100
-
-            percentage_utilization_v = min(int(math.ceil((p1_size / (card_size - p1_start)) * 100.0)), 100)
-            percentage_utilization = unicode(percentage_utilization_v)
-
-            self.pbar_fs_capacity_utilization.setEnabled(True)
-
-            self.pbar_fs_capacity_utilization.setMinimum(0)
-            self.pbar_fs_capacity_utilization.setMaximum(100)
-
-            self.pbar_fs_capacity_utilization.setValue(percentage_utilization_v)
-
-            if percentage_utilization_v >= 95:
-                self.pbutton_fs_expand.setEnabled(False)
-                self.label_fs_expand_info.hide()
-                self.line.hide()
-            else:
-                self.pbutton_fs_expand.setEnabled(True)
-                self.label_fs_expand_info.show()
-                self.line.show()
-
-            pbar_fs_capacity_utilization_fmt = "Using {0}% of total capacity".format(percentage_utilization)
-
-            if sys.platform == 'darwin':
-                self.label_pbar_fs_capacity_utilization.show()
-                self.label_pbar_fs_capacity_utilization.setText(pbar_fs_capacity_utilization_fmt)
-            else:
-                self.pbar_fs_capacity_utilization.setFormat(pbar_fs_capacity_utilization_fmt)
-        else:
+        if not report_script_result(result, 'Settings | File System',
+                                    'Error getting partition information'):
             self.label_fs_expand_info.hide()
             self.line.hide()
             self.label_pbar_fs_capacity_utilization.hide()
@@ -113,34 +78,61 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
             self.pbar_fs_capacity_utilization.setValue(0)
             self.pbar_fs_capacity_utilization.setFormat('')
             self.pbar_fs_capacity_utilization.setEnabled(False)
-
             self.pbutton_fs_expand.setEnabled(False)
-            QtGui.QMessageBox.critical(get_main_window(),
-                                       'Settings | File System',
-                                       'Error getting partition information:\n\n' + result.stderr)
+            return
+
+        try:
+            size_dict = json.loads(result.stdout)
+            p1_start = float(size_dict['p1_start'])
+            p1_size = float(size_dict['p1_size'])
+            card_size = float(size_dict['card_size'])
+        except:
+            p1_start = 0
+            p1_size = 100
+            card_size = 100
+
+        percentage_utilization_v = min(int(math.ceil((p1_size / (card_size - p1_start)) * 100.0)), 100)
+        percentage_utilization = unicode(percentage_utilization_v)
+
+        self.pbar_fs_capacity_utilization.setEnabled(True)
+
+        self.pbar_fs_capacity_utilization.setMinimum(0)
+        self.pbar_fs_capacity_utilization.setMaximum(100)
+
+        self.pbar_fs_capacity_utilization.setValue(percentage_utilization_v)
+
+        if percentage_utilization_v >= 95:
+            self.pbutton_fs_expand.setEnabled(False)
+            self.label_fs_expand_info.hide()
+            self.line.hide()
+        else:
+            self.pbutton_fs_expand.setEnabled(True)
+            self.label_fs_expand_info.show()
+            self.line.show()
+
+        pbar_fs_capacity_utilization_fmt = "Using {0}% of total capacity".format(percentage_utilization)
+
+        if sys.platform == 'darwin':
+            self.label_pbar_fs_capacity_utilization.show()
+            self.label_pbar_fs_capacity_utilization.setText(pbar_fs_capacity_utilization_fmt)
+        else:
+            self.pbar_fs_capacity_utilization.setFormat(pbar_fs_capacity_utilization_fmt)
 
     # The slots
-    def slot_fs_expand_clicked (self):
+    def slot_fs_expand_clicked(self):
         def cb_settings_fs_expand(result):
             def cb_restart_reboot_shutdown(result):
                 self.pbutton_fs_expand.setEnabled(False)
-                if result is not None:
-                    if not result.stderr and result.exit_code == 0:
-                        pass
-                    else:
-                        QtGui.QMessageBox.critical(get_main_window(),
-                                                   'Settings | File System',
-                                                   'Error rebooting RED Brick:\n\n' + result.stderr)
+                report_script_result(result, 'Settings | File System',
+                                     'Error rebooting RED Brick')
 
-            if result and result.stdout and not result.stderr and result.exit_code == 0:
-                self.script_manager.execute_script('restart_reboot_shutdown',
-                                                   cb_restart_reboot_shutdown, ['1'])
-            else:
+            if not report_script_result(result, 'Settings | File System',
+                                        'Error expanding file system'):
                 self.pbutton_fs_expand.setEnabled(True)
+                return
 
-                QtGui.QMessageBox.critical(get_main_window(),
-                                           'Settings | File System',
-                                           'Error expanding file system:\n\n' + result.stderr)
+            self.script_manager.execute_script('restart_reboot_shutdown',
+                                               cb_restart_reboot_shutdown, ['1'])
 
         self.pbutton_fs_expand.setEnabled(False)
         self.script_manager.execute_script('settings_fs_expand',
