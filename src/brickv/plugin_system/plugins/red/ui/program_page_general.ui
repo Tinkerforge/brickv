@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>517</width>
-    <height>611</height>
+    <width>575</width>
+    <height>583</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -184,10 +184,10 @@
        </property>
       </widget>
      </item>
-     <item row="7" column="1">
+     <item row="8" column="1">
       <widget class="QPlainTextEdit" name="text_description"/>
      </item>
-     <item row="7" column="0">
+     <item row="8" column="0">
       <widget class="QLabel" name="label_description">
        <property name="text">
         <string>Description:</string>
@@ -197,6 +197,19 @@
        </property>
        <property name="buddy">
         <cstring>text_description</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="1">
+      <widget class="QLabel" name="label_octave">
+       <property name="styleSheet">
+        <string notr="true">QLabel { color : red }</string>
+       </property>
+       <property name="text">
+        <string>Unfortunately, this image version comes with an Octave version that does not have fully working Java support. Therefore, the Java based Tinkerforge Octave bindings cannot be used and the Octave support for this image version is limited.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

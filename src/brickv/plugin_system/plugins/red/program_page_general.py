@@ -53,6 +53,7 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         self.edit_name.textChanged.connect(self.auto_generate_identifier)
         self.check_auto_generate.stateChanged.connect(self.update_ui_state)
         self.edit_identifier.textChanged.connect(self.check_identifier)
+        self.combo_language.currentIndexChanged.connect(self.update_ui_state)
         self.combo_language.currentIndexChanged.connect(self.check_language)
 
         self.edit_name_checker       = MandatoryLineEditChecker(self, self.label_name, self.edit_name)
@@ -109,6 +110,12 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         self.label_language.setEnabled(not self.edit_mode)
         self.combo_language.setEnabled(not self.edit_mode)
         self.label_language_help.setEnabled(not self.edit_mode)
+
+        # FIXME: image version 1.4 comes with Octave 3.8.2 which has broken Java support
+        if self.wizard().image_version.number >= (1, 4):
+            self.label_octave.setVisible(self.get_field('language') == Constants.LANGUAGE_OCTAVE)
+        else:
+            self.label_octave.setVisible(False)
 
     def auto_generate_identifier(self, name):
         if not self.check_auto_generate.isChecked() or self.edit_mode:
