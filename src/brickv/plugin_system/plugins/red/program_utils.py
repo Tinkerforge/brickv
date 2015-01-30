@@ -1372,37 +1372,6 @@ class ChunkedUploaderBase(object):
         pass
 
 
-def get_key_from_value(dictionary, value):
-    return dictionary.keys()[dictionary.values().index(value)]
-
-
-def set_current_combo_index_from_data(combo, data):
-    i = combo.findData(data)
-
-    if i >= 0:
-        combo.setCurrentIndex(i)
-    else:
-        combo.addItem('<unknown>', data)
-        combo.setCurrentIndex(combo.count() - 1)
-
-
-def timestamp_to_date_at_time(timestamp):
-    date = QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd')
-    time = QDateTime.fromTime_t(timestamp).toString('HH:mm:ss')
-
-    return date + ' at ' + time
-
-
-# FIXME: the values should be rouned up
-def get_file_display_size(size):
-    if size < 1024:
-        return '%d Bytes' % size
-    elif size < 1048576:
-        return '%.1f kiB' % (size / 1024.0)
-    else:
-        return '%.1f MiB' % (size / 1048576.0)
-
-
 class TextFile(object):
     ERROR_KIND_OPEN = 1
     ERROR_KIND_READ = 2
@@ -1442,3 +1411,34 @@ class TextFile(object):
         async_call(REDFile(session).open,
                    (name, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                    cb_open, cb_open_error, report_exception=True)
+
+
+def get_key_from_value(dictionary, value):
+    return dictionary.keys()[dictionary.values().index(value)]
+
+
+def set_current_combo_index_from_data(combo, data):
+    i = combo.findData(data)
+
+    if i >= 0:
+        combo.setCurrentIndex(i)
+    else:
+        combo.addItem('<unknown>', data)
+        combo.setCurrentIndex(combo.count() - 1)
+
+
+def timestamp_to_date_at_time(timestamp):
+    date = QDateTime.fromTime_t(timestamp).toString('yyyy-MM-dd')
+    time = QDateTime.fromTime_t(timestamp).toString('HH:mm:ss')
+
+    return date + ' at ' + time
+
+
+# FIXME: the values should be rouned up
+def get_file_display_size(size):
+    if size < 1024:
+        return '%d Bytes' % size
+    elif size < 1048576:
+        return '%.1f kiB' % (size / 1024.0)
+    else:
+        return '%.1f MiB' % (size / 1048576.0)

@@ -358,11 +358,14 @@ def check_script_result(result, decode_stderr=False):
     else:
         return (True, None)
 
-def report_script_result(result, title, message_header, decode_stderr=False):
+def report_script_result(result, title, message_header, decode_stderr=False, before_message_box=None):
     okay, message = check_script_result(result, decode_stderr)
 
     if okay:
         return True
-    else:
-        QMessageBox.critical(get_main_window(), title, message_header + u':\n\n' + message)
-        return False
+
+    if before_message_box != None:
+        before_message_box()
+
+    QMessageBox.critical(get_main_window(), title, message_header + u':\n\n' + message)
+    return False

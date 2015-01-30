@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>481</width>
+    <width>837</width>
     <height>473</height>
    </rect>
   </property>
@@ -16,22 +16,6 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="1">
-      <widget class="QListWidget" name="list_programs">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="editTriggers">
-        <set>QAbstractItemView::NoEditTriggers</set>
-       </property>
-       <property name="selectionMode">
-        <enum>QAbstractItemView::ExtendedSelection</enum>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
@@ -41,7 +25,7 @@
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
        <property name="buddy">
-        <cstring>list_programs</cstring>
+        <cstring>tree_programs</cstring>
        </property>
       </widget>
      </item>
@@ -79,12 +63,46 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="1">
+      <widget class="QTreeWidget" name="tree_programs">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
+       <property name="rootIsDecorated">
+        <bool>false</bool>
+       </property>
+       <column>
+        <property name="text">
+         <string>Name</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Identifier</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Language</string>
+        </property>
+       </column>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>list_programs</tabstop>
+  <tabstop>tree_programs</tabstop>
   <tabstop>button_refresh_programs</tabstop>
   <tabstop>button_export</tabstop>
  </tabstops>

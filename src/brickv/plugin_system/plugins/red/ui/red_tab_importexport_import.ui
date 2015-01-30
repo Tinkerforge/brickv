@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>497</width>
-    <height>427</height>
+    <width>627</width>
+    <height>406</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,10 +19,10 @@
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Import From:</string>
+        <string>Archive:</string>
        </property>
        <property name="buddy">
-        <cstring>edit_file</cstring>
+        <cstring>edit_archive</cstring>
        </property>
       </widget>
      </item>
@@ -34,34 +34,21 @@
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
-       <property name="buddy">
-        <cstring>list_programs</cstring>
-       </property>
       </widget>
      </item>
      <item row="0" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLineEdit" name="edit_file"/>
+        <widget class="QLineEdit" name="edit_archive"/>
        </item>
        <item>
-        <widget class="QPushButton" name="button_browse_file">
+        <widget class="QPushButton" name="button_browse_archive">
          <property name="text">
           <string>Browse</string>
          </property>
         </widget>
        </item>
       </layout>
-     </item>
-     <item row="1" column="1">
-      <widget class="QListWidget" name="list_programs">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
      </item>
      <item row="3" column="1">
       <widget class="QPushButton" name="button_refresh_programs">
@@ -71,7 +58,7 @@
       </widget>
      </item>
      <item row="5" column="1">
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="button_import">
        <property name="text">
         <string>Import</string>
        </property>
@@ -97,16 +84,55 @@
        </property>
       </widget>
      </item>
+     <item row="1" column="1">
+      <widget class="QTreeWidget" name="tree_programs">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
+       </property>
+       <property name="rootIsDecorated">
+        <bool>false</bool>
+       </property>
+       <column>
+        <property name="text">
+         <string>Name</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Identifier</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Language</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Status</string>
+        </property>
+       </column>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>edit_file</tabstop>
-  <tabstop>button_browse_file</tabstop>
-  <tabstop>list_programs</tabstop>
+  <tabstop>edit_archive</tabstop>
+  <tabstop>button_browse_archive</tabstop>
+  <tabstop>tree_programs</tabstop>
   <tabstop>button_refresh_programs</tabstop>
-  <tabstop>pushButton</tabstop>
+  <tabstop>button_import</tabstop>
  </tabstops>
  <resources/>
  <connections/>

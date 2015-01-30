@@ -22,11 +22,11 @@ try:
     with open(version, 'wb') as f:
         f.write('1')
 
-    with tarfile.open(archive, 'w:gz') as f:
-        f.add(version, 'tfrba-version')
+    with tarfile.open(archive, 'w:gz') as a:
+        a.add(version, 'tfrba-version')
 
         for program in programs:
-            f.add(os.path.join('/', 'home', 'tf', 'programs', program),
+            a.add(os.path.join('/', 'home', 'tf', 'programs', program),
                   os.path.join('programs', program))
 except Exception as e:
     sys.stderr.write(unicode(e).encode('utf-8'))
