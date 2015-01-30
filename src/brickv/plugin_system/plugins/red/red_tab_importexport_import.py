@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 import os
 import posixpath
 import tarfile
+import contextlib
 
 from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QWidget, QTreeWidgetItem, QMessageBox
@@ -142,7 +143,7 @@ class REDTabImportExportImport(QWidget, Ui_REDTabImportExportImport):
             except Exception as e:
                 return [], u'Could not open archive:\n\n{0}'.format(e)
 
-            with a:
+            with contextlib.closing(a):
                 try:
                     v = a.extractfile('tfrba-version')
                 except Exception as e:
