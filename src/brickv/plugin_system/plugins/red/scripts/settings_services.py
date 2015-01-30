@@ -189,6 +189,10 @@ elif command == 'APPLY':
             if os.system('/bin/systemctl disable wicd') != 0:
                 exit(12)
 
+            if os.path.isfile('/etc/xdg/autostart/wicd-tray.desktop'):
+                os.rename('/etc/xdg/autostart/wicd-tray.desktop',
+                          '/etc/xdg/autostart/wicd-tray.desktop.block')
+
         else:
             if os.path.isfile('/etc/tf_ap_enabled'):
                 os.remove('/etc/tf_ap_enabled')
@@ -204,6 +208,10 @@ elif command == 'APPLY':
 
             with open('/etc/network/interfaces', 'w') as fd_interfaces:
                 fd_interfaces.write(INTERFACES_CONF)
+            
+            if os.path.isfile('/etc/xdg/autostart/wicd-tray.desktop.block'):
+                os.rename('/etc/xdg/autostart/wicd-tray.desktop.block',
+                          '/etc/xdg/autostart/wicd-tray.desktop')
 
         exit(0)
 

@@ -197,7 +197,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             self.ledit_ap_wpa_key.setEchoMode(QtGui.QLineEdit.Password)
 
     def slot_pbutton_ap_refresh_clicked(self):
-        def cb_settings_network_apmode_status(result):
+        def cb_settings_ap_status(result):
             self.update_button_text_state(BUTTON_STATE_DEFAULT)
             self.label_working_wait.hide()
             self.pbar_working_wait.hide()
@@ -240,11 +240,11 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
         self.pbar_working_wait.show()
         self.sarea_ap.setEnabled(False)
 
-        self.script_manager.execute_script('settings_network_apmode_status',
-                                           cb_settings_network_apmode_status)
+        self.script_manager.execute_script('settings_ap_status',
+                                           cb_settings_ap_status)
 
     def slot_pbutton_ap_save_clicked(self):
-        def cb_settings_network_apmode_apply(result):
+        def cb_settings_ap_apply(result):
             self.label_working_wait.hide()
             self.pbar_working_wait.hide()
             self.saving = False
@@ -391,8 +391,8 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             self.sarea_ap.setEnabled(False)
             self.update_button_text_state(BUTTON_STATE_SAVE)
 
-            self.script_manager.execute_script('settings_network_apmode_apply',
-                                               cb_settings_network_apmode_apply,
+            self.script_manager.execute_script('settings_ap_apply',
+                                               cb_settings_ap_apply,
                                                [json.dumps(apply_dict)])
         except Exception as e:
             self.label_working_wait.hide()
@@ -415,7 +415,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             if not self.is_tab_on_focus or len(content) == 0:
                 return
 
-            def cb_settings_network_apmode_get_interfaces(result):
+            def cb_settings_ap_get_interfaces(result):
                 if not self.is_tab_on_focus:
                     return
 
@@ -511,8 +511,8 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
                     elif l_split[0].strip(' ') == 'wpa_passphrase':
                         wpa_key = l_split[1]
 
-                self.script_manager.execute_script('settings_network_apmode_get_interfaces',
-                                                   cb_settings_network_apmode_get_interfaces)
+                self.script_manager.execute_script('settings_ap_get_interfaces',
+                                                   cb_settings_ap_get_interfaces)
                 self.ledit_ap_ssid.setText(ssid)
                 self.chkbox_ap_ssid_hidden.setChecked(ssid_hidden != '0')
 
