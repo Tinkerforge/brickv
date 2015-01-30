@@ -72,6 +72,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.upload_successful               = False
         self.language_api_name               = None
         self.program                         = None
+        self.program_defined                 = False
         self.root_directory                  = None
         self.remaining_uploads               = None
         self.upload                          = None
@@ -147,6 +148,12 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if chunked_uploader != None:
             chunked_uploader.canceled = True
 
+        if not self.edit_mode and self.program_defined:
+            try:
+                self.program.purge() # FIXME: async_call
+            except (Error, REDError):
+                pass # FIXME: report this error?
+
     def check_new_name(self, name):
         target = posixpath.split(self.upload.target)[1]
 
@@ -180,7 +187,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         if log:
             self.log(message)
 
-    def upload_warning(self, message, *args, **kwargs):
+    def upload_warning(self, message, *args):
         self.warnings += 1
 
         string_args = []
@@ -193,7 +200,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.log(message, bold=True)
 
-    def upload_error(self, message, *args, **kwargs):
+    def upload_error(self, message, *args):
         string_args = []
 
         for arg in args:
@@ -204,12 +211,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.log(message, bold=True)
 
-        if 'defined' in kwargs:
-            defined = kwargs['defined']
-        else:
-            defined = True
-
-        if not self.edit_mode and defined:
+        if not self.edit_mode and self.program_defined:
             try:
                 self.program.purge() # FIXME: async_call
             except (Error, REDError):
@@ -263,8 +265,10 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
             try:
                 self.program = REDProgram(self.wizard().session).define(identifier) # FIXME: async_call
             except (Error, REDError) as e:
-                self.upload_error('...error: {0}', e, defined=False)
+                self.upload_error('...error: {0}', e)
                 return
+
+            self.program_defined = True
 
             self.log('...done')
 
