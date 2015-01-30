@@ -55,8 +55,6 @@ class ChunkedDownloader(ChunkedDownloaderBase):
         self.page.chunked_downloader = None
 
         self.page.log('...done')
-        self.page.progress_file.setValue(self.page.progress_file.maximum())
-
         self.page.download_next_file()
 
 

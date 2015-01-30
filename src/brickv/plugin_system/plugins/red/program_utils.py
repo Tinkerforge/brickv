@@ -1201,6 +1201,8 @@ class ChunkedDownloaderBase(object):
         if self.canceled:
             return
 
+        self.set_progress_value(self.source_file.length, self.source_display_size + ' of ' + self.source_display_size)
+
         self.download_read_async_cleanup()
         self.done()
 
@@ -1325,6 +1327,8 @@ class ChunkedUploaderBase(object):
     def upload_write_async_done(self):
         if self.canceled:
             return
+
+        self.set_progress_value(self.source_stat.st_size, self.source_display_size + ' of ' + self.source_display_size)
 
         self.upload_write_async_cleanup()
         self.done()

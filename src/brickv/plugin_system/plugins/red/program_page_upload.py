@@ -54,8 +54,6 @@ class ChunkedUploader(ChunkedUploaderBase):
         self.page.chunked_uploader = None
 
         self.page.log('...done')
-        self.page.progress_file.setValue(self.page.progress_file.maximum())
-
         self.page.upload_next_file()
 
 class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
