@@ -160,7 +160,7 @@ class REDTabImportExportExport(QWidget, Ui_REDTabImportExportExport):
     def export_archive(self):
         timestamp   = QDateTime.fromTime_t(int(time.time())).toString('yyyyMMdd-HHmmss')
         target_path = os.path.join(self.last_directory, 'red-brick-export-{0}.tfrba'.format(timestamp))
-        target_path = get_save_file_name(get_main_window(), 'Save Archive', target_path)
+        target_path = get_save_file_name(get_main_window(), 'Save Archive', target_path, '*.tfrba')
 
         if len(target_path) == 0:
             return
