@@ -252,14 +252,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         tab_window = device_info.tab_window
         device_info.tab_window = None
 
-        tab_window.hide()
-        tab_window.setParent(None)
+        # If we reboot the RED Brick, the tab_window sometimes is
+        # already None here
+        if not tab_window is None:
+            tab_window.hide()
+            tab_window.setParent(None)
 
         plugin = device_info.plugin
         device_info.plugin = None
 
-        plugin.hide()
-        plugin.setParent(None)
+        if not plugin is None:
+            plugin.hide()
+            plugin.setParent(None)
 
         infos.infos.pop(uid)
 
