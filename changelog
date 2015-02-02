@@ -141,3 +141,9 @@
        Improve Java class path handling for RED Brick Java programs
        Add missing Java part of RED Brick program upload summary
        Add RED Brick file system settings tab to do file system expansion
+2.2.2: Add service configuration tab to RED Brick plugin
+       Add wireless access point tab to RED Brick plugin
+       Add program import/export and system log export tab to RED Brick plugin
+       Fix make buttons on RED Brick compile dialogs for C/C++ and Delphi/Lazarus
+       Replace all PyQwt usage with custom code
+       Fix maximum page number in NFC/RFID Bricklet plugin
