@@ -69,7 +69,7 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
             if preferred_index is None:
                 if 'ttyACM' in port[0] or \
                    'ttyUSB' in port[0] or \
-                   'RED Brick' in port[0] or \
+                   'RED Brick' in port[1] or \
                    'usbmodem' in port[0]:
                     preferred_index = self.combo_serial_port.count()
 
