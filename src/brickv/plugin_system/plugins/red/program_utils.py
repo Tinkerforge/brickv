@@ -598,6 +598,8 @@ class ExpandingProgressDialog(QProgressDialog):
         QProgressDialog.__init__(self, parent)
 
         self.progress = QProgressBar(self)
+        self.progress.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
+
         self.setBar(self.progress)
 
     def set_progress_text_visible(self, visible):
