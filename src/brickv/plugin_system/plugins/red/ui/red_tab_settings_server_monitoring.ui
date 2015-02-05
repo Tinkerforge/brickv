@@ -14,7 +14,7 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="7" column="0">
+   <item row="8" column="0">
     <widget class="QScrollArea" name="sarea_sm">
      <property name="widgetResizable">
       <bool>true</bool>
@@ -25,7 +25,7 @@
         <x>0</x>
         <y>0</y>
         <width>719</width>
-        <height>496</height>
+        <height>463</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
@@ -78,7 +78,7 @@
      </widget>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="label_working_wait">
      <property name="text">
       <string>Working, please wait...</string>
@@ -114,13 +114,20 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QProgressBar" name="pbar_working_wait">
      <property name="maximum">
       <number>0</number>
      </property>
      <property name="value">
       <number>-1</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QSpinBox" name="spinBox">
+     <property name="frame">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
