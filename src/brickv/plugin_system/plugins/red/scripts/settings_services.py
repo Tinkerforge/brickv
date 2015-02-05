@@ -58,6 +58,123 @@ auto lo
 iface lo inet loopback
 '''
 
+SERVER_MONITORING_MAIN_SCRIPT = '''#!/usr/bin/env python
+# -*- coding: utf8 -*-
+# based on Wiki project:
+# http://www.tinkerunity.org/wiki/index.php/EN/Projects/IT_Infrastructure_Monitoring_-_Nagios_Plugin
+ 
+OK = 0
+WARNING = 1
+CRITICAL = 2
+UNKNOWN = 3
+
+TYPE_PTC = "ptc"
+TYPE_TEMPERATURE = "temp"
+TYPE_HUMIDITY = "humidity"
+ 
+from tinkerforge.ip_connection import IPConnection
+from tinkerforge.bricklet_temperature import Temperature
+from tinkerforge.bricklet_humidity import Humidity
+from tinkerforge.bricklet_ptc import PTC
+import argparse
+import sys
+ 
+class CheckTFValue(object):
+    def __init__(self, host='localhost', port=4223):
+        self.host = host
+        self.port = port
+        self.ipcon = IPConnection()
+
+ 
+    def connect(self, type, uid):
+        self.ipcon.connect(self.host, self.port)
+        self.connected_type = type
+
+        if self.connected_type == TYPE_PTC:
+            ptc = PTC(uid,self.ipcon)
+            self.func = ptc.get_temperature
+            self.divisor = 100.0
+        elif self.connected_type == TYPE_TEMPERATURE:
+            temperature = Temperature(uid,self.ipcon)
+            self.func = temperature.get_temperature
+            self.divisor = 100.0
+        elif self.connected_type == TYPE_HUMIDITY:
+            humidity = Humidity(uid,self.ipcon)
+            self.func = humidity.get_humidity
+            self.divisor = 10.0
+ 
+    def disconnect(self):
+        self.ipcon.disconnect()
+ 
+    def read(self, warning, critical, mode='none', warning2=0, critical2=0):
+        value = self.func()/self.divisor
+
+        if mode == 'none':
+            print "Value %s " % value
+        else:
+        
+            if mode == 'low':
+                warning2 = warning
+                critical2 = critical
+
+            if value >= critical and (mode == 'high' or mode == 'range'):
+                print "CRITICAL : Value too high %s " % value
+                return CRITICAL
+            elif value >= warning and (mode == 'high' or mode == 'range'):
+                print "WARNING : Value is high %s " % value
+                return WARNING
+            elif value <= critical2 and (mode == 'low' or mode == 'range'):
+                print "CRITICAL : Value too low %s " % value
+                return CRITICAL
+            elif value <= warning2 and (mode == 'low' or mode == 'range'):
+                print "WARNING : Value is low %s " % value
+                return WARNING
+            elif (value < warning and mode == 'high') or (value > warning2 and mode == 'low') or (value < warning and value > warning2 and mode == 'range'):
+                print "OK : %s " % value
+                return OK
+            else:
+                print "UNKOWN: Can't read value"
+                return UNKNOWN
+
+if __name__ == "__main__":
+
+    parse = argparse.ArgumentParser()
+    parse.add_argument("-u", "--uid", help="UID of Bricklet", required=True)
+    parse.add_argument("-t", "--type", help="Type: temp = Temperature Bricklet, ptc = PTC Bricklet, humidity= Humidity Bricklet", type=str, choices=[TYPE_TEMPERATURE, TYPE_PTC, TYPE_HUMIDITY], required=True)
+    parse.add_argument("-H", "--host", help="Host Server (default=localhost)", default='localhost')
+    parse.add_argument("-P", "--port", help="Port (default=4223)", type=int, default=4223)
+    parse.add_argument("-m", "--modus", help="Modus: none (default, only print value), high, low or range",type=str, choices=['none', 'high','low','range'], default='none')
+    parse.add_argument("-w", "--warning", help="Warning value level (values above this level will trigger a warning message in high mode, value below this level will trigger a warning message in low mode)", required=False,type=float)
+    parse.add_argument("-c", "--critical", help="Critical value level (value above this level will trigger a critical message in high mode, value below this level will trigger a critical message in low mode)", required=False,type=float)
+    parse.add_argument("-w2", "--warning2", help="Warning value level (value below this level will trigger a warning message in range mode)", type=float)
+    parse.add_argument("-c2", "--critical2", help="Critical value level (value below this level will trigger a critical message in range mode)", type=float)
+ 
+    args = parse.parse_args()
+
+    tf = CheckTFValue(args.host, args.port)
+    tf.connect(args.type, args.uid)
+    exit_code = tf.read(args.warning, args.critical, args.modus, args.warning2, args.critical2)
+    tf.disconnect()
+    sys.exit(exit_code)
+'''
+
+SERVER_MONITORING_NAGIOS_SERVICE = '''define service {
+    use                             generic-service
+    host_name                       localhost
+    service_description             Check Temperature
+    check_command                   check_tf_temp
+    check_interval                  1
+}
+
+define service {
+    use                             generic-service
+    host_name                       localhost
+    service_description             Check Humidity
+    check_command                   check_tf_hum
+    check_interval                  1
+}
+'''
+
 if command == 'CHECK':
     try:
         cmd = '/sbin/chkconfig | awk -F " " \'{print $1 "<==>" $2}\''
@@ -68,11 +185,12 @@ if command == 'CHECK':
 
         init_script_list_str = cmd_ps.communicate()[0].strip()
         init_script_list_list = init_script_list_str.splitlines()
-        return_dict = {'gpu'         : None,
-                       'desktopenv'  : None,
-                       'webserver'   : None,
-                       'splashscreen': None,
-                       'ap'          : None}
+        return_dict = {'gpu'              : None,
+                       'desktopenv'       : None,
+                       'webserver'        : None,
+                       'splashscreen'     : None,
+                       'ap'               : None,
+                       'servermonitoring' : None}
 
         for script in init_script_list_list:
             script_stat = script.split('<==>')
@@ -103,6 +221,11 @@ if command == 'CHECK':
             return_dict['ap'] = True
         else:
             return_dict['ap'] = False
+
+        if os.path.isfile('/etc/tf_server_monitoring_enabled'):
+            return_dict['servermonitoring'] = True
+        else:
+            return_dict['servermonitoring'] = False
 
         sys.stdout.write(json.dumps(return_dict, separators=(',', ':')))
         exit(0)
@@ -213,12 +336,42 @@ elif command == 'APPLY':
                 os.rename('/etc/xdg/autostart/wicd-tray.desktop.block',
                           '/etc/xdg/autostart/wicd-tray.desktop')
 
+        if apply_dict['servermonitoring']:
+            if not apply_dict['webserver']:
+                if os.system('/bin/systemctl enable apache2') != 0:
+                    exit(6)
+
+            with open('/etc/tf_server_monitoring_enabled', 'w') as fd_server_monitoring_enabled:
+                pass
+
+            with open('/usr/local/bin/check_tf_value.py', 'w') as fd_server_monitoring_main_script:
+                fd_server_monitoring_main_script.write(SERVER_MONITORING_MAIN_SCRIPT)
+
+            with open('/etc/nagios3/conf.d/services_tf_nagios2.cfg', 'w') as fd_server_monitoring_nagios_service:
+                fd_server_monitoring_nagios_service.write(SERVER_MONITORING_NAGIOS_SERVICE)
+
+            if os.system('/bin/systemctl enable nagios3') != 0:
+                exit(16)
+
+            if os.system('/bin/systemctl enable postfix') != 0:
+                exit(17)
+
+        else:
+            if os.path.isfile('/etc/tf_server_monitoring_enabled'):
+                os.remove('/etc/tf_server_monitoring_enabled')
+
+            if os.system('/bin/systemctl disable nagios3') != 0:
+                exit(18)
+
+            if os.system('/bin/systemctl disable postfix') != 0:
+                exit(19)
+
         exit(0)
 
     except Exception as e:
         sys.stderr.write(unicode(e).encode('utf-8'))
-        exit(16)
+        exit(20)
 
 else:
     sys.stderr.write(u'Invalid parameters'.encode('utf-8'))
-    exit(17)
+    exit(21)

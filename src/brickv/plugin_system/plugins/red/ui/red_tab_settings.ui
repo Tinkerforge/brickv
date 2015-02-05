@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>570</width>
-    <height>461</height>
+    <width>746</width>
+    <height>570</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,6 +40,11 @@
      <widget class="REDTabSettingsAP" name="tab_ap">
       <attribute name="title">
        <string>Access Point</string>
+      </attribute>
+     </widget>
+     <widget class="REDTabSettingsServerMonitoring" name="tab_server_monitoring">
+      <attribute name="title">
+       <string>Server Monitoring</string>
       </attribute>
      </widget>
      <widget class="REDTabSettingsBrickd" name="tab_brickd">
@@ -101,6 +106,12 @@
    <class>REDTabSettingsAP</class>
    <extends>QWidget</extends>
    <header location="global">brickv.plugin_system.plugins.red.red_tab_settings_ap</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>REDTabSettingsServerMonitoring</class>
+   <extends>QWidget</extends>
+   <header location="global">brickv.plugin_system.plugins.red.red_tab_settings_server_monitoring</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

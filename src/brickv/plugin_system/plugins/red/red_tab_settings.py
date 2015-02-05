@@ -68,15 +68,17 @@ class REDTabSettings(REDTab, Ui_REDTabSettings):
                            services_check_result['desktopenv'] is None or \
                            services_check_result['webserver'] is None or \
                            services_check_result['splashscreen'] is None or \
-                           services_check_result['ap'] is None:
+                           services_check_result['ap'] is None or \
+                           services_check_result['servermonitoring'] is None:
                             self.label_discovering.setText('Error getting current services status.')
                         else:
-                            self.service_state.fetched      = True
-                            self.service_state.gpu          = services_check_result['gpu']
-                            self.service_state.desktopenv   = services_check_result['desktopenv']
-                            self.service_state.webserver    = services_check_result['webserver']
-                            self.service_state.splashscreen = services_check_result['splashscreen']
-                            self.service_state.ap           = services_check_result['ap']
+                            self.service_state.fetched          = True
+                            self.service_state.gpu              = services_check_result['gpu']
+                            self.service_state.desktopenv       = services_check_result['desktopenv']
+                            self.service_state.webserver        = services_check_result['webserver']
+                            self.service_state.splashscreen     = services_check_result['splashscreen']
+                            self.service_state.ap               = services_check_result['ap']
+                            self.service_state.servermonitoring = services_check_result['servermonitoring']
 
                             if self.image_version.number < (1, 4):
                                 self.service_state.desktopenv = self.image_version.flavor == 'full'

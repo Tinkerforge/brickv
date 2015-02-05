@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>456</width>
-    <height>444</height>
+    <width>601</width>
+    <height>481</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>436</width>
-        <height>424</height>
+        <width>581</width>
+        <height>461</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -45,7 +45,7 @@
            </property>
           </widget>
          </item>
-         <item row="7" column="0">
+         <item row="8" column="0">
           <widget class="Line" name="line">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -93,13 +93,20 @@
            </property>
           </widget>
          </item>
-         <item row="8" column="0">
+         <item row="9" column="0">
           <widget class="QPushButton" name="pbutton_services_save">
            <property name="enabled">
             <bool>false</bool>
            </property>
            <property name="text">
             <string>Save</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QCheckBox" name="chkbox_server_monitoring">
+           <property name="text">
+            <string>Server Monitoring (enables Web Server, Nagios and Postfix)</string>
            </property>
           </widget>
          </item>
