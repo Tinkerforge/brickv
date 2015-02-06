@@ -161,33 +161,33 @@ class Ethernet(QWidget, Ui_Ethernet):
         self.ethernet_socket_connections.setValue(7 - value)
 
     def connection_changed(self, index):
-        self.set_ips_visible(index != 0)
+        self.set_ips_enabled(index != 0)
 
-    def set_ips_visible(self, visible):
-        self.ethernet_ip_label.setVisible(visible)
-        self.ethernet_ip1.setVisible(visible)
-        self.ethernet_dot1.setVisible(visible)
-        self.ethernet_ip2.setVisible(visible)
-        self.ethernet_dot2.setVisible(visible)
-        self.ethernet_ip3.setVisible(visible)
-        self.ethernet_dot3.setVisible(visible)
-        self.ethernet_ip4.setVisible(visible)
-        self.ethernet_sub_label.setVisible(visible)
-        self.ethernet_sub1.setVisible(visible)
-        self.ethernet_dot4.setVisible(visible)
-        self.ethernet_sub2.setVisible(visible)
-        self.ethernet_dot5.setVisible(visible)
-        self.ethernet_sub3.setVisible(visible)
-        self.ethernet_dot6.setVisible(visible)
-        self.ethernet_sub4.setVisible(visible)
-        self.ethernet_gw_label.setVisible(visible)
-        self.ethernet_gw1.setVisible(visible)
-        self.ethernet_dot7.setVisible(visible)
-        self.ethernet_gw2.setVisible(visible)
-        self.ethernet_dot8.setVisible(visible)
-        self.ethernet_gw3.setVisible(visible)
-        self.ethernet_dot9.setVisible(visible)
-        self.ethernet_gw4.setVisible(visible)
+    def set_ips_enabled(self, enable):
+        self.ethernet_ip_label.setEnabled(enable)
+        self.ethernet_ip1.setEnabled(enable)
+        self.ethernet_dot1.setEnabled(enable)
+        self.ethernet_ip2.setEnabled(enable)
+        self.ethernet_dot2.setEnabled(enable)
+        self.ethernet_ip3.setEnabled(enable)
+        self.ethernet_dot3.setEnabled(enable)
+        self.ethernet_ip4.setEnabled(enable)
+        self.ethernet_sub_label.setEnabled(enable)
+        self.ethernet_sub1.setEnabled(enable)
+        self.ethernet_dot4.setEnabled(enable)
+        self.ethernet_sub2.setEnabled(enable)
+        self.ethernet_dot5.setEnabled(enable)
+        self.ethernet_sub3.setEnabled(enable)
+        self.ethernet_dot6.setEnabled(enable)
+        self.ethernet_sub4.setEnabled(enable)
+        self.ethernet_gw_label.setEnabled(enable)
+        self.ethernet_gw1.setEnabled(enable)
+        self.ethernet_dot7.setEnabled(enable)
+        self.ethernet_gw2.setEnabled(enable)
+        self.ethernet_dot8.setEnabled(enable)
+        self.ethernet_gw3.setEnabled(enable)
+        self.ethernet_dot9.setEnabled(enable)
+        self.ethernet_gw4.setEnabled(enable)
 
     def get_ethernet_websocket_configuration_async(self, ws_conf):
         self.ethernet_websocket_port.setValue(ws_conf.port)
@@ -197,7 +197,7 @@ class Ethernet(QWidget, Ui_Ethernet):
     def get_ethernet_configuration_async(self, configuration):
         self.last_configuration = configuration
         self.ethernet_connection.setCurrentIndex(configuration.connection)
-        self.set_ips_visible(configuration.connection != 0)
+        self.set_ips_enabled(configuration.connection != 0)
         self.ethernet_port.setValue(configuration.port)
 
     def get_ethernet_status_init_async(self, status):
