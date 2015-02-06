@@ -21,7 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import Qt, QtCore, QtGui
 from brickv.plugin_system.plugins.red.QxtSpanSlider import QxtSpanSlider
 
 class widgetSpinBoxSpanSlider(QtGui.QWidget):

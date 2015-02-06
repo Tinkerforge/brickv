@@ -31,7 +31,7 @@ class QxtSpanSlider(QSlider):
         self.connect(self, SIGNAL("rangeChanged(int, int)"), self.updateRange)
         self.connect(self, SIGNAL("sliderReleased()"), self.movePressedHandle)
         
-        self.setStyle(QStyleFactory.create('Plastique'))
+        #self.setStyle(QStyleFactory.create('Plastique'))
 
         self.lower = 0
         self.upper = 0
