@@ -58,121 +58,176 @@ auto lo
 iface lo inet loopback
 '''
 
-SERVER_MONITORING_MAIN_SCRIPT = '''#!/usr/bin/env python
-# -*- coding: utf8 -*-
-# based on Wiki project:
-# http://www.tinkerunity.org/wiki/index.php/EN/Projects/IT_Infrastructure_Monitoring_-_Nagios_Plugin
+TINKERFORGE_NAGIOS_SERVICE = '''#!/usr/bin/env python
+# -*- coding: utf-8 -*-
  
-OK = 0
-WARNING = 1
-CRITICAL = 2
-UNKNOWN = 3
+#
+# Author: Christopher Dove
+# Website: http://www.dove-online.de
+# Date: 07.05.2013
+#
 
-TYPE_PTC = "ptc"
-TYPE_TEMPERATURE = "temp"
-TYPE_HUMIDITY = "humidity"
- 
+import argparse 
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_temperature import Temperature
 from tinkerforge.bricklet_humidity import Humidity
-from tinkerforge.bricklet_ptc import PTC
-import argparse
-import sys
- 
-class CheckTFValue(object):
-    def __init__(self, host='localhost', port=4223):
+
+OK       = 0
+WARNING  = 1
+CRITICAL = 2
+UNKNOWN  = -1
+
+BRICKLET_TEMPERATURE = 'temperature'
+BRICKLET_HUMIDITY    = 'humidity'
+
+class TinkerforgeNagiosService(object):
+    def __init__(self, host = 'localhost', port = 4223):
         self.host = host
         self.port = port
         self.ipcon = IPConnection()
-
  
-    def connect(self, type, uid):
+    def connect(self):
         self.ipcon.connect(self.host, self.port)
-        self.connected_type = type
-
-        if self.connected_type == TYPE_PTC:
-            ptc = PTC(uid,self.ipcon)
-            self.func = ptc.get_temperature
-            self.divisor = 100.0
-        elif self.connected_type == TYPE_TEMPERATURE:
-            temperature = Temperature(uid,self.ipcon)
-            self.func = temperature.get_temperature
-            self.divisor = 100.0
-        elif self.connected_type == TYPE_HUMIDITY:
-            humidity = Humidity(uid,self.ipcon)
-            self.func = humidity.get_humidity
-            self.divisor = 10.0
  
     def disconnect(self):
         self.ipcon.disconnect()
  
-    def read(self, warning, critical, mode='none', warning2=0, critical2=0):
-        value = self.func()/self.divisor
+    def read(self, bricklet, uid, warning, critical, mode = 'high', warning2 = 0, critical2 = 0):
 
-        if mode == 'none':
-            print "Value %s " % value
-        else:
-        
-            if mode == 'low':
-                warning2 = warning
-                critical2 = critical
+        if bricklet == BRICKLET_TEMPERATURE:
+            bricklet_temperature = Temperature(uid, self.ipcon)
+            reading = bricklet_temperature.get_temperature() / 100.0
 
-            if value >= critical and (mode == 'high' or mode == 'range'):
-                print "CRITICAL : Value too high %s " % value
-                return CRITICAL
-            elif value >= warning and (mode == 'high' or mode == 'range'):
-                print "WARNING : Value is high %s " % value
-                return WARNING
-            elif value <= critical2 and (mode == 'low' or mode == 'range'):
-                print "CRITICAL : Value too low %s " % value
-                return CRITICAL
-            elif value <= warning2 and (mode == 'low' or mode == 'range'):
-                print "WARNING : Value is low %s " % value
-                return WARNING
-            elif (value < warning and mode == 'high') or (value > warning2 and mode == 'low') or (value < warning and value > warning2 and mode == 'range'):
-                print "OK : %s " % value
-                return OK
+        elif bricklet == BRICKLET_HUMIDITY:
+            bricklet_humidity = Humidity(uid, self.ipcon)
+            reading = bricklet_humidity.get_humidity() / 10.0
+
+        if mode == 'high':
+            if reading >= critical:
+                print 'CRITICAL - Reading too high - %s' % reading
+                raise SystemExit, CRITICAL
+            elif reading >= warning:
+                print 'WARNING - Reading is high - %s' % reading
+                raise SystemExit, WARNING
+            elif reading < warning:
+                print 'OK - %s' % reading
+                raise SystemExit, OK
             else:
-                print "UNKOWN: Can't read value"
-                return UNKNOWN
+                print 'UNKOWN - Unknown reading'
+                raise SystemExit, UNKNOWN
 
-if __name__ == "__main__":
+        elif mode == 'low':
+            if reading <= critical:
+                print 'CRITICAL - Reading too low - %s' % reading
+                raise SystemExit, CRITICAL
+            elif reading <= warning:
+                print 'WARNING - Reading is low - %s' % reading
+                raise SystemExit, WARNING
+            elif reading > warning:
+                print 'OK - %s' % reading
+                raise SystemExit, OK
+            else:
+                print 'UNKOWN - Unknown reading'
+                raise SystemExit, UNKNOWN
 
+        elif mode == 'range':
+            if reading >= critical:
+                print 'CRITICAL - Reading too high - %s' % reading
+                raise SystemExit, CRITICAL
+            elif reading >= warning:
+                print 'WARNING - Reading is high - %s' % reading
+                raise SystemExit, WARNING
+            elif reading <= critical2:
+                print 'CRITICAL - Reading too low - %s' % reading
+                raise SystemExit, CRITICAL
+            elif reading <= warning2:
+                print 'WARNING - Reading is low - %s' % reading
+                raise SystemExit, WARNING
+            elif reading > warning2 and reading < warning:
+                print 'OK - %s' % reading
+                raise SystemExit, OK
+            else:
+                print 'UNKOWN - Unknown reading'
+                raise SystemExit, UNKNOWN
+ 
+if __name__ == '__main__':
+    # Create connection and connect to brickd
     parse = argparse.ArgumentParser()
-    parse.add_argument("-u", "--uid", help="UID of Bricklet", required=True)
-    parse.add_argument("-t", "--type", help="Type: temp = Temperature Bricklet, ptc = PTC Bricklet, humidity= Humidity Bricklet", type=str, choices=[TYPE_TEMPERATURE, TYPE_PTC, TYPE_HUMIDITY], required=True)
-    parse.add_argument("-H", "--host", help="Host Server (default=localhost)", default='localhost')
-    parse.add_argument("-P", "--port", help="Port (default=4223)", type=int, default=4223)
-    parse.add_argument("-m", "--modus", help="Modus: none (default, only print value), high, low or range",type=str, choices=['none', 'high','low','range'], default='none')
-    parse.add_argument("-w", "--warning", help="Warning value level (values above this level will trigger a warning message in high mode, value below this level will trigger a warning message in low mode)", required=False,type=float)
-    parse.add_argument("-c", "--critical", help="Critical value level (value above this level will trigger a critical message in high mode, value below this level will trigger a critical message in low mode)", required=False,type=float)
-    parse.add_argument("-w2", "--warning2", help="Warning value level (value below this level will trigger a warning message in range mode)", type=float)
-    parse.add_argument("-c2", "--critical2", help="Critical value level (value below this level will trigger a critical message in range mode)", type=float)
+    
+    parse.add_argument('-H',
+                       '--host',
+                       help = 'Host (default = localhost)',
+                       default = 'localhost')
+    
+    parse.add_argument('-P',
+                       '--port',
+                       help = 'Port (default = 4223)',
+                       type = int,
+                       default = 4223)
+    
+    parse.add_argument('-b',
+                       '--bricklet',
+                       help = 'Type of bricklet',
+                       type = str,
+                       required = True,
+                       choices = ['temperature', 'humidity'])
+
+    parse.add_argument('-u',
+                       '--uid',
+                       help = 'UID of bricklet',
+                       required = True)
+    
+    parse.add_argument('-m',
+                       '--mode',
+                       help = 'Mode: high (default), low or range',
+                       type = str,
+                       choices = ['high', 'low', 'range'],
+                       default = 'high')
+    
+    parse.add_argument('-w',
+                       '--warning',
+                       help = 'Warning temperature level \
+                               (temperatures above this level will trigger a warning \
+                               message in high mode,temperature below this level will \
+                               trigger a warning message in low mode)',
+                       required = True,
+                       type = float)
+    
+    parse.add_argument('-c',
+                       '--critical',
+                       help = 'Critical temperature level \
+                               (temperatures above this level will trigger a critical \
+                               message in high mode, temperature below this level will \
+                               trigger a critical message in low mode)',
+                       required=True,
+                       type = float)
+    
+    parse.add_argument('-w2',
+                       '--warning2',
+                       help = 'Warning temperature level (temperatures \
+                               below this level will trigger a warning message \
+                               in range mode)',
+                       type = float)
+    
+    parse.add_argument('-c2',
+                       '--critical2',
+                       help = 'Critical temperature level (temperatures below \
+                               this level will trigger a critical message in range mode)',
+                       type = float)
  
     args = parse.parse_args()
 
-    tf = CheckTFValue(args.host, args.port)
-    tf.connect(args.type, args.uid)
-    exit_code = tf.read(args.warning, args.critical, args.modus, args.warning2, args.critical2)
-    tf.disconnect()
-    sys.exit(exit_code)
-'''
+    service = TinkerforgeNagiosService(args.host, args.port)
 
-SERVER_MONITORING_NAGIOS_SERVICE = '''define service {
-    use                             generic-service
-    host_name                       localhost
-    service_description             Check Temperature
-    check_command                   check_tf_temp
-    check_interval                  1
-}
+    service.connect()
 
-define service {
-    use                             generic-service
-    host_name                       localhost
-    service_description             Check Humidity
-    check_command                   check_tf_hum
-    check_interval                  1
-}
+    service.read(args.bricklet,
+                 args.uid,
+                 args.warning,
+                 args.critical,
+                 args.mode,
+                 args.warning2,
+                 args.critical2)
 '''
 
 if command == 'CHECK':
@@ -344,16 +399,13 @@ elif command == 'APPLY':
             with open('/etc/tf_server_monitoring_enabled', 'w') as fd_server_monitoring_enabled:
                 pass
 
-            with open('/usr/local/bin/check_tf_value.py', 'w') as fd_server_monitoring_main_script:
-                fd_server_monitoring_main_script.write(SERVER_MONITORING_MAIN_SCRIPT)
-
-            with open('/etc/nagios3/conf.d/services_tf_nagios2.cfg', 'w') as fd_server_monitoring_nagios_service:
-                fd_server_monitoring_nagios_service.write(SERVER_MONITORING_NAGIOS_SERVICE)
-
-            if os.system('/bin/systemctl enable nagios3') != 0:
+            with open('/usr/local/bin/tinkerforge_nagios_service.py', 'w') as fd_tinkerforge_nagios_service:
+                fd_tinkerforge_nagios_service.write(TINKERFORGE_NAGIOS_SERVICE)
+                
+            if os.system('/bin/systemctl enable postfix') != 0:
                 exit(16)
 
-            if os.system('/bin/systemctl enable postfix') != 0:
+            if os.system('/bin/systemctl enable nagios3') != 0:
                 exit(17)
 
         else:
@@ -363,15 +415,12 @@ elif command == 'APPLY':
             if os.system('/bin/systemctl disable nagios3') != 0:
                 exit(18)
 
-            if os.system('/bin/systemctl disable postfix') != 0:
-                exit(19)
-
         exit(0)
 
     except Exception as e:
         sys.stderr.write(unicode(e).encode('utf-8'))
-        exit(20)
+        exit(19)
 
 else:
     sys.stderr.write(u'Invalid parameters'.encode('utf-8'))
-    exit(21)
+    exit(20)
