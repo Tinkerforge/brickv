@@ -123,8 +123,10 @@ server=8.8.8.8
 local=/{2}/127.0.0.1
 domain={2}
 host-record={2},192.168.42.1
-dhcp-range={3},{4},72h
-dhcp-option=option:netmask,{5}
+address=/{2}/{2}/192.168.42.1
+ptr-record={3}.in-addr.arpa,"{2}"
+dhcp-range={4},{5},72h
+dhcp-option=option:netmask,{6}
 dhcp-option=option:router,{1}
 dhcp-option=option:dns-server,{1}
 dhcp-option=option:ip-forward-enable,0
@@ -216,6 +218,7 @@ try:
             fd_dnsmasq_conf.write(DNSMASQ_CONF.format('#Enabled',
                                                       interface_ip,
                                                       domain,
+                                                      '.'.join(interface_ip.split('.')[::-1]),
                                                       dhcp_start,
                                                       dhcp_end,
                                                       dhcp_mask))
@@ -223,6 +226,7 @@ try:
             fd_dnsmasq_conf.write(DNSMASQ_CONF.format('#Disabled',
                                                       interface_ip,
                                                       domain,
+                                                      '.'.join(interface_ip.split('.')[::-1]),
                                                       dhcp_start,
                                                       dhcp_end,
                                                       dhcp_mask))
