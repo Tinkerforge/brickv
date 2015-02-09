@@ -30,20 +30,20 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
        <item row="0" column="0" colspan="2">
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="gbox_sm_rules">
          <property name="title">
           <string>Configure Rules</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0">
-           <widget class="QPushButton" name="pbutton_add_rule">
+           <widget class="QPushButton" name="pbutton_sm_add_rule">
             <property name="text">
              <string>Add</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QPushButton" name="pbutton_remove_all_rules">
+           <widget class="QPushButton" name="pbutton_sm_remove_all_rules">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -53,7 +53,7 @@
            </widget>
           </item>
           <item row="1" column="0" colspan="2">
-           <widget class="QTreeView" name="tview_rules">
+           <widget class="QTreeView" name="tview_sm_rules">
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>
             </property>
@@ -76,14 +76,14 @@
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QPushButton" name="pbutton_refresh">
+        <widget class="QPushButton" name="pbutton_sm_refresh">
          <property name="text">
           <string>Refresh</string>
          </property>
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QPushButton" name="pbutton_save">
+        <widget class="QPushButton" name="pbutton_sm_save">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -93,25 +93,79 @@
         </widget>
        </item>
        <item row="2" column="0" colspan="2">
-        <widget class="QGroupBox" name="groupBox_2">
+        <widget class="QGroupBox" name="gbox_sm_email">
          <property name="title">
           <string>Configure Email</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>To:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Server:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>User Name:</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label">
             <property name="text">
-             <string>E-mail Address:</string>
+             <string>From:</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1" colspan="2">
-           <widget class="QLineEdit" name="lineEdit"/>
+           <widget class="QLineEdit" name="ledit_sm_email_from"/>
           </item>
           <item row="0" column="0" colspan="3">
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="chkbox_sm_email_enable">
             <property name="text">
              <string>Enable E-mail Notifications</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Password:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Port:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="ledit_sm_email_to"/>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="ledit_sm_email_server"/>
+          </item>
+          <item row="4" column="1">
+           <widget class="QSpinBox" name="sbox_sm_email_port"/>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="ledit_sm_email_username"/>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLineEdit" name="ledit_sm_email_password">
+            <property name="echoMode">
+             <enum>QLineEdit::Password</enum>
             </property>
            </widget>
           </item>
@@ -123,7 +177,7 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QLabel" name="label_working_wait">
+    <widget class="QLabel" name="label_sm_working_wait">
      <property name="text">
       <string>Working, please wait...</string>
      </property>
@@ -133,7 +187,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="label_disabled">
+    <widget class="QLabel" name="label_sm_disabled">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -149,7 +203,7 @@
     </widget>
    </item>
    <item row="0" column="0">
-    <widget class="QLabel" name="label_unsupported">
+    <widget class="QLabel" name="label_sm_unsupported">
      <property name="text">
       <string>Server monitoring service requires image Version &gt;= 1.6</string>
      </property>
@@ -159,7 +213,7 @@
     </widget>
    </item>
    <item row="3" column="0">
-    <widget class="QProgressBar" name="pbar_working_wait">
+    <widget class="QProgressBar" name="pbar_sm_working_wait">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>

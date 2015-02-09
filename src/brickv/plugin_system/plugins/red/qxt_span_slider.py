@@ -19,12 +19,12 @@ class QxtSpanSlider(QSlider):
                        "lowerPositionChanged(int)", "upperPositionChanged(int)",
                        "sliderPressed(PyQt_PyObject)")
     __pyqtSlots__ = ("setLowerValue(int)",
-                      "setUpperValue(int)",
-                      "setSpan(int, int)",
-                      "setLowerPosition(int)",
-                      "setUpperPosition(int)",
-                      "setGradientLeftColor(PyQt_PyObject)",
-                      "setGradientRightColor(PyQt_PyObject)")
+                     "setUpperValue(int)",
+                     "setSpan(int, int)",
+                     "setLowerPosition(int)",
+                     "setUpperPosition(int)",
+                     "setGradientLeftColor(PyQt_PyObject)",
+                     "setGradientRightColor(PyQt_PyObject)")
 
     def __init__(self, parent = None):
         QSlider.__init__(self, QtCore.Qt.Horizontal, parent)

@@ -22,7 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4 import Qt, QtCore, QtGui
-from brickv.plugin_system.plugins.red.QxtSpanSlider import QxtSpanSlider
+from brickv.plugin_system.plugins.red.qxt_span_slider import QxtSpanSlider
 
 class widgetSpinBoxSpanSlider(QtGui.QWidget):
     def __init__(self, parent = None):
@@ -45,10 +45,40 @@ class widgetSpinBoxSpanSlider(QtGui.QWidget):
         self.setLayout(self.horizontal_layout)
 
     def slot_sbox_lower_value_changed(self, value):
-        self.span_slider.setLowerValue(value)
+        print 'slot_sbox_lower_value_changed', value
+        
+        value_sbox_upper = self.sbox_upper.value()
+        value_sbox_lower = value
+
+        if value_sbox_upper < value_sbox_lower:
+            self.span_slider.swapControls()
+            self.span_slider.setUpperValue(value_sbox_lower)
+            self.span_slider.setUpperPosition(value_sbox_lower)
+            self.span_slider.setLowerValue(value_sbox_upper)
+            self.span_slider.setLowerPosition(value_sbox_upper)
+            self.sbox_upper.setValue(value_sbox_lower) 
+            self.sbox_lower.setValue(value_sbox_upper) 
+            return
+
+        self.span_slider.setLowerValue(value_sbox_lower)
+        self.span_slider.setLowerPosition(value_sbox_lower)
 
     def slot_sbox_upper_value_changed(self, value):
-        self.span_slider.setUpperValue(value)
+        value_sbox_upper = value
+        value_sbox_lower = self.sbox_lower.value()
+
+        if value_sbox_upper < value_sbox_lower:
+            self.span_slider.swapControls()
+            self.span_slider.setUpperValue(value_sbox_lower)
+            self.span_slider.setUpperPosition(value_sbox_lower)
+            self.span_slider.setLowerValue(value_sbox_upper)
+            self.span_slider.setLowerPosition(value_sbox_upper)
+            self.sbox_upper.setValue(value_sbox_lower) 
+            self.sbox_lower.setValue(value_sbox_upper) 
+            return
+
+        self.span_slider.setUpperValue(value_sbox_upper)
+        self.span_slider.setUpperPosition(value_sbox_upper)
 
     def slot_span_slider_lower_position_changed(self, value):
         self.sbox_lower.setValue(value)

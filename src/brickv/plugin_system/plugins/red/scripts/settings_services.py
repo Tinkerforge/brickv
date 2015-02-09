@@ -402,25 +402,22 @@ elif command == 'APPLY':
             with open('/usr/local/bin/tinkerforge_nagios_service.py', 'w') as fd_tinkerforge_nagios_service:
                 fd_tinkerforge_nagios_service.write(TINKERFORGE_NAGIOS_SERVICE)
                 
-            if os.system('/bin/systemctl enable postfix') != 0:
-                exit(16)
-
             if os.system('/bin/systemctl enable nagios3') != 0:
-                exit(17)
+                exit(16)
 
         else:
             if os.path.isfile('/etc/tf_server_monitoring_enabled'):
                 os.remove('/etc/tf_server_monitoring_enabled')
 
             if os.system('/bin/systemctl disable nagios3') != 0:
-                exit(18)
+                exit(17)
 
         exit(0)
 
     except Exception as e:
         sys.stderr.write(unicode(e).encode('utf-8'))
-        exit(19)
+        exit(18)
 
 else:
     sys.stderr.write(u'Invalid parameters'.encode('utf-8'))
-    exit(20)
+    exit(29)
