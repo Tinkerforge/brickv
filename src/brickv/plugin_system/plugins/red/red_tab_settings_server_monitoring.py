@@ -202,12 +202,14 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.add_new_rule()
 
         elif event == EVENT_CLICKED_REMOVE_ALL:
-            print QtGui.QMessageBox.question(get_main_window(),
-                                             'Settings | Server Monitoring',
-                                             'Are you sure you want to remove all rules?',
-                                             QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
-            
-            
+            reply = QtGui.QMessageBox.question(get_main_window(),
+                                               'Settings | Server Monitoring',
+                                               'Are you sure you want to remove all rules?',
+                                               QtGui.QMessageBox.Yes, QtGui.QMessageBox.No)
+
+            if (reply == QtGui.QMessageBox.Yes):
+                self.model_rules.removeRows(0, self.model_rules.rowCount())
+
             if self.model_rules.rowCount() != 0:
                 self.pbutton_sm_remove_all_rules.setEnabled(True)
             else:
