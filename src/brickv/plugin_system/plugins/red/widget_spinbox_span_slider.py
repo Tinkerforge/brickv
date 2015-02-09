@@ -45,8 +45,6 @@ class widgetSpinBoxSpanSlider(QtGui.QWidget):
         self.setLayout(self.horizontal_layout)
 
     def slot_sbox_lower_value_changed(self, value):
-        print 'slot_sbox_lower_value_changed', value
-        
         value_sbox_upper = self.sbox_upper.value()
         value_sbox_lower = value
 
