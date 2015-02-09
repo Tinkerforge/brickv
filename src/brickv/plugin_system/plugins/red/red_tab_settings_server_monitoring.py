@@ -57,6 +57,9 @@ EVENT_CLICKED_REFRESH    = 3
 EVENT_CLICKED_SAVE       = 4
 EVENT_INPUT_CHANGED      = 5
 
+COLOR_WARNING   = QtGui.QColor(255, 204, 153)
+COLOR_CRITICAL  = QtGui.QColor(255, 0, 0)
+
 DEFAULT_RULE_DICT = {'command'     : '',
                      'command_name': '',
                      'service_name': '',
@@ -167,6 +170,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 sss = widgetSpinBoxSpanSlider()
                 sss.sbox_upper.setValue(30)
                 sss.sbox_lower.setValue(10)
+                sss.span_slider.setColorOutsideRange(COLOR_WARNING)
                 self.tview_sm_rules.setIndexWidget(index, sss)
 
             elif c == COL_INDEX_CRITICAL:
@@ -175,6 +179,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 sss = widgetSpinBoxSpanSlider()
                 sss.sbox_upper.setValue(30)
                 sss.sbox_lower.setValue(10)
+                sss.span_slider.setColorOutsideRange(COLOR_CRITICAL)
                 self.tview_sm_rules.setIndexWidget(index, sss)
 
             elif c == COL_INDEX_EMAIL:

@@ -1,5 +1,5 @@
 from PyQt4.QtCore import pyqtSignature, pyqtProperty, SIGNAL, SLOT, QRect, QPoint
-from PyQt4.QtGui import QWidget, QAbstractSlider, QSlider, QStyle, QGridLayout, QLabel, QDoubleSpinBox, QGridLayout, QStylePainter, QStyleOption, QStyleOptionSlider, QPen, QPalette, QLinearGradient, QStyleFactory
+from PyQt4.QtGui import QColor, QWidget, QAbstractSlider, QSlider, QStyle, QGridLayout, QLabel, QDoubleSpinBox, QGridLayout, QStylePainter, QStyleOption, QStyleOptionSlider, QPen, QPalette, QLinearGradient, QStyleFactory
 import PyQt4.QtCore as QtCore
 
 def clamp(v, lower, upper):
@@ -31,7 +31,7 @@ class QxtSpanSlider(QSlider):
         self.connect(self, SIGNAL("rangeChanged(int, int)"), self.updateRange)
         self.connect(self, SIGNAL("sliderReleased()"), self.movePressedHandle)
         
-        #self.setStyle(QStyleFactory.create('Plastique'))
+        self.setStyle(QStyleFactory.create('Plastique'))
 
         self.lower = 0
         self.upper = 0
@@ -48,6 +48,7 @@ class QxtSpanSlider(QSlider):
         self.blockTracking = False
         self.gradientLeft = self.palette().color(QPalette.Dark).light(110)
         self.gradientRight = self.palette().color(QPalette.Dark).light(110)
+        self.colorOutsideRange = QColor(0, 0, 0)
 
     def lowerValue(self):
         return min(self.lower, self.upper)
@@ -120,11 +121,17 @@ class QxtSpanSlider(QSlider):
     
     def gradientRightColor(self):
         return self.gradientRight
-    
+
     def setGradientRightColor(self, color):
         self.gradientRight = color
         self.update()
-    
+
+    def colorOutsideRange(self):
+        return self.colorOutsideRange
+
+    def setColorOutsideRange(self, color):
+        self.colorOutsideRange = color
+
     def movePressedHandle(self):
         if self.lastPressed == QxtSpanSlider.LowerHandle:
             if self.lowerPos != self.lower:
@@ -298,10 +305,20 @@ class QxtSpanSlider(QSlider):
             self.setupPainter(painter, opt.orientation, groove.left(), groove.center().y(), groove.right(), groove.center().y())
 
         # draw groove
+        pointTopLeftOutsideLeft = QPoint(groove.topLeft().x(), rect.topLeft().y())
+        pointBottomRightOutsideLeft = rect.bottomLeft()
+        pointTopLeftOutsideRight = rect.topLeft()
+        pointBottomRightOutsideRight = QPoint(groove.bottomRight().x(), rect.bottomRight().y())
+        rectOutsideRangeLeft  = QtCore.QRect(pointTopLeftOutsideLeft, pointBottomRightOutsideLeft)
+        rectOutsideRangeRight = QtCore.QRect(pointTopLeftOutsideRight, pointBottomRightOutsideRight)
+
         intersected = QtCore.QRectF(rect.intersected(groove))
         gradient = QLinearGradient(intersected.topLeft(), intersected.topRight())
         gradient.setColorAt(0, self.gradientLeft)
         gradient.setColorAt(1, self.gradientRight)
+
+        painter.fillRect(rectOutsideRangeLeft, self.colorOutsideRange)
+        painter.fillRect(rectOutsideRangeRight, self.colorOutsideRange)
         painter.fillRect(intersected, gradient)
     
     def drawHandle(self, painter, handle):
