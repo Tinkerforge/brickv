@@ -34,18 +34,18 @@
          <item row="2" column="0">
           <widget class="QCheckBox" name="chkbox_gpu">
            <property name="text">
-            <string>Enable GPU</string>
+            <string>GPU</string>
            </property>
           </widget>
          </item>
          <item row="4" column="0">
           <widget class="QCheckBox" name="chkbox_webserver">
            <property name="text">
-            <string>Start Web Server</string>
+            <string>Web Server</string>
            </property>
           </widget>
          </item>
-         <item row="8" column="0">
+         <item row="9" column="0">
           <widget class="Line" name="line">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -55,7 +55,7 @@
          <item row="5" column="0">
           <widget class="QCheckBox" name="chkbox_splashscreen">
            <property name="text">
-            <string>Show Splash Screen</string>
+            <string>Splash Screen</string>
            </property>
           </widget>
          </item>
@@ -82,18 +82,18 @@
          <item row="3" column="0">
           <widget class="QCheckBox" name="chkbox_desktopenv">
            <property name="text">
-            <string>Start Desktop Environment</string>
+            <string>Desktop Environment</string>
            </property>
           </widget>
          </item>
          <item row="6" column="0">
           <widget class="QCheckBox" name="chkbox_ap">
            <property name="text">
-            <string>Access Point Mode</string>
+            <string>Access Point</string>
            </property>
           </widget>
          </item>
-         <item row="9" column="0">
+         <item row="10" column="0">
           <widget class="QPushButton" name="pbutton_services_save">
            <property name="enabled">
             <bool>false</bool>
@@ -107,6 +107,13 @@
           <widget class="QCheckBox" name="chkbox_server_monitoring">
            <property name="text">
             <string>Server Monitoring (enables Web Server, Nagios and Postfix)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QCheckBox" name="chkbox_openhab">
+           <property name="text">
+            <string>openHAB</string>
            </property>
           </widget>
          </item>

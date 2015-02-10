@@ -245,42 +245,26 @@ if command == 'CHECK':
                        'webserver'        : None,
                        'splashscreen'     : None,
                        'ap'               : None,
-                       'servermonitoring' : None}
+                       'servermonitoring' : None,
+                       'openhab'          : None}
 
         for script in init_script_list_list:
             script_stat = script.split('<==>')
             if len(script_stat) == 2:
                 if script_stat[0] == 'apache2':
-                    if script_stat[1] == 'on':
-                        return_dict['webserver'] = True
-                    else:
-                        return_dict['webserver'] = False
+                    return_dict['webserver'] = script_stat[1] == 'on'
+                elif script_stat[0] == 'asplashscreen':
+                    return_dict['splashscreen'] = script_stat[1] == 'on'
+                elif script_stat[0] == 'openhab':
+                    return_dict['openhab'] = script_stat[1] == 'on'
 
-                if script_stat[0] == 'asplashscreen':
-                    if script_stat[1] == 'on':
-                        return_dict['splashscreen'] = True
-                    else:
-                        return_dict['splashscreen'] = False
+        if return_dict['openhab'] == None:
+            return_dict['openhab'] = False # openHAB is not installed at all
 
-        if os.path.isfile('/etc/tf_x11_enabled'):
-            return_dict['desktopenv'] = True
-        else:
-            return_dict['desktopenv'] = False
-
-        if os.path.isfile('/etc/modprobe.d/mali-blacklist.conf'):
-            return_dict['gpu'] = False
-        else:
-            return_dict['gpu'] = True
-
-        if os.path.isfile('/etc/tf_ap_enabled'):
-            return_dict['ap'] = True
-        else:
-            return_dict['ap'] = False
-
-        if os.path.isfile('/etc/tf_server_monitoring_enabled'):
-            return_dict['servermonitoring'] = True
-        else:
-            return_dict['servermonitoring'] = False
+        return_dict['desktopenv'] = os.path.isfile('/etc/tf_x11_enabled')
+        return_dict['gpu'] = not os.path.isfile('/etc/modprobe.d/mali-blacklist.conf')
+        return_dict['ap'] = os.path.isfile('/etc/tf_ap_enabled')
+        return_dict['servermonitoring'] = os.path.isfile('/etc/tf_server_monitoring_enabled')
 
         sys.stdout.write(json.dumps(return_dict, separators=(',', ':')))
         exit(0)
@@ -394,7 +378,7 @@ elif command == 'APPLY':
         if apply_dict['servermonitoring']:
             if not apply_dict['webserver']:
                 if os.system('/bin/systemctl enable apache2') != 0:
-                    exit(6)
+                    exit(16)
 
             with open('/etc/tf_server_monitoring_enabled', 'w') as fd_server_monitoring_enabled:
                 pass
@@ -403,21 +387,28 @@ elif command == 'APPLY':
                 fd_tinkerforge_nagios_service.write(TINKERFORGE_NAGIOS_SERVICE)
                 
             if os.system('/bin/systemctl enable nagios3') != 0:
-                exit(16)
+                exit(17)
 
         else:
             if os.path.isfile('/etc/tf_server_monitoring_enabled'):
                 os.remove('/etc/tf_server_monitoring_enabled')
 
             if os.system('/bin/systemctl disable nagios3') != 0:
-                exit(17)
+                exit(18)
+
+        if apply_dict['openhab']:
+            if os.system('/bin/systemctl enable openhab') != 0:
+                exit(19)
+        else:
+            if os.system('/bin/systemctl disable openhab') != 0:
+                exit(20)
 
         exit(0)
 
     except Exception as e:
         sys.stderr.write(unicode(e).encode('utf-8'))
-        exit(18)
+        exit(21)
 
 else:
     sys.stderr.write(u'Invalid parameters'.encode('utf-8'))
-    exit(29)
+    exit(22)

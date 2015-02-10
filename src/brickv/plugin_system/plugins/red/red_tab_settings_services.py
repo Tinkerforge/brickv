@@ -46,6 +46,7 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         self.chkbox_splashscreen.stateChanged.connect(self.service_config_changed)
         self.chkbox_ap.stateChanged.connect(self.service_config_changed)
         self.chkbox_server_monitoring.stateChanged.connect(self.service_config_changed)
+        self.chkbox_openhab.stateChanged.connect(self.service_config_changed)
         self.pbutton_services_save.clicked.connect(self.slot_pbutton_services_save_clicked)
 
     def tab_on_focus(self):
@@ -55,6 +56,7 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         self.chkbox_splashscreen.setEnabled(True)
         self.chkbox_ap.setEnabled(True)
         self.chkbox_server_monitoring.setEnabled(True)
+        self.chkbox_openhab.setEnabled(True)
         self.pbutton_services_save.setText('Save')
         self.pbutton_services_save.setEnabled(False)
 
@@ -64,28 +66,32 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         self.chkbox_splashscreen.setChecked(self.service_state.splashscreen)
         self.chkbox_ap.setChecked(self.service_state.ap)
         self.chkbox_server_monitoring.setChecked(self.service_state.servermonitoring)
+        self.chkbox_openhab.setChecked(self.service_state.openhab)
+
+        if self.image_version.number < (1, 4):
+            self.chkbox_gpu.setText('GPU (Image Version >= 1.4 required)')
+            self.chkbox_gpu.setEnabled(False)
+
+            self.chkbox_desktopenv.setText('Desktop Environment (Image Version >= 1.4 required)')
+            self.chkbox_desktopenv.setEnabled(False)
+
+            self.chkbox_webserver.setText('Web Server (Image Version >= 1.4 required)')
+            self.chkbox_webserver.setEnabled(False)
+
+            self.chkbox_splashscreen.setText('Splash Screen (Image Version >= 1.4 required)')
+            self.chkbox_splashscreen.setEnabled(False)
+
+            self.chkbox_ap.setText('Access Point (Image Version >= 1.4 required)')
+            self.chkbox_ap.setEnabled(False)
+
+            self.pbutton_services_save.setEnabled(False)
 
         if self.image_version.number < (1, 6):
             self.chkbox_server_monitoring.setText('Server Monitoring (Image Version >= 1.6 required)')
             self.chkbox_server_monitoring.setEnabled(False)
 
-        if self.image_version.number < (1, 4):
-            self.chkbox_gpu.setText('Enable GPU (Image Version >= 1.4 required)')
-            self.chkbox_gpu.setEnabled(False)
-    
-            self.chkbox_desktopenv.setText('Start Desktop Environment (Image Version >= 1.4 required)')
-            self.chkbox_desktopenv.setEnabled(False)
-    
-            self.chkbox_webserver.setText('Start Web Server (Image Version >= 1.4 required)')
-            self.chkbox_webserver.setEnabled(False)
-    
-            self.chkbox_splashscreen.setText('Show Splash Screen (Image Version >= 1.4 required)')
-            self.chkbox_splashscreen.setEnabled(False)
-    
-            self.chkbox_ap.setText('Access Point Mode (Image Version >= 1.4 required)')
-            self.chkbox_ap.setEnabled(False)
-    
-            self.pbutton_services_save.setEnabled(False)
+            self.chkbox_openhab.setText('openHAB (Image Version >= 1.6 required)')
+            self.chkbox_openhab.setEnabled(False)
 
     def tab_off_focus(self):
         pass
@@ -101,6 +107,7 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
             self.chkbox_splashscreen.setEnabled(True)
             self.chkbox_ap.setEnabled(True)
             self.chkbox_server_monitoring.setEnabled(True)
+            self.chkbox_openhab.setEnabled(True)
 
             self.pbutton_services_save.setText('Save')
             self.pbutton_services_save.setEnabled(True)
@@ -129,6 +136,7 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         state['splashscreen']     = self.chkbox_splashscreen.isChecked()
         state['ap']               = self.chkbox_ap.isChecked()
         state['servermonitoring'] = self.chkbox_server_monitoring.isChecked()
+        state['openhab']          = self.chkbox_openhab.isChecked()
 
         self.chkbox_gpu.setEnabled(False)
         self.chkbox_desktopenv.setEnabled(False)
@@ -136,6 +144,7 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         self.chkbox_splashscreen.setEnabled(False)
         self.chkbox_ap.setEnabled(False)
         self.chkbox_server_monitoring.setEnabled(False)
+        self.chkbox_openhab.setEnabled(False)
 
         self.pbutton_services_save.setText('Saving...')
         self.pbutton_services_save.setEnabled(False)
