@@ -108,28 +108,28 @@
            <widget class="QSpinBox" name="sbox_sm_email_port"/>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="label_sm_email_to">
             <property name="text">
              <string>To:</string>
             </property>
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="label_sm_email_server">
             <property name="text">
              <string>Server:</string>
             </property>
            </widget>
           </item>
           <item row="5" column="0">
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="label_sm_email_username">
             <property name="text">
              <string>User Name:</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="label_sm_email_from">
             <property name="text">
              <string>From:</string>
             </property>
@@ -146,14 +146,14 @@
            </widget>
           </item>
           <item row="6" column="0">
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="label_sm_email_password">
             <property name="text">
              <string>Password:</string>
             </property>
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="label_sm_email_port">
             <property name="text">
              <string>Port:</string>
             </property>

@@ -113,6 +113,13 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.pbutton_sm_remove_all_rules.clicked.connect(self.slot_pbutton_sm_remove_all_rules_clicked)
         self.pbutton_sm_refresh.clicked.connect(self.slot_pbutton_sm_refresh_clicked)
         self.pbutton_sm_save.clicked.connect(self.slot_pbutton_sm_save_clicked)
+        self.chkbox_sm_email_enable.stateChanged.connect(self.slot_chkbox_sm_email_enable_state_changed)
+        self.chkbox_sm_email_password_show.stateChanged.connect(self.slot_chkbox_sm_email_password_show_state_changed)
+        
+        self.chkbox_sm_email_enable.setCheckState(QtCore.Qt.Checked)
+        self.chkbox_sm_email_enable.setCheckState(QtCore.Qt.Unchecked)
+        self.chkbox_sm_email_password_show.setCheckState(QtCore.Qt.Checked)
+        self.chkbox_sm_email_password_show.setCheckState(QtCore.Qt.Unchecked)
 
     def tab_on_focus(self):
         self.is_tab_on_focus = True
@@ -188,6 +195,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 cbox = QtGui.QComboBox()
                 cbox.addItem(COLUMN_EMAIL_ITEM_0)
                 cbox.addItem(COLUMN_EMAIL_ITEM_1)
+
+                if self.chkbox_sm_email_enable.isChecked():
+                    cbox.setEnabled(True)
+                else:
+                    cbox.setEnabled(False)
+
                 self.tview_sm_rules.setIndexWidget(index, cbox)
 
             elif c == COL_INDEX_DELETE:
@@ -277,3 +290,51 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         print 'slot_pbutton_sm_save_clicked'
         self.update_gui(EVENT_CLICKED_SAVE)
         self.update_gui_after_save()
+    
+    def slot_chkbox_sm_email_enable_state_changed(self, state):        
+        if state == QtCore.Qt.Checked:
+            for r in range(self.model_rules.rowCount()):
+                item = self.model_rules.item(r, 5)
+                index_item = self.model_rules.indexFromItem(item)
+                widget = self.tview_sm_rules.indexWidget(index_item)
+                widget.setEnabled(True)
+
+            self.label_sm_email_from.show()
+            self.ledit_sm_email_from.show()
+            self.label_sm_email_to.show()
+            self.ledit_sm_email_to.show()
+            self.label_sm_email_server.show()
+            self.ledit_sm_email_server.show()
+            self.label_sm_email_port.show()
+            self.sbox_sm_email_port.show()
+            self.label_sm_email_username.show()
+            self.ledit_sm_email_username.show()
+            self.label_sm_email_password.show()
+            self.ledit_sm_email_password.show()
+            self.chkbox_sm_email_password_show.show()
+        else:
+            for r in range(self.model_rules.rowCount()):
+                item = self.model_rules.item(r, 5)
+                index_item = self.model_rules.indexFromItem(item)
+                widget = self.tview_sm_rules.indexWidget(index_item)
+                widget.setEnabled(False)
+
+            self.label_sm_email_from.hide()
+            self.ledit_sm_email_from.hide()
+            self.label_sm_email_to.hide()
+            self.ledit_sm_email_to.hide()
+            self.label_sm_email_server.hide()
+            self.ledit_sm_email_server.hide()
+            self.label_sm_email_port.hide()
+            self.sbox_sm_email_port.hide()
+            self.label_sm_email_username.hide()
+            self.ledit_sm_email_username.hide()
+            self.label_sm_email_password.hide()
+            self.ledit_sm_email_password.hide()
+            self.chkbox_sm_email_password_show.hide()
+            
+    def slot_chkbox_sm_email_password_show_state_changed(self, state):
+        if state == QtCore.Qt.Checked:
+            self.ledit_sm_email_password.setEchoMode(QtGui.QLineEdit.Normal)
+        else:
+            self.ledit_sm_email_password.setEchoMode(QtGui.QLineEdit.Password)
