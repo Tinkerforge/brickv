@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>719</width>
-        <height>496</height>
+        <width>717</width>
+        <height>502</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
@@ -101,6 +101,13 @@
           <string>Configure Email</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_sm_email_from">
+            <property name="text">
+             <string>From:</string>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="1" colspan="2">
            <widget class="QLineEdit" name="ledit_sm_email_to"/>
           </item>
@@ -125,13 +132,6 @@
            <widget class="QLabel" name="label_sm_email_username">
             <property name="text">
              <string>Username:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_sm_email_from">
-            <property name="text">
-             <string>From:</string>
             </property>
            </widget>
           </item>
@@ -178,6 +178,23 @@
           </item>
           <item row="5" column="1" colspan="2">
            <widget class="QLineEdit" name="ledit_sm_email_username"/>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="label_sm_email_tls">
+            <property name="text">
+             <string>SSL/TLS:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1" colspan="2">
+           <widget class="QCheckBox" name="chkbox_sm_email_tls">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>

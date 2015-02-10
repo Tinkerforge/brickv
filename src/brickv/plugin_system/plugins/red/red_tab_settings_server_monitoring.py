@@ -30,6 +30,8 @@ from brickv.async_call import async_call
 from brickv.utils import get_main_window
 from brickv.plugin_system.plugins.red.widget_spinbox_span_slider import widgetSpinBoxSpanSlider
 
+# Constants
+
 DEFAULT_COL_WIDTH_NAME     = 160
 DEFAULT_COL_WIDTH_BRICKLET = 160
 DEFAULT_COL_WIDTH_UID      = 160
@@ -48,8 +50,11 @@ COL_INDEX_DELETE   = 6
 
 COUNT_COLUMNS_RULES_MODEL  = 7
 
-COLUMN_EMAIL_ITEM_0 = 'Critical'
-COLUMN_EMAIL_ITEM_1 = 'Critical/Warning'
+COLUMN_EMAIL_ITEMS = ['No Notifications', 'Critical', 'Critical/Warning']
+COLUMN_BRICKLET_ITEMS = ['PTC', 'Temperature', 'Humidity']
+
+INITIAL_VALUE_LOWER = 30
+INITIAL_VALUE_UPPER = 70
 
 EVENT_CLICKED_ADD        = 1
 EVENT_CLICKED_REMOVE_ALL = 2
@@ -59,15 +64,6 @@ EVENT_INPUT_CHANGED      = 5
 
 COLOR_WARNING   = QtGui.QColor(255, 255, 0)
 COLOR_CRITICAL  = QtGui.QColor(255, 0, 0)
-
-DEFAULT_RULE_DICT = {'command'     : '',
-                     'command_name': '',
-                     'service_name': '',
-                     'bricklet'    : '',
-                     'uid'         : '',
-                     'warning'     : [],
-                     'critical'    : [],
-                     'email'       : []}
 
 class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonitoring):
     def __init__(self):
@@ -84,8 +80,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         
         self.label_sm_unsupported.hide()
         self.label_sm_disabled.hide()
-        self.label_sm_working_wait.hide()
-        self.pbar_sm_working_wait.hide()
+        self.show_working_wait(False)
         self.sarea_sm.hide()
 
         self.model_rules = QtGui.QStandardItemModel()
@@ -137,6 +132,14 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
     def tab_destroy(self):
         pass
 
+    def show_working_wait(self, show):
+        if show:
+            self.label_sm_working_wait.show()
+            self.pbar_sm_working_wait.show()
+        else:
+            self.label_sm_working_wait.hide()
+            self.pbar_sm_working_wait.hide()
+
     def add_new_rule(self):
         rule = []
         rule.append(QtGui.QStandardItem(''))
@@ -158,12 +161,10 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.tview_sm_rules.setIndexWidget(index, QtGui.QLineEdit())
 
             elif c == COL_INDEX_BRICKLET:
-                print '*** INDEX =', c
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
                 cbox = QtGui.QComboBox(self.tview_sm_rules)
-                cbox.addItems(['PTC', 'Temperature', 'Humidity'])
-                print 'CBOX = ', cbox.count()
+                cbox.addItems(COLUMN_BRICKLET_ITEMS)
                 self.tview_sm_rules.setIndexWidget(index, cbox)
 
             elif c == COL_INDEX_UID:
@@ -174,27 +175,26 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             elif c == COL_INDEX_WARNING:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
-                sss = widgetSpinBoxSpanSlider()
-                sss.sbox_upper.setValue(30)
-                sss.sbox_lower.setValue(10)
-                sss.span_slider.setColorOutsideRange(COLOR_WARNING)
-                self.tview_sm_rules.setIndexWidget(index, sss)
+                widget_spin_span = widgetSpinBoxSpanSlider()
+                widget_spin_span.sbox_upper.setValue(INITIAL_VALUE_UPPER)
+                widget_spin_span.sbox_lower.setValue(INITIAL_VALUE_LOWER)
+                widget_spin_span.span_slider.setColorOutsideRange(COLOR_WARNING)
+                self.tview_sm_rules.setIndexWidget(index, widget_spin_span)
 
             elif c == COL_INDEX_CRITICAL:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
-                sss = widgetSpinBoxSpanSlider()
-                sss.sbox_upper.setValue(30)
-                sss.sbox_lower.setValue(10)
-                sss.span_slider.setColorOutsideRange(COLOR_CRITICAL)
-                self.tview_sm_rules.setIndexWidget(index, sss)
+                widget_spin_span = widgetSpinBoxSpanSlider()
+                widget_spin_span.sbox_upper.setValue(INITIAL_VALUE_UPPER)
+                widget_spin_span.sbox_lower.setValue(INITIAL_VALUE_LOWER)
+                widget_spin_span.span_slider.setColorOutsideRange(COLOR_CRITICAL)
+                self.tview_sm_rules.setIndexWidget(index, widget_spin_span)
 
             elif c == COL_INDEX_EMAIL:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
                 cbox = QtGui.QComboBox()
-                cbox.addItem(COLUMN_EMAIL_ITEM_0)
-                cbox.addItem(COLUMN_EMAIL_ITEM_1)
+                cbox.addItems(COLUMN_EMAIL_ITEMS)
 
                 if self.chkbox_sm_email_enable.isChecked():
                     cbox.setEnabled(True)
@@ -229,10 +229,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.pbutton_sm_remove_all_rules.setEnabled(False)
 
         elif event == EVENT_CLICKED_REFRESH:
+            self.show_working_wait(True)
             self.pbutton_sm_refresh.setText('Refreshing...')
             self.sarea_sm.setEnabled(False)
 
         elif event == EVENT_CLICKED_SAVE:
+            self.show_working_wait(True)
             self.pbutton_sm_save.setText('Saving...')
             self.sarea_sm.setEnabled(False)
 
@@ -245,12 +247,15 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.pbutton_sm_remove_all_rules.setEnabled(False)
 
     def update_gui_after_refresh(self):
-        self.pbutton_sm_refresh.setText('Refresh')
+        self.show_working_wait(False)
         self.sarea_sm.setEnabled(True)
+        self.pbutton_sm_refresh.setText('Refresh')
+        self.update_gui(EVENT_INPUT_CHANGED)
 
     def update_gui_after_save(self, result):
+        self.show_working_wait(False)
+        self.sarea_sm.setEnabled(True)
         self.pbutton_sm_save.setText('Save')
-        self.sarea_sm.setEnabled(False)
 
         if result:
             self.pbutton_sm_save.setEnabled(False)
@@ -258,45 +263,43 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.pbutton_sm_save.setEnabled(True)
 
     def slot_delete_rule_clicked(self):
-        print 'slot_delete_rule_clicked'
         sender = self.sender()
         
         for r in range(self.model_rules.rowCount()):
             for c in range(0, COUNT_COLUMNS_RULES_MODEL):
                 item = self.model_rules.item(r, c)
-                index_item = self.model_rules.indexFromItem(item)
-                if sender == self.tview_sm_rules.indexWidget(index_item):
-                    print 'DELETE ROW: ', r
+                index = self.model_rules.indexFromItem(item)
+                if sender == self.tview_sm_rules.indexWidget(index):
                     self.model_rules.removeRows(r, 1)
                     break
+        
+        if self.model_rules.rowCount() == 0:
+            self.pbutton_sm_remove_all_rules.setEnabled(False)
+        else:
+            self.pbutton_sm_remove_all_rules.setEnabled(True)
 
     def slot_pbutton_sm_add_rule_clicked(self):
-        print 'slot_pbutton_sm_add_rule_clicked'
         self.update_gui(EVENT_CLICKED_ADD)
         self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_pbutton_sm_remove_all_rules_clicked(self):
-        print 'slot_pbutton_sm_remove_all_rules_clicked'
         self.update_gui(EVENT_CLICKED_REMOVE_ALL)
         self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_pbutton_sm_refresh_clicked(self):
-        print 'slot_pbutton_sm_refresh_clicked'
         self.update_gui(EVENT_CLICKED_REFRESH)
-        self.update_gui(EVENT_INPUT_CHANGED)
         self.update_gui_after_refresh()
 
     def slot_pbutton_sm_save_clicked(self):
-        print 'slot_pbutton_sm_save_clicked'
         self.update_gui(EVENT_CLICKED_SAVE)
-        self.update_gui_after_save()
+        self.update_gui_after_save(True)
     
     def slot_chkbox_sm_email_enable_state_changed(self, state):        
         if state == QtCore.Qt.Checked:
             for r in range(self.model_rules.rowCount()):
                 item = self.model_rules.item(r, 5)
-                index_item = self.model_rules.indexFromItem(item)
-                widget = self.tview_sm_rules.indexWidget(index_item)
+                index = self.model_rules.indexFromItem(item)
+                widget = self.tview_sm_rules.indexWidget(index)
                 widget.setEnabled(True)
 
             self.label_sm_email_from.show()
@@ -312,11 +315,13 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.label_sm_email_password.show()
             self.ledit_sm_email_password.show()
             self.chkbox_sm_email_password_show.show()
+            self.label_sm_email_tls.show()
+            self.chkbox_sm_email_tls.show()
         else:
             for r in range(self.model_rules.rowCount()):
                 item = self.model_rules.item(r, 5)
-                index_item = self.model_rules.indexFromItem(item)
-                widget = self.tview_sm_rules.indexWidget(index_item)
+                index = self.model_rules.indexFromItem(item)
+                widget = self.tview_sm_rules.indexWidget(index)
                 widget.setEnabled(False)
 
             self.label_sm_email_from.hide()
@@ -332,6 +337,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.label_sm_email_password.hide()
             self.ledit_sm_email_password.hide()
             self.chkbox_sm_email_password_show.hide()
+            self.label_sm_email_tls.hide()
+            self.chkbox_sm_email_tls.hide()
             
     def slot_chkbox_sm_email_password_show_state_changed(self, state):
         if state == QtCore.Qt.Checked:
