@@ -114,6 +114,10 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
 
             has_selection = len(self.list_programs.selectedItems()) > 0
 
+            if not has_selection and self.list_programs.count() > 0:
+                self.list_programs.item(0).setSelected(True)
+                has_selection = True
+
             if has_selection:
                 row = self.list_programs.row(self.list_programs.selectedItems()[0])
                 self.stacked_container.setCurrentIndex(row + 1)
