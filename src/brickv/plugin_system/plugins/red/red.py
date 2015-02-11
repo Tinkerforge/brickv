@@ -46,7 +46,7 @@ class RED(PluginBase, Ui_RED):
         except Exception as e:
             self.session = None
 
-            label = QLabel('Could not create session. There seems to be a problem with the RED Brick API Daemon:\n\n' + unicode(e))
+            label = QLabel('Could not create session:\n\n{0}'.format(e))
             label.setAlignment(Qt.AlignHCenter)
 
             layout = QVBoxLayout(self)

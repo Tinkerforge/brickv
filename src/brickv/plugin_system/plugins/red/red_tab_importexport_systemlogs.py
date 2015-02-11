@@ -177,7 +177,7 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
             f = open(filename, 'wb')
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save System Log Error',
-                                 u"Could not open {0} for writing:\n\n{1}".format(filename, unicode(e)))
+                                 u'Could not open {0} for writing:\n\n{1}'.format(filename, e))
             return
 
         try:
@@ -185,7 +185,7 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
             f.write(content)
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save System Log Error',
-                                 u"Could not write to {0}:\n\n{1}".format(filename, unicode(e)))
+                                 u'Could not write to {0}:\n\n{1}'.format(filename, e))
 
         f.close()
 

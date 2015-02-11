@@ -699,7 +699,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
             except Exception as e:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Network',
-                                           'Wireless scan failed:\n\n' + unicode(e))
+                                           'Wireless scan failed:\n\n{0}'.format(e))
                 return
 
             self.show_please_wait(WORKING_STATE_SCAN)

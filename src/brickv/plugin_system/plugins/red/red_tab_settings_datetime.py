@@ -98,7 +98,7 @@ class REDTabSettingsDateTime(QtGui.QWidget, Ui_REDTabSettingsDateTime):
             except Exception as e:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Date/Time',
-                                           'Error parsing time from RED Brick:\n\n' + unicode(e))
+                                           'Error parsing time from RED Brick:\n\n{0}'.format(e))
 
             self.time_sync_button.setEnabled(True)
 

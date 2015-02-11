@@ -128,7 +128,7 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
             f = open(filename, 'wb')
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save Log Error',
-                                 u"Could not open {0} for writing:\n\n{1}".format(filename, unicode(e)))
+                                 u'Could not open {0} for writing:\n\n{1}'.format(filename, e))
             return
 
         try:
@@ -136,7 +136,7 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
             f.write(self.content)
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save Log Error',
-                                 u"Could not write to {0}:\n\n{1}".format(filename, unicode(e)))
+                                 u'Could not write to {0}:\n\n{1}'.format(filename, e))
 
         f.close()
 

@@ -298,7 +298,7 @@ class ProgramPageDownload(ProgramPage, Ui_ProgramPageDownload):
                                          .format(self.chunked_downloader.source_display_size,
                                                  timestamp_to_date_at_time(int(self.chunked_downloader.source_file.modification_time))))
 
-            self.label_replace_help.setText(self.replace_help_template.replace('<FILE>', unicode(Qt.escape(self.download.target))))
+            self.label_replace_help.setText(self.replace_help_template.replace('<FILE>', Qt.escape(self.download.target)))
             self.check_rename_new_file.setChecked(self.auto_conflict_resolution == ProgramPageDownload.CONFLICT_RESOLUTION_RENAME)
             self.edit_new_name.setText('') # force a new-name check
             self.edit_new_name.setText(os.path.split(self.download.target)[1])

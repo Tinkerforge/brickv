@@ -489,7 +489,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Start Error',
                                  u'Could not start program [{0}]:\n\n{1}'
-                                 .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))
+                                 .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), e))
 
     # FIXME: either send SIGINT before SIGKILL, or add a dedicated button for SIGINT
     def kill_process(self):
@@ -499,7 +499,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             except (Error, REDError) as e:
                 QMessageBox.critical(get_main_window(), 'Kill Error',
                                      u'Could not kill current process of program [{0}]:\n\n{1}'
-                                     .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))
+                                     .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), e))
 
     def continue_schedule(self):
         try:
@@ -507,7 +507,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Schedule Error',
                                  u'Could not continue schedule of program [{0}]:\n\n{1}'
-                                 .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))
+                                 .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), e))
 
     def send_stdin_pipe_input(self):
         if self.program.last_spawned_process != None and self.program.last_spawned_process.stdin != None:
@@ -516,7 +516,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             except (Error, REDError) as e:
                 QMessageBox.critical(get_main_window(), 'Pipe Input Error',
                                      u'Could not write to stdin of current process of program [{0}]:\n\n{1}'
-                                     .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), unicode(e)))
+                                     .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), e))
             else:
                 self.edit_stdin_pipe_input.setText('')
 

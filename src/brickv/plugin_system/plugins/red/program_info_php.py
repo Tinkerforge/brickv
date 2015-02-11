@@ -80,7 +80,7 @@ class ProgramInfoPHP(ProgramInfo, Ui_ProgramInfoPHP):
         self.label_command.setText(self.program.cast_custom_option_value('php.command', unicode, '<unknown>'))
 
         # url
-        self.label_url.setText(self.url_template.replace('<SERVER>', 'red-brick').replace('<IDENTIFIER>', unicode(self.program.identifier)))
+        self.label_url.setText(self.url_template.replace('<SERVER>', 'red-brick').replace('<IDENTIFIER>', self.program.identifier))
 
         # working directory
         self.label_working_directory.setText(self.program.working_directory)

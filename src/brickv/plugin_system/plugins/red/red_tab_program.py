@@ -252,7 +252,7 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
             program.purge() # FIXME: async_call
         except (Error, REDError) as e:
             QMessageBox.critical(get_main_window(), 'Delete Program Error',
-                                 u'Could not delete program [{0}]:\n\n{1}'.format(name, unicode(e)))
+                                 u'Could not delete program [{0}]:\n\n{1}'.format(name, e))
             return
 
         self.stacked_container.removeWidget(program_info)

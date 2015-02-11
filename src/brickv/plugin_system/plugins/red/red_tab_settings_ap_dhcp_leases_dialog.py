@@ -99,7 +99,7 @@ class REDTabSettingsAPDhcpLeasesDialog(QtGui.QDialog, Ui_REDTabSettingsAPDhcpLea
 
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Access Point',
-                                       'Error {0} dnsmasq leases file:\n\n{1}'.format(kind_text[kind], unicode(error)))
+                                       'Error {0} dnsmasq leases file:\n\n{1}'.format(kind_text[kind], error))
 
         self.pbutton_ap_leases_refresh.setText('Refreshing...')
         self.pbutton_ap_leases_refresh.setEnabled(False)

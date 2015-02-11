@@ -403,7 +403,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Access Point',
-                                       'Error occured while processing input data:\n\n' + unicode(e))
+                                       'Error occured while processing input data:\n\n{0}'.format(e))
 
     def slot_pbutton_ap_show_dhcp_leases_clicked(self):
         leases_dialog = REDTabSettingsAPDhcpLeasesDialog(self, self.session)
@@ -521,7 +521,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             except Exception as e:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
-                                           'Error parsing hostapd.conf file:\n\n' + unicode(e))
+                                           'Error parsing hostapd.conf file:\n\n{0}'.format(e))
 
             self.update_ui_state()
 
@@ -588,7 +588,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
             except Exception as e:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Access Point',
-                                           'Error parsing dnsmasq.conf file:\n\n' + unicode(e))
+                                           'Error parsing dnsmasq.conf file:\n\n{0}'.format(e))
 
             self.update_ui_state()
 
@@ -603,7 +603,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Access Point',
-                                       'Error {0} {1} file:\n\n{2}'.format(kind_text[kind], title, unicode(error)))
+                                       'Error {0} {1} file:\n\n{2}'.format(kind_text[kind], title, error))
 
         TextFile.read_async(self.session, HOSTAPD_CONF_PATH,
                             cb_hostapd_conf_content,
