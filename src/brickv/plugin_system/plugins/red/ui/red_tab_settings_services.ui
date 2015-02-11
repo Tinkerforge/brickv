@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>581</width>
-        <height>461</height>
+        <width>579</width>
+        <height>459</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -106,7 +106,7 @@
          <item row="7" column="0">
           <widget class="QCheckBox" name="chkbox_server_monitoring">
            <property name="text">
-            <string>Server Monitoring (enables Web Server, Nagios and Postfix)</string>
+            <string>Server Monitoring (enables Web Server and Nagios)</string>
            </property>
           </widget>
          </item>
