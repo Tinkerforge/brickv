@@ -167,7 +167,7 @@ class RED(PluginBase, Ui_RED):
 
         self.label_version = label_version
 
-        if self.image_version.string != None:
+        if hasattr(self, 'image_version') and self.image_version.string != None:
             self.label_version.setText(self.image_version.string)
 
         return True
