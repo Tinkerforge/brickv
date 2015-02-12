@@ -106,6 +106,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.button_plugin_save.clicked.connect(self.plugin_save_clicked)
         self.button_plugin_browse.clicked.connect(self.plugin_browse_clicked)
 
+        infos.get_infos_changed_signal().connect(self.update_bricks)
+
         self.update_tool_label.hide()
         self.no_connection_label.hide()
 
@@ -131,6 +133,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.update_button_bricklets.clicked.connect(self.auto_update_bricklets_clicked)
 
         self.update_ui_state()
+        self.update_bricks()
 
     def refresh_latest_version_info(self, progress):
         self.tool_infos = {}
@@ -296,9 +299,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.brick_infos = []
         self.combo_brick.clear()
         items = {}
-        for info in infos.infos.values():
-            if info.type == 'brick':
-                items[info.get_combo_item()] = info
+
+        for info in infos.get_brick_infos():
+            items[info.get_combo_item()] = info
 
         for item in sorted(items.keys()):
             self.brick_infos.append(items[item])
@@ -911,17 +914,16 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
     def auto_update_bricklets_clicked(self):
         def brick_for_bricklet(bricklet):
-            for device_info in infos.infos.values():
-                if device_info.type == 'brick':
-                    if bricklet.position in device_info.bricklets and \
-                       device_info.bricklets[bricklet.position] == bricklet:
-                        return device_info
+            for device_info in infos.get_brick_infos():
+                if bricklet.position in device_info.bricklets and \
+                   device_info.bricklets[bricklet.position] == bricklet:
+                    return device_info
 
         progress = self.create_progress_bar('Auto-Updating Bricklets')
 
         bricks_to_reset = set()
 
-        for device_info in infos.infos.values():
+        for device_info in infos.get_device_infos():
             if device_info.type == 'bricklet':
                 if device_info.protocol_version == 2 and device_info.firmware_version_installed < device_info.firmware_version_latest:
                     plugin = self.download_bricklet_plugin(progress, device_info.url_part, device_info.name, device_info.firmware_version_latest)
@@ -1048,11 +1050,11 @@ class FlashingWindow(QDialog, Ui_Flashing):
             return QBrush(QColor(255, 160, 55)), True
 
         try:
-            infos.infos[infos.UID_BRICKV].firmware_version_latest = self.tool_infos['brickv'].firmware_version_latest
+            infos.get_info(infos.UID_BRICKV).firmware_version_latest = self.tool_infos['brickv'].firmware_version_latest
         except:
-            infos.infos[infos.UID_BRICKV].firmware_version_latest = (0, 0, 0)
+            infos.get_info(infos.UID_BRICKV).firmware_version_latest = (0, 0, 0)
 
-        for device_info in sorted(infos.infos.values(), key=lambda x: x.name):
+        for device_info in infos.get_device_infos():
             if device_info.type == 'brick':
                 try:
                     device_info.firmware_version_latest = self.firmware_infos[device_info.url_part].firmware_version_latest
@@ -1073,7 +1075,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         protocol1_errors = set()
         items = []
 
-        for device_uid, device_info in infos.infos.iteritems():
+        for device_info in infos.get_infos():
             if device_info.type == 'brick':
                 parent = [QStandardItem(device_info.name),
                           QStandardItem(device_info.uid),
@@ -1086,7 +1088,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                 for item in parent:
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                     item.setData(color, Qt.BackgroundRole)
-                parent[0].setData(device_uid, Qt.UserRole)
+                parent[0].setData(device_info.uid, Qt.UserRole)
                 items.append(parent)
 
                 for port in device_info.bricklets:
@@ -1094,7 +1096,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
                         try:
                             protv, fw, name = device_info.plugin.device.get_protocol1_bricklet_name(port)
                         except:
-                            protocol1_errors.add(device_uid)
+                            protocol1_errors.add(device_info.uid)
                             child = [QStandardItem(port.upper() + ': Protocol 1.0 Bricklet with Error'),
                                      QStandardItem(''),
                                      QStandardItem(''),
@@ -1172,9 +1174,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         # filter out false-positive protocol1 errors
         for device_uid in protocol1_errors:
-            if device_uid in infos.infos:
+            if infos.get_info(device_uid) != None:
                 protocol1_error_still_there = True
                 continue
+
             for i in range(len(items)):
                 if items[i][0].data(Qt.UserRole) == device_uid:
                     del items[i]

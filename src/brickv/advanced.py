@@ -47,14 +47,17 @@ class AdvancedWindow(QDialog, Ui_Advanced):
         self.combo_brick.currentIndexChanged.connect(self.brick_changed)
         self.check_enable_calibration.stateChanged.connect(self.enable_calibration_changed)
 
+        infos.get_infos_changed_signal().connect(self.update_bricks)
+
+        self.update_bricks()
+
     def update_bricks(self):
         self.brick_infos = []
         self.combo_brick.clear()
 
-        for info in infos.infos.values():
-            if info.type == 'brick':
-                self.brick_infos.append(info)
-                self.combo_brick.addItem(info.get_combo_item())
+        for info in infos.get_brick_infos():
+            self.brick_infos.append(info)
+            self.combo_brick.addItem(info.get_combo_item())
 
         if self.combo_brick.count() == 0:
             self.combo_brick.addItem(NO_BRICK)

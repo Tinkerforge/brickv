@@ -239,7 +239,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def remove_device_info(self, uid):
         tab_id = self.tab_for_uid(uid)
-        device_info = infos.infos[uid]
+        device_info = infos.get_info(uid)
 
         device_info.plugin.stop_plugin()
         device_info.plugin.destroy_plugin()
@@ -265,7 +265,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             plugin.hide()
             plugin.setParent(None)
 
-        infos.infos.pop(uid)
+        infos.remove_info(uid)
 
     def reset_view(self):
         self.tab_widget.setCurrentIndex(0)
@@ -335,7 +335,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.flashing_window is None:
             self.flashing_window = FlashingWindow(self)
 
-        self.update_flashing_window()
         self.flashing_window.show()
         self.flashing_window.refresh_updates_clicked()
 
@@ -343,7 +342,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.advanced_window is None:
             self.advanced_window = AdvancedWindow(self)
 
-        self.update_advanced_window()
         self.advanced_window.show()
 
     def connect_clicked(self):
@@ -500,7 +498,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def show_plugin(self, uid):
         i = self.tab_for_uid(uid)
-        tab_window = infos.infos[uid].tab_window
+        tab_window = infos.get_info(uid).tab_window
 
         if i > 0 and self.tab_widget.isTabEnabled(i):
             self.tab_widget.setCurrentIndex(i)
@@ -520,52 +518,49 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if enumeration_type in [IPConnection.ENUMERATION_TYPE_AVAILABLE,
                                 IPConnection.ENUMERATION_TYPE_CONNECTED]:
-            if device_identifier == BrickMaster.DEVICE_IDENTIFIER:
-                new_device_info = infos.BrickMasterInfo()
-            elif device_identifier == BrickRED.DEVICE_IDENTIFIER:
-                new_device_info = infos.BrickREDInfo()
-            elif position in ('a', 'b', 'c', 'd', 'A', 'B', 'C', 'D'):
-                position = position.lower()
-                new_device_info = infos.BrickletInfo()
-            else:
-                new_device_info = infos.BrickInfo()
+            device_info = infos.get_info(uid)
 
-            if uid in infos.infos:
-                new_device_info = infos.infos[uid]
-            else:
-                infos.infos[uid] = new_device_info
+            if device_info == None:
+                if device_identifier == BrickMaster.DEVICE_IDENTIFIER:
+                    device_info = infos.BrickMasterInfo()
+                elif device_identifier == BrickRED.DEVICE_IDENTIFIER:
+                    device_info = infos.BrickREDInfo()
+                elif position in ('a', 'b', 'c', 'd', 'A', 'B', 'C', 'D'):
+                    position = position.lower()
+                    device_info = infos.BrickletInfo()
+                else:
+                    device_info = infos.BrickInfo()
 
-            new_device_info.uid = uid
-            new_device_info.connected_uid = connected_uid
-            new_device_info.position = position
-            new_device_info.hardware_version = hardware_version
-            new_device_info.firmware_version_installed = firmware_version
-            new_device_info.device_identifier = device_identifier
-            new_device_info.protocol_version = 2
-            new_device_info.enumeration_type = enumeration_type
+            device_info.uid = uid
+            device_info.connected_uid = connected_uid
+            device_info.position = position
+            device_info.hardware_version = hardware_version
+            device_info.firmware_version_installed = firmware_version
+            device_info.device_identifier = device_identifier
+            device_info.protocol_version = 2
+            device_info.enumeration_type = enumeration_type
 
-            if new_device_info.type == 'bricklet':
+            if device_info.type == 'bricklet':
                 for brick_info in infos.get_brick_infos():
-                    if brick_info.uid == new_device_info.connected_uid:
-                        brick_info.bricklets[position] = new_device_info
-            elif new_device_info.type == 'brick':
+                    if brick_info.uid == device_info.connected_uid:
+                        brick_info.bricklets[position] = device_info
+            elif device_info.type == 'brick':
                 for bricklet_info in infos.get_bricklet_infos():
-                    if bricklet_info.connected_uid == new_device_info.uid:
-                        new_device_info.bricklets[bricklet_info.position] = bricklet_info
+                    if bricklet_info.connected_uid == device_info.uid:
+                        device_info.bricklets[bricklet_info.position] = bricklet_info
 
-            for device_info in infos.get_device_infos():
-                if device_info.uid == new_device_info.uid and device_info.plugin != None:
-                    return
+            if device_info.plugin == None:
+                infos.add_info(device_info)
 
-            plugin = self.plugin_manager.get_plugin(device_identifier, self.ipcon,
-                                                    uid, hardware_version, firmware_version)
+                plugin = self.plugin_manager.get_plugin(device_identifier, self.ipcon,
+                                                        uid, hardware_version, firmware_version)
 
-            new_device_info.plugin = plugin
-            new_device_info.name = plugin.name
-            new_device_info.url_part = plugin.get_url_part()
-            new_device_info.tab_window = self.create_tab_window(new_device_info, connected_uid, position)
-            new_device_info.tab_window.setWindowFlags(Qt.Widget)
-            new_device_info.tab_window.tab()
+                device_info.plugin = plugin
+                device_info.name = plugin.name
+                device_info.url_part = plugin.get_url_part()
+                device_info.tab_window = self.create_tab_window(device_info, connected_uid, position)
+                device_info.tab_window.setWindowFlags(Qt.Widget)
+                device_info.tab_window.tab()
         elif enumeration_type == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
             for device_info in infos.get_device_infos():
                 if device_info.uid == uid:
@@ -712,12 +707,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.spinbox_port.setDisabled(True)
             self.checkbox_authentication.setDisabled(True)
             self.edit_secret.setDisabled(True)
-            self.update_advanced_window(False)
+            self.update_advanced_window()
 
             # restart all pause plugins
-            for info in infos.infos.values():
-                if info.type in ('brick', 'bricklet'):
-                    info.plugin.resume_plugin()
+            for info in infos.get_device_infos():
+                info.plugin.resume_plugin()
         elif connection_state == IPConnection.CONNECTION_STATE_PENDING:
             self.button_connect.setText('Abort Pending Automatic Reconnect')
             self.combo_host.setDisabled(True)
@@ -728,11 +722,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.button_flashing.setDisabled(True)
 
             # pause all running plugins
-            for info in infos.infos.values():
-                if info.type in ('brick', 'bricklet'):
-                    info.plugin.pause_plugin()
+            for info in infos.get_device_infos():
+                info.plugin.pause_plugin()
 
         enable = connection_state == IPConnection.CONNECTION_STATE_CONNECTED
+
         for i in range(1, self.tab_widget.count()):
             self.tab_widget.setTabEnabled(i, enable)
 
@@ -744,44 +738,31 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def update_tree_view(self):
         self.tree_view_model.clear()
 
-        for info in sorted(infos.infos.values(), key=lambda x: x.name):
-            if info.type == 'brick':
-                parent = [QStandardItem(info.name),
-                          QStandardItem(info.uid),
-                          QStandardItem('.'.join(map(str, info.firmware_version_installed)))]
-                for item in parent:
-                    item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+        for info in infos.get_brick_infos():
+            parent = [QStandardItem(info.name),
+                      QStandardItem(info.uid),
+                      QStandardItem('.'.join(map(str, info.firmware_version_installed)))]
 
-                self.tree_view_model.appendRow(parent)
-                for port in sorted(info.bricklets):
-                    if info.bricklets[port] and info.bricklets[port].protocol_version == 2:
-                        child = [QStandardItem(port.upper() + ': ' + info.bricklets[port].name),
-                                 QStandardItem(info.bricklets[port].uid),
-                                 QStandardItem('.'.join(map(str, info.bricklets[port].firmware_version_installed)))]
-                        for item in child:
-                            item.setFlags(item.flags() & ~Qt.ItemIsEditable)
-                        parent[0].appendRow(child)
+            for item in parent:
+                item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+
+            self.tree_view_model.appendRow(parent)
+
+            for port in sorted(info.bricklets):
+                if info.bricklets[port] and info.bricklets[port].protocol_version == 2:
+                    child = [QStandardItem(port.upper() + ': ' + info.bricklets[port].name),
+                             QStandardItem(info.bricklets[port].uid),
+                             QStandardItem('.'.join(map(str, info.bricklets[port].firmware_version_installed)))]
+                    for item in child:
+                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                    parent[0].appendRow(child)
 
         self.set_tree_view_defaults()
-        self.update_flashing_window()
         self.update_advanced_window()
         self.delayed_refresh_updates_timer.start()
 
-    def update_flashing_window(self):
-        if self.flashing_window is not None:
-            self.flashing_window.update_bricks()
-
-    def update_advanced_window(self, update_window=True):
-        has_brick = False
-
-        for info in infos.infos.values():
-            if info.type == 'brick':
-                has_brick = True
-
-        self.button_advanced.setEnabled(has_brick)
-
-        if self.advanced_window is not None and update_window:
-            self.advanced_window.update_bricks()
+    def update_advanced_window(self):
+        self.button_advanced.setEnabled(len(infos.get_brick_infos()) > 0)
 
     def delayed_refresh_updates(self):
         self.delayed_refresh_updates_timer.stop()

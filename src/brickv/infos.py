@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from brickv import config
+from PyQt4.QtGui import QApplication
 
 UID_BRICKV = '$BRICKV'
 UID_BRICKD = '$BRICKD'
@@ -153,17 +154,37 @@ class BrickREDInfo(BrickInfo):
 def get_version_string(version_tuple):
     return '.'.join(map(str, version_tuple))
 
-if not 'infos' in globals():
-    infos = {UID_BRICKV: ToolInfo(), UID_BRICKD: ToolInfo()}
-    infos[UID_BRICKV].name = 'Brick Viewer'
-    infos[UID_BRICKV].firmware_version_installed = tuple(map(int, config.BRICKV_VERSION.split('.')))
-    infos[UID_BRICKD].name = 'Brick Daemon'
+if not '_infos' in globals():
+    _infos = {UID_BRICKV: ToolInfo(), UID_BRICKD: ToolInfo()}
+    _infos[UID_BRICKV].name = 'Brick Viewer'
+    _infos[UID_BRICKV].firmware_version_installed = tuple(map(int, config.BRICKV_VERSION.split('.')))
+    _infos[UID_BRICKD].name = 'Brick Daemon'
+
+def add_info(info):
+    _infos[info.uid] = info
+    get_infos_changed_signal().emit(info.uid, True)
+
+def remove_info(uid):
+    _infos.pop(uid)
+    get_infos_changed_signal().emit(uid, False)
+
+def get_info(uid):
+    try:
+        return _infos[uid]
+    except KeyError:
+        return None
+
+def get_infos():
+    return sorted(_infos.values(), key=lambda x: x.name)
 
 def get_device_infos():
-    return [info for info in infos.values() if info.type == 'brick' or info.type == 'bricklet']
+    return sorted([info for info in _infos.values() if info.type == 'brick' or info.type == 'bricklet'], key=lambda x: x.name)
 
 def get_brick_infos():
-    return [info for info in infos.values() if info.type == 'brick']
+    return sorted([info for info in _infos.values() if info.type == 'brick'], key=lambda x: x.name)
 
 def get_bricklet_infos():
-    return [info for info in infos.values() if info.type == 'bricklet']
+    return sorted([info for info in _infos.values() if info.type == 'bricklet'], key=lambda x: x.name)
+
+def get_infos_changed_signal():
+    return QApplication.instance().infos_changed_signal

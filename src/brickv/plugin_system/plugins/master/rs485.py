@@ -82,7 +82,7 @@ class RS485(QWidget, Ui_RS485):
             typ = 1
 
             # trigger enumerate for rs485 slaves
-            if infos.infos[self.parent.uid].enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED:
+            if infos.get_info(self.parent.uid).enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED:
                 self.parent.ipcon.enumerate()
 
         self.lineedit_slave_addresses.setText(address_slave_text)

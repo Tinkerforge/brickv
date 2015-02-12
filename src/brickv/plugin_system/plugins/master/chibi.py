@@ -106,7 +106,7 @@ class Chibi(QWidget, Ui_Chibi):
             typ = 1
 
             # trigger enumerate for chibi slaves
-            if infos.infos[self.parent.uid].enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED:
+            if infos.get_info(self.parent.uid).enumeration_type == IPConnection.ENUMERATION_TYPE_CONNECTED:
                 self.parent.ipcon.enumerate()
 
         self.lineedit_slave_address.setText(address_slave_text)
