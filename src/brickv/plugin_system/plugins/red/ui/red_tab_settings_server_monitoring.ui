@@ -112,7 +112,17 @@
            <widget class="QLineEdit" name="ledit_sm_email_to"/>
           </item>
           <item row="4" column="1" colspan="2">
-           <widget class="QSpinBox" name="sbox_sm_email_port"/>
+           <widget class="QSpinBox" name="sbox_sm_email_port">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+            <property name="value">
+             <number>25</number>
+            </property>
+           </widget>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_sm_email_to">
