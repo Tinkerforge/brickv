@@ -86,6 +86,7 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
             SystemLog('kern.log', '/var/log/kern.log'),
             SystemLog('daemon.log', '/var/log/daemon.log'),
             SystemLog('Xorg.0.log', '/var/log/Xorg.0.log'),
+            SystemLog('openhab.log', '/var/log/openhab/openhab.log')
         ]
 
         while self.stacked_container.count() > 0:
