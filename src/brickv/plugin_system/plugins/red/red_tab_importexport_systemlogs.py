@@ -31,17 +31,21 @@ import posixpath
 import os
 
 class SystemLog(object):
-    def __init__(self, display_name):
-        self.display_name  = display_name
-        self.source_name   = posixpath.join('/', 'var', 'log', display_name) # FIXME: need to handle rotated logs
-        self.last_filename = os.path.join(get_home_path(), display_name)
-        self.content       = ''
-        self.edit          = QPlainTextEdit()
+    def __init__(self, display_name, source_name):
+        self.display_name   = display_name
+        self.source_name    = source_name # FIXME: need to handle rotated logs
+        self.last_filename  = os.path.join(get_home_path(), display_name)
+        self.content        = ''
+        self.edit           = QPlainTextEdit()
+        self.normal_font    = self.edit.font()
+        self.monospace_font = QFont('monospace')
 
         self.edit.setUndoRedoEnabled(False)
         self.edit.setReadOnly(True)
         self.edit.setWordWrapMode(QTextOption.NoWrap)
         self.edit.setPlainText('Click "Refresh" to download {0}.'.format(display_name))
+
+        self.monospace_font.setStyleHint(QFont.TypeWriter)
 
     def log(self, message, bold=False, pre=False):
         if bold:
@@ -50,6 +54,19 @@ class SystemLog(object):
             self.edit.appendHtml(u'<pre>{0}</pre>'.format(message))
         else:
             self.edit.appendPlainText(message)
+
+    def reset(self):
+        self.content = None
+
+        self.edit.setPlainText('')
+        self.edit.setFont(self.normal_font)
+
+    def set_content(self, content):
+        self.content = content
+
+        self.edit.setPlainText('')
+        self.edit.setFont(self.monospace_font)
+        self.edit.setPlainText(content)
 
 class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
     def __init__(self):
@@ -62,13 +79,13 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
         self.image_version  = None # Set from REDTabImportExport
         self.log_file       = None
         self.logs           = [
-            SystemLog('brickd.log'),
-            SystemLog('redapid.log'),
-            SystemLog('messages'),
-            SystemLog('syslog'),
-            SystemLog('kern.log'),
-            SystemLog('daemon.log'),
-            SystemLog('Xorg.0.log')
+            SystemLog('brickd.log', '/var/log/brickd.log'),
+            SystemLog('redapid.log', '/var/log/redapid.log'),
+            SystemLog('messages', '/var/log/messages'),
+            SystemLog('syslog', '/var/log/syslog'),
+            SystemLog('kern.log', '/var/log/kern.log'),
+            SystemLog('daemon.log', '/var/log/daemon.log'),
+            SystemLog('Xorg.0.log', '/var/log/Xorg.0.log'),
         ]
 
         while self.stacked_container.count() > 0:
@@ -104,12 +121,14 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
 
         log = self.logs[self.combo_log.currentIndex()]
 
+        log.reset()
+
         self.label_download.setVisible(True)
+        self.label_download.setText('Downloading ' + log.source_name)
         self.progress_download.setRange(0, 0)
         self.progress_download.setVisible(True)
         self.button_cancel.setVisible(True)
         self.button_refresh.setEnabled(False)
-        self.label_download.setText('Downloading ' + log.source_name)
 
         def done():
             self.log_file.release()
@@ -140,28 +159,21 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
                     log.log(u'Error: Log file is not UTF-8 encoded', bold=True)
                     return
 
-                log.content = content
-
-                log.edit.setPlainText('')
-
-                font = QFont('monospace')
-                font.setStyleHint(QFont.TypeWriter)
-
-                log.edit.setFont(font)
-                log.edit.setPlainText(content)
+                log.set_content(content)
 
             self.progress_download.setRange(0, self.log_file.length)
             self.log_file.read_async(self.log_file.length, cb_read, cb_read_status)
 
-        def cb_open_error():
+        def cb_open_error(error):
+            log.log(u'Error: {0}'.format(error), bold=True)
+
             done()
-            log.log(u'Error: Could not open log file', bold=True)
 
         self.log_file = REDFile(self.session)
 
         async_call(self.log_file.open,
                    (log.source_name, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
-                   cb_open, cb_open_error)
+                   cb_open, cb_open_error, report_exception=True)
 
     def save_log(self):
         log      = self.logs[self.combo_log.currentIndex()]
