@@ -47,7 +47,7 @@ ITEM_TYPE_FILE      = 1
 ITEM_TYPE_DIRECTORY = 2
 
 
-def expand_directory_walk_to_lists(directory_walk):
+def expand_walk_to_lists(walk):
     files       = []
     directories = set()
 
@@ -61,7 +61,7 @@ def expand_directory_walk_to_lists(directory_walk):
         else:
             files.append(root)
 
-    expand('', directory_walk)
+    expand('', walk)
 
     return sorted(files), sorted(list(directories))
 
@@ -78,7 +78,7 @@ def get_full_item_path(item):
     return expand(item, item.text())
 
 
-def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon):
+def expand_walk_to_model(walk, model, folder_icon, file_icon):
     def create_last_modified_item(last_modified):
         item = QStandardItem(QDateTime.fromTime_t(last_modified).toString('yyyy-MM-dd HH:mm:ss'))
         item.setData(last_modified, USER_ROLE_LAST_MODIFIED)
@@ -127,7 +127,7 @@ def expand_directory_walk_to_model(directory_walk, model, folder_icon, file_icon
 
             return size
 
-    expand(model.invisibleRootItem(), None, directory_walk)
+    expand(model.invisibleRootItem(), None, walk)
 
     return model
 
@@ -198,7 +198,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.update_main_ui_state()
 
     def refresh_files(self):
-        def cb_directory_walk(result):
+        def cb_walk(result):
             okay, message = check_script_result(result, decode_stderr=True)
 
             if not okay:
@@ -211,27 +211,27 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
             def expand_async(data):
                 try:
-                    directory_walk = json.loads(zlib.decompress(buffer(data)).decode('utf-8'))
+                    walk = json.loads(zlib.decompress(buffer(data)).decode('utf-8'))
                 except:
-                    directory_walk = None
+                    walk = None
 
-                if directory_walk == None or not isinstance(directory_walk, dict):
+                if walk == None or not isinstance(walk, dict):
                     available_files       = []
                     available_directories = []
-                    directory_walk        = None
+                    walk                  = None
                 else:
-                    available_files, available_directories = expand_directory_walk_to_lists(directory_walk)
+                    available_files, available_directories = expand_walk_to_lists(walk)
 
-                return directory_walk, available_files, available_directories
+                return walk, available_files, available_directories
 
             def cb_expand_success(result):
-                directory_walk, available_files, available_directories = result
+                walk, available_files, available_directories = result
 
                 self.available_files       = available_files
                 self.available_directories = available_directories
 
-                if directory_walk != None:
-                    expand_directory_walk_to_model(directory_walk, self.tree_files_model, self.folder_icon, self.file_icon)
+                if walk != None:
+                    expand_walk_to_model(walk, self.tree_files_model, self.folder_icon, self.file_icon)
                 else:
                     self.label_error.setText('<b>Error:</b> Received invalid data')
                     self.label_error.setVisible(True)
@@ -257,7 +257,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.tree_files.setColumnWidth(0, width1)
         self.tree_files.setColumnWidth(1, width2)
 
-        self.script_manager.execute_script('directory_walk', cb_directory_walk,
+        self.script_manager.execute_script('walk', cb_walk,
                                            [self.bin_directory], max_length=1024*1024,
                                            decode_output_as_utf8=False)
 
@@ -476,7 +476,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         progress.setLabelText(message)
 
-        def cb_program_delete_files_dirs(script_instance_ref, result):
+        def cb_delete(script_instance_ref, result):
             script_instance = script_instance_ref[0]
 
             if script_instance != None:
@@ -496,7 +496,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
             report_script_result(result, 'Delete Files Error', 'Could not delete selected files/directories:')
 
-        script_instance_ref[0] = self.script_manager.execute_script('program_delete_files_dirs',
-                                                                    lambda result: cb_program_delete_files_dirs(script_instance_ref, result),
+        script_instance_ref[0] = self.script_manager.execute_script('delete',
+                                                                    lambda result: cb_delete(script_instance_ref, result),
                                                                     [json.dumps(files_to_delete), json.dumps(dirs_to_delete)],
                                                                     execute_as_user=True)

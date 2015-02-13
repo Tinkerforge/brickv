@@ -111,7 +111,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.update_main_ui_state()
 
     def refresh_logs(self):
-        def cb_logs_list(result):
+        def cb_program_logs_list(result):
             okay, message = check_script_result(result, decode_stderr=True)
 
             if not okay:
@@ -122,11 +122,11 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
 
             try:
                 # FIXME: do decompress in an async_call
-                logs_list = json.loads(zlib.decompress(buffer(result.stdout)).decode('utf-8'))
+                program_logs_list = json.loads(zlib.decompress(buffer(result.stdout)).decode('utf-8'))
             except:
-                logs_list = None
+                program_logs_list = None
 
-            if logs_list == None or not isinstance(logs_list, dict):
+            if program_logs_list == None or not isinstance(program_logs_list, dict):
                 self.label_error.setText('<b>Error:</b> Received invalid data')
                 self.label_error.setVisible(True)
                 self.refresh_logs_done()
@@ -151,7 +151,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             date_rows      = {}
             time_rows      = {}
 
-            for file_name, file_size in logs_list.iteritems():
+            for file_name, file_size in program_logs_list.iteritems():
                 QApplication.processEvents()
 
                 file_name_parts = file_name.split('_')
@@ -230,7 +230,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.tree_logs_model.setHorizontalHeaderLabels(self.tree_logs_model_header)
         self.tree_logs.setColumnWidth(0, width)
 
-        self.script_manager.execute_script('logs_list', cb_logs_list,
+        self.script_manager.execute_script('program_logs_list', cb_program_logs_list,
                                            [self.log_directory], max_length=1024*1024,
                                            decode_output_as_utf8=False)
 
@@ -381,7 +381,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         if not self.is_alive() or button != QMessageBox.Ok:
             return
 
-        def cb_program_delete_logs(result):
+        def cb_delete(result):
             self.refresh_logs()
             report_script_result(result, 'Delete Logs Error', 'Could not delete selected logs')
 
@@ -401,7 +401,6 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
             file_list.append(f_path)
 
         if len(file_list) > 0:
-            self.script_manager.execute_script('program_delete_logs',
-                                               cb_program_delete_logs,
-                                               [json.dumps(file_list)],
+            self.script_manager.execute_script('delete', cb_delete,
+                                               [json.dumps(file_list), json.dumps([])],
                                                execute_as_user=True)
