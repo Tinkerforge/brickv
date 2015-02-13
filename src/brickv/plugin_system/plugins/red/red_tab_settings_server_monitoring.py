@@ -121,6 +121,9 @@ MESSAGE_ERROR_CHECK_EMAIL_USERNAME_EMPTY   = 'SMTP username empty'
 MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY   = 'SMTP password empty'
 MESSAGE_ERROR_CHECK_NON_ASCII                    = 'Non ASCII character'
 
+NEW     = True
+NOT_NEW = False
+
 class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonitoring):
     def __init__(self):
         QtGui.QWidget.__init__(self)
@@ -321,7 +324,16 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.label_sm_working_wait.hide()
             self.pbar_sm_working_wait.hide()
 
-    def add_new_rule(self):
+    def add_new_rule(self,
+                     new,
+                     name                = None,
+                     bricklet            = None,
+                     uid                 = None,
+                     warning_low         = None,
+                     warning_high        = None,
+                     critical_low        = None,
+                     crtical_high        = None,
+                     email_notifications = None):
         rule = []
         rule.append(QtGui.QStandardItem(''))
         rule.append(QtGui.QStandardItem(''))
@@ -342,7 +354,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 index = self.model_rules.indexFromItem(item)
                 ledit_name = QtGui.QLineEdit()
                 ledit_name.textEdited.connect(self.slot_ledit_edited)
-                ledit_name.setText(EMPTY_SERVICE_NAME)
+
+                if new:
+                    ledit_name.setText(EMPTY_SERVICE_NAME)
+                else:
+                    ledit_name.setText(name)
+
                 ledit_name.selectAll()
                 self.tview_sm_rules.setIndexWidget(index, ledit_name)
 
@@ -352,6 +369,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 index = self.model_rules.indexFromItem(item)
                 cbox = QtGui.QComboBox(self.tview_sm_rules)
                 cbox.addItems(COLUMN_BRICKLET_ITEMS)
+
+                if new:
+                    pass
+                else:
+                    pass
+
                 cbox.activated.connect(self.slot_cbox_bricklet_activated)
                 self.tview_sm_rules.setIndexWidget(index, cbox)
 
@@ -364,6 +387,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 index_bricklet = self.model_rules.indexFromItem(item_bricklet)
                 cbox_bricklet = self.tview_sm_rules.indexWidget(index_bricklet)
                 self.populate_cbox_uids(cbox_bricklet, cbox)
+
+                if new:
+                    pass
+                else:
+                    pass
+
                 cbox.activated.connect(self.slot_cbox_uid_activated)
                 self.tview_sm_rules.setIndexWidget(index, cbox)
 
@@ -375,6 +404,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 widget_spin_span.sbox_upper.setValue(INITIAL_VALUE_UPPER)
                 widget_spin_span.sbox_lower.setValue(INITIAL_VALUE_LOWER)
                 widget_spin_span.span_slider.setColorOutsideRange(COLOR_WARNING)
+
+                if new:
+                    pass
+                else:
+                    pass
+
                 widget_spin_span.sbox_upper.valueChanged.connect(self.slot_sbox_value_changed)
                 widget_spin_span.sbox_lower.valueChanged.connect(self.slot_sbox_value_changed)
                 self.tview_sm_rules.setIndexWidget(index, widget_spin_span)
@@ -387,6 +422,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 widget_spin_span.sbox_upper.setValue(INITIAL_VALUE_UPPER)
                 widget_spin_span.sbox_lower.setValue(INITIAL_VALUE_LOWER)
                 widget_spin_span.span_slider.setColorOutsideRange(COLOR_CRITICAL)
+
+                if new:
+                    pass
+                else:
+                    pass
+
                 widget_spin_span.sbox_upper.valueChanged.connect(self.slot_sbox_value_changed)
                 widget_spin_span.sbox_lower.valueChanged.connect(self.slot_sbox_value_changed)
                 self.tview_sm_rules.setIndexWidget(index, widget_spin_span)
@@ -400,6 +441,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
                 if self.chkbox_sm_email_enable.isChecked():
                     cbox.setEnabled(True)
+
+                    if new:
+                        pass
+                    else:
+                        pass
+
                 else:
                     cbox.setEnabled(False)
 
@@ -416,7 +463,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
     def update_gui(self, event):
         if event == EVENT_CLICKED_ADD:
-            self.add_new_rule()
+            self.add_new_rule(NEW)
 
         elif event == EVENT_CLICKED_REMOVE_ALL:
             reply = QtGui.QMessageBox.question(get_main_window(),
