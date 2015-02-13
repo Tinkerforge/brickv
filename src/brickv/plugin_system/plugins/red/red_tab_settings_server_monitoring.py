@@ -36,40 +36,48 @@ from brickv.bindings.bricklet_humidity import BrickletHumidity
 from brickv.plugin_system.plugins.red.script_manager import report_script_result
 from brickv.plugin_system.plugins.red.widget_spinbox_span_slider import \
      widgetSpinBoxSpanSlider
+import json
 
 # Constants
+DEFAULT_COL_WIDTH_NAME                   = 160
+DEFAULT_COL_WIDTH_BRICKLET               = 160
+DEFAULT_COL_WIDTH_UID                    = 160
+DEFAULT_COL_WIDTH_WARNING                = 350
+DEFAULT_COL_WIDTH_CRITICAL               = 350
+DEFAULT_COL_WIDTH_EMAIL_NOTIFICATIONS    = 160
+DEFAULT_COL_WIDTH_REMOVE                 = 100
 
-DEFAULT_COL_WIDTH_NAME     = 160
-DEFAULT_COL_WIDTH_BRICKLET = 160
-DEFAULT_COL_WIDTH_UID      = 160
-DEFAULT_COL_WIDTH_WARNING  = 350
-DEFAULT_COL_WIDTH_CRITICAL = 350
-DEFAULT_COL_WIDTH_EMAIL    = 160
-DEFAULT_COL_WIDTH_REMOVE   = 100
-
-COL_INDEX_NAME     = 0
-COL_INDEX_BRICKLET = 1
-COL_INDEX_UID      = 2
-COL_INDEX_WARNING  = 3
-COL_INDEX_CRITICAL = 4
-COL_INDEX_EMAIL    = 5
-COL_INDEX_REMOVE   = 6
+COL_INDEX_NAME                   = 0
+COL_INDEX_BRICKLET               = 1
+COL_INDEX_UID                    = 2
+COL_INDEX_WARNING                = 3
+COL_INDEX_CRITICAL               = 4
+COL_INDEX_EMAIL_NOTIFICATIONS    = 5
+COL_INDEX_REMOVE                 = 6
 
 COUNT_COLUMNS_RULES_MODEL = 7
 
-COLUMN_EMAIL_ITEMS    = ['No Notifications',
-                         'Critical',
-                         'Critical/Warning']
+HEADERS_TVIEW = ['Name',
+                 'Bricklet',
+                 'UID',
+                 'Warning',
+                 'Critical',
+                 'Email Notifications',
+                 'Remove']
+
+COLUMN_EMAIL_NOTIFICATIONS_ITEMS    = ['No Notifications',
+                                       'Critical',
+                                       'Critical/Warning']
 COLUMN_BRICKLET_ITEMS = ['PTC',
                          'Temperature',
                          'Humidity']
 
-INDEX_BRICKLET_PTC           = 0
-INDEX_BRICKLET_TEMPERATURE   = 1
-INDEX_BRICKLET_HUMIDITY      = 2
 INDEX_EMAIL_NO_NOTIFICATIONS = 0
 INDEX_EMAIL_CRITICAL         = 1
 INDEX_EMAIL_CRITICAL_WARNING = 2
+INDEX_BRICKLET_PTC           = 0
+INDEX_BRICKLET_TEMPERATURE   = 1
+INDEX_BRICKLET_HUMIDITY      = 2
 
 INITIAL_VALUE_LOWER = 30
 INITIAL_VALUE_UPPER = 70
@@ -96,6 +104,22 @@ CHECK_FAILED_EMAIL_TO_EMPTY         = 7
 CHECK_FAILED_EMAIL_SERVER_EMPTY     = 8
 CHECK_FAILED_EMAIL_USERNAME_EMPTY   = 9
 CHECK_FAILED_EMAIL_PASSWORD_EMPTY   = 10
+CHECK_FAILED_NON_ASCII              = 11
+
+MESSAGEBOX_TITLE                           = 'Settings | Server Monitoring'
+MESSAGE_INFO_SAVE_OK                       = 'Rules saved and applied successfully'
+MESSAGE_INFO_NO_RULES_TO_SAVE              = 'No rules to save'
+MESSAGE_ERROR_SAVE_NOT_OK                  = 'Error occured while saving and applying rules'
+MESSAGE_ERROR_CHECK_SERVICE_NAME_EMPTY     = 'Service name empty'
+MESSAGE_ERROR_CHECK_SERVICE_NAME_DUPLICATE = 'Duplicated service name'
+MESSAGE_ERROR_CHECK_UID_EMPTY              = 'UID empty'
+MESSAGE_ERROR_CHECK_UID_INVALID            = 'Invalid UID'
+MESSAGE_ERROR_CHECK_EMAIL_FROM_EMPTY       = 'Email from address empty'
+MESSAGE_ERROR_CHECK_EMAIL_TO_EMPTY         = 'Email to address empty'
+MESSAGE_ERROR_CHECK_EMAIL_SERVER_EMPTY     = 'SMTP server empty'
+MESSAGE_ERROR_CHECK_EMAIL_USERNAME_EMPTY   = 'SMTP username empty'
+MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY   = 'SMTP password empty'
+MESSAGE_ERROR_CHECK_NON_ASCII                    = 'Non ASCII character'
 
 class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonitoring):
     def __init__(self):
@@ -120,23 +144,14 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.uids_humidity = []
 
         self.model_rules = QtGui.QStandardItemModel()
-
-        headerRow = []
-        headerRow.append('Name')
-        headerRow.append('Bricklet')
-        headerRow.append('UID')
-        headerRow.append('Warning')
-        headerRow.append('Critical')
-        headerRow.append('Email')
-        headerRow.append('Remove')
-        self.model_rules.setHorizontalHeaderLabels(headerRow)
+        self.model_rules.setHorizontalHeaderLabels(HEADERS_TVIEW)
         self.tview_sm_rules.setModel(self.model_rules)
         self.tview_sm_rules.setColumnWidth(0, DEFAULT_COL_WIDTH_NAME)
         self.tview_sm_rules.setColumnWidth(1, DEFAULT_COL_WIDTH_BRICKLET)
         self.tview_sm_rules.setColumnWidth(2, DEFAULT_COL_WIDTH_UID)
         self.tview_sm_rules.setColumnWidth(3, DEFAULT_COL_WIDTH_WARNING)
         self.tview_sm_rules.setColumnWidth(4, DEFAULT_COL_WIDTH_CRITICAL)
-        self.tview_sm_rules.setColumnWidth(5, DEFAULT_COL_WIDTH_EMAIL)
+        self.tview_sm_rules.setColumnWidth(5, DEFAULT_COL_WIDTH_EMAIL_NOTIFICATIONS)
         self.tview_sm_rules.setColumnWidth(6, DEFAULT_COL_WIDTH_REMOVE)
 
         # Connecting signals to slots
@@ -152,6 +167,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.sbox_sm_email_port.valueChanged.connect(self.slot_sbox_value_changed)
         self.ledit_sm_email_username.textEdited.connect(self.slot_ledit_edited)
         self.ledit_sm_email_password.textEdited.connect(self.slot_ledit_edited)
+        self.chkbox_sm_email_password_show.stateChanged.connect(self.slot_chkbox_sm_email_password_show_state_changed)
         infos.get_infos_changed_signal().connect(self.slot_infos_changed)
 
         self.from_constructor = True
@@ -173,6 +189,23 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
     def tab_destroy(self):
         pass
+
+    def cb_settings_server_monitoring_apply(self, result):
+        if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_SAVE_NOT_OK):
+            self.update_gui_after_save(False)
+            return
+
+        QtGui.QMessageBox.information(get_main_window(),
+                                      MESSAGEBOX_TITLE,
+                                      MESSAGE_INFO_SAVE_OK)
+        self.update_gui_after_save(True)
+
+    def is_ascii(self, text):
+        try:
+            text.encode('ascii')
+            return True
+        except:
+            return False
 
     def populate_cbox_uids(self, cbox_bricklet, cbox_uids):
         if cbox_bricklet.currentIndex() == INDEX_BRICKLET_PTC:
@@ -217,9 +250,11 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     ledit_name_text = self.tview_sm_rules.indexWidget(index).text()
 
                     if EMPTY_SERVICE_NAME in ledit_name_text or not ledit_name_text:
-                        return CHECK_FAILED_SERVICE_NAME_EMPTY
+                        return r, c, CHECK_FAILED_SERVICE_NAME_EMPTY
                     elif ledit_name_text in list_service_names:
-                        return CHECK_FAILED_SERVICE_NAME_DUPLICATE
+                        return r, c,  CHECK_FAILED_SERVICE_NAME_DUPLICATE
+                    elif not self.is_ascii(ledit_name_text):
+                        return r, c,  CHECK_FAILED_NON_ASCII
                     else:
                         list_service_names.append(ledit_name_text)
 
@@ -228,14 +263,17 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     item = self.model_rules.item(r, c)
                     index = self.model_rules.indexFromItem(item)
                     uid = self.tview_sm_rules.indexWidget(index).currentText()
+
                     if EMPTY_UID in uid or not uid:
-                        CHECK_FAILED_UID_EMPTY
+                        return r, c, CHECK_FAILED_UID_EMPTY
+                    elif not self.is_ascii(uid):
+                        return r, c, CHECK_FAILED_NON_ASCII
                     else:
                         for c in list(uid):
                             if c not in BASE58:
-                                return CHECK_FAILED_UID_INVALID
-    
-                # Check Email field
+                                return r, c, CHECK_FAILED_UID_INVALID
+
+                # Check Email fields
                 elif self.chkbox_sm_email_enable.isChecked():
                     email_from     = self.ledit_sm_email_from.text()
                     email_to       = self.ledit_sm_email_to.text()
@@ -244,17 +282,36 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     email_password = self.ledit_sm_email_password.text()
 
                     if not email_from:
-                         return CHECK_FAILED_EMAIL_FROM_EMPTY
-                    if not email_to:
-                        return CHECK_FAILED_EMAIL_TO_EMPTY
-                    if not email_server:
-                        return CHECK_FAILED_EMAIL_SERVER_EMPTY
-                    if not email_username:
-                        return CHECK_FAILED_EMAIL_USERNAME_EMPTY
-                    if not email_password:
-                        return CHECK_FAILED_EMAIL_PASSWORD_EMPTY
+                        return None, None, CHECK_FAILED_EMAIL_FROM_EMPTY
 
-        return CHECK_OK
+                    elif not self.is_ascii(email_from):
+                        return None, None,  CHECK_FAILED_NON_ASCII
+
+                    elif not email_to:
+                        return None, None, CHECK_FAILED_EMAIL_TO_EMPTY
+
+                    elif not self.is_ascii(email_to):
+                        return None, None,  CHECK_FAILED_NON_ASCII
+
+                    elif not email_server:
+                        return None, None, CHECK_FAILED_EMAIL_SERVER_EMPTY
+
+                    elif not self.is_ascii(email_server):
+                        return None, None,  CHECK_FAILED_NON_ASCII
+    
+                    elif not email_username:
+                        return None, None, CHECK_FAILED_EMAIL_USERNAME_EMPTY
+
+                    elif not self.is_ascii(email_username):
+                        return None, None,  CHECK_FAILED_NON_ASCII
+
+                    elif not email_password:
+                        return None, None, CHECK_FAILED_EMAIL_PASSWORD_EMPTY
+
+                    elif not self.is_ascii(email_password):
+                        return None, None,  CHECK_FAILED_NON_ASCII
+
+        return None, None, CHECK_OK
 
     def show_working_wait(self, show):
         if show:
@@ -335,11 +392,11 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.tview_sm_rules.setIndexWidget(index, widget_spin_span)
 
             # Add Email field widget
-            elif c == COL_INDEX_EMAIL:
+            elif c == COL_INDEX_EMAIL_NOTIFICATIONS:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
                 cbox = QtGui.QComboBox()
-                cbox.addItems(COLUMN_EMAIL_ITEMS)
+                cbox.addItems(COLUMN_EMAIL_NOTIFICATIONS_ITEMS)
 
                 if self.chkbox_sm_email_enable.isChecked():
                     cbox.setEnabled(True)
@@ -438,48 +495,192 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.update_gui_after_refresh(True)
 
     def slot_pbutton_sm_save_clicked(self):
-        check_result = self.check_rules()
-
         if self.model_rules.rowCount() > 0:
+            rule_number, field_number, check_result = self.check_rules()
+            rule = 'Rule-' + str(rule_number) + ', Field-' + str(field_number) + ': '
+
             if check_result == CHECK_FAILED_SERVICE_NAME_EMPTY:
-                QtGui.QMessageBox.critical(get_main_window(), '', '')
-                self.update_gui_after_save(False)
-                return
-            elif check_result == CHECK_FAILED_SERVICE_NAME_DUPLICATE:
-                QtGui.QMessageBox.critical(get_main_window(), '', '')
-                self.update_gui_after_save(False)
-                return
-            elif check_result == CHECK_FAILED_UID_EMPTY:
-                QtGui.QMessageBox.critical(get_main_window(), '', '')
-                self.update_gui_after_save(False)
-                return
-            elif check_result == CHECK_FAILED_UID_INVALID:
-                QtGui.QMessageBox.critical(get_main_window(), '', '')
-                self.update_gui_after_save(False)
-                return
-            elif check_result == CHECK_FAILED_EMAIL_FROM_EMPTY:
-                QtGui.QMessageBox.critical(get_main_window(), '', '')
-                self.update_gui_after_save(False)
-                return
-            elif check_result == CHECK_FAILED_EMAIL_TO_EMPTY:
-                QtGui.QMessageBox.critical(get_main_window(), '', '')
-                self.update_gui_after_save(False)
-                return
-            elif check_result == CHECK_FAILED_EMAIL_SERVER_EMPTY:
-                QtGui.QMessageBox.critical(get_main_window(), '', '')
-                self.update_gui_after_save(False)
-                return
-            elif check_result == CHECK_FAILED_EMAIL_USERNAME_EMPTY:
-                QtGui.QMessageBox.critical(get_main_window(), '', '')
-                self.update_gui_after_save(False)
-                return
-            elif check_result == CHECK_FAILED_EMAIL_PASSWORD_EMPTY:
-                QtGui.QMessageBox.critical(get_main_window(), '', '')
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           rule + MESSAGE_ERROR_CHECK_SERVICE_NAME_EMPTY)
                 self.update_gui_after_save(False)
                 return
 
-        self.update_gui(EVENT_CLICKED_SAVE)
-        self.update_gui_after_save(True)
+            elif check_result == CHECK_FAILED_SERVICE_NAME_DUPLICATE:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           rule + MESSAGE_ERROR_CHECK_SERVICE_NAME_DUPLICATE)
+                self.update_gui_after_save(False)
+                return
+
+            elif check_result == CHECK_FAILED_UID_EMPTY:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           rule + MESSAGE_ERROR_CHECK_UID_EMPTY)
+                self.update_gui_after_save(False)
+                return
+
+            elif check_result == CHECK_FAILED_UID_INVALID:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           rule + MESSAGE_ERROR_CHECK_UID_INVALID)
+                self.update_gui_after_save(False)
+                return
+
+            elif check_result == CHECK_FAILED_EMAIL_FROM_EMPTY:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           MESSAGE_ERROR_CHECK_EMAIL_FROM_EMPTY)
+                self.update_gui_after_save(False)
+                return
+
+            elif check_result == CHECK_FAILED_EMAIL_TO_EMPTY:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           MESSAGE_ERROR_CHECK_EMAIL_TO_EMPTY)
+                self.update_gui_after_save(False)
+                return
+
+            elif check_result == CHECK_FAILED_EMAIL_SERVER_EMPTY:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           MESSAGE_ERROR_CHECK_EMAIL_SERVER_EMPTY)
+                self.update_gui_after_save(False)
+                return
+
+            elif check_result == CHECK_FAILED_EMAIL_USERNAME_EMPTY:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           MESSAGE_ERROR_CHECK_EMAIL_USERNAME_EMPTY)
+                self.update_gui_after_save(False)
+                return
+
+            elif check_result == CHECK_FAILED_EMAIL_PASSWORD_EMPTY:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY)
+                self.update_gui_after_save(False)
+                return
+
+            elif check_result == CHECK_FAILED_NON_ASCII:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           MESSAGE_ERROR_CHECK_NON_ASCII)
+                self.update_gui_after_save(False)
+                return
+
+            self.update_gui(EVENT_CLICKED_SAVE)
+            # Generate data structure here
+            apply_dict = {}
+
+            apply_dict['rules'] = []
+
+            for r in range(self.model_rules.rowCount()):
+                widget_name                = None
+                widget_bricklet            = None
+                widget_uid                 = None
+                widget_warning             = None
+                widget_critical            = None
+                widget_email_notifications = None
+
+                for c in range(0, COUNT_COLUMNS_RULES_MODEL):
+                    item = self.model_rules.item(r, c)
+                    index = self.model_rules.indexFromItem(item)
+
+                    if c == COL_INDEX_NAME:
+                        widget_name = self.tview_sm_rules.indexWidget(index)
+
+                    elif c == COL_INDEX_BRICKLET:
+                        widget_bricklet = self.tview_sm_rules.indexWidget(index)
+
+                    elif c == COL_INDEX_UID:
+                        widget_uid = self.tview_sm_rules.indexWidget(index)
+
+                    elif c == COL_INDEX_WARNING:
+                        widget_warning = self.tview_sm_rules.indexWidget(index)
+
+                    elif c == COL_INDEX_CRITICAL:
+                        widget_critical = self.tview_sm_rules.indexWidget(index)
+
+                    elif c == COL_INDEX_EMAIL_NOTIFICATIONS:
+                        widget_email_notifications = self.tview_sm_rules.indexWidget(index)
+
+                command_line = '''/usr/local/bin/tinkerforge_nagios_service.py \
+-b {0} \
+-u {1} \
+-m range \
+-w {2} \
+-c {3} \
+-w2 {4} \
+-c2 {5}'''.format(widget_bricklet.currentText().lower(),
+                  widget_uid.currentText(),
+                  str(widget_warning.sbox_upper.value()),
+                  str(widget_critical.sbox_upper.value()),
+                  str(widget_warning.sbox_lower.value()),
+                  str(widget_critical.sbox_lower.value()))
+
+                if widget_email_notifications.currentIndex() == INDEX_EMAIL_NO_NOTIFICATIONS or \
+                   not widget_email_notifications.isEnabled():
+                        notification_options  = 'c'
+                        notifications_enabled = '0'
+                        contacts              = 'root'
+
+                elif widget_email_notifications.currentIndex() == INDEX_EMAIL_CRITICAL_WARNING:
+                        notification_options  = 'w,c'
+                        notifications_enabled = '1'
+                        contacts              = 'tinkerforge_contact'
+
+                elif widget_email_notifications.currentIndex() == INDEX_EMAIL_CRITICAL:
+                        notification_options  = 'c'
+                        notifications_enabled = '1'
+                        contacts              = 'tinkerforge_contact'
+
+                service_description   = widget_name.text()
+                command_line          = command_line
+                check_command         = 'tinkerforge_command_' + str(r)
+                notification_options  = notification_options
+                notifications_enabled = notifications_enabled
+
+                a_rule = {'service_description'  : service_description,
+                          'command_line'         : command_line,
+                          'check_command'        : check_command,
+                          'notification_options' : notification_options,
+                          'notifications_enabled': notifications_enabled,
+                          'contacts'             : contacts}
+
+                apply_dict['rules'].append(a_rule)
+
+            if self.chkbox_sm_email_enable.isChecked():
+                email_from     = self.ledit_sm_email_from.text()
+                email_to       = self.ledit_sm_email_to.text()
+                email_server   = self.ledit_sm_email_server.text()
+                email_port     = str(self.sbox_sm_email_port.value())
+                email_username = self.ledit_sm_email_username.text()
+                email_password = self.ledit_sm_email_password.text()
+
+                if self.chkbox_sm_email_tls.isChecked():
+                    email_tls = 'yes'
+                else:
+                    email_tls = 'no'
+
+                apply_dict['email'] = {'from'    :email_from,
+                                       'to'      :email_to,
+                                       'server'  :email_server,
+                                       'port'    :email_port,
+                                       'username':email_username,
+                                       'password':email_password,
+                                       'tls'     :email_tls}
+            else:
+                apply_dict['email'] = None
+
+            self.script_manager.execute_script('settings_server_monitoring',
+                                               self.cb_settings_server_monitoring_apply,
+                                               ['APPLY', json.dumps(apply_dict)])
+
+        else:
+            self.script_manager.execute_script('settings_server_monitoring',
+                                               self.cb_settings_server_monitoring_apply,
+                                               ['APPLY_EMPTY'])
 
     def slot_chkbox_sm_email_enable_state_changed(self, state):
         if state == QtCore.Qt.Checked:
@@ -538,8 +739,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.ledit_sm_email_password.setEchoMode(QtGui.QLineEdit.Normal)
         else:
             self.ledit_sm_email_password.setEchoMode(QtGui.QLineEdit.Password)
-
-        self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_chkbox_sm_email_tls_state_changed(self, state):
         self.update_gui(EVENT_INPUT_CHANGED)
