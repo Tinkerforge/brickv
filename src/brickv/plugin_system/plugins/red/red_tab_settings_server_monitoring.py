@@ -540,7 +540,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 cbox = QtGui.QComboBox()
                 cbox.addItems(COLUMN_EMAIL_NOTIFICATIONS_ITEMS)
 
-                if not new and email_notification_enabled == 1:
+                if not new and email_notification_enabled == '1':
                     if email_notifications == 'c':
                         cbox.setCurrentIndex(INDEX_EMAIL_CRITICAL)
                     elif email_notifications == 'w,c':
