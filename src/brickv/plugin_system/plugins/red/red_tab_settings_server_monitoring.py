@@ -840,16 +840,16 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 elif widget_email_notifications.currentIndex() == INDEX_EMAIL_CRITICAL:
                         notification_options  = 'c'
                         notifications_enabled = '1'
-                        contacts              = 'tinkerforge_contact'
+                        contacts              = 'tinkerforge-contact'
 
                 elif widget_email_notifications.currentIndex() == INDEX_EMAIL_WARNING_CRITICAL:
                         notification_options  = 'w,c'
                         notifications_enabled = '1'
-                        contacts              = 'tinkerforge_contact'
+                        contacts              = 'tinkerforge-contact'
 
                 service_description   = widget_name.text()
                 command_line          = command_line
-                check_command         = 'tinkerforge_command_' + str(r)
+                check_command         = 'tinkerforge-command-' + str(r)
                 notification_options  = notification_options
                 notifications_enabled = notifications_enabled
 

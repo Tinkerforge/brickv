@@ -234,7 +234,7 @@ try:
         dict_return['rules'] = None
         dict_return['email'] = None
 
-        for command in Model.Command.objects.filter(command_name__startswith = 'tinkerforge_command_'):
+        for command in Model.Command.objects.filter(command_name__startswith = 'tinkerforge-command-'):
             for service in Model.Service.objects.filter(check_command = command.command_name):
                 parse = argparse.ArgumentParser()
 
@@ -328,6 +328,7 @@ try:
             tf_command.command_name = rule['check_command']
             tf_command.command_line = rule['command_line']
 
+            tf_service.use                      = 'generic-service'
             tf_service.host_name                = 'localhost'
             tf_service.service_description      = rule['service_description']
             tf_service.check_command            = rule['check_command']
@@ -372,9 +373,9 @@ try:
                                                                                            apply_dict['email']['password'],
                                                                                            apply_dict['email']['tls'])
 
-            tf_contact.contact_name                  = 'tinkerforge_contact'
+            tf_contact.contact_name                  = 'tinkerforge-contact'
             tf_contact.alias                         = 'Tinkerforge Contact'
-            tf_contact.host_notifications_enabled    = '0'
+            tf_contact.host_notifications_enabled    = '1'
             tf_contact.service_notifications_enabled = '1'
             tf_contact.host_notification_period      = '24x7'
             tf_contact.service_notification_period   = '24x7'
