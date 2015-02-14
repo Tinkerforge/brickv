@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import json
+import stat
+import argparse
 from pynag import Model
 from sys import argv
 
@@ -10,9 +13,9 @@ from sys import argv
 FILE_PATH_CONTACTS       = '/etc/nagios3/conf.d/tinkerforge_contacts.cfg'
 FILE_PATH_COMMANDS       = '/etc/nagios3/conf.d/tinkerforge_commands.cfg'
 FILE_PATH_SERVICES       = '/etc/nagios3/conf.d/tinkerforge_services.cfg'
-FILE_PATH_NAGIOS_SERVICE = '/usr/local/bin/tinkerforge_nagios_service.py'
+FILE_PATH_CHECK_SCRIPT   = '/usr/local/bin/check_tinkerforge.py'
 
-SCRIPT_NAGIOS_SERVICE = '''#!/usr/bin/env python
+SCRIPT_TINKERFORGE_CHECK = '''#!/usr/bin/env python
 # -*- coding: utf-8 -*-
  
 #
@@ -184,7 +187,7 @@ if __name__ == '__main__':
                  args.critical2)
 '''
 
-TEMPLATE_COMMAND_NOTIFY_HOST = '''/usr/bin/printf "%b" "***** Nagios *****\\n\\n \
+TEMPLATE_COMMAND_LINE_NOTIFY_HOST = '''/usr/bin/printf "%b" "***** Nagios *****\\n\\n \
 Notification Type: $NOTIFICATIONTYPE$\\n \
 Host: $HOSTNAME$\\n \
 State: $HOSTSTATE$\\n \
@@ -193,14 +196,14 @@ Info: $HOSTOUTPUT$\\n\\n \
 Date/Time: $LONGDATETIME$\\n" | \
 /usr/bin/sendemail \
 -f {0} \
--t $CONTACTEMAIL$ \
+-t {1} \
 -u "** $NOTIFICATIONTYPE$ Host Alert: $HOSTNAME$ is $HOSTSTATE$ **" \
--s {1}:{2} \
--o username={3} \
--o password={4} \
--o tls={5}'''
+-s {2}:{3} \
+-o username={4} \
+-o password={5} \
+-o tls={6}'''
 
-TEMPLATE_COMMAND_NOTIFY_SERVICE = '''/usr/bin/printf "%b" "***** Nagios *****\\n\\n \
+TEMPLATE_COMMAND_LINE_NOTIFY_SERVICE = '''/usr/bin/printf "%b" "***** Nagios *****\\n\\n \
 Notification Type: $NOTIFICATIONTYPE$\\n\\n \
 Service: $SERVICEDESC$\\n \
 Host: $HOSTALIAS$\\n \
@@ -210,12 +213,12 @@ Date/Time: $LONGDATETIME$\\n\\n \
 Additional Info:\\n\\n$SERVICEOUTPUT$\\n" | \
 /usr/bin/sendemail \
 -f {0} \
--t $CONTACTEMAIL$ \
+-t {1} \
 -u "** $NOTIFICATIONTYPE$ Service Alert: $HOSTALIAS$/$SERVICEDESC$ is $SERVICESTATE$ **" \
--s {1}:{2} \
--o username={3} \
--o password={4} \
--o tls={5}'''
+-s {2}:{3} \
+-o username={4} \
+-o password={5} \
+-o tls={6}'''
 
 if len(argv) < 2:
     exit (1)
@@ -224,7 +227,75 @@ ACTION = argv[1]
 
 try:
     if ACTION == 'GET':
-        pass
+        dict_return = {}
+        list_rules  = []
+        dict_email  = {}
+
+        dict_return['rules'] = None
+        dict_return['email'] = None
+
+        for command in Model.Command.objects.filter(command_name__startswith = 'tinkerforge_command_'):
+            for service in Model.Service.objects.filter(check_command = command.command_name):
+                parse = argparse.ArgumentParser()
+
+                parse.add_argument('-b')
+                parse.add_argument('-u')
+                parse.add_argument('-m')
+                parse.add_argument('-w')
+                parse.add_argument('-c')
+                parse.add_argument('-w2')
+                parse.add_argument('-c2')
+
+                map_args = parse.parse_args(command.command_line.split('/usr/local/bin/check_tinkerforge.py ')[1].split(' '))
+
+                a_rule = {'name'                      : service.service_description,
+                          'bricklet'                  : map_args.b,
+                          'uid'                       : map_args.u,
+                          'warning_low'               : map_args.w2,
+                          'warning_high'              : map_args.w,
+                          'critical_low'              : map_args.c2,
+                          'critical_high'             : map_args.c,
+                          'email_notification_enabled': service.notifications_enabled,
+                          'email_notifications'       : service.notification_options}
+
+                list_rules.append(a_rule)
+
+        for command in Model.Command.objects.filter(command_name = 'tinkerforge-notify-service-by-email'):
+            delims = ['-f ',
+                      '-t ',
+                      '-s ',
+                      '-o username=',
+                      '-o password=',
+                      '-o tls=']
+
+            for d in delims:
+                partitioned = command.command_line.partition(d)
+
+                if len(partitioned) != 3:
+                    break
+
+                if d == '-f ':
+                    dict_email['from'] = partitioned[2].partition(' ')[0]
+                elif d == '-t ':
+                    dict_email['to'] = partitioned[2].partition(' ')[0]
+                elif d == '-s ':
+                    server_port = partitioned[2].partition(' ')[0].split(':')
+                    dict_email['server'] = server_port[0]
+                    dict_email['port']   = server_port[1]
+                elif d == '-o username=':
+                    dict_email['username'] = partitioned[2].partition(' ')[0]
+                elif d == '-o password=':
+                    dict_email['password'] = partitioned[2].partition(' ')[0]
+                elif d == '-o tls=':
+                    dict_email['tls'] = partitioned[2].partition(' ')[0]
+
+        if len(list_rules) > 0:
+            dict_return['rules'] = list_rules
+
+        if len(dict_email) == 7:
+            dict_return['email'] = dict_email
+
+        sys.stdout.write(json.dumps(dict_return))
 
     elif ACTION == 'APPLY':
         if len(argv) < 3:
@@ -241,8 +312,12 @@ try:
         if os.path.isfile(FILE_PATH_SERVICES):
             os.remove(FILE_PATH_SERVICES)
 
-        with open(FILE_PATH_NAGIOS_SERVICE, 'w') as fh_ns:
-            fh_ns.write(SCRIPT_NAGIOS_SERVICE)
+        with open(FILE_PATH_CHECK_SCRIPT, 'w') as fh_ns:
+            fh_ns.write(SCRIPT_TINKERFORGE_CHECK)
+
+        os.chmod(FILE_PATH_CHECK_SCRIPT,
+                 stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH | \
+                 stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
 
         for rule in apply_dict['rules']:
             tf_command = Model.Command()
@@ -280,20 +355,22 @@ try:
             tf_command_notify_host.set_filename(FILE_PATH_COMMANDS)
 
             tf_command_notify_service.command_name = 'tinkerforge-notify-service-by-email'
-            tf_command_notify_service.command_line = TEMPLATE_COMMAND_NOTIFY_SERVICE.format(apply_dict['email']['from'],
-                                                                                            apply_dict['email']['server'],
-                                                                                            apply_dict['email']['port'],
-                                                                                            apply_dict['email']['username'],
-                                                                                            apply_dict['email']['password'],
-                                                                                            apply_dict['email']['tls'])
+            tf_command_notify_service.command_line = TEMPLATE_COMMAND_LINE_NOTIFY_SERVICE.format(apply_dict['email']['from'],
+                                                                                                 apply_dict['email']['to'],
+                                                                                                 apply_dict['email']['server'],
+                                                                                                 apply_dict['email']['port'],
+                                                                                                 apply_dict['email']['username'],
+                                                                                                 apply_dict['email']['password'],
+                                                                                                 apply_dict['email']['tls'])
 
             tf_command_notify_host.command_name = 'tinkerforge-notify-host-by-email'
-            tf_command_notify_host.command_line = TEMPLATE_COMMAND_NOTIFY_HOST.format(apply_dict['email']['from'],
-                                                                                      apply_dict['email']['server'],
-                                                                                      apply_dict['email']['port'],
-                                                                                      apply_dict['email']['username'],
-                                                                                      apply_dict['email']['password'],
-                                                                                      apply_dict['email']['tls'])
+            tf_command_notify_host.command_line = TEMPLATE_COMMAND_LINE_NOTIFY_HOST.format(apply_dict['email']['from'],
+                                                                                           apply_dict['email']['to'],
+                                                                                           apply_dict['email']['server'],
+                                                                                           apply_dict['email']['port'],
+                                                                                           apply_dict['email']['username'],
+                                                                                           apply_dict['email']['password'],
+                                                                                           apply_dict['email']['tls'])
 
             tf_contact.contact_name                  = 'tinkerforge_contact'
             tf_contact.alias                         = 'Tinkerforge Contact'
@@ -324,8 +401,8 @@ try:
         if os.path.isfile(FILE_PATH_SERVICES):
             os.remove(FILE_PATH_SERVICES)
 
-        if os.path.isfile(FILE_PATH_NAGIOS_SERVICE):
-            os.remove(FILE_PATH_NAGIOS_SERVICE)
+        if os.path.isfile(FILE_PATH_CHECK_SCRIPT):
+            os.remove(FILE_PATH_CHECK_SCRIPT)
         
         if os.system('/bin/systemctl restart nagios3') != 0:
             exit(1)
