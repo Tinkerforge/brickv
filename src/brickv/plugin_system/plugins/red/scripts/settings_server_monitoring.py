@@ -323,7 +323,7 @@ try:
             tf_service.host_name                = 'localhost'
             tf_service.service_description      = rule['service_description']
             tf_service.check_command            = rule['check_command']
-            tf_service.max_check_attempts       = '10'
+            tf_service.max_check_attempts       = '4'
             tf_service.check_interval           = '1'
             tf_service.retry_interval           = '1'
             tf_service.check_period             = '24x7'
@@ -332,7 +332,7 @@ try:
             tf_service.notification_period      = '24x7'
             tf_service.notification_options     = rule['notification_options']
             tf_service.notifications_enabled    = rule['notifications_enabled']
-            tf_service.contacts                 = rule['contacts']
+            tf_service.contact_groups           = rule['contact_groups']
 
             tf_command.save()
             tf_service.save()
@@ -341,10 +341,12 @@ try:
             tf_command_notify_service = Model.Command()
             tf_command_notify_host    = Model.Command()
             tf_contact                = Model.Contact()
+            tf_contact_group          = Model.Contactgroup()
 
             tf_command_notify_service.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
             tf_command_notify_host.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
             tf_contact.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
+            tf_contact_group.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
             
 
             tf_command_notify_service.command_name = 'tinkerforge-notify-service-by-email'
@@ -366,21 +368,24 @@ try:
                                                                                            apply_dict['email']['tls'])
 
             tf_contact.contact_name                  = 'tinkerforge-contact'
-            tf_contact.alias                         = 'Tinkerforge Contact'
-            tf_contact.host_notifications_enabled    = '1'
+            tf_contact.host_notifications_enabled    = '0'
             tf_contact.service_notifications_enabled = '1'
             tf_contact.host_notification_period      = '24x7'
             tf_contact.service_notification_period   = '24x7'
-            tf_contact.host_notification_options     = 'd,u,r,f,s,n'
-            tf_contact.service_notification_options  = 'w,u,c,r,f,s,n'
+            tf_contact.host_notification_options     = 'd,u,r'
+            tf_contact.service_notification_options  = 'w,u,c,r'
             tf_contact.host_notification_commands    = 'tinkerforge-notify-host-by-email'
             tf_contact.service_notification_commands = 'tinkerforge-notify-service-by-email'
-            tf_contact.email                         = apply_dict['email']['to']
+            
+            tf_contact_group.contactgroup_name = 'tinkerforge-contact-group'
+            tf_contact_group.alias             = 'Tinkerforge Contact Group'
+            tf_contact_group.members           = 'tinkerforge-contact'
 
             tf_command_notify_service.save()
             tf_command_notify_host.save()
             tf_contact.save()
- 
+            tf_contact_group.save()
+
         if os.system('/bin/systemctl restart nagios3') != 0:
             exit(1)
 

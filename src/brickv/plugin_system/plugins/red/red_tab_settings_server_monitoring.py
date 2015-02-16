@@ -541,9 +541,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 cbox.addItems(COLUMN_EMAIL_NOTIFICATIONS_ITEMS)
 
                 if not new and email_notification_enabled == '1':
-                    if email_notifications == 'c':
+                    if email_notifications == 'c,r':
                         cbox.setCurrentIndex(INDEX_EMAIL_CRITICAL)
-                    elif email_notifications == 'w,c':
+                    elif email_notifications == 'w,c,r':
                         cbox.setCurrentIndex(INDEX_EMAIL_WARNING_CRITICAL)
 
                 if self.chkbox_sm_email_enable.isChecked():
@@ -833,19 +833,19 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
                 if widget_email_notifications.currentIndex() == INDEX_EMAIL_NO_NOTIFICATIONS or \
                    not self.chkbox_sm_email_enable.isChecked():
-                        notification_options  = 'c'
+                        notification_options  = 'c,r'
                         notifications_enabled = '0'
-                        contacts              = 'root'
+                        contact_groups        = 'admins'
 
                 elif widget_email_notifications.currentIndex() == INDEX_EMAIL_CRITICAL:
-                        notification_options  = 'c'
+                        notification_options  = 'c,r'
                         notifications_enabled = '1'
-                        contacts              = 'tinkerforge-contact'
+                        contact_groups        = 'tinkerforge-contact-group'
 
                 elif widget_email_notifications.currentIndex() == INDEX_EMAIL_WARNING_CRITICAL:
-                        notification_options  = 'w,c'
+                        notification_options  = 'w,c,r'
                         notifications_enabled = '1'
-                        contacts              = 'tinkerforge-contact'
+                        contact_groups        = 'tinkerforge-contact-group'
 
                 service_description   = widget_name.text()
                 command_line          = command_line
@@ -858,7 +858,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                           'check_command'        : check_command,
                           'notification_options' : notification_options,
                           'notifications_enabled': notifications_enabled,
-                          'contacts'             : contacts}
+                          'contact_groups'       : contact_groups}
 
                 apply_dict['rules'].append(a_rule)
 
