@@ -9,11 +9,8 @@ import argparse
 from pynag import Model
 from sys import argv
 
-
-FILE_PATH_CONTACTS       = '/etc/nagios3/conf.d/tinkerforge_contacts.cfg'
-FILE_PATH_COMMANDS       = '/etc/nagios3/conf.d/tinkerforge_commands.cfg'
-FILE_PATH_SERVICES       = '/etc/nagios3/conf.d/tinkerforge_services.cfg'
 FILE_PATH_CHECK_SCRIPT   = '/usr/local/bin/check_tinkerforge.py'
+FILE_PATH_TF_NAGIOS_CONFIGURATION = '/etc/nagios3/conf.d/tinkerforge.cfg'
 
 SCRIPT_TINKERFORGE_CHECK = '''#!/usr/bin/env python
 # -*- coding: utf-8 -*-
@@ -303,27 +300,21 @@ try:
 
         apply_dict = json.loads(argv[2])
 
-        if os.path.isfile(FILE_PATH_CONTACTS):
-            os.remove(FILE_PATH_CONTACTS)
-
-        if os.path.isfile(FILE_PATH_COMMANDS):
-            os.remove(FILE_PATH_COMMANDS)
-
-        if os.path.isfile(FILE_PATH_SERVICES):
-            os.remove(FILE_PATH_SERVICES)
-
-        with open(FILE_PATH_CHECK_SCRIPT, 'w') as fh_ns:
-            fh_ns.write(SCRIPT_TINKERFORGE_CHECK)
+        with open(FILE_PATH_CHECK_SCRIPT, 'w') as fh_cs:
+            fh_cs.write(SCRIPT_TINKERFORGE_CHECK)
 
         os.chmod(FILE_PATH_CHECK_SCRIPT,
                  stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH | \
                  stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
 
+        if os.path.isfile(FILE_PATH_TF_NAGIOS_CONFIGURATION):
+            os.remove(FILE_PATH_TF_NAGIOS_CONFIGURATION)
+
         for rule in apply_dict['rules']:
             tf_command = Model.Command()
             tf_service = Model.Service()
-            tf_command.set_filename(FILE_PATH_COMMANDS)
-            tf_service.set_filename(FILE_PATH_SERVICES)
+            tf_command.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
+            tf_service.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
 
             tf_command.command_name = rule['check_command']
             tf_command.command_line = rule['command_line']
@@ -347,13 +338,14 @@ try:
             tf_service.save()
 
         if apply_dict['email']:
-            tf_contact                = Model.Contact()
             tf_command_notify_service = Model.Command()
             tf_command_notify_host    = Model.Command()
+            tf_contact                = Model.Contact()
 
-            tf_contact.set_filename(FILE_PATH_CONTACTS)
-            tf_command_notify_service.set_filename(FILE_PATH_COMMANDS)
-            tf_command_notify_host.set_filename(FILE_PATH_COMMANDS)
+            tf_command_notify_service.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
+            tf_command_notify_host.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
+            tf_contact.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
+            
 
             tf_command_notify_service.command_name = 'tinkerforge-notify-service-by-email'
             tf_command_notify_service.command_line = TEMPLATE_COMMAND_LINE_NOTIFY_SERVICE.format(apply_dict['email']['from'],
@@ -393,18 +385,12 @@ try:
             exit(1)
 
     elif ACTION == 'APPLY_EMPTY':
-        if os.path.isfile(FILE_PATH_CONTACTS):
-            os.remove(FILE_PATH_CONTACTS)
-
-        if os.path.isfile(FILE_PATH_COMMANDS):
-            os.remove(FILE_PATH_COMMANDS)
-
-        if os.path.isfile(FILE_PATH_SERVICES):
-            os.remove(FILE_PATH_SERVICES)
-
         if os.path.isfile(FILE_PATH_CHECK_SCRIPT):
             os.remove(FILE_PATH_CHECK_SCRIPT)
-        
+
+        if os.path.isfile(FILE_PATH_TF_NAGIOS_CONFIGURATION):
+            os.remove(FILE_PATH_TF_NAGIOS_CONFIGURATION)
+
         if os.system('/bin/systemctl restart nagios3') != 0:
             exit(1)
     else:
