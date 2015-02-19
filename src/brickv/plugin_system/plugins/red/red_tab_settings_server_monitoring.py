@@ -81,10 +81,14 @@ INDEX_BRICKLET_HUMIDITY      = 2
 INITIAL_VALUE_LOWER = 30
 INITIAL_VALUE_UPPER = 70
 
-EVENT_CLICKED_REMOVE_ALL = 1
-EVENT_CLICKED_REFRESH    = 2
-EVENT_CLICKED_SAVE       = 3
-EVENT_INPUT_CHANGED      = 4
+EVENT_CLICKED_REMOVE_ALL     = 1
+EVENT_CLICKED_REFRESH        = 2
+EVENT_CLICKED_SAVE           = 3
+EVENT_INPUT_CHANGED          = 4
+EVENT_RETURNED_REFRESH_TRUE  = 5
+EVENT_RETURNED_REFRESH_FALSE = 6
+EVENT_RETURNED_SAVE_TRUE     = 7
+EVENT_RETURNED_SAVE_FALSE    = 8
 
 COLOR_WARNING  = QtGui.QColor(255, 255, 0)
 COLOR_CRITICAL = QtGui.QColor(255, 0, 0)
@@ -188,7 +192,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.ledit_sm_email_username.textEdited.connect(self.slot_ledit_edited)
         self.ledit_sm_email_password.textEdited.connect(self.slot_ledit_edited)
         self.chkbox_sm_email_password_show.stateChanged.connect(self.slot_chkbox_sm_email_password_show_state_changed)
-        infos.get_infos_changed_signal().connect(self.slot_infos_changed)
 
         self.from_constructor = True
         self.slot_chkbox_sm_email_enable_state_changed(self.chkbox_sm_email_enable.checkState())
@@ -212,7 +215,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
     def cb_settings_server_monitoring_get(self, result):
         if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_GET_FAILED):
-            self.update_gui_after_refresh(False)
+            self.update_gui(EVENT_RETURNED_REFRESH_FALSE)
+            self.update_gui(EVENT_RETURNED_REFRESH_FALSE)
             return
 
         dict_return = json.loads(result.stdout)
@@ -255,18 +259,19 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         else:
             self.chkbox_sm_email_enable.setCheckState(QtCore.Qt.Unchecked)
 
-        self.update_gui_after_refresh(True)
+        self.update_gui(EVENT_RETURNED_REFRESH_TRUE)
+        self.update_gui(EVENT_RETURNED_REFRESH_TRUE)
 
     def cb_settings_server_monitoring_apply(self, result):
         if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_SAVE_NOT_OK):
-            self.update_gui_after_save(False)
+            self.update_gui(EVENT_RETURNED_SAVE_FALSE)
             return
 
         QtGui.QMessageBox.information(get_main_window(),
                                       MESSAGEBOX_TITLE,
                                       MESSAGE_INFO_SAVE_OK)
 
-        self.update_gui_after_save(True)
+        self.update_gui(EVENT_RETURNED_SAVE_TRUE)
         self.slot_pbutton_sm_refresh_clicked()
 
     def is_ascii(self, text):
@@ -277,16 +282,28 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             return False
 
     def populate_cbox_uids(self, cbox_bricklet, cbox_uids):
+        def find_matched_index(search_for, search_in):
+            if search_for not in search_in:
+                return -1
+            else:
+                for index, element in enumerate(search_in):
+                    if element == search_for:
+                        return index
+
         if cbox_bricklet.currentIndex() == INDEX_BRICKLET_PTC:
-            user_data_uid = cbox_bricklet.itemData(INDEX_BRICKLET_PTC, QtCore.Qt.UserRole)
-
             cbox_uids.clear()
-
-            if user_data_uid:
-                cbox_uids.addItem(user_data_uid)
-                cbox_bricklet.setCurrentIndex(INDEX_BRICKLET_PTC)
-
             cbox_uids.addItems(self.uids_ptc)
+
+            uid_from_rule = cbox_bricklet.itemData(INDEX_BRICKLET_PTC, QtCore.Qt.UserRole)
+
+            if uid_from_rule:
+                index_found = find_matched_index(uid_from_rule, self.uids_ptc)
+
+                if index_found > -1:
+                    cbox_uids.setCurrentIndex(index_found)
+                else:
+                    cbox_uids.insertItem(0, uid_from_rule)
+                    cbox_uids.setCurrentIndex(0)
 
             if cbox_uids.count() == 1:
                 cbox_uids.setEditable(True)
@@ -296,15 +313,19 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 cbox_uids.setEditable(False)
 
         elif cbox_bricklet.currentIndex() == INDEX_BRICKLET_TEMPERATURE:
-            user_data_uid = cbox_bricklet.itemData(INDEX_BRICKLET_TEMPERATURE, QtCore.Qt.UserRole)
-
             cbox_uids.clear()
-
-            if user_data_uid:
-                cbox_uids.addItem(user_data_uid)
-                cbox_bricklet.setCurrentIndex(INDEX_BRICKLET_TEMPERATURE)
-
             cbox_uids.addItems(self.uids_temperature)
+
+            uid_from_rule = cbox_bricklet.itemData(INDEX_BRICKLET_TEMPERATURE, QtCore.Qt.UserRole)
+
+            if uid_from_rule:
+                index_found = find_matched_index(uid_from_rule, self.uids_temperature)
+
+                if index_found > -1:
+                    cbox_uids.setCurrentIndex(index_found)
+                else:
+                    cbox_uids.insertItem(0, uid_from_rule)
+                    cbox_uids.setCurrentIndex(0)
 
             if cbox_uids.count() == 1:
                 cbox_uids.setEditable(True)
@@ -314,15 +335,19 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 cbox_uids.setEditable(False)
 
         elif cbox_bricklet.currentIndex() == INDEX_BRICKLET_HUMIDITY:
-            user_data_uid = cbox_bricklet.itemData(INDEX_BRICKLET_HUMIDITY, QtCore.Qt.UserRole)
-
             cbox_uids.clear()
-
-            if user_data_uid:
-                cbox_uids.addItem(user_data_uid)
-                cbox_bricklet.setCurrentIndex(INDEX_BRICKLET_HUMIDITY)
-
             cbox_uids.addItems(self.uids_humidity)
+
+            uid_from_rule = cbox_bricklet.itemData(INDEX_BRICKLET_HUMIDITY, QtCore.Qt.UserRole)
+
+            if uid_from_rule:
+                index_found = find_matched_index(uid_from_rule, self.uids_humidity)
+
+                if index_found > -1:
+                    cbox_uids.setCurrentIndex(index_found)
+                else:
+                    cbox_uids.insertItem(0, uid_from_rule)
+                    cbox_uids.setCurrentIndex(0)
 
             if cbox_uids.count() == 1:
                 cbox_uids.setEditable(True)
@@ -584,22 +609,36 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             else:
                 self.pbutton_sm_remove_all_rules.setEnabled(False)
 
-    def update_gui_after_refresh(self, result):
-        self.show_working_wait(False)
-        self.sarea_sm.setEnabled(True)
-        self.pbutton_sm_refresh.setText('Refresh')
-        self.pbutton_sm_save.setText('Save')
-        if result:
+        elif event == EVENT_RETURNED_REFRESH_TRUE:
+            self.show_working_wait(False)
+            self.sarea_sm.setEnabled(True)
+            self.pbutton_sm_refresh.setText('Refresh')
+            self.pbutton_sm_save.setText('Save')
+    
+            if self.model_rules.rowCount() > 0:
+                self.pbutton_sm_remove_all_rules.setEnabled(True)
+
             self.pbutton_sm_save.setEnabled(False)
 
-    def update_gui_after_save(self, result):
-        self.show_working_wait(False)
-        self.sarea_sm.setEnabled(True)
-        self.pbutton_sm_save.setText('Save')
+        elif event == EVENT_RETURNED_REFRESH_FALSE:
+            self.show_working_wait(False)
+            self.sarea_sm.setEnabled(True)
+            self.pbutton_sm_refresh.setText('Refresh')
+            self.pbutton_sm_save.setText('Save')
 
-        if result:
+            if self.model_rules.rowCount() > 0:
+                self.pbutton_sm_remove_all_rules.setEnabled(True)
+
+        elif event == EVENT_RETURNED_SAVE_TRUE:
+            self.show_working_wait(False)
+            self.sarea_sm.setEnabled(True)
+            self.pbutton_sm_save.setText('Save')
             self.pbutton_sm_save.setEnabled(False)
-        else:
+
+        elif event == EVENT_RETURNED_SAVE_FALSE:
+            self.show_working_wait(False)
+            self.sarea_sm.setEnabled(True)
+            self.pbutton_sm_save.setText('Save')
             self.pbutton_sm_save.setEnabled(True)
 
     def slot_remove_rule_clicked(self):
@@ -638,6 +677,24 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
     def slot_pbutton_sm_refresh_clicked(self):
         self.update_gui(EVENT_CLICKED_REFRESH)
+
+        # Populating bricklet UID lists
+        self.uids_ptc = []
+        self.uids_temperature = []
+        self.uids_humidity = []
+
+        for bricklet in infos.get_bricklet_infos():
+            if bricklet.device_identifier == BrickletPTC.DEVICE_IDENTIFIER:
+                    self.uids_ptc.append(bricklet.uid)
+            elif bricklet.device_identifier == BrickletTemperature.DEVICE_IDENTIFIER:
+                    self.uids_temperature.append(bricklet.uid)
+            elif bricklet.device_identifier == BrickletHumidity.DEVICE_IDENTIFIER:
+                    self.uids_humidity.append(bricklet.uid)
+
+        self.uids_ptc.append(EMPTY_UID)
+        self.uids_temperature.append(EMPTY_UID)
+        self.uids_humidity.append(EMPTY_UID)
+
         self.script_manager.execute_script('settings_server_monitoring',
                                            self.cb_settings_server_monitoring_get,
                                            ['GET'])
@@ -653,133 +710,133 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            rule + MESSAGE_ERROR_CHECK_SERVICE_NAME_EMPTY)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_SERVICE_NAME_DUPLICATE:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            rule + MESSAGE_ERROR_CHECK_SERVICE_NAME_DUPLICATE)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_UID_EMPTY:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            rule + MESSAGE_ERROR_CHECK_UID_EMPTY)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_UID_INVALID:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            rule + MESSAGE_ERROR_CHECK_UID_INVALID)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_NON_ASCII:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            rule + MESSAGE_ERROR_CHECK_NON_ASCII)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_FROM_EMPTY:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_FROM_EMPTY)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
-            
+
             elif check_result == CHECK_FAILED_EMAIL_FROM_NON_ASCII:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_FROM_NON_ASCII)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
-            
+
             elif check_result == CHECK_FAILED_EMAIL_FROM_WHITESPACE:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_FROM_WHITESPACE)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_TO_EMPTY:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_TO_EMPTY)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
-            
+
             elif check_result == CHECK_FAILED_EMAIL_TO_NON_ASCII:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_TO_NON_ASCII)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
-            
+
             elif check_result == CHECK_FAILED_EMAIL_TO_WHITESPACE:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_TO_WHITESPACE)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_SERVER_EMPTY:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_SERVER_EMPTY)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_SERVER_NON_ASCII:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_SERVER_NON_ASCII)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_SERVER_WHITESPACE:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_SERVER_WHITESPACE)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_USERNAME_EMPTY:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_USERNAME_EMPTY)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
-            
+
             elif check_result == CHECK_FAILED_EMAIL_USERNAME_NON_ASCII:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_USERNAME_NON_ASCII)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
-            
+
             elif check_result == CHECK_FAILED_EMAIL_USERNAME_WHITESPACE:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_USERNAME_WHITESPACE)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             elif check_result == CHECK_FAILED_EMAIL_PASSWORD_EMPTY:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
-            
+
             elif check_result == CHECK_FAILED_EMAIL_PASSWORD_NON_ASCII:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_NON_ASCII)
-                self.update_gui_after_save(False)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
             # Generate data structure here
@@ -954,27 +1011,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
     def slot_chkbox_sm_email_tls_state_changed(self, state):
         self.update_gui(EVENT_INPUT_CHANGED)
-
-    def slot_infos_changed(self, uid, action):
-        self.uids_ptc = []
-        self.uids_temperature = []
-        self.uids_humidity = []
-
-        # Populating bricklet UID lists
-        for bricklet in infos.get_bricklet_infos():
-            if bricklet.device_identifier == BrickletPTC.DEVICE_IDENTIFIER and \
-               bricklet.uid not in self.uids_ptc:
-                    self.uids_ptc.append(bricklet.uid)
-            elif bricklet.device_identifier == BrickletTemperature.DEVICE_IDENTIFIER and \
-                 bricklet.uid not in self.uids_temperature:
-                    self.uids_temperature.append(bricklet.uid)
-            elif bricklet.device_identifier == BrickletHumidity.DEVICE_IDENTIFIER and \
-                 bricklet.uid not in self.uids_humidity:
-                    self.uids_humidity.append(bricklet.uid)
-
-        self.uids_ptc.append(EMPTY_UID)
-        self.uids_temperature.append(EMPTY_UID)
-        self.uids_humidity.append(EMPTY_UID)
 
     def slot_cbox_bricklet_activated(self, index):
         sender = self.sender()
