@@ -32,51 +32,66 @@ from brickv.bindings.ip_connection import BASE58
 from brickv.bindings.bricklet_ptc import BrickletPTC
 from brickv.bindings.bricklet_temperature import BrickletTemperature
 from brickv.bindings.bricklet_humidity import BrickletHumidity
+from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
 from brickv.plugin_system.plugins.red.script_manager import report_script_result
 from brickv.plugin_system.plugins.red.widget_spinbox_span_slider import \
      widgetSpinBoxSpanSlider
 import json
 
 # Constants
-DEFAULT_COL_WIDTH_NAME                   = 160
-DEFAULT_COL_WIDTH_BRICKLET               = 160
-DEFAULT_COL_WIDTH_UID                    = 160
-DEFAULT_COL_WIDTH_WARNING                = 350
-DEFAULT_COL_WIDTH_CRITICAL               = 350
-DEFAULT_COL_WIDTH_EMAIL_NOTIFICATIONS    = 160
-DEFAULT_COL_WIDTH_REMOVE                 = 100
+DEFAULT_COL_WIDTH_RULES_NAME                   = 140
+DEFAULT_COL_WIDTH_RULES_HOST                   = 140
+DEFAULT_COL_WIDTH_RULES_BRICKLET               = 140
+DEFAULT_COL_WIDTH_RULES_UID                    = 100
+DEFAULT_COL_WIDTH_RULES_WARNING                = 380
+DEFAULT_COL_WIDTH_RULES_CRITICAL               = 380
+DEFAULT_COL_WIDTH_RULES_EMAIL_NOTIFICATIONS    = 140
+DEFAULT_COL_WIDTH_RULES_REMOVE                 = 80
+DEFAULT_COL_WIDTH_HOSTS_HOST                   = 450
+DEFAULT_COL_WIDTH_HOSTS_AUTHENTICATION         = 200
+DEFAULT_COL_WIDTH_HOSTS_SECRET                 = 450
 
-COL_INDEX_NAME                   = 0
-COL_INDEX_BRICKLET               = 1
-COL_INDEX_UID                    = 2
-COL_INDEX_WARNING                = 3
-COL_INDEX_CRITICAL               = 4
-COL_INDEX_EMAIL_NOTIFICATIONS    = 5
-COL_INDEX_REMOVE                 = 6
+HEADERS_TVIEW_RULES = ['Name',
+                       'Host',
+                       'Bricklet',
+                       'UID',
+                       'Warning',
+                       'Critical',
+                       'Email Notifications',
+                       'Remove']
 
-COUNT_COLUMNS_RULES_MODEL = 7
-
-HEADERS_TVIEW = ['Name',
-                 'Bricklet',
-                 'UID',
-                 'Warning',
-                 'Critical',
-                 'Email Notifications',
-                 'Remove']
+HEADERS_TVIEW_HOSTS = ['Host',
+                       'Authentication',
+                       'Secret']
 
 COLUMN_EMAIL_NOTIFICATIONS_ITEMS    = ['No Notifications',
                                        'Critical',
                                        'Critical/Warning']
 COLUMN_BRICKLET_ITEMS = ['PTC',
                          'Temperature',
-                         'Humidity']
+                         'Humidity',
+                         'Ambient Light']
 
-INDEX_EMAIL_NO_NOTIFICATIONS = 0
-INDEX_EMAIL_CRITICAL         = 1
-INDEX_EMAIL_WARNING_CRITICAL = 2
-INDEX_BRICKLET_PTC           = 0
-INDEX_BRICKLET_TEMPERATURE   = 1
-INDEX_BRICKLET_HUMIDITY      = 2
+INDEX_EMAIL_NO_NOTIFICATIONS        = 0
+INDEX_EMAIL_CRITICAL                = 1
+INDEX_EMAIL_WARNING_CRITICAL        = 2
+INDEX_BRICKLET_PTC                  = 0
+INDEX_BRICKLET_TEMPERATURE          = 1
+INDEX_BRICKLET_HUMIDITY             = 2
+INDEX_BRICKLET_AMBIENT_LIGHT        = 3
+INDEX_COL_RULES_NAME                = 0
+INDEX_COL_RULES_HOST                = 1
+INDEX_COL_RULES_BRICKLET            = 2
+INDEX_COL_RULES_UID                 = 3
+INDEX_COL_RULES_WARNING             = 4
+INDEX_COL_RULES_CRITICAL            = 5
+INDEX_COL_RULES_EMAIL_NOTIFICATIONS = 6
+INDEX_COL_RULES_REMOVE              = 7
+INDEX_COL_HOSTS_HOST                = 0
+INDEX_COL_HOSTS_AUTHENTICATION      = 1
+INDEX_COL_HOSTS_SECRET              = 2
+
+COUNT_COLUMNS_RULES_MODEL = 8
 
 INITIAL_VALUE_LOWER = 30
 INITIAL_VALUE_UPPER = 70
@@ -166,17 +181,17 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.uids_ptc = []
         self.uids_temperature = []
         self.uids_humidity = []
+        self.uids_ambient_light = []
+
+        self.model_hosts = QtGui.QStandardItemModel()
+        self.model_hosts.setHorizontalHeaderLabels(HEADERS_TVIEW_HOSTS)
+        self.tview_sm_hosts.setModel(self.model_hosts)
+        self.set_default_col_width_hosts
 
         self.model_rules = QtGui.QStandardItemModel()
-        self.model_rules.setHorizontalHeaderLabels(HEADERS_TVIEW)
+        self.model_rules.setHorizontalHeaderLabels(HEADERS_TVIEW_RULES)
         self.tview_sm_rules.setModel(self.model_rules)
-        self.tview_sm_rules.setColumnWidth(0, DEFAULT_COL_WIDTH_NAME)
-        self.tview_sm_rules.setColumnWidth(1, DEFAULT_COL_WIDTH_BRICKLET)
-        self.tview_sm_rules.setColumnWidth(2, DEFAULT_COL_WIDTH_UID)
-        self.tview_sm_rules.setColumnWidth(3, DEFAULT_COL_WIDTH_WARNING)
-        self.tview_sm_rules.setColumnWidth(4, DEFAULT_COL_WIDTH_CRITICAL)
-        self.tview_sm_rules.setColumnWidth(5, DEFAULT_COL_WIDTH_EMAIL_NOTIFICATIONS)
-        self.tview_sm_rules.setColumnWidth(6, DEFAULT_COL_WIDTH_REMOVE)
+        self.set_default_col_width_rules()
 
         # Connecting signals to slots
         self.pbutton_sm_add_rule.clicked.connect(self.slot_pbutton_sm_add_rule_clicked)
@@ -213,6 +228,21 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
     def tab_destroy(self):
         pass
 
+    def set_default_col_width_hosts(self):
+        self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_HOST, DEFAULT_COL_WIDTH_HOSTS_HOST)
+        self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_AUTHENTICATION, DEFAULT_COL_WIDTH_HOSTS_AUTHENTICATION)
+        self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_SECRET, DEFAULT_COL_WIDTH_HOSTS_SECRET)
+
+    def set_default_col_width_rules(self):
+        self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_NAME, DEFAULT_COL_WIDTH_RULES_NAME)
+        self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_HOST, DEFAULT_COL_WIDTH_RULES_HOST)
+        self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_BRICKLET, DEFAULT_COL_WIDTH_RULES_BRICKLET)
+        self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_UID, DEFAULT_COL_WIDTH_RULES_UID)
+        self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_WARNING, DEFAULT_COL_WIDTH_RULES_WARNING)
+        self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_CRITICAL, DEFAULT_COL_WIDTH_RULES_CRITICAL)
+        self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_EMAIL_NOTIFICATIONS, DEFAULT_COL_WIDTH_RULES_EMAIL_NOTIFICATIONS)
+        self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_REMOVE, DEFAULT_COL_WIDTH_RULES_REMOVE)
+
     def cb_settings_server_monitoring_get(self, result):
         if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_GET_FAILED):
             self.update_gui(EVENT_RETURNED_REFRESH_FALSE)
@@ -223,18 +253,14 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         if dict_return['rules']:
             self.model_rules.clear()
-            self.model_rules.setHorizontalHeaderLabels(HEADERS_TVIEW)
-            self.tview_sm_rules.setColumnWidth(0, DEFAULT_COL_WIDTH_NAME)
-            self.tview_sm_rules.setColumnWidth(1, DEFAULT_COL_WIDTH_BRICKLET)
-            self.tview_sm_rules.setColumnWidth(2, DEFAULT_COL_WIDTH_UID)
-            self.tview_sm_rules.setColumnWidth(3, DEFAULT_COL_WIDTH_WARNING)
-            self.tview_sm_rules.setColumnWidth(4, DEFAULT_COL_WIDTH_CRITICAL)
-            self.tview_sm_rules.setColumnWidth(5, DEFAULT_COL_WIDTH_EMAIL_NOTIFICATIONS)
-            self.tview_sm_rules.setColumnWidth(6, DEFAULT_COL_WIDTH_REMOVE)
+            self.model_rules.setHorizontalHeaderLabels(HEADERS_TVIEW_RULES)
+            self.tview_sm_rules.setModel(self.model_rules)
+            self.set_default_col_width_rules()
 
             for dict_rule in dict_return['rules']:
                 self.add_new_rule(NOT_NEW,
                                   dict_rule['name'],
+                                  'Host',
                                   dict_rule['bricklet'],
                                   dict_rule['uid'],
                                   dict_rule['warning_low'],
@@ -356,13 +382,35 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             else:
                 cbox_uids.setEditable(False)
 
+        elif cbox_bricklet.currentIndex() == INDEX_BRICKLET_AMBIENT_LIGHT:
+            cbox_uids.clear()
+            cbox_uids.addItems(self.uids_ambient_light)
+
+            uid_from_rule = cbox_bricklet.itemData(INDEX_BRICKLET_AMBIENT_LIGHT, QtCore.Qt.UserRole)
+
+            if uid_from_rule:
+                index_found = find_matched_index(uid_from_rule, self.uids_ambient_light)
+
+                if index_found > -1:
+                    cbox_uids.setCurrentIndex(index_found)
+                else:
+                    cbox_uids.insertItem(0, uid_from_rule)
+                    cbox_uids.setCurrentIndex(0)
+
+            if cbox_uids.count() == 1:
+                cbox_uids.setEditable(True)
+                cbox_uids.setInsertPolicy(QtGui.QComboBox.InsertBeforeCurrent)
+                cbox_uids.lineEdit().selectAll()
+            else:
+                cbox_uids.setEditable(False)
+
     def check_rules(self):
         list_service_names = []
 
         for r in range(self.model_rules.rowCount()):
             for c in range(0, COUNT_COLUMNS_RULES_MODEL):
                 # Check Name field
-                if c == COL_INDEX_NAME:
+                if c == INDEX_COL_RULES_NAME:
                     item = self.model_rules.item(r, c)
                     index = self.model_rules.indexFromItem(item)
                     ledit_name_text = self.tview_sm_rules.indexWidget(index).text()
@@ -377,7 +425,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                         list_service_names.append(ledit_name_text)
 
                 # Check UID field
-                elif c == COL_INDEX_UID:
+                elif c == INDEX_COL_RULES_UID:
                     item = self.model_rules.item(r, c)
                     index = self.model_rules.indexFromItem(item)
                     uid = self.tview_sm_rules.indexWidget(index).currentText()
@@ -454,22 +502,19 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
     def add_new_rule(self,
                      new,
                      name                       = None,
+                     host                       = None,
                      bricklet                   = None,
                      uid                        = None,
                      warning_low                = None,
                      warning_high               = None,
                      critical_low               = None,
-                     critical_high               = None,
+                     critical_high              = None,
                      email_notification_enabled = None,
                      email_notifications        = None):
         rule = []
-        rule.append(QtGui.QStandardItem(''))
-        rule.append(QtGui.QStandardItem(''))
-        rule.append(QtGui.QStandardItem(''))
-        rule.append(QtGui.QStandardItem(''))
-        rule.append(QtGui.QStandardItem(''))
-        rule.append(QtGui.QStandardItem(''))
-        rule.append(QtGui.QStandardItem(''))
+
+        for i in range(0, COUNT_COLUMNS_RULES_MODEL):
+            rule.append(QtGui.QStandardItem(''))
 
         self.model_rules.appendRow(rule)
 
@@ -477,7 +522,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         for c in range(0, COUNT_COLUMNS_RULES_MODEL):
             # Add Name field widget
-            if c == COL_INDEX_NAME:
+            if c == INDEX_COL_RULES_NAME:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
                 ledit_name = QtGui.QLineEdit()
@@ -490,9 +535,17 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     ledit_name.setText(name)
 
                 self.tview_sm_rules.setIndexWidget(index, ledit_name)
+            
+            # Add Host field widget
+            elif c == INDEX_COL_RULES_HOST:
+                item = self.model_rules.item(r, c)
+                index = self.model_rules.indexFromItem(item)
+                cbox = QtGui.QComboBox()
+
+                self.tview_sm_rules.setIndexWidget(index, cbox)
 
             # Add Bricklet field widget
-            elif c == COL_INDEX_BRICKLET:
+            elif c == INDEX_COL_RULES_BRICKLET:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
                 cbox = QtGui.QComboBox()
@@ -509,7 +562,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.tview_sm_rules.setIndexWidget(index, cbox)
 
             # Add UID field widget
-            elif c == COL_INDEX_UID:
+            elif c == INDEX_COL_RULES_UID:
                 item_uid = self.model_rules.item(r, c)
                 index_uid = self.model_rules.indexFromItem(item_uid)
                 cbox_uid = QtGui.QComboBox()
@@ -523,7 +576,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.tview_sm_rules.setIndexWidget(index_uid, cbox_uid)
 
             # Add Warning field widget
-            elif c == COL_INDEX_WARNING:
+            elif c == INDEX_COL_RULES_WARNING:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
                 widget_spin_span = widgetSpinBoxSpanSlider()
@@ -541,7 +594,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.tview_sm_rules.setIndexWidget(index, widget_spin_span)
 
             # Add Critical field widget
-            elif c == COL_INDEX_CRITICAL:
+            elif c == INDEX_COL_RULES_CRITICAL:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
                 widget_spin_span = widgetSpinBoxSpanSlider()
@@ -559,7 +612,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.tview_sm_rules.setIndexWidget(index, widget_spin_span)
 
             # Add Email field widget
-            elif c == COL_INDEX_EMAIL_NOTIFICATIONS:
+            elif c == INDEX_COL_RULES_EMAIL_NOTIFICATIONS:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
                 cbox = QtGui.QComboBox()
@@ -580,7 +633,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.tview_sm_rules.setIndexWidget(index, cbox)
 
             # Add Remove field widget
-            elif c == COL_INDEX_REMOVE:
+            elif c == INDEX_COL_RULES_REMOVE:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
                 btn = QtGui.QPushButton('X')
@@ -682,6 +735,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.uids_ptc = []
         self.uids_temperature = []
         self.uids_humidity = []
+        self.uids_ambient_light = []
 
         for bricklet in infos.get_bricklet_infos():
             if bricklet.device_identifier == BrickletPTC.DEVICE_IDENTIFIER:
@@ -690,10 +744,13 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     self.uids_temperature.append(bricklet.uid)
             elif bricklet.device_identifier == BrickletHumidity.DEVICE_IDENTIFIER:
                     self.uids_humidity.append(bricklet.uid)
+            elif bricklet.device_identifier == BrickletAmbientLight.DEVICE_IDENTIFIER:
+                    self.uids_ambient_light.append(bricklet.uid)
 
         self.uids_ptc.append(EMPTY_UID)
         self.uids_temperature.append(EMPTY_UID)
         self.uids_humidity.append(EMPTY_UID)
+        self.uids_ambient_light.append(EMPTY_UID)
 
         self.script_manager.execute_script('settings_server_monitoring',
                                            self.cb_settings_server_monitoring_get,
@@ -856,22 +913,22 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     item = self.model_rules.item(r, c)
                     index = self.model_rules.indexFromItem(item)
 
-                    if c == COL_INDEX_NAME:
+                    if c == INDEX_COL_RULES_NAME:
                         widget_name = self.tview_sm_rules.indexWidget(index)
 
-                    elif c == COL_INDEX_BRICKLET:
+                    elif c == INDEX_COL_RULES_BRICKLET:
                         widget_bricklet = self.tview_sm_rules.indexWidget(index)
 
-                    elif c == COL_INDEX_UID:
+                    elif c == INDEX_COL_RULES_UID:
                         widget_uid = self.tview_sm_rules.indexWidget(index)
 
-                    elif c == COL_INDEX_WARNING:
+                    elif c == INDEX_COL_RULES_WARNING:
                         widget_warning = self.tview_sm_rules.indexWidget(index)
 
-                    elif c == COL_INDEX_CRITICAL:
+                    elif c == INDEX_COL_RULES_CRITICAL:
                         widget_critical = self.tview_sm_rules.indexWidget(index)
 
-                    elif c == COL_INDEX_EMAIL_NOTIFICATIONS:
+                    elif c == INDEX_COL_RULES_EMAIL_NOTIFICATIONS:
                         widget_email_notifications = self.tview_sm_rules.indexWidget(index)
 
                 command_line = '''/usr/local/bin/check_tinkerforge.py \
@@ -954,7 +1011,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
     def slot_chkbox_sm_email_enable_state_changed(self, state):
         if state == QtCore.Qt.Checked:
             for r in range(self.model_rules.rowCount()):
-                item = self.model_rules.item(r, 5)
+                item = self.model_rules.item(r, INDEX_COL_RULES_EMAIL_NOTIFICATIONS)
                 index = self.model_rules.indexFromItem(item)
                 widget = self.tview_sm_rules.indexWidget(index)
                 widget.setEnabled(True)
@@ -976,7 +1033,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.chkbox_sm_email_tls.show()
         else:
             for r in range(self.model_rules.rowCount()):
-                item = self.model_rules.item(r, 5)
+                item = self.model_rules.item(r, INDEX_COL_RULES_EMAIL_NOTIFICATIONS)
                 index = self.model_rules.indexFromItem(item)
                 widget = self.tview_sm_rules.indexWidget(index)
                 widget.setEnabled(False)
@@ -1020,7 +1077,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
                 if sender == self.tview_sm_rules.indexWidget(index):
-                    item_cbox_uids = self.model_rules.item(r, COL_INDEX_UID)
+                    item_cbox_uids = self.model_rules.item(r, INDEX_COL_RULES_UID)
                     index_cbox_uids = self.model_rules.indexFromItem(item_cbox_uids)
                     cbox_uids = self.tview_sm_rules.indexWidget(index_cbox_uids)
 
