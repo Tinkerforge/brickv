@@ -23,18 +23,20 @@ SCRIPT_TINKERFORGE_CHECK = '''#!/usr/bin/env python
 
 import argparse 
 from tinkerforge.ip_connection import IPConnection
-from tinkerforge.bricklet_temperature import Temperature
-from tinkerforge.bricklet_humidity import Humidity
+from tinkerforge.bricklet_ptc import BrickletPTC
+from tinkerforge.bricklet_temperature import BrickletTemperature
+from tinkerforge.bricklet_humidity import BrickletHumidity
 
 OK       = 0
 WARNING  = 1
 CRITICAL = 2
 UNKNOWN  = -1
 
+BRICKLET_PTC         = 'ptc'
 BRICKLET_TEMPERATURE = 'temperature'
 BRICKLET_HUMIDITY    = 'humidity'
 
-class TinkerforgeNagiosService(object):
+class CheckTinkerforge(object):
     def __init__(self, host = 'localhost', port = 4223):
         self.host = host
         self.port = port
@@ -45,15 +47,19 @@ class TinkerforgeNagiosService(object):
  
     def disconnect(self):
         self.ipcon.disconnect()
- 
+
     def read(self, bricklet, uid, warning, critical, mode = 'high', warning2 = 0, critical2 = 0):
 
-        if bricklet == BRICKLET_TEMPERATURE:
-            bricklet_temperature = Temperature(uid, self.ipcon)
+        if bricklet == BRICKLET_PTC:
+            bricklet_ptc = BrickletPTC(uid, self.ipcon)
+            reading = bricklet_ptc.get_temperature() / 100.0
+
+        elif bricklet == BRICKLET_TEMPERATURE:
+            bricklet_temperature = BrickletTemperature(uid, self.ipcon)
             reading = bricklet_temperature.get_temperature() / 100.0
 
         elif bricklet == BRICKLET_HUMIDITY:
-            bricklet_humidity = Humidity(uid, self.ipcon)
+            bricklet_humidity = BrickletHumidity(uid, self.ipcon)
             reading = bricklet_humidity.get_humidity() / 10.0
 
         if mode == 'high':
@@ -124,7 +130,7 @@ if __name__ == '__main__':
                        help = 'Type of bricklet',
                        type = str,
                        required = True,
-                       choices = ['temperature', 'humidity'])
+                       choices = ['ptc', 'temperature', 'humidity'])
 
     parse.add_argument('-u',
                        '--uid',
@@ -171,7 +177,7 @@ if __name__ == '__main__':
  
     args = parse.parse_args()
 
-    service = TinkerforgeNagiosService(args.host, args.port)
+    service = CheckTinkerforge(args.host, args.port)
 
     service.connect()
 
