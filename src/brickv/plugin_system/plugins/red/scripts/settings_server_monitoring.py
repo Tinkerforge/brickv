@@ -26,15 +26,17 @@ from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_ptc import BrickletPTC
 from tinkerforge.bricklet_temperature import BrickletTemperature
 from tinkerforge.bricklet_humidity import BrickletHumidity
+from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
 
 OK       = 0
 WARNING  = 1
 CRITICAL = 2
 UNKNOWN  = -1
 
-BRICKLET_PTC         = 'ptc'
-BRICKLET_TEMPERATURE = 'temperature'
-BRICKLET_HUMIDITY    = 'humidity'
+BRICKLET_PTC           = 'ptc'
+BRICKLET_TEMPERATURE   = 'temperature'
+BRICKLET_HUMIDITY      = 'humidity'
+BRICKLET_AMBIENT_LIGHT = 'ambient_light'
 
 class CheckTinkerforge(object):
     def __init__(self, host = 'localhost', port = 4223):
@@ -61,6 +63,10 @@ class CheckTinkerforge(object):
         elif bricklet == BRICKLET_HUMIDITY:
             bricklet_humidity = BrickletHumidity(uid, self.ipcon)
             reading = bricklet_humidity.get_humidity() / 10.0
+
+        elif bricklet == BRICKLET_AMBIENT_LIGHT:
+            bricklet_ambient_light = BrickletAmbientLight(uid, self.ipcon)
+            reading = bricklet_ambient_light.get_illuminance() / 10.0
 
         if mode == 'high':
             if reading >= critical:
@@ -130,7 +136,7 @@ if __name__ == '__main__':
                        help = 'Type of bricklet',
                        type = str,
                        required = True,
-                       choices = ['ptc', 'temperature', 'humidity'])
+                       choices = ['ptc', 'temperature', 'humidity', 'ambient_light'])
 
     parse.add_argument('-u',
                        '--uid',
