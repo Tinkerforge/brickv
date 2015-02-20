@@ -25,6 +25,8 @@ from PyQt4 import QtCore, QtGui
 from brickv import infos
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_server_monitoring import \
      Ui_REDTabSettingsServerMonitoring
+from brickv.plugin_system.plugins.red.red_tab_settings_server_monitoring_add_host_dialog import \
+     REDTabSettingsServerMonitoringAddHostDialog
 from brickv.plugin_system.plugins.red.api import *
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
@@ -39,17 +41,19 @@ from brickv.plugin_system.plugins.red.widget_spinbox_span_slider import \
 import json
 
 # Constants
-DEFAULT_COL_WIDTH_RULES_NAME                   = 140
-DEFAULT_COL_WIDTH_RULES_HOST                   = 140
-DEFAULT_COL_WIDTH_RULES_BRICKLET               = 140
-DEFAULT_COL_WIDTH_RULES_UID                    = 100
-DEFAULT_COL_WIDTH_RULES_WARNING                = 380
-DEFAULT_COL_WIDTH_RULES_CRITICAL               = 380
-DEFAULT_COL_WIDTH_RULES_EMAIL_NOTIFICATIONS    = 140
-DEFAULT_COL_WIDTH_RULES_REMOVE                 = 80
-DEFAULT_COL_WIDTH_HOSTS_HOST                   = 450
-DEFAULT_COL_WIDTH_HOSTS_AUTHENTICATION         = 200
-DEFAULT_COL_WIDTH_HOSTS_SECRET                 = 450
+DEFAULT_COL_WIDTH_RULES_NAME                = 140
+DEFAULT_COL_WIDTH_RULES_HOST                = 140
+DEFAULT_COL_WIDTH_RULES_BRICKLET            = 140
+DEFAULT_COL_WIDTH_RULES_UID                 = 100
+DEFAULT_COL_WIDTH_RULES_WARNING             = 380
+DEFAULT_COL_WIDTH_RULES_CRITICAL            = 380
+DEFAULT_COL_WIDTH_RULES_EMAIL_NOTIFICATIONS = 140
+DEFAULT_COL_WIDTH_RULES_REMOVE              = 80
+DEFAULT_COL_WIDTH_HOSTS_HOST                = 300
+DEFAULT_COL_WIDTH_HOSTS_PORT                = 300
+DEFAULT_COL_WIDTH_HOSTS_AUTHENTICATION      = 200
+DEFAULT_COL_WIDTH_HOSTS_SECRET              = 450
+DEFAULT_COL_WIDTH_HOSTS_REMOVE              = 80
 
 HEADERS_TVIEW_RULES = ['Name',
                        'Host',
@@ -61,24 +65,32 @@ HEADERS_TVIEW_RULES = ['Name',
                        'Remove']
 
 HEADERS_TVIEW_HOSTS = ['Host',
+                       'Port',
                        'Authentication',
-                       'Secret']
+                       'Secret',
+                       'Remove']
 
 COLUMN_EMAIL_NOTIFICATIONS_ITEMS    = ['No Notifications',
                                        'Critical',
                                        'Critical/Warning']
-COLUMN_BRICKLET_ITEMS = ['PTC',
-                         'Temperature',
-                         'Humidity',
-                         'Ambient Light']
+
+SUPPORTED_BRICKLETS = {'PTC'          :'ptc',
+                       'Temperature'  :'temperature',
+                       'Humidity'     :'humidity',
+                       'Ambient Light':'ambient_light'}
+
+RANGE_MIN_PTC           = 0
+RANGE_MAX_PTC           = 100
+RANGE_MIN_TEMPERATURE   = 0
+RANGE_MAX_TEMPERATURE   = 100
+RANGE_MIN_HUMIDITY      = 0
+RANGE_MAX_HUMIDITY      = 100
+RANGE_MIN_AMBIENT_LIGHT = 0
+RANGE_MAX_AMBIENT_LIGHT = 900
 
 INDEX_EMAIL_NO_NOTIFICATIONS        = 0
 INDEX_EMAIL_CRITICAL                = 1
 INDEX_EMAIL_WARNING_CRITICAL        = 2
-INDEX_BRICKLET_PTC                  = 0
-INDEX_BRICKLET_TEMPERATURE          = 1
-INDEX_BRICKLET_HUMIDITY             = 2
-INDEX_BRICKLET_AMBIENT_LIGHT        = 3
 INDEX_COL_RULES_NAME                = 0
 INDEX_COL_RULES_HOST                = 1
 INDEX_COL_RULES_BRICKLET            = 2
@@ -88,13 +100,13 @@ INDEX_COL_RULES_CRITICAL            = 5
 INDEX_COL_RULES_EMAIL_NOTIFICATIONS = 6
 INDEX_COL_RULES_REMOVE              = 7
 INDEX_COL_HOSTS_HOST                = 0
-INDEX_COL_HOSTS_AUTHENTICATION      = 1
-INDEX_COL_HOSTS_SECRET              = 2
+INDEX_COL_HOSTS_PORT                = 1
+INDEX_COL_HOSTS_AUTHENTICATION      = 2
+INDEX_COL_HOSTS_SECRET              = 3
+INDEX_COL_HOSTS_REMOVE              = 4
 
 COUNT_COLUMNS_RULES_MODEL = 8
-
-INITIAL_VALUE_LOWER = 30
-INITIAL_VALUE_UPPER = 70
+COUNT_COLUMNS_HOSTS_MODEL = 5
 
 EVENT_CLICKED_REMOVE_ALL     = 1
 EVENT_CLICKED_REFRESH        = 2
@@ -186,7 +198,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.model_hosts = QtGui.QStandardItemModel()
         self.model_hosts.setHorizontalHeaderLabels(HEADERS_TVIEW_HOSTS)
         self.tview_sm_hosts.setModel(self.model_hosts)
-        self.set_default_col_width_hosts
+        self.set_default_col_width_hosts()
 
         self.model_rules = QtGui.QStandardItemModel()
         self.model_rules.setHorizontalHeaderLabels(HEADERS_TVIEW_RULES)
@@ -196,6 +208,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         # Connecting signals to slots
         self.pbutton_sm_add_rule.clicked.connect(self.slot_pbutton_sm_add_rule_clicked)
         self.pbutton_sm_remove_all_rules.clicked.connect(self.slot_pbutton_sm_remove_all_rules_clicked)
+        self.pbutton_sm_add_host.clicked.connect(self.slot_pbutton_sm_add_host_clicked)
         self.pbutton_sm_refresh.clicked.connect(self.slot_pbutton_sm_refresh_clicked)
         self.pbutton_sm_save.clicked.connect(self.slot_pbutton_sm_save_clicked)
         self.chkbox_sm_email_enable.stateChanged.connect(self.slot_chkbox_sm_email_enable_state_changed)
@@ -228,10 +241,66 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
     def tab_destroy(self):
         pass
 
+    def add_widget_spin_span(self, r, c, new, color, low = None, high = None):
+        item = self.model_rules.item(r, c)
+        index = self.model_rules.indexFromItem(item)
+        item_bricklet = self.model_rules.item(r, INDEX_COL_RULES_BRICKLET)
+        index_bricklet = self.model_rules.indexFromItem(item_bricklet)
+
+        cbox_bricklet = self.tview_sm_rules.indexWidget(index_bricklet)
+        widget_spin_span = widgetSpinBoxSpanSlider()
+
+        self.setRangeWidgetSpinBoxSpanSlider(SUPPORTED_BRICKLETS[cbox_bricklet.currentText()],
+                                             widget_spin_span)
+
+        if new:
+            self.setInitialValueWidgetSpinBoxSpanSlider(widget_spin_span)
+        else:
+            widget_spin_span.sbox_upper.setValue(high)
+            widget_spin_span.sbox_lower.setValue(low)
+
+        widget_spin_span.span_slider.setColorOutsideRange(color)
+        widget_spin_span.sbox_upper.valueChanged.connect(self.slot_sbox_value_changed)
+        widget_spin_span.sbox_lower.valueChanged.connect(self.slot_sbox_value_changed)
+        self.tview_sm_rules.setIndexWidget(index, widget_spin_span)
+
+    def setRangeWidgetSpinBoxSpanSlider(self, bricklet, widget_spin_span):
+        if bricklet == 'ptc':
+            widget_spin_span.span_slider.setRange(RANGE_MIN_PTC, RANGE_MAX_PTC)
+            widget_spin_span.sbox_lower.setRange(RANGE_MIN_PTC, RANGE_MAX_PTC)
+            widget_spin_span.sbox_upper.setRange(RANGE_MIN_PTC, RANGE_MAX_PTC)
+    
+        elif bricklet == 'temperature':
+            widget_spin_span.span_slider.setRange(RANGE_MIN_TEMPERATURE, RANGE_MAX_TEMPERATURE)
+            widget_spin_span.sbox_lower.setRange(RANGE_MIN_TEMPERATURE, RANGE_MAX_TEMPERATURE)
+            widget_spin_span.sbox_upper.setRange(RANGE_MIN_TEMPERATURE, RANGE_MAX_TEMPERATURE)
+    
+        elif bricklet == 'humidity':
+            widget_spin_span.span_slider.setRange(RANGE_MIN_HUMIDITY, RANGE_MAX_HUMIDITY)
+            widget_spin_span.sbox_lower.setRange(RANGE_MIN_HUMIDITY, RANGE_MAX_HUMIDITY)
+            widget_spin_span.sbox_upper.setRange(RANGE_MIN_HUMIDITY, RANGE_MAX_HUMIDITY)
+    
+        elif bricklet == 'ambient_light':
+            widget_spin_span.span_slider.setRange(RANGE_MIN_AMBIENT_LIGHT, RANGE_MAX_AMBIENT_LIGHT)
+            widget_spin_span.sbox_lower.setRange(RANGE_MIN_AMBIENT_LIGHT, RANGE_MAX_AMBIENT_LIGHT)
+            widget_spin_span.sbox_upper.setRange(RANGE_MIN_AMBIENT_LIGHT, RANGE_MAX_AMBIENT_LIGHT)
+
+    def setInitialValueWidgetSpinBoxSpanSlider(self, widget_spin_span):
+        span_minimum = widget_spin_span.span_slider.minimum()
+        span_maximum = widget_spin_span.span_slider.maximum()
+        span = abs(span_minimum - span_maximum)
+        span_mid = span/2
+        widget_spin_span.sbox_upper.setValue(0)
+        widget_spin_span.sbox_lower.setValue(0)
+        widget_spin_span.sbox_upper.setValue(span_mid + abs(span_mid - span_maximum)/2)
+        widget_spin_span.sbox_lower.setValue(span_minimum + abs(span_mid - span_minimum)/2)
+
     def set_default_col_width_hosts(self):
         self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_HOST, DEFAULT_COL_WIDTH_HOSTS_HOST)
+        self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_PORT, DEFAULT_COL_WIDTH_HOSTS_PORT)
         self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_AUTHENTICATION, DEFAULT_COL_WIDTH_HOSTS_AUTHENTICATION)
         self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_SECRET, DEFAULT_COL_WIDTH_HOSTS_SECRET)
+        self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_REMOVE, DEFAULT_COL_WIDTH_HOSTS_REMOVE)
 
     def set_default_col_width_rules(self):
         self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_NAME, DEFAULT_COL_WIDTH_RULES_NAME)
@@ -316,11 +385,11 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     if element == search_for:
                         return index
 
-        if cbox_bricklet.currentIndex() == INDEX_BRICKLET_PTC:
+        if SUPPORTED_BRICKLETS[cbox_bricklet.currentText()] == 'ptc':
             cbox_uids.clear()
             cbox_uids.addItems(self.uids_ptc)
 
-            uid_from_rule = cbox_bricklet.itemData(INDEX_BRICKLET_PTC, QtCore.Qt.UserRole)
+            uid_from_rule = cbox_bricklet.itemData(cbox_bricklet.currentIndex(), QtCore.Qt.UserRole)
 
             if uid_from_rule:
                 index_found = find_matched_index(uid_from_rule, self.uids_ptc)
@@ -338,11 +407,11 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             else:
                 cbox_uids.setEditable(False)
 
-        elif cbox_bricklet.currentIndex() == INDEX_BRICKLET_TEMPERATURE:
+        elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()] == 'temperature':
             cbox_uids.clear()
             cbox_uids.addItems(self.uids_temperature)
 
-            uid_from_rule = cbox_bricklet.itemData(INDEX_BRICKLET_TEMPERATURE, QtCore.Qt.UserRole)
+            uid_from_rule = cbox_bricklet.itemData(cbox_bricklet.currentIndex(), QtCore.Qt.UserRole)
 
             if uid_from_rule:
                 index_found = find_matched_index(uid_from_rule, self.uids_temperature)
@@ -360,11 +429,11 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             else:
                 cbox_uids.setEditable(False)
 
-        elif cbox_bricklet.currentIndex() == INDEX_BRICKLET_HUMIDITY:
+        elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()] == 'humidity':
             cbox_uids.clear()
             cbox_uids.addItems(self.uids_humidity)
 
-            uid_from_rule = cbox_bricklet.itemData(INDEX_BRICKLET_HUMIDITY, QtCore.Qt.UserRole)
+            uid_from_rule = cbox_bricklet.itemData(cbox_bricklet.currentIndex(), QtCore.Qt.UserRole)
 
             if uid_from_rule:
                 index_found = find_matched_index(uid_from_rule, self.uids_humidity)
@@ -382,11 +451,11 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             else:
                 cbox_uids.setEditable(False)
 
-        elif cbox_bricklet.currentIndex() == INDEX_BRICKLET_AMBIENT_LIGHT:
+        elif SUPPORTED_BRICKLETS[cbox_bricklet.currentText()] == 'ambient_light':
             cbox_uids.clear()
             cbox_uids.addItems(self.uids_ambient_light)
 
-            uid_from_rule = cbox_bricklet.itemData(INDEX_BRICKLET_AMBIENT_LIGHT, QtCore.Qt.UserRole)
+            uid_from_rule = cbox_bricklet.itemData(cbox_bricklet.currentIndex(), QtCore.Qt.UserRole)
 
             if uid_from_rule:
                 index_found = find_matched_index(uid_from_rule, self.uids_ambient_light)
@@ -549,11 +618,11 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
                 cbox = QtGui.QComboBox()
-                cbox.addItems(COLUMN_BRICKLET_ITEMS)
+                cbox.addItems(SUPPORTED_BRICKLETS.keys())
 
                 if not new:
                     for i in range(0, cbox.count()):
-                        if bricklet == cbox.itemText(i).lower():
+                        if bricklet == SUPPORTED_BRICKLETS[cbox.itemText(i)]:
                             cbox.setCurrentIndex(i)
                             cbox.setItemData(i, uid, QtCore.Qt.UserRole)
                             break
@@ -577,39 +646,19 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
             # Add Warning field widget
             elif c == INDEX_COL_RULES_WARNING:
-                item = self.model_rules.item(r, c)
-                index = self.model_rules.indexFromItem(item)
-                widget_spin_span = widgetSpinBoxSpanSlider()
-
                 if new:
-                    widget_spin_span.sbox_upper.setValue(INITIAL_VALUE_UPPER)
-                    widget_spin_span.sbox_lower.setValue(INITIAL_VALUE_LOWER)
+                    self.add_widget_spin_span(r, c, new, COLOR_WARNING)
                 else:
-                    widget_spin_span.sbox_upper.setValue(int(warning_high))
-                    widget_spin_span.sbox_lower.setValue(int(warning_low))
-
-                widget_spin_span.span_slider.setColorOutsideRange(COLOR_WARNING)
-                widget_spin_span.sbox_upper.valueChanged.connect(self.slot_sbox_value_changed)
-                widget_spin_span.sbox_lower.valueChanged.connect(self.slot_sbox_value_changed)
-                self.tview_sm_rules.setIndexWidget(index, widget_spin_span)
+                    self.add_widget_spin_span(r, c, new, COLOR_WARNING,
+                                              int(warning_low), int(warning_high))
 
             # Add Critical field widget
             elif c == INDEX_COL_RULES_CRITICAL:
-                item = self.model_rules.item(r, c)
-                index = self.model_rules.indexFromItem(item)
-                widget_spin_span = widgetSpinBoxSpanSlider()
-
                 if new:
-                    widget_spin_span.sbox_upper.setValue(INITIAL_VALUE_UPPER)
-                    widget_spin_span.sbox_lower.setValue(INITIAL_VALUE_LOWER)
+                    self.add_widget_spin_span(r, c, new, COLOR_CRITICAL)
                 else:
-                    widget_spin_span.sbox_upper.setValue(int(critical_high))
-                    widget_spin_span.sbox_lower.setValue(int(critical_low))
-
-                widget_spin_span.span_slider.setColorOutsideRange(COLOR_CRITICAL)
-                widget_spin_span.sbox_upper.valueChanged.connect(self.slot_sbox_value_changed)
-                widget_spin_span.sbox_lower.valueChanged.connect(self.slot_sbox_value_changed)
-                self.tview_sm_rules.setIndexWidget(index, widget_spin_span)
+                    self.add_widget_spin_span(r, c, new, COLOR_CRITICAL,
+                                              int(critical_low), int(critical_high))
 
             # Add Email field widget
             elif c == INDEX_COL_RULES_EMAIL_NOTIFICATIONS:
@@ -728,6 +777,11 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.update_gui(EVENT_CLICKED_REMOVE_ALL)
             self.update_gui(EVENT_INPUT_CHANGED)
 
+    def slot_pbutton_sm_add_host_clicked(self):
+        add_host_dialog = REDTabSettingsServerMonitoringAddHostDialog(self)
+        add_host_dialog.setModal(True)
+        add_host_dialog.show()
+
     def slot_pbutton_sm_refresh_clicked(self):
         self.update_gui(EVENT_CLICKED_REFRESH)
 
@@ -739,13 +793,13 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         for bricklet in infos.get_bricklet_infos():
             if bricklet.device_identifier == BrickletPTC.DEVICE_IDENTIFIER:
-                    self.uids_ptc.append(bricklet.uid)
+                self.uids_ptc.append(bricklet.uid)
             elif bricklet.device_identifier == BrickletTemperature.DEVICE_IDENTIFIER:
-                    self.uids_temperature.append(bricklet.uid)
+                self.uids_temperature.append(bricklet.uid)
             elif bricklet.device_identifier == BrickletHumidity.DEVICE_IDENTIFIER:
-                    self.uids_humidity.append(bricklet.uid)
+                self.uids_humidity.append(bricklet.uid)
             elif bricklet.device_identifier == BrickletAmbientLight.DEVICE_IDENTIFIER:
-                    self.uids_ambient_light.append(bricklet.uid)
+                self.uids_ambient_light.append(bricklet.uid)
 
         self.uids_ptc.append(EMPTY_UID)
         self.uids_temperature.append(EMPTY_UID)
@@ -938,7 +992,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 -w {2} \
 -c {3} \
 -w2 {4} \
--c2 {5}'''.format(widget_bricklet.currentText().lower(),
+-c2 {5}'''.format(SUPPORTED_BRICKLETS[widget_bricklet.currentText()],
                   widget_uid.currentText(),
                   str(widget_warning.sbox_upper.value()),
                   str(widget_critical.sbox_upper.value()),
@@ -1076,12 +1130,26 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             for c in range(0, COUNT_COLUMNS_RULES_MODEL):
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
+
                 if sender == self.tview_sm_rules.indexWidget(index):
                     item_cbox_uids = self.model_rules.item(r, INDEX_COL_RULES_UID)
                     index_cbox_uids = self.model_rules.indexFromItem(item_cbox_uids)
+                    item_warning_widget_spin_span = self.model_rules.item(r, INDEX_COL_RULES_WARNING)
+                    index_warning_widget_spin_span = self.model_rules.indexFromItem(item_warning_widget_spin_span)
+                    item_critical_widget_spin_span = self.model_rules.item(r, INDEX_COL_RULES_CRITICAL)
+                    index_critical_widget_spin_span = self.model_rules.indexFromItem(item_critical_widget_spin_span)
+
                     cbox_uids = self.tview_sm_rules.indexWidget(index_cbox_uids)
+                    warning_widget_spin_span = self.tview_sm_rules.indexWidget(index_warning_widget_spin_span)
+                    critical_widget_spin_span = self.tview_sm_rules.indexWidget(index_critical_widget_spin_span)
 
                     self.populate_cbox_uids(sender, cbox_uids)
+                    self.setRangeWidgetSpinBoxSpanSlider(SUPPORTED_BRICKLETS[sender.currentText()],
+                                                         warning_widget_spin_span)
+                    self.setInitialValueWidgetSpinBoxSpanSlider(warning_widget_spin_span)
+                    self.setRangeWidgetSpinBoxSpanSlider(SUPPORTED_BRICKLETS[sender.currentText()],
+                                                         critical_widget_spin_span)
+                    self.setInitialValueWidgetSpinBoxSpanSlider(critical_widget_spin_span)
 
                     break
 

@@ -62,10 +62,17 @@
           <item row="0" column="0" colspan="2">
            <widget class="QTreeView" name="tview_sm_hosts"/>
           </item>
-          <item row="1" column="0" colspan="2">
+          <item row="1" column="0">
            <widget class="QPushButton" name="pbutton_sm_add_host">
             <property name="text">
              <string>Add Host</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>Remove All Hosts</string>
             </property>
            </widget>
           </item>
@@ -226,7 +233,6 @@
            </widget>
           </item>
          </layout>
-         <zorder>tabWidget</zorder>
          <zorder>tview_sm_rules</zorder>
          <zorder>pbutton_sm_add_rule</zorder>
          <zorder>pbutton_sm_remove_all_rules</zorder>

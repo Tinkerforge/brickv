@@ -50,10 +50,6 @@ class QxtSpanSlider(QSlider):
         self.gradientRight = self.palette().color(QPalette.Dark).light(110)
         self.colorOutsideRange = QColor(0, 0, 0)
 
-    def setSliderRange(minimum, maximum):
-        self.setMaximum(maximum)
-        self.setMinimum(minimum)
-
     def lowerValue(self):
         return min(self.lower, self.upper)
         

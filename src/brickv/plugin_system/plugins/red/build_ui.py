@@ -9,6 +9,7 @@ os.system("pyuic4 -o ui_red_tab_settings_network.py ui/red_tab_settings_network.
 os.system("pyuic4 -o ui_red_tab_settings_ap.py ui/red_tab_settings_ap.ui")
 os.system("pyuic4 -o ui_red_tab_settings_ap_dhcp_leases_dialog.py ui/red_tab_settings_ap_dhcp_leases_dialog.ui")
 os.system("pyuic4 -o ui_red_tab_settings_server_monitoring.py ui/red_tab_settings_server_monitoring.ui")
+os.system("pyuic4 -o ui_red_tab_settings_server_monitoring_add_host_dialog.py ui/red_tab_settings_server_monitoring_add_host_dialog.ui")
 os.system("pyuic4 -o ui_red_tab_settings_openhab.py ui/red_tab_settings_openhab.ui")
 os.system("pyuic4 -o ui_red_tab_settings_brickd.py ui/red_tab_settings_brickd.ui")
 os.system("pyuic4 -o ui_red_tab_settings_datetime.py ui/red_tab_settings_datetime.ui")
