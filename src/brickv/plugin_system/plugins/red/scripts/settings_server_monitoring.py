@@ -43,23 +43,23 @@ class CheckTinkerforge(object):
         self.args   = args
         self.ipcon  = IPConnection()
 
-    def cb_connect(connect_reason):
+    def cb_connect(self, connect_reason):
         try:
             self.ipcon.authenticate(self.args.secret)
-            service.read(self.args.bricklet,
-                         self.args.uid,
-                         self.args.warning,
-                         self.args.critical,
-                         self.args.mode,
-                         self.args.warning2,
-                         self.args.critical2)
+            self.read(self.args.bricklet,
+                      self.args.uid,
+                      self.args.warning,
+                      self.args.critical,
+                      self.args.mode,
+                      self.args.warning2,
+                      self.args.critical2)
         except:
             print 'CRITICAL - Connection Authentication failed'
             raise SystemExit, CRITICAL
 
     def connect(self):
         if self.args.secret:
-            self.ipcon.register_callback(IPConnection.CALLBACK_CONNECTED, cb_connect)
+            self.ipcon.register_callback(IPConnection.CALLBACK_CONNECTED, self.cb_connect)
 
         self.ipcon.connect(self.args.host, self.args.port)
 
