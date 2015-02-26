@@ -18,6 +18,7 @@ from brickv.plugin_system.plugins.imu import device_class as imu
 from brickv.plugin_system.plugins.industrial_digital_in_4 import device_class as industrial_digital_in_4
 from brickv.plugin_system.plugins.industrial_digital_out_4 import device_class as industrial_digital_out_4
 from brickv.plugin_system.plugins.industrial_dual_0_20ma import device_class as industrial_dual_0_20ma
+from brickv.plugin_system.plugins.industrial_dual_analog_in import device_class as industrial_dual_analog_in
 from brickv.plugin_system.plugins.industrial_quad_relay import device_class as industrial_quad_relay
 from brickv.plugin_system.plugins.io16 import device_class as io16
 from brickv.plugin_system.plugins.io4 import device_class as io4
@@ -71,6 +72,7 @@ device_classes = [
     industrial_digital_in_4,
     industrial_digital_out_4,
     industrial_dual_0_20ma,
+    industrial_dual_analog_in,
     industrial_quad_relay,
     io16,
     io4,
