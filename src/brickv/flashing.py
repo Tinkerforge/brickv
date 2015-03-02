@@ -380,7 +380,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         has_bricklet_ports = self.combo_port.count() > 0
         self.combo_serial_port.setEnabled(not is_no_bootloader)
         self.combo_port.setEnabled(has_bricklet_ports)
-        self.combo_plugin.setEnabled(has_bricklet_ports)
+        self.combo_plugin.setEnabled(has_bricklet_ports and self.combo_plugin.count() > 1)
         self.button_firmware_save.setEnabled(not is_firmware_select and not is_no_bootloader)
         self.edit_custom_firmware.setEnabled(is_firmware_custom)
         self.button_firmware_browse.setEnabled(is_firmware_custom)
