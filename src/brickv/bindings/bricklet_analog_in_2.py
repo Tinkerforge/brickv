@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-02-27.      #
+# This file was automatically generated on 2015-03-02.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -50,8 +50,8 @@ class BrickletAnalogIn2(Device):
     FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD = 10
     FUNCTION_SET_DEBOUNCE_PERIOD = 11
     FUNCTION_GET_DEBOUNCE_PERIOD = 12
-    FUNCTION_SET_AVERAGING = 13
-    FUNCTION_GET_AVERAGING = 14
+    FUNCTION_SET_MOVING_AVERAGE = 13
+    FUNCTION_GET_MOVING_AVERAGE = 14
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -81,8 +81,8 @@ class BrickletAnalogIn2(Device):
         self.response_expected[BrickletAnalogIn2.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAnalogIn2.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletAnalogIn2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletAnalogIn2.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_SET_AVERAGING] = BrickletAnalogIn2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_GET_AVERAGING] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogIn2.FUNCTION_SET_MOVING_AVERAGE] = BrickletAnalogIn2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAnalogIn2.FUNCTION_GET_MOVING_AVERAGE] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAnalogIn2.CALLBACK_VOLTAGE] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletAnalogIn2.CALLBACK_ANALOG_VALUE] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletAnalogIn2.CALLBACK_VOLTAGE_REACHED] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -228,27 +228,25 @@ class BrickletAnalogIn2(Device):
         """
         return self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
-    def set_averaging(self, average):
+    def set_moving_average(self, average):
         """
-        Set the length of a moving averaging for the voltage value.
+        Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
+        for the moisture value.
         
-        Setting the length to 1 means that no averaging is taking place. If the
-        averaging is off, there is more noise on the data, but the data is without
-        delay.
+        Setting the length to 1 will turn the averaging off. With less
+        averaging, there is more noise on the data.
         
-        Valid values are between 1 and 50. The default value is 50.
+        The range for the averaging is 1-100.
         
-        .. versionadded:: 2.0.3~(Plugin)
+        The default value is 100.
         """
-        self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_SET_AVERAGING, (average,), 'B', '')
+        self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
 
-    def get_averaging(self):
+    def get_moving_average(self):
         """
-        Returns the averaging configuration as set by :func:`SetAveraging`.
-        
-        .. versionadded:: 2.0.3~(Plugin)
+        Returns the length moving average as set by :func:`SetMovingAverage`.
         """
-        return self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_GET_AVERAGING, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
 
     def get_identity(self):
         """

@@ -11,6 +11,7 @@ from brickv.plugin_system.plugins.distance_ir import device_class as distance_ir
 from brickv.plugin_system.plugins.distance_us import device_class as distance_us
 from brickv.plugin_system.plugins.dual_button import device_class as dual_button
 from brickv.plugin_system.plugins.dual_relay import device_class as dual_relay
+from brickv.plugin_system.plugins.gas_detector import device_class as gas_detector
 from brickv.plugin_system.plugins.gps import device_class as gps
 from brickv.plugin_system.plugins.hall_effect import device_class as hall_effect
 from brickv.plugin_system.plugins.heart_rate import device_class as heart_rate
@@ -66,6 +67,7 @@ device_classes = [
     distance_us,
     dual_button,
     dual_relay,
+    gas_detector,
     gps,
     hall_effect,
     heart_rate,

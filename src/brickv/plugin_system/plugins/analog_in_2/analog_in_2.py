@@ -33,7 +33,7 @@ class VoltageLabel(QLabel):
     def setText(self, text):
         text = "Voltage: " + text + " V"
         super(VoltageLabel, self).setText(text)
-    
+
 class AnalogIn2(PluginBase):
     qtcb_voltage = pyqtSignal(int)
     
@@ -75,11 +75,11 @@ class AnalogIn2(PluginBase):
         layout_h1.addStretch()
         layout.addLayout(layout_h1)
 
-    def get_averaging_async(self, average):
+    def get_moving_average_async(self, average):
         self.spin_average.setValue(average)
 
     def start(self):
-        async_call(self.ai.get_averaging, None, self.get_averaging_async, self.increase_error_count)
+        async_call(self.ai.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
         async_call(self.ai.get_voltage, None, self.cb_voltage, self.increase_error_count)
         async_call(self.ai.set_voltage_callback_period, 100, None, self.increase_error_count)
         
@@ -109,4 +109,4 @@ class AnalogIn2(PluginBase):
         self.voltage_label.setText('%6.02f' % v)
 
     def spin_average_finished(self):
-        self.ai.set_averaging(self.spin_average.value())
+        self.ai.set_moving_average(self.spin_average.value())
