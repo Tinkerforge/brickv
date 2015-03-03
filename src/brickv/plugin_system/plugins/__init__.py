@@ -3,6 +3,7 @@ from brickv.plugin_system.plugins.ambient_light import device_class as ambient_l
 from brickv.plugin_system.plugins.analog_in import device_class as analog_in
 from brickv.plugin_system.plugins.analog_in_v2 import device_class as analog_in_v2
 from brickv.plugin_system.plugins.analog_out import device_class as analog_out
+from brickv.plugin_system.plugins.analog_out_v2 import device_class as analog_out_v2
 from brickv.plugin_system.plugins.barometer import device_class as barometer
 from brickv.plugin_system.plugins.color import device_class as color
 from brickv.plugin_system.plugins.current12 import device_class as current12
@@ -60,6 +61,7 @@ device_classes = [
     analog_in,
     analog_in_v2,
     analog_out,
+    analog_out_v2,
     barometer,
     color,
     current12,
