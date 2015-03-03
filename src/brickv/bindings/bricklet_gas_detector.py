@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-02.      #
+# This file was automatically generated on 2015-03-03.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -102,7 +102,7 @@ class BrickletGasDetector(Device):
         Sets the period in ms with which the :func:`Value` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`Value` is only triggered if the moisture value has changed since the
+        :func:`Value` is only triggered if the value value has changed since the
         last triggering.
         
         The default value is 0.
@@ -126,10 +126,10 @@ class BrickletGasDetector(Device):
          :widths: 10, 100
         
          "'x'",    "Callback is turned off"
-         "'o'",    "Callback is triggered when the moisture value is *outside* the min and max values"
-         "'i'",    "Callback is triggered when the moisture value is *inside* the min and max values"
-         "'<'",    "Callback is triggered when the moisture value is smaller than the min value (max is ignored)"
-         "'>'",    "Callback is triggered when the moisture value is greater than the min value (max is ignored)"
+         "'o'",    "Callback is triggered when the value value is *outside* the min and max values"
+         "'i'",    "Callback is triggered when the value value is *inside* the min and max values"
+         "'<'",    "Callback is triggered when the value value is smaller than the min value (max is ignored)"
+         "'>'",    "Callback is triggered when the value value is greater than the min value (max is ignored)"
         
         The default value is ('x', 0, 0).
         """
@@ -166,7 +166,7 @@ class BrickletGasDetector(Device):
     def set_moving_average(self, average):
         """
         Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
-        for the moisture value.
+        for the value value.
         
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.

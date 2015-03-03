@@ -1,13 +1,13 @@
-# -*- coding: utf-8 -*-  
+# -*- coding: utf-8 -*-
 """
-Analog In 2 Plugin
+Analog In 2.0 Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
 
-analog_in_2.py: Analog In 2.0 Plugin Implementation
+analog_in_v2.py: Analog In 2.0 Plugin Implementation
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License 
-as published by the Free Software Foundation; either version 2 
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -23,33 +23,33 @@ Boston, MA 02111-1307, USA.
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
-from brickv.bindings.bricklet_analog_in_2 import BrickletAnalogIn2
+from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2
 from brickv.async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox
 from PyQt4.QtCore import pyqtSignal, Qt
-        
+
 class VoltageLabel(QLabel):
     def setText(self, text):
         text = "Voltage: " + text + " V"
         super(VoltageLabel, self).setText(text)
 
-class AnalogIn2(PluginBase):
+class AnalogInV2(PluginBase):
     qtcb_voltage = pyqtSignal(int)
-    
+
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Analog In 2 Bricklet', BrickletAnalogIn2, *args)
-        
+        PluginBase.__init__(self, 'Analog In Bricklet', BrickletAnalogInV2, *args)
+
         self.ai = self.device
-        
+
         self.qtcb_voltage.connect(self.cb_voltage)
         self.ai.register_callback(self.ai.CALLBACK_VOLTAGE,
-                                  self.qtcb_voltage.emit) 
-        
+                                  self.qtcb_voltage.emit)
+
         self.voltage_label = VoltageLabel('Voltage: ')
-        
+
         self.current_value = None
-        
+
         plot_list = [['', Qt.red, self.get_current_value]]
         self.plot_widget = PlotWidget('Voltage [V]', plot_list)
 
@@ -82,19 +82,22 @@ class AnalogIn2(PluginBase):
         async_call(self.ai.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
         async_call(self.ai.get_voltage, None, self.cb_voltage, self.increase_error_count)
         async_call(self.ai.set_voltage_callback_period, 100, None, self.increase_error_count)
-        
+
         self.plot_widget.stop = False
-        
+
     def stop(self):
         async_call(self.ai.set_voltage_callback_period, 0, None, self.increase_error_count)
-        
+
         self.plot_widget.stop = True
 
     def destroy(self):
         pass
 
+    def is_hardware_version_relevant(self):
+        return True
+
     def get_url_part(self):
-        return 'analog_in_2'
+        return 'analog_in_v2'
 
     @staticmethod
     def has_device_identifier(device_identifier):

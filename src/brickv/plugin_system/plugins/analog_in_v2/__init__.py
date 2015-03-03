@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Analog In 2 Plugin
+Analog In 2.0 Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
 
 __init__.py: package initialization
@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugins.analog_in_2.analog_in_2 import AnalogIn2
+from brickv.plugin_system.plugins.analog_in_v2.analog_in_v2 import AnalogInV2
 
-device_class = AnalogIn2
+device_class = AnalogInV2

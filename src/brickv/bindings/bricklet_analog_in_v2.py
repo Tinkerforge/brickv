@@ -26,7 +26,7 @@ GetVoltageCallbackThreshold = namedtuple('VoltageCallbackThreshold', ['option', 
 GetAnalogValueCallbackThreshold = namedtuple('AnalogValueCallbackThreshold', ['option', 'min', 'max'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
-class BrickletAnalogIn2(Device):
+class BrickletAnalogInV2(Device):
     """
     Device for sensing voltages between 0 and 42V
     """
@@ -69,30 +69,30 @@ class BrickletAnalogIn2(Device):
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[BrickletAnalogIn2.FUNCTION_GET_VOLTAGE] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_GET_ANALOG_VALUE] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_SET_VOLTAGE_CALLBACK_PERIOD] = BrickletAnalogIn2.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_GET_VOLTAGE_CALLBACK_PERIOD] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletAnalogIn2.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD] = BrickletAnalogIn2.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_GET_VOLTAGE_CALLBACK_THRESHOLD] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletAnalogIn2.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletAnalogIn2.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_SET_MOVING_AVERAGE] = BrickletAnalogIn2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_GET_MOVING_AVERAGE] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAnalogIn2.CALLBACK_VOLTAGE] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletAnalogIn2.CALLBACK_ANALOG_VALUE] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletAnalogIn2.CALLBACK_VOLTAGE_REACHED] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletAnalogIn2.CALLBACK_ANALOG_VALUE_REACHED] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletAnalogIn2.FUNCTION_GET_IDENTITY] = BrickletAnalogIn2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_GET_VOLTAGE] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_GET_ANALOG_VALUE] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_SET_VOLTAGE_CALLBACK_PERIOD] = BrickletAnalogInV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_GET_VOLTAGE_CALLBACK_PERIOD] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletAnalogInV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD] = BrickletAnalogInV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_GET_VOLTAGE_CALLBACK_THRESHOLD] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletAnalogInV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletAnalogInV2.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_SET_MOVING_AVERAGE] = BrickletAnalogInV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_GET_MOVING_AVERAGE] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogInV2.CALLBACK_VOLTAGE] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletAnalogInV2.CALLBACK_ANALOG_VALUE] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletAnalogInV2.CALLBACK_VOLTAGE_REACHED] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletAnalogInV2.CALLBACK_ANALOG_VALUE_REACHED] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletAnalogInV2.FUNCTION_GET_IDENTITY] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletAnalogIn2.CALLBACK_VOLTAGE] = 'H'
-        self.callback_formats[BrickletAnalogIn2.CALLBACK_ANALOG_VALUE] = 'H'
-        self.callback_formats[BrickletAnalogIn2.CALLBACK_VOLTAGE_REACHED] = 'H'
-        self.callback_formats[BrickletAnalogIn2.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
+        self.callback_formats[BrickletAnalogInV2.CALLBACK_VOLTAGE] = 'H'
+        self.callback_formats[BrickletAnalogInV2.CALLBACK_ANALOG_VALUE] = 'H'
+        self.callback_formats[BrickletAnalogInV2.CALLBACK_VOLTAGE_REACHED] = 'H'
+        self.callback_formats[BrickletAnalogInV2.CALLBACK_ANALOG_VALUE_REACHED] = 'H'
 
     def get_voltage(self):
         """
@@ -100,21 +100,21 @@ class BrickletAnalogIn2(Device):
         between 0V and 42V. The resolution is approximately 10mV.
         
         If you want to get the voltage periodically, it is recommended to use the
-        callback :func:`Voltage` and set the period with 
+        callback :func:`Voltage` and set the period with
         :func:`SetVoltageCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_GET_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_GET_VOLTAGE, (), '', 'H')
 
     def get_analog_value(self):
         """
         Returns the value as read by a 12-bit analog-to-digital converter.
         The value is between 0 and 4095.
         
-        If you want the analog value periodically, it is recommended to use the 
-        callback :func:`AnalogValue` and set the period with 
+        If you want the analog value periodically, it is recommended to use the
+        callback :func:`AnalogValue` and set the period with
         :func:`SetAnalogValueCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_GET_ANALOG_VALUE, (), '', 'H')
 
     def set_voltage_callback_period(self, period):
         """
@@ -126,13 +126,13 @@ class BrickletAnalogIn2(Device):
         
         The default value is 0.
         """
-        self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_SET_VOLTAGE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_SET_VOLTAGE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_voltage_callback_period(self):
         """
         Returns the period as set by :func:`SetVoltageCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_GET_VOLTAGE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_GET_VOLTAGE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_analog_value_callback_period(self, period):
         """
@@ -144,17 +144,17 @@ class BrickletAnalogIn2(Device):
         
         The default value is 0.
         """
-        self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
+        self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_SET_ANALOG_VALUE_CALLBACK_PERIOD, (period,), 'I', '')
 
     def get_analog_value_callback_period(self):
         """
         Returns the period as set by :func:`SetAnalogValueCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_GET_ANALOG_VALUE_CALLBACK_PERIOD, (), '', 'I')
 
     def set_voltage_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`VoltageReached` callback. 
+        Sets the thresholds for the :func:`VoltageReached` callback.
         
         The following options are possible:
         
@@ -170,17 +170,17 @@ class BrickletAnalogIn2(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
 
     def get_voltage_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetVoltageCallbackThreshold`.
         """
-        return GetVoltageCallbackThreshold(*self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_GET_VOLTAGE_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetVoltageCallbackThreshold(*self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_GET_VOLTAGE_CALLBACK_THRESHOLD, (), '', 'c h h'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
         """
-        Sets the thresholds for the :func:`AnalogValueReached` callback. 
+        Sets the thresholds for the :func:`AnalogValueReached` callback.
         
         The following options are possible:
         
@@ -196,13 +196,13 @@ class BrickletAnalogIn2(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
+        self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_SET_ANALOG_VALUE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
 
     def get_analog_value_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetAnalogValueCallbackThreshold`.
         """
-        return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
+        return GetAnalogValueCallbackThreshold(*self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_GET_ANALOG_VALUE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_debounce_period(self, debounce):
         """
@@ -220,17 +220,17 @@ class BrickletAnalogIn2(Device):
         
         The default value is 100.
         """
-        self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
+        self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_SET_DEBOUNCE_PERIOD, (debounce,), 'I', '')
 
     def get_debounce_period(self):
         """
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
-        return self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+        return self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
     def set_moving_average(self, average):
         """
-        Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
+        Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__
         for the moisture value.
         
         Setting the length to 1 will turn the averaging off. With less
@@ -240,13 +240,13 @@ class BrickletAnalogIn2(Device):
         
         The default value is 50.
         """
-        self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
+        self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
 
     def get_moving_average(self):
         """
         Returns the length moving average as set by :func:`SetMovingAverage`.
         """
-        return self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
 
     def get_identity(self):
         """
@@ -259,7 +259,7 @@ class BrickletAnalogIn2(Device):
         The device identifier numbers can be found :ref:`here <device_identifier>`.
         |device_identifier_constant|
         """
-        return GetIdentity(*self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
+        return GetIdentity(*self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_GET_IDENTITY, (), '', '8s 8s c 3B 3B H'))
 
     def register_callback(self, id, callback):
         """
@@ -267,4 +267,4 @@ class BrickletAnalogIn2(Device):
         """
         self.registered_callbacks[id] = callback
 
-AnalogIn2 = BrickletAnalogIn2 # for backward compatibility
+AnalogInV2 = BrickletAnalogInV2 # for backward compatibility

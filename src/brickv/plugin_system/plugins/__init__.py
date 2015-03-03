@@ -1,7 +1,7 @@
 from brickv.plugin_system.plugins.accelerometer import device_class as accelerometer
 from brickv.plugin_system.plugins.ambient_light import device_class as ambient_light
 from brickv.plugin_system.plugins.analog_in import device_class as analog_in
-from brickv.plugin_system.plugins.analog_in_2 import device_class as analog_in_2
+from brickv.plugin_system.plugins.analog_in_v2 import device_class as analog_in_v2
 from brickv.plugin_system.plugins.analog_out import device_class as analog_out
 from brickv.plugin_system.plugins.barometer import device_class as barometer
 from brickv.plugin_system.plugins.color import device_class as color
@@ -58,7 +58,7 @@ device_classes = [
     accelerometer,
     ambient_light,
     analog_in,
-    analog_in_2,
+    analog_in_v2,
     analog_out,
     barometer,
     color,
