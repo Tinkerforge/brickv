@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-02.      #
+# This file was automatically generated on 2015-03-03.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -236,9 +236,9 @@ class BrickletAnalogIn2(Device):
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
         
-        The range for the averaging is 1-100.
+        The range for the averaging is 1-50.
         
-        The default value is 100.
+        The default value is 50.
         """
         self.ipcon.send_request(self, BrickletAnalogIn2.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
 
