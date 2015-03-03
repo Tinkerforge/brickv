@@ -82,7 +82,7 @@ class AnalogOutV2(PluginBase):
         pass
 
     def get_url_part(self):
-        return 'analog_out'
+        return 'analog_out_v2'
 
     @staticmethod
     def has_device_identifier(device_identifier):
