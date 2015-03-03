@@ -38,7 +38,7 @@ class AnalogInV2(PluginBase):
     qtcb_voltage = pyqtSignal(int)
 
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Analog In Bricklet', BrickletAnalogInV2, *args)
+        PluginBase.__init__(self, 'Analog In 2.0 Bricklet', BrickletAnalogInV2, *args)
 
         self.ai = self.device
 
@@ -101,7 +101,7 @@ class AnalogInV2(PluginBase):
 
     @staticmethod
     def has_device_identifier(device_identifier):
-        return device_identifier == BrickletAnalogIn2.DEVICE_IDENTIFIER
+        return device_identifier == BrickletAnalogInV2.DEVICE_IDENTIFIER
 
     def get_current_value(self):
         return self.current_value
