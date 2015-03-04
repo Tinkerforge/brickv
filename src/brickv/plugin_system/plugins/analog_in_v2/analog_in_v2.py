@@ -93,9 +93,6 @@ class AnalogInV2(PluginBase):
     def destroy(self):
         pass
 
-    def is_hardware_version_relevant(self):
-        return True
-
     def get_url_part(self):
         return 'analog_in_v2'
 
