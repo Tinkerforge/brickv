@@ -25,18 +25,19 @@ import json
 import posixpath
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWidget, QPlainTextEdit, QFont, QTextOption, QLabel
+from PyQt4.QtGui import QWidget, QDialog, QInputDialog, QPlainTextEdit, QFont, QTextOption, QLabel, QMessageBox
 
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_openhab import Ui_REDTabSettingsOpenHAB
 from brickv.plugin_system.plugins.red.api import *
-from brickv.plugin_system.plugins.red.script_manager import check_script_result
+from brickv.plugin_system.plugins.red.program_utils import ExpandingProgressDialog, ExpandingInputDialog
+from brickv.plugin_system.plugins.red.script_manager import check_script_result, report_script_result
 
 class ConfigFile(object):
-    def __init__(self, display_name, source_name, tab, deletable=True):
+    def __init__(self, display_name, absolute_name, tab, deletable=True):
         self.display_name   = display_name # is unique
-        self.source_name    = source_name # is also unique
+        self.absolute_name  = absolute_name # is also unique
         self.tab            = tab
         self.deletable      = deletable
         self.index          = -1
@@ -91,7 +92,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
         self.script_manager      = None # Set from REDTabSettings
         self.image_version       = None # Set from REDTabSettings
         self.service_state       = None # Set from REDTabSettings
-        self.refresh_in_progress = False
+        self.action_in_progress  = False
         self.configs             = [
             ConfigFile('openhab.cfg', '/etc/openhab/configurations/openhab.cfg', self, deletable=False),
             ConfigFile('logback.xml', '/etc/openhab/configurations/logback.xml', self, deletable=False)
@@ -100,7 +101,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
         self.recreate_widgets()
 
         self.combo_config.currentIndexChanged.connect(self.update_ui_state)
-        self.button_refresh.clicked.connect(self.refresh_configs)
+        self.button_refresh.clicked.connect(lambda: self.refresh_all_configs(None))
         self.button_new.clicked.connect(self.new_config)
         self.button_delete.clicked.connect(self.delete_config)
         self.button_discard.clicked.connect(self.discard_changes)
@@ -125,7 +126,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
             self.label_unsupported.hide()
             self.label_disabled.hide()
             self.widget_controls.show()
-            self.refresh_configs()
+            self.refresh_all_configs(None)
 
     def tab_off_focus(self):
         pass
@@ -139,14 +140,15 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
 
         self.stacked_container.setCurrentIndex(index)
 
-        self.label_progress.setVisible(self.refresh_in_progress)
-        self.progress.setVisible(self.refresh_in_progress)
+        self.label_progress.setVisible(self.action_in_progress)
+        self.progress.setVisible(self.action_in_progress)
 
-        self.button_refresh.setEnabled(not self.refresh_in_progress)
-        self.button_new.setEnabled(not self.refresh_in_progress)
-        self.button_delete.setEnabled(not self.refresh_in_progress and config.deletable)
-        self.button_discard.setEnabled(not self.refresh_in_progress and config.modified)
-        self.button_apply.setEnabled(not self.refresh_in_progress and config.modified)
+        self.combo_config.setEnabled(not self.action_in_progress)
+        self.button_refresh.setEnabled(not self.action_in_progress)
+        self.button_new.setEnabled(not self.action_in_progress)
+        self.button_delete.setEnabled(not self.action_in_progress and config.deletable)
+        self.button_discard.setEnabled(not self.action_in_progress and config.modified)
+        self.button_apply.setEnabled(not self.action_in_progress and config.modified)
 
     def recreate_widgets(self):
         index = self.combo_config.currentIndex()
@@ -183,28 +185,32 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
         self.edit_errors.show()
         self.edit_errors.appendHtml(u'<b>{0}</b>'.format(Qt.escape(message)))
 
-    def refresh_config(self, index):
+    def refresh_config(self, index, done_callback):
         if index >= len(self.configs):
-            self.refresh_in_progress = False
+            self.action_in_progress = False
             self.update_ui_state()
+
+            if done_callback != None:
+                done_callback()
+
             return
 
         config = self.configs[index]
 
         if config == None:
-            self.refresh_config(index + 1)
+            self.refresh_config(index + 1, done_callback)
             return
 
-        self.refresh_in_progress = True
+        self.action_in_progress = True
         self.update_ui_state()
 
-        self.label_progress.setText('Downloading ' + config.source_name)
+        self.label_progress.setText('Downloading ' + config.absolute_name)
 
         def cb_open(red_file):
             def cb_read(result):
                 red_file.release()
 
-                self.refresh_in_progress = False
+                self.action_in_progress = False
                 self.update_ui_state()
 
                 if result.error != None:
@@ -222,7 +228,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
                     else:
                         config.set_content(content)
 
-                self.refresh_config(index + 1)
+                self.refresh_config(index + 1, done_callback)
 
             red_file.read_async(red_file.length, cb_read)
 
@@ -234,13 +240,13 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
             else:
                 config.set_content('')
 
-            self.refresh_config(index + 1)
+            self.refresh_config(index + 1, done_callback)
 
         async_call(REDFile(self.session).open,
-                   (config.source_name, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
+                   (config.absolute_name, REDFile.FLAG_READ_ONLY | REDFile.FLAG_NON_BLOCKING, 0, 0, 0),
                    cb_open, cb_open_error, report_exception=True)
 
-    def refresh_configs(self):
+    def refresh_all_configs(self, done_callback):
         self.edit_errors.hide()
         self.edit_errors.setPlainText('')
 
@@ -249,7 +255,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
 
             def fatal_error(text):
                 self.log_error(text)
-                self.refresh_in_progress = False
+                self.action_in_progress = False
                 self.update_ui_state()
 
             if not okay:
@@ -289,33 +295,153 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
 
             self.configs = [old_configs['openhab.cfg'], old_configs['logback.xml']]
 
-            for value in configs_by_basename.values():
+            for key in sorted(configs_by_basename):
+                value = configs_by_basename[key]
+
                 if len(value) > 0:
                     self.configs.append(None)
 
-                    for display_name, source_name in sorted(value):
+                    for display_name, absolute_name in sorted(value):
                         if display_name in old_configs:
                             self.configs.append(old_configs[display_name])
                         else:
-                            self.configs.append(ConfigFile(display_name, source_name, self))
+                            self.configs.append(ConfigFile(display_name, absolute_name, self))
 
             self.recreate_widgets()
-            self.refresh_config(0)
+            self.refresh_config(0, done_callback)
 
         self.label_progress.setText('Collecting config files')
-        self.refresh_in_progress = True
+        self.action_in_progress = True
         self.update_ui_state()
 
         self.script_manager.execute_script('openhab_configs_list', cb_openhab_configs_list, max_length=1024*1024)
 
     def new_config(self):
-        pass
+        dialog = ExpandingInputDialog(get_main_window())
+        dialog.setModal(True)
+        dialog.setWindowTitle('New Config File')
+        dialog.setLabelText('Enter name for new openHAB config file:')
+        dialog.setInputMode(QInputDialog.TextInput)
+        dialog.setOkButtonText('Create')
+
+        if dialog.exec_() != QDialog.Accepted:
+            return
+
+        name = dialog.textValue()
+
+        # check that new name is valid as filename
+        if len(name) == 0 or name == '.' or name == '..' or '/' in name:
+            QMessageBox.critical(get_main_window(), 'New Config File Error',
+                                 'A config file name cannot be empty, cannot be one dot [.], cannot be two dots [..] and cannot contain a forward slash [/].')
+            return
+
+        endswith_items   = name.endswith('.items')
+        endswith_sitemap = name.endswith('.sitemap')
+        endswith_rules   = name.endswith('.rules')
+
+        if not endswith_items and not endswith_sitemap and not endswith_rules:
+            QMessageBox.critical(get_main_window(), 'New Config File Error',
+                                 'A config file name has to end with .items, .sitemap or .rules.')
+            return
+
+        if name in ['.items', '.sitemap', '.rules']:
+            QMessageBox.critical(get_main_window(), 'New Config File Error',
+                                 '.items, .sitemap and .rules cannot be used as config file names.')
+            return
+
+        if endswith_items:
+            target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'items', name)
+        elif endswith_sitemap:
+            target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'sitemaps', name)
+        elif endswith_rules:
+            target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'rules', name)
+
+        def cb_open(red_file):
+            red_file.release()
+
+            def select_new():
+                index = -1
+
+                for config in self.configs:
+                    if config != None and config.display_name == name:
+                        index = config.index
+
+                if index >= 0:
+                    self.combo_config.setCurrentIndex(index)
+
+            self.refresh_all_configs(select_new)
+
+        def cb_open_error(error):
+            if isinstance(error, REDError) and error.error_code == REDError.E_ALREADY_EXISTS:
+                QMessageBox.critical(get_main_window(), 'New Config File Error',
+                                     'Config file {0} already exists.'.format(name))
+            else:
+                QMessageBox.critical(get_main_window(), 'New Config File Error',
+                                     'Could not create config file {0}:\n\n{1}'.format(name, error))
+
+        async_call(REDFile(self.session).open,
+                   (target_path, REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_EXCLUSIVE, 0o644, 0, 0),
+                   cb_open, cb_open_error, report_exception=True)
 
     def delete_config(self):
-        pass
+        config = self.configs[self.combo_config.currentIndex()]
+        button = QMessageBox.question(get_main_window(), 'Delete Config File',
+                                      'Irreversibly deleting config file {0}.'.format(config.display_name),
+                                      QMessageBox.Ok, QMessageBox.Cancel)
+
+        if button != QMessageBox.Ok: # FIXME: check if tab is still alive
+            return
+
+        self.action_in_progress = True
+        self.update_ui_state()
+
+        self.label_progress.setText('Deleting ' + config.absolute_name)
+
+        def cb_delete(result):
+            self.action_in_progress = False
+            self.update_ui_state()
+            self.refresh_all_configs(None)
+
+            report_script_result(result, 'Delete Config File Error', 'Could not delete config file {0}:'.format(config.display_name))
+
+        self.script_manager.execute_script('delete', cb_delete,
+                                           [json.dumps([config.absolute_name]), json.dumps([])])
 
     def discard_changes(self):
         self.configs[self.combo_config.currentIndex()].discard_changes()
 
     def apply_changes(self):
-        pass
+        config  = self.configs[self.combo_config.currentIndex()]
+        content = config.edit.toPlainText()
+
+        self.action_in_progress = True
+        self.update_ui_state()
+
+        self.label_progress.setText('Uploading ' + config.absolute_name)
+
+        def cb_open(red_file):
+            def cb_write(error):
+                red_file.release()
+
+                self.action_in_progress = False
+                self.update_ui_state()
+
+                if error != None:
+                    QMessageBox.critical(get_main_window(), 'Apply Changes Error',
+                                         u'Error while writing {0}: {1}'.format(config.display_name, error))
+                    return
+
+                config.set_content(content)
+
+            red_file.write_async(content.encode('utf-8'), cb_write)
+
+        def cb_open_error(error):
+            self.action_in_progress = False
+            self.update_ui_state()
+
+            QMessageBox.critical(get_main_window(), 'Apply Changes Error',
+                                 u'Error while opening {0}: {1}'.format(config.display_name, error))
+
+        async_call(REDFile(self.session).open,
+                   (config.absolute_name, REDFile.FLAG_WRITE_ONLY | REDFile.FLAG_CREATE | REDFile.FLAG_NON_BLOCKING | REDFile.FLAG_TRUNCATE, 0o644, 0, 0),
+                   cb_open, cb_open_error, report_exception=True)
