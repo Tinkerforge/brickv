@@ -267,7 +267,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         elif name.startswith('lcd_'):
             name = name.replace('lcd_', 'LCD_')
             if url_part.startswith('lcd_20x4_'):
-                name = name.replace('v11', '1.1').replace('v12', '1.2')
+                name = name.replace('_v11', '_1.1').replace('_v12', '_1.2')
         elif name.startswith('io'):
             name = name.replace('io', 'IO-')
         elif name.endswith('_ir'):
@@ -276,6 +276,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
             name = name.replace('_us', '_US')
         elif name.startswith('led_'):
             name = name.replace('led_', 'LED_')
+        elif name.endswith('_v2'):
+            name = name.replace('_v2', '_2.0')
 
         words = name.split('_')
         parts = []
