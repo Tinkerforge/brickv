@@ -55,8 +55,18 @@ DEFAULT_COL_WIDTH_HOSTS_AUTHENTICATION      = 200
 DEFAULT_COL_WIDTH_HOSTS_SECRET              = 450
 DEFAULT_COL_WIDTH_HOSTS_REMOVE              = 80
 
+'''
 HEADERS_TVIEW_RULES = ['Name',
                        'Host',
+                       'Bricklet',
+                       'UID',
+                       'Warning',
+                       'Critical',
+                       'Email Notifications',
+                       'Remove']
+'''
+
+HEADERS_TVIEW_RULES = ['Name',
                        'Bricklet',
                        'UID',
                        'Warning',
@@ -92,20 +102,21 @@ INDEX_EMAIL_NO_NOTIFICATIONS        = 0
 INDEX_EMAIL_CRITICAL                = 1
 INDEX_EMAIL_WARNING_CRITICAL        = 2
 INDEX_COL_RULES_NAME                = 0
-INDEX_COL_RULES_HOST                = 1
-INDEX_COL_RULES_BRICKLET            = 2
-INDEX_COL_RULES_UID                 = 3
-INDEX_COL_RULES_WARNING             = 4
-INDEX_COL_RULES_CRITICAL            = 5
-INDEX_COL_RULES_EMAIL_NOTIFICATIONS = 6
-INDEX_COL_RULES_REMOVE              = 7
+#INDEX_COL_RULES_HOST                = *
+INDEX_COL_RULES_BRICKLET            = 1
+INDEX_COL_RULES_UID                 = 2
+INDEX_COL_RULES_WARNING             = 3
+INDEX_COL_RULES_CRITICAL            = 4
+INDEX_COL_RULES_EMAIL_NOTIFICATIONS = 5
+INDEX_COL_RULES_REMOVE              = 6
 INDEX_COL_HOSTS_HOST                = 0
 INDEX_COL_HOSTS_PORT                = 1
 INDEX_COL_HOSTS_AUTHENTICATION      = 2
 INDEX_COL_HOSTS_SECRET              = 3
 INDEX_COL_HOSTS_REMOVE              = 4
 
-COUNT_COLUMNS_RULES_MODEL = 8
+#COUNT_COLUMNS_RULES_MODEL = 8
+COUNT_COLUMNS_RULES_MODEL = 7
 COUNT_COLUMNS_HOSTS_MODEL = 5
 
 EVENT_CLICKED_REMOVE_ALL     = 1
@@ -184,11 +195,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.service_state  = None # Set from REDTabSettings
 
         self.is_tab_on_focus = False
-        
+
         self.label_sm_unsupported.hide()
         self.label_sm_disabled.hide()
         self.show_working_wait(False)
         self.sarea_sm.hide()
+        self.gbox_sm_hosts.hide()
 
         self.uids_ptc = []
         self.uids_temperature = []
@@ -198,6 +210,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.model_hosts = QtGui.QStandardItemModel()
         self.model_hosts.setHorizontalHeaderLabels(HEADERS_TVIEW_HOSTS)
         self.tview_sm_hosts.setModel(self.model_hosts)
+        self.tview_sm_hosts.setColumnHidden(INDEX_COL_HOSTS_HOST, True)
         self.set_default_col_width_hosts()
 
         self.model_rules = QtGui.QStandardItemModel()
@@ -254,7 +267,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                                              widget_spin_span)
 
         if new:
-            self.setInitialValueWidgetSpinBoxSpanSlider(widget_spin_span)
+            self.set_initial_value_widget_spinBoxSpanSlider(widget_spin_span)
         else:
             widget_spin_span.sbox_upper.setValue(high)
             widget_spin_span.sbox_lower.setValue(low)
@@ -285,7 +298,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             widget_spin_span.sbox_lower.setRange(RANGE_MIN_AMBIENT_LIGHT, RANGE_MAX_AMBIENT_LIGHT)
             widget_spin_span.sbox_upper.setRange(RANGE_MIN_AMBIENT_LIGHT, RANGE_MAX_AMBIENT_LIGHT)
 
-    def setInitialValueWidgetSpinBoxSpanSlider(self, widget_spin_span):
+    def set_initial_value_widget_spinBoxSpanSlider(self, widget_spin_span):
         span_minimum = widget_spin_span.span_slider.minimum()
         span_maximum = widget_spin_span.span_slider.maximum()
         span = abs(span_minimum - span_maximum)
@@ -304,7 +317,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
     def set_default_col_width_rules(self):
         self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_NAME, DEFAULT_COL_WIDTH_RULES_NAME)
-        self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_HOST, DEFAULT_COL_WIDTH_RULES_HOST)
+        #self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_HOST, DEFAULT_COL_WIDTH_RULES_HOST)
         self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_BRICKLET, DEFAULT_COL_WIDTH_RULES_BRICKLET)
         self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_UID, DEFAULT_COL_WIDTH_RULES_UID)
         self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_WARNING, DEFAULT_COL_WIDTH_RULES_WARNING)
@@ -604,14 +617,14 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     ledit_name.setText(name)
 
                 self.tview_sm_rules.setIndexWidget(index, ledit_name)
-            
-            # Add Host field widget
-            elif c == INDEX_COL_RULES_HOST:
-                item = self.model_rules.item(r, c)
-                index = self.model_rules.indexFromItem(item)
-                cbox = QtGui.QComboBox()
 
-                self.tview_sm_rules.setIndexWidget(index, cbox)
+            # Add Host field widget
+            #elif c == INDEX_COL_RULES_HOST:
+            #    item = self.model_rules.item(r, c)
+            #    index = self.model_rules.indexFromItem(item)
+            #    cbox = QtGui.QComboBox()
+
+            #    self.tview_sm_rules.setIndexWidget(index, cbox)
 
             # Add Bricklet field widget
             elif c == INDEX_COL_RULES_BRICKLET:
@@ -779,8 +792,17 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
     def slot_pbutton_sm_add_host_clicked(self):
         add_host_dialog = REDTabSettingsServerMonitoringAddHostDialog(self)
-        add_host_dialog.setModal(True)
-        add_host_dialog.show()
+        return_code_dialog = add_host_dialog.exec_()
+
+        if return_code_dialog == QtGui.QDialog.Accepted:
+            print 'ACCEPTED'
+            #read the data and save
+            #destroy the dialog
+            add_host_dialog.done(0)
+        else:
+            print 'REJECTED'
+            add_host_dialog.done(0)
+            #destroy the dialog
 
     def slot_pbutton_sm_refresh_clicked(self):
         self.update_gui(EVENT_CLICKED_REFRESH)
@@ -1146,10 +1168,10 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     self.populate_cbox_uids(sender, cbox_uids)
                     self.setRangeWidgetSpinBoxSpanSlider(SUPPORTED_BRICKLETS[sender.currentText()],
                                                          warning_widget_spin_span)
-                    self.setInitialValueWidgetSpinBoxSpanSlider(warning_widget_spin_span)
+                    self.set_initial_value_widget_spinBoxSpanSlider(warning_widget_spin_span)
                     self.setRangeWidgetSpinBoxSpanSlider(SUPPORTED_BRICKLETS[sender.currentText()],
                                                          critical_widget_spin_span)
-                    self.setInitialValueWidgetSpinBoxSpanSlider(critical_widget_spin_span)
+                    self.set_initial_value_widget_spinBoxSpanSlider(critical_widget_spin_span)
 
                     break
 

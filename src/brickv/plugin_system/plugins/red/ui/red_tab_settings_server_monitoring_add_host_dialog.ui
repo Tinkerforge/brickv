@@ -63,7 +63,17 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QSpinBox" name="sbox_sm_add_host_port"/>
+    <widget class="QSpinBox" name="sbox_sm_add_host_port">
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>65535</number>
+     </property>
+     <property name="value">
+      <number>4223</number>
+     </property>
+    </widget>
    </item>
    <item row="2" column="1">
     <widget class="QCheckBox" name="chkbox_sm_add_host_authentication">
@@ -80,7 +90,7 @@
     </widget>
    </item>
    <item row="3" column="0">
-    <widget class="QLabel" name="label_4">
+    <widget class="QLabel" name="label_sm_add_host_secret">
      <property name="text">
       <string>Secret:</string>
      </property>

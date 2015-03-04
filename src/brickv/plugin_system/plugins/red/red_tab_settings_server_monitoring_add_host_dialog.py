@@ -31,3 +31,34 @@ class REDTabSettingsServerMonitoringAddHostDialog(QtGui.QDialog, Ui_REDTabSettin
     def __init__(self, parent):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
+
+        self.chkbox_sm_add_host_authentication.stateChanged.connect(self.slot_chkbox_sm_add_host_authentication_state_changed)
+        self.pbutton_sm_add_host_add.clicked.connect(self.slot_pbutton_sm_add_host_add_clicked)
+        self.pbutton_sm_add_host_cancel.clicked.connect(self.slot_pbutton_sm_add_host_cancel_clicked)
+
+        if self.chkbox_sm_add_host_authentication.checkState() == QtCore.Qt.Checked:
+            self.label_sm_add_host_secret.show()
+            self.ledit_sm_add_host_secret.show()
+        else:
+            self.label_sm_add_host_secret.hide()
+            self.ledit_sm_add_host_secret.hide()
+
+    def slot_pbutton_sm_add_host_cancel_clicked(self):
+        self.reject()
+
+    def slot_pbutton_sm_add_host_add_clicked(self):
+        #if check fails then self.reject() otherwise self.accept()
+
+        try:
+            self.ledit_sm_add_host_host.text().encode('ascii')
+            return True
+        except:
+            return False
+
+    def slot_chkbox_sm_add_host_authentication_state_changed(self, state):
+        if state == QtCore.Qt.Checked:
+            self.label_sm_add_host_secret.show()
+            self.ledit_sm_add_host_secret.show()
+        else:
+            self.label_sm_add_host_secret.hide()
+            self.ledit_sm_add_host_secret.hide()
