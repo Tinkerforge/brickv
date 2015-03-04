@@ -219,7 +219,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.model_hosts = QtGui.QStandardItemModel()
         self.model_hosts.setHorizontalHeaderLabels(HEADERS_TVIEW_HOSTS)
         self.tview_sm_hosts.setModel(self.model_hosts)
-        self.tview_sm_hosts.setColumnHidden(INDEX_COL_HOSTS_HOST, True)
         self.set_default_col_width_hosts()
 
         self.model_rules = QtGui.QStandardItemModel()
