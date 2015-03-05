@@ -27,6 +27,7 @@ from brickv.plugin_system.plugins.industrial_quad_relay import device_class as i
 from brickv.plugin_system.plugins.io16 import device_class as io16
 from brickv.plugin_system.plugins.io4 import device_class as io4
 from brickv.plugin_system.plugins.joystick import device_class as joystick
+from brickv.plugin_system.plugins.laser_range_finder import device_class as laser_range_finder
 from brickv.plugin_system.plugins.lcd_16x2 import device_class as lcd_16x2
 from brickv.plugin_system.plugins.lcd_20x4 import device_class as lcd_20x4
 from brickv.plugin_system.plugins.led_strip import device_class as led_strip
@@ -85,6 +86,7 @@ device_classes = [
     io16,
     io4,
     joystick,
+    laser_range_finder,
     lcd_16x2,
     lcd_20x4,
     led_strip,
