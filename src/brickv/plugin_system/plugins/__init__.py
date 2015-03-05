@@ -33,6 +33,7 @@ from brickv.plugin_system.plugins.lcd_20x4 import device_class as lcd_20x4
 from brickv.plugin_system.plugins.led_strip import device_class as led_strip
 from brickv.plugin_system.plugins.line import device_class as line
 from brickv.plugin_system.plugins.linear_poti import device_class as linear_poti
+from brickv.plugin_system.plugins.load_cell import device_class as load_cell
 from brickv.plugin_system.plugins.master import device_class as master
 from brickv.plugin_system.plugins.moisture import device_class as moisture
 from brickv.plugin_system.plugins.motion_detector import device_class as motion_detector
@@ -93,6 +94,7 @@ device_classes = [
     led_strip,
     line,
     linear_poti,
+    load_cell,
     master,
     moisture,
     motion_detector,
