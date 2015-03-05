@@ -63,7 +63,7 @@ from brickv.plugin_system.plugins.red.program_page_stdio import ProgramPageStdio
 from brickv.plugin_system.plugins.red.program_page_schedule import ProgramPageSchedule
 from brickv.plugin_system.plugins.red.ui_program_info_main import Ui_ProgramInfoMain
 from brickv.async_call import async_call
-from brickv.utils import get_main_window
+from brickv.utils import get_main_window, get_home_path
 
 class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
     name_changed = pyqtSignal()
@@ -79,6 +79,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.executable_versions = executable_versions
         self.program             = program
         self.root_directory      = self.program.root_directory
+
+        self.last_upload_files_wizard_directory = get_home_path()
 
         self.program.scheduler_state_changed_callback = self.scheduler_state_changed
         self.program.process_spawned_callback         = self.process_spawned
@@ -672,8 +674,10 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         context = ProgramWizardContext(self.session, [], self.script_manager, self.image_version, self.executable_versions)
 
-        self.upload_files_wizard = ProgramWizardUpload(self, context, self.program)
+        self.upload_files_wizard = ProgramWizardUpload(self, context, self.program, self.last_upload_files_wizard_directory)
         self.upload_files_wizard.exec_()
+
+        self.last_upload_files_wizard_directory = self.upload_files_wizard.last_directory
 
         if self.upload_files_wizard.upload_successful:
             self.widget_files.refresh_files()

@@ -33,15 +33,19 @@ import posixpath
 import sys
 
 class ProgramPageFiles(ProgramPage, Ui_ProgramPageFiles):
-    def __init__(self, title_prefix=''):
+    def __init__(self, title_prefix='', last_directory=None):
         ProgramPage.__init__(self)
 
         self.setupUi(self)
 
-        self.edit_mode      = False
-        self.folder_icon    = QIcon(os.path.join(get_resources_path(), "folder-icon.png"))
-        self.file_icon      = QIcon(os.path.join(get_resources_path(), "file-icon.png"))
-        self.last_directory = get_home_path()
+        self.edit_mode   = False
+        self.folder_icon = QIcon(os.path.join(get_resources_path(), "folder-icon.png"))
+        self.file_icon   = QIcon(os.path.join(get_resources_path(), "file-icon.png"))
+
+        if last_directory != None:
+            self.last_directory = last_directory
+        else:
+            self.last_directory = get_home_path()
 
         self.setTitle(title_prefix + 'Files')
 

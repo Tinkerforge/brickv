@@ -27,14 +27,14 @@ from brickv.plugin_system.plugins.red.program_page_files import ProgramPageFiles
 from brickv.plugin_system.plugins.red.program_page_upload import ProgramPageUpload
 
 class ProgramWizardUpload(ProgramWizard):
-    def __init__(self, parent, context, program):
+    def __init__(self, parent, context, program, last_directory):
         ProgramWizard.__init__(self, parent, context)
 
         self.program = program
 
         self.setWindowTitle('Upload Files')
 
-        self.setPage(Constants.PAGE_FILES,  ProgramPageFiles(title_prefix='Step 1 of 2: '))
+        self.setPage(Constants.PAGE_FILES,  ProgramPageFiles(title_prefix='Step 1 of 2: ', last_directory=last_directory))
         self.setPage(Constants.PAGE_UPLOAD, ProgramPageUpload(title_prefix='Step 2 of 2: '))
 
     # overrides QWizard.nextId
@@ -67,3 +67,7 @@ class ProgramWizardUpload(ProgramWizard):
     @property
     def upload_successful(self):
         return self.page(Constants.PAGE_UPLOAD).upload_successful
+
+    @property
+    def last_directory(self):
+        return self.page(Constants.PAGE_FILES).last_directory
