@@ -45,6 +45,7 @@ from brickv.plugin_system.plugins.red import device_class as red
 from brickv.plugin_system.plugins.remote_switch import device_class as remote_switch
 from brickv.plugin_system.plugins.rotary_encoder import device_class as rotary_encoder
 from brickv.plugin_system.plugins.rotary_poti import device_class as rotary_poti
+from brickv.plugin_system.plugins.rs232 import device_class as rs232
 from brickv.plugin_system.plugins.segment_display_4x7 import device_class as segment_display_4x7
 from brickv.plugin_system.plugins.servo import device_class as servo
 from brickv.plugin_system.plugins.solid_state_relay import device_class as solid_state_relay
@@ -104,6 +105,7 @@ device_classes = [
     remote_switch,
     rotary_encoder,
     rotary_poti,
+    rs232,
     segment_display_4x7,
     servo,
     solid_state_relay,
