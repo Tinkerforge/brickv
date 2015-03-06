@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Error Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+brickv (Brick Viewer)
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 error.py: Error Plugin Implementation
 
@@ -27,7 +27,7 @@ from PyQt4.QtGui import QLabel, QVBoxLayout
 
 class Error(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Error', None, *args)
+        PluginBase.__init__(self, None, *args, override_base_name='Error')
 
         layout = QVBoxLayout(self)
         layout.addStretch()

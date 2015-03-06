@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Unknown Plugin
-Copyright (C) 2013-2014 Matthias Bolte <matthias@tinkerforge.com>
+brickv (Brick Viewer)
+Copyright (C) 2013-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 unknown.py: Unknwon Plugin Implementation
 
@@ -27,11 +27,11 @@ from PyQt4.QtGui import QLabel, QVBoxLayout
 
 class Unknown(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Unknown', None, *args)
+        PluginBase.__init__(self, None, *args, override_base_name='Unknown')
 
         layout = QVBoxLayout(self)
         layout.addStretch()
-        label = QLabel("The Brick or Bricklet is not yet supported in this version of Brickv. Please Update Brickv.")
+        label = QLabel("This Brick or Bricklet is not yet supported. Please update Brick Viewer!")
         label.setAlignment(Qt.AlignHCenter)
         layout.addWidget(label)
         layout.addStretch()

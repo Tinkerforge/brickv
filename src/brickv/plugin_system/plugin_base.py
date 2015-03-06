@@ -2,7 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 plugin_base.py: Base class for all Brick Viewer Plugins
 
@@ -30,12 +30,11 @@ class PluginBase(QWidget, object):
     PLUGIN_STATE_RUNNING = 1
     PLUGIN_STATE_PAUSED = 2
 
-    def __init__(self, device_class, ipcon, uid, hardware_version, firmware_version):
+    def __init__(self, device_class, ipcon, uid, hardware_version, firmware_version, override_base_name=None):
         QWidget.__init__(self)
 
         self.plugin_state = PluginBase.PLUGIN_STATE_STOPPED
         self.label_timeouts = None
-        self.base_name = device_class.DEVICE_DISPLAY_NAME
         self.ipcon = ipcon
         self.uid = uid
         self.hardware_version = hardware_version
@@ -43,9 +42,14 @@ class PluginBase(QWidget, object):
         self.error_count = 0
 
         if device_class is not None:
+            self.base_name = device_class.DEVICE_DISPLAY_NAME
             self.device = device_class(uid, ipcon)
         else:
+            self.base_name = 'Unnamed'
             self.device = None
+
+        if override_base_name != None:
+            self.base_name = override_base_name
 
         if self.is_hardware_version_relevant():
             self.name = '{0} {1}.{2}'.format(self.base_name,
