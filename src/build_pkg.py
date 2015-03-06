@@ -48,6 +48,10 @@ import brickv.config
 DESCRIPTION = 'Brick Viewer'
 NAME = 'Brickv'
 
+def system(command):
+    if os.system(command) != 0:
+        exit(1)
+
 def generate_plugin_images():
     image_files = []
     for root, dirnames, names in os.walk(os.path.join('brickv', 'plugin_system')):
@@ -108,7 +112,7 @@ def build_macosx_pkg():
             shutil.rmtree(DIST_PATH)
 
     def create_app():
-        os.system("python build_all_ui.py release")
+        system("python build_all_ui.py release")
 
         generate_plugin_images()
 
@@ -162,7 +166,7 @@ def build_macosx_pkg():
         )
 
         print('calling build_plugin_list.py')
-        os.system('python build_plugin_list.py')
+        system('python build_plugin_list.py')
 
     def qt_menu_patch():
         src = os.path.join(PWD, 'build_data', 'macosx', 'qt_menu.nib')
@@ -216,7 +220,7 @@ def sign_py2exe(exepath):
     execopy = os.path.join(os.path.dirname(exepath),
                            "temp-" + os.path.basename(exepath))
     shutil.copy2(exepath, execopy)
-    os.system('X:\\sign.bat ' + execopy)
+    system('X:\\sign.bat ' + execopy)
 
     # Figure out the size of the appended signature.
     comment_size = os.stat(execopy).st_size - os.stat(exepath).st_size
@@ -228,7 +232,7 @@ def sign_py2exe(exepath):
         f.write(struct.pack("<H", comment_size))
 
     # Now we can sign the file for real.
-    os.system('X:\\sign.bat ' + exepath)
+    system('X:\\sign.bat ' + exepath)
 
 def build_windows_pkg():
     PWD = os.path.dirname(os.path.realpath(__file__))
@@ -240,7 +244,7 @@ def build_windows_pkg():
         shutil.rmtree(DIST_PATH)
 
     import py2exe
-    os.system("python build_all_ui.py release")
+    system("python build_all_ui.py release")
 
     data_files = []
     for root, dirnames, names in os.walk(os.path.normcase("build_data/windows/")):
@@ -303,7 +307,7 @@ def build_windows_pkg():
     )
 
     print('calling build_plugin_list.py')
-    os.system('python build_plugin_list.py')
+    system('python build_plugin_list.py')
 
     # FIXME: doesn't work yet
     #if os.path.exists('X:\\sign.bat'):
@@ -317,7 +321,7 @@ def build_windows_pkg():
         lines.append(line)
     file('dist/nsis/brickv_installer.nsi', 'wb').writelines(lines)
 
-    os.system('"C:\\Program Files\\NSIS\\makensis.exe" dist\\nsis\\brickv_installer.nsi')
+    system('"C:\\Program Files\\NSIS\\makensis.exe" dist\\nsis\\brickv_installer.nsi')
 
     dist_nsis_dir = os.path.join(os.getcwd(), 'dist', 'nsis')
     installer = 'brickv_windows_{0}.exe'.format(brickv.config.BRICKV_VERSION.replace('.', '_'))
@@ -328,7 +332,7 @@ def build_windows_pkg():
     shutil.move(os.path.join(dist_nsis_dir, installer), os.getcwd())
 
     if os.path.exists('X:\\sign.bat'):
-        os.system('X:\\sign.bat ' + installer)
+        system('X:\\sign.bat ' + installer)
 
 
 def build_linux_pkg():
@@ -338,7 +342,7 @@ def build_linux_pkg():
 
     print('building brickv package')
 
-    os.system("python build_all_ui.py release")
+    system("python build_all_ui.py release")
 
     generate_plugin_images()
 
@@ -376,7 +380,7 @@ def build_linux_pkg():
             raise Exception('No bindings found corresponding to plugin ' + plugin)
 
     print('calling build_plugin_list.py')
-    os.system('python build_plugin_list.py')
+    system('python build_plugin_list.py')
 
     build_data_path = os.path.join(os.getcwd(), 'build_data', 'linux')
     os.chdir(build_data_path)
@@ -393,12 +397,12 @@ def build_linux_pkg():
                 line = RTEXT
             f.write(line.encode('utf-8'))
 
-    os.system('find brickv/usr -type f -path *.pyc -exec rm {} \;')
-    os.system('find brickv/usr -type d -exec chmod 0755 {} \;')
+    system('find brickv/usr -type f -path *.pyc -exec rm {} \;')
+    system('find brickv/usr -type d -exec chmod 0755 {} \;')
 
-    os.system('chown -R root:root brickv/usr')
-    os.system('dpkg -b brickv/ brickv-' + brickv.config.BRICKV_VERSION + '_all.deb')
-    os.system('chown -R `logname`:`logname` brickv/usr')
+    system('chown -R root:root brickv/usr')
+    system('dpkg -b brickv/ brickv-' + brickv.config.BRICKV_VERSION + '_all.deb')
+    system('chown -R `logname`:`logname` brickv/usr')
 
 
 BRICK_FLASH_CMD_VERSION = '1.0.0'
@@ -454,11 +458,11 @@ def build_linux_cmd_pkg():
         f.write(line)
     f.close()
 
-    os.system('chmod 0755 brick-flash-cmd/usr/bin/brick-flash-cmd')
-    os.system('find brick-flash-cmd/usr -type d -exec chmod 0755 {} \;')
-    os.system('chown -R root:root brick-flash-cmd/usr')
-    os.system('dpkg -b brick-flash-cmd/ brick-flash-cmd-' + BRICK_FLASH_CMD_VERSION + '_all.deb')
-    os.system('chown -R `logname`:`logname` brick-flash-cmd/usr')
+    system('chmod 0755 brick-flash-cmd/usr/bin/brick-flash-cmd')
+    system('find brick-flash-cmd/usr -type d -exec chmod 0755 {} \;')
+    system('chown -R root:root brick-flash-cmd/usr')
+    system('dpkg -b brick-flash-cmd/ brick-flash-cmd-' + BRICK_FLASH_CMD_VERSION + '_all.deb')
+    system('chown -R `logname`:`logname` brick-flash-cmd/usr')
 
 
 # call python build_pkg.py to build the windows/linux/macosx package

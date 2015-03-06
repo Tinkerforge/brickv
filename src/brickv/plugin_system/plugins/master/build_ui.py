@@ -2,10 +2,14 @@
 
 import os
 
-os.system("pyuic4 -o ui_master.py ui/master.ui")
-os.system("pyuic4 -o ui_chibi.py ui/chibi.ui")
-os.system("pyuic4 -o ui_rs485.py ui/rs485.ui")
-os.system("pyuic4 -o ui_wifi.py ui/wifi.ui")
-os.system("pyuic4 -o ui_ethernet.py ui/ethernet.ui")
-os.system("pyuic4 -o ui_wifi_status.py ui/wifi_status.ui")
-os.system("pyuic4 -o ui_extension_type.py ui/extension_type.ui")
+def system(command):
+    if os.system(command) != 0:
+        exit(1)
+
+system("pyuic4 -o ui_master.py ui/master.ui")
+system("pyuic4 -o ui_chibi.py ui/chibi.ui")
+system("pyuic4 -o ui_rs485.py ui/rs485.ui")
+system("pyuic4 -o ui_wifi.py ui/wifi.ui")
+system("pyuic4 -o ui_ethernet.py ui/ethernet.ui")
+system("pyuic4 -o ui_wifi_status.py ui/wifi_status.ui")
+system("pyuic4 -o ui_extension_type.py ui/extension_type.ui")

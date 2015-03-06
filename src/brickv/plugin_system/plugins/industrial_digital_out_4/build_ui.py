@@ -2,4 +2,8 @@
 
 import os
 
-os.system("pyuic4 -o ui_industrial_digital_out_4.py ui/industrial_digital_out_4.ui")
+def system(command):
+    if os.system(command) != 0:
+        exit(1)
+
+system("pyuic4 -o ui_industrial_digital_out_4.py ui/industrial_digital_out_4.ui")

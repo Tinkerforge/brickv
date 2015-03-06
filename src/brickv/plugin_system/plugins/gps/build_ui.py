@@ -2,4 +2,8 @@
 
 import os
 
-os.system("pyuic4 -o ui_gps.py ui/gps.ui")
+def system(command):
+    if os.system(command) != 0:
+        exit(1)
+
+system("pyuic4 -o ui_gps.py ui/gps.ui")
