@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2011 Bastian Nordmeyer <bastian@tinkerforge.com>
 
@@ -50,25 +50,23 @@ NAME = 'Brickv'
 
 def generate_plugin_images():
     image_files = []
-    def image_visitor(arg, dirname, names):
+    for root, dirnames, names in os.walk(os.path.join('brickv', 'plugin_system')):
         for name in names:
-            if os.path.isfile(os.path.join(dirname, name)):
+            if os.path.isfile(os.path.join(root, name)):
                 _, ext = os.path.splitext(name)
                 ext = ext[1:]
 
                 if ext in ['bmp', 'png', 'jpg']:
-                    image_files.append([os.path.join(dirname, name).replace('\\', '/').replace('brickv/', ''), ext])
-
-    os.path.walk(os.path.join('brickv', 'plugin_system'), image_visitor, None)
+                    image_files.append([os.path.join(root, name).replace('\\', '/').replace('brickv/', ''), ext])
 
     images = open(os.path.join('brickv', 'plugin_images.py'), 'wb')
-    images.write('image_data = {\n')
+    images.write('image_data = {\n'.encode('utf-8'))
 
     for image_file in image_files:
         image_data = base64.b64encode(file(os.path.join('brickv', image_file[0]), 'rb').read())
-        images.write("'{0}': ['{1}', '{2}'],\n".format(image_file[0], image_file[1], image_data))
+        images.write("'{0}': ['{1}', '{2}'],\n".format(image_file[0], image_file[1], image_data).encode('utf-8'))
 
-    images.write('}\n')
+    images.write('}\n'.encode('utf-8'))
     images.close()
 
 def build_macosx_pkg():
@@ -88,15 +86,12 @@ def build_macosx_pkg():
         CFBundleIconFile = 'brickv-icon.icns',
     )
 
-    def visitor(arg, dirname, names):
-        for n in names:
-            if os.path.isfile(os.path.join(dirname, n)):
-                if arg[0]: # replace first folder name
-                    data_files.append((os.path.join(dirname.replace(arg[1],"")) , [os.path.join(dirname, n)]))
-                else: # keep full path
-                    data_files.append((os.path.join(dirname), [os.path.join(dirname, n)]))
+    for root, dirnames, names in os.walk(os.path.normcase("build_data/macosx/")):
+        for name in names:
+            path = os.path.join(root, name)
+            if os.path.isfile(path):
+                data_files.append((os.path.join(root.replace(os.path.normcase("build_data/macosx/"), "")), [path]))
 
-    os.path.walk(os.path.normcase("build_data/macosx/"), visitor, (True, os.path.normcase("build_data/macosx/")))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'brickv-icon.png')]))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-default-icon.png')]))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-mouse-over-icon.png')]))
@@ -210,7 +205,7 @@ os.environ['RESOURCEPATH'] = os.path.dirname(os.path.realpath(__file__))
         run_in_term_patch()
         data_files_patch()
     else:
-        print "Usage: python setup.py py2app build"
+        print("Usage: python setup.py py2app build")
 
 # https://github.com/rfk/www.rfk.id.au/blob/master/content/blog/entry/code-signing-py2exe/index.html
 def sign_py2exe(exepath):
@@ -245,15 +240,12 @@ def build_windows_pkg():
     os.system("python build_all_ui.py")
 
     data_files = []
-    def visitor(arg, dirname, names):
-        for n in names:
-            if os.path.isfile(os.path.join(dirname, n)):
-                if arg[0]: # replace first folder name
-                    data_files.append((os.path.join(dirname.replace(arg[1],"")), [os.path.join(dirname, n)]))
-                else: # keep full path
-                    data_files.append((os.path.join(dirname), [os.path.join(dirname, n)]))
+    for root, dirnames, names in os.walk(os.path.normcase("build_data/windows/")):
+        for name in names:
+            path = os.path.join(root, name)
+            if os.path.isfile(path):
+                data_files.append((os.path.join(root.replace(os.path.normcase("build_data/windows/"), "")), [path]))
 
-    os.path.walk(os.path.normcase("build_data/windows/"), visitor, (True, os.path.normcase("build_data/windows/")))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'brickv-icon.png')]))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-default-icon.png')]))
     data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-mouse-over-icon.png')]))
@@ -345,8 +337,7 @@ def build_linux_pkg():
     generate_plugin_images()
 
     src_path = os.path.join(os.getcwd(), 'brickv')
-    build_dir = os.path.join('build_data', 'linux', 'brickv', 'usr', 'share', 'brickv')
-    dest_path = os.path.join(os.getcwd(), build_dir)
+    dest_path = os.path.join(os.getcwd(), 'build_data', 'linux', 'brickv', 'usr', 'share', 'brickv')
     if os.path.isdir(dest_path):
         shutil.rmtree(dest_path)
 
@@ -358,16 +349,14 @@ def build_linux_pkg():
     STEXT = 'Version:'
     RTEXT = 'Version: {0}\n'.format(brickv.config.BRICKV_VERSION)
 
-    f = open(os.path.join('brickv', 'DEBIAN', 'control'), 'rb')
-    lines = f.readlines()
-    f.close()
+    with open(os.path.join('brickv', 'DEBIAN', 'control'), 'rb') as f:
+        lines = [l.decode('utf-8') for l in f.readlines()]
 
-    f = open(os.path.join('brickv', 'DEBIAN', 'control'), 'wb')
-    for line in lines:
-        if not line.find(STEXT) == -1:
-            line = RTEXT
-        f.write(line)
-    f.close()
+    with open(os.path.join('brickv', 'DEBIAN', 'control'), 'wb') as f:
+        for line in lines:
+            if not line.find(STEXT) == -1:
+                line = RTEXT
+            f.write(line.encode('utf-8'))
 
     os.system('find brickv/usr -type f -path *.pyc -exec rm {} \;')
     os.system('find brickv/usr -type d -exec chmod 0755 {} \;')
@@ -456,4 +445,4 @@ if __name__ == "__main__":
         sys.argv.append('build')
         build_macosx_pkg()
     else:
-        print "error: unsupported platform: " + sys.platform
+        print("error: unsupported platform: " + sys.platform)
