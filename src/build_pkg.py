@@ -108,7 +108,7 @@ def build_macosx_pkg():
             shutil.rmtree(DIST_PATH)
 
     def create_app():
-        os.system("python build_all_ui.py")
+        os.system("python build_all_ui.py release")
 
         generate_plugin_images()
 
@@ -160,6 +160,9 @@ def build_macosx_pkg():
             data_files = data_files,
             packages = packages,
         )
+
+        print('calling build_plugin_list.py')
+        os.system('python build_plugin_list.py')
 
     def qt_menu_patch():
         src = os.path.join(PWD, 'build_data', 'macosx', 'qt_menu.nib')
@@ -237,7 +240,7 @@ def build_windows_pkg():
         shutil.rmtree(DIST_PATH)
 
     import py2exe
-    os.system("python build_all_ui.py")
+    os.system("python build_all_ui.py release")
 
     data_files = []
     for root, dirnames, names in os.walk(os.path.normcase("build_data/windows/")):
@@ -299,6 +302,9 @@ def build_windows_pkg():
                      }]
     )
 
+    print('calling build_plugin_list.py')
+    os.system('python build_plugin_list.py')
+
     # FIXME: doesn't work yet
     #if os.path.exists('X:\\sign.bat'):
     #    sign_py2exe('dist\\brickv.exe')
@@ -332,7 +338,7 @@ def build_linux_pkg():
 
     print('building brickv package')
 
-    os.system("python build_all_ui.py")
+    os.system("python build_all_ui.py release")
 
     generate_plugin_images()
 
@@ -342,6 +348,35 @@ def build_linux_pkg():
         shutil.rmtree(dest_path)
 
     shutil.copytree(src_path, dest_path)
+
+    bindings_path = os.path.join(dest_path, 'bindings')
+    plugins_path = os.path.join(dest_path, 'plugin_system', 'plugins')
+    for plugin_name in sorted(os.listdir(plugins_path)):
+        plugin_path = os.path.join(plugins_path, plugin_name)
+
+        if not os.path.isdir(plugin_path):
+            continue
+
+        brick_binding = os.path.join(bindings_path, 'brick_{0}.py'.format(plugin_name))
+        bricklet_binding = os.path.join(bindings_path, 'bricklet_{0}.py'.format(plugin_name))
+
+        if os.path.isfile(brick_binding):
+            with open(brick_binding, 'r') as f:
+                if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
+                    print('removing unreleased plugin and binding: ' + plugin_name)
+                    shutil.rmtree(plugin_path)
+                    os.remove(brick_binding)
+        elif os.path.isfile(bricklet_binding):
+            with open(bricklet_binding, 'r') as f:
+                if '#### __DEVICE_IS_NOT_RELEASED__ ####' in f.read():
+                    print('removing unreleased plugin and binding: ' + plugin_name)
+                    shutil.rmtree(plugin_path)
+                    os.remove(bricklet_binding)
+        else:
+            raise Exception('No bindings found corresponding to plugin ' + plugin)
+
+    print('calling build_plugin_list.py')
+    os.system('python build_plugin_list.py')
 
     build_data_path = os.path.join(os.getcwd(), 'build_data', 'linux')
     os.chdir(build_data_path)
