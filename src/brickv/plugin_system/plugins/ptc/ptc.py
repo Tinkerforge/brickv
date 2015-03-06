@@ -45,7 +45,7 @@ class PTC(PluginBase):
 #    qtcb_resistance = pyqtSignal(int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'PTC Bricklet', BrickletPTC, *args)
+        PluginBase.__init__(self, BrickletPTC, *args)
 
         self.ptc = self.device
         

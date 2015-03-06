@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -32,6 +32,7 @@ class BrickletPTC(Device):
     """
 
     DEVICE_IDENTIFIER = 226
+    DEVICE_DISPLAY_NAME = 'PTC Bricklet'
 
     CALLBACK_TEMPERATURE = 13
     CALLBACK_TEMPERATURE_REACHED = 14

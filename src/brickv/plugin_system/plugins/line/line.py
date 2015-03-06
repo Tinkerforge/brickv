@@ -68,7 +68,7 @@ class Line(PluginBase):
     qtcb_reflectivity = pyqtSignal(int)
 
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Line Bricklet', BrickletLine, *args)
+        PluginBase.__init__(self, BrickletLine, *args)
 
         self.line = self.device
 

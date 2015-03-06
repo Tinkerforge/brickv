@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-01-07.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -32,6 +32,7 @@ class BrickletNFCRFID(Device):
     """
 
     DEVICE_IDENTIFIER = 246
+    DEVICE_DISPLAY_NAME = 'NFC/RFID Bricklet'
 
     CALLBACK_STATE_CHANGED = 8
 

@@ -39,7 +39,7 @@ class LinearPoti(PluginBase):
     qtcb_position = pyqtSignal(int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Linear Poti Bricklet', BrickletLinearPoti, *args)
+        PluginBase.__init__(self, BrickletLinearPoti, *args)
         
         self.lp = self.device
         

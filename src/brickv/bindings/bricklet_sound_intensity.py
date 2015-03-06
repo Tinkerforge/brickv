@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -31,6 +31,7 @@ class BrickletSoundIntensity(Device):
     """
 
     DEVICE_IDENTIFIER = 238
+    DEVICE_DISPLAY_NAME = 'Sound Intensity Bricklet'
 
     CALLBACK_INTENSITY = 8
     CALLBACK_INTENSITY_REACHED = 9

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-03.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -31,6 +31,7 @@ class BrickletGasDetector(Device):
     """
 
     DEVICE_IDENTIFIER = 252
+    DEVICE_DISPLAY_NAME = 'Gas Detector Bricklet'
 
     CALLBACK_VALUE = 15
     CALLBACK_VALUE_REACHED = 16

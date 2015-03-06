@@ -34,7 +34,7 @@ class MotionDetector(PluginBase):
     qtcb_detection_cylce_ended = pyqtSignal()
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Motion Detector Bricklet', BrickletMotionDetector, *args)
+        PluginBase.__init__(self, BrickletMotionDetector, *args)
 
         self.md = self.device
         

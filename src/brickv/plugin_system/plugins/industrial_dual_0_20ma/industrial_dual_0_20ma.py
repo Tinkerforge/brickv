@@ -39,7 +39,7 @@ class IndustrialDual020mA(PluginBase):
     qtcb_current = pyqtSignal(int, int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Industrial Dual 0-20mA Bricklet', BrickletIndustrialDual020mA, *args)
+        PluginBase.__init__(self, BrickletIndustrialDual020mA, *args)
 
         self.dual020 = self.device
         

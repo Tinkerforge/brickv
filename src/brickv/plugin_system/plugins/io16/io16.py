@@ -36,7 +36,7 @@ class IO16(PluginBase, Ui_IO16):
     qtcb_monoflop = pyqtSignal('char', int, int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'IO-16 Bricklet', BrickletIO16, *args)
+        PluginBase.__init__(self, BrickletIO16, *args)
 
         self.setupUi(self)
         

@@ -38,7 +38,7 @@ class GasDetector(PluginBase):
     qtcb_value = pyqtSignal(int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Gas Detector Bricklet', BrickletGasDetector, *args)
+        PluginBase.__init__(self, BrickletGasDetector, *args)
 
         self.gas_detector = self.device
         

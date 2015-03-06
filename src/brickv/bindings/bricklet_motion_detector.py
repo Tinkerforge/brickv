@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -30,6 +30,7 @@ class BrickletMotionDetector(Device):
     """
 
     DEVICE_IDENTIFIER = 233
+    DEVICE_DISPLAY_NAME = 'Motion Detector Bricklet'
 
     CALLBACK_MOTION_DETECTED = 2
     CALLBACK_DETECTION_CYCLE_ENDED = 3

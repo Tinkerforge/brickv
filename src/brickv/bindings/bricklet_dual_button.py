@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -32,6 +32,7 @@ class BrickletDualButton(Device):
     """
 
     DEVICE_IDENTIFIER = 230
+    DEVICE_DISPLAY_NAME = 'Dual Button Bricklet'
 
     CALLBACK_STATE_CHANGED = 4
 

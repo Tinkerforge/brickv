@@ -42,7 +42,7 @@ class GPS(PluginBase, Ui_GPS):
     qtcb_date_time = pyqtSignal(int, int)
 
     def __init__(self, *args):
-        PluginBase.__init__(self, 'GPS Bricklet', BrickletGPS, *args)
+        PluginBase.__init__(self, BrickletGPS, *args)
 
         self.setupUi(self)
 

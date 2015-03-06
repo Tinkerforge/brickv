@@ -31,7 +31,7 @@ from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBox
 
 class AnalogOut(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Analog Out Bricklet', BrickletAnalogOut, *args)
+        PluginBase.__init__(self, BrickletAnalogOut, *args)
         
         self.ao = self.device
         

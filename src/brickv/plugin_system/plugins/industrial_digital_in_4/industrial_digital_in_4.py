@@ -35,7 +35,7 @@ class IndustrialDigitalIn4(PluginBase, Ui_IndustrialDigitalIn4):
     qtcb_interrupt = pyqtSignal(int, int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Industrial Digital In 4 Bricklet', BrickletIndustrialDigitalIn4, *args)
+        PluginBase.__init__(self, BrickletIndustrialDigitalIn4, *args)
 
         self.setupUi(self)
         

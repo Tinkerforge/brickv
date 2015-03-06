@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -31,6 +31,7 @@ class BrickletLCD16x2(Device):
     """
 
     DEVICE_IDENTIFIER = 211
+    DEVICE_DISPLAY_NAME = 'LCD 16x2 Bricklet'
 
     CALLBACK_BUTTON_PRESSED = 9
     CALLBACK_BUTTON_RELEASED = 10

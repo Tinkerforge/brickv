@@ -42,7 +42,7 @@ class Current25(PluginBase):
     qtcb_over = pyqtSignal()
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Current25 Bricklet', BrickletCurrent25, *args)
+        PluginBase.__init__(self, BrickletCurrent25, *args)
         
         self.cur = self.device
         

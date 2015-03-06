@@ -148,7 +148,7 @@ class DistanceIR(PluginBase):
     qtcb_analog = pyqtSignal(int)
 
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Distance IR Bricklet', BrickletDistanceIR, *args)
+        PluginBase.__init__(self, BrickletDistanceIR, *args)
 
         self.dist = self.device
 

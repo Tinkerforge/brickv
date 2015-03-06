@@ -39,7 +39,7 @@ class DistanceUS(PluginBase):
     qtcb_distance = pyqtSignal(int)
 
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Distance US Bricklet', BrickletDistanceUS, *args)
+        PluginBase.__init__(self, BrickletDistanceUS, *args)
 
         self.dist = self.device
         

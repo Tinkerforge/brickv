@@ -39,7 +39,7 @@ class Moisture(PluginBase):
     qtcb_moisture = pyqtSignal(int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Moisture Bricklet', BrickletMoisture, *args)
+        PluginBase.__init__(self, BrickletMoisture, *args)
 
         self.moisture = self.device
         

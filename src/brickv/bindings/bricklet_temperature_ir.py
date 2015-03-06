@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -32,6 +32,7 @@ class BrickletTemperatureIR(Device):
     """
 
     DEVICE_IDENTIFIER = 217
+    DEVICE_DISPLAY_NAME = 'Temperature IR Bricklet'
 
     CALLBACK_AMBIENT_TEMPERATURE = 15
     CALLBACK_OBJECT_TEMPERATURE = 16

@@ -41,7 +41,7 @@ class DualButton(PluginBase, Ui_DualButton):
     RELEASED = 1
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Dual Button Bricklet', BrickletDualButton, *args)
+        PluginBase.__init__(self, BrickletDualButton, *args)
 
         self.setupUi(self)
 

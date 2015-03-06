@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -31,6 +31,7 @@ class BrickletIndustrialDigitalOut4(Device):
     """
 
     DEVICE_IDENTIFIER = 224
+    DEVICE_DISPLAY_NAME = 'Industrial Digital Out 4 Bricklet'
 
     CALLBACK_MONOFLOP_DONE = 8
 

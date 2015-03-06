@@ -38,7 +38,7 @@ class LaserRangeFinder(PluginBase):
     qtcb_distance = pyqtSignal(int)
 
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Laser Range Finder Bricklet', BrickletLaserRangeFinder, *args)
+        PluginBase.__init__(self, BrickletLaserRangeFinder, *args)
 
         self.dist = self.device
 

@@ -42,7 +42,7 @@ class RotaryEncoder(PluginBase):
     qtcb_released = pyqtSignal()
 
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Rotary Encoder Bricklet', BrickletRotaryEncoder, *args)
+        PluginBase.__init__(self, BrickletRotaryEncoder, *args)
 
         self.re = self.device
 

@@ -39,7 +39,7 @@ class AnalogIn(PluginBase):
     qtcb_voltage = pyqtSignal(int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Analog In Bricklet', BrickletAnalogIn, *args)
+        PluginBase.__init__(self, BrickletAnalogIn, *args)
         
         self.ai = self.device
         

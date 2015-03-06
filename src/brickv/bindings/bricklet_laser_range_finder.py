@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-05.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -31,6 +31,7 @@ class BrickletLaserRangeFinder(Device):
     """
 
     DEVICE_IDENTIFIER = 255
+    DEVICE_DISPLAY_NAME = 'Laser Range Finder Bricklet'
 
     CALLBACK_DISTANCE = 8
     CALLBACK_DISTANCE_REACHED = 9

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-05.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -27,10 +27,11 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletLoadCell(Device):
     """
-    Device for measuring weight
+    Device for measuring weight with a load cell
     """
 
     DEVICE_IDENTIFIER = 253
+    DEVICE_DISPLAY_NAME = 'Load Cell Bricklet'
 
     CALLBACK_WEIGHT = 8
     CALLBACK_WEIGHT_REACHED = 9

@@ -35,7 +35,7 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
     qtcb_state = pyqtSignal(int, bool)
     
     def __init__ (self, *args):
-        PluginBase.__init__(self, 'NFC/RFID Bricklet', BrickletNFCRFID, *args)
+        PluginBase.__init__(self, BrickletNFCRFID, *args)
         
         self.setupUi(self)
         

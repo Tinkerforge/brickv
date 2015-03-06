@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-19.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -65,6 +65,7 @@ class BrickRED(Device):
     """
 
     DEVICE_IDENTIFIER = 17
+    DEVICE_DISPLAY_NAME = 'RED Brick'
 
     CALLBACK_ASYNC_FILE_READ = 30
     CALLBACK_ASYNC_FILE_WRITE = 31

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -34,6 +34,7 @@ class BrickletJoystick(Device):
     """
 
     DEVICE_IDENTIFIER = 210
+    DEVICE_DISPLAY_NAME = 'Joystick Bricklet'
 
     CALLBACK_POSITION = 15
     CALLBACK_ANALOG_VALUE = 16

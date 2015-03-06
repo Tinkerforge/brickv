@@ -39,7 +39,7 @@ class DC(PluginBase, Ui_DC):
     qtcb_emergency_shutdown = pyqtSignal()
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'DC Brick', BrickDC, *args)
+        PluginBase.__init__(self, BrickDC, *args)
 
         self.setupUi(self)
         

@@ -37,7 +37,7 @@ from brickv.plugin_system.plugins.imu.calibrate_window import CalibrateWindow
 
 class IMU(PluginBase, Ui_IMU):
     def __init__(self, *args):
-        PluginBase.__init__(self, 'IMU Brick', BrickIMU, *args)
+        PluginBase.__init__(self, BrickIMU, *args)
 
         self.setupUi(self)
 

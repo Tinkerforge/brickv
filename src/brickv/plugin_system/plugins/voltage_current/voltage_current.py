@@ -54,7 +54,7 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
     qtcb_power = pyqtSignal(int)
     
     def __init__ (self, *args):
-        PluginBase.__init__(self, 'Voltage/Current Bricklet', BrickletVoltageCurrent, *args)
+        PluginBase.__init__(self, BrickletVoltageCurrent, *args)
         
         self.setupUi(self)
         

@@ -36,7 +36,7 @@ class SolidStateRelay(PluginBase, Ui_SolidStateRelay):
     qtcb_monoflop = pyqtSignal(bool)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Solid State Relay Bricklet', BrickletSolidStateRelay, *args)
+        PluginBase.__init__(self, BrickletSolidStateRelay, *args)
 
         self.setupUi(self)
         

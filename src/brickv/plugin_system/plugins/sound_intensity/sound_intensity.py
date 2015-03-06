@@ -77,7 +77,7 @@ class SoundIntensity(PluginBase):
     qtcb_intensity = pyqtSignal(int)
 
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Sound Intensity Bricklet', BrickletSoundIntensity, *args)
+        PluginBase.__init__(self, BrickletSoundIntensity, *args)
 
         self.si = self.device
 

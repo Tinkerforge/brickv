@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -32,6 +32,7 @@ class BrickletLinearPoti(Device):
     """
 
     DEVICE_IDENTIFIER = 213
+    DEVICE_DISPLAY_NAME = 'Linear Poti Bricklet'
 
     CALLBACK_POSITION = 13
     CALLBACK_ANALOG_VALUE = 14

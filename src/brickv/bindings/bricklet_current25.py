@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -32,6 +32,7 @@ class BrickletCurrent25(Device):
     """
 
     DEVICE_IDENTIFIER = 24
+    DEVICE_DISPLAY_NAME = 'Current25 Bricklet'
 
     CALLBACK_CURRENT = 15
     CALLBACK_ANALOG_VALUE = 16

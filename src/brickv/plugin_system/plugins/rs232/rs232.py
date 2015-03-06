@@ -31,7 +31,7 @@ from PyQt4.QtCore import pyqtSignal, Qt
 
 class RS232(PluginBase):
     def __init__(self, *args):
-        PluginBase.__init__(self, 'RS232 Bricklet', BrickletRS232, *args)
+        PluginBase.__init__(self, BrickletRS232, *args)
         
         self.rs232 = self.device
         

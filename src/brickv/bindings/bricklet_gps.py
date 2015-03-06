@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletGPS(Device):
     """
 
     DEVICE_IDENTIFIER = 222
+    DEVICE_DISPLAY_NAME = 'GPS Bricklet'
 
     CALLBACK_COORDINATES = 17
     CALLBACK_STATUS = 18

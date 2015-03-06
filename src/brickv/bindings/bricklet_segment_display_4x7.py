@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -31,6 +31,7 @@ class BrickletSegmentDisplay4x7(Device):
     """
 
     DEVICE_IDENTIFIER = 237
+    DEVICE_DISPLAY_NAME = 'Segment Display 4x7 Bricklet'
 
     CALLBACK_COUNTER_FINISHED = 5
 

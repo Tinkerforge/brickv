@@ -46,7 +46,7 @@ class TemperatureIR(PluginBase):
     qtcb_object_temperature = pyqtSignal(int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Temperature IR Bricklet', BrickletTemperatureIR, *args)
+        PluginBase.__init__(self, BrickletTemperatureIR, *args)
         
         self.tem = self.device
         

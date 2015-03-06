@@ -34,7 +34,7 @@ class HallEffect(PluginBase, Ui_HallEffect):
     qtcb_edge_count = pyqtSignal(int, bool)
 
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Hall Effect Bricklet', BrickletHallEffect, *args)
+        PluginBase.__init__(self, BrickletHallEffect, *args)
 
         self.setupUi(self)
 

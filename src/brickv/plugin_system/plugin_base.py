@@ -30,12 +30,12 @@ class PluginBase(QWidget, object):
     PLUGIN_STATE_RUNNING = 1
     PLUGIN_STATE_PAUSED = 2
 
-    def __init__(self, base_name, device_class, ipcon, uid, hardware_version, firmware_version):
+    def __init__(self, device_class, ipcon, uid, hardware_version, firmware_version):
         QWidget.__init__(self)
 
         self.plugin_state = PluginBase.PLUGIN_STATE_STOPPED
         self.label_timeouts = None
-        self.base_name = base_name
+        self.base_name = device_class.DEVICE_DISPLAY_NAME
         self.ipcon = ipcon
         self.uid = uid
         self.hardware_version = hardware_version

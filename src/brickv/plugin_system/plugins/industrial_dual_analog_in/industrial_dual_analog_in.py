@@ -38,7 +38,7 @@ class IndustrialDualAnalogIn(PluginBase):
     qtcb_voltage = pyqtSignal(int, int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Industrial Dual Analog In Bricklet', BrickletIndustrialDualAnalogIn, *args)
+        PluginBase.__init__(self, BrickletIndustrialDualAnalogIn, *args)
 
         self.analog_in = self.device
         

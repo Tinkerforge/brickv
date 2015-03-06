@@ -42,7 +42,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
     STATE_COLOR_DOT = 4
 
     def __init__(self, *args):
-        PluginBase.__init__(self, 'LED Strip Bricklet', BrickletLEDStrip, *args)
+        PluginBase.__init__(self, BrickletLEDStrip, *args)
 
         self.setupUi(self)
 

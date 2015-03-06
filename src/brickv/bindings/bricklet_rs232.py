@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-05.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -31,6 +31,7 @@ class BrickletRS232(Device):
     """
 
     DEVICE_IDENTIFIER = 254
+    DEVICE_DISPLAY_NAME = 'RS232 Bricklet'
 
 
     FUNCTION_WRITE = 1

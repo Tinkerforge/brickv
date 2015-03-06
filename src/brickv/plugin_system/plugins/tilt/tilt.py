@@ -35,7 +35,7 @@ class Tilt(PluginBase):
     qtcb_tilt_state = pyqtSignal(int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Tilt Bricklet', BrickletTilt, *args)
+        PluginBase.__init__(self, BrickletTilt, *args)
 
         self.tilt = self.device
         

@@ -36,7 +36,7 @@ class DualRelay(PluginBase, Ui_DualRelay):
     qtcb_monoflop = pyqtSignal(int, bool)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Dual Relay Bricklet', BrickletDualRelay, *args)
+        PluginBase.__init__(self, BrickletDualRelay, *args)
 
         self.setupUi(self)
         

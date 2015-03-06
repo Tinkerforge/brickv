@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -30,6 +30,7 @@ class BrickletPiezoBuzzer(Device):
     """
 
     DEVICE_IDENTIFIER = 214
+    DEVICE_DISPLAY_NAME = 'Piezo Buzzer Bricklet'
 
     CALLBACK_BEEP_FINISHED = 3
     CALLBACK_MORSE_CODE_FINISHED = 4

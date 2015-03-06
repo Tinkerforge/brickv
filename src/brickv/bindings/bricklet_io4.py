@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -33,6 +33,7 @@ class BrickletIO4(Device):
     """
 
     DEVICE_IDENTIFIER = 29
+    DEVICE_DISPLAY_NAME = 'IO-4 Bricklet'
 
     CALLBACK_INTERRUPT = 9
     CALLBACK_MONOFLOP_DONE = 12

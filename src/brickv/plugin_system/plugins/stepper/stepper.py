@@ -38,7 +38,7 @@ class Stepper(PluginBase, Ui_Stepper):
     qtcb_under_voltage = pyqtSignal(int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Stepper Brick', BrickStepper, *args)
+        PluginBase.__init__(self, BrickStepper, *args)
 
         self.setupUi(self)
      

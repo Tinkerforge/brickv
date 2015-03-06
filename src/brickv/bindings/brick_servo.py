@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -33,6 +33,7 @@ class BrickServo(Device):
     """
 
     DEVICE_IDENTIFIER = 14
+    DEVICE_DISPLAY_NAME = 'Servo Brick'
 
     CALLBACK_UNDER_VOLTAGE = 26
     CALLBACK_POSITION_REACHED = 27

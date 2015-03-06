@@ -40,7 +40,7 @@ class RotaryPoti(PluginBase):
     qtcb_position = pyqtSignal(int)
 
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Rotary Poti Bricklet', BrickletRotaryPoti, *args)
+        PluginBase.__init__(self, BrickletRotaryPoti, *args)
 
         self.rp = self.device
 

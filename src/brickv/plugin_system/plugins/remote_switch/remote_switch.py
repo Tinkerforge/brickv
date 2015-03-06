@@ -33,7 +33,7 @@ class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
     qtcb_switching_done = pyqtSignal()
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Remote Switch Bricklet', BrickletRemoteSwitch, *args)
+        PluginBase.__init__(self, BrickletRemoteSwitch, *args)
 
         self.setupUi(self)
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -31,6 +31,7 @@ class BrickletLine(Device):
     """
 
     DEVICE_IDENTIFIER = 241
+    DEVICE_DISPLAY_NAME = 'Line Bricklet'
 
     CALLBACK_REFLECTIVITY = 8
     CALLBACK_REFLECTIVITY_REACHED = 9

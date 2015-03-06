@@ -38,7 +38,7 @@ class LoadCell(PluginBase):
     qtcb_weight = pyqtSignal(int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Load Cell Bricklet', BrickletLoadCell, *args)
+        PluginBase.__init__(self, BrickletLoadCell, *args)
         
         self.lc = self.device
         

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -31,6 +31,7 @@ class BrickletTemperature(Device):
     """
 
     DEVICE_IDENTIFIER = 216
+    DEVICE_DISPLAY_NAME = 'Temperature Bricklet'
 
     CALLBACK_TEMPERATURE = 8
     CALLBACK_TEMPERATURE_REACHED = 9

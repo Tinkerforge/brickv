@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -33,6 +33,7 @@ class BrickStepper(Device):
     """
 
     DEVICE_IDENTIFIER = 15
+    DEVICE_DISPLAY_NAME = 'Stepper Brick'
 
     CALLBACK_UNDER_VOLTAGE = 31
     CALLBACK_POSITION_REACHED = 32

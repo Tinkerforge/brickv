@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-02-26.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -32,6 +32,7 @@ class BrickletIndustrialDualAnalogIn(Device):
     """
 
     DEVICE_IDENTIFIER = 249
+    DEVICE_DISPLAY_NAME = 'Industrial Dual Analog In Bricklet'
 
     CALLBACK_VOLTAGE = 13
     CALLBACK_VOLTAGE_REACHED = 14

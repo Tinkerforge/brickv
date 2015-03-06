@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -32,6 +32,7 @@ class BrickletAmbientLight(Device):
     """
 
     DEVICE_IDENTIFIER = 21
+    DEVICE_DISPLAY_NAME = 'Ambient Light Bricklet'
 
     CALLBACK_ILLUMINANCE = 13
     CALLBACK_ANALOG_VALUE = 14

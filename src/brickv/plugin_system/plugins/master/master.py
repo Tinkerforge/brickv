@@ -39,7 +39,7 @@ from brickv.async_call import async_call
         
 class Master(PluginBase, Ui_Master):
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Master Brick', BrickMaster, *args)
+        PluginBase.__init__(self, BrickMaster, *args)
 
         self.setupUi(self)
 

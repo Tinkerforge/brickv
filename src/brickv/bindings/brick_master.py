@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-01-07.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -44,6 +44,7 @@ class BrickMaster(Device):
     """
 
     DEVICE_IDENTIFIER = 13
+    DEVICE_DISPLAY_NAME = 'Master Brick'
 
     CALLBACK_STACK_CURRENT = 59
     CALLBACK_STACK_VOLTAGE = 60

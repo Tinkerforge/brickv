@@ -39,7 +39,7 @@ class Voltage(PluginBase):
     qtcb_voltage = pyqtSignal(int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Voltage Bricklet', BrickletVoltage, *args)
+        PluginBase.__init__(self, BrickletVoltage, *args)
         
         self.vol = self.device
         

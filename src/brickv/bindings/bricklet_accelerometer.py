@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-03.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -32,6 +32,7 @@ class BrickletAccelerometer(Device):
     """
 
     DEVICE_IDENTIFIER = 250
+    DEVICE_DISPLAY_NAME = 'Accelerometer Bricklet'
 
     CALLBACK_ACCELERATION = 9
     CALLBACK_ACCELERATION_REACHED = 10

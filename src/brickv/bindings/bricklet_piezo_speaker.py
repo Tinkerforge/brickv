@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -30,6 +30,7 @@ class BrickletPiezoSpeaker(Device):
     """
 
     DEVICE_IDENTIFIER = 242
+    DEVICE_DISPLAY_NAME = 'Piezo Speaker Bricklet'
 
     CALLBACK_BEEP_FINISHED = 4
     CALLBACK_MORSE_CODE_FINISHED = 5

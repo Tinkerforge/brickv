@@ -40,7 +40,7 @@ class Accelerometer(PluginBase):
     qtcb_acceleration = pyqtSignal(int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Accelerometer Bricklet', BrickletAccelerometer, *args)
+        PluginBase.__init__(self, BrickletAccelerometer, *args)
 
         self.accelerometer = self.device
         

@@ -71,7 +71,7 @@ class Joystick(PluginBase):
     qtcb_released = pyqtSignal()
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Joystick Bricklet', BrickletJoystick, *args)
+        PluginBase.__init__(self, BrickletJoystick, *args)
         
         self.js = self.device
         

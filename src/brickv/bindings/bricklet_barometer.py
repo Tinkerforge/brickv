@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -33,6 +33,7 @@ class BrickletBarometer(Device):
     """
 
     DEVICE_IDENTIFIER = 221
+    DEVICE_DISPLAY_NAME = 'Barometer Bricklet'
 
     CALLBACK_AIR_PRESSURE = 15
     CALLBACK_ALTITUDE = 16

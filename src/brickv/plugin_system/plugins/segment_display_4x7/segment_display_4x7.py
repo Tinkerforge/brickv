@@ -43,7 +43,7 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
                  "QPushButton { background-color: #FF0000; color: #FF0000; }"]
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Segment Display 4x7 Bricklet', BrickletSegmentDisplay4x7, *args)
+        PluginBase.__init__(self, BrickletSegmentDisplay4x7, *args)
 
         self.setupUi(self)
 

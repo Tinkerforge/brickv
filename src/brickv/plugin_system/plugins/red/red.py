@@ -39,7 +39,7 @@ class ImageVersion(object):
 
 class RED(PluginBase, Ui_RED):
     def __init__(self, *args):
-        PluginBase.__init__(self, 'RED Brick', REDBrick, *args)
+        PluginBase.__init__(self, REDBrick, *args)
 
         try:
             self.session = REDSession(self.device, self.increase_error_count).create()

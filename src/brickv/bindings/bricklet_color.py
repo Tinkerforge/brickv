@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -33,6 +33,7 @@ class BrickletColor(Device):
     """
 
     DEVICE_IDENTIFIER = 243
+    DEVICE_DISPLAY_NAME = 'Color Bricklet'
 
     CALLBACK_COLOR = 8
     CALLBACK_COLOR_REACHED = 9

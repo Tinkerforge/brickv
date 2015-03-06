@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -32,6 +32,7 @@ class BrickletHallEffect(Device):
     """
 
     DEVICE_IDENTIFIER = 240
+    DEVICE_DISPLAY_NAME = 'Hall Effect Bricklet'
 
     CALLBACK_EDGE_COUNT = 10
 

@@ -35,7 +35,7 @@ class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):
     qtcb_monoflop = pyqtSignal(int, int)
     
     def __init__(self, *args):
-        PluginBase.__init__(self, 'Industrial Quad Relay Bricklet', BrickletIndustrialQuadRelay, *args)
+        PluginBase.__init__(self, BrickletIndustrialQuadRelay, *args)
 
         self.setupUi(self)
         

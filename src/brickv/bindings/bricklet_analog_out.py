@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2014-12-10.      #
+# This file was automatically generated on 2015-03-06.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -30,6 +30,7 @@ class BrickletAnalogOut(Device):
     """
 
     DEVICE_IDENTIFIER = 220
+    DEVICE_DISPLAY_NAME = 'Analog Out Bricklet'
 
 
     FUNCTION_SET_VOLTAGE = 1
