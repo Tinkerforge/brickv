@@ -95,7 +95,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
         self.action_in_progress  = False
         self.configs             = [
             ConfigFile('openhab.cfg', '/etc/openhab/configurations/openhab.cfg', self, deletable=False),
-            ConfigFile('logback.xml', '/etc/openhab/configurations/logback.xml', self, deletable=False)
+            ConfigFile('logback.xml', '/etc/openhab/logback.xml', self, deletable=False)
         ]
 
         self.recreate_widgets()
