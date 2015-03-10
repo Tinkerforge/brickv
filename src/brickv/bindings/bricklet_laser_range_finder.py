@@ -35,8 +35,8 @@ class BrickletLaserRangeFinder(Device):
     DEVICE_IDENTIFIER = 255
     DEVICE_DISPLAY_NAME = 'Laser Range Finder Bricklet'
 
-    CALLBACK_DISTANCE = 8
-    CALLBACK_DISTANCE_REACHED = 9
+    CALLBACK_DISTANCE = 10
+    CALLBACK_DISTANCE_REACHED = 11
 
     FUNCTION_GET_DISTANCE_VALUE = 1
     FUNCTION_SET_DISTANCE_CALLBACK_PERIOD = 2
@@ -45,8 +45,8 @@ class BrickletLaserRangeFinder(Device):
     FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD = 5
     FUNCTION_SET_DEBOUNCE_PERIOD = 6
     FUNCTION_GET_DEBOUNCE_PERIOD = 7
-    FUNCTION_SET_MOVING_AVERAGE = 10
-    FUNCTION_GET_MOVING_AVERAGE = 11
+    FUNCTION_SET_MOVING_AVERAGE = 8
+    FUNCTION_GET_MOVING_AVERAGE = 9
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -71,10 +71,10 @@ class BrickletLaserRangeFinder(Device):
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletLaserRangeFinder.CALLBACK_DISTANCE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
-        self.response_expected[BrickletLaserRangeFinder.CALLBACK_DISTANCE_REACHED] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_SET_MOVING_AVERAGE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_MOVING_AVERAGE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLaserRangeFinder.CALLBACK_DISTANCE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletLaserRangeFinder.CALLBACK_DISTANCE_REACHED] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_IDENTITY] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletLaserRangeFinder.CALLBACK_DISTANCE] = 'H'
