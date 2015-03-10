@@ -23,9 +23,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>846</width>
-        <height>623</height>
+        <y>-78</y>
+        <width>832</width>
+        <height>695</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
@@ -199,16 +199,6 @@
           <string>Rule Configuration</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="1" column="1">
-           <widget class="QPushButton" name="pbutton_sm_remove_all_rules">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>Remove All Rules</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0" colspan="2">
            <widget class="QTreeView" name="tview_sm_rules">
             <property name="editTriggers">
@@ -232,10 +222,54 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="pbutton_sm_remove_all_rules">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Remove All Rules</string>
+            </property>
+           </widget>
+          </item>
          </layout>
          <zorder>tview_sm_rules</zorder>
          <zorder>pbutton_sm_add_rule</zorder>
          <zorder>pbutton_sm_remove_all_rules</zorder>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Nagios Web Interface URL: </string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>http://&lt;red-brick-ip&gt;/nagios3</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>nagiosadmin:tf</string>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Default Username and Password:</string>
+         </property>
         </widget>
        </item>
       </layout>
