@@ -65,6 +65,14 @@ class ConfigFile(object):
         self.tab.update_ui_state()
 
     def set_content(self, content):
+        # FIXME: QPlainTextEdit does not preserve the original line endings, but
+        #        converts all line endings to \n. this results in a difference
+        #        between self.content and the content stored in the QPlainTextEdit
+        #        even if the user did not edit the content. avoid this problem
+        #        by converting all line endings to \n before setting the content
+        #        of the QPlainTextEdit
+        content = content.replace('\r\n', '\n')
+
         if self.content == None:
             self.edit.setPlainText(content)
 
