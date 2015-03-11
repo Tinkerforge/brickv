@@ -148,4 +148,4 @@
        Replace all PyQwt usage with custom code
        Fix maximum page number in NFC/RFID Bricklet plugin
 2.2.3: Add server monitoring and openHAB configuration tabs to RED Brick plugin
-       Fix DHCP IP address display for Ethernet Extension in Master Brick plugin
+       Restore DHCP IP address display for Ethernet Extension in Master Brick plugin
