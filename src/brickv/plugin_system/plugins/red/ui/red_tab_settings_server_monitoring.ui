@@ -135,7 +135,7 @@
           <item row="0" column="0" colspan="3">
            <widget class="QCheckBox" name="chkbox_sm_email_enable">
             <property name="text">
-             <string>Enable E-mail Notifications</string>
+             <string>Enable Email Notifications</string>
             </property>
            </widget>
           </item>
@@ -218,7 +218,7 @@
           <item row="1" column="0">
            <widget class="QPushButton" name="pbutton_sm_add_rule">
             <property name="text">
-             <string>Add Rules</string>
+             <string>Add Rule</string>
             </property>
            </widget>
           </item>
