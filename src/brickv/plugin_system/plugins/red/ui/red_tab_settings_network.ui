@@ -386,6 +386,9 @@
                    <property name="value">
                     <number>-1</number>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
                    <property name="textVisible">
                     <bool>false</bool>
                    </property>
