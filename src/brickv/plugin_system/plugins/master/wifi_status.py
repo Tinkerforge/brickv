@@ -23,7 +23,6 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtGui import QDialog
-from PyQt4.QtCore import Qt
 
 from brickv.plugin_system.plugins.master.ui_wifi_status import Ui_WifiStatus
 from brickv.async_call import async_call

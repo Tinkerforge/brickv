@@ -192,11 +192,6 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
 
     def render_color_black(self):
         num_leds = self.box_num_led.value()
-
-        r = self.box_r.value()
-        g = self.box_g.value()
-        b = self.box_b.value()
-
         i = 0
 
         while num_leds > 0:
