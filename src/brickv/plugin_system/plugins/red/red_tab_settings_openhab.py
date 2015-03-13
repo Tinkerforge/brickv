@@ -155,6 +155,7 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
         self.button_refresh.setEnabled(not self.action_in_progress)
         self.button_new.setEnabled(not self.action_in_progress)
         self.button_delete.setEnabled(not self.action_in_progress and config.deletable)
+        self.stacked_container.setEnabled(not self.action_in_progress)
         self.button_discard.setEnabled(not self.action_in_progress and config.modified)
         self.button_apply.setEnabled(not self.action_in_progress and config.modified)
 
