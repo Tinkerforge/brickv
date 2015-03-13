@@ -26,10 +26,11 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.knob_widget import KnobWidget
 from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
+from brickv.utils import CallbackEmulator
 from brickv.async_call import async_call
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class PositionLabel(QLabel):
     def setText(self, text):
@@ -37,16 +38,14 @@ class PositionLabel(QLabel):
         super(PositionLabel, self).setText(text)
 
 class RotaryPoti(PluginBase):
-    qtcb_position = pyqtSignal(int)
-
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletRotaryPoti, *args)
 
         self.rp = self.device
 
-        self.qtcb_position.connect(self.cb_position)
-        self.rp.register_callback(self.rp.CALLBACK_POSITION,
-                                  self.qtcb_position.emit)
+        self.cbe_position = CallbackEmulator(self.rp.get_position,
+                                             self.cb_position,
+                                             self.increase_error_count)
 
         self.position_knob = KnobWidget(self)
         self.position_knob.setFocusPolicy(Qt.NoFocus)
@@ -79,12 +78,12 @@ class RotaryPoti(PluginBase):
 
     def start(self):
         async_call(self.rp.get_position, None, self.cb_position, self.increase_error_count)
-        async_call(self.rp.set_position_callback_period, 20, None, self.increase_error_count)
+        self.cbe_position.set_period(25)
 
         self.plot_widget.stop = False
 
     def stop(self):
-        async_call(self.rp.set_position_callback_period, 0, None, self.increase_error_count)
+        self.cbe_position.set_period(0)
 
         self.plot_widget.stop = True
 

@@ -2,7 +2,7 @@
 """
 IO-16 Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 io16.py: IO-16 Plugin Implementation
 
@@ -26,13 +26,15 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_io16 import BrickletIO16
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtCore import pyqtSignal, QTimer
 
 from brickv.plugin_system.plugins.io16.ui_io16 import Ui_IO16
+
+import functools
         
 class IO16(PluginBase, Ui_IO16):
-    qtcb_interrupt = pyqtSignal('char', int, int)
     qtcb_monoflop = pyqtSignal('char', int, int)
     
     def __init__(self, *args):
@@ -43,10 +45,13 @@ class IO16(PluginBase, Ui_IO16):
         self.io = self.device
         
         self.has_monoflop = self.firmware_version >= (1, 1, 2)
-        
-        self.qtcb_interrupt.connect(self.cb_interrupt)
-        self.io.register_callback(self.io.CALLBACK_INTERRUPT,
-                                  self.qtcb_interrupt.emit)
+
+        self.cbe_port_a = CallbackEmulator(functools.partial(self.io.get_port, 'a'),
+                                           functools.partial(self.cb_port, 'a'),
+                                           self.increase_error_count)
+        self.cbe_port_b = CallbackEmulator(functools.partial(self.io.get_port, 'b'),
+                                           functools.partial(self.cb_port, 'b'),
+                                           self.increase_error_count)
         
         self.port_value = { 'a': [self.av0, self.av1, self.av2, self.av3,
                                   self.av4, self.av5, self.av6, self.av7],
@@ -149,15 +154,15 @@ class IO16(PluginBase, Ui_IO16):
         async_call(self.io.get_debounce_period, None, get_debounce_period_async, self.increase_error_count)
         
     def start(self):
-        async_call(self.io.set_port_interrupt, ('a', 0xFF), None, self.increase_error_count)
-        async_call(self.io.set_port_interrupt, ('b', 0xFF), None, self.increase_error_count)
+        self.cbe_port_a.set_period(50)
+        self.cbe_port_b.set_period(50)
         
         if self.has_monoflop:
             self.update_timer.start()
 
     def stop(self):
-        async_call(self.io.set_port_interrupt, ('a', 0), None, self.increase_error_count)
-        async_call(self.io.set_port_interrupt, ('b', 0), None, self.increase_error_count)
+        self.cbe_port_a.set_period(0)
+        self.cbe_port_b.set_period(0)
 
         self.update_timer.stop()
 
@@ -241,14 +246,13 @@ class IO16(PluginBase, Ui_IO16):
 
         self.update_monoflop_ui_state()
 
-    def cb_interrupt(self, port, interrupt, value):
+    def cb_port(self, port, value):
         for i in range(8):
-            if interrupt & (1 << i):
-                if value & (1 << i):
-                    self.port_value[port][i].setText('High')
-                else:
-                    self.port_value[port][i].setText('Low')
-    
+            if value & (1 << i):
+                self.port_value[port][i].setText('High')
+            else:
+                self.port_value[port][i].setText('Low')
+
     def port_changed(self, port):
         self.pin_changed(int(self.pin_box.currentText()))
                     

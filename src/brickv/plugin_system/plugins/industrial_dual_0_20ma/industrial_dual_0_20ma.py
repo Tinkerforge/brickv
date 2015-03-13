@@ -2,7 +2,7 @@
 """
 Industrial Dual 0-20mA Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 industrial_dual_0_20ma.py: PTC Plugin Implementation
 
@@ -22,13 +22,16 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import functools
+
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class CurrentLabel(QLabel):
     def setText(self, text):
@@ -36,8 +39,6 @@ class CurrentLabel(QLabel):
         super(CurrentLabel, self).setText(text)
 
 class IndustrialDual020mA(PluginBase):
-    qtcb_current = pyqtSignal(int, int)
-    
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletIndustrialDual020mA, *args)
 
@@ -45,10 +46,13 @@ class IndustrialDual020mA(PluginBase):
         
         self.str_connected = 'Sensor {0} is currently <font color="green">connected</font>'
         self.str_not_connected = 'Sensor {0} is currently <font color="red">not connected</font>'
-        
-        self.qtcb_current.connect(self.cb_current)
-        self.dual020.register_callback(self.dual020.CALLBACK_CURRENT,
-                                       self.qtcb_current.emit) 
+
+        self.cbe_current0 = CallbackEmulator(functools.partial(self.dual020.get_current, 0),
+                                             functools.partial(self.cb_current, 0),
+                                             self.increase_error_count)
+        self.cbe_current1 = CallbackEmulator(functools.partial(self.dual020.get_current, 1),
+                                             functools.partial(self.cb_current, 1),
+                                             self.increase_error_count)
 
         self.current_label = [CurrentLabel(), CurrentLabel()]
         
@@ -98,15 +102,15 @@ class IndustrialDual020mA(PluginBase):
     def start(self):
         async_call(self.dual020.get_current, 0, lambda x: self.cb_current(0, x), self.increase_error_count)
         async_call(self.dual020.get_current, 1, lambda x: self.cb_current(1, x), self.increase_error_count)
-        async_call(self.dual020.set_current_callback_period, (0, 100), None, self.increase_error_count)
-        async_call(self.dual020.set_current_callback_period, (1, 100), None, self.increase_error_count)
+        self.cbe_current0.set_period(100)
+        self.cbe_current1.set_period(100)
         
         async_call(self.dual020.get_sample_rate, None, self.get_sample_rate_async, self.increase_error_count)
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.dual020.set_current_callback_period, (0, 0), None, self.increase_error_count)
-        async_call(self.dual020.set_current_callback_period, (1, 0), None, self.increase_error_count)
+        self.cbe_current0.set_period(0)
+        self.cbe_current1.set_period(0)
         
         self.plot_widget.stop = True
 

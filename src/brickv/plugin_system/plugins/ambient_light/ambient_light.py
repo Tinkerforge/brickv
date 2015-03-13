@@ -2,7 +2,7 @@
 """
 Ambient Light Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 ambientlight.py: Ambient Light Bricklet Plugin Implementation
 
@@ -26,9 +26,10 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPainter, QColor, QBrush, QFrame
-from PyQt4.QtCore import Qt, pyqtSignal
+from PyQt4.QtCore import Qt
 
 class AmbientLightFrame(QFrame):
     def __init__(self, parent = None):
@@ -58,16 +59,14 @@ class IlluminanceLabel(QLabel):
         super(IlluminanceLabel, self).setText(text)
 
 class AmbientLight(PluginBase):
-    qtcb_illuminance = pyqtSignal(int)
-
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletAmbientLight, *args)
 
         self.al = self.device
 
-        self.qtcb_illuminance.connect(self.cb_illuminance)
-        self.al.register_callback(self.al.CALLBACK_ILLUMINANCE,
-                                  self.qtcb_illuminance.emit)
+        self.cbe_illuminance = CallbackEmulator(self.al.get_illuminance,
+                                                self.cb_illuminance,
+                                                self.increase_error_count)
 
         self.illuminance_label = IlluminanceLabel('Illuminance: ')
         self.alf = AmbientLightFrame()
@@ -89,12 +88,12 @@ class AmbientLight(PluginBase):
 
     def start(self):
         async_call(self.al.get_illuminance, None, self.cb_illuminance, self.increase_error_count)
-        async_call(self.al.set_illuminance_callback_period, 100, None, self.increase_error_count)
+        self.cbe_illuminance.set_period(100)
 
         self.plot_widget.stop = False
 
     def stop(self):
-        async_call(self.al.set_illuminance_callback_period, 0, None, self.increase_error_count)
+        self.cbe_illuminance.set_period(0)
 
         self.plot_widget.stop = True
 

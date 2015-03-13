@@ -2,7 +2,7 @@
 """
 Color Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 color.py: Color Plugin Implementation
 
@@ -26,9 +26,10 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_color import BrickletColor
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QPushButton, QLabel, QHBoxLayout, QComboBox, QPainter, QFrame, QBrush, QColor, QCheckBox, QVBoxLayout
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class ColorFrame(QFrame):
     def __init__(self, parent=None):
@@ -103,26 +104,20 @@ class ColorLabel(QLabel):
         super(ColorLabel, self).setText(text)
 
 class Color(PluginBase):
-    qtcb_color = pyqtSignal(int, int, int, int)
-    qtcb_illuminance = pyqtSignal(int)
-    qtcb_color_temperature = pyqtSignal(int)
-
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletColor, *args)
 
         self.color = self.device
 
-        self.qtcb_color.connect(self.cb_color)
-        self.color.register_callback(self.color.CALLBACK_COLOR,
-                                     self.qtcb_color.emit)
-
-        self.qtcb_illuminance.connect(self.cb_illuminance)
-        self.color.register_callback(self.color.CALLBACK_ILLUMINANCE,
-                                     self.qtcb_illuminance.emit)
-
-        self.qtcb_color_temperature.connect(self.cb_color_temperature)
-        self.color.register_callback(self.color.CALLBACK_COLOR_TEMPERATURE,
-                                     self.qtcb_color_temperature.emit)
+        self.cbe_color = CallbackEmulator(self.color.get_color,
+                                          self.cb_color_get,
+                                          self.increase_error_count)
+        self.cbe_illuminance = CallbackEmulator(self.color.get_illuminance,
+                                                self.cb_illuminance_get,
+                                                self.increase_error_count)
+        self.cbe_color_temperature = CallbackEmulator(self.color.get_color_temperature,
+                                                      self.cb_color_temperature_get,
+                                                      self.increase_error_count)
 
         self.color_label = ColorLabel()
         self.illuminance_label = IlluminanceLabel()
@@ -226,9 +221,9 @@ class Color(PluginBase):
         async_call(self.color.get_color, None, self.cb_color_get, self.increase_error_count)
         async_call(self.color.get_illuminance, None, self.cb_illuminance_get, self.increase_error_count)
         async_call(self.color.get_color_temperature, None, self.cb_color_temperature_get, self.increase_error_count)
-        async_call(self.color.set_color_callback_period, 50, None, self.increase_error_count)
-        async_call(self.color.set_illuminance_callback_period, 100, None, self.increase_error_count)
-        async_call(self.color.set_color_temperature_callback_period, 100, None, self.increase_error_count)
+        self.cbe_color.set_period(50)
+        self.cbe_illuminance.set_period(100)
+        self.cbe_color_temperature.set_period(100)
         async_call(self.color.get_config, None, self.cb_config, self.increase_error_count)
         async_call(self.color.is_light_on, None, self.cb_light_on, self.increase_error_count)
 
@@ -237,9 +232,9 @@ class Color(PluginBase):
         self.plot_widget_color_temperature.stop = False
 
     def stop(self):
-        async_call(self.color.set_color_callback_period, 0, None, self.increase_error_count)
-        async_call(self.color.set_illuminance_callback_period, 0, None, self.increase_error_count)
-        async_call(self.color.set_color_temperature_callback_period, 0, None, self.increase_error_count)
+        self.cbe_color.set_period(0)
+        self.cbe_illuminance.set_period(0)
+        self.cbe_color_temperature.set_period(0)
 
         self.plot_widget.stop = True
         self.plot_widget_illuminance.stop = True
@@ -254,6 +249,18 @@ class Color(PluginBase):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletColor.DEVICE_IDENTIFIER
+
+    def cb_color(self, r, g, b, c):
+        self.current_color = (r, g, b, c)
+        self.color_label.setText(r, g, b, c)
+
+        rgb_at_limit = r >= 65535 or g >= 65535 or b >= 65535
+        self.illuminance_label.mark_as_invalid(rgb_at_limit)
+        self.color_temperature_label.mark_as_invalid(rgb_at_limit)
+
+#        normalize = r+g+b
+        normalize = 0xFFFF
+        self.color_frame.set_color(r*255.0/normalize, g*255.0/normalize, b*255.0/normalize)
 
     def cb_illuminance(self, illuminance):
         self.current_illuminance = round(illuminance * 700.0 / float(self.current_gain_factor) / float(self.current_conversion_time), 1)
@@ -393,18 +400,6 @@ class Color(PluginBase):
 
     def cb_color_temperature_get(self, color_temperature):
         self.cb_color_temperature(color_temperature)
-
-    def cb_color(self, r, g, b, c):
-        self.current_color = (r, g, b, c)
-        self.color_label.setText(r, g, b, c)
-
-        rgb_at_limit = r >= 65535 or g >= 65535 or b >= 65535
-        self.illuminance_label.mark_as_invalid(rgb_at_limit)
-        self.color_temperature_label.mark_as_invalid(rgb_at_limit)
-
-#        normalize = r+g+b
-        normalize = 0xFFFF
-        self.color_frame.set_color(r*255.0/normalize, g*255.0/normalize, b*255.0/normalize)
 
     def get_current_r(self):
         return self.current_color[0]

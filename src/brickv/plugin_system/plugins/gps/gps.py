@@ -2,7 +2,7 @@
 """
 GPS Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 gps.py: GPS Plugin Implementation
 
@@ -22,25 +22,17 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugin_base import PluginBase
-from brickv.bindings.bricklet_gps import BrickletGPS
-
 from PyQt4.QtGui import QDesktopServices
-from PyQt4.QtCore import pyqtSignal, QUrl
-
-from brickv.async_call import async_call
+from PyQt4.QtCore import QUrl
 
 from brickv.plugin_system.plugins.gps.ui_gps import Ui_GPS
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.bricklet_gps import BrickletGPS
+from brickv.utils import CallbackEmulator
 
 import datetime
 
 class GPS(PluginBase, Ui_GPS):
-    qtcb_coordinates = pyqtSignal(int, 'char', int, 'char', int, int, int, int)
-    qtcb_status = pyqtSignal(int, int, int)
-    qtcb_altitude = pyqtSignal(int, int)
-    qtcb_motion = pyqtSignal(int, int)
-    qtcb_date_time = pyqtSignal(int, int)
-
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletGPS, *args)
 
@@ -48,25 +40,9 @@ class GPS(PluginBase, Ui_GPS):
 
         self.gps = self.device
 
-        self.qtcb_coordinates.connect(self.cb_coordinates)
-        self.gps.register_callback(self.gps.CALLBACK_COORDINATES,
-                                   self.qtcb_coordinates.emit)
-
-        self.qtcb_status.connect(self.cb_status)
-        self.gps.register_callback(self.gps.CALLBACK_STATUS,
-                                   self.qtcb_status.emit)
-
-        self.qtcb_altitude.connect(self.cb_altitude)
-        self.gps.register_callback(self.gps.CALLBACK_ALTITUDE,
-                                   self.qtcb_altitude.emit)
-
-        self.qtcb_motion.connect(self.cb_motion)
-        self.gps.register_callback(self.gps.CALLBACK_MOTION,
-                                   self.qtcb_motion.emit)
-
-        self.qtcb_date_time.connect(self.cb_date_time)
-        self.gps.register_callback(self.gps.CALLBACK_DATE_TIME,
-                                   self.qtcb_date_time.emit)
+        self.cbe_universal = CallbackEmulator(self.get_universal,
+                                              self.cb_universal,
+                                              self.increase_error_count)
 
         self.format_combobox.currentIndexChanged.connect(self.format_changed)
         self.show_pos.clicked.connect(self.show_pos_clicked)
@@ -86,13 +62,22 @@ class GPS(PluginBase, Ui_GPS):
         self.last_vdop = 0
         self.last_epe = 0
 
+    def get_universal(self):
+        return self.gps.get_coordinates(), self.gps.get_status(), self.gps.get_altitude(), self.gps.get_motion(), self.gps.get_date_time()
+
+    def cb_universal(self, coordinates, status, altitude, motion, date_time):
+        self.cb_coordinates(*coordinates)
+        self.cb_status(*status)
+        self.cb_altitude(*altitude)
+        self.cb_motion(*motion)
+        self.cb_date_time(*date_time)
+
     def show_pos_clicked(self):
         if self.had_fix:
             google_str = self.last_ns + self.make_dd_dddddd(self.last_lat, True) + '+' + self.last_ew + self.make_dd_dddddd(self.last_long, True)
             QDesktopServices.openUrl(QUrl('https://maps.google.com/maps?q=' + google_str))
         else:
-            # :-)
-            QDesktopServices.openUrl(QUrl('http://www.google.com/moon/'))
+            QDesktopServices.openUrl(QUrl('http://www.google.com/moon/')) # :-)
 
     def format_changed(self, index):
         self.cb_coordinates(self.last_lat, self.last_ns, self.last_long, self.last_ew, self.last_pdop, self.last_hdop, self.last_vdop, self.last_epe)
@@ -130,18 +115,10 @@ class GPS(PluginBase, Ui_GPS):
         self.gps.restart(restart_type)
 
     def start(self):
-        async_call(self.gps.set_coordinates_callback_period, 250, None, self.increase_error_count)
-        async_call(self.gps.set_status_callback_period, 250, None, self.increase_error_count)
-        async_call(self.gps.set_altitude_callback_period, 250, None, self.increase_error_count)
-        async_call(self.gps.set_motion_callback_period, 250, None, self.increase_error_count)
-        async_call(self.gps.set_date_time_callback_period, 250, None, self.increase_error_count)
+        self.cbe_universal.set_period(250)
 
     def stop(self):
-        async_call(self.gps.set_coordinates_callback_period, 0, None, self.increase_error_count)
-        async_call(self.gps.set_status_callback_period, 0, None, self.increase_error_count)
-        async_call(self.gps.set_altitude_callback_period, 0, None, self.increase_error_count)
-        async_call(self.gps.set_motion_callback_period, 0, None, self.increase_error_count)
-        async_call(self.gps.set_date_time_callback_period, 0, None, self.increase_error_count)
+        self.cbe_universal.set_period(0)
 
     def destroy(self):
         pass

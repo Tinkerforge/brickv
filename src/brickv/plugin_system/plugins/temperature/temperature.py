@@ -2,7 +2,7 @@
 """
 Temperature Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 temperature.py: Temperature Plugin Implementation
 
@@ -26,9 +26,10 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_temperature import BrickletTemperature
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class TemperatureLabel(QLabel):
     def setText(self, text):
@@ -36,17 +37,15 @@ class TemperatureLabel(QLabel):
         super(TemperatureLabel, self).setText(text)
     
 class Temperature(PluginBase):
-    qtcb_temperature = pyqtSignal(int)
-    
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletTemperature, *args)
         
         self.tem = self.device
-        
-        self.qtcb_temperature.connect(self.cb_temperature)
-        self.tem.register_callback(self.tem.CALLBACK_TEMPERATURE,
-                                   self.qtcb_temperature.emit) 
-        
+
+        self.cbe_temperature = CallbackEmulator(self.tem.get_temperature,
+                                                self.cb_temperature,
+                                                self.increase_error_count)
+
         self.temperature_label = TemperatureLabel()
         
         self.current_value = None
@@ -65,12 +64,12 @@ class Temperature(PluginBase):
 
     def start(self):
         async_call(self.tem.get_temperature, None, self.cb_temperature, self.increase_error_count)
-        async_call(self.tem.set_temperature_callback_period, 100, None, self.increase_error_count)
+        self.cbe_temperature.set_period(100)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.tem.set_temperature_callback_period, 0, None, self.increase_error_count)
+        self.cbe_temperature.set_period(0)
         
         self.plot_widget.stop = True
 

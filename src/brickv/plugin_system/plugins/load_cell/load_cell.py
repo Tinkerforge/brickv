@@ -2,6 +2,7 @@
 """
 Load Cell Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
 
 load_cell.py: Load Cell Plugin Implementation
 
@@ -25,9 +26,10 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_load_cell import BrickletLoadCell
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class WeightLabel(QLabel):
     def setText(self, text):
@@ -35,17 +37,15 @@ class WeightLabel(QLabel):
         super(WeightLabel, self).setText(text)
     
 class LoadCell(PluginBase):
-    qtcb_weight = pyqtSignal(int)
-    
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletLoadCell, *args)
         
         self.lc = self.device
-        
-        self.qtcb_weight.connect(self.cb_weight)
-        self.lc.register_callback(self.lc.CALLBACK_WEIGHT,
-                                   self.qtcb_weight.emit) 
-        
+
+        self.cbe_weight = CallbackEmulator(self.lc.get_weight,
+                                           self.cb_weight,
+                                           self.increase_error_count)
+
         self.weight_label = WeightLabel()
         
         self.current_value = None
@@ -64,12 +64,12 @@ class LoadCell(PluginBase):
 
     def start(self):
         async_call(self.lc.get_weight, None, self.cb_weight, self.increase_error_count)
-        async_call(self.lc.set_weight_callback_period, 100, None, self.increase_error_count)
+        self.cbe_weight.set_period(100)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.lc.set_weight_callback_period, 0, None, self.increase_error_count)
+        self.cbe_weight.set_period(0)
         
         self.plot_widget.stop = True
 

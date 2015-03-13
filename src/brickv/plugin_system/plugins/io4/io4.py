@@ -2,7 +2,7 @@
 """
 IO4 Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 humidity.py: IO4 Plugin Implementation
 
@@ -27,11 +27,11 @@ from brickv.bindings import ip_connection
 from PyQt4.QtCore import pyqtSignal, QTimer
 from brickv.plugin_system.plugins.io4.ui_io4 import Ui_IO4
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from brickv.bindings.bricklet_io4 import BrickletIO4
         
 class IO4(PluginBase, Ui_IO4):
-    qtcb_interrupt = pyqtSignal(int, int)
     qtcb_monoflop = pyqtSignal(int, int)
     
     def __init__(self, *args):
@@ -42,10 +42,10 @@ class IO4(PluginBase, Ui_IO4):
         self.io = self.device
         
         self.has_monoflop = self.firmware_version >= (1, 1, 1)
-        
-        self.qtcb_interrupt.connect(self.cb_interrupt)
-        self.io.register_callback(self.io.CALLBACK_INTERRUPT,
-                                  self.qtcb_interrupt.emit)
+
+        self.cbe_value = CallbackEmulator(self.io.get_value,
+                                          self.cb_value,
+                                          self.increase_error_count)
         
         self.port_value = [self.av0, self.av1, self.av2, self.av3]
         self.port_direction = [self.ad0, self.ad1, self.ad2, self.ad3]
@@ -122,13 +122,13 @@ class IO4(PluginBase, Ui_IO4):
         async_call(self.io.get_debounce_period, None, get_debounce_period_async, self.increase_error_count)
         
     def start(self):
-        async_call(self.io.set_interrupt, 1 | 2 | 4 | 8, None, self.increase_error_count)
+        self.cbe_value.set_period(50)
 
         if self.has_monoflop:
             self.update_timer.start()
         
     def stop(self):
-        async_call(self.io.set_interrupt, 0, None, self.increase_error_count)
+        self.cbe_value.set_period(0)
 
         self.update_timer.stop()
 
@@ -209,15 +209,14 @@ class IO4(PluginBase, Ui_IO4):
         self.port_time[pin].setText('0')
 
         self.update_monoflop_ui_state()
-        
-    def cb_interrupt(self, interrupt, value):
+
+    def cb_value(self, value):
         for i in range(4):
-            if interrupt & (1 << i):
-                if value & (1 << i):
-                    self.port_value[i].setText('High')
-                else:
-                    self.port_value[i].setText('Low')
-    
+            if value & (1 << i):
+                self.port_value[i].setText('High 2')
+            else:
+                self.port_value[i].setText('Low 2')
+
     def pin_changed(self, pin):
         if self.port_direction[pin].text() == 'Input':
             index = 0

@@ -2,7 +2,7 @@
 """
 Voltage Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 voltage.py: Voltage Plugin Implementation
 
@@ -26,9 +26,10 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_voltage import BrickletVoltage
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class CurrentLabel(QLabel):
     def setText(self, text):
@@ -36,17 +37,15 @@ class CurrentLabel(QLabel):
         super(CurrentLabel, self).setText(text)
     
 class Voltage(PluginBase):
-    qtcb_voltage = pyqtSignal(int)
-    
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletVoltage, *args)
         
         self.vol = self.device
-        
-        self.qtcb_voltage.connect(self.cb_voltage)
-        self.vol.register_callback(self.vol.CALLBACK_VOLTAGE,
-                                   self.qtcb_voltage.emit) 
-        
+
+        self.cbe_voltage = CallbackEmulator(self.vol.get_voltage,
+                                            self.cb_voltage,
+                                            self.increase_error_count)
+
         self.voltage_label = CurrentLabel('Voltage: ')
         
         self.current_value = None
@@ -65,12 +64,12 @@ class Voltage(PluginBase):
         
     def start(self):
         async_call(self.vol.get_voltage, None, self.cb_voltage, self.increase_error_count)
-        async_call(self.vol.set_voltage_callback_period, 100, None, self.increase_error_count)
+        self.cbe_voltage.set_period(100)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.vol.set_voltage_callback_period, 0, None, self.increase_error_count)
+        self.cbe_voltage.set_period(0)
         
         self.plot_widget.stop = True
 

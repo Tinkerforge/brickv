@@ -2,6 +2,7 @@
 """
 Industrial Dual Analog In Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
 
 industrial_dual_analog_in.py: Industrial Dual Analog In Plugin Implementation
 
@@ -21,13 +22,16 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import functools
+
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class VoltageLabel(QLabel):
     def setText(self, text):
@@ -35,16 +39,17 @@ class VoltageLabel(QLabel):
         super(VoltageLabel, self).setText(text)
 
 class IndustrialDualAnalogIn(PluginBase):
-    qtcb_voltage = pyqtSignal(int, int)
-    
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletIndustrialDualAnalogIn, *args)
 
         self.analog_in = self.device
-        
-        self.qtcb_voltage.connect(self.cb_voltage)
-        self.analog_in.register_callback(self.analog_in.CALLBACK_VOLTAGE,
-                                         self.qtcb_voltage.emit) 
+
+        self.cbe_voltage0 = CallbackEmulator(functools.partial(self.analog_in.get_voltage, 0),
+                                             functools.partial(self.cb_voltage, 0),
+                                             self.increase_error_count)
+        self.cbe_voltage1 = CallbackEmulator(functools.partial(self.analog_in.get_voltage, 1),
+                                             functools.partial(self.cb_voltage, 1),
+                                             self.increase_error_count)
 
         self.voltage_label = [VoltageLabel(), VoltageLabel()]
         
@@ -95,15 +100,15 @@ class IndustrialDualAnalogIn(PluginBase):
     def start(self):
         async_call(self.analog_in.get_voltage, 0, lambda x: self.cb_voltage(0, x), self.increase_error_count)
         async_call(self.analog_in.get_voltage, 1, lambda x: self.cb_voltage(1, x), self.increase_error_count)
-        async_call(self.analog_in.set_voltage_callback_period, (0, 100), None, self.increase_error_count)
-        async_call(self.analog_in.set_voltage_callback_period, (1, 100), None, self.increase_error_count)
+        self.cbe_voltage0.set_period(100)
+        self.cbe_voltage1.set_period(100)
         
         async_call(self.analog_in.get_sample_rate, None, self.get_sample_rate_async, self.increase_error_count)
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.analog_in.set_voltage_callback_period, (0, 0), None, self.increase_error_count)
-        async_call(self.analog_in.set_voltage_callback_period, (1, 0), None, self.increase_error_count)
+        self.cbe_voltage0.set_period(0)
+        self.cbe_voltage1.set_period(0)
         
         self.plot_widget.stop = True
 

@@ -2,6 +2,7 @@
 """
 Gas Detector Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
 
 gas_detector.py: Gas Detector Plugin Implementation
 
@@ -25,9 +26,10 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_gas_detector import BrickletGasDetector
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QCheckBox, QComboBox
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class GasDetectorLabel(QLabel):
     def setText(self, text):
@@ -35,17 +37,15 @@ class GasDetectorLabel(QLabel):
         super(GasDetectorLabel, self).setText(text)
     
 class GasDetector(PluginBase):
-    qtcb_value = pyqtSignal(int)
-    
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletGasDetector, *args)
 
         self.gas_detector = self.device
-        
-        self.qtcb_value.connect(self.cb_value)
-        self.gas_detector.register_callback(self.gas_detector.CALLBACK_VALUE,
-                                            self.qtcb_value.emit) 
-        
+
+        self.cbe_value = CallbackEmulator(self.gas_detector.get_value,
+                                          self.cb_value,
+                                          self.increase_error_count)
+
         self.gas_detector_label = GasDetectorLabel()
         self.current_value = None
         
@@ -109,12 +109,12 @@ class GasDetector(PluginBase):
         async_call(self.gas_detector.is_heater_on, None, self.is_heater_on_async, self.increase_error_count)
         
         async_call(self.gas_detector.get_value, None, self.cb_value, self.increase_error_count)
-        async_call(self.gas_detector.set_value_callback_period, 100, None, self.increase_error_count)
+        self.cbe_value.set_period(100)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.gas_detector.set_value_callback_period, 0, None, self.increase_error_count)
+        self.cbe_value.set_period(0)
         
         self.plot_widget.stop = True
 

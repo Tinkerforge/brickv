@@ -2,7 +2,7 @@
 """
 Barometer Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2012, 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012, 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 barometer.py: Barometer Plugin Implementation
 
@@ -27,9 +27,10 @@ from brickv.plot_widget import PlotWidget
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_barometer import BrickletBarometer
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QLineEdit, QSpinBox, QFrame
-from PyQt4.QtCore import pyqtSignal, Qt, QTimer
+from PyQt4.QtCore import Qt, QTimer
 
 class AirPressureLabel(QLabel):
     def setText(self, text):
@@ -47,9 +48,6 @@ class ChipTemperatureLabel(QLabel):
         super(ChipTemperatureLabel, self).setText(text)
 
 class Barometer(PluginBase):
-    qtcb_air_pressure = pyqtSignal(int)
-    qtcb_altitude = pyqtSignal(int)
-
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletBarometer, *args)
 
@@ -62,12 +60,12 @@ class Barometer(PluginBase):
         self.average_pressure = 10
         self.average_temperature = 10
 
-        self.qtcb_air_pressure.connect(self.cb_air_pressure)
-        self.barometer.register_callback(self.barometer.CALLBACK_AIR_PRESSURE,
-                                         self.qtcb_air_pressure.emit)
-        self.qtcb_altitude.connect(self.cb_altitude)
-        self.barometer.register_callback(self.barometer.CALLBACK_ALTITUDE,
-                                         self.qtcb_altitude.emit)
+        self.cbe_air_pressure = CallbackEmulator(self.barometer.get_air_pressure,
+                                                 self.cb_air_pressure,
+                                                 self.increase_error_count)
+        self.cbe_altitude = CallbackEmulator(self.barometer.get_altitude,
+                                             self.cb_altitude,
+                                             self.increase_error_count)
 
         self.air_pressure_label = AirPressureLabel()
 
@@ -197,8 +195,8 @@ class Barometer(PluginBase):
         async_call(self.barometer.get_air_pressure, None, self.cb_air_pressure, self.increase_error_count)
         async_call(self.barometer.get_altitude, None, self.cb_altitude, self.increase_error_count)
 
-        async_call(self.barometer.set_air_pressure_callback_period, 100, None, self.increase_error_count)
-        async_call(self.barometer.set_altitude_callback_period, 100, None, self.increase_error_count)
+        self.cbe_air_pressure.set_period(100)
+        self.cbe_altitude.set_period(100)
         
         async_call(self.barometer.get_averaging, None, self.cb_averaging, self.increase_error_count)
 
@@ -209,8 +207,8 @@ class Barometer(PluginBase):
         self.chip_temp_timer.start()
 
     def stop(self):
-        async_call(self.barometer.set_air_pressure_callback_period, 0, None, self.increase_error_count)
-        async_call(self.barometer.set_altitude_callback_period, 0, None, self.increase_error_count)
+        self.cbe_air_pressure.set_period(0)
+        self.cbe_altitude.set_period(0)
 
         self.air_pressure_plot_widget.stop = True
         self.altitude_plot_widget.stop = True

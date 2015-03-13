@@ -2,7 +2,7 @@
 """
 Line Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 line.py: Line Plugin Implementation
 
@@ -26,9 +26,10 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_line import BrickletLine
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout, QFrame, QPainter, QBrush, QLinearGradient
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class ReflectivityLabel(QLabel):
     def setText(self, text):
@@ -65,16 +66,14 @@ class ReflectivityFrame(QFrame):
         qp.end()
 
 class Line(PluginBase):
-    qtcb_reflectivity = pyqtSignal(int)
-
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletLine, *args)
 
         self.line = self.device
 
-        self.qtcb_reflectivity.connect(self.cb_reflectivity)
-        self.line.register_callback(self.line.CALLBACK_REFLECTIVITY,
-                                    self.qtcb_reflectivity.emit)
+        self.cbe_reflectivity = CallbackEmulator(self.line.get_reflectivity,
+                                                 self.cb_reflectivity,
+                                                 self.increase_error_count)
 
         self.reflectivity_label = ReflectivityLabel()
         self.rf = ReflectivityFrame()
@@ -109,12 +108,12 @@ class Line(PluginBase):
 
     def start(self):
         async_call(self.line.get_reflectivity, None, self.cb_reflectivity, self.increase_error_count)
-        async_call(self.line.set_reflectivity_callback_period, 100, None, self.increase_error_count)
+        self.cbe_reflectivity.set_period(25)
 
         self.plot_widget.stop = False
 
     def stop(self):
-        async_call(self.line.set_reflectivity_callback_period, 0, None, self.increase_error_count)
+        self.cbe_reflectivity.set_period(0)
 
         self.plot_widget.stop = True
 

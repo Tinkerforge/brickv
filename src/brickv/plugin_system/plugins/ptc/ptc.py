@@ -2,7 +2,7 @@
 """
 PTC Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 ptc.py: PTC Plugin Implementation
 
@@ -26,9 +26,10 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_ptc import BrickletPTC
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox
-from PyQt4.QtCore import pyqtSignal, Qt, QTimer
+from PyQt4.QtCore import Qt, QTimer
 
 class TemperatureLabel(QLabel):
     def setText(self, text):
@@ -41,9 +42,6 @@ class TemperatureLabel(QLabel):
 #        super(ResistanceLabel, self).setText(text)
     
 class PTC(PluginBase):
-    qtcb_temperature = pyqtSignal(int)
-#    qtcb_resistance = pyqtSignal(int)
-    
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletPTC, *args)
 
@@ -51,15 +49,15 @@ class PTC(PluginBase):
         
         self.str_connected = 'Sensor is currently <font color="green">connected</font>'
         self.str_not_connected = 'Sensor is currently <font color="red">not connected</font>'
-        
-        self.qtcb_temperature.connect(self.cb_temperature)
-        self.ptc.register_callback(self.ptc.CALLBACK_TEMPERATURE,
-                                   self.qtcb_temperature.emit) 
-        
-#        self.qtcb_resistance.connect(self.cb_resistance)
-#        self.ptc.register_callback(self.ptc.CALLBACK_RESISTANCE,
-#                                   self.qtcb_resistance.emit) 
-        
+
+        self.cbe_temperature = CallbackEmulator(self.ptc.get_temperature,
+                                                self.cb_temperature,
+                                                self.increase_error_count)
+
+#        self.cbe_resistance = CallbackEmulator(self.ptc.get_resistance,
+#                                               self.cb_resistance,
+#                                               self.increase_error_count)
+
         self.temperature_label = TemperatureLabel()
 #        self.resistance_label = ResistanceLabel()
         
@@ -110,8 +108,8 @@ class PTC(PluginBase):
     def start(self):
         async_call(self.ptc.get_temperature, None, self.cb_temperature, self.increase_error_count)
 #        async_call(self.ptc.get_resistance, None, self.cb_resistance, self.increase_error_count)
-        async_call(self.ptc.set_temperature_callback_period, 100, None, self.increase_error_count)
-#        async_call(self.ptc.set_resistance_callback_period, 100, None, self.increase_error_count)
+        self.cbe_temperature.set_period(100)
+#        self.cbe_resistance.set_period(100)
         
         async_call(self.ptc.is_sensor_connected, None, self.is_sensor_connected_async, self.increase_error_count)
         async_call(self.ptc.get_noise_rejection_filter, None, self.get_noise_rejection_filter_async, self.increase_error_count)
@@ -121,8 +119,8 @@ class PTC(PluginBase):
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.ptc.set_temperature_callback_period, 0, None, self.increase_error_count)
-#        async_call(self.ptc.set_resistance_callback_period, 0, None, self.increase_error_count)
+        self.cbe_temperature.set_period(0)
+#        self.cbe_resistance.set_period(0)
         
         self.connected_timer.stop()
         self.plot_widget.stop = True

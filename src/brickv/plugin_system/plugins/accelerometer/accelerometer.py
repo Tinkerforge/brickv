@@ -2,6 +2,7 @@
 """
 Accelerometer Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
 
 accelerometer.py: Accelerometer Plugin Implementation
 
@@ -25,9 +26,10 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class AccelerationLabel(QLabel):
     def setText(self, x, y, z):
@@ -37,17 +39,15 @@ class AccelerationLabel(QLabel):
         super(AccelerationLabel, self).setText(text)
     
 class Accelerometer(PluginBase):
-    qtcb_acceleration = pyqtSignal(int)
-    
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletAccelerometer, *args)
 
         self.accelerometer = self.device
-        
-        self.qtcb_acceleration.connect(self.cb_acceleration)
-        self.accelerometer.register_callback(self.accelerometer.CALLBACK_ACCELERATION,
-                                             self.qtcb_acceleration.emit) 
-        
+
+        self.cbe_acceleration = CallbackEmulator(self.accelerometer.get_acceleration,
+                                                 self.cb_acceleration,
+                                                 self.increase_error_count)
+
         self.acceleration_label = AccelerationLabel()
         self.current_acceleration = [None, None, None]
         
@@ -65,10 +65,8 @@ class Accelerometer(PluginBase):
         layout.addLayout(layout_h)
         layout.addWidget(self.plot_widget)
 
-    def get_acceleration_async(self, acceleration):
-        self.cb_acceleration(*acceleration)
-
-    def cb_acceleration(self, x, y, z):
+    def cb_acceleration(self, data):
+        x, y, z = data
         self.acceleration_label.setText(x, y, z)
         self.current_acceleration = [x, y, z]
         
@@ -82,13 +80,13 @@ class Accelerometer(PluginBase):
         return self.current_acceleration[2]
 
     def start(self):
-        async_call(self.accelerometer.get_acceleration, None, self.get_acceleration_async, self.increase_error_count)
-        async_call(self.accelerometer.set_acceleration_callback_period, 100, None, self.increase_error_count)
+        async_call(self.accelerometer.get_acceleration, None, self.cb_acceleration, self.increase_error_count)
+        self.cbe_acceleration.set_period(50)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.accelerometer.set_acceleration_callback_period, 0, None, self.increase_error_count)
+        self.cbe_acceleration.set_period(0)
         
         self.plot_widget.stop = True
 

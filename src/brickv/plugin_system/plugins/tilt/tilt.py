@@ -2,7 +2,7 @@
 """
 Tilt Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 tilt.py: Tilt Plugin Implementation
 
@@ -24,25 +24,22 @@ Boston, MA 02111-1307, USA.
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_tilt import BrickletTilt
-from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from brickv.bmp_to_pixmap import bmp_to_pixmap
 
 from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout
-from PyQt4.QtCore import pyqtSignal
 
 class Tilt(PluginBase):
-    qtcb_tilt_state = pyqtSignal(int)
-    
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletTilt, *args)
 
         self.tilt = self.device
-        
-        self.qtcb_tilt_state.connect(self.cb_tilt_state)
-        self.tilt.register_callback(self.tilt.CALLBACK_TILT_STATE,
-                                    self.qtcb_tilt_state.emit)
-        
+
+        self.cbe_tilt_state = CallbackEmulator(self.tilt.get_tilt_state,
+                                               self.cb_tilt_state,
+                                               self.increase_error_count)
+
         self.label = QLabel("Closed")
         self.closed_pixmap = bmp_to_pixmap('plugin_system/plugins/tilt/tilt_closed.bmp')
         self.open_pixmap = bmp_to_pixmap('plugin_system/plugins/tilt/tilt_open.bmp')
@@ -80,10 +77,10 @@ class Tilt(PluginBase):
             self.image_label.setPixmap(self.closed_vibrationg_pixmap)
 
     def start(self):
-        async_call(self.tilt.enable_tilt_state_callback, None, None, self.increase_error_count)
+        self.cbe_tilt_state.set_period(25)
         
     def stop(self):
-        async_call(self.tilt.disable_tilt_state_callback, None, None, self.increase_error_count)
+        self.cbe_tilt_state.set_period(0)
 
     def destroy(self):
         pass

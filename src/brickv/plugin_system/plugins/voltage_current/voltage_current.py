@@ -2,7 +2,7 @@
 """
 Voltage/Current Plugin
 Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 voltage_current.py: Voltage/Current Plugin Implementation
 
@@ -25,9 +25,10 @@ Boston, MA 02111-1307, USA.
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
         
 from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent
 
@@ -49,27 +50,23 @@ class PowerLabel(QLabel):
         super(PowerLabel, self).setText(text)
     
 class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
-    qtcb_current = pyqtSignal(int)
-    qtcb_voltage = pyqtSignal(int)
-    qtcb_power = pyqtSignal(int)
-    
     def __init__ (self, *args):
         PluginBase.__init__(self, BrickletVoltageCurrent, *args)
         
         self.setupUi(self)
         
         self.vc = self.device
-        
-        self.qtcb_current.connect(self.cb_current)
-        self.vc.register_callback(self.vc.CALLBACK_CURRENT,
-                                   self.qtcb_current.emit)
-        self.qtcb_voltage.connect(self.cb_voltage)
-        self.vc.register_callback(self.vc.CALLBACK_VOLTAGE,
-                                   self.qtcb_voltage.emit)
-        self.qtcb_power.connect(self.cb_power)
-        self.vc.register_callback(self.vc.CALLBACK_POWER,
-                                   self.qtcb_power.emit)
-        
+
+        self.cbe_current = CallbackEmulator(self.vc.get_current,
+                                            self.cb_current,
+                                            self.increase_error_count)
+        self.cbe_voltage = CallbackEmulator(self.vc.get_voltage,
+                                            self.cb_voltage,
+                                            self.increase_error_count)
+        self.cbe_power = CallbackEmulator(self.vc.get_power,
+                                          self.cb_power,
+                                          self.increase_error_count)
+
         self.current_label = CurrentLabel('Current: ')
         self.voltage_label = VoltageLabel('Voltage: ')
         self.power_label = PowerLabel('Power: ')
@@ -138,18 +135,18 @@ class VoltageCurrent(PluginBase, Ui_VoltageCurrent):
         async_call(self.vc.get_configuration, None, self.get_configuration_async, self.increase_error_count)
         async_call(self.vc.get_calibration, None, self.get_calibration_async, self.increase_error_count)
         
-        async_call(self.vc.set_current_callback_period, 100, None, self.increase_error_count)
-        async_call(self.vc.set_voltage_callback_period, 100, None, self.increase_error_count)
-        async_call(self.vc.set_power_callback_period, 100, None, self.increase_error_count)
+        self.cbe_current.set_period(100)
+        self.cbe_voltage.set_period(100)
+        self.cbe_power.set_period(100)
         
         self.plot_widget_current.stop = False
         self.plot_widget_voltage.stop = False
         self.plot_widget_power.stop = False
         
     def stop(self):
-        async_call(self.vc.set_current_callback_period, 0, None, self.increase_error_count)
-        async_call(self.vc.set_voltage_callback_period, 0, None, self.increase_error_count)
-        async_call(self.vc.set_power_callback_period, 0, None, self.increase_error_count)
+        self.cbe_current.set_period(0)
+        self.cbe_voltage.set_period(0)
+        self.cbe_power.set_period(0)
         
         self.plot_widget_current.stop = True
         self.plot_widget_voltage.stop = True

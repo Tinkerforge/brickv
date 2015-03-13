@@ -2,7 +2,7 @@
 """
 Sound Intensity Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 sound_intensity.py: Sound Intensity Plugin Implementation
 
@@ -25,11 +25,12 @@ Boston, MA 02111-1307, USA.
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
 from brickv.async_call import async_call
-from brickv.plot_widget import PlotWidget
+#from brickv.plot_widget import PlotWidget
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QWidget, \
                         QLinearGradient, QPainter, QSizePolicy, QColor
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class TuningThermo(QWidget):
     def __init__(self, *args):
@@ -74,16 +75,14 @@ class IntensityLabel(QLabel):
         super(IntensityLabel, self).setText(text)
 
 class SoundIntensity(PluginBase):
-    qtcb_intensity = pyqtSignal(int)
-
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletSoundIntensity, *args)
 
         self.si = self.device
 
-        self.qtcb_intensity.connect(self.cb_intensity)
-        self.si.register_callback(self.si.CALLBACK_INTENSITY,
-                                  self.qtcb_intensity.emit)
+        self.cbe_intensity = CallbackEmulator(self.si.get_intensity,
+                                              self.cb_intensity,
+                                              self.increase_error_count)
 
         self.intensity_label = IntensityLabel()
         self.current_value = None
@@ -119,12 +118,12 @@ class SoundIntensity(PluginBase):
 
     def start(self):
         async_call(self.si.get_intensity, None, self.cb_intensity, self.increase_error_count)
-        async_call(self.si.set_intensity_callback_period, 10, None, self.increase_error_count)
+        self.cbe_intensity.set_period(25)
 
         #self.plot_widget.stop = False
 
     def stop(self):
-        async_call(self.si.set_intensity_callback_period, 0, None, self.increase_error_count)
+        self.cbe_intensity.set_period(0)
 
         #self.plot_widget.stop = True
 

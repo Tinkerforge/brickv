@@ -2,7 +2,7 @@
 """
 Joystick Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 joystick.py: Joystick Plugin implementation
 
@@ -27,6 +27,7 @@ from brickv.plot_widget import PlotWidget
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_joystick import BrickletJoystick
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QFrame, QPainter, QPushButton, QBrush
 from PyQt4.QtCore import pyqtSignal, Qt
@@ -66,7 +67,6 @@ class JoystickFrame(QFrame):
         qp.end()
         
 class Joystick(PluginBase):
-    qtcb_position = pyqtSignal(int, int)
     qtcb_pressed = pyqtSignal()
     qtcb_released = pyqtSignal()
     
@@ -74,11 +74,11 @@ class Joystick(PluginBase):
         PluginBase.__init__(self, BrickletJoystick, *args)
         
         self.js = self.device
-        
-        self.qtcb_position.connect(self.cb_position)
-        self.js.register_callback(self.js.CALLBACK_POSITION,
-                                  self.qtcb_position.emit)
-        
+
+        self.cbe_position = CallbackEmulator(self.js.get_position,
+                                             self.cb_position,
+                                             self.increase_error_count)
+
         self.qtcb_pressed.connect(self.cb_pressed)
         self.js.register_callback(self.js.CALLBACK_PRESSED,
                                   self.qtcb_pressed.emit)
@@ -121,13 +121,13 @@ class Joystick(PluginBase):
         layout.addWidget(self.calibration_button)
 
     def start(self):
-        async_call(self.js.get_position, None, lambda pos: self.cb_position(*pos), self.increase_error_count)
-        async_call(self.js.set_position_callback_period, 20, None, self.increase_error_count)
+        async_call(self.js.get_position, None, self.cb_position, self.increase_error_count)
+        self.cbe_position.set_period(25)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.js.set_position_callback_period, 0, None, self.increase_error_count)
+        self.cbe_position.set_period(0)
         
         self.plot_widget.stop = True
 
@@ -159,7 +159,8 @@ class Joystick(PluginBase):
     def cb_released(self):
         self.joystick_frame.set_pressed(False)
 
-    def cb_position(self, x, y):
+    def cb_position(self, data):
+        x, y = data
         self.current_x = x
         self.current_y = y
         self.position_label.setText(str((x, y)))

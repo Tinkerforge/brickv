@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-  
 """
-brickv (Brick Viewer) 
+DC Plugin
 Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 dc.py: DC Plugin implementation
 
@@ -26,6 +26,7 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.brick_dc import BrickDC
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QErrorMessage, QInputDialog
 from PyQt4.QtCore import QTimer, Qt, pyqtSignal
@@ -34,7 +35,7 @@ from brickv.plugin_system.plugins.dc.speedometer import SpeedoMeter
 from brickv.plugin_system.plugins.dc.ui_dc import Ui_DC
 
 class DC(PluginBase, Ui_DC):
-    qtcb_position_reached = pyqtSignal(int)
+    qtcb_velocity_reached = pyqtSignal(int)
     qtcb_under_voltage = pyqtSignal(int)
     qtcb_emergency_shutdown = pyqtSignal()
     
@@ -92,12 +93,14 @@ class DC(PluginBase, Ui_DC):
         self.dc.register_callback(self.dc.CALLBACK_EMERGENCY_SHUTDOWN,
                                   self.qtcb_emergency_shutdown.emit) 
         
-        self.qtcb_position_reached.connect(self.update_velocity)
+        self.qtcb_velocity_reached.connect(self.update_velocity)
         self.dc.register_callback(self.dc.CALLBACK_VELOCITY_REACHED,
-                                  self.qtcb_position_reached.emit) 
-        self.dc.register_callback(self.dc.CALLBACK_CURRENT_VELOCITY,
-                                  self.qtcb_position_reached.emit)
-        
+                                  self.qtcb_velocity_reached.emit)
+
+        self.cbe_current_velocity = CallbackEmulator(self.dc.get_current_velocity,
+                                                     self.update_velocity,
+                                                     self.increase_error_count)
+
 #        if self.firmware_version >= (2, 0, 1):
 #            self.enable_encoder_checkbox.stateChanged.connect(self.enable_encoder_state_changed)
 #            self.encoder_show()
@@ -107,13 +110,13 @@ class DC(PluginBase, Ui_DC):
     
     def start(self):
         self.update_timer.start(1000)
-        async_call(self.dc.set_current_velocity_period, 100, None, self.increase_error_count)
+        self.cbe_current_velocity.set_period(100)
         self.update_start()
         self.update_data()
         
     def stop(self):
         self.update_timer.stop()
-        async_call(self.dc.set_current_velocity_period, 0, None, self.increase_error_count)
+        self.cbe_current_velocity.set_period(0)
 
     def destroy(self):
         pass

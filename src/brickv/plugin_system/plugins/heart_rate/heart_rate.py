@@ -2,7 +2,7 @@
 """
 Heart Rate Plugin
 Copyright (C) 2014 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 heart_rate.py: Heart Rate Plugin Implementation
 
@@ -26,6 +26,7 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_heart_rate import BrickletHeartRate
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 from brickv.bmp_to_pixmap import bmp_to_pixmap
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
@@ -37,17 +38,18 @@ class HeartRateLabel(QLabel):
         super(HeartRateLabel, self).setText(text)
     
 class HeartRate(PluginBase):
-    qtcb_heart_rate = pyqtSignal(int)
     qtcb_beat_state_changed = pyqtSignal(int)
     
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletHeartRate, *args)
         
         self.hr = self.device
-        
-        self.qtcb_heart_rate.connect(self.cb_heart_rate)
-        self.hr.register_callback(self.hr.CALLBACK_HEART_RATE,
-                                  self.qtcb_heart_rate.emit) 
+
+        self.cbe_heart_rate = CallbackEmulator(self.hr.get_heart_rate,
+                                               self.cb_heart_rate,
+                                               self.increase_error_count)
+
+        # FIXME: add beat state getter to Heart Rate Bricklet API
         self.qtcb_beat_state_changed.connect(self.cb_beat_state_changed)
         self.hr.register_callback(self.hr.CALLBACK_BEAT_STATE_CHANGED,
                                   self.qtcb_beat_state_changed.emit) 
@@ -75,13 +77,13 @@ class HeartRate(PluginBase):
 
     def start(self):
         async_call(self.hr.get_heart_rate, None, self.cb_heart_rate, self.increase_error_count)
-        async_call(self.hr.set_heart_rate_callback_period, 100, None, self.increase_error_count)
+        self.cbe_heart_rate.set_period(100)
         async_call(self.hr.enable_beat_state_changed_callback, None, None, self.increase_error_count)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.hr.set_heart_rate_callback_period, 0, None, self.increase_error_count)
+        self.cbe_heart_rate.set_period(0)
         async_call(self.hr.disable_beat_state_changed_callback, None, None, self.increase_error_count)
         
         self.plot_widget.stop = True

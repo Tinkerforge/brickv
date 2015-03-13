@@ -2,6 +2,7 @@
 """
 Laser Range Finder Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
 
 laser_range_finder.py: Laser Range Finder Plugin Implementation
 
@@ -25,8 +26,9 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout
 
 class DistanceLabel(QLabel):
@@ -35,16 +37,14 @@ class DistanceLabel(QLabel):
         super(DistanceLabel, self).setText(text)
 
 class LaserRangeFinder(PluginBase):
-    qtcb_distance = pyqtSignal(int)
-
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletLaserRangeFinder, *args)
 
         self.dist = self.device
 
-        self.qtcb_distance.connect(self.cb_distance)
-        self.dist.register_callback(self.dist.CALLBACK_DISTANCE,
-                                    self.qtcb_distance.emit)
+        self.cbe_distance = CallbackEmulator(self.dist.get_distance,
+                                             self.cb_distance,
+                                             self.increase_error_count)
 
         self.distance_label = DistanceLabel('Distance: ')
         self.current_value = None
@@ -65,12 +65,12 @@ class LaserRangeFinder(PluginBase):
 
     def start(self):
         async_call(self.dist.get_distance_value, None, self.cb_distance, self.increase_error_count)
-        async_call(self.dist.set_distance_callback_period, 100, None, self.increase_error_count)
-            
+        self.cbe_distance.set_period(100)
+
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.dist.set_distance_callback_period, 0, None, self.increase_error_count)
+        self.cbe_distance.set_period(0)
         
         self.plot_widget.stop = True
 

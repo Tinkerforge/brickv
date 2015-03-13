@@ -24,13 +24,14 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
                         QLineEdit, QApplication, QMessageBox
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
 from brickv.async_call import async_call
-from brickv.utils import get_main_window, get_home_path, get_open_file_name
+from brickv.utils import CallbackEmulator, get_main_window, get_home_path, \
+                         get_open_file_name
 import os
 
 # this class is directly based on the QwtSpline class from the Qwt library
@@ -144,21 +145,17 @@ class DistanceIR(PluginBase):
     NUM_VALUES = 128
     DIVIDER = 2**12/NUM_VALUES
 
-    qtcb_distance = pyqtSignal(int)
-    qtcb_analog = pyqtSignal(int)
-
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletDistanceIR, *args)
 
         self.dist = self.device
 
-        self.qtcb_distance.connect(self.cb_distance)
-        self.dist.register_callback(self.dist.CALLBACK_DISTANCE,
-                                    self.qtcb_distance.emit)
-
-        self.qtcb_analog.connect(self.cb_analog)
-        self.dist.register_callback(self.dist.CALLBACK_ANALOG_VALUE,
-                                    self.qtcb_analog.emit)
+        self.cbe_distance = CallbackEmulator(self.dist.get_distance,
+                                             self.cb_distance,
+                                             self.increase_error_count)
+        self.cbe_analog_value = CallbackEmulator(self.dist.get_analog_value,
+                                                 self.cb_analog_value,
+                                                 self.increase_error_count)
 
         self.analog_value = 0
 
@@ -201,14 +198,14 @@ class DistanceIR(PluginBase):
 
     def start(self):
         async_call(self.dist.get_distance, None, self.cb_distance, self.increase_error_count)
-        async_call(self.dist.set_distance_callback_period, 100, None, self.increase_error_count)
-        async_call(self.dist.set_analog_value_callback_period, 100, None, self.increase_error_count)
+        self.cbe_distance.set_period(100)
+        self.cbe_analog_value.set_period(100)
 
         self.plot_widget.stop = False
 
     def stop(self):
-        async_call(self.dist.set_distance_callback_period, 0, None, self.increase_error_count)
-        async_call(self.dist.set_analog_value_callback_period, 0, None, self.increase_error_count)
+        self.cbe_distance.set_period(0)
+        self.cbe_analog_value.set_period(0)
 
         self.plot_widget.stop = True
 
@@ -323,6 +320,6 @@ class DistanceIR(PluginBase):
         self.current_value = distance/10.0
         self.distance_label.setText(str(distance/10.0))
 
-    def cb_analog(self, value):
-        self.analog_value = value
+    def cb_analog_value(self, analog_value):
+        self.analog_value = analog_value
         self.analog_label.setText(str(self.analog_value))

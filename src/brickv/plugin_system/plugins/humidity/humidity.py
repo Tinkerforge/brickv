@@ -2,7 +2,7 @@
 """
 Humidity Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 humidity.py: Humidity Plugin Implementation
 
@@ -26,9 +26,10 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_humidity import BrickletHumidity
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class HumidityLabel(QLabel):
     def setText(self, text):
@@ -36,24 +37,22 @@ class HumidityLabel(QLabel):
         super(HumidityLabel, self).setText(text)
     
 class Humidity(PluginBase):
-    qtcb_humidity = pyqtSignal(int)
-    
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletHumidity, *args)
-        
+
         self.hum = self.device
-        
-        self.qtcb_humidity.connect(self.cb_humidity)
-        self.hum.register_callback(self.hum.CALLBACK_HUMIDITY,
-                                   self.qtcb_humidity.emit) 
-        
+
+        self.cbe_humidity = CallbackEmulator(self.hum.get_humidity,
+                                             self.cb_humidity,
+                                             self.increase_error_count)
+
         self.humidity_label = HumidityLabel('Humidity: ')
-        
+
         self.current_value = None
-        
+
         plot_list = [['', Qt.red, self.get_current_value]]
         self.plot_widget = PlotWidget('Relative Humidity [%RH]', plot_list)
-        
+
         layout_h = QHBoxLayout()
         layout_h.addStretch()
         layout_h.addWidget(self.humidity_label)
@@ -65,12 +64,12 @@ class Humidity(PluginBase):
 
     def start(self):
         async_call(self.hum.get_humidity, None, self.cb_humidity, self.increase_error_count)
-        async_call(self.hum.set_humidity_callback_period, 100, None, self.increase_error_count)
+        self.cbe_humidity.set_period(100)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.hum.set_humidity_callback_period, 0, None, self.increase_error_count)
+        self.cbe_humidity.set_period(0)
         
         self.plot_widget.stop = True
 

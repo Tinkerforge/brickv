@@ -2,7 +2,7 @@
 """
 Rotary Encoder Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 rotary_encoder.py: Rotary Encoder Plugin Implementation
 
@@ -27,9 +27,12 @@ from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
 from brickv.knob_widget import KnobWidget
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout, QPushButton
 from PyQt4.QtCore import pyqtSignal, Qt
+
+import functools
 
 class CountLabel(QLabel):
     def setText(self, text):
@@ -37,7 +40,6 @@ class CountLabel(QLabel):
         super(CountLabel, self).setText(text)
 
 class RotaryEncoder(PluginBase):
-    qtcb_count = pyqtSignal(int)
     qtcb_pressed = pyqtSignal()
     qtcb_released = pyqtSignal()
 
@@ -46,9 +48,9 @@ class RotaryEncoder(PluginBase):
 
         self.re = self.device
 
-        self.qtcb_count.connect(self.cb_count)
-        self.re.register_callback(self.re.CALLBACK_COUNT,
-                                  self.qtcb_count.emit)
+        self.cbe_count = CallbackEmulator(functools.partial(self.re.get_count, False),
+                                          self.cb_count,
+                                          self.increase_error_count)
 
         self.qtcb_pressed.connect(self.cb_pressed)
         self.re.register_callback(self.re.CALLBACK_PRESSED,
@@ -117,13 +119,13 @@ class RotaryEncoder(PluginBase):
         self.cb_count(0)
 
     def start(self):
-        async_call(self.re.set_count_callback_period, 100, None, self.increase_error_count)
         async_call(self.re.get_count, False, self.cb_count, self.increase_error_count)
+        self.cbe_count.set_period(25)
 
         self.plot_widget.stop = False
 
     def stop(self):
-        async_call(self.re.set_count_callback_period, 0, None, self.increase_error_count)
+        self.cbe_count.set_period(0)
 
         self.plot_widget.stop = True
 

@@ -2,7 +2,7 @@
 """
 Temperature IR Plugin
 Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 temperature_ir.py: Temperature-IR Plugin Implementation
 
@@ -27,9 +27,10 @@ from brickv.plot_widget import PlotWidget
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class ObjectLabel(QLabel):
     def setText(self, text):
@@ -42,21 +43,18 @@ class AmbientLabel(QLabel):
         super(AmbientLabel, self).setText(text)
     
 class TemperatureIR(PluginBase):
-    qtcb_ambient_temperature = pyqtSignal(int)
-    qtcb_object_temperature = pyqtSignal(int)
-    
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletTemperatureIR, *args)
         
         self.tem = self.device
-        
-        self.qtcb_ambient_temperature.connect(self.cb_ambient_temperature)
-        self.tem.register_callback(self.tem.CALLBACK_AMBIENT_TEMPERATURE,
-                                   self.qtcb_ambient_temperature.emit)
-        self.qtcb_object_temperature.connect(self.cb_object_temperature)
-        self.tem.register_callback(self.tem.CALLBACK_OBJECT_TEMPERATURE,
-                                   self.qtcb_object_temperature.emit) 
-        
+
+        self.cbe_ambient_temperature = CallbackEmulator(self.tem.get_ambient_temperature,
+                                                        self.cb_ambient_temperature,
+                                                        self.increase_error_count)
+        self.cbe_object_temperature = CallbackEmulator(self.tem.get_object_temperature,
+                                                       self.cb_object_temperature,
+                                                       self.increase_error_count)
+
         self.ambient_label = AmbientLabel()
         self.object_label = ObjectLabel()
         
@@ -98,15 +96,14 @@ class TemperatureIR(PluginBase):
         async_call(self.tem.get_ambient_temperature, None, self.cb_ambient_temperature, self.increase_error_count)
         async_call(self.tem.get_object_temperature, None, self.cb_object_temperature, self.increase_error_count)
         async_call(self.tem.get_emissivity, None, self.cb_emissivity, self.increase_error_count)
-        
-        async_call(self.tem.set_ambient_temperature_callback_period, 250, None, self.increase_error_count)
-        async_call(self.tem.set_object_temperature_callback_period, 250, None, self.increase_error_count)
+        self.cbe_ambient_temperature.set_period(250)
+        self.cbe_object_temperature.set_period(250)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.tem.set_ambient_temperature_callback_period, 0, None, self.increase_error_count)
-        async_call(self.tem.set_object_temperature_callback_period, 0, None, self.increase_error_count)
+        self.cbe_ambient_temperature.set_period(0)
+        self.cbe_object_temperature.set_period(0)
         
         self.plot_widget.stop = True
 

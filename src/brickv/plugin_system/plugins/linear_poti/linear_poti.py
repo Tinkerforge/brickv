@@ -2,7 +2,7 @@
 """
 Linear Poti Plugin
 Copyright (C) 2010-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 poti.py: Poti Plugin implementation
 
@@ -26,9 +26,10 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plot_widget import PlotWidget
 from brickv.bindings.bricklet_linear_poti import BrickletLinearPoti
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QSlider
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class PositionLabel(QLabel):
     def setText(self, text):
@@ -36,17 +37,15 @@ class PositionLabel(QLabel):
         super(PositionLabel, self).setText(text)
 
 class LinearPoti(PluginBase):
-    qtcb_position = pyqtSignal(int)
-    
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletLinearPoti, *args)
         
         self.lp = self.device
-        
-        self.qtcb_position.connect(self.cb_position)
-        self.lp.register_callback(self.lp.CALLBACK_POSITION,
-                                  self.qtcb_position.emit) 
-        
+
+        self.cbe_position = CallbackEmulator(self.lp.get_position,
+                                             self.cb_position,
+                                             self.increase_error_count)
+
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(0, 100)
         
@@ -69,13 +68,12 @@ class LinearPoti(PluginBase):
         
     def start(self):
         async_call(self.lp.get_position, None, self.cb_position, self.increase_error_count)
-        
-        async_call(self.lp.set_position_callback_period, 20, None, self.increase_error_count)
+        self.cbe_position.set_period(25)
         
         self.plot_widget.stop = False
         
     def stop(self):
-        async_call(self.lp.set_position_callback_period, 0, None, self.increase_error_count)
+        self.cbe_position.set_period(0)
         
         self.plot_widget.stop = True
 

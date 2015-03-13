@@ -2,7 +2,7 @@
 """
 Hall Effect Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 hall_effect.py: Hall Effect Plugin Implementation
 
@@ -24,15 +24,14 @@ Boston, MA 02111-1307, USA.
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
+from brickv.plugin_system.plugins.hall_effect.ui_hall_effect import Ui_HallEffect
 from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget
-from brickv.plugin_system.plugins.hall_effect.ui_hall_effect import Ui_HallEffect
+from brickv.utils import CallbackEmulator
 
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtCore import Qt
 
 class HallEffect(PluginBase, Ui_HallEffect):
-    qtcb_edge_count = pyqtSignal(int, bool)
-
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletHallEffect, *args)
 
@@ -40,9 +39,9 @@ class HallEffect(PluginBase, Ui_HallEffect):
 
         self.hf = self.device
 
-        self.qtcb_edge_count.connect(self.cb_edge_count)
-        self.hf.register_callback(self.hf.CALLBACK_EDGE_COUNT,
-                                  self.qtcb_edge_count.emit)
+        self.cbe_edge_count = CallbackEmulator(self.get_edge_count,
+                                               self.cb_edge_count,
+                                               self.increase_error_count)
 
         self.current_value = None
 
@@ -61,7 +60,11 @@ class HallEffect(PluginBase, Ui_HallEffect):
     def edge_changed(self, value):
         self.hf.set_edge_count_config(self.combo_edge_type.currentIndex(), self.spin_debounce.value())
 
-    def cb_edge_count(self, count, value):
+    def get_edge_count(self):
+        return self.hf.get_edge_count(False), self.hf.get_value()
+
+    def cb_edge_count(self, data):
+        count, value = data
         self.label_edge_count.setText(str(count))
         if value:
             self.current_value = 1
@@ -87,14 +90,14 @@ class HallEffect(PluginBase, Ui_HallEffect):
 
     def start(self):
         async_call(self.hf.get_edge_count_config, None, self.cb_edge_count_config, self.increase_error_count)
-        async_call(self.hf.set_edge_count_callback_period, 50, None, self.increase_error_count)
         async_call(self.hf.get_edge_count, False, self.get_edge_count_async, self.increase_error_count)
         async_call(self.hf.get_value, None, self.get_value_async, self.increase_error_count)
+        self.cbe_edge_count.set_period(50)
 
         self.plot_widget.stop = False
 
     def stop(self):
-        async_call(self.hf.set_edge_count_callback_period, 0, None, self.increase_error_count)
+        self.cbe_edge_count.set_period(0)
 
         self.plot_widget.stop = True
 
