@@ -23,12 +23,13 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4 import QtCore
+from PyQt4 import QtCore, QtGui
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_console import Ui_REDTabConsole
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.pyqterm import TerminalWidget
 from brickv.samba import get_serial_ports
+from brickv.utils import get_main_window
 
 class REDTabConsole(REDTab, Ui_REDTabConsole):
     append_text_signal = QtCore.pyqtSignal(str)
@@ -108,9 +109,10 @@ class REDTabConsole(REDTab, Ui_REDTabConsole):
                     try:
                         self.console.execute(command=port)
                         self.console.setFocus()
-                    except:
-                        # TODO: Error popup?
+                    except Exception as e:
                         self.destroy_session()
+                        QtGui.QMessageBox.critical(get_main_window(), 'Serial Connect Error',
+                                                   u'Could not connect to serial console:\n\n{0}'.format(e))
 
             def cb_pkill_ttyGS0(result):
                 if result == None or result.exit_code not in [0, 1]: # 0 == no error, 1 == nothing killed
