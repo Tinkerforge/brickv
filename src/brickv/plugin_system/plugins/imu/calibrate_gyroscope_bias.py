@@ -131,7 +131,7 @@ temperature for one of the sampling points.
         self.state += 1
         if self.state == 5:
             self.state = 0
-            
+
         if self.state == 0:
             self.gyr_sum = [0, 0, 0]
             self.update_temperature()
@@ -159,7 +159,6 @@ temperature for one of the sampling points.
             self.t_high.setText("?")
             
             self.set_default()
-            
         elif self.state == 1:
             self.update_timer.stop()
             self.t_raw_start_low = self.imu.get_imu_temperature()
@@ -170,7 +169,6 @@ temperature for one of the sampling points.
             self.imu.set_angular_velocity_period(1)
             self.text_label.setText("Waiting...")
             self.start_button.setEnabled(False)
-            
         elif self.state == 2:
             self.t_raw_end_low = self.imu.get_imu_temperature()
             self.calc()
@@ -188,8 +186,7 @@ absolutely still.""" % 0xB0)
             self.imu.set_angular_velocity_period(1)
             self.text_label.setText("Waiting...")
             self.start_button.setEnabled(False)
-            pass
-        if self.state == 4:
+        elif self.state == 4:
             self.t_raw_end_high = self.imu.get_imu_temperature()
             self.calc()
             self.text_label.setText("""Ready. To save the calibration \
