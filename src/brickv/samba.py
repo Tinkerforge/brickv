@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2012-2013 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 samba.py: Atmel SAM-BA flash protocol implementation
 
@@ -92,7 +92,7 @@ else:
 
 #### skip here for brick-flash-cmd ####
 
-CHIPID_CIDR = 0x400e0740
+CHIPID_CIDR = 0x400E0740
 
 ATSAM3SxB = 0x89
 ATSAM3SxC = 0x8A
@@ -129,8 +129,13 @@ RSTC_CR_EXTRST  = 0b1000
 RSTC_MR_URSTEN  = 0b0001
 RSTC_MR_URSTIEN = 0b1000
 
-RSTC_CR_FEY = 0xA5
-RSTC_MR_FEY = 0xA5
+RSTC_CR_KEY        = 0xA5
+RSTC_CR_KEY_OFFSET = 24
+
+RSTC_MR_KEY        = 0xA5
+RSTC_MR_KEY_OFFSET = 24
+
+RSTC_MR_ERSTL_OFFSET = 8
 
 # http://www.varsanofiev.com/inside/at91_sam_ba.htm
 # http://sourceforge.net/apps/mediawiki/lejos/index.php?title=Documentation:SAM-BA
@@ -463,8 +468,8 @@ class SAMBA(object):
 
     def reset(self):
         try:
-            self.write_uint32(RSTC_MR, (RSTC_MR_FEY << 24) | (10 << 8) | RSTC_MR_URSTEN)
-            self.write_uint32(RSTC_CR, (RSTC_CR_FEY << 24) | RSTC_CR_EXTRST | RSTC_CR_PERRST | RSTC_CR_PROCRST)
+            self.write_uint32(RSTC_MR, (RSTC_MR_KEY << RSTC_MR_KEY_OFFSET) | (10 << RSTC_MR_ERSTL_OFFSET) | RSTC_MR_URSTEN)
+            self.write_uint32(RSTC_CR, (RSTC_CR_KEY << RSTC_CR_KEY_OFFSET) | RSTC_CR_EXTRST | RSTC_CR_PERRST | RSTC_CR_PROCRST)
         except:
             raise SAMBAException('Write error while triggering reset')
 
