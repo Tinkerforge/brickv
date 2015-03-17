@@ -316,10 +316,12 @@ class SAMBA(object):
             page_num_offset = (ic_relative_address - ic_prefix_length) / self.flash_page_size
             self.verify_pages(imu_calibration_pages, page_num_offset, 'IMU calibration', True)
 
-        # Set Boot-from-Flash bit
-        self.wait_for_flash_ready('before setting Boot-from-Flash bit')
+        # Set Boot-from-Flash flag
+        self.reset_progress('Setting Boot-from-Flash flag', 0)
+
+        self.wait_for_flash_ready('before setting Boot-from-Flash flag')
         self.write_flash_command(EEFC_FCR_FCMD_SGPB, 1)
-        self.wait_for_flash_ready('after setting Boot-from-Flash bit')
+        self.wait_for_flash_ready('after setting Boot-from-Flash flag')
 
         # Boot
         try:
@@ -467,6 +469,8 @@ class SAMBA(object):
             raise SAMBAException('Protocol error while writing to address 0x%08X' % address)
 
     def reset(self):
+        self.reset_progress('Triggering Brick reset', 0)
+
         try:
             self.write_uint32(RSTC_MR, (RSTC_MR_KEY << RSTC_MR_KEY_OFFSET) | (10 << RSTC_MR_ERSTL_OFFSET) | RSTC_MR_URSTEN)
             self.write_uint32(RSTC_CR, (RSTC_CR_KEY << RSTC_CR_KEY_OFFSET) | RSTC_CR_EXTRST | RSTC_CR_PERRST | RSTC_CR_PROCRST)
