@@ -463,7 +463,7 @@ class SAMBA(object):
 
     def reset(self):
         try:
-            self.write_uint32(RSTC_MR, (RSTC_MR_FEY << 24) | (10 << 8) | RSTC_MR_URSTEN | RSTC_MR_URSTIEN)
+            self.write_uint32(RSTC_MR, (RSTC_MR_FEY << 24) | (10 << 8) | RSTC_MR_URSTEN)
             self.write_uint32(RSTC_CR, (RSTC_CR_FEY << 24) | RSTC_CR_EXTRST | RSTC_CR_PERRST | RSTC_CR_PROCRST)
         except:
             raise SAMBAException('Write error while triggering reset')
