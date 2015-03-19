@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-18.      #
+# This file was automatically generated on 2015-03-19.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -56,8 +56,8 @@ class BrickletLaserRangeFinder(Device):
     FUNCTION_GET_DEBOUNCE_PERIOD = 12
     FUNCTION_SET_MOVING_AVERAGE = 13
     FUNCTION_GET_MOVING_AVERAGE = 14
-    FUNCTION_SET_VELOCITY_CONFIGURATION = 15
-    FUNCTION_GET_VELOCITY_CONFIGURATION = 16
+    FUNCTION_SET_MODE = 15
+    FUNCTION_GET_MODE = 16
     FUNCTION_ENABLE_LASER = 17
     FUNCTION_DISABLE_LASER = 18
     FUNCTION_IS_LASER_ENABLED = 19
@@ -68,10 +68,11 @@ class BrickletLaserRangeFinder(Device):
     THRESHOLD_OPTION_INSIDE = 'i'
     THRESHOLD_OPTION_SMALLER = '<'
     THRESHOLD_OPTION_GREATER = '>'
-    MAX_VELOCITY_13 = 0
-    MAX_VELOCITY_32 = 1
-    MAX_VELOCITY_64 = 2
-    MAX_VELOCITY_127 = 3
+    MODE_DISTANCE = 0
+    MODE_VELOCITY_MAX_13MS = 1
+    MODE_VELOCITY_MAX_32MS = 2
+    MODE_VELOCITY_MAX_64MS = 3
+    MODE_VELOCITY_MAX_127MS = 4
 
     def __init__(self, uid, ipcon):
         """
@@ -96,8 +97,8 @@ class BrickletLaserRangeFinder(Device):
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_SET_MOVING_AVERAGE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_MOVING_AVERAGE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CONFIGURATION] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY_CONFIGURATION] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_SET_MODE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_MODE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_ENABLE_LASER] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_DISABLE_LASER] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_IS_LASER_ENABLED] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -116,6 +117,8 @@ class BrickletLaserRangeFinder(Device):
         """
         TODO
         
+        unit: cm
+        
         If you want to get the distance periodically, it is recommended to
         use the callback :func:`Distance` and set the period with 
         :func:`SetDistanceCallbackPeriod`.
@@ -125,6 +128,8 @@ class BrickletLaserRangeFinder(Device):
     def get_velocity(self):
         """
         TODO
+        
+        unit: 0.01 m/s
         
         If you want to get the velocity periodically, it is recommended to
         use the callback :func:`Velocity` and set the period with 
@@ -252,7 +257,7 @@ class BrickletLaserRangeFinder(Device):
         Setting the length to 0 will turn the averaging completely off. With less
         averaging, there is more noise on the data.
         
-        The range for the averaging is 0-50.
+        The range for the averaging is 0-30.
         
         The default value is 10.
         """
@@ -264,20 +269,20 @@ class BrickletLaserRangeFinder(Device):
         """
         return GetMovingAverage(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B B'))
 
-    def set_velocity_configuration(self, max_velocity):
+    def set_mode(self, mode):
         """
         * resolution 0.1m/s => 12.7m/s max
         * resolution 0.25m/s => 31.75m/s max
         * resolution 0.5m/s => 63.5m/s max
         * resolution 1m/s => 127 m/s max
         """
-        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CONFIGURATION, (max_velocity,), 'B', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_MODE, (mode,), 'B', '')
 
-    def get_velocity_configuration(self):
+    def get_mode(self):
         """
         
         """
-        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY_CONFIGURATION, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_MODE, (), '', 'B')
 
     def enable_laser(self):
         """
