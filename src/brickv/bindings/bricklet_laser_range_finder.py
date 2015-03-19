@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-06.      #
+# This file was automatically generated on 2015-03-18.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -25,6 +25,8 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 GetDistanceCallbackThreshold = namedtuple('DistanceCallbackThreshold', ['option', 'min', 'max'])
+GetVelocityCallbackThreshold = namedtuple('VelocityCallbackThreshold', ['option', 'min', 'max'])
+GetMovingAverage = namedtuple('MovingAverage', ['distance_average_length', 'velocity_average_length'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletLaserRangeFinder(Device):
@@ -35,18 +37,30 @@ class BrickletLaserRangeFinder(Device):
     DEVICE_IDENTIFIER = 255
     DEVICE_DISPLAY_NAME = 'Laser Range Finder Bricklet'
 
-    CALLBACK_DISTANCE = 10
-    CALLBACK_DISTANCE_REACHED = 11
+    CALLBACK_DISTANCE = 20
+    CALLBACK_VELOCITY = 21
+    CALLBACK_DISTANCE_REACHED = 22
+    CALLBACK_VELOCITY_REACHED = 23
 
-    FUNCTION_GET_DISTANCE_VALUE = 1
-    FUNCTION_SET_DISTANCE_CALLBACK_PERIOD = 2
-    FUNCTION_GET_DISTANCE_CALLBACK_PERIOD = 3
-    FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD = 4
-    FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD = 5
-    FUNCTION_SET_DEBOUNCE_PERIOD = 6
-    FUNCTION_GET_DEBOUNCE_PERIOD = 7
-    FUNCTION_SET_MOVING_AVERAGE = 8
-    FUNCTION_GET_MOVING_AVERAGE = 9
+    FUNCTION_GET_DISTANCE = 1
+    FUNCTION_GET_VELOCITY = 2
+    FUNCTION_SET_DISTANCE_CALLBACK_PERIOD = 3
+    FUNCTION_GET_DISTANCE_CALLBACK_PERIOD = 4
+    FUNCTION_SET_VELOCITY_CALLBACK_PERIOD = 5
+    FUNCTION_GET_VELOCITY_CALLBACK_PERIOD = 6
+    FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD = 7
+    FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD = 8
+    FUNCTION_SET_VELOCITY_CALLBACK_THRESHOLD = 9
+    FUNCTION_GET_VELOCITY_CALLBACK_THRESHOLD = 10
+    FUNCTION_SET_DEBOUNCE_PERIOD = 11
+    FUNCTION_GET_DEBOUNCE_PERIOD = 12
+    FUNCTION_SET_MOVING_AVERAGE = 13
+    FUNCTION_GET_MOVING_AVERAGE = 14
+    FUNCTION_SET_VELOCITY_CONFIGURATION = 15
+    FUNCTION_GET_VELOCITY_CONFIGURATION = 16
+    FUNCTION_ENABLE_LASER = 17
+    FUNCTION_DISABLE_LASER = 18
+    FUNCTION_IS_LASER_ENABLED = 19
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -54,6 +68,10 @@ class BrickletLaserRangeFinder(Device):
     THRESHOLD_OPTION_INSIDE = 'i'
     THRESHOLD_OPTION_SMALLER = '<'
     THRESHOLD_OPTION_GREATER = '>'
+    MAX_VELOCITY_13 = 0
+    MAX_VELOCITY_32 = 1
+    MAX_VELOCITY_64 = 2
+    MAX_VELOCITY_127 = 3
 
     def __init__(self, uid, ipcon):
         """
@@ -64,31 +82,55 @@ class BrickletLaserRangeFinder(Device):
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE_VALUE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_SET_DISTANCE_CALLBACK_PERIOD] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CALLBACK_PERIOD] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY_CALLBACK_PERIOD] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CALLBACK_THRESHOLD] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY_CALLBACK_THRESHOLD] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_SET_MOVING_AVERAGE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_MOVING_AVERAGE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CONFIGURATION] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY_CONFIGURATION] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_ENABLE_LASER] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_DISABLE_LASER] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLaserRangeFinder.FUNCTION_IS_LASER_ENABLED] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLaserRangeFinder.CALLBACK_DISTANCE] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletLaserRangeFinder.CALLBACK_VELOCITY] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLaserRangeFinder.CALLBACK_DISTANCE_REACHED] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletLaserRangeFinder.CALLBACK_VELOCITY_REACHED] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLaserRangeFinder.FUNCTION_GET_IDENTITY] = BrickletLaserRangeFinder.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletLaserRangeFinder.CALLBACK_DISTANCE] = 'H'
+        self.callback_formats[BrickletLaserRangeFinder.CALLBACK_VELOCITY] = 'h'
         self.callback_formats[BrickletLaserRangeFinder.CALLBACK_DISTANCE_REACHED] = 'H'
+        self.callback_formats[BrickletLaserRangeFinder.CALLBACK_VELOCITY_REACHED] = 'h'
 
-    def get_distance_value(self):
+    def get_distance(self):
         """
         TODO
         
-        If you want to get the distance value periodically, it is recommended to
+        If you want to get the distance periodically, it is recommended to
         use the callback :func:`Distance` and set the period with 
         :func:`SetDistanceCallbackPeriod`.
         """
-        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE_VALUE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE, (), '', 'H')
+
+    def get_velocity(self):
+        """
+        TODO
+        
+        If you want to get the velocity periodically, it is recommended to
+        use the callback :func:`Velocity` and set the period with 
+        :func:`SetVelocityCallbackPeriod`.
+        """
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY, (), '', 'h')
 
     def set_distance_callback_period(self, period):
         """
@@ -108,6 +150,24 @@ class BrickletLaserRangeFinder(Device):
         """
         return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE_CALLBACK_PERIOD, (), '', 'I')
 
+    def set_velocity_callback_period(self, period):
+        """
+        Sets the period in ms with which the :func:`Velocity` callback is triggered
+        periodically. A value of 0 turns the callback off.
+        
+        :func:`Velocity` is only triggered if the velocity value has changed since the
+        last triggering.
+        
+        The default value is 0.
+        """
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CALLBACK_PERIOD, (period,), 'I', '')
+
+    def get_velocity_callback_period(self):
+        """
+        Returns the period as set by :func:`SetVelocityCallbackPeriod`.
+        """
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY_CALLBACK_PERIOD, (), '', 'I')
+
     def set_distance_callback_threshold(self, option, min, max):
         """
         Sets the thresholds for the :func:`DistanceReached` callback. 
@@ -126,23 +186,51 @@ class BrickletLaserRangeFinder(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_DISTANCE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
 
     def get_distance_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetDistanceCallbackThreshold`.
         """
-        return GetDistanceCallbackThreshold(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetDistanceCallbackThreshold(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DISTANCE_CALLBACK_THRESHOLD, (), '', 'c H H'))
+
+    def set_velocity_callback_threshold(self, option, min, max):
+        """
+        Sets the thresholds for the :func:`VelocityReached` callback. 
+        
+        The following options are possible:
+        
+        .. csv-table::
+         :header: "Option", "Description"
+         :widths: 10, 100
+        
+         "'x'",    "Callback is turned off"
+         "'o'",    "Callback is triggered when the velocity is *outside* the min and max values"
+         "'i'",    "Callback is triggered when the velocity is *inside* the min and max values"
+         "'<'",    "Callback is triggered when the velocity is smaller than the min value (max is ignored)"
+         "'>'",    "Callback is triggered when the velocity is greater than the min value (max is ignored)"
+        
+        The default value is ('x', 0, 0).
+        """
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+
+    def get_velocity_callback_threshold(self):
+        """
+        Returns the threshold as set by :func:`SetVelocityCallbackThreshold`.
+        """
+        return GetVelocityCallbackThreshold(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY_CALLBACK_THRESHOLD, (), '', 'c h h'))
 
     def set_debounce_period(self, debounce):
         """
         Sets the period in ms with which the threshold callbacks
         
         * :func:`DistanceReached`,
+        * :func:`VelocityReached`,
         
         are triggered, if the thresholds
         
         * :func:`SetDistanceCallbackThreshold`,
+        * :func:`SetVelocityCallbackThreshold`,
         
         keep being reached.
         
@@ -156,25 +244,58 @@ class BrickletLaserRangeFinder(Device):
         """
         return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
 
-    def set_moving_average(self, length):
+    def set_moving_average(self, distance_average_length, velocity_average_length):
         """
         Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
-        for the distance.
+        for the distance and velocity.
         
         Setting the length to 0 will turn the averaging completely off. With less
         averaging, there is more noise on the data.
         
         The range for the averaging is 0-50.
         
-        The default value is 20.
+        The default value is 10.
         """
-        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_MOVING_AVERAGE, (length,), 'B', '')
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_MOVING_AVERAGE, (distance_average_length, velocity_average_length), 'B B', '')
 
     def get_moving_average(self):
         """
         Returns the length moving average as set by :func:`SetMovingAverage`.
         """
-        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
+        return GetMovingAverage(*self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B B'))
+
+    def set_velocity_configuration(self, max_velocity):
+        """
+        * resolution 0.1m/s => 12.7m/s max
+        * resolution 0.25m/s => 31.75m/s max
+        * resolution 0.5m/s => 63.5m/s max
+        * resolution 1m/s => 127 m/s max
+        """
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_VELOCITY_CONFIGURATION, (max_velocity,), 'B', '')
+
+    def get_velocity_configuration(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_VELOCITY_CONFIGURATION, (), '', 'B')
+
+    def enable_laser(self):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_ENABLE_LASER, (), '', '')
+
+    def disable_laser(self):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_DISABLE_LASER, (), '', '')
+
+    def is_laser_enabled(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_IS_LASER_ENABLED, (), '', '?')
 
     def get_identity(self):
         """
