@@ -47,11 +47,11 @@ class LaserRangeFinder(PluginBase):
         self.lrf = self.device
 
         self.cbe_distance = CallbackEmulator(self.lrf.get_distance,
-                                            self.cb_distance,
-                                            self.increase_error_count)
+                                             self.cb_distance,
+                                             self.increase_error_count)
         self.cbe_velocity = CallbackEmulator(self.lrf.get_velocity,
-                                            self.cb_velocity,
-                                            self.increase_error_count)
+                                             self.cb_velocity,
+                                             self.increase_error_count)
         
         self.distance_label = DistanceLabel('Distance: ')
         self.velocity_label = VelocityLabel('Velocity: ')
@@ -67,11 +67,6 @@ class LaserRangeFinder(PluginBase):
         self.enable_laser = QCheckBox("Enable Laser")
         self.enable_laser.stateChanged.connect(self.enable_laser_changed)
 
-        layout_hel = QHBoxLayout()
-        layout_hel.addStretch()
-        layout_hel.addWidget(self.enable_laser)
-        layout_hel.addStretch()
-        
         layout_hld = QHBoxLayout()
         layout_hld.addStretch()
         layout_hld.addWidget(self.distance_label)
@@ -82,18 +77,24 @@ class LaserRangeFinder(PluginBase):
         layout_hlv.addWidget(self.velocity_label)
         layout_hlv.addStretch()
         
-        self.velocity_conf_label = QLabel('Velocity Configuration: ')
-        self.velocity_conf_combo = QComboBox()
-        self.velocity_conf_combo.addItem("0.10 m/s resolution with max +- 12.70m/s")
-        self.velocity_conf_combo.addItem("0.25 m/s resolution with max +- 31.75m/s")
-        self.velocity_conf_combo.addItem("0.50 m/s resolution with max +- 63.50m/s")
-        self.velocity_conf_combo.addItem("1.00 m/s resolution with max +-127.00m/s")
-        self.velocity_conf_combo.activated.connect(self.velocity_conf_changed)
+        self.mode_label = QLabel('Mode: ')
+        self.mode_combo = QComboBox()
+        self.mode_combo.addItem("Distance 1cm resolution, 40m max")
+        self.mode_combo.addItem("Velocity 0.10 m/s resolution, 12.70m/s max")
+        self.mode_combo.addItem("Velocity 0.25 m/s resolution, 31.75m/s max")
+        self.mode_combo.addItem("Velocity 0.50 m/s resolution, 63.50m/s max")
+        self.mode_combo.addItem("Velocity 1.00 m/s resolution, 127.00m/s max")
+        self.mode_combo.activated.connect(self.mode_changed)
         
+        layout_hvel = QHBoxLayout()
+        layout_hvel.addStretch()
+        layout_hvel.addWidget(self.enable_laser)
+        layout_hvel.addStretch()
+
         layout_hvc = QHBoxLayout()
         layout_hvc.addStretch()
-#        layout_hvc.addWidget(self.velocity_conf_label)
-        layout_hvc.addWidget(self.velocity_conf_combo)
+        layout_hvc.addWidget(self.mode_label)
+        layout_hvc.addWidget(self.mode_combo)
         layout_hvc.addStretch()
         
         self.spin_average_distance = QSpinBox()
@@ -109,16 +110,19 @@ class LaserRangeFinder(PluginBase):
         self.spin_average_velocity.setSingleStep(1)
         self.spin_average_velocity.setValue(10)
         self.spin_average_velocity.editingFinished.connect(self.spin_average_finished)
-
+        
+        self.label_average_distance = QLabel('Length of moving average:')
+        self.label_average_velocity = QLabel('Length of moving average:')
+        
         layout_hd = QHBoxLayout()
         layout_hd.addStretch()
-        layout_hd.addWidget(QLabel('Length of moving average (Distance):'))
+        layout_hd.addWidget(self.label_average_distance)
         layout_hd.addWidget(self.spin_average_distance)
         layout_hd.addStretch()
 
         layout_hv = QHBoxLayout()
         layout_hv.addStretch()
-        layout_hv.addWidget(QLabel('Length of moving average (Velocity):'))
+        layout_hv.addWidget(self.label_average_velocity)
         layout_hv.addWidget(self.spin_average_velocity)
         layout_hv.addStretch()
         
@@ -126,25 +130,32 @@ class LaserRangeFinder(PluginBase):
         layout_vd.addLayout(layout_hld)
         layout_vd.addWidget(self.plot_widget_distance)
         layout_vd.addLayout(layout_hd)
-        layout_vd.addStretch()
 
         layout_vv = QVBoxLayout()
         layout_vv.addLayout(layout_hlv)
         layout_vv.addWidget(self.plot_widget_velocity)
         layout_vv.addLayout(layout_hv)
-        layout_vv.addLayout(layout_hvc)
-        layout_vv.addStretch()
         
-        layout_h2 = QHBoxLayout()
-        layout_h2.addLayout(layout_vd)
-        layout_h2.addLayout(layout_vv)
+        layout_v2 = QVBoxLayout()
+        layout_v2.addLayout(layout_vd)
+        layout_v2.addLayout(layout_vv)
+        
+        self.widgets_distance = [self.distance_label, self.plot_widget_distance, self.spin_average_distance, self.label_average_distance]
+        self.widgets_velocity = [self.velocity_label, self.plot_widget_velocity, self.spin_average_velocity, self.label_average_velocity]
+        
+        for w in self.widgets_distance:
+            w.hide()
+        for w in self.widgets_velocity:
+            w.hide()
         
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_hel)
-        layout.addLayout(layout_h2)
+        layout.addLayout(layout_hvel)
+        layout.addLayout(layout_hvc)
+        layout.addLayout(layout_v2)
+        
 
     def start(self):
-        async_call(self.lrf.get_velocity_configuration, None, self.get_velocity_configuration_async, self.increase_error_count)
+        async_call(self.lrf.get_mode, None, self.get_mode_async, self.increase_error_count)
         async_call(self.lrf.is_laser_enabled, None, self.is_laser_enabled_async, self.increase_error_count)
         async_call(self.lrf.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
         async_call(self.lrf.get_distance, None, self.cb_distance, self.increase_error_count)
@@ -190,8 +201,18 @@ class LaserRangeFinder(PluginBase):
         else:
             self.lrf.disable_laser()
             
-    def velocity_conf_changed(self, value):
-        self.lrf.set_velocity_configuration(value)
+    def mode_changed(self, value):
+        self.lrf.set_mode(value)
+        if value == 0:
+            for w in self.widgets_velocity:
+                w.hide()
+            for w in self.widgets_distance:
+                w.show()
+        else:
+            for w in self.widgets_distance:
+                w.hide()
+            for w in self.widgets_velocity:
+                w.show()
 
     def cb_distance(self, distance):
         self.current_distance_value = distance
@@ -202,8 +223,9 @@ class LaserRangeFinder(PluginBase):
         self.current_velocity_value = velocity
         self.velocity_label.setText(str(velocity)) 
         
-    def get_velocity_configuration_async(self, value):
-        self.velocity_conf_combo.setCurrentIndex(value)
+    def get_mode_async(self, value):
+        self.mode_combo.setCurrentIndex(value)
+        self.mode_changed(value)
         
     def get_moving_average_async(self, avg):
         self.spin_average_distance.setValue(avg.distance_average_length)
