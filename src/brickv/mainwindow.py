@@ -550,14 +550,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         device_info.bricklets[bricklet_info.position] = bricklet_info
 
             if device_info.plugin == None:
-                infos.add_info(device_info)
-
                 plugin = self.plugin_manager.get_plugin(device_identifier, self.ipcon,
                                                         uid, hardware_version, firmware_version)
 
                 device_info.plugin = plugin
                 device_info.name = plugin.name
                 device_info.url_part = plugin.get_url_part()
+
+                infos.add_info(device_info)
+
                 device_info.tab_window = self.create_tab_window(device_info, connected_uid, position)
                 device_info.tab_window.setWindowFlags(Qt.Widget)
                 device_info.tab_window.tab()
