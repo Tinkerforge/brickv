@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-18.      #
+# This file was automatically generated on 2015-03-23.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -25,6 +25,7 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 GetWeightCallbackThreshold = namedtuple('WeightCallbackThreshold', ['option', 'min', 'max'])
+GetConfiguration = namedtuple('Configuration', ['rate', 'gain'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletLoadCell(Device):
@@ -35,8 +36,8 @@ class BrickletLoadCell(Device):
     DEVICE_IDENTIFIER = 253
     DEVICE_DISPLAY_NAME = 'Load Cell Bricklet'
 
-    CALLBACK_WEIGHT = 8
-    CALLBACK_WEIGHT_REACHED = 9
+    CALLBACK_WEIGHT = 16
+    CALLBACK_WEIGHT_REACHED = 17
 
     FUNCTION_GET_WEIGHT = 1
     FUNCTION_SET_WEIGHT_CALLBACK_PERIOD = 2
@@ -45,6 +46,14 @@ class BrickletLoadCell(Device):
     FUNCTION_GET_WEIGHT_CALLBACK_THRESHOLD = 5
     FUNCTION_SET_DEBOUNCE_PERIOD = 6
     FUNCTION_GET_DEBOUNCE_PERIOD = 7
+    FUNCTION_SET_MOVING_AVERAGE = 8
+    FUNCTION_GET_MOVING_AVERAGE = 9
+    FUNCTION_LED_ON = 10
+    FUNCTION_LED_OFF = 11
+    FUNCTION_IS_LED_ON = 12
+    FUNCTION_CALIBRATE = 13
+    FUNCTION_SET_CONFIGURATION = 14
+    FUNCTION_GET_CONFIGURATION = 15
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -69,6 +78,14 @@ class BrickletLoadCell(Device):
         self.response_expected[BrickletLoadCell.FUNCTION_GET_WEIGHT_CALLBACK_THRESHOLD] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLoadCell.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletLoadCell.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletLoadCell.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLoadCell.FUNCTION_SET_MOVING_AVERAGE] = BrickletLoadCell.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLoadCell.FUNCTION_GET_MOVING_AVERAGE] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLoadCell.FUNCTION_LED_ON] = BrickletLoadCell.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLoadCell.FUNCTION_LED_OFF] = BrickletLoadCell.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLoadCell.FUNCTION_IS_LED_ON] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletLoadCell.FUNCTION_CALIBRATE] = BrickletLoadCell.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLoadCell.FUNCTION_SET_CONFIGURATION] = BrickletLoadCell.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLoadCell.FUNCTION_GET_CONFIGURATION] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLoadCell.CALLBACK_WEIGHT] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLoadCell.CALLBACK_WEIGHT_REACHED] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLoadCell.FUNCTION_GET_IDENTITY] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -151,6 +168,67 @@ class BrickletLoadCell(Device):
         Returns the debounce period as set by :func:`SetDebouncePeriod`.
         """
         return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_DEBOUNCE_PERIOD, (), '', 'I')
+
+    def set_moving_average(self, average):
+        """
+        Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
+        for the value value.
+        
+        Setting the length to 1 will turn the averaging off. With less
+        averaging, there is more noise on the data.
+        
+        The range for the averaging is 1-40.
+        
+        The default value is 4.
+        """
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_MOVING_AVERAGE, (average,), 'B', '')
+
+    def get_moving_average(self):
+        """
+        Returns the length moving average as set by :func:`SetMovingAverage`.
+        """
+        return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
+
+    def led_on(self):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_LED_ON, (), '', '')
+
+    def led_off(self):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_LED_OFF, (), '', '')
+
+    def is_led_on(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_IS_LED_ON, (), '', 'B')
+
+    def calibrate(self, weight):
+        """
+        * 0   = set zero point
+        * > 0 = set gain
+        """
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_CALIBRATE, (weight,), 'I', '')
+
+    def set_configuration(self, rate, gain):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_CONFIGURATION, (rate, gain), 'B B', '')
+
+    def get_configuration(self):
+        """
+        rate: 0 = 10Hz
+        rate: 1 = 80Hz
+        gain: 0 = +-3.3*0.5V/128
+        gain: 1 = +-3.3*0.5V/64
+        gain: 2 = +-3.3*0.5V/32
+        """
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
     def get_identity(self):
         """
