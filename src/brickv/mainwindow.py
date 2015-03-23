@@ -667,8 +667,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.reset_view()
 
             QMessageBox.critical(self, 'Connection',
-                                 'Stopped automatic reconnecting due to multiple connection errors in a row.',
-                                 QMessageBox.Ok)
+                                 'Stopped automatic reconnecting due to multiple connection errors in a row.')
         else:
             self.disconnect_times.append(time.time())
             self.update_ui_state(IPConnection.CONNECTION_STATE_PENDING)
