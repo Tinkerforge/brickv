@@ -31,13 +31,16 @@ from PyQt4.QtCore import pyqtSignal, Qt
 from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout, QSpinBox, QCheckBox, QComboBox
 
 class DistanceLabel(QLabel):
-    def setText(self, text):
-        text = "Distance: " + str(text) + 'cm'
+    def setText(self, distance):
+        if distance < 100:
+            text = "Distance: " + str(distance) + " cm"
+        else:
+            text = "Distance: " + "{0:.2f}".format(round(distance/100.0, 2)) + " m"
         super(DistanceLabel, self).setText(text)
         
 class VelocityLabel(QLabel):
-    def setText(self, text):
-        text = "Velocity: " + str(text) + 'm/s'
+    def setText(self, velocity):
+        text = "Velocity: " + "{0:.2f}".format(round(velocity, 2)) + ' m/s'
         super(VelocityLabel, self).setText(text)
 
 class LaserRangeFinder(PluginBase):
@@ -216,12 +219,12 @@ class LaserRangeFinder(PluginBase):
 
     def cb_distance(self, distance):
         self.current_distance_value = distance
-        self.distance_label.setText(str(distance)) 
+        self.distance_label.setText(distance) 
         
     def cb_velocity(self, velocity):
         velocity = velocity / 100.0
         self.current_velocity_value = velocity
-        self.velocity_label.setText(str(velocity)) 
+        self.velocity_label.setText(velocity) 
         
     def get_mode_async(self, value):
         self.mode_combo.setCurrentIndex(value)
