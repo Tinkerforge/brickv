@@ -28,10 +28,14 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.utils import get_main_window
 
 class REDTabSettingsServerMonitoringAddHostDialog(QtGui.QDialog, Ui_REDTabSettingsServerMonitoringAddHostDialog):
-    def __init__(self, parent):
+    def __init__(self, parent, main_window):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
 
+        self.main_window = main_window
+        self.host   = ''
+        self.port   = ''
+        self.secret = ''
         self.chkbox_sm_add_host_authentication.stateChanged.connect(self.slot_chkbox_sm_add_host_authentication_state_changed)
         self.pbutton_sm_add_host_add.clicked.connect(self.slot_pbutton_sm_add_host_add_clicked)
         self.pbutton_sm_add_host_cancel.clicked.connect(self.slot_pbutton_sm_add_host_cancel_clicked)
@@ -40,6 +44,7 @@ class REDTabSettingsServerMonitoringAddHostDialog(QtGui.QDialog, Ui_REDTabSettin
             self.label_sm_add_host_secret.show()
             self.ledit_sm_add_host_secret.show()
         else:
+            self.ledit_sm_add_host_secret.setText('')
             self.label_sm_add_host_secret.hide()
             self.ledit_sm_add_host_secret.hide()
 
@@ -47,18 +52,38 @@ class REDTabSettingsServerMonitoringAddHostDialog(QtGui.QDialog, Ui_REDTabSettin
         self.reject()
 
     def slot_pbutton_sm_add_host_add_clicked(self):
-        #if check fails then self.reject() otherwise self.accept()
+        if not self.ledit_sm_add_host_host.text():
+            QtGui.QMessageBox.critical(self.main_window,
+                                       'Settings | Server Monitoring',
+                                       'Host name is empty.')
+            return
 
         try:
             self.ledit_sm_add_host_host.text().encode('ascii')
-            return True
         except:
-            return False
+            QtGui.QMessageBox.critical(self.main_window,
+                                       'Settings | Server Monitoring',
+                                       'Host name contains non ASCII characters.')
+            return
+
+        if self.chkbox_sm_add_host_authentication.checkState() == QtCore.Qt.Checked and \
+           not self.ledit_sm_add_host_secret.text():
+                QtGui.QMessageBox.critical(self.main_window,
+                                           'Settings | Server Monitoring',
+                                           'No secrets specified.')
+                return
+
+        self.host = self.ledit_sm_add_host_host.text()
+        self.port = unicode(self.sbox_sm_add_host_port.value())
+        self.secret = self.ledit_sm_add_host_secret.text()
+
+        self.accept()
 
     def slot_chkbox_sm_add_host_authentication_state_changed(self, state):
         if state == QtCore.Qt.Checked:
             self.label_sm_add_host_secret.show()
             self.ledit_sm_add_host_secret.show()
         else:
+            self.ledit_sm_add_host_secret.setText('')
             self.label_sm_add_host_secret.hide()
             self.ledit_sm_add_host_secret.hide()

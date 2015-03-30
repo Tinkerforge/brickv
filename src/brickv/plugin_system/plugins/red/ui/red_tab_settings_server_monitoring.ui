@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>868</width>
-    <height>737</height>
+    <height>749</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="9" column="0">
+   <item row="10" column="0">
     <widget class="QScrollArea" name="sarea_sm">
      <property name="widgetResizable">
       <bool>true</bool>
@@ -23,9 +23,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-78</y>
-        <width>832</width>
-        <height>695</height>
+        <y>0</y>
+        <width>846</width>
+        <height>614</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
@@ -60,7 +60,20 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="0" column="0" colspan="2">
-           <widget class="QTreeView" name="tview_sm_hosts"/>
+           <widget class="QTreeView" name="tview_sm_hosts">
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::NoSelection</enum>
+            </property>
+            <property name="rootIsDecorated">
+             <bool>false</bool>
+            </property>
+            <property name="uniformRowHeights">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QPushButton" name="pbutton_sm_add_host">
@@ -70,7 +83,10 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="pbutton_sm_remove_all_hosts">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="text">
              <string>Remove All Hosts</string>
             </property>
@@ -233,9 +249,6 @@
            </widget>
           </item>
          </layout>
-         <zorder>tview_sm_rules</zorder>
-         <zorder>pbutton_sm_add_rule</zorder>
-         <zorder>pbutton_sm_remove_all_rules</zorder>
         </widget>
        </item>
        <item row="7" column="0">
@@ -312,7 +325,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QProgressBar" name="pbar_sm_working_wait">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -331,6 +344,16 @@
      </property>
      <property name="textVisible">
       <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_sm_unsaved_changes">
+     <property name="text">
+      <string>Unsaved changes will be lost on next refresh if not saved...</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
    </item>

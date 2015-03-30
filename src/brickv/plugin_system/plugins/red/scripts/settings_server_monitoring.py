@@ -5,9 +5,19 @@ import os
 import sys
 import json
 import stat
+import socket
 import argparse
 from pynag import Model
 from sys import argv
+from time import sleep
+from tinkerforge.ip_connection import IPConnection
+from tinkerforge.bricklet_ptc import BrickletPTC
+from tinkerforge.bricklet_temperature import BrickletTemperature
+from tinkerforge.bricklet_humidity import BrickletHumidity
+from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
+
+if len(argv) < 2:
+    exit(1)
 
 FILE_PATH_CHECK_SCRIPT   = '/usr/local/bin/check_tinkerforge.py'
 FILE_PATH_TF_NAGIOS_CONFIGURATION = '/etc/nagios3/conf.d/tinkerforge.cfg'
@@ -21,6 +31,7 @@ SCRIPT_TINKERFORGE_CHECK = '''#!/usr/bin/env python
 # Date: 07.05.2013
 #
 
+import time
 import argparse 
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_ptc import BrickletPTC
@@ -33,105 +44,127 @@ WARNING  = 1
 CRITICAL = 2
 UNKNOWN  = -1
 
-BRICKLET_PTC           = 'ptc'
+BRICKLET_PTC24         = 'ptc24'
+BRICKLET_PTC3          = 'ptc3'
 BRICKLET_TEMPERATURE   = 'temperature'
 BRICKLET_HUMIDITY      = 'humidity'
 BRICKLET_AMBIENT_LIGHT = 'ambient_light'
+
+WIRE_MODE_PTC24 = 2
+WIRE_MODE_PTC3  = 3
 
 class CheckTinkerforge(object):
     def __init__(self, args):
         self.args   = args
         self.ipcon  = IPConnection()
 
+    def handle_result(self, message, return_code):
+        self.disconnect()
+        print message
+        raise SystemExit, return_code
+
     def cb_connect(self, connect_reason):
-        try:
-            self.ipcon.authenticate(self.args.secret)
-            self.read(self.args.bricklet,
-                      self.args.uid,
-                      self.args.warning,
-                      self.args.critical,
-                      self.args.mode,
-                      self.args.warning2,
-                      self.args.critical2)
-        except:
-            print 'CRITICAL - Connection Authentication failed'
-            raise SystemExit, CRITICAL
+        if self.args.secret:
+            try:
+                self.ipcon.authenticate(self.args.secret)
+            except:
+                self.handle_result('CRITICAL - Connection Authentication failed',
+                                   CRITICAL)
+
+        self.read(self.args.bricklet,
+                  self.args.uid,
+                  self.args.warning,
+                  self.args.critical,
+                  self.args.warning2,
+                  self.args.critical2)
 
     def connect(self):
-        if self.args.secret:
+        try:
             self.ipcon.register_callback(IPConnection.CALLBACK_CONNECTED, self.cb_connect)
-
-        self.ipcon.connect(self.args.host, self.args.port)
+            self.ipcon.connect(self.args.host, self.args.port)
+            time.sleep(1)
+        except:
+            self.handle_result('CRITICAL - Error occured while connecting',
+                               CRITICAL)
 
     def disconnect(self):
-        self.ipcon.disconnect()
+        try:
+            self.ipcon.disconnect()
+        except:
+            pass
 
-    def read(self, bricklet, uid, warning, critical, mode = 'high', warning2 = 0, critical2 = 0):
-
-        if bricklet == BRICKLET_PTC:
+    def read(self, bricklet, uid, warning, critical, warning2, critical2):
+        if bricklet == BRICKLET_PTC24 or bricklet == BRICKLET_PTC3:
             bricklet_ptc = BrickletPTC(uid, self.ipcon)
-            reading = bricklet_ptc.get_temperature() / 100.0
+
+            try:
+                if not bricklet_ptc.is_sensor_connected():
+                    self.handle_result('CRITICAL - No PTC sensor connected',
+                                       CRITICAL)
+            except:
+                self.handle_result('CRITICAL - Error getting PTC sensor connection state',
+                                   CRITICAL)
+
+            try:
+                if bricklet == BRICKLET_PTC24:
+                    bricklet_ptc.set_wire_mode(WIRE_MODE_PTC24)
+                elif bricklet == BRICKLET_PTC3:
+                    bricklet_ptc.set_wire_mode(WIRE_MODE_PTC3)
+            except:
+                self.handle_result('CRITICAL - Error setting PTC wire mode',
+                                   CRITICAL)
+
+            try:
+                reading = bricklet_ptc.get_temperature() / 100.0
+            except:
+                self.handle_result('CRITICAL - Error reading value',
+                                   CRITICAL)
 
         elif bricklet == BRICKLET_TEMPERATURE:
             bricklet_temperature = BrickletTemperature(uid, self.ipcon)
-            reading = bricklet_temperature.get_temperature() / 100.0
+
+            try:
+                reading = bricklet_temperature.get_temperature() / 100.0
+            except:
+                self.handle_result('CRITICAL - Error reading value',
+                                   CRITICAL)
 
         elif bricklet == BRICKLET_HUMIDITY:
             bricklet_humidity = BrickletHumidity(uid, self.ipcon)
-            reading = bricklet_humidity.get_humidity() / 10.0
+
+            try:
+                reading = bricklet_humidity.get_humidity() / 10.0
+            except:
+                self.handle_result('CRITICAL - Error reading value',
+                                   CRITICAL)
 
         elif bricklet == BRICKLET_AMBIENT_LIGHT:
             bricklet_ambient_light = BrickletAmbientLight(uid, self.ipcon)
-            reading = bricklet_ambient_light.get_illuminance() / 10.0
 
-        if mode == 'high':
-            if reading >= critical:
-                print 'CRITICAL - Reading too high - %s' % reading
-                raise SystemExit, CRITICAL
-            elif reading >= warning:
-                print 'WARNING - Reading is high - %s' % reading
-                raise SystemExit, WARNING
-            elif reading < warning:
-                print 'OK - %s' % reading
-                raise SystemExit, OK
-            else:
-                print 'UNKOWN - Unknown reading'
-                raise SystemExit, UNKNOWN
+            try:
+                reading = bricklet_ambient_light.get_illuminance() / 10.0
+            except:
+                self.handle_result('CRITICAL - Error reading value',
+                                   CRITICAL)
 
-        elif mode == 'low':
-            if reading <= critical:
-                print 'CRITICAL - Reading too low - %s' % reading
-                raise SystemExit, CRITICAL
-            elif reading <= warning:
-                print 'WARNING - Reading is low - %s' % reading
-                raise SystemExit, WARNING
-            elif reading > warning:
-                print 'OK - %s' % reading
-                raise SystemExit, OK
-            else:
-                print 'UNKOWN - Unknown reading'
-                raise SystemExit, UNKNOWN
+        if reading >= critical:
+            self.handle_result('CRITICAL - Reading too high - %s' % reading,
+                               CRITICAL)
+        elif reading >= warning:
+            self.handle_result('WARNING - Reading is high - %s' % reading,
+                               WARNING)
+        elif reading <= critical2:
+            self.handle_result('CRITICAL - Reading too low - %s' % reading,
+                               CRITICAL)
+        elif reading <= warning2:
+            self.handle_result('WARNING - Reading is low - %s' % reading,
+                               WARNING)
+        elif reading > warning2 and reading < warning:
+            self.handle_result('OK - %s' % reading,
+                               OK)
+        else:
+            self.handle_result('UNKNOWN - Unknown state', UNKNOWN)
 
-        elif mode == 'range':
-            if reading >= critical:
-                print 'CRITICAL - Reading too high - %s' % reading
-                raise SystemExit, CRITICAL
-            elif reading >= warning:
-                print 'WARNING - Reading is high - %s' % reading
-                raise SystemExit, WARNING
-            elif reading <= critical2:
-                print 'CRITICAL - Reading too low - %s' % reading
-                raise SystemExit, CRITICAL
-            elif reading <= warning2:
-                print 'WARNING - Reading is low - %s' % reading
-                raise SystemExit, WARNING
-            elif reading > warning2 and reading < warning:
-                print 'OK - %s' % reading
-                raise SystemExit, OK
-            else:
-                print 'UNKOWN - Unknown reading'
-                raise SystemExit, UNKNOWN
- 
 if __name__ == '__main__':
     # Create connection and connect to brickd
     parse = argparse.ArgumentParser()
@@ -139,13 +172,13 @@ if __name__ == '__main__':
     parse.add_argument('-H',
                        '--host',
                        help = 'Host (default = localhost)',
-                       default = 'localhost')
+                       required = True)
 
     parse.add_argument('-P',
                        '--port',
                        help = 'Port (default = 4223)',
                        type = int,
-                       default = 4223)
+                       required = True)
 
     parse.add_argument('-S',
                        '--secret',
@@ -157,66 +190,49 @@ if __name__ == '__main__':
                        '--bricklet',
                        help = 'Type of bricklet',
                        type = str,
-                       required = True,
-                       choices = ['ptc', 'temperature', 'humidity', 'ambient_light'])
+                       choices = ['ptc24', 'ptc3', 'temperature', 'humidity', 'ambient_light'],
+                       required = True)
 
     parse.add_argument('-u',
                        '--uid',
                        help = 'UID of bricklet',
                        required = True)
-    
-    parse.add_argument('-m',
-                       '--mode',
-                       help = 'Mode: high (default), low or range',
-                       type = str,
-                       choices = ['high', 'low', 'range'],
-                       default = 'high')
-    
+        
     parse.add_argument('-w',
                        '--warning',
                        help = 'Warning temperature level \
                                (temperatures above this level will trigger a warning \
-                               message in high mode,temperature below this level will \
-                               trigger a warning message in low mode)',
-                       required = True,
-                       type = float)
+                               message)',
+                       type = float,
+                       required = True)
     
     parse.add_argument('-c',
                        '--critical',
                        help = 'Critical temperature level \
                                (temperatures above this level will trigger a critical \
-                               message in high mode, temperature below this level will \
-                               trigger a critical message in low mode)',
-                       required=True,
-                       type = float)
+                               message)',
+                       type = float,
+                       required = True)
     
     parse.add_argument('-w2',
                        '--warning2',
                        help = 'Warning temperature level (temperatures \
-                               below this level will trigger a warning message \
-                               in range mode)',
-                       type = float)
+                               below this level will trigger a warning message)',
+                       type = float,
+                       required = True)
     
     parse.add_argument('-c2',
                        '--critical2',
                        help = 'Critical temperature level (temperatures below \
-                               this level will trigger a critical message in range mode)',
-                       type = float)
+                               this level will trigger a critical message)',
+                       type = float,
+                       required = True)
  
     args = parse.parse_args()
 
     service = CheckTinkerforge(args)
 
     service.connect()
-
-    if not args.secret:
-        service.read(args.bricklet,
-                     args.uid,
-                     args.warning,
-                     args.critical,
-                     args.mode,
-                     args.warning2,
-                     args.critical2)
 '''
 
 TEMPLATE_COMMAND_LINE_NOTIFY_HOST = '''/usr/bin/printf "%b" "***** Nagios *****\\n\\n \
@@ -252,10 +268,80 @@ Additional Info:\\n\\n$SERVICEOUTPUT$\\n" | \
 -o password={5} \
 -o tls={6}'''
 
-if len(argv) < 2:
-    exit (1)
-
 ACTION = argv[1]
+
+ipcon  = None
+host   = None
+port   = None
+secret = None
+
+dict_enumerate = {'host'         : None,
+                  'port'         : None,
+                  'secret'       : None,
+                  'ptc'          : [],
+                  'temperature'  : [],
+                  'humidity'     : [],
+                  'ambient_light': []}
+
+def ignore_enumerate_fail():
+    dict_enumerate['host']          = host
+    dict_enumerate['port']          = port
+    dict_enumerate['secret']        = secret
+    dict_enumerate['ptc']           = []
+    dict_enumerate['temperature']   = []
+    dict_enumerate['humidity']      = []
+    dict_enumerate['ambient_light'] = []
+    sys.stdout.write(json.dumps(dict_enumerate))
+
+def cb_connect(connect_reason, secret):
+    if not ipcon:
+        ignore_enumerate_fail()
+        return
+
+    if secret:
+        try:
+            ipcon.authenticate(secret)
+        except:
+            ignore_enumerate_fail()
+            return
+
+    ipcon.enumerate()
+
+def cb_enumerate(uid,
+                 connected_uid,
+                 position,
+                 hardware_version,
+                 firmware_version,
+                 device_identifier,
+                 enumeration_type,
+                 host,
+                 port,
+                 secret):
+
+    if not ipcon:
+        ignore_enumerate_fail()
+        return
+
+    if device_identifier == BrickletPTC.DEVICE_IDENTIFIER:
+        dict_enumerate['host']   = host
+        dict_enumerate['port']   = port
+        dict_enumerate['secret'] = secret
+        dict_enumerate['ptc'].append(uid)
+    elif device_identifier == BrickletTemperature.DEVICE_IDENTIFIER:
+        dict_enumerate['host']   = host
+        dict_enumerate['port']   = port
+        dict_enumerate['secret'] = secret
+        dict_enumerate['temperature'].append(uid)
+    elif device_identifier == BrickletHumidity.DEVICE_IDENTIFIER:
+        dict_enumerate['host']   = host
+        dict_enumerate['port']   = port
+        dict_enumerate['secret'] = secret
+        dict_enumerate['humidity'].append(uid)
+    elif device_identifier == BrickletAmbientLight.DEVICE_IDENTIFIER:
+        dict_enumerate['host']   = host
+        dict_enumerate['port']   = port
+        dict_enumerate['secret'] = secret
+        dict_enumerate['ambient_light'].append(uid)
 
 try:
     if ACTION == 'GET':
@@ -265,11 +351,15 @@ try:
 
         dict_return['rules'] = None
         dict_return['email'] = None
+        dict_return['hosts'] = {}
 
         for command in Model.Command.objects.filter(command_name__startswith = 'tinkerforge-command-'):
             for service in Model.Service.objects.filter(check_command = command.command_name):
                 parse = argparse.ArgumentParser()
 
+                parse.add_argument('-H')
+                parse.add_argument('-P')
+                parse.add_argument('-S')
                 parse.add_argument('-b')
                 parse.add_argument('-u')
                 parse.add_argument('-m')
@@ -281,6 +371,7 @@ try:
                 map_args = parse.parse_args(command.command_line.split('/usr/local/bin/check_tinkerforge.py ')[1].split(' '))
 
                 a_rule = {'name'                      : service.service_description,
+                          'host'                      : map_args.H,
                           'bricklet'                  : map_args.b,
                           'uid'                       : map_args.u,
                           'warning_low'               : map_args.w2,
@@ -291,6 +382,14 @@ try:
                           'email_notifications'       : service.notification_options}
 
                 list_rules.append(a_rule)
+
+                if not map_args.S:
+                    secret = ''
+                else:
+                    secret = map_args.S
+
+                if map_args.H not in dict_return['hosts']:
+                    dict_return['hosts'][map_args.H] = {'port':map_args.P, 'secret':secret}
 
         for command in Model.Command.objects.filter(command_name = 'tinkerforge-notify-service-by-email'):
             delims = ['-f ',
@@ -331,7 +430,7 @@ try:
 
     elif ACTION == 'APPLY':
         if len(argv) < 3:
-            exit (1)
+            exit(1)
 
         apply_dict = json.loads(argv[2])
 
@@ -433,8 +532,52 @@ try:
 
         if os.system('/bin/systemctl restart nagios3') != 0:
             exit(1)
+
+    elif ACTION == 'GET_LOCALHOST':
+        hostname = unicode(socket.gethostname())
+
+        if hostname:
+            sys.stdout.write(hostname)
+        else:
+            exit(1)
+
+    elif ACTION == 'ENUMERATE':
+        if len(argv) < 5:
+            exit(1)
+
+        host   = argv[2]
+        port   = argv[3]
+        secret = argv[4]
+
+        ipcon = IPConnection()
+        ipcon.register_callback(IPConnection.CALLBACK_CONNECTED, lambda connect_reason: cb_connect(connect_reason, secret))
+        ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, lambda uid,
+                                                                        connected_uid,
+                                                                        position,
+                                                                        hardware_version,
+                                                                        firmware_version,
+                                                                        device_identifier,
+                                                                        enumeration_type: cb_enumerate(uid,
+                                                                                                       connected_uid,
+                                                                                                       position,
+                                                                                                       hardware_version,
+                                                                                                       firmware_version,
+                                                                                                       device_identifier,
+                                                                                                       enumeration_type,
+                                                                                                       host,
+                                                                                                       port,
+                                                                                                       secret))
+        ipcon.connect(host, int(port))
+        sleep(1)
+
     else:
         exit(1)
 
 except:
     exit(1)
+
+if ACTION == 'ENUMERATE':
+    if ipcon:
+        ipcon.disconnect()
+
+    sys.stdout.write(json.dumps(dict_enumerate))
