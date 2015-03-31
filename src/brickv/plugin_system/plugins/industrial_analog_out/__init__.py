@@ -21,6 +21,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugins.instustrial_analog_out.industrial_analog_out import IndustrialAnalogOut
+from brickv.plugin_system.plugins.industrial_analog_out.industrial_analog_out import IndustrialAnalogOut
 
 device_class = IndustrialAnalogOut
