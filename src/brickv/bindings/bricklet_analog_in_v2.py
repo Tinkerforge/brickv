@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-18.      #
+# This file was automatically generated on 2015-03-31.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -247,7 +247,7 @@ class BrickletAnalogInV2(Device):
 
     def get_moving_average(self):
         """
-        Returns the length moving average as set by :func:`SetMovingAverage`.
+        Returns the length of the moving average as set by :func:`SetMovingAverage`.
         """
         return self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
 

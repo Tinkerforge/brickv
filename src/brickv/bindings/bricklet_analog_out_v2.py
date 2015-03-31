@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-30.      #
+# This file was automatically generated on 2015-03-31.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -38,8 +38,6 @@ class BrickletAnalogOutV2(Device):
     FUNCTION_SET_OUTPUT_VOLTAGE = 1
     FUNCTION_GET_OUTPUT_VOLTAGE = 2
     FUNCTION_GET_INPUT_VOLTAGE = 3
-    FUNCTION_SET_OVERWRITE_INPUT_VOLTAGE = 4
-    FUNCTION_GET_OVERWRITE_INPUT_VOLTAGE = 5
     FUNCTION_GET_IDENTITY = 255
 
 
@@ -55,8 +53,6 @@ class BrickletAnalogOutV2(Device):
         self.response_expected[BrickletAnalogOutV2.FUNCTION_SET_OUTPUT_VOLTAGE] = BrickletAnalogOutV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletAnalogOutV2.FUNCTION_GET_OUTPUT_VOLTAGE] = BrickletAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAnalogOutV2.FUNCTION_GET_INPUT_VOLTAGE] = BrickletAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAnalogOutV2.FUNCTION_SET_OVERWRITE_INPUT_VOLTAGE] = BrickletAnalogOutV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletAnalogOutV2.FUNCTION_GET_OVERWRITE_INPUT_VOLTAGE] = BrickletAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAnalogOutV2.FUNCTION_GET_IDENTITY] = BrickletAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
@@ -77,18 +73,6 @@ class BrickletAnalogOutV2(Device):
         
         """
         return self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_GET_INPUT_VOLTAGE, (), '', 'H')
-
-    def set_overwrite_input_voltage(self, voltage):
-        """
-        
-        """
-        self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_SET_OVERWRITE_INPUT_VOLTAGE, (voltage,), 'H', '')
-
-    def get_overwrite_input_voltage(self):
-        """
-        Returns the voltage as set by :func:`SetOverwriteInputVoltage`.
-        """
-        return self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_GET_OVERWRITE_INPUT_VOLTAGE, (), '', 'H')
 
     def get_identity(self):
         """
