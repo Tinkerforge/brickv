@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-18.      #
+# This file was automatically generated on 2015-03-30.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -35,16 +35,13 @@ class BrickletAnalogOutV2(Device):
     DEVICE_DISPLAY_NAME = 'Analog Out 2.0 Bricklet'
 
 
-    FUNCTION_SET_VOLTAGE = 1
-    FUNCTION_GET_VOLTAGE = 2
-    FUNCTION_SET_MODE = 3
-    FUNCTION_GET_MODE = 4
+    FUNCTION_SET_OUTPUT_VOLTAGE = 1
+    FUNCTION_GET_OUTPUT_VOLTAGE = 2
+    FUNCTION_GET_INPUT_VOLTAGE = 3
+    FUNCTION_SET_OVERWRITE_INPUT_VOLTAGE = 4
+    FUNCTION_GET_OVERWRITE_INPUT_VOLTAGE = 5
     FUNCTION_GET_IDENTITY = 255
 
-    MODE_ANALOG_VALUE = 0
-    MODE_1K_TO_GROUND = 1
-    MODE_100K_TO_GROUND = 2
-    MODE_500K_TO_GROUND = 3
 
     def __init__(self, uid, ipcon):
         """
@@ -55,49 +52,43 @@ class BrickletAnalogOutV2(Device):
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[BrickletAnalogOutV2.FUNCTION_SET_VOLTAGE] = BrickletAnalogOutV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletAnalogOutV2.FUNCTION_GET_VOLTAGE] = BrickletAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletAnalogOutV2.FUNCTION_SET_MODE] = BrickletAnalogOutV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletAnalogOutV2.FUNCTION_GET_MODE] = BrickletAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogOutV2.FUNCTION_SET_OUTPUT_VOLTAGE] = BrickletAnalogOutV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAnalogOutV2.FUNCTION_GET_OUTPUT_VOLTAGE] = BrickletAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogOutV2.FUNCTION_GET_INPUT_VOLTAGE] = BrickletAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAnalogOutV2.FUNCTION_SET_OVERWRITE_INPUT_VOLTAGE] = BrickletAnalogOutV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAnalogOutV2.FUNCTION_GET_OVERWRITE_INPUT_VOLTAGE] = BrickletAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAnalogOutV2.FUNCTION_GET_IDENTITY] = BrickletAnalogOutV2.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
-    def set_voltage(self, voltage):
+    def set_output_voltage(self, voltage):
         """
         Sets the voltage in mV. The possible range is 0V to 16V (0-16000).
-        Calling this function will set the mode to 0 (see :func:`SetMode`).
-        
-        The default value is 0 (with mode 1).
         """
-        self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_SET_VOLTAGE, (voltage,), 'H', '')
+        self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_SET_OUTPUT_VOLTAGE, (voltage,), 'H', '')
 
-    def get_voltage(self):
+    def get_output_voltage(self):
         """
-        Returns the voltage as set by :func:`SetVoltage`.
+        Returns the voltage as set by :func:`SetOutputVoltage`.
         """
-        return self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_GET_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_GET_OUTPUT_VOLTAGE, (), '', 'H')
 
-    def set_mode(self, mode):
+    def get_input_voltage(self):
         """
-        Sets the mode of the analog value. Possible modes:
         
-        * 0: Normal Mode (Analog value as set by :func:`SetVoltage` is applied)
-        * 1: 1k Ohm resistor to ground
-        * 2: 100k Ohm resistor to ground
-        * 3: 500k Ohm resistor to ground
-        
-        Setting the mode to 0 will result in an output voltage of 0. You can jump
-        to a higher output voltage directly by calling :func:`SetVoltage`.
-        
-        The default mode is 1.
         """
-        self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_SET_MODE, (mode,), 'B', '')
+        return self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_GET_INPUT_VOLTAGE, (), '', 'H')
 
-    def get_mode(self):
+    def set_overwrite_input_voltage(self, voltage):
         """
-        Returns the mode as set by :func:`SetMode`.
+        
         """
-        return self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_GET_MODE, (), '', 'B')
+        self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_SET_OVERWRITE_INPUT_VOLTAGE, (voltage,), 'H', '')
+
+    def get_overwrite_input_voltage(self):
+        """
+        Returns the voltage as set by :func:`SetOverwriteInputVoltage`.
+        """
+        return self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_GET_OVERWRITE_INPUT_VOLTAGE, (), '', 'H')
 
     def get_identity(self):
         """

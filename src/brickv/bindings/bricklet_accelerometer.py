@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-18.      #
+# This file was automatically generated on 2015-03-27.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -26,6 +26,7 @@ except ValueError:
 
 GetAcceleration = namedtuple('Acceleration', ['x', 'y', 'z'])
 GetAccelerationCallbackThreshold = namedtuple('AccelerationCallbackThreshold', ['option', 'min_x', 'max_x', 'min_y', 'max_y', 'min_z', 'max_z'])
+GetConfiguration = namedtuple('Configuration', ['data_rate', 'full_scale', 'filter_bandwidth'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletAccelerometer(Device):
@@ -36,8 +37,8 @@ class BrickletAccelerometer(Device):
     DEVICE_IDENTIFIER = 250
     DEVICE_DISPLAY_NAME = 'Accelerometer Bricklet'
 
-    CALLBACK_ACCELERATION = 9
-    CALLBACK_ACCELERATION_REACHED = 10
+    CALLBACK_ACCELERATION = 14
+    CALLBACK_ACCELERATION_REACHED = 15
 
     FUNCTION_GET_ACCELERATION = 1
     FUNCTION_SET_ACCELERATION_CALLBACK_PERIOD = 2
@@ -47,6 +48,11 @@ class BrickletAccelerometer(Device):
     FUNCTION_SET_DEBOUNCE_PERIOD = 6
     FUNCTION_GET_DEBOUNCE_PERIOD = 7
     FUNCTION_GET_TEMPERATURE = 8
+    FUNCTION_SET_CONFIGURATION = 9
+    FUNCTION_GET_CONFIGURATION = 10
+    FUNCTION_LED_ON = 11
+    FUNCTION_LED_OFF = 12
+    FUNCTION_IS_LED_ON = 13
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -54,6 +60,25 @@ class BrickletAccelerometer(Device):
     THRESHOLD_OPTION_INSIDE = 'i'
     THRESHOLD_OPTION_SMALLER = '<'
     THRESHOLD_OPTION_GREATER = '>'
+    DATA_RATE_OFF = 0
+    DATA_RATE_3HZ = 1
+    DATA_RATE_6HZ = 2
+    DATA_RATE_12HZ = 3
+    DATA_RATE_25HZ = 4
+    DATA_RATE_50HZ = 5
+    DATA_RATE_100HZ = 6
+    DATA_RATE_400HZ = 7
+    DATA_RATE_800HZ = 8
+    DATA_RATE_1600HZ = 9
+    FULL_SCALE_2G = 0
+    FULL_SCALE_4G = 1
+    FULL_SCALE_6G = 2
+    FULL_SCALE_8G = 3
+    FULL_SCALE_16G = 4
+    FILTER_BANDWIDTH_800HZ = 0
+    FILTER_BANDWIDTH_400HZ = 1
+    FILTER_BANDWIDTH_200HZ = 2
+    FILTER_BANDWIDTH_50HZ = 3
 
     def __init__(self, uid, ipcon):
         """
@@ -72,6 +97,11 @@ class BrickletAccelerometer(Device):
         self.response_expected[BrickletAccelerometer.FUNCTION_SET_DEBOUNCE_PERIOD] = BrickletAccelerometer.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletAccelerometer.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletAccelerometer.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAccelerometer.FUNCTION_GET_TEMPERATURE] = BrickletAccelerometer.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAccelerometer.FUNCTION_SET_CONFIGURATION] = BrickletAccelerometer.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAccelerometer.FUNCTION_GET_CONFIGURATION] = BrickletAccelerometer.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletAccelerometer.FUNCTION_LED_ON] = BrickletAccelerometer.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAccelerometer.FUNCTION_LED_OFF] = BrickletAccelerometer.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletAccelerometer.FUNCTION_IS_LED_ON] = BrickletAccelerometer.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAccelerometer.CALLBACK_ACCELERATION] = BrickletAccelerometer.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletAccelerometer.CALLBACK_ACCELERATION_REACHED] = BrickletAccelerometer.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletAccelerometer.FUNCTION_GET_IDENTITY] = BrickletAccelerometer.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -159,7 +189,37 @@ class BrickletAccelerometer(Device):
         """
         Returns the temperature of the accelerometer in °C.
         """
-        return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_TEMPERATURE, (), '', 'b')
+        return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_TEMPERATURE, (), '', 'h')
+
+    def set_configuration(self, data_rate, full_scale, filter_bandwidth):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_CONFIGURATION, (data_rate, full_scale, filter_bandwidth), 'B B B', '')
+
+    def get_configuration(self):
+        """
+        
+        """
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_CONFIGURATION, (), '', 'B B B'))
+
+    def led_on(self):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_LED_ON, (), '', '')
+
+    def led_off(self):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_LED_OFF, (), '', '')
+
+    def is_led_on(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_IS_LED_ON, (), '', 'B')
 
     def get_identity(self):
         """
