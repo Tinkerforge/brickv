@@ -22,9 +22,9 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4 import QtCore, QtGui
-from brickv.plugin_system.plugins.red.ui_red_tab_settings_server_monitoring import \
+from brickv.plugin_system.plugins.red.ui_red_tab_settings_server_monitoring import\
      Ui_REDTabSettingsServerMonitoring
-from brickv.plugin_system.plugins.red.red_tab_settings_server_monitoring_add_host_dialog import \
+from brickv.plugin_system.plugins.red.red_tab_settings_server_monitoring_add_host_dialog import\
      REDTabSettingsServerMonitoringAddHostDialog
 from brickv.plugin_system.plugins.red.api import *
 from brickv.async_call import async_call
@@ -35,7 +35,7 @@ from brickv.bindings.bricklet_temperature import BrickletTemperature
 from brickv.bindings.bricklet_humidity import BrickletHumidity
 from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
 from brickv.plugin_system.plugins.red.script_manager import report_script_result
-from brickv.plugin_system.plugins.red.widget_spinbox_span_slider import \
+from brickv.plugin_system.plugins.red.widget_spinbox_span_slider import\
      widgetSpinBoxSpanSlider
 import json
 
@@ -124,7 +124,8 @@ EVENT_RETURNED_REFRESH_TRUE    = 5
 EVENT_RETURNED_REFRESH_FALSE   = 6
 EVENT_RETURNED_SAVE_TRUE       = 7
 EVENT_RETURNED_SAVE_FALSE      = 8
-EVENT_UPDATE_HOSTS_IN_RULES    = 9
+EVENT_RETURNED_ADD_HOST        = 9
+EVENT_UPDATE_HOSTS_IN_RULES    = 10
 
 COLOR_WARNING  = QtGui.QColor(255, 255, 0)
 COLOR_CRITICAL = QtGui.QColor(255, 0, 0)
@@ -182,7 +183,7 @@ MESSAGE_ERROR_GET_LOCALHOST                   = 'Error occured while getting hos
 MESSAGE_ERROR_NO_LOCALHOST                    = 'No localhost found'
 MESSAGE_ERROR_HOST_ALREADY_EXISTS             = 'The host already exists'
 MESSAGE_ERROR_ENUMERATION_ERROR               = 'Enumeration failed'
-MESSAGE_WARNING_CHECK_UNUSED_HOST             = 'There are unused hosts which will be lost after a refresh/save. Continue?'
+MESSAGE_WARNING_CHECK_UNUSED_HOST             = 'There are unused hosts which might be lost after a refresh/save. Continue?'
 MESSAGE_WARNING_REMOVE_ALL_HOSTS              = 'Are you sure you want to remove all hosts?'
 MESSAGE_WARNING_REMOVE_ALL_RULES              = 'Are you sure you want to remove all rules?'
 
@@ -202,7 +203,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         self.is_tab_on_focus = False
 
-        self.remaining_enumerations= 0
+        self.remaining_enumerations = 0
 
         self.label_sm_unsupported.hide()
         self.label_sm_disabled.hide()
@@ -268,7 +269,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         secret         = ''
 
         for r in range(self.model_hosts.rowCount()):
-            for c in range(0, COUNT_COLUMNS_HOSTS_MODEL):
+            for c in range(COUNT_COLUMNS_HOSTS_MODEL):
                 if c == INDEX_COL_HOSTS_HOST:
                     item_host = self.model_hosts.item(r, c)
                     index_host = self.model_hosts.indexFromItem(item_host)
@@ -314,14 +315,14 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         row_host = []
 
-        for i in range(0, COUNT_COLUMNS_HOSTS_MODEL):
+        for i in range(COUNT_COLUMNS_HOSTS_MODEL):
             row_host.append(QtGui.QStandardItem(''))
 
         self.model_hosts.appendRow(row_host)
 
         r = self.model_hosts.rowCount() - 1
 
-        for c in range(0, COUNT_COLUMNS_HOSTS_MODEL):
+        for c in range(COUNT_COLUMNS_HOSTS_MODEL):
             # Add Used field widget
             if c == INDEX_COL_HOSTS_USED:
                 item = self.model_hosts.item(r, c)
@@ -489,13 +490,29 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         self.add_new_host(dict_enumerate)
 
-        if not add_rule:
-            if self.remaining_enumerations == 0:
-                self.update_gui(EVENT_RETURNED_REFRESH_TRUE)
+        if not add_rule and self.remaining_enumerations == 0:
+            self.update_gui(EVENT_RETURNED_ADD_HOST)
             return
 
         for dict_rule in self.list_rules:
             if dict_rule['host'] == dict_enumerate['host']:
+                if dict_rule['bricklet'] == 'ptc24' or\
+                   dict_rule['bricklet'] == 'ptc3' and\
+                   len(dict_enumerate['ptc']) == 1:
+                        dict_enumerate['ptc'].insert(0, dict_rule['uid'])
+
+                elif dict_rule['bricklet'] == 'temperature' and\
+                     len(dict_enumerate['temperature']) == 1:
+                        dict_enumerate['temperature'].insert(0, dict_rule['uid'])
+                
+                elif dict_rule['bricklet'] == 'humidity' and\
+                     len(dict_enumerate['humidity']) == 1:
+                        dict_enumerate['humidity'].insert(0, dict_rule['uid'])
+                        
+                elif dict_rule['bricklet'] == 'ambient_light' and\
+                     len(dict_enumerate['ambient_light']) == 1:
+                        dict_enumerate['ambient_light'].insert(0, dict_rule['uid'])
+
                 self.add_new_rule(dict_rule['name'],
                                   dict_rule['host'],
                                   dict_rule['bricklet'],
@@ -508,7 +525,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                                   dict_rule['email_notifications'])
 
                 for r in range(self.model_hosts.rowCount()):
-                    for c in range(0, COUNT_COLUMNS_HOSTS_MODEL):
+                    for c in range(COUNT_COLUMNS_HOSTS_MODEL):
                         if c == INDEX_COL_HOSTS_HOST:
                             item_host  = self.model_hosts.item(r, c)
                             index_host = self.model_hosts.indexFromItem(item_host)
@@ -520,14 +537,14 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                             item_used   = self.model_hosts.item(r, INDEX_COL_HOSTS_USED)
                             index_used  = self.model_hosts.indexFromItem(item_used)
                             chkbox_used = self.tview_sm_hosts.indexWidget(index_used)
-    
+
                             if chkbox_used.checkState() == QtCore.Qt.Checked:
                                 continue
-    
+
                             chkbox_used.setCheckState(QtCore.Qt.Checked)
 
         if self.remaining_enumerations == 0:
-                self.update_gui(EVENT_RETURNED_REFRESH_TRUE)
+            self.update_gui(EVENT_RETURNED_REFRESH_TRUE)
 
     def cb_settings_server_monitoring_get(self, result):
         if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_GET_FAILED):
@@ -632,7 +649,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             uid_from_rule = cbox_bricklet.itemData(cbox_bricklet.currentIndex(), QtCore.Qt.UserRole)
 
             if uid_from_rule:
-                for i in range(0, cbox_uid.count()):
+                for i in range(cbox_uid.count()):
                     if cbox_uid.itemText(i) == uid_from_rule:
                         cbox_uid.setCurrentIndex(i)
                         break
@@ -647,7 +664,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         if cbox_host.currentText() not in self.dict_hosts:
             return
 
-        if SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'ptc24' or \
+        if SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'ptc24' or\
            SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['id'] == 'ptc3':
                 populate_and_select('ptc')
 
@@ -662,7 +679,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
     def update_hosts_used(self):
         for r_hosts in range(self.model_hosts.rowCount()):
-            for c_hosts in range(0, COUNT_COLUMNS_HOSTS_MODEL):
+            for c_hosts in range(COUNT_COLUMNS_HOSTS_MODEL):
                 if c_hosts == INDEX_COL_HOSTS_HOST:
                     item_hosts_host   = self.model_hosts.item(r_hosts, c_hosts)
                     index_hosts_host  = self.model_hosts.indexFromItem(item_hosts_host)
@@ -671,7 +688,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     match_found = False
 
                     for r_rules in range(self.model_rules.rowCount()):
-                        for c_rules in range(0, COUNT_COLUMNS_RULES_MODEL):
+                        for c_rules in range(COUNT_COLUMNS_RULES_MODEL):
                             if c_rules == INDEX_COL_RULES_HOST:
                                 item_rules_host  = self.model_rules.item(r_rules, c_rules)
                                 index_rules_host = self.model_rules.indexFromItem(item_rules_host)
@@ -691,8 +708,11 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                         chkbox_hosts_used.setCheckState(QtCore.Qt.Unchecked)
 
     def check_unused_host(self):
+        if self.model_hosts.rowCount() == 1:
+            return True
+
         for r in range(self.model_hosts.rowCount()):
-            for c in range(0, COUNT_COLUMNS_HOSTS_MODEL):
+            for c in range(COUNT_COLUMNS_HOSTS_MODEL):
                 if c == INDEX_COL_HOSTS_USED:
                     item_used   = self.model_hosts.item(r, c)
                     index_used  = self.model_hosts.indexFromItem(item_used)
@@ -707,7 +727,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         list_service_names = []
 
         for r in range(self.model_rules.rowCount()):
-            for c in range(0, COUNT_COLUMNS_RULES_MODEL):
+            for c in range(COUNT_COLUMNS_RULES_MODEL):
                 # Check Name field
                 if c == INDEX_COL_RULES_NAME:
                     item = self.model_rules.item(r, c)
@@ -811,14 +831,14 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                      email_notifications):
         rule = []
 
-        for i in range(0, COUNT_COLUMNS_RULES_MODEL):
+        for i in range(COUNT_COLUMNS_RULES_MODEL):
             rule.append(QtGui.QStandardItem(''))
 
         self.model_rules.appendRow(rule)
 
         r = self.model_rules.rowCount() - 1
 
-        for c in range(0, COUNT_COLUMNS_RULES_MODEL):
+        for c in range(COUNT_COLUMNS_RULES_MODEL):
             # Add Name field widget
             if c == INDEX_COL_RULES_NAME:
                 item = self.model_rules.item(r, c)
@@ -852,7 +872,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 cbox = QtGui.QComboBox()
                 cbox.addItems(SUPPORTED_BRICKLETS.keys())
 
-                for i in range(0, cbox.count()):
+                for i in range(cbox.count()):
                     if bricklet == SUPPORTED_BRICKLETS[cbox.itemText(i)]['id']:
                         cbox.setItemData(i, uid, QtCore.Qt.UserRole)
                         cbox.setCurrentIndex(i)
@@ -953,8 +973,13 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.sarea_sm.setEnabled(False)
 
         elif event == EVENT_INPUT_CHANGED:
+            if self.remaining_enumerations > 0:
+                return
+
             self.pbutton_sm_save.setEnabled(True)
-            self.label_sm_unsaved_changes.show()
+
+            if self.model_rules.rowCount() > 0:
+                self.label_sm_unsaved_changes.show()
 
             if self.model_rules.rowCount() > 0:
                 self.pbutton_sm_remove_all_rules.setEnabled(True)
@@ -969,7 +994,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         elif event == EVENT_RETURNED_REFRESH_TRUE:
             self.show_working_wait(False)
             self.sarea_sm.setEnabled(True)
-            self.label_sm_unsaved_changes.hide()
             self.pbutton_sm_refresh.setText('Refresh')
             self.pbutton_sm_save.setText('Save')
 
@@ -998,13 +1022,23 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         elif event == EVENT_RETURNED_SAVE_FALSE:
             self.show_working_wait(False)
             self.sarea_sm.setEnabled(True)
-            self.label_sm_unsaved_changes.show()
             self.pbutton_sm_save.setText('Save')
             self.pbutton_sm_save.setEnabled(True)
 
+        elif event == EVENT_RETURNED_ADD_HOST:
+            self.show_working_wait(False)
+            self.sarea_sm.setEnabled(True)
+            self.pbutton_sm_refresh.setText('Refresh')
+            self.pbutton_sm_save.setText('Save')
+
+            if self.model_rules.rowCount() > 0:
+                self.pbutton_sm_remove_all_rules.setEnabled(True)
+
+            self.pbutton_sm_save.setEnabled(False)
+
         elif event == EVENT_UPDATE_HOSTS_IN_RULES:
             for r in range(self.model_rules.rowCount()):
-                for c in range(0, COUNT_COLUMNS_RULES_MODEL):
+                for c in range(COUNT_COLUMNS_RULES_MODEL):
                     if c == INDEX_COL_RULES_HOST:
                         item = self.model_rules.item(r, c)
                         index = self.model_rules.indexFromItem(item)
@@ -1016,7 +1050,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                         for host in self.dict_hosts:
                             cbox.addItem(host)
 
-                        for i in range(0, cbox.count()):
+                        for i in range(cbox.count()):
                             if cbox.itemText(i) == current_text:
                                 cbox.setCurrentIndex(i)
                                 break
@@ -1031,14 +1065,27 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                                            QtGui.QMessageBox.No)
 
         if reply == QtGui.QMessageBox.Yes:
+            host = None
+    
+            for r in range(1, self.model_hosts.rowCount()):
+                item = self.model_hosts.item(r, INDEX_COL_HOSTS_HOST)
+                index = self.model_hosts.indexFromItem(item)
+                host = self.tview_sm_hosts.indexWidget(index).text()
+
+                try:
+                    del self.dict_hosts[host]
+                except:
+                    pass
+
             self.model_hosts.removeRows(1, self.model_hosts.rowCount() - 1)
+            self.update_gui(EVENT_UPDATE_HOSTS_IN_RULES)
             self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_cbox_authentication_activated(self, index):
         sender = self.sender()
 
         for r in range(self.model_hosts.rowCount()):
-            for c in range(0, COUNT_COLUMNS_RULES_MODEL):
+            for c in range(COUNT_COLUMNS_RULES_MODEL):
                 item = self.model_hosts.item(r, c)
                 index = self.model_hosts.indexFromItem(item)
 
@@ -1056,10 +1103,10 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
     def slot_remove_host_clicked(self):
         sender = self.sender()
-        host = ''
+        host = None
 
         for r in range(self.model_hosts.rowCount()):
-            for c in range(0, COUNT_COLUMNS_HOSTS_MODEL):
+            for c in range(COUNT_COLUMNS_HOSTS_MODEL):
                 item = self.model_hosts.item(r, c)
                 index = self.model_hosts.indexFromItem(item)
 
@@ -1071,22 +1118,25 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     self.model_hosts.removeRows(r, 1)
                     break
 
-        if host:
+        try:
             del self.dict_hosts[host]
+        except:
+            pass
 
         self.update_gui(EVENT_UPDATE_HOSTS_IN_RULES)
 
     def slot_remove_rule_clicked(self):
         sender = self.sender()
-        
+
         for r in range(self.model_rules.rowCount()):
-            for c in range(0, COUNT_COLUMNS_RULES_MODEL):
+            for c in range(COUNT_COLUMNS_RULES_MODEL):
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
                 if sender == self.tview_sm_rules.indexWidget(index):
                     self.model_rules.removeRows(r, 1)
                     break
 
+        self.update_hosts_used()
         self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_pbutton_sm_add_rule_clicked(self):
@@ -1116,6 +1166,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                           email_notification_enabled,
                           email_notifications)
 
+        self.update_hosts_used()
         self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_pbutton_sm_remove_all_rules_clicked(self):
@@ -1128,6 +1179,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         if reply == QtGui.QMessageBox.Yes:
             self.model_rules.removeRows(0, self.model_rules.rowCount())
             self.pbutton_sm_remove_all_rules.setEnabled(False)
+            self.update_hosts_used()
             self.update_gui(EVENT_CLICKED_REMOVE_ALL_RULES)
             self.update_gui(EVENT_INPUT_CHANGED)
 
@@ -1138,7 +1190,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         if return_code_dialog == QtGui.QDialog.Accepted:
             # Check if host is already there
             for r in range(self.model_hosts.rowCount()):
-                for c in range(0, COUNT_COLUMNS_HOSTS_MODEL):
+                for c in range(COUNT_COLUMNS_HOSTS_MODEL):
                     if c == INDEX_COL_HOSTS_HOST:
                         item_host = self.model_hosts.item(r, c)
                         index_host = self.model_hosts.indexFromItem(item_host)
@@ -1183,6 +1235,18 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
     def slot_pbutton_sm_save_clicked(self):
         self.update_gui(EVENT_CLICKED_SAVE)
+
+        result = self.check_unused_host()
+
+        if not result:
+            reply = QtGui.QMessageBox.question(get_main_window(),
+                                               MESSAGEBOX_TITLE,
+                                               MESSAGE_WARNING_CHECK_UNUSED_HOST,
+                                               QtGui.QMessageBox.Yes,
+                                               QtGui.QMessageBox.No)
+            if reply != QtGui.QMessageBox.Yes:
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
+                return
 
         if self.model_rules.rowCount() > 0:
             rule_number, field_number, check_result = self.check_rules()
@@ -1321,18 +1385,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
-            result = self.check_unused_host()
-
-            if not result:
-                reply = QtGui.QMessageBox.question(get_main_window(),
-                                                   MESSAGEBOX_TITLE,
-                                                   MESSAGE_WARNING_CHECK_UNUSED_HOST,
-                                                   QtGui.QMessageBox.Yes,
-                                                   QtGui.QMessageBox.No)
-                if reply != QtGui.QMessageBox.Yes:
-                    self.update_gui(EVENT_RETURNED_SAVE_FALSE)
-                    return
-
             # Generating data structure
             apply_dict = {}
 
@@ -1346,7 +1398,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 widget_critical            = None
                 widget_email_notifications = None
 
-                for c in range(0, COUNT_COLUMNS_RULES_MODEL):
+                for c in range(COUNT_COLUMNS_RULES_MODEL):
                     item = self.model_rules.item(r, c)
                     index = self.model_rules.indexFromItem(item)
 
@@ -1411,7 +1463,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                   str(widget_warning.sbox_lower.value()),
                   str(widget_critical.sbox_lower.value()))
 
-                if widget_email_notifications.currentIndex() == INDEX_EMAIL_NO_NOTIFICATIONS or \
+                if widget_email_notifications.currentIndex() == INDEX_EMAIL_NO_NOTIFICATIONS or\
                    not self.chkbox_sm_email_enable.isChecked():
                         notification_options  = 'c,r'
                         notifications_enabled = '0'
@@ -1535,10 +1587,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
     def slot_cbox_host_activated(self, index):
         sender = self.sender()
 
-        self.update_hosts_used()
-
         for r in range(self.model_rules.rowCount()):
-            for c in range(0, COUNT_COLUMNS_RULES_MODEL):
+            for c in range(COUNT_COLUMNS_RULES_MODEL):
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
 
@@ -1555,13 +1605,14 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
                     self.populate_cbox_uids(cbox_host, cbox_bricklet, cbox_uid)
 
+        self.update_hosts_used()
         self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_cbox_bricklet_activated(self, index):
         sender = self.sender()
 
         for r in range(self.model_rules.rowCount()):
-            for c in range(0, COUNT_COLUMNS_RULES_MODEL):
+            for c in range(COUNT_COLUMNS_RULES_MODEL):
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
 
@@ -1607,7 +1658,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         sender = self.sender()
 
         for r in range(self.model_rules.rowCount()):
-            for c in range(0, COUNT_COLUMNS_RULES_MODEL):
+            for c in range(COUNT_COLUMNS_RULES_MODEL):
                 item_cbox_uid = self.model_rules.item(r, c)
                 index_cbox_uid = self.model_rules.indexFromItem(item_cbox_uid)
                 if sender == self.tview_sm_rules.indexWidget(index_cbox_uid):

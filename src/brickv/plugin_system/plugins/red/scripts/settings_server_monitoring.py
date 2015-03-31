@@ -296,14 +296,14 @@ def ignore_enumerate_fail():
 def cb_connect(connect_reason, secret):
     if not ipcon:
         ignore_enumerate_fail()
-        return
+        exit(0)
 
     if secret:
         try:
             ipcon.authenticate(secret)
         except:
             ignore_enumerate_fail()
-            return
+            exit(0)
 
     ipcon.enumerate()
 
@@ -320,31 +320,22 @@ def cb_enumerate(uid,
 
     if not ipcon:
         ignore_enumerate_fail()
-        return
+        exit(0)
 
     if device_identifier == BrickletPTC.DEVICE_IDENTIFIER:
-        dict_enumerate['host']   = host
-        dict_enumerate['port']   = port
-        dict_enumerate['secret'] = secret
         dict_enumerate['ptc'].append(uid)
+
     elif device_identifier == BrickletTemperature.DEVICE_IDENTIFIER:
-        dict_enumerate['host']   = host
-        dict_enumerate['port']   = port
-        dict_enumerate['secret'] = secret
         dict_enumerate['temperature'].append(uid)
+
     elif device_identifier == BrickletHumidity.DEVICE_IDENTIFIER:
-        dict_enumerate['host']   = host
-        dict_enumerate['port']   = port
-        dict_enumerate['secret'] = secret
         dict_enumerate['humidity'].append(uid)
+
     elif device_identifier == BrickletAmbientLight.DEVICE_IDENTIFIER:
-        dict_enumerate['host']   = host
-        dict_enumerate['port']   = port
-        dict_enumerate['secret'] = secret
         dict_enumerate['ambient_light'].append(uid)
 
-try:
-    if ACTION == 'GET':
+if ACTION == 'GET':
+    try:
         dict_return = {}
         list_rules  = []
         dict_email  = {}
@@ -427,8 +418,11 @@ try:
             dict_return['email'] = dict_email
 
         sys.stdout.write(json.dumps(dict_return))
+    except:
+        exit(1)
 
-    elif ACTION == 'APPLY':
+elif ACTION == 'APPLY':
+    try:
         if len(argv) < 3:
             exit(1)
 
@@ -476,13 +470,10 @@ try:
             tf_command_notify_host    = Model.Command()
             tf_contact                = Model.Contact()
             tf_contact_group          = Model.Contactgroup()
-
             tf_command_notify_service.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
             tf_command_notify_host.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
             tf_contact.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
             tf_contact_group.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
-            
-
             tf_command_notify_service.command_name = 'tinkerforge-notify-service-by-email'
             tf_command_notify_service.command_line = TEMPLATE_COMMAND_LINE_NOTIFY_SERVICE.format(apply_dict['email']['from'],
                                                                                                  apply_dict['email']['to'],
@@ -491,7 +482,6 @@ try:
                                                                                                  apply_dict['email']['username'],
                                                                                                  apply_dict['email']['password'],
                                                                                                  apply_dict['email']['tls'])
-
             tf_command_notify_host.command_name = 'tinkerforge-notify-host-by-email'
             tf_command_notify_host.command_line = TEMPLATE_COMMAND_LINE_NOTIFY_HOST.format(apply_dict['email']['from'],
                                                                                            apply_dict['email']['to'],
@@ -500,7 +490,6 @@ try:
                                                                                            apply_dict['email']['username'],
                                                                                            apply_dict['email']['password'],
                                                                                            apply_dict['email']['tls'])
-
             tf_contact.contact_name                  = 'tinkerforge-contact'
             tf_contact.host_notifications_enabled    = '0'
             tf_contact.service_notifications_enabled = '1'
@@ -510,20 +499,21 @@ try:
             tf_contact.service_notification_options  = 'w,u,c,r'
             tf_contact.host_notification_commands    = 'tinkerforge-notify-host-by-email'
             tf_contact.service_notification_commands = 'tinkerforge-notify-service-by-email'
-            
             tf_contact_group.contactgroup_name = 'tinkerforge-contact-group'
             tf_contact_group.alias             = 'Tinkerforge Contact Group'
             tf_contact_group.members           = 'tinkerforge-contact'
-
             tf_command_notify_service.save()
             tf_command_notify_host.save()
             tf_contact.save()
             tf_contact_group.save()
 
-        if os.system('/bin/systemctl restart nagios3') != 0:
-            exit(1)
+            if os.system('/bin/systemctl restart nagios3') != 0:
+                exit(1)
+    except:
+        exit(1)
 
-    elif ACTION == 'APPLY_EMPTY':
+elif ACTION == 'APPLY_EMPTY':
+    try:
         if os.path.isfile(FILE_PATH_CHECK_SCRIPT):
             os.remove(FILE_PATH_CHECK_SCRIPT)
 
@@ -532,22 +522,32 @@ try:
 
         if os.system('/bin/systemctl restart nagios3') != 0:
             exit(1)
+    except:
+        exit(1)
 
-    elif ACTION == 'GET_LOCALHOST':
+elif ACTION == 'GET_LOCALHOST':
+    try:
         hostname = unicode(socket.gethostname())
 
         if hostname:
             sys.stdout.write(hostname)
         else:
             exit(1)
+    except:
+        exit(1)
 
-    elif ACTION == 'ENUMERATE':
+elif ACTION == 'ENUMERATE':
+    try:
         if len(argv) < 5:
             exit(1)
 
         host   = argv[2]
         port   = argv[3]
         secret = argv[4]
+
+        dict_enumerate['host']   = host
+        dict_enumerate['port']   = port
+        dict_enumerate['secret'] = secret
 
         ipcon = IPConnection()
         ipcon.register_callback(IPConnection.CALLBACK_CONNECTED, lambda connect_reason: cb_connect(connect_reason, secret))
@@ -569,15 +569,16 @@ try:
                                                                                                        secret))
         ipcon.connect(host, int(port))
         sleep(1)
-
-    else:
-        exit(1)
-
-except:
+    except:
+        pass
+else:
     exit(1)
 
 if ACTION == 'ENUMERATE':
     if ipcon:
-        ipcon.disconnect()
+        try:
+            ipcon.disconnect()
+        except:
+            pass
 
     sys.stdout.write(json.dumps(dict_enumerate))
