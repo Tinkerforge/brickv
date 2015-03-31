@@ -33,7 +33,7 @@ class BrickletACCurrent(Device):
     Device for sensing ac currents between 0 and 100A
     """
 
-    DEVICE_IDENTIFIER = 251
+    DEVICE_IDENTIFIER = 257
     DEVICE_DISPLAY_NAME = 'AC Current Bricklet'
 
     CALLBACK_CURRENT = 15
