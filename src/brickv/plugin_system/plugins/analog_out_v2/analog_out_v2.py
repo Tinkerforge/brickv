@@ -25,8 +25,14 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_analog_out_v2 import BrickletAnalogOutV2
 from brickv.async_call import async_call
+from brickv.utils import CallbackEmulator
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBox
+
+class VoltageLabel(QLabel):
+    def setText(self, voltage):
+        text = "Voltage: {0:.2f}V".format(round(voltage/1000.0, 2))
+        super(VoltageLabel, self).setText(text)
 
 class AnalogOutV2(PluginBase):
     def __init__(self, *args):
@@ -34,33 +40,23 @@ class AnalogOutV2(PluginBase):
         
         self.ao = self.device
         
-        self.voltage_label = QLabel('Output Voltage (mV): ')
-        self.voltage_box = QSpinBox()
-        self.voltage_box.setMinimum(0)
-
-        # TODO: Get max output by reading input value
-        self.voltage_box.setMaximum(16000)
-        self.voltage_box.setSingleStep(1)
-        self.mode_label = QLabel('Mode: ')
-        self.mode_combo = QComboBox()
-        self.mode_combo.addItem("Normal Mode")
-        self.mode_combo.addItem("1k Ohm resistor to ground")
-        self.mode_combo.addItem("100k Ohm resistor to ground")
-        self.mode_combo.addItem("500k Ohm resistor to ground")
+        self.input_voltage_label = VoltageLabel()
         
-        # TODO: Add label for input voltage
-        # TODO: Add CheckBox and SpinBox to force input voltage
+        self.output_voltage_label = QLabel('Output Voltage (mV): ')
+        self.output_voltage_box = QSpinBox()
+        self.output_voltage_box.setMinimum(0)
+        self.output_voltage_box.setMaximum(12000)
+        self.output_voltage_box.setSingleStep(1)
         
         layout_h1 = QHBoxLayout()
         layout_h1.addStretch()
-        layout_h1.addWidget(self.voltage_label)
-        layout_h1.addWidget(self.voltage_box)
+        layout_h1.addWidget(self.output_voltage_label)
+        layout_h1.addWidget(self.output_voltage_box)
         layout_h1.addStretch()
         
         layout_h2 = QHBoxLayout()
         layout_h2.addStretch()
-        layout_h2.addWidget(self.mode_label)
-        layout_h2.addWidget(self.mode_combo)
+        layout_h2.addWidget(self.input_voltage_label)
         layout_h2.addStretch()
 
         layout = QVBoxLayout(self)
@@ -68,15 +64,19 @@ class AnalogOutV2(PluginBase):
         layout.addLayout(layout_h1)
         layout.addStretch()
         
-        self.voltage_box.editingFinished.connect(self.voltage_finished)
-        self.mode_combo.activated.connect(self.mode_changed)
+        self.output_voltage_box.editingFinished.connect(self.voltage_finished)
+        
+        self.cbe_input_voltage = CallbackEmulator(self.ao.get_input_voltage,
+                                                  self.cb_get_input_voltage,
+                                                  self.increase_error_count)
         
     def start(self):
-        async_call(self.ao.get_voltage, None, self.voltage_box.setValue, self.increase_error_count)
-        async_call(self.ao.get_mode, None, self.mode_combo.setCurrentIndex, self.increase_error_count)
+        async_call(self.ao.get_output_voltage, None, self.cb_get_output_voltage, self.increase_error_count)
+        async_call(self.ao.get_input_voltage, None, self.cb_get_input_voltage, self.increase_error_count)
+        self.cbe_input_voltage.set_period(1000)
         
     def stop(self):
-        pass
+        self.cbe_input_voltage.set_period(0)
 
     def destroy(self):
         pass
@@ -88,19 +88,17 @@ class AnalogOutV2(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletAnalogOutV2.DEVICE_IDENTIFIER
     
+    def cb_get_output_voltage(self, voltage):
+        self.output_voltage_box.setValue(voltage)
+        print "out", voltage
+    
+    def cb_get_input_voltage(self, voltage):
+        self.input_voltage_label.setText(voltage)
+        print "in", voltage
+        
     def voltage_finished(self):
-        value = self.voltage_box.value()
+        value = self.output_voltage_box.value()
         try:
-            self.ao.set_voltage(value)
+            self.ao.set_output_voltage(value)
         except ip_connection.Error:
             return
-        
-        self.mode_combo.setCurrentIndex(0)
-        
-    def mode_changed(self, mode):
-        try:
-            self.ao.set_mode(mode)
-        except ip_connection.Error:
-            return
-        
-        self.voltage_box.setValue(0)
