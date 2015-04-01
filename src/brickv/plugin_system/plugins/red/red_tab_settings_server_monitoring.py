@@ -124,8 +124,7 @@ EVENT_RETURNED_REFRESH_TRUE    = 5
 EVENT_RETURNED_REFRESH_FALSE   = 6
 EVENT_RETURNED_SAVE_TRUE       = 7
 EVENT_RETURNED_SAVE_FALSE      = 8
-EVENT_RETURNED_ADD_HOST        = 9
-EVENT_UPDATE_HOSTS_IN_RULES    = 10
+EVENT_UPDATE_HOSTS_IN_RULES    = 9
 
 COLOR_WARNING  = QtGui.QColor(255, 255, 0)
 COLOR_CRITICAL = QtGui.QColor(255, 0, 0)
@@ -203,6 +202,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         self.is_tab_on_focus = False
 
+        self.working = False
         self.remaining_enumerations = 0
 
         self.label_sm_unsupported.hide()
@@ -251,11 +251,14 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         if self.image_version.number < (1, 6):
             self.label_sm_unsupported.show()
-        elif not self.service_state.servermonitoring:
+            return
+
+        if not self.service_state.servermonitoring:
             self.label_sm_disabled.show()
-        else:
-            self.sarea_sm.show()
-            self.slot_pbutton_sm_refresh_clicked()
+            return
+
+        self.sarea_sm.show()
+        self.slot_pbutton_sm_refresh_clicked()
 
     def tab_off_focus(self):
         self.is_tab_on_focus = False
@@ -471,6 +474,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
     def cb_settings_server_monitoring_enumerate(self, add_rule, result):
         self.remaining_enumerations = self.remaining_enumerations - 1
 
+        if self.remaining_enumerations < 1:
+            self.working = False
+
         # Not using report_script_result() because this is a special case
         # in which we usually ignore errors occured while enumeration
         # and only consider an error if the script was called with wrong
@@ -482,7 +488,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             return
 
         dict_enumerate = json.loads(result.stdout)
-
         dict_enumerate['ptc'].append(EMPTY_UID)
         dict_enumerate['temperature'].append(EMPTY_UID)
         dict_enumerate['humidity'].append(EMPTY_UID)
@@ -490,8 +495,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         self.add_new_host(dict_enumerate)
 
-        if not add_rule and self.remaining_enumerations == 0:
-            self.update_gui(EVENT_RETURNED_ADD_HOST)
+        if not add_rule and self.remaining_enumerations < 1:
+            self.update_gui(EVENT_INPUT_CHANGED)
             return
 
         for dict_rule in self.list_rules:
@@ -543,7 +548,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
                             chkbox_used.setCheckState(QtCore.Qt.Checked)
 
-        if self.remaining_enumerations == 0:
+        if self.remaining_enumerations < 1:
             self.update_gui(EVENT_RETURNED_REFRESH_TRUE)
 
     def cb_settings_server_monitoring_get(self, result):
@@ -581,7 +586,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.set_default_col_width_hosts()
         self.dict_hosts.clear()
 
-        if dict_return['hosts']:
+        if dict_return['hosts'] and len(dict_return['hosts']) > 0:
             if self.localhost not in dict_return['hosts']:
                 self.remaining_enumerations = len(dict_return['hosts']) + 1
                 self.script_manager.execute_script('settings_server_monitoring',
@@ -624,6 +629,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                                            ['GET'])
 
     def cb_settings_server_monitoring_apply(self, result):
+        self.working = False
+
         if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_SAVE_NOT_OK):
             self.update_gui(EVENT_RETURNED_SAVE_FALSE)
             return
@@ -977,14 +984,15 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 return
 
             self.pbutton_sm_save.setEnabled(True)
-
-            if self.model_rules.rowCount() > 0:
-                self.label_sm_unsaved_changes.show()
+            self.label_sm_unsaved_changes.show()
 
             if self.model_rules.rowCount() > 0:
                 self.pbutton_sm_remove_all_rules.setEnabled(True)
+                self.gbox_sm_email.setEnabled(True)
             else:
                 self.pbutton_sm_remove_all_rules.setEnabled(False)
+                self.gbox_sm_email.setEnabled(False)
+                self.chkbox_sm_email_enable.setCheckState(QtCore.Qt.Unchecked)
 
             if self.model_hosts.rowCount() > 1:
                 self.pbutton_sm_remove_all_hosts.setEnabled(True)
@@ -999,6 +1007,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
             if self.model_rules.rowCount() > 0:
                 self.pbutton_sm_remove_all_rules.setEnabled(True)
+                self.gbox_sm_email.setEnabled(True)
 
             self.pbutton_sm_save.setEnabled(False)
             self.label_sm_unsaved_changes.hide()
@@ -1011,6 +1020,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
             if self.model_rules.rowCount() > 0:
                 self.pbutton_sm_remove_all_rules.setEnabled(True)
+                self.gbox_sm_email.setEnabled(True)
 
         elif event == EVENT_RETURNED_SAVE_TRUE:
             self.show_working_wait(False)
@@ -1025,18 +1035,10 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.pbutton_sm_save.setText('Save')
             self.pbutton_sm_save.setEnabled(True)
 
-        elif event == EVENT_RETURNED_ADD_HOST:
-            self.show_working_wait(False)
-            self.sarea_sm.setEnabled(True)
-            self.pbutton_sm_refresh.setText('Refresh')
-            self.pbutton_sm_save.setText('Save')
-
-            if self.model_rules.rowCount() > 0:
-                self.pbutton_sm_remove_all_rules.setEnabled(True)
-
-            self.pbutton_sm_save.setEnabled(False)
-
         elif event == EVENT_UPDATE_HOSTS_IN_RULES:
+            if self.model_rules.rowCount() < 1:
+                return
+
             for r in range(self.model_rules.rowCount()):
                 for c in range(COUNT_COLUMNS_RULES_MODEL):
                     if c == INDEX_COL_RULES_HOST:
@@ -1179,11 +1181,16 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         if reply == QtGui.QMessageBox.Yes:
             self.model_rules.removeRows(0, self.model_rules.rowCount())
             self.pbutton_sm_remove_all_rules.setEnabled(False)
+            self.gbox_sm_email.setEnabled(False)
+            self.chkbox_sm_email_enable.setCheckState(QtCore.Qt.Unchecked)
             self.update_hosts_used()
             self.update_gui(EVENT_CLICKED_REMOVE_ALL_RULES)
             self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_pbutton_sm_add_host_clicked(self):
+        if self.working:
+            return
+
         add_host_dialog = REDTabSettingsServerMonitoringAddHostDialog(self, get_main_window())
         return_code_dialog = add_host_dialog.exec_()
 
@@ -1202,6 +1209,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                                                        MESSAGE_ERROR_HOST_ALREADY_EXISTS)
                             return
 
+            self.working = True
             self.update_gui(EVENT_CLICKED_REFRESH)
             self.remaining_enumerations = 1
             self.script_manager.execute_script('settings_server_monitoring',
@@ -1215,6 +1223,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             add_host_dialog.done(0)
 
     def slot_pbutton_sm_refresh_clicked(self):
+        if self.working:
+            return
+
         self.update_gui(EVENT_CLICKED_REFRESH)
 
         result = self.check_unused_host()
@@ -1229,11 +1240,16 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.update_gui(EVENT_RETURNED_REFRESH_FALSE)
                 return
 
+        self.working = True
+
         self.script_manager.execute_script('settings_server_monitoring',
                                            self.cb_settings_server_monitoring_get_localhost,
                                            ['GET_LOCALHOST'])
 
     def slot_pbutton_sm_save_clicked(self):
+        if self.working:
+            return
+
         self.update_gui(EVENT_CLICKED_SAVE)
 
         result = self.check_unused_host()
@@ -1247,6 +1263,16 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             if reply != QtGui.QMessageBox.Yes:
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
+
+            for r in range(self.model_hosts.rowCount()):
+                for c in range(COUNT_COLUMNS_HOSTS_MODEL):
+                    if c == INDEX_COL_HOSTS_USED:
+                        item_used   = self.model_hosts.item(r, c)
+                        index_used  = self.model_hosts.indexFromItem(item_used)
+                        chkbox_used = self.tview_sm_hosts.indexWidget(index_used)
+    
+                        if chkbox_used.checkState() != QtCore.Qt.Checked:
+                            self.model_hosts.removeRows(r, 1)
 
         if self.model_rules.rowCount() > 0:
             rule_number, field_number, check_result = self.check_rules()
@@ -1517,11 +1543,13 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             else:
                 apply_dict['email'] = None
 
+            self.working = True
             self.script_manager.execute_script('settings_server_monitoring',
                                                self.cb_settings_server_monitoring_apply,
                                                ['APPLY', json.dumps(apply_dict)])
 
         else:
+            self.working = True
             self.script_manager.execute_script('settings_server_monitoring',
                                                self.cb_settings_server_monitoring_apply,
                                                ['APPLY_EMPTY'])

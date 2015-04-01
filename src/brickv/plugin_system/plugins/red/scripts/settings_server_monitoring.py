@@ -443,10 +443,8 @@ elif ACTION == 'APPLY':
             tf_service = Model.Service()
             tf_command.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
             tf_service.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
-
             tf_command.command_name = rule['check_command']
             tf_command.command_line = rule['command_line']
-
             tf_service.use                      = 'generic-service'
             tf_service.host_name                = 'localhost'
             tf_service.service_description      = rule['service_description']
@@ -461,7 +459,6 @@ elif ACTION == 'APPLY':
             tf_service.notification_options     = rule['notification_options']
             tf_service.notifications_enabled    = rule['notifications_enabled']
             tf_service.contact_groups           = rule['contact_groups']
-
             tf_command.save()
             tf_service.save()
 
@@ -499,16 +496,16 @@ elif ACTION == 'APPLY':
             tf_contact.service_notification_options  = 'w,u,c,r'
             tf_contact.host_notification_commands    = 'tinkerforge-notify-host-by-email'
             tf_contact.service_notification_commands = 'tinkerforge-notify-service-by-email'
-            tf_contact_group.contactgroup_name = 'tinkerforge-contact-group'
-            tf_contact_group.alias             = 'Tinkerforge Contact Group'
-            tf_contact_group.members           = 'tinkerforge-contact'
+            tf_contact_group.contactgroup_name       = 'tinkerforge-contact-group'
+            tf_contact_group.alias                   = 'Tinkerforge Contact Group'
+            tf_contact_group.members                 = 'tinkerforge-contact'
             tf_command_notify_service.save()
             tf_command_notify_host.save()
             tf_contact.save()
             tf_contact_group.save()
 
-            if os.system('/bin/systemctl restart nagios3') != 0:
-                exit(1)
+        if os.system('/bin/systemctl restart nagios3') != 0:
+            exit(1)
     except:
         exit(1)
 
