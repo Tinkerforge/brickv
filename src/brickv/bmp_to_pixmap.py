@@ -30,7 +30,7 @@ from PyQt4.QtGui import QPixmap, QColor
 from PyQt4.QtCore import Qt, QByteArray
 
 if hasattr(sys, 'frozen'):
-    from brickv.plugin_images import image_data
+    from brickv.frozen_plugin_images import image_data
 else:
     image_data = None
 
