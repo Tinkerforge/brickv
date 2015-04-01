@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-31.      #
+# This file was automatically generated on 2015-04-01.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -24,6 +24,7 @@ try:
 except ValueError:
     from ip_connection import Device, IPConnection, Error
 
+GetConfiguration = namedtuple('Configuration', ['voltage_range', 'current_range'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletIndustrialAnalogOut(Device):
@@ -35,9 +36,12 @@ class BrickletIndustrialAnalogOut(Device):
     DEVICE_DISPLAY_NAME = 'Industrial Analog Out Bricklet'
 
 
-    FUNCTION_SET_OUTPUT_VOLTAGE = 1
-    FUNCTION_GET_OUTPUT_VOLTAGE = 2
-    FUNCTION_GET_INPUT_VOLTAGE = 3
+    FUNCTION_SET_VOLTAGE = 1
+    FUNCTION_GET_VOLTAGE = 2
+    FUNCTION_SET_CURRENT = 3
+    FUNCTION_GET_CURRENT = 4
+    FUNCTION_SET_CONFIGURATION = 5
+    FUNCTION_GET_CONFIGURATION = 6
     FUNCTION_GET_IDENTITY = 255
 
 
@@ -50,29 +54,50 @@ class BrickletIndustrialAnalogOut(Device):
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_SET_OUTPUT_VOLTAGE] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_GET_OUTPUT_VOLTAGE] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_GET_INPUT_VOLTAGE] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_SET_VOLTAGE] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_GET_VOLTAGE] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_SET_CURRENT] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_GET_CURRENT] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_SET_CONFIGURATION] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_GET_CONFIGURATION] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_GET_IDENTITY] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
 
 
-    def set_output_voltage(self, voltage):
+    def set_voltage(self, voltage):
         """
-        Sets the voltage in mV. The possible range is 0V to 10V (0-10000).
+        Sets the voltage in mV.
         """
-        self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_OUTPUT_VOLTAGE, (voltage,), 'H', '')
+        self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_VOLTAGE, (voltage,), 'H', '')
 
-    def get_output_voltage(self):
+    def get_voltage(self):
         """
-        Returns the voltage as set by :func:`SetOutputVoltage`.
+        Returns the voltage as set by :func:`SetVoltage`.
         """
-        return self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_GET_OUTPUT_VOLTAGE, (), '', 'H')
+        return self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_GET_VOLTAGE, (), '', 'H')
 
-    def get_input_voltage(self):
+    def set_current(self, current):
         """
-        
+        Sets the current in µA.
         """
-        return self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_GET_INPUT_VOLTAGE, (), '', 'H')
+        self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_CURRENT, (current,), 'H', '')
+
+    def get_current(self):
+        """
+        Returns the current as set by :func:`SetCurrent`.
+        """
+        return self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_GET_CURRENT, (), '', 'H')
+
+    def set_configuration(self, voltage_range, current_range):
+        """
+        TODO
+        """
+        self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_CONFIGURATION, (voltage_range, current_range), 'B B', '')
+
+    def get_configuration(self):
+        """
+        Returns the configuration as set by :func:`SetConfiguration`.
+        """
+        return GetConfiguration(*self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
     def get_identity(self):
         """
