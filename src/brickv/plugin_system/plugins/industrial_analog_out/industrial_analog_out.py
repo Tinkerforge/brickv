@@ -27,6 +27,8 @@ from brickv.plugin_system.plugins.industrial_analog_out.ui_industrial_analog_out
 from brickv.async_call import async_call
 from brickv.utils import CallbackEmulator
 
+from PyQt4.QtCore import Qt 
+
 class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletIndustrialAnalogOut, *args)
@@ -48,6 +50,8 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
         self.box_voltage_range.activated.connect(self.config_changed)
         self.box_current_range.activated.connect(self.config_changed)
         
+        self.checkbox_enable.clicked.connect(self.enable_changed)
+        
         self.last_voltage = 0
         self.last_current = 4000
         self.last_voltage_range = 0
@@ -63,6 +67,7 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
         async_call(self.ao.get_voltage, None, self.new_voltage, self.increase_error_count)
         async_call(self.ao.get_current, None, self.new_current, self.increase_error_count)
         async_call(self.ao.get_configuration, None, self.cb_get_configuration, self.increase_error_count)
+        async_call(self.ao.is_enabled, None, self.cb_is_enabled, self.increase_error_count)
         
     def stop(self):
         pass
@@ -76,6 +81,12 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletIndustrialAnalogOut.DEVICE_IDENTIFIER
+    
+    def enable_changed(self, enabled):
+        if enabled == True:
+            self.ao.enable()
+        else:
+            self.ao.disable()
     
     def new_voltage(self, voltage):
         try:
@@ -178,7 +189,6 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
             self.new_configuration()
         except:
             pass
-
     
     def cb_get_configuration(self, conf):
         self.last_voltage_range = conf.voltage_range
@@ -186,3 +196,9 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
         self.box_voltage_range.setCurrentIndex(conf.voltage_range)
         self.box_current_range.setCurrentIndex(conf.current_range)
         self.new_configuration()
+        
+    def cb_is_enabled(self, enabled):
+        if enabled:
+            self.checkbox_enable.setCheckState(Qt.Checked)
+        else:
+            self.checkbox_enable.setCheckState(Qt.Unchecked)
