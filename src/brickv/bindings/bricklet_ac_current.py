@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-31.      #
+# This file was automatically generated on 2015-04-02.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -36,10 +36,10 @@ class BrickletACCurrent(Device):
     DEVICE_IDENTIFIER = 257
     DEVICE_DISPLAY_NAME = 'AC Current Bricklet'
 
-    CALLBACK_CURRENT = 15
-    CALLBACK_ANALOG_VALUE = 16
-    CALLBACK_CURRENT_REACHED = 17
-    CALLBACK_ANALOG_VALUE_REACHED = 18
+    CALLBACK_CURRENT = 17
+    CALLBACK_ANALOG_VALUE = 18
+    CALLBACK_CURRENT_REACHED = 19
+    CALLBACK_ANALOG_VALUE_REACHED = 20
 
     FUNCTION_GET_CURRENT = 1
     FUNCTION_GET_ANALOG_VALUE = 2
@@ -55,6 +55,8 @@ class BrickletACCurrent(Device):
     FUNCTION_GET_DEBOUNCE_PERIOD = 12
     FUNCTION_SET_MOVING_AVERAGE = 13
     FUNCTION_GET_MOVING_AVERAGE = 14
+    FUNCTION_SET_CONFIGURATION = 15
+    FUNCTION_GET_CONFIGURATION = 16
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -86,6 +88,8 @@ class BrickletACCurrent(Device):
         self.response_expected[BrickletACCurrent.FUNCTION_GET_DEBOUNCE_PERIOD] = BrickletACCurrent.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletACCurrent.FUNCTION_SET_MOVING_AVERAGE] = BrickletACCurrent.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletACCurrent.FUNCTION_GET_MOVING_AVERAGE] = BrickletACCurrent.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletACCurrent.FUNCTION_SET_CONFIGURATION] = BrickletACCurrent.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletACCurrent.FUNCTION_GET_CONFIGURATION] = BrickletACCurrent.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletACCurrent.CALLBACK_CURRENT] = BrickletACCurrent.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletACCurrent.CALLBACK_ANALOG_VALUE] = BrickletACCurrent.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletACCurrent.CALLBACK_CURRENT_REACHED] = BrickletACCurrent.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -249,6 +253,18 @@ class BrickletACCurrent(Device):
         Returns the length of the moving average as set by :func:`SetMovingAverage`.
         """
         return self.ipcon.send_request(self, BrickletACCurrent.FUNCTION_GET_MOVING_AVERAGE, (), '', 'B')
+
+    def set_configuration(self, current_range):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletACCurrent.FUNCTION_SET_CONFIGURATION, (current_range,), 'B', '')
+
+    def get_configuration(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletACCurrent.FUNCTION_GET_CONFIGURATION, (), '', 'B')
 
     def get_identity(self):
         """
