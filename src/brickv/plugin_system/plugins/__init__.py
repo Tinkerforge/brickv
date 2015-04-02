@@ -1,6 +1,7 @@
 from brickv.plugin_system.plugins.ac_current import device_class as ac_current
 from brickv.plugin_system.plugins.accelerometer import device_class as accelerometer
 from brickv.plugin_system.plugins.ambient_light import device_class as ambient_light
+from brickv.plugin_system.plugins.ambient_light_v2 import device_class as ambient_light_v2
 from brickv.plugin_system.plugins.analog_in import device_class as analog_in
 from brickv.plugin_system.plugins.analog_in_v2 import device_class as analog_in_v2
 from brickv.plugin_system.plugins.analog_out import device_class as analog_out
@@ -64,6 +65,7 @@ device_classes = [
     ac_current,
     accelerometer,
     ambient_light,
+    ambient_light_v2,
     analog_in,
     analog_in_v2,
     analog_out,
