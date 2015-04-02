@@ -36,12 +36,15 @@ class BrickletIndustrialAnalogOut(Device):
     DEVICE_DISPLAY_NAME = 'Industrial Analog Out Bricklet'
 
 
-    FUNCTION_SET_VOLTAGE = 1
-    FUNCTION_GET_VOLTAGE = 2
-    FUNCTION_SET_CURRENT = 3
-    FUNCTION_GET_CURRENT = 4
-    FUNCTION_SET_CONFIGURATION = 5
-    FUNCTION_GET_CONFIGURATION = 6
+    FUNCTION_ENABLE = 1
+    FUNCTION_DISABLE = 2
+    FUNCTION_IS_ENABLED = 3
+    FUNCTION_SET_VOLTAGE = 4
+    FUNCTION_GET_VOLTAGE = 5
+    FUNCTION_SET_CURRENT = 6
+    FUNCTION_GET_CURRENT = 7
+    FUNCTION_SET_CONFIGURATION = 8
+    FUNCTION_GET_CONFIGURATION = 9
     FUNCTION_GET_IDENTITY = 255
 
     VOLTAGE_RANGE_0_TO_5V = 0
@@ -59,6 +62,9 @@ class BrickletIndustrialAnalogOut(Device):
 
         self.api_version = (2, 0, 0)
 
+        self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_ENABLE] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_DISABLE] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_IS_ENABLED] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_SET_VOLTAGE] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_GET_VOLTAGE] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_SET_CURRENT] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_FALSE
@@ -67,6 +73,24 @@ class BrickletIndustrialAnalogOut(Device):
         self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_GET_CONFIGURATION] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletIndustrialAnalogOut.FUNCTION_GET_IDENTITY] = BrickletIndustrialAnalogOut.RESPONSE_EXPECTED_ALWAYS_TRUE
 
+
+    def enable(self):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_ENABLE, (), '', '')
+
+    def disable(self):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_DISABLE, (), '', '')
+
+    def is_enabled(self):
+        """
+        
+        """
+        return self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_IS_ENABLED, (), '', '?')
 
     def set_voltage(self, voltage):
         """
