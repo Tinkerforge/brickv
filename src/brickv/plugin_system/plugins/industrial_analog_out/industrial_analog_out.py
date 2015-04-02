@@ -152,7 +152,6 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
     def current_slider_changed(self, value):
         self.spin_current.setValue(value)
         
-    # TODO: use constants from Bindings when available
     def new_configuration(self):
         if self.last_voltage_range == self.ao.VOLTAGE_RANGE_0_TO_5V:
             self.slider_voltage.setMaximum(5000)
