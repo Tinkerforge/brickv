@@ -24,12 +24,6 @@ FILE_PATH_TF_NAGIOS_CONFIGURATION = '/etc/nagios3/conf.d/tinkerforge.cfg'
 
 SCRIPT_TINKERFORGE_CHECK = '''#!/usr/bin/env python
 # -*- coding: utf-8 -*-
- 
-#
-# Author: Christopher Dove
-# Website: http://www.dove-online.de
-# Date: 07.05.2013
-#
 
 import time
 import argparse 
@@ -39,10 +33,10 @@ from tinkerforge.bricklet_temperature import BrickletTemperature
 from tinkerforge.bricklet_humidity import BrickletHumidity
 from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
 
-OK       = 0
-WARNING  = 1
-CRITICAL = 2
-UNKNOWN  = -1
+RETURN_CODE_OK       = 0
+RETURN_CODE_WARNING  = 1
+RETURN_CODE_CRITICAL = 2
+RETURN_CODE_UNKNOWN  = 3
 
 BRICKLET_PTC24         = 'ptc24'
 BRICKLET_PTC3          = 'ptc3'
@@ -53,122 +47,137 @@ BRICKLET_AMBIENT_LIGHT = 'ambient_light'
 WIRE_MODE_PTC24 = 2
 WIRE_MODE_PTC3  = 3
 
-class CheckTinkerforge(object):
-    def __init__(self, args):
-        self.args   = args
-        self.ipcon  = IPConnection()
+MESSAGE_CRITICAL_ERROR_CONNECTING = 'CRITICAL - Error occured while connecting'
+MESSAGE_CRITICAL_AUTHENTICATION_FAILED = 'CRITICAL - Connection Authentication failed'
+MESSAGE_CRITICAL_NO_PTC_CONNECTED = 'CRITICAL - No PTC sensor connected'
+MESSAGE_CRITICAL_ERROR_GETTING_PTC_STATE = 'CRITICAL - Error getting PTC sensor connection state'
+MESSAGE_CRITICAL_ERROR_SETTINGS_PTC_MODE = 'CRITICAL - Error setting PTC wire mode'
+MESSAGE_CRITICAL_ERROR_READING_VALUE = 'CRITICAL - Error reading value'
+MESSAGE_CRITICAL_READING_TOO_HIGH = 'CRITICAL - Reading too high - %s'
+MESSAGE_CRITICAL_READING_TOO_LOW = 'CRITICAL - Reading too low - %s'
+MESSAGE_WARNING_READING_IS_HIGH = 'WARNING - Reading is high - %s'
+MESSAGE_WARNING_READING_IS_LOW = 'WARNING - Reading is low - %s'
+MESSAGE_OK_READING = 'OK - %s'
+MESSAGE_UNKNOWN_READING = 'UNKNOWN - Unknown state'
 
-    def handle_result(self, message, return_code):
-        self.disconnect()
-        print message
-        raise SystemExit, return_code
+global args
+global ipcon
+global return_code
+args               = None
+ipcon              = None
+return_code        = None
 
-    def cb_connect(self, connect_reason):
-        if self.args.secret:
-            try:
-                self.ipcon.authenticate(self.args.secret)
-            except:
-                self.handle_result('CRITICAL - Connection Authentication failed',
-                                   CRITICAL)
+def handle_result(message, code):
+    disconnect()
+    print message
+    global return_code
+    return_code = code
 
-        self.read(self.args.bricklet,
-                  self.args.uid,
-                  self.args.warning,
-                  self.args.critical,
-                  self.args.warning2,
-                  self.args.critical2)
-
-    def connect(self):
+def cb_connect(connect_reason):
+    if args.secret:
         try:
-            self.ipcon.register_callback(IPConnection.CALLBACK_CONNECTED, self.cb_connect)
-            self.ipcon.connect(self.args.host, self.args.port)
-            time.sleep(1)
+            ipcon.authenticate(args.secret)
         except:
-            self.handle_result('CRITICAL - Error occured while connecting',
-                               CRITICAL)
+            handle_result(MESSAGE_CRITICAL_AUTHENTICATION_FAILED,
+                          RETURN_CODE_CRITICAL)
 
-    def disconnect(self):
+    read(args.bricklet,
+         args.uid,
+         args.warning,
+         args.critical,
+         args.warning2,
+         args.critical2)
+
+def connect():
+    try:
+        ipcon.register_callback(IPConnection.CALLBACK_CONNECTED, cb_connect)
+        ipcon.connect(args.host, args.port)
+        time.sleep(1)
+    except:
+        handle_result(MESSAGE_CRITICAL_ERROR_CONNECTING,
+                      RETURN_CODE_CRITICAL)
+
+def disconnect():
+    try:
+        ipcon.disconnect()
+    except:
+        pass
+
+def read(bricklet, uid, warning, critical, warning2, critical2):
+    if bricklet == BRICKLET_PTC24 or bricklet == BRICKLET_PTC3:
+        bricklet_ptc = BrickletPTC(uid, ipcon)
+
         try:
-            self.ipcon.disconnect()
+            if not bricklet_ptc.is_sensor_connected():
+                handle_result(MESSAGE_CRITICAL_NO_PTC_CONNECTED,
+                              RETURN_CODE_CRITICAL)
         except:
-            pass
+            handle_result(MESSAGE_CRITICAL_ERROR_GETTING_PTC_STATE,
+                          RETURN_CODE_CRITICAL)
 
-    def read(self, bricklet, uid, warning, critical, warning2, critical2):
-        if bricklet == BRICKLET_PTC24 or bricklet == BRICKLET_PTC3:
-            bricklet_ptc = BrickletPTC(uid, self.ipcon)
+        try:
+            if bricklet == BRICKLET_PTC24:
+                bricklet_ptc.set_wire_mode(WIRE_MODE_PTC24)
+            elif bricklet == BRICKLET_PTC3:
+                bricklet_ptc.set_wire_mode(WIRE_MODE_PTC3)
+        except:
+            handle_result(MESSAGE_CRITICAL_ERROR_SETTINGS_PTC_MODE,
+                          RETURN_CODE_CRITICAL)
 
-            try:
-                if not bricklet_ptc.is_sensor_connected():
-                    self.handle_result('CRITICAL - No PTC sensor connected',
-                                       CRITICAL)
-            except:
-                self.handle_result('CRITICAL - Error getting PTC sensor connection state',
-                                   CRITICAL)
+        try:
+            reading = bricklet_ptc.get_temperature() / 100.0
+        except:
+            handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
+                          RETURN_CODE_CRITICAL)
 
-            try:
-                if bricklet == BRICKLET_PTC24:
-                    bricklet_ptc.set_wire_mode(WIRE_MODE_PTC24)
-                elif bricklet == BRICKLET_PTC3:
-                    bricklet_ptc.set_wire_mode(WIRE_MODE_PTC3)
-            except:
-                self.handle_result('CRITICAL - Error setting PTC wire mode',
-                                   CRITICAL)
+    elif bricklet == BRICKLET_TEMPERATURE:
+        bricklet_temperature = BrickletTemperature(uid, ipcon)
 
-            try:
-                reading = bricklet_ptc.get_temperature() / 100.0
-            except:
-                self.handle_result('CRITICAL - Error reading value',
-                                   CRITICAL)
+        try:
+            reading = bricklet_temperature.get_temperature() / 100.0
+        except:
+            handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
+                          RETURN_CODE_CRITICAL)
 
-        elif bricklet == BRICKLET_TEMPERATURE:
-            bricklet_temperature = BrickletTemperature(uid, self.ipcon)
+    elif bricklet == BRICKLET_HUMIDITY:
+        bricklet_humidity = BrickletHumidity(uid, ipcon)
 
-            try:
-                reading = bricklet_temperature.get_temperature() / 100.0
-            except:
-                self.handle_result('CRITICAL - Error reading value',
-                                   CRITICAL)
+        try:
+            reading = bricklet_humidity.get_humidity() / 10.0
+        except:
+            handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
+                          RETURN_CODE_CRITICAL)
 
-        elif bricklet == BRICKLET_HUMIDITY:
-            bricklet_humidity = BrickletHumidity(uid, self.ipcon)
+    elif bricklet == BRICKLET_AMBIENT_LIGHT:
+        bricklet_ambient_light = BrickletAmbientLight(uid, ipcon)
 
-            try:
-                reading = bricklet_humidity.get_humidity() / 10.0
-            except:
-                self.handle_result('CRITICAL - Error reading value',
-                                   CRITICAL)
+        try:
+            reading = bricklet_ambient_light.get_illuminance() / 10.0
+        except:
+            handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
+                          RETURN_CODE_CRITICAL)
 
-        elif bricklet == BRICKLET_AMBIENT_LIGHT:
-            bricklet_ambient_light = BrickletAmbientLight(uid, self.ipcon)
-
-            try:
-                reading = bricklet_ambient_light.get_illuminance() / 10.0
-            except:
-                self.handle_result('CRITICAL - Error reading value',
-                                   CRITICAL)
-
-        if reading >= critical:
-            self.handle_result('CRITICAL - Reading too high - %s' % reading,
-                               CRITICAL)
-        elif reading >= warning:
-            self.handle_result('WARNING - Reading is high - %s' % reading,
-                               WARNING)
-        elif reading <= critical2:
-            self.handle_result('CRITICAL - Reading too low - %s' % reading,
-                               CRITICAL)
-        elif reading <= warning2:
-            self.handle_result('WARNING - Reading is low - %s' % reading,
-                               WARNING)
-        elif reading > warning2 and reading < warning:
-            self.handle_result('OK - %s' % reading,
-                               OK)
-        else:
-            self.handle_result('UNKNOWN - Unknown state', UNKNOWN)
+    if reading >= critical:
+        handle_result(MESSAGE_CRITICAL_READING_TOO_HIGH % reading,
+                      RETURN_CODE_CRITICAL)
+    elif reading >= warning:
+        handle_result(MESSAGE_WARNING_READING_IS_HIGH % reading,
+                      RETURN_CODE_WARNING)
+    elif reading <= critical2:
+        handle_result(MESSAGE_CRITICAL_READING_TOO_LOW % reading,
+                      RETURN_CODE_CRITICAL)
+    elif reading <= warning2:
+        handle_result(MESSAGE_WARNING_READING_IS_LOW % reading,
+                      RETURN_CODE_WARNING)
+    elif reading > warning2 and reading < warning:
+        handle_result(MESSAGE_OK_READING % reading,
+                      RETURN_CODE_OK)
+    else:
+        handle_result(MESSAGE_UNKNOWN_READING, RETURN_CODE_UNKNOWN)
 
 if __name__ == '__main__':
-    # Create connection and connect to brickd
     parse = argparse.ArgumentParser()
-    
+
     parse.add_argument('-H',
                        '--host',
                        help = 'Host (default = localhost)',
@@ -184,7 +193,8 @@ if __name__ == '__main__':
                        '--secret',
                        help = 'Secret (default = None)',
                        type = str,
-                       default = None)
+                       default = None,
+                       required = False)
 
     parse.add_argument('-b',
                        '--bricklet',
@@ -227,12 +237,14 @@ if __name__ == '__main__':
                                this level will trigger a critical message)',
                        type = float,
                        required = True)
- 
-    args = parse.parse_args()
 
-    service = CheckTinkerforge(args)
+    args  = parse.parse_args()
+    ipcon = IPConnection()
 
-    service.connect()
+    if args and ipcon:
+        connect()
+        time.sleep(1)
+        exit(return_code)
 '''
 
 TEMPLATE_COMMAND_LINE_NOTIFY_HOST = '''/usr/bin/printf "%b" "***** Nagios *****\\n\\n \

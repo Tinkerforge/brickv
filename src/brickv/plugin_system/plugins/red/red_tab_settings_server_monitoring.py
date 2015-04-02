@@ -218,6 +218,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.localhost = None
 
         self.list_rules = []
+        self.dict_email = {}
         self.model_rules = QtGui.QStandardItemModel()
         self.model_rules.setHorizontalHeaderLabels(HEADERS_TVIEW_RULES)
         self.tview_sm_rules.setModel(self.model_rules)
@@ -529,6 +530,21 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                                   dict_rule['email_notification_enabled'],
                                   dict_rule['email_notifications'])
 
+                if dict_rule['email_notification_enabled'] == '1':
+                    self.ledit_sm_email_from.setText(self.dict_email['from'])
+                    self.ledit_sm_email_to.setText(self.dict_email['to'])
+                    self.ledit_sm_email_server.setText(self.dict_email['server'])
+                    self.sbox_sm_email_port.setValue(int(self.dict_email['port']))
+                    self.ledit_sm_email_username.setText(self.dict_email['username'])
+                    self.ledit_sm_email_password.setText(self.dict_email['password'])
+
+                    if self.dict_email['tls'] == '1':
+                        self.chkbox_sm_email_tls.setCheckState(QtCore.Qt.Checked)
+                    else:
+                        self.chkbox_sm_email_tls.setCheckState(QtCore.Qt.Unchecked)
+
+                    self.chkbox_sm_email_enable.setCheckState(QtCore.Qt.Checked)
+
                 for r in range(self.model_hosts.rowCount()):
                     for c in range(COUNT_COLUMNS_HOSTS_MODEL):
                         if c == INDEX_COL_HOSTS_HOST:
@@ -577,7 +593,24 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 rule['critical_high']              = dict_rule['critical_high']
                 rule['email_notification_enabled'] = dict_rule['email_notification_enabled']
                 rule['email_notifications']        = dict_rule['email_notifications']
-    
+
+                self.dict_email['from']     = None
+                self.dict_email['to']       = None
+                self.dict_email['server']   = None
+                self.dict_email['port']     = None
+                self.dict_email['username'] = None
+                self.dict_email['password'] = None
+                self.dict_email['tls']      = None
+
+                if rule['email_notification_enabled'] == '1':
+                    self.dict_email['from']     = dict_return['email']['from']
+                    self.dict_email['to']       = dict_return['email']['to']
+                    self.dict_email['server']   = dict_return['email']['server']
+                    self.dict_email['port']     = dict_return['email']['port']
+                    self.dict_email['username'] = dict_return['email']['username']
+                    self.dict_email['password'] = dict_return['email']['password']
+                    self.dict_email['tls']      = dict_return['email']['tls']
+
                 self.list_rules.append(rule)
 
         self.model_hosts.clear()
@@ -975,7 +1008,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         elif event == EVENT_CLICKED_SAVE:
             self.show_working_wait(True)
-            self.label_sm_unsaved_changes.hide()
             self.pbutton_sm_save.setText('Saving...')
             self.sarea_sm.setEnabled(False)
 
