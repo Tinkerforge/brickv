@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-01.      #
+# This file was automatically generated on 2015-04-02.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -44,6 +44,11 @@ class BrickletIndustrialAnalogOut(Device):
     FUNCTION_GET_CONFIGURATION = 6
     FUNCTION_GET_IDENTITY = 255
 
+    VOLTAGE_RANGE_0_TO_5V = 0
+    VOLTAGE_RANGE_0_TO_10V = 1
+    CURRENT_RANGE_4_TO_20MA = 0
+    CURRENT_RANGE_0_TO_20MA = 1
+    CURRENT_RANGE_0_TO_24MA = 2
 
     def __init__(self, uid, ipcon):
         """
