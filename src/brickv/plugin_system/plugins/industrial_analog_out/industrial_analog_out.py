@@ -143,24 +143,24 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
         
     # TODO: use constants from Bindings when available
     def new_configuration(self):
-        if self.last_voltage_range == 0:
+        if self.last_voltage_range == self.ao.VOLTAGE_RANGE_0_TO_5V:
             self.slider_voltage.setMaximum(5000)
             self.spin_voltage.setMaximum(5000)
-        elif self.last_voltage_range == 1:
+        elif self.last_voltage_range == self.ao.VOLTAGE_RANGE_0_TO_10V:
             self.slider_voltage.setMaximum(10000)
             self.spin_voltage.setMaximum(10000)
             
-        if self.last_current_range == 0:
+        if self.last_current_range == self.ao.CURRENT_RANGE_4_TO_20MA:
             self.slider_current.setMinimum(4000)
             self.spin_current.setMinimum(4000)
             self.slider_current.setMaximum(20000)
             self.spin_current.setMaximum(20000)
-        elif self.last_current_range == 1:
+        elif self.last_current_range == self.ao.CURRENT_RANGE_0_TO_20MA:
             self.slider_current.setMinimum(0)
             self.spin_current.setMinimum(0)
             self.slider_current.setMaximum(20000)
             self.spin_current.setMaximum(20000)
-        elif self.last_current_range == 2:
+        elif self.last_current_range == self.ao.CURRENT_RANGE_0_TO_24MA:
             self.slider_current.setMinimum(0)
             self.spin_current.setMinimum(0)
             self.slider_current.setMaximum(24000)
