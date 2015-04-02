@@ -27,7 +27,7 @@ from brickv.bindings.bricklet_ac_current import BrickletACCurrent
 from brickv.async_call import async_call
 from brickv.utils import CallbackEmulator
 
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QSpinBox, QComboBox
 from PyQt4.QtCore import Qt
 
 class CurrentLabel(QLabel):
@@ -61,23 +61,44 @@ class ACCurrent(PluginBase):
         layout.addLayout(layout_h2)
         layout.addWidget(self.plot_widget)
 
+        self.label_average = QLabel('Length of moving average:')
         self.spin_average = QSpinBox()
         self.spin_average.setMinimum(1)
         self.spin_average.setMaximum(50)
         self.spin_average.setSingleStep(1)
         self.spin_average.setValue(50)
         self.spin_average.editingFinished.connect(self.spin_average_finished)
+        
+        self.label_range = QLabel('Current Range: ')
+        self.combo_range = QComboBox()
+        self.combo_range.addItem("0") # TODO: Adjust ranges
+        self.combo_range.addItem("1")
+        self.combo_range.activated.connect(self.new_config)
 
         layout_h1 = QHBoxLayout()
-        layout_h1.addWidget(QLabel('Length of moving average:'))
+        layout_h1.addStretch()
+        layout_h1.addWidget(self.label_average)
         layout_h1.addWidget(self.spin_average)
         layout_h1.addStretch()
+        layout_h1.addWidget(self.label_range)
+        layout_h1.addWidget(self.combo_range)
+        layout_h1.addStretch()
         layout.addLayout(layout_h1)
+        
+    def get_configuration_async(self, conf):
+        self.combo_range.setCurrentIndex(conf)
 
     def get_moving_average_async(self, average):
         self.spin_average.setValue(average)
+        
+    def new_config(self, value):
+        try:
+            self.acc.set_configuration(value)
+        except:
+            pass
 
     def start(self):
+        async_call(self.acc.get_configuration, None, self.get_configuration_async, self.increase_error_count)
         async_call(self.acc.get_moving_average, None, self.get_moving_average_async, self.increase_error_count)
         async_call(self.acc.get_current, None, self.cb_current, self.increase_error_count)
         self.cbe_current.set_period(100)
