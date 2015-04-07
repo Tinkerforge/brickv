@@ -1303,7 +1303,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
-            for r in range(self.model_hosts.rowCount()):
+            for r in reversed(range(self.model_hosts.rowCount())):
                 for c in range(COUNT_COLUMNS_HOSTS_MODEL):
                     if c == INDEX_COL_HOSTS_USED:
                         item_used   = self.model_hosts.item(r, c)
