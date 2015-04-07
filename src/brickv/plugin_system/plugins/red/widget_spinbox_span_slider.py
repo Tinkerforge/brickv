@@ -32,6 +32,7 @@ class widgetSpinBoxSpanSlider(QtGui.QWidget):
         self.sbox_lower = QtGui.QSpinBox()
         self.sbox_upper = QtGui.QSpinBox()
         self.horizontal_layout = QtGui.QHBoxLayout()
+        self.horizontal_layout.setContentsMargins(5, 5, 5, 5)
         self.horizontal_layout.addWidget(self.sbox_lower)
         self.horizontal_layout.addWidget(self.span_slider)
         self.horizontal_layout.addWidget(self.sbox_upper)
