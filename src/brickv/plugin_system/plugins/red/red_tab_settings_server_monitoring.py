@@ -505,19 +505,19 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             if dict_rule['host'] == dict_enumerate['host']:
                 if dict_rule['bricklet'] == 'ptc24' or\
                    dict_rule['bricklet'] == 'ptc3' and\
-                   len(dict_enumerate['ptc']) == 1:
+                   dict_rule['uid'] not in dict_enumerate['ptc']:
                         dict_enumerate['ptc'].insert(0, dict_rule['uid'])
 
                 elif dict_rule['bricklet'] == 'temperature' and\
-                     len(dict_enumerate['temperature']) == 1:
+                     dict_rule['uid'] not in dict_enumerate['temperature']:
                         dict_enumerate['temperature'].insert(0, dict_rule['uid'])
                 
                 elif dict_rule['bricklet'] == 'humidity' and\
-                     len(dict_enumerate['humidity']) == 1:
+                     dict_rule['uid'] not in dict_enumerate['humidity']:
                         dict_enumerate['humidity'].insert(0, dict_rule['uid'])
                         
                 elif dict_rule['bricklet'] == 'ambient_light' and\
-                     len(dict_enumerate['ambient_light']) == 1:
+                     dict_rule['uid'] not in dict_enumerate['ambient_light']:
                         dict_enumerate['ambient_light'].insert(0, dict_rule['uid'])
 
                 self.add_new_rule(dict_rule['name'],
@@ -924,10 +924,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
             # Add UID field widget
             elif c == INDEX_COL_RULES_UID:
-                item_uid = self.model_rules.item(r, c)
-                index_uid = self.model_rules.indexFromItem(item_uid)
-                cbox_uid = QtGui.QComboBox()
-
                 item_host = self.model_rules.item(r, INDEX_COL_RULES_HOST)
                 index_host = self.model_rules.indexFromItem(item_host)
                 cbox_host = self.tview_sm_rules.indexWidget(index_host)
@@ -936,7 +932,17 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 index_bricklet = self.model_rules.indexFromItem(item_bricklet)
                 cbox_bricklet = self.tview_sm_rules.indexWidget(index_bricklet)
 
+                item_uid = self.model_rules.item(r, c)
+                index_uid = self.model_rules.indexFromItem(item_uid)
+                cbox_uid = QtGui.QComboBox()
+
                 self.populate_cbox_uids(cbox_host, cbox_bricklet, cbox_uid)
+
+                for i in range(cbox_uid.count()):
+                    if uid == cbox_uid.itemText(i):
+                        cbox_uid.setCurrentIndex(i)
+                        break
+
                 cbox_uid.activated.connect(self.slot_cbox_uid_activated)
                 self.tview_sm_rules.setIndexWidget(index_uid, cbox_uid)
 

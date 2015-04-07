@@ -63,14 +63,18 @@ MESSAGE_UNKNOWN_READING = 'UNKNOWN - Unknown state'
 global args
 global ipcon
 global return_code
+global return_message
 args               = None
 ipcon              = None
 return_code        = None
+return_message     = None
 
 def handle_result(message, code):
     disconnect()
     print message
     global return_code
+    global return_message
+    return_message = message
     return_code = code
 
 def cb_connect(connect_reason):
@@ -243,7 +247,8 @@ if __name__ == '__main__':
 
     if args and ipcon:
         connect()
-        time.sleep(1)
+        time.sleep(3)
+        print return_message
         exit(return_code)
 '''
 
