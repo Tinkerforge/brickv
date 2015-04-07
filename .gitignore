@@ -5,6 +5,7 @@ _scripts.py
 *.py_prepared
 src/build
 src/dist
+# keep generated plugin_images.py ignored even after it was renamed to frozen_plugin_images.py
 src/brickv/plugin_images.py
 src/brickv/frozen_plugin_images.py
 src/build_data/linux/brickv/usr/share/brickv

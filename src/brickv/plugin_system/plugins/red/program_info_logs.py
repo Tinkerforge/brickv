@@ -74,6 +74,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.set_program_callbacks_enabled = set_program_callbacks_enabled
         self.log_directory                 = posixpath.join(self.program.root_directory, 'log')
         self.refresh_in_progress           = False
+        self.any_refresh_in_progress       = False # set from ProgramInfoMain.update_ui_state
         self.view_dialog                   = None
         self.file_icon                     = QIcon(os.path.join(get_resources_path(), "file-icon.png"))
         self.tree_logs_model               = QStandardItemModel(self)
@@ -97,10 +98,9 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
     def update_ui_state(self):
         selection_count = len(self.tree_logs.selectionModel().selectedRows())
 
-        self.set_widget_enabled(self.button_download_logs, selection_count > 0)
-        self.set_widget_enabled(self.button_view_log, selection_count == 1 and \
-                                len(self.get_directly_selected_log_items()) == 1)
-        self.set_widget_enabled(self.button_delete_logs, selection_count > 0)
+        self.set_widget_enabled(self.button_download_logs, not self.any_refresh_in_progress and selection_count > 0)
+        self.set_widget_enabled(self.button_view_log, not self.any_refresh_in_progress and selection_count == 1 and len(self.get_directly_selected_log_items()) == 1)
+        self.set_widget_enabled(self.button_delete_logs, not self.any_refresh_in_progress and selection_count > 0)
 
     def close_all_dialogs(self):
         if self.view_dialog != None:
@@ -339,7 +339,7 @@ class ProgramInfoLogs(QWidget, Ui_ProgramInfoLogs):
         self.show_download_wizard('logs', download_directory, downloads)
 
     def view_activated_log(self, index):
-        if index.column() == 0:
+        if index.column() == 0 and not self.any_refresh_in_progress:
             mapped_index = self.tree_logs_proxy_model.mapToSource(index)
             item         = self.tree_logs_model.itemFromIndex(mapped_index)
             item_type    = item.data(USER_ROLE_ITEM_TYPE)

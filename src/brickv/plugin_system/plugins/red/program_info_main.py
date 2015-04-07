@@ -257,9 +257,11 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         async_call(refresh_async, None, cb_success, cb_error)
 
     def update_ui_state(self):
-        if self.program_refresh_in_progress or \
-           self.widget_logs.refresh_in_progress or \
-           self.widget_files.refresh_in_progress:
+        any_refresh_in_progress = self.program_refresh_in_progress or \
+                                  self.widget_logs.refresh_in_progress or \
+                                  self.widget_files.refresh_in_progress
+
+        if any_refresh_in_progress:
             self.progress.setVisible(True)
             self.button_refresh.setText('Refreshing...')
             self.set_edit_buttons_enabled(False)
@@ -363,16 +365,18 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         else:
             self.label_last_scheduler_message.setText('None')
 
-        self.set_widget_enabled(self.button_start_program, not process_running)
-        self.set_widget_enabled(self.button_kill_process, process_running)
-        self.set_widget_enabled(self.button_continue_schedule, scheduler_stopped and self.program.start_mode != REDProgram.START_MODE_NEVER)
+        self.set_widget_enabled(self.button_start_program, not any_refresh_in_progress and not process_running)
+        self.set_widget_enabled(self.button_kill_process, not any_refresh_in_progress and process_running)
+        self.set_widget_enabled(self.button_continue_schedule, not any_refresh_in_progress and scheduler_stopped and self.program.start_mode != REDProgram.START_MODE_NEVER)
 
         # logs
         self.group_logs.setVisible(show_logs)
 
+        self.widget_logs.any_refresh_in_progress = any_refresh_in_progress
         self.widget_logs.update_ui_state()
 
         # files
+        self.widget_files.any_refresh_in_progress = any_refresh_in_progress
         self.widget_files.update_ui_state()
 
         # language
@@ -433,8 +437,8 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.label_stdin_file_title.setVisible(stdin_redirection_file)
         self.label_stdin_file.setVisible(stdin_redirection_file)
 
-        self.set_widget_enabled(self.edit_stdin_pipe_input, process_running)
-        self.set_widget_enabled(self.button_send_stdin_pipe_input, process_running)
+        self.set_widget_enabled(self.edit_stdin_pipe_input, not any_refresh_in_progress and process_running)
+        self.set_widget_enabled(self.button_send_stdin_pipe_input, not any_refresh_in_progress and process_running)
 
         if stdin_redirection_file:
             self.label_stdin_file.setText(self.program.stdin_file_name)
