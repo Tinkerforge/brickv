@@ -497,6 +497,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.add_new_host(dict_enumerate)
 
         if not add_rule and self.remaining_enumerations < 1:
+            self.update_gui(EVENT_RETURNED_REFRESH_TRUE)
             self.update_gui(EVENT_INPUT_CHANGED)
             return
 
