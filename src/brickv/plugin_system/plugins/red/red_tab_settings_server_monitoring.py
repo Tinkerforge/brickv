@@ -50,12 +50,13 @@ DEFAULT_COL_WIDTH_RULES_CRITICAL            = 360
 DEFAULT_COL_WIDTH_RULES_UNIT                = 40
 DEFAULT_COL_WIDTH_RULES_EMAIL_NOTIFICATIONS = 140
 DEFAULT_COL_WIDTH_RULES_REMOVE              = 100
-DEFAULT_COL_WIDTH_HOSTS_USED                = 10
-DEFAULT_COL_WIDTH_HOSTS_HOST                = 300
+DEFAULT_COL_WIDTH_HOSTS_USED                = 40
+DEFAULT_COL_WIDTH_HOSTS_HOST                = 200
 DEFAULT_COL_WIDTH_HOSTS_PORT                = 250
 DEFAULT_COL_WIDTH_HOSTS_AUTHENTICATION      = 200
-DEFAULT_COL_WIDTH_HOSTS_SECRET              = 400
-DEFAULT_COL_WIDTH_HOSTS_REMOVE              = 80
+DEFAULT_COL_WIDTH_HOSTS_SECRET              = 250
+DEFAULT_COL_WIDTH_HOSTS_REFRESH_UIDS        = 200
+DEFAULT_COL_WIDTH_HOSTS_REMOVE              = 200
 
 HEADERS_TVIEW_RULES = ['Name',
                        'Host',
@@ -72,6 +73,7 @@ HEADERS_TVIEW_HOSTS = ['Used',
                        'Port',
                        'Authentication',
                        'Secret',
+                       'Refresh UIDs',
                        'Remove']
 
 COLUMN_EMAIL_NOTIFICATIONS_ITEMS = ['No Notifications',
@@ -112,10 +114,11 @@ INDEX_COL_HOSTS_HOST                = 1
 INDEX_COL_HOSTS_PORT                = 2
 INDEX_COL_HOSTS_AUTHENTICATION      = 3
 INDEX_COL_HOSTS_SECRET              = 4
-INDEX_COL_HOSTS_REMOVE              = 5
+INDEX_COL_HOSTS_REFRESH_UIDS        = 5
+INDEX_COL_HOSTS_REMOVE              = 6
 
 COUNT_COLUMNS_RULES_MODEL = 9
-COUNT_COLUMNS_HOSTS_MODEL = 6
+COUNT_COLUMNS_HOSTS_MODEL = 7
 
 EVENT_CLICKED_REMOVE_ALL_RULES = 1
 EVENT_CLICKED_REFRESH          = 2
@@ -342,7 +345,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.tview_sm_hosts.setIndexWidget(index, chkbox)
 
             # Add Host field widget
-            if c == INDEX_COL_HOSTS_HOST:
+            elif c == INDEX_COL_HOSTS_HOST:
                 item = self.model_hosts.item(r, c)
                 index = self.model_hosts.indexFromItem(item)
                 ledit = QtGui.QLineEdit()
@@ -390,6 +393,15 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
                 ledit.textChanged.connect(self.slot_input_changed)
                 self.tview_sm_hosts.setIndexWidget(index, ledit)
+
+            # Add Refresh UIDs field widget
+            elif c == INDEX_COL_HOSTS_REFRESH_UIDS:
+                item = self.model_hosts.item(r, c)
+                index = self.model_hosts.indexFromItem(item)
+                btn = QtGui.QPushButton()
+                btn.setText('Refresh UIDs')
+                btn.clicked.connect(self.slot_refresh_uids_clicked)
+                self.tview_sm_hosts.setIndexWidget(index, btn)
 
             # Add Remove field widget
             elif c == INDEX_COL_HOSTS_REMOVE:
@@ -459,11 +471,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         widget_spin_span.sbox_lower.setValue(span_minimum + abs(span_mid - span_minimum)/2)
 
     def set_default_col_width_hosts(self):
-        self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_HOST, DEFAULT_COL_WIDTH_HOSTS_USED)
+        self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_USED, DEFAULT_COL_WIDTH_HOSTS_USED)
         self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_HOST, DEFAULT_COL_WIDTH_HOSTS_HOST)
         self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_PORT, DEFAULT_COL_WIDTH_HOSTS_PORT)
         self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_AUTHENTICATION, DEFAULT_COL_WIDTH_HOSTS_AUTHENTICATION)
         self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_SECRET, DEFAULT_COL_WIDTH_HOSTS_SECRET)
+        self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_REFRESH_UIDS, DEFAULT_COL_WIDTH_HOSTS_REFRESH_UIDS)
         self.tview_sm_hosts.setColumnWidth(INDEX_COL_HOSTS_REMOVE, DEFAULT_COL_WIDTH_HOSTS_REMOVE)
 
     def set_default_col_width_rules(self):
@@ -1152,6 +1165,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                         ledit_secret.setEnabled(False)
 
         self.update_gui(EVENT_INPUT_CHANGED)
+
+    def slot_refresh_uids_clicked(self):
+        pass
 
     def slot_remove_host_clicked(self):
         sender = self.sender()
