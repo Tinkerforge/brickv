@@ -911,7 +911,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
                 cbox = QtGui.QComboBox()
-                cbox.addItems(SUPPORTED_BRICKLETS.keys())
+                cbox.addItems(sorted(SUPPORTED_BRICKLETS.keys()))
 
                 for i in range(cbox.count()):
                     if bricklet == SUPPORTED_BRICKLETS[cbox.itemText(i)]['id']:
