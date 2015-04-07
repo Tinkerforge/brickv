@@ -21,6 +21,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import re
 from PyQt4 import QtCore, QtGui
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_server_monitoring import\
      Ui_REDTabSettingsServerMonitoring
@@ -140,18 +141,20 @@ CHECK_FAILED_UID_INVALID               = 5
 CHECK_FAILED_EMAIL_FROM_EMPTY          = 6
 CHECK_FAILED_EMAIL_FROM_NON_ASCII      = 7
 CHECK_FAILED_EMAIL_FROM_WHITESPACE     = 8
-CHECK_FAILED_EMAIL_TO_EMPTY            = 9
-CHECK_FAILED_EMAIL_TO_NON_ASCII        = 10
-CHECK_FAILED_EMAIL_TO_WHITESPACE       = 11
-CHECK_FAILED_EMAIL_SERVER_EMPTY        = 12
-CHECK_FAILED_EMAIL_SERVER_NON_ASCII    = 13
-CHECK_FAILED_EMAIL_SERVER_WHITESPACE   = 14
-CHECK_FAILED_EMAIL_USERNAME_EMPTY      = 15
-CHECK_FAILED_EMAIL_USERNAME_NON_ASCII  = 16
-CHECK_FAILED_EMAIL_USERNAME_WHITESPACE = 17
-CHECK_FAILED_EMAIL_PASSWORD_EMPTY      = 18
-CHECK_FAILED_EMAIL_PASSWORD_NON_ASCII  = 19
-CHECK_FAILED_NON_ASCII                 = 20
+CHECK_FAILED_EMAIL_FROM_MALFORMED      = 9
+CHECK_FAILED_EMAIL_TO_EMPTY            = 10
+CHECK_FAILED_EMAIL_TO_NON_ASCII        = 11
+CHECK_FAILED_EMAIL_TO_WHITESPACE       = 12
+CHECK_FAILED_EMAIL_TO_MALFORMED        = 13
+CHECK_FAILED_EMAIL_SERVER_EMPTY        = 14
+CHECK_FAILED_EMAIL_SERVER_NON_ASCII    = 15
+CHECK_FAILED_EMAIL_SERVER_WHITESPACE   = 16
+CHECK_FAILED_EMAIL_USERNAME_EMPTY      = 17
+CHECK_FAILED_EMAIL_USERNAME_NON_ASCII  = 18
+CHECK_FAILED_EMAIL_USERNAME_WHITESPACE = 19
+CHECK_FAILED_EMAIL_PASSWORD_EMPTY      = 20
+CHECK_FAILED_EMAIL_PASSWORD_NON_ASCII  = 21
+CHECK_FAILED_NON_ASCII                 = 22
 
 MESSAGEBOX_TITLE                              = 'Settings | Server Monitoring'
 MESSAGE_INFO_SAVE_OK                          = 'Rules saved and applied successfully'
@@ -166,9 +169,11 @@ MESSAGE_ERROR_CHECK_UID_INVALID               = 'Invalid UID'
 MESSAGE_ERROR_CHECK_EMAIL_FROM_EMPTY          = 'Email from address empty'
 MESSAGE_ERROR_CHECK_EMAIL_FROM_NON_ASCII      = 'Email from address contains non ASCII character'
 MESSAGE_ERROR_CHECK_EMAIL_FROM_WHITESPACE     = 'Email from address contains whitespace'
+MESSAGE_ERROR_CHECK_EMAIL_FROM_MALFORMED      = 'Email from address is malformed'
 MESSAGE_ERROR_CHECK_EMAIL_TO_EMPTY            = 'Email to address empty'
 MESSAGE_ERROR_CHECK_EMAIL_TO_NON_ASCII        = 'Email to address contains non ASCII character'
 MESSAGE_ERROR_CHECK_EMAIL_TO_WHITESPACE       = 'Email to address contains whitespace'
+MESSAGE_ERROR_CHECK_EMAIL_TO_MALFORMED        = 'Email to address is malformed'
 MESSAGE_ERROR_CHECK_EMAIL_SERVER_EMPTY        = 'SMTP server empty'
 MESSAGE_ERROR_CHECK_EMAIL_SERVER_NON_ASCII    = 'SMTP server contains non ASCII character'
 MESSAGE_ERROR_CHECK_EMAIL_SERVER_WHITESPACE   = 'SMTP server contains whitespace'
@@ -816,6 +821,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     elif ' ' in email_from:
                         return None, None,  CHECK_FAILED_EMAIL_FROM_WHITESPACE
 
+                    elif not re.match('^.+@.+$', email_from):
+                        return None, None,  CHECK_FAILED_EMAIL_FROM_MALFORMED
+
                     elif not email_to:
                         return None, None, CHECK_FAILED_EMAIL_TO_EMPTY
 
@@ -824,6 +832,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
                     elif ' ' in email_to:
                         return None, None,  CHECK_FAILED_EMAIL_TO_WHITESPACE
+
+                    elif not re.match('^.+@.+$', email_to):
+                        return None, None,  CHECK_FAILED_EMAIL_TO_MALFORMED
 
                     elif not email_server:
                         return None, None, CHECK_FAILED_EMAIL_SERVER_EMPTY
@@ -1291,28 +1302,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         self.update_gui(EVENT_CLICKED_SAVE)
 
-        result = self.check_unused_host()
-
-        if not result:
-            reply = QtGui.QMessageBox.question(get_main_window(),
-                                               MESSAGEBOX_TITLE,
-                                               MESSAGE_WARNING_CHECK_UNUSED_HOST,
-                                               QtGui.QMessageBox.Yes,
-                                               QtGui.QMessageBox.No)
-            if reply != QtGui.QMessageBox.Yes:
-                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
-                return
-
-            for r in reversed(range(self.model_hosts.rowCount())):
-                for c in range(COUNT_COLUMNS_HOSTS_MODEL):
-                    if c == INDEX_COL_HOSTS_USED:
-                        item_used   = self.model_hosts.item(r, c)
-                        index_used  = self.model_hosts.indexFromItem(item_used)
-                        chkbox_used = self.tview_sm_hosts.indexWidget(index_used)
-    
-                        if chkbox_used.checkState() != QtCore.Qt.Checked:
-                            self.model_hosts.removeRows(r, 1)
-
         if self.model_rules.rowCount() > 0:
             rule_number, field_number, check_result = self.check_rules()
             rule = 'Rule-' + str(rule_number) + ', Field-' + str(field_number) + ': '
@@ -1373,6 +1362,13 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
+            elif check_result == CHECK_FAILED_EMAIL_FROM_MALFORMED:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           MESSAGE_ERROR_CHECK_EMAIL_FROM_MALFORMED)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
+                return
+
             elif check_result == CHECK_FAILED_EMAIL_TO_EMPTY:
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
@@ -1391,6 +1387,13 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 QtGui.QMessageBox.critical(get_main_window(),
                                            MESSAGEBOX_TITLE,
                                            MESSAGE_ERROR_CHECK_EMAIL_TO_WHITESPACE)
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
+                return
+
+            elif check_result == CHECK_FAILED_EMAIL_TO_MALFORMED:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           MESSAGE_ERROR_CHECK_EMAIL_TO_MALFORMED)
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
@@ -1450,6 +1453,29 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.update_gui(EVENT_RETURNED_SAVE_FALSE)
                 return
 
+        result = self.check_unused_host()
+
+        if not result:
+            reply = QtGui.QMessageBox.question(get_main_window(),
+                                               MESSAGEBOX_TITLE,
+                                               MESSAGE_WARNING_CHECK_UNUSED_HOST,
+                                               QtGui.QMessageBox.Yes,
+                                               QtGui.QMessageBox.No)
+            if reply != QtGui.QMessageBox.Yes:
+                self.update_gui(EVENT_RETURNED_SAVE_FALSE)
+                return
+
+            for r in reversed(range(self.model_hosts.rowCount())):
+                for c in range(COUNT_COLUMNS_HOSTS_MODEL):
+                    if c == INDEX_COL_HOSTS_USED:
+                        item_used   = self.model_hosts.item(r, c)
+                        index_used  = self.model_hosts.indexFromItem(item_used)
+                        chkbox_used = self.tview_sm_hosts.indexWidget(index_used)
+    
+                        if chkbox_used.checkState() != QtCore.Qt.Checked:
+                            self.model_hosts.removeRows(r, 1)
+
+        if self.model_rules.rowCount() > 0:
             # Generating data structure
             apply_dict = {}
 
