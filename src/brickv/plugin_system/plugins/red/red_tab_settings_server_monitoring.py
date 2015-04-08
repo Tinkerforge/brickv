@@ -41,10 +41,10 @@ from brickv.plugin_system.plugins.red.widget_spinbox_span_slider import\
 import json
 
 # Constants
-DEFAULT_COL_WIDTH_RULES_NAME                = 140
+DEFAULT_COL_WIDTH_RULES_NAME                = 160
 DEFAULT_COL_WIDTH_RULES_HOST                = 140
 DEFAULT_COL_WIDTH_RULES_BRICKLET            = 140
-DEFAULT_COL_WIDTH_RULES_UID                 = 100
+DEFAULT_COL_WIDTH_RULES_UID                 = 130
 DEFAULT_COL_WIDTH_RULES_WARNING             = 360
 DEFAULT_COL_WIDTH_RULES_CRITICAL            = 360
 DEFAULT_COL_WIDTH_RULES_UNIT                = 40
@@ -116,19 +116,22 @@ INDEX_COL_HOSTS_AUTHENTICATION      = 3
 INDEX_COL_HOSTS_SECRET              = 4
 INDEX_COL_HOSTS_REFRESH_UIDS        = 5
 INDEX_COL_HOSTS_REMOVE              = 6
+INDEX_COL_HOSTS_HIDDEN_HOST         = 7
 
 COUNT_COLUMNS_RULES_MODEL = 9
-COUNT_COLUMNS_HOSTS_MODEL = 7
+COUNT_COLUMNS_HOSTS_MODEL = 8
 
 EVENT_CLICKED_REMOVE_ALL_RULES = 1
 EVENT_CLICKED_REFRESH          = 2
 EVENT_CLICKED_SAVE             = 3
-EVENT_INPUT_CHANGED            = 4
-EVENT_RETURNED_REFRESH_TRUE    = 5
-EVENT_RETURNED_REFRESH_FALSE   = 6
-EVENT_RETURNED_SAVE_TRUE       = 7
-EVENT_RETURNED_SAVE_FALSE      = 8
-EVENT_UPDATE_HOSTS_IN_RULES    = 9
+EVENT_CLICKED_REFRESH_GENERIC  = 4
+EVENT_INPUT_CHANGED            = 5
+EVENT_RETURNED_REFRESH_TRUE    = 6
+EVENT_RETURNED_REFRESH_FALSE   = 7
+EVENT_RETURNED_SAVE_TRUE       = 8
+EVENT_RETURNED_SAVE_FALSE      = 9
+EVENT_RETURNED_REFRESH_GENERIC = 10
+EVENT_UPDATE_UIDS_IN_RULES     = 11
 
 COLOR_WARNING  = QtGui.QColor(255, 255, 0)
 COLOR_CRITICAL = QtGui.QColor(255, 0, 0)
@@ -190,9 +193,12 @@ MESSAGE_ERROR_GET_LOCALHOST                   = 'Error occured while getting hos
 MESSAGE_ERROR_NO_LOCALHOST                    = 'No localhost found'
 MESSAGE_ERROR_HOST_ALREADY_EXISTS             = 'The host already exists'
 MESSAGE_ERROR_ENUMERATION_ERROR               = 'Enumeration failed'
-MESSAGE_WARNING_CHECK_UNUSED_HOST             = 'There are unused hosts which might be lost after a refresh/save. Continue?'
-MESSAGE_WARNING_REMOVE_ALL_HOSTS              = 'Are you sure you want to remove all hosts?'
+MESSAGE_ERROR_SCRIPT_RETURN_DATA              = 'Error occured while processing data returned from script'
+MESSAGE_WARNING_CHECK_UNUSED_HOST             = 'There are unused hosts which will be lost after a save. Continue?'
+MESSAGE_WARNING_REMOVE_ALL_HOSTS              = 'Are you sure you want to remove all hosts? This will also delete all the rules those depend on these hosts. Continue?'
 MESSAGE_WARNING_REMOVE_ALL_RULES              = 'Are you sure you want to remove all rules?'
+MESSAGE_WARNING_REMOVE_DEPENDANT_RULES        = 'There are rules which depend on this host. Deleting this host will also delete all the dependant rules. Continue?'
+MESSAGE_WARNING_REMOVE_CORRESPONDING_HOST     = 'If this is the only rule that depends on the host then the corresponding host will be also removed. Continue?'
 
 NEW_RULE                 = True
 NOT_NEW_RULE             = False
@@ -349,8 +355,13 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 item = self.model_hosts.item(r, c)
                 index = self.model_hosts.indexFromItem(item)
                 ledit = QtGui.QLineEdit()
-                ledit.textEdited.connect(self.slot_input_changed)
                 ledit.setText(host)
+
+                if host == self.localhost:
+                    ledit.setEnabled(False)
+                else:
+                    ledit.textEdited.connect(self.slot_host_edited)
+
                 self.tview_sm_hosts.setIndexWidget(index, ledit)
 
             # Add Port field widget
@@ -417,7 +428,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 btn.clicked.connect(self.slot_remove_host_clicked)
                 self.tview_sm_hosts.setIndexWidget(index, btn)
 
-        self.update_gui(EVENT_UPDATE_HOSTS_IN_RULES)
+            # Add Hidden Host column
+            elif c == INDEX_COL_HOSTS_HIDDEN_HOST:
+                item = self.model_hosts.item(r, c)
+                item.setText(host)
+
+        self.tview_sm_hosts.setColumnHidden(INDEX_COL_HOSTS_HIDDEN_HOST, True)
 
     def add_widget_spin_span(self, r, c, color, low, high):
         item = self.model_rules.item(r, c)
@@ -490,7 +506,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_EMAIL_NOTIFICATIONS, DEFAULT_COL_WIDTH_RULES_EMAIL_NOTIFICATIONS)
         self.tview_sm_rules.setColumnWidth(INDEX_COL_RULES_REMOVE, DEFAULT_COL_WIDTH_RULES_REMOVE)
 
-    def cb_settings_server_monitoring_enumerate(self, add_rule, result):
+    def cb_settings_server_monitoring_enumerate(self, add_rule, result, refresh_uids = False):
         self.remaining_enumerations = self.remaining_enumerations - 1
 
         if self.remaining_enumerations < 1:
@@ -506,97 +522,130 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                                        MESSAGE_ERROR_ENUMERATION_ERROR)
             return
 
-        dict_enumerate = json.loads(result.stdout)
+        try:
+            dict_enumerate = json.loads(result.stdout)
+        except:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_SCRIPT_RETURN_DATA)
+            return
+
         dict_enumerate['ptc'].append(EMPTY_UID)
         dict_enumerate['temperature'].append(EMPTY_UID)
         dict_enumerate['humidity'].append(EMPTY_UID)
         dict_enumerate['ambient_light'].append(EMPTY_UID)
 
+        self.dict_hosts[dict_enumerate['host']] = {}
+        self.dict_hosts[dict_enumerate['host']]['port']          = dict_enumerate['port']
+        self.dict_hosts[dict_enumerate['host']]['secret']        = dict_enumerate['secret']
+        self.dict_hosts[dict_enumerate['host']]['ptc']           = dict_enumerate['ptc']
+        self.dict_hosts[dict_enumerate['host']]['temperature']   = dict_enumerate['temperature']
+        self.dict_hosts[dict_enumerate['host']]['humidity']      = dict_enumerate['humidity']
+        self.dict_hosts[dict_enumerate['host']]['ambient_light'] = dict_enumerate['ambient_light']
+
+        # Enumeration was for refresh uids
+        if refresh_uids and self.remaining_enumerations < 1:
+            self.update_gui(EVENT_UPDATE_UIDS_IN_RULES)
+            self.update_gui(EVENT_RETURNED_REFRESH_GENERIC)
+            return
+
         self.add_new_host(dict_enumerate)
 
+        # Enumeration after adding new host
         if not add_rule and self.remaining_enumerations < 1:
-            self.update_gui(EVENT_RETURNED_REFRESH_TRUE)
+            self.update_gui(EVENT_RETURNED_REFRESH_GENERIC)
             self.update_gui(EVENT_INPUT_CHANGED)
             return
 
-        for dict_rule in self.list_rules:
-            if dict_rule['host'] == dict_enumerate['host']:
-                if dict_rule['bricklet'] == 'ptc24' or\
-                   dict_rule['bricklet'] == 'ptc3' and\
-                   dict_rule['uid'] not in dict_enumerate['ptc']:
-                        dict_enumerate['ptc'].insert(0, dict_rule['uid'])
-
-                elif dict_rule['bricklet'] == 'temperature' and\
-                     dict_rule['uid'] not in dict_enumerate['temperature']:
-                        dict_enumerate['temperature'].insert(0, dict_rule['uid'])
-                
-                elif dict_rule['bricklet'] == 'humidity' and\
-                     dict_rule['uid'] not in dict_enumerate['humidity']:
-                        dict_enumerate['humidity'].insert(0, dict_rule['uid'])
-                        
-                elif dict_rule['bricklet'] == 'ambient_light' and\
-                     dict_rule['uid'] not in dict_enumerate['ambient_light']:
-                        dict_enumerate['ambient_light'].insert(0, dict_rule['uid'])
-
-                self.add_new_rule(dict_rule['name'],
-                                  dict_rule['host'],
-                                  dict_rule['bricklet'],
-                                  dict_rule['uid'],
-                                  dict_rule['warning_low'],
-                                  dict_rule['warning_high'],
-                                  dict_rule['critical_low'],
-                                  dict_rule['critical_high'],
-                                  dict_rule['email_notification_enabled'],
-                                  dict_rule['email_notifications'])
-
-                if dict_rule['email_notification_enabled'] == '1':
-                    self.ledit_sm_email_from.setText(self.dict_email['from'])
-                    self.ledit_sm_email_to.setText(self.dict_email['to'])
-                    self.ledit_sm_email_server.setText(self.dict_email['server'])
-                    self.sbox_sm_email_port.setValue(int(self.dict_email['port']))
-                    self.ledit_sm_email_username.setText(self.dict_email['username'])
-                    self.ledit_sm_email_password.setText(self.dict_email['password'])
-
-                    if self.dict_email['tls'] == '1':
-                        self.chkbox_sm_email_tls.setCheckState(QtCore.Qt.Checked)
-                    else:
-                        self.chkbox_sm_email_tls.setCheckState(QtCore.Qt.Unchecked)
-
-                    self.chkbox_sm_email_enable.setCheckState(QtCore.Qt.Checked)
-
-                for r in range(self.model_hosts.rowCount()):
-                    for c in range(COUNT_COLUMNS_HOSTS_MODEL):
-                        if c == INDEX_COL_HOSTS_HOST:
-                            item_host  = self.model_hosts.item(r, c)
-                            index_host = self.model_hosts.indexFromItem(item_host)
-                            ledit_host = self.tview_sm_hosts.indexWidget(index_host)
-
-                            if ledit_host.text() != dict_rule['host']:
-                                continue
-
-                            item_used   = self.model_hosts.item(r, INDEX_COL_HOSTS_USED)
-                            index_used  = self.model_hosts.indexFromItem(item_used)
-                            chkbox_used = self.tview_sm_hosts.indexWidget(index_used)
-
-                            if chkbox_used.checkState() == QtCore.Qt.Checked:
-                                continue
-
-                            chkbox_used.setCheckState(QtCore.Qt.Checked)
-
+        # Enumeration calls of refresh
         if self.remaining_enumerations < 1:
+            self.populate_rules()
             self.update_gui(EVENT_RETURNED_REFRESH_TRUE)
+
+    def populate_rules(self):
+        for dict_rule in self.list_rules:
+            if dict_rule['host'] not in self.dict_hosts:
+                continue
+
+            if dict_rule['bricklet'] == 'ptc24' or\
+               dict_rule['bricklet'] == 'ptc3' and\
+               dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['ptc']:
+                    self.dict_hosts[dict_rule['host']]['ptc'].insert(0, dict_rule['uid'])
+
+            elif dict_rule['bricklet'] == 'temperature' and\
+                 dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['temperature']:
+                    self.dict_hosts[dict_rule['host']]['temperature'].insert(0, dict_rule['uid'])
+
+            elif dict_rule['bricklet'] == 'humidity' and\
+                 dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['humidity']:
+                    self.dict_hosts[dict_rule['host']]['humidity'].insert(0, dict_rule['uid'])
+
+            elif dict_rule['bricklet'] == 'ambient_light' and\
+                 dict_rule['uid'] not in self.dict_hosts[dict_rule['host']]['ambient_light']:
+                    self.dict_hosts[dict_rule['host']]['ambient_light'].insert(0, dict_rule['uid'])
+
+            self.add_new_rule(dict_rule['name'],
+                              dict_rule['host'],
+                              dict_rule['bricklet'],
+                              dict_rule['uid'],
+                              dict_rule['warning_low'],
+                              dict_rule['warning_high'],
+                              dict_rule['critical_low'],
+                              dict_rule['critical_high'],
+                              dict_rule['email_notification_enabled'],
+                              dict_rule['email_notifications'])
+
+            if dict_rule['email_notification_enabled'] == '1':
+                self.ledit_sm_email_from.setText(self.dict_email['from'])
+                self.ledit_sm_email_to.setText(self.dict_email['to'])
+                self.ledit_sm_email_server.setText(self.dict_email['server'])
+                self.sbox_sm_email_port.setValue(int(self.dict_email['port']))
+                self.ledit_sm_email_username.setText(self.dict_email['username'])
+                self.ledit_sm_email_password.setText(self.dict_email['password'])
+
+                if self.dict_email['tls'] == '1':
+                    self.chkbox_sm_email_tls.setCheckState(QtCore.Qt.Checked)
+                else:
+                    self.chkbox_sm_email_tls.setCheckState(QtCore.Qt.Unchecked)
+
+                self.chkbox_sm_email_enable.setCheckState(QtCore.Qt.Checked)
+
+            # Updating the used field of the hosts list
+            for r in range(self.model_hosts.rowCount()):
+                for c in range(COUNT_COLUMNS_HOSTS_MODEL):
+                    if c == INDEX_COL_HOSTS_HOST:
+                        item_host  = self.model_hosts.item(r, c)
+                        index_host = self.model_hosts.indexFromItem(item_host)
+                        ledit_host = self.tview_sm_hosts.indexWidget(index_host)
+
+                        if ledit_host.text() != dict_rule['host']:
+                            continue
+
+                        item_used   = self.model_hosts.item(r, INDEX_COL_HOSTS_USED)
+                        index_used  = self.model_hosts.indexFromItem(item_used)
+                        chkbox_used = self.tview_sm_hosts.indexWidget(index_used)
+
+                        if chkbox_used.checkState() == QtCore.Qt.Checked:
+                            continue
+
+                        chkbox_used.setCheckState(QtCore.Qt.Checked)
 
     def cb_settings_server_monitoring_get(self, result):
         if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_GET_FAILED):
             self.update_gui(EVENT_RETURNED_REFRESH_FALSE)
             return
 
-        dict_return = json.loads(result.stdout)
+        try:
+            dict_return = json.loads(result.stdout)
+        except:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_SCRIPT_RETURN_DATA)
+            return
 
         self.list_rules = []
         self.model_rules.clear()
         self.model_rules.setHorizontalHeaderLabels(HEADERS_TVIEW_RULES)
-        self.tview_sm_rules.setModel(self.model_rules)
         self.set_default_col_width_rules()
 
         if dict_return['rules']:
@@ -634,7 +683,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         self.model_hosts.clear()
         self.model_hosts.setHorizontalHeaderLabels(HEADERS_TVIEW_HOSTS)
-        self.tview_sm_hosts.setModel(self.model_hosts)
         self.set_default_col_width_hosts()
         self.dict_hosts.clear()
 
@@ -708,6 +756,11 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             uid_from_rule = cbox_bricklet.itemData(cbox_bricklet.currentIndex(), QtCore.Qt.UserRole)
 
             if uid_from_rule:
+                if uid_from_rule not in self.dict_hosts[cbox_host.currentText()][bricklet]:
+                    self.dict_hosts[cbox_host.currentText()][bricklet].insert(0, uid_from_rule)
+                    cbox_uid.clear()
+                    cbox_uid.addItems(self.dict_hosts[cbox_host.currentText()][bricklet])
+
                 for i in range(cbox_uid.count()):
                     if cbox_uid.itemText(i) == uid_from_rule:
                         cbox_uid.setCurrentIndex(i)
@@ -777,7 +830,13 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     index_used  = self.model_hosts.indexFromItem(item_used)
                     chkbox_used = self.tview_sm_hosts.indexWidget(index_used)
 
-                    if chkbox_used.checkState() != QtCore.Qt.Checked:
+                    item_host   = self.model_hosts.item(r, INDEX_COL_HOSTS_HOST)
+                    index_host  = self.model_hosts.indexFromItem(item_host)
+                    ledit_host = self.tview_sm_hosts.indexWidget(index_host)
+
+                    host = ledit_host.text()
+
+                    if chkbox_used.checkState() != QtCore.Qt.Checked and host != self.localhost:
                         return False
 
         return True
@@ -919,8 +978,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 index = self.model_rules.indexFromItem(item)
                 cbox = QtGui.QComboBox()
 
-                for host in self.dict_hosts:
-                    cbox.addItem(host)
+                cbox.setModel(self.model_hosts)
+                cbox.setModelColumn(INDEX_COL_HOSTS_HIDDEN_HOST)
 
                 for i in range(cbox.count()):
                     if cbox.itemText(i) == host:
@@ -1042,6 +1101,10 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.pbutton_sm_save.setText('Saving...')
             self.sarea_sm.setEnabled(False)
 
+        elif event == EVENT_CLICKED_REFRESH_GENERIC:
+            self.show_working_wait(True)
+            self.sarea_sm.setEnabled(False)
+
         elif event == EVENT_INPUT_CHANGED:
             if self.remaining_enumerations > 0:
                 return
@@ -1098,29 +1161,47 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.pbutton_sm_save.setText('Save')
             self.pbutton_sm_save.setEnabled(True)
 
-        elif event == EVENT_UPDATE_HOSTS_IN_RULES:
+        elif event == EVENT_RETURNED_REFRESH_GENERIC:
+            self.show_working_wait(False)
+            self.sarea_sm.setEnabled(True)
+            self.pbutton_sm_refresh.setText('Refresh')
+            self.pbutton_sm_save.setText('Save')
+
+            if self.model_rules.rowCount() > 0:
+                self.pbutton_sm_remove_all_rules.setEnabled(True)
+                self.gbox_sm_email.setEnabled(True)
+
+            self.pbutton_sm_save.setEnabled(False)
+
+        elif event == EVENT_UPDATE_UIDS_IN_RULES:
             if self.model_rules.rowCount() < 1:
                 return
 
             for r in range(self.model_rules.rowCount()):
-                for c in range(COUNT_COLUMNS_RULES_MODEL):
-                    if c == INDEX_COL_RULES_HOST:
-                        item = self.model_rules.item(r, c)
-                        index = self.model_rules.indexFromItem(item)
-                        cbox = self.tview_sm_rules.indexWidget(index)
+                host = None
+                bricklet = None
+                previously_selected_uid = None
 
-                        current_text = cbox.currentText()
-                        cbox.clear()
+                item_host = self.model_rules.item(r, INDEX_COL_HOSTS_HOST)
+                index_host = self.model_rules.indexFromItem(item_host)
+                cbox_host = self.tview_sm_rules.indexWidget(index_host)
 
-                        for host in self.dict_hosts:
-                            cbox.addItem(host)
+                item_bricklet = self.model_rules.item(r, INDEX_COL_RULES_BRICKLET)
+                index_bricklet = self.model_rules.indexFromItem(item_bricklet)
+                cbox_bricklet = self.tview_sm_rules.indexWidget(index_bricklet)
 
-                        for i in range(cbox.count()):
-                            if cbox.itemText(i) == current_text:
-                                cbox.setCurrentIndex(i)
-                                break
+                item_uid = self.model_rules.item(r, INDEX_COL_RULES_UID)
+                index_uid = self.model_rules.indexFromItem(item_uid)
+                cbox_uid = self.tview_sm_rules.indexWidget(index_uid)
 
-                        self.update_gui(EVENT_INPUT_CHANGED)
+                host = cbox_host.currentText()
+                bricklet = cbox_bricklet.currentText()
+                previously_selected_uid = cbox_uid.currentText()
+
+                if not host or not bricklet or not previously_selected_uid:
+                    continue
+
+                self.populate_cbox_uids(cbox_host, cbox_bricklet, cbox_uid)
 
     def slot_pbutton_sm_remove_all_hosts_clicked(self):
         reply = QtGui.QMessageBox.question(get_main_window(),
@@ -1129,28 +1210,41 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                                            QtGui.QMessageBox.Yes,
                                            QtGui.QMessageBox.No)
 
-        if reply == QtGui.QMessageBox.Yes:
-            host = None
-    
-            for r in range(1, self.model_hosts.rowCount()):
-                item = self.model_hosts.item(r, INDEX_COL_HOSTS_HOST)
-                index = self.model_hosts.indexFromItem(item)
-                host = self.tview_sm_hosts.indexWidget(index).text()
+        if reply != QtGui.QMessageBox.Yes:
+            return
 
-                try:
-                    del self.dict_hosts[host]
-                except:
-                    pass
+        host = None
 
-            self.model_hosts.removeRows(1, self.model_hosts.rowCount() - 1)
-            self.update_gui(EVENT_UPDATE_HOSTS_IN_RULES)
-            self.update_gui(EVENT_INPUT_CHANGED)
+        # Delete all hosts except the default one
+        for r in reversed(range(1, self.model_hosts.rowCount())):
+            item = self.model_hosts.item(r, INDEX_COL_HOSTS_HOST)
+            index = self.model_hosts.indexFromItem(item)
+            host = self.tview_sm_hosts.indexWidget(index).text()
+
+            try:
+                del self.dict_hosts[host]
+            except:
+                pass
+
+        # Delete all relevant rules
+        for r in range(self.model_rules.rowCount()):
+            for c in range(COUNT_COLUMNS_RULES_MODEL):
+                item_rules_host = self.model_hosts.item(r, c)
+                index_rules_host = self.model_hosts.indexFromItem(item_rules_host)
+
+                if self.tview_sm_rules.indexWidget(index_rules_host).currentText() != self.localhost:
+                    self.model_rules.removeRows(r, 1)
+
+        # Delete all hosts except the default one
+        self.model_hosts.removeRows(1, self.model_hosts.rowCount() - 1)
+
+        self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_cbox_authentication_activated(self, index):
         sender = self.sender()
 
         for r in range(self.model_hosts.rowCount()):
-            for c in range(COUNT_COLUMNS_RULES_MODEL):
+            for c in range(COUNT_COLUMNS_HOSTS_MODEL):
                 item = self.model_hosts.item(r, c)
                 index = self.model_hosts.indexFromItem(item)
 
@@ -1167,7 +1261,50 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_refresh_uids_clicked(self):
-        pass
+        if self.working:
+            return
+
+        sender = self.sender()
+        host   = None
+        port   = None
+        secret = None
+
+        for r in range(self.model_hosts.rowCount()):
+            for c in range(COUNT_COLUMNS_HOSTS_MODEL):
+                item = self.model_hosts.item(r, c)
+                index = self.model_hosts.indexFromItem(item)
+
+                if sender == self.tview_sm_hosts.indexWidget(index):
+                    item_host = self.model_hosts.item(r, INDEX_COL_HOSTS_HOST)
+                    index_host = self.model_hosts.indexFromItem(item_host)
+                    ledit_host = self.tview_sm_hosts.indexWidget(index_host)
+
+                    item_port = self.model_hosts.item(r, INDEX_COL_HOSTS_PORT)
+                    index_port = self.model_hosts.indexFromItem(item_port)
+                    sbox_port = self.tview_sm_hosts.indexWidget(index_port)
+
+                    item_secret = self.model_hosts.item(r, INDEX_COL_HOSTS_SECRET)
+                    index_secret = self.model_hosts.indexFromItem(item_secret)
+                    ledit_secret = self.tview_sm_hosts.indexWidget(index_secret)
+
+                    host = ledit_host.text()
+                    port = unicode(sbox_port.value())
+
+                    if not ledit_secret.isEnabled():
+                        secret = ''
+                    else:
+                        secret = ledit_secret.text()
+
+        if host and port:
+            self.working = True
+            self.update_gui(EVENT_CLICKED_REFRESH_GENERIC)
+            self.remaining_enumerations = 1
+            self.script_manager.execute_script('settings_server_monitoring',
+                                               lambda result: self.cb_settings_server_monitoring_enumerate(False, result, True),
+                                               ['ENUMERATE',
+                                                host,
+                                                port,
+                                                secret])
 
     def slot_remove_host_clicked(self):
         sender = self.sender()
@@ -1181,17 +1318,56 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 if sender == self.tview_sm_hosts.indexWidget(index):
                     item_host   = self.model_hosts.item(r, INDEX_COL_HOSTS_HOST)
                     index_host  = self.model_hosts.indexFromItem(item_host)
-                    host_widget = self.tview_sm_hosts.indexWidget(index_host)
-                    host = host_widget.text()
+                    ledit_host = self.tview_sm_hosts.indexWidget(index_host)
+
+                    item_used   = self.model_hosts.item(r, INDEX_COL_HOSTS_USED)
+                    index_used  = self.model_hosts.indexFromItem(item_used)
+                    chkbox_used = self.tview_sm_hosts.indexWidget(index_used)
+
+                    host = ledit_host.text()
+
+                    if chkbox_used.isChecked():
+                        reply = QtGui.QMessageBox.question(get_main_window(),
+                                                           MESSAGEBOX_TITLE,
+                                                           MESSAGE_WARNING_REMOVE_DEPENDANT_RULES,
+                                                           QtGui.QMessageBox.Yes,
+                                                           QtGui.QMessageBox.No)
+
+                        if reply != QtGui.QMessageBox.Yes:
+                            return
+
+                        for r_rules in reversed(range(self.model_rules.rowCount())):
+                            item_rules_host   = self.model_rules.item(r_rules, INDEX_COL_RULES_HOST)
+                            index_rules_host  = self.model_rules.indexFromItem(item_rules_host)
+                            cbox_rules_host = self.tview_sm_rules.indexWidget(index_rules_host)
+
+                            if host == cbox_rules_host.currentText():
+                                self.model_rules.removeRows(r_rules, 1)
+
+                        for i in reversed(range(len(self.list_rules))):
+                            dict_rule = self.list_rules[i]
+
+                            if host == dict_rule['host']:
+                                del self.list_rules[i]
+
                     self.model_hosts.removeRows(r, 1)
-                    break
 
-        try:
+        if host:
             del self.dict_hosts[host]
-        except:
-            pass
 
-        self.update_gui(EVENT_UPDATE_HOSTS_IN_RULES)
+    def slot_host_edited(self, text):
+        sender = self.sender()
+
+        for r in range(self.model_hosts.rowCount()):
+            for c in range(COUNT_COLUMNS_HOSTS_MODEL):
+                item = self.model_hosts.item(r, c)
+                index = self.model_hosts.indexFromItem(item)
+
+                if sender == self.tview_sm_hosts.indexWidget(index):
+                    item_hidden_host = self.model_hosts.item(r, INDEX_COL_HOSTS_HIDDEN_HOST)
+                    item_hidden_host.setText(text)
+
+                    break
 
     def slot_remove_rule_clicked(self):
         sender = self.sender()
@@ -1276,7 +1452,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                             return
 
             self.working = True
-            self.update_gui(EVENT_CLICKED_REFRESH)
+            self.update_gui(EVENT_CLICKED_REFRESH_GENERIC)
             self.remaining_enumerations = 1
             self.script_manager.execute_script('settings_server_monitoring',
                                                lambda result: self.cb_settings_server_monitoring_enumerate(False, result),
@@ -1295,16 +1471,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.update_gui(EVENT_CLICKED_REFRESH)
 
         result = self.check_unused_host()
-
-        if not result:
-            reply = QtGui.QMessageBox.question(get_main_window(),
-                                               MESSAGEBOX_TITLE,
-                                               MESSAGE_WARNING_CHECK_UNUSED_HOST,
-                                               QtGui.QMessageBox.Yes,
-                                               QtGui.QMessageBox.No)
-            if reply != QtGui.QMessageBox.Yes:
-                self.update_gui(EVENT_RETURNED_REFRESH_FALSE)
-                return
 
         self.working = True
 
@@ -1711,6 +1877,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     item_uid       = self.model_rules.item(r, INDEX_COL_RULES_UID)
                     index_uid      = self.model_rules.indexFromItem(item_uid)
                     cbox_uid       = self.tview_sm_rules.indexWidget(index_uid)
+
+                    if cbox_host.currentText() not in self.dict_hosts:
+                        return
 
                     self.populate_cbox_uids(cbox_host, cbox_bricklet, cbox_uid)
 
