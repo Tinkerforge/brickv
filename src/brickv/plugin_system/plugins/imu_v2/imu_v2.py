@@ -156,19 +156,18 @@ in the image above, then press "Save Orientation".""")
 
         for w in self.test_plot_widget:
             w.stop = False
-        self.mag_plot_widget.stop = False
-        self.acc_plot_widget.stop = False
-        self.gyr_plot_widget.stop = False
-        self.tem_plot_widget.stop = False
+        #self.mag_plot_widget.stop = False
+        #self.acc_plot_widget.stop = False
+        #self.gyr_plot_widget.stop = False
+        #self.tem_plot_widget.stop = False
 
     def stop(self):
         for w in self.test_plot_widget:
             w.stop = True
-        self.test_plot_widget.stop = True
-        self.mag_plot_widget.stop = True
-        self.acc_plot_widget.stop = True
-        self.gyr_plot_widget.stop = True
-        self.tem_plot_widget.stop = True
+        #self.mag_plot_widget.stop = True
+        #self.acc_plot_widget.stop = True
+        #self.gyr_plot_widget.stop = True
+        #self.tem_plot_widget.stop = True
 
         self.update_timer.stop()
         self.cbe_all_data.set_period(0)
