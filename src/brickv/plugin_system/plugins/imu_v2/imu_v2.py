@@ -27,7 +27,7 @@ from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget
 from brickv.utils import CallbackEmulator
 
-from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy
+from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy, QColor
 from PyQt4.QtCore import Qt, QTimer
 
 from brickv.plugin_system.plugins.imu_v2.ui_imu_v2 import Ui_IMUV2
@@ -92,8 +92,12 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.test_plot_widget = []
         for i in range(20):
             self.test_plot_widget.append(PlotWidget("",
-                                               [["Z", Qt.blue, self.get_test]],
-                                               self.clear_graphs))
+                                                    [["Z", Qt.blue, self.get_test]],
+                                                    self.clear_graphs,
+                                                    scales_visible=False,
+                                                    curve_outer_border_visible=False,
+                                                    curve_motion_granularity=1,
+                                                    canvas_color=QColor(255, 255, 0)))
 
 #        self.mag_plot_widget = PlotWidget("Magnetic Field [mG]",
 #                                          [["X", Qt.red, self.get_mag_x],
