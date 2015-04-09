@@ -57,6 +57,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.qua_y = 0
         self.qua_z = 0
         self.qua_w = 0
+        self.test = 0
 
         self.old_time = 0
 
@@ -88,30 +89,38 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.max_z = 0
 
         self.update_counter = 0
+        self.test_plot_widget = []
+        for i in range(20):
+            self.test_plot_widget.append(PlotWidget("",
+                                               [["Z", Qt.blue, self.get_test]],
+                                               self.clear_graphs))
 
-        self.mag_plot_widget = PlotWidget("Magnetic Field [mG]",
-                                          [["X", Qt.red, self.get_mag_x],
-                                           ["Y", Qt.darkGreen, self.get_mag_y],
-                                           ["Z", Qt.blue, self.get_mag_z]],
-                                          self.clear_graphs)
-        self.acc_plot_widget = PlotWidget("Acceleration [mG]",
-                                          [["X", Qt.red, self.get_acc_x],
-                                           ["Y", Qt.darkGreen, self.get_acc_y],
-                                           ["Z", Qt.blue, self.get_acc_z]],
-                                          self.clear_graphs)
-        self.gyr_plot_widget = PlotWidget("Angular Velocity [%c/s]" % 0xB0,
-                                          [["X", Qt.red, self.get_gyr_x],
-                                           ["Y", Qt.darkGreen, self.get_gyr_y],
-                                           ["Z", Qt.blue, self.get_gyr_z]],
-                                          self.clear_graphs)
-        self.tem_plot_widget = PlotWidget("Temperature [%cC]" % 0xB0,
-                                          [["t", Qt.red, self.get_tem]],
-                                          self.clear_graphs)
+#        self.mag_plot_widget = PlotWidget("Magnetic Field [mG]",
+#                                          [["X", Qt.red, self.get_mag_x],
+#                                           ["Y", Qt.darkGreen, self.get_mag_y],
+#                                           ["Z", Qt.blue, self.get_mag_z]],
+#                                          self.clear_graphs)
+#        self.acc_plot_widget = PlotWidget("Acceleration [mG]",
+#                                          [["X", Qt.red, self.get_acc_x],
+#                                           ["Y", Qt.darkGreen, self.get_acc_y],
+#                                           ["Z", Qt.blue, self.get_acc_z]],
+#                                          self.clear_graphs)
+#        self.gyr_plot_widget = PlotWidget("Angular Velocity [%c/s]" % 0xB0,
+#                                          [["X", Qt.red, self.get_gyr_x],
+#                                           ["Y", Qt.darkGreen, self.get_gyr_y],
+#                                           ["Z", Qt.blue, self.get_gyr_z]],
+#                                          self.clear_graphs)
+#        self.tem_plot_widget = PlotWidget("Temperature [%cC]" % 0xB0,
+#                                          [["t", Qt.red, self.get_tem]],
+#                                          self.clear_graphs)
 
-        self.mag_plot_widget.setMinimumSize(250, 200)
-        self.acc_plot_widget.setMinimumSize(250, 200)
-        self.gyr_plot_widget.setMinimumSize(250, 200)
-        self.tem_plot_widget.setMinimumSize(250, 200)
+        for w in self.test_plot_widget:
+            w.setMinimumHeight(12)
+            w.setMaximumHeight(12)
+#        self.mag_plot_widget.setMinimumSize(250, 200)
+#        self.acc_plot_widget.setMinimumSize(250, 200)
+#        self.gyr_plot_widget.setMinimumSize(250, 200)
+#        self.tem_plot_widget.setMinimumSize(250, 200)
 
         self.orientation_label = QLabel("""Position your IMU Brick as shown \
 in the image above, then press "Save Orientation".""")
@@ -120,12 +129,17 @@ in the image above, then press "Save Orientation".""")
         self.gl_layout = QVBoxLayout()
         self.gl_layout.addWidget(self.imu_gl)
         self.gl_layout.addWidget(self.orientation_label)
+        
+        self.v_layout = QVBoxLayout()
+        for w in self.test_plot_widget:
+            self.v_layout.addWidget(w)
 
-        self.layout_top.addWidget(self.gyr_plot_widget)
-        self.layout_top.addWidget(self.acc_plot_widget)
-        self.layout_top.addWidget(self.mag_plot_widget)
+        self.layout_top.addLayout(self.v_layout)
+#        self.layout_top.addWidget(self.gyr_plot_widget)
+#        self.layout_top.addWidget(self.acc_plot_widget)
+#        self.layout_top.addWidget(self.mag_plot_widget)
         self.layout_bottom.addLayout(self.gl_layout)
-        self.layout_bottom.addWidget(self.tem_plot_widget)
+#        self.layout_bottom.addWidget(self.tem_plot_widget)
 
         self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
         self.led_button.clicked.connect(self.led_clicked)
@@ -140,12 +154,17 @@ in the image above, then press "Save Orientation".""")
         self.gl_layout.activate()
         self.cbe_all_data.set_period(50)
 
+        for w in self.test_plot_widget:
+            w.stop = False
         self.mag_plot_widget.stop = False
         self.acc_plot_widget.stop = False
         self.gyr_plot_widget.stop = False
         self.tem_plot_widget.stop = False
 
     def stop(self):
+        for w in self.test_plot_widget:
+            w.stop = True
+        self.test_plot_widget.stop = True
         self.mag_plot_widget.stop = True
         self.acc_plot_widget.stop = True
         self.gyr_plot_widget.stop = True
@@ -153,8 +172,6 @@ in the image above, then press "Save Orientation".""")
 
         self.update_timer.stop()
         self.cbe_all_data.set_period(0)
-        self.cbe_orientation.set_period(0)
-        self.cbe_quaternion.set_period(0)
 
     def destroy(self):
         self.alive = False
@@ -179,6 +196,7 @@ in the image above, then press "Save Orientation".""")
         return device_identifier == BrickIMUV2.DEVICE_IDENTIFIER
 
     def all_data_callback(self, data):
+        self.test = data.acceleration[0]
         print data
 
     def led_clicked(self):
@@ -218,8 +236,12 @@ in the image above, then press "Save Orientation".""")
 
     def get_tem(self):
         return self.tem/100.0
+    
+    def get_test(self):
+        return self.test
 
     def update_data(self):
+        print "update_data"
         self.update_counter += 1
 
         self.imu_gl.update(self.qua_x, self.qua_y, self.qua_z, self.qua_w)
