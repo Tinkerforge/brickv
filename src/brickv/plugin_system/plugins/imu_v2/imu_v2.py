@@ -188,7 +188,7 @@ in the image above, then press "Save Orientation".""")
         return True
 
     def get_url_part(self):
-        return 'imu'
+        return 'imu_v2'
 
     @staticmethod
     def has_device_identifier(device_identifier):
