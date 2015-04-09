@@ -21,6 +21,7 @@ from brickv.plugin_system.plugins.hall_effect import device_class as hall_effect
 from brickv.plugin_system.plugins.heart_rate import device_class as heart_rate
 from brickv.plugin_system.plugins.humidity import device_class as humidity
 from brickv.plugin_system.plugins.imu import device_class as imu
+from brickv.plugin_system.plugins.imu_v2 import device_class as imu_v2
 from brickv.plugin_system.plugins.industrial_analog_out import device_class as industrial_analog_out
 from brickv.plugin_system.plugins.industrial_digital_in_4 import device_class as industrial_digital_in_4
 from brickv.plugin_system.plugins.industrial_digital_out_4 import device_class as industrial_digital_out_4
@@ -85,6 +86,7 @@ device_classes = [
     heart_rate,
     humidity,
     imu,
+    imu_v2,
     industrial_analog_out,
     industrial_digital_in_4,
     industrial_digital_out_4,
