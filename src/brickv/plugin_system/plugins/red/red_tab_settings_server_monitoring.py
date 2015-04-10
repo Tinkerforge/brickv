@@ -1095,7 +1095,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.pbutton_sm_remove_all_hosts.setEnabled(False)
             self.chkbox_sm_email_enable.setCheckState(QtCore.Qt.Unchecked)
             self.gbox_sm_email.setEnabled(False)
-            self.update_hosts_used()
             self.update_gui(EVENT_INPUT_CHANGED)
 
         elif event == EVENT_CLICKED_REFRESH:
@@ -1177,8 +1176,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             if self.model_rules.rowCount() > 0:
                 self.pbutton_sm_remove_all_rules.setEnabled(True)
                 self.gbox_sm_email.setEnabled(True)
-
-            self.pbutton_sm_save.setEnabled(False)
 
         elif event == EVENT_UPDATE_UIDS_IN_RULES:
             if self.model_rules.rowCount() < 1:

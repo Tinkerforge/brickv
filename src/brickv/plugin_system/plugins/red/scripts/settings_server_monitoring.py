@@ -291,6 +291,8 @@ ipcon  = None
 host   = None
 port   = None
 secret = None
+global ignore_enumerate_failed_called
+ignore_enumerate_failed_called = False
 
 dict_enumerate = {'host'         : None,
                   'port'         : None,
@@ -301,6 +303,15 @@ dict_enumerate = {'host'         : None,
                   'ambient_light': []}
 
 def ignore_enumerate_fail():
+    global ignore_enumerate_failed_called
+    ignore_enumerate_failed_called = True
+
+    if ipcon:
+        try:
+            ipcon.disconnect()
+        except:
+            pass
+
     dict_enumerate['host']          = host
     dict_enumerate['port']          = port
     dict_enumerate['secret']        = secret
@@ -308,6 +319,7 @@ def ignore_enumerate_fail():
     dict_enumerate['temperature']   = []
     dict_enumerate['humidity']      = []
     dict_enumerate['ambient_light'] = []
+
     sys.stdout.write(json.dumps(dict_enumerate))
 
 def cb_connect(connect_reason, secret):
@@ -582,9 +594,10 @@ elif ACTION == 'ENUMERATE':
                                                                                                        port,
                                                                                                        secret))
         ipcon.connect(host, int(port))
-        sleep(1)
+        sleep(2)
     except:
-        pass
+        ignore_enumerate_fail()
+        exit(0)
 else:
     exit(1)
 
@@ -595,4 +608,5 @@ if ACTION == 'ENUMERATE':
         except:
             pass
 
-    sys.stdout.write(json.dumps(dict_enumerate))
+    if not ignore_enumerate_failed_called:
+        sys.stdout.write(json.dumps(dict_enumerate))
