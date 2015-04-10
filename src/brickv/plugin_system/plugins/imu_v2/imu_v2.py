@@ -150,7 +150,9 @@ in the image above, then press "Save Orientation".""")
         self.layout_bottom.addLayout(self.gl_layout)
 
         self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
-        self.led_button.clicked.connect(self.led_clicked)
+        self.checkbox_leds.stateChanged.connect(self.led_clicked)
+        self.box_range_acc.activated.connect(self.configuration_changed)
+        self.box_range_gyr.activated.connect(self.configuration_changed)
 
         self.calibrate = None
         self.alive = True
@@ -159,6 +161,7 @@ in the image above, then press "Save Orientation".""")
         if not self.alive:
             return
 
+        async_call(self.imu.get_configuration, None, self.get_configuration_async, self.increase_error_count)
         self.gl_layout.activate()
         self.cbe_all_data.set_period(100)
 
@@ -193,6 +196,19 @@ in the image above, then press "Save Orientation".""")
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickIMUV2.DEVICE_IDENTIFIER
+    
+    def configuration_changed(self, index):
+        acc_range = self.box_range_acc.currentIndex()
+        gyr_range = self.box_range_gyr.currentIndex()
+        try:
+            self.imu.set_configuration(acc_range, gyr_range)
+        except:
+            pass
+    
+    def get_configuration_async(self, configuration):
+        print configuration
+        self.box_range_acc.setCurrentIndex(configuration.accelerometer_range)
+        self.box_range_gyr.setCurrentIndex(configuration.gyroscope_range)
 
     def all_data_callback(self, data):
         self.sensor_data[0]  = data.acceleration[0]/100.0
@@ -222,12 +238,10 @@ in the image above, then press "Save Orientation".""")
         for i in range(23):
             self.data_labels[i].setText("{0:.2f}".format(self.sensor_data[i]))
 
-    def led_clicked(self):
-        if 'On' in self.led_button.text():
-            self.led_button.setText('Turn LEDs Off')
+    def led_clicked(self, state):
+        if state == Qt.Checked:
             self.imu.leds_on()
-        elif 'Off' in self.led_button.text():
-            self.led_button.setText('Turn LEDs On')
+        else:
             self.imu.leds_off()
     
     def get_data(self, i):

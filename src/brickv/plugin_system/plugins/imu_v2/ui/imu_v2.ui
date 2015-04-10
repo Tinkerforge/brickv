@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>249</width>
-    <height>487</height>
+    <width>315</width>
+    <height>630</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -641,13 +641,6 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
-            <widget class="QPushButton" name="led_button">
-             <property name="text">
-              <string>Turn LEDs Off</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="clear_graphs">
              <property name="text">
               <string>Clear Graphs</string>
@@ -663,6 +656,98 @@
              <property name="text">
               <string>Save Orientation</string>
              </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_6">
+           <item>
+            <widget class="QCheckBox" name="checkbox_leds">
+             <property name="text">
+              <string>LEDs On</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Accelerometer Range:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="box_range_acc">
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <item>
+              <property name="text">
+               <string>2 G</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>4 G</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>8 G</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>16 G</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Gyroscope Range:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="box_range_gyr">
+             <item>
+              <property name="text">
+               <string>2000 °/s</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>1000 °/s</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>500 °/s</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>250 °/s</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>125 °/s</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>
