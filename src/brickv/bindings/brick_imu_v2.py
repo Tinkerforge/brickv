@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-09.      #
+# This file was automatically generated on 2015-04-10.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -32,6 +32,7 @@ GetLinearAcceleration = namedtuple('LinearAcceleration', ['x', 'y', 'z'])
 GetGravityVector = namedtuple('GravityVector', ['x', 'y', 'z'])
 GetQuaternion = namedtuple('Quaternion', ['w', 'x', 'y', 'z'])
 GetAllData = namedtuple('AllData', ['acceleration', 'magnetic_field', 'angular_velocity', 'euler_angle', 'quaternion', 'linear_acceleration', 'gravity_vector', 'temperature', 'calibration_status'])
+GetConfiguration = namedtuple('Configuration', ['accelerometer_range', 'gyroscope_range'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -90,6 +91,15 @@ class BrickIMUV2(Device):
     FUNCTION_RESET = 243
     FUNCTION_GET_IDENTITY = 255
 
+    ACCELEROMETER_RANGE_2G = 0
+    ACCELEROMETER_RANGE_4G = 1
+    ACCELEROMETER_RANGE_8G = 2
+    ACCELEROMETER_RANGE_16G = 3
+    GYROSCOPE_RANGE_2000DPS = 0
+    GYROSCOPE_RANGE_1000DPS = 1
+    GYROSCOPE_RANGE_500DPS = 2
+    GYROSCOPE_RANGE_250DPS = 3
+    GYROSCOPE_RANGE_125DPS = 4
 
     def __init__(self, uid, ipcon):
         """
@@ -113,7 +123,7 @@ class BrickIMUV2(Device):
         self.response_expected[BrickIMUV2.FUNCTION_LEDS_OFF] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMUV2.FUNCTION_ARE_LEDS_ON] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_SET_CONFIGURATION] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickIMUV2.FUNCTION_GET_CONFIGURATION] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMUV2.FUNCTION_GET_CONFIGURATION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_SET_ACCELERATION_PERIOD] = BrickIMUV2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_GET_ACCELERATION_PERIOD] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_SET_MAGNETIC_FIELD_PERIOD] = BrickIMUV2.RESPONSE_EXPECTED_TRUE
@@ -291,17 +301,17 @@ class BrickIMUV2(Device):
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_ARE_LEDS_ON, (), '', '?')
 
-    def set_configuration(self):
+    def set_configuration(self, accelerometer_range, gyroscope_range):
         """
         TODO
         """
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_CONFIGURATION, (), '', '')
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_CONFIGURATION, (accelerometer_range, gyroscope_range), 'B B', '')
 
     def get_configuration(self):
         """
         TODO
         """
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_CONFIGURATION, (), '', '')
+        return GetConfiguration(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
 
     def set_acceleration_period(self, period):
         """
