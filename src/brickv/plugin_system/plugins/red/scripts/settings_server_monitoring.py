@@ -70,8 +70,11 @@ return_code        = None
 return_message     = None
 
 def handle_result(message, code):
-    disconnect()
-    print message
+    try:
+        ipcon.disconnect()
+    except:
+        pass
+
     global return_code
     global return_message
     return_message = message
@@ -100,12 +103,6 @@ def connect():
     except:
         handle_result(MESSAGE_CRITICAL_ERROR_CONNECTING,
                       RETURN_CODE_CRITICAL)
-
-def disconnect():
-    try:
-        ipcon.disconnect()
-    except:
-        pass
 
 def read(bricklet, uid, warning, critical, warning2, critical2):
     if bricklet == BRICKLET_PTC24 or bricklet == BRICKLET_PTC3:
