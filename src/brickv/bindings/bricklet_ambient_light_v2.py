@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-02.      #
+# This file was automatically generated on 2015-04-10.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
-# to the generator git on tinkerforge.com                   #
+# to the generators git repository on tinkerforge.com       #
 #############################################################
 
 #### __DEVICE_IS_NOT_RELEASED__ ####
@@ -34,7 +34,7 @@ class BrickletAmbientLightV2(Device):
     """
 
     DEVICE_IDENTIFIER = 259
-    DEVICE_DISPLAY_NAME = 'Ambient Light 2.0 Bricklet'
+    DEVICE_DISPLAY_NAME = 'Ambient Light Bricklet 2.0'
 
     CALLBACK_ILLUMINANCE = 10
     CALLBACK_ILLUMINANCE_REACHED = 11

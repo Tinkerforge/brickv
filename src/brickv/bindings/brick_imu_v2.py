@@ -6,7 +6,7 @@
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
-# to the generator git on tinkerforge.com                   #
+# to the generators git repository on tinkerforge.com       #
 #############################################################
 
 #### __DEVICE_IS_NOT_RELEASED__ ####
@@ -42,7 +42,7 @@ class BrickIMUV2(Device):
     """
 
     DEVICE_IDENTIFIER = 18
-    DEVICE_DISPLAY_NAME = 'IMU 2.0 Brick'
+    DEVICE_DISPLAY_NAME = 'IMU Brick 2.0'
 
     CALLBACK_ACCELERATION = 33
     CALLBACK_MAGNETIC_FIELD = 34
@@ -303,6 +303,7 @@ class BrickIMUV2(Device):
 
     def set_configuration(self, accelerometer_range, gyroscope_range):
         """
+        Default: 4G, 2000DPS
         TODO
         """
         self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_CONFIGURATION, (accelerometer_range, gyroscope_range), 'B B', '')

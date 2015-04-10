@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-03-31.      #
+# This file was automatically generated on 2015-04-10.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
-# to the generator git on tinkerforge.com                   #
+# to the generators git repository on tinkerforge.com       #
 #############################################################
 
 #### __DEVICE_IS_NOT_RELEASED__ ####
@@ -32,7 +32,7 @@ class BrickletAnalogOutV2(Device):
     """
 
     DEVICE_IDENTIFIER = 256
-    DEVICE_DISPLAY_NAME = 'Analog Out 2.0 Bricklet'
+    DEVICE_DISPLAY_NAME = 'Analog Out Bricklet 2.0'
 
 
     FUNCTION_SET_OUTPUT_VOLTAGE = 1
