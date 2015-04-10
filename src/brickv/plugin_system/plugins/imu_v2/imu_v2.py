@@ -45,8 +45,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
 
         self.cbe_all_data = CallbackEmulator(self.imu.get_all_data,
                                              self.all_data_callback,
-                                             self.increase_error_count,
-                                             use_data_signal=False)
+                                             self.increase_error_count)
 
         # Import IMUGLWidget here, not global. If globally included we get
         # 'No OpenGL_accelerate module loaded: No module named OpenGL_accelerate'
