@@ -27,7 +27,7 @@ from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget
 from brickv.utils import CallbackEmulator
 
-from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy, QColor
+from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy, QColor, QPalette
 from PyQt4.QtCore import Qt, QTimer
 
 from brickv.plugin_system.plugins.imu_v2.ui_imu_v2 import Ui_IMUV2
@@ -39,27 +39,6 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.setupUi(self)
 
         self.imu = self.device
-
-        self.acc_x = 0
-        self.acc_y = 0
-        self.acc_z = 0
-        self.mag_x = 0
-        self.mag_y = 0
-        self.mag_z = 0
-        self.gyr_x = 0
-        self.gyr_y = 0
-        self.gyr_z = 0
-        self.tem   = 0
-        self.roll  = 0
-        self.pitch = 0
-        self.yaw   = 0
-        self.qua_x = 0
-        self.qua_y = 0
-        self.qua_z = 0
-        self.qua_w = 0
-        self.test = 0
-
-        self.old_time = 0
 
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
@@ -89,44 +68,78 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.max_z = 0
 
         self.update_counter = 0
-        self.test_plot_widget = []
-        for i in range(20):
-            self.test_plot_widget.append(PlotWidget("",
-                                                    [["Z", Qt.blue, self.get_test]],
-                                                    self.clear_graphs,
-                                                    scales_visible=False,
+
+        self.data_plot_widget = []
+        self.sensor_data = [0]*23
+
+        self.data_labels = [self.label_acceleration_x, self.label_acceleration_y, self.label_acceleration_z, 
+                            self.label_magnetic_field_x, self.label_magnetic_field_y, self.label_magnetic_field_z, 
+                            self.label_angular_velocity_x, self.label_angular_velocity_y, self.label_angular_velocity_z, 
+                            self.label_euler_angle_roll, self.label_euler_angle_pitch, self.label_euler_angle_heading, 
+                            self.label_quaternion_w, self.label_quaternion_x, self.label_quaternion_y, self.label_quaternion_z, 
+                            self.label_linear_acceleration_x, self.label_linear_acceleration_y, self.label_linear_acceleration_z, 
+                            self.label_gravity_vector_x, self.label_gravity_vector_y, self.label_gravity_vector_z, 
+                            self.label_temperature]
+        
+        self.data_rows = [[self.label_acceleration_11, self.label_acceleration_21, self.label_acceleration_22, self.label_acceleration_23, self.label_acceleration_41, self.label_acceleration_42, self.label_acceleration_43, self.label_acceleration_x, self.label_acceleration_y, self.label_acceleration_z],
+                          [self.label_magnetic_field_11, self.label_magnetic_field_21, self.label_magnetic_field_22, self.label_magnetic_field_23, self.label_magnetic_field_41, self.label_magnetic_field_42, self.label_magnetic_field_43, self.label_magnetic_field_x, self.label_magnetic_field_y, self.label_magnetic_field_z],
+                          [self.label_angular_velocity_11, self.label_angular_velocity_21, self.label_angular_velocity_22, self.label_angular_velocity_23, self.label_angular_velocity_41, self.label_angular_velocity_42, self.label_angular_velocity_43, self.label_angular_velocity_x, self.label_angular_velocity_y, self.label_angular_velocity_z],
+                          [self.label_euler_angle_11, self.label_euler_angle_21, self.label_euler_angle_22, self.label_euler_angle_23, self.label_euler_angle_41, self.label_euler_angle_42, self.label_euler_angle_43, self.label_euler_angle_roll, self.label_euler_angle_pitch, self.label_euler_angle_heading],
+                          [self.label_quaternion_11, self.label_quaternion_21, self.label_quaternion_22, self.label_quaternion_23, self.label_quaternion_24, self.label_quaternion_41, self.label_quaternion_42, self.label_quaternion_43, self.label_quaternion_44, self.label_quaternion_w, self.label_quaternion_x, self.label_quaternion_y, self.label_quaternion_z],
+                          [self.label_linear_acceleration_11, self.label_linear_acceleration_21, self.label_linear_acceleration_22, self.label_linear_acceleration_23, self.label_linear_acceleration_41, self.label_linear_acceleration_42, self.label_linear_acceleration_43, self.label_linear_acceleration_x, self.label_linear_acceleration_y, self.label_linear_acceleration_z],
+                          [self.label_gravity_vector_11, self.label_gravity_vector_21, self.label_gravity_vector_22, self.label_gravity_vector_23, self.label_gravity_vector_41, self.label_gravity_vector_42, self.label_gravity_vector_43, self.label_gravity_vector_x, self.label_gravity_vector_y, self.label_gravity_vector_z],
+                          [self.label_temperature_11, self.label_temperature_21, self.label_temperature_41, self.label_temperature],
+                         ]
+        
+        even_color = QColor(240, 240, 240)
+        odd_color = QColor(255, 255, 255)
+        
+        self.data_color = [(Qt.red, even_color), (Qt.darkGreen, even_color), (Qt.blue, even_color),
+                           (Qt.red, odd_color), (Qt.darkGreen, odd_color), (Qt.blue, odd_color),
+                           (Qt.red, even_color), (Qt.darkGreen, even_color), (Qt.blue, even_color),
+                           (Qt.red, odd_color), (Qt.darkGreen, odd_color), (Qt.blue, odd_color),
+                           (Qt.magenta, even_color), (Qt.red, even_color), (Qt.darkGreen, even_color), (Qt.blue, even_color),
+                           (Qt.red, odd_color), (Qt.darkGreen, odd_color), (Qt.blue, odd_color),
+                           (Qt.red, even_color), (Qt.darkGreen, even_color), (Qt.blue, even_color),
+                           (Qt.magenta, odd_color)]
+        
+        
+        even_palette = QPalette()
+        even_palette.setColor(QPalette.Window, even_color)
+        odd_palette = QPalette()
+        odd_palette.setColor(QPalette.Window, odd_color)
+        
+        for i, row in enumerate(self.data_rows):
+            for label in row:
+                if i % 2:
+                    label.setPalette(odd_palette)
+                else:
+                    label.setPalette(even_palette)
+                    
+                label.setAutoFillBackground(True)
+
+        def get_lambda_data_getter(i):
+            return lambda: self.get_data(i)
+        
+        for i in range(23):
+            self.data_plot_widget.append(PlotWidget("",
+                                                    [["", self.data_color[i][0], get_lambda_data_getter(i)]],
+                                                    self.clear_graphs, 
+                                                    scales_visible=False, 
                                                     curve_outer_border_visible=False,
                                                     curve_motion_granularity=1,
-                                                    canvas_color=QColor(255, 255, 0)))
+                                                    canvas_color=self.data_color[i][1]))
 
-#        self.mag_plot_widget = PlotWidget("Magnetic Field [mG]",
-#                                          [["X", Qt.red, self.get_mag_x],
-#                                           ["Y", Qt.darkGreen, self.get_mag_y],
-#                                           ["Z", Qt.blue, self.get_mag_z]],
-#                                          self.clear_graphs)
-#        self.acc_plot_widget = PlotWidget("Acceleration [mG]",
-#                                          [["X", Qt.red, self.get_acc_x],
-#                                           ["Y", Qt.darkGreen, self.get_acc_y],
-#                                           ["Z", Qt.blue, self.get_acc_z]],
-#                                          self.clear_graphs)
-#        self.gyr_plot_widget = PlotWidget("Angular Velocity [%c/s]" % 0xB0,
-#                                          [["X", Qt.red, self.get_gyr_x],
-#                                           ["Y", Qt.darkGreen, self.get_gyr_y],
-#                                           ["Z", Qt.blue, self.get_gyr_z]],
-#                                          self.clear_graphs)
-#        self.tem_plot_widget = PlotWidget("Temperature [%cC]" % 0xB0,
-#                                          [["t", Qt.red, self.get_tem]],
-#                                          self.clear_graphs)
+        for w in self.data_plot_widget:
+            w.setMinimumHeight(15)
+            w.setMaximumHeight(25)
+                    
+        for i in range(23):
+            self.data_grid.addWidget(self.data_plot_widget[i], i, 4)
+            
+        self.data_grid.setColumnMinimumWidth(2, 75)
 
-        for w in self.test_plot_widget:
-            w.setMinimumHeight(12)
-            w.setMaximumHeight(12)
-#        self.mag_plot_widget.setMinimumSize(250, 200)
-#        self.acc_plot_widget.setMinimumSize(250, 200)
-#        self.gyr_plot_widget.setMinimumSize(250, 200)
-#        self.tem_plot_widget.setMinimumSize(250, 200)
-
-        self.orientation_label = QLabel("""Position your IMU Brick as shown \
+        self.orientation_label = QLabel("""Position your IMU Brick 2.0 as shown \
 in the image above, then press "Save Orientation".""")
         self.orientation_label.setWordWrap(True)
         self.orientation_label.setAlignment(Qt.AlignHCenter)
@@ -135,15 +148,7 @@ in the image above, then press "Save Orientation".""")
         self.gl_layout.addWidget(self.orientation_label)
         
         self.v_layout = QVBoxLayout()
-        for w in self.test_plot_widget:
-            self.v_layout.addWidget(w)
-
-        self.layout_top.addLayout(self.v_layout)
-#        self.layout_top.addWidget(self.gyr_plot_widget)
-#        self.layout_top.addWidget(self.acc_plot_widget)
-#        self.layout_top.addWidget(self.mag_plot_widget)
         self.layout_bottom.addLayout(self.gl_layout)
-#        self.layout_bottom.addWidget(self.tem_plot_widget)
 
         self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
         self.led_button.clicked.connect(self.led_clicked)
@@ -156,22 +161,14 @@ in the image above, then press "Save Orientation".""")
             return
 
         self.gl_layout.activate()
-        self.cbe_all_data.set_period(50)
+        self.cbe_all_data.set_period(100)
 
-        for w in self.test_plot_widget:
+        for w in self.data_plot_widget:
             w.stop = False
-        #self.mag_plot_widget.stop = False
-        #self.acc_plot_widget.stop = False
-        #self.gyr_plot_widget.stop = False
-        #self.tem_plot_widget.stop = False
 
     def stop(self):
-        for w in self.test_plot_widget:
+        for w in self.data_plot_widget:
             w.stop = True
-        #self.mag_plot_widget.stop = True
-        #self.acc_plot_widget.stop = True
-        #self.gyr_plot_widget.stop = True
-        #self.tem_plot_widget.stop = True
 
         self.update_timer.stop()
         self.cbe_all_data.set_period(0)
@@ -199,8 +196,32 @@ in the image above, then press "Save Orientation".""")
         return device_identifier == BrickIMUV2.DEVICE_IDENTIFIER
 
     def all_data_callback(self, data):
-        self.test = data.acceleration[0]
-        print data
+        self.sensor_data[0]  = data.acceleration[0]/100.0
+        self.sensor_data[1]  = data.acceleration[1]/100.0
+        self.sensor_data[2]  = data.acceleration[2]/100.0
+        self.sensor_data[3]  = data.magnetic_field[0]/16.0
+        self.sensor_data[4]  = data.magnetic_field[1]/16.0
+        self.sensor_data[5]  = data.magnetic_field[2]/16.0
+        self.sensor_data[6]  = data.angular_velocity[0]/16.0
+        self.sensor_data[7]  = data.angular_velocity[1]/16.0
+        self.sensor_data[8]  = data.angular_velocity[2]/16.0
+        self.sensor_data[9]  = data.euler_angle[0]/16.0
+        self.sensor_data[10] = data.euler_angle[1]/16.0
+        self.sensor_data[11] = data.euler_angle[2]/16.0
+        self.sensor_data[12] = data.quaternion[0]/(float(2**14-1))
+        self.sensor_data[13] = data.quaternion[1]/(float(2**14-1))
+        self.sensor_data[14] = data.quaternion[2]/(float(2**14-1))
+        self.sensor_data[15] = data.quaternion[3]/(float(2**14-1))
+        self.sensor_data[16] = data.linear_acceleration[0]/100.0
+        self.sensor_data[17] = data.linear_acceleration[1]/100.0
+        self.sensor_data[18] = data.linear_acceleration[2]/100.0
+        self.sensor_data[19] = data.gravity_vector[0]/100.0
+        self.sensor_data[20] = data.gravity_vector[1]/100.0
+        self.sensor_data[21] = data.gravity_vector[2]/100.0
+        self.sensor_data[22] = data.temperature
+        
+        for i in range(23):
+            self.data_labels[i].setText("{0:.2f}".format(self.sensor_data[i]))
 
     def led_clicked(self):
         if 'On' in self.led_button.text():
@@ -209,90 +230,12 @@ in the image above, then press "Save Orientation".""")
         elif 'Off' in self.led_button.text():
             self.led_button.setText('Turn LEDs On')
             self.imu.leds_off()
-
-    def get_acc_x(self):
-        return self.acc_x
-
-    def get_acc_y(self):
-        return self.acc_y
-
-    def get_acc_z(self):
-        return self.acc_z
-
-    def get_mag_x(self):
-        return self.mag_x
-
-    def get_mag_y(self):
-        return self.mag_y
-
-    def get_mag_z(self):
-        return self.mag_z
-
-    def get_gyr_x(self):
-        return self.gyr_x/14.375
-
-    def get_gyr_y(self):
-        return self.gyr_y/14.375
-
-    def get_gyr_z(self):
-        return self.gyr_z/14.375
-
-    def get_tem(self):
-        return self.tem/100.0
     
-    def get_test(self):
-        return self.test
+    def get_data(self, i):
+        return self.sensor_data[i]
 
     def update_data(self):
         print "update_data"
         self.update_counter += 1
 
         self.imu_gl.update(self.qua_x, self.qua_y, self.qua_z, self.qua_w)
-
-        if self.update_counter % 2:
-            gyr_x = self.gyr_x/14.375
-            gyr_y = self.gyr_y/14.375
-            gyr_z = self.gyr_z/14.375
-
-            self.acceleration_update(self.acc_x, self.acc_y, self.acc_z)
-            self.magnetometer_update(self.mag_x, self.mag_y, self.mag_z)
-            self.gyroscope_update(gyr_x, gyr_y, gyr_z)
-            self.orientation_update(self.roll, self.pitch, self.yaw)
-            self.temperature_update(self.tem)
-
-    def acceleration_update(self, x, y, z):
-        x_str = "%g" % x
-        y_str = "%g" % y
-        z_str = "%g" % z
-        self.acc_y_label.setText(y_str)
-        self.acc_x_label.setText(x_str)
-        self.acc_z_label.setText(z_str)
-
-    def magnetometer_update(self, x, y, z):
-        # Earth magnetic field. 0.5 Gauss
-        x_str = "%g" % x
-        y_str = "%g" % y
-        z_str = "%g" % z
-        self.mag_x_label.setText(x_str)
-        self.mag_y_label.setText(y_str)
-        self.mag_z_label.setText(z_str)
-
-    def gyroscope_update(self, x, y, z):
-        x_str = "%g" % int(x)
-        y_str = "%g" % int(y)
-        z_str = "%g" % int(z)
-        self.gyr_x_label.setText(x_str)
-        self.gyr_y_label.setText(y_str)
-        self.gyr_z_label.setText(z_str)
-
-    def orientation_update(self, r, p, y):
-        r_str = "%g" % (r/100)
-        p_str = "%g" % (p/100)
-        y_str = "%g" % (y/100)
-        self.roll_label.setText(r_str)
-        self.pitch_label.setText(p_str)
-        self.yaw_label.setText(y_str)
-
-    def temperature_update(self, t):
-        t_str = "%.2f" % (t/100.0)
-        self.tem_label.setText(t_str)
