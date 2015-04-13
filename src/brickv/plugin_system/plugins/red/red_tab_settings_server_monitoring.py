@@ -229,7 +229,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.model_hosts.setHorizontalHeaderLabels(HEADERS_TVIEW_HOSTS)
         self.tview_sm_hosts.setModel(self.model_hosts)
         self.set_default_col_width_hosts()
-        self.localhost = None
+        self.defaulthost = None
 
         self.list_rules = []
         self.dict_email = {}
@@ -357,7 +357,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 ledit = QtGui.QLineEdit()
                 ledit.setText(host)
 
-                if host == self.localhost:
+                if host == self.defaulthost:
                     ledit.setEnabled(False)
                 else:
                     ledit.textEdited.connect(self.slot_host_edited)
@@ -422,7 +422,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
                 btn.setText('Remove')
 
-                if host == self.localhost:
+                if host == self.defaulthost:
                     btn.setEnabled(False)
 
                 btn.clicked.connect(self.slot_remove_host_clicked)
@@ -682,12 +682,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         # Host data structure is populated on enumerate script callback
         if dict_return['hosts'] and len(dict_return['hosts']) > 0:
-            if self.localhost not in dict_return['hosts']:
+            if self.defaulthost not in dict_return['hosts']:
                 self.remaining_enumerations = len(dict_return['hosts']) + 1
                 self.script_manager.execute_script('settings_server_monitoring',
                                                    lambda result: self.cb_settings_server_monitoring_enumerate(True, result),
                                                    ['ENUMERATE',
-                                                    self.localhost,
+                                                    self.defaulthost,
                                                     '4223',
                                                     ''])
             else:
@@ -707,19 +707,19 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.script_manager.execute_script('settings_server_monitoring',
                                                lambda result: self.cb_settings_server_monitoring_enumerate(True, result),
                                                ['ENUMERATE',
-                                                self.localhost,
+                                                self.defaulthost,
                                                 '4223',
                                                 ''])
 
     def cb_settings_server_monitoring_get_localhost(self, result):
         if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_GET_LOCALHOST):
             self.update_gui(EVENT_RETURNED_REFRESH_FALSE)
-            self.localhost = None
+            self.defaulthost = None
             return
 
-        self.localhost = result.stdout
+        self.defaulthost = result.stdout
 
-        if not self.localhost:
+        if not self.defaulthost:
             QtGui.QMessageBox.information(get_main_window(),
                                           MESSAGEBOX_TITLE,
                                           MESSAGE_ERROR_HOSTNAME_EMPTY)
@@ -843,7 +843,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
                     host = ledit_host.text()
 
-                    if chkbox_used.checkState() != QtCore.Qt.Checked and host != self.localhost:
+                    if chkbox_used.checkState() != QtCore.Qt.Checked and host != self.defaulthost:
                         return False
 
         return True
@@ -1356,7 +1356,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_pbutton_sm_add_rule_clicked(self):
-        if not self.localhost:
+        if not self.defaulthost:
             QtGui.QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_NO_LOCALHOST)
@@ -1372,7 +1372,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         email_notifications = 'c,r'
 
         self.add_new_rule(EMPTY_SERVICE_NAME,
-                          self.localhost,
+                          self.defaulthost,
                           bricklet,
                           uid,
                           warning_low,
@@ -1395,9 +1395,22 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         if reply != QtGui.QMessageBox.Yes:
             return
 
-        # Remove all rules
-        self.list_rules = []
-        self.model_rules.removeRows(0, self.model_rules.rowCount())
+        # Remove all rules except the ones those are using the default host as host
+        for i in reversed(range(len(self.list_rules))):
+            if self.list_rules[i]['host'] == self.defaulthost:
+                continue
+
+            del self.list_rules[i]
+
+        for i in reversed(range(self.model_rules.rowCount())):
+            item_host = self.model_rules.item(i, INDEX_COL_HOSTS_HOST)
+            index_host = self.model_rules.indexFromItem(item_host)
+            host = self.tview_sm_rules.indexWidget(index_host).currentText()
+
+            if host == self.defaulthost:
+                continue
+
+            self.model_rules.removeRows(i, 1)
 
         # Delete all hosts except the default one
         for r in reversed(range(1, self.model_hosts.rowCount())):
@@ -1882,6 +1895,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     cbox_uid       = self.tview_sm_rules.indexWidget(index_uid)
 
                     self.populate_cbox_uids(cbox_host, cbox_bricklet, cbox_uid)
+
+                    break
 
         self.update_hosts_used()
         self.update_gui(EVENT_INPUT_CHANGED)

@@ -348,17 +348,21 @@ def cb_enumerate(uid,
         ignore_enumerate_fail()
         exit(0)
 
-    if device_identifier == BrickletPTC.DEVICE_IDENTIFIER:
-        dict_enumerate['ptc'].append(uid)
+    if device_identifier == BrickletPTC.DEVICE_IDENTIFIER and\
+       uid not in dict_enumerate['ptc']:
+            dict_enumerate['ptc'].append(uid)
 
-    elif device_identifier == BrickletTemperature.DEVICE_IDENTIFIER:
-        dict_enumerate['temperature'].append(uid)
+    elif device_identifier == BrickletTemperature.DEVICE_IDENTIFIER and\
+         uid not in dict_enumerate['temperature']:
+            dict_enumerate['temperature'].append(uid)
 
-    elif device_identifier == BrickletHumidity.DEVICE_IDENTIFIER:
-        dict_enumerate['humidity'].append(uid)
+    elif device_identifier == BrickletHumidity.DEVICE_IDENTIFIER and\
+         uid not in dict_enumerate['humidity']:
+            dict_enumerate['humidity'].append(uid)
 
-    elif device_identifier == BrickletAmbientLight.DEVICE_IDENTIFIER:
-        dict_enumerate['ambient_light'].append(uid)
+    elif device_identifier == BrickletAmbientLight.DEVICE_IDENTIFIER and\
+         uid not in dict_enumerate['ambient_light']:
+            dict_enumerate['ambient_light'].append(uid)
 
 if ACTION == 'GET':
     try:
