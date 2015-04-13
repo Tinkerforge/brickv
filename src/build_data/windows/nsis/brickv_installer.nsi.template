@@ -160,12 +160,6 @@ RequestExecutionLevel admin
   DetailPrint "Uninstall Brick Viewer..."
 
   ; Remove directories used
-  RMDir /R $INSTDIR\drivers
-  RMDir /R $INSTDIR\imageformats
-  RMDir /R $INSTDIR\OpenGL
-  RMDir /R $INSTDIR\OpenGL_accelerate
-  RMDir /R $INSTDIR\plugin_system
-  RMDir /R $INSTDIR\tcl
   RMDir /R "$INSTDIR"
 
   ; Remove menu shortcuts
@@ -205,16 +199,7 @@ Section "Install Brick Viewer ${BRICKV_VERSION}"
   DetailPrint "Install Brick Viewer..."
 
   SetOutPath "$INSTDIR"
-  File "..\*"
-
-  SetOutPath "$INSTDIR\drivers"
-  File /r "..\drivers\*"
-
-  SetOutPath "$INSTDIR\imageformats"
-  File /r "..\imageformats\*"
-
-  SetOutPath "$INSTDIR\OpenGL"
-  File /r "..\OpenGL\*"
+  File /r "..\*"
 
   ; Write the installation path into the registry
   WriteRegStr HKLM "Software\Tinkerforge\Brickv" "Install_Dir" "$INSTDIR"
