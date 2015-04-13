@@ -32,7 +32,8 @@ from brickv.plugin_system.plugins.red.program_utils import Download, ExpandingPr
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
 from brickv.plugin_system.plugins.red.script_manager import check_script_result, report_script_result
 from brickv.async_call import async_call
-from brickv.utils import get_main_window, get_resources_path, get_home_path, get_existing_directory
+from brickv.utils import get_main_window, get_home_path, get_existing_directory
+from brickv.load_pixmap import load_pixmap
 import os
 import posixpath
 import json
@@ -161,8 +162,8 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.any_refresh_in_progress = False # set from ProgramInfoMain.update_ui_state
         self.available_files         = []
         self.available_directories   = []
-        self.folder_icon             = QIcon(os.path.join(get_resources_path(), "folder-icon.png"))
-        self.file_icon               = QIcon(os.path.join(get_resources_path(), "file-icon.png"))
+        self.folder_icon             = QIcon(load_pixmap('folder-icon.png'))
+        self.file_icon               = QIcon(load_pixmap('file-icon.png'))
         self.tree_files_model        = QStandardItemModel(self)
         self.tree_files_model_header = ['Name', 'Size', 'Last Modified']
         self.tree_files_proxy_model  = FilesProxyModel(self)

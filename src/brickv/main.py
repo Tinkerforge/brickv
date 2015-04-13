@@ -65,6 +65,7 @@ from PyQt4.QtCore import QEvent, pyqtSignal
 from brickv import config
 from brickv.mainwindow import MainWindow
 from brickv.async_call import ASYNC_EVENT, async_event_handler
+from brickv.load_pixmap import load_pixmap
 
 logging.basicConfig(level=config.LOGGING_LEVEL,
                     format=config.LOGGING_FORMAT,
@@ -78,7 +79,7 @@ class BrickViewer(QApplication):
         QApplication.__init__(self, *args, **kwargs)
 
         self.object_creator_signal.connect(self.object_creator_slot)
-        self.setWindowIcon(QIcon(os.path.join(resources_path, 'brickv-icon.png')))
+        self.setWindowIcon(QIcon(load_pixmap('brickv-icon.png')))
 
     def object_creator_slot(self, object_creator):
         object_creator.create()

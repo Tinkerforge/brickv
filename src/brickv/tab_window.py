@@ -23,12 +23,13 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import os
+
 from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QWidget, QAbstractButton, QTabBar, QPainter, \
                         QSizePolicy, QIcon
 
-import os
-from brickv.utils import get_resources_path
+from brickv.load_pixmap import load_pixmap
 
 class IconButton(QAbstractButton):
     clicked = pyqtSignal()
@@ -77,8 +78,8 @@ class TabWindow(QWidget):
         self.name = name
         self.button = None # see tab()
         self.button_handler = button_handler
-        self.button_icon_default = QIcon(os.path.join(get_resources_path(), "tab-default-icon.png"))
-        self.button_icon_mouse_over = QIcon(os.path.join(get_resources_path(), "tab-mouse-over-icon.png"))
+        self.button_icon_default = QIcon(load_pixmap('tab-default-icon.png'))
+        self.button_icon_mouse_over = QIcon(load_pixmap('tab-mouse-over-icon.png'))
         self.cb_on_tab = None
         self.cb_on_untab = None
 

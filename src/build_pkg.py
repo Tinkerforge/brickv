@@ -52,9 +52,9 @@ def system(command):
     if os.system(command) != 0:
         exit(1)
 
-def freeze_plugin_images():
+def freeze_images():
     image_files = []
-    for root, dirnames, names in os.walk(os.path.join('brickv', 'plugin_system')):
+    for root, dirnames, names in os.walk('brickv'):
         for name in names:
             if os.path.isfile(os.path.join(root, name)):
                 _, ext = os.path.splitext(name)
@@ -63,7 +63,7 @@ def freeze_plugin_images():
                 if ext in ['bmp', 'png', 'jpg']:
                     image_files.append([os.path.join(root, name).replace('\\', '/').replace('brickv/', ''), ext])
 
-    images = open(os.path.join('brickv', 'frozen_plugin_images.py'), 'wb')
+    images = open(os.path.join('brickv', 'frozen_images.py'), 'wb')
     images.write('image_data = {\n'.encode('utf-8'))
 
     for image_file in image_files:
@@ -96,13 +96,6 @@ def build_macosx_pkg():
             if os.path.isfile(path):
                 data_files.append((os.path.join(root.replace(os.path.normcase("build_data/macosx/"), "")), [path]))
 
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'brickv-icon.png')]))
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-default-icon.png')]))
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-mouse-over-icon.png')]))
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'file-icon.png')]))
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'folder-icon.png')]))
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'dialog-warning.png')]))
-
     def delete_old():
         BUILD_PATH = os.path.join(PWD, "build")
         DIST_PATH = os.path.join(PWD, "dist")
@@ -114,7 +107,7 @@ def build_macosx_pkg():
     def create_app():
         system("python build_all_ui.py release")
 
-        freeze_plugin_images()
+        freeze_images()
 
         apps = [{"script": "brickv/main.py", "plist": plist}]
 
@@ -253,14 +246,7 @@ def build_windows_pkg():
             if os.path.isfile(path):
                 data_files.append((os.path.join(root.replace(os.path.normcase("build_data/windows/"), "")), [path]))
 
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'brickv-icon.png')]))
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-default-icon.png')]))
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'tab-mouse-over-icon.png')]))
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'file-icon.png')]))
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'folder-icon.png')]))
-    data_files.append((os.path.join('.'), [os.path.join('.', 'brickv', 'dialog-warning.png')]))
-
-    freeze_plugin_images()
+    freeze_images()
 
     setup(name = NAME,
           description = DESCRIPTION,
@@ -344,7 +330,7 @@ def build_linux_pkg():
 
     system("python build_all_ui.py release")
 
-    freeze_plugin_images()
+    freeze_images()
 
     src_path = os.path.join(os.getcwd(), 'brickv')
     dest_path = os.path.join(os.getcwd(), 'build_data', 'linux', 'brickv', 'usr', 'share', 'brickv')

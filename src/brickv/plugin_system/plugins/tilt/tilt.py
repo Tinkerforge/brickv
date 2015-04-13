@@ -22,13 +22,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout
+
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_tilt import BrickletTilt
 from brickv.utils import CallbackEmulator
-
-from brickv.bmp_to_pixmap import bmp_to_pixmap
-
-from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout
+from brickv.load_pixmap import load_masked_pixmap
 
 class Tilt(PluginBase):
     def __init__(self, *args):
@@ -41,9 +40,9 @@ class Tilt(PluginBase):
                                                self.increase_error_count)
 
         self.label = QLabel("Closed")
-        self.closed_pixmap = bmp_to_pixmap('plugin_system/plugins/tilt/tilt_closed.bmp')
-        self.open_pixmap = bmp_to_pixmap('plugin_system/plugins/tilt/tilt_open.bmp')
-        self.closed_vibrationg_pixmap = bmp_to_pixmap('plugin_system/plugins/tilt/tilt_closed_vibrating.bmp')
+        self.closed_pixmap = load_masked_pixmap('plugin_system/plugins/tilt/tilt_closed.bmp')
+        self.open_pixmap = load_masked_pixmap('plugin_system/plugins/tilt/tilt_open.bmp')
+        self.closed_vibrationg_pixmap = load_masked_pixmap('plugin_system/plugins/tilt/tilt_closed_vibrating.bmp')
         
         self.image_label = QLabel("")
         self.image_label.setPixmap(self.closed_pixmap)

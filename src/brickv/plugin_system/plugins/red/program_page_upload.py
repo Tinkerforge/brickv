@@ -28,7 +28,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_page import ProgramPage
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_page_upload import Ui_ProgramPageUpload
-from brickv.utils import get_resources_path
+from brickv.load_pixmap import load_pixmap
 import os
 import posixpath
 import stat
@@ -97,7 +97,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         self.button_start_upload.clicked.connect(self.start_upload)
 
         self.label_replace_icon.clear()
-        self.label_replace_icon.setPixmap(QPixmap(os.path.join(get_resources_path(), 'dialog-warning.png')))
+        self.label_replace_icon.setPixmap(load_pixmap('dialog-warning.png'))
 
         self.edit_new_name_checker = MandatoryLineEditChecker(self, self.label_new_name, self.edit_new_name)
 
