@@ -414,14 +414,20 @@ class Plot(QWidget):
             self.draw_y_scale(painter, curve_height, factor_y)
 
         # draw curves
-        if self.x_min != None:
+        if self.x_min != None and self.x_max != None:
+            x_min = self.x_min
+            x_max = self.x_max
+            drawLine = painter.drawLine
+
+            if self.scales_visible:
+                curve_x_offset = 0
+            else:
+                curve_x_offset = round((self.history_length_x - (x_max - x_min)) * factor_x)
+
             painter.save()
-            painter.translate(canvas_x + self.curve_outer_border,
+            painter.translate(canvas_x + self.curve_outer_border + curve_x_offset,
                               canvas_y + self.curve_outer_border + curve_height - 1) # -1 to accommodate the 1px width of the curve
             painter.scale(1, -1)
-
-            x_min = self.x_min
-            drawLine = painter.drawLine
 
             for c in range(len(self.curves_x)):
                 if not self.curves_visible[c]:
@@ -493,6 +499,9 @@ class Plot(QWidget):
         if self.x_min == None:
             self.x_min = x
 
+        if self.x_max == None:
+            self.x_max = x
+
         if self.curves_visible[c]:
             if self.y_min == None:
                 self.y_min = y
@@ -510,6 +519,9 @@ class Plot(QWidget):
         if self.curves_x_min[c] == None:
             self.curves_x_min[c] = x
 
+        if self.curves_x_max[c] == None:
+            self.curves_x_max[c] = x
+
         if self.curves_y_min[c] == None:
             self.curves_y_min[c] = y
         else:
@@ -520,27 +532,37 @@ class Plot(QWidget):
         else:
             self.curves_y_max[c] = max(self.curves_y_max[c], y)
 
-        if len(self.curves_x[c]) > 0 and (self.curves_x[c][-1] - self.curves_x[c][0]) >= self.history_length_x:
-            self.curves_x[c] = self.curves_x[c][self.curve_motion_granularity:]
-            self.curves_y[c] = self.curves_y[c][self.curve_motion_granularity:]
+        if len(self.curves_x[c]) > 0:
+            if (self.curves_x[c][-1] - self.curves_x[c][0]) >= self.history_length_x:
+                self.curves_x[c] = self.curves_x[c][self.curve_motion_granularity:]
+                self.curves_y[c] = self.curves_y[c][self.curve_motion_granularity:]
 
-            if len(self.curves_x[c]) > 0:
-                self.curves_x_min[c] = self.curves_x[c][0]
+                if len(self.curves_x[c]) > 0:
+                    self.curves_x_min[c] = self.curves_x[c][0]
+                else:
+                    self.curves_x_min[c] = None
+
+                if len(self.curves_x[c]) > 0:
+                    self.curves_x_max[c] = self.curves_x[c][-1]
+                else:
+                    self.curves_x_max[c] = None
+
+                self.curves_y_min[c] = min(self.curves_y[c])
+                self.curves_y_max[c] = max(self.curves_y[c])
+
+                self.update_x_min_max_y_min_max()
             else:
-                self.curves_x_min[c] = None
-
-            self.curves_y_min[c] = min(self.curves_y[c])
-            self.curves_y_max[c] = max(self.curves_y[c])
-
-            self.update_x_min_y_min_max()
+                self.curves_x_max[c] = self.curves_x[c][-1]
+                self.x_max = min(self.curves_x_max)
 
         if self.curves_visible[c] and (last_y_min != self.y_min or last_y_max != self.y_max):
             self.update_y_min_max_scale()
 
         self.update()
 
-    def update_x_min_y_min_max(self):
+    def update_x_min_max_y_min_max(self):
         self.x_min = min(self.curves_x_min)
+        self.x_max = min(self.curves_x_max)
 
         if sum(map(int, self.curves_visible)) > 0:
             self.y_min = min([curve_y_min for k, curve_y_min in enumerate(self.curves_y_min) if self.curves_visible[k]])
@@ -629,7 +651,7 @@ class Plot(QWidget):
 
         self.curves_visible[c] = show
 
-        self.update_x_min_y_min_max()
+        self.update_x_min_max_y_min_max()
 
         if last_y_min != self.y_min or last_y_max != self.y_max:
             self.update_y_min_max_scale()
@@ -641,9 +663,11 @@ class Plot(QWidget):
         self.curves_x = [] # per curve x values
         self.curves_y = [] # per curve y values
         self.curves_x_min = [] # per curve minimum x value
+        self.curves_x_max = [] # per curve maximum x value
         self.curves_y_min = [] # per curve minimum y value
         self.curves_y_max = [] # per curve maximum y value
         self.x_min = None # minimum x value over all curves
+        self.x_max = None # maximum x value over all curves
         self.y_min = None # minimum y value over all curves
         self.y_max = None # maximum y value over all curves
         self.y_type = None
@@ -653,6 +677,7 @@ class Plot(QWidget):
             self.curves_x.append([])
             self.curves_y.append([])
             self.curves_x_min.append(None)
+            self.curves_x_max.append(None)
             self.curves_y_min.append(None)
             self.curves_y_max.append(None)
 
