@@ -8,5 +8,5 @@ GenericName=Brick Viewer
 Terminal=false
 Icon=brickv-icon.png
 Type=Application
-Exec=python /usr/share/brickv/main.py
+Exec=brickv
 Categories=Electronics;
