@@ -121,17 +121,16 @@ INDEX_COL_HOSTS_HIDDEN_HOST         = 7
 COUNT_COLUMNS_RULES_MODEL = 9
 COUNT_COLUMNS_HOSTS_MODEL = 8
 
-EVENT_CLICKED_REMOVE_ALL_HOSTS_RULES = 1
-EVENT_CLICKED_REFRESH                = 2
-EVENT_CLICKED_SAVE                   = 3
-EVENT_CLICKED_REFRESH_GENERIC        = 4
-EVENT_INPUT_CHANGED                  = 5
-EVENT_RETURNED_REFRESH_TRUE          = 6
-EVENT_RETURNED_REFRESH_FALSE         = 7
-EVENT_RETURNED_SAVE_TRUE             = 8
-EVENT_RETURNED_SAVE_FALSE            = 9
-EVENT_RETURNED_REFRESH_GENERIC       = 10
-EVENT_UPDATE_UIDS_IN_RULES           = 11
+EVENT_CLICKED_REFRESH                = 1
+EVENT_CLICKED_SAVE                   = 2
+EVENT_CLICKED_REFRESH_GENERIC        = 3
+EVENT_INPUT_CHANGED                  = 4
+EVENT_RETURNED_REFRESH_TRUE          = 5
+EVENT_RETURNED_REFRESH_FALSE         = 6
+EVENT_RETURNED_SAVE_TRUE             = 7
+EVENT_RETURNED_SAVE_FALSE            = 8
+EVENT_RETURNED_REFRESH_GENERIC       = 9
+EVENT_UPDATE_UIDS_IN_RULES           = 10
 
 COLOR_WARNING  = QtGui.QColor(255, 255, 0)
 COLOR_CRITICAL = QtGui.QColor(255, 0, 0)
@@ -196,7 +195,8 @@ MESSAGE_ERROR_ENUMERATION_ERROR               = 'Enumeration failed'
 MESSAGE_ERROR_SCRIPT_RETURN_DATA              = 'Error occured while processing data returned from script'
 MESSAGE_ERROR_HOSTNAME_EMPTY                  = 'Hostname empty'
 MESSAGE_WARNING_CHECK_UNUSED_HOST             = 'There are unused hosts which will be lost after a save. Continue?'
-MESSAGE_WARNING_REMOVE_ALL_RULES_HOSTS        = 'This will remove all the rules and the hosts. Continue?'
+MESSAGE_WARNING_REMOVE_ALL_RULES              = 'This will remove all the rules those do not depend on the default host. Continue?'
+MESSAGE_WARNING_REMOVE_ALL_HOSTS              = 'This will remove all the hosts except the default host and the rules those depend on these hosts. Continue?'
 MESSAGE_WARNING_REMOVE_DEPENDANT_RULES        = 'There are rules which depend on this host. Deleting this host will also delete all the dependant rules. Continue?'
 MESSAGE_WARNING_REMOVE_CORRESPONDING_HOST     = 'If this is the only rule that depends on the host then the corresponding host will be also removed. Continue?'
 
@@ -243,8 +243,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         # Connecting signals to slots
         self.pbutton_sm_add_rule.clicked.connect(self.slot_pbutton_sm_add_rule_clicked)
-        self.pbutton_sm_remove_all_rules.clicked.connect(self.slot_pbutton_sm_remove_all_rules_hosts_clicked)
-        self.pbutton_sm_remove_all_hosts.clicked.connect(self.slot_pbutton_sm_remove_all_rules_hosts_clicked)
+        self.pbutton_sm_remove_all_rules.clicked.connect(self.slot_pbutton_sm_remove_all_rules_clicked)
+        self.pbutton_sm_remove_all_hosts.clicked.connect(self.slot_pbutton_sm_remove_all_hosts_clicked)
         self.pbutton_sm_add_host.clicked.connect(self.slot_pbutton_sm_add_host_clicked)
         self.pbutton_sm_refresh.clicked.connect(self.slot_pbutton_sm_refresh_clicked)
         self.pbutton_sm_save.clicked.connect(self.slot_pbutton_sm_save_clicked)
@@ -259,7 +259,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.chkbox_sm_email_password_show.stateChanged.connect(self.slot_chkbox_sm_email_password_show_state_changed)
 
         self.from_constructor = True
-        self.slot_chkbox_sm_email_enable_state_changed(self.chkbox_sm_email_enable.checkState())
+        self.slot_chkbox_sm_email_enable_state_changed(self.chkbox_sm_email_enable.isChecked())
 
     def tab_on_focus(self):
         self.is_tab_on_focus = True
@@ -346,7 +346,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 item = self.model_hosts.item(r, c)
                 index = self.model_hosts.indexFromItem(item)
                 chkbox = QtGui.QCheckBox()
-                chkbox.setCheckState(QtCore.Qt.Unchecked)
+                chkbox.setChecked(False)
                 chkbox.setEnabled(False)
                 self.tview_sm_hosts.setIndexWidget(index, chkbox)
 
@@ -614,11 +614,11 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.ledit_sm_email_password.setText(self.dict_email['password'])
 
                 if self.dict_email['tls'] == '1':
-                    self.chkbox_sm_email_tls.setCheckState(QtCore.Qt.Checked)
+                    self.chkbox_sm_email_tls.setChecked(True)
                 else:
-                    self.chkbox_sm_email_tls.setCheckState(QtCore.Qt.Unchecked)
+                    self.chkbox_sm_email_tls.setChecked(False)
 
-                self.chkbox_sm_email_enable.setCheckState(QtCore.Qt.Checked)
+                self.chkbox_sm_email_enable.setChecked(True)
 
             # Updating the used field of the hosts list
             self.update_hosts_used()
@@ -822,9 +822,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     chkbox_hosts_used = self.tview_sm_hosts.indexWidget(index_hosts_used)
 
                     if match_found:
-                        chkbox_hosts_used.setCheckState(QtCore.Qt.Checked)
+                        chkbox_hosts_used.setChecked(True)
                     else:
-                        chkbox_hosts_used.setCheckState(QtCore.Qt.Unchecked)
+                        chkbox_hosts_used.setChecked(False)
 
     def check_unused_host(self):
         if self.model_hosts.rowCount() == 1:
@@ -843,7 +843,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
                     host = ledit_host.text()
 
-                    if chkbox_used.checkState() != QtCore.Qt.Checked and host != self.defaulthost:
+                    if not chkbox_used.isChecked() and host != self.defaulthost:
                         return False
 
         return True
@@ -1090,14 +1090,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.tview_sm_rules.setIndexWidget(index, btn)
 
     def update_gui(self, event):
-        if event == EVENT_CLICKED_REMOVE_ALL_HOSTS_RULES:
-            self.pbutton_sm_remove_all_rules.setEnabled(False)
-            self.pbutton_sm_remove_all_hosts.setEnabled(False)
-            self.chkbox_sm_email_enable.setCheckState(QtCore.Qt.Unchecked)
-            self.gbox_sm_email.setEnabled(False)
-            self.update_gui(EVENT_INPUT_CHANGED)
-
-        elif event == EVENT_CLICKED_REFRESH:
+        if event == EVENT_CLICKED_REFRESH:
             self.show_working_wait(True)
             self.pbutton_sm_refresh.setText('Refreshing...')
             self.sarea_sm.setEnabled(False)
@@ -1124,7 +1117,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             else:
                 self.pbutton_sm_remove_all_rules.setEnabled(False)
                 self.gbox_sm_email.setEnabled(False)
-                self.chkbox_sm_email_enable.setCheckState(QtCore.Qt.Unchecked)
+                self.chkbox_sm_email_enable.setChecked(False)
 
             if self.model_hosts.rowCount() > 1:
                 self.pbutton_sm_remove_all_hosts.setEnabled(True)
@@ -1385,44 +1378,105 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.update_hosts_used()
         self.update_gui(EVENT_INPUT_CHANGED)
 
-    def slot_pbutton_sm_remove_all_rules_hosts_clicked(self):
+    def slot_pbutton_sm_remove_all_rules_clicked(self):
         reply = QtGui.QMessageBox.question(get_main_window(),
                                            MESSAGEBOX_TITLE,
-                                           MESSAGE_WARNING_REMOVE_ALL_RULES_HOSTS,
+                                           MESSAGE_WARNING_REMOVE_ALL_RULES,
                                            QtGui.QMessageBox.Yes,
                                            QtGui.QMessageBox.No)
 
         if reply != QtGui.QMessageBox.Yes:
             return
 
-        # Remove all rules except the ones those are using the default host as host
+        # Remove all rules except the ones those are using the default host as host.
+        # Also remove unused hosts after removing the rules.
+
+        # From data structure
         for i in reversed(range(len(self.list_rules))):
             if self.list_rules[i]['host'] == self.defaulthost:
                 continue
 
             del self.list_rules[i]
 
-        for i in reversed(range(self.model_rules.rowCount())):
-            item_host = self.model_rules.item(i, INDEX_COL_HOSTS_HOST)
+        # From GUI model
+        for r in reversed(range(self.model_rules.rowCount())):
+            item_host = self.model_rules.item(r, INDEX_COL_HOSTS_HOST)
             index_host = self.model_rules.indexFromItem(item_host)
             host = self.tview_sm_rules.indexWidget(index_host).currentText()
 
             if host == self.defaulthost:
                 continue
 
-            self.model_rules.removeRows(i, 1)
+            self.model_rules.removeRows(r, 1)
 
-        # Delete all hosts except the default one
-        for r in reversed(range(1, self.model_hosts.rowCount())):
+        self.update_hosts_used()
+
+        # Remove hosts which are not being used by any rules
+        for r in reversed(range(self.model_hosts.rowCount())):
+            item_used = self.model_hosts.item(r, INDEX_COL_HOSTS_USED)
+            index_used = self.model_hosts.indexFromItem(item_used)
+            used = self.tview_sm_hosts.indexWidget(index_used).isChecked()
+
+            if used:
+                continue
+
             item_host = self.model_hosts.item(r, INDEX_COL_HOSTS_HOST)
             index_host = self.model_hosts.indexFromItem(item_host)
             host = self.tview_sm_hosts.indexWidget(index_host).text()
+
+            if host == self.defaulthost:
+                continue
+
+            self.model_hosts.removeRows(r, 1)
+
+        self.update_gui(EVENT_INPUT_CHANGED)
+
+    def slot_pbutton_sm_remove_all_hosts_clicked(self):
+        reply = QtGui.QMessageBox.question(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           MESSAGE_WARNING_REMOVE_ALL_HOSTS,
+                                           QtGui.QMessageBox.Yes,
+                                           QtGui.QMessageBox.No)
+
+        if reply != QtGui.QMessageBox.Yes:
+            return
+
+        # Delete all hosts except the default one.
+        # Also remove all dependant rules while removing a host.
+        
+        # From data structure
+        for host in self.dict_hosts.keys():
+            if host == self.defaulthost:
+                continue
+
+            for i in reversed(range(len(self.list_rules))):
+                if host != self.list_rules[i]['host']:
+                    continue
+
+                del self.list_rules[i]
+
+            for r in reversed(range(self.model_rules.rowCount())):
+                item_host = self.model_rules.item(r, INDEX_COL_RULES_HOST)
+                index_host = self.model_rules.indexFromItem(item_host)
+
+                if host != self.tview_sm_rules.indexWidget(index_host).currentText():
+                    continue
+
+                self.model_rules.removeRows(r, 1)
+
             del self.dict_hosts[host]
 
-        # Delete all hosts except the default one
-        self.model_hosts.removeRows(1, self.model_hosts.rowCount() - 1)
+        # From the GUI model
+        for r in reversed(range(self.model_hosts.rowCount())):
+            item_host = self.model_hosts.item(r, INDEX_COL_HOSTS_HOST)
+            index_host = self.model_hosts.indexFromItem(item_host)
+            
+            if self.defaulthost == self.tview_sm_hosts.indexWidget(index_host).text():
+                continue
 
-        self.update_gui(EVENT_CLICKED_REMOVE_ALL_HOSTS_RULES)
+            self.model_hosts.removeRows(r, 1)
+
+        self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_pbutton_sm_add_host_clicked(self):
         if self.working:
@@ -1649,7 +1703,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                         index_used  = self.model_hosts.indexFromItem(item_used)
                         chkbox_used = self.tview_sm_hosts.indexWidget(index_used)
     
-                        if chkbox_used.checkState() != QtCore.Qt.Checked:
+                        if not chkbox_used.isChecked():
                             self.model_hosts.removeRows(r, 1)
 
         if self.model_rules.rowCount() > 0:
