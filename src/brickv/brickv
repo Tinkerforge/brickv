@@ -3,6 +3,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
 
 brickv: Brick Viewer startup
 
@@ -26,9 +27,11 @@ import sys
 
 try:
     from brickv.main import main
+
     if __name__ == "__main__":
         main()
-        sys.exit(0)
 except ImportError:
-    print('Could not import brickv. Please make sure that brickv is installed properly. If you want to start brickv from source, you should direclty call "python main.py".')
+    print('Could not import brickv. Please make sure that brickv is installed properly. ' + \
+          'If you want to start brickv from source, you should direclty call "python main.py".')
+
     sys.exit(1)
