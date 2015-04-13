@@ -137,6 +137,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         self.pbutton_net_wireless_scan.clicked.connect(self.slot_pbutton_net_wireless_scan_clicked)
         self.pbutton_net_conf_refresh.clicked.connect(self.slot_network_conf_refresh_clicked)
         self.pbutton_net_connect.clicked.connect(self.slot_network_connect_clicked)
+        self.pbutton_net_conf_change_hostname.clicked.connect(self.slot_change_hostname_clicked)
 
         # Network fields
         self.address_configuration_gui(False)
@@ -1154,6 +1155,20 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                        REDFile.FLAG_TRUNCATE, 0o500, 0, 0),
                        lambda x: cb_open(config, write_wired_settings, x, iname_previous),
                        cb_open_error)
+
+    def slot_change_hostname_clicked(self):
+        input_dialog_hostname = QtGui.QInputDialog()
+        input_dialog_hostname.setInputMode(QtGui.QInputDialog.TextInput)
+        hostname, ok = input_dialog_hostname.getText(get_main_window(),
+                                                     'Settings | Network',
+                                                     '''Note: After clicking OK if the entered hostname is valid
+then the RED Brick will automatically reboot.''',
+                                                     QtGui.QLineEdit.Normal,
+                                                     self.label_net_hostname.text())
+        if not ok or not hostname:
+            return
+
+        print 'proceeding'
 
     def slot_cbox_net_intf_current_idx_changed(self, idx):
         interface_name = self.cbox_net_intf.itemData(idx, INTERFACE_NAME_USER_ROLE)
