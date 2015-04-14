@@ -4,7 +4,7 @@ Section: electronics
 Maintainer: Olaf Lüke <olaf@tinkerforge.com>
 Architecture: all
 Priority: optional
-Installed-Size: 5387
+Installed-Size: <<INSTALLED_SIZE>>
 Depends: python, python-qt4, python-qt4-gl, python-opengl, python-serial
 Description: Brick Viewer
  Brick Viewer is a small Qt GUI with which one can control and test

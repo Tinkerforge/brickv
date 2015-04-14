@@ -4,7 +4,7 @@ Section: electronics
 Maintainer: Matthias Bolte <matthias@tinkerforge.com>
 Architecture: all
 Priority: optional
-Installed-Size: 17
+Installed-Size: <<INSTALLED_SIZE>>
 Depends: python, python-argparse, python-serial
 Description: Flash firmware onto Bricks from a terminal
  brick-flash-cmd can be used to update the firmware of Tinkerforge Bricks

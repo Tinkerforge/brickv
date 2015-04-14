@@ -43,6 +43,7 @@ from distutils.core import setup
 import glob
 import shutil
 import struct
+import subprocess
 import brickv.config
 
 DESCRIPTION = 'Brick Viewer'
@@ -51,6 +52,24 @@ NAME = 'Brickv'
 def system(command):
     if os.system(command) != 0:
         exit(1)
+
+def check_output(*popenargs, **kwargs):
+    if 'stdout' in kwargs:
+        raise ValueError('stdout argument not allowed, it will be overridden.')
+
+    process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
+    output, unused_err = process.communicate()
+    retcode = process.poll()
+
+    if retcode:
+        cmd = kwargs.get("args")
+
+        if cmd is None:
+            cmd = popenargs[0]
+
+        raise subprocess.CalledProcessError(retcode, cmd, output=output)
+
+    return output
 
 def specialize_template(template_filename, destination_filename, replacements):
     template_file = open(template_filename, 'rb')
@@ -397,8 +416,10 @@ def build_linux_pkg():
     system('find brickv/usr -type f -path *.pyc -exec rm {} \;')
     system('find brickv/usr -type d -exec chmod 0755 {} \;')
 
+    installed_size = int(check_output(['du', '-s', 'brickv/usr']).split('\t')[0])
     specialize_template('brickv/DEBIAN/control', 'brickv/DEBIAN/control',
-                        {'<<VERSION>>': brickv.config.BRICKV_VERSION})
+                        {'<<VERSION>>': brickv.config.BRICKV_VERSION,
+                         '<<INSTALLED_SIZE>>': str(installed_size)})
 
     system('chown -R root:root brickv/usr')
     system('dpkg -b brickv/ brickv-' + brickv.config.BRICKV_VERSION + '_all.deb')
@@ -444,8 +465,10 @@ def build_linux_cmd_pkg():
     build_data_path = os.path.join(os.getcwd(), 'build_data', 'linux')
     os.chdir(build_data_path)
 
+    installed_size = int(check_output(['du', '-s', 'brick-flash-cmd/usr']).split('\t')[0])
     specialize_template('brick-flash-cmd/DEBIAN/control', 'brick-flash-cmd/DEBIAN/control',
-                        {'<<VERSION>>': BRICK_FLASH_CMD_VERSION})
+                        {'<<VERSION>>': BRICK_FLASH_CMD_VERSION,
+                         '<<INSTALLED_SIZE>>': str(installed_size)})
 
     system('chmod 0755 brick-flash-cmd/usr/bin/brick-flash-cmd')
     system('find brick-flash-cmd/usr -type d -exec chmod 0755 {} \;')
