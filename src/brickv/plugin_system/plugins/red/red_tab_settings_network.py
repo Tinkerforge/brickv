@@ -1157,18 +1157,57 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                        cb_open_error)
 
     def slot_change_hostname_clicked(self):
+        def cb_settings_network_change_hostname(result):
+            self.show_please_wait(WORKING_STATE_DONE)
+
+            if not self.is_tab_on_focus:
+                return
+
+            if result.exit_code != 0:
+                err_msg = 'Error occured while changing hostname.'
+
+                if result.stderr:
+                    err_msg = err_msg + '\n\n' + unicode(result.stderr)
+
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           'Settings | Network',
+                                           err_msg)
+
+        hostname_old = self.label_net_hostname.text()
         input_dialog_hostname = QtGui.QInputDialog()
         input_dialog_hostname.setInputMode(QtGui.QInputDialog.TextInput)
-        hostname, ok = input_dialog_hostname.getText(get_main_window(),
+        hostname_new, ok = input_dialog_hostname.getText(get_main_window(),
                                                      'Settings | Network',
-                                                     '''Note: After clicking OK if the entered hostname is valid
-then the RED Brick will automatically reboot.''',
+                                                     'Hostname:',
                                                      QtGui.QLineEdit.Normal,
                                                      self.label_net_hostname.text())
-        if not ok or not hostname:
+        if not ok or not hostname_new:
             return
 
-        print 'proceeding'
+        if hostname_old == hostname_new:
+            return
+
+        # Checking for non ASCII characters
+        try:
+            hostname_new.encode('ascii')
+        except:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       'Settings | Network',
+                                       'Hostname contains non ASCII characters.')
+            return
+
+        # Checking for blank spaces
+        if ' ' in hostname_new:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       'Settings | Network',
+                                       'Hostname contains blank spaces.')
+            return
+
+        self.show_please_wait(WORKING_STATE_REFRESH)
+
+        self.script_manager.execute_script('settings_network_change_hostname',
+                                           cb_settings_network_change_hostname,
+                                           [hostname_old, hostname_new])
 
     def slot_cbox_net_intf_current_idx_changed(self, idx):
         interface_name = self.cbox_net_intf.itemData(idx, INTERFACE_NAME_USER_ROLE)
