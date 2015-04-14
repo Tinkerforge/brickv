@@ -2,7 +2,7 @@
 """
 Segment Display 4x7 Plugin
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 segment_display_4x7.py: Segment Display 4x7 Plugin Implementation
 
@@ -71,6 +71,8 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
         
         self.brightness = 7
         self.box_brightness.currentIndexChanged.connect(self.brightness_changed)
+        self.button_all_segments_on.clicked.connect(self.all_segments_on_clicked)
+        self.button_all_segments_off.clicked.connect(self.all_segments_off_clicked)
         self.button_start.clicked.connect(self.start_clicked)
         
         def get_clicked_func(digit, segment):
@@ -90,14 +92,26 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
         self.counter_timer = QTimer()
         self.counter_timer.timeout.connect(self.update_counter)
         self.counter_timer.setInterval(100)
-            
+
+    def all_segments_on_clicked(self):
+        self.counter_timer.stop()
+        value = ([0xFF, 0xFF, 0xFF, 0xFF], self.brightness, True)
+        self.sd4x7.set_segments(*value)
+        self.cb_get_segments(value)
+
+    def all_segments_off_clicked(self):
+        self.counter_timer.stop()
+        value = ([0, 0, 0, 0], self.brightness, False)
+        self.sd4x7.set_segments(*value)
+        self.cb_get_segments(value)
+
     def cb_counter_finished(self):
         self.counter_timer.stop()
         async_call(self.sd4x7.get_segments, None, self.cb_get_segments, self.increase_error_count)
             
     def update_counter(self):
         async_call(self.sd4x7.get_segments, None, self.cb_get_segments, self.increase_error_count)
-            
+
     def start_clicked(self):
         fr = self.box_from.value()
         to = self.box_to.value()
@@ -148,9 +162,8 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
             else:
                 self.digits[digit][segment].setStyleSheet(self.STYLE_ON[self.brightness])
                 self.digit_state[digit][segment] = True
-            
+
         self.update_segments()
-            
 
     def update_segments(self):
         segments = [0, 0, 0, 0]
@@ -158,10 +171,9 @@ class SegmentDisplay4x7(PluginBase, Ui_SegmentDisplay4x7):
             for s in range(7):
                 if self.digit_state[d][s]:
                     segments[d] |= (1 << s)
-                    
-                    
+
         self.sd4x7.set_segments(segments, self.brightness, self.digit_state[4][0])
-        
+
     def cb_get_segments(self, value):
         segments, brightness, colon = value
         

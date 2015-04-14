@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>685</width>
-    <height>344</height>
+    <width>699</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -954,6 +954,20 @@
          <string>7 (bright)</string>
         </property>
        </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_all_segments_on">
+       <property name="text">
+        <string>All Segments On</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_all_segments_off">
+       <property name="text">
+        <string>All Segments Off</string>
+       </property>
       </widget>
      </item>
      <item>
