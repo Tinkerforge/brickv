@@ -44,7 +44,7 @@ import glob
 import shutil
 import struct
 import subprocess
-import brickv.config
+from brickv.config import BRICKV_VERSION
 
 DESCRIPTION = 'Brick Viewer'
 NAME = 'Brickv'
@@ -127,8 +127,8 @@ def build_macosx_pkg():
 
     plist = dict(
         CFBundleName = 'Brickv',
-        CFBundleShortVersionString = brickv.config.BRICKV_VERSION,
-        CFBundleGetInfoString = ' '.join(['Brickv', brickv.config.BRICKV_VERSION]),
+        CFBundleShortVersionString = BRICKV_VERSION,
+        CFBundleGetInfoString = ' '.join(['Brickv', BRICKV_VERSION]),
         CFBundleExecutable = 'main',
         CFBundleIdentifier = 'com.tinkerforge.brickv',
         CFBundleIconFile = 'brickv-icon.icns',
@@ -188,7 +188,7 @@ def build_macosx_pkg():
 
         setup(
             name = 'brickv',
-            version = brickv.config.BRICKV_VERSION,
+            version = BRICKV_VERSION,
             description = 'Brick Viewer Software',
             author = 'Tinkerforge',
             author_email = 'info@tinkerforge.com',
@@ -294,7 +294,7 @@ def build_windows_pkg():
 
     setup(name = NAME,
           description = DESCRIPTION,
-          version = brickv.config.BRICKV_VERSION,
+          version = BRICKV_VERSION,
           data_files = data_files,
           options = {
                     "py2exe" : {
@@ -346,13 +346,13 @@ def build_windows_pkg():
     # build nsis
     specialize_template('build_data/windows/nsis/brickv_installer.nsi.template',
                         'dist/nsis/brickv_installer.nsi',
-                        {'<<BRICKV_DOT_VERSION>>': brickv.config.BRICKV_VERSION,
-                         '<<BRICKV_UNDERSCORE_VERSION>>': brickv.config.BRICKV_VERSION.replace('.', '_')})
+                        {'<<BRICKV_DOT_VERSION>>': BRICKV_VERSION,
+                         '<<BRICKV_UNDERSCORE_VERSION>>': BRICKV_VERSION.replace('.', '_')})
 
     system('"C:\\Program Files\\NSIS\\makensis.exe" dist\\nsis\\brickv_installer.nsi')
 
     dist_nsis_dir = os.path.join(os.getcwd(), 'dist', 'nsis')
-    installer = 'brickv_windows_{0}.exe'.format(brickv.config.BRICKV_VERSION.replace('.', '_'))
+    installer = 'brickv_windows_{0}.exe'.format(BRICKV_VERSION.replace('.', '_'))
 
     if os.path.exists(installer):
         os.unlink(installer)
@@ -418,11 +418,11 @@ def build_linux_pkg():
 
     installed_size = int(check_output(['du', '-s', 'brickv/usr']).split('\t')[0])
     specialize_template('brickv/DEBIAN/control', 'brickv/DEBIAN/control',
-                        {'<<VERSION>>': brickv.config.BRICKV_VERSION,
+                        {'<<VERSION>>': BRICKV_VERSION,
                          '<<INSTALLED_SIZE>>': str(installed_size)})
 
     system('sudo chown -R root:root brickv/usr')
-    system('dpkg -b brickv/ brickv-' + brickv.config.BRICKV_VERSION + '_all.deb')
+    system('dpkg -b brickv/ brickv-{0}_all.deb'.format(BRICKV_VERSION))
     system('sudo chown -R `logname`:`logname` brickv/usr')
 
 
@@ -473,7 +473,7 @@ def build_linux_cmd_pkg():
     system('chmod 0755 brick-flash-cmd/usr/bin/brick-flash-cmd')
     system('find brick-flash-cmd/usr -type d -exec chmod 0755 {} \;')
     system('sudo chown -R root:root brick-flash-cmd/usr')
-    system('dpkg -b brick-flash-cmd/ brick-flash-cmd-' + BRICK_FLASH_CMD_VERSION + '_all.deb')
+    system('dpkg -b brick-flash-cmd/ brick-flash-cmd-{0}_all.deb'.format(BRICK_FLASH_CMD_VERSION))
     system('sudo chown -R `logname`:`logname` brick-flash-cmd/usr')
 
 
