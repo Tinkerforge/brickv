@@ -199,7 +199,7 @@ Section "Install Brick Viewer ${BRICKV_VERSION}"
   DetailPrint "Install Brick Viewer..."
 
   SetOutPath "$INSTDIR"
-  File /r "..\*"
+  File /r /x nsis ..\*
 
   ; Write the installation path into the registry
   WriteRegStr HKLM "Software\Tinkerforge\Brickv" "Install_Dir" "$INSTDIR"
