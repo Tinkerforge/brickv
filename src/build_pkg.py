@@ -52,6 +52,31 @@ def system(command):
     if os.system(command) != 0:
         exit(1)
 
+def specialize_template(template_filename, destination_filename, replacements):
+    template_file = open(template_filename, 'rb')
+    lines = []
+    replaced = set()
+
+    for line in template_file.readlines():
+        for key in replacements:
+            replaced_line = line.replace(key, replacements[key])
+
+            if replaced_line != line:
+                replaced.add(key)
+
+            line = replaced_line
+
+        lines.append(line)
+
+    template_file.close()
+
+    if replaced != set(replacements.keys()):
+        raise Exception('Not all replacements for {0} have been applied'.format(template_filename))
+
+    destination_file = open(destination_filename, 'wb')
+    destination_file.writelines(lines)
+    destination_file.close()
+
 def freeze_images():
     image_files = []
     for root, dirnames, names in os.walk('brickv'):
@@ -300,12 +325,10 @@ def build_windows_pkg():
     #    sign_py2exe('dist\\brickv.exe')
 
     # build nsis
-    lines = []
-    for line in file('build_data/windows/nsis/brickv_installer.nsi.template', 'rb').readlines():
-        line = line.replace('<<BRICKV_DOT_VERSION>>', brickv.config.BRICKV_VERSION)
-        line = line.replace('<<BRICKV_UNDERSCORE_VERSION>>', brickv.config.BRICKV_VERSION.replace('.', '_'))
-        lines.append(line)
-    file('dist/nsis/brickv_installer.nsi', 'wb').writelines(lines)
+    specialize_template('build_data/windows/nsis/brickv_installer.nsi.template',
+                        'dist/nsis/brickv_installer.nsi',
+                        {'<<BRICKV_DOT_VERSION>>': brickv.config.BRICKV_VERSION,
+                         '<<BRICKV_UNDERSCORE_VERSION>>': brickv.config.BRICKV_VERSION.replace('.', '_')})
 
     system('"C:\\Program Files\\NSIS\\makensis.exe" dist\\nsis\\brickv_installer.nsi')
 
@@ -371,20 +394,11 @@ def build_linux_pkg():
     build_data_path = os.path.join(os.getcwd(), 'build_data', 'linux')
     os.chdir(build_data_path)
 
-    STEXT = 'Version:'
-    RTEXT = 'Version: {0}\n'.format(brickv.config.BRICKV_VERSION)
-
-    with open(os.path.join('brickv', 'DEBIAN', 'control'), 'rb') as f:
-        lines = [l.decode('utf-8') for l in f.readlines()]
-
-    with open(os.path.join('brickv', 'DEBIAN', 'control'), 'wb') as f:
-        for line in lines:
-            if not line.find(STEXT) == -1:
-                line = RTEXT
-            f.write(line.encode('utf-8'))
-
     system('find brickv/usr -type f -path *.pyc -exec rm {} \;')
     system('find brickv/usr -type d -exec chmod 0755 {} \;')
+
+    specialize_template('brickv/DEBIAN/control', 'brickv/DEBIAN/control',
+                        {'<<VERSION>>': brickv.config.BRICKV_VERSION})
 
     system('chown -R root:root brickv/usr')
     system('dpkg -b brickv/ brickv-' + brickv.config.BRICKV_VERSION + '_all.deb')
@@ -430,19 +444,8 @@ def build_linux_cmd_pkg():
     build_data_path = os.path.join(os.getcwd(), 'build_data', 'linux')
     os.chdir(build_data_path)
 
-    STEXT = 'Version:'
-    RTEXT = 'Version: {0}\n'.format(BRICK_FLASH_CMD_VERSION)
-
-    f = open(os.path.join('brick-flash-cmd', 'DEBIAN', 'control'), 'rb')
-    lines = f.readlines()
-    f.close()
-
-    f = open(os.path.join('brick-flash-cmd', 'DEBIAN', 'control'), 'wb')
-    for line in lines:
-        if not line.find(STEXT) == -1:
-            line = RTEXT
-        f.write(line)
-    f.close()
+    specialize_template('brick-flash-cmd/DEBIAN/control', 'brick-flash-cmd/DEBIAN/control',
+                        {'<<VERSION>>': BRICK_FLASH_CMD_VERSION})
 
     system('chmod 0755 brick-flash-cmd/usr/bin/brick-flash-cmd')
     system('find brick-flash-cmd/usr -type d -exec chmod 0755 {} \;')
