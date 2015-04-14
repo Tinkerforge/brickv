@@ -364,8 +364,8 @@ def build_windows_pkg():
 
 
 def build_linux_pkg():
-    if os.geteuid() != 0:
-        sys.stderr.write("build_pkg for Linux has to be started as root, exiting\n")
+    if os.geteuid() == 0:
+        sys.stderr.write("build_pkg for Linux must not be started as root, exiting\n")
         sys.exit(1)
 
     print('building brickv package')
@@ -421,16 +421,16 @@ def build_linux_pkg():
                         {'<<VERSION>>': brickv.config.BRICKV_VERSION,
                          '<<INSTALLED_SIZE>>': str(installed_size)})
 
-    system('chown -R root:root brickv/usr')
+    system('sudo chown -R root:root brickv/usr')
     system('dpkg -b brickv/ brickv-' + brickv.config.BRICKV_VERSION + '_all.deb')
-    system('chown -R `logname`:`logname` brickv/usr')
+    system('sudo chown -R `logname`:`logname` brickv/usr')
 
 
 BRICK_FLASH_CMD_VERSION = '1.0.0'
 
 def build_linux_cmd_pkg():
-    if os.geteuid() != 0:
-        sys.stderr.write("build_pkg for Linux has to be started as root, exiting\n")
+    if os.geteuid() == 0:
+        sys.stderr.write("build_pkg for Linux must not be started as root, exiting\n")
         sys.exit(1)
 
     print('building brick-flash-cmd package')
@@ -472,9 +472,9 @@ def build_linux_cmd_pkg():
 
     system('chmod 0755 brick-flash-cmd/usr/bin/brick-flash-cmd')
     system('find brick-flash-cmd/usr -type d -exec chmod 0755 {} \;')
-    system('chown -R root:root brick-flash-cmd/usr')
+    system('sudo chown -R root:root brick-flash-cmd/usr')
     system('dpkg -b brick-flash-cmd/ brick-flash-cmd-' + BRICK_FLASH_CMD_VERSION + '_all.deb')
-    system('chown -R `logname`:`logname` brick-flash-cmd/usr')
+    system('sudo chown -R `logname`:`logname` brick-flash-cmd/usr')
 
 
 # call python build_pkg.py to build the windows/linux/macosx package
