@@ -67,7 +67,7 @@ class IMUV2GLWidget(QGLWidget):
         
         self.save_orientation_flag = False
         
-    def update(self, x, y, z, w):
+    def update(self, w, x, y, z):
         if self.save_orientation_flag:
             self.rel_x = x
             self.rel_y = y

@@ -27,10 +27,66 @@ from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget
 from brickv.utils import CallbackEmulator
 
-from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy, QColor, QPalette
-from PyQt4.QtCore import Qt, QTimer
+from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy, QColor, QPalette, QFrame, QPainter, QBrush
+from PyQt4.QtCore import Qt
 
 from brickv.plugin_system.plugins.imu_v2.ui_imu_v2 import Ui_IMUV2
+from brickv.plugin_system.plugins.imu_v2.ui_calibration import Ui_calibration
+
+class Calibration(QFrame, Ui_calibration):
+    def __init__(self, parent):
+        QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
+
+        self.setupUi(self)
+
+        self.setWindowTitle("IMU Calibration")
+        
+        self.parent = parent
+        self.ipcon = parent.ipcon
+        self.imu = parent.imu
+        
+        self.acc_color = ColorFrame()
+        self.mag_color = ColorFrame()
+        self.gyr_color = ColorFrame()
+        self.sys_color = ColorFrame()
+        
+        self.grid.addWidget(self.acc_color , 2, 2)
+        self.grid.addWidget(self.mag_color , 3, 2)
+        self.grid.addWidget(self.gyr_color , 4, 2)
+        self.grid.addWidget(self.sys_color , 5, 2)
+        
+        self.save_calibration.clicked.connect(self.save_calibration_clicked)
+        
+    def save_calibration_clicked(self):
+        async_call(self.imu.save_calibration, None, self.async_save_calibration, self.parent.increase_error_count)
+        
+    def async_save_calibration(self, calibration_done):
+        print "calibration_done", calibration_done
+        
+    def closeEvent(self, event):
+        self.parent.button_calibration.setEnabled(True)
+        
+class ColorFrame(QFrame):
+    def __init__(self, parent = None):
+        QFrame.__init__(self, parent)
+        self.color = Qt.red
+        self.setMinimumSize(15, 15)
+        self.setMaximumSize(15, 15)
+
+    def set_color(self, color):
+        self.color = color
+        self.repaint()
+
+    def paintEvent(self, event):
+        qp = QPainter()
+        qp.begin(self)
+        qp.setBrush(QBrush(self.color))
+        qp.setPen(self.color)
+        qp.drawRect(0, 0, 15, 15)
+        qp.setBrush(Qt.NoBrush)
+        qp.setPen(Qt.black)
+        qp.drawRect(1, 1, 14, 14)
+        qp.end()
 
 class IMUV2(PluginBase, Ui_IMUV2):
     def __init__(self, *args):
@@ -39,9 +95,6 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.setupUi(self)
 
         self.imu = self.device
-
-        self.update_timer = QTimer()
-        self.update_timer.timeout.connect(self.update_data)
 
         self.cbe_all_data = CallbackEmulator(self.imu.get_all_data,
                                              self.all_data_callback,
@@ -57,7 +110,8 @@ class IMUV2(PluginBase, Ui_IMUV2):
             from imu_v2_gl_widget import IMUV2GLWidget
 
         self.imu_gl = IMUV2GLWidget(self)
-        self.imu_gl.setMinimumSize(150, 150)
+        self.imu_gl.setMinimumSize(200, 200)
+        self.imu_gl.setMaximumSize(200, 200)
         self.imu_gl.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.min_x = 0
         self.min_y = 0
@@ -66,15 +120,13 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.max_y = 0
         self.max_z = 0
 
-        self.update_counter = 0
-
         self.data_plot_widget = []
         self.sensor_data = [0]*23
 
         self.data_labels = [self.label_acceleration_x, self.label_acceleration_y, self.label_acceleration_z, 
                             self.label_magnetic_field_x, self.label_magnetic_field_y, self.label_magnetic_field_z, 
                             self.label_angular_velocity_x, self.label_angular_velocity_y, self.label_angular_velocity_z, 
-                            self.label_euler_angle_roll, self.label_euler_angle_pitch, self.label_euler_angle_heading, 
+                            self.label_euler_angle_heading, self.label_euler_angle_roll, self.label_euler_angle_pitch, 
                             self.label_quaternion_w, self.label_quaternion_x, self.label_quaternion_y, self.label_quaternion_z, 
                             self.label_linear_acceleration_x, self.label_linear_acceleration_y, self.label_linear_acceleration_z, 
                             self.label_gravity_vector_x, self.label_gravity_vector_y, self.label_gravity_vector_z, 
@@ -138,54 +190,48 @@ class IMUV2(PluginBase, Ui_IMUV2):
             
         self.data_grid.setColumnMinimumWidth(2, 75)
 
-        self.orientation_label = QLabel("""Position your IMU Brick 2.0 as shown \
-in the image above, then press "Save Orientation".""")
-        self.orientation_label.setWordWrap(True)
-        self.orientation_label.setAlignment(Qt.AlignHCenter)
         self.gl_layout = QVBoxLayout()
         self.gl_layout.addWidget(self.imu_gl)
-        self.gl_layout.addWidget(self.orientation_label)
         
         self.v_layout = QVBoxLayout()
         self.layout_bottom.addLayout(self.gl_layout)
 
         self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
         self.checkbox_leds.stateChanged.connect(self.led_clicked)
-        self.box_range_acc.activated.connect(self.configuration_changed)
-        self.box_range_gyr.activated.connect(self.configuration_changed)
+        self.button_calibration.clicked.connect(self.calibration_clicked)
+        self.calibration_color = [Qt.red, QColor(0xFF, 0xA0, 0x00), Qt.yellow, Qt.darkGreen]
 
-        self.calibrate = None
+        self.calibration = None
         self.alive = True
+        self.callback_counter = 0
 
     def start(self):
         if not self.alive:
             return
 
-        async_call(self.imu.get_configuration, None, self.get_configuration_async, self.increase_error_count)
         self.gl_layout.activate()
-        self.cbe_all_data.set_period(100)
+        self.cbe_all_data.set_period(50)
 
         for w in self.data_plot_widget:
             w.stop = False
+
 
     def stop(self):
         for w in self.data_plot_widget:
             w.stop = True
 
-        self.update_timer.stop()
         self.cbe_all_data.set_period(0)
 
     def destroy(self):
         self.alive = False
-        if self.calibrate:
-            self.calibrate.close()
+        if self.calibration:
+            self.calibration.close()
 
     def has_reset_device(self):
-        return self.firmware_version >= (1, 0, 7)
+        return True
 
     def reset_device(self):
-        if self.has_reset_device():
-            self.imu.reset()
+        self.imu.reset()
 
     def is_brick(self):
         return True
@@ -197,47 +243,68 @@ in the image above, then press "Save Orientation".""")
     def has_device_identifier(device_identifier):
         return device_identifier == BrickIMUV2.DEVICE_IDENTIFIER
     
-    def configuration_changed(self, index):
-        acc_range = self.box_range_acc.currentIndex()
-        gyr_range = self.box_range_gyr.currentIndex()
-        try:
-            self.imu.set_configuration(acc_range, gyr_range)
-        except:
-            pass
-    
-    def get_configuration_async(self, configuration):
-        print configuration
-        self.box_range_acc.setCurrentIndex(configuration.accelerometer_range)
-        self.box_range_gyr.setCurrentIndex(configuration.gyroscope_range)
+    def calibration_clicked(self):
+        if self.calibration is None:
+            self.calibration = Calibration(self)
+
+        self.button_calibration.setEnabled(False)
+        self.calibration.show()
 
     def all_data_callback(self, data):
-        self.sensor_data[0]  = data.acceleration[0]/100.0
-        self.sensor_data[1]  = data.acceleration[1]/100.0
-        self.sensor_data[2]  = data.acceleration[2]/100.0
-        self.sensor_data[3]  = data.magnetic_field[0]/16.0
-        self.sensor_data[4]  = data.magnetic_field[1]/16.0
-        self.sensor_data[5]  = data.magnetic_field[2]/16.0
-        self.sensor_data[6]  = data.angular_velocity[0]/16.0
-        self.sensor_data[7]  = data.angular_velocity[1]/16.0
-        self.sensor_data[8]  = data.angular_velocity[2]/16.0
-        self.sensor_data[9]  = data.euler_angle[0]/16.0
-        self.sensor_data[10] = data.euler_angle[1]/16.0
-        self.sensor_data[11] = data.euler_angle[2]/16.0
-        self.sensor_data[12] = data.quaternion[0]/(float(2**14-1))
-        self.sensor_data[13] = data.quaternion[1]/(float(2**14-1))
-        self.sensor_data[14] = data.quaternion[2]/(float(2**14-1))
-        self.sensor_data[15] = data.quaternion[3]/(float(2**14-1))
-        self.sensor_data[16] = data.linear_acceleration[0]/100.0
-        self.sensor_data[17] = data.linear_acceleration[1]/100.0
-        self.sensor_data[18] = data.linear_acceleration[2]/100.0
-        self.sensor_data[19] = data.gravity_vector[0]/100.0
-        self.sensor_data[20] = data.gravity_vector[1]/100.0
-        self.sensor_data[21] = data.gravity_vector[2]/100.0
-        self.sensor_data[22] = data.temperature
-        
-        for i in range(23):
-            self.data_labels[i].setText("{0:.2f}".format(self.sensor_data[i]))
+        self.callback_counter += 1
+        if self.callback_counter % 2 == 0:
+            self.sensor_data[0]  = data.acceleration[0]/100.0
+            self.sensor_data[1]  = data.acceleration[1]/100.0
+            self.sensor_data[2]  = data.acceleration[2]/100.0
+            self.sensor_data[3]  = data.magnetic_field[0]/16.0
+            self.sensor_data[4]  = data.magnetic_field[1]/16.0
+            self.sensor_data[5]  = data.magnetic_field[2]/16.0
+            self.sensor_data[6]  = data.angular_velocity[0]/16.0
+            self.sensor_data[7]  = data.angular_velocity[1]/16.0
+            self.sensor_data[8]  = data.angular_velocity[2]/16.0
+            self.sensor_data[9]  = data.euler_angle[0]/16.0
+            self.sensor_data[10] = data.euler_angle[1]/16.0
+            self.sensor_data[11] = data.euler_angle[2]/16.0
+            self.sensor_data[12] = data.quaternion[0]/(float(2**14-1))
+            self.sensor_data[13] = data.quaternion[1]/(float(2**14-1))
+            self.sensor_data[14] = data.quaternion[2]/(float(2**14-1))
+            self.sensor_data[15] = data.quaternion[3]/(float(2**14-1))
+            self.sensor_data[16] = data.linear_acceleration[0]/100.0
+            self.sensor_data[17] = data.linear_acceleration[1]/100.0
+            self.sensor_data[18] = data.linear_acceleration[2]/100.0
+            self.sensor_data[19] = data.gravity_vector[0]/100.0
+            self.sensor_data[20] = data.gravity_vector[1]/100.0
+            self.sensor_data[21] = data.gravity_vector[2]/100.0
+            self.sensor_data[22] = data.temperature
+            
+            for i in range(23):
+                self.data_labels[i].setText("{0:.2f}".format(self.sensor_data[i]))
 
+            self.imu_gl.update(self.sensor_data[12], self.sensor_data[13], self.sensor_data[14], self.sensor_data[15])
+            
+            cal_mag = data.calibration_status & 3;
+            cal_acc = (data.calibration_status & (3 << 2)) >> 2
+            cal_gyr = (data.calibration_status & (3 << 4)) >> 4
+            cal_sys = (data.calibration_status & (3 << 6)) >> 6
+            
+            
+            if self.calibration != None:
+                if data.calibration_status == 0xFF:
+                    self.calibration.save_calibration.setEnabled(True)
+                else:
+                    self.calibration.save_calibration.setEnabled(False)
+                    
+                self.calibration.mag_color.set_color(self.calibration_color[cal_mag])
+                self.calibration.acc_color.set_color(self.calibration_color[cal_acc])
+                self.calibration.gyr_color.set_color(self.calibration_color[cal_gyr])
+                self.calibration.sys_color.set_color(self.calibration_color[cal_sys])
+        else:
+            self.imu_gl.update(data.quaternion[0]/(float(2**14-1)),
+                               data.quaternion[1]/(float(2**14-1)),
+                               data.quaternion[2]/(float(2**14-1)),
+                               data.quaternion[3]/(float(2**14-1)))
+            
+        
     def led_clicked(self, state):
         if state == Qt.Checked:
             self.imu.leds_on()
@@ -246,9 +313,3 @@ in the image above, then press "Save Orientation".""")
     
     def get_data(self, i):
         return self.sensor_data[i]
-
-    def update_data(self):
-        print "update_data"
-        self.update_counter += 1
-
-        self.imu_gl.update(self.qua_x, self.qua_y, self.qua_z, self.qua_w)
