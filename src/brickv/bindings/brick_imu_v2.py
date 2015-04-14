@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-14.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -27,12 +27,11 @@ except ValueError:
 GetAcceleration = namedtuple('Acceleration', ['x', 'y', 'z'])
 GetMagneticField = namedtuple('MagneticField', ['x', 'y', 'z'])
 GetAngularVelocity = namedtuple('AngularVelocity', ['x', 'y', 'z'])
-GetOrientation = namedtuple('Orientation', ['roll', 'pitch', 'heading'])
+GetOrientation = namedtuple('Orientation', ['heading', 'roll', 'pitch'])
 GetLinearAcceleration = namedtuple('LinearAcceleration', ['x', 'y', 'z'])
 GetGravityVector = namedtuple('GravityVector', ['x', 'y', 'z'])
 GetQuaternion = namedtuple('Quaternion', ['w', 'x', 'y', 'z'])
 GetAllData = namedtuple('AllData', ['acceleration', 'magnetic_field', 'angular_velocity', 'euler_angle', 'quaternion', 'linear_acceleration', 'gravity_vector', 'temperature', 'calibration_status'])
-GetConfiguration = namedtuple('Configuration', ['accelerometer_range', 'gyroscope_range'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -44,15 +43,15 @@ class BrickIMUV2(Device):
     DEVICE_IDENTIFIER = 18
     DEVICE_DISPLAY_NAME = 'IMU Brick 2.0'
 
-    CALLBACK_ACCELERATION = 33
-    CALLBACK_MAGNETIC_FIELD = 34
-    CALLBACK_ANGULAR_VELOCITY = 35
-    CALLBACK_TEMPERATURE = 36
-    CALLBACK_LINEAR_ACCELERATION = 37
-    CALLBACK_GRAVITY_VECTOR = 38
-    CALLBACK_ORIENTATION = 39
-    CALLBACK_QUATERNION = 40
-    CALLBACK_ALL_DATA = 41
+    CALLBACK_ACCELERATION = 32
+    CALLBACK_MAGNETIC_FIELD = 33
+    CALLBACK_ANGULAR_VELOCITY = 34
+    CALLBACK_TEMPERATURE = 35
+    CALLBACK_LINEAR_ACCELERATION = 36
+    CALLBACK_GRAVITY_VECTOR = 37
+    CALLBACK_ORIENTATION = 38
+    CALLBACK_QUATERNION = 39
+    CALLBACK_ALL_DATA = 40
 
     FUNCTION_GET_ACCELERATION = 1
     FUNCTION_GET_MAGNETIC_FIELD = 2
@@ -66,40 +65,30 @@ class BrickIMUV2(Device):
     FUNCTION_LEDS_ON = 10
     FUNCTION_LEDS_OFF = 11
     FUNCTION_ARE_LEDS_ON = 12
-    FUNCTION_SET_CONFIGURATION = 13
-    FUNCTION_GET_CONFIGURATION = 14
-    FUNCTION_SET_ACCELERATION_PERIOD = 15
-    FUNCTION_GET_ACCELERATION_PERIOD = 16
-    FUNCTION_SET_MAGNETIC_FIELD_PERIOD = 17
-    FUNCTION_GET_MAGNETIC_FIELD_PERIOD = 18
-    FUNCTION_SET_ANGULAR_VELOCITY_PERIOD = 19
-    FUNCTION_GET_ANGULAR_VELOCITY_PERIOD = 20
-    FUNCTION_SET_TEMPERATURE_PERIOD = 21
-    FUNCTION_GET_TEMPERATURE_PERIOD = 22
-    FUNCTION_SET_ORIENTATION_PERIOD = 23
-    FUNCTION_GET_ORIENTATION_PERIOD = 24
-    FUNCTION_SET_LINEAR_ACCELERATION_PERIOD = 25
-    FUNCTION_GET_LINEAR_ACCELERATION_PERIOD = 26
-    FUNCTION_SET_GRAVITY_VECTOR_PERIOD = 27
-    FUNCTION_GET_GRAVITY_VECTOR_PERIOD = 28
-    FUNCTION_SET_QUATERNION_PERIOD = 29
-    FUNCTION_GET_QUATERNION_PERIOD = 30
-    FUNCTION_SET_ALL_DATA_PERIOD = 31
-    FUNCTION_GET_ALL_DATA_PERIOD = 32
+    FUNCTION_SAVE_CALIBRATION = 13
+    FUNCTION_SET_ACCELERATION_PERIOD = 14
+    FUNCTION_GET_ACCELERATION_PERIOD = 15
+    FUNCTION_SET_MAGNETIC_FIELD_PERIOD = 16
+    FUNCTION_GET_MAGNETIC_FIELD_PERIOD = 17
+    FUNCTION_SET_ANGULAR_VELOCITY_PERIOD = 18
+    FUNCTION_GET_ANGULAR_VELOCITY_PERIOD = 19
+    FUNCTION_SET_TEMPERATURE_PERIOD = 20
+    FUNCTION_GET_TEMPERATURE_PERIOD = 21
+    FUNCTION_SET_ORIENTATION_PERIOD = 22
+    FUNCTION_GET_ORIENTATION_PERIOD = 23
+    FUNCTION_SET_LINEAR_ACCELERATION_PERIOD = 24
+    FUNCTION_GET_LINEAR_ACCELERATION_PERIOD = 25
+    FUNCTION_SET_GRAVITY_VECTOR_PERIOD = 26
+    FUNCTION_GET_GRAVITY_VECTOR_PERIOD = 27
+    FUNCTION_SET_QUATERNION_PERIOD = 28
+    FUNCTION_GET_QUATERNION_PERIOD = 29
+    FUNCTION_SET_ALL_DATA_PERIOD = 30
+    FUNCTION_GET_ALL_DATA_PERIOD = 31
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
     FUNCTION_GET_IDENTITY = 255
 
-    ACCELEROMETER_RANGE_2G = 0
-    ACCELEROMETER_RANGE_4G = 1
-    ACCELEROMETER_RANGE_8G = 2
-    ACCELEROMETER_RANGE_16G = 3
-    GYROSCOPE_RANGE_2000DPS = 0
-    GYROSCOPE_RANGE_1000DPS = 1
-    GYROSCOPE_RANGE_500DPS = 2
-    GYROSCOPE_RANGE_250DPS = 3
-    GYROSCOPE_RANGE_125DPS = 4
 
     def __init__(self, uid, ipcon):
         """
@@ -122,8 +111,7 @@ class BrickIMUV2(Device):
         self.response_expected[BrickIMUV2.FUNCTION_LEDS_ON] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMUV2.FUNCTION_LEDS_OFF] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMUV2.FUNCTION_ARE_LEDS_ON] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickIMUV2.FUNCTION_SET_CONFIGURATION] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
-        self.response_expected[BrickIMUV2.FUNCTION_GET_CONFIGURATION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMUV2.FUNCTION_SAVE_CALIBRATION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_SET_ACCELERATION_PERIOD] = BrickIMUV2.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_GET_ACCELERATION_PERIOD] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_SET_MAGNETIC_FIELD_PERIOD] = BrickIMUV2.RESPONSE_EXPECTED_TRUE
@@ -163,8 +151,8 @@ class BrickIMUV2(Device):
         self.callback_formats[BrickIMUV2.CALLBACK_LINEAR_ACCELERATION] = 'h h h'
         self.callback_formats[BrickIMUV2.CALLBACK_GRAVITY_VECTOR] = 'h h h'
         self.callback_formats[BrickIMUV2.CALLBACK_ORIENTATION] = 'h h h'
-        self.callback_formats[BrickIMUV2.CALLBACK_QUATERNION] = 'H H H H'
-        self.callback_formats[BrickIMUV2.CALLBACK_ALL_DATA] = 'h h h h h h h h h h'
+        self.callback_formats[BrickIMUV2.CALLBACK_QUATERNION] = 'h h h h'
+        self.callback_formats[BrickIMUV2.CALLBACK_ALL_DATA] = '3h 3h 3h 3h 4h 3h 3h b B'
 
     def get_acceleration(self):
         """
@@ -270,7 +258,7 @@ class BrickIMUV2(Device):
         to use the callback :func:`Quaternion` and set the period with 
         :func:`SetQuaternionPeriod`.
         """
-        return GetQuaternion(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_QUATERNION, (), '', 'H H H H'))
+        return GetQuaternion(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_QUATERNION, (), '', 'h h h h'))
 
     def get_all_data(self):
         """
@@ -280,7 +268,7 @@ class BrickIMUV2(Device):
         to use the callback :func:`AllData` and set the period with 
         :func:`SetAllDataPeriod`.
         """
-        return GetAllData(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ALL_DATA, (), '', '3h 3h 3h 3h 4H 3h 3h b B'))
+        return GetAllData(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ALL_DATA, (), '', '3h 3h 3h 3h 4h 3h 3h b B'))
 
     def leds_on(self):
         """
@@ -301,18 +289,11 @@ class BrickIMUV2(Device):
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_ARE_LEDS_ON, (), '', '?')
 
-    def set_configuration(self, accelerometer_range, gyroscope_range):
-        """
-        Default: 4G, 2000DPS
-        TODO
-        """
-        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SET_CONFIGURATION, (accelerometer_range, gyroscope_range), 'B B', '')
-
-    def get_configuration(self):
+    def save_calibration(self):
         """
         TODO
         """
-        return GetConfiguration(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_CONFIGURATION, (), '', 'B B'))
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SAVE_CALIBRATION, (), '', '?')
 
     def set_acceleration_period(self, period):
         """
