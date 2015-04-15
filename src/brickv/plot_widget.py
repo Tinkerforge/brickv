@@ -686,7 +686,8 @@ class Plot(QWidget):
 class PlotWidget(QWidget):
     def __init__(self, y_scale_title_text, plots, clear_button=None, parent=None,
                  scales_visible=True, curve_outer_border_visible=True,
-                 curve_motion_granularity=10, canvas_color=QColor(245, 245, 245)):
+                 curve_motion_granularity=10, canvas_color=QColor(245, 245, 245),
+                 external_timer=None):
         QWidget.__init__(self, parent)
 
         self.setMinimumSize(300, 250)
@@ -750,9 +751,13 @@ class PlotWidget(QWidget):
         for plot in plots:
             self.update_funcs.append(plot[2])
 
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.add_new_data)
-        self.timer.start(100)
+        if external_timer == None:
+            self.timer = QTimer(self)
+            self.timer.timeout.connect(self.add_new_data)
+            self.timer.start(100)
+        else:
+            # assuming that the external timer runs with 100ms interval
+            external_timer.timeout.connect(self.add_new_data)
 
     # overrides QWidget.showEvent
     def showEvent(self, event):

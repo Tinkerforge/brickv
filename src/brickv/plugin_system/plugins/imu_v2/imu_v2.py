@@ -28,8 +28,9 @@ from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget
 from brickv.utils import CallbackEmulator
 
-from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy, QColor, QPalette, QFrame, QPainter, QBrush, QDialog
-from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy, QColor, QPalette, \
+                        QFrame, QPainter, QBrush, QDialog
+from PyQt4.QtCore import Qt, QTimer
 
 from brickv.plugin_system.plugins.imu_v2.ui_imu_v2 import Ui_IMUV2
 from brickv.plugin_system.plugins.imu_v2.ui_calibration import Ui_Calibration
@@ -199,7 +200,10 @@ class IMUV2(PluginBase, Ui_IMUV2):
 
         def get_lambda_data_getter(i):
             return lambda: self.get_data(i)
-        
+
+        self.plot_timer = QTimer(self)
+        self.plot_timer.start(100)
+
         for i in range(23):
             self.data_plot_widget.append(PlotWidget("",
                                                     [["", self.data_color[i][0], get_lambda_data_getter(i)]],
@@ -207,7 +211,8 @@ class IMUV2(PluginBase, Ui_IMUV2):
                                                     scales_visible=False, 
                                                     curve_outer_border_visible=False,
                                                     curve_motion_granularity=1,
-                                                    canvas_color=self.data_color[i][1]))
+                                                    canvas_color=self.data_color[i][1],
+                                                    external_timer=self.plot_timer))
 
         for w in self.data_plot_widget:
             w.setMinimumHeight(15)
