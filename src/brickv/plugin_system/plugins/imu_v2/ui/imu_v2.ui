@@ -38,7 +38,7 @@
        <item row="22" column="0">
         <widget class="QLabel" name="label_temperature_11">
          <property name="text">
-          <string>Temperature</string>
+          <string> Temperature</string>
          </property>
         </widget>
        </item>
@@ -525,28 +525,28 @@
        <item row="12" column="0" rowspan="4">
         <widget class="QLabel" name="label_quaternion_11">
          <property name="text">
-          <string>Quaternion</string>
+          <string> Quaternion</string>
          </property>
         </widget>
        </item>
        <item row="9" column="0" rowspan="3">
         <widget class="QLabel" name="label_euler_angle_11">
          <property name="text">
-          <string>Euler Angle</string>
+          <string> Euler Angle</string>
          </property>
         </widget>
        </item>
        <item row="6" column="0" rowspan="3">
         <widget class="QLabel" name="label_angular_velocity_11">
          <property name="text">
-          <string>Angular Velocity</string>
+          <string> Angular Velocity</string>
          </property>
         </widget>
        </item>
        <item row="3" column="0" rowspan="3">
         <widget class="QLabel" name="label_magnetic_field_11">
          <property name="text">
-          <string>Magnetic Field</string>
+          <string> Magnetic Field</string>
          </property>
         </widget>
        </item>
@@ -556,21 +556,21 @@
           <bool>false</bool>
          </property>
          <property name="text">
-          <string>Acceleration</string>
+          <string> Acceleration</string>
          </property>
         </widget>
        </item>
        <item row="16" column="0" rowspan="3">
         <widget class="QLabel" name="label_linear_acceleration_11">
          <property name="text">
-          <string>Linear Acceleration  </string>
+          <string> Linear Acceleration  </string>
          </property>
         </widget>
        </item>
        <item row="19" column="0" rowspan="3">
         <widget class="QLabel" name="label_gravity_vector_11">
          <property name="text">
-          <string>Gravity Vector</string>
+          <string> Gravity Vector</string>
          </property>
         </widget>
        </item>
@@ -640,6 +640,12 @@
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
           <widget class="QPushButton" name="clear_graphs">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
             <string>Clear Graphs</string>
            </property>
