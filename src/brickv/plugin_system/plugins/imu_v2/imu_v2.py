@@ -2,6 +2,7 @@
 """
 IMU 2.0 Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
 
 imu_v2.py: IMU 2.0 Plugin implementation
 
@@ -27,20 +28,46 @@ from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget
 from brickv.utils import CallbackEmulator
 
-from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy, QColor, QPalette, QFrame, QPainter, QBrush
+from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy, QColor, QPalette, QFrame, QPainter, QBrush, QDialog
 from PyQt4.QtCore import Qt
 
 from brickv.plugin_system.plugins.imu_v2.ui_imu_v2 import Ui_IMUV2
-from brickv.plugin_system.plugins.imu_v2.ui_calibration import Ui_calibration
+from brickv.plugin_system.plugins.imu_v2.ui_calibration import Ui_Calibration
 
-class Calibration(QFrame, Ui_calibration):
+class Calibration(QDialog, Ui_Calibration):
     def __init__(self, parent):
-        QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
+        QDialog.__init__(self, parent)
 
         self.setupUi(self)
 
-        self.setWindowTitle("IMU Calibration")
-        
+        self.text_browser.setHtml("""
+<p><b>General:</b> The IMU does continous calibration during usage.
+It is not necessary to start a specific calibration process.</p>
+<p>Accelerometer and gyroscope are factory calibrated and are less susceptible
+to external disturbances. As a result the offsets can be seen as negligble and
+calibration is not important. For the magnetometer on the other hand calibration
+is mandatory after each &quot;power on reset&quot;.</p>
+<p>To make this easier we allow to save the calibration to the flash of the
+IMU Brick and load the calibration on each startup. This way there is no
+&quot;startup phase&quot; that is necessary until the IMU Brick has calibrated
+itself.</p>
+<p><b>Calibration values:</b> Saving a calibration is only possible if all
+sensors are fully calibrated.</p>
+<ul>
+<li>green = fully calibrated,</li>
+<li>yellow = calibration OK,</li>
+<li>orange = calibration recommended and</li>
+<li>red = not calibrated.</li>
+</ul>
+<p><b>Accelerometer:</b> Place the IMU Brick in 6 different stable position for
+a period of a few seconds. Use slow movement between stable positions. Use at
+least one position that is perpendicular to the x, y and z axis.</p>
+<p><b>Magnetometer:</b> Make random movements (e.g. write a figure 8 in air).</p>
+<p><b>Gyroscope:</b> Place the IMU Brick in a single stable position for a
+period of several seconds.</p>
+<p><b>System:</b> Wait for the system to stabilize. Use only small movements
+during stabilization.</p>""")
+
         self.parent = parent
         self.ipcon = parent.ipcon
         self.imu = parent.imu
@@ -50,10 +77,10 @@ class Calibration(QFrame, Ui_calibration):
         self.gyr_color = ColorFrame()
         self.sys_color = ColorFrame()
         
-        self.grid.addWidget(self.acc_color , 2, 2)
-        self.grid.addWidget(self.mag_color , 3, 2)
-        self.grid.addWidget(self.gyr_color , 4, 2)
-        self.grid.addWidget(self.sys_color , 5, 2)
+        self.grid.addWidget(self.acc_color, 2, 2)
+        self.grid.addWidget(self.mag_color, 3, 2)
+        self.grid.addWidget(self.gyr_color, 4, 2)
+        self.grid.addWidget(self.sys_color, 5, 2)
         
         self.save_calibration.clicked.connect(self.save_calibration_clicked)
         
@@ -61,7 +88,8 @@ class Calibration(QFrame, Ui_calibration):
         async_call(self.imu.save_calibration, None, self.async_save_calibration, self.parent.increase_error_count)
         
     def async_save_calibration(self, calibration_done):
-        print "calibration_done", calibration_done
+        #print "calibration_done", calibration_done
+        pass
         
     def closeEvent(self, event):
         self.parent.button_calibration.setEnabled(True)

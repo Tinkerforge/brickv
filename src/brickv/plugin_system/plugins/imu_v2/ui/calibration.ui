@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>calibration</class>
- <widget class="QWidget" name="calibration">
-  <property name="windowModality">
-   <enum>Qt::NonModal</enum>
-  </property>
+ <class>Calibration</class>
+ <widget class="QDialog" name="Calibration">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -14,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Advanced Functions</string>
+   <string>IMU Calibration</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -176,41 +173,14 @@
       </widget>
      </item>
      <item row="0" column="0" colspan="3">
-      <widget class="QScrollArea" name="scrollArea">
-       <property name="widgetResizable">
-        <bool>true</bool>
+      <widget class="QTextBrowser" name="text_browser">
+       <property name="html">
+        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
-       <widget class="QWidget" name="scrollAreaWidgetContents_2">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>414</width>
-          <height>556</height>
-         </rect>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <widget class="QLabel" name="label_10">
-           <property name="maximumSize">
-            <size>
-             <width>400</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;General:&lt;/span&gt; The IMU does continous calibration during usage. It is not necessary to start a specific calibration process.&lt;/p&gt;&lt;p&gt;Accelerometer and gyroscope are factory calibrated and are less susceptible to external disturbances. As a result the offsets can be seen as negligble and calibration is not important. For the magnetometer on the other hand calibration is mandatory after each &amp;quot;power on reset&amp;quot;. &lt;/p&gt;&lt;p&gt;To make this easier we allow to save the calibration to the flash of the IMU Brick and load the calibration on each startup. This way there is no &amp;quot;startup phase&amp;quot; that is necessary until the IMU Brick has calibrated itself.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Calibration values:&lt;/span&gt; Saving a calibration is only possible if all sensors are fully calibrated.&lt;/p&gt;&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;green = fully calibrated,&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;yellow = calibration OK,&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;orange = calibration recommended and&lt;/li&gt;&lt;li style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;red = not calibrated.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Accelerometer:&lt;/span&gt; Place the IMU Brick in 6 different stable position for a period of a few seconds. Use slow movement between stable positions. Use at least one position that is perpendicular to the x, y and z axis.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Magnetometer:&lt;/span&gt; Make random movements (e.g. write a figure 8 in air).&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Gyroscope:&lt;/span&gt; Place the IMU Brick in a single stable position for a period of several seconds.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;System:&lt;/span&gt; Wait for the system to stabilize. Use only small movements during stabilization.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="scaledContents">
-            <bool>true</bool>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
       </widget>
      </item>
     </layout>
