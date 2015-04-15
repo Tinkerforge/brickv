@@ -22,12 +22,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import sys
+import math
+import functools
+
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
                         QPushButton, QPainter, QSizePolicy, QFontMetrics, \
                         QPixmap, QIcon, QColor, QCursor, QPen
 from PyQt4.QtCore import QTimer, Qt, QSize
-import math
-import functools
 
 EPSILON = 0.000001
 DEBUG = False
@@ -316,6 +318,13 @@ class Plot(QWidget):
         else:
             self.curve_outer_border = 0 # px, fixed
 
+        if sys.platform == 'darwin':
+            # FIXME: there is a 1px vertical offset in the curve srawing on Mac OS X.
+            #        it's not clear what the reason is, just workaround it for now
+            self.curve_y_offset = 1
+        else:
+            self.curve_y_offset = 0
+
         self.curve_motion_granularity = curve_motion_granularity
         self.curve_to_scale = 8 # px, fixed
         self.cross_hair_visible = False
@@ -426,7 +435,7 @@ class Plot(QWidget):
 
             painter.save()
             painter.translate(canvas_x + self.curve_outer_border + curve_x_offset,
-                              canvas_y + self.curve_outer_border + curve_height - 1) # -1 to accommodate the 1px width of the curve
+                              canvas_y + self.curve_outer_border + curve_height - 1 + self.curve_y_offset) # -1 to accommodate the 1px width of the curve
             painter.scale(1, -1)
 
             for c in range(len(self.curves_x)):
