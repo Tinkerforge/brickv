@@ -28,7 +28,7 @@ from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget
 from brickv.utils import CallbackEmulator
 
-from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy, QColor, QPalette, \
+from PyQt4.QtGui import QLabel, QVBoxLayout, QColor, QPalette, \
                         QFrame, QPainter, QBrush, QDialog
 from PyQt4.QtCore import Qt, QTimer
 
@@ -139,9 +139,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
             from imu_v2_gl_widget import IMUV2GLWidget
 
         self.imu_gl = IMUV2GLWidget(self)
-        self.imu_gl.setMinimumSize(200, 200)
-        self.imu_gl.setMaximumSize(200, 200)
-        self.imu_gl.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.imu_gl.setFixedSize(200, 200)
         self.min_x = 0
         self.min_y = 0
         self.min_z = 0
@@ -248,7 +246,6 @@ class IMUV2(PluginBase, Ui_IMUV2):
         for w in self.data_plot_widget:
             w.stop = False
 
-
     def stop(self):
         for w in self.data_plot_widget:
             w.stop = True
@@ -285,6 +282,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
 
     def all_data_callback(self, data):
         self.callback_counter += 1
+
         if self.callback_counter % 2 == 0:
             self.sensor_data[0]  = data.acceleration[0]/100.0
             self.sensor_data[1]  = data.acceleration[1]/100.0
@@ -309,23 +307,22 @@ class IMUV2(PluginBase, Ui_IMUV2):
             self.sensor_data[20] = data.gravity_vector[1]/100.0
             self.sensor_data[21] = data.gravity_vector[2]/100.0
             self.sensor_data[22] = data.temperature
-            
+
             for i in range(23):
                 self.data_labels[i].setText("{0:.2f}".format(self.sensor_data[i]))
 
-            self.imu_gl.update(self.sensor_data[12], self.sensor_data[13], self.sensor_data[14], self.sensor_data[15])
+            self.imu_gl.update(self.sensor_data[12],
+                               self.sensor_data[13],
+                               self.sensor_data[14],
+                               self.sensor_data[15])
             
             cal_mag = data.calibration_status & 3;
             cal_acc = (data.calibration_status & (3 << 2)) >> 2
             cal_gyr = (data.calibration_status & (3 << 4)) >> 4
             cal_sys = (data.calibration_status & (3 << 6)) >> 6
-            
-            
+
             if self.calibration != None:
-                if data.calibration_status == 0xFF:
-                    self.calibration.save_calibration.setEnabled(True)
-                else:
-                    self.calibration.save_calibration.setEnabled(False)
+                self.calibration.save_calibration.setEnabled(data.calibration_status == 0xFF)
                     
                 self.calibration.mag_color.set_color(self.calibration_color[cal_mag])
                 self.calibration.acc_color.set_color(self.calibration_color[cal_acc])
@@ -336,8 +333,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
                                data.quaternion[1]/(float(2**14-1)),
                                data.quaternion[2]/(float(2**14-1)),
                                data.quaternion[3]/(float(2**14-1)))
-            
-        
+
     def led_clicked(self, state):
         if state == Qt.Checked:
             self.imu.leds_on()

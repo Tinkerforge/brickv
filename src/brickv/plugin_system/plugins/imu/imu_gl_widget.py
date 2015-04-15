@@ -65,6 +65,7 @@ class IMUGLWidget(QGLWidget):
         self.rel_w = 0
 
         self.save_orientation_flag = False
+        self.has_save_orientation = False
         self.display_list = None
 
     def update(self, x, y, z, w):
@@ -74,8 +75,11 @@ class IMUGLWidget(QGLWidget):
             self.rel_z = z
             self.rel_w = w
             self.save_orientation_flag = False
-            self.parent.orientation_label.setText("")
-            self.parent.orientation_label.setFixedHeight(0)
+            self.has_save_orientation = True
+            self.parent.orientation_label.hide()
+
+        if not self.has_save_orientation:
+            return
 
         # conjugate
         x = -x
