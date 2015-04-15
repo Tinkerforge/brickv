@@ -22,10 +22,10 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugins.imu.ui_calibrate import Ui_widget_calibrate
+from brickv.plugin_system.plugins.imu.ui_calibrate import Ui_Calibrate
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QFrame, QTabWidget
+from PyQt4.QtGui import QDialog, QTabWidget
 
 from brickv.plugin_system.plugins.imu.calibrate_accelerometer import CalibrateAccelerometer
 from brickv.plugin_system.plugins.imu.calibrate_magnetometer import CalibrateMagnetometer
@@ -34,7 +34,7 @@ from brickv.plugin_system.plugins.imu.calibrate_gyroscope_gain import CalibrateG
 from brickv.plugin_system.plugins.imu.calibrate_temperature import CalibrateTemperature
 from brickv.plugin_system.plugins.imu.calibrate_import_export import CalibrateImportExport
 
-class CalibrateWindow(QFrame, Ui_widget_calibrate):
+class CalibrateWindow(QDialog, Ui_Calibrate):
     TYPE_ACC_GAIN = 0
     TYPE_ACC_BIAS = 1
     TYPE_MAG_GAIN = 2
@@ -43,11 +43,9 @@ class CalibrateWindow(QFrame, Ui_widget_calibrate):
     TYPE_GYR_BIAS = 5
 
     def __init__(self, parent):
-        QFrame.__init__(self, parent, Qt.Popup | Qt.Window | Qt.Tool)
+        QDialog.__init__(self, parent)
 
         self.setupUi(self)
-
-        self.setWindowTitle("IMU Calibration")
         
         self.parent = parent
         self.ipcon = parent.ipcon
