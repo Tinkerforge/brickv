@@ -28,8 +28,8 @@ import functools
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
                         QPushButton, QPainter, QSizePolicy, QFontMetrics, \
-                        QPixmap, QIcon, QColor, QCursor, QPen
-from PyQt4.QtCore import QTimer, Qt, QSize
+                        QPixmap, QIcon, QColor, QCursor, QPen, QPainterPath
+from PyQt4.QtCore import QTimer, Qt, QSize, QPointF
 
 EPSILON = 0.000001
 DEBUG = False
@@ -426,7 +426,6 @@ class Plot(QWidget):
         if self.x_min != None and self.x_max != None:
             x_min = self.x_min
             x_max = self.x_max
-            drawLine = painter.drawLine
 
             if self.scales_visible:
                 curve_x_offset = 0
@@ -436,7 +435,8 @@ class Plot(QWidget):
             painter.save()
             painter.translate(canvas_x + self.curve_outer_border + curve_x_offset,
                               canvas_y + self.curve_outer_border + curve_height - 1 + self.curve_y_offset) # -1 to accommodate the 1px width of the curve
-            painter.scale(1, -1)
+            painter.scale(factor_x, -factor_y)
+            painter.translate(-x_min, -y_min_scale)
 
             for c in range(len(self.curves_x)):
                 if not self.curves_visible[c]:
@@ -444,19 +444,16 @@ class Plot(QWidget):
 
                 curve_x = self.curves_x[c]
                 curve_y = self.curves_y[c]
-                last_x = round((curve_x[0] - x_min) * factor_x)
-                last_y = round((curve_y[0] - y_min_scale) * factor_y)
+                path = QPainterPath()
+                lineTo = path.lineTo
+
+                path.moveTo(curve_x[0], curve_y[0])
+
+                for i in xrange(1, len(curve_x)):
+                    lineTo(curve_x[i], curve_y[i])
 
                 painter.setPen(self.plots[c][1])
-
-                for i in range(1, len(curve_x)):
-                    x = round((curve_x[i] - x_min) * factor_x)
-                    y = round((curve_y[i] - y_min_scale) * factor_y)
-
-                    drawLine(last_x, last_y, x, y)
-
-                    last_x = x
-                    last_y = y
+                painter.drawPath(path)
 
             painter.restore()
 
