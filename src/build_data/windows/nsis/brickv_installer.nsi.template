@@ -207,7 +207,7 @@ Section "Install Brick Viewer ${BRICKV_VERSION}"
 
   ; Write the uninstall keys for Windows
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "DisplayName" "Tinkerforge Brick Viewer ${BRICKV_VERSION}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "DisplayIcon" '"$INSTDIR\brickv-icon.ico"'
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "DisplayIcon" '"$INSTDIR\brickv.exe",0'
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "DisplayVersion" "${BRICKV_VERSION}"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "Publisher" "Tinkerforge GmbH"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Tinkerforge Brickv" "UninstallString" '"$INSTDIR\uninstall.exe"'

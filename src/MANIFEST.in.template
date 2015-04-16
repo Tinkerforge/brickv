@@ -1,0 +1,3 @@
+recursive-exclude brickv build_ui.py
+recursive-exclude brickv build_scripts.py
+<<EXCLUDES>>
