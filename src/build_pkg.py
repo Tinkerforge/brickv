@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
@@ -51,25 +52,27 @@ NAME = 'Brickv'
 
 def system(command):
     if os.system(command) != 0:
-        exit(1)
+        sys.exit(1)
 
-def check_output(*popenargs, **kwargs):
+
+def check_output(*args, **kwargs):
     if 'stdout' in kwargs:
-        raise ValueError('stdout argument not allowed, it will be overridden.')
+        raise ValueError('stdout argument not allowed, it will be overridden')
 
-    process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
-    output, unused_err = process.communicate()
-    retcode = process.poll()
+    process = subprocess.Popen(stdout=subprocess.PIPE, *args, **kwargs)
+    output, error = process.communicate()
+    exit_code = process.poll()
 
-    if retcode:
-        cmd = kwargs.get("args")
+    if exit_code != 0:
+        command = kwargs.get('args')
 
-        if cmd is None:
-            cmd = popenargs[0]
+        if command == None:
+            command = args[0]
 
-        raise subprocess.CalledProcessError(retcode, cmd, output=output)
+        raise subprocess.CalledProcessError(exit_code, command, output=output)
 
     return output
+
 
 def specialize_template(template_filename, destination_filename, replacements):
     template_file = open(template_filename, 'rb')
@@ -100,12 +103,14 @@ def freeze_images():
     image_files = []
     for root, dirnames, names in os.walk('brickv'):
         for name in names:
-            if os.path.isfile(os.path.join(root, name)):
+            full_name = os.path.join(root, name)
+
+            if os.path.isfile(full_name):
                 _, ext = os.path.splitext(name)
                 ext = ext[1:]
 
                 if ext in ['bmp', 'png', 'jpg']:
-                    image_files.append([os.path.join(root, name).replace('\\', '/').replace('brickv/', ''), ext])
+                    image_files.append([full_name.replace('\\', '/').replace('brickv/', ''), ext])
 
     images = open(os.path.join('brickv', 'frozen_images.py'), 'wb')
     images.write('image_data = {\n'.encode('utf-8'))
@@ -116,6 +121,7 @@ def freeze_images():
 
     images.write('}\n'.encode('utf-8'))
     images.close()
+
 
 def build_macosx_pkg():
     from setuptools import setup, find_packages
@@ -496,4 +502,5 @@ if __name__ == "__main__":
         sys.argv.append('build')
         build_macosx_pkg()
     else:
-        print("error: unsupported platform: " + sys.platform)
+        print('error: unsupported platform: ' + sys.platform)
+        sys.exit(1)
