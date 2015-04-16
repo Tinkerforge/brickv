@@ -259,7 +259,6 @@ def build_windows_pkg():
 
     print('building NSIS installer')
     system('"C:\\Program Files\\NSIS\\makensis.exe" dist\\nsis\\brickv_installer.nsi')
-
     installer = 'brickv_windows_{0}.exe'.format(BRICKV_VERSION.replace('.', '_'))
 
     if os.path.exists(installer):
@@ -321,16 +320,16 @@ def build_linux_pkg():
                          '<<INSTALLED_SIZE>>': str(installed_size)})
 
     print('changing directory modes to 0755')
-    system('find dist/linux/usr -type d -exec chmod 0755 {} \;')
+    system('find dist/linux -type d -exec chmod 0755 {} \;')
 
     print('changing owner to root')
-    system('sudo chown -R root:root dist/linux/usr')
+    system('sudo chown -R root:root dist/linux')
 
     print('building Debian package')
     system('dpkg -b dist/linux brickv-{0}_all.deb'.format(BRICKV_VERSION))
 
     print('changing owner back to original user')
-    system('sudo chown -R `logname`:`logname` dist/linux/usr')
+    system('sudo chown -R `logname`:`logname` dist/linux')
 
     #print('checking Debian package')
     #system('lintian --pedantic brickv-{0}_all.deb'.format(BRICKV_VERSION))

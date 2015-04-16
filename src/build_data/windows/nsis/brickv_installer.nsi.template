@@ -159,7 +159,6 @@ RequestExecutionLevel admin
 
   DetailPrint "Uninstall Brick Viewer..."
 
-  ; Remove directories used
   RMDir /R "$INSTDIR"
 
   ; Remove menu shortcuts
