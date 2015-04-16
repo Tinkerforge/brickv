@@ -90,11 +90,9 @@ class AnalogOutV2(PluginBase):
     
     def cb_get_output_voltage(self, voltage):
         self.output_voltage_box.setValue(voltage)
-        print "out", voltage
     
     def cb_get_input_voltage(self, voltage):
         self.input_voltage_label.setText(voltage)
-        print "in", voltage
         
     def voltage_finished(self):
         value = self.output_voltage_box.value()
