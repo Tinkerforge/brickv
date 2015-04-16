@@ -157,6 +157,19 @@ class AmbientLightV2(PluginBase):
     def cb_illuminance(self, illuminance):
         self.current_value = illuminance/100.0
         self.illuminance_label.setText(illuminance)
+        
+        max_illuminance = 60000
+        i = self.range_combo.currentIndex()
+        if i == 0:
+            max_illuminance = 6400000
+        elif i == 1:
+            max_illuminance = 3200000
+        elif i == 2:
+            max_illuminance = 1600000
+        elif i == 3:
+            max_illuminance = 800000
+        elif i == 4:
+            max_illuminance = 130000
 
-        value = illuminance*255/64000
+        value = illuminance*255/max_illuminance
         self.alf.set_color(value, value, value)
