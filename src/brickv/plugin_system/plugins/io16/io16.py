@@ -22,18 +22,17 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugin_base import PluginBase
-from brickv.bindings import ip_connection
-from brickv.bindings.bricklet_io16 import BrickletIO16
-from brickv.async_call import async_call
-from brickv.utils import CallbackEmulator
+import functools
 
 from PyQt4.QtCore import pyqtSignal, QTimer
 
+from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.io16.ui_io16 import Ui_IO16
+from brickv.bindings import ip_connection
+from brickv.bindings.bricklet_io16 import BrickletIO16
+from brickv.async_call import async_call
+from brickv.callback_emulator import CallbackEmulator
 
-import functools
-        
 class IO16(PluginBase, Ui_IO16):
     qtcb_monoflop = pyqtSignal('char', int, int)
     

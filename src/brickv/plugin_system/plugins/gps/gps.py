@@ -22,15 +22,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QDesktopServices
-from PyQt4.QtCore import QUrl
-
-from brickv.plugin_system.plugins.gps.ui_gps import Ui_GPS
-from brickv.plugin_system.plugin_base import PluginBase
-from brickv.bindings.bricklet_gps import BrickletGPS
-from brickv.utils import CallbackEmulator
-
 import datetime
+
+from PyQt4.QtCore import QUrl
+from PyQt4.QtGui import QDesktopServices
+
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.plugin_system.plugins.gps.ui_gps import Ui_GPS
+from brickv.bindings.bricklet_gps import BrickletGPS
+from brickv.callback_emulator import CallbackEmulator
 
 class GPS(PluginBase, Ui_GPS):
     def __init__(self, *args):

@@ -22,17 +22,19 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import os
+
+from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
                         QLineEdit, QApplication, QMessageBox
-from PyQt4.QtCore import Qt
+
 from brickv.plugin_system.plugin_base import PluginBase
-from brickv.plot_widget import PlotWidget
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
+from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
-from brickv.utils import CallbackEmulator, get_main_window, get_home_path, \
-                         get_open_file_name
-import os
+from brickv.callback_emulator import CallbackEmulator
+from brickv.utils import get_main_window, get_home_path, get_open_file_name
 
 # this class is directly based on the QwtSpline class from the Qwt library
 class NaturalSpline(object):

@@ -22,16 +22,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtGui import QVBoxLayout, QLabel, QPushButton, QHBoxLayout
+
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_current25 import BrickletCurrent25
-from brickv.async_call import async_call
-from brickv.utils import CallbackEmulator
-
 from brickv.plot_widget import PlotWidget
-
-from PyQt4.QtGui import QVBoxLayout, QLabel, QPushButton, QHBoxLayout
-from PyQt4.QtCore import pyqtSignal, Qt
+from brickv.async_call import async_call
+from brickv.callback_emulator import CallbackEmulator
 
 class CurrentLabel(QLabel):
     def setText(self, text):

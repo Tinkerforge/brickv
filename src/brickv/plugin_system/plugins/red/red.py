@@ -22,15 +22,16 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QLabel, QVBoxLayout
+import re
+
 from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QLabel, QVBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.red.ui_red import Ui_RED
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.script_manager import ScriptManager
 from brickv.async_call import async_call
-import re
 
 class ImageVersion(object):
     string = None

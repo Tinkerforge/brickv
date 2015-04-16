@@ -22,15 +22,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugin_base import PluginBase
-from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
-from brickv.async_call import async_call
-
-from brickv.plugin_system.plugins.led_strip.ui_led_strip import Ui_LEDStrip
+import colorsys
 
 from PyQt4.QtCore import pyqtSignal, QTimer
 
-import colorsys
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.plugin_system.plugins.led_strip.ui_led_strip import Ui_LEDStrip
+from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
+from brickv.async_call import async_call
 
 class LEDStrip(PluginBase, Ui_LEDStrip):
     qtcb_frame_rendered = pyqtSignal(int)

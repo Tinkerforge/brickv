@@ -22,14 +22,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugin_base import PluginBase
-from brickv.plot_widget import PlotWidget
-from brickv.bindings.bricklet_linear_poti import BrickletLinearPoti
-from brickv.async_call import async_call
-from brickv.utils import CallbackEmulator
-
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QSlider
 from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QSlider
+
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.bricklet_linear_poti import BrickletLinearPoti
+from brickv.plot_widget import PlotWidget
+from brickv.async_call import async_call
+from brickv.callback_emulator import CallbackEmulator
 
 class PositionLabel(QLabel):
     def setText(self, text):

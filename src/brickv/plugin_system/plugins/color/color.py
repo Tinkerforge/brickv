@@ -22,14 +22,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugin_base import PluginBase
-from brickv.plot_widget import PlotWidget
-from brickv.bindings.bricklet_color import BrickletColor
-from brickv.async_call import async_call
-from brickv.utils import CallbackEmulator
-
-from PyQt4.QtGui import QPushButton, QLabel, QHBoxLayout, QComboBox, QPainter, QFrame, QBrush, QColor, QCheckBox, QVBoxLayout
 from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QPushButton, QLabel, QHBoxLayout, QComboBox, QPainter, \
+                        QFrame, QBrush, QColor, QCheckBox, QVBoxLayout
+
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.bricklet_color import BrickletColor
+from brickv.plot_widget import PlotWidget
+from brickv.async_call import async_call
+from brickv.callback_emulator import CallbackEmulator
 
 class ColorFrame(QFrame):
     def __init__(self, parent=None):

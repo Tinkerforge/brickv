@@ -22,12 +22,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugin_base import PluginBase
-from brickv.bindings.bricklet_remote_switch import BrickletRemoteSwitch
-
-from brickv.plugin_system.plugins.remote_switch.ui_remote_switch import Ui_RemoteSwitch
-
 from PyQt4.QtCore import pyqtSignal
+
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.plugin_system.plugins.remote_switch.ui_remote_switch import Ui_RemoteSwitch
+from brickv.bindings.bricklet_remote_switch import BrickletRemoteSwitch
 
 class RemoteSwitch(PluginBase, Ui_RemoteSwitch):
     qtcb_switching_done = pyqtSignal()

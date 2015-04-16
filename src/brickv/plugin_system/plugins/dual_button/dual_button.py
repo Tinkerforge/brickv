@@ -22,12 +22,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import pyqtSignal
+
 from brickv.plugin_system.plugin_base import PluginBase
+from brickv.plugin_system.plugins.dual_button.ui_dual_button import Ui_DualButton
 from brickv.bindings.bricklet_dual_button import BrickletDualButton
 from brickv.async_call import async_call
-
-from brickv.plugin_system.plugins.dual_button.ui_dual_button import Ui_DualButton
-from PyQt4.QtCore import pyqtSignal
     
 class DualButton(PluginBase, Ui_DualButton):
     qtcb_state_changed = pyqtSignal(int, int, int, int)

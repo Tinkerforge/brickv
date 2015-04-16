@@ -22,13 +22,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import pyqtSignal
+
 from brickv.plugin_system.plugin_base import PluginBase
+from brickv.plugin_system.plugins.multi_touch.ui_multi_touch import Ui_MultiTouch
 from brickv.bindings.bricklet_multi_touch import BrickletMultiTouch
 from brickv.async_call import async_call
-
-from brickv.plugin_system.plugins.multi_touch.ui_multi_touch import Ui_MultiTouch
-
-from PyQt4.QtCore import pyqtSignal
 
 class MultiTouch(PluginBase, Ui_MultiTouch):
     qtcb_touch_state = pyqtSignal(int)

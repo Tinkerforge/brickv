@@ -22,17 +22,17 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import functools
+
+from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout, QPushButton
+
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
 from brickv.knob_widget import KnobWidget
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
-from brickv.utils import CallbackEmulator
-
-from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout, QPushButton
-from PyQt4.QtCore import pyqtSignal, Qt
-
-import functools
+from brickv.callback_emulator import CallbackEmulator
 
 class CountLabel(QLabel):
     def setText(self, text):

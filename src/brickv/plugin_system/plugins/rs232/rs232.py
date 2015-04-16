@@ -23,14 +23,14 @@ Boston, MA 02111-1307, USA.
 
 import threading
 
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QTextCursor
+from PyQt4.QtCore import pyqtSignal, Qt
+
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_rs232 import BrickletRS232
 from brickv.plugin_system.plugins.rs232.ui_rs232 import Ui_RS232
 from brickv.async_call import async_call
-from brickv.utils import CallbackEmulator
-
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QTextCursor
-from PyQt4.QtCore import pyqtSignal, Qt
+from brickv.callback_emulator import CallbackEmulator
 
 class RS232(PluginBase, Ui_RS232):
     def __init__(self, *args):

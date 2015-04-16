@@ -22,12 +22,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit
+
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_piezo_buzzer import BrickletPiezoBuzzer
-
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit
-from PyQt4.QtCore import pyqtSignal
 
 class PiezoBuzzer(PluginBase):
     qtcb_beep_finished = pyqtSignal()

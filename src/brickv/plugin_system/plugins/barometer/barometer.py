@@ -22,15 +22,16 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import Qt, QTimer
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QPushButton, \
+                        QLineEdit, QSpinBox, QFrame
+
 from brickv.plugin_system.plugin_base import PluginBase
-from brickv.plot_widget import PlotWidget
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_barometer import BrickletBarometer
+from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
-from brickv.utils import CallbackEmulator
-
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QPushButton, QLineEdit, QSpinBox, QFrame
-from PyQt4.QtCore import Qt, QTimer
+from brickv.callback_emulator import CallbackEmulator
 
 class AirPressureLabel(QLabel):
     def setText(self, text):

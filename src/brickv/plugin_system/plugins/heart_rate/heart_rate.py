@@ -22,15 +22,15 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugin_base import PluginBase
-from brickv.plot_widget import PlotWidget
-from brickv.bindings.bricklet_heart_rate import BrickletHeartRate
-from brickv.async_call import async_call
-from brickv.utils import CallbackEmulator
-from brickv.load_pixmap import load_masked_pixmap
-
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
 from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout
+
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.bricklet_heart_rate import BrickletHeartRate
+from brickv.plot_widget import PlotWidget
+from brickv.async_call import async_call
+from brickv.callback_emulator import CallbackEmulator
+from brickv.load_pixmap import load_masked_pixmap
 
 class HeartRateLabel(QLabel):
     def setText(self, text):

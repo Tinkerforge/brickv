@@ -22,18 +22,17 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import Qt, QTimer
+from PyQt4.QtGui import QLabel, QVBoxLayout, QColor, QPalette, \
+                        QFrame, QPainter, QBrush, QDialog
+
 from brickv.plugin_system.plugin_base import PluginBase
+from brickv.plugin_system.plugins.imu_v2.ui_imu_v2 import Ui_IMUV2
+from brickv.plugin_system.plugins.imu_v2.ui_calibration import Ui_Calibration
 from brickv.bindings.brick_imu_v2 import BrickIMUV2
 from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget
-from brickv.utils import CallbackEmulator
-
-from PyQt4.QtGui import QLabel, QVBoxLayout, QColor, QPalette, \
-                        QFrame, QPainter, QBrush, QDialog
-from PyQt4.QtCore import Qt, QTimer
-
-from brickv.plugin_system.plugins.imu_v2.ui_imu_v2 import Ui_IMUV2
-from brickv.plugin_system.plugins.imu_v2.ui_calibration import Ui_Calibration
+from brickv.callback_emulator import CallbackEmulator
 
 class Calibration(QDialog, Ui_Calibration):
     def __init__(self, parent):

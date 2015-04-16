@@ -22,14 +22,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import Qt
+
 from brickv.plugin_system.plugin_base import PluginBase
-from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
 from brickv.plugin_system.plugins.hall_effect.ui_hall_effect import Ui_HallEffect
+from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
 from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget
-from brickv.utils import CallbackEmulator
-
-from PyQt4.QtCore import Qt
+from brickv.callback_emulator import CallbackEmulator
 
 class HallEffect(PluginBase, Ui_HallEffect):
     def __init__(self, *args):

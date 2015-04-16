@@ -22,13 +22,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugin_base import PluginBase
-from brickv.bindings.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
-from brickv.async_call import async_call
-
 from PyQt4.QtCore import Qt, pyqtSignal, QTimer
 
+from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.industrial_quad_relay.ui_industrial_quad_relay import Ui_IndustrialQuadRelay
+from brickv.bindings.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay
+from brickv.async_call import async_call
 from brickv.load_pixmap import load_masked_pixmap
 
 class IndustrialQuadRelay(PluginBase, Ui_IndustrialQuadRelay):

@@ -21,13 +21,13 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugin_base import PluginBase
-from brickv.bindings.bricklet_industrial_analog_out import BrickletIndustrialAnalogOut
-from brickv.plugin_system.plugins.industrial_analog_out.ui_industrial_analog_out import Ui_IndustrialAnalogOut
-from brickv.async_call import async_call
-from brickv.utils import CallbackEmulator
+from PyQt4.QtCore import Qt
 
-from PyQt4.QtCore import Qt 
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.plugin_system.plugins.industrial_analog_out.ui_industrial_analog_out import Ui_IndustrialAnalogOut
+from brickv.bindings.bricklet_industrial_analog_out import BrickletIndustrialAnalogOut
+from brickv.async_call import async_call
+from brickv.callback_emulator import CallbackEmulator
 
 class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
     def __init__(self, *args):

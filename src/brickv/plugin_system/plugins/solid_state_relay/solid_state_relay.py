@@ -22,14 +22,13 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from PyQt4.QtCore import pyqtSignal, QTimer
+
 from brickv.plugin_system.plugin_base import PluginBase
+from brickv.plugin_system.plugins.solid_state_relay.ui_solid_state_relay import Ui_SolidStateRelay
 from brickv.bindings import ip_connection
 from brickv.bindings.bricklet_solid_state_relay import BrickletSolidStateRelay
 from brickv.async_call import async_call
-
-from PyQt4.QtCore import pyqtSignal, QTimer
-
-from brickv.plugin_system.plugins.solid_state_relay.ui_solid_state_relay import Ui_SolidStateRelay
 from brickv.load_pixmap import load_masked_pixmap
 
 class SolidStateRelay(PluginBase, Ui_SolidStateRelay):

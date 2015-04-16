@@ -21,14 +21,14 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugin_base import PluginBase
-from brickv.plot_widget import PlotWidget
-from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder
-from brickv.async_call import async_call
-from brickv.utils import CallbackEmulator
-
 from PyQt4.QtCore import pyqtSignal, Qt
 from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout, QSpinBox, QCheckBox, QComboBox
+
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder
+from brickv.plot_widget import PlotWidget
+from brickv.async_call import async_call
+from brickv.callback_emulator import CallbackEmulator
 
 class DistanceLabel(QLabel):
     def setText(self, distance):

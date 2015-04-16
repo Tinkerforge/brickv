@@ -26,7 +26,7 @@ from PyQt4.QtGui import QLabel, QVBoxLayout, QHBoxLayout
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_tilt import BrickletTilt
-from brickv.utils import CallbackEmulator
+from brickv.callback_emulator import CallbackEmulator
 from brickv.load_pixmap import load_masked_pixmap
 
 class Tilt(PluginBase):

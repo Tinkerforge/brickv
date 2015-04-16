@@ -22,16 +22,16 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from brickv.plugin_system.plugin_base import PluginBase
-from brickv.plot_widget import PlotWidget
-from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer
-from brickv.async_call import async_call
-from brickv.utils import CallbackEmulator
+import math
 
 from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QCheckBox
 from PyQt4.QtCore import Qt
 
-import math
+from brickv.plugin_system.plugin_base import PluginBase
+from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer
+from brickv.plot_widget import PlotWidget
+from brickv.async_call import async_call
+from brickv.callback_emulator import CallbackEmulator
 
 class MonoSpaceLabel(QLabel):
     def __init__(self):
