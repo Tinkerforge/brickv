@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-14.      #
+# This file was automatically generated on 2015-04-15.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -157,7 +157,7 @@ class BrickIMUV2(Device):
     def get_acceleration(self):
         """
         Returns the calibrated acceleration from the accelerometer for the 
-        x, y and z axis in mG (G/1000, 1G = 9.80605m/s²).
+        x, y and z axis in 1/100 m/s².
         
         If you want to get the acceleration periodically, it is recommended 
         to use the callback :func:`Acceleration` and set the period with 
@@ -168,7 +168,7 @@ class BrickIMUV2(Device):
     def get_magnetic_field(self):
         """
         Returns the calibrated magnetic field from the magnetometer for the 
-        x, y and z axis in mG (Milligauss or Nanotesla).
+        x, y and z axis in 1/16 µT (Microtesla).
         
         If you want to get the magnetic field periodically, it is recommended 
         to use the callback :func:`MagneticField` and set the period with 
@@ -179,8 +179,7 @@ class BrickIMUV2(Device):
     def get_angular_velocity(self):
         """
         Returns the calibrated angular velocity from the gyroscope for the 
-        x, y and z axis in °/14.375s (you have to divide by 14.375 to
-        get the value in °/s).
+        x, y and z axis in 1/16 °/s.
         
         If you want to get the angular velocity periodically, it is recommended 
         to use the callback :func:`AngularVelocity` and set the period with 
@@ -191,20 +190,24 @@ class BrickIMUV2(Device):
     def get_temperature(self):
         """
         Returns the temperature of the IMU Brick. The temperature is given in 
-        °C/100.
+        °C. The temperature is measured in the core of the BNO055 IC, it is not the
+        ambient temperature
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_TEMPERATURE, (), '', 'b')
 
     def get_orientation(self):
         """
-        Returns the current orientation (roll, pitch, heading) of the IMU Brick as Euler
-        angles in one-hundredth degree. Note that Euler angles always experience a
+        Returns the current orientation (heading, roll, pitch) of the IMU Brick as Euler
+        angles in 1/16 degree. Note that Euler angles always experience a
         `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
         
         We recommend that you use quaternions instead.
         
-        The order to sequence in which the orientation values should be applied is 
-        roll, yaw, pitch. 
+        The rotation angle has the following ranges:
+        
+        * heading: 0° - 360°
+        * roll: -90° - 90°
+        * pitch: -180° - 180°
         
         If you want to get the orientation periodically, it is recommended 
         to use the callback :func:`Orientation` and set the period with 
@@ -214,45 +217,45 @@ class BrickIMUV2(Device):
 
     def get_linear_acceleration(self):
         """
-        TODO
+        Returns the linear acceleration of the IMU Brick for the
+        x, y and z axis in 1/100 m/s².
+        
+        The linear acceleration is the acceleration in each of the three
+        axis of the IMU Brick with the influences of gravity removed.
+        
+        It is also possible to get the gravity vector with the influence of linear
+        acceleration removed, see :func:`GetGravityVector`.
+        
+        If you want to get the linear acceleration periodically, it is recommended 
+        to use the callback :func:`LinearAcceleration` and set the period with 
+        :func:`SetLinearAccelerationPeriod`.
         """
         return GetLinearAcceleration(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_LINEAR_ACCELERATION, (), '', 'h h h'))
 
     def get_gravity_vector(self):
         """
-        TODO
+        Returns the current gravity vector of the IMU Brick for the
+        x, y and z axis in 1/100 m/s².
+        
+        The gravity vector is the acceleration that occurs due to gravity.
+        Influences of additional linear acceleration are removed.
+        
+        It is also possible to get the linear acceleration with the influence 
+        of gravity removed, see :func:`GetLinearAcceleration`.
+        
+        If you want to get the gravity vector periodically, it is recommended 
+        to use the callback :func:`GravityVector` and set the period with 
+        :func:`SetGravityVectorPeriod`.
         """
         return GetGravityVector(*self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_GRAVITY_VECTOR, (), '', 'h h h'))
 
     def get_quaternion(self):
         """
-        Returns the current orientation (x, y, z, w) of the IMU as 
+        Returns the current orientation (w, x, y, z) of the IMU as 
         `quaternions <http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
         
-        You can go from quaternions to Euler angles with the following formula::
-        
-         xAngle = atan2(2*y*w - 2*x*z, 1 - 2*y*y - 2*z*z)
-         yAngle = atan2(2*x*w - 2*y*z, 1 - 2*x*x - 2*z*z)
-         zAngle =  asin(2*x*y + 2*z*w)
-        
-        This process is not reversible, because of the 
-        `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
-        
-        It is also possible to calculate independent angles. You can calculate 
-        yaw, pitch and roll in a right-handed vehicle coordinate system according to DIN70000
-        with::
-        
-         yaw   =  atan2(2*x*y + 2*w*z, w*w + x*x - y*y - z*z)
-         pitch = -asin(2*w*y - 2*x*z)
-         roll  = -atan2(2*y*z + 2*w*x, -w*w + x*x + y*y - z*z))
-        
-        Converting the quaternions to an OpenGL transformation matrix is
-        possible with the following formula::
-        
-         matrix = [[1 - 2*(y*y + z*z),     2*(x*y - w*z),     2*(x*z + w*y), 0],
-                   [    2*(x*y + w*z), 1 - 2*(x*x + z*z),     2*(y*z - w*x), 0],
-                   [    2*(x*z - w*y),     2*(y*z + w*x), 1 - 2*(x*x + y*y), 0],
-                   [                0,                 0,                 0, 1]]
+        You have to divide the returnes values by 16383 (14 bit) to get
+        the usual range of -1 to 1 for quaternions.
         
         If you want to get the quaternions periodically, it is recommended 
         to use the callback :func:`Quaternion` and set the period with 
@@ -262,7 +265,32 @@ class BrickIMUV2(Device):
 
     def get_all_data(self):
         """
-        TODO
+        Return all of the available data of the IMU Brick.
+        
+        * acceleration in 1/100 m/s² (see :func:`GetAcceleration`)
+        * magnetic field in 1/16 µT (see :func:`GetMagneticField`)
+        * angular velocity in 1/16 °/s (see :func:`GetAngularVelocity`)
+        * euler angles in 1/16 ° (see :func:`GetOrientation`)
+        * quaternion 1/16383 (see :func:`GetQuaternion`)
+        * linear acceleration 1/100 m/s² (see :func:`GetLinearAcceleration`)
+        * gravity vector 1/100 m/s² (see :func:`GetGravityVector`)
+        * temperature in 1 °C (see :func:`GetTemperature`)
+        * calibration status (see below)
+        
+        The calibration status consists of four pairs of two bits. Each pair
+        of bits represents the status of the current calibration.
+        
+        * bit 0-1: Magnetometer
+        * bit 2-3: Accelerometer
+        * bit 4-5: Gyroscope
+        * bit 6-7: System
+        
+        A value of 0 means for "not calibrated" and a value of 3 means
+        "fully calibrated". In your program you should always be able to
+        ignore the calibration status, it is used by the calibration
+        window of the Brick Viewer and it can be ignored after the first
+        calibration. See the documentation in the calibration window for
+        more information regarding the calibration of the IMU Brick.
         
         If you want to get the data periodically, it is recommended 
         to use the callback :func:`AllData` and set the period with 
@@ -291,7 +319,16 @@ class BrickIMUV2(Device):
 
     def save_calibration(self):
         """
-        TODO
+        A call of this function saves the current calibration to be used
+        as a starting point for the next restart of continuous calibration
+        of the IMU Brick.
+        
+        A return value of *true* means that the calibration could be used and
+        *false* means that it could not be used (this happens if the calibration 
+        status is not "fully calibrated").
+        
+        This function is used by the calibration window of the Brick Viewer, you
+        should not need to call it in your program.
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_SAVE_CALIBRATION, (), '', '?')
 

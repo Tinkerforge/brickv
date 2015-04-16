@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-15.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -92,11 +92,13 @@ class BrickletSegmentDisplay4x7(Device):
         The *length* of the increment is given in ms.
         
         Example: If you set *from* to 0, *to* to 100, *increment* to 1 and
-        *length* to 1000, a counter that goes from 0 to 100 with 1 second
+        *length* to 1000, a counter that goes from 0 to 100 with one second
         pause between each increment will be started.
         
         The maximum values for *from*, *to* and *increment* is 9999, 
         the minimum value is -999.
+        
+        Using a negative increment allows to count backwards.
         
         You can stop the counter at every time by calling :func:`SetSegments`.
         """
