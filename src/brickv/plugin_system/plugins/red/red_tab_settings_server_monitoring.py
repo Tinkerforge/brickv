@@ -1482,7 +1482,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         if self.working:
             return
 
-        add_host_dialog = REDTabSettingsServerMonitoringAddHostDialog(self, get_main_window())
+        add_host_dialog = REDTabSettingsServerMonitoringAddHostDialog(self)
         return_code_dialog = add_host_dialog.exec_()
 
         if return_code_dialog == QtGui.QDialog.Accepted:

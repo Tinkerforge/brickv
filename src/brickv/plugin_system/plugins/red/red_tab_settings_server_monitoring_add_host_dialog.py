@@ -28,11 +28,10 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.utils import get_main_window
 
 class REDTabSettingsServerMonitoringAddHostDialog(QtGui.QDialog, Ui_REDTabSettingsServerMonitoringAddHostDialog):
-    def __init__(self, parent, main_window):
+    def __init__(self, parent):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
 
-        self.main_window = main_window
         self.host   = ''
         self.port   = ''
         self.secret = ''
@@ -53,7 +52,7 @@ class REDTabSettingsServerMonitoringAddHostDialog(QtGui.QDialog, Ui_REDTabSettin
 
     def slot_pbutton_sm_add_host_add_clicked(self):
         if not self.ledit_sm_add_host_host.text():
-            QtGui.QMessageBox.critical(self.main_window,
+            QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Server Monitoring',
                                        'Host name is empty.')
             return
@@ -61,14 +60,14 @@ class REDTabSettingsServerMonitoringAddHostDialog(QtGui.QDialog, Ui_REDTabSettin
         try:
             self.ledit_sm_add_host_host.text().encode('ascii')
         except:
-            QtGui.QMessageBox.critical(self.main_window,
+            QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Server Monitoring',
                                        'Host name contains non ASCII characters.')
             return
 
         if self.chkbox_sm_add_host_authentication.checkState() == QtCore.Qt.Checked and \
            not self.ledit_sm_add_host_secret.text():
-                QtGui.QMessageBox.critical(self.main_window,
+                QtGui.QMessageBox.critical(get_main_window(),
                                            'Settings | Server Monitoring',
                                            'No secrets specified.')
                 return
