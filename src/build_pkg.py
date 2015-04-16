@@ -314,7 +314,7 @@ def build_linux_pkg():
     shutil.copytree(unpacked_path, linux_share_path)
 
     print('creating DEBIAN/control from template')
-    installed_size = int(check_output(['du', '-s', 'dist/linux/usr']).split('\t')[0])
+    installed_size = int(check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split('\t')[0])
     control_path = os.path.join(linux_path, 'DEBIAN', 'control')
     specialize_template(control_path, control_path,
                         {'<<VERSION>>': BRICKV_VERSION,
@@ -374,7 +374,7 @@ def build_linux_cmd_pkg():
         f.write(template)
 
     print('creating DEBIAN/control from template')
-    installed_size = int(check_output(['du', '-s', 'dist/linux/usr']).split('\t')[0])
+    installed_size = int(check_output(['du', '-s', '--exclude', 'dist/linux/DEBIAN', 'dist/linux']).split('\t')[0])
     control_path = os.path.join(linux_path, 'DEBIAN', 'control')
     specialize_template(control_path, control_path,
                         {'<<VERSION>>': BRICK_FLASH_CMD_VERSION,
