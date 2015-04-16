@@ -192,7 +192,7 @@ def build_macosx_pkg():
     dmg_name = 'brickv_macos_{0}.dmg'.format(BRICKV_VERSION.replace('.', '_'))
 
     if os.path.exists(dmg_name):
-        shutil.rmtree(dmg_name)
+        os.remove(dmg_name)
 
     system('hdiutil create -fs HFS+ -volname "Brickv-{0}" -srcfolder dist {1}'.format(BRICKV_VERSION, dmg_name))
 
