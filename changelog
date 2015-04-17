@@ -149,3 +149,8 @@
        Fix maximum page number in NFC/RFID Bricklet plugin
 2.2.3: Add server monitoring and openHAB configuration tabs to RED Brick plugin
        Restore DHCP IP address display for Ethernet Extension in Master Brick plugin
+2.2.4: Don't modify Brick and Bricklet callback configurations anymore, use getters instead
+       Add support for multiple hosts to server monitoring tab of RED Brick plugin
+       Add hostname change button to network tab of RED Brick plugin
+       Optimize OpenGL drawing code for IMU Brick plugin to reduce CPU usage
+       Optimize general plot drawing code to reduce CPU usage
