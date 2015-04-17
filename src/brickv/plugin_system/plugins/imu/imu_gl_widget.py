@@ -25,12 +25,13 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtOpenGL import QGLWidget
 
 from OpenGL.GL import GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, \
-                      GL_LESS, GL_MODELVIEW, GL_POLYGON, GL_PROJECTION, GL_SMOOTH, \
-                      GL_LINES, GL_COMPILE, glBegin, glCallList, glClear, glClearColor, \
-                      glClearDepth, glColor3f, glDepthFunc, glEnable, glEnd, glEndList, \
-                      glGenLists, glLoadIdentity, glMatrixMode, glNewList, glPopMatrix, \
-                      glPushMatrix, glShadeModel, glTranslatef, glVertex3fv, glViewport, \
-                      glScalef, glMultMatrixf, glLineWidth
+                      GL_LESS, GL_MODELVIEW, GL_QUADS, GL_PROJECTION, GL_SMOOTH, \
+                      GL_LINES, GL_COMPILE, GL_TRIANGLES, GL_CULL_FACE, glBegin, \
+                      glCallList, glClear, glClearColor, glClearDepth, glColor3f, \
+                      glDepthFunc, glEnable, glEnd, glEndList, glGenLists, glLoadIdentity, \
+                      glMatrixMode, glNewList, glPopMatrix, glPushMatrix, glShadeModel, \
+                      glTranslatef, glVertex3fv, glVertex3f, glViewport, glScalef, \
+                      glMultMatrixf, glLineWidth
 from OpenGL.GLU import gluPerspective
 
 class IMUGLWidget(QGLWidget):
@@ -38,21 +39,16 @@ class IMUGLWidget(QGLWidget):
         QGLWidget.__init__(self, parent, name)
         self.parent = parent
 
-        self.vertices = (
-            (-1.0,-1.0,-1.0),
-            (1.0,-1.0,-1.0),
-            (1.0,1.0,-1.0),
-            (-1.0,1.0,-1.0),
-            (-1.0,-1.0,1.0),
-            (1.0,-1.0,1.0),
-            (1.0,1.0,1.0),
-            (-1.0,1.0,1.0)
-        )
-
-        self.pins = [(-0.8, -0.9), (-0.8, -0.65), (-0.8, -0.4),
-                     (-0.6, -0.9), (-0.6, -0.65), (-0.6, -0.4),
-                     (0.9, 0.8), (0.65, 0.8), (0.4, 0.8), (0.15, 0.8),
-                     (0.9, 0.6), (0.65, 0.6), (0.4, 0.6), (0.15, 0.6)]
+        self.vertices = [
+            (-0.5,-0.5,-0.5),
+            (0.5,-0.5,-0.5),
+            (0.5,0.5,-0.5),
+            (-0.5,0.5,-0.5),
+            (-0.5,-0.5,0.5),
+            (0.5,-0.5,0.5),
+            (0.5,0.5,0.5),
+            (-0.5,0.5,0.5)
+        ]
 
         self.m = [[1, 0, 0, 0],
                   [0, 1, 0, 0],
@@ -118,6 +114,7 @@ class IMUGLWidget(QGLWidget):
         glClearDepth(1.0)
         glDepthFunc(GL_LESS)
         glEnable(GL_DEPTH_TEST)
+        glEnable(GL_CULL_FACE)
         glShadeModel(GL_SMOOTH)
 
         glMatrixMode(GL_PROJECTION)
@@ -128,94 +125,185 @@ class IMUGLWidget(QGLWidget):
 
         self.display_list = glGenLists(1)
         glNewList(self.display_list, GL_COMPILE)
+        glScalef(0.5, 0.5, 0.5)
 
-        # Draw board
+        # board
         glColor3f(0.0, 0.0, 0.0)
-        self.draw_cuboid(1.0, 1.0, 0.1)
+        self.draw_cuboid(4.0, 4.0, 0.16)
 
-        # Draw USB connector
+        # USB connector
         glPushMatrix()
         glColor3f(0.5, 0.51, 0.58)
-        glTranslatef(0.0, -0.8, 0.2)
-        self.draw_cuboid(0.2, 0.25, 0.1)
+        glTranslatef(0.0, -1.6, 0.28)
+        self.draw_cuboid(0.75, 0.9, 0.4)
         glPopMatrix()
 
-        # Draw button right
+        # right button
         glPushMatrix()
         glColor3f(0.5, 0.51, 0.58)
-        glTranslatef(0.65, -0.95, 0.125)
-        self.draw_cuboid(0.1, 0.075, 0.05)
+        glTranslatef(1.15, -1.85, 0.16)
+        self.draw_cuboid(0.4, 0.3, 0.16)
         glColor3f(0.0, 0.0, 0.0)
-        glTranslatef(0.0, -0.075, 0.0)
-        self.draw_cuboid(0.05, 0.025, 0.045)
+        glTranslatef(0.0, -0.155, 0.025)
+        self.draw_cuboid(0.18, 0.1, 0.08)
         glPopMatrix()
 
-        # Draw button left
+        # left button
         glPushMatrix()
         glColor3f(0.5, 0.51, 0.58)
-        glTranslatef(-0.65, -0.95, 0.125)
-        self.draw_cuboid(0.1, 0.075, 0.05)
+        glTranslatef(-1.15, -1.85, 0.16)
+        self.draw_cuboid(0.4, 0.3, 0.16)
         glColor3f(0.0, 0.0, 0.0)
-        glTranslatef(0.0, -0.075, 0.0)
-        self.draw_cuboid(0.05, 0.025, 0.045)
+        glTranslatef(0.0, -0.155, 0.025)
+        self.draw_cuboid(0.18, 0.1, 0.08)
         glPopMatrix()
 
-        # Draw btb left top
+        # left btb top
         glPushMatrix()
         glColor3f(1.0, 1.0, 1.0)
-        glTranslatef(-0.75, 0.0, 0.25)
-        self.draw_cuboid(0.13, 0.5, 0.15)
+        glTranslatef(-1.65, 0.0, 0.38)
+        self.draw_cuboid(0.5, 1.4, 0.6)
         glPopMatrix()
 
-        # Draw btb right top
+        # right btb top
         glPushMatrix()
         glColor3f(1.0, 1.0, 1.0)
-        glTranslatef(0.75, 0.0, 0.25)
-        self.draw_cuboid(0.13, 0.5, 0.15)
+        glTranslatef(1.65, 0.0, 0.38)
+        self.draw_cuboid(0.5, 1.4, 0.6)
         glPopMatrix()
 
-        # Draw btb left bottom
+        # left btb bottom
         glPushMatrix()
         glColor3f(1.0, 1.0, 1.0)
-        glTranslatef(-0.75, 0.0, -0.2)
-        self.draw_cuboid(0.13, 0.5, 0.1)
+        glTranslatef(-1.65, 0.0, -0.33)
+        self.draw_cuboid(0.5, 1.4, 0.5)
         glPopMatrix()
 
-        # Draw btb right bottom
+        # right btb bottom
         glPushMatrix()
         glColor3f(1.0, 1.0, 1.0)
-        glTranslatef(0.75, 0.0, -0.2)
-        self.draw_cuboid(0.13, 0.5, 0.1)
+        glTranslatef(1.65, 0.0, -0.33)
+        self.draw_cuboid(0.5, 1.4, 0.5)
         glPopMatrix()
 
-        # Draw bricklet port left
+        # left bricklet port
         glPushMatrix()
         glColor3f(1.0, 1.0, 1.0)
-        glTranslatef(-0.425, 0.9, -0.125)
-        self.draw_cuboid(0.325, 0.1, 0.05)
+        glTranslatef(-0.85, 1.8, -0.23)
+        self.draw_cuboid(1.2, 0.4, 0.3)
         glPopMatrix()
 
-        # Draw bricklet port right
+        # right bricklet port
         glPushMatrix()
         glColor3f(1.0, 1.0, 1.0)
-        glTranslatef(0.425, 0.9, -0.125)
-        self.draw_cuboid(0.325, 0.1, 0.05)
+        glTranslatef(0.85, 1.8, -0.23)
+        self.draw_cuboid(1.2, 0.4, 0.3)
         glPopMatrix()
 
-        # Draw Axis
+        # left direction LED
         glPushMatrix()
-        glTranslatef(-1.2, -1.2, -0.3)
+        glColor3f(0.0, 0.5, 0.0)
+        glTranslatef(-1.05, 1.425, 0.115)
+        self.draw_cuboid(0.1, 0.2, 0.07)
+        glPopMatrix()
+
+        # top direction LED
+        glPushMatrix()
+        glColor3f(0.0, 0.5, 0.0)
+        glTranslatef(-0.675, 1.8, 0.115)
+        self.draw_cuboid(0.2, 0.1, 0.07)
+        glPopMatrix()
+
+        # right direction LED
+        glPushMatrix()
+        glColor3f(0.0, 0.5, 0.0)
+        glTranslatef(-0.3, 1.425, 0.115)
+        self.draw_cuboid(0.1, 0.2, 0.07)
+        glPopMatrix()
+
+        # bottom direction LED
+        glPushMatrix()
+        glColor3f(0.0, 0.5, 0.0)
+        glTranslatef(-0.675, 1.05, 0.115)
+        self.draw_cuboid(0.2, 0.1, 0.07)
+        glPopMatrix()
+
+        # left y orientation LED
+        glPushMatrix()
+        glColor3f(0.0, 0.0, 1.0)
+        glTranslatef(0.275, 1.7, 0.115)
+        self.draw_cuboid(0.1, 0.2, 0.07)
+        glPopMatrix()
+
+        # right y orientation LED
+        glPushMatrix()
+        glColor3f(1.0, 0.0, 0.0)
+        glTranslatef(0.425, 1.7, 0.115)
+        self.draw_cuboid(0.1, 0.2, 0.07)
+        glPopMatrix()
+
+        # top z orientation LED
+        glPushMatrix()
+        glColor3f(1.0, 0.0, 0.0)
+        glTranslatef(0.35, 1.15, 0.115)
+        self.draw_cuboid(0.2, 0.1, 0.07)
+        glPopMatrix()
+
+        # bottom z orientation LED
+        glPushMatrix()
+        glColor3f(0.0, 0.0, 1.0)
+        glTranslatef(0.35, 1.0, 0.115)
+        self.draw_cuboid(0.2, 0.1, 0.07)
+        glPopMatrix()
+
+        # top x orientation LED
+        glPushMatrix()
+        glColor3f(1.0, 0.0, 0.0)
+        glTranslatef(1.0, 1.15, 0.115)
+        self.draw_cuboid(0.2, 0.1, 0.07)
+        glPopMatrix()
+
+        # bottom x orientation LED
+        glPushMatrix()
+        glColor3f(0.0, 0.0, 1.0)
+        glTranslatef(1.0, 1.0, 0.115)
+        self.draw_cuboid(0.2, 0.1, 0.07)
+        glPopMatrix()
+
+        # top alignment corner
+        glPushMatrix()
+        glColor3f(1.0, 1.0, 1.0)
+        glBegin(GL_TRIANGLES)
+        glVertex3f(-2.0, -2.0, 0.081)
+        glVertex3f(-1.1, -2.0, 0.081)
+        glVertex3f(-2.0, -1.1, 0.081)
+        glEnd()
+        glPopMatrix()
+
+        # bottom alignment corner
+        glPushMatrix()
+        glColor3f(1.0, 1.0, 1.0)
+        glBegin(GL_TRIANGLES)
+        glVertex3f(-2.0, -2.0, -0.081)
+        glVertex3f(-2.0, -1.1, -0.081)
+        glVertex3f(-1.1, -2.0, -0.081)
+        glEnd()
+        glPopMatrix()
+
+        # axis
+        glPushMatrix()
+        glTranslatef(-2.3, -2.3, -0.38)
         glLineWidth(5.0)
         glBegin(GL_LINES)
         glColor3f(1,0,0) # x axis is red
         glVertex3fv((0,0,0))
-        glVertex3fv((2,0,0))
+        glVertex3fv((3.5,0,0))
         glColor3f(0,0.5,0) # y axis is green
         glVertex3fv((0,0,0))
-        glVertex3fv((0,2,0))
+        glVertex3fv((0,3.5,0))
         glColor3f(0,0,1) # z axis is blue
         glVertex3fv((0,0,0))
-        glVertex3fv((0,0,2))
+        glVertex3fv((0,0,3.5))
         glEnd()
         glPopMatrix()
 
@@ -242,12 +330,12 @@ class IMUGLWidget(QGLWidget):
         glLoadIdentity()
         glTranslatef(0.0, 0.0, -5.0)
         glMultMatrixf(self.m)
-        
+
         glCallList(self.display_list)
 
-    def polygon(self, a, b, c, d):
-        # draw a polygon
-        glBegin(GL_POLYGON)
+    def quad(self, a, b, c, d, n):
+        # draw a quad
+        glBegin(GL_QUADS)
         glVertex3fv(self.vertices[a])
         glVertex3fv(self.vertices[b])
         glVertex3fv(self.vertices[c])
@@ -256,12 +344,12 @@ class IMUGLWidget(QGLWidget):
 
     def cube(self):
         # map vertices to faces
-        self.polygon(0, 3, 2, 1)
-        self.polygon(2, 3, 7, 6)
-        self.polygon(4, 7, 3, 0)
-        self.polygon(1, 2, 6, 5)
-        self.polygon(7, 4, 5, 6)
-        self.polygon(5, 4, 0, 1)
+        self.quad(0, 3, 2, 1, 5)
+        self.quad(2, 3, 7, 6, 1)
+        self.quad(4, 7, 3, 0, 3)
+        self.quad(1, 2, 6, 5, 0)
+        self.quad(7, 4, 5, 6, 2)
+        self.quad(5, 4, 0, 1, 4)
 
     def draw_cuboid(self, x, y, z):
         glPushMatrix()
