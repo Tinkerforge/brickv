@@ -124,8 +124,10 @@ def prepare_manifest(root_path):
 
 
 def freeze_images():
+    directory = 'brickv'
     image_files = []
-    for root, dirnames, names in os.walk('brickv'):
+
+    for root, dirnames, names in os.walk(directory):
         for name in names:
             full_name = os.path.join(root, name)
 
@@ -134,13 +136,13 @@ def freeze_images():
                 ext = ext[1:]
 
                 if ext in ['bmp', 'png', 'jpg']:
-                    image_files.append([full_name.replace('\\', '/').replace('brickv/', ''), ext])
+                    image_files.append([full_name.replace('\\', '/').replace(directory + '/', ''), ext])
 
-    images = open(os.path.join('brickv', 'frozen_images.py'), 'wb')
+    images = open(os.path.join(directory, 'frozen_images.py'), 'wb')
     images.write('image_data = {\n'.encode('utf-8'))
 
     for image_file in image_files:
-        image_data = base64.b64encode(file(os.path.join('brickv', image_file[0]), 'rb').read())
+        image_data = base64.b64encode(file(os.path.join(directory, image_file[0]), 'rb').read())
         images.write("'{0}': ['{1}', '{2}'],\n".format(image_file[0], image_file[1], image_data).encode('utf-8'))
 
     images.write('}\n'.encode('utf-8'))
