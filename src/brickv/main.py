@@ -31,33 +31,30 @@ import os
 import sys
 import logging
 
-# from http://www.py2exe.org/index.cgi/WhereAmI
-if hasattr(sys, "frozen"):
-    program_path = os.path.dirname(os.path.realpath(unicode(sys.executable, sys.getfilesystemencoding())))
-
-    if sys.platform == "darwin":
-        resources_path = os.path.join(os.path.split(program_path)[0], 'Resources')
+def prepare_package(package_name):
+    # from http://www.py2exe.org/index.cgi/WhereAmI
+    if hasattr(sys, 'frozen'):
+        program_path = os.path.dirname(os.path.realpath(unicode(sys.executable, sys.getfilesystemencoding())))
     else:
-        resources_path = program_path
-else:
-    program_path = os.path.dirname(os.path.realpath(unicode(__file__, sys.getfilesystemencoding())))
-    resources_path = program_path
+        program_path = os.path.dirname(os.path.realpath(unicode(__file__, sys.getfilesystemencoding())))
 
-# add program_path so OpenGL is properly imported
-sys.path.insert(0, program_path)
+    # add program_path so OpenGL is properly imported
+    sys.path.insert(0, program_path)
 
-# Allow brickv to be directly started by calling "main.py"
-# without "brickv" being in the path already
-if not 'brickv' in sys.modules:
-    head, tail = os.path.split(program_path)
+    # allow the program to be directly started by calling 'main.py'
+    # without '<package_name>' being in the path already
+    if package_name not in sys.modules:
+        head, tail = os.path.split(program_path)
 
-    if not head in sys.path:
-        sys.path.insert(0, head)
+        if head not in sys.path:
+            sys.path.insert(0, head)
 
-    if not hasattr(sys, "frozen"):
-        # load and inject in modules list, this allows to have the source in a
-        # directory named differently than 'brickv'
-        sys.modules['brickv'] = __import__(tail, globals(), locals(), [], -1)
+        if not hasattr(sys, 'frozen'):
+            # load and inject in modules list, this allows to have the source in a
+            # directory named differently than '<package_name>'
+            sys.modules[package_name] = __import__(tail, globals(), locals(), [], -1)
+
+prepare_package('brickv')
 
 from PyQt4.QtGui import QApplication, QIcon, QFont
 from PyQt4.QtCore import QEvent, pyqtSignal
