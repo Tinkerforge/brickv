@@ -163,6 +163,9 @@ def build_macosx_pkg():
     if os.path.exists(dist_path):
         shutil.rmtree(dist_path)
 
+    print('freezing images')
+    freeze_images()
+
     print('calling build_all_ui.py release')
     system('python build_all_ui.py release')
 
