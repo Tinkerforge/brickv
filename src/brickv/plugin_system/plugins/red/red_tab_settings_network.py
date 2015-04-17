@@ -1177,7 +1177,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
         input_dialog_hostname = QtGui.QInputDialog()
         input_dialog_hostname.setInputMode(QtGui.QInputDialog.TextInput)
         hostname_new, ok = input_dialog_hostname.getText(get_main_window(),
-                                                     'Settings | Network',
+                                                     'Change Hostname',
                                                      'Hostname:',
                                                      QtGui.QLineEdit.Normal,
                                                      self.label_net_hostname.text())
