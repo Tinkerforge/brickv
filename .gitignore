@@ -1,6 +1,7 @@
 *.pyc
 ui_*.py
 _scripts.py
+_mobile_internet_dicts.py
 *.py_minified
 *.py_prepared
 src/build
