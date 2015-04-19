@@ -81,9 +81,9 @@
     </layout>
    </item>
    <item row="1" column="1">
-    <widget class="QPushButton" name="pbutton_mi_presets_cancel">
+    <widget class="QPushButton" name="pbutton_mi_presets_close">
      <property name="text">
-      <string>Cancel</string>
+      <string>Close</string>
      </property>
     </widget>
    </item>

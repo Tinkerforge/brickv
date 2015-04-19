@@ -36,7 +36,21 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
 
         self.session = session
 
+        self.pbutton_mi_presets_select.clicked.connect(self.pbutton_mi_presets_select_clicked)
+        self.pbutton_mi_presets_close.clicked.connect(self.pbutton_mi_presets_close_clicked)
+
         self.cbox_mi_presets_country.clear()
 
+        list_countries = []
+
         for key in dict_country:
-            self.cbox_mi_presets_country.addItem(dict_country[key])
+            list_countries.append(dict_country[key])
+
+        for country in sorted(list_countries):
+            self.cbox_mi_presets_country.addItem(country)
+
+    def pbutton_mi_presets_select_clicked(self):
+        self.accept()
+
+    def pbutton_mi_presets_close_clicked(self):
+        self.reject()

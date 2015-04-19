@@ -68,5 +68,9 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
                                                                                   self.session,
                                                                                   dict_provider,
                                                                                   dict_country)
-        provider_preset_dialog.setModal(True)
-        provider_preset_dialog.show()
+        if provider_preset_dialog.exec_() == QtGui.QDialog.Accepted:
+            print 'accepted'
+            provider_preset_dialog.done(0)
+        else:
+            print 'not accepted'
+            provider_preset_dialog.done(0)
