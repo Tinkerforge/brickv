@@ -29,9 +29,14 @@ from brickv.async_call import async_call
 from brickv.utils import get_main_window
 
 class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabSettingsMobileInternetProviderPresetDialog):
-    def __init__(self, parent, session):
+    def __init__(self, parent, session, dict_provider, dict_country):
         QtGui.QDialog.__init__(self, parent)
 
         self.setupUi(self)
 
         self.session = session
+
+        self.cbox_mi_presets_country.clear()
+
+        for key in dict_country:
+            self.cbox_mi_presets_country.addItem(dict_country[key])

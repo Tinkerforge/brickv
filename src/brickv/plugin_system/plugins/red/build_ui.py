@@ -73,3 +73,5 @@ system("pyuic4 -o ui_program_page_upload.py ui/program_page_upload.ui")
 system("pyuic4 -o ui_program_page_download.py ui/program_page_download.ui")
 
 system("python build_scripts.py")
+
+system("python generate_mobile_internet_dicts.py")

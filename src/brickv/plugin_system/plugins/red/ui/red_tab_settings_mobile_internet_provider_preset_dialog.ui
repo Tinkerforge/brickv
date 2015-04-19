@@ -24,7 +24,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QComboBox" name="comboBox"/>
+      <widget class="QComboBox" name="cbox_mi_presets_country"/>
      </item>
      <item row="1" column="0">
       <widget class="QLabel" name="label_2">
@@ -34,7 +34,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QComboBox" name="comboBox_2"/>
+      <widget class="QComboBox" name="cbox_mi_presets_provider"/>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_3">
@@ -44,7 +44,7 @@
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QComboBox" name="comboBox_3">
+      <widget class="QComboBox" name="cbox_mi_presets_network_type">
        <item>
         <property name="text">
          <string>GSM</string>
@@ -65,7 +65,7 @@
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QComboBox" name="comboBox_4">
+      <widget class="QComboBox" name="cbox_mi_presets_plan">
        <item>
         <property name="text">
          <string>Postpaid</string>
@@ -81,14 +81,14 @@
     </layout>
    </item>
    <item row="1" column="1">
-    <widget class="QPushButton" name="pushButton_2">
+    <widget class="QPushButton" name="pbutton_mi_presets_cancel">
      <property name="text">
       <string>Cancel</string>
      </property>
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="pbutton_mi_presets_select">
      <property name="text">
       <string>Select</string>
      </property>

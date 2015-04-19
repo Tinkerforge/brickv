@@ -29,6 +29,8 @@ from brickv.plugin_system.plugins.red.red_tab_settings_mobile_internet_provider_
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import TextFile
 from brickv.plugin_system.plugins.red import config_parser
+from brickv.plugin_system.plugins.red._mobile_internet_dicts import dict_provider
+from brickv.plugin_system.plugins.red._mobile_internet_dicts import dict_country
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
 
@@ -62,6 +64,9 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         puk_dialog.show()
 
     def pbutton_mi_provider_presets_clicked(self):
-        provider_preset_dialog = REDTabSettingsMobileInternetProviderPresetDialog(self, self.session)
+        provider_preset_dialog = REDTabSettingsMobileInternetProviderPresetDialog(self,
+                                                                                  self.session,
+                                                                                  dict_provider,
+                                                                                  dict_country)
         provider_preset_dialog.setModal(True)
         provider_preset_dialog.show()
