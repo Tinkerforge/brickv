@@ -31,7 +31,9 @@ from OpenGL.GL import GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_DEPTH_TEST, \
                       glDepthFunc, glEnable, glEnd, glEndList, glGenLists, glLoadIdentity, \
                       glMatrixMode, glNewList, glPopMatrix, glPushMatrix, glShadeModel, \
                       glTranslatef, glVertex3fv, glVertex3f, glViewport, glScalef, \
-                      glMultMatrixf, glLineWidth
+                      glMultMatrixf, glLineWidth, glNormal3fv, glNormal3f, GL_NORMALIZE, \
+                      GL_LIGHTING, glLightfv, GL_LIGHT0, GL_POSITION, GL_AMBIENT_AND_DIFFUSE, \
+                      GL_COLOR_MATERIAL, GL_FRONT, glColorMaterial, glDisable
 from OpenGL.GLU import gluPerspective
 
 class IMUV2GLWidget(QGLWidget):
@@ -48,6 +50,15 @@ class IMUV2GLWidget(QGLWidget):
             (0.5,-0.5,0.5),
             (0.5,0.5,0.5),
             (-0.5,0.5,0.5)
+        ]
+
+        self.normals = [
+            (1,0,0),
+            (0,1,0),
+            (0,0,1),
+            (-1,0,0),
+            (0,-1,0),
+            (0,0,-1),
         ]
 
         self.m = [[1, 0, 0, 0],
@@ -115,7 +126,13 @@ class IMUV2GLWidget(QGLWidget):
         glDepthFunc(GL_LESS)
         glEnable(GL_DEPTH_TEST)
         glEnable(GL_CULL_FACE)
+
         glShadeModel(GL_SMOOTH)
+        glEnable(GL_NORMALIZE)
+        glEnable(GL_COLOR_MATERIAL)
+        glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE)
+        glLightfv(GL_LIGHT0, GL_POSITION, (0.0, 0.0, 1.0, 0.0))
+        glEnable(GL_LIGHT0)
 
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
@@ -126,6 +143,8 @@ class IMUV2GLWidget(QGLWidget):
         self.display_list = glGenLists(1)
         glNewList(self.display_list, GL_COMPILE)
         glScalef(0.5, 0.5, 0.5)
+
+        glEnable(GL_LIGHTING)
 
         # board
         glColor3f(0.0, 0.0, 0.0)
@@ -274,6 +293,7 @@ class IMUV2GLWidget(QGLWidget):
         glPushMatrix()
         glColor3f(1.0, 1.0, 1.0)
         glBegin(GL_TRIANGLES)
+        glNormal3f(0.0, 0.0, 1.0)
         glVertex3f(-2.0, -2.0, 0.081)
         glVertex3f(-1.1, -2.0, 0.081)
         glVertex3f(-2.0, -1.1, 0.081)
@@ -284,11 +304,14 @@ class IMUV2GLWidget(QGLWidget):
         glPushMatrix()
         glColor3f(1.0, 1.0, 1.0)
         glBegin(GL_TRIANGLES)
+        glNormal3f(0.0, 0.0, -1.0)
         glVertex3f(-2.0, -2.0, -0.081)
         glVertex3f(-2.0, -1.1, -0.081)
         glVertex3f(-1.1, -2.0, -0.081)
         glEnd()
         glPopMatrix()
+
+        glDisable(GL_LIGHTING)
 
         # axis
         glPushMatrix()
@@ -296,15 +319,16 @@ class IMUV2GLWidget(QGLWidget):
         glLineWidth(3.0)
         glBegin(GL_LINES)
         glColor3f(1,0,0) # x axis is red
-        glVertex3fv((0,0,0))
-        glVertex3fv((3.5,0,0))
+        glVertex3f(0,0,0)
+        glVertex3f(3,0,0)
         glColor3f(0,0.5,0) # y axis is green
-        glVertex3fv((0,0,0))
-        glVertex3fv((0,3.5,0))
+        glVertex3f(0,0,0)
+        glVertex3f(0,3,0)
         glColor3f(0,0,1) # z axis is blue
-        glVertex3fv((0,0,0))
-        glVertex3fv((0,0,3.5))
+        glVertex3f(0,0,0)
+        glVertex3f(0,0,3)
         glEnd()
+        glLineWidth(1.0)
         glPopMatrix()
 
         glEndList()
@@ -336,6 +360,7 @@ class IMUV2GLWidget(QGLWidget):
     def quad(self, a, b, c, d, n):
         # draw a quad
         glBegin(GL_QUADS)
+        glNormal3fv(self.normals[n])
         glVertex3fv(self.vertices[a])
         glVertex3fv(self.vertices[b])
         glVertex3fv(self.vertices[c])
