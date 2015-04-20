@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-20.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -115,9 +115,13 @@ class BrickletLaserRangeFinder(Device):
 
     def get_distance(self):
         """
-        TODO
+        Returns the measured distance. The value has a range of 0 to 4000
+        and is given in cm.
         
-        unit: cm
+        The Laser Range Finder Bricklet knows different modes. Distances
+        are only measured in the distace measurement mode, 
+        see :func:`SetMode`. Also the laser has to be enabled, see
+        :func:`EnableLaser`.
         
         If you want to get the distance periodically, it is recommended to
         use the callback :func:`Distance` and set the period with 
@@ -127,9 +131,13 @@ class BrickletLaserRangeFinder(Device):
 
     def get_velocity(self):
         """
-        TODO
+        Returns the measured velocity. The value has a range of 0 to 12700
+        and is given in 1/100 m/s.
         
-        unit: 0.01 m/s
+        The Laser Range Finder Bricklet knows different modes. Velocity 
+        is only measured in the velocity measurement modes, 
+        see :func:`SetMode`. Also the laser has to be enabled, see
+        :func:`EnableLaser`.
         
         If you want to get the velocity periodically, it is recommended to
         use the callback :func:`Velocity` and set the period with 
@@ -271,34 +279,43 @@ class BrickletLaserRangeFinder(Device):
 
     def set_mode(self, mode):
         """
-        * resolution 0.1m/s => 12.7m/s max
-        * resolution 0.25m/s => 31.75m/s max
-        * resolution 0.5m/s => 63.5m/s max
-        * resolution 1m/s => 127 m/s max
+        The LIDAR has five different modes. One mode is for distance
+        measurements and four modes are for velocity measurements with
+        different ranges.
+        
+        The following modes are available:
+        
+        * 0: Distance is measured with resolution 1.0 cm and range 0-400 cm
+        * 1: Velocity is measured with resolution 0.1 m/s and range is 0-12.7 m/s
+        * 2: Velocity is measured with resolution 0.25 m/s and range is 0-31.75 m/s
+        * 3: Velocity is measured with resolution 0.5 m/s and range is 0-63.5 m/s
+        * 4: Velocity is measured with resolution 1.0 m/s and range is 0-127 m/s
+        
+        The default mode is 0 (Distance is measured).
         """
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_MODE, (mode,), 'B', '')
 
     def get_mode(self):
         """
-        
+        Returns the mode as set by :func:`SetMode`.
         """
         return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_GET_MODE, (), '', 'B')
 
     def enable_laser(self):
         """
-        
+        Activates the laser of the LIDAR.
         """
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_ENABLE_LASER, (), '', '')
 
     def disable_laser(self):
         """
-        
+        Deactivates the laser of the LIDAR.
         """
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_DISABLE_LASER, (), '', '')
 
     def is_laser_enabled(self):
         """
-        
+        Returns *true* if the laser is enabled, *false* otherwise.
         """
         return self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_IS_LASER_ENABLED, (), '', '?')
 

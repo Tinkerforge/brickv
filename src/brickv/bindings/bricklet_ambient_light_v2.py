@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-20.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -98,8 +98,8 @@ class BrickletAmbientLightV2(Device):
     def get_illuminance(self):
         """
         Returns the illuminance of the ambient light sensor. The value
-        has a range of 0 to 9000 and is given in Lux/10, i.e. a value
-        of 4500 means that an illuminance of 450 Lux is measured.
+        has a range of 0 to 6400000 and is given in 1/100 Lux, i.e. a value
+        of 45000 means that an illuminance of 450 Lux is measured.
         
         If you want to get the illuminance periodically, it is recommended to use the
         callback :func:`Illuminance` and set the period with 

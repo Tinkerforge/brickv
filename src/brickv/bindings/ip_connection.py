@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright (C) 2012-2014 Matthias Bolte <matthias@tinkerforge.com>
+# Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 # Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
 #
 # Redistribution and use in source and binary forms of this file,
@@ -520,7 +520,7 @@ class IPConnection:
         self.registered_callbacks[id] = callback
 
     def connect_unlocked(self, is_auto_reconnect):
-        # NOTE: assumes that socket_lock is locked
+        # NOTE: assumes that socket is None and socket_lock is locked
 
         # create callback thread and queue
         if self.callback is None:
@@ -540,14 +540,11 @@ class IPConnection:
 
         # create and connect socket
         try:
-            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-            self.socket.connect((self.host, self.port))
-            self.socket_id += 1
+            tmp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            tmp.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            tmp.connect((self.host, self.port))
         except:
             def cleanup():
-                self.socket = None
-
                 # end callback thread
                 if not is_auto_reconnect:
                     self.callback.queue.put((IPConnection.QUEUE_EXIT, None))
@@ -559,6 +556,9 @@ class IPConnection:
 
             cleanup()
             raise
+
+        self.socket = tmp
+        self.socket_id += 1
 
         # create disconnect probe thread
         try:
@@ -629,7 +629,7 @@ class IPConnection:
                                  connect_reason, None)))
 
     def disconnect_unlocked(self):
-        # NOTE: assumes that socket_lock is locked
+        # NOTE: assumes that socket is not None and socket_lock is locked
 
         # end disconnect probe thread
         self.disconnect_probe_queue.put(True)
