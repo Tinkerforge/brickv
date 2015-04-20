@@ -65,7 +65,9 @@ class GPS(PluginBase, Ui_GPS):
     def get_universal(self):
         return self.gps.get_coordinates(), self.gps.get_status(), self.gps.get_altitude(), self.gps.get_motion(), self.gps.get_date_time()
 
-    def cb_universal(self, coordinates, status, altitude, motion, date_time):
+    def cb_universal(self, data):
+        coordinates, status, altitude, motion, date_time = data
+
         self.cb_coordinates(*coordinates)
         self.cb_status(*status)
         self.cb_altitude(*altitude)
