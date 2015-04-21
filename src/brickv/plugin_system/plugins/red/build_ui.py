@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import sys
 
 def system(command):
     if os.system(command) != 0:
@@ -74,4 +75,7 @@ system("pyuic4 -o ui_program_page_download.py ui/program_page_download.ui")
 
 system("python build_scripts.py")
 
-system("python generate_mobile_internet_dicts.py")
+if sys.platform.startswith("linux"):
+    system("python build_serviceproviders.py")
+else:
+    print("Skipping build_serviceproviders.py")

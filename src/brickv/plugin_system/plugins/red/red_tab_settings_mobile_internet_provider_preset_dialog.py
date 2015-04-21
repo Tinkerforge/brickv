@@ -62,7 +62,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
         code_country = self.cbox_mi_presets_country.itemData(self.cbox_mi_presets_country.currentIndex())
         self.cbox_mi_presets_provider.clear()
 
-        for i, dict_c in enumerate(self.dict_provider['serviceproviders']['country']):
+        for i, dict_c in enumerate(self.dict_provider['country']):
             if 'provider' not in dict_c:
                 continue
 
@@ -70,17 +70,17 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
                 continue
 
             if isinstance(dict_c['provider'], dict):
-                self.cbox_mi_presets_provider.addItem(dict_c['provider']['name'].decode('unicode_escape'))
+                self.cbox_mi_presets_provider.addItem(dict_c['provider']['name'])
                 self.cbox_mi_presets_provider.setItemData(i, code_country)
                 continue
 
             for dict_p in dict_c['provider']:
                 if isinstance(dict_p['name'], list):
-                    self.cbox_mi_presets_provider.addItem(dict_p['name'][0].decode('unicode_escape'))
+                    self.cbox_mi_presets_provider.addItem(dict_p['name'][0])
                     self.cbox_mi_presets_provider.setItemData(i, code_country)
                     continue
 
-                self.cbox_mi_presets_provider.addItem(dict_p['name'].decode('unicode_escape'))
+                self.cbox_mi_presets_provider.addItem(dict_p['name'])
                 self.cbox_mi_presets_provider.setItemData(i, code_country)
 
             self.cbox_mi_presets_provider.setCurrentIndex(-1)
@@ -94,7 +94,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
             dict_c[self.dict_country[key]] = key
 
         for i, key in enumerate(sorted(dict_c)):
-            self.cbox_mi_presets_country.addItem(key.decode('unicode_escape'))
+            self.cbox_mi_presets_country.addItem(key)
             self.cbox_mi_presets_country.setItemData(i, dict_c[key])
 
         self.cbox_mi_presets_country.setCurrentIndex(-1)

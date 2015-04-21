@@ -26,6 +26,7 @@ Boston, MA 02111-1307, USA.
 import os
 import glob
 import traceback
+from pprint import pformat
 
 print("Adding RED Brick scripts:")
 
@@ -71,24 +72,24 @@ try:
 
         with open(path) as f:
             name, extension = os.path.splitext(os.path.split(script)[-1])
-            content = f.read()
+            content = f.read().replace('\n# Created by pyminifier (https://github.com/liftoff/pyminifier)\n\n', '')
 
             script_data.append((name, extension, content))
 
             print(" " + str(i) + ") " + name)
 
-    with open(os.path.join(build_script_path, '_scripts.py'), 'w') as f:
+    with open(os.path.join(build_script_path, 'script_data.py'), 'w') as f:
         f.write('# -*- coding: utf-8 -*-\n')
         f.write('# This file is generated, don\'t edit it. Edit the files in the scripts/ folder.\n')
         f.write('\n')
         f.write('script_data = ')
-        f.write(repr(script_data).replace('\\n# Created by pyminifier (https://github.com/liftoff/pyminifier)\\n\\n', ''))
+        f.write(pformat(script_data))
 except:
     print("Exception during script parsing, there will be no scripts available.")
     traceback.print_exc()
 
     build_script_path = os.path.dirname(os.path.realpath(__file__))
-    with open(os.path.join(build_script_path, '_scripts.py'), 'w') as f:
+    with open(os.path.join(build_script_path, 'script_data.py'), 'w') as f:
         f.write('# -*- coding: utf-8 -*-\n')
         f.write('# This file is generated, don\'t edit it. Edit the files in the scripts/ folder.\n')
         f.write('\n')

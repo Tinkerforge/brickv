@@ -30,7 +30,7 @@ from PyQt4.QtGui import QMessageBox
 from threading import Lock
 from brickv.async_call import async_call
 from brickv.object_creator import create_object_in_qt_main_thread
-from brickv.plugin_system.plugins.red._scripts import script_data
+from brickv.plugin_system.plugins.red.script_data import script_data
 from brickv.utils import get_main_window
 
 SCRIPT_FOLDER = '/usr/local/scripts'
