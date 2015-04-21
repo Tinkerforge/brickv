@@ -28,6 +28,8 @@ import glob
 from setuptools import setup, find_packages
 from brickv.config import BRICKV_VERSION
 
+BRICKV_DESCRIPTION = 'Small Qt GUI to control and test all Bricks and Bricklets from Tinkerforge'
+
 # Find brickv packages
 if sys.platform == 'darwin':
     packages = find_packages() # FIXME: setuptools on our macbook doesn't understand 'include'
@@ -81,17 +83,16 @@ elif sys.platform == 'darwin':
 
 # Run setup
 setup_arguments = {
-    'name':             'brickv',
-    'version':          BRICKV_VERSION,
-    'author':           'Tinkerforge',
-    'author_email':     'info@tinkerforge.com',
-    'url':              'http://www.tinkerforge.com',
-    'license':          'GPL v2',
-    'description':      'Brick Viewer',
-    'long_description': 'Brick Viewer is a small Qt GUI with which one can control and test all Bricks and Bricklets from Tinkerforge',
-    'packages':         packages,
-    'package_data':     package_data,
-    'data_files':       data_files
+    'name':         'brickv',
+    'version':      BRICKV_VERSION,
+    'author':       'Tinkerforge',
+    'author_email': 'info@tinkerforge.com',
+    'url':          'http://www.tinkerforge.com',
+    'license':      'GPL v2',
+    'description':  BRICKV_DESCRIPTION,
+    'packages':     packages,
+    'package_data': package_data,
+    'data_files':   data_files
 }
 
 if sys.platform.startswith('linux'):
@@ -181,11 +182,13 @@ elif sys.platform == 'darwin':
         'script': 'brickv/main.py',
         'plist': {
             'CFBundleName':               'Brickv',
+            'CFBundleVersion':            BRICKV_VERSION,
             'CFBundleShortVersionString': BRICKV_VERSION,
-            'CFBundleGetInfoString':      'Brickv {0}'.format(BRICKV_VERSION),
-            'CFBundleExecutable':         'main',
+            'CFBundleGetInfoString':      BRICKV_DESCRIPTION,
+            'CFBundleExecutable':         'brickv',
             'CFBundleIdentifier':         'com.tinkerforge.brickv',
             'CFBundleIconFile':           'brickv-icon.icns',
+            'NSHumanReadableCopyright':   'Tinkerforge GmbH 2011-2015'
         }
     }]
 

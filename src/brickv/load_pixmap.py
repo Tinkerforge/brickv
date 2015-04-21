@@ -24,10 +24,11 @@ Boston, MA 02111-1307, USA.
 
 import os
 import sys
-from brickv.utils import get_resources_path
 
 from PyQt4.QtGui import QPixmap, QColor
 from PyQt4.QtCore import Qt, QByteArray
+
+from brickv.utils import get_resources_path
 
 if hasattr(sys, 'frozen'):
     from brickv.frozen_images import image_data
