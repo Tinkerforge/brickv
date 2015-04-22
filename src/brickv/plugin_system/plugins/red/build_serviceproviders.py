@@ -32,6 +32,7 @@ import xml.etree.ElementTree as ET
 from pprint import pformat
 
 XML_URL = 'https://git.gnome.org/browse/mobile-broadband-provider-info/plain/serviceproviders.xml'
+ISO3166_FILE = '/usr/share/xml/iso-codes/iso_3166.xml'
 DATA_FILE = 'serviceprovider_data.py'
 
 try:
@@ -79,7 +80,7 @@ try:
 
     print('[*] Processing country dict')
 
-    root_country = ET.parse('/usr/share/xml/iso-codes/iso_3166.xml').getroot()
+    root_country = ET.parse(ISO3166_FILE).getroot()
     dict_country_all = {}
     dict_country = {}
 
@@ -96,8 +97,18 @@ try:
         f.write('# -*- coding: utf-8 -*-\n')
         f.write('# This file is generated, don\'t edit it.\n')
         f.write('\n')
+        f.write('# The provider data comes from the GNOME mobile-broadband-provider-info package\n')
+        f.write('# that is released as public domain:\n')
+        f.write('#\n')
+        f.write('# https://git.gnome.org/browse/mobile-broadband-provider-info/plain/serviceproviders.xml\n')
+        f.write('\n')
         f.write('dict_provider = \\\n')
         f.write(pformat(dict_provider) + '\n')
+        f.write('\n')
+        f.write('# The country data comes from the Debian iso-codes package that is released\n')
+        f.write('# under LGPLv2.1+:\n')
+        f.write('#\n')
+        f.write('# /usr/share/xml/iso-codes/iso_3166.xml\n')
         f.write('\n')
         f.write('dict_country = \\\n')
         f.write(pformat(dict_country) + '\n')

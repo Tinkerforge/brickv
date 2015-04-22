@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 # This file is generated, don't edit it.
 
+# The provider data comes from the GNOME mobile-broadband-provider-info package
+# that is released as public domain:
+#
+# https://git.gnome.org/browse/mobile-broadband-provider-info/plain/serviceproviders.xml
+
 dict_provider = \
 {'@format': '2.0',
  'country': [{'@code': 'ae',
@@ -9701,6 +9706,11 @@ dict_provider = \
                                     'network-id': {'@mcc': '655',
                                                    '@mnc': '02'}},
                             'name': '8.ta'}]}]}
+
+# The country data comes from the Debian iso-codes package that is released
+# under LGPLv2.1+:
+#
+# /usr/share/xml/iso-codes/iso_3166.xml
 
 dict_country = \
 {'ae': 'United Arab Emirates',
