@@ -88,7 +88,7 @@ during stabilization.</p>""")
         async_call(self.imu.save_calibration, None, self.async_save_calibration, self.parent.increase_error_count)
         
     def async_save_calibration(self, calibration_done):
-        #print "calibration_done", calibration_done
+        # TODO: Show user that calibration was is done/not done?
         pass
         
     def closeEvent(self, event):
