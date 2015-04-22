@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QLabel, QVBoxLayout, QColor, QPalette, \
+from PyQt4.QtGui import QVBoxLayout, QColor, QPalette, \
                         QFrame, QPainter, QBrush, QDialog
 
 from brickv.plugin_system.plugin_base import PluginBase
@@ -88,7 +88,7 @@ during stabilization.</p>""")
         async_call(self.imu.save_calibration, None, self.async_save_calibration, self.parent.increase_error_count)
         
     def async_save_calibration(self, calibration_done):
-        # TODO: Show user that calibration was is done/not done?
+        # TODO: Show user that calibration is done/not done?
         pass
         
     def closeEvent(self, event):
