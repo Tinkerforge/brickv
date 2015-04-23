@@ -173,7 +173,7 @@ class BrickletGasDetector(Device):
     def set_moving_average(self, average):
         """
         Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
-        for the measured value.
+        for the value value.
         
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
@@ -205,7 +205,7 @@ class BrickletGasDetector(Device):
         You can use the Brick Viewer to set the detector type, so you likely
         don't need to use this function in your source code.
         
-        The default detector type is 0.
+        The default type is 0.
         """
         self.ipcon.send_request(self, BrickletGasDetector.FUNCTION_SET_DETECTOR_TYPE, (detector_type,), 'B', '')
 

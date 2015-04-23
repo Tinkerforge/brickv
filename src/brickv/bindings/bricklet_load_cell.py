@@ -177,7 +177,7 @@ class BrickletLoadCell(Device):
     def set_moving_average(self, average):
         """
         Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
-        for the weight value.
+        for the value value.
         
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
@@ -237,9 +237,9 @@ class BrickletLoadCell(Device):
         (see :func:`SetMovingAverage`) to the measurements.
         
         The gain can be 128x, 64x or 32x. It represents a measurement range of
-        ±20mV, ±40mV and ±80mV respectively. The Load Cell Bricklet uses an
+        +-20mV, +-40mV and +-80mV respectively. The Load Cell Bricklet uses an
         excitation voltage of 5V and most load cells use an output of 2mV/V. That
-        means the voltage range is ±15mV for most load cells (i.e. gain of 128x
+        means the voltage range is +-15mV for most load cells (i.e. gain of 128 
         is best). If you don't know what all of this means you should keep it at 
         128x, it will most likely be correct.
         

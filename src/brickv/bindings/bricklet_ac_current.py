@@ -103,7 +103,7 @@ class BrickletACCurrent(Device):
 
     def get_current(self):
         """
-        TODO
+        Returns ... TODO
         
         If you want to get the current periodically, it is recommended to use the
         callback :func:`Current` and set the period with

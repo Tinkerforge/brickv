@@ -211,9 +211,9 @@ class BrickIMUV2(Device):
         
         The rotation angle has the following ranges:
         
-        * heading: 0° to 360°
-        * roll: -90° to +90°
-        * pitch: -180° to +180°
+        * heading: 0° - 360°
+        * roll: -90° - 90°
+        * pitch: -180° - 180°
         
         If you want to get the orientation periodically, it is recommended 
         to use the callback :func:`Orientation` and set the period with 
@@ -257,11 +257,11 @@ class BrickIMUV2(Device):
 
     def get_quaternion(self):
         """
-        Returns the current orientation (w, x, y, z) of the IMU Brick as
+        Returns the current orientation (w, x, y, z) of the IMU as 
         `quaternions <http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
         
         You have to divide the returns values by 16383 (14 bit) to get
-        the usual range of -1.0 to +1.0 for quaternions.
+        the usual range of -1 to 1 for quaternions.
         
         If you want to get the quaternions periodically, it is recommended 
         to use the callback :func:`Quaternion` and set the period with 

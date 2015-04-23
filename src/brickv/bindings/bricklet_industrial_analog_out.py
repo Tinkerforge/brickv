@@ -126,8 +126,8 @@ class BrickletIndustrialAnalogOut(Device):
         
         Possible voltage ranges are:
         
-        * 0V to 5V
-        * 0V to 10V
+        * 0V - 5V
+        * 0V - 10V
         
         Possible current ranges are:
         
