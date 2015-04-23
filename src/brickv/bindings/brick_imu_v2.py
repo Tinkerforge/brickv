@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-15.      #
+# This file was automatically generated on 2015-04-23.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -37,7 +37,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickIMUV2(Device):
     """
-    Device for sensing acceleration, magnetic field and angular velocity
+    Full fledged AHRS with 9 degrees of freedom
     """
 
     DEVICE_IDENTIFIER = 18
@@ -84,6 +84,9 @@ class BrickIMUV2(Device):
     FUNCTION_GET_QUATERNION_PERIOD = 29
     FUNCTION_SET_ALL_DATA_PERIOD = 30
     FUNCTION_GET_ALL_DATA_PERIOD = 31
+    FUNCTION_ENABLE_STATUS_LED = 238
+    FUNCTION_DISABLE_STATUS_LED = 239
+    FUNCTION_IS_STATUS_LED_ENABLED = 240
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
@@ -139,6 +142,9 @@ class BrickIMUV2(Device):
         self.response_expected[BrickIMUV2.CALLBACK_ORIENTATION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickIMUV2.CALLBACK_QUATERNION] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickIMUV2.CALLBACK_ALL_DATA] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickIMUV2.FUNCTION_ENABLE_STATUS_LED] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMUV2.FUNCTION_DISABLE_STATUS_LED] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMUV2.FUNCTION_IS_STATUS_LED_ENABLED] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_GET_CHIP_TEMPERATURE] = BrickIMUV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMUV2.FUNCTION_RESET] = BrickIMUV2.RESPONSE_EXPECTED_FALSE
@@ -205,9 +211,9 @@ class BrickIMUV2(Device):
         
         The rotation angle has the following ranges:
         
-        * heading: 0° - 360°
-        * roll: -90° - 90°
-        * pitch: -180° - 180°
+        * heading: 0° to 360°
+        * roll: -90° to +90°
+        * pitch: -180° to +180°
         
         If you want to get the orientation periodically, it is recommended 
         to use the callback :func:`Orientation` and set the period with 
@@ -251,11 +257,11 @@ class BrickIMUV2(Device):
 
     def get_quaternion(self):
         """
-        Returns the current orientation (w, x, y, z) of the IMU as 
+        Returns the current orientation (w, x, y, z) of the IMU Brick as
         `quaternions <http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
         
-        You have to divide the returnes values by 16383 (14 bit) to get
-        the usual range of -1 to 1 for quaternions.
+        You have to divide the returns values by 16383 (14 bit) to get
+        the usual range of -1.0 to +1.0 for quaternions.
         
         If you want to get the quaternions periodically, it is recommended 
         to use the callback :func:`Quaternion` and set the period with 
@@ -270,7 +276,7 @@ class BrickIMUV2(Device):
         * acceleration in 1/100 m/s² (see :func:`GetAcceleration`)
         * magnetic field in 1/16 µT (see :func:`GetMagneticField`)
         * angular velocity in 1/16 °/s (see :func:`GetAngularVelocity`)
-        * euler angles in 1/16 ° (see :func:`GetOrientation`)
+        * Euler angles in 1/16 ° (see :func:`GetOrientation`)
         * quaternion 1/16383 (see :func:`GetQuaternion`)
         * linear acceleration 1/100 m/s² (see :func:`GetLinearAcceleration`)
         * gravity vector 1/100 m/s² (see :func:`GetGravityVector`)
@@ -450,6 +456,34 @@ class BrickIMUV2(Device):
         Returns the period as set by :func:`SetAllDataPeriod`.
         """
         return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
+
+    def enable_status_led(self):
+        """
+        Enables the status LED.
+        
+        The status LED is the blue LED next to the USB connector. If enabled is is
+        on and it flickers if data is transfered. If disabled it is always off.
+        
+        The default state is enabled.
+        """
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_ENABLE_STATUS_LED, (), '', '')
+
+    def disable_status_led(self):
+        """
+        Disables the status LED.
+        
+        The status LED is the blue LED next to the USB connector. If enabled is is
+        on and it flickers if data is transfered. If disabled it is always off.
+        
+        The default state is enabled.
+        """
+        self.ipcon.send_request(self, BrickIMUV2.FUNCTION_DISABLE_STATUS_LED, (), '', '')
+
+    def is_status_led_enabled(self):
+        """
+        Returns *true* if the status LED is enabled, *false* otherwise.
+        """
+        return self.ipcon.send_request(self, BrickIMUV2.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
 
     def get_protocol1_bricklet_name(self, port):
         """

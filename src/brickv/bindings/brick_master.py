@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-23.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -40,7 +40,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickMaster(Device):
     """
-    Device for controlling Stacks and four Bricklets
+    Basis to build stacks and has 4 Bricklet ports
     """
 
     DEVICE_IDENTIFIER = 13
@@ -123,6 +123,9 @@ class BrickMaster(Device):
     FUNCTION_GET_ETHERNET_AUTHENTICATION_SECRET = 74
     FUNCTION_SET_WIFI_AUTHENTICATION_SECRET = 75
     FUNCTION_GET_WIFI_AUTHENTICATION_SECRET = 76
+    FUNCTION_ENABLE_STATUS_LED = 238
+    FUNCTION_DISABLE_STATUS_LED = 239
+    FUNCTION_IS_STATUS_LED_ENABLED = 240
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
@@ -261,6 +264,9 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_GET_ETHERNET_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SET_WIFI_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_WIFI_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_ENABLE_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_DISABLE_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_IS_STATUS_LED_ENABLED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_CHIP_TEMPERATURE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_RESET] = BrickMaster.RESPONSE_EXPECTED_FALSE
@@ -622,7 +628,7 @@ class BrickMaster(Device):
         The values are stored in the EEPROM and only applied on startup. That means
         you have to restart the Master Brick after configuration.
         
-        It is recommended to use the Brick Viewer to set the WIFI encryption.
+        It is recommended to use the Brick Viewer to set the Wi-Fi encryption.
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI_ENCRYPTION, (encryption, key, key_index, eap_options, ca_certificate_length, client_certificate_length, private_key_length), 'B 50s B B H H H', '')
 
@@ -654,8 +660,8 @@ class BrickMaster(Device):
 
     def refresh_wifi_status(self):
         """
-        Refreshes the WIFI status (see :func:`GetWifiStatus`). To read the status
-        of the WIFI module, the Master Brick has to change from data mode to
+        Refreshes the Wi-Fi status (see :func:`GetWifiStatus`). To read the status
+        of the Wi-Fi module, the Master Brick has to change from data mode to
         command mode and back. This transaction and the readout itself is
         unfortunately time consuming. This means, that it might take some ms
         until the stack with attached WIFI Extension reacts again after this
@@ -715,7 +721,7 @@ class BrickMaster(Device):
 
     def get_wifi_buffer_info(self):
         """
-        Returns informations about the WIFI receive buffer. The WIFI
+        Returns informations about the Wi-Fi receive buffer. The Wi-Fi
         receive buffer has a max size of 1500 byte and if data is transfered
         too fast, it might overflow.
         
@@ -762,7 +768,7 @@ class BrickMaster(Device):
 
     def set_long_wifi_key(self, key):
         """
-        Sets a long WIFI key (up to 63 chars, at least 8 chars) for WPA encryption.
+        Sets a long Wi-Fi key (up to 63 chars, at least 8 chars) for WPA encryption.
         This key will be used
         if the key in :func:`SetWifiEncryption` is set to "-". In the old protocol,
         a payload of size 63 was not possible, so the maximum key length was 50 chars.
@@ -1159,6 +1165,40 @@ class BrickMaster(Device):
         .. versionadded:: 2.2.0~(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_AUTHENTICATION_SECRET, (), '', '64s')
+
+    def enable_status_led(self):
+        """
+        Enables the status LED.
+        
+        The status LED is the blue LED next to the USB connector. If enabled is is
+        on and it flickers if data is transfered. If disabled it is always off.
+        
+        The default state is enabled.
+        
+        .. versionadded:: 2.3.2~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_ENABLE_STATUS_LED, (), '', '')
+
+    def disable_status_led(self):
+        """
+        Disables the status LED.
+        
+        The status LED is the blue LED next to the USB connector. If enabled is is
+        on and it flickers if data is transfered. If disabled it is always off.
+        
+        The default state is enabled.
+        
+        .. versionadded:: 2.3.2~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_DISABLE_STATUS_LED, (), '', '')
+
+    def is_status_led_enabled(self):
+        """
+        Returns *true* if the status LED is enabled, *false* otherwise.
+        
+        .. versionadded:: 2.3.2~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
 
     def get_protocol1_bricklet_name(self, port):
         """

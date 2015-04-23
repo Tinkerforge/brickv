@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-22.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -27,7 +27,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletIndustrialDigitalIn4(Device):
     """
-    Device for controlling up to 4 optically coupled digital inputs
+    4 galvanically isolated digital inputs
     """
 
     DEVICE_IDENTIFIER = 223

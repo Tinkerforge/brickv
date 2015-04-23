@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-22.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -27,7 +27,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletLCD16x2(Device):
     """
-    Device for controlling a LCD with 2 lines a 16 characters
+    16x2 character alphanumeric display with blue backlight
     """
 
     DEVICE_IDENTIFIER = 211

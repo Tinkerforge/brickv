@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-23.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -29,7 +29,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickServo(Device):
     """
-    Device for controlling up to seven servos
+    Drives up to 7 RC Servos with up to 3A
     """
 
     DEVICE_IDENTIFIER = 14
@@ -70,6 +70,9 @@ class BrickServo(Device):
     FUNCTION_ENABLE_VELOCITY_REACHED_CALLBACK = 32
     FUNCTION_DISABLE_VELOCITY_REACHED_CALLBACK = 33
     FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED = 34
+    FUNCTION_ENABLE_STATUS_LED = 238
+    FUNCTION_DISABLE_STATUS_LED = 239
+    FUNCTION_IS_STATUS_LED_ENABLED = 240
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
@@ -119,6 +122,9 @@ class BrickServo(Device):
         self.response_expected[BrickServo.FUNCTION_ENABLE_VELOCITY_REACHED_CALLBACK] = BrickServo.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickServo.FUNCTION_DISABLE_VELOCITY_REACHED_CALLBACK] = BrickServo.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickServo.FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickServo.FUNCTION_ENABLE_STATUS_LED] = BrickServo.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickServo.FUNCTION_DISABLE_STATUS_LED] = BrickServo.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickServo.FUNCTION_IS_STATUS_LED_ENABLED] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickServo.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickServo.FUNCTION_GET_CHIP_TEMPERATURE] = BrickServo.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickServo.FUNCTION_RESET] = BrickServo.RESPONSE_EXPECTED_FALSE
@@ -447,6 +453,40 @@ class BrickServo(Device):
         .. versionadded:: 2.0.1~(Firmware)
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED, (), '', 'B')
+
+    def enable_status_led(self):
+        """
+        Enables the status LED.
+        
+        The status LED is the blue LED next to the USB connector. If enabled is is
+        on and it flickers if data is transfered. If disabled it is always off.
+        
+        The default state is enabled.
+        
+        .. versionadded:: 2.3.1~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_STATUS_LED, (), '', '')
+
+    def disable_status_led(self):
+        """
+        Disables the status LED.
+        
+        The status LED is the blue LED next to the USB connector. If enabled is is
+        on and it flickers if data is transfered. If disabled it is always off.
+        
+        The default state is enabled.
+        
+        .. versionadded:: 2.3.1~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_STATUS_LED, (), '', '')
+
+    def is_status_led_enabled(self):
+        """
+        Returns *true* if the status LED is enabled, *false* otherwise.
+        
+        .. versionadded:: 2.3.1~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
 
     def get_protocol1_bricklet_name(self, port):
         """

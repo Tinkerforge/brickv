@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-22.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -30,7 +30,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletJoystick(Device):
     """
-    Dual-Axis Joystick with Button
+    2-axis joystick with push-button
     """
 
     DEVICE_IDENTIFIER = 210

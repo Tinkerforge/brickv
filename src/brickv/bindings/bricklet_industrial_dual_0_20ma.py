@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-22.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -27,7 +27,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletIndustrialDual020mA(Device):
     """
-    Device for sensing two currents between 0 and 20mA (IEC 60381-1)
+    Measures two DC currents between 0mA and 20mA (IEC 60381-1)
     """
 
     DEVICE_IDENTIFIER = 228

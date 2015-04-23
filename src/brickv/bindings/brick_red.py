@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-23.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -61,7 +61,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickRED(Device):
     """
-    Device for executing user programs standalone
+    Executes user programs and controls other Bricks/Bricklets standalone
     """
 
     DEVICE_IDENTIFIER = 17
@@ -855,7 +855,7 @@ class BrickRED(Device):
 
     def get_program_scheduler_state(self, program_id, session_id):
         """
-        FIXME: message is currently vaild in error-occurred state only
+        FIXME: message is currently valid in error-occurred state only
         """
         return GetProgramSchedulerState(*self.ipcon.send_request(self, BrickRED.FUNCTION_GET_PROGRAM_SCHEDULER_STATE, (program_id, session_id), 'H H', 'B B Q H'))
 

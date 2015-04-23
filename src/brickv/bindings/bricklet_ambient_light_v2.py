@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-20.      #
+# This file was automatically generated on 2015-04-23.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -30,7 +30,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletAmbientLightV2(Device):
     """
-    Device for sensing Ambient Light
+    Measures ambient light up to 64000lux
     """
 
     DEVICE_IDENTIFIER = 259
@@ -175,7 +175,13 @@ class BrickletAmbientLightV2(Device):
 
     def set_configuration(self, illuminance_range, integration_time):
         """
-        TODO
+        Sets the configuration. It is possible to configure an illuminance range
+        between 0-600lux and 0-64000lux and an integration time between 50ms and 400ms.
+        
+        A smaller illuminance range increases the resolution of the data. An
+        increase in integration time will result in less noise on the data.
+        
+        The default values are 0-8000lux illuminance range and 200ms integration time.
         """
         self.ipcon.send_request(self, BrickletAmbientLightV2.FUNCTION_SET_CONFIGURATION, (illuminance_range, integration_time), 'B B', '')
 

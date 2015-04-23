@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-22.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -30,7 +30,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletAnalogInV2(Device):
     """
-    Device for sensing voltages between 0 and 42V
+    Measures DC voltage between 0V and 42V
     """
 
     DEVICE_IDENTIFIER = 251

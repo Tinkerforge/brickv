@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-23.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -29,7 +29,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletIndustrialAnalogOut(Device):
     """
-    Device for output of voltage between 0 and 10V and current between 4 and 20mA
+    Generates configurable DC voltage and current, 0V to 10V and 4mA to 20mA
     """
 
     DEVICE_IDENTIFIER = 258
@@ -76,25 +76,29 @@ class BrickletIndustrialAnalogOut(Device):
 
     def enable(self):
         """
+        Enables the output of voltage and current.
         
+        The default is disabled.
         """
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_ENABLE, (), '', '')
 
     def disable(self):
         """
+        Disables the output of voltage and current.
         
+        The default is disabled.
         """
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_DISABLE, (), '', '')
 
     def is_enabled(self):
         """
-        
+        Returns *true* if output of voltage and current is enabled, *false* otherwise.
         """
         return self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_IS_ENABLED, (), '', '?')
 
     def set_voltage(self, voltage):
         """
-        Sets the voltage in mV.
+        Sets the output voltage in mV.
         """
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_VOLTAGE, (voltage,), 'H', '')
 
@@ -106,7 +110,7 @@ class BrickletIndustrialAnalogOut(Device):
 
     def set_current(self, current):
         """
-        Sets the current in µA.
+        Sets the output current in µA.
         """
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_CURRENT, (current,), 'H', '')
 
@@ -118,7 +122,21 @@ class BrickletIndustrialAnalogOut(Device):
 
     def set_configuration(self, voltage_range, current_range):
         """
-        TODO
+        Configures the voltage and current range.
+        
+        Possible voltage ranges are:
+        
+        * 0V to 5V
+        * 0V to 10V
+        
+        Possible current ranges are:
+        
+        * 4mA to 20mA
+        * 0mA to 20mA
+        * 0mA to 24mA
+        
+        The resolution will always be 12 bit. This means, that the
+        precision is higher with a smaller range.
         """
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_CONFIGURATION, (voltage_range, current_range), 'B B', '')
 

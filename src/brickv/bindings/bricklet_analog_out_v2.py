@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-22.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -28,7 +28,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletAnalogOutV2(Device):
     """
-    Device for output of voltage between 0 and 16V
+    Generates configurable DC voltage between 0V and 12V
     """
 
     DEVICE_IDENTIFIER = 256
@@ -58,7 +58,7 @@ class BrickletAnalogOutV2(Device):
 
     def set_output_voltage(self, voltage):
         """
-        Sets the voltage in mV. The possible range is 0V to 16V (0-16000).
+        Sets the voltage in mV. The possible range is 0V to 12V (0-12000).
         """
         self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_SET_OUTPUT_VOLTAGE, (voltage,), 'H', '')
 
@@ -70,7 +70,7 @@ class BrickletAnalogOutV2(Device):
 
     def get_input_voltage(self):
         """
-        
+        Returns the input voltage in mV.
         """
         return self.ipcon.send_request(self, BrickletAnalogOutV2.FUNCTION_GET_INPUT_VOLTAGE, (), '', 'H')
 

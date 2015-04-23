@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-23.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -30,7 +30,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletRS232(Device):
     """
-    Device for RS232 communication
+    Communicates with RS232 devices
     """
 
     DEVICE_IDENTIFIER = 254
@@ -98,43 +98,67 @@ class BrickletRS232(Device):
 
     def write(self, message, length):
         """
-        TODO
+        Writes a string of up to 60 characters to the RS232 interface. The string
+        can be binary data, ASCII or similar is not necessary.
+        
+        The length of the string has to be given as an additional parameter.
+        
+        See :func:`SetConfigurations` for configuration possibilities
+        regarding baudrate, parity and so on.
         """
         self.ipcon.send_request(self, BrickletRS232.FUNCTION_WRITE, (message, length), '60c B', '')
 
     def read(self):
         """
-        TODO
+        Returns the currently buffered message. The maximum length
+        of message is 60. If the length is given as 0, there was no
+        new data available.
+        
+        Instead of polling with this function, you can also use
+        callbacks. See :func:`EnableCallback` and :func:`ReadCallback`.
         """
         return Read(*self.ipcon.send_request(self, BrickletRS232.FUNCTION_READ, (), '', '60c B'))
 
     def enable_callback(self):
         """
-        TODO
+        Enables the :func:`ReadCallback`.
+        
+        By default the callback is disabled.
         """
         self.ipcon.send_request(self, BrickletRS232.FUNCTION_ENABLE_CALLBACK, (), '', '')
 
     def disable_callback(self):
         """
-        TODO
+        Disables the :func:`ReadCallback`.
+        
+        By default the callback is disabled.
         """
         self.ipcon.send_request(self, BrickletRS232.FUNCTION_DISABLE_CALLBACK, (), '', '')
 
     def is_callback_enabled(self):
         """
-        TODO
+        Returns *true* if the :func:`ReadCallback` is enabled,
+        *false* otherwise.
         """
         return self.ipcon.send_request(self, BrickletRS232.FUNCTION_IS_CALLBACK_ENABLED, (), '', '?')
 
     def set_configuration(self, baudrate, parity, stopbits, wordlength, hardware_flowcontrol, software_flowcontrol):
         """
-        TODO
+        Sets the configuration for the RS232 communication. Available options:
+        
+        * Baudrate between 300 and 230400 baud.
+        * Parity of none, odd, even or forced parity.
+        * Stopbits can be 1 or 2.
+        * Word length of 5 to 8.
+        * Hard-/Software flow control can each be on or off.
+        
+        The default is: 115200 baud, parity none, 1 stop bit, word length 8, hard-/software flow control off.
         """
         self.ipcon.send_request(self, BrickletRS232.FUNCTION_SET_CONFIGURATION, (baudrate, parity, stopbits, wordlength, hardware_flowcontrol, software_flowcontrol), 'B B B B B B', '')
 
     def get_configuration(self):
         """
-        TODO
+        Returns the configuration as set by :func:`SetConfiguration`.
         """
         return GetConfiguration(*self.ipcon.send_request(self, BrickletRS232.FUNCTION_GET_CONFIGURATION, (), '', 'B B B B B B'))
 

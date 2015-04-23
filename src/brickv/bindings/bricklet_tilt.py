@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-22.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -26,7 +26,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletTilt(Device):
     """
-    Device for sensing tilt and vibration
+    Detects inclination of Bricklet (tilt switch open/closed)
     """
 
     DEVICE_IDENTIFIER = 239

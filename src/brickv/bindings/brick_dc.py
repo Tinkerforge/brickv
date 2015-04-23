@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-23.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -27,7 +27,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickDC(Device):
     """
-    Device for controlling DC motors
+    Drives one brushed DC motor with up to 28V and 5A (peak)
     """
 
     DEVICE_IDENTIFIER = 11
@@ -58,6 +58,9 @@ class BrickDC(Device):
     FUNCTION_GET_DRIVE_MODE = 18
     FUNCTION_SET_CURRENT_VELOCITY_PERIOD = 19
     FUNCTION_GET_CURRENT_VELOCITY_PERIOD = 20
+    FUNCTION_ENABLE_STATUS_LED = 238
+    FUNCTION_DISABLE_STATUS_LED = 239
+    FUNCTION_IS_STATUS_LED_ENABLED = 240
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
@@ -99,6 +102,9 @@ class BrickDC(Device):
         self.response_expected[BrickDC.CALLBACK_EMERGENCY_SHUTDOWN] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickDC.CALLBACK_VELOCITY_REACHED] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickDC.CALLBACK_CURRENT_VELOCITY] = BrickDC.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickDC.FUNCTION_ENABLE_STATUS_LED] = BrickDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickDC.FUNCTION_DISABLE_STATUS_LED] = BrickDC.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickDC.FUNCTION_IS_STATUS_LED_ENABLED] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickDC.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickDC.FUNCTION_GET_CHIP_TEMPERATURE] = BrickDC.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickDC.FUNCTION_RESET] = BrickDC.RESPONSE_EXPECTED_FALSE
@@ -307,6 +313,40 @@ class BrickDC(Device):
         Returns the period as set by :func:`SetCurrentVelocityPeriod`.
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_GET_CURRENT_VELOCITY_PERIOD, (), '', 'H')
+
+    def enable_status_led(self):
+        """
+        Enables the status LED.
+        
+        The status LED is the blue LED next to the USB connector. If enabled is is
+        on and it flickers if data is transfered. If disabled it is always off.
+        
+        The default state is enabled.
+        
+        .. versionadded:: 2.3.1~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickDC.FUNCTION_ENABLE_STATUS_LED, (), '', '')
+
+    def disable_status_led(self):
+        """
+        Disables the status LED.
+        
+        The status LED is the blue LED next to the USB connector. If enabled is is
+        on and it flickers if data is transfered. If disabled it is always off.
+        
+        The default state is enabled.
+        
+        .. versionadded:: 2.3.1~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickDC.FUNCTION_DISABLE_STATUS_LED, (), '', '')
+
+    def is_status_led_enabled(self):
+        """
+        Returns *true* if the status LED is enabled, *false* otherwise.
+        
+        .. versionadded:: 2.3.1~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickDC.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
 
     def get_protocol1_bricklet_name(self, port):
         """

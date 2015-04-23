@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-20.      #
+# This file was automatically generated on 2015-04-23.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -30,7 +30,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletLoadCell(Device):
     """
-    Device for measuring weight with a load cell
+    Measures weight with a load cell
     """
 
     DEVICE_IDENTIFIER = 253
@@ -177,7 +177,7 @@ class BrickletLoadCell(Device):
     def set_moving_average(self, average):
         """
         Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
-        for the value value.
+        for the weight value.
         
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
@@ -237,9 +237,9 @@ class BrickletLoadCell(Device):
         (see :func:`SetMovingAverage`) to the measurements.
         
         The gain can be 128x, 64x or 32x. It represents a measurement range of
-        +-20mV, +-40mV and +-80mV respectively. The Load Cell Bricklet uses an
+        ±20mV, ±40mV and ±80mV respectively. The Load Cell Bricklet uses an
         excitation voltage of 5V and most load cells use an output of 2mV/V. That
-        means the voltage range is +-15mV for most load cells (i.e. gain of 128 
+        means the voltage range is ±15mV for most load cells (i.e. gain of 128x
         is best). If you don't know what all of this means you should keep it at 
         128x, it will most likely be correct.
         

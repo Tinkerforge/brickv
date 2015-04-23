@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-23.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -33,7 +33,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickIMU(Device):
     """
-    Device for sensing acceleration, magnetic field and angular velocity
+    Full fledged AHRS with 9 degrees of freedom
     """
 
     DEVICE_IDENTIFIER = 16
@@ -79,6 +79,9 @@ class BrickIMU(Device):
     FUNCTION_ORIENTATION_CALCULATION_ON = 37
     FUNCTION_ORIENTATION_CALCULATION_OFF = 38
     FUNCTION_IS_ORIENTATION_CALCULATION_ON = 39
+    FUNCTION_ENABLE_STATUS_LED = 238
+    FUNCTION_DISABLE_STATUS_LED = 239
+    FUNCTION_IS_STATUS_LED_ENABLED = 240
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
@@ -139,6 +142,9 @@ class BrickIMU(Device):
         self.response_expected[BrickIMU.FUNCTION_ORIENTATION_CALCULATION_ON] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_ORIENTATION_CALCULATION_OFF] = BrickIMU.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickIMU.FUNCTION_IS_ORIENTATION_CALCULATION_ON] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickIMU.FUNCTION_ENABLE_STATUS_LED] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_DISABLE_STATUS_LED] = BrickIMU.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickIMU.FUNCTION_IS_STATUS_LED_ENABLED] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_GET_CHIP_TEMPERATURE] = BrickIMU.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickIMU.FUNCTION_RESET] = BrickIMU.RESPONSE_EXPECTED_FALSE
@@ -500,6 +506,40 @@ class BrickIMU(Device):
         .. versionadded:: 2.0.2~(Firmware)
         """
         return self.ipcon.send_request(self, BrickIMU.FUNCTION_IS_ORIENTATION_CALCULATION_ON, (), '', '?')
+
+    def enable_status_led(self):
+        """
+        Enables the status LED.
+        
+        The status LED is the blue LED next to the USB connector. If enabled is is
+        on and it flickers if data is transfered. If disabled it is always off.
+        
+        The default state is enabled.
+        
+        .. versionadded:: 2.3.1~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickIMU.FUNCTION_ENABLE_STATUS_LED, (), '', '')
+
+    def disable_status_led(self):
+        """
+        Disables the status LED.
+        
+        The status LED is the blue LED next to the USB connector. If enabled is is
+        on and it flickers if data is transfered. If disabled it is always off.
+        
+        The default state is enabled.
+        
+        .. versionadded:: 2.3.1~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickIMU.FUNCTION_DISABLE_STATUS_LED, (), '', '')
+
+    def is_status_led_enabled(self):
+        """
+        Returns *true* if the status LED is enabled, *false* otherwise.
+        
+        .. versionadded:: 2.3.1~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickIMU.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
 
     def get_protocol1_bricklet_name(self, port):
         """

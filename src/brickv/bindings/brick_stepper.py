@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-23.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -29,7 +29,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickStepper(Device):
     """
-    Device for controlling stepper motors
+    Drives one bipolar stepper motor with up to 38V and 2.5A per phase
     """
 
     DEVICE_IDENTIFIER = 15
@@ -77,6 +77,9 @@ class BrickStepper(Device):
     FUNCTION_GET_ALL_DATA = 37
     FUNCTION_SET_ALL_DATA_PERIOD = 38
     FUNCTION_GET_ALL_DATA_PERIOD = 39
+    FUNCTION_ENABLE_STATUS_LED = 238
+    FUNCTION_DISABLE_STATUS_LED = 239
+    FUNCTION_IS_STATUS_LED_ENABLED = 240
     FUNCTION_GET_PROTOCOL1_BRICKLET_NAME = 241
     FUNCTION_GET_CHIP_TEMPERATURE = 242
     FUNCTION_RESET = 243
@@ -143,6 +146,9 @@ class BrickStepper(Device):
         self.response_expected[BrickStepper.FUNCTION_GET_ALL_DATA_PERIOD] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickStepper.CALLBACK_ALL_DATA] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickStepper.CALLBACK_NEW_STATE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickStepper.FUNCTION_ENABLE_STATUS_LED] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_DISABLE_STATUS_LED] = BrickStepper.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickStepper.FUNCTION_IS_STATUS_LED_ENABLED] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickStepper.FUNCTION_GET_PROTOCOL1_BRICKLET_NAME] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickStepper.FUNCTION_GET_CHIP_TEMPERATURE] = BrickStepper.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickStepper.FUNCTION_RESET] = BrickStepper.RESPONSE_EXPECTED_FALSE
@@ -512,6 +518,40 @@ class BrickStepper(Device):
         Returns the period as set by :func:`SetAllDataPeriod`.
         """
         return self.ipcon.send_request(self, BrickStepper.FUNCTION_GET_ALL_DATA_PERIOD, (), '', 'I')
+
+    def enable_status_led(self):
+        """
+        Enables the status LED.
+        
+        The status LED is the blue LED next to the USB connector. If enabled is is
+        on and it flickers if data is transfered. If disabled it is always off.
+        
+        The default state is enabled.
+        
+        .. versionadded:: 2.3.1~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_ENABLE_STATUS_LED, (), '', '')
+
+    def disable_status_led(self):
+        """
+        Disables the status LED.
+        
+        The status LED is the blue LED next to the USB connector. If enabled is is
+        on and it flickers if data is transfered. If disabled it is always off.
+        
+        The default state is enabled.
+        
+        .. versionadded:: 2.3.1~(Firmware)
+        """
+        self.ipcon.send_request(self, BrickStepper.FUNCTION_DISABLE_STATUS_LED, (), '', '')
+
+    def is_status_led_enabled(self):
+        """
+        Returns *true* if the status LED is enabled, *false* otherwise.
+        
+        .. versionadded:: 2.3.1~(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickStepper.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
 
     def get_protocol1_bricklet_name(self, port):
         """

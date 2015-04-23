@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-22.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -26,7 +26,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletAnalogOut(Device):
     """
-    Device for output of voltage between 0 and 5V
+    Generates configurable DC voltage between 0V and 5V
     """
 
     DEVICE_IDENTIFIER = 220

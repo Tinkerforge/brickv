@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-22.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -30,7 +30,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletIndustrialDualAnalogIn(Device):
     """
-    TODO
+    Measures two DC voltages between -35V and +35V with 24bit resolution each
     """
 
     DEVICE_IDENTIFIER = 249
@@ -97,7 +97,7 @@ class BrickletIndustrialDualAnalogIn(Device):
 
     def get_voltage(self, channel):
         """
-        TODO
+        Returns the voltage for the given channel in mV.
         
         If you want to get the voltage periodically, it is recommended to use the
         callback :func:`Voltage` and set the period with 
@@ -174,7 +174,9 @@ class BrickletIndustrialDualAnalogIn(Device):
 
     def set_sample_rate(self, rate):
         """
-        TODO
+        Sets the sample rate. The sample rate can be between 1 sample per second
+        and 976 samples per second. Decreasing the sample rate will also decrease the
+        noise on the data.
         """
         self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_SAMPLE_RATE, (rate,), 'B', '')
 
@@ -186,19 +188,24 @@ class BrickletIndustrialDualAnalogIn(Device):
 
     def set_calibration(self, offset, gain):
         """
-        TODO
+        Sets offset and gain of MCP3911 internal calibration registers.
+        
+        See MCP3911 datasheet 7.7 and 7.8. The Industrial Dual Analog In Bricklet
+        is already factory calibrated by Tinkerforge. It should not be necessary
+        for you to use this function
         """
         self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_CALIBRATION, (offset, gain), '2i 2i', '')
 
     def get_calibration(self):
         """
-        TODO
+        Returns the calibration as set by :func:`SetCalibration`.
         """
         return GetCalibration(*self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_CALIBRATION, (), '', '2i 2i'))
 
     def get_adc_values(self):
         """
-        TODO
+        Returns the ADC values as given by the MCP3911 IC. This function
+        is needed for proper calibration, see :func:`SetCalibration`.
         """
         return self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_GET_ADC_VALUES, (), '', '2i')
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-23.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -31,7 +31,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletAccelerometer(Device):
     """
-    Device for sensing acceleration in three axis
+    Measures acceleration in three axis
     """
 
     DEVICE_IDENTIFIER = 250
@@ -111,7 +111,8 @@ class BrickletAccelerometer(Device):
 
     def get_acceleration(self):
         """
-        TODO
+        Returns the acceleration in x, y and z direction. The values
+        are given in mG (1/1000 G).
         
         If you want to get the acceleration periodically, it is recommended 
         to use the callback :func:`Acceleration` and set the period with 
@@ -193,31 +194,42 @@ class BrickletAccelerometer(Device):
 
     def set_configuration(self, data_rate, full_scale, filter_bandwidth):
         """
+        Configures the data rate, full scale range and filter bandwidth.
+        Possible values are:
         
+        * Data rate of 0Hz to 1600Hz.
+        * Full scale range of -2G to +2G up to -16G to +16G.
+        * Filter bandwidth between 50Hz and 800Hz.
+        
+        Decreasing data rate or full scale range will also decrease the noise on 
+        the data.
+        
+        The default values are 100Hz data rate, -4G to +4G range and 200Hz
+        filter bandwidth.
         """
         self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_CONFIGURATION, (data_rate, full_scale, filter_bandwidth), 'B B B', '')
 
     def get_configuration(self):
         """
-        
+        Returns the configuration as set by :func:`SetConfiguration`.
         """
         return GetConfiguration(*self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_GET_CONFIGURATION, (), '', 'B B B'))
 
     def led_on(self):
         """
-        
+        Enables the LED on the Bricklet.
         """
         self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_LED_ON, (), '', '')
 
     def led_off(self):
         """
-        
+        Disables the LED on the Bricklet.
         """
         self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_LED_OFF, (), '', '')
 
     def is_led_on(self):
         """
-        
+        Returns *true* if the LED is enabled, *false* otherwise.
         """
         return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_IS_LED_ON, (), '', 'B')
 

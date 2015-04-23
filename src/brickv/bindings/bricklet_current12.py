@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-10.      #
+# This file was automatically generated on 2015-04-22.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -28,7 +28,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletCurrent12(Device):
     """
-    Device for sensing current of up to 12.5A
+    Measures AC/DC current between -12.5A and +12.5A
     """
 
     DEVICE_IDENTIFIER = 23

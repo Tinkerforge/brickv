@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-20.      #
+# This file was automatically generated on 2015-04-23.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -31,7 +31,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletLaserRangeFinder(Device):
     """
-    Device that measures distance with a laser range finder
+    Measures distance up to 40m with laser light
     """
 
     DEVICE_IDENTIFIER = 255
@@ -119,7 +119,7 @@ class BrickletLaserRangeFinder(Device):
         and is given in cm.
         
         The Laser Range Finder Bricklet knows different modes. Distances
-        are only measured in the distace measurement mode, 
+        are only measured in the distance measurement mode,
         see :func:`SetMode`. Also the laser has to be enabled, see
         :func:`EnableLaser`.
         
@@ -291,7 +291,7 @@ class BrickletLaserRangeFinder(Device):
         * 3: Velocity is measured with resolution 0.5 m/s and range is 0-63.5 m/s
         * 4: Velocity is measured with resolution 1.0 m/s and range is 0-127 m/s
         
-        The default mode is 0 (Distance is measured).
+        The default mode is 0 (distance is measured).
         """
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_MODE, (mode,), 'B', '')
 
