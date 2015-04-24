@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-23.      #
+# This file was automatically generated on 2015-04-24.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -111,7 +111,7 @@ class BrickletAccelerometer(Device):
 
     def get_acceleration(self):
         """
-        Returns the acceleration in X, Y and Z direction. The values
+        Returns the acceleration in x, y and z direction. The values
         are given in mG (1/1000 G).
         
         If you want to get the acceleration periodically, it is recommended 
@@ -197,14 +197,14 @@ class BrickletAccelerometer(Device):
         Configures the data rate, full scale range and filter bandwidth.
         Possible values are:
         
-        * Data rate of 0Hz to 1600 Hz.
-        * Full scale range of -2G to 2G up to -16G to 16G.
+        * Data rate of 0Hz to 1600Hz.
+        * Full scale range of -2G to +2G up to -16G to +16G.
         * Filter bandwidth between 50Hz and 800Hz.
         
         Decreasing data rate or full scale range will also decrease the noise on 
         the data.
         
-        The default values are 100Hz data rate, -4G to 4G range and 200Hz 
+        The default values are 100Hz data rate, -4G to +4G range and 200Hz
         filter bandwidth.
         """
         self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_SET_CONFIGURATION, (data_rate, full_scale, filter_bandwidth), 'B B B', '')

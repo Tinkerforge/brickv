@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-23.      #
+# This file was automatically generated on 2015-04-24.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -291,7 +291,7 @@ class BrickletLaserRangeFinder(Device):
         * 3: Velocity is measured with resolution 0.5 m/s and range is 0-63.5 m/s
         * 4: Velocity is measured with resolution 1.0 m/s and range is 0-127 m/s
         
-        The default mode is 0 (Distance is measured).
+        The default mode is 0 (distance is measured).
         """
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_SET_MODE, (mode,), 'B', '')
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-23.      #
+# This file was automatically generated on 2015-04-24.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -147,7 +147,7 @@ class BrickletRS232(Device):
         Sets the configuration for the RS232 communication. Available options:
         
         * Baudrate between 300 and 230400 baud.
-        * Parity of None, Odd, Even or forced parity.
+        * Parity of none, odd, even or forced parity.
         * Stopbits can be 1 or 2.
         * Word length of 5 to 8.
         * Hard-/Software flow control can each be on or off.

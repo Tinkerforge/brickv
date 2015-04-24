@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-23.      #
+# This file was automatically generated on 2015-04-24.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -103,7 +103,7 @@ class BrickletACCurrent(Device):
 
     def get_current(self):
         """
-        Returns ... TODO
+        TODO
         
         If you want to get the current periodically, it is recommended to use the
         callback :func:`Current` and set the period with

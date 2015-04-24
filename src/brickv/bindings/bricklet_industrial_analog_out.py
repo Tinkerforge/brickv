@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-23.      #
+# This file was automatically generated on 2015-04-24.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -126,8 +126,8 @@ class BrickletIndustrialAnalogOut(Device):
         
         Possible voltage ranges are:
         
-        * 0V - 5V
-        * 0V - 10V
+        * 0V to 5V
+        * 0V to 10V
         
         Possible current ranges are:
         
