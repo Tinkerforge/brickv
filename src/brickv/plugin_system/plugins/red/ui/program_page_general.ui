@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>575</width>
-    <height>583</height>
+    <width>593</width>
+    <height>617</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -206,7 +206,7 @@
         <string notr="true">QLabel { color : red }</string>
        </property>
        <property name="text">
-        <string>Unfortunately, this image version comes with an Octave version that does not have fully working Java support. Therefore, the Java based Tinkerforge Octave bindings cannot be used and the Octave support for this image version is limited.</string>
+        <string>Unfortunately, this image version comes with an Octave version that does not have fully working Java support. Therefore, the Java based Tinkerforge Octave bindings do not support callbacks with this image version. If your Octave program does not use callbacks then you can ignore this warning.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
