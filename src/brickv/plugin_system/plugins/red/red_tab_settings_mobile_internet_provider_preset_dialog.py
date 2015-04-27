@@ -27,11 +27,9 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import TextFile
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
-
-INDEX_NETWORK_GSM   = 0
-INDEX_NETWORK_CDMA  = 1
-INDEX_PLAN_POSTPAID = 0
-INDEX_PLAN_PREPAID  = 1
+from brickv.plugin_system.plugins.red.serviceprovider_data import dict_provider
+from brickv.plugin_system.plugins.red.serviceprovider_data import dict_country
+from operator import itemgetter
 
 class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabSettingsMobileInternetProviderPresetDialog):
     def __init__(self, parent, session, dict_provider, dict_country):
@@ -43,65 +41,256 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
 
         self.dict_country = dict_country
         self.dict_provider = dict_provider
+        self.number = None
+        self.apn = None
+        self.username = None
+        self.password = None
 
-        self.pbutton_mi_presets_select.clicked.connect(self.pbutton_mi_presets_select_clicked)
-        self.pbutton_mi_presets_close.clicked.connect(self.pbutton_mi_presets_close_clicked)
         self.cbox_mi_presets_country.currentIndexChanged.connect(self.cbox_mi_presets_country_current_index_changed)
         self.cbox_mi_presets_provider.currentIndexChanged.connect(self.cbox_mi_presets_provider_index_changed)
-        self.cbox_mi_presets_network_type.currentIndexChanged.connect(self.cbox_mi_presets_network_type_index_changed)
+        self.cbox_mi_presets_plan.currentIndexChanged.connect(self.cbox_mi_presets_plan_index_changed)
+        self.pbutton_mi_presets_select.clicked.connect(self.pbutton_mi_presets_select_clicked)
+        self.pbutton_mi_presets_close.clicked.connect(self.pbutton_mi_presets_close_clicked)
 
-        self.populate_cbox_mi_presets_country()
+        if not dict_provider or \
+           not dict_country or \
+           len(dict_provider) == 0 or \
+           len(dict_country) == 0:
+                self.label_mi_preview_number.setText('-')
+                self.label_mi_preview_apn.setText('-')
+                self.label_mi_preview_username.setText('-')
+                self.label_mi_preview_password.setText('-')
+                self.cbox_mi_presets_country.clear()
+                self.cbox_mi_presets_provider.clear()
+                self.cbox_mi_presets_plan.clear()
+                self.pbutton_mi_presets_select.setEnabled(False)
+                self.cbox_mi_presets_country.setEnabled(False)
+                self.cbox_mi_presets_provider.setEnabled(False)
+                self.cbox_mi_presets_plan.setEnabled(False)
+        else:
+            self.populate_cbox_mi_presets_country()
 
-    def cbox_mi_presets_network_type_index_changed(self):
-        pass
+    def cbox_mi_presets_country_current_index_changed(self):
+        self.populate_cbox_mi_presets_provider()
 
     def cbox_mi_presets_provider_index_changed(self):
-        pass
+         self.populate_cbox_mi_presets_plan()
 
-    def cbox_mi_presets_country_current_index_changed(self, current_index):
-        code_country = self.cbox_mi_presets_country.itemData(self.cbox_mi_presets_country.currentIndex())
-        self.cbox_mi_presets_provider.clear()
-
-        for i, dict_c in enumerate(self.dict_provider['country']):
-            if 'provider' not in dict_c:
-                continue
-
-            if code_country != dict_c['@code']:
-                continue
-
-            if isinstance(dict_c['provider'], dict):
-                self.cbox_mi_presets_provider.addItem(dict_c['provider']['name'])
-                self.cbox_mi_presets_provider.setItemData(i, code_country)
-                continue
-
-            for dict_p in dict_c['provider']:
-                if isinstance(dict_p['name'], list):
-                    self.cbox_mi_presets_provider.addItem(dict_p['name'][0])
-                    self.cbox_mi_presets_provider.setItemData(i, code_country)
-                    continue
-
-                self.cbox_mi_presets_provider.addItem(dict_p['name'])
-                self.cbox_mi_presets_provider.setItemData(i, code_country)
-
-            self.cbox_mi_presets_provider.setCurrentIndex(-1)
-            self.cbox_mi_presets_provider.setCurrentIndex(0)
-
-    def populate_cbox_mi_presets_country(self):
-        self.cbox_mi_presets_country.clear()
-        dict_c = {}
-
-        for key in self.dict_country:
-            dict_c[self.dict_country[key]] = key
-
-        for i, key in enumerate(sorted(dict_c)):
-            self.cbox_mi_presets_country.addItem(key)
-            self.cbox_mi_presets_country.setItemData(i, dict_c[key])
-
-        self.cbox_mi_presets_country.setCurrentIndex(-1)
-        self.cbox_mi_presets_country.setCurrentIndex(0)
+    def cbox_mi_presets_plan_index_changed(self):
+        self.update_preview_labels()
 
     def pbutton_mi_presets_select_clicked(self):
         self.accept()
 
     def pbutton_mi_presets_close_clicked(self):
         self.reject()
+
+    def update_preview_labels(self):
+        self.label_mi_preview_number.setText('-')
+        self.label_mi_preview_apn.setText('-')
+        self.label_mi_preview_username.setText('-')
+        self.label_mi_preview_password.setText('-')
+
+        self.number = None
+        self.apn = None
+        self.username = None
+        self.password = None
+
+        '''
+        self.label_mi_preview_number.setText('')
+        self.label_mi_preview_apn.setText('')
+        self.label_mi_preview_username.setText('')
+        self.label_mi_preview_password.setText('')
+        '''
+
+    def populate_cbox_mi_presets_plan(self):
+        print '*** populate_cbox_mi_presets_plan'
+        self.cbox_mi_presets_plan.clear()
+
+        code_country = ''
+        provider = ''
+
+        try:
+            code_country = self.cbox_mi_presets_country.itemData(self.cbox_mi_presets_country.currentIndex())
+            provider = self.cbox_mi_presets_provider.currentText()
+        except:
+            return
+
+        if not code_country or not provider:
+            return
+
+        plans = []
+
+        for dict_c in dict_provider['country']:
+            if code_country != dict_c['@code']:
+                continue
+
+            if isinstance(dict_c['provider'], list):
+                for dict_p in dict_c['provider']:
+                    if isinstance(dict_p['name'], list):
+                        provider_current = dict_p['name'][0]
+                    else:
+                        provider_current = dict_p['name']
+
+                    if provider_current != provider or 'gsm' not in dict_p:
+                        continue
+
+                    if 'apn' not in dict_p['gsm']:
+                        continue
+
+                    if isinstance(dict_p['gsm']['apn'], dict):
+                        if '@value' not in dict_p['gsm']['apn']:
+                            continue
+
+                        # Setup: usage, name, number, username, password and do an entry
+                        if 'usage' not in dict_p['gsm']['apn']:
+                            usage =  ''
+                        elif dict_p['gsm']['apn']['usage']['@type'] == 'internet':
+                            usage = 'internet'
+                        else:
+                            continue
+
+                        if 'name' not in dict_p['gsm']['apn']:
+                            name =  'Default'
+                        else:
+                            name = dict_p['gsm']['apn']['name']
+
+                        if 'number' not in dict_p['gsm']['apn']:
+                            number =  ''
+                        else:
+                            number = dict_p['gsm']['apn']['number']
+
+                        apn = dict_p['gsm']['apn']['@value']
+                        
+                        if 'username' not in dict_p['gsm']['apn']:
+                            username =  'none'
+                        else:
+                            username = dict_p['gsm']['apn']['username']
+                        
+                        if 'password' not in dict_p['gsm']['apn']:
+                            password =  'none'
+                        else:
+                            password = dict_p['gsm']['apn']['password']
+
+                    else:
+                        if 'apn' not in dict_p['gsm']:
+                            continue
+
+                        for dict_apn in dict_p['gsm']['apn']:
+                            if '@value' not in dict_apn:
+                                continue
+
+                            # Setup: usage, name, number, username, password and do an entry
+                            usage = ''
+                            name = ''
+                            number = ''
+                            apn = ''
+                            username = ''
+                            password = ''
+
+            else:
+                if isinstance(dict_c['provider']['name'], list):
+                    provider_current = dict_c['provider']['name'][0]
+                else:
+                    provider_current = dict_c['provider']['name']
+
+                if provider_current != provider or 'gsm' not in dict_c['provider']:
+                    continue
+
+                if 'apn' not in dict_c['provider']['gsm']:
+                    continue
+
+                if isinstance(dict_c['provider']['gsm']['apn'], dict):
+                    if '@value' not in dict_c['provider']['gsm']['apn']:
+                        continue
+
+                    # Setup: usage, name, number, username, password and do an entry
+                    usage = ''
+                    name = ''
+                    number = ''
+                    apn = ''
+                    username = ''
+                    password = ''
+
+                else:
+                    if 'apn' not in dict_c['provider']['gsm']:
+                        continue
+
+                    for dict_apn in dict_c['provider']['gsm']['apn']:
+                        if '@value' not in dict_apn:
+                            continue
+
+                        # Setup: usage, name, number, username, password and do an entry
+                        usage = ''
+                        name = ''
+                        number = ''
+                        apn = ''
+                        username = ''
+                        password = ''
+
+    def populate_cbox_mi_presets_provider(self):
+        self.pbutton_mi_presets_select.setEnabled(True)
+        self.cbox_mi_presets_provider.setEnabled(True)
+        self.cbox_mi_presets_plan.setEnabled(True)
+        self.cbox_mi_presets_provider.clear()
+        code_country = self.cbox_mi_presets_country.itemData(self.cbox_mi_presets_country.currentIndex())
+        list_providers = []
+
+        for dict_c in dict_provider['country']:
+            if dict_c['@code'] != code_country:
+                continue
+
+            list_providers = []
+
+            # Some countries don't have any operators
+            if 'provider' not in dict_c:
+                self.pbutton_mi_presets_select.setEnabled(False)
+                self.cbox_mi_presets_provider.setEnabled(False)
+                self.cbox_mi_presets_plan.setEnabled(False)
+                continue
+
+            self.pbutton_mi_presets_select.setEnabled(True)
+            self.cbox_mi_presets_provider.setEnabled(True)
+            self.cbox_mi_presets_plan.setEnabled(True)
+
+            if isinstance(dict_c['provider'], list):
+                for dict_p in dict_c['provider']:
+                    if isinstance(dict_p['name'], list):
+                        list_providers.append(dict_p['name'][0])
+                    else:
+                        list_providers.append(dict_p['name'])
+            else:
+                if isinstance(dict_c['provider']['name'], list):
+                    list_providers.append(dict_c['provider']['name'][0])
+                else:
+                    list_providers.append(dict_c['provider']['name'])
+
+        self.cbox_mi_presets_provider.blockSignals(True)
+        self.cbox_mi_presets_provider.addItems(sorted(list_providers))
+        self.cbox_mi_presets_provider.blockSignals(False)
+        self.cbox_mi_presets_provider.setCurrentIndex(-1)
+        self.cbox_mi_presets_provider.setCurrentIndex(0)
+
+    def populate_cbox_mi_presets_country(self):
+        self.cbox_mi_presets_country.clear()
+        list_countries = []
+
+        for dict_c in dict_provider['country']:
+            dict_country_code = {'country': None, 'code': None}
+            dict_country_code['country'] = dict_country[dict_c['@code']]
+            dict_country_code['code'] = dict_c['@code']
+            list_countries.append(dict_country_code)
+
+        list_countries_sorted = sorted(list_countries,
+                                       key = itemgetter('country'),
+                                       reverse = False)
+
+        self.cbox_mi_presets_country.blockSignals(True)
+
+        for i, dict_c in enumerate(list_countries_sorted):
+            self.cbox_mi_presets_country.addItem(dict_c['country'])
+            self.cbox_mi_presets_country.setItemData(i, dict_c['code'])
+
+        self.cbox_mi_presets_country.blockSignals(False)
+        self.cbox_mi_presets_country.setCurrentIndex(-1)
+        self.cbox_mi_presets_country.setCurrentIndex(0)

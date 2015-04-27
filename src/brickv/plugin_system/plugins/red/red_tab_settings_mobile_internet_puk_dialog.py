@@ -27,6 +27,8 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import TextFile
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
+from brickv.plugin_system.plugins.red.serviceprovider_data import dict_provider
+from brickv.plugin_system.plugins.red.serviceprovider_data import dict_country
 
 class REDTabSettingsMobileInternetPUKDialog(QtGui.QDialog, Ui_REDTabSettingsMobileInternetPUKDialog):
     def __init__(self, parent, session):
