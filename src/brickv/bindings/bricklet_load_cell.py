@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-24.      #
+# This file was automatically generated on 2015-04-30.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -36,8 +36,8 @@ class BrickletLoadCell(Device):
     DEVICE_IDENTIFIER = 253
     DEVICE_DISPLAY_NAME = 'Load Cell Bricklet'
 
-    CALLBACK_WEIGHT = 16
-    CALLBACK_WEIGHT_REACHED = 17
+    CALLBACK_WEIGHT = 17
+    CALLBACK_WEIGHT_REACHED = 18
 
     FUNCTION_GET_WEIGHT = 1
     FUNCTION_SET_WEIGHT_CALLBACK_PERIOD = 2
@@ -52,8 +52,9 @@ class BrickletLoadCell(Device):
     FUNCTION_LED_OFF = 11
     FUNCTION_IS_LED_ON = 12
     FUNCTION_CALIBRATE = 13
-    FUNCTION_SET_CONFIGURATION = 14
-    FUNCTION_GET_CONFIGURATION = 15
+    FUNCTION_TARE = 14
+    FUNCTION_SET_CONFIGURATION = 15
+    FUNCTION_GET_CONFIGURATION = 16
     FUNCTION_GET_IDENTITY = 255
 
     THRESHOLD_OPTION_OFF = 'x'
@@ -89,6 +90,7 @@ class BrickletLoadCell(Device):
         self.response_expected[BrickletLoadCell.FUNCTION_LED_OFF] = BrickletLoadCell.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLoadCell.FUNCTION_IS_LED_ON] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLoadCell.FUNCTION_CALIBRATE] = BrickletLoadCell.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletLoadCell.FUNCTION_TARE] = BrickletLoadCell.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLoadCell.FUNCTION_SET_CONFIGURATION] = BrickletLoadCell.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletLoadCell.FUNCTION_GET_CONFIGURATION] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletLoadCell.CALLBACK_WEIGHT] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -227,6 +229,12 @@ class BrickletLoadCell(Device):
         to call this function in your source code.
         """
         self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_CALIBRATE, (weight,), 'I', '')
+
+    def tare(self):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_TARE, (), '', '')
 
     def set_configuration(self, rate, gain):
         """

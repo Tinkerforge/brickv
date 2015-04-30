@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-22.      #
+# This file was automatically generated on 2015-04-30.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -31,7 +31,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletVoltageCurrent(Device):
     """
-    Measure power, DC voltage and DC current up to 720W/36V/20A
+    Measures power, DC voltage and DC current up to 720W/36V/20A
     """
 
     DEVICE_IDENTIFIER = 227

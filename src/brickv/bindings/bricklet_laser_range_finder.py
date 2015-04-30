@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-24.      #
+# This file was automatically generated on 2015-04-30.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -304,6 +304,9 @@ class BrickletLaserRangeFinder(Device):
     def enable_laser(self):
         """
         Activates the laser of the LIDAR.
+        
+        We recommend that you wait 250ms after enabling the laser before
+        the first call of :func:`GetDistance` to ensure stable measurements.
         """
         self.ipcon.send_request(self, BrickletLaserRangeFinder.FUNCTION_ENABLE_LASER, (), '', '')
 
