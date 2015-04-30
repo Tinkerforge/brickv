@@ -40,11 +40,15 @@ class MonoSpaceLabel(QLabel):
 
 class PitchRollLabel(MonoSpaceLabel):
     def setText(self, x, y, z):
-        text = u'Pitch: {0:+03d}°'.format(int(round(math.atan(x/(math.sqrt(y*y + z*z)))*180/math.pi, 0)))
-        text += u', Roll: {0:+03d}°'.format(int(round(math.atan(y/math.sqrt(x*x+z*z))*180/math.pi, 0)))
-        text = text.replace('-0', '- ')
-        text = text.replace('+0', '+ ')
-        super(PitchRollLabel, self).setText(text)
+        try:
+            text = u'Pitch: {0:+03d}°'.format(int(round(math.atan(x/(math.sqrt(y*y + z*z)))*180/math.pi, 0)))
+            text += u', Roll: {0:+03d}°'.format(int(round(math.atan(y/math.sqrt(x*x+z*z))*180/math.pi, 0)))
+            text = text.replace('-0', '- ')
+            text = text.replace('+0', '+ ')
+            super(PitchRollLabel, self).setText(text)
+        except:
+            # In case of division by 0 or similar we simply don't update the text
+            pass
 
 class TemperatureLabel(MonoSpaceLabel):
     def setText(self, t):
