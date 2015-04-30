@@ -39,6 +39,12 @@ class WeightLabel(QLabel):
         else:
             text = "Weight: " + "{0:.3f}".format(round(weight/1000.0, 3)) + " kg"
         super(WeightLabel, self).setText(text)
+        
+def line():
+    f = QFrame()
+    f.setFrameShape(QFrame.HLine)
+    f.setFrameShadow(QFrame.Sunken)
+    return f
     
 class LoadCell(PluginBase):
     def __init__(self, *args):
@@ -57,6 +63,7 @@ class LoadCell(PluginBase):
         plot_list = [['', Qt.red, self.get_current_value]]
         self.plot_widget = PlotWidget('Weight [g]', plot_list)
         
+        self.button_tare = QPushButton("Tare")
         self.button_zero = QPushButton("Calibrate Zero")
         self.button_calibrate = QPushButton("Calibrate Weight")
         self.spin_calibrate = QSpinBox()
@@ -64,11 +71,10 @@ class LoadCell(PluginBase):
         self.spin_calibrate.setMaximum(1000*1000*1000) # 1 ton
         self.spin_calibrate.setSingleStep(100)
         self.label_average = QLabel('Current Weight (g):')
-        self.line = QFrame()
-        self.line.setFrameShape(QFrame.HLine)
-        self.line.setFrameShadow(QFrame.Sunken)
+
         self.label_calibrate = QLabel('To calibrate your Load Cell Bricklet you have to\n 1) Empty the scale and press "Calibrate Zero".\n 2) Add a known weight to the scale, enter it as "Current Weight" and press "Calibrate Weight".\nThe calibration is saved on the EEPROM and only has to be done once.')
         
+        self.button_tare.pressed.connect(self.button_tare_pressed)
         self.button_zero.pressed.connect(self.button_zero_pressed)
         self.button_calibrate.pressed.connect(self.button_calibrate_pressed)
         layout_cal1 = QHBoxLayout()
@@ -115,7 +121,7 @@ class LoadCell(PluginBase):
         self.rate_combo.addItem("80Hz")
         self.rate_combo.activated.connect(self.new_config)
         
-        self.label_configuration = QLabel('Increasing the rate will increase the samples per second but also increase the noise on the data.\nChanging the gain is only necessary if your load cell is out of range. 128x is most likely OK.\nThe Gain and Rate configuration is also saved on the EEPROm and only has to be done once.')
+        self.label_configuration = QLabel('Increasing the rate will increase the samples per second but also increase the noise on the data.\nChanging the gain is only necessary if your load cell is out of range. 128x is most likely OK.\nThe Gain and Rate configuration is also saved on the EEPROM and only has to be done once.')
         
         layout_hc = QHBoxLayout()
         layout_hc.addWidget(self.rate_label)
@@ -127,8 +133,9 @@ class LoadCell(PluginBase):
         layout = QVBoxLayout(self)
         layout.addLayout(layout_h)
         layout.addWidget(self.plot_widget)
+        layout.addWidget(self.button_tare)
         layout.addLayout(layout_avg)
-        layout.addWidget(self.line)
+        layout.addWidget(line())
         layout.addWidget(self.label_calibrate)
         layout.addLayout(layout_cal1)
         layout.addLayout(layout_cal2)
@@ -171,6 +178,9 @@ class LoadCell(PluginBase):
             self.enable_led.setChecked(True)
         else:
             self.enable_led.setChecked(False)
+            
+    def button_tare_pressed(self):
+        self.lc.tare()
 
     def button_zero_pressed(self):
         self.lc.calibrate(0)
