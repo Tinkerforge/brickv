@@ -47,9 +47,9 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
         self.username = None
         self.password = None
 
-        self.cbox_mi_presets_country.activated.connect(self.cbox_mi_presets_country_activated)
-        self.cbox_mi_presets_provider.activated.connect(self.cbox_mi_presets_provider_activated)
-        self.cbox_mi_presets_plan.activated.connect(self.cbox_mi_presets_plan_activated)
+        self.cbox_mi_presets_country.currentIndexChanged.connect(self.cbox_mi_presets_country_current_index_changed)
+        self.cbox_mi_presets_provider.currentIndexChanged.connect(self.cbox_mi_presets_provider_current_index_changed)
+        self.cbox_mi_presets_plan.currentIndexChanged.connect(self.cbox_mi_presets_plan_current_index_changed)
         self.pbutton_mi_presets_select.clicked.connect(self.pbutton_mi_presets_select_clicked)
         self.pbutton_mi_presets_close.clicked.connect(self.pbutton_mi_presets_close_clicked)
 
@@ -71,13 +71,13 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
         else:
             self.populate_cbox_mi_presets_country()
 
-    def cbox_mi_presets_country_activated(self, index):
+    def cbox_mi_presets_country_current_index_changed(self, index):
         self.populate_cbox_mi_presets_provider()
 
-    def cbox_mi_presets_provider_activated(self, index):
+    def cbox_mi_presets_provider_current_index_changed(self, index):
          self.populate_cbox_mi_presets_plan()
 
-    def cbox_mi_presets_plan_activated(self, index):
+    def cbox_mi_presets_plan_current_index_changed(self, index):
         self.update_preview_labels()
 
     def pbutton_mi_presets_select_clicked(self):
@@ -87,22 +87,14 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
         self.reject()
 
     def update_preview_labels(self):
-        self.label_mi_preview_number.setText('-')
-        self.label_mi_preview_apn.setText('-')
-        self.label_mi_preview_username.setText('-')
-        self.label_mi_preview_password.setText('-')
-
-        self.number = None
-        self.apn = None
-        self.username = None
-        self.password = None
-
-        '''
-        self.label_mi_preview_number.setText('')
-        self.label_mi_preview_apn.setText('')
-        self.label_mi_preview_username.setText('')
-        self.label_mi_preview_password.setText('')
-        '''
+        if not self.number:
+            self.label_mi_preview_number.setText('-')
+        elif not self.apn:
+            self.label_mi_preview_apn.setText('-')
+        elif not self.username:
+            self.label_mi_preview_username.setText('-')
+        elif not self.password:
+            self.label_mi_preview_password.setText('-')
 
     def populate_cbox_mi_presets_plan(self):
         print '*** populate_cbox_mi_presets_plan'
@@ -266,7 +258,11 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
                 else:
                     list_providers.append(dict_c['provider']['name'])
 
+        self.cbox_mi_presets_provider.blockSignals(True)
         self.cbox_mi_presets_provider.addItems(sorted(list_providers))
+        self.cbox_mi_presets_provider.blockSignals(False)
+        self.cbox_mi_presets_provider.setCurrentIndex(-1)
+        self.cbox_mi_presets_provider.setCurrentIndex(0)
 
     def populate_cbox_mi_presets_country(self):
         self.cbox_mi_presets_country.clear()
@@ -282,6 +278,12 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
                                        key = itemgetter('country'),
                                        reverse = False)
 
+        self.cbox_mi_presets_provider.blockSignals(True)
+
         for i, dict_c in enumerate(list_countries_sorted):
             self.cbox_mi_presets_country.addItem(dict_c['country'])
             self.cbox_mi_presets_country.setItemData(i, dict_c['code'])
+
+        self.cbox_mi_presets_provider.blockSignals(False)
+        self.cbox_mi_presets_country.setCurrentIndex(-1)
+        self.cbox_mi_presets_country.setCurrentIndex(0)
