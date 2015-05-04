@@ -37,3 +37,17 @@ class REDTabSettingsMobileInternetPUKDialog(QtGui.QDialog, Ui_REDTabSettingsMobi
         self.setupUi(self)
 
         self.session = session
+
+        regex = QtCore.QRegExp("\\d+")
+        validator = QtGui.QRegExpValidator(regex)
+        self.ledit_mi_puk_puk.setValidator(validator)
+        self.ledit_mi_puk_pin.setValidator(validator)
+
+        self.pbutton_mi_puk_apply.clicked.connect(self.pbutton_mi_puk_apply_clicked)
+        self.pbutton_mi_puk_cancel.clicked.connect(self.pbutton_mi_puk_cancel_clicked)
+
+    def pbutton_mi_puk_apply_clicked(self):
+        self.accept()
+
+    def pbutton_mi_puk_cancel_clicked(self):
+        self.reject()

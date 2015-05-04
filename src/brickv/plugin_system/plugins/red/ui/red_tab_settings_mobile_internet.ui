@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>720</width>
-    <height>476</height>
+    <height>497</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,14 +31,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="pbutton_mi_refresh">
        <property name="text">
         <string>Refresh</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="pbutton_mi_connect">
        <property name="text">
         <string>Connect</string>
        </property>
@@ -185,69 +185,69 @@
       <string>Configuration</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="2" column="0">
+      <item row="0" column="1" colspan="2">
+       <widget class="QLineEdit" name="ledit_mi_apn"/>
+      </item>
+      <item row="3" column="0">
        <widget class="QLabel" name="label_4">
         <property name="text">
          <string>Username:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QLineEdit" name="lineEdit_4"/>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="ledit_mi_password"/>
       </item>
       <item row="0" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Number:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
          <string>APN:</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="6" column="0">
        <widget class="QLabel" name="label_6">
         <property name="text">
          <string>SIM Card PIN:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="4" column="0">
        <widget class="QLabel" name="label_5">
         <property name="text">
          <string>Password:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="2">
-       <widget class="QCheckBox" name="checkBox">
+      <item row="4" column="2">
+       <widget class="QCheckBox" name="chkbox_mi_show_password">
         <property name="text">
          <string>Show Characters</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1" colspan="2">
-       <widget class="QLineEdit" name="lineEdit"/>
+      <item row="3" column="1" colspan="2">
+       <widget class="QLineEdit" name="ledit_mi_username"/>
       </item>
-      <item row="1" column="1" colspan="2">
-       <widget class="QLineEdit" name="lineEdit_2"/>
-      </item>
-      <item row="2" column="1" colspan="2">
-       <widget class="QLineEdit" name="lineEdit_3"/>
-      </item>
-      <item row="5" column="1" colspan="2">
-       <widget class="QCheckBox" name="checkBox_3">
+      <item row="7" column="1" colspan="2">
+       <widget class="QCheckBox" name="chkbox_mi_use_provider_dns">
         <property name="text">
          <string>Use Provider DNS</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1" colspan="2">
-       <widget class="QLineEdit" name="lineEdit_5"/>
+      <item row="6" column="1" colspan="2">
+       <widget class="QLineEdit" name="ledit_mi_sim_pin"/>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Number:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1" colspan="2">
+       <widget class="QLineEdit" name="ledit_mi_number"/>
       </item>
      </layout>
     </widget>

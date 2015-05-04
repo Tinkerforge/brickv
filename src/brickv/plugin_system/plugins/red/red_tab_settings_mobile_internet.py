@@ -45,8 +45,13 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
 
         self.is_tab_on_focus = False
 
-        self.pbutton_mi_enter_puk.clicked.connect(self.pbutton_mi_enter_puk_clicked)
+        self.label_working_wait.hide()
+        self.pbar_working_wait.hide()
+
         self.pbutton_mi_provider_presets.clicked.connect(self.pbutton_mi_provider_presets_clicked)
+        self.pbutton_mi_enter_puk.clicked.connect(self.pbutton_mi_enter_puk_clicked)
+        self.pbutton_mi_refresh.clicked.connect(self.pbutton_mi_refresh_clicked)
+        self.pbutton_mi_connect.clicked.connect(self.pbutton_mi_connect_clicked)
 
     def tab_on_focus(self):
         self.is_tab_on_focus = True
@@ -57,19 +62,62 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
     def tab_destroy(self):
         pass
 
-    def pbutton_mi_enter_puk_clicked(self):
-        puk_dialog = REDTabSettingsMobileInternetPUKDialog(self, self.session)
-        puk_dialog.setModal(True)
-        puk_dialog.show()
-
     def pbutton_mi_provider_presets_clicked(self):
         provider_preset_dialog = REDTabSettingsMobileInternetProviderPresetDialog(self,
                                                                                   self.session,
                                                                                   dict_provider,
                                                                                   dict_country)
         if provider_preset_dialog.exec_() == QtGui.QDialog.Accepted:
-            print 'accepted'
-            provider_preset_dialog.done(0)
+            if provider_preset_dialog.label_mi_preview_apn.text() and \
+               provider_preset_dialog.label_mi_preview_apn.text() != '-':
+                    self.ledit_mi_apn.setText(provider_preset_dialog.label_mi_preview_apn.text())
+            else:
+                self.ledit_mi_apn.setText('')
+
+            if provider_preset_dialog.label_mi_preview_username.text() and \
+               provider_preset_dialog.label_mi_preview_username.text() != '-':
+                    self.ledit_mi_username.setText(provider_preset_dialog.label_mi_preview_username.text())
+            else:
+                self.ledit_mi_username.setText('')
+
+            if provider_preset_dialog.label_mi_preview_password.text() and \
+               provider_preset_dialog.label_mi_preview_password.text() != '-':
+                    self.ledit_mi_password.setText(provider_preset_dialog.label_mi_preview_password.text())
+            else:
+                self.ledit_mi_password.setText('')
+
+            if provider_preset_dialog.label_mi_preview_number.text() and \
+               provider_preset_dialog.label_mi_preview_number.text() != '-':
+                    self.ledit_mi_number.setText(provider_preset_dialog.label_mi_preview_number.text())
+            else:
+                self.ledit_mi_number.setText('')
+
+        provider_preset_dialog.done(0)
+
+    def pbutton_mi_enter_puk_clicked(self):
+        puk_dialog = REDTabSettingsMobileInternetPUKDialog(self, self.session)
+
+        if puk_dialog.exec_() == QtGui.QDialog.Accepted:
+            puk = puk_dialog.ledit_mi_puk_puk.text()
+            pin = puk_dialog.ledit_mi_puk_pin.text()
+
+            if not puk or not pin:
+                return
+
+            # Call the script here
+
+        puk_dialog.done(0)
+
+    def pbutton_mi_refresh_clicked(self):
+        pass
+
+    def pbutton_mi_connect_clicked(self):
+        pass
+
+    def show_working_wait(self, show):
+        if show:
+            self.label_working_wait.show()
+            self.pbar_working_wait.show()
         else:
-            print 'not accepted'
-            provider_preset_dialog.done(0)
+            self.label_working_wait.hide()
+            self.pbar_working_wait.hide()
