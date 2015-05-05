@@ -56,7 +56,7 @@ class RS232(PluginBase, Ui_RS232):
         self.hardware_flowcontrol_combobox.activated.connect(self.configuration_changed)
         self.software_flowcontrol_combobox.activated.connect(self.configuration_changed)
         
-        self.save_button.pressed.connect(self.save_pressed)
+        self.save_button.clicked.connect(self.save_clicked)
         self.timer = None
 
     def read_async(self, r):
@@ -102,7 +102,7 @@ class RS232(PluginBase, Ui_RS232):
     def configuration_changed(self):
         self.save_button.setEnabled(True)
     
-    def save_pressed(self):
+    def save_clicked(self):
         baudrate = self.baudrate_combobox.currentIndex()
         parity = self.parity_combobox.currentIndex()
         stopbits = self.stopbits_spinbox.value()
