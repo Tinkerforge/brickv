@@ -48,8 +48,6 @@ class REDTabSettings(REDTab, Ui_REDTabSettings):
 
         self.tab_widget.hide()
 
-        self.tab_widget.removeTab(2) # FIXME: temporary remove mobile internet tab for 2.2.5 release
-
         for i in range(self.tab_widget.count()):
             self.tabs.append(self.tab_widget.widget(i))
 
