@@ -154,3 +154,5 @@
        Add hostname change button to network tab of RED Brick plugin
        Optimize OpenGL drawing code for IMU Brick plugin to reduce CPU usage
        Optimize general plot drawing code to reduce CPU usage
+2.2.5: Add support for IMU Brick 2.0, Accelerometer, Ambient Light 2.0, Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out, Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet
+       Fix callback handling in GPS Bricket plugin
