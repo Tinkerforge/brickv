@@ -24,8 +24,8 @@ Boston, MA 02111-1307, USA.
 
 import math
 
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QCheckBox
 from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QCheckBox, QFont
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer
@@ -36,7 +36,11 @@ from brickv.callback_emulator import CallbackEmulator
 class MonoSpaceLabel(QLabel):
     def __init__(self):
         super(MonoSpaceLabel, self).__init__()
-        self.setStyleSheet("font-family: Monospace;")
+
+        font = QFont('monospace')
+        font.setStyleHint(QFont.TypeWriter)
+
+        self.setFont(font)
 
 class PitchRollLabel(MonoSpaceLabel):
     def setText(self, x, y, z):
