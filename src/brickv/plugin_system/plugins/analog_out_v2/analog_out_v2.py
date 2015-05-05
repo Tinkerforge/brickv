@@ -31,7 +31,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class VoltageLabel(QLabel):
     def setText(self, voltage):
-        text = "Voltage: {0:.2f}V".format(round(voltage/1000.0, 2))
+        text = "Input Voltage: {0:.2f}V".format(round(voltage/1000.0, 2))
         super(VoltageLabel, self).setText(text)
 
 class AnalogOutV2(PluginBase):
