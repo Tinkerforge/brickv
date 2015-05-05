@@ -34,7 +34,7 @@ from brickv.callback_emulator import CallbackEmulator
 
 class WeightLabel(QLabel):
     def setText(self, weight):
-        if weight < 1000:
+        if abs(weight) < 1000:
             text = "Weight: " + str(weight) + " g"
         else:
             text = "Weight: " + "{0:.3f}".format(round(weight/1000.0, 3)) + " kg"
