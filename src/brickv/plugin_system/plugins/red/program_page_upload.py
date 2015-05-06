@@ -356,13 +356,6 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
 
         self.next_step(u'Uploading {0}...'.format(source_path))
 
-        try:
-            self.source_stat = os.stat(source_path)
-            self.source_file = open(source_path, 'rb')
-        except Exception as e:
-            self.upload_error('...error: Could not open source file {0}: {1}', source_path, e)
-            return
-
         self.chunked_uploader = ChunkedUploader(self)
 
         if not self.chunked_uploader.prepare(source_path):
@@ -396,7 +389,7 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
         #        the file extension. this does not work if the executable is
         #        cross-compiled and doesn't have the typical Windows file
         #        extensions for executables
-        if (self.source_stat.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)) != 0:
+        if (self.chunked_uploader.source_stat.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)) != 0:
             permissions = 0o755
         else:
             permissions = 0o644
