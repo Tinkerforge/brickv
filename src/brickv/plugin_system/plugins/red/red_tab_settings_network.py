@@ -154,6 +154,10 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
     def tab_on_focus(self):
         self.is_tab_on_focus = True
 
+        # python-reconfigure is available since image version 1.7
+        self.pbutton_net_conf_change_hostname.setDisabled(self.image_version.number < (1, 7))
+        self.label_net_conf_change_hostname_hint.setVisible(self.image_version.number < (1, 7))
+
         if self.image_version.number < (1, 4) or not self.service_state.ap:
             self.ap_mode_disabled()
         else:

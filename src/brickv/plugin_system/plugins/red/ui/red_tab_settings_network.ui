@@ -37,7 +37,7 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>916</width>
+        <width>918</width>
         <height>839</height>
        </rect>
       </property>
@@ -444,6 +444,13 @@
                   </layout>
                  </item>
                 </layout>
+               </widget>
+              </item>
+              <item row="11" column="0" colspan="3">
+               <widget class="QLabel" name="label_net_conf_change_hostname_hint">
+                <property name="text">
+                 <string>The Change Hostname feature requires Image Version &gt;= 1.7</string>
+                </property>
                </widget>
               </item>
              </layout>
