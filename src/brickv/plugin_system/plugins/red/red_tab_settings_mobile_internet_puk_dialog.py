@@ -100,7 +100,6 @@ class REDTabSettingsMobileInternetPUKDialog(QtGui.QDialog, Ui_REDTabSettingsMobi
             self.pbutton_mi_puk_cancel.setEnabled(True)
 
     def cb_settings_mobile_internet_puk(self, result):
-        print result
         self.update_gui(EVENT_GUI_APPLY_RETURNED)
 
         if result.exit_code == 2:

@@ -15,23 +15,24 @@ if len(sys.argv) < 2:
 ACTION = sys.argv[1]
 FILE_CONIG_WVDIAL = '/etc/tf_wvdial.conf'
 
-dict_status = {'status': None,
-               'interface': None,
-               'ip': None,
+dict_status = {'status'     : None,
+               'interface'  : None,
+               'ip'         : None,
                'subnet_mask': None,
-               'gateway': None,
-               'dns': None}
+               'gateway'    : None,
+               'dns'        : None}
 
-dict_configuration = {'apn': None,
-                      'username': None,
-                      'password': None,
-                      'number': None,
-                      'sim_card_pin': None,
+dict_configuration = {'apn'             : None,
+                      'username'        : None,
+                      'password'        : None,
+                      'number'          : None,
+                      'sim_card_pin'    : None,
                       'use_provider_dns': None}
 
 def detect_device():
     with open(os.devnull, 'w') as nfh_w:
-        child = subprocess.Popen(['/bin/mktemp', '-t', 'tmp.XXX'], stdout = subprocess.PIPE)
+        child = subprocess.Popen(['/bin/mktemp', '-t', 'tmp.XXX'], stdout = subprocess.PIPE, stderr = nfh_w)
+        _tmp_file = ''
         _tmp_file = child.communicate()[0]
 
         if _tmp_file:
@@ -51,16 +52,13 @@ def detect_device():
 try:
     if ACTION == 'GET_STATUS':
         pass
-        #if not detect_device():
-            #exit(2)
+
     elif ACTION == 'REFRESH':
         pass
-        #if not detect_device():
-            #exit(2)
+
     elif ACTION == 'CONNECT':
         pass
-        #if not detect_device():
-            #exit(2)
+
     elif ACTION == 'PUK':
         if len(sys.argv) < 4:
             exit(1)
@@ -79,7 +77,7 @@ try:
             config.add_section('Dialer puk')
 
             option = 'Init3'
-            value = 'AT+CPIN="'+sys.argv[2]+'","'+sys.argv[3]+'"'
+            value = 'AT+CPIN="' + sys.argv[2] + '","' + sys.argv[3] + '"'
 
             config.set('Dialer puk', option, value)
 
@@ -89,7 +87,18 @@ try:
         with open(tmp_file, 'w') as tfh_w:
             config.write(tfh_w)
 
-        # Now execute the actual PUK command
+        child = subprocess.Popen(['/usr/bin/wvdial', '-C', tmp_file, 'puk'],
+                                 stdout = subprocess.PIPE,
+                                 stderr = subprocess.PIPE)
+
+        # Not checking returncode because the tool returns error code as the tool looks for
+        # username, password and phone number but they are not needed for PUK operations
+        child_output = ''
+        child_output = child.communicate()[1]
+
+        if child_output and 'Sending: AT+CPIN="{0}","{1}"\nOK'.format(sys.argv[2], sys.argv[3]) not in child_output:
+            exit(1)
+
     else:
         exit(1)
 
