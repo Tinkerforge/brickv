@@ -25,7 +25,7 @@ dict_status = {'status'     : None,
 dict_configuration = {'apn'             : None,
                       'username'        : None,
                       'password'        : None,
-                      'number'          : None,
+                      'phone'           : None,
                       'sim_card_pin'    : None,
                       'use_provider_dns': None}
 
@@ -54,7 +54,56 @@ try:
         pass
 
     elif ACTION == 'REFRESH':
-        pass
+        if not os.path.exists(FILE_CONIG_WVDIAL):
+            sys.stdout.write(json.dumps(dict_configuration))
+
+        else:
+            with open(FILE_CONIG_WVDIAL, 'r') as wcfh_r:
+                config = ConfigParser.ConfigParser()
+                config.readfp(wcfh_r)
+    
+                dict_configuration['apn'] = None
+                dict_configuration['username'] = None
+                dict_configuration['password'] = None
+                dict_configuration['phone'] = None
+                dict_configuration['sim_card_pin'] = None
+                dict_configuration['use_provider_dns'] = None
+    
+                for section in config.sections():
+                    for option in config.options(section):
+                        if option == 'Username':
+                            dict_configuration['username'] = config.get(section, 'Username')
+                        elif option ==  'username':
+                            dict_configuration['username'] = config.get(section, 'username')
+        
+                        if option == 'Password':
+                            dict_configuration['password'] = config.get(section, 'Password')
+                        elif option == 'password':
+                            dict_configuration['password'] = config.get(section, 'password')
+        
+                        if option == 'Phone':
+                            dict_configuration['phone'] = config.get(section, 'Phone')
+                        elif option == 'phone':
+                            dict_configuration['phone'] = config.get(section, 'phone')
+                        
+                        if option == 'Auto DNS':
+                            if config.get(section, 'Auto DNS') == 'yes' or \
+                               config.get(section, 'Auto DNS') == 'Yes' or \
+                               config.get(section, 'Auto DNS') == 'YES' or \
+                               config.get(section, 'Auto DNS') == '1':
+                                    dict_configuration['use_provider_dns'] = True
+                            else:
+                                dict_configuration['use_provider_dns'] = False
+                        elif option == 'auto DNS':
+                            if config.get(section, 'auto DNS') == 'yes' or \
+                               config.get(section, 'auto DNS') == 'Yes' or \
+                               config.get(section, 'auto DNS') == 'YES' or \
+                               config.get(section, 'auto DNS') == '1':
+                                    dict_configuration['use_provider_dns'] = True
+                            else:
+                                dict_configuration['use_provider_dns'] = False
+
+            sys.stdout.write(json.dumps(dict_configuration))
 
     elif ACTION == 'CONNECT':
         pass

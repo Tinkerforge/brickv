@@ -29,6 +29,7 @@ from brickv.plugin_system.plugins.red.red_tab_settings_mobile_internet_provider_
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import TextFile
 from brickv.plugin_system.plugins.red import config_parser
+from brickv.plugin_system.plugins.red.script_manager import report_script_result
 from brickv.plugin_system.plugins.red.serviceprovider_data import dict_provider, dict_country
 from brickv.async_call import async_call
 from brickv.utils import get_main_window
@@ -51,6 +52,8 @@ MESSAGE_ERROR_VALIDATION_PASSWORD_EMPTY = 'Password empty'
 MESSAGE_ERROR_VALIDATION_PASSWORD_NON_ASCII = 'Password contains non ASCII characters'
 MESSAGE_ERROR_VALIDATION_NUMBER_EMPTY = 'Number empty'
 MESSAGE_ERROR_VALIDATION_NUMBER_NON_ASCII = 'Number contains non ASCII characters'
+MESSAGE_ERROR_REFERSH = 'Error occured while refreshing'
+MESSAGE_ERROR_REFERSH_DECODE = 'Error occured while decoding refresh data'
 
 INTERVAL_REFRESH_STATUS = 3000 # In miliseconds
 
@@ -176,6 +179,47 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
 
     def cb_settings_mobile_internet_refresh(self, result):
         self.update_gui(EVENT_GUI_REFRESH_RETURNED)
+
+        if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_REFERSH):
+            return
+
+        try:
+            dict_configuration = json.loads(result.stdout)
+        except:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_REFERSH_DECODE)
+            return
+
+        if dict_configuration['apn']:
+            self.ledit_mi_apn.setText(dict_configuration['apn'])
+        else:
+            self.ledit_mi_apn.setText('')
+
+        if dict_configuration['username']:
+            self.ledit_mi_username.setText(dict_configuration['username'])
+        else:
+            self.ledit_mi_username.setText('')
+        
+        if dict_configuration['password']:
+            self.ledit_mi_password.setText(dict_configuration['password'])
+        else:
+            self.ledit_mi_password.setText('')
+        
+        if dict_configuration['phone']:
+            self.ledit_mi_number.setText(dict_configuration['phone'])
+        else:
+            self.ledit_mi_number.setText('')
+
+        if dict_configuration['sim_card_pin']:
+            self.ledit_mi_sim_pin.setText(dict_configuration['sim_card_pin'])
+        else:
+            self.ledit_mi_sim_pin.setText('')
+        
+        if dict_configuration['use_provider_dns']:
+            self.chkbox_mi_use_provider_dns.setChecked(True)
+        else:
+            self.chkbox_mi_use_provider_dns.setChecked(False)
 
     def check_ascii(self, text):
         try:
