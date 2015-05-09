@@ -21,18 +21,19 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import threading
-
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QTextCursor
-from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtGui import QTextCursor
+from PyQt4.QtCore import pyqtSignal
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_rs232 import BrickletRS232
 from brickv.plugin_system.plugins.rs232.ui_rs232 import Ui_RS232
 from brickv.async_call import async_call
-from brickv.callback_emulator import CallbackEmulator
+
+from brickv.plugin_system.plugins.rs232.qhexedit import QHexeditWidget
 
 class RS232(PluginBase, Ui_RS232):
+    qtcb_read = pyqtSignal(object, int)
+
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletRS232, *args)
 
@@ -41,12 +42,12 @@ class RS232(PluginBase, Ui_RS232):
         
         self.rs232 = self.device
         
-        #self.cbe_read = CallbackEmulator(self.rs232.read,
-        #                                 self.cb_read,
-        #                                 self.increase_error_count)
+        self.qtcb_read.connect(self.cb_read)
+        self.rs232.register_callback(self.rs232.CALLBACK_READ_CALLBACK,
+                                     self.qtcb_read.emit) 
         
         self.input_combobox.addItem("")
-        
+        self.input_combobox.lineEdit().setMaxLength(58)
         self.input_combobox.lineEdit().returnPressed.connect(self.input_changed)
         
         self.baudrate_combobox.activated.connect(self.configuration_changed)
@@ -55,20 +56,31 @@ class RS232(PluginBase, Ui_RS232):
         self.wordlength_spinbox.editingFinished.connect(self.configuration_changed)
         self.hardware_flowcontrol_combobox.activated.connect(self.configuration_changed)
         self.software_flowcontrol_combobox.activated.connect(self.configuration_changed)
+        self.text_type_combobox.activated.connect(self.text_type_changed)
+        
+        self.hextext = QHexeditWidget(self.text.font())
+        self.hextext.hide()
+        self.layout().insertWidget(2, self.hextext)
         
         self.save_button.clicked.connect(self.save_clicked)
-        self.timer = None
 
-    def read_async(self, r):
-        s = ''.join(r.message[:r.length])
-        if r.length > 0:
-            self.text.moveCursor(QTextCursor.End)
-            self.text.insertPlainText(s)
-            self.text.moveCursor(QTextCursor.End)
-            async_call(self.rs232.read, None, self.read_async, self.increase_error_count)
-        else:
-            self.timer = threading.Timer(0.1, lambda: async_call(self.rs232.read, None, self.read_async, self.increase_error_count))
-            self.timer.start()
+    def cb_read(self, message, length):
+        s = ''.join(message[:length])
+        self.hextext.appendData(s)
+        
+        # QTextEdit breaks lines at \r and \n
+        s = s.replace('\n\r', '\n').replace('\r\n', '\n')
+
+        ascii = ''
+        for c in s:
+            if (ord(c) < 32 or ord(c) > 126) and not (ord(c) in (10, 13)):
+                ascii += '.'
+            else:
+                ascii += c
+        
+        self.text.moveCursor(QTextCursor.End)
+        self.text.insertPlainText(ascii)
+        self.text.moveCursor(QTextCursor.End)
             
     def input_return_pressed(self):
         c = ['\0']*60
@@ -99,6 +111,14 @@ class RS232(PluginBase, Ui_RS232):
         self.software_flowcontrol_combobox.setCurrentIndex(conf.software_flowcontrol)
         self.save_button.setEnabled(False)
         
+    def text_type_changed(self):
+        if self.text_type_combobox.currentIndex() == 0:
+            self.hextext.hide()
+            self.text.show()
+        else:
+            self.text.hide()
+            self.hextext.show()
+        
     def configuration_changed(self):
         self.save_button.setEnabled(True)
     
@@ -115,7 +135,7 @@ class RS232(PluginBase, Ui_RS232):
         
     def start(self):
         async_call(self.rs232.get_configuration, None, self.get_configuration_async, self.increase_error_count)
-        async_call(self.rs232.read, None, self.read_async, self.increase_error_count)
+        self.rs232.enable_callback()
 #        self.cbe_read.set_period(100)
         
     def stop(self):
