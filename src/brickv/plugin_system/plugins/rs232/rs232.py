@@ -82,23 +82,19 @@ class RS232(PluginBase, Ui_RS232):
         self.text.insertPlainText(ascii)
         self.text.moveCursor(QTextCursor.End)
             
-    def input_return_pressed(self):
-        c = ['\0']*60
-        
-        text = self.input.text() + '\n\r'
-        for i, t in enumerate(text):
-            c[i] = t
-        
-        self.rs232.write(c, len(text))
-        self.input.setText('')
-        
     def input_changed(self):
         text = str(self.input_combobox.currentText()) + '\n\r'
         c = ['\0']*60
         for i, t in enumerate(text):
             c[i] = t
         
-        self.rs232.write(c, len(text))
+        length = len(text)
+        written = 0 
+        while length != 0:
+            written = self.rs232.write(c, length)
+            c = c[written:] 
+            c = c + ['\0']*written
+            length = length - written
 
         self.input_combobox.setCurrentIndex(0)
         

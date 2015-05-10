@@ -21,10 +21,13 @@
 # * Fix indentation errors
 # * Allow font to be set through constructor
 # * Remove unnecessary menu options
+# * Consider \n, \r and \t to be not printable in hex view
+# * Fix bug with every second highlight getting grey
+# * Use writeData on QBuffer directly instead of using QByteArray
 
 from PyQt4.Qt import Qt
 from PyQt4.QtGui import QFontMetrics, QMenu, QClipboard, QApplication, QFontDialog, QAbstractScrollArea, QAction, QPen, QPainter
-from PyQt4.QtCore import SIGNAL, QByteArray, QBuffer, QIODevice, QFile
+from PyQt4.QtCore import QBuffer, QIODevice
 
 
 import string
@@ -81,10 +84,10 @@ class QHexeditWidget(QAbstractScrollArea):
         else:
             sep = ''
 
-        return str("%04x%s%04x"% ((address >> 16) & 0xffff, sep, address & 0xffff)     )	
+        return str("%04x%s%04x" % (address, sep, address + 0x10))	
 
     def is_printable(self, ch):
-        return ch in string.printable
+        return (ch in string.printable) and (not ch in ('\n', '\r', '\t'))
 
     '''
     // Name: add_toggle_action_to_menu(QMenu *menu, const str &caption, bool checked, QObject *receiver, const char *slot)
@@ -95,7 +98,7 @@ class QHexeditWidget(QAbstractScrollArea):
         action.setCheckable(True)
         action.setChecked(checked)
         menu.addAction(action)
-        self.connect(action, SIGNAL('toggled(bool)'), call)
+        action.toggled.connect(call)
         return action
 
 
@@ -558,8 +561,8 @@ class QHexeditWidget(QAbstractScrollArea):
             
             offset = self.pixelToWord(x, y)
             byte_offset = offset * self.word_width
-            if(self.origin) :
-                if(self.origin % self.word_width) :
+            if(self.origin):
+                if(self.origin % self.word_width):
                     byte_offset -= self.word_width - (self.origin % self.word_width)
             if(offset < self.dataSize()):
                 self.selection_start = self.selection_end = byte_offset
@@ -606,28 +609,20 @@ class QHexeditWidget(QAbstractScrollArea):
     '''
     // Name: setData(const QSharedPointer<QIODevice>& d)
     '''
-    def setData(self, data) :
+    def firstData(self, data) :
         # transform it
-        ba = QByteArray.fromRawData(data)
-        buf = QBuffer(ba)
-        buf.open(QIODevice.ReadOnly)
-        # save the ref otherwise gc collects it
-        self.myPointerToTheData = ba
-
-        self.data = buf
-        self.deselect()
-        self.updateScrollbars()
-        self.repaint()
-        return
+        self.data = QBuffer()
+        self.data.open(QIODevice.ReadOnly)
     
     def appendData(self, data):
         if not self.data:
-            self.setData(data)
-            return
+            self.firstData(data)
         
         self.data.writeData(data)
         self.deselect()
         self.updateScrollbars()
+        slider = self.verticalScrollBar()
+        slider.setSliderPosition(slider.maximum())
         self.repaint()
 
     '''
@@ -686,14 +681,10 @@ class QHexeditWidget(QAbstractScrollArea):
             if(index < size) :
                 if(self.isSelected(index)) :
                     ch = row_data[i]
-                    printable = ch in string.printable
-                    if printable:
+                    if self.is_printable(ch):
                         stream += str(ch)
-#                        self.byteBuffer(ch)
                     else:
                         stream += str(self.unprintable_char)
-#                        self.byteBuffer()
-#                    stream << byteBuffer  ????
                 else :
                     stream += ' '
                 
@@ -814,9 +805,8 @@ class QHexeditWidget(QAbstractScrollArea):
                                 )
                     painter.setPen(QPen(self.palette().highlightedText().color()))
                 else :
-                    if (word_count & 1):
-                        painter.setPen(QPen(self.even_word ))
-                        painter.setPen(QPen(self.palette().text().color()))
+                    painter.setPen(QPen(self.even_word ))
+                    painter.setPen(QPen(self.palette().text().color()))
                 
                 painter.drawText(
                     drawLeft,
@@ -971,7 +961,7 @@ class QHexeditWidget(QAbstractScrollArea):
             e = max(self.selection_start, self.selection_end)
             self.data.seek(s)
             return self.data.read(e - s)
-        return QByteArray()
+        return []
 
     '''
     // Name: selectedBytesAddress() const
@@ -1045,7 +1035,7 @@ class QHexeditWidget(QAbstractScrollArea):
     def rowWidth(self) :
         return self.row_width
 
-    '''
+    '''wf
     // Name: firstVisibleAddress() const
     '''
     def firstVisibleAddress(self):
@@ -1057,23 +1047,3 @@ class QHexeditWidget(QAbstractScrollArea):
                 offset += self.origin
                 offset -= chars_per_row
         return offset + self.addressOffset()
-
-    @classmethod
-    def fromBuffer(cls, data):
-        #ba = QByteArray.fromRawData(data)
-        #buf = QBuffer(ba)
-        #buf.open(QIODevice.ReadOnly)
-        me = cls()
-        me.setData(data)
-        # save the ref otherwise gc collects it
-        #me.myPointerToTheData = ba\
-        #me.fromBuffer(data)
-        return me
-
-    @classmethod
-    def fromFile(cls, filename):
-        qf = QFile(filename)
-        qf.open(QIODevice.ReadOnly)
-        me = cls()
-        me.setData(qf)
-        return me
