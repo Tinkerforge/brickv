@@ -24,11 +24,11 @@
 # * Consider \n, \r and \t to be not printable in hex view
 # * Fix bug with every second highlight getting grey
 # * Use writeData on QBuffer directly instead of using QByteArray
+# * Remove QBuffer and QIODevice and replace it by str
+# * Remove Font picker
 
 from PyQt4.Qt import Qt
-from PyQt4.QtGui import QFontMetrics, QMenu, QClipboard, QApplication, QFontDialog, QAbstractScrollArea, QAction, QPen, QPainter
-from PyQt4.QtCore import QBuffer, QIODevice
-
+from PyQt4.QtGui import QFontMetrics, QMenu, QClipboard, QApplication, QAbstractScrollArea, QAction, QPen, QPainter
 
 import string
 
@@ -43,14 +43,13 @@ class QHexeditWidget(QAbstractScrollArea):
     
     def __init__(self, font, parent = None):
         QAbstractScrollArea.__init__(self, parent)
-        self.data = None
+        self.data = ""
         self.row_width = 16        
         self.word_width = 1
         self.address_color = Qt.blue
         self.show_hex = True
         self.show_ascii = True
         self.show_address = True
-        #self.show_comments = True
         self.origin =0
         self.address_offset = 0
         self.selection_start = -1
@@ -63,9 +62,6 @@ class QHexeditWidget(QAbstractScrollArea):
         self.show_line2 = True
         self.show_line3 = False
         self.show_address_separator = True
-        # default to a simple monospace font
-        #font = QFont('monospace')
-        #font.setStyleHint(QFont.TypeWriter)
         self.setFont(font)
         self.setShowAddressSeparator(True)
         return 
@@ -87,7 +83,7 @@ class QHexeditWidget(QAbstractScrollArea):
         return str("%04x%s%04x" % (address, sep, address + 0x10))	
 
     def is_printable(self, ch):
-        return (ch in string.printable) and (not ch in ('\n', '\r', '\t'))
+        return (ch in string.printable) and (not ch in ('\n', '\r', '\t', '\x0b', '\x0c'))
 
     '''
     // Name: add_toggle_action_to_menu(QMenu *menu, const str &caption, bool checked, QObject *receiver, const char *slot)
@@ -111,10 +107,7 @@ class QHexeditWidget(QAbstractScrollArea):
     Desc: returns how much data we are viewing
     '''
     def dataSize(self):
-        if self.data is not None:
-            return self.data.size()
-        else:
-            return 0
+        return len(self.data)
 
     '''
     Name: setFont(const QFont &f)
@@ -136,8 +129,6 @@ class QHexeditWidget(QAbstractScrollArea):
     '''
     def createStandardContextMenu(self):
         menu = QMenu(self)
-#        menu.addAction(str("Set &Font"), self.mnuSetFont )
-#        menu.addSeparator()
 
         self.add_toggle_action_to_menu(menu, str("Show A&ddress"), self.show_address, self.setShowAddress )
         self.add_toggle_action_to_menu(menu, str("Show &Hex"), self.show_hex, self.setShowHexDump )
@@ -183,8 +174,7 @@ class QHexeditWidget(QAbstractScrollArea):
         #offset now refers to the first visible byte
         while (offset < end) :
             if ((offset + chars_per_row) > start) :
-                self.data.seek(offset)
-                row_data = self.data.read(chars_per_row)
+                row_data = self.data[offset:chars_per_row + offset]
 
                 if not (row_data is None) :
                     if (self.show_address) :
@@ -209,21 +199,11 @@ class QHexeditWidget(QAbstractScrollArea):
         return
 
     '''
-    Name: mnuSetFont()
-    Desc: slot used to set the font of the widget based on dialog selector
-    '''
-    def mnuSetFont(self) :
-        font, _ = QFontDialog.getFont(self.font(), self)
-        self.setFont(font)
-        return
-
-    '''
     // Name: clear()
     // Desc: clears all data from the view
     '''
     def clear(self) :
-        if (self.data != 0) :
-            self.data.clear()
+        self.data = ""
         self.repaint()
         return 
     
@@ -606,19 +586,8 @@ class QHexeditWidget(QAbstractScrollArea):
             self.highlighting = self.highlightingNone
         return
 
-    '''
-    // Name: setData(const QSharedPointer<QIODevice>& d)
-    '''
-    def firstData(self, data) :
-        # transform it
-        self.data = QBuffer()
-        self.data.open(QIODevice.ReadOnly)
-    
     def appendData(self, data):
-        if not self.data:
-            self.firstData(data)
-        
-        self.data.writeData(data)
+        self.data += data
         self.deselect()
         self.updateScrollbars()
         slider = self.verticalScrollBar()
@@ -894,8 +863,7 @@ class QHexeditWidget(QAbstractScrollArea):
         widget_height = self.height()
 
         while(row + self.font_height < widget_height ) and (offset < data_size) :
-            self.data.seek(offset)
-            row_data = self.data.read(chars_per_row)
+            row_data = self.data[offset:chars_per_row+offset]
             if( row_data is not None ) : # != '' ?
                 if(self.show_address) :
                     address_rva = self.address_offset + offset
@@ -949,8 +917,7 @@ class QHexeditWidget(QAbstractScrollArea):
     // Name: allBytes() const
     '''
     def allBytes(self) :
-        self.data.seek(0)
-        return self.data.readAll()
+        return self.data
 
     '''
     // Name: selectedBytes() const
@@ -960,7 +927,7 @@ class QHexeditWidget(QAbstractScrollArea):
             s = min(self.selection_start, self.selection_end)
             e = max(self.selection_start, self.selection_end)
             self.data.seek(s)
-            return self.data.read(e - s)
+            return self.data[s:e]
         return []
 
     '''
