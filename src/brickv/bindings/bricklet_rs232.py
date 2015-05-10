@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-05-05.      #
+# This file was automatically generated on 2015-05-10.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -8,6 +8,8 @@
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
+
+#### __DEVICE_IS_NOT_RELEASED__ ####
 
 try:
     from collections import namedtuple
@@ -82,7 +84,7 @@ class BrickletRS232(Device):
 
         self.api_version = (2, 0, 0)
 
-        self.response_expected[BrickletRS232.FUNCTION_WRITE] = BrickletRS232.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletRS232.FUNCTION_WRITE] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232.FUNCTION_READ] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232.FUNCTION_ENABLE_CALLBACK] = BrickletRS232.RESPONSE_EXPECTED_TRUE
         self.response_expected[BrickletRS232.FUNCTION_DISABLE_CALLBACK] = BrickletRS232.RESPONSE_EXPECTED_TRUE
@@ -101,10 +103,12 @@ class BrickletRS232(Device):
         
         The length of the string has to be given as an additional parameter.
         
+        The return value is the number of bytes that could be written.
+        
         See :func:`SetConfigurations` for configuration possibilities
         regarding baudrate, parity and so on.
         """
-        self.ipcon.send_request(self, BrickletRS232.FUNCTION_WRITE, (message, length), '60c B', '')
+        return self.ipcon.send_request(self, BrickletRS232.FUNCTION_WRITE, (message, length), '60c B', 'B')
 
     def read(self):
         """
