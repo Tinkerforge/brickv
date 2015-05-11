@@ -9,8 +9,6 @@
 # to the generators git repository on tinkerforge.com       #
 #############################################################
 
-#### __DEVICE_IS_NOT_RELEASED__ ####
-
 try:
     from collections import namedtuple
 except ImportError:
