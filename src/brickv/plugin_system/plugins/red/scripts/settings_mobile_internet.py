@@ -68,7 +68,7 @@ try:
                 dict_configuration['phone'] = None
                 dict_configuration['sim_card_pin'] = None
                 dict_configuration['use_provider_dns'] = None
-    
+
                 for section in config.sections():
                     for option in config.options(section):
                         if option == 'Username':

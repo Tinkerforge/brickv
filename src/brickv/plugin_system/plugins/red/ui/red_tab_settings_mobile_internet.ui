@@ -6,24 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>651</width>
-    <height>557</height>
+    <width>656</width>
+    <height>599</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
-   <item row="2" column="0">
-    <widget class="QProgressBar" name="pbar_mi_working_wait">
-     <property name="maximum">
-      <number>0</number>
-     </property>
-     <property name="value">
-      <number>-1</number>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QLabel" name="label_mi_working_wait">
      <property name="text">
@@ -44,8 +34,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>623</width>
-        <height>464</height>
+        <width>628</width>
+        <height>506</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
@@ -172,13 +162,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pbutton_mi_enter_puk">
-           <property name="text">
-            <string>Enter PUK</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="pbutton_mi_refresh">
            <property name="text">
             <string>Refresh</string>
@@ -200,20 +183,20 @@
           <string>Configuration</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="1" colspan="2">
+          <item row="2" column="1" colspan="2">
            <widget class="QLineEdit" name="ledit_mi_apn"/>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_4">
+          <item row="0" column="1" colspan="2">
+           <widget class="QComboBox" name="comboBox"/>
+          </item>
+          <item row="6" column="2">
+           <widget class="QCheckBox" name="checkBox">
             <property name="text">
-             <string>Username:</string>
+             <string>Enable</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="ledit_mi_password"/>
-          </item>
-          <item row="0" column="0">
+          <item row="2" column="0">
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>APN:</string>
@@ -227,46 +210,56 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Password:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QCheckBox" name="chkbox_mi_show_password">
-            <property name="text">
-             <string>Show Characters</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1" colspan="2">
-           <widget class="QLineEdit" name="ledit_mi_username"/>
-          </item>
-          <item row="7" column="1" colspan="2">
-           <widget class="QCheckBox" name="chkbox_mi_use_provider_dns">
-            <property name="text">
-             <string>Use Provider DNS</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1" colspan="2">
+          <item row="6" column="1">
            <widget class="QLineEdit" name="ledit_mi_sim_pin">
             <property name="maxLength">
              <number>32</number>
             </property>
            </widget>
           </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_2">
+          <item row="7" column="1" colspan="2">
+           <widget class="QLabel" name="label">
             <property name="text">
-             <string>Number:</string>
+             <string>Using wrong PIN code three times will block the SIM card.</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="1" colspan="2">
+          <item row="4" column="1" colspan="2">
+           <widget class="QLineEdit" name="ledit_mi_username"/>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Password:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Username:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_20">
+            <property name="text">
+             <string>Modem:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Dial:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="2">
            <widget class="QLineEdit" name="ledit_mi_number"/>
+          </item>
+          <item row="5" column="1" colspan="2">
+           <widget class="QLineEdit" name="ledit_mi_password"/>
           </item>
          </layout>
         </widget>
@@ -295,6 +288,19 @@
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QProgressBar" name="pbar_mi_working_wait">
+     <property name="maximum">
+      <number>0</number>
+     </property>
+     <property name="value">
+      <number>-1</number>
+     </property>
+     <property name="textVisible">
+      <bool>false</bool>
      </property>
     </widget>
    </item>

@@ -24,7 +24,6 @@ Boston, MA 02111-1307, USA.
 import json
 from PyQt4 import Qt, QtCore, QtGui
 from brickv.plugin_system.plugins.red.ui_red_tab_settings_mobile_internet import Ui_REDTabSettingsMobileInternet
-from brickv.plugin_system.plugins.red.red_tab_settings_mobile_internet_puk_dialog import REDTabSettingsMobileInternetPUKDialog
 from brickv.plugin_system.plugins.red.red_tab_settings_mobile_internet_provider_preset_dialog import REDTabSettingsMobileInternetProviderPresetDialog
 from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import TextFile
@@ -78,7 +77,6 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         self.status_refresh_timer = Qt.QTimer(self)
 
         self.pbutton_mi_provider_presets.clicked.connect(self.pbutton_mi_provider_presets_clicked)
-        self.pbutton_mi_enter_puk.clicked.connect(self.pbutton_mi_enter_puk_clicked)
         self.pbutton_mi_refresh.clicked.connect(self.pbutton_mi_refresh_clicked)
         self.pbutton_mi_connect.clicked.connect(self.pbutton_mi_connect_clicked)
         self.status_refresh_timer.timeout.connect(self.status_refresh_timer_timeout)
@@ -137,11 +135,6 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
                 self.ledit_mi_number.setText('')
 
         provider_preset_dialog.done(0)
-
-    def pbutton_mi_enter_puk_clicked(self):
-        puk_dialog = REDTabSettingsMobileInternetPUKDialog(self, self.session, self.script_manager)
-        puk_dialog.exec_()
-        puk_dialog.done(0)
 
     def pbutton_mi_refresh_clicked(self):
         self.update_gui(EVENT_GUI_REFRESH_CLICKED)
@@ -215,11 +208,6 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
             self.ledit_mi_sim_pin.setText(dict_configuration['sim_card_pin'])
         else:
             self.ledit_mi_sim_pin.setText('')
-        
-        if dict_configuration['use_provider_dns']:
-            self.chkbox_mi_use_provider_dns.setChecked(True)
-        else:
-            self.chkbox_mi_use_provider_dns.setChecked(False)
 
     def check_ascii(self, text):
         try:
