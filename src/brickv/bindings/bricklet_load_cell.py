@@ -95,8 +95,8 @@ class BrickletLoadCell(Device):
         self.response_expected[BrickletLoadCell.CALLBACK_WEIGHT_REACHED] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletLoadCell.FUNCTION_GET_IDENTITY] = BrickletLoadCell.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletLoadCell.CALLBACK_WEIGHT] = 'i'
-        self.callback_formats[BrickletLoadCell.CALLBACK_WEIGHT_REACHED] = 'i'
+        self.callback_formats[BrickletLoadCell.CALLBACK_WEIGHT] = 'I'
+        self.callback_formats[BrickletLoadCell.CALLBACK_WEIGHT_REACHED] = 'h'
 
     def get_weight(self):
         """
@@ -144,13 +144,13 @@ class BrickletLoadCell(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_WEIGHT_CALLBACK_THRESHOLD, (option, min, max), 'c i i', '')
+        self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_SET_WEIGHT_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
 
     def get_weight_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetWeightCallbackThreshold`.
         """
-        return GetWeightCallbackThreshold(*self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_WEIGHT_CALLBACK_THRESHOLD, (), '', 'c i i'))
+        return GetWeightCallbackThreshold(*self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_GET_WEIGHT_CALLBACK_THRESHOLD, (), '', 'c h h'))
 
     def set_debounce_period(self, debounce):
         """
