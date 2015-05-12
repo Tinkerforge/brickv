@@ -35,7 +35,7 @@ from operator import itemgetter
 USER_ROLE_APN      = QtCore.Qt.UserRole
 USER_ROLE_USERNAME = QtCore.Qt.UserRole + 1
 USER_ROLE_PASSWORD = QtCore.Qt.UserRole + 2
-USER_ROLE_NUMBER   = QtCore.Qt.UserRole + 3
+USER_ROLE_DIAL   = QtCore.Qt.UserRole + 3
 
 class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabSettingsMobileInternetProviderPresetDialog):
     def __init__(self, parent, session, dict_provider, dict_country):
@@ -58,7 +58,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
            not dict_country or \
            len(dict_provider) == 0 or \
            len(dict_country) == 0:
-                self.label_mi_preview_number.setText('-')
+                self.label_mi_preview_dial.setText('-')
                 self.label_mi_preview_apn.setText('-')
                 self.label_mi_preview_username.setText('-')
                 self.label_mi_preview_password.setText('-')
@@ -82,7 +82,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
         apn = self.cbox_mi_presets_plan.itemData(index, USER_ROLE_APN)
         username = self.cbox_mi_presets_plan.itemData(index, USER_ROLE_USERNAME)
         password = self.cbox_mi_presets_plan.itemData(index, USER_ROLE_PASSWORD)
-        number = self.cbox_mi_presets_plan.itemData(index, USER_ROLE_NUMBER)
+        dial = self.cbox_mi_presets_plan.itemData(index, USER_ROLE_DIAL)
 
         if not apn:
             self.label_mi_preview_apn.setText('-')
@@ -99,10 +99,10 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
         else:
             self.label_mi_preview_password.setText(password)
 
-        if not number:
-            self.label_mi_preview_number.setText('-')
+        if not dial:
+            self.label_mi_preview_dial.setText('-')
         else:
-            self.label_mi_preview_number.setText(number)
+            self.label_mi_preview_dial.setText(dial)
 
     def pbutton_mi_presets_select_clicked(self):
         self.accept()
@@ -130,12 +130,12 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
         else:
             password = data['password']
 
-        if 'number' not in data:
-            number =  ''
+        if 'dial' not in data:
+            dial =  ''
         else:
-            number = data['number']
+            dial = data['dial']
 
-        return True, name, apn, username, password, number
+        return True, name, apn, username, password, dial
 
     def populate_cbox_mi_presets_plan(self):
         self.cbox_mi_presets_plan.clear()
@@ -178,7 +178,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
                             if dict_apn['usage']['@type'] != 'internet':
                                 continue
 
-                            result, name, apn, username, password, number = self.validate_fields(dict_apn)
+                            result, name, apn, username, password, dial = self.validate_fields(dict_apn)
 
                             if result:
                                 self.cbox_mi_presets_plan.addItem(name)
@@ -186,7 +186,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
                                 self.cbox_mi_presets_plan.setItemData(current_index, apn, USER_ROLE_APN)
                                 self.cbox_mi_presets_plan.setItemData(current_index, username, USER_ROLE_USERNAME)
                                 self.cbox_mi_presets_plan.setItemData(current_index, password, USER_ROLE_PASSWORD)
-                                self.cbox_mi_presets_plan.setItemData(current_index, number, USER_ROLE_NUMBER)
+                                self.cbox_mi_presets_plan.setItemData(current_index, dial, USER_ROLE_DIAL)
                     # The provider has only one plan
                     else:
                         if '@value' not in dict_p['gsm']['apn']:
@@ -195,7 +195,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
                         if dict_p['gsm']['apn']['usage']['@type'] != 'internet':
                             continue
 
-                        result, name, apn, username, password, number = self.validate_fields(dict_p['gsm']['apn'])
+                        result, name, apn, username, password, dial = self.validate_fields(dict_p['gsm']['apn'])
 
                         if result:
                             self.cbox_mi_presets_plan.addItem(name)
@@ -203,7 +203,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
                             self.cbox_mi_presets_plan.setItemData(current_index, apn, USER_ROLE_APN)
                             self.cbox_mi_presets_plan.setItemData(current_index, username, USER_ROLE_USERNAME)
                             self.cbox_mi_presets_plan.setItemData(current_index, password, USER_ROLE_PASSWORD)
-                            self.cbox_mi_presets_plan.setItemData(current_index, number, USER_ROLE_NUMBER)
+                            self.cbox_mi_presets_plan.setItemData(current_index, dial, USER_ROLE_DIAL)
 
             # The country has only one provider
             else:
@@ -224,7 +224,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
                         if dict_apn['usage']['@type'] != 'internet':
                             continue
 
-                        result, name, apn, username, password, number = self.validate_fields(dict_apn)
+                        result, name, apn, username, password, dial = self.validate_fields(dict_apn)
 
                         if result:
                             self.cbox_mi_presets_plan.addItem(name)
@@ -232,7 +232,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
                             self.cbox_mi_presets_plan.setItemData(current_index, apn, USER_ROLE_APN)
                             self.cbox_mi_presets_plan.setItemData(current_index, username, USER_ROLE_USERNAME)
                             self.cbox_mi_presets_plan.setItemData(current_index, password, USER_ROLE_PASSWORD)
-                            self.cbox_mi_presets_plan.setItemData(current_index, number, USER_ROLE_NUMBER)
+                            self.cbox_mi_presets_plan.setItemData(current_index, dial, USER_ROLE_DIAL)
                 # The provider has only one plan
                 else:
                     if '@value' not in dict_c['provider']['gsm']['apn']:
@@ -241,7 +241,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
                     if dict_c['provider']['gsm']['apn']['usage']['@type'] != 'internet':
                         continue
 
-                    result, name, apn, username, password, number = self.validate_fields(dict_c['provider']['gsm']['apn'])
+                    result, name, apn, username, password, dial = self.validate_fields(dict_c['provider']['gsm']['apn'])
 
                     if result:
                         self.cbox_mi_presets_plan.addItem(name)
@@ -249,7 +249,7 @@ class REDTabSettingsMobileInternetProviderPresetDialog(QtGui.QDialog, Ui_REDTabS
                         self.cbox_mi_presets_plan.setItemData(current_index, apn, USER_ROLE_APN)
                         self.cbox_mi_presets_plan.setItemData(current_index, username, USER_ROLE_USERNAME)
                         self.cbox_mi_presets_plan.setItemData(current_index, password, USER_ROLE_PASSWORD)
-                        self.cbox_mi_presets_plan.setItemData(current_index, number, USER_ROLE_NUMBER)
+                        self.cbox_mi_presets_plan.setItemData(current_index, dial, USER_ROLE_DIAL)
 
         self.cbox_mi_presets_plan.blockSignals(False)
 

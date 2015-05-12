@@ -111,7 +111,7 @@
      <item row="3" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Number:</string>
+        <string>Dial:</string>
        </property>
       </widget>
      </item>
@@ -123,7 +123,7 @@
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QLabel" name="label_mi_preview_number">
+      <widget class="QLabel" name="label_mi_preview_dial">
        <property name="text">
         <string>-</string>
        </property>

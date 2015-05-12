@@ -34,8 +34,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>628</width>
-        <height>506</height>
+        <width>638</width>
+        <height>520</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
@@ -45,6 +45,31 @@
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
+       </item>
+       <item row="3" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="pbutton_mi_provider_presets">
+           <property name="text">
+            <string>Provider Presets</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pbutton_mi_refresh">
+           <property name="text">
+            <string>Refresh</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pbutton_mi_connect">
+           <property name="text">
+            <string>Connect</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item row="0" column="0">
         <widget class="QGroupBox" name="gbox_mi_status">
@@ -87,7 +112,7 @@
            </widget>
           </item>
           <item row="6" column="1">
-           <widget class="QLabel" name="label_19">
+           <widget class="QLabel" name="label_mi_status_dns">
             <property name="text">
              <string>-</string>
             </property>
@@ -115,35 +140,35 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLabel" name="label_14">
+           <widget class="QLabel" name="label_mi_status_status">
             <property name="text">
              <string>-</string>
             </property>
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QLabel" name="label_17">
+           <widget class="QLabel" name="label_mi_status_subnet_mask">
             <property name="text">
              <string>-</string>
             </property>
            </widget>
           </item>
           <item row="5" column="1">
-           <widget class="QLabel" name="label_18">
+           <widget class="QLabel" name="label_mi_status_gateway">
             <property name="text">
              <string>-</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLabel" name="label_15">
+           <widget class="QLabel" name="label_mi_status_interface">
             <property name="text">
              <string>-</string>
             </property>
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QLabel" name="label_16">
+           <widget class="QLabel" name="label_mi_status_ip">
             <property name="text">
              <string>-</string>
             </property>
@@ -151,31 +176,6 @@
           </item>
          </layout>
         </widget>
-       </item>
-       <item row="3" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QPushButton" name="pbutton_mi_provider_presets">
-           <property name="text">
-            <string>Provider Presets</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pbutton_mi_refresh">
-           <property name="text">
-            <string>Refresh</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pbutton_mi_connect">
-           <property name="text">
-            <string>Connect</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </item>
        <item row="1" column="0">
         <widget class="QGroupBox" name="gbox_mi_configuration">
@@ -187,10 +187,10 @@
            <widget class="QLineEdit" name="ledit_mi_apn"/>
           </item>
           <item row="0" column="1" colspan="2">
-           <widget class="QComboBox" name="comboBox"/>
+           <widget class="QComboBox" name="cbox_mi_modem"/>
           </item>
           <item row="6" column="2">
-           <widget class="QCheckBox" name="checkBox">
+           <widget class="QCheckBox" name="chkbox_mi_enable_pin">
             <property name="text">
              <string>Enable</string>
             </property>
@@ -211,9 +211,9 @@
            </widget>
           </item>
           <item row="6" column="1">
-           <widget class="QLineEdit" name="ledit_mi_sim_pin">
+           <widget class="QLineEdit" name="ledit_mi_sim_card_pin">
             <property name="maxLength">
-             <number>32</number>
+             <number>4</number>
             </property>
            </widget>
           </item>
@@ -248,18 +248,18 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="1" colspan="2">
+           <widget class="QLineEdit" name="ledit_mi_dial"/>
+          </item>
+          <item row="5" column="1" colspan="2">
+           <widget class="QLineEdit" name="ledit_mi_password"/>
+          </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_2">
             <property name="text">
              <string>Dial:</string>
             </property>
            </widget>
-          </item>
-          <item row="1" column="1" colspan="2">
-           <widget class="QLineEdit" name="ledit_mi_number"/>
-          </item>
-          <item row="5" column="1" colspan="2">
-           <widget class="QLineEdit" name="ledit_mi_password"/>
           </item>
          </layout>
         </widget>

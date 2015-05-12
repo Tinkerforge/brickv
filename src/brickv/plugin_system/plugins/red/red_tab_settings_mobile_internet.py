@@ -35,26 +35,24 @@ from brickv.utils import get_main_window
 
 EVENT_GUI_INIT_OK = 1
 EVENT_GUI_INIT_UNSUPPORTED = 2
-EVENT_GUI_NO_DEVICE = 3
-EVENT_GUI_REFRESH_CLICKED = 4
-EVENT_GUI_REFRESH_RETURNED = 5
-EVENT_GUI_CONNECT_CLICKED = 6
-EVENT_GUI_CONNECT_RETURNED = 7
+EVENT_GUI_REFRESH_CLICKED = 3
+EVENT_GUI_REFRESH_RETURNED = 4
+EVENT_GUI_CONNECT_CLICKED = 5
+EVENT_GUI_CONNECT_RETURNED = 6
 
 MESSAGEBOX_TITLE = 'Settings | Mobile Internet'
 MESSAGE_ERROR_DETECT_DEVICE = 'Error detecting mobile internet device'
 MESSAGE_ERROR_VALIDATION_APN_EMPTY = 'APN empty'
 MESSAGE_ERROR_VALIDATION_APN_NON_ASCII = 'APN contains non ASCII characters'
-MESSAGE_ERROR_VALIDATION_USERNAME_EMPTY = 'Username empty'
 MESSAGE_ERROR_VALIDATION_USERNAME_NON_ASCII = 'Username contains non ASCII characters'
-MESSAGE_ERROR_VALIDATION_PASSWORD_EMPTY = 'Password empty'
 MESSAGE_ERROR_VALIDATION_PASSWORD_NON_ASCII = 'Password contains non ASCII characters'
-MESSAGE_ERROR_VALIDATION_NUMBER_EMPTY = 'Number empty'
-MESSAGE_ERROR_VALIDATION_NUMBER_NON_ASCII = 'Number contains non ASCII characters'
+MESSAGE_ERROR_VALIDATION_PIN_EMPTY = 'SIM card PIN empty'
+MESSAGE_ERROR_VALIDATION_PIN_LENGTH = 'SIM card PIN not 4 digits'
 MESSAGE_ERROR_REFERSH = 'Error occured while refreshing'
 MESSAGE_ERROR_REFERSH_DECODE = 'Error occured while decoding refresh data'
+MESSAGE_ERROR_STATUS_DECODE = 'Error occured while decoding status data'
 
-INTERVAL_REFRESH_STATUS = 3000 # In miliseconds
+INTERVAL_REFRESH_STATUS = 3000 # In milliseconds
 
 class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInternet):
     def __init__(self):
@@ -70,9 +68,13 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
 
         self.sarea_mi.hide()
 
-        regex = QtCore.QRegExp("\\d+")
-        validator = QtGui.QRegExpValidator(regex)
-        self.ledit_mi_sim_pin.setValidator(validator)
+        regex_sim_card_pin = QtCore.QRegExp('\\d+')
+        validator_sim_card_pin = QtGui.QRegExpValidator(regex_sim_card_pin)
+        self.ledit_mi_sim_card_pin.setValidator(validator_sim_card_pin)
+        
+        regex_dial = QtCore.QRegExp('[\\d*#]+')
+        validator_dial = QtGui.QRegExpValidator(regex_dial)
+        self.ledit_mi_dial.setValidator(validator_dial)
 
         self.status_refresh_timer = Qt.QTimer(self)
 
@@ -80,6 +82,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         self.pbutton_mi_refresh.clicked.connect(self.pbutton_mi_refresh_clicked)
         self.pbutton_mi_connect.clicked.connect(self.pbutton_mi_connect_clicked)
         self.status_refresh_timer.timeout.connect(self.status_refresh_timer_timeout)
+        self.chkbox_mi_enable_pin.stateChanged.connect(self.chkbox_mi_enable_pin_state_changed)
 
     def tab_on_focus(self):
         self.is_tab_on_focus = True
@@ -89,10 +92,13 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
             self.update_gui(EVENT_GUI_INIT_UNSUPPORTED)
             return
 
+        # Initial GUI
         self.update_gui(EVENT_GUI_INIT_OK)
 
-        # Start status refresh timer
-        self.status_refresh_timer.start(INTERVAL_REFRESH_STATUS)
+        # Start status refreshing
+        self.script_manager.execute_script('settings_mobile_internet',
+                                           self.cb_settings_mobile_internet_get_status,
+                                           ['GET_STATUS'])
 
         # Do initial refresh
         self.pbutton_mi_refresh_clicked()
@@ -128,11 +134,11 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
             else:
                 self.ledit_mi_password.setText('')
 
-            if provider_preset_dialog.label_mi_preview_number.text() and \
-               provider_preset_dialog.label_mi_preview_number.text() != '-':
-                    self.ledit_mi_number.setText(provider_preset_dialog.label_mi_preview_number.text())
+            if provider_preset_dialog.label_mi_preview_dial.text() and \
+               provider_preset_dialog.label_mi_preview_dial.text() != '-':
+                    self.ledit_mi_dial.setText(provider_preset_dialog.label_mi_preview_dial.text())
             else:
-                self.ledit_mi_number.setText('')
+                self.ledit_mi_dial.setText('*99#')
 
         provider_preset_dialog.done(0)
 
@@ -158,17 +164,77 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
                                            ['CONNECT'])
 
     def status_refresh_timer_timeout(self):
+        self.status_refresh_timer.stop()
         self.script_manager.execute_script('settings_mobile_internet',
                                            self.cb_settings_mobile_internet_get_status,
                                            ['GET_STATUS'])
-        self.status_refresh_timer.stop()
+
+    def chkbox_mi_enable_pin_state_changed(self):
+        if self.chkbox_mi_enable_pin.isChecked():
+            self.ledit_mi_sim_card_pin.setEnabled(True)
+        else:
+            self.ledit_mi_sim_card_pin.setEnabled(False)
 
     def cb_settings_mobile_internet_get_status(self, result):
-        self.status_refresh_timer.start(INTERVAL_REFRESH_STATUS)
+        self.status_refresh_timer.stop()
+
+        if not self.is_tab_on_focus:
+            return
+
+        if result.exit_code != 0:
+            self.status_refresh_timer.start(INTERVAL_REFRESH_STATUS)
+            return
+
+        try:
+            dict_status = json.loads(result.stdout)
+        except Exception as e:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_STATUS_DECODE + ':\n\n' +str(e))
+
+            self.status_refresh_timer.start(INTERVAL_REFRESH_STATUS)
+            return
+
         # Update status GUI elements
+        if not dict_status['status']:
+            self.label_mi_status_status.setText('-')
+        else:
+            self.label_mi_status_status.setText(dict_status['status'])
+            
+        if not dict_status['interface']:
+            self.label_mi_status_interface.setText('-')
+        else:
+            self.label_mi_status_interface.setText(dict_status['interface'])
+            
+        if not dict_status['ip']:
+            self.label_mi_status_ip.setText('-')
+        else:
+            self.label_mi_status_ip.setText(dict_status['ip'])
+            
+        if not dict_status['subnet_mask']:
+            self.label_mi_status_subnet_mask.setText('-')
+        else:
+            self.label_mi_status_subnet_mask.setText(dict_status['subnet_mask'])
+            
+        if not dict_status['gateway']:
+            self.label_mi_status_gateway.setText('-')
+        else:
+            self.label_mi_status_gateway.setText(dict_status['gateway'])
+            
+        if not dict_status['dns']:
+            self.label_mi_status_dns.setText('-')
+        else:
+            self.label_mi_status_dns.setText(dict_status['dns'])
+
+        self.status_refresh_timer.start(INTERVAL_REFRESH_STATUS)
 
     def cb_settings_mobile_internet_connect(self, result):
         self.update_gui(EVENT_GUI_CONNECT_RETURNED)
+
+        # If successful then,
+        #self.pbutton_mi_refresh_clicked()
+        # Else
+        #return
 
     def cb_settings_mobile_internet_refresh(self, result):
         self.update_gui(EVENT_GUI_REFRESH_RETURNED)
@@ -178,36 +244,49 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
 
         try:
             dict_configuration = json.loads(result.stdout)
-        except:
+        except Exception as e:
             QtGui.QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
-                                       MESSAGE_ERROR_REFERSH_DECODE)
+                                       MESSAGE_ERROR_REFERSH_DECODE + ':\n\n' +str(e))
             return
 
-        if dict_configuration['apn']:
-            self.ledit_mi_apn.setText(dict_configuration['apn'])
+        if not dict_configuration['modem']:
+            self.cbox_mi_modem.clear()
         else:
+            self.cbox_mi_modem.clear()
+
+            for dict_modem in dict_configuration['modem']:
+                self.cbox_mi_modem.addItem(dict_modem['name'])
+                self.cbox_mi_modem.setItemData(self.cbox_mi_modem.count() - 1, dict_modem['vid_pid'])
+        
+        if not dict_configuration['dial']:
+            self.ledit_mi_dial.setText('')
+        else:
+            self.ledit_mi_dial.setText(dict_configuration['dial'])
+
+        if not dict_configuration['apn']:
             self.ledit_mi_apn.setText('')
-
-        if dict_configuration['username']:
-            self.ledit_mi_username.setText(dict_configuration['username'])
         else:
+            self.ledit_mi_apn.setText(dict_configuration['apn'])
+        
+        if not dict_configuration['username']:
             self.ledit_mi_username.setText('')
-        
-        if dict_configuration['password']:
-            self.ledit_mi_password.setText(dict_configuration['password'])
         else:
+            self.ledit_mi_.setText(dict_configuration['username'])
+        
+        if not dict_configuration['password']:
             self.ledit_mi_password.setText('')
-        
-        if dict_configuration['phone']:
-            self.ledit_mi_number.setText(dict_configuration['phone'])
         else:
-            self.ledit_mi_number.setText('')
+            self.ledit_mi_password.setText(dict_configuration['password'])
 
-        if dict_configuration['sim_card_pin']:
-            self.ledit_mi_sim_pin.setText(dict_configuration['sim_card_pin'])
+        if not dict_configuration['sim_card_pin']:
+            self.ledit_mi_sim_card_pin.setText('')
+            self.chkbox_mi_enable_pin.setChecked(False)
+            self.chkbox_mi_enable_pin_state_changed()
         else:
-            self.ledit_mi_sim_pin.setText('')
+            self.chkbox_mi_enable_pin.setChecked(True)
+            self.chkbox_mi_enable_pin_state_changed()
+            self.ledit_mi_sim_card_pin.setText(dict_configuration['sim_card_pin'])
 
     def check_ascii(self, text):
         try:
@@ -220,27 +299,23 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         apn = self.ledit_mi_apn.text()
         username = self.ledit_mi_username.text()
         password = self.ledit_mi_password.text()
-        number = self.ledit_mi_number.text()
 
         if not apn:
             return False, MESSAGE_ERROR_VALIDATION_APN_EMPTY
         if not self.check_ascii(apn):
             return False, MESSAGE_ERROR_VALIDATION_APN_NON_ASCII
 
-        if not username:
-            return False, MESSAGE_ERROR_VALIDATION_USERNAME_EMPTY
-        if not self.check_ascii(username):
+        if username and not self.check_ascii(username):
             return False, MESSAGE_ERROR_VALIDATION_USERNAME_NON_ASCII
-
-        if not password:
-            return False, MESSAGE_ERROR_VALIDATION_PASSWORD_EMPTY
-        if not self.check_ascii(password):
+    
+        if password and not self.check_ascii(password):
             return False, MESSAGE_ERROR_VALIDATION_PASSWORD_NON_ASCII
 
-        if not number:
-            return False, MESSAGE_ERROR_VALIDATION_NUMBER_EMPTY
-        if not self.check_ascii(number):
-            return False, MESSAGE_ERROR_VALIDATION_NUMBER_NON_ASCII
+        if self.chkbox_mi_enable_pin.isChecked():
+            if not self.ledit_mi_sim_card_pin.text():
+                return False, MESSAGE_ERROR_VALIDATION_PIN_EMPTY
+            if len(self.ledit_mi_sim_card_pin.text()) != 4:
+                return False, MESSAGE_ERROR_VALIDATION_PIN_LENGTH
 
         return True, None
 
