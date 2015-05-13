@@ -54,24 +54,12 @@ class Master(PluginBase, Ui_Master):
         self.tab_widget.removeTab(0)
         self.tab_widget.hide()
 
-        # Chibi widget
         if self.firmware_version >= (1, 1, 0):
+            self.check_extensions = True
             self.extension_type_button.clicked.connect(self.extension_clicked)
-            async_call(self.master.is_chibi_present, None, self.is_chibi_present_async, self.increase_error_count)
         else:
+            self.check_extensions = False
             self.extension_type_button.setEnabled(False)
-            
-        # RS485 widget
-        if self.firmware_version >= (1, 2, 0):
-            async_call(self.master.is_rs485_present, None, self.is_rs485_present_async, self.increase_error_count)
-                
-        # Wifi widget
-        if self.firmware_version >= (1, 3, 0):
-            async_call(self.master.is_wifi_present, None, self.is_wifi_present_async, self.increase_error_count)
-        
-        # Ethernet widget
-        if self.firmware_version >= (2, 1, 0):
-            async_call(self.master.is_ethernet_present, None, self.is_ethernet_present_async, self.increase_error_count)
 
     def is_ethernet_present_async(self, present):
         if present:
@@ -114,6 +102,25 @@ class Master(PluginBase, Ui_Master):
             self.label_no_extension.hide()
 
     def start(self):
+        if self.check_extensions:
+            self.check_extensions = False
+
+            # Chibi widget
+            if self.firmware_version >= (1, 1, 0):
+                async_call(self.master.is_chibi_present, None, self.is_chibi_present_async, self.increase_error_count)
+
+            # RS485 widget
+            if self.firmware_version >= (1, 2, 0):
+                async_call(self.master.is_rs485_present, None, self.is_rs485_present_async, self.increase_error_count)
+
+            # Wifi widget
+            if self.firmware_version >= (1, 3, 0):
+                async_call(self.master.is_wifi_present, None, self.is_wifi_present_async, self.increase_error_count)
+
+            # Ethernet widget
+            if self.firmware_version >= (2, 1, 0):
+                async_call(self.master.is_ethernet_present, None, self.is_ethernet_present_async, self.increase_error_count)
+
         self.update_timer.start(1000)
 
     def stop(self):
