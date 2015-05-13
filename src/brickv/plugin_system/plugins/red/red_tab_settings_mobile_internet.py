@@ -52,7 +52,7 @@ MESSAGE_ERROR_REFERSH = 'Error occured while refreshing'
 MESSAGE_ERROR_REFERSH_DECODE = 'Error occured while decoding refresh data'
 MESSAGE_ERROR_STATUS_DECODE = 'Error occured while decoding status data'
 
-INTERVAL_REFRESH_STATUS = 3000 # In milliseconds
+INTERVAL_REFRESH_STATUS = 15000 # In milliseconds
 
 class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInternet):
     def __init__(self):
