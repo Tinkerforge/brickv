@@ -178,7 +178,20 @@ try:
             exit(1)
 
         if 'Not connected' in p_out_str:
-            dict_status['status'] = 'Not connected'
+            p = subprocess.Popen([BINARY_SYSTEMCTL,
+                                  'status',
+                                  SERVICE_SYSTEMD_TF_MOBILE_INTERNET],
+                                 stdout = subprocess.PIPE,
+                                 stderr = subprocess.PIPE)
+            p_out_str = p.communicate()[0]
+            
+            if p_out_str and \
+               'Loaded: loaded' in p_out_str and \
+               'Active: active' in p_out_str:
+                    dict_status['status'] = 'Connecting...'
+            else:
+                dict_status['status'] = 'Not connected'
+
             dict_status['interface'] = None
             dict_status['ip'] = None
             dict_status['subnet_mask'] = None

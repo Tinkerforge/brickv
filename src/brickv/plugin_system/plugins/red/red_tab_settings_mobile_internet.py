@@ -70,6 +70,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         self.service_state  = None # Set from REDTabSettings
 
         self.is_tab_on_focus = False
+        self.working = False
 
         self.sarea_mi.hide()
 
@@ -148,6 +149,9 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         provider_preset_dialog.done(0)
 
     def pbutton_mi_refresh_clicked(self):
+        if self.working:
+            return
+
         self.update_gui(EVENT_GUI_REFRESH_CLICKED)
 
         self.script_manager.execute_script('settings_mobile_internet',
@@ -155,6 +159,9 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
                                            ['REFRESH'])
 
     def pbutton_mi_connect_clicked(self):
+        if self.working:
+            return
+
         result, message = self.validate_configuration_fields()
 
         if not result:
@@ -265,6 +272,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         self.status_refresh_timer.start(INTERVAL_REFRESH_STATUS)
 
     def cb_settings_mobile_internet_connect(self, result):
+        self.working = False
         self.update_gui(EVENT_GUI_CONNECT_RETURNED)
 
         if result.exit_code == 2:
@@ -295,6 +303,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         self.pbutton_mi_refresh_clicked()
 
     def cb_settings_mobile_internet_refresh(self, result):
+        self.working = False
         self.update_gui(EVENT_GUI_REFRESH_RETURNED)
 
         if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_REFERSH):
@@ -399,6 +408,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
             self.sarea_mi.hide()
 
         elif event == EVENT_GUI_REFRESH_CLICKED or event == EVENT_GUI_CONNECT_CLICKED:
+            self.working = True
             self.label_mi_working_wait.show()
             self.pbar_mi_working_wait.show()
 
