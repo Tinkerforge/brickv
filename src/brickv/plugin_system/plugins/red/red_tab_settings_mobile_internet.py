@@ -53,6 +53,9 @@ MESSAGE_ERROR_REFERSH_DECODE = 'Error occurred while decoding refresh data'
 MESSAGE_ERROR_STATUS_DECODE = 'Error occurred while decoding status data'
 MESSAGE_ERROR_CONNECT = 'Error occurred while connecting'
 MESSAGE_ERROR_CONNECT_TEST = 'Error occurred while connecting. Make sure the configuration is correct'
+MESSAGE_ERROR_CONNECT_SERVICE_CREATION = 'Error occurred while connecting. systemd service creation failed'
+MESSAGE_ERROR_CONNECT_SERVICE_EXECUTION = 'Error occurred while connecting. systemd service execution failed'
+MESSAGE_INFORMATION_CONNECT_OK = 'Configuration saved and applied successfully'
 
 INTERVAL_REFRESH_STATUS = 15000 # In milliseconds
 
@@ -261,7 +264,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
 
         self.status_refresh_timer.start(INTERVAL_REFRESH_STATUS)
 
-    def cb_settings_mobile_internet_connect(self, result):
+    def cb_settings_mobile_internet_connect(self, result):   
         self.update_gui(EVENT_GUI_CONNECT_RETURNED)
 
         if result.exit_code == 2:
@@ -269,9 +272,25 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CONNECT_TEST)
             return
+        
+        if result.exit_code == 3:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CONNECT_SERVICE_CREATION)
+            return
+    
+        if result.exit_code == 4:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CONNECT_SERVICE_EXECUTION)
+            return
 
         if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_CONNECT):
             return
+
+        QtGui.QMessageBox.information(get_main_window(),
+                                      MESSAGEBOX_TITLE,
+                                      MESSAGE_INFORMATION_CONNECT_OK)
 
         self.pbutton_mi_refresh_clicked()
 

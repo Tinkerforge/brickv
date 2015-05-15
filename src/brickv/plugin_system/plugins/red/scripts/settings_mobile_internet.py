@@ -13,19 +13,15 @@ if len(sys.argv) < 2:
 
 ACTION = sys.argv[1]
 
-SYSTEMD_SERVICE = '''[Unit]
-Description=Systemd service for Tinkerforge Mobile Internet
+UNIT_SYSTEMD = '''[Unit]
+Description=systemd service for Tinkerforge mobile internet
 
 [Service]
-TimeoutStartSec=0
-ExecStartPre=
-ExecStart=
-ExecStartPost=
-
-TimeoutStopSec=0
-ExecStopPre=
-ExecStop=
-ExecStopPost=
+Type=Simple
+TimeoutStartSec=5
+ExecStart=/usr/umtskeeper/umtskeeper --conf /usr/umtskeeper/umtskeeper.conf
+TimeoutStopSec=5
+ExecStop=/usr/bin/killall -9 pppd
 
 [Install]
 WantedBy=multi-user.target
@@ -53,12 +49,15 @@ TAG_PARAM_APN_USER = 'APN_USER'
 TAG_PARAM_APN_PASS = 'APN_PASS'
 TAG_PARAM_USBMODEM = 'USBMODEM'
 
-CONFIG_FILE_UMTSKEEPER = '/usr/umtskeeper/umtskeeper.conf'
+SERVICE_SYSTEMD_TF_MOBILE_INTERNET = 'tf_mobile_internet.service'
+FILE_UNIT_TF_MOBILE_INTERNET = '/etc/systemd/system/' + SERVICE_SYSTEMD_TF_MOBILE_INTERNET
+FILE_CONFIG_UMTSKEEPER = '/usr/umtskeeper/umtskeeper.conf'
 
 BINARY_SAKIS3G = '/usr/umtskeeper/sakis3g'
 BINARY_LSUSB = '/usr/bin/lsusb'
 BINARY_UMTSKEEPER = '/usr/umtskeeper/umtskeeper'
 BINARY_KILLALL = '/usr/bin/killall'
+BINARY_SYSTEMCTL = '/bin/systemctl'
 
 SPLIT_SEARCH_INTERFACE = 'Interface: '
 SPLIT_SEARCH_OPERATOR = 'Operator name: '
@@ -81,6 +80,28 @@ dict_configuration = {'modem_list'      : None,
                       'password'        : None,
                       'sim_card_pin'    : None}
 
+def test_connection():
+    if execute_command(command_test_connection.split(' ')) != 0:
+        exit(2)
+
+    if execute_command([BINARY_KILLALL, '-9', 'pppd']) != 0:
+        exit(1)
+                
+def create_execute_systemd_service():
+    if execute_command([BINARY_SYSTEMCTL, 'enable', FILE_UNIT_TF_MOBILE_INTERNET]) != 0:
+        disable_remove_systemd_service()
+        exit(3)
+    
+    if execute_command([BINARY_SYSTEMCTL, 'start', SERVICE_SYSTEMD_TF_MOBILE_INTERNET]) != 0:
+        disable_remove_systemd_service()
+        exit(4)
+                
+def disable_remove_systemd_service():
+    os.system(' disable '.join([BINARY_SYSTEMCTL, SERVICE_SYSTEMD_TF_MOBILE_INTERNET]) + ' &> /dev/null')
+    
+    if os.path.exists(FILE_UNIT_TF_MOBILE_INTERNET):
+        os.remove(FILE_UNIT_TF_MOBILE_INTERNET)
+                
 def execute_command(command):
     p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     p.communicate()
@@ -219,8 +240,8 @@ try:
         dict_configuration['modem_list'] = list_modem
 
         # Process configuration file if it exists
-        if os.path.exists(CONFIG_FILE_UMTSKEEPER):
-            with open(CONFIG_FILE_UMTSKEEPER, 'r') as ucfh:
+        if os.path.exists(FILE_CONFIG_UMTSKEEPER):
+            with open(FILE_CONFIG_UMTSKEEPER, 'r') as ucfh:
                 for line in ucfh.readlines():
                     if TAG_CONFIG_SAKIS_OPERATORS not in line:
                         continue
@@ -287,26 +308,21 @@ try:
                                            apn_pass,
                                            sim_pin)
 
-        # Execute test connect command
-        if execute_command(command_test_connection.split(' ')) != 0:
-            exit(2)
-        
-        # Execute kill test connect command
-        if execute_command([BINARY_KILLALL, '-9', 'pppd']) != 0:
-            exit(1)
+        # Test connection to verify provided configuration
+        test_connection()
 
         # Write configuration file
-        with open(CONFIG_FILE_UMTSKEEPER, 'w') as ucfh:
+        with open(FILE_CONFIG_UMTSKEEPER, 'w') as ucfh:
             ucfh.write(configuration_umtskeeper)
 
-        # The following does not work because the call will never return until umtskeeper is killed
-        # Generally a much more better approach is to create and enable Systemd service and then start that service
-        #if execute_command([BINARY_UMTSKEEPER, '--conf', CONFIG_FILE_UMTSKEEPER]) != 0:
-        #    exit(1)
-
-        # Create systemd entry
+        # Diable and remove the systemd service if it exists
+        disable_remove_systemd_service()
         
-        # Execute systemd entry
+        # Write the systemd unit file
+        with open(FILE_UNIT_TF_MOBILE_INTERNET, 'w') as ufh:
+            ufh.write(UNIT_SYSTEMD)
+
+        create_execute_systemd_service()
 
     else:
         exit(1)
