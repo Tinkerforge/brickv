@@ -48,9 +48,11 @@ MESSAGE_ERROR_VALIDATION_USERNAME_NON_ASCII = 'Username contains non ASCII chara
 MESSAGE_ERROR_VALIDATION_PASSWORD_NON_ASCII = 'Password contains non ASCII characters'
 MESSAGE_ERROR_VALIDATION_PIN_EMPTY = 'SIM card PIN empty'
 MESSAGE_ERROR_VALIDATION_PIN_LENGTH = 'SIM card PIN not 4 digits'
-MESSAGE_ERROR_REFERSH = 'Error occured while refreshing'
-MESSAGE_ERROR_REFERSH_DECODE = 'Error occured while decoding refresh data'
-MESSAGE_ERROR_STATUS_DECODE = 'Error occured while decoding status data'
+MESSAGE_ERROR_REFERSH = 'Error occurred while refreshing'
+MESSAGE_ERROR_REFERSH_DECODE = 'Error occurred while decoding refresh data'
+MESSAGE_ERROR_STATUS_DECODE = 'Error occurred while decoding status data'
+MESSAGE_ERROR_CONNECT = 'Error occurred while connecting'
+MESSAGE_ERROR_CONNECT_TEST = 'Error occurred while connecting. Make sure the configuration is correct'
 
 INTERVAL_REFRESH_STATUS = 15000 # In milliseconds
 
@@ -159,9 +161,40 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
             return
         
         self.update_gui(EVENT_GUI_CONNECT_CLICKED)
+        
+        usb_modem = self.cbox_mi_modem.itemData(self.cbox_mi_modem.currentIndex())
+        
+        if self.ledit_mi_dial.text():
+            dial = self.ledit_mi_dial.text()
+        else:
+            dial = '*99#'
+
+        apn = self.ledit_mi_apn.text()
+
+        if self.ledit_mi_username.text():
+            apn_user = self.ledit_mi_username.text()
+        else:
+            apn_user = 'none'
+
+        if self.ledit_mi_password.text():
+            apn_pass = self.ledit_mi_password.text()
+        else:
+            apn_pass = 'none'
+
+        if self.chkbox_mi_enable_pin.isChecked():
+            sim_pin = self.ledit_mi_sim_card_pin.text()
+        else:
+            sim_pin = ''
+
         self.script_manager.execute_script('settings_mobile_internet',
                                            self.cb_settings_mobile_internet_connect,
-                                           ['CONNECT'])
+                                           ['CONNECT',
+                                            usb_modem,
+                                            dial,
+                                            apn,
+                                            apn_user,
+                                            apn_pass,
+                                            sim_pin])
 
     def status_refresh_timer_timeout(self):
         self.status_refresh_timer.stop()
@@ -181,7 +214,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         if not self.is_tab_on_focus:
             return
 
-        if result.exit_code != 0:
+        if not result or result.exit_code != 0:
             self.status_refresh_timer.start(INTERVAL_REFRESH_STATUS)
             return
 
@@ -231,10 +264,16 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
     def cb_settings_mobile_internet_connect(self, result):
         self.update_gui(EVENT_GUI_CONNECT_RETURNED)
 
-        # If successful then,
-        #self.pbutton_mi_refresh_clicked()
-        # Else
-        #return
+        if result.exit_code == 2:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CONNECT_TEST)
+            return
+
+        if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_CONNECT):
+            return
+
+        self.pbutton_mi_refresh_clicked()
 
     def cb_settings_mobile_internet_refresh(self, result):
         self.update_gui(EVENT_GUI_REFRESH_RETURNED)
@@ -250,15 +289,23 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
                                        MESSAGE_ERROR_REFERSH_DECODE + ':\n\n' +str(e))
             return
 
-        if not dict_configuration['modem']:
+        if not dict_configuration['modem_list']:
             self.cbox_mi_modem.clear()
         else:
             self.cbox_mi_modem.clear()
 
-            for dict_modem in dict_configuration['modem']:
+            for dict_modem in dict_configuration['modem_list']:
                 self.cbox_mi_modem.addItem(dict_modem['name'])
                 self.cbox_mi_modem.setItemData(self.cbox_mi_modem.count() - 1, dict_modem['vid_pid'])
-        
+
+        if dict_configuration['modem_configured']:
+            for i in range(self.cbox_mi_modem.count()):
+                if dict_configuration['modem_configured'] != self.cbox_mi_modem.itemData(i):
+                    continue
+                
+                self.cbox_mi_modem.setCurrentIndex(i)
+                break
+
         if not dict_configuration['dial']:
             self.ledit_mi_dial.setText('')
         else:
@@ -272,7 +319,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         if not dict_configuration['username']:
             self.ledit_mi_username.setText('')
         else:
-            self.ledit_mi_.setText(dict_configuration['username'])
+            self.ledit_mi_username.setText(dict_configuration['username'])
         
         if not dict_configuration['password']:
             self.ledit_mi_password.setText('')
