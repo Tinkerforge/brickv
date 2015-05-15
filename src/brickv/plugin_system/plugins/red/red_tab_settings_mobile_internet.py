@@ -264,7 +264,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
 
         self.status_refresh_timer.start(INTERVAL_REFRESH_STATUS)
 
-    def cb_settings_mobile_internet_connect(self, result):   
+    def cb_settings_mobile_internet_connect(self, result):
         self.update_gui(EVENT_GUI_CONNECT_RETURNED)
 
         if result.exit_code == 2:

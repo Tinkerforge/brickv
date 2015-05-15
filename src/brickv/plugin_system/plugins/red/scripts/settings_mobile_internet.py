@@ -96,7 +96,8 @@ def create_execute_systemd_service():
         disable_remove_systemd_service()
         exit(4)
                 
-def disable_remove_systemd_service():
+def stop_disable_remove_systemd_service():
+    os.system(' stop '.join([BINARY_SYSTEMCTL, SERVICE_SYSTEMD_TF_MOBILE_INTERNET]) + ' &> /dev/null')
     os.system(' disable '.join([BINARY_SYSTEMCTL, SERVICE_SYSTEMD_TF_MOBILE_INTERNET]) + ' &> /dev/null')
     
     if os.path.exists(FILE_UNIT_TF_MOBILE_INTERNET):
@@ -316,7 +317,7 @@ try:
             ucfh.write(configuration_umtskeeper)
 
         # Diable and remove the systemd service if it exists
-        disable_remove_systemd_service()
+        stop_disable_remove_systemd_service()
         
         # Write the systemd unit file
         with open(FILE_UNIT_TF_MOBILE_INTERNET, 'w') as ufh:
