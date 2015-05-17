@@ -306,6 +306,19 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>sarea_mi</tabstop>
+  <tabstop>cbox_mi_modem</tabstop>
+  <tabstop>ledit_mi_dial</tabstop>
+  <tabstop>ledit_mi_apn</tabstop>
+  <tabstop>ledit_mi_username</tabstop>
+  <tabstop>ledit_mi_password</tabstop>
+  <tabstop>ledit_mi_sim_card_pin</tabstop>
+  <tabstop>chkbox_mi_enable_pin</tabstop>
+  <tabstop>pbutton_mi_provider_presets</tabstop>
+  <tabstop>pbutton_mi_refresh</tabstop>
+  <tabstop>pbutton_mi_connect</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

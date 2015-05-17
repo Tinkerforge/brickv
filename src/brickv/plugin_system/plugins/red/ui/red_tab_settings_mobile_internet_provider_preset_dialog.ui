@@ -140,6 +140,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>cbox_mi_presets_country</tabstop>
+  <tabstop>cbox_mi_presets_provider</tabstop>
+  <tabstop>cbox_mi_presets_plan</tabstop>
+  <tabstop>pbutton_mi_presets_select</tabstop>
+  <tabstop>pbutton_mi_presets_close</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
