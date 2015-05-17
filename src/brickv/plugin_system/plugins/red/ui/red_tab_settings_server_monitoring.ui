@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>846</width>
-        <height>614</height>
+        <width>839</width>
+        <height>644</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
@@ -361,6 +361,23 @@
  </widget>
  <tabstops>
   <tabstop>sarea_sm</tabstop>
+  <tabstop>tview_sm_rules</tabstop>
+  <tabstop>pbutton_sm_add_rule</tabstop>
+  <tabstop>pbutton_sm_remove_all_rules</tabstop>
+  <tabstop>tview_sm_hosts</tabstop>
+  <tabstop>pbutton_sm_add_host</tabstop>
+  <tabstop>pbutton_sm_remove_all_hosts</tabstop>
+  <tabstop>chkbox_sm_email_enable</tabstop>
+  <tabstop>ledit_sm_email_from</tabstop>
+  <tabstop>ledit_sm_email_to</tabstop>
+  <tabstop>ledit_sm_email_server</tabstop>
+  <tabstop>sbox_sm_email_port</tabstop>
+  <tabstop>ledit_sm_email_username</tabstop>
+  <tabstop>ledit_sm_email_password</tabstop>
+  <tabstop>chkbox_sm_email_password_show</tabstop>
+  <tabstop>chkbox_sm_email_tls</tabstop>
+  <tabstop>pbutton_sm_refresh</tabstop>
+  <tabstop>pbutton_sm_save</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -197,7 +197,7 @@ MESSAGE_ERROR_HOSTNAME_EMPTY                  = 'Hostname empty'
 MESSAGE_WARNING_CHECK_UNUSED_HOST             = 'There are unused hosts which will be lost after a save. Continue?'
 MESSAGE_WARNING_REMOVE_ALL_RULES              = 'This will remove all the rules those do not depend on the default host. Continue?'
 MESSAGE_WARNING_REMOVE_ALL_HOSTS              = 'This will remove all the hosts except the default host and the rules those depend on these hosts. Continue?'
-MESSAGE_WARNING_REMOVE_DEPENDANT_RULES        = 'There are rules which depend on this host. Deleting this host will also delete all the dependant rules. Continue?'
+MESSAGE_WARNING_REMOVE_DEPENDENT_RULES        = 'There are rules which depend on this host. Deleting this host will also delete all the dependant rules. Continue?'
 MESSAGE_WARNING_REMOVE_CORRESPONDING_HOST     = 'If this is the only rule that depends on the host then the corresponding host will be also removed. Continue?'
 
 NEW_RULE                 = True
@@ -224,6 +224,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.show_working_wait(False)
         self.sarea_sm.hide()
 
+        # This dictionary is needed to be kept in sync with all the GUI changes
+        # on the hosts as some of the rule fields depend on available host information
         self.dict_hosts = {}
         self.model_hosts = QtGui.QStandardItemModel()
         self.model_hosts.setHorizontalHeaderLabels(HEADERS_TVIEW_HOSTS)
@@ -231,6 +233,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.set_default_col_width_hosts()
         self.defaulthost = None
 
+        # This list is used as a temporary storage for the saved rules
+        # until the enumeration calls for all the saved hosts return.
+        # No need to keep this data structure in sync with the changes made on the GUI model
         self.list_rules = []
         self.dict_email = {}
         self.model_rules = QtGui.QStandardItemModel()
@@ -566,9 +571,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.update_gui(EVENT_INPUT_CHANGED)
             return
 
-        # Enumeration calls of refresh
+        # Enumeration calls of refresh event
         if self.remaining_enumerations < 1:
             # Populating rules list after all host information is available
+            # This is why we are using self.list_rules as a temporary storage
+            # of the rules until all the enumeration calls are returned. This is
+            # applicable only for a refresh
             self.populate_rules()
             self.update_gui(EVENT_RETURNED_REFRESH_TRUE)
 
@@ -622,6 +630,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
             # Updating the used field of the hosts list
             self.update_hosts_used()
+        
+        # Clearing temporary rules list
+        self.list_rules = []
 
     def cb_settings_server_monitoring_get(self, result):
         if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_GET_FAILED):
@@ -1276,8 +1287,8 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 index = self.model_hosts.indexFromItem(item)
 
                 if sender == self.tview_sm_hosts.indexWidget(index):
-                    item_host   = self.model_hosts.item(r, INDEX_COL_HOSTS_HOST)
-                    index_host  = self.model_hosts.indexFromItem(item_host)
+                    item_host  = self.model_hosts.item(r, INDEX_COL_HOSTS_HOST)
+                    index_host = self.model_hosts.indexFromItem(item_host)
                     ledit_host = self.tview_sm_hosts.indexWidget(index_host)
 
                     item_used   = self.model_hosts.item(r, INDEX_COL_HOSTS_USED)
@@ -1289,13 +1300,14 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     if chkbox_used.isChecked():
                         reply = QtGui.QMessageBox.question(get_main_window(),
                                                            MESSAGEBOX_TITLE,
-                                                           MESSAGE_WARNING_REMOVE_DEPENDANT_RULES,
+                                                           MESSAGE_WARNING_REMOVE_DEPENDENT_RULES,
                                                            QtGui.QMessageBox.Yes,
                                                            QtGui.QMessageBox.No)
 
                         if reply != QtGui.QMessageBox.Yes:
                             return
 
+                        # Remove rules those depend on the host that is being removed
                         for r_rules in reversed(range(self.model_rules.rowCount())):
                             item_rules_host   = self.model_rules.item(r_rules, INDEX_COL_RULES_HOST)
                             index_rules_host  = self.model_rules.indexFromItem(item_rules_host)
@@ -1303,12 +1315,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
                             if host == cbox_rules_host.currentText():
                                 self.model_rules.removeRows(r_rules, 1)
-
-                        for i in reversed(range(len(self.list_rules))):
-                            dict_rule = self.list_rules[i]
-
-                            if host == dict_rule['host']:
-                                del self.list_rules[i]
 
                     self.model_hosts.removeRows(r, 1)
 
@@ -1388,47 +1394,11 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         if reply != QtGui.QMessageBox.Yes:
             return
 
-        # Remove all rules except the ones those are using the default host as host.
-        # Also remove unused hosts after removing the rules.
-
-        # From data structure
-        for i in reversed(range(len(self.list_rules))):
-            if self.list_rules[i]['host'] == self.defaulthost:
-                continue
-
-            del self.list_rules[i]
-
-        # From GUI model
+        # Remove all rules from GUI model
         for r in reversed(range(self.model_rules.rowCount())):
-            item_host = self.model_rules.item(r, INDEX_COL_HOSTS_HOST)
-            index_host = self.model_rules.indexFromItem(item_host)
-            host = self.tview_sm_rules.indexWidget(index_host).currentText()
-
-            if host == self.defaulthost:
-                continue
-
             self.model_rules.removeRows(r, 1)
 
         self.update_hosts_used()
-
-        # Remove hosts which are not being used by any rules
-        for r in reversed(range(self.model_hosts.rowCount())):
-            item_used = self.model_hosts.item(r, INDEX_COL_HOSTS_USED)
-            index_used = self.model_hosts.indexFromItem(item_used)
-            used = self.tview_sm_hosts.indexWidget(index_used).isChecked()
-
-            if used:
-                continue
-
-            item_host = self.model_hosts.item(r, INDEX_COL_HOSTS_HOST)
-            index_host = self.model_hosts.indexFromItem(item_host)
-            host = self.tview_sm_hosts.indexWidget(index_host).text()
-
-            if host == self.defaulthost:
-                continue
-
-            self.model_hosts.removeRows(r, 1)
-
         self.update_gui(EVENT_INPUT_CHANGED)
 
     def slot_pbutton_sm_remove_all_hosts_clicked(self):
@@ -1442,18 +1412,12 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             return
 
         # Delete all hosts except the default one.
-        # Also remove all dependant rules while removing a host.
-        
+        # Also remove all dependent rules from rules GUI model
+
         # From data structure
         for host in self.dict_hosts.keys():
             if host == self.defaulthost:
                 continue
-
-            for i in reversed(range(len(self.list_rules))):
-                if host != self.list_rules[i]['host']:
-                    continue
-
-                del self.list_rules[i]
 
             for r in reversed(range(self.model_rules.rowCount())):
                 item_host = self.model_rules.item(r, INDEX_COL_RULES_HOST)
