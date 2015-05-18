@@ -519,6 +519,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if enumeration_type in [IPConnection.ENUMERATION_TYPE_AVAILABLE,
                                 IPConnection.ENUMERATION_TYPE_CONNECTED]:
             device_info = infos.get_info(uid)
+            something_changed_ref = [False]
 
             if device_info == None:
                 if device_identifier == BrickMaster.DEVICE_IDENTIFIER:
@@ -530,24 +531,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     device_info = infos.BrickletInfo()
                 else:
                     device_info = infos.BrickInfo()
+                    something_changed_ref[0] = True
 
-            device_info.uid = uid
-            device_info.connected_uid = connected_uid
-            device_info.position = position
-            device_info.hardware_version = hardware_version
-            device_info.firmware_version_installed = firmware_version
-            device_info.device_identifier = device_identifier
-            device_info.protocol_version = 2
-            device_info.enumeration_type = enumeration_type
+            def set_device_info_value(name, value):
+                if getattr(device_info, name) != value:
+                    setattr(device_info, name, value)
+                    something_changed_ref[0] = True
+
+            set_device_info_value('uid', uid)
+            set_device_info_value('connected_uid', connected_uid)
+            set_device_info_value('position', position)
+            set_device_info_value('hardware_version', hardware_version)
+            set_device_info_value('firmware_version_installed', firmware_version)
+            set_device_info_value('device_identifier', device_identifier)
+            set_device_info_value('protocol_version', 2)
+            set_device_info_value('enumeration_type', enumeration_type)
 
             if device_info.type == 'bricklet':
                 for brick_info in infos.get_brick_infos():
                     if brick_info.uid == device_info.connected_uid:
-                        brick_info.bricklets[position] = device_info
+                        if brick_info.bricklets[position] != device_info:
+                            brick_info.bricklets[position] = device_info
+                            something_changed_ref[0] = True
             elif device_info.type == 'brick':
                 for bricklet_info in infos.get_bricklet_infos():
                     if bricklet_info.connected_uid == device_info.uid:
-                        device_info.bricklets[bricklet_info.position] = bricklet_info
+                        if device_info.bricklets[bricklet_info.position] != bricklet_info:
+                            device_info.bricklets[bricklet_info.position] = bricklet_info
+                            something_changed_ref[0] = True
 
             if device_info.plugin == None:
                 plugin = self.plugin_manager.get_plugin(device_identifier, self.ipcon,
@@ -562,6 +573,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 device_info.tab_window = self.create_tab_window(device_info, connected_uid, position)
                 device_info.tab_window.setWindowFlags(Qt.Widget)
                 device_info.tab_window.tab()
+
+                something_changed_ref[0] = True
+
+            if something_changed_ref[0]:
+                self.update_tree_view()
         elif enumeration_type == IPConnection.ENUMERATION_TYPE_DISCONNECTED:
             for device_info in infos.get_device_infos():
                 if device_info.uid == uid:
@@ -573,7 +589,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                         if device_info.bricklets[port] and device_info.bricklets[port].uid == uid:
                             device_info.bricklets[port] = None
 
-        self.update_tree_view()
+            self.update_tree_view()
 
     def hack_to_remove_red_brick_tab(self, red_brick_uid):
         for device_info in infos.get_device_infos():
