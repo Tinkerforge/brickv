@@ -34,8 +34,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>638</width>
-        <height>514</height>
+        <width>628</width>
+        <height>506</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
@@ -142,7 +142,7 @@
           <item row="1" column="1">
            <widget class="QLabel" name="label_mi_status_status">
             <property name="text">
-             <string>Gathering status information...</string>
+             <string>Collecting status information...</string>
             </property>
            </widget>
           </item>
@@ -190,9 +190,9 @@
            <widget class="QComboBox" name="cbox_mi_modem"/>
           </item>
           <item row="6" column="2">
-           <widget class="QCheckBox" name="chkbox_mi_enable_pin">
+           <widget class="QCheckBox" name="chkbox_mi_use_pin">
             <property name="text">
-             <string>Enable</string>
+             <string>Use PIN</string>
             </property>
            </widget>
           </item>
@@ -314,7 +314,7 @@
   <tabstop>ledit_mi_username</tabstop>
   <tabstop>ledit_mi_password</tabstop>
   <tabstop>ledit_mi_sim_card_pin</tabstop>
-  <tabstop>chkbox_mi_enable_pin</tabstop>
+  <tabstop>chkbox_mi_use_pin</tabstop>
   <tabstop>pbutton_mi_provider_presets</tabstop>
   <tabstop>pbutton_mi_refresh</tabstop>
   <tabstop>pbutton_mi_connect</tabstop>
