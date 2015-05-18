@@ -238,7 +238,7 @@ try:
 
     # Handle command REFRESH
     elif ACTION == 'REFRESH':
-        p = subprocess.Popen([BINARY_LSUSB, '-v'], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        p = subprocess.Popen([BINARY_LSUSB], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
         p_out_str = p.communicate()[0]
 
         if p.returncode != 0:
@@ -251,19 +251,35 @@ try:
 
         p_out_lines = p_out_str.splitlines()
 
-        for i, line in enumerate(p_out_lines):
-            if not line.startswith('Bus '):
+        for line in p_out_lines:
+            split_line = line.split(':', 1)
+
+            if len(split_line) != 2:
                 continue
 
-            entry = line.split(': ')[1].split('ID ')[1].split(' ', 1)
-            vid_pid = entry[0].strip()
-            name = entry[1].strip()
+            bus_device = split_line[0].strip()
 
-            if not name:
-                name = vid_pid
+            if not split_line[1].startswith(' ID '):
+                continue
 
-            dict_modem = {'vid_pid' : vid_pid,
-                          'name': name}
+            split_line_1 = split_line[1].split(' ID ', 1)
+
+            if len(split_line_1) != 2:
+                continue
+
+            split_id_name = split_line_1[1].split(' ', 1)
+
+            if len(split_id_name) != 2:
+                continue
+
+            if split_id_name[1] == '' or split_id_name[1] == ' ':
+                name = split_id_name[0].strip()
+            else:
+                name = split_id_name[1].strip()
+
+            dict_modem = {'vid_pid'   : split_id_name[0].strip(),
+                          'name'      : name,
+                          'bus_device': bus_device}
 
             list_modem.append(dict_modem)
 
