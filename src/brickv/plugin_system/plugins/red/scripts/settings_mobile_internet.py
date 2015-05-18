@@ -5,6 +5,7 @@ import re
 import os
 import sys
 import json
+import shlex
 import netifaces
 import subprocess
 
@@ -21,7 +22,7 @@ Type=Simple
 TimeoutStartSec=5
 ExecStart=/usr/umtskeeper/umtskeeper --conf /usr/umtskeeper/umtskeeper.conf
 TimeoutStopSec=5
-ExecStop=/usr/bin/killall -9 pppd
+ExecStop=/usr/bin/killall -9 umtskeeper sakis3g pppd
 
 [Install]
 WantedBy=multi-user.target
@@ -80,40 +81,53 @@ dict_configuration = {'modem_list'      : None,
                       'password'        : None,
                       'sim_card_pin'    : None}
 
-def test_connection():
-    if execute_command(command_test_connection.split(' ')) != 0:
-        exit(2)
+def killall_processes():
+    os.system(' -9 '.join([BINARY_KILLALL, 'umtskeeper sakis3g pppd']) + ' &> /dev/null')
 
-    if execute_command([BINARY_KILLALL, '-9', 'pppd']) != 0:
-        exit(1)
-                
-def create_execute_systemd_service():
+def test_connection(command_test_connection):
+    killall_processes()
+
+    if execute_command(shlex.split(command_test_connection)) != 0:
+        killall_processes()
+        return 2
+
+    killall_processes()
+
+    return 0
+
+def enable_start_systemd_service():
     if execute_command([BINARY_SYSTEMCTL, 'enable', FILE_UNIT_TF_MOBILE_INTERNET]) != 0:
-        disable_remove_systemd_service()
-        exit(3)
+        stop_disable_remove_systemd_service()
+        return 3
     
     if execute_command([BINARY_SYSTEMCTL, 'start', SERVICE_SYSTEMD_TF_MOBILE_INTERNET]) != 0:
-        disable_remove_systemd_service()
-        exit(4)
-                
+        stop_disable_remove_systemd_service()
+        return 4
+    
+    return 0     
+  
 def stop_disable_remove_systemd_service():
     os.system(' stop '.join([BINARY_SYSTEMCTL, SERVICE_SYSTEMD_TF_MOBILE_INTERNET]) + ' &> /dev/null')
     os.system(' disable '.join([BINARY_SYSTEMCTL, SERVICE_SYSTEMD_TF_MOBILE_INTERNET]) + ' &> /dev/null')
-    
+
     if os.path.exists(FILE_UNIT_TF_MOBILE_INTERNET):
         os.remove(FILE_UNIT_TF_MOBILE_INTERNET)
-                
+   
+    killall_processes()                
+
+# This function is used when a command must be executed with subprocess.Popen and
+# only returncode is needed
 def execute_command(command):
     p = subprocess.Popen(command, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     p.communicate()
     return p.returncode
 
-def prepare_test_and_configuration(usb_modem,
-                                   dial,
-                                   apn,
-                                   apn_user,
-                                   apn_pass,
-                                   sim_pin):
+def prepare_test_command_and_umtskeeper_configuration(usb_modem,
+                                                      dial,
+                                                      apn,
+                                                      apn_user,
+                                                      apn_pass,
+                                                      sim_pin):
     command_test_connection = ''
     configuration_umtskeeper = ''
     sakis_operators = '''DIAL="{0}" APN="{1}" APN_USER="{2}" APN_PASS="{3}" OTHER="USBMODEM" USBMODEM="{4}"'''
@@ -155,12 +169,15 @@ def find_whole_word(word):
     return re.compile(r'\b({0})\b'.format(word), flags=re.IGNORECASE).search
 
 def get_DNS():
+    if not os.path.exists('/etc/resolv.conf'):
+        return None
+    
     with open('/etc/resolv.conf', 'r') as rcfh:
         for line in rcfh.readlines():
             line_split = line.split(' ')
 
             if len(line_split) == 2 and \
-               line_split[0] == 'nameserver' and line_split[1] != '':
+               'nameserver' in line_split[0] and line_split[1] != '':
                     return line_split[1].strip()
 
 try:
@@ -184,7 +201,7 @@ try:
                                  stdout = subprocess.PIPE,
                                  stderr = subprocess.PIPE)
             p_out_str = p.communicate()[0]
-            
+
             if p_out_str and \
                'Loaded: loaded' in p_out_str and \
                'Active: active' in p_out_str:
@@ -315,31 +332,42 @@ try:
         sim_pin = sys.argv[7]
 
         command_test_connection, configuration_umtskeeper =\
-            prepare_test_and_configuration(usb_modem,
-                                           dial,
-                                           apn,
-                                           apn_user,
-                                           apn_pass,
-                                           sim_pin)
+            prepare_test_command_and_umtskeeper_configuration(usb_modem,
+                                                              dial,
+                                                              apn,
+                                                              apn_user,
+                                                              apn_pass,
+                                                              sim_pin)
+
+        # Disable and remove the systemd service if it exists
+        stop_disable_remove_systemd_service()
 
         # Test connection to verify provided configuration
-        test_connection()
+        ret_test_connection = test_connection(command_test_connection)
 
-        # Write configuration file
+        if ret_test_connection != 0:
+            exit(ret_test_connection)
+
+        # Write umtskeeper configuration file
         with open(FILE_CONFIG_UMTSKEEPER, 'w') as ucfh:
             ucfh.write(configuration_umtskeeper)
-
-        # Diable and remove the systemd service if it exists
-        stop_disable_remove_systemd_service()
         
         # Write the systemd unit file
         with open(FILE_UNIT_TF_MOBILE_INTERNET, 'w') as ufh:
             ufh.write(UNIT_SYSTEMD)
 
-        create_execute_systemd_service()
+        ret_enable_start_systemd_service = enable_start_systemd_service()
+        
+        if ret_enable_start_systemd_service != 0:
+            exit(ret_enable_start_systemd_service)
 
     else:
         exit(1)
 
+except SystemExit as e:
+    # For handling the exit() calls within the try block
+    exit(e.code)
+
 except:
+    # For all the other exceptions raised from the try block
     exit(1)

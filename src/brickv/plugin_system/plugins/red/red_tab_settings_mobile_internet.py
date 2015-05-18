@@ -41,7 +41,6 @@ EVENT_GUI_CONNECT_CLICKED = 5
 EVENT_GUI_CONNECT_RETURNED = 6
 
 MESSAGEBOX_TITLE = 'Settings | Mobile Internet'
-MESSAGE_ERROR_DETECT_DEVICE = 'Error detecting mobile internet device'
 MESSAGE_ERROR_VALIDATION_APN_EMPTY = 'APN empty'
 MESSAGE_ERROR_VALIDATION_APN_NON_ASCII = 'APN contains non ASCII characters'
 MESSAGE_ERROR_VALIDATION_USERNAME_NON_ASCII = 'Username contains non ASCII characters'
@@ -88,7 +87,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         self.pbutton_mi_refresh.clicked.connect(self.pbutton_mi_refresh_clicked)
         self.pbutton_mi_connect.clicked.connect(self.pbutton_mi_connect_clicked)
         self.status_refresh_timer.timeout.connect(self.status_refresh_timer_timeout)
-        self.chkbox_mi_enable_pin.stateChanged.connect(self.chkbox_mi_enable_pin_state_changed)
+        self.chkbox_mi_use_pin.stateChanged.connect(self.chkbox_mi_use_pin_state_changed)
 
     def tab_on_focus(self):
         self.is_tab_on_focus = True
@@ -191,7 +190,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         else:
             apn_pass = 'none'
 
-        if self.chkbox_mi_enable_pin.isChecked():
+        if self.chkbox_mi_use_pin.isChecked():
             sim_pin = self.ledit_mi_sim_card_pin.text()
         else:
             sim_pin = ''
@@ -212,8 +211,16 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
                                            self.cb_settings_mobile_internet_get_status,
                                            ['GET_STATUS'])
 
-    def chkbox_mi_enable_pin_state_changed(self):
-        if self.chkbox_mi_enable_pin.isChecked():
+    def show_working_wait(self, show):
+        if show:
+            self.label_mi_working_wait.show()
+            self.pbar_mi_working_wait.show()
+        else:
+            self.label_mi_working_wait.hide()
+            self.pbar_mi_working_wait.hide()
+
+    def chkbox_mi_use_pin_state_changed(self):
+        if self.chkbox_mi_use_pin.isChecked():
             self.ledit_mi_sim_card_pin.setEnabled(True)
         else:
             self.ledit_mi_sim_card_pin.setEnabled(False)
@@ -272,7 +279,6 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         self.status_refresh_timer.start(INTERVAL_REFRESH_STATUS)
 
     def cb_settings_mobile_internet_connect(self, result):
-        self.working = False
         self.update_gui(EVENT_GUI_CONNECT_RETURNED)
 
         if result.exit_code == 2:
@@ -303,7 +309,6 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         self.pbutton_mi_refresh_clicked()
 
     def cb_settings_mobile_internet_refresh(self, result):
-        self.working = False
         self.update_gui(EVENT_GUI_REFRESH_RETURNED)
 
         if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_REFERSH):
@@ -356,11 +361,11 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
 
         if not dict_configuration['sim_card_pin']:
             self.ledit_mi_sim_card_pin.setText('')
-            self.chkbox_mi_enable_pin.setChecked(False)
-            self.chkbox_mi_enable_pin_state_changed()
+            self.chkbox_mi_use_pin.setChecked(False)
+            self.chkbox_mi_use_pin_state_changed()
         else:
-            self.chkbox_mi_enable_pin.setChecked(True)
-            self.chkbox_mi_enable_pin_state_changed()
+            self.chkbox_mi_use_pin.setChecked(True)
+            self.chkbox_mi_use_pin_state_changed()
             self.ledit_mi_sim_card_pin.setText(dict_configuration['sim_card_pin'])
 
     def check_ascii(self, text):
@@ -386,7 +391,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         if password and not self.check_ascii(password):
             return False, MESSAGE_ERROR_VALIDATION_PASSWORD_NON_ASCII
 
-        if self.chkbox_mi_enable_pin.isChecked():
+        if self.chkbox_mi_use_pin.isChecked():
             if not self.ledit_mi_sim_card_pin.text():
                 return False, MESSAGE_ERROR_VALIDATION_PIN_EMPTY
             if len(self.ledit_mi_sim_card_pin.text()) != 4:
@@ -397,20 +402,21 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
     def update_gui(self, event):
         if event == EVENT_GUI_INIT_OK:
             self.label_mi_unsupported.hide()
-            self.label_mi_working_wait.hide()
-            self.pbar_mi_working_wait.hide()
             self.sarea_mi.show()
+
+            if self.working:
+                self.show_working_wait(True)
+            else:
+                self.show_working_wait(False)
 
         elif event == EVENT_GUI_INIT_UNSUPPORTED:
             self.label_mi_unsupported.show()
-            self.label_mi_working_wait.hide()
-            self.pbar_mi_working_wait.hide()
+            self.show_working_wait(False)
             self.sarea_mi.hide()
 
         elif event == EVENT_GUI_REFRESH_CLICKED or event == EVENT_GUI_CONNECT_CLICKED:
             self.working = True
-            self.label_mi_working_wait.show()
-            self.pbar_mi_working_wait.show()
+            self.show_working_wait(True)
 
             if event == EVENT_GUI_REFRESH_CLICKED:
                 self.pbutton_mi_refresh.setText('Refreshing...')
@@ -420,8 +426,8 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
             self.sarea_mi.setEnabled(False)
 
         elif event == EVENT_GUI_REFRESH_RETURNED or event == EVENT_GUI_CONNECT_RETURNED:
-            self.label_mi_working_wait.hide()
-            self.pbar_mi_working_wait.hide()
+            self.working = False
+            self.show_working_wait(False)
             self.pbutton_mi_refresh.setText('Refresh')
             self.pbutton_mi_connect.setText('Connect')
             self.sarea_mi.setEnabled(True)
