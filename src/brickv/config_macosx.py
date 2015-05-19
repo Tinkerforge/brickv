@@ -32,8 +32,7 @@ CONFIG_DIRNAME = os.path.dirname(CONFIG_FILENAME)
 def get_plist_value(name, default):
     try:
         subprocess.call(['plutil', '-convert', 'xml1', CONFIG_FILENAME])
-        root = plistlib.readPlist(CONFIG_FILENAME)
-        return root[name]
+        return plistlib.readPlist(CONFIG_FILENAME)[name]
     except:
         return default
 
@@ -43,28 +42,41 @@ def set_plist_value(name, value):
         root = plistlib.readPlist(CONFIG_FILENAME)
     except:
         root = {}
+
     root[name] = value
+
     if not os.path.exists(CONFIG_DIRNAME):
         os.makedirs(CONFIG_DIRNAME)
+
     plistlib.writePlist(root, CONFIG_FILENAME)
 
-def get_host_info_strings(count):
-    host_info_strings = []
+def get_host_info_strings(max_count):
+    strings = []
+
+    try:
+        count = int(get_plist_value('HostInfoCount', '-1'))
+    except:
+        count = max_count
+
+    if count < 0 or count > max_count:
+        count = max_count
 
     for i in range(count):
-        host_info_string = get_plist_value('HostInfo{0}'.format(i), None)
+        string = get_plist_value('HostInfo{0}'.format(i), None)
 
-        if host_info_string is not None:
-            host_info_strings.append(str(host_info_string))
+        if string is not None:
+            strings.append(str(string))
 
-    return host_info_strings
+    return strings
 
-def set_host_info_strings(host_info_strings):
+def set_host_info_strings(strings):
     i = 0
 
-    for host_info_string in host_info_strings:
-        set_plist_value('HostInfo{0}'.format(i), str(host_info_string))
+    for string in strings:
+        set_plist_value('HostInfo{0}'.format(i), str(string))
         i += 1
+
+    set_plist_value('HostInfoCount', str(i))
 
 def legacy_get_host():
     return get_plist_value('Host', DEFAULT_HOST)

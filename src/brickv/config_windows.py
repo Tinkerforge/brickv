@@ -56,23 +56,33 @@ def set_registry_value(name, type_, value):
         finally:
             winreg.CloseKey(reg)
 
-def get_host_info_strings(count):
-    host_info_strings = []
+def get_host_info_strings(max_count):
+    strings = []
+
+    try:
+        count = int(get_registry_value('HostInfoCount', '-1'))
+    except:
+        count = max_count
+
+    if count < 0 or count > max_count:
+        count = max_count
 
     for i in range(count):
-        host_info_string = get_registry_value('HostInfo{0}'.format(i), None)
+        string = get_registry_value('HostInfo{0}'.format(i), None)
 
-        if host_info_string is not None:
-            host_info_strings.append(str(host_info_string))
+        if string is not None:
+            strings.append(str(string))
 
-    return host_info_strings
+    return strings
 
-def set_host_info_strings(host_info_strings):
+def set_host_info_strings(strings):
     i = 0
 
-    for host_info_string in host_info_strings:
-        set_registry_value('HostInfo{0}'.format(i), winreg.REG_SZ, str(host_info_string))
+    for string in strings:
+        set_registry_value('HostInfo{0}'.format(i), winreg.REG_SZ, str(string))
         i += 1
+
+    set_registry_value('HostInfoCount', winreg.REG_SZ, str(i))
 
 def legacy_get_host():
     return get_registry_value('Host', DEFAULT_HOST)

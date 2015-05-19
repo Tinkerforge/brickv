@@ -41,6 +41,7 @@ CONFIG_DIRNAME = os.path.dirname(CONFIG_FILENAME)
 def get_config_value(section, option, default):
     scp = configparser.SafeConfigParser()
     scp.read(CONFIG_FILENAME)
+
     try:
         return scp.get(section, option)
     except configparser.Error:
@@ -49,31 +50,45 @@ def get_config_value(section, option, default):
 def set_config_value(section, option, value):
     scp = configparser.SafeConfigParser()
     scp.read(CONFIG_FILENAME)
+
     if not scp.has_section(section):
         scp.add_section(section)
+
     scp.set(section, option, value)
+
     if not os.path.exists(CONFIG_DIRNAME):
         os.makedirs(CONFIG_DIRNAME)
+
     with open(CONFIG_FILENAME, 'wb') as f:
         scp.write(f)
 
-def get_host_info_strings(count):
-    host_info_strings = []
+def get_host_info_strings(max_count):
+    strings = []
+
+    try:
+        count = int(get_config_value('Connection', 'HostInfoCount', '-1'))
+    except:
+        count = max_count
+
+    if count < 0 or count > max_count:
+        count = max_count
 
     for i in range(count):
-        host_info_string = get_config_value('Connection', 'HostInfo{0}'.format(i), None)
+        string = get_config_value('Connection', 'HostInfo{0}'.format(i), None)
 
-        if host_info_string is not None:
-            host_info_strings.append(str(host_info_string))
+        if string != None:
+            strings.append(str(string))
 
-    return host_info_strings
+    return strings
 
-def set_host_info_strings(host_info_strings):
+def set_host_info_strings(strings):
     i = 0
 
-    for host_info_string in host_info_strings:
-        set_config_value('Connection', 'HostInfo{0}'.format(i), str(host_info_string))
+    for string in strings:
+        set_config_value('Connection', 'HostInfo{0}'.format(i), str(string))
         i += 1
+
+    set_config_value('Connection', 'HostInfoCount', str(i))
 
 def legacy_get_host():
     return get_config_value('Connection', 'Host', DEFAULT_HOST)
