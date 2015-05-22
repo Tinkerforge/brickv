@@ -6,6 +6,7 @@ import os
 import sys
 import json
 import shlex
+import serial
 import netifaces
 import subprocess
 
@@ -59,12 +60,15 @@ BINARY_LSUSB = '/usr/bin/lsusb'
 BINARY_UMTSKEEPER = '/usr/umtskeeper/umtskeeper'
 BINARY_KILLALL = '/usr/bin/killall'
 BINARY_SYSTEMCTL = '/bin/systemctl'
+BINARY_UDEVADM = '/sbin/udevadm'
 
 SPLIT_SEARCH_INTERFACE = 'Interface: '
 SPLIT_SEARCH_OPERATOR = 'Operator name: '
 SPLIT_SEARCH_IP = 'IP Address: '
 SPLIT_SEARCH_SUBNET_MASK = 'Subnet Mask: '
 SPLIT_SEARCH_GATEWAY = 'Default route(s): '
+
+DIR_SYS_CLASS_TTY = '/sys/class/tty'
 
 dict_status = {'status'     : None,
                'interface'  : None,
@@ -80,6 +84,113 @@ dict_configuration = {'modem_list'      : None,
                       'username'        : None,
                       'password'        : None,
                       'sim_card_pin'    : None}
+
+def get_value_from_line(line):
+    split_line = line.split('=', 1)
+
+    if len(split_line) == 2:   
+        return split_line[1]
+    else:
+        return False
+
+def get_vid_pid(pstdout):
+    vid = ''
+    pid = ''
+
+    for line in pstdout.splitlines():
+        if 'ID_VENDOR_ID=' in line:
+            value = get_value_from_line(line)
+
+            if value:
+                vid = value
+
+        if 'ID_MODEL_ID=' in line:
+            value = get_value_from_line(line)
+            
+            if value:
+                pid = value
+
+    if not vid or not pid:
+        return False
+
+    return ':'.join([vid, pid])
+
+def get_device_name(pstdout):
+    vendor = None
+    model = None
+
+    for line in pstdout.splitlines():
+        if 'ID_VENDOR_FROM_DATABASE=' in line:
+            value = get_value_from_line(line)
+
+            if value:
+                vendor = value
+
+        if 'ID_MODEL_FROM_DATABASE=' in line:
+            value = get_value_from_line(line)
+
+            if value:
+                model = value
+
+    if not vendor and not model:
+        return False
+
+    if vendor and not model:
+        return vendor
+    
+    if not vendor and model:
+        return model
+
+    return ' '.join([vendor, model])
+
+def get_usb_tty_devices():
+    
+    usb_tty_devices = []
+    
+    for device_node in os.listdir(DIR_SYS_CLASS_TTY):
+        
+        device_node_path = '/dev/' + device_node
+        
+        p = subprocess.Popen([BINARY_UDEVADM, 'info', device_node_path],
+                             stdout = subprocess.PIPE,
+                             stderr = subprocess.PIPE)
+        pstdout = p.communicate()[0]
+
+        if not pstdout:
+            continue
+
+        if p.returncode != 0:
+            continue
+
+        if not 'ID_' in pstdout:
+            continue
+
+        if not 'N: ' in pstdout:
+            continue
+
+        if not 'ID_VENDOR_ID=' in pstdout:
+            continue
+
+        if not 'ID_MODEL_ID=' in pstdout:
+            continue
+
+        vid_pid = get_vid_pid(pstdout)
+        device_name = get_device_name(pstdout)
+
+        if not vid_pid:
+            conitnue
+        
+        if not device_name:
+            device_name = ''
+
+        usb_tty_devices.append({'device_node_path': device_node_path,
+                                'vid_pid': vid_pid,
+                                'device_name': device_name})
+    
+    if len(usb_tty_devices) <= 0:
+        return False
+
+    return usb_tty_devices
 
 def killall_processes():
     os.system(' -9 '.join([BINARY_KILLALL, 'umtskeeper sakis3g pppd']) + ' &> /dev/null')
@@ -238,54 +349,24 @@ try:
 
     # Handle command REFRESH
     elif ACTION == 'REFRESH':
-        p = subprocess.Popen([BINARY_LSUSB], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-        p_out_str = p.communicate()[0]
+        usb_tty_devices = get_usb_tty_devices()
 
-        if p.returncode != 0:
-            exit(1)
+        if usb_tty_devices:
+            list_modem = []
+            list_vid_pid = []
 
-        if not p_out_str:
-            exit(1)
+            for dict_device in usb_tty_devices:
+                if dict_device['vid_pid'] in list_vid_pid:
+                    continue
 
-        list_modem = []
+                list_vid_pid.append(dict_device['vid_pid'])
+                list_modem.append({'vid_pid': dict_device['vid_pid'],
+                                   'name'   : dict_device['device_name']})
 
-        p_out_lines = p_out_str.splitlines()
-
-        for line in p_out_lines:
-            split_line = line.split(':', 1)
-
-            if len(split_line) != 2:
-                continue
-
-            bus_device = split_line[0].strip()
-
-            if not split_line[1].startswith(' ID '):
-                continue
-
-            split_line_1 = split_line[1].split(' ID ', 1)
-
-            if len(split_line_1) != 2:
-                continue
-
-            split_id_name = split_line_1[1].split(' ', 1)
-
-            if len(split_id_name) != 2:
-                continue
-
-            if split_id_name[1] == '' or split_id_name[1] == ' ':
-                name = split_id_name[0].strip()
-            else:
-                name = split_id_name[1].strip()
-
-            dict_modem = {'vid_pid'   : split_id_name[0].strip(),
-                          'name'      : name,
-                          'bus_device': bus_device}
-
-            list_modem.append(dict_modem)
-
-        # Load USB device list
-        dict_configuration['modem_list'] = list_modem
-
+            dict_configuration['modem_list'] = list_modem
+        else:
+            dict_configuration['modem_list'] = None
+            
         # Process configuration file if it exists
         if os.path.exists(FILE_CONFIG_UMTSKEEPER):
             with open(FILE_CONFIG_UMTSKEEPER, 'r') as ucfh:
