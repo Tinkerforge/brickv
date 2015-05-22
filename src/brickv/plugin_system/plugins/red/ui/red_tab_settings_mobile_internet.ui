@@ -182,19 +182,26 @@
          <property name="title">
           <string>Configuration</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="2" column="1" colspan="2">
-           <widget class="QLineEdit" name="ledit_mi_apn"/>
-          </item>
-          <item row="0" column="1" colspan="2">
-           <widget class="QComboBox" name="cbox_mi_modem"/>
-          </item>
-          <item row="6" column="2">
-           <widget class="QCheckBox" name="chkbox_mi_use_pin">
+         <layout class="QFormLayout" name="formLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_20">
             <property name="text">
-             <string>Use PIN</string>
+             <string>Modem:</string>
             </property>
            </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="cbox_mi_modem"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Dial:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="ledit_mi_dial"/>
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_3">
@@ -203,61 +210,47 @@
             </property>
            </widget>
           </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>SIM Card PIN:</string>
-            </property>
-           </widget>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="ledit_mi_apn"/>
           </item>
-          <item row="6" column="1">
-           <widget class="QLineEdit" name="ledit_mi_sim_card_pin">
-            <property name="maxLength">
-             <number>4</number>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1" colspan="2">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Using wrong PIN code three times will block the SIM card.</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1" colspan="2">
-           <widget class="QLineEdit" name="ledit_mi_username"/>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Password:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
+          <item row="3" column="0">
            <widget class="QLabel" name="label_4">
             <property name="text">
              <string>Username:</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_20">
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="ledit_mi_username"/>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_5">
             <property name="text">
-             <string>Modem:</string>
+             <string>Password:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1" colspan="2">
-           <widget class="QLineEdit" name="ledit_mi_dial"/>
-          </item>
-          <item row="5" column="1" colspan="2">
+          <item row="4" column="1">
            <widget class="QLineEdit" name="ledit_mi_password"/>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_2">
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_6">
             <property name="text">
-             <string>Dial:</string>
+             <string>SIM Card PIN:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="ledit_mi_sim_card_pin">
+            <property name="maxLength">
+             <number>4</number>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Using wrong PIN code three times will block the SIM card.</string>
             </property>
            </widget>
           </item>
@@ -314,7 +307,6 @@
   <tabstop>ledit_mi_username</tabstop>
   <tabstop>ledit_mi_password</tabstop>
   <tabstop>ledit_mi_sim_card_pin</tabstop>
-  <tabstop>chkbox_mi_use_pin</tabstop>
   <tabstop>pbutton_mi_provider_presets</tabstop>
   <tabstop>pbutton_mi_refresh</tabstop>
   <tabstop>pbutton_mi_connect</tabstop>

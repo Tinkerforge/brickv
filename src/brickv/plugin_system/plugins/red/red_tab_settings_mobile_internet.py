@@ -41,6 +41,7 @@ EVENT_GUI_CONNECT_CLICKED = 5
 EVENT_GUI_CONNECT_RETURNED = 6
 
 MESSAGEBOX_TITLE = 'Settings | Mobile Internet'
+MESSAGE_ERROR_VALIDATION_NO_MODEM = 'No modem available'
 MESSAGE_ERROR_VALIDATION_APN_EMPTY = 'APN empty'
 MESSAGE_ERROR_VALIDATION_APN_NON_ASCII = 'APN contains non ASCII characters'
 MESSAGE_ERROR_VALIDATION_USERNAME_NON_ASCII = 'Username contains non ASCII characters'
@@ -87,7 +88,6 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         self.pbutton_mi_refresh.clicked.connect(self.pbutton_mi_refresh_clicked)
         self.pbutton_mi_connect.clicked.connect(self.pbutton_mi_connect_clicked)
         self.status_refresh_timer.timeout.connect(self.status_refresh_timer_timeout)
-        self.chkbox_mi_use_pin.stateChanged.connect(self.chkbox_mi_use_pin_state_changed)
 
     def tab_on_focus(self):
         self.is_tab_on_focus = True
@@ -190,10 +190,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         else:
             apn_pass = 'none'
 
-        if self.chkbox_mi_use_pin.isChecked():
-            sim_pin = self.ledit_mi_sim_card_pin.text()
-        else:
-            sim_pin = ''
+        sim_pin = self.ledit_mi_sim_card_pin.text()
 
         self.script_manager.execute_script('settings_mobile_internet',
                                            self.cb_settings_mobile_internet_connect,
@@ -218,12 +215,6 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         else:
             self.label_mi_working_wait.hide()
             self.pbar_mi_working_wait.hide()
-
-    def chkbox_mi_use_pin_state_changed(self):
-        if self.chkbox_mi_use_pin.isChecked():
-            self.ledit_mi_sim_card_pin.setEnabled(True)
-        else:
-            self.ledit_mi_sim_card_pin.setEnabled(False)
 
     def cb_settings_mobile_internet_get_status(self, result):
         self.status_refresh_timer.stop()
@@ -324,8 +315,11 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
 
         if not dict_configuration['modem_list']:
             self.cbox_mi_modem.clear()
+            self.cbox_mi_modem.addItem('No modem available...')
+            self.cbox_mi_modem.setEnabled(False)
         else:
             self.cbox_mi_modem.clear()
+            self.cbox_mi_modem.setEnabled(True)
 
             for dict_modem in dict_configuration['modem_list']:
                 self.cbox_mi_modem.addItem(dict_modem['name'])
@@ -361,11 +355,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
 
         if not dict_configuration['sim_card_pin']:
             self.ledit_mi_sim_card_pin.setText('')
-            self.chkbox_mi_use_pin.setChecked(False)
-            self.chkbox_mi_use_pin_state_changed()
         else:
-            self.chkbox_mi_use_pin.setChecked(True)
-            self.chkbox_mi_use_pin_state_changed()
             self.ledit_mi_sim_card_pin.setText(dict_configuration['sim_card_pin'])
 
     def check_ascii(self, text):
@@ -380,6 +370,9 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         username = self.ledit_mi_username.text()
         password = self.ledit_mi_password.text()
 
+        if not self.cbox_mi_modem.isEnabled():
+            return False, MESSAGE_ERROR_VALIDATION_NO_MODEM
+
         if not apn:
             return False, MESSAGE_ERROR_VALIDATION_APN_EMPTY
         if not self.check_ascii(apn):
@@ -391,11 +384,10 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         if password and not self.check_ascii(password):
             return False, MESSAGE_ERROR_VALIDATION_PASSWORD_NON_ASCII
 
-        if self.chkbox_mi_use_pin.isChecked():
-            if not self.ledit_mi_sim_card_pin.text():
-                return False, MESSAGE_ERROR_VALIDATION_PIN_EMPTY
-            if len(self.ledit_mi_sim_card_pin.text()) != 4:
-                return False, MESSAGE_ERROR_VALIDATION_PIN_LENGTH
+        if not self.ledit_mi_sim_card_pin.text():
+            return False, MESSAGE_ERROR_VALIDATION_PIN_EMPTY
+        if len(self.ledit_mi_sim_card_pin.text()) != 4:
+            return False, MESSAGE_ERROR_VALIDATION_PIN_LENGTH
 
         return True, None
 
