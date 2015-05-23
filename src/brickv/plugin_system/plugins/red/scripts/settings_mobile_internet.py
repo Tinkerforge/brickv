@@ -330,19 +330,24 @@ try:
         else:
             for line in p_out_str.splitlines():
                 if SPLIT_SEARCH_OPERATOR in line and len(line.split(SPLIT_SEARCH_OPERATOR)) == 2:
-                    dict_status['status'] = 'Connected to ' + line.split(SPLIT_SEARCH_OPERATOR)[1]
+                    if line.split(SPLIT_SEARCH_OPERATOR)[0] == '':
+                        dict_status['status'] = 'Connected to ' + line.split(SPLIT_SEARCH_OPERATOR)[1]
 
                 elif SPLIT_SEARCH_INTERFACE in line and len(line.split(SPLIT_SEARCH_INTERFACE)) == 2:
-                    dict_status['interface'] = line.split(SPLIT_SEARCH_INTERFACE)[1]
+                    if line.split(SPLIT_SEARCH_INTERFACE)[0] == '':
+                        dict_status['interface'] = line.split(SPLIT_SEARCH_INTERFACE)[1]
         
                 elif SPLIT_SEARCH_IP in line and len(line.split(SPLIT_SEARCH_IP)) == 2:
-                    dict_status['ip'] = line.split(SPLIT_SEARCH_IP)[1]
-            
+                    if line.split(SPLIT_SEARCH_IP)[0] == '':
+                        dict_status['ip'] = line.split(SPLIT_SEARCH_IP)[1]
+
                 elif SPLIT_SEARCH_SUBNET_MASK in line and len(line.split(SPLIT_SEARCH_SUBNET_MASK)) == 2:
-                    dict_status['subnet_mask'] = line.split(SPLIT_SEARCH_SUBNET_MASK)[1]
+                    if line.split(SPLIT_SEARCH_SUBNET_MASK)[0] == '':
+                        dict_status['subnet_mask'] = line.split(SPLIT_SEARCH_SUBNET_MASK)[1]
             
                 elif SPLIT_SEARCH_GATEWAY in line and len(line.split(SPLIT_SEARCH_GATEWAY)) == 2:
-                    dict_status['gateway'] = line.split(SPLIT_SEARCH_GATEWAY)[1]
+                    if line.split(SPLIT_SEARCH_GATEWAY)[0] == '':
+                        dict_status['gateway'] = line.split(SPLIT_SEARCH_GATEWAY)[1]
         
             dict_status['dns'] = get_DNS() 
             sys.stdout.write(json.dumps(dict_status))
