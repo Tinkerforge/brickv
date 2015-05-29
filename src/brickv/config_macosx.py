@@ -30,6 +30,9 @@ CONFIG_FILENAME = os.path.expanduser('~/Library/Preferences/com.tinkerforge.bric
 CONFIG_DIRNAME = os.path.dirname(CONFIG_FILENAME)
 
 def get_plist_value(name, default):
+    if not os.path.exists(CONFIG_FILENAME):
+        return default
+
     try:
         subprocess.call(['plutil', '-convert', 'xml1', CONFIG_FILENAME])
         return plistlib.readPlist(CONFIG_FILENAME)[name]
@@ -37,11 +40,14 @@ def get_plist_value(name, default):
         return default
 
 def set_plist_value(name, value):
-    try:
-        subprocess.call(['plutil', '-convert', 'xml1', CONFIG_FILENAME])
-        root = plistlib.readPlist(CONFIG_FILENAME)
-    except:
-        root = {}
+    root = {}
+
+    if os.path.exists(CONFIG_FILENAME):
+        try:
+            subprocess.call(['plutil', '-convert', 'xml1', CONFIG_FILENAME])
+            root = plistlib.readPlist(CONFIG_FILENAME)
+        except:
+            pass
 
     root[name] = value
 
