@@ -72,6 +72,12 @@ except:
     return_dict['cstat_dns'] = None
 
 try:
+    #daemon = dbus.Interface(bus.get_object('org.wicd.daemon', '/org/wicd/daemon'), 'org.wicd.daemon')
+    #daemon.GetWiredInterface()
+    #daemon.GetWirelessInterface()
+    #returns: dbus.String(u'')
+    #query with netifaces to get the netmask on the interface
+
     wicd_dbusmanager.connect_to_dbus()
     status = wicd_dbusmanager.get_dbus_ifaces()['daemon'].GetConnectionStatus()
 
