@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-05-18.      #
+# This file was automatically generated on 2015-05-29.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -99,8 +99,9 @@ class BrickletOzone(Device):
 
     def get_ozone_concentration(self):
         """
-        Returns the measured ozone concentration. The value is in ppb and
-        between TBD and TBD.
+        Returns the measured ozone concentration. The value is in 
+        `ppb (parts-per-billion) <http://en.wikipedia.org/wiki/Parts-per_notation>`__
+        and between 0 to 250.
         
         If you want to get the ozone concentration periodically, it is recommended to use the
         callback :func:`OzoneConcentration` and set the period with

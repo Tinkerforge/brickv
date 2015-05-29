@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-05-19.      #
+# This file was automatically generated on 2015-05-29.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -78,8 +78,9 @@ class BrickletCO2(Device):
 
     def get_co2_concentration(self):
         """
-        Returns the measured CO2 concentration. The value is in ppb and
-        between TBD and TBD.
+        Returns the measured CO2 concentration. The value is in 
+        `ppm (parts-per-million) <http://en.wikipedia.org/wiki/Parts-per_notation>`__ 
+        and between TBD to TBD.
         
         If you want to get the CO2 concentration periodically, it is recommended to use the
         callback :func:`CO2Concentration` and set the period with
