@@ -13,13 +13,19 @@ return_dict = {'wireless': None,
 
 wl_links_dict = {}
 lwireless = []
-lwired = []
+_lwired = []
 
 for intf in netifaces.interfaces():
-     if os.path.isdir('/sys/class/net/'+intf+'/wireless'):
+    if os.path.isdir('/sys/class/net/'+intf+'/wireless') and intf not in lwireless:
         lwireless.append(intf)
-     else:
-        lwired.append(intf)
+        continue
+
+    if not os.path.isfile('/sys/class/net/'+intf+'/type'):
+        continue
+
+    with open('/sys/class/net/'+intf+'/type', 'r') as fhtype:
+        if int(fhtype.read().strip()) == 1 and intf not in _lwired:
+            _lwired.append(intf)
 
 if len(lwireless) > 0:
     return_dict['wireless'] = lwireless
@@ -53,8 +59,14 @@ if len(lwireless) > 0:
                                                        'essid': associated_essid,
                                                        'bssid': associated_bssid}
 
-#remove lo and tunl0 interfaces from interfaces list
-lwired = [x for x in lwired if x!='lo' and x!='tunl0']
+# Remove localhost and tunnel interfaces
+lwired = []
+
+for wired in _lwired:
+    if wired.startswith('tun') or wired == 'lo':
+        continue
+
+    lwired.append(wired)
 
 if len(lwired) > 0:
     return_dict['wired'] = lwired
