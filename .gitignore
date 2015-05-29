@@ -2,6 +2,8 @@
 ui_*.py
 *.py_minified
 *.py_prepared
+.project
+.pydevproject
 src/build
 src/dist
 # keep generated plugin_images.py ignored even after it was renamed to frozen_images.py
