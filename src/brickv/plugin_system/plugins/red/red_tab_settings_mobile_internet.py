@@ -415,11 +415,17 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
             if event == EVENT_GUI_CONNECT_CLICKED:
                 self.pbutton_mi_connect.setText('Connecting...')
 
-            self.sarea_mi.setEnabled(False)
+            self.gbox_mi_configuration.setEnabled(False)
+            self.pbutton_mi_provider_presets.setEnabled(False)
+            self.pbutton_mi_refresh.setEnabled(False)
+            self.pbutton_mi_connect.setEnabled(False)
 
         elif event == EVENT_GUI_REFRESH_RETURNED or event == EVENT_GUI_CONNECT_RETURNED:
             self.working = False
             self.show_working_wait(False)
             self.pbutton_mi_refresh.setText('Refresh')
             self.pbutton_mi_connect.setText('Connect')
-            self.sarea_mi.setEnabled(True)
+            self.gbox_mi_configuration.setEnabled(True)
+            self.pbutton_mi_provider_presets.setEnabled(True)
+            self.pbutton_mi_refresh.setEnabled(True)
+            self.pbutton_mi_connect.setEnabled(True)

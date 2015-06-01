@@ -30,7 +30,7 @@ WantedBy=multi-user.target
 '''
 
 CONFIG_UMTSKEEPER = '''conf['deviceName'] = 'modem_mobile_internet'
-conf['sakisSwitches'] = "--nostorage --pppd --nofix --console"
+conf['sakisSwitches'] = "--nostorage --pppd --console"
 conf['sakisOperators'] = "{0}"
 conf['sakisMaxFails'] = 8
 conf['sakisFailLockDuration'] = 120
@@ -284,12 +284,19 @@ def get_DNS():
         return None
     
     with open('/etc/resolv.conf', 'r') as rcfh:
+        dns_servers = []
+
         for line in rcfh.readlines():
             line_split = line.split(' ')
 
             if len(line_split) == 2 and \
                'nameserver' in line_split[0] and line_split[1] != '':
-                    return line_split[1].strip()
+                    dns_servers.append(line_split[1].strip())
+
+        if len(dns_servers) <= 0:
+            return '-'
+
+        return ', '.join(dns_servers)
 
 try:
     # Handle command GET_STATUS
