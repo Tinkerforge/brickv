@@ -151,7 +151,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def closeEvent(self, event):
         self.exit_brickv()
 
-    def exit_brickv(self, signl=None, frme=None):
+    def exit_brickv(self, signal=None, frame=None):
         if self.current_device_info is not None:
             self.current_device_info.plugin.stop_plugin()
             self.current_device_info.plugin.destroy_plugin()
@@ -161,7 +161,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.do_disconnect()
 
-        if signl != None and frme != None:
+        if signal != None and frame != None:
             print("Received SIGINT or SIGTERM, shutting down.")
             sys.exit()
 
