@@ -234,16 +234,10 @@ try:
         fd_interfaces_conf.write(INTERFACES_CONF.format(interface, interface_ip, interface_mask))
 
     for intf in netifaces.interfaces():
-        if intf == 'lo' or intf == 'tunl0':
+        if intf != interface:
             continue
-
-        if intf == interface:
-            if os.system('/sbin/ifconfig '+intf+' up') != 0:
-                exit(1)
-
-            continue
-            
-        if os.system('/sbin/ifconfig '+intf+' down') != 0:
+        
+        if os.system('/sbin/ifconfig '+intf+' up &> /dev/null') != 0:
             exit(1)
 
     if os.system('/bin/systemctl stop wicd') != 0:
