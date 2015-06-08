@@ -4,7 +4,40 @@
 import os
 import json
 import netifaces
+import subprocess
 from sys import argv
+
+MIN_VERSION_FOR_NAT = 1.7
+
+UNIT_SETUP_AP_NAT = '''[Unit]
+Description=Setup NAT in AP mode
+
+[Service]
+Type=Simple
+TimeoutStartSec=5
+ExecStart=gw=$(/sbin/route | /usr/bin/awk '{{if($1=="default") print $8}}');\
+if test $gw != '{0}';\
+then \
+/sbin/iptables -t nat -D POSTROUTING -o $gw -j MASQUERADE &> /dev/null;\
+/sbin/iptables -D FORWARD -i {0} -j ACCEPT &> /dev/null;\
+/sbin/iptables -t nat -A POSTROUTING -o $gw -j MASQUERADE &> /dev/null;\
+/sbin/iptables -A FORWARD -i {0} -j ACCEPT &> /dev/null
+fi
+'''
+
+TIMER_SETUP_AP_NAT = '''[Unit]
+Description=Execute tf_setup_ap_nat.service every 10 seconds
+
+[Timer]
+# Time to wait after booting before we run first time
+OnBootSec=1min
+# Time between running each consecutive time
+OnUnitActiveSec=10s
+Unit=tf_setup_ap_nat.service
+
+[Install]
+WantedBy=multi-user.target
+''' 
 
 HOSTAPD_CONF = '''# AP netdevice name (without 'ap' postfix, i.e., wlan0 uses wlan0ap for
 # management frames with the Host AP driver); wlan0 with many nl80211 drivers
@@ -236,34 +269,63 @@ try:
     for intf in netifaces.interfaces():
         if intf != interface:
             continue
-        
+
         if os.system('/sbin/ifconfig '+intf+' up &> /dev/null') != 0:
             exit(1)
 
-    if os.system('/bin/systemctl stop wicd') != 0:
+    if os.system('/bin/systemctl stop wicd &> /dev/null') != 0:
         exit(1)
 
-    if os.system('/bin/systemctl disable wicd') != 0:
+    if os.system('/bin/systemctl disable wicd &> /dev/null') != 0:
         exit(1)
         
     if enabled_dns_dhcp:
-        if os.system('/bin/systemctl enable dnsmasq') != 0:
+        if os.system('/bin/systemctl enable dnsmasq &> /dev/null') != 0:
             exit(1)
         
-        if os.system('/bin/systemctl restart dnsmasq') != 0:
+        if os.system('/bin/systemctl restart dnsmasq &> /dev/null') != 0:
             exit(1)
     else:
-        if os.system('/bin/systemctl disable dnsmasq') != 0:
+        if os.system('/bin/systemctl disable dnsmasq &> /dev/null') != 0:
             exit(1)
         
-        if os.system('/bin/systemctl stop dnsmasq') != 0:
+        if os.system('/bin/systemctl stop dnsmasq &> /dev/null') != 0:
             exit(1)
 
-    if os.system('/bin/systemctl enable hostapd') != 0:
+    if os.system('/bin/systemctl enable hostapd &> /dev/null') != 0:
         exit(1)
 
-    if os.system('/bin/systemctl restart networking; /bin/systemctl restart hostapd'):
+    image_version = ''
+
+    with open('/etc/tf_image_version', 'r') as fh_version:
+        fh_version_lines = fh_version.readlines()
+
+        if len(fh_version_lines) > 0:
+            fh_version_lines_0_split = fh_version_lines[0].split(' ')
+
+            if len(fh_version_lines_0_split) > 0:
+                image_version = fh_version_lines_0_split[0].strip()
+
+    if image_version and float(image_version) >= MIN_VERSION_FOR_NAT:
+        with open('/etc/sysctl.d/enable_ipv4_forward', 'w') as fh_sysctl:
+            fh_sysctl.write('net.ipv4.ip_forward = 1\n')
+            
+        if os.system('/sbin/sysctl -p /etc/sysctl.d/enable_ipv4_forward.conf &> /dev/null') == 0:
+            if os.path.exists('/etc/systemd/system/tf_setup_ap_nat.timer'):
+                os.system('/bin/systemctl disable /etc/systemd/system/tf_setup_ap_nat.timer &> /dev/null')
+            
+            with open('/etc/systemd/system/tf_setup_ap_nat.service', 'w') as fh_unit:
+                fh_unit.write(UNIT_SETUP_AP_NAT.format(interface))
+            
+            with open('/etc/systemd/system/tf_setup_ap_nat.timer', 'w') as fh_timer:
+                fh_timer.write(TIMER_SETUP_AP_NAT)
+                
+            if os.path.exists('/etc/systemd/system/tf_setup_ap_nat.timer'):
+                os.system('/bin/systemctl enable /etc/systemd/system/tf_setup_ap_nat.timer &> /dev/null')
+                os.system('/bin/systemctl start tf_setup_ap_nat.timer &> /dev/null')
+
+    if os.system('/bin/systemctl restart networking &> /dev/null; /bin/systemctl restart hostapd &> /dev/null') != 0:
         exit(1)
 
-except Exception as e:
+except:
     exit(1)
