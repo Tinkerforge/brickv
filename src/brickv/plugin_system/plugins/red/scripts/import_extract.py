@@ -97,6 +97,10 @@ try:
         os.chown(path, 1000, 1000)
         os.chmod(path, 0o755)
 
+    if not os.path.exists('/home/tf/programs'):
+        os.mkdir('/home/tf/programs')
+        fixup('/home/tf/programs')
+
     fixup(directory)
     fixup(os.path.join(directory, 'programs'))
 
