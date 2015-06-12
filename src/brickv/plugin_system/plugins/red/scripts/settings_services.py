@@ -182,6 +182,13 @@ elif command == 'APPLY':
             if os.path.isfile('/etc/xdg/autostart/wicd-tray.desktop'):
                 os.rename('/etc/xdg/autostart/wicd-tray.desktop',
                           '/etc/xdg/autostart/wicd-tray.desktop.block')
+            
+            if os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.service') and \
+               os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.timer'):
+                    os.system('/bin/systemctl start /etc/systemd/system/tf_setup_ap_nat.service &> /dev/null')
+                    os.system('/bin/systemctl start /etc/systemd/system/tf_setup_ap_nat.timer &> /dev/null')
+                    os.system('/bin/systemctl enable /etc/systemd/system/tf_setup_ap_nat.service &> /dev/null')
+                    os.system('/bin/systemctl enable /etc/systemd/system/tf_setup_ap_nat.timer &> /dev/null')
 
         else:
             if os.path.isfile('/etc/tf_ap_enabled'):
@@ -202,6 +209,13 @@ elif command == 'APPLY':
             if os.path.isfile('/etc/xdg/autostart/wicd-tray.desktop.block'):
                 os.rename('/etc/xdg/autostart/wicd-tray.desktop.block',
                           '/etc/xdg/autostart/wicd-tray.desktop')
+
+            if os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.service') and \
+               os.path.isfile('/etc/systemd/system/tf_setup_ap_nat.timer'):
+                    os.system('/bin/systemctl stop /etc/systemd/system/tf_setup_ap_nat.service &> /dev/null')
+                    os.system('/bin/systemctl stop /etc/systemd/system/tf_setup_ap_nat.timer &> /dev/null')
+                    os.system('/bin/systemctl disable /etc/systemd/system/tf_setup_ap_nat.service &> /dev/null')
+                    os.system('/bin/systemctl disable /etc/systemd/system/tf_setup_ap_nat.timer &> /dev/null')
 
         if apply_dict['servermonitoring']:
             if not apply_dict['webserver']:

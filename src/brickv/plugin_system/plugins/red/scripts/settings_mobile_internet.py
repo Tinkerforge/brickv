@@ -19,7 +19,7 @@ UNIT_SYSTEMD = '''[Unit]
 Description=systemd service for Tinkerforge mobile internet
 
 [Service]
-Type=Simple
+Type=simple
 TimeoutStartSec=5
 ExecStart=/usr/umtskeeper/umtskeeper --conf /usr/umtskeeper/umtskeeper.conf
 TimeoutStopSec=5
@@ -464,6 +464,8 @@ try:
         # Write the systemd unit file
         with open(FILE_UNIT_TF_MOBILE_INTERNET, 'w') as ufh:
             ufh.write(UNIT_SYSTEMD)
+
+        os.chmod(FILE_UNIT_TF_MOBILE_INTERNET, 0644)
 
         ret_enable_start_systemd_service = enable_start_systemd_service()
         

@@ -9,35 +9,42 @@ from sys import argv
 
 MIN_VERSION_FOR_NAT = 1.7
 
-UNIT_SETUP_AP_NAT = '''[Unit]
-Description=Setup NAT in AP mode
+SH_SETUP_AP_NAT = '''
+#! /bin/bash
 
-[Service]
-Type=Simple
-TimeoutStartSec=5
-ExecStart=gw=$(/sbin/route | /usr/bin/awk '{{if($1=="default") print $8}}');\
-if test $gw != '{0}';\
-then \
-/sbin/iptables -t nat -D POSTROUTING -o $gw -j MASQUERADE &> /dev/null;\
-/sbin/iptables -D FORWARD -i {0} -j ACCEPT &> /dev/null;\
-/sbin/iptables -t nat -A POSTROUTING -o $gw -j MASQUERADE &> /dev/null;\
-/sbin/iptables -A FORWARD -i {0} -j ACCEPT &> /dev/null
+gw=$(/sbin/route | /usr/bin/awk '{{if($1=="default") print $8}}')
+
+if [ ! -z "$gw" ] && [ $gw != '{0}' ]; then
+    /sbin/iptables -t nat -D POSTROUTING -o $gw -j MASQUERADE &> /dev/null
+    /sbin/iptables -D FORWARD -i {0} -j ACCEPT &> /dev/null
+    /sbin/iptables -t nat -A POSTROUTING -o $gw -j MASQUERADE &> /dev/null
+    /sbin/iptables -A FORWARD -i {0} -j ACCEPT &> /dev/null
 fi
 '''
 
-TIMER_SETUP_AP_NAT = '''[Unit]
-Description=Execute tf_setup_ap_nat.service every 10 seconds
+UNIT_SETUP_AP_NAT = '''[Unit]
+Description=Service to setup/update NAT configuration
+Wants=network.target network-online.target
+After=network.target network-online.target
 
-[Timer]
-# Time to wait after booting before we run first time
-OnBootSec=1min
-# Time between running each consecutive time
-OnUnitActiveSec=10s
-Unit=tf_setup_ap_nat.service
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/local/scripts/_tf_setup_ap_nat.sh
 
 [Install]
 WantedBy=multi-user.target
-''' 
+'''
+
+TIMER_SETUP_AP_NAT = '''[Unit]
+Description=Execute tf_setup_ap_nat.service every 5 seconds
+
+[Timer]
+OnUnitActiveSec=5s
+Unit=tf_setup_ap_nat.service
+
+[Install]
+WantedBy=timers.target
+'''
 
 HOSTAPD_CONF = '''# AP netdevice name (without 'ap' postfix, i.e., wlan0 uses wlan0ap for
 # management frames with the Host AP driver); wlan0 with many nl80211 drivers
@@ -211,6 +218,64 @@ CONFIG_DIR=/etc/dnsmasq.d,.dpkg-dist,.dpkg-old,.dpkg-new
 #IGNORE_RESOLVCONF=yes
 '''
 
+def setup_nat():    
+    image_version = ''
+
+    with open('/etc/tf_image_version', 'r') as fh_version:
+        fh_version_lines = fh_version.readlines()
+
+        if len(fh_version_lines) > 0:
+            fh_version_lines_0_split = fh_version_lines[0].split(' ')
+
+            if len(fh_version_lines_0_split) > 0:
+                image_version = fh_version_lines_0_split[0].strip()
+
+    if not image_version or float(image_version) < MIN_VERSION_FOR_NAT:
+        return
+    
+    file_path_sysctl_conf = '/etc/sysctl.d/enable_ipv4_forward.conf'
+    file_path_systemd_sh = '/usr/local/scripts/_tf_setup_ap_nat.sh'
+    file_path_systemd_unit = '/etc/systemd/system/tf_setup_ap_nat.service'
+    file_path_systemd_timer = '/etc/systemd/system/tf_setup_ap_nat.timer'
+
+    with open(file_path_sysctl_conf, 'w') as fh_sysctl:
+        fh_sysctl.write('net.ipv4.ip_forward = 1\n')
+
+    os.chmod(file_path_sysctl_conf, 0644)
+    
+    if os.system('/sbin/sysctl -p ' + file_path_sysctl_conf + ' &> /dev/null') == 0:
+        with open(file_path_systemd_sh, 'w') as fh_sh:
+            fh_sh.write(SH_SETUP_AP_NAT.format(interface))
+
+        os.chmod(file_path_systemd_sh, 0755)
+
+        if os.path.exists(file_path_systemd_unit):
+            os.system('/bin/systemctl stop ' + file_path_systemd_unit + ' &> /dev/null')
+            os.system('/bin/systemctl disable ' + file_path_systemd_unit + ' &> /dev/null')
+
+        if os.path.exists(file_path_systemd_timer):
+            os.system('/bin/systemctl stop ' + file_path_systemd_timer +' &> /dev/null')
+            os.system('/bin/systemctl disable ' + file_path_systemd_timer + ' &> /dev/null')
+        
+        with open(file_path_systemd_unit, 'w') as fh_unit:
+            fh_unit.write(UNIT_SETUP_AP_NAT.format(interface))
+
+        with open(file_path_systemd_timer, 'w') as fh_timer:
+            fh_timer.write(TIMER_SETUP_AP_NAT)
+
+        os.chmod(file_path_systemd_unit, 0644)
+        os.chmod(file_path_systemd_timer, 0644)
+
+        if os.path.exists(file_path_systemd_unit):
+            os.system('/bin/systemctl enable ' + file_path_systemd_unit + ' &> /dev/null')
+            os.system('/bin/systemctl start tf_setup_ap_nat.service &> /dev/null')
+
+        if os.path.exists(file_path_systemd_timer):
+            os.system('/bin/systemctl enable ' + file_path_systemd_timer + ' &> /dev/null')
+            os.system('/bin/systemctl start tf_setup_ap_nat.timer &> /dev/null')
+
+        os.system('/bin/systemctl daemon-reload &> /dev/null')
+
 if len(argv) < 2:
     exit (1)
 
@@ -295,34 +360,7 @@ try:
     if os.system('/bin/systemctl enable hostapd &> /dev/null') != 0:
         exit(1)
 
-    image_version = ''
-
-    with open('/etc/tf_image_version', 'r') as fh_version:
-        fh_version_lines = fh_version.readlines()
-
-        if len(fh_version_lines) > 0:
-            fh_version_lines_0_split = fh_version_lines[0].split(' ')
-
-            if len(fh_version_lines_0_split) > 0:
-                image_version = fh_version_lines_0_split[0].strip()
-
-    if image_version and float(image_version) >= MIN_VERSION_FOR_NAT:
-        with open('/etc/sysctl.d/enable_ipv4_forward', 'w') as fh_sysctl:
-            fh_sysctl.write('net.ipv4.ip_forward = 1\n')
-            
-        if os.system('/sbin/sysctl -p /etc/sysctl.d/enable_ipv4_forward.conf &> /dev/null') == 0:
-            if os.path.exists('/etc/systemd/system/tf_setup_ap_nat.timer'):
-                os.system('/bin/systemctl disable /etc/systemd/system/tf_setup_ap_nat.timer &> /dev/null')
-            
-            with open('/etc/systemd/system/tf_setup_ap_nat.service', 'w') as fh_unit:
-                fh_unit.write(UNIT_SETUP_AP_NAT.format(interface))
-            
-            with open('/etc/systemd/system/tf_setup_ap_nat.timer', 'w') as fh_timer:
-                fh_timer.write(TIMER_SETUP_AP_NAT)
-                
-            if os.path.exists('/etc/systemd/system/tf_setup_ap_nat.timer'):
-                os.system('/bin/systemctl enable /etc/systemd/system/tf_setup_ap_nat.timer &> /dev/null')
-                os.system('/bin/systemctl start tf_setup_ap_nat.timer &> /dev/null')
+    setup_nat()
 
     if os.system('/bin/systemctl restart networking &> /dev/null; /bin/systemctl restart hostapd &> /dev/null') != 0:
         exit(1)
