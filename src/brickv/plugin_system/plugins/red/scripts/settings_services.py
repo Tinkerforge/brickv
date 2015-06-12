@@ -179,6 +179,9 @@ elif command == 'APPLY':
             if os.system('/bin/systemctl disable wicd') != 0:
                 exit(12)
 
+            if os.path.isfile('/etc/network/interfaces.ap'):
+                os.rename('/etc/network/interfaces.ap', '/etc/network/interfaces')
+
             if os.path.isfile('/etc/xdg/autostart/wicd-tray.desktop'):
                 os.rename('/etc/xdg/autostart/wicd-tray.desktop',
                           '/etc/xdg/autostart/wicd-tray.desktop.block')

@@ -331,6 +331,9 @@ try:
     with open('/etc/network/interfaces', 'w') as fd_interfaces_conf:
         fd_interfaces_conf.write(INTERFACES_CONF.format(interface, interface_ip, interface_mask))
 
+    with open('/etc/network/interfaces.ap', 'w') as fd_interfaces_ap_conf:
+        fd_interfaces_ap_conf.write(INTERFACES_CONF.format(interface, interface_ip, interface_mask))
+
     for intf in netifaces.interfaces():
         if intf != interface:
             continue
