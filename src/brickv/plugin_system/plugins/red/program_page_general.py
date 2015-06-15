@@ -111,8 +111,11 @@ class ProgramPageGeneral(ProgramPage, Ui_ProgramPageGeneral):
         self.combo_language.setEnabled(not self.edit_mode)
         self.label_language_help.setEnabled(not self.edit_mode)
 
-        # FIXME: image version 1.4 comes with Octave 3.8.2 which has broken Java support
-        if self.wizard().image_version.number >= (1, 4):
+        # FIXME: image versions 1.4 till 1.6 comes with Octave 3.8 which has
+        # broken Java support. since image version 1.7 Octave is downgraded to
+        # the working version 3.6
+        if self.wizard().image_version.number >= (1, 4) and \
+           self.wizard().image_version.number <= (1, 6):
             self.label_octave.setVisible(self.get_field('language') == Constants.LANGUAGE_OCTAVE)
         else:
             self.label_octave.setVisible(False)

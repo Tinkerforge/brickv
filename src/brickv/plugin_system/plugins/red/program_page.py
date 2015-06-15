@@ -62,11 +62,13 @@ class ProgramPage(QWizardPage):
             versions = self.wizard().executable_versions[executable_name]
 
             if versions == None:
+                # if executable version is still not set, try again in 100 msec
                 QTimer.singleShot(100, cb_get)
                 return
 
             callback(versions)
 
+        # if executable version is not set yet, try again in 100 msec
         if self.wizard().executable_versions[executable_name] == None:
             QTimer.singleShot(100, cb_get)
         else:
