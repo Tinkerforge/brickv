@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-05-13.      #
+# This file was automatically generated on 2015-06-19.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -40,9 +40,9 @@ class BrickletRS232(Device):
 
     FUNCTION_WRITE = 1
     FUNCTION_READ = 2
-    FUNCTION_ENABLE_CALLBACK = 3
-    FUNCTION_DISABLE_CALLBACK = 4
-    FUNCTION_IS_CALLBACK_ENABLED = 5
+    FUNCTION_ENABLE_READ_CALLBACK = 3
+    FUNCTION_DISABLE_READ_CALLBACK = 4
+    FUNCTION_IS_READ_CALLBACK_ENABLED = 5
     FUNCTION_SET_CONFIGURATION = 6
     FUNCTION_GET_CONFIGURATION = 7
     FUNCTION_GET_IDENTITY = 255
@@ -86,9 +86,9 @@ class BrickletRS232(Device):
 
         self.response_expected[BrickletRS232.FUNCTION_WRITE] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232.FUNCTION_READ] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletRS232.FUNCTION_ENABLE_CALLBACK] = BrickletRS232.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletRS232.FUNCTION_DISABLE_CALLBACK] = BrickletRS232.RESPONSE_EXPECTED_TRUE
-        self.response_expected[BrickletRS232.FUNCTION_IS_CALLBACK_ENABLED] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletRS232.FUNCTION_ENABLE_READ_CALLBACK] = BrickletRS232.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletRS232.FUNCTION_DISABLE_READ_CALLBACK] = BrickletRS232.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletRS232.FUNCTION_IS_READ_CALLBACK_ENABLED] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232.FUNCTION_SET_CONFIGURATION] = BrickletRS232.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletRS232.FUNCTION_GET_CONFIGURATION] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232.CALLBACK_READ_CALLBACK] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_FALSE
@@ -117,32 +117,32 @@ class BrickletRS232(Device):
         new data available.
         
         Instead of polling with this function, you can also use
-        callbacks. See :func:`EnableCallback` and :func:`ReadCallback`.
+        callbacks. See :func:`EnableReadCallback` and :func:`ReadCallback`.
         """
         return Read(*self.ipcon.send_request(self, BrickletRS232.FUNCTION_READ, (), '', '60c B'))
 
-    def enable_callback(self):
+    def enable_read_callback(self):
         """
         Enables the :func:`ReadCallback`.
         
         By default the callback is disabled.
         """
-        self.ipcon.send_request(self, BrickletRS232.FUNCTION_ENABLE_CALLBACK, (), '', '')
+        self.ipcon.send_request(self, BrickletRS232.FUNCTION_ENABLE_READ_CALLBACK, (), '', '')
 
-    def disable_callback(self):
+    def disable_read_callback(self):
         """
         Disables the :func:`ReadCallback`.
         
         By default the callback is disabled.
         """
-        self.ipcon.send_request(self, BrickletRS232.FUNCTION_DISABLE_CALLBACK, (), '', '')
+        self.ipcon.send_request(self, BrickletRS232.FUNCTION_DISABLE_READ_CALLBACK, (), '', '')
 
-    def is_callback_enabled(self):
+    def is_read_callback_enabled(self):
         """
         Returns *true* if the :func:`ReadCallback` is enabled,
         *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickletRS232.FUNCTION_IS_CALLBACK_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickletRS232.FUNCTION_IS_READ_CALLBACK_ENABLED, (), '', '?')
 
     def set_configuration(self, baudrate, parity, stopbits, wordlength, hardware_flowcontrol, software_flowcontrol):
         """

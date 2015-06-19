@@ -131,7 +131,7 @@ class RS232(PluginBase, Ui_RS232):
         
     def start(self):
         async_call(self.rs232.get_configuration, None, self.get_configuration_async, self.increase_error_count)
-        self.rs232.enable_callback()
+        self.rs232.enable_read_callback()
 #        self.cbe_read.set_period(100)
         
     def stop(self):

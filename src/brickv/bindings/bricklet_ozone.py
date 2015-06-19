@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-05-29.      #
+# This file was automatically generated on 2015-06-19.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -30,7 +30,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletOzone(Device):
     """
-    Measures Ozone concentration in ppb
+    Measures ozone concentration in ppb
     """
 
     DEVICE_IDENTIFIER = 261

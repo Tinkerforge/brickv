@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-05-13.      #
+# This file was automatically generated on 2015-06-19.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -99,6 +99,8 @@ class BrickletIndustrialAnalogOut(Device):
     def set_voltage(self, voltage):
         """
         Sets the output voltage in mV.
+        
+        FIXME: document that output voltage and current are linked to each other
         """
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_VOLTAGE, (voltage,), 'H', '')
 
@@ -111,6 +113,8 @@ class BrickletIndustrialAnalogOut(Device):
     def set_current(self, current):
         """
         Sets the output current in µA.
+        
+        FIXME: document that output voltage and current are linked to each other
         """
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_CURRENT, (current,), 'H', '')
 
