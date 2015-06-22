@@ -62,7 +62,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.setWindowTitle("Brick Viewer " + config.BRICKV_VERSION)
 
-        self.tree_view_model_labels = ['Name', 'UID', 'FW Version']
+        self.tree_view_model_labels = ['Name', 'UID', 'Position', 'FW Version']
         self.tree_view_model = QStandardItemModel(self)
         self.tree_view.setModel(self.tree_view_model)
         self.tree_view.doubleClicked.connect(self.item_double_clicked)
@@ -692,9 +692,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def set_tree_view_defaults(self):
         self.tree_view_model.setHorizontalHeaderLabels(self.tree_view_model_labels)
         self.tree_view.expandAll()
-        self.tree_view.setColumnWidth(0, 260)
-        self.tree_view.setColumnWidth(1, 75)
+        self.tree_view.setColumnWidth(0, 250)
+        self.tree_view.setColumnWidth(1, 85)
         self.tree_view.setColumnWidth(2, 85)
+        self.tree_view.setColumnWidth(3, 90)
         self.tree_view.setExpandsOnDoubleClick(False)
         self.tree_view.setSortingEnabled(True)
         self.tree_view.header().setSortIndicator(0, Qt.AscendingOrder)
@@ -757,6 +758,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         for info in infos.get_brick_infos():
             parent = [QStandardItem(info.name),
                       QStandardItem(info.uid),
+                      QStandardItem(info.position.upper()),
                       QStandardItem('.'.join(map(str, info.firmware_version_installed)))]
 
             for item in parent:
@@ -768,6 +770,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if info.bricklets[port] and info.bricklets[port].protocol_version == 2:
                     child = [QStandardItem(port.upper() + ': ' + info.bricklets[port].name),
                              QStandardItem(info.bricklets[port].uid),
+                             QStandardItem(info.bricklets[port].position.upper()),
                              QStandardItem('.'.join(map(str, info.bricklets[port].firmware_version_installed)))]
                     for item in child:
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
