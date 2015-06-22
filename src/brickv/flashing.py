@@ -685,6 +685,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             return
 
         brick_info = self.brick_infos[index]
+        first_index = None
 
         for key in sorted(brick_info.bricklets.keys()):
             bricklet_info = brick_info.bricklets[key]
@@ -692,8 +693,14 @@ class FlashingWindow(QDialog, Ui_Flashing):
             if bricklet_info is None:
                 self.combo_port.addItem(key.upper())
             else:
+                if first_index == None:
+                    first_index = self.combo_port.count()
+
                 name = '{0}: {1}'.format(key.upper(), bricklet_info.get_combo_item())
                 self.combo_port.addItem(name, bricklet_info.url_part)
+
+        if first_index != None:
+            self.combo_port.setCurrentIndex(first_index)
 
         self.update_ui_state()
 
