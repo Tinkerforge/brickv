@@ -132,7 +132,7 @@ class QHexeditWidget(QAbstractScrollArea):
 
         self.add_toggle_action_to_menu(menu, str("Show A&ddress"), self.show_address, self.setShowAddress )
         self.add_toggle_action_to_menu(menu, str("Show &Hex"), self.show_hex, self.setShowHexDump )
-        self.add_toggle_action_to_menu(menu, str("Show &Ascii"), self.show_ascii, self.setShowAsciiDump )
+        self.add_toggle_action_to_menu(menu, str("Show &ASCII"), self.show_ascii, self.setShowAsciiDump )
 
         menu.addSeparator()
         menu.addAction(str("&Copy Selection To Clipboard"), self.mnuCopy)
