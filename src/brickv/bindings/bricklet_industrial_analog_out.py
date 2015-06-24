@@ -100,7 +100,8 @@ class BrickletIndustrialAnalogOut(Device):
         """
         Sets the output voltage in mV.
         
-        FIXME: document that output voltage and current are linked to each other
+        The output voltage and output current are linked. Changing the output voltage
+        also changes the output current.
         """
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_VOLTAGE, (voltage,), 'H', '')
 
@@ -114,7 +115,8 @@ class BrickletIndustrialAnalogOut(Device):
         """
         Sets the output current in µA.
         
-        FIXME: document that output voltage and current are linked to each other
+        The output current and output voltage are linked. Changing the output current
+        also changes the output voltage.
         """
         self.ipcon.send_request(self, BrickletIndustrialAnalogOut.FUNCTION_SET_CURRENT, (current,), 'H', '')
 
