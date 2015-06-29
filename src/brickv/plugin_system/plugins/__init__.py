@@ -45,6 +45,7 @@ from brickv.plugin_system.plugins.moisture import device_class as moisture
 from brickv.plugin_system.plugins.motion_detector import device_class as motion_detector
 from brickv.plugin_system.plugins.multi_touch import device_class as multi_touch
 from brickv.plugin_system.plugins.nfc_rfid import device_class as nfc_rfid
+from brickv.plugin_system.plugins.oled_64x48 import device_class as oled_64x48
 from brickv.plugin_system.plugins.ozone import device_class as ozone
 from brickv.plugin_system.plugins.piezo_buzzer import device_class as piezo_buzzer
 from brickv.plugin_system.plugins.piezo_speaker import device_class as piezo_speaker
@@ -113,6 +114,7 @@ device_classes = [
     motion_detector,
     multi_touch,
     nfc_rfid,
+    oled_64x48,
     ozone,
     piezo_buzzer,
     piezo_speaker,
