@@ -33,36 +33,36 @@ from brickv.object_creator import create_object_in_qt_main_thread
 from brickv.utils import get_main_window
 
 class REDError(Exception):
-    E_SUCCESS                  = 0
-    E_UNKNOWN_ERROR            = 1
-    E_INVALID_OPERATION        = 2
-    E_OPERATION_ABORTED        = 3
-    E_INTERNAL_ERROR           = 4
-    E_UNKNOWN_SESSION_ID       = 5
-    E_NO_FREE_SESSION_ID       = 6
-    E_UNKNOWN_OBJECT_ID        = 7
-    E_NO_FREE_OBJECT_ID        = 8
-    E_OBJECT_IS_LOCKED         = 9
-    E_NO_MORE_DATA             = 10
-    E_WRONG_LIST_ITEM_TYPE     = 11
-    E_PROGRAM_IS_PURGED        = 12
-    E_INVALID_PARAMETER        = 128
-    E_NO_FREE_MEMORY           = 129
-    E_NO_FREE_SPACE            = 130
-    E_ACCESS_DENIED            = 131
-    E_ALREADY_EXISTS           = 132
-    E_DOES_NOT_EXIST           = 133
-    E_INTERRUPTED              = 134
-    E_IS_DIRECTORY             = 135
-    E_NOT_A_DIRECTORY          = 136
-    E_WOULD_BLOCK              = 137
-    E_OVERFLOW                 = 138
-    E_BAD_FILE_DESCRIPTOR      = 139
-    E_OUT_OF_RANGE             = 140
-    E_NAME_TOO_LONG            = 141
-    E_INVALID_SEEK             = 142
-    E_NOT_SUPPORTED            = 143
-    E_TOO_MANY_OPEN_FILES      = 144
+    E_SUCCESS                  = BrickRED.ERROR_CODE_SUCCESS
+    E_UNKNOWN_ERROR            = BrickRED.ERROR_CODE_UNKNOWN_ERROR
+    E_INVALID_OPERATION        = BrickRED.ERROR_CODE_INVALID_OPERATION
+    E_OPERATION_ABORTED        = BrickRED.ERROR_CODE_OPERATION_ABORTED
+    E_INTERNAL_ERROR           = BrickRED.ERROR_CODE_INTERNAL_ERROR
+    E_UNKNOWN_SESSION_ID       = BrickRED.ERROR_CODE_UNKNOWN_SESSION_ID
+    E_NO_FREE_SESSION_ID       = BrickRED.ERROR_CODE_NO_FREE_SESSION_ID
+    E_UNKNOWN_OBJECT_ID        = BrickRED.ERROR_CODE_UNKNOWN_OBJECT_ID
+    E_NO_FREE_OBJECT_ID        = BrickRED.ERROR_CODE_NO_FREE_OBJECT_ID
+    E_OBJECT_IS_LOCKED         = BrickRED.ERROR_CODE_OBJECT_IS_LOCKED
+    E_NO_MORE_DATA             = BrickRED.ERROR_CODE_NO_MORE_DATA
+    E_WRONG_LIST_ITEM_TYPE     = BrickRED.ERROR_CODE_WRONG_LIST_ITEM_TYPE
+    E_PROGRAM_IS_PURGED        = BrickRED.ERROR_CODE_PROGRAM_IS_PURGED
+    E_INVALID_PARAMETER        = BrickRED.ERROR_CODE_INVALID_PARAMETER
+    E_NO_FREE_MEMORY           = BrickRED.ERROR_CODE_NO_FREE_MEMORY
+    E_NO_FREE_SPACE            = BrickRED.ERROR_CODE_NO_FREE_SPACE
+    E_ACCESS_DENIED            = BrickRED.ERROR_CODE_ACCESS_DENIED
+    E_ALREADY_EXISTS           = BrickRED.ERROR_CODE_ALREADY_EXISTS
+    E_DOES_NOT_EXIST           = BrickRED.ERROR_CODE_DOES_NOT_EXIST
+    E_INTERRUPTED              = BrickRED.ERROR_CODE_INTERRUPTED
+    E_IS_DIRECTORY             = BrickRED.ERROR_CODE_IS_DIRECTORY
+    E_NOT_A_DIRECTORY          = BrickRED.ERROR_CODE_NOT_A_DIRECTORY
+    E_WOULD_BLOCK              = BrickRED.ERROR_CODE_WOULD_BLOCK
+    E_OVERFLOW                 = BrickRED.ERROR_CODE_OVERFLOW
+    E_BAD_FILE_DESCRIPTOR      = BrickRED.ERROR_CODE_BAD_FILE_DESCRIPTOR
+    E_OUT_OF_RANGE             = BrickRED.ERROR_CODE_OUT_OF_RANGE
+    E_NAME_TOO_LONG            = BrickRED.ERROR_CODE_NAME_TOO_LONG
+    E_INVALID_SEEK             = BrickRED.ERROR_CODE_INVALID_SEEK
+    E_NOT_SUPPORTED            = BrickRED.ERROR_CODE_NOT_SUPPORTED
+    E_TOO_MANY_OPEN_FILES      = BrickRED.ERROR_CODE_TOO_MANY_OPEN_FILES
 
     _error_code_names = {
         E_SUCCESS                  : 'E_SUCCESS',
