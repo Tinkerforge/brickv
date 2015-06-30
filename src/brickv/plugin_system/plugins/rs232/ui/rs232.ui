@@ -58,8 +58,17 @@
        <family>Ubuntu Mono</family>
       </font>
      </property>
+     <property name="undoRedoEnabled">
+      <bool>false</bool>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
      <property name="plainText">
       <string/>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
      </property>
     </widget>
    </item>
@@ -119,14 +128,14 @@
      <item row="4" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>Hardware flow control:</string>
+        <string>Hardware Flow Control:</string>
        </property>
       </widget>
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Word length:</string>
+        <string>Word Length:</string>
        </property>
       </widget>
      </item>
@@ -191,6 +200,12 @@
      </item>
      <item row="0" column="1">
       <widget class="QComboBox" name="baudrate_combobox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <item>
         <property name="text">
          <string>300 baud</string>
@@ -261,7 +276,7 @@
      <item row="2" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Stop bits:</string>
+        <string>Stop Bits:</string>
        </property>
       </widget>
      </item>
@@ -269,12 +284,12 @@
       <widget class="QComboBox" name="hardware_flowcontrol_combobox">
        <item>
         <property name="text">
-         <string>Hardware Flow Control Off</string>
+         <string>Off</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Hardware Flow Control On</string>
+         <string>On</string>
         </property>
        </item>
       </widget>
@@ -282,7 +297,7 @@
      <item row="5" column="0">
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>Software flow control:</string>
+        <string>Software Flow Control:</string>
        </property>
       </widget>
      </item>
@@ -290,12 +305,12 @@
       <widget class="QComboBox" name="software_flowcontrol_combobox">
        <item>
         <property name="text">
-         <string>Software Flow Control Off</string>
+         <string>Off</string>
         </property>
        </item>
        <item>
         <property name="text">
-         <string>Software Flow Control On</string>
+         <string>On</string>
         </property>
        </item>
       </widget>
@@ -304,6 +319,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>text_type_combobox</tabstop>
+  <tabstop>text</tabstop>
+  <tabstop>input_combobox</tabstop>
+  <tabstop>baudrate_combobox</tabstop>
+  <tabstop>parity_combobox</tabstop>
+  <tabstop>stopbits_spinbox</tabstop>
+  <tabstop>wordlength_spinbox</tabstop>
+  <tabstop>hardware_flowcontrol_combobox</tabstop>
+  <tabstop>software_flowcontrol_combobox</tabstop>
+  <tabstop>save_button</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
