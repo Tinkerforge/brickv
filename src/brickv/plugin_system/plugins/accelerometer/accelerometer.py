@@ -61,9 +61,9 @@ class TemperatureLabel(MonoSpaceLabel):
 
 class AccelerationLabel(MonoSpaceLabel):
     def setText(self, x, y, z):
-        text = u'Acceleration X: {0:+.3f}G'.format(round(x/1000.0, 3))
-        text += u', Y: {0:+.3f}G'.format(round(y/1000.0, 3))
-        text += u', Z: {0:+.3f}G'.format(round(z/1000.0, 3))
+        text = u'Acceleration X: {0:+.3f}g'.format(round(x/1000.0, 3))
+        text += u', Y: {0:+.3f}g'.format(round(y/1000.0, 3))
+        text += u', Z: {0:+.3f}g'.format(round(z/1000.0, 3))
         super(AccelerationLabel, self).setText(text)
     
 class Accelerometer(PluginBase):
@@ -86,7 +86,7 @@ class Accelerometer(PluginBase):
         plot_list = [['X', Qt.red, self.get_current_x],
                      ['Y', Qt.darkGreen, self.get_current_y],
                      ['Z', Qt.blue, self.get_current_z]]
-        self.plot_widget = PlotWidget('Acceleration [G]', plot_list)
+        self.plot_widget = PlotWidget('Acceleration [g]', plot_list)
         
         self.temperature_label = TemperatureLabel()
         layout_ht = QHBoxLayout()
@@ -105,17 +105,17 @@ class Accelerometer(PluginBase):
         
         self.fs_label = QLabel('Full Scale:')
         self.fs_combo = QComboBox()
-        self.fs_combo.addItem("2 G")
-        self.fs_combo.addItem("4 G")
-        self.fs_combo.addItem("6 G")
-        self.fs_combo.addItem("8 G")
-        self.fs_combo.addItem("16 G")
+        self.fs_combo.addItem("2 g")
+        self.fs_combo.addItem("4 g")
+        self.fs_combo.addItem("6 g")
+        self.fs_combo.addItem("8 g")
+        self.fs_combo.addItem("16 g")
         self.fs_combo.activated.connect(self.new_config)
         
         self.dr_label = QLabel('Data Rate:')
         self.dr_combo = QComboBox()
         self.dr_combo.addItem("Off")
-        self.dr_combo.addItem("3.12 5Hz")
+        self.dr_combo.addItem("3.125 Hz")
         self.dr_combo.addItem("6.25 Hz")
         self.dr_combo.addItem("12.5 Hz")
         self.dr_combo.addItem("25 Hz")
