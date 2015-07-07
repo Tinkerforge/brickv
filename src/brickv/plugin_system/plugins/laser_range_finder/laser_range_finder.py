@@ -82,11 +82,11 @@ class LaserRangeFinder(PluginBase):
         
         self.mode_label = QLabel('Mode: ')
         self.mode_combo = QComboBox()
-        self.mode_combo.addItem("Distance 1cm resolution, 40m max")
-        self.mode_combo.addItem("Velocity 0.10 m/s resolution, 12.70m/s max")
-        self.mode_combo.addItem("Velocity 0.25 m/s resolution, 31.75m/s max")
-        self.mode_combo.addItem("Velocity 0.50 m/s resolution, 63.50m/s max")
-        self.mode_combo.addItem("Velocity 1.00 m/s resolution, 127.00m/s max")
+        self.mode_combo.addItem("Distance: 1cm resolution, 40m max")
+        self.mode_combo.addItem("Velocity: 0.10 m/s resolution, 12.70m/s max")
+        self.mode_combo.addItem("Velocity: 0.25 m/s resolution, 31.75m/s max")
+        self.mode_combo.addItem("Velocity: 0.50 m/s resolution, 63.50m/s max")
+        self.mode_combo.addItem("Velocity: 1.00 m/s resolution, 127.00m/s max")
         self.mode_combo.activated.connect(self.mode_changed)
         
         layout_hvel = QHBoxLayout()
