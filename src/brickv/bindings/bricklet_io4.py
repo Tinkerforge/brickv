@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-04-22.      #
+# This file was automatically generated on 2015-06-30.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -243,7 +243,7 @@ class BrickletIO4(Device):
         If you set the reset counter to *true*, the count is set back to 0
         directly after it is read.
         
-        .. versionadded:: 2.0.1~(Plugin)
+        .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_EDGE_COUNT, (pin, reset_counter), 'B ?', 'I')
 
@@ -267,7 +267,7 @@ class BrickletIO4(Device):
         
         Default values: 0 (edge type) and 100ms (debounce time)
         
-        .. versionadded:: 2.0.1~(Plugin)
+        .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         self.ipcon.send_request(self, BrickletIO4.FUNCTION_SET_EDGE_COUNT_CONFIG, (selection_mask, edge_type, debounce), 'B B B', '')
 
@@ -276,7 +276,7 @@ class BrickletIO4(Device):
         Returns the edge type and debounce time for the selected pin as set by
         :func:`SetEdgeCountConfig`.
         
-        .. versionadded:: 2.0.1~(Plugin)
+        .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         return GetEdgeCountConfig(*self.ipcon.send_request(self, BrickletIO4.FUNCTION_GET_EDGE_COUNT_CONFIG, (pin,), 'B', 'B B'))
 
