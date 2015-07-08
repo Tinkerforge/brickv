@@ -108,8 +108,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         infos.get_infos_changed_signal().connect(self.update_bricks)
 
-        self.update_tool_label.hide()
-        self.no_connection_label.hide()
+        self.label_update_tool.hide()
+        self.label_no_update_connection.hide()
+        self.label_no_firmware_connection.hide()
+        self.label_no_plugin_connection.hide()
 
         self.refresh_serial_ports()
 
@@ -1035,19 +1037,20 @@ class FlashingWindow(QDialog, Ui_Flashing):
         }
 
         progress = self.create_progress_bar('Discovering')
-        okay = True
 
         try:
-            urllib2.urlopen(FIRMWARE_URL, timeout=10).read()
-            self.no_connection_label.hide()
+            urllib2.urlopen("http://tinkerforge.com", timeout=10).read()
+            self.label_no_update_connection.hide()
+            self.label_no_firmware_connection.hide()
+            self.label_no_plugin_connection.hide()
         except urllib2.URLError:
-            okay = False
             progress.cancel()
-            self.no_connection_label.show()
+            self.label_no_update_connection.show()
+            self.label_no_firmware_connection.show()
+            self.label_no_plugin_connection.show()
             return
 
-        if okay:
-            self.refresh_latest_version_info(progress)
+        self.refresh_latest_version_info(progress)
 
         def get_color_for_device(device):
             if device.firmware_version_installed >= device.firmware_version_latest:
@@ -1160,9 +1163,9 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
                 color, update = get_color_for_device(device_info)
                 if update:
-                    self.update_tool_label.show()
+                    self.label_update_tool.show()
                 else:
-                    self.update_tool_label.hide()
+                    self.label_update_tool.hide()
 
                 for item in parent:
                     item.setFlags(item.flags() & ~Qt.ItemIsEditable)
@@ -1176,6 +1179,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
             # out false-positive protocol1 errors that were detected due to
             # fast USB unplug
             t = 200
+
         QTimer.singleShot(t, lambda: self.refresh_updates_clicked_second_step(is_update, items, protocol1_errors))
 
     def refresh_updates_clicked_second_step(self, is_update, items, protocol1_errors):
