@@ -35,10 +35,11 @@ from brickv.utils import get_main_window
 
 EVENT_GUI_INIT_OK = 1
 EVENT_GUI_INIT_UNSUPPORTED = 2
-EVENT_GUI_REFRESH_CLICKED = 3
-EVENT_GUI_REFRESH_RETURNED = 4
-EVENT_GUI_CONNECT_CLICKED = 5
-EVENT_GUI_CONNECT_RETURNED = 6
+EVENT_GUI_INIT_SERVICE_DISABLED = 3
+EVENT_GUI_REFRESH_CLICKED = 4
+EVENT_GUI_REFRESH_RETURNED = 5
+EVENT_GUI_CONNECT_CLICKED = 6
+EVENT_GUI_CONNECT_RETURNED = 7
 
 MESSAGEBOX_TITLE = 'Settings | Mobile Internet'
 MESSAGE_ERROR_VALIDATION_NO_MODEM = 'No modem available'
@@ -95,6 +96,11 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         # Check image version
         if self.image_version.number < (1, 7):
             self.update_gui(EVENT_GUI_INIT_UNSUPPORTED)
+            return
+        
+        # Check if the service is enabled
+        if not self.service_state.mobileinternet:
+            self.update_gui(EVENT_GUI_INIT_SERVICE_DISABLED)
             return
 
         # Initial GUI
@@ -394,6 +400,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
     def update_gui(self, event):
         if event == EVENT_GUI_INIT_OK:
             self.label_mi_unsupported.hide()
+            self.label_mi_disabled.hide()
             self.sarea_mi.show()
 
             if self.working:
@@ -402,7 +409,14 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
                 self.show_working_wait(False)
 
         elif event == EVENT_GUI_INIT_UNSUPPORTED:
+            self.label_mi_disabled.hide()
             self.label_mi_unsupported.show()
+            self.show_working_wait(False)
+            self.sarea_mi.hide()
+
+        elif event == EVENT_GUI_INIT_SERVICE_DISABLED:
+            self.label_mi_unsupported.hide()
+            self.label_mi_disabled.show()
             self.show_working_wait(False)
             self.sarea_mi.hide()
 

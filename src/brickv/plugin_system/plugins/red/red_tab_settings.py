@@ -36,6 +36,7 @@ class ServiceState(object):
     ap               = None
     servermonitoring = None
     openhab          = None
+    mobileinternet   = None
 
 class REDTabSettings(REDTab, Ui_REDTabSettings):
     def __init__(self):
@@ -72,7 +73,8 @@ class REDTabSettings(REDTab, Ui_REDTabSettings):
                            services_check_result['splashscreen'] is None or \
                            services_check_result['ap'] is None or \
                            services_check_result['servermonitoring'] is None or \
-                           services_check_result['openhab'] is None:
+                           services_check_result['openhab'] is None or \
+                           services_check_result['mobileinternet'] is None:
                             self.label_discovering.setText('Received incomplete current services status.')
                         else:
                             self.service_state.fetched          = True
@@ -83,6 +85,7 @@ class REDTabSettings(REDTab, Ui_REDTabSettings):
                             self.service_state.ap               = services_check_result['ap']
                             self.service_state.servermonitoring = services_check_result['servermonitoring']
                             self.service_state.openhab          = services_check_result['openhab']
+                            self.service_state.mobileinternet   = services_check_result['mobileinternet']
 
                             if self.image_version.number < (1, 4):
                                 self.service_state.desktopenv = self.image_version.flavor == 'full'
