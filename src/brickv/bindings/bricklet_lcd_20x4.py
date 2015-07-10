@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-06-30.      #
+# This file was automatically generated on 2015-07-10.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -174,7 +174,7 @@ class BrickletLCD20x4(Device):
         Custom characters are stored by the LCD in RAM, so they have to be set
         after each startup.
         
-        .. versionadded:: 2.0.1$nbsp;(Plugin)
+        .. versionadded:: 2.0.1~(Plugin)
         """
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_CUSTOM_CHARACTER, (index, character), 'B 8B', '')
 
@@ -183,7 +183,7 @@ class BrickletLCD20x4(Device):
         Returns the custom character for a given index, as set with
         :func:`SetCustomCharacter`.
         
-        .. versionadded:: 2.0.1$nbsp;(Plugin)
+        .. versionadded:: 2.0.1~(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_CUSTOM_CHARACTER, (index,), 'B', '8B')
 
@@ -195,7 +195,7 @@ class BrickletLCD20x4(Device):
         The default text is shown on the LCD, if the default text counter
         expires, see :func:`SetDefaultTextCounter`.
         
-        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        .. versionadded:: 2.0.2~(Plugin)
         """
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_DEFAULT_TEXT, (line, text), 'B 20s', '')
 
@@ -204,7 +204,7 @@ class BrickletLCD20x4(Device):
         Returns the default text for a given line (0-3) as set by
         :func:`SetDefaultText`.
         
-        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        .. versionadded:: 2.0.2~(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_DEFAULT_TEXT, (line,), 'B', '20s')
 
@@ -226,7 +226,7 @@ class BrickletLCD20x4(Device):
         
         The default is -1.
         
-        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        .. versionadded:: 2.0.2~(Plugin)
         """
         self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_SET_DEFAULT_TEXT_COUNTER, (counter,), 'i', '')
 
@@ -234,7 +234,7 @@ class BrickletLCD20x4(Device):
         """
         Returns the current value of the default text counter.
         
-        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        .. versionadded:: 2.0.2~(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_GET_DEFAULT_TEXT_COUNTER, (), '', 'i')
 

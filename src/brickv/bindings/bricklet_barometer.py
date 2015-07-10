@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-06-30.      #
+# This file was automatically generated on 2015-07-10.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -293,7 +293,7 @@ class BrickletBarometer(Device):
         The default values are 10 for the normal averages and 25 for the
         moving average.
         
-        .. versionadded:: 2.0.1$nbsp;(Plugin)
+        .. versionadded:: 2.0.1~(Plugin)
         """
         self.ipcon.send_request(self, BrickletBarometer.FUNCTION_SET_AVERAGING, (moving_average_pressure, average_pressure, average_temperature), 'B B B', '')
 
@@ -301,7 +301,7 @@ class BrickletBarometer(Device):
         """
         Returns the averaging configuration as set by :func:`SetAveraging`.
         
-        .. versionadded:: 2.0.1$nbsp;(Plugin)
+        .. versionadded:: 2.0.1~(Plugin)
         """
         return GetAveraging(*self.ipcon.send_request(self, BrickletBarometer.FUNCTION_GET_AVERAGING, (), '', 'B B B'))
 

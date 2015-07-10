@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-06-30.      #
+# This file was automatically generated on 2015-07-10.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -117,7 +117,7 @@ class BrickletRemoteSwitch(Device):
         A detailed description on how you can figure out the house and receiver code
         can be found :ref:`here <remote_switch_bricklet_type_a_house_and_receiver_code>`.
         
-        .. versionadded:: 2.0.1$nbsp;(Plugin)
+        .. versionadded:: 2.0.1~(Plugin)
         """
         self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET_A, (house_code, receiver_code, switch_to), 'B B B', '')
 
@@ -133,7 +133,7 @@ class BrickletRemoteSwitch(Device):
         A detailed description on how you can teach a socket the address and unit can
         be found :ref:`here <remote_switch_bricklet_type_b_address_and_unit>`.
         
-        .. versionadded:: 2.0.1$nbsp;(Plugin)
+        .. versionadded:: 2.0.1~(Plugin)
         """
         self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET_B, (address, unit, switch_to), 'I B B', '')
 
@@ -148,7 +148,7 @@ class BrickletRemoteSwitch(Device):
         A detailed description on how you can teach a dimmer the address and unit can
         be found :ref:`here <remote_switch_bricklet_type_b_address_and_unit>`.
         
-        .. versionadded:: 2.0.1$nbsp;(Plugin)
+        .. versionadded:: 2.0.1~(Plugin)
         """
         self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_DIM_SOCKET_B, (address, unit, dim_value), 'I B B', '')
 
@@ -163,7 +163,7 @@ class BrickletRemoteSwitch(Device):
         A detailed description on how you can figure out the system and device code
         can be found :ref:`here <remote_switch_bricklet_type_c_system_and_device_code>`.
         
-        .. versionadded:: 2.0.1$nbsp;(Plugin)
+        .. versionadded:: 2.0.1~(Plugin)
         """
         self.ipcon.send_request(self, BrickletRemoteSwitch.FUNCTION_SWITCH_SOCKET_C, (system_code, device_code, switch_to), 'c B B', '')
 
