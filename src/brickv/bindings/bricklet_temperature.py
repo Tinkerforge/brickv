@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-10.      #
+# This file was automatically generated on 2015-07-13.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -172,7 +172,7 @@ class BrickletTemperature(Device):
         It is however not recommended to lower the I2C speed in applications where
         a high throughput needs to be achieved.
         
-        .. versionadded:: 2.0.1~(Plugin)
+        .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         self.ipcon.send_request(self, BrickletTemperature.FUNCTION_SET_I2C_MODE, (mode,), 'B', '')
 
@@ -180,7 +180,7 @@ class BrickletTemperature(Device):
         """
         Returns the I2C mode as set by :func:`SetI2CMode`.
         
-        .. versionadded:: 2.0.1~(Plugin)
+        .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletTemperature.FUNCTION_GET_I2C_MODE, (), '', 'B')
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-10.      #
+# This file was automatically generated on 2015-07-13.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -171,7 +171,7 @@ class BrickletLEDStrip(Device):
         .. note::
          The frequency in firmware version 2.0.0 is fixed at 2MHz.
         
-        .. versionadded:: 2.0.1~(Plugin)
+        .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_CLOCK_FREQUENCY, (frequency,), 'I', '')
 
@@ -179,7 +179,7 @@ class BrickletLEDStrip(Device):
         """
         Returns the currently used clock frequency as set by :func:`SetClockFrequency`.
         
-        .. versionadded:: 2.0.1~(Plugin)
+        .. versionadded:: 2.0.1$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_CLOCK_FREQUENCY, (), '', 'I')
 
@@ -197,7 +197,7 @@ class BrickletLEDStrip(Device):
         
         The default value is WS2801 (``chip`` = 2801).
         
-        .. versionadded:: 2.0.2~(Plugin)
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
         self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_SET_CHIP_TYPE, (chip,), 'H', '')
 
@@ -205,7 +205,7 @@ class BrickletLEDStrip(Device):
         """
         Returns the currently used chip type as set by :func:`SetChipType`.
         
-        .. versionadded:: 2.0.2~(Plugin)
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
         """
         return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_CHIP_TYPE, (), '', 'H')
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-10.      #
+# This file was automatically generated on 2015-07-13.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -404,7 +404,7 @@ class BrickServo(Device):
         
         Default is disabled.
         
-        .. versionadded:: 2.0.1~(Firmware)
+        .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_POSITION_REACHED_CALLBACK, (), '', '')
 
@@ -414,7 +414,7 @@ class BrickServo(Device):
         
         Default is disabled.
         
-        .. versionadded:: 2.0.1~(Firmware)
+        .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_POSITION_REACHED_CALLBACK, (), '', '')
 
@@ -422,7 +422,7 @@ class BrickServo(Device):
         """
         Returns *true* if :func:`PositionReached` callback is enabled, *false* otherwise.
         
-        .. versionadded:: 2.0.1~(Firmware)
+        .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_POSITION_REACHED_CALLBACK_ENABLED, (), '', 'B')
 
@@ -432,7 +432,7 @@ class BrickServo(Device):
         
         Default is disabled.
         
-        .. versionadded:: 2.0.1~(Firmware)
+        .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_VELOCITY_REACHED_CALLBACK, (), '', '')
 
@@ -442,7 +442,7 @@ class BrickServo(Device):
         
         Default is disabled.
         
-        .. versionadded:: 2.0.1~(Firmware)
+        .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_VELOCITY_REACHED_CALLBACK, (), '', '')
 
@@ -450,7 +450,7 @@ class BrickServo(Device):
         """
         Returns *true* if :func:`VelocityReached` callback is enabled, *false* otherwise.
         
-        .. versionadded:: 2.0.1~(Firmware)
+        .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED, (), '', 'B')
 
@@ -463,7 +463,7 @@ class BrickServo(Device):
         
         The default state is enabled.
         
-        .. versionadded:: 2.3.1~(Firmware)
+        .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_ENABLE_STATUS_LED, (), '', '')
 
@@ -476,7 +476,7 @@ class BrickServo(Device):
         
         The default state is enabled.
         
-        .. versionadded:: 2.3.1~(Firmware)
+        .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickServo.FUNCTION_DISABLE_STATUS_LED, (), '', '')
 
@@ -484,7 +484,7 @@ class BrickServo(Device):
         """
         Returns *true* if the status LED is enabled, *false* otherwise.
         
-        .. versionadded:: 2.3.1~(Firmware)
+        .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
 

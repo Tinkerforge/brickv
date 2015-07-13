@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-10.      #
+# This file was automatically generated on 2015-07-13.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -323,7 +323,7 @@ class BrickDC(Device):
         
         The default state is enabled.
         
-        .. versionadded:: 2.3.1~(Firmware)
+        .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickDC.FUNCTION_ENABLE_STATUS_LED, (), '', '')
 
@@ -336,7 +336,7 @@ class BrickDC(Device):
         
         The default state is enabled.
         
-        .. versionadded:: 2.3.1~(Firmware)
+        .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickDC.FUNCTION_DISABLE_STATUS_LED, (), '', '')
 
@@ -344,7 +344,7 @@ class BrickDC(Device):
         """
         Returns *true* if the status LED is enabled, *false* otherwise.
         
-        .. versionadded:: 2.3.1~(Firmware)
+        .. versionadded:: 2.3.1$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickDC.FUNCTION_IS_STATUS_LED_ENABLED, (), '', '?')
 
