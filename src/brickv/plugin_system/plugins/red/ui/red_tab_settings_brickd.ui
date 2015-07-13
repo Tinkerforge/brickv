@@ -24,8 +24,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>454</width>
-        <height>533</height>
+        <width>460</width>
+        <height>539</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -108,7 +108,7 @@
               <bool>false</bool>
              </property>
              <property name="text">
-              <string>Save</string>
+              <string>Save and Restart Brick Daemon</string>
              </property>
             </widget>
            </item>

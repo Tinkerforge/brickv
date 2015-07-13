@@ -287,7 +287,7 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
                     self.script_manager.execute_script('restart_brickd', None)
                     QtGui.QMessageBox.information(get_main_window(),
                                                   'Settings | Brick Daemon',
-                                                  'Saved configuration successfully, restarting brickd.')
+                                                  'Saved configuration successfully, restarting Brick Daemon.')
 
             red_file.write_async(config, lambda x: cb_write(red_file, x), None)
 
