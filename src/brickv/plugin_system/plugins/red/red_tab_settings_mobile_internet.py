@@ -331,6 +331,11 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
                 self.cbox_mi_modem.addItem(dict_modem['name'])
                 self.cbox_mi_modem.setItemData(self.cbox_mi_modem.count() - 1, dict_modem['vid_pid'])
 
+        if self.cbox_mi_modem.isEnabled():
+            self.pbutton_mi_connect.setEnabled(True)
+        else:
+            self.pbutton_mi_connect.setEnabled(False)
+
         if dict_configuration['modem_configured']:
             for i in range(self.cbox_mi_modem.count()):
                 if dict_configuration['modem_configured'] != self.cbox_mi_modem.itemData(i):
