@@ -213,9 +213,9 @@ class IO4(PluginBase, Ui_IO4):
     def cb_value(self, value):
         for i in range(4):
             if value & (1 << i):
-                self.port_value[i].setText('High 2')
+                self.port_value[i].setText('High')
             else:
-                self.port_value[i].setText('Low 2')
+                self.port_value[i].setText('Low')
 
     def pin_changed(self, pin):
         if self.port_direction[pin].text() == 'Input':
