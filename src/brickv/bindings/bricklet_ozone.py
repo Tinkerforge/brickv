@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-13.      #
+# This file was automatically generated on 2015-07-14.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -100,7 +100,7 @@ class BrickletOzone(Device):
     def get_ozone_concentration(self):
         """
         Returns the measured ozone concentration. The value is in 
-        `ppb (parts-per-billion) <http://en.wikipedia.org/wiki/Parts-per_notation>`__
+        `ppb (parts-per-billion) <https://en.wikipedia.org/wiki/Parts-per_notation>`__
         and between 0 to 250.
         
         If you want to get the ozone concentration periodically, it is recommended to use the
@@ -234,7 +234,7 @@ class BrickletOzone(Device):
 
     def set_moving_average(self, average):
         """
-        Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__
+        Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
         for the ozone concentration.
         
         Setting the length to 1 will turn the averaging off. With less

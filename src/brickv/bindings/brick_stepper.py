@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-13.      #
+# This file was automatically generated on 2015-07-14.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -459,7 +459,7 @@ class BrickStepper(Device):
         decay is used.
         
         For an explanation of synchronous rectification see 
-        `here <http://en.wikipedia.org/wiki/Active_rectification>`__.
+        `here <https://en.wikipedia.org/wiki/Active_rectification>`__.
         
         .. warning::
          If you want to use high speeds (> 10000 steps/s) for a large 

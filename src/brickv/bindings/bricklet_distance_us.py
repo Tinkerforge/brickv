@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-13.      #
+# This file was automatically generated on 2015-07-14.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -161,7 +161,7 @@ class BrickletDistanceUS(Device):
 
     def set_moving_average(self, average):
         """
-        Sets the length of a `moving averaging <http://en.wikipedia.org/wiki/Moving_average>`__ 
+        Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__ 
         for the distance value.
         
         Setting the length to 0 will turn the averaging completely off. With less

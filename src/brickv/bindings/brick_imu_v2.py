@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-13.      #
+# This file was automatically generated on 2015-07-14.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -205,7 +205,7 @@ class BrickIMUV2(Device):
         """
         Returns the current orientation (heading, roll, pitch) of the IMU Brick as Euler
         angles in 1/16 degree. Note that Euler angles always experience a
-        `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
+        `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
         
         We recommend that you use quaternions instead.
         
@@ -258,7 +258,7 @@ class BrickIMUV2(Device):
     def get_quaternion(self):
         """
         Returns the current orientation (w, x, y, z) of the IMU Brick as
-        `quaternions <http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
+        `quaternions <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
         
         You have to divide the returns values by 16383 (14 bit) to get
         the usual range of -1.0 to +1.0 for quaternions.

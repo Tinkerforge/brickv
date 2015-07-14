@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-13.      #
+# This file was automatically generated on 2015-07-14.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -79,7 +79,7 @@ class BrickletSoundIntensity(Device):
         Returns the current sound intensity. The value has a range of
         0 to 4095.
         
-        The value corresponds to the `upper envelop <http://en.wikipedia.org/wiki/Envelope_(waves)>`__
+        The value corresponds to the `upper envelop <https://en.wikipedia.org/wiki/Envelope_(waves)>`__
         of the signal of the microphone capsule.
         
         If you want to get the intensity periodically, it is recommended to use the

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-13.      #
+# This file was automatically generated on 2015-07-14.      #
 #                                                           #
 # Bindings Version 2.1.4                                    #
 #                                                           #
@@ -208,7 +208,7 @@ class BrickIMU(Device):
         """
         Returns the current orientation (roll, pitch, yaw) of the IMU Brick as Euler
         angles in one-hundredth degree. Note that Euler angles always experience a
-        `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
+        `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
         
         We recommend that you use quaternions instead.
         
@@ -224,7 +224,7 @@ class BrickIMU(Device):
     def get_quaternion(self):
         """
         Returns the current orientation (x, y, z, w) of the IMU as 
-        `quaternions <http://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
+        `quaternions <https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation>`__.
         
         You can go from quaternions to Euler angles with the following formula::
         
@@ -233,7 +233,7 @@ class BrickIMU(Device):
          zAngle =  asin(2*x*y + 2*z*w)
         
         This process is not reversible, because of the 
-        `gimbal lock <http://en.wikipedia.org/wiki/Gimbal_lock>`__.
+        `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
         
         It is also possible to calculate independent angles. You can calculate 
         yaw, pitch and roll in a right-handed vehicle coordinate system according to DIN70000
