@@ -41,7 +41,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.setupUi(self)
 
         self.text_browser.setHtml("""
-<p><b>General:</b> The IMU does continous calibration during usage.
+<p><b>General:</b> The IMU does continous self-calibration during usage.
 It is not necessary to start a specific calibration process.</p>
 <p>Accelerometer and gyroscope are factory calibrated and are less susceptible
 to external disturbances. As a result the offsets can be seen as negligble and
