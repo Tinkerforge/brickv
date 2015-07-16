@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy
+from PyQt4.QtGui import QLabel, QVBoxLayout, QSizePolicy, QAction
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.imu.ui_imu import Ui_IMU
@@ -144,6 +144,11 @@ in the image above, then press "Save Orientation".""")
         self.calibrate = None
         self.alive = True
 
+        if self.firmware_version >= (1, 0, 7):
+            reset = QAction('Reset', self)
+            reset.triggered.connect(lambda: self.imu.reset())
+            self.set_actions(reset)
+
     def start(self):
         if not self.alive:
             return
@@ -176,16 +181,6 @@ in the image above, then press "Save Orientation".""")
         self.alive = False
         if self.calibrate:
             self.calibrate.close()
-
-    def has_reset_device(self):
-        return self.firmware_version >= (1, 0, 7)
-
-    def reset_device(self):
-        if self.has_reset_device():
-            self.imu.reset()
-
-    def is_brick(self):
-        return True
 
     def get_url_part(self):
         return 'imu'

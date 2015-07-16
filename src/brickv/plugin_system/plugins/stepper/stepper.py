@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import QTimer, Qt, pyqtSignal
-from PyQt4.QtGui import QErrorMessage, QInputDialog
+from PyQt4.QtGui import QErrorMessage, QInputDialog, QAction
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.stepper.speedometer import SpeedoMeter
@@ -104,6 +104,11 @@ class Stepper(PluginBase, Ui_Stepper):
         self.ev  = 0
         self.mv  = 0
         self.mod = 0
+
+        if self.firmware_version >= (1, 1, 4):
+            reset = QAction('Reset', self)
+            reset.triggered.connect(lambda: self.stepper.reset())
+            self.set_actions(reset)
         
     def start(self):
         self.update_timer.start(100)
@@ -114,16 +119,6 @@ class Stepper(PluginBase, Ui_Stepper):
 
     def destroy(self):
         pass
-
-    def has_reset_device(self):
-        return self.firmware_version >= (1, 1, 4)
-
-    def reset_device(self):
-        if self.has_reset_device():
-            self.stepper.reset()
-
-    def is_brick(self):
-        return True
 
     def get_url_part(self):
         return 'stepper'

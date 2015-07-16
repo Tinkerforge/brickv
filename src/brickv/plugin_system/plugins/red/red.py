@@ -22,10 +22,11 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import functools
 import re
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QLabel, QVBoxLayout
+from PyQt4.QtGui import QLabel, QVBoxLayout, QAction
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.red.ui_red import Ui_RED
@@ -76,6 +77,15 @@ class RED(PluginBase, Ui_RED):
             self.tabs.append(tab)
 
         self.tab_widget.currentChanged.connect(self.tab_widget_current_changed)
+
+        actions = []
+
+        for param, name in enumerate(['Restart Brick Daemon', 'Reboot RED Brick', 'Shut down RED Brick']):
+            action = QAction(name, self)
+            action.triggered.connect(functools.partial(self.perform_action, param))
+            actions.append(action)
+
+        self.set_actions(['System', actions])
 
         # FIXME: RED Brick doesn't do enumerate-connected callback correctly yet
         #        for Brick(let)s connected to it. Trigger a enumerate to pick up
@@ -133,36 +143,6 @@ class RED(PluginBase, Ui_RED):
         self.script_manager.destroy()
         self.session.expire()
 
-    def has_reset_device(self):
-        return False # FIXME: will have reboot, instead of reset
-
-    def reset_device(self):
-        pass
-
-    def has_drop_down(self):
-        return ['System', 'Restart Brick Daemon', 'Reboot RED Brick', 'Shut down RED Brick']
-
-    def drop_down_triggered(self, action):
-        if self.session == None:
-            return
-
-        def cb(result):
-            if result == None or result.stderr != '':
-                pass # TODO: Error popup?
-
-        t = action.text()
-        param = -1
-
-        if t == 'Restart Brick Daemon':
-            param = 0
-        elif t == 'Reboot RED Brick':
-            param = 1
-        elif t == 'Shut down RED Brick':
-            param = 2
-
-        if param != -1:
-            self.script_manager.execute_script('restart_reboot_shutdown', cb, [str(param)])
-
     def has_custom_version(self, label_version_name, label_version):
         label_version_name.setText('Image Version: ')
 
@@ -171,9 +151,6 @@ class RED(PluginBase, Ui_RED):
         if hasattr(self, 'image_version') and self.image_version.string != None:
             self.label_version.setText(self.image_version.string)
 
-        return True
-
-    def is_brick(self):
         return True
 
     def get_url_part(self):
@@ -189,3 +166,13 @@ class RED(PluginBase, Ui_RED):
                 tab.tab_on_focus()
             else:
                 tab.tab_off_focus()
+
+    def perform_action(self, param):
+        if self.session == None:
+            return
+
+        def cb(result):
+            if result == None or result.stderr != '':
+                pass # TODO: Error popup?
+
+        self.script_manager.execute_script('restart_reboot_shutdown', cb, [str(param)])

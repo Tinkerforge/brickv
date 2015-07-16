@@ -27,7 +27,8 @@ import random
 from threading import Event
 
 from PyQt4.QtCore import Qt, QRect, QTimer, pyqtSignal, QThread
-from PyQt4.QtGui import QLabel, QWidget, QColor, QPainter, QInputDialog, QErrorMessage
+from PyQt4.QtGui import QLabel, QWidget, QColor, QPainter, QInputDialog, \
+                        QErrorMessage, QAction
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.servo.ui_servo import Ui_Servo
@@ -216,6 +217,11 @@ class Servo(PluginBase, Ui_Servo):
         self.update_done_event = Event()
         self.update_done_event.set()
 
+        if self.firmware_version >= (1, 1, 3):
+            reset = QAction('Reset', self)
+            reset.triggered.connect(lambda: self.servo.reset())
+            self.set_actions(reset)
+
     def start(self):
         self.alive = True
         self.test_event.clear()
@@ -245,16 +251,6 @@ class Servo(PluginBase, Ui_Servo):
     def destroy(self):
         self.test_event.set()
         self.update_event.set()
-
-    def has_reset_device(self):
-        return self.firmware_version >= (1, 1, 3)
-
-    def reset_device(self):
-        if self.has_reset_device():
-            self.servo.reset()
-
-    def is_brick(self):
-        return True
 
     def get_url_part(self):
         return 'servo'

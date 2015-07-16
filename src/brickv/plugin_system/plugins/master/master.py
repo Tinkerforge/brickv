@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import QTimer
+from PyQt4.QtGui import QAction
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.master.ui_master import Ui_Master
@@ -60,6 +61,11 @@ class Master(PluginBase, Ui_Master):
         else:
             self.check_extensions = False
             self.extension_type_button.setEnabled(False)
+
+        if self.firmware_version >= (1, 2, 1):
+            reset = QAction('Reset', self)
+            reset.triggered.connect(lambda: self.master.reset())
+            self.set_actions(reset)
 
     def is_ethernet_present_async(self, present):
         if present:
@@ -136,16 +142,6 @@ class Master(PluginBase, Ui_Master):
 
         if self.extension_type:
             self.extension_type.close()
-
-    def has_reset_device(self):
-        return self.firmware_version >= (1, 2, 1)
-
-    def reset_device(self):
-        if self.has_reset_device():
-            self.master.reset()
-
-    def is_brick(self):
-        return True
 
     def is_hardware_version_relevant(self):
         return True

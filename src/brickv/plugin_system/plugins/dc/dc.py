@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QErrorMessage, QInputDialog
+from PyQt4.QtGui import QErrorMessage, QInputDialog, QAction
 from PyQt4.QtCore import QTimer, Qt, pyqtSignal
 
 from brickv.plugin_system.plugin_base import PluginBase
@@ -101,6 +101,11 @@ class DC(PluginBase, Ui_DC):
                                                      self.update_velocity,
                                                      self.increase_error_count)
 
+        if self.firmware_version >= (1, 1, 3):
+            reset = QAction('Reset', self)
+            reset.triggered.connect(lambda: self.dc.reset())
+            self.set_actions(reset)
+
 #        if self.firmware_version >= (2, 0, 1):
 #            self.enable_encoder_checkbox.stateChanged.connect(self.enable_encoder_state_changed)
 #            self.encoder_show()
@@ -120,16 +125,6 @@ class DC(PluginBase, Ui_DC):
 
     def destroy(self):
         pass
-
-    def has_reset_device(self):
-        return self.firmware_version >= (1, 1, 3)
-
-    def reset_device(self):
-        if self.has_reset_device():
-            self.dc.reset()
-
-    def is_brick(self):
-        return True
 
     def get_url_part(self):
         return 'dc'
