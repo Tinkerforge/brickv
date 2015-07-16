@@ -35,6 +35,7 @@ from brickv.bindings import ip_connection
 from brickv.bindings.brick_servo import BrickServo
 from brickv.async_call import async_call
 from brickv.knob_widget import KnobWidget
+from brickv.slider_spin_syncer import SliderSpinSyncer
 
 class ColorBar(QWidget):
     def __init__(self, orientation, *args):
@@ -170,21 +171,21 @@ class Servo(PluginBase, Ui_Servo):
         self.servo_dropbox.currentIndexChanged.connect(lambda x: self.update_servo_specific())
         self.enable_checkbox.stateChanged.connect(self.enable_state_changed)
 
-        self.position_slider.sliderReleased.connect(self.position_slider_released)
-        self.position_slider.valueChanged.connect(self.position_spin.setValue)
-        self.position_spin.editingFinished.connect(self.position_spin_finished)
+        self.position_syncer = SliderSpinSyncer(self.position_slider,
+                                                self.position_spin,
+                                                self.position_changed)
 
-        self.velocity_slider.sliderReleased.connect(self.velocity_slider_released)
-        self.velocity_slider.valueChanged.connect(self.velocity_spin.setValue)
-        self.velocity_spin.editingFinished.connect(self.velocity_spin_finished)
+        self.velocity_syncer = SliderSpinSyncer(self.velocity_slider,
+                                                self.velocity_spin,
+                                                self.velocity_changed)
 
-        self.acceleration_slider.sliderReleased.connect(self.acceleration_slider_released)
-        self.acceleration_slider.valueChanged.connect(self.acceleration_spin.setValue)
-        self.acceleration_spin.editingFinished.connect(self.acceleration_spin_finished)
+        self.acceleration_syncer = SliderSpinSyncer(self.acceleration_slider,
+                                                    self.acceleration_spin,
+                                                    self.acceleration_changed)
 
-        self.period_slider.sliderReleased.connect(self.period_slider_released)
-        self.period_slider.valueChanged.connect(self.period_spin.setValue)
-        self.period_spin.editingFinished.connect(self.period_spin_finished)
+        self.period_syncer = SliderSpinSyncer(self.period_slider,
+                                              self.period_spin,
+                                              self.period_changed)
 
         self.pulse_width_min_spin.editingFinished.connect(self.pulse_width_spin_finished)
         self.pulse_width_max_spin.editingFinished.connect(self.pulse_width_spin_finished)
@@ -529,65 +530,25 @@ class Servo(PluginBase, Ui_Servo):
         except ip_connection.Error:
             return
 
-    def position_slider_released(self):
-        value = self.position_slider.value()
-        self.position_spin.setValue(value)
+    def position_changed(self, value):
         try:
             self.servo.set_position(self.selected_servo(), value)
         except ip_connection.Error:
             return
 
-    def position_spin_finished(self):
-        value = self.position_spin.value()
-        self.position_slider.setValue(value)
-        try:
-            self.servo.set_position(self.selected_servo(), value)
-        except ip_connection.Error:
-            return
-
-    def velocity_slider_released(self):
-        value = self.velocity_slider.value()
-        self.velocity_spin.setValue(value)
+    def velocity_changed(self, value):
         try:
             self.servo.set_velocity(self.selected_servo(), value)
         except ip_connection.Error:
             return
 
-    def velocity_spin_finished(self):
-        value = self.velocity_spin.value()
-        self.velocity_slider.setValue(value)
-        try:
-            self.servo.set_velocity(self.selected_servo(), value)
-        except ip_connection.Error:
-            return
-
-    def acceleration_slider_released(self):
-        value = self.acceleration_slider.value()
-        self.acceleration_spin.setValue(value)
+    def acceleration_changed(self, value):
         try:
             self.servo.set_acceleration(self.selected_servo(), value)
         except ip_connection.Error:
             return
 
-    def acceleration_spin_finished(self):
-        value = self.acceleration_spin.value()
-        self.acceleration_slider.setValue(value)
-        try:
-            self.servo.set_acceleration(self.selected_servo(), value)
-        except ip_connection.Error:
-            return
-
-    def period_slider_released(self):
-        value = self.period_slider.value()
-        self.period_spin.setValue(value)
-        try:
-            self.servo.set_period(self.selected_servo(), value)
-        except ip_connection.Error:
-            return
-
-    def period_spin_finished(self):
-        value = self.period_spin.value()
-        self.period_slider.setValue(value)
+    def period_changed(self, value):
         try:
             self.servo.set_period(self.selected_servo(), value)
         except ip_connection.Error:

@@ -31,6 +31,7 @@ from brickv.plugin_system.plugins.stepper.ui_stepper import Ui_Stepper
 from brickv.bindings import ip_connection
 from brickv.bindings.brick_stepper import BrickStepper
 from brickv.async_call import async_call
+from brickv.slider_spin_syncer import SliderSpinSyncer
 
 class Stepper(PluginBase, Ui_Stepper):
     qtcb_position_reached = pyqtSignal(int)
@@ -58,23 +59,23 @@ class Stepper(PluginBase, Ui_Stepper):
 
         self.qem = QErrorMessage(self)
         self.qem.setWindowTitle("Under Voltage")
-        
-        self.velocity_slider.sliderReleased.connect(self.velocity_slider_released)
-        self.velocity_slider.valueChanged.connect(self.velocity_spin.setValue)
-        self.velocity_spin.editingFinished.connect(self.velocity_spin_finished)
-        
-        self.acceleration_slider.sliderReleased.connect(self.acceleration_slider_released)
-        self.acceleration_slider.valueChanged.connect(self.acceleration_spin.setValue)
-        self.acceleration_spin.editingFinished.connect(self.acceleration_spin_finished)
-        
-        self.deceleration_slider.sliderReleased.connect(self.deceleration_slider_released)
-        self.deceleration_slider.valueChanged.connect(self.deceleration_spin.setValue)
-        self.deceleration_spin.editingFinished.connect(self.deceleration_spin_finished)
-        
-#        self.decay_slider.sliderReleased.connect(self.decay_slider_released)
-#        self.decay_slider.valueChanged.connect(self.decay_spin.setValue)
-#        self.decay_spin.editingFinished.connect(self.decay_spin_finished)
-        
+
+        self.velocity_syncer = SliderSpinSyncer(self.velocity_slider,
+                                                self.velocity_spin,
+                                                self.velocity_changed)
+
+        self.acceleration_syncer = SliderSpinSyncer(self.acceleration_slider,
+                                                    self.acceleration_spin,
+                                                    self.acceleration_changed)
+
+        self.deceleration_syncer = SliderSpinSyncer(self.deceleration_slider,
+                                                    self.deceleration_spin,
+                                                    self.deceleration_changed)
+
+#        self.decay_syncer = SliderSpinSyncer(self.decay_slider,
+#                                             self.decay_spin,
+#                                             self.decay_changed)
+
         self.enable_checkbox.stateChanged.connect(self.enable_state_changed)
         self.forward_button.clicked.connect(self.forward_clicked)
         self.stop_button.clicked.connect(self.stop_clicked)
@@ -338,70 +339,28 @@ class Stepper(PluginBase, Ui_Stepper):
             async_call(self.stepper.get_external_input_voltage, None, self.external_input_voltage_update, self.increase_error_count)
             async_call(self.stepper.get_minimum_voltage, None, self.minimum_voltage_update, self.increase_error_count)
             async_call(self.stepper.get_step_mode, None, self.mode_update, self.increase_error_count)
-        
-    def velocity_slider_released(self):
-        value = self.velocity_slider.value()
-        self.velocity_spin.setValue(value)
+
+    def velocity_changed(self, value):
         try:
             self.stepper.set_max_velocity(value)
-        except ip_connection.Error:
-            return
- 
-    def velocity_spin_finished(self):
-        value = self.velocity_spin.value()
-        self.velocity_slider.setValue(value)
-        try:
-            self.stepper.set_max_velocity(value)
-        except ip_connection.Error:
-            return
-    
-    def acceleration_slider_released(self):
-        acc = self.acceleration_slider.value()
-        dec = self.deceleration_slider.value()
-        self.acceleration_spin.setValue(acc)
-        try:
-            self.stepper.set_speed_ramping(acc, dec)
-        except ip_connection.Error:
-            return
- 
-    def acceleration_spin_finished(self):
-        acc = self.acceleration_spin.value()
-        dec = self.deceleration_spin.value()
-        self.acceleration_slider.setValue(acc)
-        try:
-            self.stepper.set_speed_ramping(acc, dec)
-        except ip_connection.Error:
-            return
-            
-    def deceleration_slider_released(self):
-        acc = self.acceleration_slider.value()
-        dec = self.deceleration_slider.value()
-        self.deceleration_spin.setValue(dec)
-        try:
-            self.stepper.set_speed_ramping(acc, dec)
-        except ip_connection.Error:
-            return
- 
-    def deceleration_spin_finished(self):
-        acc = self.acceleration_spin.value()
-        dec = self.deceleration_spin.value()
-        self.deceleration_slider.setValue(dec)
-        try:
-            self.stepper.set_speed_ramping(acc, dec)
         except ip_connection.Error:
             return
 
-#    def decay_slider_released(self):
-#        value = self.decay_slider.value()
-#        self.decay_spin.setValue(value)
-#        try:
-#            self.stepper.set_decay(value)
-#        except ip_connection.Error:
-#            return
- 
-#    def decay_spin_finished(self):
-#        value = self.decay_spin.value()
-#        self.decay_slider.setValue(value)
+    def acceleration_changed(self, value):
+        dec = self.deceleration_spin.value()
+        try:
+            self.stepper.set_speed_ramping(value, dec)
+        except ip_connection.Error:
+            return
+            
+    def deceleration_changed(self, value):
+        acc = self.acceleration_slider.value()
+        try:
+            self.stepper.set_speed_ramping(acc, value)
+        except ip_connection.Error:
+            return
+
+#    def decay_changed(self, value):
 #        try:
 #            self.stepper.set_decay(value)
 #        except ip_connection.Error:

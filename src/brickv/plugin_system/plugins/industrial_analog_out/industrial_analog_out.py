@@ -28,6 +28,7 @@ from brickv.plugin_system.plugins.industrial_analog_out.ui_industrial_analog_out
 from brickv.bindings.bricklet_industrial_analog_out import BrickletIndustrialAnalogOut
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
+from brickv.slider_spin_syncer import SliderSpinSyncer
 
 class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
     def __init__(self, *args):
@@ -36,16 +37,17 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
         self.setupUi(self)
 
         self.ao = self.device
-        
-        self.spin_voltage.editingFinished.connect(self.voltage_spin_finished)
-        self.slider_voltage.sliderReleased.connect(self.voltage_slider_released)
-        self.slider_voltage.valueChanged.connect(self.voltage_slider_changed)
-        self.spin_current.editingFinished.connect(self.current_spin_finished)
-        self.slider_current.sliderReleased.connect(self.current_slider_released)
-        self.slider_current.valueChanged.connect(self.current_slider_changed)
-        
-        self.radio_voltage.released.connect(self.radio_released)
-        self.radio_current.released.connect(self.radio_released)
+
+        self.voltage_syncer = SliderSpinSyncer(self.slider_voltage,
+                                               self.spin_voltage,
+                                               self.voltage_changed)
+
+        self.current_syncer = SliderSpinSyncer(self.slider_current,
+                                              self.spin_current,
+                                              self.current_changed)
+
+        self.radio_voltage.clicked.connect(self.radio_clicked)
+        self.radio_current.clicked.connect(self.radio_clicked)
         
         self.box_voltage_range.currentIndexChanged.connect(self.config_changed)
         self.box_current_range.currentIndexChanged.connect(self.config_changed)
@@ -118,7 +120,7 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
         for ui in self.ui_current:
             ui.show()
             
-    def radio_released(self):
+    def radio_clicked(self):
         if self.radio_voltage.isChecked():
             async_call(self.ao.get_voltage, None, self.new_voltage, self.increase_error_count)
             self.mode_voltage()
@@ -126,32 +128,14 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
             async_call(self.ao.get_current, None, self.new_current, self.increase_error_count)
             self.mode_current()
     
-    def voltage_spin_finished(self):
-        value = self.spin_voltage.value()
+    def voltage_changed(self, value):
         self.new_voltage(value)
         self.ao.set_voltage(value)
-    
-    def voltage_slider_released(self):
-        value = self.slider_voltage.value()
-        self.new_voltage(value)
-        self.ao.set_voltage(value)
-    
-    def voltage_slider_changed(self, value):
-        self.spin_voltage.setValue(value)
-    
-    def current_spin_finished(self):
-        value = self.spin_current.value()
+
+    def current_changed(self, value):
         self.new_current(value)
         self.ao.set_current(value)
-    
-    def current_slider_released(self):
-        value = self.slider_current.value()
-        self.new_current(value)
-        self.ao.set_current(value)
-    
-    def current_slider_changed(self, value):
-        self.spin_current.setValue(value)
-        
+
     def new_configuration(self):
         if self.last_voltage_range == self.ao.VOLTAGE_RANGE_0_TO_5V:
             self.slider_voltage.setMaximum(5000)
