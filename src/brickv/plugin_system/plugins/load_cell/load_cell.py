@@ -121,7 +121,7 @@ class LoadCell(PluginBase):
         self.rate_combo = QComboBox()
         self.rate_combo.addItem("10Hz")
         self.rate_combo.addItem("80Hz")
-        self.rate_combo.activated.connect(self.new_config)
+        self.rate_combo.currentIndexChanged.connect(self.new_config)
         
         layout_avg = QHBoxLayout()
         layout_avg.addWidget(self.label_average)

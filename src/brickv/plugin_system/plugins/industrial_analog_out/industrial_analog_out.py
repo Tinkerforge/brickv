@@ -47,8 +47,8 @@ class IndustrialAnalogOut(PluginBase, Ui_IndustrialAnalogOut):
         self.radio_voltage.released.connect(self.radio_released)
         self.radio_current.released.connect(self.radio_released)
         
-        self.box_voltage_range.activated.connect(self.config_changed)
-        self.box_current_range.activated.connect(self.config_changed)
+        self.box_voltage_range.currentIndexChanged.connect(self.config_changed)
+        self.box_current_range.currentIndexChanged.connect(self.config_changed)
         
         self.checkbox_enable.clicked.connect(self.enable_changed)
         

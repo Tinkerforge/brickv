@@ -65,7 +65,7 @@ class AnalogOut(PluginBase):
         layout.addStretch()
         
         self.voltage_box.editingFinished.connect(self.voltage_finished)
-        self.mode_combo.activated.connect(self.mode_changed)
+        self.mode_combo.currentIndexChanged.connect(self.mode_changed)
         
     def start(self):
         async_call(self.ao.get_voltage, None, self.voltage_box.setValue, self.increase_error_count)

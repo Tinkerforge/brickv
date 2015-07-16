@@ -110,7 +110,7 @@ class Accelerometer(PluginBase):
         self.fs_combo.addItem("6 g")
         self.fs_combo.addItem("8 g")
         self.fs_combo.addItem("16 g")
-        self.fs_combo.activated.connect(self.new_config)
+        self.fs_combo.currentIndexChanged.connect(self.new_config)
         
         self.dr_label = QLabel('Data Rate:')
         self.dr_combo = QComboBox()
@@ -124,7 +124,7 @@ class Accelerometer(PluginBase):
         self.dr_combo.addItem("400 Hz")
         self.dr_combo.addItem("800 Hz")
         self.dr_combo.addItem("1600 Hz")
-        self.dr_combo.activated.connect(self.new_config)
+        self.dr_combo.currentIndexChanged.connect(self.new_config)
         
         self.fb_label = QLabel('Filter Bandwidth:')
         self.fb_combo = QComboBox()
@@ -132,7 +132,7 @@ class Accelerometer(PluginBase):
         self.fb_combo.addItem("400 Hz")
         self.fb_combo.addItem("200 Hz")
         self.fb_combo.addItem("50 Hz")
-        self.fb_combo.activated.connect(self.new_config)
+        self.fb_combo.currentIndexChanged.connect(self.new_config)
         
         layout_hc = QHBoxLayout()
         layout_hc.addStretch()

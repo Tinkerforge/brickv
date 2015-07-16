@@ -90,7 +90,7 @@ class AmbientLightV2(PluginBase):
         self.range_combo.addItem("0 - 8000 Lux")
         self.range_combo.addItem("0 - 1300 Lux")
         self.range_combo.addItem("0 - 600 Lux")
-        self.range_combo.activated.connect(self.new_config)
+        self.range_combo.currentIndexChanged.connect(self.new_config)
         
         self.time_label = QLabel('Integration Time: ')
         self.time_combo = QComboBox()
@@ -102,7 +102,7 @@ class AmbientLightV2(PluginBase):
         self.time_combo.addItem("300ms")
         self.time_combo.addItem("350ms")
         self.time_combo.addItem("400ms")
-        self.time_combo.activated.connect(self.new_config)
+        self.time_combo.currentIndexChanged.connect(self.new_config)
         
         layout_hc = QHBoxLayout()
         layout_hc.addStretch()

@@ -152,7 +152,7 @@ class Color(PluginBase):
         self.gain_combo.addItem("16x")
         self.gain_combo.addItem("60x")
 
-        self.gain_combo.activated.connect(self.gain_changed)
+        self.gain_combo.currentIndexChanged.connect(self.gain_changed)
 
         self.current_gain_factor = 60
 
@@ -166,7 +166,7 @@ class Color(PluginBase):
 
         self.current_conversion_time = 154
 
-        self.conversion_combo.activated.connect(self.conversion_changed)
+        self.conversion_combo.currentIndexChanged.connect(self.conversion_changed)
 
         self.light_checkbox = QCheckBox("Enable Light")
 

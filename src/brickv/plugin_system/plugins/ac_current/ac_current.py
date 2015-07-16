@@ -73,7 +73,7 @@ class ACCurrent(PluginBase):
         self.combo_range = QComboBox()
         self.combo_range.addItem("0") # TODO: Adjust ranges
         self.combo_range.addItem("1")
-        self.combo_range.activated.connect(self.new_config)
+        self.combo_range.currentIndexChanged.connect(self.new_config)
 
         layout_h1 = QHBoxLayout()
         layout_h1.addStretch()

@@ -49,7 +49,7 @@ class HallEffect(PluginBase, Ui_HallEffect):
         self.plot_widget = PlotWidget('Value', plot_list)
         self.plot_widget.set_fixed_y_scale(0, 1, 1, 1)
 
-        self.combo_edge_type.activated.connect(self.edge_changed)
+        self.combo_edge_type.currentIndexChanged.connect(self.edge_changed)
         self.spin_debounce.editingFinished.connect(self.debounce_changed)
 
         self.main_layout.insertWidget(1, self.plot_widget)
