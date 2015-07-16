@@ -30,9 +30,7 @@ from brickv.bindings import ip_connection
 from brickv.async_call import async_call
 from brickv.plugin_system.plugins.oled_128x64.ui_oled_128x64 import Ui_OLED128x64
 from brickv.bindings.bricklet_oled_128x64 import BrickletOLED128x64
-        
-    
-        
+
 class ScribbleArea(QWidget):
     """
       this scales the image but it's not good, too many refreshes really mess it up!!!
@@ -188,10 +186,6 @@ class OLED128x64(PluginBase, Ui_OLED128x64):
     def get_url_part(self):
         return 'oled_128x64'
 
-    def is_hardware_version_relevant(self):
-        return True
-
     @staticmethod
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletOLED128x64.DEVICE_IDENTIFIER
-
