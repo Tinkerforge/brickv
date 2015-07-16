@@ -16,6 +16,12 @@ from tinkerforge.bricklet_temperature import BrickletTemperature
 from tinkerforge.bricklet_humidity import BrickletHumidity
 from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
 
+try:
+    from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
+    has_ambient_light_v2 = True
+except ImportError:
+    has_ambient_light_v2 = False
+
 if len(argv) < 2:
     exit(1)
 
@@ -26,12 +32,18 @@ SCRIPT_TINKERFORGE_CHECK = '''#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import time
-import argparse 
+import argparse
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_ptc import BrickletPTC
 from tinkerforge.bricklet_temperature import BrickletTemperature
 from tinkerforge.bricklet_humidity import BrickletHumidity
 from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
+
+try:
+    from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
+    has_ambient_light_v2 = True
+except ImportError:
+    has_ambient_light_v2 = False
 
 RETURN_CODE_OK       = 0
 RETURN_CODE_WARNING  = 1
@@ -51,8 +63,10 @@ MESSAGE_CRITICAL_ERROR_CONNECTING = 'CRITICAL - Error occured while connecting'
 MESSAGE_CRITICAL_AUTHENTICATION_FAILED = 'CRITICAL - Connection Authentication failed'
 MESSAGE_CRITICAL_NO_PTC_CONNECTED = 'CRITICAL - No PTC sensor connected'
 MESSAGE_CRITICAL_ERROR_GETTING_PTC_STATE = 'CRITICAL - Error getting PTC sensor connection state'
-MESSAGE_CRITICAL_ERROR_SETTINGS_PTC_MODE = 'CRITICAL - Error setting PTC wire mode'
+MESSAGE_CRITICAL_ERROR_SETTING_PTC_MODE = 'CRITICAL - Error setting PTC wire mode'
 MESSAGE_CRITICAL_ERROR_READING_VALUE = 'CRITICAL - Error reading value'
+MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY = 'CRITICAL - Error getting device identity'
+MESSAGE_CRITICAL_ERROR_SETTING_AMBIENT_LIGHT_CONFIGURATION = 'CRITICAL - Error setting Ambient Light configuration'
 MESSAGE_CRITICAL_READING_TOO_HIGH = 'CRITICAL - Reading too high - %s'
 MESSAGE_CRITICAL_READING_TOO_LOW = 'CRITICAL - Reading too low - %s'
 MESSAGE_WARNING_READING_IS_HIGH = 'WARNING - Reading is high - %s'
@@ -105,31 +119,38 @@ def connect():
                       RETURN_CODE_CRITICAL)
 
 def read(bricklet, uid, warning, critical, warning2, critical2):
+    reading = None
+
     if bricklet == BRICKLET_PTC24 or bricklet == BRICKLET_PTC3:
         bricklet_ptc = BrickletPTC(uid, ipcon)
 
         try:
             if not bricklet_ptc.is_sensor_connected():
+                bricklet_ptc = None
                 handle_result(MESSAGE_CRITICAL_NO_PTC_CONNECTED,
                               RETURN_CODE_CRITICAL)
         except:
+            bricklet_ptc = None
             handle_result(MESSAGE_CRITICAL_ERROR_GETTING_PTC_STATE,
                           RETURN_CODE_CRITICAL)
 
-        try:
-            if bricklet == BRICKLET_PTC24:
-                bricklet_ptc.set_wire_mode(WIRE_MODE_PTC24)
-            elif bricklet == BRICKLET_PTC3:
-                bricklet_ptc.set_wire_mode(WIRE_MODE_PTC3)
-        except:
-            handle_result(MESSAGE_CRITICAL_ERROR_SETTINGS_PTC_MODE,
-                          RETURN_CODE_CRITICAL)
+        if bricklet_ptc != None:
+            try:
+                if bricklet == BRICKLET_PTC24:
+                    bricklet_ptc.set_wire_mode(WIRE_MODE_PTC24)
+                elif bricklet == BRICKLET_PTC3:
+                    bricklet_ptc.set_wire_mode(WIRE_MODE_PTC3)
+            except:
+                bricklet_ptc = None
+                handle_result(MESSAGE_CRITICAL_ERROR_SETTING_PTC_MODE,
+                              RETURN_CODE_CRITICAL)
 
-        try:
-            reading = bricklet_ptc.get_temperature() / 100.0
-        except:
-            handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
-                          RETURN_CODE_CRITICAL)
+        if bricklet_ptc != None:
+            try:
+                reading = bricklet_ptc.get_temperature() / 100.0
+            except:
+                handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
+                              RETURN_CODE_CRITICAL)
 
     elif bricklet == BRICKLET_TEMPERATURE:
         bricklet_temperature = BrickletTemperature(uid, ipcon)
@@ -151,30 +172,55 @@ def read(bricklet, uid, warning, critical, warning2, critical2):
 
     elif bricklet == BRICKLET_AMBIENT_LIGHT:
         bricklet_ambient_light = BrickletAmbientLight(uid, ipcon)
+        divisor = 10.0
 
-        try:
-            reading = bricklet_ambient_light.get_illuminance() / 10.0
-        except:
-            handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
+        if has_ambient_light_v2:
+            device_identifier = None
+
+            try:
+                device_identifier = bricklet_ambient_light.get_identity().device_identifier
+            except:
+                bricklet_ambient_light = None
+                handle_result(MESSAGE_CRITICAL_ERROR_GETTING_DEVICE_IDENTITY,
+                              RETURN_CODE_CRITICAL)
+
+            if device_identifier == BrickletAmbientLightV2.DEVICE_IDENTIFIER:
+                bricklet_ambient_light = BrickletAmbientLightV2(uid, ipcon)
+                divisor = 100.0
+
+                try:
+                    bricklet_ambient_light.set_configuration(BrickletAmbientLightV2.ILLUMINANCE_RANGE_1300LUX,
+                                                             BrickletAmbientLightV2.INTEGRATION_TIME_200MS)
+                except:
+                    bricklet_ambient_light = None
+                    handle_result(MESSAGE_CRITICAL_ERROR_SETTING_AMBIENT_LIGHT_CONFIGURATION,
+                                  RETURN_CODE_CRITICAL)
+
+        if bricklet_ambient_light != None:
+            try:
+                reading = bricklet_ambient_light.get_illuminance() / divisor
+            except:
+                handle_result(MESSAGE_CRITICAL_ERROR_READING_VALUE,
+                              RETURN_CODE_CRITICAL)
+
+    if reading != None:
+        if reading >= critical:
+            handle_result(MESSAGE_CRITICAL_READING_TOO_HIGH % reading,
                           RETURN_CODE_CRITICAL)
-
-    if reading >= critical:
-        handle_result(MESSAGE_CRITICAL_READING_TOO_HIGH % reading,
-                      RETURN_CODE_CRITICAL)
-    elif reading >= warning:
-        handle_result(MESSAGE_WARNING_READING_IS_HIGH % reading,
-                      RETURN_CODE_WARNING)
-    elif reading <= critical2:
-        handle_result(MESSAGE_CRITICAL_READING_TOO_LOW % reading,
-                      RETURN_CODE_CRITICAL)
-    elif reading <= warning2:
-        handle_result(MESSAGE_WARNING_READING_IS_LOW % reading,
-                      RETURN_CODE_WARNING)
-    elif reading > warning2 and reading < warning:
-        handle_result(MESSAGE_OK_READING % reading,
-                      RETURN_CODE_OK)
-    else:
-        handle_result(MESSAGE_UNKNOWN_READING, RETURN_CODE_UNKNOWN)
+        elif reading >= warning:
+            handle_result(MESSAGE_WARNING_READING_IS_HIGH % reading,
+                          RETURN_CODE_WARNING)
+        elif reading <= critical2:
+            handle_result(MESSAGE_CRITICAL_READING_TOO_LOW % reading,
+                          RETURN_CODE_CRITICAL)
+        elif reading <= warning2:
+            handle_result(MESSAGE_WARNING_READING_IS_LOW % reading,
+                          RETURN_CODE_WARNING)
+        elif reading > warning2 and reading < warning:
+            handle_result(MESSAGE_OK_READING % reading,
+                          RETURN_CODE_OK)
+        else:
+            handle_result(MESSAGE_UNKNOWN_READING, RETURN_CODE_UNKNOWN)
 
 if __name__ == '__main__':
     parse = argparse.ArgumentParser()
@@ -208,7 +254,7 @@ if __name__ == '__main__':
                        '--uid',
                        help = 'UID of bricklet',
                        required = True)
-        
+
     parse.add_argument('-w',
                        '--warning',
                        help = 'Warning temperature level \
@@ -216,7 +262,7 @@ if __name__ == '__main__':
                                message)',
                        type = float,
                        required = True)
-    
+
     parse.add_argument('-c',
                        '--critical',
                        help = 'Critical temperature level \
@@ -224,14 +270,14 @@ if __name__ == '__main__':
                                message)',
                        type = float,
                        required = True)
-    
+
     parse.add_argument('-w2',
                        '--warning2',
                        help = 'Warning temperature level (temperatures \
                                below this level will trigger a warning message)',
                        type = float,
                        required = True)
-    
+
     parse.add_argument('-c2',
                        '--critical2',
                        help = 'Critical temperature level (temperatures below \
@@ -361,6 +407,11 @@ def cb_enumerate(uid,
             dict_enumerate['humidity'].append(uid)
 
     elif device_identifier == BrickletAmbientLight.DEVICE_IDENTIFIER and\
+         uid not in dict_enumerate['ambient_light']:
+            dict_enumerate['ambient_light'].append(uid)
+
+    elif has_ambient_light_v2 and\
+         device_identifier == BrickletAmbientLightV2.DEVICE_IDENTIFIER and\
          uid not in dict_enumerate['ambient_light']:
             dict_enumerate['ambient_light'].append(uid)
 

@@ -95,7 +95,7 @@ RANGE_MAX_TEMPERATURE   = 100
 RANGE_MIN_HUMIDITY      = 0
 RANGE_MAX_HUMIDITY      = 100
 RANGE_MIN_AMBIENT_LIGHT = 0
-RANGE_MAX_AMBIENT_LIGHT = 900
+RANGE_MAX_AMBIENT_LIGHT = 1300 # Ambient Light = fixed 900, Ambient Light 2.0 = configured to 1300
 
 INDEX_EMAIL_NO_NOTIFICATIONS        = 0
 INDEX_EMAIL_CRITICAL                = 1
@@ -1364,9 +1364,9 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         bricklet = 'ambient_light'
         uid = ''
         warning_low = '225'
-        warning_high = '675'
+        warning_high = '1075'
         critical_low = '225'
-        critical_high = '675'
+        critical_high = '1075'
         email_notification_enabled = '0'
         email_notifications = 'c,r'
 
