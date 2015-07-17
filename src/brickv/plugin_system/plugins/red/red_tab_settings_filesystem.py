@@ -86,12 +86,23 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
             p1_start = float(size_dict['p1_start'])
             p1_size = float(size_dict['p1_size'])
             card_size = float(size_dict['card_size'])
+            ext3_size = float(size_dict['ext3_size'])
         except:
             p1_start = 0
             p1_size = 100
             card_size = 100
+            ext3_size = 100
 
-        percentage_utilization_v = min(int(math.ceil((p1_size / (card_size - p1_start)) * 100.0)), 100)
+        avialable_size = card_size - p1_start
+        used_size = min(p1_size, ext3_size)
+
+        percentage_utilization_v = min(int(math.ceil((used_size / avialable_size) * 100.0)), 100)
+
+        # due to common file system overahead 100% will normally never be
+        # reached just fake 100% in this case to avoid user confusion
+        if percentage_utilization_v >= 95:
+            percentage_utilization_v = 100
+
         percentage_utilization = unicode(percentage_utilization_v)
 
         self.pbar_fs_capacity_utilization.setEnabled(True)
@@ -101,7 +112,7 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
 
         self.pbar_fs_capacity_utilization.setValue(percentage_utilization_v)
 
-        if percentage_utilization_v >= 95:
+        if percentage_utilization_v == 100:
             self.pbutton_fs_expand.setEnabled(False)
             self.label_fs_expand_info.hide()
             self.line.hide()

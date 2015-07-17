@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>513</width>
-    <height>581</height>
+    <height>596</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,7 +25,7 @@
         <x>0</x>
         <y>0</y>
         <width>493</width>
-        <height>561</height>
+        <height>576</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -74,14 +74,14 @@
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>Expand</string>
+            <string>Reboot and Expand</string>
            </property>
           </widget>
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_fs_expand_info">
            <property name="text">
-            <string>&lt;html&gt;&lt;body&gt;&lt;p&gt;Depending on the image size and the capacity of the Micro-SD card you might not be using the total capacity of the Micro-SD card. In this case expanding the file system will provide you with some extra storage space. &lt;/p&gt;&lt;p&gt;&lt;b&gt;Steps:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;1. Make sure the RED Brick is powered from a reliable power source during the expansion process and do not power it off during the expansion process. This could damage the Micro-SD card and the data in it. &lt;/p&gt;&lt;p&gt;2. After clicking the Expand button the file system will be expanded and RED Brick will automatically reboot. This process may take a moment. &lt;/p&gt;&lt;p&gt;3. Additional storage will only be available after a reboot. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;body&gt;&lt;p&gt;Depending on the image size and the capacity of the Micro-SD card you might not be using the total capacity of the Micro-SD card. In this case expanding the file system will provide you with some extra storage space. &lt;/p&gt;&lt;p&gt;&lt;b&gt;Steps:&lt;/b&gt;&lt;/p&gt;&lt;p&gt;1. Make sure the RED Brick is powered from a reliable power source during the expansion process and do not power it off during the expansion process. This could damage the Micro-SD card and the data in it. &lt;/p&gt;&lt;p&gt;2. After clicking the Expand button the RED Brick will automatically reboot and then expand the file system. This process may take a moment. Depending on the size and speed of the Micro-SD card it can take 1 to 15 minutes until the RED Brick will show up again in Brickv Viewer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

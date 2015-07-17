@@ -4,6 +4,7 @@
 import json
 import subprocess
 import sys
+import os
 
 if len(sys.argv) < 2:
     sys.stderr.write(u'Missing parameters'.encode('utf-8'))
@@ -25,12 +26,18 @@ if ps_get_part.returncode != 0:
 
     exit(ps_get_part.returncode)
 elif len(cmd_output.splitlines()) != 2:
+    sys.stderr.write(u'Found more than one partition, cannot resize this')
     exit(3)
 
 try:
     with open('/sys/block/mmcblk0/size') as f_card_size:
         card_size = f_card_size.readline()
         result['card_size'] = int(card_size.strip())
+
+    s = os.statvfs('/')
+
+    # divide by 512 to get the size in the same base as the /sys/block values
+    result['ext3_size'] = s.f_blocks * s.f_bsize / 512
 
     with open('/sys/block/mmcblk0/mmcblk0p1/start') as f_p1_start:
         p1_start = f_p1_start.readline()
