@@ -193,8 +193,19 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
 
     def ap_tree_model_clear_add_item(self, item):
         self.ap_tree_model.removeRows(0, self.ap_tree_model.rowCount())
-        if item:
-            self.ap_tree_model.appendRow([item])
+
+        if not item:
+            return
+
+        list_items = [item]
+
+        for i in range(self.ap_tree_model.columnCount() - 1):
+            _item = QtGui.QStandardItem('')
+            _item.setEnabled(False)
+            _item.setSelectable(False)
+            list_items.append(_item)
+
+        self.ap_tree_model.appendRow(list_items)
 
     def cb_settings_network_status(self, result):
         self.network_stat_refresh_timer.stop()
