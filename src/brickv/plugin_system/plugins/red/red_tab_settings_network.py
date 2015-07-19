@@ -1188,6 +1188,8 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                            'Settings | Network',
                                            err_msg)
 
+            self.slot_network_conf_refresh_clicked()
+
         hostname_old = self.label_net_hostname.text()
         input_dialog_hostname = QtGui.QInputDialog()
         input_dialog_hostname.setInputMode(QtGui.QInputDialog.TextInput)
