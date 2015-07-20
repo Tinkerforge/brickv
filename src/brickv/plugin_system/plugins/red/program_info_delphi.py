@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
 
 program_info_delphi.py: Program Delphi Info Widget
 
@@ -60,6 +60,16 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
         else:
             self.label_compile_from_source.setText('Disabled')
 
+        # build system
+        build_system_api_name = self.program.cast_custom_option_value('delphi.build_system', unicode, '<unknown>')
+        build_system          = Constants.get_delphi_build_system(build_system_api_name)
+        build_system_fpcmake  = build_system == Constants.DELPHI_BUILD_SYSTEM_FPCMAKE
+        build_system_lazbuild = build_system == Constants.DELPHI_BUILD_SYSTEM_LAZBUILD
+
+        self.label_build_system_title.setVisible(compile_from_source)
+        self.label_build_system.setVisible(compile_from_source)
+        self.label_build_system.setText(Constants.delphi_build_system_display_names[build_system])
+
         # working directory
         self.label_working_directory_title.setVisible(show_advanced_options)
         self.label_working_directory.setVisible(show_advanced_options)
@@ -69,6 +79,11 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
         self.label_make_options_title.setVisible(compile_from_source and show_advanced_options and build_system_fpcmake)
         self.label_make_options.setVisible(compile_from_source and show_advanced_options and build_system_fpcmake)
         self.label_make_options.setText('\n'.join(self.program.cast_custom_option_value_list('delphi.make_options', unicode, [])))
+
+        # lazbuild options
+        self.label_lazbuild_options_title.setVisible(compile_from_source and show_advanced_options and build_system_lazbuild)
+        self.label_lazbuild_options.setVisible(compile_from_source and show_advanced_options and build_system_lazbuild)
+        self.label_lazbuild_options.setText('\n'.join(self.program.cast_custom_option_value_list('delphi.lazbuild_options', unicode, [])))
 
     # overrides ProgramInfo.close_all_dialogs
     def close_all_dialogs(self):

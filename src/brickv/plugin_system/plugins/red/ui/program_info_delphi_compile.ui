@@ -32,7 +32,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1" colspan="4">
+     <item row="0" column="1">
       <widget class="QPlainTextEdit" name="edit_log">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -55,47 +55,65 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QPushButton" name="button_make">
-       <property name="text">
-        <string>Make</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2">
-      <widget class="QPushButton" name="button_clean">
-       <property name="text">
-        <string>Clean</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="3">
-      <widget class="QPushButton" name="button_cancel">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string>Cancel</string>
-       </property>
-       <property name="autoDefault">
-        <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="4">
-      <widget class="QPushButton" name="button_close">
-       <property name="text">
-        <string>Close</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QPushButton" name="button_make">
+         <property name="text">
+          <string>Make</string>
+         </property>
+         <property name="autoDefault">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="button_clean">
+         <property name="text">
+          <string>Clean</string>
+         </property>
+         <property name="autoDefault">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="button_compile">
+         <property name="text">
+          <string>Compile</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="button_recompile_all">
+         <property name="text">
+          <string>Recompile All</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="button_cancel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Cancel</string>
+         </property>
+         <property name="autoDefault">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="button_close">
+         <property name="text">
+          <string>Close</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -103,10 +121,6 @@
  </widget>
  <tabstops>
   <tabstop>edit_log</tabstop>
-  <tabstop>button_make</tabstop>
-  <tabstop>button_clean</tabstop>
-  <tabstop>button_cancel</tabstop>
-  <tabstop>button_close</tabstop>
  </tabstops>
  <resources/>
  <connections/>

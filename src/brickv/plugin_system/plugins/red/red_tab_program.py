@@ -33,6 +33,7 @@ from brickv.plugin_system.plugins.red.program_wizard_new import ProgramWizardNew
 from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.program_page_delphi import get_fpc_versions
 from brickv.plugin_system.plugins.red.program_page_c import get_gcc_versions
+from brickv.plugin_system.plugins.red.program_page_delphi import get_lazbuild_versions
 from brickv.plugin_system.plugins.red.program_page_java import get_java_versions
 from brickv.plugin_system.plugins.red.program_page_csharp import get_mono_versions
 from brickv.plugin_system.plugins.red.program_page_javascript import get_nodejs_versions
@@ -186,6 +187,7 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
 
         get_fpc_versions(self.script_manager, lambda versions: cb_versions('fpc', versions))
         get_gcc_versions(self.script_manager, lambda versions: cb_versions('gcc', versions))
+        get_lazbuild_versions(self.script_manager, lambda versions: cb_versions('lazbuild', versions))
         get_java_versions(self.script_manager, lambda versions: cb_versions('java', versions))
         get_mono_versions(self.script_manager, lambda versions: cb_versions('mono', versions))
         get_nodejs_versions(self.script_manager, lambda versions: cb_versions('nodejs', versions))

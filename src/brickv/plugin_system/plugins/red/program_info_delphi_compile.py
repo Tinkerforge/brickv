@@ -23,6 +23,7 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QDialog
+from brickv.plugin_system.plugins.red.program_utils import *
 from brickv.plugin_system.plugins.red.ui_program_info_delphi_compile import Ui_ProgramInfoDelphiCompile
 import posixpath
 
@@ -37,12 +38,23 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
         self.program         = program
         self.script_instance = None
 
-        self.rejected.connect(self.cancel_fpcmake_execution)
+        self.rejected.connect(self.cancel_script_execution)
         self.button_make.clicked.connect(lambda: self.execute_fpcmake(None))
         self.button_clean.clicked.connect(lambda: self.execute_fpcmake('clean'))
-        self.button_cancel.clicked.connect(self.cancel_fpcmake_execution)
+        self.button_compile.clicked.connect(lambda: self.execute_lazbuild([]))
+        self.button_recompile_all.clicked.connect(lambda: self.execute_lazbuild(['-B']))
+        self.button_cancel.clicked.connect(self.cancel_script_execution)
         self.button_close.clicked.connect(self.reject)
 
+        build_system_api_name = program.cast_custom_option_value('delphi.build_system', unicode, '<unknown>')
+        build_system          = Constants.get_delphi_build_system(build_system_api_name)
+        build_system_fpcmake  = build_system == Constants.DELPHI_BUILD_SYSTEM_FPCMAKE
+        build_system_lazbuild = build_system == Constants.DELPHI_BUILD_SYSTEM_LAZBUILD
+
+        self.button_make.setVisible(build_system_fpcmake)
+        self.button_clean.setVisible(build_system_fpcmake)
+        self.button_compile.setVisible(build_system_lazbuild)
+        self.button_recompile_all.setVisible(build_system_lazbuild)
         self.button_cancel.setEnabled(False)
 
     def log(self, message, bold=False, pre=False):
@@ -98,7 +110,47 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
                                                                   max_length=1024*1024, redirect_stderr_to_stdout=True,
                                                                   execute_as_user=True)
 
-    def cancel_fpcmake_execution(self):
+    def execute_lazbuild(self, additional_options):
+        self.button_compile.setEnabled(False)
+        self.button_recompile_all.setEnabled(False)
+        self.button_cancel.setEnabled(True)
+
+        # FIXME: it would be better to read the output incremental instead of
+        #        waiting for make to exit and then display it in a burst
+        def cb_lazbuild_helper(result):
+            aborted = self.script_instance.abort
+            self.script_instance = None
+
+            if result != None:
+                for s in result.stdout.rstrip().split('\n'):
+                    self.log(s, pre=True)
+
+                if result.exit_code != 0:
+                    self.log('...error', bold=True)
+                else:
+                    self.log('...done')
+            elif aborted:
+                self.log('...canceled', bold=True)
+            else:
+                self.log('...error', bold=True)
+
+            self.button_compile.setEnabled(True)
+            self.button_recompile_all.setEnabled(True)
+            self.button_cancel.setEnabled(False)
+
+        if len(additional_options):
+            self.log('Executing lazbuild {0}...'.format(' '.join(additional_options)))
+        else:
+            self.log('Executing lazbuild...')
+
+        lazbuild_options  = self.program.cast_custom_option_value_list('delphi.lazbuild_options', unicode, []) + additional_options
+        working_directory = posixpath.join(self.program.root_directory, 'bin', self.program.working_directory)
+
+        self.script_instance = self.script_manager.execute_script('lazbuild_helper', cb_lazbuild_helper, [working_directory] + lazbuild_options,
+                                                                  max_length=1024*1024, redirect_stderr_to_stdout=True,
+                                                                  execute_as_user=True)
+
+    def cancel_script_execution(self):
         script_instance = self.script_instance
 
         if script_instance == None:
@@ -106,6 +158,8 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
 
         self.button_make.setEnabled(True)
         self.button_clean.setEnabled(True)
+        self.button_compile.setEnabled(True)
+        self.button_recompile_all.setEnabled(True)
         self.button_cancel.setEnabled(False)
 
         self.script_manager.abort_script(script_instance)
