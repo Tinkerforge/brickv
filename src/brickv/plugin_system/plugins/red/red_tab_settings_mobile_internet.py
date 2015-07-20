@@ -88,6 +88,8 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         self.pbutton_mi_provider_presets.clicked.connect(self.pbutton_mi_provider_presets_clicked)
         self.pbutton_mi_refresh.clicked.connect(self.pbutton_mi_refresh_clicked)
         self.pbutton_mi_connect.clicked.connect(self.pbutton_mi_connect_clicked)
+        self.chkbox_mi_password.stateChanged.connect(self.chkbox_mi_password_state_changed)
+        self.chkbox_mi_sim_card_pin.stateChanged.connect(self.chkbox_mi_sim_card_pin_state_changed)
         self.status_refresh_timer.timeout.connect(self.status_refresh_timer_timeout)
 
     def tab_on_focus(self):
@@ -120,6 +122,18 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
 
     def tab_destroy(self):
         pass
+
+    def chkbox_mi_password_state_changed(self, state):
+        if state == QtCore.Qt.Checked:
+            self.ledit_mi_password.setEchoMode(QtGui.QLineEdit.Normal)
+        else:
+            self.ledit_mi_password.setEchoMode(QtGui.QLineEdit.Password)
+
+    def chkbox_mi_sim_card_pin_state_changed(self, state):
+        if state == QtCore.Qt.Checked:
+            self.ledit_mi_sim_card_pin.setEchoMode(QtGui.QLineEdit.Normal)
+        else:
+            self.ledit_mi_sim_card_pin.setEchoMode(QtGui.QLineEdit.Password)
 
     def pbutton_mi_provider_presets_clicked(self):
         provider_preset_dialog = REDTabSettingsMobileInternetProviderPresetDialog(self,
