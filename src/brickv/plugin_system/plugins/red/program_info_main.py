@@ -103,6 +103,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.button_refresh.clicked.connect(self.refresh_info)
 
         self.button_start_program.clicked.connect(self.start_program)
+        self.button_exit_process.clicked.connect(self.exit_process)
         self.button_kill_process.clicked.connect(self.kill_process)
         self.button_continue_schedule.clicked.connect(self.continue_schedule)
         self.button_send_stdin_pipe_input.clicked.connect(self.send_stdin_pipe_input)
@@ -366,6 +367,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             self.label_last_scheduler_message.setText('None')
 
         self.set_widget_enabled(self.button_start_program, not any_refresh_in_progress and not process_running)
+        self.set_widget_enabled(self.button_exit_process, not any_refresh_in_progress and process_running)
         self.set_widget_enabled(self.button_kill_process, not any_refresh_in_progress and process_running)
         self.set_widget_enabled(self.button_continue_schedule, not any_refresh_in_progress and scheduler_stopped and self.program.start_mode != REDProgram.START_MODE_NEVER)
 
@@ -497,7 +499,14 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
                                  u'Could not start program [{0}]:\n\n{1}'
                                  .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), e))
 
-    # FIXME: either send SIGINT before SIGKILL, or add a dedicated button for SIGINT
+    def exit_process(self):
+        if self.program.last_spawned_process != None:
+            try:
+                self.program.last_spawned_process.kill(REDProcess.SIGNAL_TERMINATE)
+            except (Error, REDError) as e:
+                QMessageBox.critical(get_main_window(), 'Exit Error',
+                                     u'Could not exit current process of program [{0}]:\n\n{1}'
+                                     .format(self.program.cast_custom_option_value('name', unicode, '<unknown>'), e))
     def kill_process(self):
         if self.program.last_spawned_process != None:
             try:

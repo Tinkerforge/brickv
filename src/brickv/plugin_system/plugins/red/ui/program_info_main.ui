@@ -401,6 +401,13 @@
                     </widget>
                    </item>
                    <item>
+                    <widget class="QPushButton" name="button_exit_process">
+                     <property name="text">
+                      <string>Exit</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
                     <widget class="QPushButton" name="button_kill_process">
                      <property name="text">
                       <string>Kill</string>
@@ -907,6 +914,7 @@
   <tabstop>scroll_area</tabstop>
   <tabstop>button_edit_general</tabstop>
   <tabstop>button_start_program</tabstop>
+  <tabstop>button_exit_process</tabstop>
   <tabstop>button_kill_process</tabstop>
   <tabstop>button_continue_schedule</tabstop>
   <tabstop>button_edit_language</tabstop>
