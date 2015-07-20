@@ -56,14 +56,8 @@ class ProgramInfoJavaScript(ProgramInfo, Ui_ProgramInfoJavaScript):
 
             self.get_executable_versions('nodejs', cb_nodejs_versions)
 
-        self.label_start_mode_title.setVisible(flavor_nodejs)
-        self.label_start_mode.setVisible(flavor_nodejs)
         self.check_show_advanced_options.setVisible(flavor_nodejs)
         self.line.setVisible(flavor_nodejs)
-        self.label_working_directory_title.setVisible(flavor_nodejs and show_advanced_options)
-        self.label_working_directory.setVisible(flavor_nodejs and show_advanced_options)
-        self.label_options_title.setVisible(flavor_nodejs and show_advanced_options)
-        self.label_options.setVisible(flavor_nodejs and show_advanced_options)
 
         # start mode
         start_mode_api_name    = self.program.cast_custom_option_value('javascript.start_mode', unicode, '<unknown>')
@@ -71,20 +65,26 @@ class ProgramInfoJavaScript(ProgramInfo, Ui_ProgramInfoJavaScript):
         start_mode_script_file = start_mode == Constants.JAVASCRIPT_START_MODE_SCRIPT_FILE
         start_mode_command     = start_mode == Constants.JAVASCRIPT_START_MODE_COMMAND
 
+        self.label_start_mode_title.setVisible(flavor_nodejs)
+        self.label_start_mode.setVisible(flavor_nodejs)
         self.label_start_mode.setText(Constants.javascript_start_mode_display_names[start_mode])
-        self.label_script_file_title.setVisible(flavor_nodejs and start_mode_script_file)
-        self.label_script_file.setVisible(flavor_nodejs and start_mode_script_file)
-        self.label_command_title.setVisible(flavor_nodejs and start_mode_command)
-        self.label_command.setVisible(flavor_nodejs and start_mode_command)
 
         # script file
+        self.label_script_file_title.setVisible(flavor_nodejs and start_mode_script_file)
+        self.label_script_file.setVisible(flavor_nodejs and start_mode_script_file)
         self.label_script_file.setText(self.program.cast_custom_option_value('javascript.script_file', unicode, '<unknown>'))
 
         # command
+        self.label_command_title.setVisible(flavor_nodejs and start_mode_command)
+        self.label_command.setVisible(flavor_nodejs and start_mode_command)
         self.label_command.setText(self.program.cast_custom_option_value('javascript.command', unicode, '<unknown>'))
 
         # working directory
+        self.label_working_directory_title.setVisible(flavor_nodejs and show_advanced_options)
+        self.label_working_directory.setVisible(flavor_nodejs and show_advanced_options)
         self.label_working_directory.setText(self.program.working_directory)
 
         # options
+        self.label_options_title.setVisible(flavor_nodejs and show_advanced_options)
+        self.label_options.setVisible(flavor_nodejs and show_advanced_options)
         self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('javascript.options', unicode, [])))

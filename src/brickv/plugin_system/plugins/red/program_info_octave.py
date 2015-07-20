@@ -37,11 +37,6 @@ class ProgramInfoOctave(ProgramInfo, Ui_ProgramInfoOctave):
     def update_ui_state(self):
         show_advanced_options = self.check_show_advanced_options.isChecked()
 
-        self.label_working_directory_title.setVisible(show_advanced_options)
-        self.label_working_directory.setVisible(show_advanced_options)
-        self.label_options_title.setVisible(show_advanced_options)
-        self.label_options.setVisible(show_advanced_options)
-
         # version
         def cb_octave_versions(versions):
             for version in versions:
@@ -59,14 +54,18 @@ class ProgramInfoOctave(ProgramInfo, Ui_ProgramInfoOctave):
         start_mode_script_file = start_mode == Constants.OCTAVE_START_MODE_SCRIPT_FILE
 
         self.label_start_mode.setText(Constants.octave_start_mode_display_names[start_mode])
-        self.label_script_file_title.setVisible(start_mode_script_file)
-        self.label_script_file.setVisible(start_mode_script_file)
 
         # script file
+        self.label_script_file_title.setVisible(start_mode_script_file)
+        self.label_script_file.setVisible(start_mode_script_file)
         self.label_script_file.setText(self.program.cast_custom_option_value('octave.script_file', unicode, '<unknown>'))
 
         # working directory
+        self.label_working_directory_title.setVisible(show_advanced_options)
+        self.label_working_directory.setVisible(show_advanced_options)
         self.label_working_directory.setText(self.program.working_directory)
 
         # options
+        self.label_options_title.setVisible(show_advanced_options)
+        self.label_options.setVisible(show_advanced_options)
         self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('octave.options', unicode, [])))

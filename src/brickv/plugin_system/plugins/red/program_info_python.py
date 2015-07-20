@@ -61,35 +61,35 @@ class ProgramInfoPython(ProgramInfo, Ui_ProgramInfoPython):
         self.label_version_title.setVisible(not start_mode_web_interface)
         self.label_version.setVisible(not start_mode_web_interface)
         self.label_start_mode.setText(Constants.python_start_mode_display_names[start_mode])
-        self.label_script_file_title.setVisible(start_mode_script_file)
-        self.label_script_file.setVisible(start_mode_script_file)
-        self.label_module_name_title.setVisible(start_mode_module_name)
-        self.label_module_name.setVisible(start_mode_module_name)
-        self.label_command_title.setVisible(start_mode_command)
-        self.label_command.setVisible(start_mode_command)
-        self.label_url_title.setVisible(start_mode_web_interface)
-        self.label_url.setVisible(start_mode_web_interface)
         self.line.setVisible(not start_mode_web_interface)
         self.check_show_advanced_options.setVisible(not start_mode_web_interface)
-        self.label_working_directory_title.setVisible(show_advanced_options and not start_mode_web_interface)
-        self.label_working_directory.setVisible(show_advanced_options and not start_mode_web_interface)
-        self.label_options_title.setVisible(show_advanced_options and not start_mode_web_interface)
-        self.label_options.setVisible(show_advanced_options and not start_mode_web_interface)
 
         # script file
+        self.label_script_file_title.setVisible(start_mode_script_file)
+        self.label_script_file.setVisible(start_mode_script_file)
         self.label_script_file.setText(self.program.cast_custom_option_value('python.script_file', unicode, '<unknown>'))
 
         # module name
+        self.label_module_name_title.setVisible(start_mode_module_name)
+        self.label_module_name.setVisible(start_mode_module_name)
         self.label_module_name.setText(self.program.cast_custom_option_value('python.module_name', unicode, '<unknown>'))
 
         # command
+        self.label_command_title.setVisible(start_mode_command)
+        self.label_command.setVisible(start_mode_command)
         self.label_command.setText(self.program.cast_custom_option_value('python.command', unicode, '<unknown>'))
 
         # url
+        self.label_url_title.setVisible(start_mode_web_interface)
+        self.label_url.setVisible(start_mode_web_interface)
         self.label_url.setText(self.url_template.replace('<SERVER>', 'red-brick').replace('<IDENTIFIER>', self.program.identifier))
 
         # working directory
+        self.label_working_directory_title.setVisible(show_advanced_options and not start_mode_web_interface)
+        self.label_working_directory.setVisible(show_advanced_options and not start_mode_web_interface)
         self.label_working_directory.setText(self.program.working_directory)
 
         # options
+        self.label_options_title.setVisible(show_advanced_options and not start_mode_web_interface)
+        self.label_options.setVisible(show_advanced_options and not start_mode_web_interface)
         self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('python.options', unicode, [])))

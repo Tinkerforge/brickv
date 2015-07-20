@@ -39,7 +39,6 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
     # overrides ProgramInfo.update_ui_state
     def update_ui_state(self):
         show_advanced_options = self.check_show_advanced_options.isChecked()
-        compile_from_source   = self.program.cast_custom_option_value('delphi.compile_from_source', bool, False)
 
         # start mode
         start_mode_api_name   = self.program.cast_custom_option_value('delphi.start_mode', unicode, '<unknown>')
@@ -47,26 +46,28 @@ class ProgramInfoDelphi(ProgramInfo, Ui_ProgramInfoDelphi):
         start_mode_executable = start_mode == Constants.DELPHI_START_MODE_EXECUTABLE
 
         self.label_start_mode.setText(Constants.delphi_start_mode_display_names[start_mode])
-        self.label_executable_title.setVisible(start_mode_executable)
-        self.label_executable.setVisible(start_mode_executable)
-        self.label_working_directory_title.setVisible(show_advanced_options)
-        self.label_working_directory.setVisible(show_advanced_options)
-        self.label_make_options_title.setVisible(compile_from_source and show_advanced_options)
-        self.label_make_options.setVisible(compile_from_source and show_advanced_options)
 
         # executable
+        self.label_executable_title.setVisible(start_mode_executable)
+        self.label_executable.setVisible(start_mode_executable)
         self.label_executable.setText(self.program.cast_custom_option_value('delphi.executable', unicode, ''))
 
         # compile from source
+        compile_from_source = self.program.cast_custom_option_value('delphi.compile_from_source', bool, False)
+
         if compile_from_source:
             self.label_compile_from_source.setText('Enabled')
         else:
             self.label_compile_from_source.setText('Disabled')
 
         # working directory
+        self.label_working_directory_title.setVisible(show_advanced_options)
+        self.label_working_directory.setVisible(show_advanced_options)
         self.label_working_directory.setText(self.program.working_directory)
 
         # make options
+        self.label_make_options_title.setVisible(compile_from_source and show_advanced_options and build_system_fpcmake)
+        self.label_make_options.setVisible(compile_from_source and show_advanced_options and build_system_fpcmake)
         self.label_make_options.setText('\n'.join(self.program.cast_custom_option_value_list('delphi.make_options', unicode, [])))
 
     # overrides ProgramInfo.close_all_dialogs

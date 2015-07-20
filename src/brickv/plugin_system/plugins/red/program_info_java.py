@@ -40,13 +40,6 @@ class ProgramInfoJava(ProgramInfo, Ui_ProgramInfoJava):
         show_class_path       = self.check_show_class_path.isChecked()
         show_advanced_options = self.check_show_advanced_options.isChecked()
 
-        self.label_class_path_title.setVisible(show_class_path)
-        self.label_class_path.setVisible(show_class_path)
-        self.label_working_directory_title.setVisible(show_advanced_options)
-        self.label_working_directory.setVisible(show_advanced_options)
-        self.label_options_title.setVisible(show_advanced_options)
-        self.label_options.setVisible(show_advanced_options)
-
         # version
         def cb_java_versions(versions):
             for version in versions:
@@ -65,22 +58,28 @@ class ProgramInfoJava(ProgramInfo, Ui_ProgramInfoJava):
         start_mode_jar_file   = start_mode == Constants.JAVA_START_MODE_JAR_FILE
 
         self.label_start_mode.setText(Constants.java_start_mode_display_names[start_mode])
-        self.label_main_class_title.setVisible(start_mode_main_class)
-        self.label_main_class.setVisible(start_mode_main_class)
-        self.label_jar_file_title.setVisible(start_mode_jar_file)
-        self.label_jar_file.setVisible(start_mode_jar_file)
 
         # main class
+        self.label_main_class_title.setVisible(start_mode_main_class)
+        self.label_main_class.setVisible(start_mode_main_class)
         self.label_main_class.setText(self.program.cast_custom_option_value('java.main_class', unicode, '<unknown>'))
 
         # jar file
+        self.label_jar_file_title.setVisible(start_mode_jar_file)
+        self.label_jar_file.setVisible(start_mode_jar_file)
         self.label_jar_file.setText(self.program.cast_custom_option_value('java.jar_file', unicode, '<unknown>'))
 
         # class path
+        self.label_class_path_title.setVisible(show_class_path)
+        self.label_class_path.setVisible(show_class_path)
         self.label_class_path.setText('\n'.join(self.program.cast_custom_option_value_list('java.class_path', unicode, [])))
 
         # working directory
+        self.label_working_directory_title.setVisible(show_advanced_options)
+        self.label_working_directory.setVisible(show_advanced_options)
         self.label_working_directory.setText(self.program.working_directory)
 
         # options
+        self.label_options_title.setVisible(show_advanced_options)
+        self.label_options.setVisible(show_advanced_options)
         self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('java.options', unicode, [])))

@@ -47,14 +47,10 @@ class ProgramInfoC(ProgramInfo, Ui_ProgramInfoC):
         start_mode_executable = start_mode == Constants.C_START_MODE_EXECUTABLE
 
         self.label_start_mode.setText(Constants.c_start_mode_display_names[start_mode])
-        self.label_executable_title.setVisible(start_mode_executable)
-        self.label_executable.setVisible(start_mode_executable)
-        self.label_working_directory_title.setVisible(show_advanced_options)
-        self.label_working_directory.setVisible(show_advanced_options)
-        self.label_make_options_title.setVisible(compile_from_source and show_advanced_options)
-        self.label_make_options.setVisible(compile_from_source and show_advanced_options)
 
         # executable
+        self.label_executable_title.setVisible(start_mode_executable)
+        self.label_executable.setVisible(start_mode_executable)
         self.label_executable.setText(self.program.cast_custom_option_value('c.executable', unicode, ''))
 
         # compile from source
@@ -64,9 +60,13 @@ class ProgramInfoC(ProgramInfo, Ui_ProgramInfoC):
             self.label_compile_from_source.setText('Disabled')
 
         # working directory
+        self.label_working_directory_title.setVisible(show_advanced_options)
+        self.label_working_directory.setVisible(show_advanced_options)
         self.label_working_directory.setText(self.program.working_directory)
 
         # make options
+        self.label_make_options_title.setVisible(compile_from_source and show_advanced_options)
+        self.label_make_options.setVisible(compile_from_source and show_advanced_options)
         self.label_make_options.setText('\n'.join(self.program.cast_custom_option_value_list('c.make_options', unicode, [])))
 
     # overrides ProgramInfo.close_all_dialogs

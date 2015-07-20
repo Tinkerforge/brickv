@@ -37,11 +37,6 @@ class ProgramInfoVBNET(ProgramInfo, Ui_ProgramInfoVBNET):
     def update_ui_state(self):
         show_advanced_options = self.check_show_advanced_options.isChecked()
 
-        self.label_working_directory_title.setVisible(show_advanced_options)
-        self.label_working_directory.setVisible(show_advanced_options)
-        self.label_options_title.setVisible(show_advanced_options)
-        self.label_options.setVisible(show_advanced_options)
-
         # version
         def cb_mono_versions(versions):
             for version in versions:
@@ -59,14 +54,18 @@ class ProgramInfoVBNET(ProgramInfo, Ui_ProgramInfoVBNET):
         start_mode_executable = start_mode == Constants.VBNET_START_MODE_EXECUTABLE
 
         self.label_start_mode.setText(Constants.vbnet_start_mode_display_names[start_mode])
-        self.label_executable_title.setVisible(start_mode_executable)
-        self.label_executable.setVisible(start_mode_executable)
 
         # executable
+        self.label_executable_title.setVisible(start_mode_executable)
+        self.label_executable.setVisible(start_mode_executable)
         self.label_executable.setText(self.program.cast_custom_option_value('vbnet.executable', unicode, '<unknown>'))
 
         # working directory
+        self.label_working_directory_title.setVisible(show_advanced_options)
+        self.label_working_directory.setVisible(show_advanced_options)
         self.label_working_directory.setText(self.program.working_directory)
 
         # options
+        self.label_options_title.setVisible(show_advanced_options)
+        self.label_options.setVisible(show_advanced_options)
         self.label_options.setText('\n'.join(self.program.cast_custom_option_value_list('vbnet.options', unicode, [])))
