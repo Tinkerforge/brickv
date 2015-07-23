@@ -714,7 +714,14 @@ class ProgramPageUpload(ProgramPage, Ui_ProgramPageUpload):
                 self.upload_done()
                 return
 
-            for s in result.stdout.rstrip().split('\n'):
+            stdout_old = result.stdout
+            stdout_new = stdout_old.replace('\n\n\n', '\n')
+
+            while stdout_old != stdout_new:
+                stdout_old = stdout_new
+                stdout_new = stdout_old.replace('\n\n\n', '\n')
+
+            for s in stdout_new.rstrip().split('\n'):
                 self.log(s, pre=True)
 
             if result.exit_code != 0:

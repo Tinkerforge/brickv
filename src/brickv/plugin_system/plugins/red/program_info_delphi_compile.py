@@ -122,7 +122,14 @@ class ProgramInfoDelphiCompile(QDialog, Ui_ProgramInfoDelphiCompile):
             self.script_instance = None
 
             if result != None:
-                for s in result.stdout.rstrip().split('\n'):
+                stdout_old = result.stdout
+                stdout_new = stdout_old.replace('\n\n\n', '\n')
+
+                while stdout_old != stdout_new:
+                    stdout_old = stdout_new
+                    stdout_new = stdout_old.replace('\n\n\n', '\n')
+
+                for s in stdout_new.rstrip().split('\n'):
                     self.log(s, pre=True)
 
                 if result.exit_code != 0:
