@@ -26,8 +26,10 @@ import functools
 import weakref
 import threading
 import time
-from brickv.bindings.ip_connection import Error
+
 from PyQt4 import QtCore
+
+from brickv.bindings.ip_connection import Error
 from brickv.bindings.brick_red import BrickRED
 from brickv.object_creator import create_object_in_qt_main_thread
 from brickv.utils import get_main_window
@@ -1248,48 +1250,13 @@ def create_directory(session, name, flags, permissions, uid, gid):
         raise REDError('Could not create directory', error_code)
 
 
-class REDProcess(REDObject):
-    SIGNAL_INTERRUPT = BrickRED.PROCESS_SIGNAL_INTERRUPT
-    SIGNAL_QUIT      = BrickRED.PROCESS_SIGNAL_QUIT
-    SIGNAL_ABORT     = BrickRED.PROCESS_SIGNAL_ABORT
-    SIGNAL_KILL      = BrickRED.PROCESS_SIGNAL_KILL
-    SIGNAL_USER1     = BrickRED.PROCESS_SIGNAL_USER1
-    SIGNAL_USER2     = BrickRED.PROCESS_SIGNAL_USER2
-    SIGNAL_TERMINATE = BrickRED.PROCESS_SIGNAL_TERMINATE
-    SIGNAL_CONTINUE  = BrickRED.PROCESS_SIGNAL_CONTINUE
-    SIGNAL_STOP      = BrickRED.PROCESS_SIGNAL_STOP
-
-    STATE_UNKNOWN = BrickRED.PROCESS_STATE_UNKNOWN
-    STATE_RUNNING = BrickRED.PROCESS_STATE_RUNNING
-    STATE_ERROR   = BrickRED.PROCESS_STATE_ERROR
-    STATE_EXITED  = BrickRED.PROCESS_STATE_EXITED
-    STATE_KILLED  = BrickRED.PROCESS_STATE_KILLED
-    STATE_STOPPED = BrickRED.PROCESS_STATE_STOPPED
-
-    # possible exit code values for error state
-    E_INTERNAL_ERROR = 125
-    E_CANNOT_EXECUTE = 126
-    E_DOES_NOT_EXIST = 127
-
+class REDProcessBase(REDObject):
     _qtcb_state_changed = QtCore.pyqtSignal(int, int, int)
 
-    def __repr__(self):
-        return '<REDProcess object_id: {0}>'.format(self.object_id)
-
     def _initialize(self):
-        self._executable        = None
-        self._arguments         = None
-        self._environment       = None
-        self._working_directory = None
-        self._pid               = None
-        self._uid               = None
-        self._gid               = None
-        self._stdin             = None
-        self._stdout            = None
-        self._stderr            = None
-        self._state             = None
-        self._timestamp         = None
-        self._exit_code         = None
+        self._state     = None
+        self._timestamp = None
+        self._exit_code = None
 
         self.state_changed_callback = None
 
@@ -1336,6 +1303,71 @@ class REDProcess(REDObject):
             return
 
         self._cb_state_changed(self._state, self._timestamp, self._exit_code)
+
+    def update_state(self):
+        if self.object_id is None:
+            raise RuntimeError('Cannot update unattached process object')
+
+        try:
+            error_code, state, timestamp, exit_code = self._session._brick.get_process_state(self.object_id)
+        except Error:
+            self._session.increase_error_count()
+            raise
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get state of process object {0}'.format(self.object_id), error_code)
+
+        self._state     = state
+        self._timestamp = timestamp
+        self._exit_code = exit_code
+
+    @property
+    def state(self):     return self._state
+    @property
+    def timestamp(self): return self._timestamp
+    @property
+    def exit_code(self): return self._exit_code
+
+
+class REDProcess(REDProcessBase):
+    SIGNAL_INTERRUPT = BrickRED.PROCESS_SIGNAL_INTERRUPT
+    SIGNAL_QUIT      = BrickRED.PROCESS_SIGNAL_QUIT
+    SIGNAL_ABORT     = BrickRED.PROCESS_SIGNAL_ABORT
+    SIGNAL_KILL      = BrickRED.PROCESS_SIGNAL_KILL
+    SIGNAL_USER1     = BrickRED.PROCESS_SIGNAL_USER1
+    SIGNAL_USER2     = BrickRED.PROCESS_SIGNAL_USER2
+    SIGNAL_TERMINATE = BrickRED.PROCESS_SIGNAL_TERMINATE
+    SIGNAL_CONTINUE  = BrickRED.PROCESS_SIGNAL_CONTINUE
+    SIGNAL_STOP      = BrickRED.PROCESS_SIGNAL_STOP
+
+    STATE_UNKNOWN = BrickRED.PROCESS_STATE_UNKNOWN
+    STATE_RUNNING = BrickRED.PROCESS_STATE_RUNNING
+    STATE_ERROR   = BrickRED.PROCESS_STATE_ERROR
+    STATE_EXITED  = BrickRED.PROCESS_STATE_EXITED
+    STATE_KILLED  = BrickRED.PROCESS_STATE_KILLED
+    STATE_STOPPED = BrickRED.PROCESS_STATE_STOPPED
+
+    # possible exit code values for error state
+    E_INTERNAL_ERROR = 125
+    E_CANNOT_EXECUTE = 126
+    E_DOES_NOT_EXIST = 127
+
+    def __repr__(self):
+        return '<REDProcess object_id: {0}>'.format(self.object_id)
+
+    def _initialize(self):
+        REDProcessBase._initialize(self)
+
+        self._executable        = None
+        self._arguments         = None
+        self._environment       = None
+        self._working_directory = None
+        self._pid               = None
+        self._uid               = None
+        self._gid               = None
+        self._stdin             = None
+        self._stdout            = None
+        self._stderr            = None
 
     def update(self):
         self.update_command()
@@ -1404,23 +1436,6 @@ class REDProcess(REDObject):
         self._stdin  = stdin
         self._stdout = stdout
         self._stderr = stderr
-
-    def update_state(self):
-        if self.object_id is None:
-            raise RuntimeError('Cannot update unattached process object')
-
-        try:
-            error_code, state, timestamp, exit_code = self._session._brick.get_process_state(self.object_id)
-        except Error:
-            self._session.increase_error_count()
-            raise
-
-        if error_code != REDError.E_SUCCESS:
-            raise REDError('Could not get state of process object {0}'.format(self.object_id), error_code)
-
-        self._state     = state
-        self._timestamp = timestamp
-        self._exit_code = exit_code
 
     def spawn(self, executable, arguments, environment, working_directory,
               uid, gid, stdin, stdout, stderr):
@@ -1505,12 +1520,14 @@ class REDProcess(REDObject):
     def stdout(self):            return self._stdout
     @property
     def stderr(self):            return self._stderr
-    @property
-    def state(self):             return self._state
-    @property
-    def timestamp(self):         return self._timestamp
-    @property
-    def exit_code(self):         return self._exit_code
+
+
+class REDLiteProcess(REDProcessBase):
+    def __repr__(self):
+        return '<REDLiteProcess object_id: {0}>'.format(self.object_id)
+
+    def update(self):
+        self.update_state()
 
 
 def get_processes(session):
@@ -1676,7 +1693,9 @@ class REDProgram(REDProgramBase):
     SCHEDULER_STATE_RUNNING = BrickRED.PROGRAM_SCHEDULER_STATE_RUNNING
 
     _qtcb_scheduler_state_changed = QtCore.pyqtSignal()
+    _qtcb_lite_scheduler_state_changed = QtCore.pyqtSignal()
     _qtcb_process_spawned = QtCore.pyqtSignal()
+    _qtcb_lite_process_spawned = QtCore.pyqtSignal()
 
     def __repr__(self):
         return '<REDProgram object_id: {0}, identifier: {1}>'.format(self.object_id, self._identifier)
@@ -1684,55 +1703,78 @@ class REDProgram(REDProgramBase):
     def _initialize(self):
         REDProgramBase._initialize(self)
 
-        self._root_directory         = None
-        self._executable             = None
-        self._arguments              = None
-        self._environment            = None
-        self._working_directory      = None
-        self._stdin_redirection      = None
-        self._stdin_file_name        = None
-        self._stdout_redirection     = None
-        self._stdout_file_name       = None
-        self._stderr_redirection     = None
-        self._stderr_file_name       = None
-        self._start_mode             = None
-        self._continue_after_error   = None
-        self._start_interval         = None
-        self._start_fields           = None
-        self._scheduler_state        = None
-        self._scheduler_timestamp    = None
-        self._scheduler_message      = None
-        self._last_spawned_process   = None
-        self._last_spawned_timestamp = None
+        self._root_directory            = None
+        self._executable                = None
+        self._arguments                 = None
+        self._environment               = None
+        self._working_directory         = None
+        self._stdin_redirection         = None
+        self._stdin_file_name           = None
+        self._stdout_redirection        = None
+        self._stdout_file_name          = None
+        self._stderr_redirection        = None
+        self._stderr_file_name          = None
+        self._start_mode                = None
+        self._continue_after_error      = None
+        self._start_interval            = None
+        self._start_fields              = None
+        self._scheduler_state           = None
+        self._lite_scheduler_state      = None
+        self._scheduler_timestamp       = None
+        self._scheduler_message         = None
+        self._last_spawned_process      = None
+        self._last_spawned_lite_process = None
+        self._last_spawned_timestamp    = None
 
-        self.enable_callbacks                 = False
-        self.scheduler_state_changed_callback = None
-        self.process_spawned_callback         = None
+        self.enable_callbacks                      = False
+        self.scheduler_state_changed_callback      = None
+        self.lite_scheduler_state_changed_callback = None # not affected by enable_callbacks
+        self.process_spawned_callback              = None
+        self.lite_process_spawned_callback         = None # not affected by enable_callbacks
 
-        self._cb_scheduler_state_changed_emit_cookie = None
-        self._cb_process_spawned_emit_cookie         = None
+        self._cb_scheduler_state_changed_emit_cookie      = None
+        self._cb_lite_scheduler_state_changed_emit_cookie = None
+        self._cb_process_spawned_emit_cookie              = None
+        self._cb_lite_process_spawned_emit_cookie         = None
 
     def _attach_callbacks(self):
         self._qtcb_scheduler_state_changed.connect(self._cb_scheduler_state_changed, QtCore.Qt.QueuedConnection)
         self._cb_scheduler_state_changed_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED,
                                                                                           self._cb_scheduler_state_changed_emit)
 
+        self._qtcb_lite_scheduler_state_changed.connect(self._cb_lite_scheduler_state_changed, QtCore.Qt.QueuedConnection)
+        self._cb_lite_scheduler_state_changed_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED,
+                                                                                              self._cb_lite_scheduler_state_changed_emit)
+
         self._qtcb_process_spawned.connect(self._cb_process_spawned, QtCore.Qt.QueuedConnection)
         self._cb_process_spawned_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
                                                                                  self._cb_process_spawned_emit)
+
+        self._qtcb_lite_process_spawned.connect(self._cb_lite_process_spawned, QtCore.Qt.QueuedConnection)
+        self._cb_lite_process_spawned_emit_cookie = self._session._brick.add_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
+                                                                                      self._cb_lite_process_spawned_emit)
 
     def _detach_callbacks(self):
         self._qtcb_scheduler_state_changed.disconnect(self._cb_scheduler_state_changed)
         self._session._brick.remove_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED,
                                              self._cb_scheduler_state_changed_emit_cookie)
 
+        self._qtcb_lite_scheduler_state_changed.disconnect(self._cb_lite_scheduler_state_changed)
+        self._session._brick.remove_callback(BrickRED.CALLBACK_PROGRAM_SCHEDULER_STATE_CHANGED,
+                                             self._cb_lite_scheduler_state_changed_emit_cookie)
+
         self._qtcb_process_spawned.disconnect(self._cb_process_spawned)
         self._session._brick.remove_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
                                              self._cb_process_spawned_emit_cookie)
 
+        self._qtcb_lite_process_spawned.disconnect(self._cb_lite_process_spawned)
+        self._session._brick.remove_callback(BrickRED.CALLBACK_PROGRAM_PROCESS_SPAWNED,
+                                             self._cb_lite_process_spawned_emit_cookie)
 
-        self._cb_scheduler_state_changed_emit_cookie = None
-        self._cb_process_spawned_emit_cookie         = None
+        self._cb_scheduler_state_changed_emit_cookie      = None
+        self._cb_lite_scheduler_state_changed_emit_cookie = None
+        self._cb_process_spawned_emit_cookie              = None
+        self._cb_lite_process_spawned_emit_cookie         = None
 
     def _cb_scheduler_state_changed_emit(self, program_id):
         if not self.enable_callbacks or self.object_id != program_id:
@@ -1769,6 +1811,38 @@ class REDProgram(REDProgramBase):
 
         if scheduler_state_changed_callback != None:
             scheduler_state_changed_callback(self)
+
+    def _cb_lite_scheduler_state_changed_emit(self, program_id):
+        if self.object_id != program_id:
+            return
+
+        # cannot directly use emit function as callback functions, because this
+        # triggers a segfault on the second call for some unknown reason. adding
+        # a method in between helps
+        self._qtcb_lite_scheduler_state_changed.emit()
+
+    def _cb_lite_scheduler_state_changed(self):
+        try:
+            error_code, state, timestamp, message_string_id = self._session._brick.get_program_scheduler_state(self.object_id, self._session._session_id)
+        except Error:
+            self._session.increase_error_count()
+            return
+
+        if error_code != REDError.E_SUCCESS:
+            return
+
+        try:
+            self._session._brick.release_object_unchecked(message_string_id, self._session._session_id)
+        except:
+            # just report IPConnection-level error, but don't re-raise it
+            self._session.increase_error_count()
+
+        self._lite_scheduler_state = state
+
+        lite_scheduler_state_changed_callback = self.lite_scheduler_state_changed_callback
+
+        if lite_scheduler_state_changed_callback != None:
+            lite_scheduler_state_changed_callback(self)
 
     def _cb_process_spawned_emit(self, program_id):
         if not self.enable_callbacks or self.object_id != program_id:
@@ -1808,6 +1882,44 @@ class REDProgram(REDProgramBase):
         if self._last_spawned_process.state != REDProcess.STATE_RUNNING:
             self._last_spawned_process._fake_state_change_callback()
 
+    def _cb_lite_process_spawned_emit(self, program_id):
+        if self.object_id != program_id:
+            return
+
+        # cannot directly use emit function as callback functions, because this
+        # triggers a segfault on the second call for some unknown reason. adding
+        # a method in between helps
+        self._qtcb_lite_process_spawned.emit()
+
+    def _cb_lite_process_spawned(self):
+        try:
+            error_code, process_id, timestamp = self._session._brick.get_last_spawned_program_process(self.object_id, self._session._session_id)
+        except Error:
+            self._session.increase_error_count()
+            return
+
+        if error_code != REDError.E_SUCCESS:
+            return
+
+        try:
+            lite_process = _attach_or_release(self._session, REDLiteProcess, process_id)
+        except:
+            lite_process = None
+
+        self._last_spawned_lite_process = lite_process
+        self._last_spawned_timestamp    = timestamp
+
+        if self._last_spawned_lite_process == None:
+            return
+
+        lite_process_spawned_callback = self.lite_process_spawned_callback
+
+        if lite_process_spawned_callback != None:
+            lite_process_spawned_callback(self)
+
+        if self._last_spawned_lite_process.state != REDProcess.STATE_RUNNING:
+            self._last_spawned_lite_process._fake_state_change_callback()
+
     def update(self):
         self.update_identifier()
         self.update_root_directory()
@@ -1816,6 +1928,7 @@ class REDProgram(REDProgramBase):
         self.update_schedule()
         self.update_scheduler_state()
         self.update_last_spawned_process()
+        self.update_last_spawned_lite_process()
         self.update_custom_options()
 
     def update_root_directory(self):
@@ -1948,9 +2061,10 @@ class REDProgram(REDProgramBase):
 
         message = _attach_or_release(self._session, REDString, message_string_id)
 
-        self._scheduler_state     = state
-        self._scheduler_timestamp = timestamp
-        self._scheduler_message   = message
+        self._scheduler_state      = state
+        self._lite_scheduler_state = state
+        self._scheduler_timestamp  = timestamp
+        self._scheduler_message    = message
 
     def update_last_spawned_process(self):
         if self.object_id is None:
@@ -1981,6 +2095,36 @@ class REDProgram(REDProgramBase):
 
         if self._last_spawned_process != None:
             self._last_spawned_process.state_changed_callback = state_changed_callback
+
+    def update_last_spawned_lite_process(self):
+        if self.object_id is None:
+            raise RuntimeError('Cannot update unattached program object')
+
+        if self._last_spawned_lite_process != None:
+            state_changed_callback = self._last_spawned_lite_process.state_changed_callback
+        else:
+            state_changed_callback = None
+
+        try:
+            error_code, process_id, timestamp = self._session._brick.get_last_spawned_program_process(self.object_id, self._session._session_id)
+        except Error:
+            self._session.increase_error_count()
+            raise
+
+        if error_code == REDError.E_DOES_NOT_EXIST:
+            self._last_spawned_lite_process = None
+            self._last_spawned_timestamp    = None
+
+            return
+
+        if error_code != REDError.E_SUCCESS:
+            raise REDError('Could not get last spawned process of program object {0}'.format(self.object_id), error_code)
+
+        self._last_spawned_lite_process = _attach_or_release(self._session, REDLiteProcess, process_id)
+        self._last_spawned_timestamp    = timestamp
+
+        if self._last_spawned_lite_process != None:
+            self._last_spawned_lite_process.state_changed_callback = state_changed_callback
 
     def define(self, identifier):
         self.release()
@@ -2170,45 +2314,49 @@ class REDProgram(REDProgramBase):
             raise REDError('Could not start program object {0} now'.format(self.object_id), error_code)
 
     @property
-    def root_directory(self):         return _red_string_to_unicode(self._root_directory)
+    def root_directory(self):            return _red_string_to_unicode(self._root_directory)
     @property
-    def executable(self):             return _red_string_to_unicode(self._executable)
+    def executable(self):                return _red_string_to_unicode(self._executable)
     @property
-    def arguments(self):              return self._arguments
+    def arguments(self):                 return self._arguments
     @property
-    def environment(self):            return self._environment
+    def environment(self):               return self._environment
     @property
-    def working_directory(self):      return _red_string_to_unicode(self._working_directory)
+    def working_directory(self):         return _red_string_to_unicode(self._working_directory)
     @property
-    def stdin_redirection(self):      return self._stdin_redirection
+    def stdin_redirection(self):         return self._stdin_redirection
     @property
-    def stdin_file_name(self):        return _red_string_to_unicode(self._stdin_file_name)
+    def stdin_file_name(self):           return _red_string_to_unicode(self._stdin_file_name)
     @property
-    def stdout_redirection(self):     return self._stdout_redirection
+    def stdout_redirection(self):        return self._stdout_redirection
     @property
-    def stdout_file_name(self):       return _red_string_to_unicode(self._stdout_file_name)
+    def stdout_file_name(self):          return _red_string_to_unicode(self._stdout_file_name)
     @property
-    def stderr_redirection(self):     return self._stderr_redirection
+    def stderr_redirection(self):        return self._stderr_redirection
     @property
-    def stderr_file_name(self):       return _red_string_to_unicode(self._stderr_file_name)
+    def stderr_file_name(self):          return _red_string_to_unicode(self._stderr_file_name)
     @property
-    def start_mode(self):             return self._start_mode
+    def start_mode(self):                return self._start_mode
     @property
-    def continue_after_error(self):   return self._continue_after_error
+    def continue_after_error(self):      return self._continue_after_error
     @property
-    def start_interval(self):         return self._start_interval
+    def start_interval(self):            return self._start_interval
     @property
-    def start_fields(self):           return _red_string_to_unicode(self._start_fields)
+    def start_fields(self):              return _red_string_to_unicode(self._start_fields)
     @property
-    def scheduler_state(self):        return self._scheduler_state
+    def scheduler_state(self):           return self._scheduler_state
     @property
-    def scheduler_timestamp(self):    return self._scheduler_timestamp
+    def lite_scheduler_state(self):      return self._lite_scheduler_state
     @property
-    def scheduler_message(self):      return _red_string_to_unicode(self._scheduler_message)
+    def scheduler_timestamp(self):       return self._scheduler_timestamp
     @property
-    def last_spawned_process(self):   return self._last_spawned_process
+    def scheduler_message(self):         return _red_string_to_unicode(self._scheduler_message)
     @property
-    def last_spawned_timestamp(self): return self._last_spawned_timestamp
+    def last_spawned_process(self):      return self._last_spawned_process
+    @property
+    def last_spawned_lite_process(self): return self._last_spawned_lite_process
+    @property
+    def last_spawned_timestamp(self):    return self._last_spawned_timestamp
 
 
 class REDLiteProgram(REDProgramBase):

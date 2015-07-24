@@ -66,7 +66,8 @@ from brickv.async_call import async_call
 from brickv.utils import get_main_window, get_home_path
 
 class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
-    name_changed = pyqtSignal()
+    name_changed = pyqtSignal(object)
+    status_changed = pyqtSignal(object)
 
     def __init__(self, session, script_manager, image_version, executable_versions, program):
         QWidget.__init__(self)
@@ -82,11 +83,16 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
 
         self.last_upload_files_wizard_directory = get_home_path()
 
-        self.program.scheduler_state_changed_callback = self.scheduler_state_changed
-        self.program.process_spawned_callback         = self.process_spawned
+        self.program.scheduler_state_changed_callback      = self.scheduler_state_changed
+        self.program.lite_scheduler_state_changed_callback = self.lite_scheduler_state_changed
+        self.program.process_spawned_callback              = self.process_spawned
+        self.program.lite_process_spawned_callback         = self.lite_process_spawned
 
         if self.program.last_spawned_process != None:
             self.program.last_spawned_process.state_changed_callback = self.process_state_changed
+
+        if self.program.last_spawned_lite_process != None:
+            self.program.last_spawned_lite_process.state_changed_callback = self.lite_process_state_changed
 
         self.first_show_event            = True
         self.tab_is_alive                = True
@@ -192,13 +198,24 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
     def scheduler_state_changed(self, program):
         self.update_ui_state()
 
+    def lite_scheduler_state_changed(self, program):
+        self.status_changed.emit(self.program)
+
     def process_spawned(self, program):
         self.program.last_spawned_process.state_changed_callback = self.process_state_changed
 
         self.update_ui_state()
 
+    def lite_process_spawned(self, program):
+        self.program.last_spawned_lite_process.state_changed_callback = self.lite_process_state_changed
+
+        self.status_changed.emit(self.program)
+
     def process_state_changed(self, process):
         self.update_ui_state()
+
+    def lite_process_state_changed(self, process):
+        self.status_changed.emit(self.program)
 
     def close_all_dialogs(self):
         self.tab_is_alive = False
@@ -580,7 +597,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         if self.edit_general_wizard.exec_() == QDialog.Accepted:
             page.apply_program_changes()
             self.refresh_info()
-            self.name_changed.emit()
+            self.name_changed.emit(self.program)
 
         self.edit_general_wizard = None
 

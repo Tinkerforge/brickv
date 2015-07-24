@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt, QTimer
-from PyQt4.QtGui import QApplication, QMessageBox, QListWidgetItem
+from PyQt4.QtGui import QApplication, QMessageBox, QTreeWidgetItem
 from brickv.plugin_system.plugins.red.red_tab import REDTab
 from brickv.plugin_system.plugins.red.ui_red_tab_program import Ui_REDTabProgram
 from brickv.plugin_system.plugins.red.api import *
@@ -70,9 +70,12 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
         self.refresh_in_progress = False
         self.new_program_wizard  = None
 
-        self.splitter.setSizes([150, 400])
-        self.list_programs.itemSelectionChanged.connect(self.update_ui_state)
-        self.button_refresh.clicked.connect(self.refresh_program_list)
+        self.splitter.setSizes([175, 400])
+        self.tree_programs.setColumnWidth(0, 150)
+        self.tree_programs.setColumnWidth(1, 50)
+
+        self.tree_programs.itemSelectionChanged.connect(self.update_ui_state)
+        self.button_refresh.clicked.connect(self.refresh_program_tree)
         self.button_new.clicked.connect(self.show_new_program_wizard)
         self.button_delete.clicked.connect(self.purge_selected_program)
 
@@ -82,7 +85,7 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
         if self.first_tab_on_focus:
             self.first_tab_on_focus = False
 
-            QTimer.singleShot(1, self.refresh_program_list)
+            QTimer.singleShot(1, self.refresh_program_tree)
             QTimer.singleShot(1, self.refresh_executable_versions)
 
     def tab_off_focus(self):
@@ -113,29 +116,31 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
             self.button_refresh.setEnabled(True)
             self.button_new.setEnabled(True)
 
-            has_selection = len(self.list_programs.selectedItems()) > 0
+            has_selection = len(self.tree_programs.selectedItems()) > 0
 
-            if not has_selection and self.list_programs.count() > 0:
-                self.list_programs.item(0).setSelected(True)
+            if not has_selection and self.tree_programs.topLevelItemCount() > 0:
+                self.tree_programs.topLevelItem(0).setSelected(True)
                 has_selection = True
 
             if has_selection:
-                row = self.list_programs.row(self.list_programs.selectedItems()[0])
-                self.stacked_container.setCurrentIndex(row + 1)
+                index = self.tree_programs.indexOfTopLevelItem(self.tree_programs.selectedItems()[0])
+                self.stacked_container.setCurrentIndex(index + 1)
 
             self.button_delete.setEnabled(has_selection)
 
-    def add_program_to_list(self, program):
+    def add_program_to_tree(self, program):
         program_info = ProgramInfoMain(self.session, self.script_manager, self.image_version, self.executable_versions, program)
-        program_info.name_changed.connect(self.refresh_program_names)
+        program_info.name_changed.connect(self.refresh_program_name)
+        program_info.status_changed.connect(self.refresh_program_status)
 
-        item = QListWidgetItem(program.cast_custom_option_value('name', unicode, '<unknown>'))
-        item.setData(Qt.UserRole, program_info)
+        item = QTreeWidgetItem([program.cast_custom_option_value('name', unicode, '<unknown>'),
+                                get_program_short_status(program)])
+        item.setData(0, Qt.UserRole, program_info)
 
-        self.list_programs.addItem(item)
+        self.tree_programs.addTopLevelItem(item)
         self.stacked_container.addWidget(program_info)
 
-    def refresh_program_list(self):
+    def refresh_program_tree(self):
         def refresh_async():
             return get_programs(self.session)
 
@@ -152,7 +157,7 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
 
             for first_upload in sorted(sorted_programs.keys()):
                 for identifier in sorted(sorted_programs[first_upload].keys()):
-                    self.add_program_to_list(sorted_programs[first_upload][identifier])
+                    self.add_program_to_tree(sorted_programs[first_upload][identifier])
 
             self.refresh_in_progress = False
             self.update_ui_state()
@@ -163,7 +168,7 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
 
         self.refresh_in_progress = True
         self.update_ui_state()
-        self.list_programs.clear()
+        self.tree_programs.clear()
         QApplication.processEvents()
 
         # move help widget to front so the other widgets wont show and update during removal
@@ -175,11 +180,20 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
 
         async_call(refresh_async, None, cb_success, cb_error)
 
-    def refresh_program_names(self):
-        for i in range(self.list_programs.count()):
-            item = self.list_programs.item(i)
-            program = item.data(Qt.UserRole).program
-            item.setText(program.cast_custom_option_value('name', unicode, '<unknown>'))
+    def refresh_program_name(self, program):
+        for i in range(self.tree_programs.topLevelItemCount()):
+            item = self.tree_programs.topLevelItem(i)
+
+            if item.data(0, Qt.UserRole).program == program:
+                item.setText(0, program.cast_custom_option_value('name', unicode, '<unknown>'))
+
+    def refresh_program_status(self, program):
+        print 'refresh_program_status'
+        for i in range(self.tree_programs.topLevelItemCount()):
+            item = self.tree_programs.topLevelItem(i)
+
+            if item.data(0, Qt.UserRole).program == program:
+                item.setText(1, get_program_short_status(program))
 
     def refresh_executable_versions(self):
         def cb_versions(executable_name, versions):
@@ -211,8 +225,8 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
 
         identifiers = []
 
-        for i in range(self.list_programs.count()):
-            identifiers.append(self.list_programs.item(i).data(Qt.UserRole).program.identifier)
+        for i in range(self.tree_programs.topLevelItemCount()):
+            identifiers.append(self.tree_programs.topLevelItem(i).data(0, Qt.UserRole).program.identifier)
 
         context = ProgramWizardContext(self.session, identifiers, self.script_manager, self.image_version, self.executable_versions)
 
@@ -221,8 +235,11 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
         self.new_program_wizard.exec_()
 
         if self.new_program_wizard.upload_successful:
-            self.add_program_to_list(self.new_program_wizard.program)
-            self.list_programs.item(self.list_programs.count() - 1).setSelected(True)
+            self.add_program_to_tree(self.new_program_wizard.program)
+            self.tree_programs.topLevelItem(self.tree_programs.topLevelItemCount() - 1).setSelected(True)
+
+            for i in reversed(range(self.tree_programs.topLevelItemCount() - 1)):
+                self.tree_programs.topLevelItem(i).setSelected(False)
 
         if self.tab_is_alive:
             self.new_program_wizard = None
@@ -233,12 +250,12 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
             self.button_new.setEnabled(True)
 
     def purge_selected_program(self):
-        selected_items = self.list_programs.selectedItems()
+        selected_items = self.tree_programs.selectedItems()
 
         if len(selected_items) == 0:
             return
 
-        program_info = selected_items[0].data(Qt.UserRole)
+        program_info = selected_items[0].data(0, Qt.UserRole)
         program      = program_info.program
         name         = program.cast_custom_option_value('name', unicode, '<unknown>')
         button       = QMessageBox.question(get_main_window(), 'Delete Program',
@@ -248,7 +265,8 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
         if not self.tab_is_alive or button != QMessageBox.Ok:
             return
 
-        program_info.name_changed.disconnect(self.refresh_program_names)
+        program_info.name_changed.disconnect(self.refresh_program_name)
+        program_info.status_changed.disconnect(self.refresh_program_status)
 
         try:
             program.purge() # FIXME: async_call
@@ -258,5 +276,5 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
             return
 
         self.stacked_container.removeWidget(program_info)
-        self.list_programs.takeItem(self.list_programs.row(selected_items[0]))
+        self.tree_programs.takeTopLevelItem(self.tree_programs.indexOfTopLevelItem(selected_items[0]))
         self.update_ui_state()

@@ -24,9 +24,6 @@
      </property>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QListWidget" name="list_programs"/>
-       </item>
        <item row="3" column="0">
         <widget class="QPushButton" name="button_new">
          <property name="text">
@@ -61,6 +58,29 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="0">
+        <widget class="QTreeWidget" name="tree_programs">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="rootIsDecorated">
+          <bool>false</bool>
+         </property>
+         <property name="uniformRowHeights">
+          <bool>true</bool>
+         </property>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Status</string>
+          </property>
+         </column>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QStackedWidget" name="stacked_container">
@@ -87,7 +107,7 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>list_programs</tabstop>
+  <tabstop>tree_programs</tabstop>
   <tabstop>button_refresh</tabstop>
   <tabstop>button_new</tabstop>
   <tabstop>button_delete</tabstop>

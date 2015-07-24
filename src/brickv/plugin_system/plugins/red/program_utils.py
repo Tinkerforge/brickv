@@ -1466,3 +1466,32 @@ def get_file_display_size(size):
         return '%.1f kiB' % (size / 1024.0)
     else:
         return '%.1f MiB' % (size / 1048576.0)
+
+
+def get_program_short_status(program):
+    process = program.last_spawned_lite_process
+
+    if process != None:
+        if process.state == REDProcess.STATE_RUNNING:
+            return 'Running'
+        elif process.state == REDProcess.STATE_ERROR:
+            if program.lite_scheduler_state == REDProgram.SCHEDULER_STATE_RUNNING:
+                return 'Scheduled'
+            else:
+                return 'Error'
+        elif process.state == REDProcess.STATE_EXITED:
+            if program.lite_scheduler_state == REDProgram.SCHEDULER_STATE_RUNNING:
+                return 'Scheduled'
+            else:
+                return 'Exited'
+        elif process.state == REDProcess.STATE_KILLED:
+            if program.lite_scheduler_state == REDProgram.SCHEDULER_STATE_RUNNING:
+                return 'Scheduled'
+            else:
+                return 'Killed'
+        elif process.state == REDProcess.STATE_STOPPED:
+            return 'Stopped'
+        else:
+            return 'Unknown'
+    else:
+        return 'Virgin'
