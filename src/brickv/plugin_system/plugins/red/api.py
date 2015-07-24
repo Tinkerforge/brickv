@@ -2211,9 +2211,9 @@ class REDProgram(REDProgramBase):
     def last_spawned_timestamp(self): return self._last_spawned_timestamp
 
 
-class REDSimpleProgram(REDProgramBase):
+class REDLiteProgram(REDProgramBase):
     def __repr__(self):
-        return '<REDSimpleProgram object_id: {0}, identifier: {1}>'.format(self.object_id, self._identifier)
+        return '<REDLiteProgram object_id: {0}, identifier: {1}>'.format(self.object_id, self._identifier)
 
     def _attach_callbacks(self):
         pass
@@ -2239,7 +2239,7 @@ def get_programs(session):
     return _attach_or_release(session, REDList, programs_list_id).items
 
 
-def get_simple_programs(session):
+def get_lite_programs(session):
     try:
         error_code, programs_list_id = session._brick.get_programs(session._session_id)
     except Error:
@@ -2249,7 +2249,7 @@ def get_simple_programs(session):
     if error_code != REDError.E_SUCCESS:
         raise REDError('Could not get programs list object', error_code)
 
-    return _attach_or_release(session, REDList, programs_list_id, extra_parameters=(REDSimpleProgram,)).items
+    return _attach_or_release(session, REDList, programs_list_id, extra_parameters=(REDLiteProgram,)).items
 
 
 REDObject._subclasses = {

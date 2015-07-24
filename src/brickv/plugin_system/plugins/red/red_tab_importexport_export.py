@@ -116,7 +116,7 @@ class REDTabImportExportExport(QWidget, Ui_REDTabImportExportExport):
 
     def refresh_program_list(self):
         def refresh_async():
-            return get_simple_programs(self.session)
+            return get_lite_programs(self.session)
 
         def cb_success(programs):
             sorted_programs = {}

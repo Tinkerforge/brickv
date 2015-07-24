@@ -192,7 +192,7 @@ class REDTabImportExportImport(QWidget, Ui_REDTabImportExportImport):
                         programs[identifier] = [name, identifier, language, 'New', first_upload]
 
                 try:
-                    existing_programs = get_simple_programs(self.session)
+                    existing_programs = get_lite_programs(self.session)
                 except Exception as e:
                     return [], u'Could not get existing program list:\n\n{0}'.format(e)
 
