@@ -133,18 +133,22 @@ class REDTabSettingsFileSystem(QtGui.QWidget, Ui_REDTabSettingsFileSystem):
     def slot_fs_expand_clicked(self):
         def cb_settings_fs_expand(result):
             def cb_restart_reboot_shutdown(result):
-                self.pbutton_fs_expand.setEnabled(False)
                 report_script_result(result, 'Settings | File System',
                                      'Error rebooting RED Brick')
 
+            get_main_window().setEnabled(True)
+
             if not report_script_result(result, 'Settings | File System',
                                         'Error expanding file system'):
-                self.pbutton_fs_expand.setEnabled(True)
                 return
+
+            QtGui.QMessageBox.information(get_main_window(),
+                                          'Settings | Services',
+                                          'File system expansion will be complete after reboot, rebooting RED Brick now.')
 
             self.script_manager.execute_script('restart_reboot_shutdown',
                                                cb_restart_reboot_shutdown, ['1'])
 
-        self.pbutton_fs_expand.setEnabled(False)
+        get_main_window().setEnabled(False)
         self.script_manager.execute_script('settings_fs_expand',
                                            cb_settings_fs_expand)

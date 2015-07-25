@@ -220,8 +220,6 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
                    cb_open_error)
         
     def slot_brickd_save_clicked(self):
-        self.brickd_button_save_enabled(False)
-
         adr = '.'.join((str(self.sbox_brickd_la_ip1.value()),
                         str(self.sbox_brickd_la_ip2.value()),
                         str(self.sbox_brickd_la_ip3.value()),
@@ -277,9 +275,9 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
         def cb_open(config, red_file):
             def cb_write(red_file, result):
                 red_file.release()
+                get_main_window().setEnabled(True)
 
                 if result is not None:
-                    self.brickd_button_save_enabled(True)
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Brickd',
                                                'Error writing brickd config file.')
@@ -292,10 +290,12 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
             red_file.write_async(config, lambda x: cb_write(red_file, x), None)
 
         def cb_open_error():
-            self.brickd_button_save_enabled(True)
+            get_main_window().setEnabled(True)
             QtGui.QMessageBox.critical(get_main_window(),
                                        'Settings | Brickd',
                                        'Error opening brickd config file.')
+
+        get_main_window().setEnabled(False)
 
         async_call(self.brickd_conf_rfile.open,
                    (BRICKD_CONF_PATH,

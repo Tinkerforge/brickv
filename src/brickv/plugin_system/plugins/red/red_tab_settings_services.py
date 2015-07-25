@@ -130,14 +130,14 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
             done()
             return
 
-        self.script_manager.execute_script('restart_reboot_shutdown',
-                                           cb_restart_reboot_shutdown, ['1'])
-
         get_main_window().setEnabled(True)
         
         QtGui.QMessageBox.information(get_main_window(),
                                       'Settings | Services',
                                       'Saved configuration successfully, rebooting RED Brick.')
+
+        self.script_manager.execute_script('restart_reboot_shutdown',
+                                           cb_restart_reboot_shutdown, ['1'])
 
     def service_config_changed(self, state):
         self.pbutton_services_save.setEnabled(True)
