@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 
 import functools
 
-from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QPushButton, QFrame, QDialog
+from PyQt4.QtGui import QVBoxLayout, QLabel, QHBoxLayout, QComboBox, QPushButton, QFrame, QDialog, QMessageBox
 from PyQt4.QtCore import Qt
 
 from brickv.plugin_system.plugin_base import PluginBase
@@ -83,12 +83,16 @@ class Calibration(QDialog, Ui_Calibration):
         self.update_calibration()
         
     def gain_clicked(self):
-        measured0 = (sum(self.values0)/10.0)*244/38588
-        measured1 = (sum(self.values1)/10.0)*244/38588
-        factor0 = self.spinbox_voltage_ch0.value()/measured0
-        factor1 = self.spinbox_voltage_ch1.value()/measured1
-        gain0 = int((factor0-1)*2**23)
-        gain1 = int((factor1-1)*2**23)
+        try:
+            measured0 = (sum(self.values0)/10.0)*244/38588
+            measured1 = (sum(self.values1)/10.0)*244/38588
+            factor0 = self.spinbox_voltage_ch0.value()/measured0
+            factor1 = self.spinbox_voltage_ch1.value()/measured1
+            gain0 = int((factor0-1)*2**23)
+            gain1 = int((factor1-1)*2**23)
+        except:
+            QMessageBox.critical(self, "Failure during Calibration", "Calibration values are not in range", QMessageBox.Ok)
+            return
 
         self.parent.analog_in.set_calibration((self.current_offset0, self.current_offset1), (gain0, gain1))
         self.update_calibration()

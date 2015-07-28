@@ -33,7 +33,7 @@
      <item row="13" column="0" colspan="3">
       <widget class="QLabel" name="label_15">
        <property name="text">
-        <string>To calibrate gain apply a known voltage to Channel 0 and 1. Enter the known correct voltage below and press &quot;Calibrate Gain&quot;.</string>
+        <string>Step 3: To calibrate gain apply a known voltage to Channel 0 and 1. Enter the known correct voltage below and press &quot;Calibrate Gain&quot;.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
@@ -57,7 +57,7 @@
      <item row="10" column="0" colspan="3">
       <widget class="QLabel" name="label_14">
        <property name="text">
-        <string>To calibrate offset connect IN0+, IN0-, IN1+ and IN1- to GND and press &quot;Calibrate Offset&quot;.</string>
+        <string>Step 2: To calibrate offset connect IN0+, IN0-, IN1+ and IN1- to GND and press &quot;Calibrate Offset&quot;.</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -83,7 +83,7 @@
      <item row="7" column="0" colspan="3">
       <widget class="QLabel" name="label_8">
        <property name="text">
-        <string>To recalibrate the Bricklet you have to remove the old calibration and then calibrate the offset first and gain second.</string>
+        <string>Step 1: To recalibrate the Bricklet you have to remove the old calibration and then calibrate the offset first and gain second.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
