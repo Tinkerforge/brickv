@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-14.      #
+# This file was automatically generated on 2015-07-28.      #
 #                                                           #
-# Bindings Version 2.1.4                                    #
+# Bindings Version 2.1.5                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -79,7 +79,7 @@ class BrickletCO2(Device):
     def get_co2_concentration(self):
         """
         Returns the measured CO2 concentration. The value is in 
-        `ppm (parts per million) <https://en.wikipedia.org/wiki/Parts-per_notation>`__ 
+        `ppm (parts per million) <https://en.wikipedia.org/wiki/Parts-per_notation>`__
         and between 0 to TBD.
         
         If you want to get the CO2 concentration periodically, it is recommended to use the

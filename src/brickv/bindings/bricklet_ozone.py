@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-14.      #
+# This file was automatically generated on 2015-07-28.      #
 #                                                           #
-# Bindings Version 2.1.4                                    #
+# Bindings Version 2.1.5                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -100,7 +100,7 @@ class BrickletOzone(Device):
     def get_ozone_concentration(self):
         """
         Returns the measured ozone concentration. The value is in 
-        `ppb (parts-per-billion) <https://en.wikipedia.org/wiki/Parts-per_notation>`__
+        `ppb (parts per billion) <https://en.wikipedia.org/wiki/Parts-per_notation>`__
         and between 0 to 250.
         
         If you want to get the ozone concentration periodically, it is recommended to use the

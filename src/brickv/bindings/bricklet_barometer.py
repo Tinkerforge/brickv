@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-14.      #
+# This file was automatically generated on 2015-07-28.      #
 #                                                           #
-# Bindings Version 2.1.4                                    #
+# Bindings Version 2.1.5                                    #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -277,7 +277,7 @@ class BrickletBarometer(Device):
         Sets the different averaging parameters. It is possible to set
         the length of a normal averaging for the temperature and pressure,
         as well as an additional length of a 
-        `moving average <https://en.wikipedia.org/wiki/Moving_average>`__ 
+        `moving average <https://en.wikipedia.org/wiki/Moving_average>`__
         for the pressure. The moving average is calculated from the normal 
         averages.  There is no moving average for the temperature.
         
