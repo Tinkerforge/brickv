@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Calibration</class>
+ <widget class="QDialog" name="Calibration">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>407</width>
+    <height>507</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Industrial Dual Analog In Calibration</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <layout class="QGridLayout" name="grid">
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Ch 0:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" rowspan="2">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Gain:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="13" column="0" colspan="3">
+      <widget class="QLabel" name="label_15">
+       <property name="text">
+        <string>To calibrate gain apply a known voltage to Channel 0 and 1. Enter the known correct voltage below and press &quot;Calibrate Gain&quot;.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_adc0">
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QLabel" name="label_offset0">
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0" colspan="3">
+      <widget class="QLabel" name="label_14">
+       <property name="text">
+        <string>To calibrate offset connect IN0+, IN0-, IN1+ and IN1- to GND and press &quot;Calibrate Offset&quot;.</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::AutoText</enum>
+       </property>
+       <property name="scaledContents">
+        <bool>false</bool>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="2">
+      <widget class="QSpinBox" name="spinbox_voltage_ch0">
+       <property name="suffix">
+        <string>mV</string>
+       </property>
+       <property name="maximum">
+        <number>35000</number>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0" colspan="3">
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>To recalibrate the Bricklet you have to remove the old calibration and then calibrate the offset first and gain second.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Ch 1:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>Ch 0:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="0" rowspan="2">
+      <widget class="QLabel" name="label_16">
+       <property name="text">
+        <string>Voltage:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="2">
+      <widget class="QSpinBox" name="spinbox_voltage_ch1">
+       <property name="suffix">
+        <string>mV</string>
+       </property>
+       <property name="maximum">
+        <number>35000</number>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QLabel" name="label_11">
+       <property name="text">
+        <string>Ch 1</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0" colspan="3">
+      <widget class="QPushButton" name="button_cal_remove">
+       <property name="text">
+        <string>Remove Old Calibration</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" rowspan="2">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Offset:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLabel" name="label_adc1">
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" rowspan="2">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>ADC Value:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>Ch 1:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Ch 0:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0" colspan="3">
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2">
+      <widget class="QLabel" name="label_offset1">
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="1">
+      <widget class="QLabel" name="label_18">
+       <property name="text">
+        <string>Ch 1:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="2">
+      <widget class="QLabel" name="label_gain1">
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="0" colspan="3">
+      <widget class="QPushButton" name="button_cal_offset">
+       <property name="text">
+        <string>Calibrate Offset</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="0" colspan="3">
+      <widget class="Line" name="line_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="1">
+      <widget class="QLabel" name="label_17">
+       <property name="text">
+        <string>Ch 0:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="2">
+      <widget class="QLabel" name="label_gain0">
+       <property name="text">
+        <string>0</string>
+       </property>
+      </widget>
+     </item>
+     <item row="16" column="0" colspan="3">
+      <widget class="QPushButton" name="button_cal_gain">
+       <property name="text">
+        <string>Calibrate Gain</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0" colspan="3">
+      <widget class="Line" name="line_3">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
