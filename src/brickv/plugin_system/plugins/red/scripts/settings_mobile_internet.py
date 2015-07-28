@@ -241,8 +241,8 @@ def prepare_test_command_and_umtskeeper_configuration(usb_modem,
                                                       sim_pin):
     command_test_connection = ''
     configuration_umtskeeper = ''
-    sakis_operators = '''DIAL="{0}" APN="{1}" APN_USER="{2}" APN_PASS="{3}" OTHER="USBMODEM" USBMODEM="{4}"'''
-    sakis_operators_sim_pin = '''SIM_PIN="{0}" DIAL="{1}" APN="{2}" APN_USER="{3}" APN_PASS="{4}" OTHER="USBMODEM" USBMODEM="{5}"'''
+    sakis_operators = '''DIAL="{0}" FORCE_APN="{1}" APN_USER="{2}" APN_PASS="{3}" OTHER="USBMODEM" USBMODEM="{4}"'''
+    sakis_operators_sim_pin = '''SIM_PIN="{0}" DIAL="{1}" FORCE_APN="{2}" APN_USER="{3}" APN_PASS="{4}" OTHER="USBMODEM" USBMODEM="{5}"'''
 
     if sim_pin:
         command_test_connection_args = ' connect --nostorage --pppd --nofix --console ' +\
