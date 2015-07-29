@@ -39,7 +39,7 @@ conf['DNSprobeDomain'] = 'google.com'
 conf['DNSprobeCycle'] = 600
 conf['writeStats'] = False
 conf['printMsg'] = False
-conf['logMsg'] = True
+conf['logMsg'] = False
 conf['logFile'] = '/var/log/umtskeeper.log'
 '''
 
