@@ -188,7 +188,6 @@ class REDTabProgram(REDTab, Ui_REDTabProgram):
                 item.setText(0, program.cast_custom_option_value('name', unicode, '<unknown>'))
 
     def refresh_program_status(self, program):
-        print 'refresh_program_status'
         for i in range(self.tree_programs.topLevelItemCount()):
             item = self.tree_programs.topLevelItem(i)
 
