@@ -1,158 +1,284 @@
-1.0.0: Initial version
-1.0.1: Fix problem with Servo plugin on Windows (can't start timer in thread)
-1.0.2: Fix some Windows installation problems
-       Make UIDs copyable
-1.0.3: Fix OpenGL doublebuffering bug (only IMU), fix bias bug
-1.0.4: Fix Bricklet flash problem on Windows
-1.0.5: Add warning to ADC calibration
-1.0.6: Better usability for Chibi configuration
-1.0.7: Use threads in Stepper plugin, more usable over Chibi this way
-       Add Mac OS support
-1.0.8: Remove Stepper decay slider
-1.1.0: Convert file name to file system encoding before opening the file
-       LCD plugin supports full LCD charset
-       Remove matplotlib, pylab, scipy and numpy from the dependencies list
-       Add version number to window title
-       Add Brick flashing support, no SAM-BA needed anymore
-1.1.1: Improve flashing error messages
-       File dialogs remember the last directory
-       "Show this message again" checkbox in error messages work
-       Store host and port information across brickv restarts
-1.1.2: Use correct write_line signature in LCD 16x2 plugin
-1.1.3: Add RS485 support to Master Brick plugin
-1.1.4: Add monoflop GUI for the Dual Relay Bricklet plugin
-       Improve error reporting for inaccessible serial port
-       Add reset buttons for Bricks
-1.1.5: Don't change selected serial port on refresh when possible
-       Fix serial port writability check on Windows
-1.1.6: Add chip temperature column to device table
-       Add monoflop GUI for the IO-4 and IO-16 Bricklet plugins
-1.1.7: Check for timeout error on get_chip_temperature call
-       Add WIFI support to Master Brick plugin
-1.1.8: Show Brick UID in Bricklet flashing dialog
-       Make device table sortable
-       Remove chip temperature column
-       Fix serial port enumeration for ports with non-ASCII names
-       Add Stack ID, UID, FW Version and Reset button to each tab
-       Add AP and Ad Hoc support to Master Brick plugin
-1.1.9: Add configuration combobox for regulatory domain (WIFI)
-       Add plugins for Industrial Bricklets: Digital In 4, Digital Out 4 and Quad Relay
-       Map ÄÖÜ to äöü in LCD Bricklet plugin
-1.1.10: Add Barometer Bricklet plugin
-1.1.11: Replace Barometer Bricklet calibrate function with getter/setter for reference air pressure
-1.1.12: Automatically restart Bricks after successful flashing a new firmware
-        Check for invalid characters in SSID and key for WIFI Extension
-        Show correct WIFI encryption mode
-        Show version numbers in flashing dialog
-        Remember the last 5 hosts
-        Add Check-for-Updates functionality for connected Bricks and Bricklets
-1.1.13: Switch from green to dark green in graphs for better contrast on gray
-        Show Barometer Bricklet altitude also in feet
-        Fix progress dialog for Bricklet flashing
-        Handle old names for Temperature IR and Distance IR Bricklets in Check-for-Updates dialog
-        Automatically restore IMU factory calibration after flashing
-        Improve flashing verification speed by reading whole flash pages
-        Improve progress dialog for firmware and plugin discovery in flashing window
-        Add basic FreeBSD support
-        Add button to restore factory calibration to IMU calibration window
-        Add missing image for Dual Replay Bricklet plugin
-1.1.14: Make Bricklet flashing fail early on verification error
-        Improve message for WIFI power mode changes
-        Verify UID format before writing it to a Bricklet
-        Fix discovering of plugins for Industrial Bricklets
-        Switch button text from state to action for Dual Relay Bricklet plugin
-        Improve monoflop handling for Industrial Bricklets
-1.1.15: Add support for the 4th button of the LCD 20x4 Bricklet v1.2
-1.1.16: Add plugin for Voltage/Current Bricklet and GPS Bricklet
-1.1.17: Downgrade packaged Qt to 4.7 on Mac OS X to fix a graph rendering problem
-1.1.18: Use BMPs and add alpha channel in code (instead of GIFs or pixmaps)
-1.1.19: Make updates and flashing dialog ignore firmware/tool version 2
-        Ensure to load window icon and plugin bitmaps from correct directory
-2.0.0: Add compatibility for 2.0.0 firmwares
-       Make Brick and Bricklet plugins asynchronous (no freezing if timeouts occur)
-       Add auto-update feature for Bricklets with backward compatibility for 1.x.y Bricklets
-2.0.1: Add custom character support to LCD Bricklet plugins
-       Handle no-internet-connection case probably in updates dialog
-       Add more information to Bricklet UID and plugin writing error messages
-       Make Protocol 1.0 Bricklet auto-detection more robust
-2.0.2: Use smaller update rate for WIFI status refresh (may timeout otherwise)
-       Check UID length before writing it to the Bricklet
-       Fix initialization of IO16 Bricklet plugin
-       Make Brick flashing error message more verbose
-       Add support for long WPA key (up to 64 chars) to Master Brick plugin
-2.0.3: Filter out false-positives in Protocol 1.0 error detection
-       Check WEP key for being in hexadecimal notation and 10 or 26 digits long
-       Trigger enumeration for RS485/Chibi slaves if RS485/Chibi master enumerates itself as connected
-       Fix IO-4 Bricklet Plugin initialization
-       Fix Piezo Buzzer Bricklet Protocol 1.0 autodetection
-       NSIS installer for Windows installs bootloader driver
-       Add support for WIFI hostname configuration to Master Brick plugin
-       Add support for measurement range selection to Analog In Bricklet plugin
-2.0.4: Ignore enumerate callbacks that arrived after a disconnect
-       Fix Chibi and RS485 configuration handling
-       Disable instead of hide WIFI hostname edit box, if Master Brick firmware doesn't support it
-2.0.5: Add commandline tool for flashing bricks (thanks to Jan)
-       Try to avoid UI hang during connect
-       Add plugin for Ethernet Extension
-       Show WIFI password/key with * characters by default
-       Add spin boxes for new averaging API in Barometer Bricklet plugin
-       Less jittery plot widgets
-       Make errors during Brick reset in flash process non-fatal
-2.0.6: Remove averaging of analog value from Distance IR Bricklet plugin
-       Set min/max degree correctly if all servos are selected in Servo Brick plugin
-       Support splitted LCD 20x4 Bricklet plugin
-       Fix monoflop time update if Go button is clicked in quick succession
-       Add plugins for PTC Bricklet and Industrial Dual 0-20mA Bricklet
-2.0.7: Fix naming of Industrial Dual 0-20mA Bricklet
-2.0.8: Add support for Distance US, Dual Button, Hall Effect, LED Strip, Line, Moisture, Motion Detector, Multi Touch, Piezo Speaker, Remote Switch, Rotary Encoder, Segment Display 4x7, Sound Intensity and Tilt Bricklet
-       Don't crash on unknown Bricklets
-       Support 3.3V range and averaging configuration for Analog In Bricklet
-       Make serial port detection more robust on Windows
-       Speed up firmware version information discovery
-       Make sample point file parsing more robust in Distance IR Bricklet plugin
-2.0.9: Support Get/SetClockFrequency in LED Strip Bricklet plugin
-       Show "motion detected" in red in Motion Detector Bricklet plugin
-       Support Intertechno and ELRO Home Easy addressing types in Remote Switch Bricklet plugin
-2.1.0: Add authentication support
-       Add authentication configuration for Ethernet and WIFI Extension to Master Brick plugin
-       Add WebSocket configuration for Ethernet Extension to Master Brick plugin
-       Fix temperature averaging bug in Barometer Bricklet plugin
-       Fix Dual Button Bricklet left/right permutation
-       Reduce long-term memory usage by properly removing widgets on device disconnect
-2.1.1: Force Qt to use a more recent UI style on Windows
-       Store port, authentication options and secret per host and double host history length
-       Use a signed Brick bootloader driver on Windows
-       Add support for WS2811 and WS2812 to LED Strip Bricklet plugin
-2.1.2: Add support for Color, NFC/RFID and Solid State Relay Bricklet
-       Rename main.exe to brickv.exe on Windows
-       Make rainbow work better on small LED counts and add moving-dot mode to LED Strip Bricklet plugin
-       Allow double click anywhere in a device tree row to jump to the corresponding tab
-2.2.0: Add RED Brick support
-       Allow to rearrange Brick and Bricklet tabs and detach them from the main window
-       Improve UI for NFC/RFID Bricklet read and write operations
-       Windows installer and drivers are signed now
-       Fix occasional bounce of the connect button
-       Fix UI font selection on Mac OS X 10.9 and 10.10
-2.2.1: Exclude file system cache from memory value on RED Brick overview tab
-       Show full list of available wireless networks instead of using a drop-down box on RED Brick network tab
-       Use timeout counter to show RED Brick timeout errors
-       Fix file progress display on RED Brick program upload dialog
-       Add Java main class discovery for already created RED Brick Java programs and make it abortable
-       Improve Java class path handling for RED Brick Java programs
-       Add missing Java part of RED Brick program upload summary
-       Add RED Brick file system settings tab to do file system expansion
-2.2.2: Add service configuration tab to RED Brick plugin
-       Add wireless access point tab to RED Brick plugin
-       Add program import/export and system log export tab to RED Brick plugin
-       Fix make buttons on RED Brick compile dialogs for C/C++ and Delphi/Lazarus
-       Replace all PyQwt usage with custom code
-       Fix maximum page number in NFC/RFID Bricklet plugin
-2.2.3: Add server monitoring and openHAB configuration tabs to RED Brick plugin
-       Restore DHCP IP address display for Ethernet Extension in Master Brick plugin
-2.2.4: Don't modify Brick and Bricklet callback configurations anymore, use getters instead
-       Add support for multiple hosts to server monitoring tab of RED Brick plugin
-       Add hostname change button to network tab of RED Brick plugin
-       Optimize OpenGL drawing code for IMU Brick plugin to reduce CPU usage
-       Optimize general plot drawing code to reduce CPU usage
-2.2.5: Add support for IMU Brick 2.0, Accelerometer, Ambient Light 2.0, Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out, Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet
-       Fix callback handling in GPS Bricket plugin
+1.0.0:
+- Initial version
+
+1.0.1:
+- Fix problem with Servo Brick plugin on Windows (can't start timer in thread)
+
+1.0.2:
+- Fix some Windows installation problems
+- Make UIDs copyable
+
+1.0.3:
+- Fix OpenGL double-buffering bug (only IMU)
+- Fix bias bug
+
+1.0.4:
+- Fix Bricklet flash problem on Windows
+
+1.0.5:
+- Add warning to ADC calibration
+
+1.0.6:
+- Better usability for Chibi configuration
+
+1.0.7:
+- Use threads in Stepper Brick plugin, more usable over Chibi this way
+- Add Mac OS support
+
+1.0.8:
+- Remove Stepper Brick decay slider
+
+1.1.0:
+- Convert file name to file system encoding before opening the file
+- LCD Bricklet plugins supports full LCD charset
+- Remove matplotlib, pylab, scipy and numpy from the dependencies list
+- Add version number to window title
+- Add Brick flashing support, no SAM-BA needed anymore
+
+1.1.1:
+- Improve flashing error messages
+- File dialogs remember the last directory
+- "Show this message again" checkbox in error messages work
+- Store host and port information across brickv restarts
+
+1.1.2:
+- Use correct write_line signature in LCD 16x2 Bricklet plugin
+
+1.1.3:
+- Add RS485 support to Master Brick plugin
+
+1.1.4:
+- Add monoflop GUI for the Dual Relay Bricklet plugin
+- Improve error reporting for inaccessible serial port
+- Add reset buttons for Bricks
+
+1.1.5:
+- Don't change selected serial port on refresh when possible
+- Fix serial port writability check on Windows
+
+1.1.6:
+- Add chip temperature column to device table
+- Add monoflop GUI for the IO-4 and IO-16 Bricklet plugins
+
+1.1.7:
+- Check for timeout error on get_chip_temperature call
+- Add WIFI support to Master Brick plugin
+
+1.1.8:
+- Show Brick UID in Bricklet flashing dialog
+- Make device table sortable
+- Remove chip temperature column
+- Fix serial port enumeration for ports with non-ASCII names
+- Add stack ID, UID, firmware version and reset button to each tab
+- Add WIFI access point and ad-hoc support to Master Brick plugin
+
+1.1.9:
+- Add configuration combobox for regulatory domain (WIFI)
+- Add plugins for Industrial Bricklets: Digital In 4, Digital Out 4 and
+  Quad Relay
+- Map ÄÖÜ to äöü in LCD Bricklet plugin
+
+1.1.10:
+- Add Barometer Bricklet plugin
+
+1.1.11:
+- Replace Barometer Bricklet calibrate function with getter/setter for
+  reference air pressure
+
+1.1.12:
+- Automatically restart Bricks after successful flashing a new firmware
+- Check for invalid characters in SSID and key for WIFI Extension
+- Show correct WIFI encryption mode
+- Show version numbers in flashing dialog
+- Remember the last 5 hosts
+- Add Check-for-Updates functionality for connected Bricks and Bricklets
+
+1.1.13:
+- Switch from green to dark green in graphs for better contrast on gray
+- Show Barometer Bricklet altitude also in feet
+- Fix progress dialog for Bricklet flashing
+- Handle old names for Temperature IR and Distance IR Bricklets in
+  Check-for-Updates dialog
+- Automatically restore IMU factory calibration after flashing
+- Improve flashing verification speed by reading whole flash pages
+- Improve progress dialog for firmware and plugin discovery in flashing window
+- Add basic FreeBSD support
+- Add button to restore factory calibration to IMU calibration window
+- Add missing image for Dual Replay Bricklet plugin
+
+1.1.14:
+- Make Bricklet flashing fail early on verification error
+- Improve message for WIFI power mode changes
+- Verify UID format before writing it to a Bricklet
+- Fix discovering of plugins for Industrial Bricklets
+- Switch button text from state to action for Dual Relay Bricklet plugin
+- Improve monoflop handling for Industrial Bricklets
+
+1.1.15:
+- Add support for the 4th button of the LCD 20x4 Bricklet 1.2
+
+1.1.16:
+- Add plugins for Voltage/Current Bricklet and GPS Bricklet
+
+1.1.17:
+- Downgrade packaged Qt to 4.7 on Mac OS X to fix a graph rendering problem
+
+1.1.18:
+- Use BMPs and add alpha channel in code (instead of GIFs or pixmaps)
+
+1.1.19:
+- Make updates and flashing dialog ignore firmware/tool version 2
+- Ensure to load window icon and plugin bitmaps from correct directory
+
+2.0.0:
+- Add compatibility for 2.0.0 firmwares
+- Make Brick and Bricklet plugins asynchronous (no freezing if timeouts occur)
+- Add auto-update feature for Bricklets with backward compatibility for
+  1.x.y Bricklets
+
+2.0.1:
+- Add custom character support to LCD Bricklet plugins
+- Handle no-Internet-connection case properly in updates dialog
+- Add more information to Bricklet UID and plugin writing error messages
+- Make Protocol 1.0 Bricklet auto-detection more robust
+
+2.0.2:
+- Use smaller update rate for WIFI status refresh (may timeout otherwise)
+- Check UID length before writing it to the Bricklet
+- Fix initialization of IO-16 Bricklet plugin
+- Make Brick flashing error message more verbose
+- Add support for long WPA key (up to 64 chars) to Master Brick plugin
+
+2.0.3:
+- Filter out false-positives in Protocol 1.0 error detection
+- Check WEP key for being in hexadecimal notation and 10 or 26 digits long
+- Trigger enumeration for RS485/Chibi slaves if RS485/Chibi master enumerates
+  itself as connected
+- Fix IO-4 Bricklet Plugin initialization
+- Fix Piezo Buzzer Bricklet Protocol 1.0 autodetection
+- NSIS installer for Windows installs bootloader driver
+- Add support for WIFI hostname configuration to Master Brick plugin
+- Add support for measurement range selection to Analog In Bricklet plugin
+
+2.0.4:
+- Ignore enumerate callbacks that arrived after a disconnect
+- Fix Chibi and RS485 configuration handling
+- Disable instead of hide WIFI hostname edit box, if Master Brick firmware
+  doesn't support it
+
+2.0.5:
+- Add commandline tool for flashing bricks (thanks to Jan)
+- Try to avoid UI hang during connect
+- Add plugin for Ethernet Extension
+- Show WIFI password/key with * characters by default
+- Add spin boxes for new averaging API in Barometer Bricklet plugin
+- Less jittery plot widgets
+- Make errors during Brick reset in flash process non-fatal
+
+2.0.6:
+- Remove averaging of analog value from Distance IR Bricklet plugin
+- Set min/max degree correctly if all servos are selected in Servo Brick plugin
+- Support splitted LCD 20x4 Bricklet plugin
+- Fix monoflop time update if go button is clicked in quick succession
+- Add plugins for PTC Bricklet and Industrial Dual 0-20mA Bricklet
+
+2.0.7:
+- Fix naming of Industrial Dual 0-20mA Bricklet
+
+2.0.8:
+- Add support for Distance US, Dual Button, Hall Effect, LED Strip, Line,
+  Moisture, Motion Detector, Multi Touch, Piezo Speaker, Remote Switch,
+  Rotary Encoder, Segment Display 4x7, Sound Intensity and Tilt Bricklet
+- Don't crash on unknown Bricklets
+- Support 3.3V range and averaging configuration for Analog In Bricklet
+- Make serial port detection more robust on Windows
+- Speed up firmware version information discovery
+- Make sample point file parsing more robust in Distance IR Bricklet plugin
+
+2.0.9:
+- Support Get/SetClockFrequency in LED Strip Bricklet plugin
+- Show "motion detected" in red in Motion Detector Bricklet plugin
+- Support Intertechno and ELRO Home Easy addressing types in Remote Switch
+  Bricklet plugin
+
+2.1.0:
+- Add authentication support
+- Add authentication configuration for Ethernet and WIFI Extension to Master
+  Brick plugin
+- Add WebSocket configuration for Ethernet Extension to Master Brick plugin
+- Fix temperature averaging bug in Barometer Bricklet plugin
+- Fix Dual Button Bricklet left/right permutation
+- Reduce long-term memory usage by properly removing widgets on device
+  disconnect
+
+2.1.1:
+- Force Qt to use a more recent UI style on Windows
+- Store port, authentication options and secret per host and double host
+  history length
+- Use a signed Brick bootloader driver on Windows
+- Add support for WS2811 and WS2812 to LED Strip Bricklet plugin
+
+2.1.2:
+- Add support for Color, NFC/RFID and Solid State Relay Bricklet
+- Rename main.exe to brickv.exe on Windows
+- Make rainbow work better on small LED counts and add moving-dot mode to LED
+  Strip Bricklet plugin
+- Allow double click anywhere in a device tree row to jump to the matching tab
+
+2.2.0:
+- Add RED Brick support
+- Allow to rearrange tabs and detach them from the main window
+- Improve UI for NFC/RFID Bricklet read and write operations
+- Windows installer and drivers are signed now
+- Fix occasional bounce of the connect button
+- Fix UI font selection on Mac OS X 10.9 and 10.10
+
+2.2.1:
+- Exclude file system cache from memory value on RED Brick overview tab
+- Show full list of available wireless networks instead of using a drop-down
+  box on RED Brick network tab
+- Use timeout counter to show RED Brick timeout errors
+- Fix file progress display on RED Brick program upload dialog
+- Add Java main class discovery for already created RED Brick Java programs
+  and make it abortable
+- Improve Java class path handling for RED Brick Java programs
+- Add missing Java part of RED Brick program upload summary
+- Add RED Brick file system settings tab to do file system expansion
+
+2.2.2:
+- Add service configuration tab to RED Brick plugin
+- Add wireless access point tab to RED Brick plugin
+- Add program import/export and system log export tab to RED Brick plugin
+- Fix make buttons on RED Brick compile dialogs for C/C++ and Delphi/Lazarus
+- Replace all PyQwt usage with custom code
+- Fix maximum page number in NFC/RFID Bricklet plugin
+
+2.2.3:
+- Add server monitoring and openHAB configuration tabs to RED Brick plugin
+- Restore DHCP IP address display for Ethernet Extension in Master Brick plugin
+
+2.2.4:
+- Don't modify callback configurations anymore, use getters instead
+- Add support for multiple hosts to server monitoring tab of RED Brick plugin
+- Add hostname change button to network tab of RED Brick plugin
+- Optimize OpenGL drawing code for IMU Brick plugin to reduce CPU usage
+- Optimize general plot drawing code to reduce CPU usage
+
+2.2.5:
+- Add support for IMU Brick 2.0, Accelerometer, Ambient Light 2.0,
+  Analog In 2.0, Analog Out 2.0, Dust Detector, Industrial Analog Out,
+  Industrial Dual Analog In, Laser Range Finder, Load Cell and RS232 Bricklet
+- Fix callback handling in GPS Bricket plugin
+
+2.2.6:
+- Add mobile Internet configuration tab to RED Brick plugin
+- Add hex-view to RS232 Bricklet plugin
+- Avoid warnings when reading non-existing config file on Mac OS X
+- Ensure programs directory exists on RED Brick before importing a program
+- Add position column to main device tree
+- Add support for Ambient Light Bricklet 2.0 to RED Brick server monitoring
+- Make RED Brick filesystem resize process more robust
+- Add option to build Lazarus projects on RED Brick
+- Add exit button for RED Brick programs
+- Add status column to RED Brick program list
+- Add calibration dialog to Industrial Dual Analog In Bricklet plugin
