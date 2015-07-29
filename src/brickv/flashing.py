@@ -245,14 +245,19 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def refresh_firmware_info(self, url_part, latest_version):
         name = url_part
 
-        if name in ['dc', 'imu']:
+        if name.endswith('_v2'):
+            name = name.replace('_v2', '_2.0')
+
+        if name in ['dc', 'imu', 'imu_2.0']:
             name = name.upper()
-        else:
-            words = name.split('_')
-            parts = []
-            for word in words:
-                parts.append(word[0].upper() + word[1:])
-            name = ' '.join(parts)
+
+        words = name.split('_')
+        parts = []
+
+        for word in words:
+            parts.append(word[0].upper() + word[1:])
+
+        name = ' '.join(parts)
 
         firmware_info = infos.FirmwareInfo()
         firmware_info.name = name
@@ -264,7 +269,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
     def refresh_plugin_info(self, url_part, latest_version):
         name = url_part
 
-        if name in ['gps', 'ptc']:
+        if name.endswith('_v2'):
+            name = name.replace('_v2', '_2.0')
+
+        if name in ['gps', 'ptc', 'rs232']:
             name = name.upper()
         elif name.startswith('lcd_'):
             name = name.replace('lcd_', 'LCD_')
@@ -278,8 +286,6 @@ class FlashingWindow(QDialog, Ui_Flashing):
             name = name.replace('_us', '_US')
         elif name.startswith('led_'):
             name = name.replace('led_', 'LED_')
-        elif name.endswith('_v2'):
-            name = name.replace('_v2', '_2.0')
 
         words = name.split('_')
         parts = []
