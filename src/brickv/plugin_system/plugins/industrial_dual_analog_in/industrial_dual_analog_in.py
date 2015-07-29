@@ -213,7 +213,8 @@ class IndustrialDualAnalogIn(PluginBase):
         self.plot_widget.stop = True
 
     def destroy(self):
-        pass
+        if self.calibration != None:
+            self.calibration.close()
 
     def get_url_part(self):
         return 'industrial_dual_analog_in'
@@ -227,12 +228,9 @@ class IndustrialDualAnalogIn(PluginBase):
     
     def get_voltage_value1(self):
         return self.voltage_value[1]
-    
-    def update_connected(self):
-        pass
-    
+
     def calibration_button_clicked(self):
-        if self.calibration is None:
+        if self.calibration == None:
             self.calibration = Calibration(self)
 
         self.calibration_button.setEnabled(False)
