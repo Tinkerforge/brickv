@@ -22,6 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+import sys
+import traceback
 from PyQt4.QtGui import QWidget
 from brickv.bindings.ip_connection import IPConnection
 
@@ -72,7 +74,8 @@ class PluginBase(QWidget, object):
                 try:
                     self.start()
                 except:
-                    pass
+                    if not hasattr(sys, 'frozen'):
+                        traceback.print_exc()
 
                 self.plugin_state = PluginBase.PLUGIN_STATE_RUNNING
 
@@ -82,7 +85,8 @@ class PluginBase(QWidget, object):
             try:
                 self.stop()
             except:
-                pass
+                if not hasattr(sys, 'frozen'):
+                    traceback.print_exc()
 
         # set the state to stopped even it the plugin was not actually
         # running. this stops a paused plugin from being restarted after
@@ -94,7 +98,8 @@ class PluginBase(QWidget, object):
             try:
                 self.stop()
             except:
-                pass
+                if not hasattr(sys, 'frozen'):
+                    traceback.print_exc()
 
             self.plugin_state = PluginBase.PLUGIN_STATE_PAUSED
 
@@ -103,7 +108,8 @@ class PluginBase(QWidget, object):
             try:
                 self.start()
             except:
-                pass
+                if not hasattr(sys, 'frozen'):
+                    traceback.print_exc()
 
             self.plugin_state = PluginBase.PLUGIN_STATE_RUNNING
 
@@ -112,7 +118,8 @@ class PluginBase(QWidget, object):
         try:
             self.destroy()
         except:
-            pass
+            if not hasattr(sys, 'frozen'):
+                traceback.print_exc()
 
         # before destroying the widgets ensure that all callbacks are
         # unregistered. callbacks a typically bound to Qt slots. the plugin
