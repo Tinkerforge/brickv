@@ -34,12 +34,14 @@ from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
 from brickv.plugin_system.plugins.industrial_dual_analog_in.ui_calibration import Ui_Calibration
 
+def is_int32(value):
+    return value >= -2147483648 and value <= 2147483647
+
 class VoltageLabel(QLabel):
     def setText(self, text):
         text = text + " V"
         super(VoltageLabel, self).setText(text)
-        
-        
+
 class Calibration(QDialog, Ui_Calibration):
     def __init__(self, parent):
         QDialog.__init__(self, parent)
@@ -90,8 +92,11 @@ class Calibration(QDialog, Ui_Calibration):
             factor1 = self.spinbox_voltage_ch1.value()/measured1
             gain0 = int((factor0-1)*2**23)
             gain1 = int((factor1-1)*2**23)
+
+            if not is_int32(gain0) or not is_int32(gain1):
+                raise ValueError("Out of range")
         except:
-            QMessageBox.critical(self, "Failure during Calibration", "Calibration values are not in range", QMessageBox.Ok)
+            QMessageBox.critical(self, "Failure during Calibration", "Calibration values are not in range.", QMessageBox.Ok)
             return
 
         self.parent.analog_in.set_calibration((self.current_offset0, self.current_offset1), (gain0, gain1))
