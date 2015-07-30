@@ -1468,7 +1468,32 @@ def get_file_display_size(size):
         return '%.1f MiB' % (size / 1048576.0)
 
 
+def has_program_start_mode_web_interface(program):
+    language_api_name               = program.cast_custom_option_value('language', unicode, '<unknown>')
+    php_start_mode_web_interface    = False
+    python_start_mode_web_interface = False
+    javascript_flavor_browser       = False
+
+    if language_api_name == 'php':
+        php_start_mode_api_name      = program.cast_custom_option_value('php.start_mode', unicode, '<unknown>')
+        php_start_mode               = Constants.get_php_start_mode(php_start_mode_api_name)
+        php_start_mode_web_interface = php_start_mode == Constants.PHP_START_MODE_WEB_INTERFACE
+    elif language_api_name == 'python':
+        python_start_mode_api_name      = program.cast_custom_option_value('python.start_mode', unicode, '<unknown>')
+        python_start_mode               = Constants.get_python_start_mode(python_start_mode_api_name)
+        python_start_mode_web_interface = python_start_mode == Constants.PYTHON_START_MODE_WEB_INTERFACE
+    elif language_api_name == 'javascript':
+        javascript_flavor_api_name = program.cast_custom_option_value('javascript.flavor', unicode, '<unknown>')
+        javascript_flavor          = Constants.get_javascript_flavor(javascript_flavor_api_name)
+        javascript_flavor_browser  = javascript_flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER
+
+    return php_start_mode_web_interface or python_start_mode_web_interface or javascript_flavor_browser
+
+
 def get_program_short_status(program):
+    if has_program_start_mode_web_interface(program):
+        return 'N/A'
+
     process = program.last_spawned_lite_process
 
     if process != None:
@@ -1490,8 +1515,11 @@ def get_program_short_status(program):
             else:
                 return 'Killed'
         elif process.state == REDProcess.STATE_STOPPED:
-            return 'Stopped'
+            return 'Suspended'
         else:
             return 'Unknown'
     else:
-        return 'Virgin'
+        if program.lite_scheduler_state == REDProgram.SCHEDULER_STATE_RUNNING:
+            return 'Scheduled'
+        else:
+            return 'Stopped'

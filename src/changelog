@@ -282,3 +282,6 @@
 - Add exit button for RED Brick programs
 - Add status column to RED Brick program list
 - Add calibration dialog to Industrial Dual Analog In Bricklet plugin
+
+2.2.7: (not released)
+- Show status of web interface programs properly in the RED Brick program list

@@ -307,31 +307,10 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.label_first_upload.setText(timestamp_to_date_at_time(first_upload))
         self.label_last_edit.setText(timestamp_to_date_at_time(last_edit))
 
-        php_start_mode_web_interface    = False
-        python_start_mode_web_interface = False
-        javascript_flavor_browser       = False
-
-        if language_api_name == 'php':
-            php_start_mode_api_name      = self.program.cast_custom_option_value('php.start_mode', unicode, '<unknown>')
-            php_start_mode               = Constants.get_php_start_mode(php_start_mode_api_name)
-            php_start_mode_web_interface = php_start_mode == Constants.PHP_START_MODE_WEB_INTERFACE
-        elif language_api_name == 'python':
-            python_start_mode_api_name      = self.program.cast_custom_option_value('python.start_mode', unicode, '<unknown>')
-            python_start_mode               = Constants.get_python_start_mode(python_start_mode_api_name)
-            python_start_mode_web_interface = python_start_mode == Constants.PYTHON_START_MODE_WEB_INTERFACE
-        elif language_api_name == 'javascript':
-            javascript_flavor_api_name = self.program.cast_custom_option_value('javascript.flavor', unicode, '<unknown>')
-            javascript_flavor          = Constants.get_javascript_flavor(javascript_flavor_api_name)
-            javascript_flavor_browser  = javascript_flavor == Constants.JAVASCRIPT_FLAVOR_BROWSER
-
-        show_status    = not php_start_mode_web_interface and not python_start_mode_web_interface and not javascript_flavor_browser
-        show_logs      = not php_start_mode_web_interface and not python_start_mode_web_interface and not javascript_flavor_browser
-        show_arguments = not php_start_mode_web_interface and not python_start_mode_web_interface and not javascript_flavor_browser
-        show_stdio     = not php_start_mode_web_interface and not python_start_mode_web_interface and not javascript_flavor_browser
-        show_schedule  = not php_start_mode_web_interface and not python_start_mode_web_interface and not javascript_flavor_browser
+        start_mode_web_interface = has_program_start_mode_web_interface(self.program)
 
         # status
-        self.group_status.setVisible(show_status)
+        self.group_status.setVisible(not start_mode_web_interface)
 
         process_running = False
 
@@ -362,7 +341,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
                 self.label_program_current_state.setText('Not running, last run was killed (signal: {0}) on {1}'
                                                          .format(self.program.last_spawned_process.exit_code, date_at_time))
             elif self.program.last_spawned_process.state == REDProcess.STATE_STOPPED:
-                self.label_program_current_state.setText('Stopped on {0}'.format(date_at_time)) # FIXME: show continue button?
+                self.label_program_current_state.setText('Suspended on {0}'.format(date_at_time)) # FIXME: show resume button?
 
             self.label_last_program_start.setText(timestamp_to_date_at_time(self.program.last_spawned_timestamp))
         else:
@@ -389,7 +368,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.set_widget_enabled(self.button_continue_schedule, not any_refresh_in_progress and scheduler_stopped and self.program.start_mode != REDProgram.START_MODE_NEVER)
 
         # logs
-        self.group_logs.setVisible(show_logs)
+        self.group_logs.setVisible(not start_mode_web_interface)
 
         self.widget_logs.any_refresh_in_progress = any_refresh_in_progress
         self.widget_logs.update_ui_state()
@@ -419,7 +398,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
                 self.current_language_action = language_action
 
         # arguments
-        self.group_arguments.setVisible(show_arguments)
+        self.group_arguments.setVisible(not start_mode_web_interface)
 
         arguments = []
         editable_arguments_offset = max(self.program.cast_custom_option_value('editable_arguments_offset', int, 0), 0)
@@ -442,7 +421,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
         self.label_environment.setText('\n'.join(environment))
 
         # stdio
-        self.group_stdio.setVisible(show_stdio)
+        self.group_stdio.setVisible(not start_mode_web_interface)
 
         stdin_redirection_pipe  = self.program.stdin_redirection  == REDProgram.STDIO_REDIRECTION_PIPE
         stdin_redirection_file  = self.program.stdin_redirection  == REDProgram.STDIO_REDIRECTION_FILE
@@ -477,7 +456,7 @@ class ProgramInfoMain(QWidget, Ui_ProgramInfoMain):
             self.label_stderr_file.setText(self.program.stderr_file_name)
 
         # schedule
-        self.group_schedule.setVisible(show_schedule)
+        self.group_schedule.setVisible(not start_mode_web_interface)
 
         start_mode_never    = self.program.start_mode == REDProgram.START_MODE_NEVER
         start_mode_always   = self.program.start_mode == REDProgram.START_MODE_ALWAYS
