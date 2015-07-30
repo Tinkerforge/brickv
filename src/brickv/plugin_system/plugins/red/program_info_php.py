@@ -50,9 +50,6 @@ class ProgramInfoPHP(ProgramInfo, Ui_ProgramInfoPHP):
 
         self.get_executable_versions('php', cb_php_versions)
 
-        self.label_version_title.setVisible(not start_mode_web_interface)
-        self.label_version.setVisible(not start_mode_web_interface)
-
         # start mode
         start_mode_api_name      = self.program.cast_custom_option_value('php.start_mode', unicode, '<unknown>')
         start_mode               = Constants.get_php_start_mode(start_mode_api_name)
@@ -60,6 +57,8 @@ class ProgramInfoPHP(ProgramInfo, Ui_ProgramInfoPHP):
         start_mode_command       = start_mode == Constants.PHP_START_MODE_COMMAND
         start_mode_web_interface = start_mode == Constants.PHP_START_MODE_WEB_INTERFACE
 
+        self.label_version_title.setVisible(not start_mode_web_interface)
+        self.label_version.setVisible(not start_mode_web_interface)
         self.label_start_mode.setText(Constants.php_start_mode_display_names[start_mode])
         self.line.setVisible(not start_mode_web_interface)
         self.check_show_advanced_options.setVisible(not start_mode_web_interface)
