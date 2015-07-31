@@ -283,5 +283,6 @@
 - Add status column to RED Brick program list
 - Add calibration dialog to Industrial Dual Analog In Bricklet plugin
 
-2.2.7: (not released)
+2.2.7:
 - Show status of web interface programs properly in the RED Brick program list
+- Fix crash in RED Brick PHP program info screen UI status logic
