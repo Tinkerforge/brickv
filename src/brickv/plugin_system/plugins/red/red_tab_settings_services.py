@@ -134,7 +134,7 @@ class REDTabSettingsServices(QtGui.QWidget, Ui_REDTabSettingsServices):
         
         QtGui.QMessageBox.information(get_main_window(),
                                       'Settings | Services',
-                                      'Saved configuration successfully, rebooting RED Brick.')
+                                      'Saved configuration successfully, will not reboot RED Brick.')
 
         self.script_manager.execute_script('restart_reboot_shutdown',
                                            cb_restart_reboot_shutdown, ['1'])

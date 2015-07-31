@@ -281,11 +281,13 @@ class REDTabSettingsBrickd(QtGui.QWidget, Ui_REDTabSettingsBrickd):
                     QtGui.QMessageBox.critical(get_main_window(),
                                                'Settings | Brickd',
                                                'Error writing brickd config file.')
-                else:
-                    self.script_manager.execute_script('restart_brickd', None)
-                    QtGui.QMessageBox.information(get_main_window(),
-                                                  'Settings | Brick Daemon',
-                                                  'Saved configuration successfully, restarting Brick Daemon.')
+                    return
+
+                QtGui.QMessageBox.information(get_main_window(),
+                                              'Settings | Brick Daemon',
+                                              'Saved configuration successfully, will now restart Brick Daemon.')
+
+                self.script_manager.execute_script('restart_brickd', None)
 
             red_file.write_async(config, lambda x: cb_write(red_file, x), None)
 
