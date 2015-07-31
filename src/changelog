@@ -286,3 +286,4 @@
 2.2.7:
 - Show status of web interface programs properly in the RED Brick program list
 - Fix crash in RED Brick PHP program info screen UI status logic
+- Fix TLS checkbox on RED Brick server monitoring tab
