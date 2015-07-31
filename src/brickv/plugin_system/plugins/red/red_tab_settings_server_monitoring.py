@@ -621,7 +621,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.ledit_sm_email_username.setText(self.dict_email['username'])
                 self.ledit_sm_email_password.setText(self.dict_email['password'])
 
-                if self.dict_email['tls'] == '1':
+                if self.dict_email['tls'] == 'yes':
                     self.chkbox_sm_email_tls.setChecked(True)
                 else:
                     self.chkbox_sm_email_tls.setChecked(False)
@@ -1768,8 +1768,6 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 service_description   = widget_name.text()
                 command_line          = command_line
                 check_command         = 'tinkerforge-command-' + str(r)
-                notification_options  = notification_options
-                notifications_enabled = notifications_enabled
 
                 a_rule = {'service_description'  : service_description,
                           'command_line'         : command_line,
