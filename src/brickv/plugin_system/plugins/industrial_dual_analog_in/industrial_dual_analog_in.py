@@ -86,8 +86,12 @@ class Calibration(QDialog, Ui_Calibration):
         
     def gain_clicked(self):
         try:
-            measured0 = (sum(self.values0)/10.0)*244/38588
-            measured1 = (sum(self.values1)/10.0)*244/38588
+            if self.parent.firmware_version >= (2, 0, 1): #fixed computation in 2.0.1
+                measured0 = (sum(self.values0)/10.0)*244/44983
+                measured1 = (sum(self.values1)/10.0)*244/44983
+            else:
+                measured0 = (sum(self.values0)/10.0)*244/38588
+                measured1 = (sum(self.values1)/10.0)*244/38588
             factor0 = self.spinbox_voltage_ch0.value()/measured0
             factor1 = self.spinbox_voltage_ch1.value()/measured1
             gain0 = int((factor0-1)*2**23)
