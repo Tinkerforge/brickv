@@ -30,6 +30,7 @@ from brickv.plugin_system.plugins.rs232.ui_rs232 import Ui_RS232
 from brickv.async_call import async_call
 
 from brickv.plugin_system.plugins.rs232.qhexedit import QHexeditWidget
+from brickv.plugin_system.plugins.rs232.TFHexValidator import TFHexValidator
 
 class RS232(PluginBase, Ui_RS232):
     qtcb_read = pyqtSignal(object, int)
@@ -49,6 +50,11 @@ class RS232(PluginBase, Ui_RS232):
         self.input_combobox.addItem("")
         self.input_combobox.lineEdit().setMaxLength(58)
         self.input_combobox.lineEdit().returnPressed.connect(self.input_changed)
+
+        hex_validator = TFHexValidator()
+        self.line_ending_lineedit.setValidator(hex_validator)
+        self.line_ending_combobox.currentIndexChanged.connect(self.line_ending_changed)
+        self.line_ending_lineedit.editingFinished.connect(self.line_ending_changed)
 
         self.baudrate_combobox.currentIndexChanged.connect(self.configuration_changed)
         self.parity_combobox.currentIndexChanged.connect(self.configuration_changed)
@@ -82,8 +88,40 @@ class RS232(PluginBase, Ui_RS232):
         self.text.insertPlainText(ascii)
         self.text.moveCursor(QTextCursor.End)
 
+    def line_ending_changed(self):
+        selected_line_ending = self.line_ending_combobox.currentText()
+        self.line_ending_lineedit.setEnabled( (selected_line_ending == 'Hex:' ))
+
+    def get_line_ending(self):
+        selected_line_ending = self.line_ending_combobox.currentText()
+
+        if selected_line_ending == '\\n':
+            hex_le = '0A'
+        elif selected_line_ending == '\\r':
+            hex_le = '0D'
+        elif selected_line_ending == '\\r\\n':
+            hex_le = '0D0A'
+        elif selected_line_ending == '\\n\\r':
+            hex_le = '0A0D'
+        elif selected_line_ending == '\\0':
+            self.line_ending = "00"
+        elif selected_line_ending == 'Hex:':
+            hex_le = self.line_ending_lineedit.text()
+        else:
+            hex_le = ''
+
+        try:
+            line_ending = hex_le.decode('hex')
+        except TypeError:
+            # TODO: Handle Error!
+            # Should never happen, because LineEdit has a validator applied
+            line_ending = ''
+
+        print "Line Ending: %s" % (line_ending.encode('hex'))
+        return line_ending
+
     def input_changed(self):
-        text = self.input_combobox.currentText().encode('utf-8') + '\n\r'
+        text = self.input_combobox.currentText().encode('utf-8') + self.get_line_ending()
         c = ['\0']*60
         for i, t in enumerate(text):
             c[i] = t
