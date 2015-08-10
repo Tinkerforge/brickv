@@ -86,6 +86,7 @@ WORKING_STATE_SAVE = 4
 AP_NAME_COL_WIDTH = 300
 AP_CHANNEL_COL_WIDTH = 100
 AP_SECURITY_COL_WIDTH = 100
+AP_QUALITY_COL_WIDTH = 100
 
 class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
     def __init__(self):
@@ -119,17 +120,19 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                                  'wired_settings': None}
         
 
-        self.ap_tree_model = QtGui.QStandardItemModel(0, 3)
+        self.ap_tree_model = QtGui.QStandardItemModel(0, 4)
 
         self.ap_tree_model.setHorizontalHeaderItem(0, QtGui.QStandardItem("Access Point"))
         self.ap_tree_model.setHorizontalHeaderItem(1, QtGui.QStandardItem("Channel"))
         self.ap_tree_model.setHorizontalHeaderItem(2, QtGui.QStandardItem("Security"))
+        self.ap_tree_model.setHorizontalHeaderItem(3, QtGui.QStandardItem("Signal Quality"))
 
         self.tree_net_wireless_ap.setModel(self.ap_tree_model)
 
         self.tree_net_wireless_ap.header().resizeSection(0, AP_NAME_COL_WIDTH)
         self.tree_net_wireless_ap.header().resizeSection(1, AP_CHANNEL_COL_WIDTH)
         self.tree_net_wireless_ap.header().resizeSection(2, AP_SECURITY_COL_WIDTH)
+        self.tree_net_wireless_ap.header().resizeSection(3, AP_QUALITY_COL_WIDTH)
 
         self.network_stat_refresh_timer.timeout.connect(self.cb_network_stat_refresh)
 
@@ -409,6 +412,7 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 channel = unicode(apdict['channel'])
                 encryption = unicode(apdict['encryption'])
                 encryption_method = unicode(apdict['encryption_method'])
+                quality = unicode(apdict['quality'])
 
                 ap_item = QtGui.QStandardItem(essid)
                 ap_item.setData(AP_COL, AP_COL_USER_ROLE)
@@ -490,7 +494,9 @@ class REDTabSettingsNetwork(QtGui.QWidget, Ui_REDTabSettingsNetwork):
                 except:
                     ap_item.setData('0.0.0.0', AP_DNS_USER_ROLE)
 
-                self.ap_tree_model.appendRow([ap_item, channel_item, encryption_method_item])
+                quality_item = QtGui.QStandardItem(quality+'%')
+
+                self.ap_tree_model.appendRow([ap_item, channel_item, encryption_method_item, quality_item])
 
             if self.ap_tree_model.rowCount() <= 0:
                 no_ap_found()
