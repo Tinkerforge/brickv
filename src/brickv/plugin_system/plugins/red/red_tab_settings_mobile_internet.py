@@ -47,7 +47,6 @@ MESSAGE_ERROR_VALIDATION_APN_EMPTY = 'APN empty'
 MESSAGE_ERROR_VALIDATION_APN_NON_ASCII = 'APN contains non ASCII characters'
 MESSAGE_ERROR_VALIDATION_USERNAME_NON_ASCII = 'Username contains non ASCII characters'
 MESSAGE_ERROR_VALIDATION_PASSWORD_NON_ASCII = 'Password contains non ASCII characters'
-MESSAGE_ERROR_VALIDATION_PIN_EMPTY = 'SIM card PIN empty'
 MESSAGE_ERROR_VALIDATION_PIN_LENGTH = 'SIM card PIN not 4 digits'
 MESSAGE_ERROR_REFERSH = 'Error occurred while refreshing'
 MESSAGE_ERROR_REFERSH_DECODE = 'Error occurred while decoding refresh data'
@@ -58,7 +57,7 @@ MESSAGE_ERROR_CONNECT_SERVICE_CREATION = 'Error occurred while connecting. syste
 MESSAGE_ERROR_CONNECT_SERVICE_EXECUTION = 'Error occurred while connecting. systemd service execution failed'
 MESSAGE_INFORMATION_CONNECT_OK = 'Configuration saved and applied successfully'
 
-INTERVAL_REFRESH_STATUS = 15000 # In milliseconds
+INTERVAL_REFRESH_STATUS = 1000 # In milliseconds
 
 class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInternet):
     def __init__(self):
@@ -261,7 +260,12 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
             self.label_mi_status_status.setText('-')
         else:
             self.label_mi_status_status.setText(dict_status['status'])
-            
+
+        if not dict_status['signal_quality']:
+            self.label_mi_status_signal_quality.setText('-')
+        else:
+            self.label_mi_status_signal_quality.setText(dict_status['signal_quality'])
+
         if not dict_status['interface']:
             self.label_mi_status_interface.setText('-')
         else:
@@ -409,9 +413,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         if password and not self.check_ascii(password):
             return False, MESSAGE_ERROR_VALIDATION_PASSWORD_NON_ASCII
 
-        if not self.ledit_mi_sim_card_pin.text():
-            return False, MESSAGE_ERROR_VALIDATION_PIN_EMPTY
-        if len(self.ledit_mi_sim_card_pin.text()) != 4:
+        if len(self.ledit_mi_sim_card_pin.text()) > 0 and len(self.ledit_mi_sim_card_pin.text()) != 4:
             return False, MESSAGE_ERROR_VALIDATION_PIN_LENGTH
 
         return True, None

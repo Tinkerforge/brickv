@@ -5,6 +5,7 @@ import re
 import os
 import sys
 import json
+import time
 import shlex
 import serial
 import netifaces
@@ -54,6 +55,7 @@ TAG_PARAM_USBMODEM = 'USBMODEM'
 SERVICE_SYSTEMD_TF_MOBILE_INTERNET = 'tf_mobile_internet.service'
 FILE_UNIT_TF_MOBILE_INTERNET = '/etc/systemd/system/' + SERVICE_SYSTEMD_TF_MOBILE_INTERNET
 FILE_CONFIG_UMTSKEEPER = '/usr/umtskeeper/umtskeeper.conf'
+FILE_TMP_SAKIS3GNET = '/tmp/sakis3g.3gnet'
 
 BINARY_SAKIS3G = '/usr/umtskeeper/sakis3g'
 BINARY_LSUSB = '/usr/bin/lsusb'
@@ -241,10 +243,10 @@ def prepare_test_command_and_umtskeeper_configuration(usb_modem,
                                                       sim_pin):
     command_test_connection = ''
     configuration_umtskeeper = ''
-    sakis_operators = '''DIAL="{0}" FORCE_APN="{1}" APN_USER="{2}" APN_PASS="{3}" OTHER="USBMODEM" USBMODEM="{4}"'''
-    sakis_operators_sim_pin = '''SIM_PIN="{0}" DIAL="{1}" FORCE_APN="{2}" APN_USER="{3}" APN_PASS="{4}" OTHER="USBMODEM" USBMODEM="{5}"'''
+    sakis_operators = '''DIAL="{0}" FORCE_APN="{1}" APN_USER="{2}" APN_PASS="{3}" OTHER="USBMODEM" USBMODEM="{4}" MODEM="{4}"'''
+    sakis_operators_sim_pin = '''SIM_PIN="{0}" DIAL="{1}" FORCE_APN="{2}" APN_USER="{3}" APN_PASS="{4}" OTHER="USBMODEM" USBMODEM="{5}" MODEM="{5}"'''
 
-    if sim_pin:
+    if sim_pin != '':
         command_test_connection_args = ' connect --nostorage --pppd --nofix --console ' +\
             sakis_operators_sim_pin.format(sim_pin,
                                            dial,
@@ -298,26 +300,80 @@ def get_DNS():
 
         return ', '.join(dns_servers)
 
+def find_tty_usb(vid, pid):
+    for dnbase in os.listdir('/sys/bus/usb/devices'):
+        dn = os.path.join('/sys/bus/usb/devices', dnbase)
+        if not os.path.exists(join(dn, 'idVendor')):
+            continue
+        idv = open(join(dn, 'idVendor')).read().strip()
+        if idv != vid:
+            continue
+        idp = open(join(dn, 'idProduct')).read().strip()
+        if idp != pid:
+            continue
+        for subdir in os.listdir(dn):
+            if subdir.startswith(dnbase+':'):
+                for subsubdir in os.listdir(join(dn, subdir)):
+                    if subsubdir.startswith('ttyUSB'):
+                        return join('/dev', subsubdir)
+
+def get_signal_quality():
+    modem = None
+    signal_quality = None
+
+    try:
+        if os.path.exists(FILE_CONFIG_UMTSKEEPER):
+            with open(FILE_CONFIG_UMTSKEEPER, 'r') as ucfh:
+                for line in ucfh.readlines():
+                    if 'MODEM=' not in line:
+                        continue
+                    split_sakisops = line.split('MODEM=')
+
+                    if len(split_sakisops) != 2:
+                        continue
+
+                    vid_pid = split_sakisops[1].replace('"', '').replace("'", '').strip()
+
+                    split_vid_pid = vid_pid.split(':')
+
+                    if len(split_vid_pid) != 2:
+                        continue
+
+                    vid = split_vid_pid[0].strip()
+                    pid = split_vid_pid[1].strip()
+
+                    if len(vid) != 4 or len(pid) != 4:
+                        continue
+
+                    ports_modem = find_tty_usb(vid, pid)
+
+                    for port in ports_modem:
+                        try:
+                            modem = serial.Serial(port,  9600, timeout = 5)
+                            modem.write(b'AT+CSQ\r')
+                            time.sleep(0.5)
+                            response_at = modem.read(32)
+                            signal_quality = ''
+                            break
+                        except:
+                            continue
+    except:
+        if modem:
+            modem.close()
+
+        return None
+
+    return signal_quality
+
 try:
     # Handle command GET_STATUS
     if ACTION == 'GET_STATUS':
-        p = subprocess.Popen([BINARY_SAKIS3G, 'info'],
-                             stdout = subprocess.PIPE,
-                             stderr = subprocess.PIPE)
-        p_out_str = p.communicate()[0]
-        
-        if p.returncode != 0:
-            exit(1)
- 
-        if not p_out_str:
-            exit(1)
-
-        if 'Not connected' in p_out_str:
+        if not os.path.exists(FILE_TMP_SAKIS3GNET):
             p = subprocess.Popen([BINARY_SYSTEMCTL,
                                   'status',
                                   SERVICE_SYSTEMD_TF_MOBILE_INTERNET],
-                                 stdout = subprocess.PIPE,
-                                 stderr = subprocess.PIPE)
+                                  stdout = subprocess.PIPE,
+                                  stderr = subprocess.PIPE)
             p_out_str = p.communicate()[0]
 
             if p_out_str and \
@@ -327,37 +383,78 @@ try:
             else:
                 dict_status['status'] = 'Not connected'
 
+            dict_status['signal_quality'] = None
             dict_status['interface'] = None
             dict_status['ip'] = None
             dict_status['subnet_mask'] = None
             dict_status['gateway'] = None
             dict_status['dns'] = get_DNS()
             sys.stdout.write(json.dumps(dict_status))
+            exit(0)
 
-        else:
-            for line in p_out_str.splitlines():
-                if SPLIT_SEARCH_OPERATOR in line and len(line.split(SPLIT_SEARCH_OPERATOR)) == 2:
-                    if line.split(SPLIT_SEARCH_OPERATOR)[0] == '':
-                        dict_status['status'] = 'Connected to ' + line.split(SPLIT_SEARCH_OPERATOR)[1]
+        p = subprocess.Popen([BINARY_SAKIS3G, 'info'],
+                             stdout = subprocess.PIPE,
+                             stderr = subprocess.PIPE)
+        p_out_str = p.communicate()[0]
 
-                elif SPLIT_SEARCH_INTERFACE in line and len(line.split(SPLIT_SEARCH_INTERFACE)) == 2:
-                    if line.split(SPLIT_SEARCH_INTERFACE)[0] == '':
-                        dict_status['interface'] = line.split(SPLIT_SEARCH_INTERFACE)[1]
-        
-                elif SPLIT_SEARCH_IP in line and len(line.split(SPLIT_SEARCH_IP)) == 2:
-                    if line.split(SPLIT_SEARCH_IP)[0] == '':
-                        dict_status['ip'] = line.split(SPLIT_SEARCH_IP)[1]
+        if p.returncode != 0:
+            exit(1)
 
-                elif SPLIT_SEARCH_SUBNET_MASK in line and len(line.split(SPLIT_SEARCH_SUBNET_MASK)) == 2:
-                    if line.split(SPLIT_SEARCH_SUBNET_MASK)[0] == '':
-                        dict_status['subnet_mask'] = line.split(SPLIT_SEARCH_SUBNET_MASK)[1]
-            
-                elif SPLIT_SEARCH_GATEWAY in line and len(line.split(SPLIT_SEARCH_GATEWAY)) == 2:
-                    if line.split(SPLIT_SEARCH_GATEWAY)[0] == '':
-                        dict_status['gateway'] = line.split(SPLIT_SEARCH_GATEWAY)[1]
-        
-            dict_status['dns'] = get_DNS() 
+        if not p_out_str:
+            exit(1)
+
+        # The file /tmp/sakis3g.3gnet file might exist when the modem is not connected.
+        # For example when a connected modem is disconnected physically from USB port.
+        if 'Not connected' in p_out_str:
+            _p = subprocess.Popen([BINARY_SYSTEMCTL,
+                                  'status',
+                                  SERVICE_SYSTEMD_TF_MOBILE_INTERNET],
+                                  stdout = subprocess.PIPE,
+                                  stderr = subprocess.PIPE)
+            _p_out_str = _p.communicate()[0]
+
+            if _p_out_str and \
+               'Loaded: loaded' in _p_out_str and \
+               'Active: active' in _p_out_str:
+                    dict_status['status'] = 'Connecting...'
+            else:
+                dict_status['status'] = 'Not connected'
+
+            dict_status['signal_quality'] = None
+            dict_status['interface'] = None
+            dict_status['ip'] = None
+            dict_status['subnet_mask'] = None
+            dict_status['gateway'] = None
+            dict_status['dns'] = get_DNS()
             sys.stdout.write(json.dumps(dict_status))
+            exit(0)
+
+        for line in p_out_str.splitlines():
+            if SPLIT_SEARCH_OPERATOR in line and len(line.split(SPLIT_SEARCH_OPERATOR)) == 2:
+                if line.split(SPLIT_SEARCH_OPERATOR)[0] == '':
+                    dict_status['status'] = 'Connected to ' + line.split(SPLIT_SEARCH_OPERATOR)[1]
+
+            elif SPLIT_SEARCH_INTERFACE in line and len(line.split(SPLIT_SEARCH_INTERFACE)) == 2:
+                if line.split(SPLIT_SEARCH_INTERFACE)[0] == '':
+                    dict_status['interface'] = line.split(SPLIT_SEARCH_INTERFACE)[1]
+
+            elif SPLIT_SEARCH_IP in line and len(line.split(SPLIT_SEARCH_IP)) == 2:
+                if line.split(SPLIT_SEARCH_IP)[0] == '':
+                    dict_status['ip'] = line.split(SPLIT_SEARCH_IP)[1]
+
+            elif SPLIT_SEARCH_SUBNET_MASK in line and len(line.split(SPLIT_SEARCH_SUBNET_MASK)) == 2:
+                if line.split(SPLIT_SEARCH_SUBNET_MASK)[0] == '':
+                    dict_status['subnet_mask'] = line.split(SPLIT_SEARCH_SUBNET_MASK)[1]
+        
+            elif SPLIT_SEARCH_GATEWAY in line and len(line.split(SPLIT_SEARCH_GATEWAY)) == 2:
+                if line.split(SPLIT_SEARCH_GATEWAY)[0] == '':
+                    dict_status['gateway'] = line.split(SPLIT_SEARCH_GATEWAY)[1]
+
+        #TODO: Populate signal quality
+        #dict_status['signal_quality'] = get_signal_quality()
+        dict_status['signal_quality'] = None
+        dict_status['dns'] = get_DNS()
+        sys.stdout.write(json.dumps(dict_status))
 
     # Handle command REFRESH
     elif ACTION == 'REFRESH':

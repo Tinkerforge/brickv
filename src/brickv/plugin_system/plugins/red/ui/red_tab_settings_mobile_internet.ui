@@ -77,6 +77,27 @@
           <string>Current Network Status</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
+          <item row="4" column="1" colspan="2">
+           <widget class="QLabel" name="label_mi_status_ip">
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Status:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1" colspan="2">
+           <widget class="QLabel" name="label_mi_status_subnet_mask">
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="2">
            <spacer name="horizontalSpacer">
             <property name="orientation">
@@ -90,17 +111,45 @@
             </property>
            </spacer>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_8">
+          <item row="7" column="1" colspan="2">
+           <widget class="QLabel" name="label_mi_status_dns">
             <property name="text">
-             <string>IP:</string>
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" colspan="2">
+           <widget class="QLabel" name="label_mi_status_interface">
+            <property name="text">
+             <string>-</string>
             </property>
            </widget>
           </item>
           <item row="5" column="0">
-           <widget class="QLabel" name="label_10">
+           <widget class="QLabel" name="label_9">
             <property name="text">
-             <string>Gateway:</string>
+             <string>Subnet Mask:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Interface:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1" colspan="2">
+           <widget class="QLabel" name="label_mi_status_gateway">
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>IP:</string>
             </property>
            </widget>
           </item>
@@ -111,64 +160,29 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_13">
-            <property name="text">
-             <string>Status:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_9">
-            <property name="text">
-             <string>Subnet Mask:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
+          <item row="7" column="0">
            <widget class="QLabel" name="label_11">
             <property name="text">
              <string>DNS:</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_7">
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_10">
             <property name="text">
-             <string>Interface:</string>
+             <string>Gateway:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Signal Quality:</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1" colspan="2">
-           <widget class="QLabel" name="label_mi_status_interface">
-            <property name="text">
-             <string>-</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1" colspan="2">
-           <widget class="QLabel" name="label_mi_status_ip">
-            <property name="text">
-             <string>-</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1" colspan="2">
-           <widget class="QLabel" name="label_mi_status_subnet_mask">
-            <property name="text">
-             <string>-</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1" colspan="2">
-           <widget class="QLabel" name="label_mi_status_gateway">
-            <property name="text">
-             <string>-</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1" colspan="2">
-           <widget class="QLabel" name="label_mi_status_dns">
+           <widget class="QLabel" name="label_mi_status_signal_quality">
             <property name="text">
              <string>-</string>
             </property>
