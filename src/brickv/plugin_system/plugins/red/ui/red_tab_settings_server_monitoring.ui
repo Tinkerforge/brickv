@@ -25,7 +25,7 @@
         <x>0</x>
         <y>0</y>
         <width>839</width>
-        <height>644</height>
+        <height>792</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
@@ -61,6 +61,12 @@
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="0" column="0" colspan="2">
            <widget class="QTreeView" name="tview_sm_hosts">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>150</height>
+             </size>
+            </property>
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>
             </property>
@@ -217,6 +223,12 @@
          <layout class="QGridLayout" name="gridLayout_2">
           <item row="0" column="0" colspan="2">
            <widget class="QTreeView" name="tview_sm_rules">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>150</height>
+             </size>
+            </property>
             <property name="editTriggers">
              <set>QAbstractItemView::NoEditTriggers</set>
             </property>
