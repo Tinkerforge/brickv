@@ -117,7 +117,6 @@ class RS232(PluginBase, Ui_RS232):
             # Should never happen, because LineEdit has a validator applied
             line_ending = ''
 
-        print "Line Ending: %s" % (line_ending.encode('hex'))
         return line_ending
 
     def input_changed(self):
