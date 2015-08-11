@@ -51,8 +51,7 @@ class RS232(PluginBase, Ui_RS232):
         self.input_combobox.lineEdit().setMaxLength(58)
         self.input_combobox.lineEdit().returnPressed.connect(self.input_changed)
 
-        hex_validator = TFHexValidator()
-        self.line_ending_lineedit.setValidator(hex_validator)
+        self.line_ending_lineedit.setValidator(TFHexValidator())
         self.line_ending_combobox.currentIndexChanged.connect(self.line_ending_changed)
         self.line_ending_lineedit.editingFinished.connect(self.line_ending_changed)
 
@@ -104,7 +103,7 @@ class RS232(PluginBase, Ui_RS232):
         elif selected_line_ending == '\\n\\r':
             hex_le = '0A0D'
         elif selected_line_ending == '\\0':
-            self.line_ending = "00"
+            hex_le = "00"
         elif selected_line_ending == 'Hex:':
             hex_le = self.line_ending_lineedit.text()
         else:
