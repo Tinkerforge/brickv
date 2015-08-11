@@ -38,7 +38,7 @@
        </item>
        <item>
         <property name="text">
-         <string>Binary</string>
+         <string>Hex</string>
         </property>
        </item>
       </widget>
@@ -97,6 +97,70 @@
        </property>
        <property name="insertPolicy">
         <enum>QComboBox::InsertAtBottom</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="line_ending_combobox">
+       <property name="toolTip">
+        <string>Line Ending</string>
+       </property>
+       <property name="currentIndex">
+        <number>3</number>
+       </property>
+       <item>
+        <property name="text">
+         <string/>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>\n</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>\r</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>\r\n</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>\n\r</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>\0</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Hex:</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="line_ending_lineedit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>16777215</height>
+        </size>
        </property>
       </widget>
      </item>
