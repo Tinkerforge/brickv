@@ -7,6 +7,7 @@ import json
 import stat
 import socket
 import argparse
+import subprocess
 from pynag import Model
 from sys import argv
 from time import sleep
@@ -650,6 +651,55 @@ elif ACTION == 'ENUMERATE':
     except:
         ignore_enumerate_fail()
         exit(0)
+
+elif ACTION == 'TEST_EMAIL':
+    if len(argv) != 3:
+        sys.stderr.write(unicode('Too many or too few arguments provided for sending test email'))
+        exit(1)
+    try:
+        test_email_dict = json.loads(argv[2])
+        test_email_from = test_email_dict['test_email_from']
+        test_email_to = test_email_dict['test_email_to']
+        test_email_server = test_email_dict['test_email_server']
+        test_email_port = test_email_dict['test_email_port']
+        test_email_username = test_email_dict['test_email_username']
+        test_email_password = test_email_dict['test_email_password']
+        test_email_ssl = test_email_dict['test_email_ssl']
+
+        p_sendemail = subprocess.Popen(['/usr/bin/sendemail',
+                                        '-f',
+                                        test_email_from,
+                                        '-t',
+                                        test_email_to,
+                                        '-u',
+                                        '"** RED-Brick Server Monitoring Test Email **"',
+                                        '-m',
+                                        'If you received this email message on the target email \
+address then it means that the server monitoring email alert is working on the RED-Brick.\n',
+                                        '-s',
+                                        test_email_server+':'+test_email_port,
+                                        '-o',
+                                        'username='+test_email_username,
+                                        '-o',
+                                        'password='+test_email_password,
+                                        '-o',
+                                        'tls='+test_email_ssl],
+                                       universal_newlines = True,
+                                       stdout = subprocess.PIPE,
+                                       stderr = subprocess.PIPE)
+        p_sendemail_comm = p_sendemail.communicate()
+
+    except Exception as e:
+        sys.stderr.write(unicode(e))
+        exit(1)
+
+    if p_sendemail.returncode != 0:
+        if p_sendemail_comm[1]:
+            sys.stderr.write(unicode(p_sendemail_comm[1]))
+        else:
+            sys.stderr.write(unicode(p_sendemail_comm[0]))
+        exit(1)
+
 else:
     exit(1)
 

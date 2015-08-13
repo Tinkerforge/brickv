@@ -164,6 +164,7 @@ CHECK_FAILED_NON_ASCII                 = 22
 MESSAGEBOX_TITLE                              = 'Settings | Server Monitoring'
 MESSAGE_INFO_SAVE_OK                          = 'Rules saved and applied successfully'
 MESSAGE_INFO_NO_RULES_TO_SAVE                 = 'No rules to save'
+MESSAGE_INFO_TEST_EMAIL_SENT                  = 'Test Email sent successfully'
 MESSAGE_ERROR_SAVE_NOT_OK                     = 'Error occured while saving and applying rules'
 MESSAGE_ERROR_GET_FAILED                      = 'Error occured while trying to get existing rules'
 MESSAGE_ERROR_ENUMERATION_FAILED              = 'Error occured while enumerating host'
@@ -187,6 +188,7 @@ MESSAGE_ERROR_CHECK_EMAIL_USERNAME_NON_ASCII  = 'SMTP username contains non ASCI
 MESSAGE_ERROR_CHECK_EMAIL_USERNAME_WHITESPACE = 'SMTP username contains whitespace'
 MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY      = 'SMTP password empty'
 MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_NON_ASCII  = 'SMTP password contains non ASCII character'
+MESSAGE_ERROR_TEST_EMAIL_FAILED               = 'Sending test Email failed'
 MESSAGE_ERROR_CHECK_NON_ASCII                 = 'Non ASCII character'
 MESSAGE_ERROR_GET_LOCALHOST                   = 'Error occured while getting hostname'
 MESSAGE_ERROR_NO_LOCALHOST                    = 'No localhost found'
@@ -262,6 +264,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
         self.ledit_sm_email_username.textEdited.connect(self.slot_input_changed)
         self.ledit_sm_email_password.textEdited.connect(self.slot_input_changed)
         self.chkbox_sm_email_password_show.stateChanged.connect(self.slot_chkbox_sm_email_password_show_state_changed)
+        self.pbutton_sm_email_test.clicked.connect(self.slot_pbutton_sm_email_test_clicked)
 
         self.from_constructor = True
         self.slot_chkbox_sm_email_enable_state_changed(self.chkbox_sm_email_enable.isChecked())
@@ -285,6 +288,21 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
     def tab_destroy(self):
         pass
+
+    def cb_settings_server_monitoring_test_email(self, result):
+        self.working = False
+
+        if not report_script_result(result,
+                                    MESSAGEBOX_TITLE,
+                                    MESSAGE_ERROR_TEST_EMAIL_FAILED):
+            self.update_gui(EVENT_RETURNED_REFRESH_GENERIC)
+            return
+
+        QtGui.QMessageBox.information(get_main_window(),
+                                      MESSAGEBOX_TITLE,
+                                      MESSAGE_INFO_TEST_EMAIL_SENT)
+
+        self.update_gui(EVENT_RETURNED_REFRESH_GENERIC)
 
     def get_host_parameters(self, host_name):
         port           = ''
@@ -859,8 +877,73 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
         return True
 
-    def check_rules(self):
+    def check_rules(self, check_only_email_fields = False):
+        def check_email_fields():
+            email_from     = self.ledit_sm_email_from.text()
+            email_to       = self.ledit_sm_email_to.text()
+            email_server   = self.ledit_sm_email_server.text()
+            email_username = self.ledit_sm_email_username.text()
+            email_password = self.ledit_sm_email_password.text()
+
+            if not email_from:
+                return None, None, CHECK_FAILED_EMAIL_FROM_EMPTY
+
+            elif not self.is_ascii(email_from):
+                return None, None,  CHECK_FAILED_EMAIL_FROM_NON_ASCII
+
+            elif ' ' in email_from:
+                return None, None, CHECK_FAILED_EMAIL_FROM_WHITESPACE
+
+            elif not re.match('^.+@.+$', email_from):
+                return None, None, CHECK_FAILED_EMAIL_FROM_MALFORMED
+
+            elif not email_to:
+                return None, None, CHECK_FAILED_EMAIL_TO_EMPTY
+
+            elif not self.is_ascii(email_to):
+                return None, None, CHECK_FAILED_EMAIL_TO_NON_ASCII
+
+            elif ' ' in email_to:
+                return None, None, CHECK_FAILED_EMAIL_TO_WHITESPACE
+
+            elif not re.match('^.+@.+$', email_to):
+                return None, None, CHECK_FAILED_EMAIL_TO_MALFORMED
+
+            elif not email_server:
+                return None, None, CHECK_FAILED_EMAIL_SERVER_EMPTY
+
+            elif not self.is_ascii(email_server):
+                return None, None, CHECK_FAILED_EMAIL_SERVER_NON_ASCII
+
+            elif ' ' in email_server:
+                return None, None, CHECK_FAILED_EMAIL_SERVER_WHITESPACE
+
+            elif not email_username:
+                return None, None, CHECK_FAILED_EMAIL_USERNAME_EMPTY
+
+            elif not self.is_ascii(email_username):
+                return None, None, CHECK_FAILED_EMAIL_USERNAME_NON_ASCII
+
+            elif ' ' in email_username:
+                return None, None, CHECK_FAILED_EMAIL_USERNAME_WHITESPACE
+
+            elif not email_password:
+                return None, None, CHECK_FAILED_EMAIL_PASSWORD_EMPTY
+
+            elif not self.is_ascii(email_password):
+                return None, None, CHECK_FAILED_EMAIL_PASSWORD_NON_ASCII
+
+            return None, None, CHECK_OK
+
         list_service_names = []
+
+        if check_only_email_fields:
+            rule_number, field_number, check_result = check_email_fields()
+
+            if check_result == CHECK_OK:
+                return rule_number, field_number, CHECK_OK
+            else:
+                return rule_number, field_number, check_result
 
         for r in range(self.model_rules.rowCount()):
             for c in range(COUNT_COLUMNS_RULES_MODEL):
@@ -896,59 +979,10 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 
                 # Check Email fields
                 elif self.chkbox_sm_email_enable.isChecked():
-                    email_from     = self.ledit_sm_email_from.text()
-                    email_to       = self.ledit_sm_email_to.text()
-                    email_server   = self.ledit_sm_email_server.text()
-                    email_username = self.ledit_sm_email_username.text()
-                    email_password = self.ledit_sm_email_password.text()
+                    rule_number, field_number, check_result = check_email_fields()
 
-                    if not email_from:
-                        return None, None, CHECK_FAILED_EMAIL_FROM_EMPTY
-
-                    elif not self.is_ascii(email_from):
-                        return None, None,  CHECK_FAILED_EMAIL_FROM_NON_ASCII
-
-                    elif ' ' in email_from:
-                        return None, None,  CHECK_FAILED_EMAIL_FROM_WHITESPACE
-
-                    elif not re.match('^.+@.+$', email_from):
-                        return None, None,  CHECK_FAILED_EMAIL_FROM_MALFORMED
-
-                    elif not email_to:
-                        return None, None, CHECK_FAILED_EMAIL_TO_EMPTY
-
-                    elif not self.is_ascii(email_to):
-                        return None, None,  CHECK_FAILED_EMAIL_TO_NON_ASCII
-
-                    elif ' ' in email_to:
-                        return None, None,  CHECK_FAILED_EMAIL_TO_WHITESPACE
-
-                    elif not re.match('^.+@.+$', email_to):
-                        return None, None,  CHECK_FAILED_EMAIL_TO_MALFORMED
-
-                    elif not email_server:
-                        return None, None, CHECK_FAILED_EMAIL_SERVER_EMPTY
-
-                    elif not self.is_ascii(email_server):
-                        return None, None,  CHECK_FAILED_EMAIL_SERVER_NON_ASCII
-
-                    elif ' ' in email_server:
-                        return None, None,  CHECK_FAILED_EMAIL_SERVER_WHITESPACE
-
-                    elif not email_username:
-                        return None, None, CHECK_FAILED_EMAIL_USERNAME_EMPTY
-
-                    elif not self.is_ascii(email_username):
-                        return None, None,  CHECK_FAILED_EMAIL_USERNAME_NON_ASCII
-
-                    elif ' ' in email_username:
-                        return None, None,  CHECK_FAILED_EMAIL_USERNAME_WHITESPACE
-
-                    elif not email_password:
-                        return None, None, CHECK_FAILED_EMAIL_PASSWORD_EMPTY
-
-                    elif not self.is_ascii(email_password):
-                        return None, None,  CHECK_FAILED_EMAIL_PASSWORD_NON_ASCII
+                    if check_result != CHECK_OK:
+                        return rule_number, field_number, check_result
 
         return None, None, CHECK_OK
 
@@ -1210,6 +1244,125 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     continue
 
                 self.populate_cbox_uids(cbox_host, cbox_bricklet, cbox_uid)
+
+    def slot_pbutton_sm_email_test_clicked(self):
+        if self.working:
+            return
+
+        rule_number, field_number, check_result = self.check_rules(check_only_email_fields = True)
+
+        if check_result == CHECK_FAILED_EMAIL_FROM_EMPTY:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_FROM_EMPTY)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_FROM_NON_ASCII:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_FROM_NON_ASCII)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_FROM_WHITESPACE:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_FROM_WHITESPACE)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_FROM_MALFORMED:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_FROM_MALFORMED)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_TO_EMPTY:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_TO_EMPTY)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_TO_NON_ASCII:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_TO_NON_ASCII)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_TO_WHITESPACE:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_TO_WHITESPACE)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_TO_MALFORMED:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_TO_MALFORMED)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_SERVER_EMPTY:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_SERVER_EMPTY)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_SERVER_NON_ASCII:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_SERVER_NON_ASCII)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_SERVER_WHITESPACE:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_SERVER_WHITESPACE)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_USERNAME_EMPTY:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_USERNAME_EMPTY)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_USERNAME_NON_ASCII:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_USERNAME_NON_ASCII)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_USERNAME_WHITESPACE:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_USERNAME_WHITESPACE)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_PASSWORD_EMPTY:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY)
+            return
+
+        elif check_result == CHECK_FAILED_EMAIL_PASSWORD_NON_ASCII:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_NON_ASCII)
+            return
+
+        test_email_dict = {'test_email_from'    : self.ledit_sm_email_from.text(),
+                           'test_email_to'      : self.ledit_sm_email_to.text(),
+                           'test_email_server'  : self.ledit_sm_email_server.text(),
+                           'test_email_port'    : str(self.sbox_sm_email_port.value()),
+                           'test_email_username': self.ledit_sm_email_username.text(),
+                           'test_email_password': self.ledit_sm_email_password.text(),
+                           'test_email_ssl'     : 'no'}
+
+        if self.chkbox_sm_email_tls.isChecked():
+            test_email_dict['test_email_ssl'] = 'yes'
+
+        self.working = True
+        self.update_gui(EVENT_CLICKED_REFRESH_GENERIC)
+        self.script_manager.execute_script('settings_server_monitoring',
+                                           self.cb_settings_server_monitoring_test_email,
+                                           ['TEST_EMAIL', json.dumps(test_email_dict)])
 
     def slot_cbox_authentication_activated(self, index):
         sender = self.sender()
@@ -1835,6 +1988,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.chkbox_sm_email_password_show.show()
             self.label_sm_email_tls.show()
             self.chkbox_sm_email_tls.show()
+            self.pbutton_sm_email_test.show()
         else:
             for r in range(self.model_rules.rowCount()):
                 item = self.model_rules.item(r, INDEX_COL_RULES_EMAIL_NOTIFICATIONS)
@@ -1857,6 +2011,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
             self.chkbox_sm_email_password_show.hide()
             self.label_sm_email_tls.hide()
             self.chkbox_sm_email_tls.hide()
+            self.pbutton_sm_email_test.hide()
 
         if self.from_constructor:
             self.from_constructor = False
