@@ -52,7 +52,10 @@ MESSAGE_ERROR_REFERSH = 'Error occurred while refreshing'
 MESSAGE_ERROR_REFERSH_DECODE = 'Error occurred while decoding refresh data'
 MESSAGE_ERROR_STATUS_DECODE = 'Error occurred while decoding status data'
 MESSAGE_ERROR_CONNECT = 'Error occurred while connecting'
-MESSAGE_ERROR_CONNECT_TEST = 'Error occurred while connecting. Make sure the configuration is correct and the modem is registered to the provider network'
+MESSAGE_ERROR_CONNECT_TEST = 'Error occurred while connecting. Make sure the configuration is correct'
+MESSAGE_ERROR_CONNECT_TEST_PIN = 'Error occurred while connecting. Wrong SIM card PIN'
+MESSAGE_ERROR_CONNECT_TEST_REGISTER_NETWORK = 'Error occurred while connecting. Could not register to a network. Most probably signal strength is not strong enough'
+MESSAGE_ERROR_CONNECT_TEST_DEVICE_UNAVAILABLE = 'Error occurred while connecting. Selected device unavailable. Try unplugging and plugging the modem'
 MESSAGE_ERROR_CONNECT_SERVICE_CREATION = 'Error occurred while connecting. systemd service creation failed'
 MESSAGE_ERROR_CONNECT_SERVICE_EXECUTION = 'Error occurred while connecting. systemd service execution failed'
 MESSAGE_INFORMATION_CONNECT_OK = 'Configuration saved and applied successfully'
@@ -294,6 +297,7 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
         self.status_refresh_timer.start(INTERVAL_REFRESH_STATUS)
 
     def cb_settings_mobile_internet_connect(self, result):
+        print result
         self.update_gui(EVENT_GUI_CONNECT_RETURNED)
 
         if result.exit_code == 2:
@@ -312,6 +316,25 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
             QtGui.QMessageBox.critical(get_main_window(),
                                        MESSAGEBOX_TITLE,
                                        MESSAGE_ERROR_CONNECT_SERVICE_EXECUTION)
+            return
+
+        if result.exit_code == 7 or \
+           result.exit_code == 8:
+                QtGui.QMessageBox.critical(get_main_window(),
+                                           MESSAGEBOX_TITLE,
+                                           MESSAGE_ERROR_CONNECT_TEST_DEVICE_UNAVAILABLE)
+                return
+
+        if result.exit_code == 12:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CONNECT_TEST_PIN)
+            return
+
+        if result.exit_code == 13:
+            QtGui.QMessageBox.critical(get_main_window(),
+                                       MESSAGEBOX_TITLE,
+                                       MESSAGE_ERROR_CONNECT_TEST_REGISTER_NETWORK)
             return
 
         if not report_script_result(result, MESSAGEBOX_TITLE, MESSAGE_ERROR_CONNECT):

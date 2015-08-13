@@ -209,9 +209,17 @@ def test_connection(command_test_connection):
     killall_processes()
     remove_tmp_sakis3gnet()
 
-    if execute_command(shlex.split(command_test_connection)) != 0:
+    ret_command_test_connection = execute_command(shlex.split(command_test_connection))
+
+    if ret_command_test_connection != 0:
         killall_processes()
         remove_tmp_sakis3gnet()
+        sys.stdout.write('ERRORCODE = ' + str(ret_command_test_connection))
+        if ret_command_test_connection == 7 or \
+           ret_command_test_connection == 8 or \
+           ret_command_test_connection == 12 or \
+           ret_command_test_connection == 13:
+                return ret_command_test_connection
         return 2
 
     killall_processes()
