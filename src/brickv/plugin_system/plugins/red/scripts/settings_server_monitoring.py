@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import sys
 import json
 import stat
+import shlex
 import socket
 import argparse
 import subprocess
@@ -346,6 +348,19 @@ dict_enumerate = {'host'         : None,
                   'humidity'     : [],
                   'ambient_light': []}
 
+_find_unsafe = re.compile(r'[^\w@%+=:,./-]').search
+
+def quote(s):
+    """Return a shell-escaped version of the string *s*."""
+    if not s:
+        return "''"
+    if _find_unsafe(s) is None:
+        return s
+
+    # use single quotes, and put single quotes into double quotes
+    # the string $'b is then quoted as '$'"'"'b'
+    return "'" + s.replace("'", "'\"'\"'") + "'"
+
 def ignore_enumerate_fail():
     global ignore_enumerate_failed_called
     ignore_enumerate_failed_called = True
@@ -554,21 +569,21 @@ elif ACTION == 'APPLY':
             tf_contact.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
             tf_contact_group.set_filename(FILE_PATH_TF_NAGIOS_CONFIGURATION)
             tf_command_notify_service.command_name = 'tinkerforge-notify-service-by-email'
-            tf_command_notify_service.command_line = TEMPLATE_COMMAND_LINE_NOTIFY_SERVICE.format(apply_dict['email']['from'],
-                                                                                                 apply_dict['email']['to'],
-                                                                                                 apply_dict['email']['server'],
-                                                                                                 apply_dict['email']['port'],
-                                                                                                 apply_dict['email']['username'],
-                                                                                                 apply_dict['email']['password'],
-                                                                                                 apply_dict['email']['tls'])
+            tf_command_notify_service.command_line = TEMPLATE_COMMAND_LINE_NOTIFY_SERVICE.format(quote(apply_dict['email']['from']),
+                                                                                                 quote(apply_dict['email']['to']),
+                                                                                                 quote(apply_dict['email']['server']),
+                                                                                                 quote(apply_dict['email']['port']),
+                                                                                                 quote(apply_dict['email']['username']),
+                                                                                                 quote(apply_dict['email']['password']),
+                                                                                                 quote(apply_dict['email']['tls']))
             tf_command_notify_host.command_name = 'tinkerforge-notify-host-by-email'
-            tf_command_notify_host.command_line = TEMPLATE_COMMAND_LINE_NOTIFY_HOST.format(apply_dict['email']['from'],
-                                                                                           apply_dict['email']['to'],
-                                                                                           apply_dict['email']['server'],
-                                                                                           apply_dict['email']['port'],
-                                                                                           apply_dict['email']['username'],
-                                                                                           apply_dict['email']['password'],
-                                                                                           apply_dict['email']['tls'])
+            tf_command_notify_host.command_line = TEMPLATE_COMMAND_LINE_NOTIFY_HOST.format(quote(apply_dict['email']['from']),
+                                                                                           quote(apply_dict['email']['to']),
+                                                                                           quote(apply_dict['email']['server']),
+                                                                                           quote(apply_dict['email']['port']),
+                                                                                           quote(apply_dict['email']['username']),
+                                                                                           quote(apply_dict['email']['password']),
+                                                                                           quote(apply_dict['email']['tls']))
             tf_contact.contact_name                  = 'tinkerforge-contact'
             tf_contact.host_notifications_enabled    = '0'
             tf_contact.service_notifications_enabled = '1'
@@ -664,26 +679,25 @@ elif ACTION == 'TEST_EMAIL':
         test_email_port = test_email_dict['test_email_port']
         test_email_username = test_email_dict['test_email_username']
         test_email_password = test_email_dict['test_email_password']
-        test_email_ssl = test_email_dict['test_email_ssl']
+        test_email_tls = test_email_dict['test_email_tls']
 
-        p_sendemail = subprocess.Popen(['/usr/bin/sendemail',
-                                        '-f',
-                                        test_email_from,
-                                        '-t',
-                                        test_email_to,
-                                        '-u',
-                                        '** RED-Brick Server Monitoring Test Email **',
-                                        '-m',
-                                        'If you received this email message on the target email \
-address then it means that the server monitoring email alert is working on the RED-Brick.\n',
-                                        '-s',
-                                        test_email_server+':'+test_email_port,
-                                        '-o',
-                                        'username='+test_email_username,
-                                        '-o',
-                                        'password='+test_email_password,
-                                        '-o',
-                                        'tls='+test_email_ssl],
+        test_email_cmd = '''/usr/bin/sendemail \
+-f {0} \
+-t {1} \
+-u ** RED-Brick Server Monitoring Test Email ** \
+-m If you received this email message on the target email address then it means \
+that the server monitoring email alert is working on the RED-Brick.\n \
+-s {2} \
+-o username={3} \
+-o password={4} \
+-o tls={5}'''.format(quote(test_email_from),
+                     quote(test_email_to),
+                     quote(':'.join([test_email_server, test_email_port])),
+                     quote(test_email_username),
+                     quote(test_email_password),
+                     quote(test_email_tls))
+
+        p_sendemail = subprocess.Popen(shlex.split(test_email_cmd),
                                        universal_newlines = True,
                                        stdout = subprocess.PIPE,
                                        stderr = subprocess.PIPE)
