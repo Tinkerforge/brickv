@@ -1353,10 +1353,10 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                            'test_email_port'    : str(self.sbox_sm_email_port.value()),
                            'test_email_username': self.ledit_sm_email_username.text(),
                            'test_email_password': self.ledit_sm_email_password.text(),
-                           'test_email_ssl'     : 'no'}
+                           'test_email_tls'     : 'no'}
 
         if self.chkbox_sm_email_tls.isChecked():
-            test_email_dict['test_email_ssl'] = 'yes'
+            test_email_dict['test_email_tls'] = 'yes'
 
         self.working = True
         self.update_gui(EVENT_CLICKED_REFRESH_GENERIC)
