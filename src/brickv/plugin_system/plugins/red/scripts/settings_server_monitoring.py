@@ -672,7 +672,7 @@ elif ACTION == 'TEST_EMAIL':
                                         '-t',
                                         test_email_to,
                                         '-u',
-                                        '"** RED-Brick Server Monitoring Test Email **"',
+                                        '** RED-Brick Server Monitoring Test Email **',
                                         '-m',
                                         'If you received this email message on the target email \
 address then it means that the server monitoring email alert is working on the RED-Brick.\n',
