@@ -164,7 +164,7 @@ CHECK_FAILED_NON_ASCII                 = 22
 MESSAGEBOX_TITLE                              = 'Settings | Server Monitoring'
 MESSAGE_INFO_SAVE_OK                          = 'Rules saved and applied successfully'
 MESSAGE_INFO_NO_RULES_TO_SAVE                 = 'No rules to save'
-MESSAGE_INFO_TEST_EMAIL_SENT                  = 'Test Email sent successfully'
+MESSAGE_INFO_TEST_EMAIL_SENT                  = 'Test email sent successfully'
 MESSAGE_ERROR_SAVE_NOT_OK                     = 'Error occured while saving and applying rules'
 MESSAGE_ERROR_GET_FAILED                      = 'Error occured while trying to get existing rules'
 MESSAGE_ERROR_ENUMERATION_FAILED              = 'Error occured while enumerating host'
@@ -188,7 +188,7 @@ MESSAGE_ERROR_CHECK_EMAIL_USERNAME_NON_ASCII  = 'SMTP username contains non ASCI
 MESSAGE_ERROR_CHECK_EMAIL_USERNAME_WHITESPACE = 'SMTP username contains whitespace'
 MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_EMPTY      = 'SMTP password empty'
 MESSAGE_ERROR_CHECK_EMAIL_PASSWORD_NON_ASCII  = 'SMTP password contains non ASCII character'
-MESSAGE_ERROR_TEST_EMAIL_FAILED               = 'Sending test Email failed'
+MESSAGE_ERROR_TEST_EMAIL_FAILED               = 'Sending test email failed'
 MESSAGE_ERROR_CHECK_NON_ASCII                 = 'Non ASCII character'
 MESSAGE_ERROR_GET_LOCALHOST                   = 'Error occured while getting hostname'
 MESSAGE_ERROR_NO_LOCALHOST                    = 'No localhost found'
@@ -977,7 +977,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                             if c not in BASE58:
                                 return r, c, CHECK_FAILED_UID_INVALID
 
-                # Check Email fields
+                # Check email fields
                 elif self.chkbox_sm_email_enable.isChecked():
                     rule_number, field_number, check_result = check_email_fields()
 
@@ -1103,7 +1103,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 label_unit.setText(SUPPORTED_BRICKLETS[cbox_bricklet.currentText()]['unit'])
                 self.tview_sm_rules.setIndexWidget(index_unit, label_unit)
 
-            # Add Email field widget
+            # Add email field widget
             elif c == INDEX_COL_RULES_EMAIL_NOTIFICATIONS:
                 item = self.model_rules.item(r, c)
                 index = self.model_rules.indexFromItem(item)
