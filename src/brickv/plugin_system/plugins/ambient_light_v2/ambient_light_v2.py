@@ -171,5 +171,5 @@ class AmbientLightV2(PluginBase):
         elif i == 4:
             max_illuminance = 130000
 
-        value = illuminance*255/max_illuminance
+        value = min(max(illuminance*255/max_illuminance, 0), 255)
         self.alf.set_color(value, value, value)
