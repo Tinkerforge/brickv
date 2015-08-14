@@ -218,7 +218,8 @@ def test_connection(command_test_connection):
         if ret_command_test_connection == 7 or \
            ret_command_test_connection == 8 or \
            ret_command_test_connection == 12 or \
-           ret_command_test_connection == 13:
+           ret_command_test_connection == 13 or \
+           ret_command_test_connection == 98:
                 return ret_command_test_connection
         return 2
 
