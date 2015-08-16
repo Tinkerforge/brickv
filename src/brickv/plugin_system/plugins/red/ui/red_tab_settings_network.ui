@@ -37,8 +37,8 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>916</width>
-        <height>839</height>
+        <width>924</width>
+        <height>847</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -52,321 +52,7 @@
            <layout class="QVBoxLayout" name="verticalLayout_7">
             <item>
              <layout class="QGridLayout" name="gridLayout_8">
-              <item row="1" column="1" colspan="2">
-               <widget class="QComboBox" name="cbox_net_intf"/>
-              </item>
-              <item row="2" column="1">
-               <widget class="QTreeView" name="tree_net_wireless_ap">
-                <property name="enabled">
-                 <bool>true</bool>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                  <horstretch>1</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>200</height>
-                 </size>
-                </property>
-                <property name="editTriggers">
-                 <set>QAbstractItemView::NoEditTriggers</set>
-                </property>
-                <property name="rootIsDecorated">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="1" colspan="2">
-               <layout class="QHBoxLayout" name="horizontalLayout_6">
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_mask1">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_mask2">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_mask3">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_mask4">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item row="8" column="1" colspan="2">
-               <layout class="QHBoxLayout" name="horizontalLayout_11">
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_dns1">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_dns2">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_dns3">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_dns4">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item row="7" column="0">
-               <widget class="QLabel" name="label_gw">
-                <property name="text">
-                 <string>Gateway:</string>
-                </property>
-                <property name="buddy">
-                 <cstring>sbox_net_gw1</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="1" colspan="2">
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_ip1">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_ip2">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_ip3">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_ip4">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item row="10" column="0" colspan="3">
-               <layout class="QHBoxLayout" name="horizontalLayout">
-                <item>
-                 <widget class="QPushButton" name="pbutton_net_conf_change_hostname">
-                  <property name="text">
-                   <string>Change Hostname</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pbutton_net_conf_refresh">
-                  <property name="text">
-                   <string>Refresh</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="pbutton_net_connect">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="text">
-                   <string>Connect</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_ap">
-                <property name="text">
-                 <string>Access Points:</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                </property>
-                <property name="buddy">
-                 <cstring>tree_net_wireless_ap</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_31">
-                <property name="text">
-                 <string>Interfaces:</string>
-                </property>
-                <property name="buddy">
-                 <cstring>cbox_net_intf</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="1" colspan="2">
-               <layout class="QHBoxLayout" name="horizontalLayout_10">
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_gw1">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_gw2">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_gw3">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSpinBox" name="sbox_net_gw4">
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item row="6" column="0">
-               <widget class="QLabel" name="label_mask">
-                <property name="text">
-                 <string>Subnet Mask:</string>
-                </property>
-                <property name="buddy">
-                 <cstring>sbox_net_mask1</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="0" colspan="3">
-               <widget class="Line" name="line_3">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_addrs_conf">
-                <property name="text">
-                 <string>Address:</string>
-                </property>
-                <property name="buddy">
-                 <cstring>cbox_net_conftype</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="label_key">
-                <property name="text">
-                 <string>WPA Key:</string>
-                </property>
-                <property name="buddy">
-                 <cstring>ledit_net_wireless_key</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="1" colspan="2">
-               <widget class="QComboBox" name="cbox_net_conftype">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>DHCP</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Static</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item row="8" column="0">
-               <widget class="QLabel" name="label_dns">
-                <property name="text">
-                 <string>DNS:</string>
-                </property>
-                <property name="buddy">
-                 <cstring>sbox_net_dns1</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_ip">
-                <property name="text">
-                 <string>IP:</string>
-                </property>
-                <property name="buddy">
-                 <cstring>sbox_net_ip1</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="2">
-               <widget class="QCheckBox" name="chkbox_net_wireless_key_show">
-                <property name="text">
-                 <string>Show Characters</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1">
-               <widget class="QLineEdit" name="ledit_net_wireless_key">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                  <horstretch>1</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" colspan="3">
+              <item row="0" column="0" colspan="2">
                <widget class="QFrame" name="frame_working_please_wait">
                 <property name="frameShape">
                  <enum>QFrame::NoFrame</enum>
@@ -410,47 +96,373 @@
                 </layout>
                </widget>
               </item>
-              <item row="2" column="2">
-               <widget class="QWidget" name="widget_scan" native="true">
-                <layout class="QVBoxLayout" name="verticalLayout_4">
-                 <property name="margin">
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <layout class="QVBoxLayout" name="verticalLayout_3">
-                   <item>
-                    <widget class="QPushButton" name="pbutton_net_wireless_scan">
-                     <property name="text">
-                      <string>Scan</string>
-                     </property>
-                     <property name="flat">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer name="verticalSpacer">
-                     <property name="orientation">
-                      <enum>Qt::Vertical</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>20</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item row="11" column="0" colspan="3">
+              <item row="2" column="0" colspan="2">
                <widget class="QLabel" name="label_net_conf_change_hostname_hint">
                 <property name="text">
                  <string>The Change Hostname feature requires Image Version &gt;= 1.7</string>
                 </property>
+               </widget>
+              </item>
+              <item row="1" column="0" colspan="2">
+               <widget class="QFrame" name="frame_net_config">
+                <property name="frameShape">
+                 <enum>QFrame::NoFrame</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <layout class="QGridLayout" name="gridLayout_4">
+                 <item row="1" column="1">
+                  <widget class="QTreeView" name="tree_net_wireless_ap">
+                   <property name="enabled">
+                    <bool>true</bool>
+                   </property>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>1</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="minimumSize">
+                    <size>
+                     <width>0</width>
+                     <height>200</height>
+                    </size>
+                   </property>
+                   <property name="editTriggers">
+                    <set>QAbstractItemView::NoEditTriggers</set>
+                   </property>
+                   <property name="rootIsDecorated">
+                    <bool>false</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_key">
+                   <property name="text">
+                    <string>WPA Key:</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>ledit_net_wireless_key</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_ap">
+                   <property name="text">
+                    <string>Access Points:</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                   </property>
+                   <property name="buddy">
+                    <cstring>tree_net_wireless_ap</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QLineEdit" name="ledit_net_wireless_key">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                     <horstretch>1</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="0">
+                  <widget class="QLabel" name="label_mask">
+                   <property name="text">
+                    <string>Subnet Mask:</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>sbox_net_mask1</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="1" colspan="2">
+                  <layout class="QHBoxLayout" name="horizontalLayout_6">
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_mask1">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_mask2">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_mask3">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_mask4">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="6" column="1" colspan="2">
+                  <layout class="QHBoxLayout" name="horizontalLayout_10">
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_gw1">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_gw2">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_gw3">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_gw4">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_31">
+                   <property name="text">
+                    <string>Interfaces:</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>cbox_net_intf</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1" colspan="2">
+                  <widget class="QComboBox" name="cbox_net_intf"/>
+                 </item>
+                 <item row="7" column="1" colspan="2">
+                  <layout class="QHBoxLayout" name="horizontalLayout_11">
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_dns1">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_dns2">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_dns3">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_dns4">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="9" column="0" colspan="3">
+                  <layout class="QHBoxLayout" name="horizontalLayout">
+                   <item>
+                    <widget class="QPushButton" name="pbutton_net_conf_change_hostname">
+                     <property name="text">
+                      <string>Change Hostname</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pbutton_net_conf_refresh">
+                     <property name="text">
+                      <string>Refresh</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pbutton_net_connect">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="text">
+                      <string>Connect</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="3" column="1" colspan="2">
+                  <widget class="QComboBox" name="cbox_net_conftype">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <item>
+                    <property name="text">
+                     <string>DHCP</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>Static</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                 <item row="2" column="2">
+                  <widget class="QCheckBox" name="chkbox_net_wireless_key_show">
+                   <property name="text">
+                    <string>Show Characters</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="8" column="0" colspan="3">
+                  <widget class="Line" name="line_3">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1" colspan="2">
+                  <layout class="QHBoxLayout" name="horizontalLayout_3">
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_ip1">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_ip2">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_ip3">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="sbox_net_ip4">
+                     <property name="maximum">
+                      <number>255</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_addrs_conf">
+                   <property name="text">
+                    <string>Address:</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>cbox_net_conftype</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="6" column="0">
+                  <widget class="QLabel" name="label_gw">
+                   <property name="text">
+                    <string>Gateway:</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>sbox_net_gw1</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="0">
+                  <widget class="QLabel" name="label_ip">
+                   <property name="text">
+                    <string>IP:</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>sbox_net_ip1</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="7" column="0">
+                  <widget class="QLabel" name="label_dns">
+                   <property name="text">
+                    <string>DNS:</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>sbox_net_dns1</cstring>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="2">
+                  <widget class="QWidget" name="widget_scan" native="true">
+                   <layout class="QVBoxLayout" name="verticalLayout_4">
+                    <property name="margin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_3">
+                      <item>
+                       <widget class="QPushButton" name="pbutton_net_wireless_scan">
+                        <property name="text">
+                         <string>Scan</string>
+                        </property>
+                        <property name="flat">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="verticalSpacer">
+                        <property name="orientation">
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>20</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
               </item>
              </layout>
@@ -626,12 +638,7 @@
  </widget>
  <tabstops>
   <tabstop>sarea_net</tabstop>
-  <tabstop>cbox_net_intf</tabstop>
-  <tabstop>tree_net_wireless_ap</tabstop>
   <tabstop>pbutton_net_wireless_scan</tabstop>
-  <tabstop>ledit_net_wireless_key</tabstop>
-  <tabstop>chkbox_net_wireless_key_show</tabstop>
-  <tabstop>cbox_net_conftype</tabstop>
   <tabstop>sbox_net_ip1</tabstop>
   <tabstop>sbox_net_ip2</tabstop>
   <tabstop>sbox_net_ip3</tabstop>

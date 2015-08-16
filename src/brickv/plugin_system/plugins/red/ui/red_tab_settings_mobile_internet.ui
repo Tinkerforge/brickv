@@ -6,24 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>656</width>
-    <height>599</height>
+    <width>832</width>
+    <height>695</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_mi_working_wait">
-     <property name="text">
-      <string>Working, please wait...</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
    <item row="5" column="0">
     <widget class="QScrollArea" name="sarea_mi">
      <property name="widgetResizable">
@@ -34,43 +24,11 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>638</width>
-        <height>493</height>
+        <width>814</width>
+        <height>639</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="2" column="0">
-        <widget class="Line" name="line">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QPushButton" name="pbutton_mi_provider_presets">
-           <property name="text">
-            <string>Provider Presets</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pbutton_mi_refresh">
-           <property name="text">
-            <string>Refresh</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pbutton_mi_connect">
-           <property name="text">
-            <string>Connect</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
        <item row="0" column="0">
         <widget class="QGroupBox" name="gbox_mi_status">
          <property name="title">
@@ -197,109 +155,188 @@
           <string>Configuration</string>
          </property>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>APN:</string>
+          <item row="0" column="0">
+           <widget class="QFrame" name="frame_mi_working">
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
             </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>SIM Card PIN:</string>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
             </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="ledit_mi_password">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="echoMode">
-             <enum>QLineEdit::Password</enum>
-            </property>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="1" column="0">
+              <widget class="QProgressBar" name="pbar_mi_working_wait">
+               <property name="maximum">
+                <number>0</number>
+               </property>
+               <property name="value">
+                <number>-1</number>
+               </property>
+               <property name="textVisible">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_mi_working_wait">
+               <property name="text">
+                <string>Working, please wait...</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Dial:</string>
+           <widget class="QFrame" name="frame_mi_configuration">
+            <property name="frameShape">
+             <enum>QFrame::NoFrame</enum>
             </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Password:</string>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
             </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Username:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QLineEdit" name="ledit_mi_sim_card_pin">
-            <property name="maxLength">
-             <number>4</number>
-            </property>
-            <property name="echoMode">
-             <enum>QLineEdit::Password</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_20">
-            <property name="text">
-             <string>Modem:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="2">
-           <widget class="QCheckBox" name="chkbox_mi_sim_card_pin">
-            <property name="text">
-             <string>Show Characters</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QCheckBox" name="chkbox_mi_password">
-            <property name="text">
-             <string>Show Characters</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" colspan="2">
-           <widget class="QComboBox" name="cbox_mi_modem"/>
-          </item>
-          <item row="1" column="1" colspan="2">
-           <widget class="QLineEdit" name="ledit_mi_dial"/>
-          </item>
-          <item row="2" column="1" colspan="2">
-           <widget class="QLineEdit" name="ledit_mi_apn"/>
-          </item>
-          <item row="3" column="1" colspan="2">
-           <widget class="QLineEdit" name="ledit_mi_username">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1" colspan="2">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Using wrong PIN code three times will block the SIM card.</string>
-            </property>
+            <layout class="QGridLayout" name="gridLayout_6">
+             <item row="1" column="1" colspan="2">
+              <widget class="QLineEdit" name="ledit_mi_dial"/>
+             </item>
+             <item row="7" column="0" colspan="3">
+              <widget class="Line" name="line">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1" colspan="2">
+              <widget class="QLineEdit" name="ledit_mi_username">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" colspan="2">
+              <widget class="QComboBox" name="cbox_mi_modem"/>
+             </item>
+             <item row="2" column="1" colspan="2">
+              <widget class="QLineEdit" name="ledit_mi_apn"/>
+             </item>
+             <item row="4" column="1">
+              <widget class="QLineEdit" name="ledit_mi_password">
+               <property name="text">
+                <string/>
+               </property>
+               <property name="echoMode">
+                <enum>QLineEdit::Password</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>SIM Card PIN:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="2">
+              <widget class="QCheckBox" name="chkbox_mi_password">
+               <property name="text">
+                <string>Show Characters</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>APN:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="1" colspan="2">
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Using wrong PIN code three times will block the SIM card.</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="2">
+              <widget class="QCheckBox" name="chkbox_mi_sim_card_pin">
+               <property name="text">
+                <string>Show Characters</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_5">
+               <property name="text">
+                <string>Password:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLineEdit" name="ledit_mi_sim_card_pin">
+               <property name="maxLength">
+                <number>4</number>
+               </property>
+               <property name="echoMode">
+                <enum>QLineEdit::Password</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>Dial:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_4">
+               <property name="text">
+                <string>Username:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_20">
+               <property name="text">
+                <string>Modem:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="0" colspan="3">
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <item>
+                <widget class="QPushButton" name="pbutton_mi_provider_presets">
+                 <property name="text">
+                  <string>Provider Presets</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pbutton_mi_refresh">
+                 <property name="text">
+                  <string>Refresh</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="pbutton_mi_connect">
+                 <property name="text">
+                  <string>Connect</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
@@ -332,19 +369,6 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
-    <widget class="QProgressBar" name="pbar_mi_working_wait">
-     <property name="maximum">
-      <number>0</number>
-     </property>
-     <property name="value">
-      <number>-1</number>
-     </property>
-     <property name="textVisible">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0" colspan="2">
     <widget class="QLabel" name="label_mi_disabled">
      <property name="text">
@@ -359,12 +383,6 @@
  </widget>
  <tabstops>
   <tabstop>sarea_mi</tabstop>
-  <tabstop>cbox_mi_modem</tabstop>
-  <tabstop>ledit_mi_dial</tabstop>
-  <tabstop>ledit_mi_apn</tabstop>
-  <tabstop>ledit_mi_username</tabstop>
-  <tabstop>ledit_mi_password</tabstop>
-  <tabstop>ledit_mi_sim_card_pin</tabstop>
   <tabstop>pbutton_mi_provider_presets</tabstop>
   <tabstop>pbutton_mi_refresh</tabstop>
   <tabstop>pbutton_mi_connect</tabstop>

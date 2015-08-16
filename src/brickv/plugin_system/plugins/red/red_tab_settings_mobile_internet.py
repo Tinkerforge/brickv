@@ -235,11 +235,11 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
 
     def show_working_wait(self, show):
         if show:
-            self.label_mi_working_wait.show()
-            self.pbar_mi_working_wait.show()
+            self.frame_mi_working.show()
+            self.frame_mi_configuration.setEnabled(False)
         else:
-            self.label_mi_working_wait.hide()
-            self.pbar_mi_working_wait.hide()
+            self.frame_mi_working.hide()
+            self.frame_mi_configuration.setEnabled(True)
 
     def cb_settings_mobile_internet_get_status(self, result):
         self.status_refresh_timer.stop()
@@ -476,7 +476,6 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
             if event == EVENT_GUI_CONNECT_CLICKED:
                 self.pbutton_mi_connect.setText('Connecting...')
 
-            self.gbox_mi_configuration.setEnabled(False)
             self.pbutton_mi_provider_presets.setEnabled(False)
             self.pbutton_mi_refresh.setEnabled(False)
             self.pbutton_mi_connect.setEnabled(False)
@@ -486,7 +485,6 @@ class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInterne
             self.show_working_wait(False)
             self.pbutton_mi_refresh.setText('Refresh')
             self.pbutton_mi_connect.setText('Connect')
-            self.gbox_mi_configuration.setEnabled(True)
             self.pbutton_mi_provider_presets.setEnabled(True)
             self.pbutton_mi_refresh.setEnabled(True)
             self.pbutton_mi_connect.setEnabled(True)
