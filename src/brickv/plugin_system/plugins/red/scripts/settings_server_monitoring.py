@@ -331,6 +331,17 @@ Additional Info:\\n\\n$SERVICEOUTPUT$\\n" | \
 -o password={5} \
 -o tls={6}'''
 
+TEMPLATE_TEST_EMAIL = '''/usr/bin/sendemail \
+-f {0} \
+-t {1} \
+-u ** RED-Brick Server Monitoring Test Email ** \
+-m If you received this email message on the target email address then it means \
+that the server monitoring email alert is working on the RED-Brick.\n
+-s {2} \
+-o username={3} \
+-o password={4} \
+-o tls={5}'''
+
 ACTION = argv[1]
 
 ipcon  = None
@@ -681,21 +692,12 @@ elif ACTION == 'TEST_EMAIL':
         test_email_password = test_email_dict['test_email_password']
         test_email_tls = test_email_dict['test_email_tls']
 
-        test_email_cmd = '''/usr/bin/sendemail \
--f {0} \
--t {1} \
--u ** RED-Brick Server Monitoring Test Email ** \
--m If you received this email message on the target email address then it means \
-that the server monitoring email alert is working on the RED-Brick.\n \
--s {2} \
--o username={3} \
--o password={4} \
--o tls={5}'''.format(quote(test_email_from),
-                     quote(test_email_to),
-                     quote(':'.join([test_email_server, test_email_port])),
-                     quote(test_email_username),
-                     quote(test_email_password),
-                     quote(test_email_tls))
+        test_email_cmd = TEMPLATE_TEST_EMAIL.format(quote(test_email_from),
+                                                    quote(test_email_to),
+                                                    quote(':'.join([test_email_server, test_email_port])),
+                                                    quote(test_email_username),
+                                                    quote(test_email_password),
+                                                    quote(test_email_tls))
 
         p_sendemail = subprocess.Popen(shlex.split(test_email_cmd),
                                        universal_newlines = True,
