@@ -337,10 +337,10 @@ TEMPLATE_TEST_EMAIL = '''/usr/bin/sendemail \
 -u ** RED-Brick Server Monitoring Test Email ** \
 -m If you received this email message on the target email address then it means \
 that the server monitoring email alert is working on the RED-Brick.\n
--s {2} \
--o username={3} \
--o password={4} \
--o tls={5}'''
+-s {2}:{3} \
+-o username={4} \
+-o password={5} \
+-o tls={6}'''
 
 ACTION = argv[1]
 
@@ -491,33 +491,33 @@ if ACTION == 'GET':
                     dict_return['hosts'][map_args.H] = {'port':map_args.P, 'secret':secret}
 
         for command in Model.Command.objects.filter(command_name = 'tinkerforge-notify-service-by-email'):
-            delims = ['-f ',
-                      '-t ',
-                      '-s ',
-                      '-o username=',
-                      '-o password=',
-                      '-o tls=']
+            arguments = command.command_line.partition('/usr/bin/sendemail')[2]
+            tokens = shlex.split(arguments)
 
-            for d in delims:
-                partitioned = command.command_line.partition(d)
-
-                if len(partitioned) != 3:
-                    break
-
-                if d == '-f ':
-                    dict_email['from'] = partitioned[2].partition(' ')[0]
-                elif d == '-t ':
-                    dict_email['to'] = partitioned[2].partition(' ')[0]
-                elif d == '-s ':
-                    server_port = partitioned[2].partition(' ')[0].split(':')
+            while len(tokens) >= 2:
+                if tokens[0] == '-f':
+                    dict_email['from'] = tokens[1]
+                elif tokens[0] == '-t':
+                    dict_email['to'] = tokens[1]
+                elif tokens[0] == '-s':
+                    server_port = tokens[1].split(':')
                     dict_email['server'] = server_port[0]
                     dict_email['port']   = server_port[1]
-                elif d == '-o username=':
-                    dict_email['username'] = partitioned[2].partition(' ')[0]
-                elif d == '-o password=':
-                    dict_email['password'] = partitioned[2].partition(' ')[0]
-                elif d == '-o tls=':
-                    dict_email['tls'] = partitioned[2].partition(' ')[0]
+                elif tokens[0] == '-o':
+                    if tokens[1].startswith('username='):
+                        dict_email['username'] = tokens[1][len('username='):]
+                    elif tokens[1].startswith('password='):
+                        dict_email['password'] = tokens[1][len('password='):]
+                    elif tokens[1].startswith('tls='):
+                        dict_email['tls'] = tokens[1][len('tls='):]
+                    else:
+                        tokens = tokens[1:]
+                        continue
+                else:
+                    tokens = tokens[1:]
+                    continue
+
+                tokens = tokens[2:]
 
         if len(list_rules) > 0:
             dict_return['rules'] = list_rules
@@ -526,7 +526,8 @@ if ACTION == 'GET':
             dict_return['email'] = dict_email
 
         sys.stdout.write(json.dumps(dict_return))
-    except:
+    except Exception as e:
+        sys.stderr.write(unicode(e))
         exit(1)
 
 elif ACTION == 'APPLY':
@@ -614,7 +615,8 @@ elif ACTION == 'APPLY':
 
         if os.system('/bin/systemctl restart nagios3') != 0:
             exit(1)
-    except:
+    except Exception as e:
+        sys.stderr.write(unicode(e))
         exit(1)
 
 elif ACTION == 'APPLY_EMPTY':
@@ -627,7 +629,8 @@ elif ACTION == 'APPLY_EMPTY':
 
         if os.system('/bin/systemctl restart nagios3') != 0:
             exit(1)
-    except:
+    except Exception as e:
+        sys.stderr.write(unicode(e))
         exit(1)
 
 elif ACTION == 'GET_LOCALHOST':
@@ -638,7 +641,8 @@ elif ACTION == 'GET_LOCALHOST':
             sys.stdout.write(hostname)
         else:
             exit(1)
-    except:
+    except Exception as e:
+        sys.stderr.write(unicode(e))
         exit(1)
 
 elif ACTION == 'ENUMERATE':
@@ -694,7 +698,8 @@ elif ACTION == 'TEST_EMAIL':
 
         test_email_cmd = TEMPLATE_TEST_EMAIL.format(quote(test_email_from),
                                                     quote(test_email_to),
-                                                    quote(':'.join([test_email_server, test_email_port])),
+                                                    quote(test_email_server),
+                                                    quote(test_email_port),
                                                     quote(test_email_username),
                                                     quote(test_email_password),
                                                     quote(test_email_tls))

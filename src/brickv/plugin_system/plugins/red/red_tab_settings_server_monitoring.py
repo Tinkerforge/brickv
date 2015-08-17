@@ -205,6 +205,19 @@ MESSAGE_WARNING_REMOVE_CORRESPONDING_HOST     = 'If this is the only rule that d
 NEW_RULE                 = True
 NOT_NEW_RULE             = False
 
+_find_unsafe = re.compile(r'[^\w@%+=:,./-]').search
+
+def quote(s):
+    """Return a shell-escaped version of the string *s*."""
+    if not s:
+        return "''"
+    if _find_unsafe(s) is None:
+        return s
+
+    # use single quotes, and put single quotes into double quotes
+    # the string $'b is then quoted as '$'"'"'b'
+    return "'" + s.replace("'", "'\"'\"'") + "'"
+
 class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonitoring):
     def __init__(self):
         QtGui.QWidget.__init__(self)
@@ -698,7 +711,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                 self.dict_email['password'] = None
                 self.dict_email['tls']      = None
 
-                if rule['email_notification_enabled'] == '1':
+                if rule['email_notification_enabled'] == '1' and dict_return['email']:
                     self.dict_email['from']     = dict_return['email']['from']
                     self.dict_email['to']       = dict_return['email']['to']
                     self.dict_email['server']   = dict_return['email']['server']
@@ -1874,7 +1887,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 -w {4} \
 -c {5} \
 -w2 {6} \
--c2 {7}'''.format(host_name,
+-c2 {7}'''.format(quote(host_name),
                   host_port,
                   SUPPORTED_BRICKLETS[widget_bricklet.currentText()]['id'],
                   widget_uid.currentText(),
@@ -1892,7 +1905,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
 -w {5} \
 -c {6} \
 -w2 {7} \
--c2 {8}'''.format(host_name,
+-c2 {8}'''.format(quote(host_name),
                   host_port,
                   host_secret,
                   SUPPORTED_BRICKLETS[widget_bricklet.currentText()]['id'],
