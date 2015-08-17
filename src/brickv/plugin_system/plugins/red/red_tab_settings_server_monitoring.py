@@ -1116,7 +1116,7 @@ class REDTabSettingsServerMonitoring(QtGui.QWidget, Ui_REDTabSettingsServerMonit
                     elif email_notifications == 'w,c,r':
                         cbox.setCurrentIndex(INDEX_EMAIL_WARNING_CRITICAL)
                 else:
-                    cbox.setCurrentIndex(INDEX_EMAIL_CRITICAL)
+                    cbox.setCurrentIndex(INDEX_EMAIL_NO_NOTIFICATIONS)
 
                 if self.chkbox_sm_email_enable.isChecked():
                     cbox.setEnabled(True)
