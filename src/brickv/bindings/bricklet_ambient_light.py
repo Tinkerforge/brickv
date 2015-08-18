@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-28.      #
+# This file was automatically generated on 2015-08-14.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -66,7 +66,7 @@ class BrickletAmbientLight(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletAmbientLight.FUNCTION_GET_ILLUMINANCE] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAmbientLight.FUNCTION_GET_ANALOG_VALUE] = BrickletAmbientLight.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -94,8 +94,8 @@ class BrickletAmbientLight(Device):
     def get_illuminance(self):
         """
         Returns the illuminance of the ambient light sensor. The value
-        has a range of 0 to 9000 and is given in Lux/10, i.e. a value
-        of 4500 means that an illuminance of 450 Lux is measured.
+        has a range of 0 to 9000 and is given in lux/10, i.e. a value
+        of 4500 means that an illuminance of 450lux is measured.
         
         If you want to get the illuminance periodically, it is recommended to use the
         callback :func:`Illuminance` and set the period with 
@@ -178,13 +178,13 @@ class BrickletAmbientLight(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.send_request(self, BrickletAmbientLight.FUNCTION_SET_ILLUMINANCE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, BrickletAmbientLight.FUNCTION_SET_ILLUMINANCE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
 
     def get_illuminance_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetIlluminanceCallbackThreshold`.
         """
-        return GetIlluminanceCallbackThreshold(*self.ipcon.send_request(self, BrickletAmbientLight.FUNCTION_GET_ILLUMINANCE_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetIlluminanceCallbackThreshold(*self.ipcon.send_request(self, BrickletAmbientLight.FUNCTION_GET_ILLUMINANCE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
         """

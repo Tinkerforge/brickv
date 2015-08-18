@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-28.      #
+# This file was automatically generated on 2015-08-14.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -173,13 +173,13 @@ class BrickletVoltage(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.send_request(self, BrickletVoltage.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, BrickletVoltage.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
 
     def get_voltage_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetVoltageCallbackThreshold`.
         """
-        return GetVoltageCallbackThreshold(*self.ipcon.send_request(self, BrickletVoltage.FUNCTION_GET_VOLTAGE_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetVoltageCallbackThreshold(*self.ipcon.send_request(self, BrickletVoltage.FUNCTION_GET_VOLTAGE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
         """

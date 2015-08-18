@@ -166,11 +166,8 @@ class Accelerometer(PluginBase):
         else:
             self.accelerometer.led_off()
         
-    def is_led_on_async(self, value):
-        if value:
-            self.enable_led.setChecked(True)
-        else:
-            self.enable_led.setChecked(False)
+    def is_led_on_async(self, on):
+        self.enable_led.setChecked(on)
         
     def new_config(self):
         dr = self.dr_combo.currentIndex()

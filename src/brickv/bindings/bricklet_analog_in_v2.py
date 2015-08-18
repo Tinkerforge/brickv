@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-28.      #
+# This file was automatically generated on 2015-08-14.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -68,7 +68,7 @@ class BrickletAnalogInV2(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletAnalogInV2.FUNCTION_GET_VOLTAGE] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAnalogInV2.FUNCTION_GET_ANALOG_VALUE] = BrickletAnalogInV2.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -171,13 +171,13 @@ class BrickletAnalogInV2(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_SET_VOLTAGE_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
 
     def get_voltage_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetVoltageCallbackThreshold`.
         """
-        return GetVoltageCallbackThreshold(*self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_GET_VOLTAGE_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetVoltageCallbackThreshold(*self.ipcon.send_request(self, BrickletAnalogInV2.FUNCTION_GET_VOLTAGE_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-28.      #
+# This file was automatically generated on 2015-08-14.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -140,7 +140,7 @@ class BrickletLEDStrip(Device):
 
     def get_frame_duration(self):
         """
-        Returns the frame duration as set by :func:`SetFrameDuration`.
+        Returns the frame duration in ms as set by :func:`SetFrameDuration`.
         """
         return self.ipcon.send_request(self, BrickletLEDStrip.FUNCTION_GET_FRAME_DURATION, (), '', 'H')
 

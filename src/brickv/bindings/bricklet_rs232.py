@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-28.      #
+# This file was automatically generated on 2015-08-18.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -35,6 +35,7 @@ class BrickletRS232(Device):
     DEVICE_DISPLAY_NAME = 'RS232 Bricklet'
 
     CALLBACK_READ_CALLBACK = 8
+    CALLBACK_ERROR_CALLBACK = 9
 
     FUNCTION_WRITE = 1
     FUNCTION_READ = 2
@@ -52,11 +53,12 @@ class BrickletRS232(Device):
     BAUDRATE_4800 = 4
     BAUDRATE_9600 = 5
     BAUDRATE_14400 = 6
-    BAUDRATE_28800 = 7
-    BAUDRATE_38400 = 8
-    BAUDRATE_57600 = 9
-    BAUDRATE_115200 = 10
-    BAUDRATE_230400 = 11
+    BAUDRATE_19200 = 7
+    BAUDRATE_28800 = 8
+    BAUDRATE_38400 = 9
+    BAUDRATE_57600 = 10
+    BAUDRATE_115200 = 11
+    BAUDRATE_230400 = 12
     PARITY_NONE = 0
     PARITY_ODD = 1
     PARITY_EVEN = 2
@@ -72,6 +74,9 @@ class BrickletRS232(Device):
     HARDWARE_FLOWCONTROL_ON = 1
     SOFTWARE_FLOWCONTROL_OFF = 0
     SOFTWARE_FLOWCONTROL_ON = 1
+    ERROR_OVERRUN = 1
+    ERROR_PARITY = 2
+    ERROR_FRAMING = 4
 
     def __init__(self, uid, ipcon):
         """
@@ -80,7 +85,7 @@ class BrickletRS232(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletRS232.FUNCTION_WRITE] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232.FUNCTION_READ] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -90,9 +95,11 @@ class BrickletRS232(Device):
         self.response_expected[BrickletRS232.FUNCTION_SET_CONFIGURATION] = BrickletRS232.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletRS232.FUNCTION_GET_CONFIGURATION] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232.CALLBACK_READ_CALLBACK] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS232.CALLBACK_ERROR_CALLBACK] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS232.FUNCTION_GET_IDENTITY] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletRS232.CALLBACK_READ_CALLBACK] = '60c B'
+        self.callback_formats[BrickletRS232.CALLBACK_ERROR_CALLBACK] = 'B'
 
     def write(self, message, length):
         """
@@ -153,6 +160,11 @@ class BrickletRS232(Device):
         * Hard-/Software flow control can each be on or off.
         
         The default is: 115200 baud, parity none, 1 stop bit, word length 8, hard-/software flow control off.
+        
+        .. note::
+         The currently released Bindings have a off-by-one in the baudrate constants.
+         Please use the actual number and not the constant. The bug will be fixed
+         with the next Binding release.
         """
         self.ipcon.send_request(self, BrickletRS232.FUNCTION_SET_CONFIGURATION, (baudrate, parity, stopbits, wordlength, hardware_flowcontrol, software_flowcontrol), 'B B B B B B', '')
 
