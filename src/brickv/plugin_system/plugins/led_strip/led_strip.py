@@ -67,7 +67,7 @@ class LEDStrip(PluginBase, Ui_LEDStrip):
         if self.has_chip_type:
             self.chip_type_combobox.currentIndexChanged.connect(self.chip_type_index_changed)
         else:
-            self.chip_type_label.setText("Chip Type (needs FW >= 2.0.2)")
+            self.chip_type_label.setText("Chip Type (FW Version >= 2.0.2 required)")
             self.chip_type_combobox.setCurrentIndex(0)
             self.chip_type_combobox.setEnabled(False)
 
