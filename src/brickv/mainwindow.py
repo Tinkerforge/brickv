@@ -33,6 +33,7 @@ from brickv.plugin_system.plugin_manager import PluginManager
 from brickv.bindings.ip_connection import IPConnection
 from brickv.flashing import FlashingWindow
 from brickv.advanced import AdvancedWindow
+from brickv.logger_setup import LoggerWindow
 from brickv.async_call import async_start_thread, async_next_session
 from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
@@ -92,6 +93,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.current_device_info = None
         self.flashing_window = None
         self.advanced_window = None
+        self.logger_window = None
         self.delayed_refresh_updates_timer = QTimer()
         self.delayed_refresh_updates_timer.timeout.connect(self.delayed_refresh_updates)
         self.delayed_refresh_updates_timer.setInterval(500)
@@ -105,6 +107,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_connect.clicked.connect(self.connect_clicked)
         self.button_flashing.clicked.connect(self.flashing_clicked)
         self.button_advanced.clicked.connect(self.advanced_clicked)
+        self.button_logger.clicked.connect(self.logger_clicked)
         self.plugin_manager = PluginManager()
 
         # host info
@@ -149,9 +152,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     # override QMainWindow.closeEvent
     def closeEvent(self, event):
+        if not self.exit_logger():
+            event.ignore()
+            return
+            
         self.exit_brickv()
 
-    def exit_brickv(self, signal=None, frame=None):
+    def exit_brickv(self, signl=None, frme=None):
         if self.current_device_info is not None:
             self.current_device_info.plugin.stop_plugin()
             self.current_device_info.plugin.destroy_plugin()
@@ -160,11 +167,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         config.set_host_infos(self.host_infos)
 
         self.do_disconnect()
-
-        if signal != None and frame != None:
+        
+        if signl != None and frme != None:
             print("Received SIGINT or SIGTERM, shutting down.")
             sys.exit()
 
+    def exit_logger(self):
+        exitBrickv = True
+        if (self.logger_window is not None) and (self.logger_window.data_logger_thread is not None) and (not self.logger_window.data_logger_thread.stopped):
+            quit_msg = "The Data Logger is running. Are you sure you want to exit the program?"
+            reply = QMessageBox.question(self, 'Message', 
+                     quit_msg, QMessageBox.Yes, QMessageBox.No)
+
+            if reply == QMessageBox.Yes:
+                self.logger_window.data_logger_thread.stop()
+            else:
+                exitBrickv = False
+        
+        return exitBrickv
+                
     def host_index_changed(self, i):
         if i < 0:
             return
@@ -343,6 +364,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.advanced_window = AdvancedWindow(self)
 
         self.advanced_window.show()
+        
+    def logger_clicked(self):
+        if self.logger_window is None:
+            self.logger_window = LoggerWindow(self)
+        
+        self.logger_window.show()
 
     def connect_clicked(self):
         if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_DISCONNECTED:
