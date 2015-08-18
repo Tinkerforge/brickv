@@ -34,11 +34,15 @@ from brickv.plugin_system.plugins.rs232.TFHexValidator import TFHexValidator
 
 class RS232(PluginBase, Ui_RS232):
     qtcb_read = pyqtSignal(object, int)
+    qtcb_error = pyqtSignal(int)
 
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletRS232, *args)
 
         self.setupUi(self)
+        
+        has_errors = self.firmware_version >= (2, 0, 1)
+        
         self.text.setReadOnly(True)
 
         self.rs232 = self.device
@@ -46,6 +50,14 @@ class RS232(PluginBase, Ui_RS232):
         self.qtcb_read.connect(self.cb_read)
         self.rs232.register_callback(self.rs232.CALLBACK_READ_CALLBACK,
                                      self.qtcb_read.emit)
+        if has_errors:
+            self.qtcb_error.connect(self.cb_error)
+            self.rs232.register_callback(self.rs232.CALLBACK_ERROR_CALLBACK,
+                                         self.qtcb_error.emit)
+        else:
+            self.label_error_overrun.setText('Need FW >= v2.0.1')
+            self.label_error_parity.setText('Need FW >= v2.0.1')
+            self.label_error_framing.setText('Need FW >= v2.0.1')
 
         self.input_combobox.addItem("")
         self.input_combobox.lineEdit().setMaxLength(58)
@@ -68,6 +80,21 @@ class RS232(PluginBase, Ui_RS232):
         self.layout().insertWidget(2, self.hextext)
 
         self.save_button.clicked.connect(self.save_clicked)
+        
+        self.error_overrun = 0
+        self.error_parity = 0
+        self.error_framing = 0
+        
+    def cb_error(self, error):
+        if error & BrickletRS232.ERROR_OVERRUN:
+            self.error_overrun += 1
+            self.label_error_overrun.setText(str(self.error_overrun))
+        if error & BrickletRS232.ERROR_PARITY:
+            self.error_parity += 1
+            self.label_parity_overrun.setText(str(self.error_parity))
+        if error & BrickletRS232.ERROR_FRAMING:
+            self.error_framing += 1
+            self.label_error_framing.setText(str(self.error_framing))
 
     def cb_read(self, message, length):
         s = ''.join(message[:length])
