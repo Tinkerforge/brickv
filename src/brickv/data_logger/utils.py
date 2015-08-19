@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2012, 2014 Roland Dudko  <roland.dudko@gmail.com>
+Copyright (C) 2012, 2014 Roland Dudko <roland.dudko@gmail.com>
 Copyright (C) 2012, 2014 Marvin Lutz <marvin.lutz.mail@gmail.com>
 
-data_logger_util.py: Util classes for the data logger
+utils.py: Util classes for the data logger
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -21,6 +21,7 @@ License along with this program; if not, write to the
 Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
+
 '''
 /*---------------------------------------------------------------------------
                                 DataLoggerException
