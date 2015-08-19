@@ -84,7 +84,9 @@ class RS232(PluginBase, Ui_RS232):
         self.error_overrun = 0
         self.error_parity = 0
         self.error_framing = 0
-        
+
+        self.last_char = ''
+
     def cb_error(self, error):
         if error & BrickletRS232.ERROR_OVERRUN:
             self.error_overrun += 1
@@ -99,6 +101,12 @@ class RS232(PluginBase, Ui_RS232):
     def cb_read(self, message, length):
         s = ''.join(message[:length])
         self.hextext.appendData(s)
+
+        if self.last_char in ['\r', '\n'] and s[0] in ['\r', '\n'] and s[0] != self.last_char:
+            s=s[1:]
+
+        if len(s):
+            self.last_lineend = s[-1]
 
         # QTextEdit breaks lines at \r and \n
         s = s.replace('\n\r', '\n').replace('\r\n', '\n')
