@@ -113,7 +113,7 @@
            <item row="2" column="0">
             <widget class="QGroupBox" name="groupBox">
              <property name="title">
-              <string>Eventfile</string>
+              <string>Event File</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_9">
               <item row="0" column="2">
@@ -312,7 +312,7 @@
               <bool>true</bool>
              </property>
              <property name="title">
-              <string>Datafile</string>
+              <string>Data File</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
               <item row="1" column="1">
