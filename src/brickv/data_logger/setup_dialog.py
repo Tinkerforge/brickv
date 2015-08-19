@@ -38,19 +38,18 @@ from brickv.data_logger.gui_config_handler import GuiConfigHandler
 from brickv.data_logger.job import GuiDataJob
 from brickv.data_logger.loggable_devices import Identifier
 from brickv.data_logger.utils import Utilities
-from brickv.device_dialog import LoggerDeviceDialog
-from brickv.ui_logger_setup import Ui_Logger
+from brickv.data_logger.device_dialog import DeviceDialog
+from brickv.data_logger.ui_setup_dialog import Ui_SetupDialog
 
 
 # noinspection PyProtectedMember,PyCallByClass
-class LoggerWindow(QDialog, Ui_Logger):
+class SetupDialog(QDialog, Ui_SetupDialog):
     """
         Function and Event handling class for the Ui_Logger.
     """
 
     def __init__(self, parent):
         QDialog.__init__(self, parent)
-        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
 
         self._gui_logger = GUILogger("GUILogger", EventLogger.EVENT_LOG_LEVEL)
         self._gui_job = None
@@ -62,7 +61,7 @@ class LoggerWindow(QDialog, Ui_Logger):
         self.data_logger_thread = None
         self.tab_console_warning = False
 
-        self.logger_device_dialog = None
+        self.device_dialog = None
 
         # Code Inspector
         self.host_infos = None
@@ -166,7 +165,7 @@ class LoggerWindow(QDialog, Ui_Logger):
             self._reset_stop()
 
         elif self.data_logger_thread is None:
-            from data_logger import main
+            from brickv.data_logger import main
 
             arguments_map = {}
             arguments_map[main.GUI_CONFIG] = GuiConfigHandler.create_config_file(self)
@@ -294,12 +293,12 @@ class LoggerWindow(QDialog, Ui_Logger):
         """
             Opens the DeviceDialog in Add-Mode.
         """
-        if self.logger_device_dialog is None:
-            self.logger_device_dialog = LoggerDeviceDialog(self)
+        if self.device_dialog is None:
+            self.device_dialog = DeviceDialog(self)
 
         # blueprint = Identifier.DEVICE_DEFINITIONS
-        self.logger_device_dialog.init_dialog(self)
-        self.logger_device_dialog.show()
+        self.device_dialog.init_dialog(self)
+        self.device_dialog.show()
 
     def btn_remove_device_clicked(self):
         """

@@ -179,7 +179,7 @@
            </widget>
           </item>
           <item row="12" column="0" colspan="2">
-           <widget class="QPushButton" name="button_logger">
+           <widget class="QPushButton" name="button_data_logger">
             <property name="text">
              <string>Data Logger</string>
             </property>
@@ -199,6 +199,20 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>tab_widget</tabstop>
+  <tabstop>button_connect</tabstop>
+  <tabstop>combo_host</tabstop>
+  <tabstop>spinbox_port</tabstop>
+  <tabstop>checkbox_authentication</tabstop>
+  <tabstop>edit_secret</tabstop>
+  <tabstop>checkbox_secret_show</tabstop>
+  <tabstop>checkbox_remember_secret</tabstop>
+  <tabstop>button_flashing</tabstop>
+  <tabstop>button_advanced</tabstop>
+  <tabstop>button_data_logger</tabstop>
+  <tabstop>tree_view</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -1,26 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Logger</class>
- <widget class="QDialog" name="Logger">
+ <class>SetupDialog</class>
+ <widget class="QDialog" name="SetupDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>608</width>
-    <height>538</height>
+    <width>600</width>
+    <height>558</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Data Logger</string>
-  </property>
-  <property name="toolTip">
-   <string notr="true"/>
-  </property>
-  <property name="statusTip">
-   <string notr="true"/>
-  </property>
-  <property name="whatsThis">
-   <string notr="true"/>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
    <item row="1" column="0">

@@ -26,7 +26,7 @@ Boston, MA 02111-1307, USA.
 from PyQt4.QtGui import QDialog # , QMessageBox
 from brickv.data_logger.event_logger import EventLogger
 from brickv.data_logger.utils import Utilities
-from brickv.ui_device_dialog import Ui_DeviceDialog
+from brickv.data_logger.ui_device_dialog import Ui_DeviceDialog
 # from PyQt4 import QtGui, QtCore
 from brickv.data_logger.gui_config_handler import GuiConfigHandler
 from PyQt4.QtCore import Qt
@@ -36,14 +36,13 @@ from brickv.data_logger.loggable_devices import Identifier
 
 
 # noinspection PyTypeChecker
-class LoggerDeviceDialog(QDialog, Ui_DeviceDialog):
+class DeviceDialog(QDialog, Ui_DeviceDialog):
     """
         Function and Event handling class for the Ui_DeviceDialog.
     """
 
     def __init__(self, parent):
         QDialog.__init__(self, parent)
-        self.setWindowFlags(Qt.Window | Qt.WindowCloseButtonHint)
 
         self._logger_window = parent
         self._no_connected_device_string = "No Connected Devices found"

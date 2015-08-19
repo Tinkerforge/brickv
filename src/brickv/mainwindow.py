@@ -33,7 +33,7 @@ from brickv.plugin_system.plugin_manager import PluginManager
 from brickv.bindings.ip_connection import IPConnection
 from brickv.flashing import FlashingWindow
 from brickv.advanced import AdvancedWindow
-from brickv.logger_setup import LoggerWindow
+from brickv.data_logger.setup_dialog import SetupDialog as DataLoggerWindow
 from brickv.async_call import async_start_thread, async_next_session
 from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.brick_red import BrickRED
@@ -93,7 +93,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.current_device_info = None
         self.flashing_window = None
         self.advanced_window = None
-        self.logger_window = None
+        self.data_logger_window = None
         self.delayed_refresh_updates_timer = QTimer()
         self.delayed_refresh_updates_timer.timeout.connect(self.delayed_refresh_updates)
         self.delayed_refresh_updates_timer.setInterval(500)
@@ -107,7 +107,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.button_connect.clicked.connect(self.connect_clicked)
         self.button_flashing.clicked.connect(self.flashing_clicked)
         self.button_advanced.clicked.connect(self.advanced_clicked)
-        self.button_logger.clicked.connect(self.logger_clicked)
+        self.button_data_logger.clicked.connect(self.data_logger_clicked)
         self.plugin_manager = PluginManager()
 
         # host info
@@ -174,13 +174,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def exit_logger(self):
         exitBrickv = True
-        if (self.logger_window is not None) and (self.logger_window.data_logger_thread is not None) and (not self.logger_window.data_logger_thread.stopped):
+        if (self.data_logger_window is not None) and (self.data_logger_window.data_logger_thread is not None) and (not self.data_logger_window.data_logger_thread.stopped):
             quit_msg = "The Data Logger is running. Are you sure you want to exit the program?"
             reply = QMessageBox.question(self, 'Message', 
                      quit_msg, QMessageBox.Yes, QMessageBox.No)
 
             if reply == QMessageBox.Yes:
-                self.logger_window.data_logger_thread.stop()
+                self.data_logger_window.data_logger_thread.stop()
             else:
                 exitBrickv = False
         
@@ -365,11 +365,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.advanced_window.show()
         
-    def logger_clicked(self):
-        if self.logger_window is None:
-            self.logger_window = LoggerWindow(self)
+    def data_logger_clicked(self):
+        if self.data_logger_window is None:
+            self.data_logger_window = DataLoggerWindow(self)
         
-        self.logger_window.show()
+        self.data_logger_window.show()
 
     def connect_clicked(self):
         if self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_DISCONNECTED:
