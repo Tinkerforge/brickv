@@ -292,6 +292,15 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
 
                 for name in config_names['rules']:
                     configs_by_basename.setdefault(name[:-len('.rules')], []).append((name, posixpath.join('/etc/openhab/configurations/rules', name)))
+
+                for name in config_names['persistence']:
+                    configs_by_basename.setdefault(name[:-len('.persist')], []).append((name, posixpath.join('/etc/openhab/configurations/persistence', name)))
+
+                for name in config_names['scripts']:
+                    configs_by_basename.setdefault(name[:-len('.script')], []).append((name, posixpath.join('/etc/openhab/configurations/scripts', name)))
+
+                for name in config_names['transform']:
+                    configs_by_basename.setdefault(name[:-len('.transform')], []).append((name, posixpath.join('/etc/openhab/configurations/transform', name)))
             except Exception as e:
                 fatal_error(u'Received invalid config file collection: {0}'.format(e))
                 return
@@ -344,18 +353,21 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
                                  'A config file name cannot be empty, cannot be one dot [.], cannot be two dots [..] and cannot contain a forward slash [/].')
             return
 
-        endswith_items   = name.endswith('.items')
-        endswith_sitemap = name.endswith('.sitemap')
-        endswith_rules   = name.endswith('.rules')
+        endswith_items     = name.endswith('.items')
+        endswith_sitemap   = name.endswith('.sitemap')
+        endswith_rules     = name.endswith('.rules')
+        endswith_persist   = name.endswith('.persist')
+        endswith_script    = name.endswith('.script')
+        endswith_transform = name.endswith('.transform')
 
-        if not endswith_items and not endswith_sitemap and not endswith_rules:
+        if not endswith_items and not endswith_sitemap and not endswith_rules and not endswith_persist and not endswith_script and not endswith_transform:
             QMessageBox.critical(get_main_window(), 'New Config File Error',
-                                 'A config file name has to end with .items, .sitemap or .rules.')
+                                 'A config file name has to end with .items, .sitemap, .rules, .persist, .script or .transform.')
             return
 
-        if name in ['.items', '.sitemap', '.rules']:
+        if name in ['.items', '.sitemap', '.rules', '.persist', '.script', '.transform']:
             QMessageBox.critical(get_main_window(), 'New Config File Error',
-                                 '.items, .sitemap and .rules cannot be used as config file names.')
+                                 '.items, .sitemap, .rules, .persist, .script and .transform cannot be used as config file names.')
             return
 
         if endswith_items:
@@ -364,6 +376,12 @@ class REDTabSettingsOpenHAB(QWidget, Ui_REDTabSettingsOpenHAB):
             target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'sitemaps', name)
         elif endswith_rules:
             target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'rules', name)
+        elif endswith_persist:
+            target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'persistence', name)
+        elif endswith_script:
+            target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'scripts', name)
+        elif endswith_transform:
+            target_path = posixpath.join('/', 'etc', 'openhab', 'configurations', 'transform', name)
 
         def cb_open(red_file):
             red_file.release()
