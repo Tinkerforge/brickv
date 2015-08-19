@@ -84,7 +84,7 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="2" rowspan="11">
+          <item row="1" column="2" rowspan="12">
            <widget class="QTreeView" name="tree_view">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
