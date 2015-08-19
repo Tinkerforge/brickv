@@ -860,15 +860,30 @@ class IPConnection:
 
     def handle_deserialized_char(self, c):
         if sys.hexversion >= 0x03000000:
-            c = c.decode('ascii')
+            try:
+                # c is a bytes object, try to decode it as ASCII. if it is
+                # not decodable keep it as a bytes object because there is no
+                # other option for this in Python 3
+                c = c.decode('ascii')
+            except:
+                pass
 
         return c
 
     def handle_deserialized_string(self, s):
-        if sys.hexversion >= 0x03000000:
-            s = s.decode('ascii')
+        nul = b'\x00'
 
-        i = s.find(chr(0))
+        if sys.hexversion >= 0x03000000:
+            try:
+                # s is a bytes object, try to decode it as ASCII. if it is
+                # not decodable keep it as a bytes object because there is no
+                # other option for this in Python 3
+                s = s.decode('ascii')
+                nul = '\x00'
+            except:
+                pass
+
+        i = s.find(nul)
         if i >= 0:
             s = s[:i]
 
