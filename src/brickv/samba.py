@@ -195,11 +195,7 @@ class SAMBA(object):
             return
 
         try:
-            if sys.version_info >= (3, 0):
-                self.port.write(bytes(mode + '#', encoding='ascii'))
-            else:
-                self.port.write(mode + '#')
-
+            self.port.write((mode + '#').encode('ascii'))
         except:
             raise SAMBAException('Write error during mode change')
 
@@ -207,30 +203,22 @@ class SAMBA(object):
             while True:
                 try:
                     response = self.port.read(1)
-                    if sys.version_info >= (3, 0):
-                        check_for = b'>'
-                    else:
-                        check_for = '>'
                 except:
                     raise SAMBAException('Read error during mode change')
 
                 if len(response) == 0:
                     raise SAMBAException('Read timeout during mode change')
-                elif response == check_for:
+                elif response == b'>':
                     break
         else:
             try:
                 response = self.port.read(2)
-                if sys.version_info >= (3, 0):
-                    check_for = b'\n\r'
-                else:
-                    check_for = '\n\r'
             except:
                 raise SAMBAException('Read error during mode change')
 
             if len(response) == 0:
                 raise SAMBAException('Read timeout during mode change')
-            elif response != check_for:
+            elif response != b'\n\r':
                 raise SAMBAException('Protocol error during mode change')
 
         self.current_mode = mode
@@ -256,10 +244,7 @@ class SAMBA(object):
             page = firmware[offset:offset + self.flash_page_size]
 
             if len(page) < self.flash_page_size:
-                if sys.version_info >= (3, 0):
-                    page += b'\xff' * (self.flash_page_size - len(page))
-                else:
-                    page += '\xff' * (self.flash_page_size - len(page))
+                page += b'\xff' * (self.flash_page_size - len(page))
 
             firmware_pages.append(page)
             offset += self.flash_page_size
@@ -306,7 +291,7 @@ class SAMBA(object):
                 page = prefixed_imu_calibration[offset:offset + self.flash_page_size]
 
                 if len(page) < self.flash_page_size:
-                    page += '\xff' * (self.flash_page_size - len(page))
+                    page += b'\xff' * (self.flash_page_size - len(page))
 
                 imu_calibration_pages.append(page)
                 offset += self.flash_page_size
@@ -411,10 +396,7 @@ class SAMBA(object):
         self.change_mode('N')
 
         try:
-            if sys.version_info >= (3, 0):
-                self.port.write(bytes('w%X,4#' % address, encoding='ascii'))
-            else:
-                self.port.write('w%X,4#' % address)
+            self.port.write(('w%X,4#' % address).encode('ascii'))
         except:
             raise SAMBAException('Write error while reading from address 0x%08X' % address)
 
@@ -441,10 +423,7 @@ class SAMBA(object):
         self.change_mode('N')
 
         try:
-            if sys.version_info >= (3, 0):
-                self.port.write(bytes('W%X,%X#' % (address, value), encoding='ascii'))
-            else:
-                self.port.write('W%X,%X#' % (address, value))
+            self.port.write(('W%X,%X#' % (address, value)).encode('ascii'))
         except:
             raise SAMBAException('Write error while writing to address 0x%08X' % address)
 
@@ -452,11 +431,7 @@ class SAMBA(object):
         self.change_mode('T')
 
         try:
-            if sys.version_info >= (3, 0):
-                self.port.write(bytes('R%X,%X#' % (address, length), encoding='ascii'))
-            else:
-                self.port.write('R%X,%X#' % (address, length))
-
+            self.port.write(('R%X,%X#' % (address, length)).encode('ascii'))
         except:
             raise SAMBAException('Write error while reading from address 0x%08X' % address)
 
@@ -478,10 +453,7 @@ class SAMBA(object):
 
         try:
             # FIXME: writes '33337777BBBBFFFF' instead of '0123456789ABCDEF'
-            if sys.version_info >= (3, 0):
-                self.port.write(bytes('S%X,%X#' % (address, len(bytes_)), encoding='ascii'))
-            else:
-                self.port.write('S%X,%X#' % (address, len(bytes_)))
+            self.port.write(('S%X,%X#' % (address, len(bytes_))).encode('ascii'))
             self.port.write(bytes_)
         except:
             raise SAMBAException('Write error while writing to address 0x%08X' % address)
@@ -494,7 +466,7 @@ class SAMBA(object):
         if len(response) == 0:
             raise SAMBAException('Timeout while writing to address 0x%08X' % address)
 
-        if response != '\n\r>':
+        if response != b'\n\r>':
             raise SAMBAException('Protocol error while writing to address 0x%08X' % address)
 
     def reset(self):
@@ -510,10 +482,7 @@ class SAMBA(object):
         self.change_mode('N')
 
         try:
-            if sys.version_info >= (3, 0):
-                self.port.write(bytes('G%X#' % address, encoding='ascii'))
-            else:
-                self.port.write('G%X#' % address)
+            self.port.write(('G%X#' % address).encode('ascii'))
         except:
             raise SAMBAException('Write error while executing code at address 0x%08X' % address)
 
