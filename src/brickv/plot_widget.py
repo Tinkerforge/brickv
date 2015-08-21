@@ -665,27 +665,25 @@ class Plot(QWidget):
         self.update()
 
     def clear_graph(self):
-        self.curves_visible = [] # per curve visibility
-        self.curves_x = [] # per curve x values
-        self.curves_y = [] # per curve y values
-        self.curves_x_min = [] # per curve minimum x value
-        self.curves_x_max = [] # per curve maximum x value
-        self.curves_y_min = [] # per curve minimum y value
-        self.curves_y_max = [] # per curve maximum y value
+        count = len(self.plots)
+
+        if not hasattr(self, 'curves_visible'):
+            self.curves_visible = [True]*count # per curve visibility
+
+        def new_list():
+            return []
+
+        self.curves_x = [new_list() for i in range(count)] # per curve x values
+        self.curves_y = [new_list() for i in range(count)] # per curve y values
+        self.curves_x_min = [None]*count # per curve minimum x value
+        self.curves_x_max = [None]*count # per curve maximum x value
+        self.curves_y_min = [None]*count # per curve minimum y value
+        self.curves_y_max = [None]*count # per curve maximum y value
         self.x_min = None # minimum x value over all curves
         self.x_max = None # maximum x value over all curves
         self.y_min = None # minimum y value over all curves
         self.y_max = None # maximum y value over all curves
         self.y_type = None
-
-        for plot in self.plots:
-            self.curves_visible.append(True)
-            self.curves_x.append([])
-            self.curves_y.append([])
-            self.curves_x_min.append(None)
-            self.curves_x_max.append(None)
-            self.curves_y_min.append(None)
-            self.curves_y_max.append(None)
 
         self.update()
 
