@@ -779,6 +779,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QApplication.processEvents()
 
     def update_tree_view(self):
+        sis = self.tree_view.header().sortIndicatorSection()
+        sio = self.tree_view.header().sortIndicatorOrder()
+
         self.tree_view_model.clear()
 
         for info in infos.get_brick_infos():
@@ -803,6 +806,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     parent[0].appendRow(child)
 
         self.set_tree_view_defaults()
+        self.tree_view.header().setSortIndicator(sis, sio)
         self.update_advanced_window()
         self.delayed_refresh_updates_timer.start()
 
