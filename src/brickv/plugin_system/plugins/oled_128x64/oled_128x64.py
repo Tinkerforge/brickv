@@ -123,8 +123,8 @@ class OLED128x64(PluginBase, Ui_OLED128x64):
         self.oled.set_display_configuration(contrast, invert)
         
     def write_chars(self, value):
-        if value > 250:
-            value = 250
+        if value > 248:
+            value = 248
         for j in range(8):
             start = ""
             if value + j < 10:
