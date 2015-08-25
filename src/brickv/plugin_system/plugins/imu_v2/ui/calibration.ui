@@ -154,7 +154,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>Save calibration (to be used on startup of IMU Brick)</string>
+        <string>Save Calibration</string>
        </property>
       </widget>
      </item>

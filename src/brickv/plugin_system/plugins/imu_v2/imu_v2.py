@@ -88,8 +88,8 @@ during stabilization.</p>""")
         async_call(self.imu.save_calibration, None, self.async_save_calibration, self.parent.increase_error_count)
         
     def async_save_calibration(self, calibration_done):
-        # TODO: Show user that calibration is done/not done?
-        pass
+        if calibration_done:
+            self.save_calibration.setText('Save Calibration Again')
         
     def closeEvent(self, event):
         self.parent.button_calibration.setEnabled(True)
