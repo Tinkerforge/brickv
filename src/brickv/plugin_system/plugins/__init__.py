@@ -63,7 +63,9 @@ from brickv.plugin_system.plugins.sound_intensity import device_class as sound_i
 from brickv.plugin_system.plugins.stepper import device_class as stepper
 from brickv.plugin_system.plugins.temperature import device_class as temperature
 from brickv.plugin_system.plugins.temperature_ir import device_class as temperature_ir
+from brickv.plugin_system.plugins.thermocouple import device_class as thermocouple
 from brickv.plugin_system.plugins.tilt import device_class as tilt
+from brickv.plugin_system.plugins.uv_light import device_class as uv_light
 from brickv.plugin_system.plugins.voltage import device_class as voltage
 from brickv.plugin_system.plugins.voltage_current import device_class as voltage_current
 
@@ -133,7 +135,9 @@ device_classes = [
     stepper,
     temperature,
     temperature_ir,
+    thermocouple,
     tilt,
+    uv_light,
     voltage,
     voltage_current,
 ]
