@@ -79,6 +79,9 @@ class RS232(PluginBase, Ui_RS232):
         self.hextext.hide()
         self.layout().insertWidget(2, self.hextext)
 
+        self.button_clear_text.clicked.connect(lambda: self.text.setPlainText(""))
+        self.button_clear_text.clicked.connect(self.hextext.clear)
+
         self.save_button.clicked.connect(self.save_clicked)
         
         self.error_overrun = 0
