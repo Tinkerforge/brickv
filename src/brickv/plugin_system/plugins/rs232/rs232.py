@@ -102,11 +102,16 @@ class RS232(PluginBase, Ui_RS232):
         s = ''.join(message[:length])
         self.hextext.appendData(s)
 
-        if self.last_char in ['\r', '\n'] and s[0] in ['\r', '\n'] and s[0] != self.last_char:
-            s=s[1:]
+        # check if a \r\n or \n\r was split into two messages. the first one
+        # ended with \r or \n and the net one starts with \n or \r
+        if len(s) > 0:
+            if s[0] != self.last_char and self.last_char in ['\r', '\n'] and s[0] in ['\r', '\n']:
+                s = s[1:]
 
-        if len(s):
-            self.last_lineend = s[-1]
+            if len(s) > 0:
+                self.last_char = s[-1]
+            else:
+                self.last_char = ''
 
         # QTextEdit breaks lines at \r and \n
         s = s.replace('\n\r', '\n').replace('\r\n', '\n')
