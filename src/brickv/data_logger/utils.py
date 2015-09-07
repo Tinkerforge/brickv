@@ -348,6 +348,7 @@ class CSVWriter(object):
 
         EventLogger.debug("CSVWriter._write_header() - done")
         self._csv_file.writerow(["UID"] + ["DEVICE_IDENTIFIER"] + ["VAR"] + ["RAW"] + ["TIMESTAMP"])
+        self._raw_file.flush()
 
     def write_data_row(self, csv_data):
         """
@@ -359,8 +360,8 @@ class CSVWriter(object):
         if self._raw_file is None or self._csv_file is None:
             return False
 
-        self._csv_file.writerow(
-            [csv_data.uid] + [csv_data.name] + [csv_data.var_name] + [str(csv_data.raw_data)] + [csv_data.timestamp])
+        self._csv_file.writerow([csv_data.uid] + [csv_data.name] + [csv_data.var_name] + [str(csv_data.raw_data)] + [csv_data.timestamp])
+        self._raw_file.flush()
 
         if self._file_size > 0:
             self._rolling_file()
