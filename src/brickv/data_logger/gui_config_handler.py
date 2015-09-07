@@ -136,7 +136,7 @@ class GuiConfigHandler(object):
 
             GuiConfigHandler.device_blueprint.append(bp_dev)
 
-    def create_config_file(Ui_Logger):
+    def create_config_file(setup_dialog):
         """
         Creates a config file. Converst all devices from the tree_widget and
         fetches the GENERAL_SECTION information.
@@ -144,12 +144,12 @@ class GuiConfigHandler(object):
         """
         config_root = {}
         # add general section
-        general_section = GuiConfigHandler.create_general_section(Ui_Logger)
+        general_section = GuiConfigHandler.create_general_section(setup_dialog)
         # TODO: add xively
         xively_section = {}
 
         # add device section
-        device_section = GuiConfigHandler.create_device_section(Ui_Logger)
+        device_section = GuiConfigHandler.create_device_section(setup_dialog)
 
         from brickv.data_logger.configuration_validator import ConfigurationReader
 
@@ -159,7 +159,7 @@ class GuiConfigHandler(object):
 
         return config_root
 
-    def create_general_section(Ui_Logger):
+    def create_general_section(setup_dialog):
         """
         Creates the GENERAL_SECTION part of the config file 
         and returns it as a dictonary.
@@ -168,16 +168,17 @@ class GuiConfigHandler(object):
 
         general_section = {}
 
-        # host            combo_host              currentText()   : QString
-        general_section[ConfigurationReader.GENERAL_HOST] = str(Ui_Logger.combo_host.currentText())
+        # host            combo_host              currentText()   : str
+        general_section[ConfigurationReader.GENERAL_HOST] = setup_dialog.combo_host.currentText()
         # port            spinbox_port            value()         : int
-        general_section[ConfigurationReader.GENERAL_PORT] = Ui_Logger.spinbox_port.value()
+        general_section[ConfigurationReader.GENERAL_PORT] = setup_dialog.spinbox_port.value()
         # file_count      spin_file_count         value()         : int
-        general_section[ConfigurationReader.GENERAL_LOG_COUNT] = Ui_Logger.spin_file_count.value()
+        general_section[ConfigurationReader.GENERAL_LOG_COUNT] = setup_dialog.spin_file_count.value()
         # file_size       spin_file_size          value()         : int * 1024 * 1024! (MB -> Byte)
-        general_section[ConfigurationReader.GENERAL_LOG_FILE_SIZE] = (Ui_Logger.spin_file_size.value() * 1024 * 1024)
-        # path_to_file    line_path_to_file       text()          : QString
-        path_to_file = str(Ui_Logger.line_path_to_file.text())
+        general_section[ConfigurationReader.GENERAL_LOG_FILE_SIZE] = (setup_dialog.spin_file_size.value() * 1024 * 1024)
+        # path_to_file    line_data_file          text()          : str
+        path_to_file = setup_dialog.line_data_file.text()
+
         log_to_file = True
         if path_to_file is None or path_to_file == "":
             log_to_file = False
@@ -186,9 +187,9 @@ class GuiConfigHandler(object):
         general_section[ConfigurationReader.GENERAL_LOG_TO_FILE] = log_to_file
 
         # logfile path
-        general_section[ConfigurationReader.GENERAL_EVENTLOG_PATH] = str(Ui_Logger.line_path_to_eventfile.text())
+        general_section[ConfigurationReader.GENERAL_EVENTLOG_PATH] = setup_dialog.line_messages_file.text()
         # loglevel
-        ll = Ui_Logger.combo_loglevel.currentText()
+        ll = setup_dialog.combo_loglevel.currentText()
         log_level_num = 0
         od = collections.OrderedDict(sorted(GUILogger._convert_level.items()))
         for k in od.keys():
@@ -197,14 +198,14 @@ class GuiConfigHandler(object):
                 break
         general_section[ConfigurationReader.GENERAL_EVENTLOG_LEVEL] = log_level_num
         # log_to_console
-        general_section[ConfigurationReader.GENERAL_EVENTLOG_TO_FILE] = Ui_Logger.checkbox_to_file.isChecked()
+        general_section[ConfigurationReader.GENERAL_EVENTLOG_TO_FILE] = setup_dialog.checkbox_to_file.isChecked()
         # log_to_file
-        general_section[ConfigurationReader.GENERAL_EVENTLOG_TO_CONSOLE] = Ui_Logger.checkbox_to_console.isChecked()
+        general_section[ConfigurationReader.GENERAL_EVENTLOG_TO_CONSOLE] = setup_dialog.checkbox_to_console.isChecked()
 
         return general_section
 
-    def create_device_section(Ui_Logger):
-        tree_widget = Ui_Logger.tree_devices
+    def create_device_section(setup_dialog):
+        tree_widget = setup_dialog.tree_devices
         devices = []
 
         # start lvl0 - basics(name|uid)
@@ -250,7 +251,7 @@ class GuiConfigHandler(object):
             devices.append(dev)
         return devices
 
-    def get_simple_blueprint(Ui_Logger):
+    def get_simple_blueprint(setup_dialog):
         """
         Returns a very simple bluepirnt version of the current 
         devices in the tree_widget. Is used for the DeviceDialog.
@@ -258,7 +259,7 @@ class GuiConfigHandler(object):
         """
         simple_blueprint = []
 
-        tree_widget = Ui_Logger.tree_devices
+        tree_widget = setup_dialog.tree_devices
 
         r0_max = tree_widget.topLevelItemCount()
 

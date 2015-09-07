@@ -33,6 +33,7 @@ from PyQt4.QtGui import QDialog
 from PyQt4.QtGui import QMessageBox
 
 from brickv import config
+from brickv.utils import get_save_file_name, get_open_file_name, get_main_window, get_home_path
 from brickv.data_logger.event_logger import EventLogger, GUILogger
 from brickv.data_logger.gui_config_handler import GuiConfigHandler
 from brickv.data_logger.job import GuiDataJob
@@ -41,11 +42,10 @@ from brickv.data_logger.utils import Utilities
 from brickv.data_logger.device_dialog import DeviceDialog
 from brickv.data_logger.ui_setup_dialog import Ui_SetupDialog
 
-
 # noinspection PyProtectedMember,PyCallByClass
 class SetupDialog(QDialog, Ui_SetupDialog):
     """
-        Function and Event handling class for the Ui_Logger.
+        Function and Event handling class for the Ui_SetupDialog.
     """
 
     def __init__(self, parent):
@@ -100,9 +100,9 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.btn_start_logging.clicked.connect(self.btn_start_logging_clicked)
         self.btn_save_config.clicked.connect(self.btn_save_config_clicked)
         self.btn_load_config.clicked.connect(self.btn_load_config_clicked)
-        self.btn_set_logfile.clicked.connect(self.btn_set_logfile_clicked)
-        self.btn_set_eventfile.clicked.connect(self.btn_set_eventfile_clicked)
-        self.btn_console_clear.clicked.connect(self.btn_console_clear_clicked)
+        self.btn_data_file.clicked.connect(self.btn_data_file_clicked)
+        self.btn_messages_file.clicked.connect(self.btn_messages_file_clicked)
+        self.btn_clear_messages.clicked.connect(self.btn_clear_messages_clicked)
         self.combo_console_level.currentIndexChanged.connect(self.combo_console_level_changed)
         self.btn_add_device.clicked.connect(self.btn_add_device_clicked)
         self.btn_remove_device.clicked.connect(self.btn_remove_device_clicked)
@@ -199,16 +199,19 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         """
             Opens a FileSelectionDialog and saves the current config.
         """
-        conf = GuiConfigHandler.create_config_file(self)
-        fn = QtGui.QFileDialog.getSaveFileName(self, 'Save  Config-File', os.getcwd(), filter='*.json')
+        filename = get_save_file_name(get_main_window(), 'Save Config File',
+                                      get_home_path(), 'JSON Files (*.json)')
 
-        if fn == "":
-            # cancel
-            EventLogger.debug("Cancelled load Config.")
+        if len(filename) == 0:
             return
 
+        if not filename.lower().endswith('.json'):
+            filename += '.json'
+
+        conf = GuiConfigHandler.create_config_file(self)
+
         try:
-            with open(fn, 'w') as outfile:
+            with open(filename, 'w') as outfile:
                 json.dump(conf, outfile, sort_keys=True, indent=2)
         except Exception as e1:
             EventLogger.warning("Load Config - Exception: " + str(e1))
@@ -217,33 +220,31 @@ class SetupDialog(QDialog, Ui_SetupDialog):
                                 QMessageBox.Ok)
             return
 
-        QMessageBox.information(self, 'Success', 'Config-File saved!', QMessageBox.Ok)
-        EventLogger.info("Config-File saved to: " + str(fn))
+        QMessageBox.information(self, 'Success', 'Config file saved!', QMessageBox.Ok)
+        EventLogger.info("Config file saved to: " + str(filename))
 
     def btn_load_config_clicked(self):
         """
             Opens a FileSelectionDialog and loads the selected config.
         """
-        fn = QtGui.QFileDialog.getOpenFileName(self, "Open Config-File...", os.getcwd(), "JSON-Files (*.json)")
+        filename = get_open_file_name(get_main_window(), 'Load Config File', get_home_path(), 'JSON Files (*.json)')
 
-        if fn == "":
-            # cancel
-            EventLogger.debug("Cancelled save Config.")
+        if len(filename) == 0:
             return
 
         config_json = None
         try:
-            with codecs.open(fn, 'r', 'UTF-8') as content_file:
+            with codecs.open(filename, 'r', 'UTF-8') as content_file:
                 try:
                     config_json = json.load(content_file)
 
                 except ValueError as e:
-                    EventLogger.warning("Load Config - Cant parse the configuration file: " + str(e))
+                    EventLogger.warning("Load Config - Could not parse the config file: " + str(e))
         except Exception as e1:
             EventLogger.warning("Load Config - Exception: " + str(e1))
             return
 
-        EventLogger.info("Loaded Config-File from: " + str(fn))
+        EventLogger.info("Loaded config file from: " + str(filename))
 
         # devices
         config_blueprint = GuiConfigHandler.load_devices(config_json)
@@ -259,35 +260,41 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         # TODO add other information
         # xively
 
-    def btn_set_logfile_clicked(self):
+    def btn_data_file_clicked(self):
         """
             Opens a FileSelectionDialog and sets the selected path for the data output file.
         """
-        fn = self.__choose_file_dialog('Choose Config Destination', "CSV-Files (*.csv);;Text-Files (*.txt)")
+        if len(self.line_data_file.text()) > 0:
+            last_dir = os.path.dirname(os.path.realpath(self.line_data_file.text()))
+        else:
+            last_dir = get_home_path()
 
-        if fn == "":
-            # cancel
-            self.line_path_to_file.setText("")
-            EventLogger.debug("Cancelled select Config-File-Path.")
-            return
+        filename = get_save_file_name(get_main_window(), 'Choose Data File',
+                                      last_dir, "CSV Files (*.csv);;Text Files (*.txt)")
 
-        self.line_path_to_file.setText(fn)
+        if len(filename) > 0:
+            if not (filename.lower().endswith('.csv') or filename.lower().endswith('.txt')):
+                filename += '.csv'
 
-    def btn_set_eventfile_clicked(self):
+            self.line_data_file.setText(filename)
+
+    def btn_messages_file_clicked(self):
         """
-            Opens a FileSelectionDialog and sets the selected path for the event output file.
+            Opens a FileSelectionDialog and sets the selected path for the messages output file.
         """
-        fn = self.__choose_file_dialog('Choose Eventfile destination', "Log-Files (*.log)")
+        if len(self.line_messages_file.text()) > 0:
+            last_dir = os.path.dirname(os.path.realpath(self.line_messages_file.text()))
+        else:
+            last_dir = get_home_path()
 
-        if fn == "":
-            # cancel
-            EventLogger.debug("Cancelled select Eventfile-Path.")
-            return
+        filename = get_save_file_name(get_main_window(), 'Choose Messages File',
+                                      last_dir, "Log Files (*.log)")
 
-        self.line_path_to_eventfile.setText(fn)
+        if len(filename) > 0:
+            if not filename.lower().endswith('.log'):
+                filename += '.log'
 
-    def __choose_file_dialog(self, msg, filter_string):
-        return QtGui.QFileDialog.getSaveFileName(self, msg, os.getcwd(), filter_string)
+            self.line_messages_file.setText(filename)
 
     def btn_add_device_clicked(self):
         """
@@ -382,9 +389,9 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         else:
             self.tab_widget.setTabIcon(tab_index, QIcon())
 
-    def btn_console_clear_clicked(self):
+    def btn_clear_messages_clicked(self):
         """
-            Clears the gui console tab.
+            Clears the gui messages tab.
         """
         self.txt_console.clear()
 
@@ -429,7 +436,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         from brickv.data_logger.configuration_validator import ConfigurationReader
 
         try:
-            # host            combo_host              setEditText(String)
+            # host            combo_host              setEditText(str)
             self.combo_host.setEditText(general_section[ConfigurationReader.GENERAL_HOST])
             # port            spinbox_port            setValue(int)
             self.spinbox_port.setValue(general_section[ConfigurationReader.GENERAL_PORT])
@@ -437,11 +444,10 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             self.spin_file_count.setValue(general_section[ConfigurationReader.GENERAL_LOG_COUNT])
             # file_size       spin_file_size          setValue(int/1024/1024)  (Byte -> MB)
             self.spin_file_size.setValue((general_section[ConfigurationReader.GENERAL_LOG_FILE_SIZE] / 1024.0 / 1024.0))
-            # path_to_file    line_path_to_file       setText(string)
-            self.line_path_to_file.setText(general_section[ConfigurationReader.GENERAL_PATH_TO_FILE])
-
+            # path_to_file    line_data_file          setText(str)
+            self.line_data_file.setText(general_section[ConfigurationReader.GENERAL_PATH_TO_FILE])
             # logfile path
-            self.line_path_to_eventfile.setText(general_section[ConfigurationReader.GENERAL_EVENTLOG_PATH])
+            self.line_messages_file.setText(general_section[ConfigurationReader.GENERAL_EVENTLOG_PATH])
             # loglevel
             ll = general_section[ConfigurationReader.GENERAL_EVENTLOG_LEVEL]
             od = collections.OrderedDict(sorted(GUILogger._convert_level.items()))
