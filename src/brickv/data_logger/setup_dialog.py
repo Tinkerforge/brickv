@@ -26,6 +26,7 @@ import codecs
 import collections
 import json
 import os
+import time
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt  # , SIGNAL
@@ -72,6 +73,10 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.setupUi(self)
         self.widget_initialization()
+
+        timestamp = int(time.time())
+        self.line_data_file.setText(os.path.join(get_home_path(), 'logger_data_{0}.csv'.format(timestamp)))
+        self.line_event_file.setText(os.path.join(get_home_path(), 'logger_events_{0}.log'.format(timestamp)))
 
     def widget_initialization(self):
         """
