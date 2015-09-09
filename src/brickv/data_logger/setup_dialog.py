@@ -77,8 +77,8 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.tab_widget.removeTab(4) # FIXME: remove Xively tab, as long as there is no support for it
 
         timestamp = int(time.time())
-        self.line_data_file.setText(os.path.join(get_home_path(), 'logger_data_{0}.csv'.format(timestamp)))
-        self.line_event_file.setText(os.path.join(get_home_path(), 'logger_events_{0}.log'.format(timestamp)))
+        self.line_csv_data_file.setText(os.path.join(get_home_path(), 'logger_data_{0}.csv'.format(timestamp)))
+        self.line_event_log_file.setText(os.path.join(get_home_path(), 'logger_events_{0}.log'.format(timestamp)))
 
     def widget_initialization(self):
         """
@@ -106,8 +106,8 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.btn_start_logging.clicked.connect(self.btn_start_logging_clicked)
         self.btn_save_config.clicked.connect(self.btn_save_config_clicked)
         self.btn_load_config.clicked.connect(self.btn_load_config_clicked)
-        self.btn_data_file.clicked.connect(self.btn_data_file_clicked)
-        self.btn_event_file.clicked.connect(self.btn_event_file_clicked)
+        self.btn_csv_data_file.clicked.connect(self.btn_csv_data_file_clicked)
+        self.btn_event_log_file.clicked.connect(self.btn_event_log_file_clicked)
         self.btn_clear_events.clicked.connect(self.btn_clear_events_clicked)
         self.combo_console_level.currentIndexChanged.connect(self.combo_console_level_changed)
         self.btn_add_device.clicked.connect(self.btn_add_device_clicked)
@@ -267,41 +267,41 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         # TODO add other information
         # xively
 
-    def btn_data_file_clicked(self):
+    def btn_csv_data_file_clicked(self):
         """
-            Opens a FileSelectionDialog and sets the selected path for the data output file.
+            Opens a FileSelectionDialog and sets the selected path for the CSV data output file.
         """
-        if len(self.line_data_file.text()) > 0:
-            last_dir = os.path.dirname(os.path.realpath(self.line_data_file.text()))
+        if len(self.line_csv_data_file.text()) > 0:
+            last_dir = os.path.dirname(os.path.realpath(self.line_csv_data_file.text()))
         else:
             last_dir = get_home_path()
 
-        filename = get_save_file_name(get_main_window(), 'Choose Data File',
-                                      last_dir, "CSV Files (*.csv);;Text Files (*.txt)")
+        filename = get_save_file_name(get_main_window(), 'Choose CSV File',
+                                      last_dir, "CSV Files (*.csv)")
 
         if len(filename) > 0:
-            if not (filename.lower().endswith('.csv') or filename.lower().endswith('.txt')):
+            if filename.lower().endswith('.csv'):
                 filename += '.csv'
 
-            self.line_data_file.setText(filename)
+            self.line_csv_data_file.setText(filename)
 
-    def btn_event_file_clicked(self):
+    def btn_event_log_file_clicked(self):
         """
-            Opens a FileSelectionDialog and sets the selected path for the event output file.
+            Opens a FileSelectionDialog and sets the selected path for the event log output file.
         """
-        if len(self.line_event_file.text()) > 0:
-            last_dir = os.path.dirname(os.path.realpath(self.line_event_file.text()))
+        if len(self.line_event_log_file.text()) > 0:
+            last_dir = os.path.dirname(os.path.realpath(self.line_event_log_file.text()))
         else:
             last_dir = get_home_path()
 
-        filename = get_save_file_name(get_main_window(), 'Choose Event File',
+        filename = get_save_file_name(get_main_window(), 'Choose Log File',
                                       last_dir, "Log Files (*.log)")
 
         if len(filename) > 0:
             if not filename.lower().endswith('.log'):
                 filename += '.log'
 
-            self.line_event_file.setText(filename)
+            self.line_event_log_file.setText(filename)
 
     def btn_add_device_clicked(self):
         """
@@ -451,10 +451,10 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             self.spin_file_count.setValue(general_section[ConfigurationReader.GENERAL_LOG_COUNT])
             # file_size       spin_file_size          setValue(int/1024/1024)  (Byte -> MB)
             self.spin_file_size.setValue((general_section[ConfigurationReader.GENERAL_LOG_FILE_SIZE] / 1024.0 / 1024.0))
-            # path_to_file    line_data_file          setText(str)
-            self.line_data_file.setText(general_section[ConfigurationReader.GENERAL_PATH_TO_FILE])
-            # logfile path
-            self.line_event_file.setText(general_section[ConfigurationReader.GENERAL_EVENTLOG_PATH])
+            # path_to_file    line_csv_data_file      setText(str)
+            self.line_csv_data_file.setText(general_section[ConfigurationReader.GENERAL_PATH_TO_FILE])
+            # eventlog_path   line_event_log_file      setText(str)
+            self.line_event_log_file.setText(general_section[ConfigurationReader.GENERAL_EVENTLOG_PATH])
             # loglevel
             ll = general_section[ConfigurationReader.GENERAL_EVENTLOG_LEVEL]
             od = collections.OrderedDict(sorted(GUILogger._convert_level.items()))

@@ -61,19 +61,19 @@
               <item>
                <layout class="QGridLayout" name="gridLayout_9">
                 <item row="0" column="2">
-                 <widget class="QPushButton" name="btn_event_file">
+                 <widget class="QPushButton" name="btn_event_log_file">
                   <property name="text">
                    <string>Browse</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QLineEdit" name="line_event_file"/>
+                 <widget class="QLineEdit" name="line_event_log_file"/>
                 </item>
                 <item row="0" column="0">
                  <widget class="QLabel" name="label_13">
                   <property name="text">
-                   <string>File:</string>
+                   <string>Log File:</string>
                   </property>
                  </widget>
                 </item>
@@ -186,7 +186,7 @@
               <item>
                <layout class="QGridLayout" name="gridLayout_3">
                 <item row="0" column="1">
-                 <widget class="QLineEdit" name="line_data_file">
+                 <widget class="QLineEdit" name="line_csv_data_file">
                   <property name="inputMask">
                    <string notr="true"/>
                   </property>
@@ -198,7 +198,7 @@
                 <item row="0" column="0">
                  <widget class="QLabel" name="label_3">
                   <property name="text">
-                   <string>File:</string>
+                   <string>CSV File:</string>
                   </property>
                  </widget>
                 </item>
@@ -210,7 +210,7 @@
                  </widget>
                 </item>
                 <item row="0" column="2">
-                 <widget class="QPushButton" name="btn_data_file">
+                 <widget class="QPushButton" name="btn_csv_data_file">
                   <property name="focusPolicy">
                    <enum>Qt::TabFocus</enum>
                   </property>
@@ -663,12 +663,12 @@
   <tabstop>tab_widget</tabstop>
   <tabstop>combo_host</tabstop>
   <tabstop>spinbox_port</tabstop>
-  <tabstop>line_data_file</tabstop>
-  <tabstop>btn_data_file</tabstop>
+  <tabstop>line_csv_data_file</tabstop>
+  <tabstop>btn_csv_data_file</tabstop>
   <tabstop>spin_file_count</tabstop>
   <tabstop>spin_file_size</tabstop>
-  <tabstop>line_event_file</tabstop>
-  <tabstop>btn_event_file</tabstop>
+  <tabstop>line_event_log_file</tabstop>
+  <tabstop>btn_event_log_file</tabstop>
   <tabstop>combo_loglevel</tabstop>
   <tabstop>checkbox_to_file</tabstop>
   <tabstop>checkbox_to_console</tabstop>

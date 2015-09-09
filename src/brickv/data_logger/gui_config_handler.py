@@ -176,8 +176,8 @@ class GuiConfigHandler(object):
         general_section[ConfigurationReader.GENERAL_LOG_COUNT] = setup_dialog.spin_file_count.value()
         # file_size       spin_file_size          value()         : int * 1024 * 1024! (MB -> Byte)
         general_section[ConfigurationReader.GENERAL_LOG_FILE_SIZE] = (setup_dialog.spin_file_size.value() * 1024 * 1024)
-        # path_to_file    line_data_file          text()          : str
-        path_to_file = setup_dialog.line_data_file.text()
+        # path_to_file    line_csv_data_file      text()          : str
+        path_to_file = setup_dialog.line_csv_data_file.text()
 
         log_to_file = True
         if path_to_file is None or path_to_file == "":
@@ -187,7 +187,7 @@ class GuiConfigHandler(object):
         general_section[ConfigurationReader.GENERAL_LOG_TO_FILE] = log_to_file
 
         # logfile path
-        general_section[ConfigurationReader.GENERAL_EVENTLOG_PATH] = setup_dialog.line_event_file.text()
+        general_section[ConfigurationReader.GENERAL_EVENTLOG_PATH] = setup_dialog.line_event_log_file.text()
         # loglevel
         ll = setup_dialog.combo_loglevel.currentText()
         log_level_num = 0
