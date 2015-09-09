@@ -29,8 +29,7 @@ import os
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt  # , SIGNAL
-from PyQt4.QtGui import QDialog
-from PyQt4.QtGui import QMessageBox
+from PyQt4.QtGui import QDialog, QMessageBox, QPalette
 
 from brickv import config
 from brickv.utils import get_save_file_name, get_open_file_name, get_main_window, get_home_path
@@ -363,7 +362,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.tab_console_warning = False
         from PyQt4.QtGui import QColor
 
-        self.tab_set(self.tab_widget.indexOf(self.tab_console), QColor(0, 0, 0), None)
+        self.tab_set(self.tab_widget.indexOf(self.tab_console), self.palette().color(QPalette.WindowText), None)
 
     def combo_console_level_changed(self):
         """
