@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-08-14.      #
+# This file was automatically generated on 2015-09-07.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -95,9 +95,10 @@ class BrickletAmbientLightV2(Device):
 
     def get_illuminance(self):
         """
-        Returns the illuminance of the ambient light sensor. The value
-        has a range of 0 to 6400000 and is given in lux/100, i.e. a value
-        of 45000 means that an illuminance of 450lux is measured.
+        Returns the illuminance of the ambient light sensor. The measurement range goes
+        up to about 100000lux, but above 64000lux the precision starts to drop.
+        The illuminance is given in lux/100, i.e. a value of 450000 means that an
+        illuminance of 4500lux is measured.
         
         If you want to get the illuminance periodically, it is recommended to use the
         callback :func:`Illuminance` and set the period with 
@@ -175,6 +176,9 @@ class BrickletAmbientLightV2(Device):
         """
         Sets the configuration. It is possible to configure an illuminance range
         between 0-600lux and 0-64000lux and an integration time between 50ms and 400ms.
+        The upper bound of the illuminance range is not a hard limit. Typically the
+        sensor will measure up to 150% of the configured illuminance range. But after
+        the 100% mark the precision starts to drop.
         
         A smaller illuminance range increases the resolution of the data. An
         increase in integration time will result in less noise on the data.

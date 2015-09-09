@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-28.      #
+# This file was automatically generated on 2015-09-07.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -35,6 +35,7 @@ GetUSBVoltageCallbackThreshold = namedtuple('USBVoltageCallbackThreshold', ['opt
 GetEthernetConfiguration = namedtuple('EthernetConfiguration', ['connection', 'ip', 'subnet_mask', 'gateway', 'port'])
 GetEthernetStatus = namedtuple('EthernetStatus', ['mac_address', 'ip', 'subnet_mask', 'gateway', 'rx_count', 'tx_count', 'hostname'])
 GetEthernetWebsocketConfiguration = namedtuple('EthernetWebsocketConfiguration', ['sockets', 'port'])
+ReadWifi2Flash = namedtuple('ReadWifi2Flash', ['data', 'length_out'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -123,6 +124,9 @@ class BrickMaster(Device):
     FUNCTION_GET_ETHERNET_AUTHENTICATION_SECRET = 74
     FUNCTION_SET_WIFI_AUTHENTICATION_SECRET = 75
     FUNCTION_GET_WIFI_AUTHENTICATION_SECRET = 76
+    FUNCTION_START_WIFI2_BOOTLOADER = 77
+    FUNCTION_WRITE_WIFI2_FLASH = 78
+    FUNCTION_READ_WIFI2_FLASH = 79
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -264,6 +268,9 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_GET_ETHERNET_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SET_WIFI_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_WIFI_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_START_WIFI2_BOOTLOADER] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_WRITE_WIFI2_FLASH] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_READ_WIFI2_FLASH] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_ENABLE_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_DISABLE_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_IS_STATUS_LED_ENABLED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -1165,6 +1172,24 @@ class BrickMaster(Device):
         .. versionadded:: 2.2.0$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_AUTHENTICATION_SECRET, (), '', '64s')
+
+    def start_wifi2_bootloader(self):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_START_WIFI2_BOOTLOADER, (), '', 'b')
+
+    def write_wifi2_flash(self, data, length):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_WRITE_WIFI2_FLASH, (data, length), '60B B', 'b')
+
+    def read_wifi2_flash(self, length_in):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return ReadWifi2Flash(*self.ipcon.send_request(self, BrickMaster.FUNCTION_READ_WIFI2_FLASH, (length_in,), 'B', '60B B'))
 
     def enable_status_led(self):
         """
