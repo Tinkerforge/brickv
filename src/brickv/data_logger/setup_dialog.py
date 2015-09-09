@@ -180,7 +180,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
                 self.tab_devices.setEnabled(False)
                 self.tab_setup.setEnabled(False)
                 # self.tab_xively.setEnabled(False)#nyi
-                self.tab_widget.setCurrentIndex(self.tab_widget.indexOf(self.tab_console))
+                self.tab_widget.setCurrentIndex(self.tab_widget.indexOf(self.tab_csv_data))
                 self.tab_reset_warning()
 
     def _reset_stop(self):
