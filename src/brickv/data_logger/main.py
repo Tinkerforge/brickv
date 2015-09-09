@@ -116,8 +116,6 @@ def main(arguments_map):
     """
     This function initialize the data logger and starts the logging process
     """
-    EventLogger.add_logger(ConsoleLogger("ConsoleLogger", 20))#logging.info
-
     configuration = None
     gui_start = False
     try:
