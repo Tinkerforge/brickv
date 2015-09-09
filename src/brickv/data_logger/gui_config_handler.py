@@ -187,7 +187,7 @@ class GuiConfigHandler(object):
         general_section[ConfigurationReader.GENERAL_LOG_TO_FILE] = log_to_file
 
         # logfile path
-        general_section[ConfigurationReader.GENERAL_EVENTLOG_PATH] = setup_dialog.line_messages_file.text()
+        general_section[ConfigurationReader.GENERAL_EVENTLOG_PATH] = setup_dialog.line_event_file.text()
         # loglevel
         ll = setup_dialog.combo_loglevel.currentText()
         log_level_num = 0

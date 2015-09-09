@@ -105,8 +105,8 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.btn_save_config.clicked.connect(self.btn_save_config_clicked)
         self.btn_load_config.clicked.connect(self.btn_load_config_clicked)
         self.btn_data_file.clicked.connect(self.btn_data_file_clicked)
-        self.btn_messages_file.clicked.connect(self.btn_messages_file_clicked)
-        self.btn_clear_messages.clicked.connect(self.btn_clear_messages_clicked)
+        self.btn_event_file.clicked.connect(self.btn_event_file_clicked)
+        self.btn_clear_events.clicked.connect(self.btn_clear_events_clicked)
         self.combo_console_level.currentIndexChanged.connect(self.combo_console_level_changed)
         self.btn_add_device.clicked.connect(self.btn_add_device_clicked)
         self.btn_remove_device.clicked.connect(self.btn_remove_device_clicked)
@@ -282,23 +282,23 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
             self.line_data_file.setText(filename)
 
-    def btn_messages_file_clicked(self):
+    def btn_event_file_clicked(self):
         """
-            Opens a FileSelectionDialog and sets the selected path for the messages output file.
+            Opens a FileSelectionDialog and sets the selected path for the event output file.
         """
-        if len(self.line_messages_file.text()) > 0:
-            last_dir = os.path.dirname(os.path.realpath(self.line_messages_file.text()))
+        if len(self.line_event_file.text()) > 0:
+            last_dir = os.path.dirname(os.path.realpath(self.line_event_file.text()))
         else:
             last_dir = get_home_path()
 
-        filename = get_save_file_name(get_main_window(), 'Choose Messages File',
+        filename = get_save_file_name(get_main_window(), 'Choose Event File',
                                       last_dir, "Log Files (*.log)")
 
         if len(filename) > 0:
             if not filename.lower().endswith('.log'):
                 filename += '.log'
 
-            self.line_messages_file.setText(filename)
+            self.line_event_file.setText(filename)
 
     def btn_add_device_clicked(self):
         """
@@ -393,9 +393,9 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         else:
             self.tab_widget.setTabIcon(tab_index, QIcon())
 
-    def btn_clear_messages_clicked(self):
+    def btn_clear_events_clicked(self):
         """
-            Clears the gui messages tab.
+            Clears the gui events tab.
         """
         self.txt_console.clear()
 
@@ -451,7 +451,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             # path_to_file    line_data_file          setText(str)
             self.line_data_file.setText(general_section[ConfigurationReader.GENERAL_PATH_TO_FILE])
             # logfile path
-            self.line_messages_file.setText(general_section[ConfigurationReader.GENERAL_EVENTLOG_PATH])
+            self.line_event_file.setText(general_section[ConfigurationReader.GENERAL_EVENTLOG_PATH])
             # loglevel
             ll = general_section[ConfigurationReader.GENERAL_EVENTLOG_LEVEL]
             od = collections.OrderedDict(sorted(GUILogger._convert_level.items()))
@@ -628,7 +628,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
     def txt_console_highlight_tab(self):
         """
             SIGNAL function:
-            Highlight the console/message tab when an error occurs.
+            Highlight the events tab when an error occurs.
         """
         if not self.tab_console_warning and self.tab_widget.currentWidget().objectName() != self.tab_console.objectName():
             self.tab_console_warning = True
