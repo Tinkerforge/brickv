@@ -86,52 +86,43 @@ from brickv.bindings.brick_dc import BrickDC  # NYI
 from brickv.data_logger.event_logger import EventLogger
 import brickv.data_logger.utils as utils
 
-'''
-/*---------------------------------------------------------------------------
-                                SpecialDevices
- ---------------------------------------------------------------------------*/
- '''
 
-class SpecialDevices(object):
-    """
-    SpecialDevices are functions for special Bricks/Bricklets. Some Device functions can return different values,
-    depending on different situations, e.g. the GPS Bricklet. If the GPS Bricklet does not have a so called FIX Value,
-    then the function will return an Error instead of the specified return values.
-    """
+# special_* functions are for special Bricks/Bricklets. Some device functions can
+# return different values, depending on different situations, e.g. the GPS Bricklet.
+# If the GPS Bricklet does not have a fix, then the function will return an Error
+# instead of the specified return values.
 
-    # BrickletGPS
-    def get_gps_coordinates(device):
-        if device.get_status()[0] == BrickletGPS.FIX_NO_FIX:
-            raise Exception('No fix')
-        else:
-            return device.get_coordinates()
+# BrickletGPS
+def special_get_gps_coordinates(device):
+    if device.get_status()[0] == BrickletGPS.FIX_NO_FIX:
+        raise Exception('No fix')
+    else:
+        return device.get_coordinates()
 
-    get_gps_coordinates = staticmethod(get_gps_coordinates)
+def special_get_gps_altitude(device):
+    if device.get_status()[0] != BrickletGPS.FIX_3D_FIX:
+        raise Exception('No 3D fix')
+    else:
+        return device.get_altitude()
 
-    def get_gps_altitude(device):
-        if device.get_status()[0] != BrickletGPS.FIX_3D_FIX:
-            raise Exception('No 3D fix')
-        else:
-            return device.get_altitude()
+def special_get_gps_motion(device):
+    if device.get_status()[0] == BrickletGPS.FIX_NO_FIX:
+        raise Exception('No fix')
+    else:
+        return device.get_motion()
 
-    get_gps_altitude = staticmethod(get_gps_altitude)
+# BrickletPTC
+def special_get_ptc_resistance(device):
+    if not device.is_sensor_connected():
+        raise Exception('No sensor')
+    else:
+        return device.get_resistance()
 
-    def get_gps_motion(device):
-        if device.get_status()[0] == BrickletGPS.FIX_NO_FIX:
-            raise Exception('No fix')
-        else:
-            return device.get_motion()
-
-    get_gps_motion = staticmethod(get_gps_motion)
-
-    # BrickletPTC
-    def get_ptc_temperature(device):
-        if not device.is_sensor_connected():
-            raise Exception('No sensor')
-        else:
-            return device.get_temperature()
-
-    get_ptc_temperature = staticmethod(get_ptc_temperature)
+def special_get_ptc_temperature(device):
+    if not device.is_sensor_connected():
+        raise Exception('No sensor')
+    else:
+        return device.get_temperature()
 
 
 '''
@@ -318,11 +309,11 @@ class Identifier(object):
             'class': BrickletGPS,
             'values': {
                 'Altitude': {
-                    'getter': SpecialDevices.get_gps_altitude,
+                    'getter': special_get_gps_altitude,
                     'subvalues': ['Altitude', 'Geoidal Separation']
                 },
                 'Coordinates': {
-                    'getter': SpecialDevices.get_gps_coordinates,
+                    'getter': special_get_gps_coordinates,
                     'subvalues': ['Latitude', 'NS', 'Longitude', 'EW', 'PDOP', 'HDOP', 'VDOP', 'EPE']
                 },
                 'Date Time': {
@@ -330,7 +321,7 @@ class Identifier(object):
                     'subvalues': ['Date', 'Time']
                 },
                 'Motion': {
-                    'getter': SpecialDevices.get_gps_motion,
+                    'getter': special_get_gps_motion,
                     'subvalues': ['Course', 'Speed']
                 },
                 'Status': {
@@ -476,11 +467,11 @@ class Identifier(object):
             'class': BrickletPTC,
             'values': {
                 'Resistance': {
-                    'getter': lambda device: device.get_resistance(),
+                    'getter': special_get_ptc_resistance,
                     'subvalues': None
                 },
                 'Temperature': {
-                    'getter': lambda device: device.get_temperature(),
+                    'getter': special_get_ptc_temperature,
                     'subvalues': None
                 }
             }
