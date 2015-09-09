@@ -632,7 +632,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             from PyQt4.QtGui import QColor
 
             self.tab_set(self.tab_widget.indexOf(self.tab_console), QColor(255, 0, 0),
-                         os.path.join(get_resources_path(), "dialog-warning.png"))
+                         os.path.join(get_resources_path(), "warning-icon.png"))
 
     def table_add_row(self, csv_data):
         """
