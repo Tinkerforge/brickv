@@ -262,7 +262,7 @@ class ConfigurationValidator(object):
                 continue  # next device
 
             # uid
-            if not Utilities.is_valid_string(device[Idf.DD_UID], 3) or device[Idf.DD_UID] == Idf.DD_UID_DEFAULT:
+            if not Utilities.is_valid_string(device[Idf.DD_UID], 1) or device[Idf.DD_UID] == Idf.DD_UID_DEFAULT:
                 EventLogger.critical(
                     self._generate_device_error_message(uid=device[Idf.DD_UID],
                                                         tier_array=["general"], msg="the UID from '"+device[Idf.DD_NAME]+"' is invalid"))

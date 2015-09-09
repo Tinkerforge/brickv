@@ -56,8 +56,8 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         EventLogger.add_logger(self._gui_logger)
 
         # FIXME better way to find interval and uids in tree_widget?!
-        self.__tree_interval_tooltip = "Interval in milliseconds"
-        self.__tree_uid_tooltip = "UID must be at least 3 Character long"
+        self.__tree_interval_tooltip = "Update interval in milliseconds"
+        self.__tree_uid_tooltip = "UID cannot be empty"
         self.data_logger_thread = None
         self.tab_console_warning = False
 
@@ -591,7 +591,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
                 # check if tooltip is uid
                 elif tt == self.__tree_uid_tooltip:
                     text = item.text(1)
-                    if not Utilities.is_valid_string(text, 3):
+                    if not Utilities.is_valid_string(text, 1):
                         text = Identifier.DD_UID_DEFAULT
                     item.setText(1, text)
 
