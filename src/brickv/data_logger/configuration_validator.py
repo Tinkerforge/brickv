@@ -312,7 +312,7 @@ class ConfigurationValidator(object):
         """
         # TODO: implement xively section validation
         # xively_section = self.json_config._xively
-        EventLogger.warning("Xively validation is not yet supported")
+        #EventLogger.warning("Xively validation is not yet supported")
 
     def _is_valid_interval(self, integer_value, min_value=0):
         """

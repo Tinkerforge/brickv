@@ -73,6 +73,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.setupUi(self)
         self.widget_initialization()
+        self.tab_widget.removeTab(4) # FIXME: remove Xively tab, as long as there is no support for it
 
         timestamp = int(time.time())
         self.line_data_file.setText(os.path.join(get_home_path(), 'logger_data_{0}.csv'.format(timestamp)))
