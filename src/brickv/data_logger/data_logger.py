@@ -28,7 +28,7 @@ import threading
 from brickv.bindings.ip_connection import IPConnection
 from brickv.data_logger.configuration_validator import ConfigurationReader
 from brickv.data_logger.event_logger import EventLogger
-from brickv.data_logger.job import CSVWriterJob, XivelyJob#, GuiDataJob
+from brickv.data_logger.job import CSVWriterJob#, GuiDataJob
 import brickv.data_logger.loggable_devices as loggable_devices
 from brickv.data_logger.utils import DataLoggerException
 import brickv.data_logger.utils as utils
@@ -72,7 +72,6 @@ class DataLogger(threading.Thread):
         self._configuration = config
         self.default_file_path = "logged_data.csv"
         self.log_to_file = True
-        self.log_to_xively = False
         self.stopped = False
 
 
@@ -89,22 +88,6 @@ class DataLogger(threading.Thread):
 
         EventLogger.debug("Logging output to file: " + str(self.log_to_file))
         EventLogger.debug("Output file path: " + str(self.default_file_path))
-
-    def process_xively_section(self):
-        """
-        Information out of the xively section will be consumed here
-        """
-        data = self._configuration._xively
-        # TODO: write code for xively handling
-        if len(data) == 0:
-            return
-
-        self.log_to_xively = data.get(ConfigurationReader.XIVELY_ACTIVE)
-        logging.debug("Logging output to Xively: " + str(self.log_to_xively))
-        # = data.get(XIVELY_AGENT_DESCRIPTION)
-        # = data.get(XIVELY_FEED)
-        # = data.get(XIVELY_API_KEY)
-        # = DataLogger.parse_to_int(data.get(XIVELY_UPDATE_RATE))
 
     def initialize_loggable_devices(self):
         """
@@ -143,7 +126,6 @@ class DataLogger(threading.Thread):
         """
         self.stopped = False
         self.process_general_section()
-        self.process_xively_section()
 
         self.initialize_loggable_devices()
 
@@ -152,8 +134,6 @@ class DataLogger(threading.Thread):
         # look which thread should be working
         if self.log_to_file:
             self.jobs.append(CSVWriterJob(name="CSV-Writer", datalogger=self))
-        if self.log_to_xively:
-            self.jobs.append(XivelyJob(name="Xively-Writer", datalogger=self))
         if self._gui_job is not None:
             self._gui_job.set_datalogger(self)
             self.jobs.append(self._gui_job)

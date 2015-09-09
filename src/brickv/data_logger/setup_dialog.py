@@ -74,7 +74,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.setupUi(self)
         self.widget_initialization()
-        self.tab_widget.removeTab(4) # FIXME: remove Xively tab, as long as there is no support for it
 
         timestamp = int(time.time())
         self.line_csv_data_file.setText(os.path.join(get_home_path(), 'logger_data_{0}.csv'.format(timestamp)))
@@ -124,8 +123,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         # login information
         self.combo_host.currentIndexChanged.connect(self._host_index_changed)
         self.spinbox_port.valueChanged.connect(self._port_changed)
-
-        self.checkbox_xively.stateChanged.connect(self.cb_xively_changed)
 
         self.tree_devices.itemDoubleClicked.connect(self.tree_on_double_click)
         self.tree_devices.itemChanged.connect(self.tree_on_change)
@@ -186,14 +183,12 @@ class SetupDialog(QDialog, Ui_SetupDialog):
                 self.btn_start_logging.setText("Stop Logging")
                 self.tab_devices.setEnabled(False)
                 self.tab_setup.setEnabled(False)
-                # self.tab_xively.setEnabled(False)#nyi
                 self.tab_widget.setCurrentIndex(self.tab_widget.indexOf(self.tab_csv_data))
                 self.tab_reset_warning()
 
     def _reset_stop(self):
         self.tab_devices.setEnabled(True)
         self.tab_setup.setEnabled(True)
-        # self.tab_xively.setEnabled(True)#nyi
         self.btn_start_logging.setText("Start Logging")
 
         self.disconnect(self._gui_job, QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), self.table_add_row)
@@ -263,9 +258,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         from brickv.data_logger.configuration_validator import ConfigurationReader
 
         self.update_setup_tab(config_json[ConfigurationReader.GENERAL_SECTION])
-
-        # TODO add other information
-        # xively
 
     def btn_csv_data_file_clicked(self):
         """
@@ -426,15 +418,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             return
 
         self.host_infos[i].port = self.spinbox_port.value()
-
-    def cb_xively_changed(self):
-        """
-            Enables/Disables widgets for xively configuration
-        """
-        if self.checkbox_xively.isChecked():
-            self.groupBox_xively.setEnabled(True)
-        else:
-            self.groupBox_xively.setEnabled(False)
 
     def update_setup_tab(self, general_section):
         """

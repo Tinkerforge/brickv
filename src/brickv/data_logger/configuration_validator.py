@@ -51,13 +51,6 @@ class ConfigurationReader(object):
     GENERAL_EVENTLOG_TO_FILE = "event_log_to_file"
     GENERAL_EVENTLOG_LEVEL = "event_log_level"
 
-    XIVELY_SECTION = "XIVELY"
-    XIVELY_ACTIVE = "active"
-    XIVELY_AGENT_DESCRIPTION = "agent_description"
-    XIVELY_FEED = "feed"
-    XIVELY_API_KEY = "api_key"
-    XIVELY_UPLOAD_RATE = "upload_rate"
-
     DEVICES_SECTION = Idf.DEVICES
 
     def __init__(self, path_to_config=None, configuration=None):
@@ -103,12 +96,10 @@ class ConfigurationReader(object):
             EventLogger.critical("json configuration file has no [" + ConfigurationReader.GENERAL_SECTION + "] section")
             self._readConfigErr += 1
 
-        self._configuration._xively = prevent_key_error(json_structure, ConfigurationReader.XIVELY_SECTION)
         self._configuration._devices = prevent_key_error(json_structure, ConfigurationReader.DEVICES_SECTION)
 
     def map_dict_to_config(self, json_dict):
         self._configuration._general = prevent_key_error(json_dict, ConfigurationReader.GENERAL_SECTION)
-        self._configuration._xively = prevent_key_error(json_dict, ConfigurationReader.XIVELY_SECTION)
         self._configuration._devices = prevent_key_error(json_dict, ConfigurationReader.DEVICES_SECTION)
 
 
@@ -143,7 +134,6 @@ class ConfigurationValidator(object):
         """
         EventLogger.info("Started configuration file validation")
         self.validate_general_section()
-        self.validate_xively_section()
         self.validate_devices_section()
         EventLogger.info("Validation ends with [" + str(self._error_count) + "] errors")
 
@@ -306,14 +296,6 @@ class ConfigurationValidator(object):
                     if interval > 0:
                         self._log_space_counter.add_lines_per_second(interval / 1000 * logged_values)
 
-    def validate_xively_section(self):
-        """
-        This function validates the xively section out of the configuration
-        """
-        # TODO: implement xively section validation
-        # xively_section = self.json_config._xively
-        #EventLogger.warning("Xively validation is not yet supported")
-
     def _is_valid_interval(self, integer_value, min_value=0):
         """
         Returns True if the 'integer_value' is of type integer and is not negative
@@ -399,7 +381,6 @@ class Configuration:
 
     def __init__(self):
         self._general = {}
-        self._xively = {}
 
         self._devices = []
 

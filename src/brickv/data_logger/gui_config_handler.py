@@ -145,8 +145,6 @@ class GuiConfigHandler(object):
         config_root = {}
         # add general section
         general_section = GuiConfigHandler.create_general_section(setup_dialog)
-        # TODO: add xively
-        xively_section = {}
 
         # add device section
         device_section = GuiConfigHandler.create_device_section(setup_dialog)
@@ -154,7 +152,6 @@ class GuiConfigHandler(object):
         from brickv.data_logger.configuration_validator import ConfigurationReader
 
         config_root[ConfigurationReader.GENERAL_SECTION] = general_section
-        #config_root[ConfigurationReader.XIVELY_SECTION] = xively_section # FIXME: ignore xively for now
         config_root[Idf.DEVICES] = device_section
 
         return config_root
