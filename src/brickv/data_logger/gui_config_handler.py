@@ -37,7 +37,7 @@ from brickv.data_logger.loggable_devices import Identifier as Idf
 class GuiConfigHandler(object):
     """
         This static class is used to convert a config into a blueprint for the gui and vice versa.
-        It also holds a blueprint with all supported diveces. If a new device should be supported,
+        It also holds a blueprint with all supported devices. If a new device should be supported,
         this string should be updatetd, too.
     """
 
