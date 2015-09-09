@@ -27,6 +27,7 @@ import collections
 import json
 import os
 import time
+import functools
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt  # , SIGNAL
@@ -128,6 +129,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.tree_devices.itemDoubleClicked.connect(self.tree_on_double_click)
         self.tree_devices.itemChanged.connect(self.tree_on_change)
+        self.tree_devices.itemChanged.connect(self.cb_device_interval_changed)
 
     def combo_log_level_init(self, combo_widget):
         combo_widget.clear()
@@ -508,6 +510,15 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.tree_devices.sortItems(0, QtCore.Qt.AscendingOrder)
         self.tree_devices.setSortingEnabled(True)
 
+    def cb_device_interval_changed(self, item, column):
+        widget = self.tree_devices.itemWidget(item, 1)
+
+        if widget != None:
+            try:
+                widget.setValue(int(item.text(1)))
+            except:
+                print "foobar"
+
     def __add_item_to_tree(self, item_blueprint):
         """
         Private function with NO sort = false
@@ -528,14 +539,27 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.tree_devices.topLevelItem(lv0_counter).setText(1, str(item_blueprint[Identifier.DD_UID]))
         self.tree_devices.topLevelItem(lv0_counter).setToolTip(1, self.__tree_uid_tooltip)
 
+        def value_changed(item, value):
+            item.setText(1, str(value))
+
         for item_value in item_blueprint[Identifier.DD_VALUES]:
             # lvl1: new entry(value_name|interval)
             item_1 = QtGui.QTreeWidgetItem(item_0)
             item_1.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
             interval = item_blueprint[Identifier.DD_VALUES][item_value][Identifier.DD_VALUES_INTERVAL]
-            self.tree_devices.topLevelItem(lv0_counter).child(value_counter).setText(0, str(item_value))
-            self.tree_devices.topLevelItem(lv0_counter).child(value_counter).setText(1, str(interval))
-            self.tree_devices.topLevelItem(lv0_counter).child(value_counter).setToolTip(1, self.__tree_interval_tooltip)
+            child = self.tree_devices.topLevelItem(lv0_counter).child(value_counter)
+            child.setText(0, str(item_value))
+            child.setText(1, str(interval))
+            child.setToolTip(1, self.__tree_interval_tooltip)
+
+            spinbox_interval = QtGui.QSpinBox()
+            spinbox_interval.setRange(0, (1 << 31) - 1)
+            spinbox_interval.setSingleStep(1000)
+            spinbox_interval.setValue(interval)
+            spinbox_interval.setSuffix(" msec")
+            spinbox_interval.valueChanged.connect(functools.partial(value_changed, child))
+
+            self.tree_devices.setItemWidget(child, 1, spinbox_interval)
 
             # check sub_values
             sub_values = item_blueprint[Identifier.DD_VALUES][item_value][Identifier.DD_SUBVALUES]
@@ -547,11 +571,9 @@ class SetupDialog(QDialog, Ui_SetupDialog):
                     item_2 = QtGui.QTreeWidgetItem(item_1)
                     item_2.setFlags(
                         QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
-                    lvl2_item = self.tree_devices.topLevelItem(lv0_counter).child(value_counter).child(
-                        sub_value_counter)
+                    lvl2_item = self.tree_devices.topLevelItem(lv0_counter).child(value_counter).child(sub_value_counter)
                     item_sub_value_value = \
-                        item_blueprint[Identifier.DD_VALUES][item_value][Identifier.DD_SUBVALUES][
-                            item_sub_value]
+                        item_blueprint[Identifier.DD_VALUES][item_value][Identifier.DD_SUBVALUES][item_sub_value]
                     lvl2_item.setText(0, str(item_sub_value))
                     if item_sub_value_value:
                         lvl2_item.setCheckState(1, QtCore.Qt.Checked)
@@ -588,7 +610,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         # check for wrong input number in interval or uid
         if column == 1:
             # check if tooltip is set
-            tt = str(item.toolTip(1))
+            tt = item.toolTip(1)
             if tt != "":
                 # check if tooltip is interval
                 if tt == self.__tree_interval_tooltip:
