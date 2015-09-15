@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-28.      #
+# This file was automatically generated on 2015-09-15.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -201,11 +201,10 @@ class BrickIMUV2(Device):
 
     def get_orientation(self):
         """
-        Returns the current orientation (heading, roll, pitch) of the IMU Brick as Euler
-        angles in 1/16 degree. Note that Euler angles always experience a
-        `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__.
-        
-        We recommend that you use quaternions instead.
+        Returns the current orientation (heading, roll, pitch) of the IMU Brick as
+        independent Euler angles in 1/16 degree. Note that Euler angles always
+        experience a `gimbal lock <https://en.wikipedia.org/wiki/Gimbal_lock>`__. We
+        recommend that you use quaternions instead, if you need the absolute orientation.
         
         The rotation angle has the following ranges:
         

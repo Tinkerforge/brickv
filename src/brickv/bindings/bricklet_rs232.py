@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-08-18.      #
+# This file was automatically generated on 2015-09-15.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -44,6 +44,7 @@ class BrickletRS232(Device):
     FUNCTION_IS_READ_CALLBACK_ENABLED = 5
     FUNCTION_SET_CONFIGURATION = 6
     FUNCTION_GET_CONFIGURATION = 7
+    FUNCTION_SET_BREAK_CONDITION = 10
     FUNCTION_GET_IDENTITY = 255
 
     BAUDRATE_300 = 0
@@ -85,7 +86,7 @@ class BrickletRS232(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 1)
+        self.api_version = (2, 0, 2)
 
         self.response_expected[BrickletRS232.FUNCTION_WRITE] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232.FUNCTION_READ] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -96,6 +97,7 @@ class BrickletRS232(Device):
         self.response_expected[BrickletRS232.FUNCTION_GET_CONFIGURATION] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletRS232.CALLBACK_READ_CALLBACK] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletRS232.CALLBACK_ERROR_CALLBACK] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletRS232.FUNCTION_SET_BREAK_CONDITION] = BrickletRS232.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletRS232.FUNCTION_GET_IDENTITY] = BrickletRS232.RESPONSE_EXPECTED_ALWAYS_TRUE
 
         self.callback_formats[BrickletRS232.CALLBACK_READ_CALLBACK] = '60c B'
@@ -173,6 +175,15 @@ class BrickletRS232(Device):
         Returns the configuration as set by :func:`SetConfiguration`.
         """
         return GetConfiguration(*self.ipcon.send_request(self, BrickletRS232.FUNCTION_GET_CONFIGURATION, (), '', 'B B B B B B'))
+
+    def set_break_condition(self, break_time):
+        """
+        Sets a break condition (the TX output is forced to a logic 0 state). 
+        The parameter sets the hold-time of the break condition (in ms). 
+        
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+        """
+        self.ipcon.send_request(self, BrickletRS232.FUNCTION_SET_BREAK_CONDITION, (break_time,), 'H', '')
 
     def get_identity(self):
         """
