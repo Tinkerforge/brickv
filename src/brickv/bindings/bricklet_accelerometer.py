@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-08-14.      #
+# This file was automatically generated on 2015-09-15.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -85,7 +85,7 @@ class BrickletAccelerometer(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 1)
+        self.api_version = (2, 0, 0)
 
         self.response_expected[BrickletAccelerometer.FUNCTION_GET_ACCELERATION] = BrickletAccelerometer.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAccelerometer.FUNCTION_SET_ACCELERATION_CALLBACK_PERIOD] = BrickletAccelerometer.RESPONSE_EXPECTED_TRUE
@@ -229,7 +229,7 @@ class BrickletAccelerometer(Device):
         """
         Returns *true* if the LED is enabled, *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_IS_LED_ON, (), '', '?')
+        return self.ipcon.send_request(self, BrickletAccelerometer.FUNCTION_IS_LED_ON, (), '', 'B')
 
     def get_identity(self):
         """

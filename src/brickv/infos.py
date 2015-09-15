@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2012-2015 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
 
 infos.py: Common information structures for Tools/Bricks/Bricklets
@@ -82,6 +82,9 @@ class DeviceInfo(AbstractInfo):
            self.hardware_version, self.device_identifier,
            self.protocol_version, self.url_part,
            self.plugin, self.tab_window)
+
+    def get_combo_item_extension(self):
+        return 'WIFI Extension 2.0 on top of {0} [{1}]'.format(self.name, self.uid)
 
     def get_combo_item(self):
         version_str = get_version_string(self.firmware_version_installed)

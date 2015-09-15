@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-08-14.      #
+# This file was automatically generated on 2015-09-15.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -86,7 +86,7 @@ class BrickServo(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 1)
+        self.api_version = (2, 0, 0)
 
         self.response_expected[BrickServo.FUNCTION_ENABLE] = BrickServo.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickServo.FUNCTION_DISABLE] = BrickServo.RESPONSE_EXPECTED_FALSE
@@ -424,7 +424,7 @@ class BrickServo(Device):
         
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_POSITION_REACHED_CALLBACK_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_POSITION_REACHED_CALLBACK_ENABLED, (), '', 'B')
 
     def enable_velocity_reached_callback(self):
         """
@@ -452,7 +452,7 @@ class BrickServo(Device):
         
         .. versionadded:: 2.0.1$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED, (), '', '?')
+        return self.ipcon.send_request(self, BrickServo.FUNCTION_IS_VELOCITY_REACHED_CALLBACK_ENABLED, (), '', 'B')
 
     def enable_status_led(self):
         """

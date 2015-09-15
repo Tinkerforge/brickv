@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2011-2012 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2011-2015 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
 Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 
@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from brickv.ui_flashing import Ui_Flashing
+from brickv.bindings.brick_master import BrickMaster
 from brickv.bindings.ip_connection import IPConnection, Error, base58encode, \
                                           base58decode, BASE58, uid64_to_uid32
 from brickv.imu_calibration import parse_imu_calibration, IMU_CALIBRATION_URL
@@ -33,12 +34,16 @@ from PyQt4.QtGui import QApplication, QColor, QDialog, QMessageBox, \
 from brickv.samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_ports
 from brickv.infos import get_version_string
 from brickv.utils import get_main_window, get_home_path, get_open_file_name
+from brickv.esp_flash import ESPROM
 from brickv import infos
 
+import zipfile
 import os
 import urllib2
 import time
 import struct
+import math
+import traceback
 from serial import SerialException
 
 LATEST_VERSIONS_URL = 'http://download.tinkerforge.com/latest_versions.txt'
@@ -46,6 +51,7 @@ FIRMWARE_URL = 'http://download.tinkerforge.com/firmwares/'
 SELECT = 'Select...'
 CUSTOM = 'Custom...'
 NO_BRICK = 'No Brick found'
+NO_EXTENSION = 'No Extension found'
 NO_BOOTLOADER = 'No Brick in Bootloader found'
 
 def error_to_name(e):
@@ -90,6 +96,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.firmware_infos = {}
         self.plugin_infos = {}
         self.brick_infos = []
+        self.extension_infos = []
         self.refresh_updates_pending = False
 
         self.parent = parent
@@ -105,6 +112,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.combo_plugin.currentIndexChanged.connect(self.plugin_changed)
         self.button_plugin_save.clicked.connect(self.plugin_save_clicked)
         self.button_plugin_browse.clicked.connect(self.plugin_browse_clicked)
+        self.combo_extension.currentIndexChanged.connect(self.extension_changed)
+        self.combo_extension_firmware.currentIndexChanged.connect(self.extension_firmware_changed)
+        self.button_extension_firmware_save.clicked.connect(self.extension_firmware_save_clicked)
+        self.button_extension_firmware_browse.clicked.connect(self.extension_firmware_browse_clicked)
 
         infos.get_infos_changed_signal().connect(self.update_bricks)
 
@@ -112,6 +123,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.label_no_update_connection.hide()
         self.label_no_firmware_connection.hide()
         self.label_no_plugin_connection.hide()
+        self.label_no_extension_firmware_connection.hide()
 
         self.refresh_serial_ports()
 
@@ -123,7 +135,12 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.combo_plugin.setDisabled(True)
         self.plugin_changed(0)
 
+        self.combo_extension_firmware.addItem(CUSTOM)
+        self.combo_extension_firmware.setDisabled(True)
+        self.extension_firmware_changed(0)
+
         self.brick_changed(0)
+        self.extension_changed(0)
 
         self.update_tree_view_model_labels = ['Name', 'UID', 'Installed', 'Latest']
         self.update_tree_view_model = QStandardItemModel(self)
@@ -136,6 +153,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
 
         self.update_ui_state()
         self.update_bricks()
+        self.update_extensions()
 
     def refresh_latest_version_info(self, progress):
         self.tool_infos = {}
@@ -406,7 +424,17 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.edit_custom_plugin.setEnabled(is_plugin_custom)
         self.button_plugin_browse.setEnabled(is_plugin_custom)
 
-        self.tab_widget.setTabEnabled(2, len(self.brick_infos) > 0)
+        is_extension_firmware_select = self.combo_extension_firmware.currentText() == SELECT
+        is_extension_firmware_custom = self.combo_extension_firmware.currentText() == CUSTOM
+        is_no_extension = self.combo_extension.currentText() == NO_EXTENSION
+        self.combo_extension.setEnabled(not is_no_extension)
+        self.button_extension_firmware_save.setEnabled(not is_extension_firmware_select and not is_no_extension)
+        self.edit_custom_extension_firmware.setEnabled(is_extension_firmware_custom)
+        self.button_extension_firmware_browse.setEnabled(is_extension_firmware_custom)
+
+        bricks_available = len(self.brick_infos) > 0
+        self.tab_widget.setTabEnabled(2, bricks_available)
+        self.tab_widget.setTabEnabled(3, bricks_available)
 
     def firmware_changed(self, index):
         self.update_ui_state()
@@ -1003,6 +1031,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         elif i == 2:
             self.brick_changed(self.combo_brick.currentIndex())
             self.port_changed(self.combo_port.currentIndex())
+        elif i == 3:
+            self.extension_changed(self.combo_extension.currentIndex())
 
     def refresh_updates_clicked(self):
         if self.tab_widget.currentIndex() != 0:
@@ -1232,3 +1262,114 @@ There was an error during the auto-detection of Bricklets with Protocol 1.0 plug
 - Select the "Bricklet" tab and update the plugin manually.
 """
             QMessageBox.critical(self, "Bricklet with Error", message, QMessageBox.Ok)
+
+
+
+    def extension_changed(self, index):
+        # Since we currently only have one extension with a firmware
+        # there is nothing to do here.
+        pass
+
+    def extension_firmware_changed(self, index):
+        self.update_ui_state()
+
+    def extension_firmware_save_clicked(self):
+        current_text = self.combo_extension_firmware.currentText()
+        progress = ProgressWrapper(self.create_progress_bar('Extension Flashing'))
+
+        try:
+            if current_text == SELECT:
+                return
+            elif current_text == CUSTOM:
+                firmware_file_name = self.edit_custom_extension_firmware.text()
+
+            if not zipfile.is_zipfile(firmware_file_name):
+                self.popup_fail('Extension Firmware', 'Firmware file does not have corret format')
+                progress.cancel()
+                return
+
+            files = []
+            zf = zipfile.ZipFile(firmware_file_name, 'r')
+            for name in zf.namelist():
+                files.append((int(name.replace('.bin', ''), 0), name))
+
+            progress.reset('Connecting to bootloader of WIFI Extension 2.0', 0)
+            progress.update(0)
+
+            master_info = self.extension_infos[self.combo_extension.currentIndex()]
+            master = None
+
+            # Find master from infos again, our info object may be outdated at this point
+            for info in infos.get_brick_infos():
+                if info.uid == master_info.uid:
+                    master = info.plugin.device
+
+            if master == None:
+                self.popup_fail('Extension Firmware', 'Error during Extension flashing: Could not find choosen Master Brick')
+                return
+
+            esp = ESPROM(master)
+            esp.connect()
+
+            flash_mode = 0
+            flash_size_freq = 64
+            flash_info = struct.pack('BB', flash_mode, flash_size_freq)
+
+            for i, f in enumerate(files):
+                address = f[0]
+                image = zf.read(f[1])
+                progress.reset('Erasing flash ({0}/{1})'.format(i+1, len(files)), 0)
+                progress.update(0)
+                blocks = math.ceil(len(image)/float(esp.ESP_FLASH_BLOCK))
+                esp.flash_begin(blocks*esp.ESP_FLASH_BLOCK, address)
+                seq = 0
+
+                progress.reset('Writing flash ({0}/{1})'.format(i+1, len(files)), 100)
+                while len(image) > 0:
+                    progress.update(100*(seq+1)/blocks)
+                    block = image[0:esp.ESP_FLASH_BLOCK]
+
+                    # Fix sflash config data
+                    if address == 0 and seq == 0 and block[0] == '\xe9':
+                        block = block[0:2] + flash_info + block[4:]
+
+                    # Pad the last block
+                    block = block + '\xff' * (esp.ESP_FLASH_BLOCK-len(block))
+                    esp.flash_block(block, seq)
+
+                    image = image[esp.ESP_FLASH_BLOCK:]
+                    seq += 1
+            esp.flash_finish(False)
+        except:
+            progress.cancel()
+            self.popup_fail('Extension Firmware', 'Error during Extension flashing: ' + traceback.format_exc())
+        else:
+            progress.cancel()
+            master.reset()
+            self.popup_ok('Extension Firmware', 'Successfully flashed extension firmware.\nMaster Brick will now automatically restart.')
+
+    def extension_firmware_browse_clicked(self):
+        if len(self.edit_custom_extension_firmware.text()) > 0:
+            last_dir = os.path.dirname(os.path.realpath(self.edit_custom_extension_firmware.text()))
+        else:
+            last_dir = get_home_path()
+
+        filename = get_open_file_name(get_main_window(), 'Open Extension Firmware', last_dir, '*.zbin')
+
+        if len(filename) > 0:
+            self.edit_custom_extension_firmware.setText(filename)
+
+    def update_extensions(self):
+        self.combo_extension.clear()
+        self.extension_infos = []
+
+        for info in infos.get_brick_infos():
+            if info.device_identifier == BrickMaster.DEVICE_IDENTIFIER and info.firmware_version_installed >= (2, 4, 0):
+                if info.plugin.device.is_wifi2_present():
+                    self.combo_extension.addItem(info.get_combo_item_extension())
+                    self.extension_infos.append(info)
+
+        if self.combo_brick.count() == 0:
+            self.combo_brick.addItem(NO_EXTENSION)
+
+        self.update_ui_state()

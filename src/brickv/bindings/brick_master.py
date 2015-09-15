@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-09-07.      #
+# This file was automatically generated on 2015-09-15.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -124,9 +124,10 @@ class BrickMaster(Device):
     FUNCTION_GET_ETHERNET_AUTHENTICATION_SECRET = 74
     FUNCTION_SET_WIFI_AUTHENTICATION_SECRET = 75
     FUNCTION_GET_WIFI_AUTHENTICATION_SECRET = 76
-    FUNCTION_START_WIFI2_BOOTLOADER = 77
-    FUNCTION_WRITE_WIFI2_FLASH = 78
-    FUNCTION_READ_WIFI2_FLASH = 79
+    FUNCTION_IS_WIFI2_PRESENT = 77
+    FUNCTION_START_WIFI2_BOOTLOADER = 78
+    FUNCTION_WRITE_WIFI2_FLASH = 79
+    FUNCTION_READ_WIFI2_FLASH = 80
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -190,7 +191,7 @@ class BrickMaster(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 3)
+        self.api_version = (2, 0, 4)
 
         self.response_expected[BrickMaster.FUNCTION_GET_STACK_VOLTAGE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_STACK_CURRENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -268,6 +269,7 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_GET_ETHERNET_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SET_WIFI_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_WIFI_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_IS_WIFI2_PRESENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_START_WIFI2_BOOTLOADER] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_WRITE_WIFI2_FLASH] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_READ_WIFI2_FLASH] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -1172,6 +1174,15 @@ class BrickMaster(Device):
         .. versionadded:: 2.2.0$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_AUTHENTICATION_SECRET, (), '', '64s')
+
+    def is_wifi2_present(self):
+        """
+        Returns *true* if a WIFI Extension 2.0 is available to be used by the Master
+        Brick.
+        
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_WIFI2_PRESENT, (), '', '?')
 
     def start_wifi2_bootloader(self):
         """
