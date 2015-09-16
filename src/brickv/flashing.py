@@ -1282,7 +1282,7 @@ There was an error during the auto-detection of Bricklets with Protocol 1.0 plug
                 firmware_file_name = self.edit_custom_extension_firmware.text()
 
             if not zipfile.is_zipfile(firmware_file_name):
-                self.popup_fail('Extension Firmware', 'Firmware file does not have corret format')
+                self.popup_fail('Extension Firmware', 'Firmware file does not have correct format')
                 progress.cancel()
                 return
 
@@ -1344,7 +1344,7 @@ There was an error during the auto-detection of Bricklets with Protocol 1.0 plug
         else:
             progress.cancel()
             master.reset()
-            self.popup_ok('Extension Firmware', 'Successfully flashed extension firmware.\nMaster Brick will now automatically restart.')
+            self.popup_ok('Extension Firmware', 'Successfully flashed Extension firmware.\nMaster Brick will now automatically restart.')
 
     def extension_firmware_browse_clicked(self):
         if len(self.edit_custom_extension_firmware.text()) > 0:
