@@ -432,9 +432,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
         self.edit_custom_extension_firmware.setEnabled(is_extension_firmware_custom)
         self.button_extension_firmware_browse.setEnabled(is_extension_firmware_custom)
 
-        bricks_available = len(self.brick_infos) > 0
-        self.tab_widget.setTabEnabled(2, bricks_available)
-        self.tab_widget.setTabEnabled(3, bricks_available)
+        self.tab_widget.setTabEnabled(2, len(self.brick_infos) > 0)
+        self.tab_widget.setTabEnabled(3, len(self.extension_infos) > 0)
 
     def firmware_changed(self, index):
         self.update_ui_state()
