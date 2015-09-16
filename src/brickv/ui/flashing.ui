@@ -349,14 +349,14 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_4">
            <property name="text">
-            <string>Extension</string>
+            <string>Extension:</string>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>Firmware</string>
+            <string>Firmware:</string>
            </property>
           </widget>
          </item>
@@ -525,6 +525,11 @@
   <tabstop>edit_uid</tabstop>
   <tabstop>button_uid_load</tabstop>
   <tabstop>button_uid_save</tabstop>
+  <tabstop>combo_extension</tabstop>
+  <tabstop>combo_extension_firmware</tabstop>
+  <tabstop>button_extension_firmware_save</tabstop>
+  <tabstop>edit_custom_extension_firmware</tabstop>
+  <tabstop>button_extension_firmware_browse</tabstop>
  </tabstops>
  <resources/>
  <connections/>

@@ -1263,8 +1263,6 @@ There was an error during the auto-detection of Bricklets with Protocol 1.0 plug
 """
             QMessageBox.critical(self, "Bricklet with Error", message, QMessageBox.Ok)
 
-
-
     def extension_changed(self, index):
         # Since we currently only have one extension with a firmware
         # there is nothing to do here.
