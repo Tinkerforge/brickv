@@ -64,12 +64,21 @@ class AmbientLightV2(PluginBase):
 
         self.al = self.device
 
+        self.has_clamped_output = self.firmware_version >= (2, 0, 2)
+
         self.cbe_illuminance = CallbackEmulator(self.al.get_illuminance,
                                                 self.cb_illuminance,
                                                 self.increase_error_count)
 
         self.illuminance_label = IlluminanceLabel('Illuminance: ')
         self.alf = AmbientLightFrame()
+        self.out_of_range_label = QLabel('out-of-range')
+        self.saturated_label = QLabel('sensor saturated')
+
+        self.out_of_range_label.hide()
+        self.out_of_range_label.setStyleSheet('QLabel { color: red }')
+        self.saturated_label.hide()
+        self.saturated_label.setStyleSheet('QLabel { color: magenta }')
 
         self.current_value = None
 
@@ -79,29 +88,33 @@ class AmbientLightV2(PluginBase):
         layout_h = QHBoxLayout()
         layout_h.addStretch()
         layout_h.addWidget(self.illuminance_label)
+        layout_h.addWidget(self.out_of_range_label)
+        layout_h.addWidget(self.saturated_label)
         layout_h.addWidget(self.alf)
         layout_h.addStretch()
         
         self.range_label = QLabel('Illuminance Range: ')
         self.range_combo = QComboBox()
-        self.range_combo.addItem("0 - 64000 Lux")
-        self.range_combo.addItem("0 - 32000 Lux")
-        self.range_combo.addItem("0 - 16000 Lux")
-        self.range_combo.addItem("0 - 8000 Lux")
-        self.range_combo.addItem("0 - 1300 Lux")
-        self.range_combo.addItem("0 - 600 Lux")
+        if self.has_clamped_output: # Also means that the unlimited range is available
+            self.range_combo.addItem("Unlimited", BrickletAmbientLightV2.ILLUMINANCE_RANGE_UNLIMITED)
+        self.range_combo.addItem("0 - 64000 Lux", BrickletAmbientLightV2.ILLUMINANCE_RANGE_64000LUX)
+        self.range_combo.addItem("0 - 32000 Lux", BrickletAmbientLightV2.ILLUMINANCE_RANGE_32000LUX)
+        self.range_combo.addItem("0 - 16000 Lux", BrickletAmbientLightV2.ILLUMINANCE_RANGE_16000LUX)
+        self.range_combo.addItem("0 - 8000 Lux", BrickletAmbientLightV2.ILLUMINANCE_RANGE_8000LUX)
+        self.range_combo.addItem("0 - 1300 Lux", BrickletAmbientLightV2.ILLUMINANCE_RANGE_1300LUX)
+        self.range_combo.addItem("0 - 600 Lux", BrickletAmbientLightV2.ILLUMINANCE_RANGE_600LUX)
         self.range_combo.currentIndexChanged.connect(self.new_config)
         
         self.time_label = QLabel('Integration Time: ')
         self.time_combo = QComboBox()
-        self.time_combo.addItem("50ms")
-        self.time_combo.addItem("100ms")
-        self.time_combo.addItem("150ms")
-        self.time_combo.addItem("200ms")
-        self.time_combo.addItem("250ms")
-        self.time_combo.addItem("300ms")
-        self.time_combo.addItem("350ms")
-        self.time_combo.addItem("400ms")
+        self.time_combo.addItem("50ms", BrickletAmbientLightV2.INTEGRATION_TIME_50MS)
+        self.time_combo.addItem("100ms", BrickletAmbientLightV2.INTEGRATION_TIME_100MS)
+        self.time_combo.addItem("150ms", BrickletAmbientLightV2.INTEGRATION_TIME_150MS)
+        self.time_combo.addItem("200ms", BrickletAmbientLightV2.INTEGRATION_TIME_200MS)
+        self.time_combo.addItem("250ms", BrickletAmbientLightV2.INTEGRATION_TIME_250MS)
+        self.time_combo.addItem("300ms", BrickletAmbientLightV2.INTEGRATION_TIME_300MS)
+        self.time_combo.addItem("350ms", BrickletAmbientLightV2.INTEGRATION_TIME_350MS)
+        self.time_combo.addItem("400ms", BrickletAmbientLightV2.INTEGRATION_TIME_400MS)
         self.time_combo.currentIndexChanged.connect(self.new_config)
         
         layout_hc = QHBoxLayout()
@@ -141,13 +154,13 @@ class AmbientLightV2(PluginBase):
         return device_identifier == BrickletAmbientLightV2.DEVICE_IDENTIFIER
     
     def get_configucation_async(self, conf):
-        self.range_combo.setCurrentIndex(conf.illuminance_range)
-        self.time_combo.setCurrentIndex(conf.integration_time)
+        self.range_combo.setCurrentIndex(self.range_combo.findData(conf.illuminance_range))
+        self.time_combo.setCurrentIndex(self.time_combo.findData(conf.integration_time))
         
     def new_config(self, value):
         try:
-            self.al.set_configuration(self.range_combo.currentIndex(), 
-                                      self.time_combo.currentIndex())
+            self.al.set_configuration(self.range_combo.itemData(self.range_combo.currentIndex()),
+                                      self.time_combo.itemData(self.time_combo.currentIndex()))
         except:
             pass
 
@@ -157,19 +170,35 @@ class AmbientLightV2(PluginBase):
     def cb_illuminance(self, illuminance):
         self.current_value = illuminance/100.0
         self.illuminance_label.setText(illuminance)
-        
-        max_illuminance = 60000
-        i = self.range_combo.currentIndex()
-        if i == 0:
-            max_illuminance = 6400000
-        elif i == 1:
-            max_illuminance = 3200000
-        elif i == 2:
-            max_illuminance = 1600000
-        elif i == 3:
-            max_illuminance = 800000
-        elif i == 4:
-            max_illuminance = 130000
+
+        max_illuminance = 12000000 # Approximation for unlimited range
+        current_range = self.range_combo.itemData(self.range_combo.currentIndex())
+        if current_range == BrickletAmbientLightV2.ILLUMINANCE_RANGE_64000LUX:
+            max_illuminance = 6400001
+        elif current_range == BrickletAmbientLightV2.ILLUMINANCE_RANGE_32000LUX:
+            max_illuminance = 3200001
+        elif current_range == BrickletAmbientLightV2.ILLUMINANCE_RANGE_16000LUX:
+            max_illuminance = 1600001
+        elif current_range == BrickletAmbientLightV2.ILLUMINANCE_RANGE_8000LUX:
+            max_illuminance = 800001
+        elif current_range == BrickletAmbientLightV2.ILLUMINANCE_RANGE_1300LUX:
+            max_illuminance = 130001
+        elif current_range == BrickletAmbientLightV2.ILLUMINANCE_RANGE_600LUX:
+            max_illuminance = 60001
+
+        if self.has_clamped_output: # Also means that the unlimited range is available
+            if illuminance == 0:
+                self.illuminance_label.setStyleSheet('QLabel { color: magenta }')
+                self.out_of_range_label.hide()
+                self.saturated_label.show()
+            elif illuminance >= max_illuminance:
+                self.illuminance_label.setStyleSheet('QLabel { color: red }')
+                self.out_of_range_label.show()
+                self.saturated_label.hide()
+            else:
+                self.illuminance_label.setStyleSheet('')
+                self.out_of_range_label.hide()
+                self.saturated_label.hide()
 
         value = min(max(illuminance*255/max_illuminance, 0), 255)
         self.alf.set_color(value, value, value)

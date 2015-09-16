@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-09-07.      #
+# This file was automatically generated on 2015-09-16.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -59,6 +59,7 @@ class BrickletAmbientLightV2(Device):
     ILLUMINANCE_RANGE_8000LUX = 3
     ILLUMINANCE_RANGE_1300LUX = 4
     ILLUMINANCE_RANGE_600LUX = 5
+    ILLUMINANCE_RANGE_UNLIMITED = 6
     INTEGRATION_TIME_50MS = 0
     INTEGRATION_TIME_100MS = 1
     INTEGRATION_TIME_150MS = 2
