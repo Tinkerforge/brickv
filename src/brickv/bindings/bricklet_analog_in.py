@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-08-14.      #
+# This file was automatically generated on 2015-09-16.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -255,7 +255,7 @@ class BrickletAnalogIn(Device):
         * 2: 0V - 10.32V, ~2.52mV resolution
         * 3: 0V - 36.30V, ~8.86mV resolution
         * 4: 0V - 45.00V, ~11.25mV resolution
-        * 5: 0V - 3.3V, ~0.81mV resolution, new in version 2.0.3 (Plugin)
+        * 5: 0V - 3.3V, ~0.81mV resolution, new in version 2.0.3$nbsp;(Plugin)
         
         The default measurement range is 0.
         

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-09-15.      #
+# This file was automatically generated on 2015-09-16.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -174,13 +174,13 @@ class BrickletOzone(Device):
         
         The default value is ('x', 0, 0).
         """
-        self.ipcon.send_request(self, BrickletOzone.FUNCTION_SET_OZONE_CONCENTRATION_CALLBACK_THRESHOLD, (option, min, max), 'c h h', '')
+        self.ipcon.send_request(self, BrickletOzone.FUNCTION_SET_OZONE_CONCENTRATION_CALLBACK_THRESHOLD, (option, min, max), 'c H H', '')
 
     def get_ozone_concentration_callback_threshold(self):
         """
         Returns the threshold as set by :func:`SetOzoneConcentrationCallbackThreshold`.
         """
-        return GetOzoneConcentrationCallbackThreshold(*self.ipcon.send_request(self, BrickletOzone.FUNCTION_GET_OZONE_CONCENTRATION_CALLBACK_THRESHOLD, (), '', 'c h h'))
+        return GetOzoneConcentrationCallbackThreshold(*self.ipcon.send_request(self, BrickletOzone.FUNCTION_GET_OZONE_CONCENTRATION_CALLBACK_THRESHOLD, (), '', 'c H H'))
 
     def set_analog_value_callback_threshold(self, option, min, max):
         """

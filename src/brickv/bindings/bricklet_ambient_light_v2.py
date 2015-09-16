@@ -53,13 +53,13 @@ class BrickletAmbientLightV2(Device):
     THRESHOLD_OPTION_INSIDE = 'i'
     THRESHOLD_OPTION_SMALLER = '<'
     THRESHOLD_OPTION_GREATER = '>'
+    ILLUMINANCE_RANGE_UNLIMITED = 6
     ILLUMINANCE_RANGE_64000LUX = 0
     ILLUMINANCE_RANGE_32000LUX = 1
     ILLUMINANCE_RANGE_16000LUX = 2
     ILLUMINANCE_RANGE_8000LUX = 3
     ILLUMINANCE_RANGE_1300LUX = 4
     ILLUMINANCE_RANGE_600LUX = 5
-    ILLUMINANCE_RANGE_UNLIMITED = 6
     INTEGRATION_TIME_50MS = 0
     INTEGRATION_TIME_100MS = 1
     INTEGRATION_TIME_150MS = 2
@@ -76,7 +76,7 @@ class BrickletAmbientLightV2(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletAmbientLightV2.FUNCTION_GET_ILLUMINANCE] = BrickletAmbientLightV2.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletAmbientLightV2.FUNCTION_SET_ILLUMINANCE_CALLBACK_PERIOD] = BrickletAmbientLightV2.RESPONSE_EXPECTED_TRUE
@@ -100,6 +100,10 @@ class BrickletAmbientLightV2(Device):
         up to about 100000lux, but above 64000lux the precision starts to drop.
         The illuminance is given in lux/100, i.e. a value of 450000 means that an
         illuminance of 4500lux is measured.
+        
+        .. versionchanged:: 2.0.2$nbsp;(Plugin)
+          An illuminance of 0lux indicates that the sensor is saturated and the
+          configuration should be modified, see :func:`SetConfiguration`.
         
         If you want to get the illuminance periodically, it is recommended to use the
         callback :func:`Illuminance` and set the period with 
@@ -177,17 +181,27 @@ class BrickletAmbientLightV2(Device):
         """
         Sets the configuration. It is possible to configure an illuminance range
         between 0-600lux and 0-64000lux and an integration time between 50ms and 400ms.
-        The upper bound of the illuminance range is not a hard limit. Typically the
-        sensor will measure up to 150% of the configured illuminance range. But after
-        the 100% mark the precision starts to drop.
         
-        A smaller illuminance range increases the resolution of the data. An
-        increase in integration time will result in less noise on the data.
+        .. versionadded:: 2.0.2$nbsp;(Plugin)
+          The unlimited illuminance range allows to measure up to about 100000lux, but
+          above 64000lux the precision starts to drop.
         
-        With a long integration time the sensor might not be able to measure up to the
-        high end of the selected illuminance range. Start with a big illuminance range
-        and a short integration time then narrow it down to find a good balance between
-        resolution and noise for your setup.
+        A smaller illuminance range increases the resolution of the data. A longer
+        integration time will result in less noise on the data.
+        
+        .. versionchanged:: 2.0.2$nbsp;(Plugin)
+          If the actual measure illuminance is out-of-range then the current illuminance
+          range maximum +0.01lux is reported by :func:`GetIlluminance` and the
+          :func:`Illuminance` callback. For example, 800001 for the 0-8000lux range.
+        
+        .. versionchanged:: 2.0.2$nbsp;(Plugin)
+          With a long integration time the sensor might be saturated before the measured
+          value reaches the maximum of the selected illuminance range. In this case 0lux
+          is reported by :func:`GetIlluminance` and the :func:`Illuminance` callback.
+        
+        If the measurement is out-of-range or the sensor is saturated then you should
+        configure the next higher illuminance range. If the highest range is already
+        in use, then start to reduce the integration time.
         
         The default values are 0-8000lux illuminance range and 200ms integration time.
         """

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-09-15.      #
+# This file was automatically generated on 2015-09-16.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -140,6 +140,7 @@ class BrickMaster(Device):
     EXTENSION_TYPE_RS485 = 2
     EXTENSION_TYPE_WIFI = 3
     EXTENSION_TYPE_ETHERNET = 4
+    EXTENSION_TYPE_WIFI2 = 5
     CHIBI_FREQUENCY_OQPSK_868_MHZ = 0
     CHIBI_FREQUENCY_OQPSK_915_MHZ = 1
     CHIBI_FREQUENCY_OQPSK_780_MHZ = 2
@@ -320,6 +321,7 @@ class BrickMaster(Device):
          "2",    "RS485"
          "3",    "WIFI"
          "4",    "Ethernet"
+         "5",    "WIFI 2.0"
         
         The extension type is already set when bought and it can be set with the 
         Brick Viewer, it is unlikely that you need this function.
