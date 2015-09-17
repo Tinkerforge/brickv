@@ -32,6 +32,7 @@ from brickv.plugin_system.plugins.master.chibi import Chibi
 from brickv.plugin_system.plugins.master.rs485 import RS485
 from brickv.plugin_system.plugins.master.wifi import Wifi
 from brickv.plugin_system.plugins.master.ethernet import Ethernet
+from brickv.plugin_system.plugins.master.wifi2 import Wifi2
 from brickv.bindings.brick_master import BrickMaster
 from brickv.async_call import async_call
         
@@ -66,6 +67,17 @@ class Master(PluginBase, Ui_Master):
             reset = QAction('Reset', self)
             reset.triggered.connect(lambda: self.master.reset())
             self.set_actions(reset)
+
+    def is_wifi2_present_async(self, present):
+        print "wifi2_present:", present
+        if present:
+            wifi2 = Wifi2(self)
+            self.extensions.append(wifi2)
+            self.tab_widget.addTab(wifi2, 'Wifi 2.0')
+            self.tab_widget.show()
+            self.num_extensions += 1
+            self.extension_label.setText(str(self.num_extensions) + " Present")
+            self.label_no_extension.hide()
 
     def is_ethernet_present_async(self, present):
         if present:
@@ -126,6 +138,10 @@ class Master(PluginBase, Ui_Master):
             # Ethernet widget
             if self.firmware_version >= (2, 1, 0):
                 async_call(self.master.is_ethernet_present, None, self.is_ethernet_present_async, self.increase_error_count)
+
+            # Wifi2 widget
+            if self.firmware_version >= (2, 4, 0):
+                async_call(self.master.is_wifi2_present, None, self.is_wifi2_present_async, self.increase_error_count)
 
         self.update_timer.start(1000)
 
