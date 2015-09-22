@@ -25,60 +25,47 @@ Boston, MA 02111-1307, USA.
 # https://docs.google.com/spreadsheets/d/14p6N8rAg8M9Ozr1fmOZePPflvNJmgt0pSAebliDrasI/edit?usp=sharing
 # Documented for Testing and Blueprints
 # Bricklets ############################################################################################################
-# from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer #NYI
+from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer # config: data_rate, full_scale,filter_bandwidth
 from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
-# from brickv.bindings.bricklet_ambient_light_v2 import BrickletAmbientLightV2 #NYI
-from brickv.bindings.bricklet_analog_in import BrickletAnalogIn
-# from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2 #NYI
-from brickv.bindings.bricklet_analog_out import BrickletAnalogOut
-# from brickv.bindings.bricklet_analog_out_v2 import BrickletAnalogOutV2 #NYI
-from brickv.bindings.bricklet_barometer import BrickletBarometer
-from brickv.bindings.bricklet_color import BrickletColor
+from brickv.bindings.bricklet_ambient_light_v2 import BrickletAmbientLightV2 # config: illuminance_range, integration_time
+from brickv.bindings.bricklet_analog_in import BrickletAnalogIn # config: range, averaging
+from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2 # config: moving_average
+from brickv.bindings.bricklet_analog_out_v2 import BrickletAnalogOutV2
+from brickv.bindings.bricklet_barometer import BrickletBarometer # config: reference_air_pressure, averaging
+from brickv.bindings.bricklet_color import BrickletColor # config: gain, integration_time
 from brickv.bindings.bricklet_current12 import BrickletCurrent12
 from brickv.bindings.bricklet_current25 import BrickletCurrent25
 from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
-from brickv.bindings.bricklet_distance_us import BrickletDistanceUS
+from brickv.bindings.bricklet_distance_us import BrickletDistanceUS # config: moving_average
 from brickv.bindings.bricklet_dual_button import BrickletDualButton
-from brickv.bindings.bricklet_dual_relay import BrickletDualRelay
-# from brickv.bindings.bricklet_dust_detector import BrickletDustDetector #NYI
+from brickv.bindings.bricklet_dust_detector import BrickletDustDetector # config: moving_average
 from brickv.bindings.bricklet_gps import BrickletGPS
-from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
+from brickv.bindings.bricklet_hall_effect import BrickletHallEffect # config: edge_type, debounce
 from brickv.bindings.bricklet_humidity import BrickletHumidity
-# from brickv.bindings.bricklet_industrial_analog_out import BrickletIndustrialAnalogOut #NYI
-# from brickv.bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4 #NYI
-# from brickv.bindings.bricklet_industrial_digital_out_4 import BrickletIndustrialDigitalOut4 #NYI
-from brickv.bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
-# from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn #NYI
-# from brickv.bindings.bricklet_industrial_quad_relay import BrickletIndustrialQuadRelay #NYI
-from brickv.bindings.bricklet_io16 import BrickletIO16
-from brickv.bindings.bricklet_io4 import BrickletIO4
+from brickv.bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4 # config: selection_mask, edge_type, debounce
+from brickv.bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA # config: sample_rate
+from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn # config: sample_rate
+from brickv.bindings.bricklet_io16 import BrickletIO16 # config: port_configuration
+from brickv.bindings.bricklet_io4 import BrickletIO4 # config: port
 from brickv.bindings.bricklet_joystick import BrickletJoystick
-# from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI
-# from brickv.bindings.bricklet_lcd_16x2 import BrickletLCD16x2 #NYI
-# from brickv.bindings.bricklet_lcd_20x4 import BrickletLCD20x4 #NYI
+# from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
 from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
 from brickv.bindings.bricklet_line import BrickletLine
 from brickv.bindings.bricklet_linear_poti import BrickletLinearPoti
-# from brickv.bindings.bricklet_load_cell import BrickletLoadCell #NYI
-from brickv.bindings.bricklet_moisture import BrickletMoisture
+from brickv.bindings.bricklet_load_cell import BrickletLoadCell # config: moving_average
+from brickv.bindings.bricklet_moisture import BrickletMoisture # config: moving_average
 from brickv.bindings.bricklet_motion_detector import BrickletMotionDetector
-from brickv.bindings.bricklet_multi_touch import BrickletMultiTouch
-# from brickv.bindings.bricklet_nfc_rfid import BrickletNFCRFID #NYI
-# from brickv.bindings.bricklet_piezo_buzzer import BrickletPiezoBuzzer #NYI
-# from brickv.bindings.bricklet_piezo_speaker import BrickletPiezoSpeaker #NYI
-from brickv.bindings.bricklet_ptc import BrickletPTC
-# from brickv.bindings.bricklet_remote_switch import BrickletRemoteSwitch #NYI
+from brickv.bindings.bricklet_multi_touch import BrickletMultiTouch # config: electrode_config, electrode_sensitivity
+from brickv.bindings.bricklet_ptc import BrickletPTC # config: wire_mode
 from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
 from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
-# from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI
-from brickv.bindings.bricklet_segment_display_4x7 import BrickletSegmentDisplay4x7
-from brickv.bindings.bricklet_solid_state_relay import BrickletSolidStateRelay
+# from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback to get all data
 from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
-from brickv.bindings.bricklet_temperature import BrickletTemperature
-from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
+from brickv.bindings.bricklet_temperature import BrickletTemperature # config: i2c_mode
+from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR # config: emissivity
 from brickv.bindings.bricklet_tilt import BrickletTilt
 from brickv.bindings.bricklet_voltage import BrickletVoltage
-from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent
+from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent # config: averaging, voltage_conversion_time, current_conversion_time
 # Bricks ###############################################################################################################
 from brickv.bindings.brick_dc import BrickDC  # NYI
 # from brickv.bindings.brick_stepper import BricklStepper #NYI
@@ -158,6 +145,19 @@ class Identifier(object):
         ########################
         # Bricklets Start Here #
         ########################
+        BrickletAccelerometer.DEVICE_DISPLAY_NAME: {
+            'class': BrickletAccelerometer,
+            'values': {
+                'Acceleration': {
+                    'getter': lambda device: device.get_acceleration(),
+                    'subvalues': ['X', 'Y', 'Z']
+                },
+                'Temperature': {
+                    'getter': lambda device: device.get_temperature(),
+                    'subvalues': None
+                }
+            }
+        },
         BrickletAmbientLight.DEVICE_DISPLAY_NAME: {
             'class': BrickletAmbientLight,
             'values': {
@@ -165,6 +165,15 @@ class Identifier(object):
                     'getter': lambda device: device.get_analog_value(),
                     'subvalues': None
                 },
+                'Illuminance': {
+                    'getter': lambda device: device.get_illuminance(),
+                    'subvalues': None
+                }
+            }
+        },
+        BrickletAmbientLightV2.DEVICE_DISPLAY_NAME: {
+            'class': BrickletAmbientLightV2,
+            'values': {
                 'Illuminance': {
                     'getter': lambda device: device.get_illuminance(),
                     'subvalues': None
@@ -184,11 +193,24 @@ class Identifier(object):
                 }
             }
         },
-        BrickletAnalogOut.DEVICE_DISPLAY_NAME: {
-            'class': BrickletAnalogOut,
+        BrickletAnalogInV2.DEVICE_DISPLAY_NAME: {
+            'class': BrickletAnalogInV2,
             'values': {
+                'Analog Value': {
+                    'getter': lambda device: device.get_analog_value(),
+                    'subvalues': None
+                },
                 'Voltage': {
                     'getter': lambda device: device.get_voltage(),
+                    'subvalues': None
+                }
+            }
+        },
+        BrickletAnalogOutV2.DEVICE_DISPLAY_NAME: {
+            'class': BrickletAnalogOutV2,
+            'values': {
+                'Input Voltage': {
+                    'getter': lambda device: device.get_input_voltage(),
                     'subvalues': None
                 }
             }
@@ -288,20 +310,12 @@ class Identifier(object):
                 }
             }
         },
-        BrickletDualRelay.DEVICE_DISPLAY_NAME: {
-            'class': BrickletDualRelay,
+        BrickletDustDetector.DEVICE_DISPLAY_NAME: {
+            'class': BrickletDustDetector,
             'values': {
-                'State': {
-                    'getter': lambda device: device.get_state(),
-                    'subvalues': ['Relay1', 'Relay2']
-                },
-                'Monoflop 1': {
-                    'getter': lambda device: device.get_monoflop(1),
-                    'subvalues': ['State', 'Time', 'Time Remaining']
-                },
-                'Monoflop 2': {
-                    'getter': lambda device: device.get_monoflop(2),
-                    'subvalues': ['State', 'Time', 'Time Remaining']
+                'Dust Density': {
+                    'getter': lambda device: device.get_dust_density(),
+                    'subvalues': None
                 }
             }
         },
@@ -333,6 +347,10 @@ class Identifier(object):
         BrickletHallEffect.DEVICE_DISPLAY_NAME: {
             'class': BrickletHallEffect,
             'values': {
+                'Edge Count': {
+                    'getter': lambda device: device.get_edge_count(False),
+                    'subvalues': None
+                },
                 'Value': {
                     'getter': lambda device: device.get_value(),
                     'subvalues': None
@@ -352,6 +370,31 @@ class Identifier(object):
                 }
             }
         },
+        BrickletIndustrialDigitalIn4.DEVICE_DISPLAY_NAME: {
+            'class': BrickletIndustrialDigitalIn4,
+            'values': {
+                'Edge Count (Pin 0)': {
+                    'getter': lambda device: device.get_edge_count(0, False),
+                    'subvalues': None
+                },
+                'Edge Count (Pin 1)': {
+                    'getter': lambda device: device.get_edge_count(1, False),
+                    'subvalues': None
+                },
+                'Edge Count (Pin 2)': {
+                    'getter': lambda device: device.get_edge_count(2, False),
+                    'subvalues': None
+                },
+                'Edge Count (Pin 3)': {
+                    'getter': lambda device: device.get_edge_count(3, False),
+                    'subvalues': None
+                },
+                'Value': {
+                    'getter': lambda device: device.get_value(),
+                    'subvalues': None
+                }
+            }
+        },
         BrickletIndustrialDual020mA.DEVICE_DISPLAY_NAME: {
             'class': BrickletIndustrialDual020mA,
             'values': {
@@ -365,9 +408,34 @@ class Identifier(object):
                 }
             }
         },
+        BrickletIndustrialDualAnalogIn.DEVICE_DISPLAY_NAME: {
+            'class': BrickletIndustrialDualAnalogIn,
+            'values': {
+                'Voltage (Channel 0)': {
+                    'getter': lambda device: device.get_voltage(0),
+                    'subvalues': None
+                },
+                'Voltage (Channel 1)': {
+                    'getter': lambda device: device.get_voltage(1),
+                    'subvalues': None
+                },
+                'ADC Values': {
+                    'getter': lambda device: device.get_adc_values(),
+                    'subvalues': ['Channel 0', 'Channel 1']
+                }
+            }
+        },
         BrickletIO16.DEVICE_DISPLAY_NAME: {
             'class': BrickletIO16,
             'values': {
+                'Edge Count (Pin A0)': {
+                    'getter': lambda device: device.get_edge_count(0, False),
+                    'subvalues': None
+                },
+                'Edge Count (Pin A1)': {
+                    'getter': lambda device: device.get_edge_count(1, False),
+                    'subvalues': None
+                },
                 'Port A': {
                     'getter': lambda device: device.get_port('a'),
                     'subvalues': None
@@ -381,6 +449,22 @@ class Identifier(object):
         BrickletIO4.DEVICE_DISPLAY_NAME: {
             'class': BrickletIO4,
             'values': {
+                'Edge Count (Pin 0)': {
+                    'getter': lambda device: device.get_edge_count(0, False),
+                    'subvalues': None
+                },
+                'Edge Count (Pin 1)': {
+                    'getter': lambda device: device.get_edge_count(1, False),
+                    'subvalues': None
+                },
+                'Edge Count (Pin 2)': {
+                    'getter': lambda device: device.get_edge_count(2, False),
+                    'subvalues': None
+                },
+                'Edge Count (Pin 3)': {
+                    'getter': lambda device: device.get_edge_count(3, False),
+                    'subvalues': None
+                },
                 'Value': {
                     'getter': lambda device: device.get_value(),
                     'subvalues': None
@@ -404,7 +488,6 @@ class Identifier(object):
                 }
             }
         },
-        # TODO Bricklet with some big return Arrays (3x16!) -> To many subvalues?
         BrickletLEDStrip.DEVICE_DISPLAY_NAME: {
             'class': BrickletLEDStrip,
             'values': {
@@ -432,6 +515,15 @@ class Identifier(object):
                 },
                 'Analog Value': {
                     'getter': lambda device: device.get_analog_value(),
+                    'subvalues': None
+                }
+            }
+        },
+        BrickletLoadCell.DEVICE_DISPLAY_NAME: {
+            'class': BrickletLoadCell,
+            'values': {
+                'Weight': {
+                    'getter': lambda device: device.get_weight(),
                     'subvalues': None
                 }
             }
@@ -499,32 +591,6 @@ class Identifier(object):
                 'Analog Value': {
                     'getter': lambda device: device.get_analog_value(),
                     'subvalues': None
-                }
-            }
-        },
-        BrickletSegmentDisplay4x7.DEVICE_DISPLAY_NAME: {
-            'class': BrickletSegmentDisplay4x7,
-            'values': {
-                'Counter Value': {
-                    'getter': lambda device: device.get_counter_value(),
-                    'subvalues': None
-                },
-                'Segments': {
-                    'getter': lambda device: device.get_segments(),
-                    'subvalues': [['Segm1', 'Segm2', 'Segm3', 'Segm4'], 'Brightness', 'Colon']
-                }
-            }
-        },
-        BrickletSolidStateRelay.DEVICE_DISPLAY_NAME: {
-            'class': BrickletSolidStateRelay,
-            'values': {
-                'State': {
-                    'getter': lambda device: device.get_state(),
-                    'subvalues': None
-                },
-                'Monoflop': {
-                    'getter': lambda device: device.get_monoflop(),
-                    'subvalues': ['State', 'Time', 'Time Remaining']
                 }
             }
         },
