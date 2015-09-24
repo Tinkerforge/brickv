@@ -43,9 +43,6 @@ class DataLogger(threading.Thread):
 
     # constructor and other functions
     def __init__(self, config, gui_job=None):
-        """
-            config -- brickv.data_logger.configuration_validator.Configuration
-        """
         super(DataLogger, self).__init__()
 
         self.jobs = []  # thread hashmap for all running threads/jobs
@@ -56,8 +53,8 @@ class DataLogger(threading.Thread):
         self.max_file_size = None
         self.max_file_count = None
         self.data_queue = {}  # universal data_queue hash map
-        self.host = config._general[ConfigurationReader.GENERAL_HOST]
-        self.port = utils.Utilities.parse_to_int(config._general[ConfigurationReader.GENERAL_PORT])
+        self.host = config['hosts']['default']['name']
+        self.port = config['hosts']['default']['port']
         self.ipcon = IPConnection()
         try:
             self.ipcon.connect(self.host, self.port)  # Connect to brickd
@@ -69,17 +66,16 @@ class DataLogger(threading.Thread):
         EventLogger.info("Connection to " + self.host + ":" + str(self.port) + " established.")
         self.ipcon.set_timeout(1)  # TODO: Timeout number
         EventLogger.debug("Set ipcon.time_out to 1.")
-        self._configuration = config
+        self._config = config
         self.default_file_path = "logged_data.csv"
         self.log_to_file = True
         self.stopped = False
-
 
     def process_general_section(self):
         """
         Information out of the general section will be consumed here
         """
-        data = self._configuration._general
+        data = self._config['general']
 
         self.log_to_file = data[ConfigurationReader.GENERAL_LOG_TO_FILE]
         self.default_file_path = data[ConfigurationReader.GENERAL_PATH_TO_FILE]
@@ -93,7 +89,7 @@ class DataLogger(threading.Thread):
         """
         This function creates the actual objects for each device out of the configuration
         """
-        device_list = self._configuration._devices
+        device_list = self._config['devices']
 
         wrong_uid_msg = "The following Devices got an invalid UID: "
         got_wrong_uid_exception = False

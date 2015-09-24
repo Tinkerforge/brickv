@@ -126,7 +126,7 @@ class Identifier(object):
         This Blueprint is used in the config file and the GUI.
     """
     # Devices
-    DEVICES = "DEVICES"
+    DEVICES = "devices"
 
     # config list access strings
     DD_NAME = "name"

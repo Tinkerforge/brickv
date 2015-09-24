@@ -33,7 +33,6 @@ from brickv.data_logger.loggable_devices import Identifier as Idf
  ---------------------------------------------------------------------------*/
  '''
 
-
 class GuiConfigHandler(object):
     """
         This static class is used to convert a config into a blueprint for the gui and vice versa.
@@ -51,7 +50,6 @@ class GuiConfigHandler(object):
         try:
             GuiConfigHandler.clear_blueprint()
             GuiConfigHandler.create_device_blueprint(device_json[Idf.DEVICES])
-
         except Exception as e:
             EventLogger.warning("Devices could not be fully loaded! -> " + str(e))
 
@@ -62,7 +60,6 @@ class GuiConfigHandler(object):
         """
         Resets the current blueprints save in device_blueprint.
         """
-        GuiConfigHandler.device_blueprint = None
         GuiConfigHandler.device_blueprint = []
 
     def create_device_blueprint(devices):
@@ -142,7 +139,7 @@ class GuiConfigHandler(object):
         fetches the GENERAL_SECTION information.
         Returns the config as dictonary.
         """
-        config_root = {}
+        config = {}
         # add general section
         general_section = GuiConfigHandler.create_general_section(setup_dialog)
 
@@ -151,24 +148,33 @@ class GuiConfigHandler(object):
 
         from brickv.data_logger.configuration_validator import ConfigurationReader
 
-        config_root[ConfigurationReader.GENERAL_SECTION] = general_section
-        config_root[Idf.DEVICES] = device_section
+        config['hosts'] = GuiConfigHandler.create_hosts_section(setup_dialog)
+        config[ConfigurationReader.GENERAL_SECTION] = general_section
+        config[Idf.DEVICES] = device_section
 
-        return config_root
+        return config
+
+    def create_hosts_section(setup_dialog):
+        """
+        Creates the hosts section part of the config file
+        and returns it as a dictonary.
+        """
+        # store hosts as a dict as preparation for multi-host support. so the
+        # config format doesn't have to be changed if multi-host support is added
+        hosts_section = {'default': {'name': setup_dialog.combo_host.currentText(),
+                                     'port': setup_dialog.spinbox_port.value()}}
+
+        return hosts_section
 
     def create_general_section(setup_dialog):
         """
-        Creates the GENERAL_SECTION part of the config file 
+        Creates the general section part of the config file
         and returns it as a dictonary.
         """
         from brickv.data_logger.configuration_validator import ConfigurationReader
 
         general_section = {}
 
-        # host            combo_host              currentText()   : str
-        general_section[ConfigurationReader.GENERAL_HOST] = setup_dialog.combo_host.currentText()
-        # port            spinbox_port            value()         : int
-        general_section[ConfigurationReader.GENERAL_PORT] = setup_dialog.spinbox_port.value()
         # file_count      spin_file_count         value()         : int
         general_section[ConfigurationReader.GENERAL_LOG_COUNT] = setup_dialog.spin_file_count.value()
         # file_size       spin_file_size          value()         : int * 1024 * 1024! (MB -> Byte)
@@ -212,6 +218,7 @@ class GuiConfigHandler(object):
             # create device item
             dev = {}
             dev_name = lvl0_item.text(0)
+            dev['host'] = 'default'
             dev[Idf.DD_NAME] = dev_name
             dev[Idf.DD_UID] = lvl0_item.text(1)
             dev[Idf.DD_VALUES] = {}
@@ -250,7 +257,7 @@ class GuiConfigHandler(object):
 
     def get_simple_blueprint(setup_dialog):
         """
-        Returns a very simple bluepirnt version of the current 
+        Returns a very simple blueprint version of the current
         devices in the tree_widget. Is used for the DeviceDialog.
         This blueprint only contains the name and uid of a device.
         """
@@ -318,9 +325,8 @@ class GuiConfigHandler(object):
     # clear_blueprint = staticmethod(clear_blueprint)
     create_device_blueprint = staticmethod(create_device_blueprint)
     create_config_file = staticmethod(create_config_file)
+    create_hosts_section = staticmethod(create_hosts_section)
     create_general_section = staticmethod(create_general_section)
     get_simple_blueprint = staticmethod(get_simple_blueprint)
     get_device_blueprint = staticmethod(get_device_blueprint)
     create_device_section = staticmethod(create_device_section)
-
-    

@@ -29,11 +29,10 @@ import signal
 import sys
 import traceback
 
-from brickv.data_logger.configuration_validator import ConfigurationReader as CR
+from brickv.data_logger.configuration_validator import ConfigurationReader
 from brickv.data_logger.data_logger import DataLogger
 from brickv.data_logger.event_logger import ConsoleLogger, FileLogger, EventLogger
 from brickv.data_logger.utils import DataLoggerException
-
 
 if hasattr(sys, "frozen"):
     program_path = os.path.dirname(os.path.realpath(unicode(sys.executable, sys.getfilesystemencoding())))
@@ -97,10 +96,10 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 def __manage_eventlog(arguments_map):
-    EventLogger.EVENT_CONSOLE_LOGGING = arguments_map[CR.GENERAL_EVENTLOG_TO_CONSOLE]
-    EventLogger.EVENT_FILE_LOGGING = arguments_map[CR.GENERAL_EVENTLOG_TO_FILE]
-    EventLogger.EVENT_FILE_LOGGING_PATH = arguments_map[CR.GENERAL_EVENTLOG_PATH]
-    EventLogger.EVENT_LOG_LEVEL = arguments_map[CR.GENERAL_EVENTLOG_LEVEL]
+    EventLogger.EVENT_CONSOLE_LOGGING = arguments_map[ConfigurationReader.GENERAL_EVENTLOG_TO_CONSOLE]
+    EventLogger.EVENT_FILE_LOGGING = arguments_map[ConfigurationReader.GENERAL_EVENTLOG_TO_FILE]
+    EventLogger.EVENT_FILE_LOGGING_PATH = arguments_map[ConfigurationReader.GENERAL_EVENTLOG_PATH]
+    EventLogger.EVENT_LOG_LEVEL = arguments_map[ConfigurationReader.GENERAL_EVENTLOG_LEVEL]
 
     if EventLogger.EVENT_FILE_LOGGING:
         EventLogger.add_logger(
@@ -116,17 +115,20 @@ def main(arguments_map):
     """
     This function initialize the data logger and starts the logging process
     """
-    configuration = None
+    config = None
     gui_start = False
     try:
         # was started via console
         if CONSOLE_CONFIG_FILE in arguments_map and arguments_map[CONSOLE_CONFIG_FILE] is not None:
-            configuration = CR(path_to_config=arguments_map[CONSOLE_CONFIG_FILE])
+            config = load_and_validate_config(arguments_map[CONSOLE_CONFIG_FILE])
+
+            if config == None:
+                return
 
         # was started via gui
         elif GUI_CONFIG in arguments_map and arguments_map[GUI_CONFIG] is not None:
             gui_start = True
-            configuration = CR(configuration=arguments_map[GUI_CONFIG])
+            config = arguments_map[GUI_CONFIG]
 
         # no configuration file was given
         else:
@@ -136,7 +138,7 @@ def main(arguments_map):
             return
 
         # activate eventlogger
-        __manage_eventlog(configuration._configuration._general)
+        __manage_eventlog(config['general'])
 
     except Exception as exc:
         EventLogger.critical(str(exc))
@@ -145,16 +147,12 @@ def main(arguments_map):
         else:
             sys.exit(DataLoggerException.DL_CRITICAL_ERROR)
 
-    if configuration._configuration.is_empty():
-        EventLogger.error("Configuration is empty")
-        return None
-
     data_logger = None
     try:
         if gui_start:
-            data_logger = DataLogger(configuration._configuration, arguments_map[GUI_ELEMENT])
+            data_logger = DataLogger(config, arguments_map[GUI_ELEMENT])
         else:
-            data_logger = DataLogger(configuration._configuration)
+            data_logger = DataLogger(config)
 
         if data_logger.ipcon is not None:
             data_logger.run()
@@ -172,7 +170,6 @@ def main(arguments_map):
             sys.exit(DataLoggerException.DL_CRITICAL_ERROR)
 
     return data_logger
-
 
 def command_line_start(argv, program_name):
     """

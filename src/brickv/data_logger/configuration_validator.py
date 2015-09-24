@@ -39,13 +39,11 @@ class ConfigurationReader(object):
     """
     This class provides the read-in functionality for the Data Logger configuration file
     """
-    GENERAL_SECTION = "GENERAL"
+    GENERAL_SECTION = "general"
     GENERAL_LOG_TO_FILE = "log_to_file"
     GENERAL_PATH_TO_FILE = "path_to_file"
     GENERAL_LOG_COUNT = "log_count"
     GENERAL_LOG_FILE_SIZE = "max_logged_file_size"
-    GENERAL_HOST = "host"
-    GENERAL_PORT = "port"
     GENERAL_EVENTLOG_PATH = "event_path_to_eventfile"
     GENERAL_EVENTLOG_TO_CONSOLE = "event_log_to_console"
     GENERAL_EVENTLOG_TO_FILE = "event_log_to_file"
@@ -53,196 +51,212 @@ class ConfigurationReader(object):
 
     DEVICES_SECTION = Idf.DEVICES
 
-    def __init__(self, path_to_config=None, configuration=None):
-        """
-        pathToConfig -- path to the json configuration file
-        OR
-        configuration -- the configuration itself
-        """
-        self._configuration = Configuration()
-        self._readConfigErr = 0  # Errors which occure during readin
+def load_and_validate_config(filename):
+    EventLogger.info("Loading config file from '{0}'".format(filename))
 
-        if path_to_config is None and configuration is None:
-            EventLogger.critical(
-                "ConfigurationReader needs a path to the configuration file or an actual configuration")
-            return
-
-        if path_to_config is not None:
-            self.fileName = path_to_config
-            self._read_json_config_file()
-
-        if configuration is not None:
-            if isinstance(configuration, Configuration):
-                self._configuration = configuration
-            else:
-                self.map_dict_to_config(configuration)
-
-        validator = ConfigurationValidator(self._configuration)
-        validator._error_count += self._readConfigErr
-        validator.validate()
-
-    def _read_json_config_file(self):
-        with codecs.open(self.fileName, 'r', 'UTF-8') as content_file:
-            try:
-                json_structure = json.load(content_file)
-            except ValueError as e:
-                EventLogger.critical("Cant parse the configuration file: " + str(e))
-                return
-
-        # Load sections out of the json structure
+    with codecs.open(filename, 'r', 'UTF-8') as f:
         try:
-            self._configuration._general = json_structure[ConfigurationReader.GENERAL_SECTION]
-        except KeyError:
-            EventLogger.critical("json configuration file has no [" + ConfigurationReader.GENERAL_SECTION + "] section")
-            self._readConfigErr += 1
+            config = json.load(f)
+        except ValueError as e:
+            EventLogger.critical("Could not parse config file as JSON: " + str(e))
+            return None
 
-        self._configuration._devices = prevent_key_error(json_structure, ConfigurationReader.DEVICES_SECTION)
+    if not ConfigValidator(config).validate():
+        return None
 
-    def map_dict_to_config(self, json_dict):
-        self._configuration._general = prevent_key_error(json_dict, ConfigurationReader.GENERAL_SECTION)
-        self._configuration._devices = prevent_key_error(json_dict, ConfigurationReader.DEVICES_SECTION)
-
+    return config
 
 """"
 /*---------------------------------------------------------------------------
-                                ConfigurationValidator
+                                ConfigValidator
  ---------------------------------------------------------------------------*/
 """
 
 
-class ConfigurationValidator(object):
+class ConfigValidator(object):
     """
-    This class validates the (json) configuration file
+    This class validates the (JSON) config file
     """
     MIN_INTERVAL = 0
 
-    def __init__(self, config_file):
-        self.CR = ConfigurationReader  # alias for the ConfigurationReader
-
-        self.json_config = config_file
-
+    def __init__(self, config):
         self._error_count = 0
-        file_count = self.json_config._general[self.CR.GENERAL_LOG_COUNT]
-        file_size = self.json_config._general[self.CR.GENERAL_LOG_FILE_SIZE]
+        self._config = config
 
-        self._log_space_counter = LogSpaceCounter(file_count, file_size)
+        # FIXME: dont access the config before its validated. also this code should not be here
+        # but somewhere else. it has nothing to do with validation
+        #file_count = self._config['general'][ConfigurationReader.GENERAL_LOG_COUNT]
+        #file_size = self._config['general'][ConfigurationReader.GENERAL_LOG_FILE_SIZE]
+
+        #self._log_space_counter = LogSpaceCounter(file_count, file_size)
+
+    def _report_error(self, message):
+        self._error_count += 1
+        EventLogger.critical(message)
 
     def validate(self):
         """
-        This function performs the validation of the various sections of the json
+        This function performs the validation of the various sections of the JSON
         configuration file
         """
-        EventLogger.info("Started configuration file validation")
-        self.validate_general_section()
-        self.validate_devices_section()
-        EventLogger.info("Validation ends with [" + str(self._error_count) + "] errors")
+        EventLogger.info("Validating config file")
 
-        logging_time = self._log_space_counter.calculate_time()
-        if self._log_space_counter.file_size != 0:
-            EventLogger.info("Logging time until old data will be overwritten.")
-            EventLogger.info("Days: " + str(logging_time[0]) +
-                             " Hours: " + str(logging_time[1]) +
-                             " Minutes: " + str(logging_time[2]) +
-                             " Seconds: " + str(logging_time[3]))
-        EventLogger.info("Will write about " + str(
-            int(self._log_space_counter.lines_per_second + 0.5)) + " lines per second into the log-file.")
+        self._validate_hosts()
+        self._validate_general_section()
+        self._validate_devices_section()
 
-        if self._error_count != 0:
-            raise DataLoggerException(DataLoggerException.DL_FAILED_VALIDATION, "Validation process found some errors")
+        if self._error_count > 0:
+            EventLogger.critical("Validation found {0} errors".format(self._error_count))
+        else:
+            EventLogger.info("Validation successful")
 
-    def validate_general_section(self):
+        #logging_time = self._log_space_counter.calculate_time()
+        #if self._log_space_counter.file_size != 0:
+        #    EventLogger.info("Logging time until old data will be overwritten.")
+        #    EventLogger.info("Days: " + str(logging_time[0]) +
+        #                     " Hours: " + str(logging_time[1]) +
+        #                     " Minutes: " + str(logging_time[2]) +
+        #                     " Seconds: " + str(logging_time[3]))
+        #EventLogger.info("Will write about " + str(
+        #    int(self._log_space_counter.lines_per_second + 0.5)) + " lines per second into the log-file.")
+
+        return self._error_count == 0
+
+    def _validate_hosts(self):
+        """
+        This function validates the hosts section of the configuration
+        """
+        try:
+            hosts = self._config['hosts']
+        except KeyError:
+            self._report_error('Config has no hosts section')
+            return
+
+        if not isinstance(hosts, dict):
+            self._report_error('Hosts section is not a dictionary')
+            return
+
+        try:
+            hosts['default']
+        except KeyError:
+            self._report_error('Config has no default host')
+
+        for host_id, host in hosts.items():
+            try:
+                name = host['name']
+            except KeyError:
+                self._report_error('Host with ID "{0}" has no name'.format(host_id))
+            else:
+                if not isinstance(name, basestring):
+                    self._report_error('Name of host with ID "{0}" is not a string'.format(host_id))
+                    continue
+
+                if len(name) == 0:
+                    self._report_error('Name of host with ID "{0}" is empty'.format(host_id))
+                    continue
+
+            try:
+                port = host['port']
+            except KeyError:
+                self._report_error('Host with ID "{0}" has no port'.format(host_id))
+            else:
+                if not isinstance(port, int):
+                    self._report_error('Port of host with ID "{0}" is not an int'.format(host_id))
+                    continue
+
+                if port <= 0 or port > 65535:
+                    self._report_error('Port of host with ID "{0}" is out-of-range'.format(host_id))
+                    continue
+
+    def _validate_general_section(self):
         """
         This function validates the general section out of the configuration
         """
-        global_section = self.json_config._general
+        try:
+            global_section = self._config['general']
+        except KeyError:
+            self._report_error('Config has no general section')
+            return
 
-        # self.CR.GENERAL_HOST ip address
-        host = global_section[self.CR.GENERAL_HOST]
-        if host is None or len(host) == 0:
-            EventLogger.critical(
-                self._generate_device_error_message(uid="", tier_array=[self.CR.GENERAL_SECTION, self.CR.GENERAL_HOST],
-                                                    msg="invalid host"))
-
-        # self.CR.GENERAL_PORT port number
-        port = global_section[self.CR.GENERAL_PORT]
-        if not Utilities.is_valid_string(port, 1) and not (0 < port <= 65535):
-            EventLogger.critical(
-                self._generate_device_error_message(uid="", tier_array=[self.CR.GENERAL_SECTION, self.CR.GENERAL_PORT],
-                                                    msg="port should be an integer 0-65535"))
-
-        # --- Datalog file ---------------------------------------------  
-        # self.CR.GENERAL_LOG_TO_FILE should be a bool and if its True then
-        # self.CR.GENERAL_LOG_TO_FILE should be a string and a valid path
-        if not type(global_section[self.CR.GENERAL_LOG_TO_FILE]) == bool:
+        # --- Datalog file ---------------------------------------------
+        # ConfigurationReader.GENERAL_LOG_TO_FILE should be a bool and if its True then
+        # ConfigurationReader.GENERAL_LOG_TO_FILE should be a string and a valid path
+        if not type(global_section[ConfigurationReader.GENERAL_LOG_TO_FILE]) == bool:
             EventLogger.critical(
                 self._generate_device_error_message(uid="",
-                                                    tier_array=[self.CR.GENERAL_SECTION, self.CR.GENERAL_LOG_TO_FILE],
+                                                    tier_array=[ConfigurationReader.GENERAL_SECTION, ConfigurationReader.GENERAL_LOG_TO_FILE],
                                                     msg="should be a boolean"))
         else:
-            if global_section[self.CR.GENERAL_LOG_TO_FILE]:
-                if not Utilities.check_file_path_exists(global_section[self.CR.GENERAL_PATH_TO_FILE]):
+            if global_section[ConfigurationReader.GENERAL_LOG_TO_FILE]:
+                if not Utilities.check_file_path_exists(global_section[ConfigurationReader.GENERAL_PATH_TO_FILE]):
                     EventLogger.critical(
-                        self._generate_device_error_message(uid="", tier_array=[self.CR.GENERAL_SECTION,
-                                                                                self.CR.GENERAL_PATH_TO_FILE],
+                        self._generate_device_error_message(uid="", tier_array=[ConfigurationReader.GENERAL_SECTION,
+                                                                                ConfigurationReader.GENERAL_PATH_TO_FILE],
                                                             msg="path is not reachable"))
 
-        # self.CR.GENERAL_PATH_TO_FILE
-        if not Utilities.is_valid_string(global_section[self.CR.GENERAL_PATH_TO_FILE], 1):
+        # ConfigurationReader.GENERAL_PATH_TO_FILE
+        if not Utilities.is_valid_string(global_section[ConfigurationReader.GENERAL_PATH_TO_FILE], 1):
             EventLogger.critical(
                 self._generate_device_error_message(uid="",
-                                                    tier_array=[self.CR.GENERAL_SECTION, self.CR.GENERAL_PATH_TO_FILE],
+                                                    tier_array=[ConfigurationReader.GENERAL_SECTION, ConfigurationReader.GENERAL_PATH_TO_FILE],
                                                     msg="should be a path to the file where the data will be saved"))
 
-        # self.CR.GENERAL_LOG_COUNT and GENERAL_LOG_FILE_SIZE
-        count = global_section[self.CR.GENERAL_LOG_COUNT]
+        # ConfigurationReader.GENERAL_LOG_COUNT and GENERAL_LOG_FILE_SIZE
+        count = global_section[ConfigurationReader.GENERAL_LOG_COUNT]
         if not isinstance(count, int) and (not isinstance(count, float)):
             EventLogger.critical(
                 self._generate_device_error_message(uid="",
-                                                    tier_array=[self.CR.GENERAL_SECTION, self.CR.GENERAL_LOG_COUNT],
+                                                    tier_array=[ConfigurationReader.GENERAL_SECTION, ConfigurationReader.GENERAL_LOG_COUNT],
                                                     msg="should be a int or float"))
-        size = global_section[self.CR.GENERAL_LOG_FILE_SIZE]
+        size = global_section[ConfigurationReader.GENERAL_LOG_FILE_SIZE]
         if not isinstance(size, int) and (not isinstance(size, float)):
             EventLogger.critical(
                 self._generate_device_error_message(uid="",
-                                                    tier_array=[self.CR.GENERAL_SECTION, self.CR.GENERAL_LOG_FILE_SIZE],
+                                                    tier_array=[ConfigurationReader.GENERAL_SECTION, ConfigurationReader.GENERAL_LOG_FILE_SIZE],
                                                     msg="should be a int or float"))
 
-        # --- Eventlog file ---------------------------------------------    
-        # self.CR.GENERAL_EVENTLOG_TO_FILE should be a bool and if its True then
-        # self.CR.GENERAL_EVENTLOG_PATH should be a string and a valid path
-        if not type(global_section[self.CR.GENERAL_EVENTLOG_TO_FILE]) == bool:
+        # --- Eventlog file ---------------------------------------------
+        # ConfigurationReader.GENERAL_EVENTLOG_TO_FILE should be a bool and if its True then
+        # ConfigurationReader.GENERAL_EVENTLOG_PATH should be a string and a valid path
+        if not type(global_section[ConfigurationReader.GENERAL_EVENTLOG_TO_FILE]) == bool:
             EventLogger.critical(
-                self._generate_device_error_message(uid="", tier_array=[self.CR.GENERAL_SECTION,
-                                                                        self.CR.GENERAL_EVENTLOG_TO_FILE],
+                self._generate_device_error_message(uid="", tier_array=[ConfigurationReader.GENERAL_SECTION,
+                                                                        ConfigurationReader.GENERAL_EVENTLOG_TO_FILE],
                                                     msg="should be a boolean"))
         else:
-            if global_section[self.CR.GENERAL_EVENTLOG_TO_FILE]:
-                if not Utilities.is_valid_string(global_section[self.CR.GENERAL_EVENTLOG_PATH], 1):
+            if global_section[ConfigurationReader.GENERAL_EVENTLOG_TO_FILE]:
+                if not Utilities.is_valid_string(global_section[ConfigurationReader.GENERAL_EVENTLOG_PATH], 1):
                     EventLogger.critical(self._generate_device_error_message(uid="",
-                                                                             tier_array=[self.CR.GENERAL_SECTION,
-                                                                                         self.CR.GENERAL_EVENTLOG_PATH],
+                                                                             tier_array=[ConfigurationReader.GENERAL_SECTION,
+                                                                                         ConfigurationReader.GENERAL_EVENTLOG_PATH],
                                                                              msg="should be a path to the event file"))
                 else:
-                    if not Utilities.check_file_path_exists(global_section[self.CR.GENERAL_EVENTLOG_PATH]):
+                    if not Utilities.check_file_path_exists(global_section[ConfigurationReader.GENERAL_EVENTLOG_PATH]):
                         EventLogger.critical(self._generate_device_error_message(uid="",
-                                                                                 tier_array=[self.CR.GENERAL_SECTION,
-                                                                                             self.CR.GENERAL_EVENTLOG_PATH],
+                                                                                 tier_array=[ConfigurationReader.GENERAL_SECTION,
+                                                                                             ConfigurationReader.GENERAL_EVENTLOG_PATH],
                                                                                  msg="path is not reachable"))
 
-        if not type(global_section[self.CR.GENERAL_EVENTLOG_TO_CONSOLE]) == bool:
+        if not type(global_section[ConfigurationReader.GENERAL_EVENTLOG_TO_CONSOLE]) == bool:
             EventLogger.critical(
-                self._generate_device_error_message(uid="", tier_array=[self.CR.GENERAL_SECTION,
-                                                                        self.CR.GENERAL_EVENTLOG_TO_CONSOLE],
+                self._generate_device_error_message(uid="", tier_array=[ConfigurationReader.GENERAL_SECTION,
+                                                                        ConfigurationReader.GENERAL_EVENTLOG_TO_CONSOLE],
                                                     msg="should be a boolean"))
 
-    def validate_devices_section(self):
+    def _validate_devices_section(self):
         """
             This function validates the devices out of the configuration file
         :return:
         """
+        try:
+            devices = self._config['devices']
+        except KeyError:
+            self._report_error('Config has no devices section')
+            return
+
         device_definitions = Idf.DEVICE_DEFINITIONS
 
-        for device in self.json_config._devices:
+        for device in devices:
             # name
             blueprint = device_definitions[device[Idf.DD_NAME]]
             if blueprint is None:
@@ -256,6 +270,21 @@ class ConfigurationValidator(object):
                 EventLogger.critical(
                     self._generate_device_error_message(uid=device[Idf.DD_UID],
                                                         tier_array=["general"], msg="the UID from '"+device[Idf.DD_NAME]+"' is invalid"))
+
+            # host
+            try:
+                host = device['host']
+            except KeyError:
+                self._report_error('Device "{0}" with UID "{1}" has no host'.format(device[Idf.DD_NAME], device[Idf.DD_UID]))
+            else:
+                if not isinstance(host, basestring):
+                    self._report_error('Host for device "{0}" with UID "{1}" is not a string'.format(device[Idf.DD_NAME], device[Idf.DD_UID]))
+
+                if len(host) == 0:
+                    self._report_error('Host for device "{0}" with UID "{1}" is empty'.format(device[Idf.DD_NAME], device[Idf.DD_UID]))
+
+                if host != 'default':
+                    self._report_error('Host for device "{0}" with UID "{1}" is not set to "default"'.format(device[Idf.DD_NAME], device[Idf.DD_UID]))
 
             device_values = device[Idf.DD_VALUES]
             blueprint_values = blueprint[Idf.DD_VALUES]
@@ -293,8 +322,8 @@ class ConfigurationValidator(object):
                         if interval > 0:  # just one value to log
                             logged_values += 1
 
-                    if interval > 0:
-                        self._log_space_counter.add_lines_per_second(interval / 1000 * logged_values)
+                    #if interval > 0:
+                    #    self._log_space_counter.add_lines_per_second(interval / 1000 * logged_values)
 
     def _is_valid_interval(self, integer_value, min_value=0):
         """
@@ -364,39 +393,3 @@ class LogSpaceCounter(object):
         sec -= 60.0 * mins
 
         return days, hrs, mins, int(sec)
-
-
-""""
-/*---------------------------------------------------------------------------
-                                Configuration
- ---------------------------------------------------------------------------*/
-"""
-
-
-class Configuration:
-    """
-    This class contains the information out of the json configuration file split by the
-    different categories/sections.
-    """
-
-    def __init__(self):
-        self._general = {}
-
-        self._devices = []
-
-    def is_empty(self):
-        return True if len(self._general) == 0 else False
-
-
-def prevent_key_error(dict_src, key):
-    """
-    This function returns an empty array if there is no such
-    section in the configuration file
-    key -- section key
-    """
-    result = []
-    try:
-        result = dict_src[key]
-    except KeyError:
-        EventLogger.warning("json configuration file has no [" + key + "] section")
-    return result

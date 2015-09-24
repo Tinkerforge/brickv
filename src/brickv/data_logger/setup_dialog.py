@@ -41,6 +41,7 @@ from brickv.data_logger.job import GuiDataJob
 from brickv.data_logger.loggable_devices import Identifier
 from brickv.data_logger.utils import Utilities
 from brickv.data_logger.device_dialog import DeviceDialog
+from brickv.data_logger.configuration_validator import load_and_validate_config
 from brickv.data_logger.ui_setup_dialog import Ui_SetupDialog
 
 # noinspection PyProtectedMember,PyCallByClass
@@ -210,11 +211,11 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         if not filename.lower().endswith('.json'):
             filename += '.json'
 
-        conf = GuiConfigHandler.create_config_file(self)
+        config = GuiConfigHandler.create_config_file(self)
 
         try:
             with open(filename, 'w') as outfile:
-                json.dump(conf, outfile, sort_keys=True, indent=2)
+                json.dump(config, outfile, sort_keys=True, indent=2)
         except Exception as e1:
             EventLogger.warning("Load Config - Exception: " + str(e1))
             QMessageBox.warning(self, 'Error',
@@ -234,30 +235,19 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         if len(filename) == 0:
             return
 
-        config_json = None
-        try:
-            with codecs.open(filename, 'r', 'UTF-8') as content_file:
-                try:
-                    config_json = json.load(content_file)
+        config = load_and_validate_config(filename)
 
-                except ValueError as e:
-                    EventLogger.warning("Load Config - Could not parse the config file: " + str(e))
-        except Exception as e1:
-            EventLogger.warning("Load Config - Exception: " + str(e1))
+        if config == None:
             return
 
-        EventLogger.info("Loaded config file from: " + str(filename))
-
         # devices
-        config_blueprint = GuiConfigHandler.load_devices(config_json)
-        if config_blueprint is None:
+        config_blueprint = GuiConfigHandler.load_devices(config)
+
+        if config_blueprint == None:
             return
 
         self.create_tree_items(config_blueprint)
-        # general_section
-        from brickv.data_logger.configuration_validator import ConfigurationReader
-
-        self.update_setup_tab(config_json[ConfigurationReader.GENERAL_SECTION])
+        self.update_setup_tab(config)
 
     def btn_csv_data_file_clicked(self):
         """
@@ -419,7 +409,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.host_infos[i].port = self.spinbox_port.value()
 
-    def update_setup_tab(self, general_section):
+    def update_setup_tab(self, config):
         """
             Update the information of the setup tab with the given general_section.
         """
@@ -427,19 +417,19 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         try:
             # host            combo_host              setEditText(str)
-            self.combo_host.setEditText(general_section[ConfigurationReader.GENERAL_HOST])
+            self.combo_host.setEditText(config['hosts']['default']['name'])
             # port            spinbox_port            setValue(int)
-            self.spinbox_port.setValue(general_section[ConfigurationReader.GENERAL_PORT])
+            self.spinbox_port.setValue(config['hosts']['default']['port'])
             # file_count      spin_file_count         setValue(int)
-            self.spin_file_count.setValue(general_section[ConfigurationReader.GENERAL_LOG_COUNT])
+            self.spin_file_count.setValue(config['general'][ConfigurationReader.GENERAL_LOG_COUNT])
             # file_size       spin_file_size          setValue(int/1024/1024)  (Byte -> MB)
-            self.spin_file_size.setValue((general_section[ConfigurationReader.GENERAL_LOG_FILE_SIZE] / 1024.0 / 1024.0))
+            self.spin_file_size.setValue((config['general'][ConfigurationReader.GENERAL_LOG_FILE_SIZE] / 1024.0 / 1024.0))
             # path_to_file    line_csv_data_file      setText(str)
-            self.line_csv_data_file.setText(general_section[ConfigurationReader.GENERAL_PATH_TO_FILE])
+            self.line_csv_data_file.setText(config['general'][ConfigurationReader.GENERAL_PATH_TO_FILE])
             # eventlog_path   line_event_log_file      setText(str)
-            self.line_event_log_file.setText(general_section[ConfigurationReader.GENERAL_EVENTLOG_PATH])
+            self.line_event_log_file.setText(config['general'][ConfigurationReader.GENERAL_EVENTLOG_PATH])
             # loglevel
-            ll = general_section[ConfigurationReader.GENERAL_EVENTLOG_LEVEL]
+            ll = config['general'][ConfigurationReader.GENERAL_EVENTLOG_LEVEL]
             od = collections.OrderedDict(sorted(GUILogger._convert_level.items()))
 
             counter = 0  # TODO better way to set the combo box index?
@@ -457,10 +447,10 @@ class SetupDialog(QDialog, Ui_SetupDialog):
                     return 0
 
             self.checkbox_to_file.setChecked(
-                __checkbox_bool_setter(general_section[ConfigurationReader.GENERAL_EVENTLOG_TO_FILE]))
+                __checkbox_bool_setter(config['general'][ConfigurationReader.GENERAL_EVENTLOG_TO_FILE]))
             # log_to_file
             self.checkbox_to_console.setCheckState(
-                __checkbox_bool_setter(general_section[ConfigurationReader.GENERAL_EVENTLOG_TO_CONSOLE]))
+                __checkbox_bool_setter(config['general'][ConfigurationReader.GENERAL_EVENTLOG_TO_CONSOLE]))
 
         except Exception as e:
             EventLogger.critical("Could not read the General Section of the Config-File! -> " + str(e))
