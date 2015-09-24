@@ -43,6 +43,7 @@ conf['writeStats'] = False
 conf['printMsg'] = False
 conf['logMsg'] = False
 conf['logFile'] = '/var/log/umtskeeper.log'
+conf['statCycle'] = 20 # slow down all checking by 5x
 '''
 
 TAG_CONFIG_SAKIS_OPERATORS = "conf['sakisOperators']"
