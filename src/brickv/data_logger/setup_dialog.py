@@ -658,7 +658,8 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.table_widget.setItem(row, 1, QtGui.QTableWidgetItem(str(csv_data.name)))
         self.table_widget.setItem(row, 2, QtGui.QTableWidgetItem(str(csv_data.var_name)))
         self.table_widget.setItem(row, 3, QtGui.QTableWidgetItem(str(csv_data.raw_data)))
-        self.table_widget.setItem(row, 4, QtGui.QTableWidgetItem(str(csv_data.timestamp)))
+        self.table_widget.setItem(row, 4, QtGui.QTableWidgetItem(str(csv_data.var_unit)))
+        self.table_widget.setItem(row, 5, QtGui.QTableWidgetItem(str(csv_data.timestamp)))
 
         if self.checkbox_data_auto_scroll.isChecked():
             self.table_widget.scrollToBottom()

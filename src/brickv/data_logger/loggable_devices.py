@@ -150,11 +150,13 @@ class Identifier(object):
             'values': {
                 'Acceleration': {
                     'getter': lambda device: device.get_acceleration(),
-                    'subvalues': ['X', 'Y', 'Z']
+                    'subvalues': ['X', 'Y', 'Z'],
+                    'unit': ['g/1000', 'g/1000', 'g/1000']
                 },
                 'Temperature': {
                     'getter': lambda device: device.get_temperature(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': '°C'
                 }
             }
         },
@@ -163,11 +165,13 @@ class Identifier(object):
             'values': {
                 'Analog Value': {
                     'getter': lambda device: device.get_analog_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Illuminance': {
                     'getter': lambda device: device.get_illuminance(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'lx/10'
                 }
             }
         },
@@ -176,7 +180,8 @@ class Identifier(object):
             'values': {
                 'Illuminance': {
                     'getter': lambda device: device.get_illuminance(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'lx/100'
                 }
             }
         },
@@ -185,11 +190,13 @@ class Identifier(object):
             'values': {
                 'Analog Value': {
                     'getter': lambda device: device.get_analog_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Voltage': {
                     'getter': lambda device: device.get_voltage(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mV'
                 }
             }
         },
@@ -198,11 +205,13 @@ class Identifier(object):
             'values': {
                 'Analog Value': {
                     'getter': lambda device: device.get_analog_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Voltage': {
                     'getter': lambda device: device.get_voltage(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mV'
                 }
             }
         },
@@ -211,7 +220,8 @@ class Identifier(object):
             'values': {
                 'Input Voltage': {
                     'getter': lambda device: device.get_input_voltage(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mV'
                 }
             }
         },
@@ -220,15 +230,18 @@ class Identifier(object):
             'values': {
                 'Air Pressure': {
                     'getter': lambda device: device.get_air_pressure(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mbar/1000'
                 },
                 'Altitude': {
                     'getter': lambda device: device.get_altitude(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'cm'
                 },
                 'Chip Temperature': {
                     'getter': lambda device: device.get_chip_temperature(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': '°C/100'
                 }
             }
         },
@@ -237,15 +250,18 @@ class Identifier(object):
             'values': {
                 'Color': {
                     'getter': lambda device: device.get_color(),
-                    'subvalues': ['Red', 'Green', 'Blue', 'Clear']
+                    'subvalues': ['Red', 'Green', 'Blue', 'Clear'],
+                    'unit': [None, None, None, None]
                 },
                 'Illuminance': {
-                    'getter': lambda device: device.get_illuminance(),
-                    'subvalues': None
+                    'getter': lambda device: device.get_illuminance(), # FIXME: need to apply formula: illuminance * 700 / gain / integration_time
+                    'subvalues': None,
+                    'unit': 'lx'
                 },
                 'Color Temperature': {
                     'getter': lambda device: device.get_color_temperature(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'K'
                 }
             }
         },
@@ -254,11 +270,13 @@ class Identifier(object):
             'values': {
                 'Analog Value': {
                     'getter': lambda device: device.get_analog_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Current': {
                     'getter': lambda device: device.get_current(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mA'
                 }
             }
         },
@@ -267,11 +285,13 @@ class Identifier(object):
             'values': {
                 'Analog Value': {
                     'getter': lambda device: device.get_analog_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Current': {
                     'getter': lambda device: device.get_current(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mA'
                 }
             }
         },
@@ -280,11 +300,13 @@ class Identifier(object):
             'values': {
                 'Analog Value': {
                     'getter': lambda device: device.get_analog_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Distance': {
                     'getter': lambda device: device.get_distance(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mm'
                 }
             }
         },
@@ -293,7 +315,8 @@ class Identifier(object):
             'values': {
                 'Distance Value': {
                     'getter': lambda device: device.get_distance_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -302,11 +325,13 @@ class Identifier(object):
             'values': {
                 'Button State': {
                     'getter': lambda device: device.get_button_state(),
-                    'subvalues': ['Left', 'Right']
+                    'subvalues': ['Left', 'Right'],
+                    'unit': [None, None] # FIXME: constants?
                 },
                 'LED State': {
                     'getter': lambda device: device.get_led_state(),
-                    'subvalues': ['Left', 'Right']
+                    'subvalues': ['Left', 'Right'],
+                    'unit': [None, None] # FIXME: constants?
                 }
             }
         },
@@ -315,7 +340,8 @@ class Identifier(object):
             'values': {
                 'Dust Density': {
                     'getter': lambda device: device.get_dust_density(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'ug/m^3'
                 }
             }
         },
@@ -324,23 +350,28 @@ class Identifier(object):
             'values': {
                 'Altitude': {
                     'getter': special_get_gps_altitude,
-                    'subvalues': ['Altitude', 'Geoidal Separation']
+                    'subvalues': ['Altitude', 'Geoidal Separation'],
+                    'unit': ['cm', 'cm']
                 },
                 'Coordinates': {
                     'getter': special_get_gps_coordinates,
-                    'subvalues': ['Latitude', 'NS', 'Longitude', 'EW', 'PDOP', 'HDOP', 'VDOP', 'EPE']
+                    'subvalues': ['Latitude', 'NS', 'Longitude', 'EW', 'PDOP', 'HDOP', 'VDOP', 'EPE'],
+                    'unit': ['°/1000000', None, '°/1000000', None, '1/100', '1/100', '1/100', 'cm']
                 },
                 'Date Time': {
                     'getter': lambda device: device.get_date_time(),
-                    'subvalues': ['Date', 'Time']
+                    'subvalues': ['Date', 'Time'],
+                    'unit': ['ddmmyy', 'hhmmss|sss']
                 },
                 'Motion': {
                     'getter': special_get_gps_motion,
-                    'subvalues': ['Course', 'Speed']
+                    'subvalues': ['Course', 'Speed'],
+                    'unit': ['°/100', '10m/h']
                 },
                 'Status': {
                     'getter': lambda device: device.get_status(),
-                    'subvalues': ['Fix', 'Satellites View', 'Satellites Used']
+                    'subvalues': ['Fix', 'Satellites View', 'Satellites Used'],
+                    'unit': [None, None, None] # FIXME: fix constants?
                 }
             }
         },
@@ -349,11 +380,13 @@ class Identifier(object):
             'values': {
                 'Edge Count': {
                     'getter': lambda device: device.get_edge_count(False),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Value': {
                     'getter': lambda device: device.get_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -362,11 +395,13 @@ class Identifier(object):
             'values': {
                 'Humidity': {
                     'getter': lambda device: device.get_humidity(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': '%RH/10'
                 },
                 'Analog Value': {
                     'getter': lambda device: device.get_analog_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -375,23 +410,28 @@ class Identifier(object):
             'values': {
                 'Edge Count (Pin 0)': {
                     'getter': lambda device: device.get_edge_count(0, False),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Edge Count (Pin 1)': {
                     'getter': lambda device: device.get_edge_count(1, False),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Edge Count (Pin 2)': {
                     'getter': lambda device: device.get_edge_count(2, False),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Edge Count (Pin 3)': {
                     'getter': lambda device: device.get_edge_count(3, False),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Value': {
                     'getter': lambda device: device.get_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -400,11 +440,13 @@ class Identifier(object):
             'values': {
                 'Current (Sensor 0)': {
                     'getter': lambda device: device.get_current(0),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'nA'
                 },
                 'Current (Sensor 1)': {
                     'getter': lambda device: device.get_current(1),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'nA'
                 }
             }
         },
@@ -413,15 +455,18 @@ class Identifier(object):
             'values': {
                 'Voltage (Channel 0)': {
                     'getter': lambda device: device.get_voltage(0),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mV'
                 },
                 'Voltage (Channel 1)': {
                     'getter': lambda device: device.get_voltage(1),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mV'
                 },
                 'ADC Values': {
                     'getter': lambda device: device.get_adc_values(),
-                    'subvalues': ['Channel 0', 'Channel 1']
+                    'subvalues': ['Channel 0', 'Channel 1'],
+                    'unit': [None, None]
                 }
             }
         },
@@ -430,19 +475,23 @@ class Identifier(object):
             'values': {
                 'Edge Count (Pin A0)': {
                     'getter': lambda device: device.get_edge_count(0, False),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Edge Count (Pin A1)': {
                     'getter': lambda device: device.get_edge_count(1, False),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Port A': {
                     'getter': lambda device: device.get_port('a'),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Port B': {
                     'getter': lambda device: device.get_port('b'),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -451,23 +500,28 @@ class Identifier(object):
             'values': {
                 'Edge Count (Pin 0)': {
                     'getter': lambda device: device.get_edge_count(0, False),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Edge Count (Pin 1)': {
                     'getter': lambda device: device.get_edge_count(1, False),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Edge Count (Pin 2)': {
                     'getter': lambda device: device.get_edge_count(2, False),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Edge Count (Pin 3)': {
                     'getter': lambda device: device.get_edge_count(3, False),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Value': {
                     'getter': lambda device: device.get_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -476,15 +530,18 @@ class Identifier(object):
             'values': {
                 'Position': {
                     'getter': lambda device: device.get_position(),
-                    'subvalues': ['X', 'Y']
+                    'subvalues': ['X', 'Y'],
+                    'unit': [None, None]
                 },
                 'Pressed': {
                     'getter': lambda device: device.is_pressed(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Analog Value': {
                     'getter': lambda device: device.get_analog_value(),
-                    'subvalues': ['X', 'Y']
+                    'subvalues': ['X', 'Y'],
+                    'unit': [None, None]
                 }
             }
         },
@@ -493,7 +550,8 @@ class Identifier(object):
             'values': {
                 'Supply Voltage': {
                     'getter': lambda device: device.get_supply_voltage(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mV'
                 }
             }
         },
@@ -502,7 +560,8 @@ class Identifier(object):
             'values': {
                 'Reflectivity': {
                     'getter': lambda device: device.get_reflectivity(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -511,11 +570,13 @@ class Identifier(object):
             'values': {
                 'Position': {
                     'getter': lambda device: device.get_position(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Analog Value': {
                     'getter': lambda device: device.get_analog_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -524,7 +585,8 @@ class Identifier(object):
             'values': {
                 'Weight': {
                     'getter': lambda device: device.get_weight(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'gram'
                 }
             }
         },
@@ -533,7 +595,8 @@ class Identifier(object):
             'values': {
                 'Value': {
                     'getter': lambda device: device.get_moisture_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -542,7 +605,8 @@ class Identifier(object):
             'values': {
                 'Motion Detected': {
                     'getter': lambda device: device.get_motion_detected(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -551,7 +615,8 @@ class Identifier(object):
             'values': {
                 'State': {
                     'getter': lambda device: device.get_touch_state(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -560,11 +625,13 @@ class Identifier(object):
             'values': {
                 'Resistance': {
                     'getter': special_get_ptc_resistance,
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Temperature': {
                     'getter': special_get_ptc_temperature,
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': '°C/100'
                 }
             }
         },
@@ -573,11 +640,13 @@ class Identifier(object):
             'values': {
                 'Count': {
                     'getter': lambda device: device.get_count(False),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Pressed': {
                     'getter': lambda device: device.is_pressed(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -586,11 +655,13 @@ class Identifier(object):
             'values': {
                 'Position': {
                     'getter': lambda device: device.get_position(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Analog Value': {
                     'getter': lambda device: device.get_analog_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -599,7 +670,8 @@ class Identifier(object):
             'values': {
                 'Intensity': {
                     'getter': lambda device: device.get_intensity(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -608,7 +680,8 @@ class Identifier(object):
             'values': {
                 'Temperature': {
                     'getter': lambda device: device.get_temperature(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': '°C/100'
                 }
             }
         },
@@ -617,11 +690,13 @@ class Identifier(object):
             'values': {
                 'Ambient Temperature': {
                     'getter': lambda device: device.get_ambient_temperature(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': '°C/10'
                 },
                 'Object Temperature': {
                     'getter': lambda device: device.get_object_temperature(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': '°C/10'
                 }
             }
         },
@@ -630,7 +705,8 @@ class Identifier(object):
             'values': {
                 'State': {
                     'getter': lambda device: device.get_tilt_state(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -639,11 +715,13 @@ class Identifier(object):
             'values': {
                 'Voltage': {
                     'getter': lambda device: device.get_voltage(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mV'
                 },
                 'Analog Value': {
                     'getter': lambda device: device.get_analog_value(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 }
             }
         },
@@ -652,15 +730,18 @@ class Identifier(object):
             'values': {
                 'Current': {
                     'getter': lambda device: device.get_current(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mA'
                 },
                 'Voltage': {
                     'getter': lambda device: device.get_voltage(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mV'
                 },
                 'Power': {
                     'getter': lambda device: device.get_power(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mW'
                 }
             }
         },
@@ -672,31 +753,38 @@ class Identifier(object):
             'values': {
                 'Velocity': {
                     'getter': lambda device: device.get_velocity(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Current Velocity': {
                     'getter': lambda device: device.get_current_velocity(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': None
                 },
                 'Acceleration': {
                     'getter': lambda device: device.get_acceleration(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'velocity/s'
                 },
                 'Stack Input Voltage': {
                     'getter': lambda device: device.get_stack_input_voltage(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mV'
                 },
                 'External Input Voltage': {
                     'getter': lambda device: device.get_external_input_voltage(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mV'
                 },
                 'Current Consumption': {
                     'getter': lambda device: device.get_current_consumption(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': 'mA'
                 },
                 'Chip Temperature': {
                     'getter': lambda device: device.get_chip_temperature(),
-                    'subvalues': None
+                    'subvalues': None,
+                    'unit': '°C/10'
                 }
             }
         }
@@ -789,53 +877,64 @@ class DeviceImpl(AbstractDevice):
         """
 
         getter = self.device_definition[Identifier.DD_VALUES][var_name][Identifier.DD_GETTER]
-        subvalue_names = self.device_definition[Identifier.DD_VALUES][var_name][
-            Identifier.DD_SUBVALUES]
+        subvalue_names = self.device_definition[Identifier.DD_VALUES][var_name][Identifier.DD_SUBVALUES]
+        unit = self.device_definition[Identifier.DD_VALUES][var_name]['unit']
         timestamp = utils.CSVData._get_timestamp()
 
         try:
             value = getter(self.device)
         except Exception as e:
             value = self._exception_msg(str(self.identifier) + "-" + str(var_name), e)
-            self.datalogger.add_to_queue(utils.CSVData(self.device_uid, self.identifier, var_name, value, timestamp))
+            self.datalogger.add_to_queue(utils.CSVData(self.device_uid, self.identifier, var_name, value, '', timestamp))
             # log_exception(timestamp, value_name, e)
             return
 
         try:
             if subvalue_names is None:
+                if unit == None:
+                    unit_str = ''
+                else:
+                    unit_str = unit
+
                 # log_value(value_name, value)
                 self.datalogger.add_to_queue(
-                    utils.CSVData(self.device_uid, self.identifier, var_name, value, timestamp))
+                    utils.CSVData(self.device_uid, self.identifier, var_name, value, unit_str, timestamp))
             else:
                 subvalue_bool = self.data[Identifier.DD_VALUES][var_name][Identifier.DD_SUBVALUES]
                 for i in range(len(subvalue_names)):
                     if not isinstance(subvalue_names[i], list):
                         try:
                             if subvalue_bool[subvalue_names[i]]:
+                                if unit[i] == None:
+                                    unit_str = ''
+                                else:
+                                    unit_str = unit[i]
                                 self.datalogger.add_to_queue(utils.CSVData(self.device_uid, self.identifier,
                                                                            str(var_name) + "-" + str(subvalue_names[i]),
-                                                                           value[i], timestamp))
+                                                                           value[i], unit_str, timestamp))
                         except Exception as e:
                             value = self._exception_msg(str(self.identifier) + "-" + str(var_name), e)
                             self.datalogger.add_to_queue(utils.CSVData(self.device_uid, self.identifier,
                                                                        str(var_name) + "-" + str(subvalue_names[i]),
-                                                                       value[i], timestamp))
+                                                                       value[i], '', timestamp))
                             return
                     else:
                         for k in range(len(subvalue_names[i])):
                             try:
                                 if subvalue_bool[subvalue_names[i][k]]:
+                                    if unit[i][k] == None:
+                                        unit_str = ''
+                                    else:
+                                        unit_str = unit[i][k]
                                     self.datalogger.add_to_queue(utils.CSVData(self.device_uid, self.identifier,
-                                                                               str(var_name) + "-" + str(
-                                                                                   subvalue_names[i][k]), value[i][k],
-                                                                               timestamp))
+                                                                               str(var_name) + "-" + str(subvalue_names[i][k]), value[i][k],
+                                                                               unit_str, timestamp))
                             except Exception as e:
                                 value = self._exception_msg(str(self.identifier) + "-" + str(var_name), e)
                                 self.datalogger.add_to_queue(utils.CSVData(self.device_uid, self.identifier,
-                                                                           str(var_name) + "-" + str(
-                                                                               subvalue_names[i][k]), value[i][k],
-                                                                           timestamp))
+                                                                           str(var_name) + "-" + str(subvalue_names[i][k]), value[i][k],
+                                                                           '', timestamp))
                                 return
         except Exception as e:
             value = self._exception_msg(str(self.identifier) + "-" + str(var_name), e)
-            self.datalogger.add_to_queue(utils.CSVData(self.device_uid, self.identifier, var_name, value, timestamp))
+            self.datalogger.add_to_queue(utils.CSVData(self.device_uid, self.identifier, var_name, value, '', timestamp))

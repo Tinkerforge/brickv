@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>576</width>
-    <height>543</height>
+    <width>798</width>
+    <height>545</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -390,7 +390,7 @@
            </column>
            <column>
             <property name="text">
-             <string>Device</string>
+             <string>Name</string>
             </property>
            </column>
            <column>
@@ -400,12 +400,17 @@
            </column>
            <column>
             <property name="text">
-             <string>Value</string>
+             <string>Raw</string>
             </property>
            </column>
            <column>
             <property name="text">
-             <string>Timestamp</string>
+             <string>Unit</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Time</string>
             </property>
            </column>
           </widget>

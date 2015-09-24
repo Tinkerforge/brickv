@@ -65,12 +65,13 @@ class CSVData(object):
     This class is used as a temporary save spot for all csv relevant data.
     """
 
-    def __init__(self, uid, name, var_name, raw_data, time_stamp=None):
+    def __init__(self, uid, name, var_name, raw_data, var_unit, timestamp=None):
         """
         uid      -- uid of the bricklet
         name     -- DEVICE_IDENTIFIER of the bricklet
         var_name -- variable name of the logged value
         raw_data -- the logged value
+        var_unit -- unit of the logged value
 
         The timestamp is added automatically.
         """
@@ -78,11 +79,12 @@ class CSVData(object):
         self.name = name
         self.var_name = var_name
         self.raw_data = raw_data
+        self.var_unit = var_unit
         self.timestamp = None
-        if time_stamp is None:
+        if timestamp is None:
             self.timestamp = CSVData._get_timestamp()
         else:
-            self.timestamp = time_stamp
+            self.timestamp = timestamp
 
     def _get_timestamp():
         """
@@ -115,8 +117,12 @@ class CSVData(object):
         """
         Simple Debug function for easier display of the object.
         """
-        return "[UID=" + str(self.uid) + ";NAME=" + str(self.name) + ";VAR=" + str(self.var_name) + ";RAW=" + str(
-            self.raw_data) + ";TIME=" + str(self.timestamp) + "]"
+        return "[UID=" + str(self.uid) + \
+               ";NAME=" + str(self.name) + \
+               ";VAR=" + str(self.var_name) + \
+               ";RAW=" + str(self.raw_data) + \
+               ";UNIT=" + str(self.var_unit) + \
+               ";TIME=" + str(self.timestamp) + "]"
 
 
     _get_timestamp = staticmethod(_get_timestamp)
@@ -347,7 +353,7 @@ class CSVWriter(object):
             return
 
         EventLogger.debug("CSVWriter._write_header() - done")
-        self._csv_file.writerow(["UID"] + ["DEVICE_IDENTIFIER"] + ["VAR"] + ["RAW"] + ["TIMESTAMP"])
+        self._csv_file.writerow(["UID"] + ["NAME"] + ["VAR"] + ["RAW"] + ["UNIT"] + ["TIME"])
         self._raw_file.flush()
 
     def write_data_row(self, csv_data):
@@ -360,7 +366,7 @@ class CSVWriter(object):
         if self._raw_file is None or self._csv_file is None:
             return False
 
-        self._csv_file.writerow([csv_data.uid] + [csv_data.name] + [csv_data.var_name] + [str(csv_data.raw_data)] + [csv_data.timestamp])
+        self._csv_file.writerow([csv_data.uid] + [csv_data.name] + [csv_data.var_name] + [str(csv_data.raw_data)] + [csv_data.var_unit] + [csv_data.timestamp])
         self._raw_file.flush()
 
         if self._file_size > 0:
