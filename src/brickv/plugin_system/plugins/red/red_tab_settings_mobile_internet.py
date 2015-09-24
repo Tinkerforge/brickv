@@ -63,7 +63,7 @@ MESSAGE_ERROR_CONNECT_SERVICE_CREATION = 'Error occurred while connecting. syste
 MESSAGE_ERROR_CONNECT_SERVICE_EXECUTION = 'Error occurred while connecting. systemd service execution failed.'
 MESSAGE_INFORMATION_CONNECT_OK = 'Configuration saved and applied successfully.'
 
-INTERVAL_REFRESH_STATUS = 1000 # In milliseconds
+INTERVAL_REFRESH_STATUS = 3000 # In milliseconds
 
 class REDTabSettingsMobileInternet(QtGui.QWidget, Ui_REDTabSettingsMobileInternet):
     def __init__(self):
