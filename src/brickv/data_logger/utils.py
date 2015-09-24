@@ -134,15 +134,14 @@ class LoggerTimer(object):
 
     def __init__(self, interval, func_name, var_name, device):
         """
-        interval -- the repeat interval in ms
+        interval -- the repeat interval in seconds
         func -- the function which will be called
         """
         self.exit_flag = False
-        interval /= 1000.0  # for seconds
         if interval < 0:
             interval = 0
 
-        self._interval = interval
+        self._interval = interval # in seconds
         self._func_name = func_name
         self._var_name = var_name
         self._device = device

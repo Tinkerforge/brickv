@@ -59,7 +59,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         EventLogger.add_logger(self._gui_logger)
 
         # FIXME better way to find interval and uids in tree_widget?!
-        self.__tree_interval_tooltip = "Update interval in milliseconds"
+        self.__tree_interval_tooltip = "Update interval in seconds"
         self.__tree_uid_tooltip = "UID cannot be empty"
         self.data_logger_thread = None
         self.tab_console_warning = False
@@ -538,9 +538,9 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
             spinbox_interval = QtGui.QSpinBox()
             spinbox_interval.setRange(0, (1 << 31) - 1)
-            spinbox_interval.setSingleStep(1000)
+            spinbox_interval.setSingleStep(1)
             spinbox_interval.setValue(interval)
-            spinbox_interval.setSuffix(" msec")
+            spinbox_interval.setSuffix(" seconds")
             spinbox_interval.valueChanged.connect(functools.partial(value_changed, child))
 
             self.tree_devices.setItemWidget(child, 1, spinbox_interval)

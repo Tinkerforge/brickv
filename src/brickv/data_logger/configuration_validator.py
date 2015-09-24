@@ -333,7 +333,7 @@ class ConfigValidator(object):
                             logged_values += 1
 
                     #if interval > 0:
-                    #    self._log_space_counter.add_lines_per_second(interval / 1000 * logged_values)
+                    #    self._log_space_counter.add_lines_per_second(interval * logged_values)
 
     def _is_valid_interval(self, integer_value, min_value=0):
         """
