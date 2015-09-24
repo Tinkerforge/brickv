@@ -178,6 +178,16 @@ class ConfigValidator(object):
             self._report_error('Config has no general section')
             return
 
+        try:
+            time_format = global_section['time_format']
+        except KeyError:
+            self._report_error('General section has no time format')
+        else:
+            if not isinstance(time_format, basestring):
+                self._report_error('Time format is not an string')
+            elif time_format not in ['de', 'us', 'iso']:
+                self._report_error('Invalid time format')
+
         # --- Datalog file ---------------------------------------------
         # ConfigurationReader.GENERAL_LOG_TO_FILE should be a bool and if its True then
         # ConfigurationReader.GENERAL_LOG_TO_FILE should be a string and a valid path

@@ -29,7 +29,7 @@ Boston, MA 02111-1307, USA.
  '''
 
 import csv  # CSV_Writer
-import datetime  # CSV_Data
+from datetime import datetime  # CSV_Data
 import os  # CSV_Writer
 from shutil import copyfile
 import sys  # CSV_Writer
@@ -38,6 +38,32 @@ import time  # Writer Thread
 
 from brickv.data_logger.event_logger import EventLogger
 
+def datatime_to_de(dt):
+    return dt.strftime('%d.%m.%Y %H:%M:%S')
+
+def datatime_to_us(dt):
+    return dt.strftime('%m/%d/%Y %H:%M:%S')
+
+def datatime_to_iso(dt):
+    """
+    Format a timestamp in ISO 8601 standard
+    ISO 8601 = YYYY-MM-DDThh:mm:ss+tz:tz
+               2014-09-10T14:12:05+02:00
+    """
+
+    if time.localtime().tm_isdst and time.daylight:
+        offset = -time.altzone / 60
+    else:
+        offset = -time.timezone / 60
+
+    tz = '%02d:%02d' % (abs(offset) / 60, abs(offset) % 60)
+
+    if offset < 0:
+        tz = '-' + tz
+    else:
+        tz = '+' + tz
+
+    return dt.strftime('%Y-%m-%dT%H:%M:%S') + tz
 
 class DataLoggerException(Exception):
     # Error Codes
@@ -80,38 +106,10 @@ class CSVData(object):
         self.var_name = var_name
         self.raw_data = raw_data
         self.var_unit = var_unit
-        self.timestamp = None
-        if timestamp is None:
-            self.timestamp = CSVData._get_timestamp()
-        else:
-            self.timestamp = timestamp
+        self.timestamp = timestamp # datatime object
 
-    def _get_timestamp():
-        """
-        Adds a timestamp in ISO 8601 standard, with ms
-        ISO 8061 =  YYYY-MM-DDThh:mm:ss+tz:tz
-                    2014-09-10T14:12:05+02:00
-        """
-        t = datetime.datetime.now()
-        utc = CSVData._time_utc_offset()
-        utc_string = ""
-        if utc < 0:
-            utc *= -1
-            utc_string = "-%02d:00" % (utc,)
-        else:
-            utc_string = "+%02d:00" % (utc,)
-
-        ts = '{:%Y-%m-%dT%H:%M:%S.%f}'.format(t)
-        ts = ts[:len(ts) - 3] + utc_string
-
-        return ts
-
-    @staticmethod
-    def _time_utc_offset():
-        if time.localtime(time.time()).tm_isdst and time.daylight:
-            return -time.altzone / (60 * 60)
-
-        return -time.timezone / (60 * 60)
+        if self.timestamp == None:
+            self.timestamp = datatime.now()
 
     def __str__(self):
         """
@@ -123,11 +121,6 @@ class CSVData(object):
                ";RAW=" + str(self.raw_data) + \
                ";UNIT=" + str(self.var_unit) + \
                ";TIME=" + str(self.timestamp) + "]"
-
-
-    _get_timestamp = staticmethod(_get_timestamp)
-    # _time_utc_offset = staticmethod(_time_utc_offset)
-
 
 '''
 /*---------------------------------------------------------------------------

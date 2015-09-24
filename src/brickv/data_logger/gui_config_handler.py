@@ -175,6 +175,8 @@ class GuiConfigHandler(object):
 
         general_section = {}
 
+        general_section['time_format'] = setup_dialog.combo_time_format.itemData(setup_dialog.combo_time_format.currentIndex())
+
         # file_count      spin_file_count         value()         : int
         general_section[ConfigurationReader.GENERAL_LOG_COUNT] = setup_dialog.spin_file_count.value()
         # file_size       spin_file_size          value()         : int * 1024 * 1024! (MB -> Byte)

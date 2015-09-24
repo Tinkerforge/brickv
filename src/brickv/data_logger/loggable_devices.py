@@ -22,6 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+from datetime import datetime
+
 # https://docs.google.com/spreadsheets/d/14p6N8rAg8M9Ozr1fmOZePPflvNJmgt0pSAebliDrasI/edit?usp=sharing
 # Documented for Testing and Blueprints
 # Bricklets ############################################################################################################
@@ -879,7 +881,15 @@ class DeviceImpl(AbstractDevice):
         getter = self.device_definition[Identifier.DD_VALUES][var_name][Identifier.DD_GETTER]
         subvalue_names = self.device_definition[Identifier.DD_VALUES][var_name][Identifier.DD_SUBVALUES]
         unit = self.device_definition[Identifier.DD_VALUES][var_name]['unit']
-        timestamp = utils.CSVData._get_timestamp()
+        now = datetime.now()
+        time_format = self.datalogger._config['general']['time_format']
+
+        if time_format == 'de':
+            timestamp = utils.datatime_to_de(now)
+        elif time_format == 'us':
+            timestamp = utils.datatime_to_us(now)
+        else:
+            timestamp = utils.datatime_to_iso(now)
 
         try:
             value = getter(self.device)

@@ -28,6 +28,7 @@ import json
 import os
 import time
 import functools
+from datetime import datetime
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt  # , SIGNAL
@@ -39,7 +40,7 @@ from brickv.data_logger.event_logger import EventLogger, GUILogger
 from brickv.data_logger.gui_config_handler import GuiConfigHandler
 from brickv.data_logger.job import GuiDataJob
 from brickv.data_logger.loggable_devices import Identifier
-from brickv.data_logger.utils import Utilities
+from brickv.data_logger.utils import Utilities, datatime_to_de, datatime_to_us, datatime_to_iso
 from brickv.data_logger.device_dialog import DeviceDialog
 from brickv.data_logger.configuration_validator import load_and_validate_config
 from brickv.data_logger.ui_setup_dialog import Ui_SetupDialog
@@ -79,6 +80,11 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         timestamp = int(time.time())
         self.line_csv_data_file.setText(os.path.join(get_home_path(), 'logger_data_{0}.csv'.format(timestamp)))
         self.line_event_log_file.setText(os.path.join(get_home_path(), 'logger_events_{0}.log'.format(timestamp)))
+
+        now = datetime.now()
+        self.combo_time_format.addItem(datatime_to_de(now) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
+        self.combo_time_format.addItem(datatime_to_us(now) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
+        self.combo_time_format.addItem(datatime_to_iso(now) + ' (ISO 8601)', 'iso')
 
     def widget_initialization(self):
         """
@@ -416,6 +422,11 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         from brickv.data_logger.configuration_validator import ConfigurationReader
 
         try:
+            i = self.combo_time_format.findData(config['general']['time_format'])
+
+            if i >= 0:
+                self.combo_time_format.setCurrentIndex(i)
+
             # host            combo_host              setEditText(str)
             self.combo_host.setEditText(config['hosts']['default']['name'])
             # port            spinbox_port            setValue(int)
