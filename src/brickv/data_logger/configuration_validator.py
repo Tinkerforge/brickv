@@ -185,8 +185,8 @@ class ConfigValidator(object):
         else:
             if not isinstance(time_format, basestring):
                 self._report_error('Time format is not an string')
-            elif time_format not in ['de', 'us', 'iso']:
-                self._report_error('Invalid time format')
+            elif time_format not in ['de', 'us', 'iso', 'unix']:
+                self._report_error('Invalid time format: {0}'.format(time_format))
 
         # --- Datalog file ---------------------------------------------
         # ConfigurationReader.GENERAL_LOG_TO_FILE should be a bool and if its True then

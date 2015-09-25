@@ -38,13 +38,13 @@ import time  # Writer Thread
 
 from brickv.data_logger.event_logger import EventLogger
 
-def datatime_to_de(dt):
-    return dt.strftime('%d.%m.%Y %H:%M:%S')
+def timestamp_to_de(timestamp):
+    return datetime.fromtimestamp(timestamp).strftime('%d.%m.%Y %H:%M:%S')
 
-def datatime_to_us(dt):
-    return dt.strftime('%m/%d/%Y %H:%M:%S')
+def timestamp_to_us(timestamp):
+    return datetime.fromtimestamp(timestamp).strftime('%m/%d/%Y %H:%M:%S')
 
-def datatime_to_iso(dt):
+def timestamp_to_iso(timestamp):
     """
     Format a timestamp in ISO 8601 standard
     ISO 8601 = YYYY-MM-DDThh:mm:ss+tz:tz
@@ -63,7 +63,10 @@ def datatime_to_iso(dt):
     else:
         tz = '+' + tz
 
-    return dt.strftime('%Y-%m-%dT%H:%M:%S') + tz
+    return datetime.fromtimestamp(timestamp).strftime('%Y-%m-%dT%H:%M:%S') + tz
+
+def timestamp_to_unix(timestamp):
+    return str(int(timestamp))
 
 class DataLoggerException(Exception):
     # Error Codes

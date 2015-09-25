@@ -40,7 +40,7 @@ from brickv.data_logger.event_logger import EventLogger, GUILogger
 from brickv.data_logger.gui_config_handler import GuiConfigHandler
 from brickv.data_logger.job import GuiDataJob
 from brickv.data_logger.loggable_devices import Identifier
-from brickv.data_logger.utils import Utilities, datatime_to_de, datatime_to_us, datatime_to_iso
+from brickv.data_logger import utils
 from brickv.data_logger.device_dialog import DeviceDialog
 from brickv.data_logger.configuration_validator import load_and_validate_config
 from brickv.data_logger.ui_setup_dialog import Ui_SetupDialog
@@ -81,10 +81,10 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.line_csv_data_file.setText(os.path.join(get_home_path(), 'logger_data_{0}.csv'.format(timestamp)))
         self.line_event_log_file.setText(os.path.join(get_home_path(), 'logger_events_{0}.log'.format(timestamp)))
 
-        now = datetime.now()
-        self.combo_time_format.addItem(datatime_to_de(now) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
-        self.combo_time_format.addItem(datatime_to_us(now) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
-        self.combo_time_format.addItem(datatime_to_iso(now) + ' (ISO 8601)', 'iso')
+        self.combo_time_format.addItem(utils.timestamp_to_de(timestamp) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
+        self.combo_time_format.addItem(utils.timestamp_to_us(timestamp) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
+        self.combo_time_format.addItem(utils.timestamp_to_iso(timestamp) + ' (ISO 8601)', 'iso')
+        self.combo_time_format.addItem(utils.timestamp_to_unix(timestamp) + ' (Unix)', 'unix')
 
     def widget_initialization(self):
         """
@@ -598,11 +598,11 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             if tt != "":
                 # check if tooltip is interval
                 if tt == self.__tree_interval_tooltip:
-                    item.setText(1, str(Utilities.parse_to_int(item.text(1))))
+                    item.setText(1, str(utils.Utilities.parse_to_int(item.text(1))))
                 # check if tooltip is uid
                 elif tt == self.__tree_uid_tooltip:
                     text = item.text(1)
-                    if not Utilities.is_valid_string(text, 1):
+                    if not utils.Utilities.is_valid_string(text, 1):
                         text = Identifier.DD_UID_DEFAULT
                     item.setText(1, text)
 

@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from datetime import datetime
+import time
 
 # https://docs.google.com/spreadsheets/d/14p6N8rAg8M9Ozr1fmOZePPflvNJmgt0pSAebliDrasI/edit?usp=sharing
 # Documented for Testing and Blueprints
@@ -881,15 +881,17 @@ class DeviceImpl(AbstractDevice):
         getter = self.device_definition[Identifier.DD_VALUES][var_name][Identifier.DD_GETTER]
         subvalue_names = self.device_definition[Identifier.DD_VALUES][var_name][Identifier.DD_SUBVALUES]
         unit = self.device_definition[Identifier.DD_VALUES][var_name]['unit']
-        now = datetime.now()
+        now = time.time()
         time_format = self.datalogger._config['general']['time_format']
 
         if time_format == 'de':
-            timestamp = utils.datatime_to_de(now)
+            timestamp = utils.timestamp_to_de(now)
         elif time_format == 'us':
-            timestamp = utils.datatime_to_us(now)
+            timestamp = utils.timestamp_to_us(now)
+        elif time_format == 'iso':
+            timestamp = utils.timestamp_to_iso(now)
         else:
-            timestamp = utils.datatime_to_iso(now)
+            timestamp = utils.timestamp_to_unix(now)
 
         try:
             value = getter(self.device)
