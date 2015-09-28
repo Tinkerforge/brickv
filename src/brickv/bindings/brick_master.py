@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-09-23.      #
+# This file was automatically generated on 2015-09-28.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -37,8 +37,9 @@ GetEthernetStatus = namedtuple('EthernetStatus', ['mac_address', 'ip', 'subnet_m
 GetEthernetWebsocketConfiguration = namedtuple('EthernetWebsocketConfiguration', ['sockets', 'port'])
 ReadWifi2Flash = namedtuple('ReadWifi2Flash', ['data', 'length_out'])
 GetWifi2Configuration = namedtuple('Wifi2Configuration', ['port', 'websocket_port', 'website_port', 'phy_mode', 'sleep_mode', 'website'])
+GetWifi2Status = namedtuple('Wifi2Status', ['client_enabled', 'client_status', 'client_ip', 'client_subnet_mask', 'client_gateway', 'client_mac_address', 'client_rx_count', 'client_tx_count', 'client_rssi', 'ap_enabled', 'ap_ip', 'ap_subnet_mask', 'ap_gateway', 'ap_mac_address', 'ap_rx_count', 'ap_tx_count', 'ap_connected_count'])
 GetWifi2ClientConfiguration = namedtuple('Wifi2ClientConfiguration', ['enable', 'ssid', 'ip', 'subnet_mask', 'gateway', 'mac_address', 'bssid'])
-GetWifi2APConfiguration = namedtuple('Wifi2APConfiguration', ['enable', 'ssid', 'ip', 'subnet_mask', 'gateway', 'encryption', 'hidden', 'mac_address'])
+GetWifi2APConfiguration = namedtuple('Wifi2APConfiguration', ['enable', 'ssid', 'ip', 'subnet_mask', 'gateway', 'encryption', 'hidden', 'channel', 'mac_address'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -1299,7 +1300,7 @@ class BrickMaster(Device):
         """
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
-        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_STATUS, (), '', 'B')
+        return GetWifi2Status(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_STATUS, (), '', '? B 4B 4B 4B 6B I I b ? 4B 4B 4B 6B I I B'))
 
     def set_wifi2_client_configuration(self, enable, ssid, ip, subnet_mask, gateway, mac_address, bssid):
         """
@@ -1337,17 +1338,17 @@ class BrickMaster(Device):
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_CLIENT_PASSWORD, (), '', '64s')
 
-    def set_wifi2_ap_configuration(self, enable, ssid, ip, subnet_mask, gateway, auth, hidden, mac_address):
+    def set_wifi2_ap_configuration(self, enable, ssid, ip, subnet_mask, gateway, auth, hidden, channel, mac_address):
         """
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
-        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_AP_CONFIGURATION, (enable, ssid, ip, subnet_mask, gateway, auth, hidden, mac_address), '? 32s 4B 4B 4B B ? 6B', '')
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_AP_CONFIGURATION, (enable, ssid, ip, subnet_mask, gateway, auth, hidden, channel, mac_address), '? 32s 4B 4B 4B B ? B 6B', '')
 
     def get_wifi2_ap_configuration(self):
         """
         .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
-        return GetWifi2APConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_AP_CONFIGURATION, (), '', '? 32s 4B 4B 4B B ? 6B'))
+        return GetWifi2APConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_AP_CONFIGURATION, (), '', '? 32s 4B 4B 4B B ? B 6B'))
 
     def set_wifi2_ap_password(self, password):
         """

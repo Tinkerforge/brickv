@@ -23,9 +23,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-240</y>
+        <y>-229</y>
         <width>627</width>
-        <height>1093</height>
+        <height>1126</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -992,7 +992,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                 </property>
                </widget>
               </item>
-              <item row="8" column="1">
+              <item row="9" column="1">
                <widget class="QCheckBox" name="wifi_ap_use_mac">
                 <property name="text">
                  <string>Use custom MAC Address</string>
@@ -1013,7 +1013,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                 </property>
                </widget>
               </item>
-              <item row="7" column="1">
+              <item row="8" column="1">
                <widget class="QCheckBox" name="wifi_ap_hide_ssid">
                 <property name="text">
                  <string>Hide SSID</string>
@@ -1302,7 +1302,7 @@ WEP: 10 or 26 hexadecimal digits</string>
                 </property>
                </widget>
               </item>
-              <item row="9" column="1">
+              <item row="10" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_7">
                 <item>
                  <widget class="QSpinBox" name="wifi_ap_mac6">
@@ -1419,10 +1419,27 @@ WEP: 10 or 26 hexadecimal digits</string>
                 </item>
                </layout>
               </item>
-              <item row="9" column="0">
+              <item row="10" column="0">
                <widget class="QLabel" name="wifi_ap_mac_label">
                 <property name="text">
                  <string>MAC:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="0">
+               <widget class="QLabel" name="wifi_ap_channel_label">
+                <property name="text">
+                 <string>Channel:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="1">
+               <widget class="QSpinBox" name="wifi_ap_channel">
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>13</number>
                 </property>
                </widget>
               </item>
