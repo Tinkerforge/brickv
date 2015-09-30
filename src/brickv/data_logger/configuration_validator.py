@@ -22,34 +22,12 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-"""
-/*---------------------------------------------------------------------------
-                                ConfigurationReader
- ---------------------------------------------------------------------------*/
- """
-import codecs  # ConfigurationReader to read the file in correct encoding
+import codecs
 import json
 
 from brickv.data_logger.event_logger import EventLogger
 from brickv.data_logger.utils import DataLoggerException, Utilities
 from brickv.data_logger.loggable_devices import Identifier as Idf
-
-
-class ConfigurationReader(object):
-    """
-    This class provides the read-in functionality for the Data Logger configuration file
-    """
-    GENERAL_SECTION = "general"
-    GENERAL_LOG_TO_FILE = "log_to_file"
-    GENERAL_PATH_TO_FILE = "path_to_file"
-    GENERAL_LOG_COUNT = "log_count"
-    GENERAL_LOG_FILE_SIZE = "max_logged_file_size"
-    GENERAL_EVENTLOG_PATH = "event_path_to_eventfile"
-    GENERAL_EVENTLOG_TO_CONSOLE = "event_log_to_console"
-    GENERAL_EVENTLOG_TO_FILE = "event_log_to_file"
-    GENERAL_EVENTLOG_LEVEL = "event_log_level"
-
-    DEVICES_SECTION = Idf.DEVICES
 
 def load_and_validate_config(filename):
     EventLogger.info("Loading config file from '{0}'".format(filename))
@@ -85,9 +63,8 @@ class ConfigValidator(object):
 
         # FIXME: dont access the config before its validated. also this code should not be here
         # but somewhere else. it has nothing to do with validation
-        #file_count = self._config['general'][ConfigurationReader.GENERAL_LOG_COUNT]
-        #file_size = self._config['general'][ConfigurationReader.GENERAL_LOG_FILE_SIZE]
-
+        #file_count = self._config['data']['csv']['file_count']
+        #file_size = self._config['data']['csv']['file_size']
         #self._log_space_counter = LogSpaceCounter(file_count, file_size)
 
     def _report_error(self, message):
@@ -102,7 +79,8 @@ class ConfigValidator(object):
         EventLogger.info("Validating config file")
 
         self._validate_hosts()
-        self._validate_general_section()
+        self._validate_data()
+        self._validate_events()
         self._validate_devices_section()
 
         if self._error_count > 0:
@@ -129,11 +107,11 @@ class ConfigValidator(object):
         try:
             hosts = self._config['hosts']
         except KeyError:
-            self._report_error('Config has no hosts section')
+            self._report_error('Config has no "hosts" section')
             return
 
         if not isinstance(hosts, dict):
-            self._report_error('Hosts section is not a dictionary')
+            self._report_error('"hosts" section is not a dictionary')
             return
 
         try:
@@ -149,11 +127,8 @@ class ConfigValidator(object):
             else:
                 if not isinstance(name, basestring):
                     self._report_error('Name of host with ID "{0}" is not a string'.format(host_id))
-                    continue
-
-                if len(name) == 0:
+                elif len(name) == 0:
                     self._report_error('Name of host with ID "{0}" is empty'.format(host_id))
-                    continue
 
             try:
                 port = host['port']
@@ -162,96 +137,138 @@ class ConfigValidator(object):
             else:
                 if not isinstance(port, int):
                     self._report_error('Port of host with ID "{0}" is not an int'.format(host_id))
-                    continue
-
-                if port <= 0 or port > 65535:
+                elif port < 1 or port > 65535:
                     self._report_error('Port of host with ID "{0}" is out-of-range'.format(host_id))
-                    continue
 
-    def _validate_general_section(self):
+    def _validate_data(self):
         """
-        This function validates the general section out of the configuration
+        This function validates the data section out of the configuration
         """
         try:
-            global_section = self._config['general']
+            data = self._config['data']
         except KeyError:
-            self._report_error('Config has no general section')
+            self._report_error('Config has no "data" section')
             return
 
         try:
-            time_format = global_section['time_format']
+            time_format = data['time_format']
         except KeyError:
-            self._report_error('General section has no time format')
+            self._report_error('"data" section has no "time_format" member')
         else:
             if not isinstance(time_format, basestring):
-                self._report_error('Time format is not an string')
+                self._report_error('"data/time_format" is not a string')
             elif time_format not in ['de', 'us', 'iso', 'unix']:
-                self._report_error('Invalid time format: {0}'.format(time_format))
+                self._report_error('Invalid "data/time_format" value: {0}'.format(time_format))
 
-        # --- Datalog file ---------------------------------------------
-        # ConfigurationReader.GENERAL_LOG_TO_FILE should be a bool and if its True then
-        # ConfigurationReader.GENERAL_LOG_TO_FILE should be a string and a valid path
-        if not type(global_section[ConfigurationReader.GENERAL_LOG_TO_FILE]) == bool:
-            EventLogger.critical(
-                self._generate_device_error_message(uid="",
-                                                    tier_array=[ConfigurationReader.GENERAL_SECTION, ConfigurationReader.GENERAL_LOG_TO_FILE],
-                                                    msg="should be a boolean"))
+        self._validate_data_csv()
+
+    def _validate_data_csv(self):
+        """
+        This function validates the data/csv section out of the configuration
+        """
+        try:
+            csv = self._config['data']['csv']
+        except KeyError:
+            self._report_error('Config has no "data/csv" section')
+            return
+
+        try:
+            enabled = csv['enabled']
+        except KeyError:
+            self._report_error('"data/csv" section has no "enabled" member')
         else:
-            if global_section[ConfigurationReader.GENERAL_LOG_TO_FILE]:
-                if not Utilities.check_file_path_exists(global_section[ConfigurationReader.GENERAL_PATH_TO_FILE]):
-                    EventLogger.critical(
-                        self._generate_device_error_message(uid="", tier_array=[ConfigurationReader.GENERAL_SECTION,
-                                                                                ConfigurationReader.GENERAL_PATH_TO_FILE],
-                                                            msg="path is not reachable"))
+            if not isinstance(enabled, bool):
+                self._report_error('"data/csv/enabled" is not an bool')
 
-        # ConfigurationReader.GENERAL_PATH_TO_FILE
-        if not Utilities.is_valid_string(global_section[ConfigurationReader.GENERAL_PATH_TO_FILE], 1):
-            EventLogger.critical(
-                self._generate_device_error_message(uid="",
-                                                    tier_array=[ConfigurationReader.GENERAL_SECTION, ConfigurationReader.GENERAL_PATH_TO_FILE],
-                                                    msg="should be a path to the file where the data will be saved"))
-
-        # ConfigurationReader.GENERAL_LOG_COUNT and GENERAL_LOG_FILE_SIZE
-        count = global_section[ConfigurationReader.GENERAL_LOG_COUNT]
-        if not isinstance(count, int) and (not isinstance(count, float)):
-            EventLogger.critical(
-                self._generate_device_error_message(uid="",
-                                                    tier_array=[ConfigurationReader.GENERAL_SECTION, ConfigurationReader.GENERAL_LOG_COUNT],
-                                                    msg="should be a int or float"))
-        size = global_section[ConfigurationReader.GENERAL_LOG_FILE_SIZE]
-        if not isinstance(size, int) and (not isinstance(size, float)):
-            EventLogger.critical(
-                self._generate_device_error_message(uid="",
-                                                    tier_array=[ConfigurationReader.GENERAL_SECTION, ConfigurationReader.GENERAL_LOG_FILE_SIZE],
-                                                    msg="should be a int or float"))
-
-        # --- Eventlog file ---------------------------------------------
-        # ConfigurationReader.GENERAL_EVENTLOG_TO_FILE should be a bool and if its True then
-        # ConfigurationReader.GENERAL_EVENTLOG_PATH should be a string and a valid path
-        if not type(global_section[ConfigurationReader.GENERAL_EVENTLOG_TO_FILE]) == bool:
-            EventLogger.critical(
-                self._generate_device_error_message(uid="", tier_array=[ConfigurationReader.GENERAL_SECTION,
-                                                                        ConfigurationReader.GENERAL_EVENTLOG_TO_FILE],
-                                                    msg="should be a boolean"))
+        try:
+            file_name = csv['file_name']
+        except KeyError:
+            self._report_error('"data/csv" section has no "file_name" member')
         else:
-            if global_section[ConfigurationReader.GENERAL_EVENTLOG_TO_FILE]:
-                if not Utilities.is_valid_string(global_section[ConfigurationReader.GENERAL_EVENTLOG_PATH], 1):
-                    EventLogger.critical(self._generate_device_error_message(uid="",
-                                                                             tier_array=[ConfigurationReader.GENERAL_SECTION,
-                                                                                         ConfigurationReader.GENERAL_EVENTLOG_PATH],
-                                                                             msg="should be a path to the event file"))
-                else:
-                    if not Utilities.check_file_path_exists(global_section[ConfigurationReader.GENERAL_EVENTLOG_PATH]):
-                        EventLogger.critical(self._generate_device_error_message(uid="",
-                                                                                 tier_array=[ConfigurationReader.GENERAL_SECTION,
-                                                                                             ConfigurationReader.GENERAL_EVENTLOG_PATH],
-                                                                                 msg="path is not reachable"))
+            if not isinstance(file_name, basestring):
+                self._report_error('"data/csv/file_name" is not an string')
+            elif len(file_name) == 0:
+                self._report_error('"data/csv/file_name" is empty')
 
-        if not type(global_section[ConfigurationReader.GENERAL_EVENTLOG_TO_CONSOLE]) == bool:
-            EventLogger.critical(
-                self._generate_device_error_message(uid="", tier_array=[ConfigurationReader.GENERAL_SECTION,
-                                                                        ConfigurationReader.GENERAL_EVENTLOG_TO_CONSOLE],
-                                                    msg="should be a boolean"))
+        try:
+            file_count = csv['file_count']
+        except KeyError:
+            self._report_error('"data/csv" section has no "file_count" member')
+        else:
+            if not isinstance(file_count, int):
+                self._report_error('"data/csv/file_count" is not an integer')
+            elif file_count < 1 or file_count > 65535:
+                self._report_error('"data/csv/file_count" is out-of-range')
+
+        try:
+            file_size = csv['file_size']
+        except KeyError:
+            self._report_error('"data/csv" section has no "file_size" member')
+        else:
+            if not isinstance(file_size, int):
+                self._report_error('"data/csv/file_size" is not an integer')
+            elif file_size < 0 or file_size > 2097152:
+                self._report_error('"data/csv/file_size" is out-of-range')
+
+    def _validate_events(self):
+        """
+        This function validates the events section out of the configuration
+        """
+        try:
+            events = self._config['events']
+        except KeyError:
+            self._report_error('Config has no "events" section')
+            return
+
+        try:
+            time_format = events['time_format']
+        except KeyError:
+            self._report_error('"events" section has no "time_format" member')
+        else:
+            if not isinstance(time_format, basestring):
+                self._report_error('"events/time_format" is not a string')
+            elif time_format not in ['de', 'us', 'iso', 'unix']:
+                self._report_error('Invalid "events/time_format" value: {0}'.format(time_format))
+
+        self._validate_events_log()
+
+    def _validate_events_log(self):
+        """
+        This function validates the events/log section out of the configuration
+        """
+        try:
+            log = self._config['events']['log']
+        except KeyError:
+            self._report_error('Config has no "events/log" section')
+            return
+
+        try:
+            enabled = log['enabled']
+        except KeyError:
+            self._report_error('"events/log" section has no "enabled" member')
+        else:
+            if not isinstance(enabled, bool):
+                self._report_error('"events/log/enabled" is not an bool')
+
+        try:
+            file_name = log['file_name']
+        except KeyError:
+            self._report_error('"events/log" section has no "file_name" member')
+        else:
+            if not isinstance(file_name, basestring):
+                self._report_error('"events/log/file_name" is not an string')
+            elif len(file_name) == 0:
+                self._report_error('"events/log/file_name" is empty')
+
+        try:
+            level = log['level']
+        except KeyError:
+            self._report_error('"events/log" section has no "level" member')
+        else:
+            if not isinstance(level, basestring):
+                self._report_error('"events/log/level" is not an integer')
+            elif level not in ['debug', 'info', 'warning', 'error', 'critical']:
+                self._report_error('Invalid "events/log/level" value: {0}'.format(level))
 
     def _validate_devices_section(self):
         """

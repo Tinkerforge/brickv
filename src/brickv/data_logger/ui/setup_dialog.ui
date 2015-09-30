@@ -6,211 +6,246 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>798</width>
-    <height>545</height>
+    <width>775</width>
+    <height>659</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string notr="true">Data Logger</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_5">
-   <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QTabWidget" name="tab_widget">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="currentIndex">
-        <number>0</number>
-       </property>
-       <widget class="QWidget" name="tab_setup">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <attribute name="title">
-         <string>Setup</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
-         <item>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="2" column="0">
-            <widget class="QGroupBox" name="group_events_file">
-             <property name="title">
-              <string>Events</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_5">
-              <item>
-               <layout class="QGridLayout" name="gridLayout_9">
-                <item row="0" column="2">
-                 <widget class="QPushButton" name="btn_event_log_file">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTabWidget" name="tab_widget">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab_setup">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <attribute name="title">
+       <string>Setup</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="2" column="0">
+          <widget class="QGroupBox" name="group_events_file">
+           <property name="title">
+            <string>Events</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <layout class="QGridLayout" name="gridLayout_9">
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_log_level">
+                <property name="text">
+                 <string>Log Level:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QComboBox" name="combo_log_level"/>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="combo_events_time_format">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>1</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Time Format:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <item>
+                 <widget class="QLineEdit" name="edit_log_file_name">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="btn_browse_log_file_name">
                   <property name="text">
                    <string>Browse</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
-                 <widget class="QLineEdit" name="line_event_log_file"/>
-                </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_13">
-                  <property name="text">
-                   <string>Log File:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_14">
-                  <property name="text">
-                   <string>Level:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QCheckBox" name="checkbox_to_file">
-                  <property name="text">
-                   <string>Output to file</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QComboBox" name="combo_loglevel"/>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QCheckBox" name="checkbox_to_console">
-                  <property name="text">
-                   <string>Output to console</string>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_log_file_name">
+                <property name="text">
+                 <string>Log File:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QCheckBox" name="check_events_to_log_file">
+                <property name="text">
+                 <string>Write to Log File</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
              </layout>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QGroupBox" name="group_general">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="title">
-              <string>General</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_3">
-              <item>
-               <layout class="QGridLayout" name="gridLayout_2">
-                <item row="0" column="1">
-                 <widget class="QComboBox" name="combo_host">
-                  <property name="editable">
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QGroupBox" name="group_general">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="title">
+            <string>General</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <layout class="QGridLayout" name="gridLayout_2">
+              <item row="0" column="1">
+               <widget class="QComboBox" name="combo_host">
+                <property name="editable">
+                 <bool>true</bool>
+                </property>
+                <property name="insertPolicy">
+                 <enum>QComboBox::InsertAtTop</enum>
+                </property>
+                <property name="sizeAdjustPolicy">
+                 <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Host:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_2">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>Port:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QSpinBox" name="spin_port">
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+                <property name="value">
+                 <number>4223</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QGroupBox" name="group_data_file">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="title">
+            <string>Data</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <layout class="QGridLayout" name="gridLayout_3">
+              <item row="3" column="1">
+               <widget class="QSpinBox" name="spin_csv_file_count">
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_csv_file_count">
+                <property name="text">
+                 <string>CSV File Count:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_csv_file_name">
+                <property name="text">
+                 <string>CSV File:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="label_csv_file_size">
+                <property name="text">
+                 <string>CSV File Size:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <item>
+                 <widget class="QLineEdit" name="edit_csv_file_name">
+                  <property name="readOnly">
                    <bool>true</bool>
                   </property>
-                  <property name="insertPolicy">
-                   <enum>QComboBox::InsertAtTop</enum>
-                  </property>
-                  <property name="sizeAdjustPolicy">
-                   <enum>QComboBox::AdjustToMinimumContentsLength</enum>
-                  </property>
                  </widget>
                 </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Host:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_2">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>Port:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QSpinBox" name="spinbox_port">
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                  <property name="maximum">
-                   <number>65535</number>
-                  </property>
-                  <property name="value">
-                   <number>4223</number>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QGroupBox" name="group_data_file">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="title">
-              <string>Data</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_4">
-              <item>
-               <layout class="QGridLayout" name="gridLayout_3">
-                <item row="1" column="1">
-                 <widget class="QSpinBox" name="spin_file_count">
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_4">
-                  <property name="text">
-                   <string>File Count:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="2">
-                 <widget class="QLabel" name="label_6">
-                  <property name="text">
-                   <string>MB</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="2">
-                 <widget class="QPushButton" name="btn_csv_data_file">
+                <item>
+                 <widget class="QPushButton" name="btn_browse_csv_file_name">
                   <property name="focusPolicy">
                    <enum>Qt::TabFocus</enum>
                   </property>
@@ -219,177 +254,149 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
-                 <widget class="QLineEdit" name="line_csv_data_file">
-                  <property name="inputMask">
-                   <string notr="true"/>
-                  </property>
-                  <property name="text">
-                   <string notr="true"/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_5">
-                  <property name="text">
-                   <string>File Size:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_3">
-                  <property name="text">
-                   <string>CSV File:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QSpinBox" name="spin_file_size">
-                  <property name="maximum">
-                   <number>2097152</number>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label_7">
-                  <property name="text">
-                   <string>Time Format:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QComboBox" name="combo_time_format"/>
-                </item>
                </layout>
               </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_7">
+                <property name="text">
+                 <string>Time Format:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <widget class="QSpinBox" name="spin_csv_file_size">
+                <property name="suffix">
+                 <string> MB</string>
+                </property>
+                <property name="maximum">
+                 <number>2097152</number>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QCheckBox" name="check_data_to_csv_file">
+                <property name="text">
+                 <string>Write to CSV File</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QComboBox" name="combo_data_time_format">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>1</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
              </layout>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tab_devices">
-        <attribute name="title">
-         <string>Devices</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_8">
-         <item row="0" column="2">
-          <widget class="QPushButton" name="btn_remove_device">
-           <property name="text">
-            <string>Remove Device</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QPushButton" name="btn_add_device">
-           <property name="text">
-            <string>Add Device</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="4">
-          <spacer name="horizontalSpacer_7">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="5">
-          <widget class="QPushButton" name="btn_remove_all_devices">
-           <property name="text">
-            <string>Remove All Devices</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0" colspan="6">
-          <widget class="QTreeWidget" name="tree_devices">
-           <property name="selectionMode">
-            <enum>QAbstractItemView::ExtendedSelection</enum>
-           </property>
-           <property name="sortingEnabled">
-            <bool>true</bool>
-           </property>
-           <attribute name="headerDefaultSectionSize">
-            <number>300</number>
-           </attribute>
-           <attribute name="headerMinimumSectionSize">
-            <number>200</number>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>Device</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Value</string>
-            </property>
-           </column>
+            </item>
+           </layout>
           </widget>
          </item>
         </layout>
-       </widget>
-       <widget class="QWidget" name="tab_csv_data">
-        <attribute name="title">
-         <string>Data</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <item>
-          <widget class="QCheckBox" name="checkbox_data_auto_scroll">
-           <property name="text">
-            <string>Auto Scroll</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_devices">
+      <attribute name="title">
+       <string>Devices</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_8">
+       <item row="0" column="2">
+        <widget class="QPushButton" name="btn_remove_device">
+         <property name="text">
+          <string>Remove Device</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QPushButton" name="btn_add_device">
+         <property name="text">
+          <string>Add Device</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <spacer name="horizontalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="5">
+        <widget class="QPushButton" name="btn_remove_all_devices">
+         <property name="text">
+          <string>Remove All Devices</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="6">
+        <widget class="QTreeWidget" name="tree_devices">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ExtendedSelection</enum>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>300</number>
+         </attribute>
+         <attribute name="headerMinimumSectionSize">
+          <number>200</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Device</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Value</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_csv_data">
+      <attribute name="title">
+       <string>Data</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="1" column="0" colspan="4">
           <widget class="QTableWidget" name="table_widget">
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
            </property>
-           <property name="showDropIndicator" stdset="0">
-            <bool>true</bool>
-           </property>
            <property name="alternatingRowColors">
             <bool>true</bool>
            </property>
-           <property name="gridStyle">
-            <enum>Qt::SolidLine</enum>
-           </property>
-           <property name="sortingEnabled">
-            <bool>true</bool>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-           <property name="cornerButtonEnabled">
-            <bool>true</bool>
-           </property>
-           <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-            <bool>true</bool>
-           </attribute>
            <attribute name="horizontalHeaderStretchLastSection">
             <bool>true</bool>
            </attribute>
@@ -425,22 +432,28 @@
            </column>
           </widget>
          </item>
-         <item>
-          <widget class="QPushButton" name="btn_clear_tabel">
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="label_3">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
-            <string>Clear Table</string>
+            <string>Shows the latest 1000 data entries</string>
            </property>
           </widget>
          </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tab_console">
-        <attribute name="title">
-         <string>Events</string>
-        </attribute>
-        <layout class="QGridLayout" name="gridLayout_10">
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="checkbox_console_auto_scroll">
+         <item row="0" column="3">
+          <widget class="QPushButton" name="btn_clear_data">
+           <property name="text">
+            <string>Clear Data</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QCheckBox" name="checkbox_data_auto_scroll">
            <property name="text">
             <string>Auto Scroll</string>
            </property>
@@ -449,50 +462,21 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="2">
-          <spacer name="horizontalSpacer_8">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="3">
-          <widget class="QComboBox" name="combo_console_level">
-           <property name="currentIndex">
-            <number>1</number>
-           </property>
-           <item>
-            <property name="text">
-             <string>Debug</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Info</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Warning</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Error / Critical</string>
-            </property>
-           </item>
-          </widget>
-         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_console">
+      <attribute name="title">
+       <string>Events</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <layout class="QGridLayout" name="gridLayout_5">
          <item row="1" column="0" colspan="4">
           <widget class="QTextBrowser" name="txt_console"/>
          </item>
-         <item row="2" column="0" colspan="4">
+         <item row="0" column="3">
           <widget class="QPushButton" name="btn_clear_events">
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
@@ -502,13 +486,43 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="checkbox_console_auto_scroll">
+           <property name="text">
+            <string>Auto Scroll</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Shows the latest 1000 events</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QComboBox" name="combo_events_level">
+           <property name="currentIndex">
+            <number>-1</number>
+           </property>
+          </widget>
+         </item>
         </layout>
-       </widget>
-      </widget>
-     </item>
-    </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
-   <item row="1" column="0">
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="btn_start_logging">
@@ -560,16 +574,10 @@
  <tabstops>
   <tabstop>tab_widget</tabstop>
   <tabstop>combo_host</tabstop>
-  <tabstop>spinbox_port</tabstop>
-  <tabstop>line_csv_data_file</tabstop>
-  <tabstop>btn_csv_data_file</tabstop>
-  <tabstop>spin_file_count</tabstop>
-  <tabstop>spin_file_size</tabstop>
-  <tabstop>line_event_log_file</tabstop>
-  <tabstop>btn_event_log_file</tabstop>
-  <tabstop>combo_loglevel</tabstop>
-  <tabstop>checkbox_to_file</tabstop>
-  <tabstop>checkbox_to_console</tabstop>
+  <tabstop>spin_port</tabstop>
+  <tabstop>spin_csv_file_count</tabstop>
+  <tabstop>spin_csv_file_size</tabstop>
+  <tabstop>combo_log_level</tabstop>
   <tabstop>btn_start_logging</tabstop>
   <tabstop>btn_load_config</tabstop>
   <tabstop>btn_save_config</tabstop>
@@ -578,11 +586,8 @@
   <tabstop>btn_remove_device</tabstop>
   <tabstop>btn_add_device</tabstop>
   <tabstop>btn_remove_all_devices</tabstop>
-  <tabstop>checkbox_data_auto_scroll</tabstop>
   <tabstop>table_widget</tabstop>
-  <tabstop>btn_clear_tabel</tabstop>
   <tabstop>checkbox_console_auto_scroll</tabstop>
-  <tabstop>combo_console_level</tabstop>
   <tabstop>txt_console</tabstop>
  </tabstops>
  <resources/>

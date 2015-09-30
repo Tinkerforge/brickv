@@ -28,6 +28,7 @@ import json
 import os
 import time
 import functools
+import logging
 from datetime import datetime
 
 from PyQt4 import QtGui, QtCore
@@ -78,13 +79,52 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.widget_initialization()
 
         timestamp = int(time.time())
-        self.line_csv_data_file.setText(os.path.join(get_home_path(), 'logger_data_{0}.csv'.format(timestamp)))
-        self.line_event_log_file.setText(os.path.join(get_home_path(), 'logger_events_{0}.log'.format(timestamp)))
+        self.edit_csv_file_name.setText(os.path.join(get_home_path(), 'logger_data_{0}.csv'.format(timestamp)))
+        self.edit_log_file_name.setText(os.path.join(get_home_path(), 'logger_events_{0}.log'.format(timestamp)))
 
-        self.combo_time_format.addItem(utils.timestamp_to_de(timestamp) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
-        self.combo_time_format.addItem(utils.timestamp_to_us(timestamp) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
-        self.combo_time_format.addItem(utils.timestamp_to_iso(timestamp) + ' (ISO 8601)', 'iso')
-        self.combo_time_format.addItem(utils.timestamp_to_unix(timestamp) + ' (Unix)', 'unix')
+        self.combo_data_time_format.addItem(utils.timestamp_to_de(timestamp) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
+        self.combo_data_time_format.addItem(utils.timestamp_to_us(timestamp) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
+        self.combo_data_time_format.addItem(utils.timestamp_to_iso(timestamp) + ' (ISO 8601)', 'iso')
+        self.combo_data_time_format.addItem(utils.timestamp_to_unix(timestamp) + ' (Unix)', 'unix')
+
+        self.combo_events_time_format.addItem(utils.timestamp_to_de(timestamp) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
+        self.combo_events_time_format.addItem(utils.timestamp_to_us(timestamp) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
+        self.combo_events_time_format.addItem(utils.timestamp_to_iso(timestamp) + ' (ISO 8601)', 'iso')
+        self.combo_events_time_format.addItem(utils.timestamp_to_unix(timestamp) + ' (Unix)', 'unix')
+
+        self.combo_log_level.addItem('Debug', 'debug')
+        self.combo_log_level.addItem('Info', 'info')
+        self.combo_log_level.addItem('Warning', 'warning')
+        self.combo_log_level.addItem('Error', 'error')
+        self.combo_log_level.addItem('Critical', 'critical')
+        self.combo_log_level.setCurrentIndex(0) # debug
+
+        self.combo_events_level.addItem('Debug', logging.DEBUG)
+        self.combo_events_level.addItem('Info', logging.INFO)
+        self.combo_events_level.addItem('Warning', logging.WARNING)
+        self.combo_events_level.addItem('Error', logging.ERROR)
+        self.combo_events_level.addItem('Critical', logging.CRITICAL)
+        self.combo_events_level.setCurrentIndex(1) # info
+
+        self.update_ui_state()
+
+    def update_ui_state(self):
+        data_to_csv_file = self.check_data_to_csv_file.isChecked()
+        events_to_log_file = self.check_events_to_log_file.isChecked()
+
+        self.label_csv_file_name.setVisible(data_to_csv_file)
+        self.edit_csv_file_name.setVisible(data_to_csv_file)
+        self.btn_browse_csv_file_name.setVisible(data_to_csv_file)
+        self.label_csv_file_count.setVisible(data_to_csv_file)
+        self.spin_csv_file_count.setVisible(data_to_csv_file)
+        self.label_csv_file_size.setVisible(data_to_csv_file)
+        self.spin_csv_file_size.setVisible(data_to_csv_file)
+
+        self.label_log_file_name.setVisible(events_to_log_file)
+        self.edit_log_file_name.setVisible(events_to_log_file)
+        self.btn_browse_log_file_name.setVisible(events_to_log_file)
+        self.label_log_level.setVisible(events_to_log_file)
+        self.combo_log_level.setVisible(events_to_log_file)
 
     def widget_initialization(self):
         """
@@ -92,15 +132,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         """
         # Login data
         self.host_info_initialization()
-        # GUI LOG LEVEL
-        self.combo_log_level_init(self.combo_console_level)
-        self.combo_console_level.setCurrentIndex(1)  # INFO LEVEL
-        # set loglevel
-        self.combo_console_level_changed()
-
-        # LOGLEVEL FROM CONFIG
-        self.combo_log_level_init(self.combo_loglevel)
-        self.combo_loglevel.setCurrentIndex(0)  # DEBUG LEVEL
 
         self.signal_initialization()
 
@@ -112,16 +143,18 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.btn_start_logging.clicked.connect(self.btn_start_logging_clicked)
         self.btn_save_config.clicked.connect(self.btn_save_config_clicked)
         self.btn_load_config.clicked.connect(self.btn_load_config_clicked)
-        self.btn_csv_data_file.clicked.connect(self.btn_csv_data_file_clicked)
-        self.btn_event_log_file.clicked.connect(self.btn_event_log_file_clicked)
+        self.check_data_to_csv_file.stateChanged.connect(self.update_ui_state)
+        self.check_events_to_log_file.stateChanged.connect(self.update_ui_state)
+        self.btn_browse_csv_file_name.clicked.connect(self.btn_browse_csv_file_name_clicked)
+        self.btn_browse_log_file_name.clicked.connect(self.btn_browse_log_file_name_clicked)
         self.btn_clear_events.clicked.connect(self.btn_clear_events_clicked)
-        self.combo_console_level.currentIndexChanged.connect(self.combo_console_level_changed)
+        self.combo_events_level.currentIndexChanged.connect(self.combo_events_level_changed)
         self.btn_add_device.clicked.connect(self.btn_add_device_clicked)
         self.btn_remove_device.clicked.connect(self.btn_remove_device_clicked)
         self.btn_remove_all_devices.clicked.connect(self.btn_remove_all_devices_clicked)
 
         self.tab_widget.currentChanged.connect(self.tab_reset_warning)
-        self.btn_clear_tabel.clicked.connect(self.btn_clear_table_clicked)
+        self.btn_clear_data.clicked.connect(self.btn_clear_data_clicked)
 
         self.connect(self._gui_logger, QtCore.SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE), self.txt_console_output)
         self.connect(self._gui_logger, QtCore.SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT),
@@ -129,26 +162,11 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         # login information
         self.combo_host.currentIndexChanged.connect(self._host_index_changed)
-        self.spinbox_port.valueChanged.connect(self._port_changed)
+        self.spin_port.valueChanged.connect(self._port_changed)
 
         self.tree_devices.itemDoubleClicked.connect(self.tree_on_double_click)
         self.tree_devices.itemChanged.connect(self.tree_on_change)
         self.tree_devices.itemChanged.connect(self.cb_device_interval_changed)
-
-    def combo_log_level_init(self, combo_widget):
-        combo_widget.clear()
-        od = collections.OrderedDict(sorted(GUILogger._convert_level.items()))
-        for k in od.keys():
-            combo_widget.addItem(od[k])
-
-            # TODO dynamic way to set GUI LogLevel - not used at the moment!
-            # set index
-            # ll = GUILogger._convert_level[EventLogger.EVENT_LOG_LEVEL]
-            # combo_widget_count = combo_widget.count()
-            # for i in range(0, combo_widget_count):
-            # if ll == combo_widget.itemText(i):
-            # combo_widget.setCurrentIndex(i)
-            # break
 
     def host_info_initialization(self):
         """
@@ -162,7 +180,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.last_host = None
         self.combo_host.setCurrentIndex(0)
-        self.spinbox_port.setValue(self.host_infos[0].port)
+        self.spin_port.setValue(self.host_infos[0].port)
         self.host_index_changing = False
 
     def btn_start_logging_clicked(self):
@@ -179,7 +197,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             from brickv.data_logger import main
 
             arguments_map = {}
-            arguments_map[main.GUI_CONFIG] = GuiConfigHandler.create_config_file(self)
+            arguments_map[main.GUI_CONFIG] = GuiConfigHandler.create_config(self)
             self._gui_job = GuiDataJob(name="GuiData-Writer")
             self.connect(self._gui_job, QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), self.table_add_row)
             arguments_map[main.GUI_ELEMENT] = self._gui_job
@@ -217,7 +235,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         if not filename.lower().endswith('.json'):
             filename += '.json'
 
-        config = GuiConfigHandler.create_config_file(self)
+        config = GuiConfigHandler.create_config(self)
 
         try:
             with open(filename, 'w') as outfile:
@@ -225,18 +243,19 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         except Exception as e1:
             EventLogger.warning("Load Config - Exception: " + str(e1))
             QMessageBox.warning(self, 'Error',
-                                'Could not save the Config-File! Look at the Log-File for further information.',
+                                'Could not save the config! Look at the Events tab for further information.',
                                 QMessageBox.Ok)
             return
 
-        QMessageBox.information(self, 'Success', 'Config file saved!', QMessageBox.Ok)
-        EventLogger.info("Config file saved to: " + str(filename))
+        QMessageBox.information(self, 'Success', 'Config saved!', QMessageBox.Ok)
+        EventLogger.info("Config saved to: " + str(filename))
 
     def btn_load_config_clicked(self):
         """
             Opens a FileSelectionDialog and loads the selected config.
         """
-        filename = get_open_file_name(get_main_window(), 'Load Config File', get_home_path(), 'JSON Files (*.json)')
+        filename = get_open_file_name(get_main_window(), 'Load Config File',
+                                      get_home_path(), 'JSON Files (*.json)')
 
         if len(filename) == 0:
             return
@@ -255,12 +274,15 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.create_tree_items(config_blueprint)
         self.update_setup_tab(config)
 
-    def btn_csv_data_file_clicked(self):
+        QMessageBox.information(self, 'Success', 'Config loaded!', QMessageBox.Ok)
+        EventLogger.info("Config loaded from: " + str(filename))
+
+    def btn_browse_csv_file_name_clicked(self):
         """
             Opens a FileSelectionDialog and sets the selected path for the CSV data output file.
         """
-        if len(self.line_csv_data_file.text()) > 0:
-            last_dir = os.path.dirname(os.path.realpath(self.line_csv_data_file.text()))
+        if len(self.edit_csv_file_name.text()) > 0:
+            last_dir = os.path.dirname(os.path.realpath(self.edit_csv_file_name.text()))
         else:
             last_dir = get_home_path()
 
@@ -268,17 +290,17 @@ class SetupDialog(QDialog, Ui_SetupDialog):
                                       last_dir, "CSV Files (*.csv)")
 
         if len(filename) > 0:
-            if filename.lower().endswith('.csv'):
+            if not filename.lower().endswith('.csv'):
                 filename += '.csv'
 
-            self.line_csv_data_file.setText(filename)
+            self.edit_csv_file_name.setText(filename)
 
-    def btn_event_log_file_clicked(self):
+    def btn_browse_log_file_name_clicked(self):
         """
             Opens a FileSelectionDialog and sets the selected path for the event log output file.
         """
-        if len(self.line_event_log_file.text()) > 0:
-            last_dir = os.path.dirname(os.path.realpath(self.line_event_log_file.text()))
+        if len(self.edit_log_file_name.text()) > 0:
+            last_dir = os.path.dirname(os.path.realpath(self.edit_log_file_name.text()))
         else:
             last_dir = get_home_path()
 
@@ -289,7 +311,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             if not filename.lower().endswith('.log'):
                 filename += '.log'
 
-            self.line_event_log_file.setText(filename)
+            self.edit_log_file_name.setText(filename)
 
     def btn_add_device_clicked(self):
         """
@@ -342,7 +364,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
     def btn_remove_all_devices_clicked(self):
         self.tree_devices.clear()
 
-    def btn_clear_table_clicked(self):
+    def btn_clear_data_clicked(self):
         """
             Clears the Data table.
         """
@@ -360,17 +382,11 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.tab_set(self.tab_widget.indexOf(self.tab_console), self.palette().color(QPalette.WindowText), None)
 
-    def combo_console_level_changed(self):
+    def combo_events_level_changed(self):
         """
             Changes the log level dynamically.
         """
-        ll = self.combo_console_level.currentText()
-
-        od = collections.OrderedDict(sorted(self._gui_logger._convert_level.items()))
-        for k in od.keys():
-            if ll == od[k]:
-                self._gui_logger.level = k
-                break
+        self._gui_logger.level = self.combo_events_level.itemData(self.combo_events_level.currentIndex())
 
     def tab_set(self, tab_index, color, icon=None):
         """
@@ -399,7 +415,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             return
 
         self.host_index_changing = True
-        self.spinbox_port.setValue(self.host_infos[i].port)
+        self.spin_port.setValue(self.host_infos[i].port)
         self.host_index_changing = False
 
     def _port_changed(self, value):
@@ -413,59 +429,25 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         if i < 0:
             return
 
-        self.host_infos[i].port = self.spinbox_port.value()
+        self.host_infos[i].port = self.spin_port.value()
 
     def update_setup_tab(self, config):
         """
-            Update the information of the setup tab with the given general_section.
+            Update the information of the setup tab with the given config.
         """
-        from brickv.data_logger.configuration_validator import ConfigurationReader
+        self.combo_host.setEditText(config['hosts']['default']['name'])
+        self.spin_port.setValue(config['hosts']['default']['port'])
 
-        try:
-            i = self.combo_time_format.findData(config['general']['time_format'])
+        self.combo_data_time_format.setCurrentIndex(max(self.combo_data_time_format.findData(config['data']['time_format']), 0))
+        self.check_data_to_csv_file.setChecked(config['data']['csv']['enabled'])
+        self.edit_csv_file_name.setText(config['data']['csv']['file_name'])
+        self.spin_csv_file_count.setValue(config['data']['csv']['file_count'])
+        self.spin_csv_file_size.setValue(config['data']['csv']['file_size'])
 
-            if i >= 0:
-                self.combo_time_format.setCurrentIndex(i)
-
-            # host            combo_host              setEditText(str)
-            self.combo_host.setEditText(config['hosts']['default']['name'])
-            # port            spinbox_port            setValue(int)
-            self.spinbox_port.setValue(config['hosts']['default']['port'])
-            # file_count      spin_file_count         setValue(int)
-            self.spin_file_count.setValue(config['general'][ConfigurationReader.GENERAL_LOG_COUNT])
-            # file_size       spin_file_size          setValue(int/1024/1024)  (Byte -> MB)
-            self.spin_file_size.setValue((config['general'][ConfigurationReader.GENERAL_LOG_FILE_SIZE] / 1024.0 / 1024.0))
-            # path_to_file    line_csv_data_file      setText(str)
-            self.line_csv_data_file.setText(config['general'][ConfigurationReader.GENERAL_PATH_TO_FILE])
-            # eventlog_path   line_event_log_file      setText(str)
-            self.line_event_log_file.setText(config['general'][ConfigurationReader.GENERAL_EVENTLOG_PATH])
-            # loglevel
-            ll = config['general'][ConfigurationReader.GENERAL_EVENTLOG_LEVEL]
-            od = collections.OrderedDict(sorted(GUILogger._convert_level.items()))
-
-            counter = 0  # TODO better way to set the combo box index?
-            for k in od.keys():
-                if ll == k:
-                    break
-                counter += 1
-            self.combo_loglevel.setCurrentIndex(counter)
-
-            # log_to_console
-            def __checkbox_bool_setter(bool_value):
-                if bool_value:
-                    return 2
-                else:
-                    return 0
-
-            self.checkbox_to_file.setChecked(
-                __checkbox_bool_setter(config['general'][ConfigurationReader.GENERAL_EVENTLOG_TO_FILE]))
-            # log_to_file
-            self.checkbox_to_console.setCheckState(
-                __checkbox_bool_setter(config['general'][ConfigurationReader.GENERAL_EVENTLOG_TO_CONSOLE]))
-
-        except Exception as e:
-            EventLogger.critical("Could not read the General Section of the Config-File! -> " + str(e))
-            return
+        self.combo_events_time_format.setCurrentIndex(max(self.combo_events_time_format.findData(config['events']['time_format']), 0))
+        self.check_events_to_log_file.setChecked(config['events']['log']['enabled'])
+        self.edit_log_file_name.setChecked(config['events']['log']['file_name'])
+        self.combo_log_level.setCurrentIndex(max(self.combo_events_time_format.findData(config['events']['log']['level']), 0))
 
     def create_tree_items(self, blueprint):
         """
@@ -650,10 +632,12 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             SIGNAL function:
             Adds new CSV Data into the Table.
         """
-        # disable sort
-        self.table_widget.setSortingEnabled(False)
-
         row = self.table_widget.rowCount()
+
+        while row > 1000:
+            self.table_widget.removeRow(0)
+            row = self.table_widget.rowCount()
+
         self.table_widget.insertRow(row)
         self.table_widget.setItem(row, 0, QtGui.QTableWidgetItem(str(csv_data.uid)))
         self.table_widget.setItem(row, 1, QtGui.QTableWidgetItem(str(csv_data.name)))
@@ -664,6 +648,3 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         if self.checkbox_data_auto_scroll.isChecked():
             self.table_widget.scrollToBottom()
-
-        # enable sort
-        self.table_widget.setSortingEnabled(True)

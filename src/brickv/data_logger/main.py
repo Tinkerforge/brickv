@@ -29,7 +29,6 @@ import signal
 import sys
 import traceback
 
-from brickv.data_logger.configuration_validator import ConfigurationReader
 from brickv.data_logger.data_logger import DataLogger
 from brickv.data_logger.event_logger import ConsoleLogger, FileLogger, EventLogger
 from brickv.data_logger.utils import DataLoggerException
@@ -96,7 +95,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 def __manage_eventlog(arguments_map):
-    EventLogger.EVENT_CONSOLE_LOGGING = arguments_map[ConfigurationReader.GENERAL_EVENTLOG_TO_CONSOLE]
+    """EventLogger.EVENT_CONSOLE_LOGGING = arguments_map[ConfigurationReader.GENERAL_EVENTLOG_TO_CONSOLE]
     EventLogger.EVENT_FILE_LOGGING = arguments_map[ConfigurationReader.GENERAL_EVENTLOG_TO_FILE]
     EventLogger.EVENT_FILE_LOGGING_PATH = arguments_map[ConfigurationReader.GENERAL_EVENTLOG_PATH]
     EventLogger.EVENT_LOG_LEVEL = arguments_map[ConfigurationReader.GENERAL_EVENTLOG_LEVEL]
@@ -109,7 +108,7 @@ def __manage_eventlog(arguments_map):
     else:
         EventLogger.remove_logger("ConsoleLogger")
         EventLogger.add_logger(ConsoleLogger("ConsoleLogger", EventLogger.EVENT_LOG_LEVEL))
-
+"""
 
 def main(arguments_map):
     """
@@ -138,7 +137,7 @@ def main(arguments_map):
             return
 
         # activate eventlogger
-        __manage_eventlog(config['general'])
+        __manage_eventlog(config)
 
     except Exception as exc:
         EventLogger.critical(str(exc))

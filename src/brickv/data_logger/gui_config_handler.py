@@ -133,24 +133,15 @@ class GuiConfigHandler(object):
 
             GuiConfigHandler.device_blueprint.append(bp_dev)
 
-    def create_config_file(setup_dialog):
+    def create_config(setup_dialog):
         """
         Creates a config file. Converst all devices from the tree_widget and
-        fetches the GENERAL_SECTION information.
-        Returns the config as dictonary.
+        fetches the other information. Returns the config as dictonary.
         """
-        config = {}
-        # add general section
-        general_section = GuiConfigHandler.create_general_section(setup_dialog)
-
-        # add device section
-        device_section = GuiConfigHandler.create_device_section(setup_dialog)
-
-        from brickv.data_logger.configuration_validator import ConfigurationReader
-
-        config['hosts'] = GuiConfigHandler.create_hosts_section(setup_dialog)
-        config[ConfigurationReader.GENERAL_SECTION] = general_section
-        config[Idf.DEVICES] = device_section
+        config = {'hosts': GuiConfigHandler.create_hosts_section(setup_dialog),
+                  'data': GuiConfigHandler.create_data_section(setup_dialog),
+                  'events': GuiConfigHandler.create_events_section(setup_dialog),
+                  'devices': GuiConfigHandler.create_device_section(setup_dialog)}
 
         return config
 
@@ -161,53 +152,35 @@ class GuiConfigHandler(object):
         """
         # store hosts as a dict as preparation for multi-host support. so the
         # config format doesn't have to be changed if multi-host support is added
-        hosts_section = {'default': {'name': setup_dialog.combo_host.currentText(),
-                                     'port': setup_dialog.spinbox_port.value()}}
+        hosts = {'default': {'name': setup_dialog.combo_host.currentText(),
+                             'port': setup_dialog.spin_port.value()}}
 
-        return hosts_section
+        return hosts
 
-    def create_general_section(setup_dialog):
+    def create_data_section(setup_dialog):
         """
-        Creates the general section part of the config file
+        Creates the data section part of the config file
         and returns it as a dictonary.
         """
-        from brickv.data_logger.configuration_validator import ConfigurationReader
+        data = {'time_format': setup_dialog.combo_data_time_format.itemData(setup_dialog.combo_data_time_format.currentIndex()),
+                'csv': {'enabled': setup_dialog.check_data_to_csv_file.isChecked(),
+                        'file_name': setup_dialog.edit_csv_file_name.text(),
+                        'file_count': setup_dialog.spin_csv_file_count.value(),
+                        'file_size': setup_dialog.spin_csv_file_size.value()}}
 
-        general_section = {}
+        return data
 
-        general_section['time_format'] = setup_dialog.combo_time_format.itemData(setup_dialog.combo_time_format.currentIndex())
+    def create_events_section(setup_dialog):
+        """
+        Creates the events section part of the config file
+        and returns it as a dictonary.
+        """
+        events = {'time_format': setup_dialog.combo_events_time_format.itemData(setup_dialog.combo_events_time_format.currentIndex()),
+                  'log': {'enabled': setup_dialog.check_events_to_log_file.isChecked(),
+                          'file_name': setup_dialog.edit_log_file_name.text(),
+                          'level': setup_dialog.combo_log_level.itemData(setup_dialog.combo_log_level.currentIndex())}}
 
-        # file_count      spin_file_count         value()         : int
-        general_section[ConfigurationReader.GENERAL_LOG_COUNT] = setup_dialog.spin_file_count.value()
-        # file_size       spin_file_size          value()         : int * 1024 * 1024! (MB -> Byte)
-        general_section[ConfigurationReader.GENERAL_LOG_FILE_SIZE] = (setup_dialog.spin_file_size.value() * 1024 * 1024)
-        # path_to_file    line_csv_data_file      text()          : str
-        path_to_file = setup_dialog.line_csv_data_file.text()
-
-        log_to_file = True
-        if path_to_file is None or path_to_file == "":
-            log_to_file = False
-        # log_to_file     (if path_to_file != None || "")
-        general_section[ConfigurationReader.GENERAL_PATH_TO_FILE] = path_to_file
-        general_section[ConfigurationReader.GENERAL_LOG_TO_FILE] = log_to_file
-
-        # logfile path
-        general_section[ConfigurationReader.GENERAL_EVENTLOG_PATH] = setup_dialog.line_event_log_file.text()
-        # loglevel
-        ll = setup_dialog.combo_loglevel.currentText()
-        log_level_num = 0
-        od = collections.OrderedDict(sorted(GUILogger._convert_level.items()))
-        for k in od.keys():
-            if ll == od[k]:
-                log_level_num = k
-                break
-        general_section[ConfigurationReader.GENERAL_EVENTLOG_LEVEL] = log_level_num
-        # log_to_console
-        general_section[ConfigurationReader.GENERAL_EVENTLOG_TO_FILE] = setup_dialog.checkbox_to_file.isChecked()
-        # log_to_file
-        general_section[ConfigurationReader.GENERAL_EVENTLOG_TO_CONSOLE] = setup_dialog.checkbox_to_console.isChecked()
-
-        return general_section
+        return events
 
     def create_device_section(setup_dialog):
         tree_widget = setup_dialog.tree_devices
@@ -326,9 +299,10 @@ class GuiConfigHandler(object):
     load_devices = staticmethod(load_devices)
     # clear_blueprint = staticmethod(clear_blueprint)
     create_device_blueprint = staticmethod(create_device_blueprint)
-    create_config_file = staticmethod(create_config_file)
+    create_config = staticmethod(create_config)
     create_hosts_section = staticmethod(create_hosts_section)
-    create_general_section = staticmethod(create_general_section)
+    create_data_section = staticmethod(create_data_section)
+    create_events_section = staticmethod(create_events_section)
     get_simple_blueprint = staticmethod(get_simple_blueprint)
     get_device_blueprint = staticmethod(get_device_blueprint)
     create_device_section = staticmethod(create_device_section)

@@ -882,7 +882,7 @@ class DeviceImpl(AbstractDevice):
         subvalue_names = self.device_definition[Identifier.DD_VALUES][var_name][Identifier.DD_SUBVALUES]
         unit = self.device_definition[Identifier.DD_VALUES][var_name]['unit']
         now = time.time()
-        time_format = self.datalogger._config['general']['time_format']
+        time_format = self.datalogger._config['data']['time_format']
 
         if time_format == 'de':
             timestamp = utils.timestamp_to_de(now)

@@ -26,7 +26,6 @@ import logging
 import threading
 
 from brickv.bindings.ip_connection import IPConnection
-from brickv.data_logger.configuration_validator import ConfigurationReader
 from brickv.data_logger.event_logger import EventLogger
 from brickv.data_logger.job import CSVWriterJob#, GuiDataJob
 import brickv.data_logger.loggable_devices as loggable_devices
@@ -71,16 +70,16 @@ class DataLogger(threading.Thread):
         self.log_to_file = True
         self.stopped = False
 
-    def process_general_section(self):
+    def process_data_section(self):
         """
         Information out of the general section will be consumed here
         """
-        data = self._config['general']
+        csv = self._config['data']['csv']
 
-        self.log_to_file = data[ConfigurationReader.GENERAL_LOG_TO_FILE]
-        self.default_file_path = data[ConfigurationReader.GENERAL_PATH_TO_FILE]
-        self.max_file_size = data[ConfigurationReader.GENERAL_LOG_FILE_SIZE]
-        self.max_file_count = data[ConfigurationReader.GENERAL_LOG_COUNT]
+        self.log_to_file = csv['enabled']
+        self.default_file_path = csv['file_name']
+        self.max_file_count = csv['file_count']
+        self.max_file_size = csv['file_size'] * 1024 * 1024 # megabyte to byte
 
         EventLogger.debug("Logging output to file: " + str(self.log_to_file))
         EventLogger.debug("Output file path: " + str(self.default_file_path))
@@ -121,7 +120,7 @@ class DataLogger(threading.Thread):
         This function starts the actual logging process in a new thread
         """
         self.stopped = False
-        self.process_general_section()
+        self.process_data_section()
 
         self.initialize_loggable_devices()
 
