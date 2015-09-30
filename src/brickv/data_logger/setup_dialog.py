@@ -33,7 +33,7 @@ from datetime import datetime
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt  # , SIGNAL
-from PyQt4.QtGui import QDialog, QMessageBox, QPalette
+from PyQt4.QtGui import QDialog, QMessageBox, QPalette, QStandardItemModel, QStandardItem
 
 from brickv import config
 from brickv.utils import get_save_file_name, get_open_file_name, get_main_window, get_home_path
@@ -67,15 +67,16 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.device_dialog = None
 
-        # Code Inspector
         self.host_infos = None
         self.last_host = None
         self.host_index_changing = None
 
-        # if self._table_widget is not None:#FIXME rework this like the console_tab <-- what does that mean?!
-        # self.jobs.append()
-
         self.setupUi(self)
+
+        self.model_data = QStandardItemModel()
+        self.model_data.setHorizontalHeaderLabels(['UID', 'Name', 'Var', 'Raw', 'Unit', 'Time'])
+        self.table_data.setModel(self.model_data)
+
         self.widget_initialization()
 
         timestamp = int(time.time())
@@ -368,7 +369,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         """
             Clears the Data table.
         """
-        self.table_widget.setRowCount(0)
+        self.model_data.removeRows(0, self.model_data.rowCount())
 
     def tab_reset_warning(self):
         """
@@ -632,19 +633,29 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             SIGNAL function:
             Adds new CSV Data into the Table.
         """
-        row = self.table_widget.rowCount()
+        rows = self.model_data.rowCount()
 
-        while row > 1000:
-            self.table_widget.removeRow(0)
-            row = self.table_widget.rowCount()
+        while rows >= 1000:
+            self.model_data.removeRow(0)
+            rows = self.model_data.rowCount()
 
-        self.table_widget.insertRow(row)
-        self.table_widget.setItem(row, 0, QtGui.QTableWidgetItem(str(csv_data.uid)))
-        self.table_widget.setItem(row, 1, QtGui.QTableWidgetItem(str(csv_data.name)))
-        self.table_widget.setItem(row, 2, QtGui.QTableWidgetItem(str(csv_data.var_name)))
-        self.table_widget.setItem(row, 3, QtGui.QTableWidgetItem(str(csv_data.raw_data)))
-        self.table_widget.setItem(row, 4, QtGui.QTableWidgetItem(str(csv_data.var_unit)))
-        self.table_widget.setItem(row, 5, QtGui.QTableWidgetItem(str(csv_data.timestamp)))
+        row_number = None
+
+        if rows > 0:
+            try:
+                row_number = int(self.model_data.headerData(rows - 1, Qt.Vertical))
+            except ValueError:
+                pass
+
+        self.model_data.appendRow([QStandardItem(csv_data.uid),
+                                   QStandardItem(csv_data.name),
+                                   QStandardItem(csv_data.var_name),
+                                   QStandardItem(str(csv_data.raw_data)),
+                                   QStandardItem(csv_data.var_unit),
+                                   QStandardItem(csv_data.timestamp)])
+
+        if row_number != None:
+            self.model_data.setHeaderData(rows, Qt.Vertical, str(row_number + 1))
 
         if self.checkbox_data_auto_scroll.isChecked():
-            self.table_widget.scrollToBottom()
+            self.table_data.scrollToBottom()

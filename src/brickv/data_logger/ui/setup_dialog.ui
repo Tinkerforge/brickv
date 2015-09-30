@@ -389,49 +389,6 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <layout class="QGridLayout" name="gridLayout_4">
-         <item row="1" column="0" colspan="4">
-          <widget class="QTableWidget" name="table_widget">
-           <property name="editTriggers">
-            <set>QAbstractItemView::NoEditTriggers</set>
-           </property>
-           <property name="alternatingRowColors">
-            <bool>true</bool>
-           </property>
-           <attribute name="horizontalHeaderStretchLastSection">
-            <bool>true</bool>
-           </attribute>
-           <column>
-            <property name="text">
-             <string>UID</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Name</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Var</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Raw</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Unit</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>Time</string>
-            </property>
-           </column>
-          </widget>
-         </item>
          <item row="0" column="0" colspan="2">
           <widget class="QLabel" name="label_3">
            <property name="sizePolicy">
@@ -460,6 +417,19 @@
            <property name="checked">
             <bool>true</bool>
            </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="4">
+          <widget class="QTableView" name="table_data">
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>true</bool>
+           </property>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
+           </attribute>
           </widget>
          </item>
         </layout>
@@ -586,7 +556,7 @@
   <tabstop>btn_remove_device</tabstop>
   <tabstop>btn_add_device</tabstop>
   <tabstop>btn_remove_all_devices</tabstop>
-  <tabstop>table_widget</tabstop>
+  <tabstop>table_data</tabstop>
   <tabstop>checkbox_console_auto_scroll</tabstop>
   <tabstop>txt_console</tabstop>
  </tabstops>
