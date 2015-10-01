@@ -176,9 +176,9 @@ def command_line_start(argv, program_name):
     """
     cl_parser = argparse.ArgumentParser(description='Tinkerforge Data Logger')
 
-    cl_parser.add_argument('config_file', help="Path to the configuration file")
+    cl_parser.add_argument('config_file', help="Path to the config file")
     cl_parser.add_argument('-v', action="store_true", dest="validate",
-                           help="Just process the validation of the configuration file")
+                           help="Just process the validation of the config file")
 
     results = cl_parser.parse_args(argv)
 

@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 
 import logging
 import threading
+import time
 
 from brickv.bindings.ip_connection import IPConnection
 from brickv.data_logger.event_logger import EventLogger
@@ -49,8 +50,8 @@ class DataLogger(threading.Thread):
         self.job_sleep = 1  # TODO: Enahncement -> use condition objects
         self.timers = []
         self._gui_job = gui_job
-        self.max_file_size = None
-        self.max_file_count = None
+        self.csv_file_count = 1
+        self.csv_file_size = 0
         self.data_queue = {}  # universal data_queue hash map
         self.host = config['hosts']['default']['name']
         self.port = config['hosts']['default']['port']
@@ -66,23 +67,23 @@ class DataLogger(threading.Thread):
         self.ipcon.set_timeout(1)  # TODO: Timeout number
         EventLogger.debug("Set ipcon.time_out to 1.")
         self._config = config
-        self.default_file_path = "logged_data.csv"
-        self.log_to_file = True
+        self.csv_file_name = 'logger_data_{0}.csv'.format(int(time.time()))
+        self.csv_enabled = True
         self.stopped = False
 
-    def process_data_section(self):
+    def process_data_csv_section(self):
         """
         Information out of the general section will be consumed here
         """
         csv = self._config['data']['csv']
 
-        self.log_to_file = csv['enabled']
-        self.default_file_path = csv['file_name']
-        self.max_file_count = csv['file_count']
-        self.max_file_size = csv['file_size'] * 1024 * 1024 # megabyte to byte
+        self.csv_enabled = csv['enabled']
+        self.csv_file_name = csv['file_name']
+        self.csv_file_count = csv['file_count']
+        self.csv_file_size = csv['file_size'] * 1024 * 1024 # megabyte to byte
 
-        EventLogger.debug("Logging output to file: " + str(self.log_to_file))
-        EventLogger.debug("Output file path: " + str(self.default_file_path))
+        EventLogger.debug("Logging output to CSV file: " + str(self.csv_enabled))
+        EventLogger.debug("Output file path: " + str(self.csv_file_name))
 
     def initialize_loggable_devices(self):
         """
@@ -120,14 +121,14 @@ class DataLogger(threading.Thread):
         This function starts the actual logging process in a new thread
         """
         self.stopped = False
-        self.process_data_section()
+        self.process_data_csv_section()
 
         self.initialize_loggable_devices()
 
         """START-WRITE-THREAD"""
         # create jobs
         # look which thread should be working
-        if self.log_to_file:
+        if self.csv_enabled:
             self.jobs.append(CSVWriterJob(name="CSV-Writer", datalogger=self))
         if self._gui_job is not None:
             self._gui_job.set_datalogger(self)

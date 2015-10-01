@@ -287,7 +287,7 @@ class CSVWriter(object):
     a CSV formatted file.
     """
 
-    def __init__(self, file_path, max_file_size=0, max_file_count=1):
+    def __init__(self, file_path, max_file_count=1, max_file_size=0):
         """
         file_path = Path to the csv file
         """
