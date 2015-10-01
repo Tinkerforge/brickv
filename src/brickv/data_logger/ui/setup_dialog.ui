@@ -115,9 +115,6 @@
                 <property name="text">
                  <string>Write to Log File</string>
                 </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
                </widget>
               </item>
              </layout>
@@ -277,9 +274,6 @@
                <widget class="QCheckBox" name="check_data_to_csv_file">
                 <property name="text">
                  <string>Write to CSV File</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
                 </property>
                </widget>
               </item>
