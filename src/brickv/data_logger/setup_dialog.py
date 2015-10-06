@@ -31,12 +31,13 @@ import logging
 from datetime import datetime
 
 from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import Qt  # , SIGNAL
+from PyQt4.QtCore import Qt, QRegExp
 from PyQt4.QtGui import QDialog, QMessageBox, QPalette, QStandardItemModel, \
                         QStandardItem, QLineEdit, QSpinBox, QCheckBox, QComboBox, \
-                        QSpinBox, QDoubleSpinBox
+                        QSpinBox, QDoubleSpinBox, QRegExpValidator
 
 from brickv import config
+from brickv.bindings.ip_connection import BASE58
 from brickv.utils import get_save_file_name, get_open_file_name, get_main_window, get_home_path
 from brickv.data_logger.event_logger import EventLogger, GUILogger
 from brickv.data_logger.gui_config_handler import GuiConfigHandler
@@ -430,7 +431,8 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.model_devices.appendRow([name_item, uid_item])
 
         edit_uid = QLineEdit()
-        edit_uid.setPlaceholderText('Enter UID') # FIXME: add base58 validator
+        edit_uid.setPlaceholderText('Enter UID')
+        edit_uid.setValidator(QRegExpValidator(QRegExp('^[{0}]{{1,6}}$'.format(BASE58)))) # FIXME: use stricter logic
         edit_uid.setText(device['uid'])
 
         self.tree_devices.setIndexWidget(uid_item.index(), edit_uid)

@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 import codecs
 import json
 
+from brickv.bindings.ip_connection import base58decode
 from brickv.data_logger.event_logger import EventLogger
 from brickv.data_logger.utils import DataLoggerException, Utilities
 from brickv.data_logger.loggable_devices import Identifier as Idf
@@ -306,6 +307,18 @@ class ConfigValidator(object):
             if not isinstance(uid, basestring):
                 self._report_error('Device UID is not a string')
                 continue
+
+            if len(uid) > 0:
+                try:
+                    decoded_uid = base58decode(uid)
+                except Exception as e:
+                    print e
+                    self._report_error('Invalid device UID: {0}'.format(uid))
+                    continue
+
+                if decoded_uid < 1 or decoded_uid > 0xFFFFFFFF:
+                    self._report_error('Device UID is out-of-range: {0}'.format(uid))
+                    continue
 
             # name
             try:

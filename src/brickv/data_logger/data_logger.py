@@ -101,8 +101,8 @@ class DataLogger(threading.Thread):
                 EventLogger.warning('Ignoring "{0}" with invalid UID: {1}'.format(device['name'], device['uid']))
                 continue
 
-            if decoded_uid < 2:
-                EventLogger.warning('Ignoring "{0}" with invalid UID: {1}'.format(device['name'], device['uid']))
+            if decoded_uid < 1 or decoded_uid > 0xFFFFFFFF:
+                EventLogger.warning('Ignoring "{0}" with out-of-range UID: {1}'.format(device['name'], device['uid']))
                 continue
 
             try:
