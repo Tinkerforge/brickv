@@ -379,8 +379,6 @@ class ConfigValidator(object):
                                     self._report_error('Subvalues of value "{0}" of device "{1}" is not a dict'.format(value_spec['name'], uid))
                                 else:
                                     for subvalue_spec_name in value_spec['subvalues']:
-                                        subvalue_spec = value_spec['subvalues'][subvalue_spec_name]
-
                                         try:
                                             subvalue_value = subvalues[subvalue_spec_name]
                                         except:
