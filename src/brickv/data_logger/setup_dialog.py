@@ -76,8 +76,14 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.setupUi(self)
 
         self.model_data = QStandardItemModel(self)
-        self.model_data.setHorizontalHeaderLabels(['UID', 'Name', 'Var', 'Raw', 'Unit', 'Time'])
+        self.model_data.setHorizontalHeaderLabels(['Time', 'Name', 'UID', 'Var', 'Raw', 'Unit'])
         self.table_data.setModel(self.model_data)
+        self.table_data.setColumnWidth(0, 160)
+        self.table_data.setColumnWidth(1, 170)
+        self.table_data.setColumnWidth(2, 50)
+        self.table_data.setColumnWidth(3, 110)
+        self.table_data.setColumnWidth(4, 70)
+        self.table_data.setColumnWidth(5, 100)
 
         self.model_devices = QStandardItemModel(self)
         self.model_devices.setHorizontalHeaderLabels(['Device', 'Value'])
@@ -550,12 +556,12 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             except ValueError:
                 pass
 
-        self.model_data.appendRow([QStandardItem(csv_data.uid),
+        self.model_data.appendRow([QStandardItem(csv_data.timestamp),
                                    QStandardItem(csv_data.name),
+                                   QStandardItem(csv_data.uid),
                                    QStandardItem(csv_data.var_name),
                                    QStandardItem(str(csv_data.raw_data)),
-                                   QStandardItem(csv_data.var_unit),
-                                   QStandardItem(csv_data.timestamp)])
+                                   QStandardItem(csv_data.var_unit)])
 
         if row_number != None:
             self.model_data.setHeaderData(rows, Qt.Vertical, str(row_number + 1))

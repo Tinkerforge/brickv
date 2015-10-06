@@ -1303,7 +1303,12 @@ class DeviceImpl(AbstractDevice):
             value = getter(self.device)
         except Exception as e:
             value = self._exception_msg(str(self.identifier) + "-" + str(var_name), e)
-            self.datalogger.add_to_queue(utils.CSVData(self.device_uid, self.identifier, var_name, value, '', timestamp))
+            self.datalogger.add_to_queue(utils.CSVData(timestamp,
+                                                       self.identifier,
+                                                       self.device_uid,
+                                                       var_name,
+                                                       value,
+                                                       ''))
             # log_exception(timestamp, value_name, e)
             return
 
@@ -1315,8 +1320,12 @@ class DeviceImpl(AbstractDevice):
                     unit_str = unit
 
                 # log_value(value_name, value)
-                self.datalogger.add_to_queue(
-                    utils.CSVData(self.device_uid, self.identifier, var_name, value, unit_str, timestamp))
+                self.datalogger.add_to_queue(utils.CSVData(timestamp,
+                                                           self.identifier,
+                                                           self.device_uid,
+                                                           var_name,
+                                                           value,
+                                                           unit_str))
             else:
                 subvalue_bool = self.data[Identifier.DD_VALUES][var_name][Identifier.DD_SUBVALUES]
                 for i in range(len(subvalue_names)):
@@ -1327,14 +1336,20 @@ class DeviceImpl(AbstractDevice):
                                     unit_str = ''
                                 else:
                                     unit_str = unit[i]
-                                self.datalogger.add_to_queue(utils.CSVData(self.device_uid, self.identifier,
+                                self.datalogger.add_to_queue(utils.CSVData(timestamp,
+                                                                           self.identifier,
+                                                                           self.device_uid,
                                                                            str(var_name) + "-" + str(subvalue_names[i]),
-                                                                           value[i], unit_str, timestamp))
+                                                                           value[i],
+                                                                           unit_str))
                         except Exception as e:
                             value = self._exception_msg(str(self.identifier) + "-" + str(var_name), e)
-                            self.datalogger.add_to_queue(utils.CSVData(self.device_uid, self.identifier,
+                            self.datalogger.add_to_queue(utils.CSVData(timestamp,
+                                                                       self.identifier,
+                                                                       self.device_uid,
                                                                        str(var_name) + "-" + str(subvalue_names[i]),
-                                                                       value[i], '', timestamp))
+                                                                       value[i],
+                                                                       ''))
                             return
                     else:
                         for k in range(len(subvalue_names[i])):
@@ -1344,15 +1359,26 @@ class DeviceImpl(AbstractDevice):
                                         unit_str = ''
                                     else:
                                         unit_str = unit[i][k]
-                                    self.datalogger.add_to_queue(utils.CSVData(self.device_uid, self.identifier,
-                                                                               str(var_name) + "-" + str(subvalue_names[i][k]), value[i][k],
-                                                                               unit_str, timestamp))
+                                    self.datalogger.add_to_queue(utils.CSVData(timestamp,
+                                                                               self.identifier,
+                                                                               self.device_uid,
+                                                                               str(var_name) + "-" + str(subvalue_names[i][k]),
+                                                                               value[i][k],
+                                                                               unit_str))
                             except Exception as e:
                                 value = self._exception_msg(str(self.identifier) + "-" + str(var_name), e)
-                                self.datalogger.add_to_queue(utils.CSVData(self.device_uid, self.identifier,
-                                                                           str(var_name) + "-" + str(subvalue_names[i][k]), value[i][k],
-                                                                           '', timestamp))
+                                self.datalogger.add_to_queue(utils.CSVData(timestamp,
+                                                                           self.identifier,
+                                                                           self.device_uid,
+                                                                           str(var_name) + "-" + str(subvalue_names[i][k]),
+                                                                           value[i][k],
+                                                                           ''))
                                 return
         except Exception as e:
             value = self._exception_msg(str(self.identifier) + "-" + str(var_name), e)
-            self.datalogger.add_to_queue(utils.CSVData(self.device_uid, self.identifier, var_name, value, '', timestamp))
+            self.datalogger.add_to_queue(utils.CSVData(timestamp,
+                                                       self.identifier,
+                                                       self.device_uid,
+                                                       var_name,
+                                                       value,
+                                                       ''))
