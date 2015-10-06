@@ -425,7 +425,11 @@
        <item>
         <layout class="QGridLayout" name="gridLayout_5">
          <item row="1" column="0" colspan="4">
-          <widget class="QTextBrowser" name="text_events"/>
+          <widget class="QTextBrowser" name="text_events">
+           <property name="lineWrapMode">
+            <enum>QTextEdit::NoWrap</enum>
+           </property>
+          </widget>
          </item>
          <item row="0" column="3">
           <widget class="QPushButton" name="btn_clear_events">

@@ -356,12 +356,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         else:
             self.tab_widget.setTabIcon(tab_index, QIcon())
 
-    def btn_clear_events_clicked(self):
-        """
-            Clears the gui events tab.
-        """
-        self.txt_console.clear()
-
     def _host_index_changed(self, i):
         """
             Persists host information changes like in brickv.mainwindow
@@ -519,7 +513,10 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             cursor.removeSelectedText()
 
         if self.checkbox_console_auto_scroll.isChecked():
-            self.text_events.moveCursor(QtGui.QTextCursor.End)
+            self.text_events.verticalScrollBar().setValue(self.text_events.verticalScrollBar().maximum())
+
+    def btn_clear_events_clicked(self):
+        self.text_events.clear()
 
     def highlight_events_tab(self):
         """
