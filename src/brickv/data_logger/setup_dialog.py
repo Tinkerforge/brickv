@@ -34,7 +34,7 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt, QRegExp
 from PyQt4.QtGui import QDialog, QMessageBox, QPalette, QStandardItemModel, \
                         QStandardItem, QLineEdit, QSpinBox, QCheckBox, QComboBox, \
-                        QSpinBox, QDoubleSpinBox, QRegExpValidator
+                        QSpinBox, QDoubleSpinBox, QRegExpValidator, QTextCursor
 
 from brickv import config
 from brickv.bindings.ip_connection import BASE58
@@ -164,9 +164,9 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.tab_widget.currentChanged.connect(self.tab_reset_warning)
         self.btn_clear_data.clicked.connect(self.btn_clear_data_clicked)
 
-        self.connect(self._gui_logger, QtCore.SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE), self.txt_console_output)
+        self.connect(self._gui_logger, QtCore.SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE), self.add_event_message)
         self.connect(self._gui_logger, QtCore.SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT),
-                     self.txt_console_highlight_tab)
+                     self.highlight_events_tab)
 
         # login information
         self.combo_host.currentIndexChanged.connect(self._host_index_changed)
@@ -509,17 +509,19 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
                 self.tree_devices.setIndexWidget(option_widget_item.index(), widget_option_value)
 
-    def txt_console_output(self, msg):
-        """
-            SIGNAL function:
-            Function to write text on the gui console tab.
-        """
-        self.txt_console.append(str(msg))
+    def add_event_message(self, message):
+        self.text_events.append(message)
+
+        while self.text_events.document().blockCount() > 1000:
+            cursor = QTextCursor(self.text_events.document().begin())
+            cursor.select(QTextCursor.BlockUnderCursor)
+            cursor.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor)
+            cursor.removeSelectedText()
+
         if self.checkbox_console_auto_scroll.isChecked():
-            self.txt_console.moveCursor(QtGui.QTextCursor.End)
+            self.text_events.moveCursor(QtGui.QTextCursor.End)
 
-
-    def txt_console_highlight_tab(self):
+    def highlight_events_tab(self):
         """
             SIGNAL function:
             Highlight the events tab when an error occurs.

@@ -425,7 +425,7 @@
        <item>
         <layout class="QGridLayout" name="gridLayout_5">
          <item row="1" column="0" colspan="4">
-          <widget class="QTextBrowser" name="txt_console"/>
+          <widget class="QTextBrowser" name="text_events"/>
          </item>
          <item row="0" column="3">
           <widget class="QPushButton" name="btn_clear_events">
@@ -539,7 +539,7 @@
   <tabstop>btn_remove_all_devices</tabstop>
   <tabstop>table_data</tabstop>
   <tabstop>checkbox_console_auto_scroll</tabstop>
-  <tabstop>txt_console</tabstop>
+  <tabstop>text_events</tabstop>
  </tabstops>
  <resources/>
  <connections/>
