@@ -75,11 +75,11 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.setupUi(self)
 
-        self.model_data = QStandardItemModel()
+        self.model_data = QStandardItemModel(self)
         self.model_data.setHorizontalHeaderLabels(['UID', 'Name', 'Var', 'Raw', 'Unit', 'Time'])
         self.table_data.setModel(self.model_data)
 
-        self.model_devices = QStandardItemModel()
+        self.model_devices = QStandardItemModel(self)
         self.model_devices.setHorizontalHeaderLabels(['Device', 'Value'])
         self.tree_devices.setModel(self.model_devices)
         self.tree_devices.setColumnWidth(0, 300)
