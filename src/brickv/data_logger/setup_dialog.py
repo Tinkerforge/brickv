@@ -24,7 +24,6 @@ Boston, MA 02111-1307, USA.
 
 import codecs
 import collections
-import json
 import os
 import time
 import functools
@@ -33,7 +32,9 @@ from datetime import datetime
 
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt  # , SIGNAL
-from PyQt4.QtGui import QDialog, QMessageBox, QPalette, QStandardItemModel, QStandardItem
+from PyQt4.QtGui import QDialog, QMessageBox, QPalette, QStandardItemModel, \
+                        QStandardItem, QLineEdit, QSpinBox, QCheckBox, QComboBox, \
+                        QSpinBox, QDoubleSpinBox
 
 from brickv import config
 from brickv.utils import get_save_file_name, get_open_file_name, get_main_window, get_home_path
@@ -43,7 +44,7 @@ from brickv.data_logger.job import GuiDataJob
 from brickv.data_logger.loggable_devices import Identifier
 from brickv.data_logger import utils
 from brickv.data_logger.device_dialog import DeviceDialog
-from brickv.data_logger.configuration_validator import load_and_validate_config
+from brickv.data_logger.configuration_validator import load_and_validate_config, save_config
 from brickv.data_logger.ui_setup_dialog import Ui_SetupDialog
 
 # noinspection PyProtectedMember,PyCallByClass
@@ -76,6 +77,11 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.model_data = QStandardItemModel()
         self.model_data.setHorizontalHeaderLabels(['UID', 'Name', 'Var', 'Raw', 'Unit', 'Time'])
         self.table_data.setModel(self.model_data)
+
+        self.model_devices = QStandardItemModel()
+        self.model_devices.setHorizontalHeaderLabels(['Device', 'Value'])
+        self.tree_devices.setModel(self.model_devices)
+        self.tree_devices.setColumnWidth(0, 300)
 
         self.widget_initialization()
 
@@ -165,9 +171,9 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.combo_host.currentIndexChanged.connect(self._host_index_changed)
         self.spin_port.valueChanged.connect(self._port_changed)
 
-        self.tree_devices.itemDoubleClicked.connect(self.tree_on_double_click)
-        self.tree_devices.itemChanged.connect(self.tree_on_change)
-        self.tree_devices.itemChanged.connect(self.cb_device_interval_changed)
+        #self.tree_devices.itemDoubleClicked.connect(self.tree_on_double_click)
+        #self.tree_devices.itemChanged.connect(self.tree_on_change)
+        #self.tree_devices.itemChanged.connect(self.cb_device_interval_changed)
 
     def host_info_initialization(self):
         """
@@ -224,10 +230,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.btn_start_logging.clicked.connect(self.btn_start_logging_clicked)
 
     def btn_save_config_clicked(self):
-        """
-            Opens a FileSelectionDialog and saves the current config.
-        """
-        filename = get_save_file_name(get_main_window(), 'Save Config File',
+        filename = get_save_file_name(get_main_window(), 'Save Config',
                                       get_home_path(), 'JSON Files (*.json)')
 
         if len(filename) == 0:
@@ -238,24 +241,13 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         config = GuiConfigHandler.create_config(self)
 
-        try:
-            with open(filename, 'w') as outfile:
-                json.dump(config, outfile, sort_keys=True, indent=2)
-        except Exception as e1:
-            EventLogger.warning("Load Config - Exception: " + str(e1))
-            QMessageBox.warning(self, 'Error',
-                                'Could not save the config! Look at the Events tab for further information.',
+        if not save_config(config, filename):
+            QMessageBox.warning(get_main_window(), 'Save Config',
+                                'Could not save config to file! See Events tab for details.',
                                 QMessageBox.Ok)
-            return
-
-        QMessageBox.information(self, 'Success', 'Config saved!', QMessageBox.Ok)
-        EventLogger.info("Config saved to: " + str(filename))
 
     def btn_load_config_clicked(self):
-        """
-            Opens a FileSelectionDialog and loads the selected config.
-        """
-        filename = get_open_file_name(get_main_window(), 'Load Config File',
+        filename = get_open_file_name(get_main_window(), 'Load Config',
                                       get_home_path(), 'JSON Files (*.json)')
 
         if len(filename) == 0:
@@ -264,24 +256,15 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         config = load_and_validate_config(filename)
 
         if config == None:
+            QMessageBox.warning(get_main_window(), 'Load Config',
+                                'Could not load config from file! See Events tab for details.',
+                                QMessageBox.Ok)
             return
 
-        # devices
-        config_blueprint = GuiConfigHandler.load_devices(config)
-
-        if config_blueprint == None:
-            return
-
-        self.create_tree_items(config_blueprint)
         self.update_setup_tab(config)
-
-        QMessageBox.information(self, 'Success', 'Config loaded!', QMessageBox.Ok)
-        EventLogger.info("Config loaded from: " + str(filename))
+        self.update_devices_tab(config)
 
     def btn_browse_csv_file_name_clicked(self):
-        """
-            Opens a FileSelectionDialog and sets the selected path for the CSV data output file.
-        """
         if len(self.edit_csv_file_name.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(self.edit_csv_file_name.text()))
         else:
@@ -297,9 +280,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             self.edit_csv_file_name.setText(filename)
 
     def btn_browse_log_file_name_clicked(self):
-        """
-            Opens a FileSelectionDialog and sets the selected path for the event log output file.
-        """
         if len(self.edit_log_file_name.text()) > 0:
             last_dir = os.path.dirname(os.path.realpath(self.edit_log_file_name.text()))
         else:
@@ -326,49 +306,23 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.device_dialog.show()
 
     def btn_remove_device_clicked(self):
-        """
-            Removes selected Device
-        """
-        selected_item = self.tree_devices.selectedItems()
-        for index in range(0, len(selected_item)):
-            try:
-                if selected_item[index] is None:
-                    continue
+        selection = self.tree_devices.selectionModel().selectedIndexes()
 
-                device_name = selected_item[index].text(0)
-                device_id = selected_item[index].text(1)
+        while len(selection) > 0:
+            index = selection[0]
 
-                if selected_item[index].text(0) not in Identifier.DEVICE_DEFINITIONS:
-                    # have to find the parent
-                    current_item = selected_item[0]
+            while index.parent() != self.model_devices.invisibleRootItem().index():
+                index = index.parent()
 
-                    while True:
-                        if current_item.parent() is None:
-                            if current_item.text(0) not in Identifier.DEVICE_DEFINITIONS:
-                                EventLogger.error("Cant remove device: " + selected_item[index].text(0))
-                                device_name = ""
-                                device_id = ""
-                                break
-                            else:
-                                device_name = current_item.text(0)
-                                device_id = current_item.text(1)
-                                break
-                        else:
-                            current_item = current_item.parent()
+            self.model_devices.removeRows(index.row(), 1)
 
-                self.remove_item_from_tree(device_name, device_id)
-            except Exception as e:
-                if not str(e).startswith("wrapped C/C++ object"):
-                    EventLogger.error("Cant remove device: " + str(e))  # was already removed
-
+            # get new selection, because row removal might invalid indices
+            selection = self.tree_devices.selectionModel().selectedIndexes()
 
     def btn_remove_all_devices_clicked(self):
-        self.tree_devices.clear()
+        self.model_devices.removeRows(0, self.model_devices.rowCount())
 
     def btn_clear_data_clicked(self):
-        """
-            Clears the Data table.
-        """
         self.model_data.removeRows(0, self.model_data.rowCount())
 
     def tab_reset_warning(self):
@@ -433,9 +387,8 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.host_infos[i].port = self.spin_port.value()
 
     def update_setup_tab(self, config):
-        """
-            Update the information of the setup tab with the given config.
-        """
+        EventLogger.debug('Updating setup tab from config')
+
         self.combo_host.setEditText(config['hosts']['default']['name'])
         self.spin_port.setValue(config['hosts']['default']['port'])
 
@@ -447,163 +400,112 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.combo_events_time_format.setCurrentIndex(max(self.combo_events_time_format.findData(config['events']['time_format']), 0))
         self.check_events_to_log_file.setChecked(config['events']['log']['enabled'])
-        self.edit_log_file_name.setChecked(config['events']['log']['file_name'])
+        self.edit_log_file_name.setText(config['events']['log']['file_name'])
         self.combo_log_level.setCurrentIndex(max(self.combo_events_time_format.findData(config['events']['log']['level']), 0))
 
-    def create_tree_items(self, blueprint):
-        """
-            Create the device tree with the given blueprint.
-            Shows all possible devices, if the view_all Flag is True.
-        """
-        self.tree_devices.clear()
-        self.tree_devices.setSortingEnabled(False)
+    def update_devices_tab(self, config):
+        EventLogger.debug('Updating devices tab from config')
 
-        try:
-            for dev in blueprint:
-                self.__add_item_to_tree(dev)
-            EventLogger.debug("Device Tree created.")
+        self.model_devices.removeRows(0, self.model_data.rowCount())
 
-        except Exception as e:
-            EventLogger.warning("DeviceTree - Exception while creating the Tree: " + str(e))
+        for device in config['devices']:
+            self.add_device_to_tree(device)
 
-        self.tree_devices.sortItems(0, QtCore.Qt.AscendingOrder)
-        self.tree_devices.setSortingEnabled(True)
+    def add_device_to_tree(self, device):
+        # check if device is already added
+        if len(device['uid']) > 0:
+            for row in range(self.model_devices.rowCount()):
+                existing_name = self.model_devices.item(row, 0).text()
+                exisitng_uid = self.tree_devices.indexWidget(self.model_devices.item(row, 1).index()).text()
 
-    def add_item_to_tree(self, item_blueprint):
-        self.tree_devices.setSortingEnabled(False)
+                if device['name'] == existing_name and device['uid'] == exisitng_uid:
+                    EventLogger.info('Ignoring duplicate device "{0}" with UID "{1}"'
+                                     .format(device['name'], device['uid']))
+                    return
 
-        self.__add_item_to_tree(item_blueprint)
+        # add device
+        name_item = QStandardItem(device['name'])
+        uid_item = QStandardItem('')
 
-        self.tree_devices.sortItems(0, QtCore.Qt.AscendingOrder)
-        self.tree_devices.setSortingEnabled(True)
+        self.model_devices.appendRow([name_item, uid_item])
 
-    def cb_device_interval_changed(self, item, column):
-        widget = self.tree_devices.itemWidget(item, 1)
+        edit_uid = QLineEdit()
+        edit_uid.setPlaceholderText('Enter UID') # FIXME: add base58 validator
+        edit_uid.setText(device['uid'])
 
-        if widget != None:
-            try:
-                widget.setValue(int(item.text(1)))
-            except:
-                print "foobar"
+        self.tree_devices.setIndexWidget(uid_item.index(), edit_uid)
 
-    def __add_item_to_tree(self, item_blueprint):
-        """
-        Private function with NO sort = false
-        :param item_blueprint:
-        :return:
-        """
-        # counts topLevelItems
-        lv0_counter = self.tree_devices.topLevelItemCount()
+        value_specs = Identifier.DEVICE_DEFINITIONS[device['name']]['values']
+        parent_item = QStandardItem('Values')
 
-        # counts values in devices
-        value_counter = 0
+        name_item.appendRow(parent_item)
+        self.tree_devices.expand(parent_item.index())
 
-        # lvl0: new entry(name|UID)
-        item_0 = QtGui.QTreeWidgetItem(self.tree_devices)
-        item_0.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-        # set name|UID
-        self.tree_devices.topLevelItem(lv0_counter).setText(0, str(item_blueprint[Identifier.DD_NAME]))
-        self.tree_devices.topLevelItem(lv0_counter).setText(1, str(item_blueprint[Identifier.DD_UID]))
-        self.tree_devices.topLevelItem(lv0_counter).setToolTip(1, self.__tree_uid_tooltip)
+        # add values
+        for value_spec in value_specs:
+            value_name_item = QStandardItem(value_spec['name'])
+            value_interval_item = QStandardItem('')
 
-        def value_changed(item, value):
-            item.setText(1, str(value))
+            parent_item.appendRow([value_name_item, value_interval_item])
 
-        for item_value in item_blueprint[Identifier.DD_VALUES]:
-            # lvl1: new entry(value_name|interval)
-            item_1 = QtGui.QTreeWidgetItem(item_0)
-            item_1.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-            interval = item_blueprint[Identifier.DD_VALUES][item_value][Identifier.DD_VALUES_INTERVAL]
-            child = self.tree_devices.topLevelItem(lv0_counter).child(value_counter)
-            child.setText(0, str(item_value))
-            child.setText(1, str(interval))
-            child.setToolTip(1, self.__tree_interval_tooltip)
-
-            spinbox_interval = QtGui.QSpinBox()
+            spinbox_interval = QSpinBox()
             spinbox_interval.setRange(0, (1 << 31) - 1)
             spinbox_interval.setSingleStep(1)
-            spinbox_interval.setValue(interval)
-            spinbox_interval.setSuffix(" seconds")
-            spinbox_interval.valueChanged.connect(functools.partial(value_changed, child))
+            spinbox_interval.setValue(device['values'][value_spec['name']]['interval'])
+            spinbox_interval.setSuffix(' seconds')
 
-            self.tree_devices.setItemWidget(child, 1, spinbox_interval)
+            self.tree_devices.setIndexWidget(value_interval_item.index(), spinbox_interval)
 
-            # check sub_values
-            sub_values = item_blueprint[Identifier.DD_VALUES][item_value][Identifier.DD_SUBVALUES]
-            if sub_values is not None:
-                # counts sub values in devices
-                sub_value_counter = 0
-                for item_sub_value in sub_values:
-                    # lvl2: new entry (sub_value_name|True/False)
-                    item_2 = QtGui.QTreeWidgetItem(item_1)
-                    item_2.setFlags(
-                        QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
-                    lvl2_item = self.tree_devices.topLevelItem(lv0_counter).child(value_counter).child(sub_value_counter)
-                    item_sub_value_value = \
-                        item_blueprint[Identifier.DD_VALUES][item_value][Identifier.DD_SUBVALUES][item_sub_value]
-                    lvl2_item.setText(0, str(item_sub_value))
-                    if item_sub_value_value:
-                        lvl2_item.setCheckState(1, QtCore.Qt.Checked)
-                    else:
-                        lvl2_item.setCheckState(1, QtCore.Qt.Unchecked)
-                    lvl2_item.setText(1, "")
+            if value_spec['subvalues'] != None:
+                for subvalue_name in value_spec['subvalues']:
+                    subvalue_name_item = QStandardItem(subvalue_name)
+                    subvalue_check_item = QStandardItem('')
 
-                    sub_value_counter += 1
-            value_counter += 1
+                    value_name_item.appendRow([subvalue_name_item, subvalue_check_item])
 
-    def remove_item_from_tree(self, item_name, item_uid):
-        """
-            Removes an item from the device tree. The first match is removed!
-        """
-        # remove first found match!
-        # removed_item = False
-        t0_max = self.tree_devices.topLevelItemCount()
+                    check_subvalue = QCheckBox()
+                    check_subvalue.setChecked(device['values'][value_spec['name']]['subvalues'][subvalue_name])
 
-        for t0 in range(0, t0_max):
+                    self.tree_devices.setIndexWidget(subvalue_check_item.index(), check_subvalue)
 
-            dev_name = self.tree_devices.topLevelItem(t0).text(0)
-            dev_uid = self.tree_devices.topLevelItem(t0).text(1)
+        self.tree_devices.expand(name_item.index())
 
-            if dev_name == item_name and dev_uid == item_uid:
-                # removed_item = True
-                self.tree_devices.takeTopLevelItem(t0)
-                break
+        # add options
+        option_specs = Identifier.DEVICE_DEFINITIONS[device['name']]['options']
 
-                # can't use this approach because of multiple selection in tree_devices
-                # if not removed_item:
-                # QMessageBox.information(self, 'No Device found?', 'No Device was not found and could not be deleted!', QMessageBox.Ok)
+        if option_specs != None:
+            parent_item = QStandardItem('Options')
 
-    def tree_on_change(self, item, column):
-        # check for wrong input number in interval or uid
-        if column == 1:
-            # check if tooltip is set
-            tt = item.toolTip(1)
-            if tt != "":
-                # check if tooltip is interval
-                if tt == self.__tree_interval_tooltip:
-                    item.setText(1, str(utils.Utilities.parse_to_int(item.text(1))))
-                # check if tooltip is uid
-                elif tt == self.__tree_uid_tooltip:
-                    text = item.text(1)
-                    if not utils.Utilities.is_valid_string(text, 1):
-                        text = Identifier.DD_UID_DEFAULT
-                    item.setText(1, text)
+            name_item.appendRow(parent_item)
 
-    def tree_on_double_click(self, item, column):
-        """
-            Is called, when a cell in the tree was doubleclicked.
-            Is used to allow the changing of the interval
-            numbers and UID's but not empty cells.
-        """
-        edit_flag = (
-            QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
-        non_edit_flag = (QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+            for option_spec in option_specs:
+                option_name_item = QStandardItem(option_spec['name'])
+                option_widget_item = QStandardItem('')
 
-        if column == 0:
-            item.setFlags(non_edit_flag)
+                parent_item.appendRow([option_name_item, option_widget_item])
 
-        elif item.text(column) != "" or item.text(column) is None:
-            item.setFlags(edit_flag)
+                if option_spec['type'] == 'choice':
+                    widget_option_value = QComboBox()
+
+                    for option_value_spec in option_spec['values']:
+                        widget_option_value.addItem(option_value_spec[0], option_value_spec[1])
+
+                    widget_option_value.setCurrentIndex(widget_option_value.findText(device['options'][option_spec['name']]['value']))
+                elif option_spec['type'] == 'int':
+                    widget_option_value = QSpinBox()
+
+                    widget_option_value.setRange(option_spec['minimum'], option_spec['maximum'])
+                    widget_option_value.setSuffix(option_spec['suffix'])
+                    widget_option_value.setValue(device['options'][option_spec['name']]['value'])
+                elif option_spec['type'] == 'float':
+                    widget_option_value = QDoubleSpinBox()
+
+                    widget_option_value.setRange(option_spec['minimum'], option_spec['maximum'])
+                    widget_option_value.setDecimals(option_spec['decimals'])
+                    widget_option_value.setSuffix(option_spec['suffix'])
+                    widget_option_value.setValue(device['options'][option_spec['name']]['value'])
+
+                self.tree_devices.setIndexWidget(option_widget_item.index(), widget_option_value)
 
     def txt_console_output(self, msg):
         """

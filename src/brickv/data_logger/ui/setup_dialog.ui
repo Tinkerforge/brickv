@@ -349,29 +349,16 @@
         </widget>
        </item>
        <item row="1" column="0" colspan="6">
-        <widget class="QTreeWidget" name="tree_devices">
+        <widget class="QTreeView" name="tree_devices">
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
          <property name="selectionMode">
           <enum>QAbstractItemView::ExtendedSelection</enum>
          </property>
-         <property name="sortingEnabled">
+         <attribute name="headerStretchLastSection">
           <bool>true</bool>
-         </property>
-         <attribute name="headerDefaultSectionSize">
-          <number>300</number>
          </attribute>
-         <attribute name="headerMinimumSectionSize">
-          <number>200</number>
-         </attribute>
-         <column>
-          <property name="text">
-           <string>Device</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Value</string>
-          </property>
-         </column>
         </widget>
        </item>
       </layout>

@@ -89,24 +89,26 @@ class DataLogger(threading.Thread):
         """
         This function creates the actual objects for each device out of the configuration
         """
-        device_list = self._config['devices']
+        devices = self._config['devices']
 
         wrong_uid_msg = "The following Devices got an invalid UID: "
         got_wrong_uid_exception = False
 
         # start the timers
         try:
-            for i in range(0, len(device_list)):
+            for device in devices:
+                # FIXME: verify UID, ignore invalid ones
+
                 try:
-                    loggable_devices.DeviceImpl(device_list[i], self).start_timer()
+                    loggable_devices.DeviceImpl(device, self).start_timer()
 
                 except Exception as e:
                     if str(e) == "substring not found":
                         got_wrong_uid_exception = True
-                        wrong_uid_msg += str(device_list[i][Idf.DD_NAME])+"("+str(device_list[i][Idf.DD_UID])+"), "
+                        wrong_uid_msg += str(device[Idf.DD_NAME])+"("+str(device[Idf.DD_UID])+"), "
                     else:
                         # other important exception -> raise
-                        raise e
+                        raise
 
             if got_wrong_uid_exception:
                 raise Exception(wrong_uid_msg)

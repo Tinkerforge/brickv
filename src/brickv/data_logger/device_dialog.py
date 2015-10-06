@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 
 # -*- coding: utf-8 -*-
 from PyQt4.QtGui import QDialog # , QMessageBox
+from brickv.data_logger.loggable_devices import Identifier
 from brickv.data_logger.event_logger import EventLogger
 from brickv.data_logger.utils import Utilities
 from brickv.data_logger.ui_device_dialog import Ui_DeviceDialog
@@ -57,8 +58,8 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
         """
             Init of all important Signals and connections.
         """
-        self.btn_add_device.clicked.connect(self._btn_add_device_clicked)
-        self.btn_add_all_devices.clicked.connect(self._btn_add_all_devices_clicked)
+        self.btn_add_device.clicked.connect(self.btn_add_device_clicked)
+        self.btn_add_all_devices.clicked.connect(self.btn_add_all_devices_clicked)
         self.btn_cancel.clicked.connect(self._btn_cancel_clicked)
 
     def init_dialog(self, Ui_Logger):
@@ -67,74 +68,57 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
         """
         self.Ui_Logger = Ui_Logger
 
-        connected_devices = infos.get_device_infos()
-        if len(connected_devices) <= 0:
-            self.btn_add_all_devices.setEnabled(False)
-        else:
-            self.btn_add_all_devices.setEnabled(True)
+        self.btn_add_all_devices.setEnabled(len(infos.get_device_infos()) > 0)
 
         self._create_tree()
 
     def _btn_cancel_clicked(self):
         self.close()
 
-    def _btn_add_all_devices_clicked(self):
-        cur_dev = GuiConfigHandler.get_simple_blueprint(self.Ui_Logger)
-        connected_devices = infos.get_device_infos()
-        if len(connected_devices) <= 0:
-            return
-        con_dev = []
-        for device_info in connected_devices:
+    def btn_add_all_devices_clicked(self):
+        for device_info in infos.get_device_infos():
             if device_info.name in Identifier.DEVICE_DEFINITIONS:
-                tmp = {}
-                tmp[device_info.name] = device_info.uid
-                con_dev.append(tmp)
+                self._logger_window.add_device_to_tree(self.create_device_config('{0} [{1}]'.format(device_info.name, device_info.uid)))
 
-        for dev in con_dev:
-            for key in dev.keys():
-                if not self.__is_device_in_list(key, dev[key], cur_dev):
-                    blueprint = GuiConfigHandler.get_device_blueprint(key)
-                    if blueprint is None:
-                        return
-                    blueprint[Identifier.DD_UID] = dev[key]
-                    self._logger_window.add_item_to_tree(blueprint)
-
-    def __is_device_in_list(self, device_name, uid, list_to_check):
-        for dev in list_to_check:
-            for key in dev.keys():
-                if device_name == key and uid == dev[key]:
-                    # device matches -> return True
-                    return True
-        return False
-
-    def _btn_add_device_clicked(self):
-        """
-            Add the selected device from the list/DataLogger-Config.
-        """
-        items = self.list_widget.selectedItems()
-        cur_dev = GuiConfigHandler.get_simple_blueprint(self.Ui_Logger)
-        for item in items:
+    def btn_add_device_clicked(self):
+        for item in self.list_widget.selectedItems():
             name = item.text()
-            if name == self._no_connected_device_string or name == self._list_separator_string:
+
+            if name == self._no_connected_device_string or name == self._list_separator_string: # FIXME
                 # ignore those
                 continue
 
-            dev_name, uid = Utilities.parse_device_name(name)
-            dev = GuiConfigHandler.get_device_blueprint(dev_name)
-            if dev is None:
-                EventLogger.debug("DeviceDialog._btn_add_device_clicked: Blueprint(" + str(dev_name) + ") was None!")
-                continue
+            self._logger_window.add_device_to_tree(self.create_device_config(name))
 
-            if uid is not None:
-                if self.__is_device_in_list(dev_name, uid, cur_dev):
-                    continue
-                # else
-                dev[Identifier.DD_UID] = uid
+    def create_device_config(self, item_text):
+        name, uid = Utilities.parse_device_name(item_text) # FIXME
+        device_spec = Identifier.DEVICE_DEFINITIONS[name]
 
-            else:
-                dev[Identifier.DD_UID] = Identifier.DD_UID_DEFAULT
+        if uid == None: # FIXME
+            uid = ''
 
-            self._logger_window.add_item_to_tree(dev)
+        device = {
+            'host': 'default',
+            'name': name,
+            'uid': uid,
+            'values': {},
+            'options': {}
+        }
+
+        for value_spec in device_spec['values']:
+            device['values'][value_spec['name']] = {'interval': 0}
+
+            if value_spec['subvalues'] != None:
+                device['values'][value_spec['name']]['subvalues'] = {}
+
+                for subvalue_name in value_spec['subvalues']:
+                    device['values'][value_spec['name']]['subvalues'][subvalue_name] = True
+
+        if device_spec['options'] != None:
+            for option_spec in device_spec['options']:
+                device['options'][option_spec['name']] = {'value': option_spec['default']}
+
+        return device
 
     def _create_tree(self, connected_devices=0):
         """
