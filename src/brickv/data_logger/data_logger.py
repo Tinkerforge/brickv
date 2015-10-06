@@ -146,7 +146,7 @@ class DataLogger(threading.Thread):
         EventLogger.debug("Get-Timers started.")
 
         """END_CONDITIONS"""
-        EventLogger.info("DataLogger is runninng...")
+        EventLogger.info("DataLogger is running...")
         # TODO Exit condition ?
 
     def stop(self):
