@@ -87,9 +87,14 @@ class AdvancedWindow(QDialog, Ui_Advanced):
             self.label_gain.setText('-')
         else:
             def slot():
-                offset, gain = self.parent.ipcon.get_adc_calibration(device)
+                try:
+                    offset, gain = self.parent.ipcon.get_adc_calibration(device)
+                except:
+                    return
+
                 self.label_offset.setText(str(offset))
                 self.label_gain.setText(str(gain))
+
             QTimer.singleShot(0, slot)
 
     def brick_changed(self, index):
