@@ -28,6 +28,7 @@ import os
 import signal
 import sys
 import traceback
+import logging
 
 from brickv.data_logger.data_logger import DataLogger
 from brickv.data_logger.event_logger import ConsoleLogger, FileLogger, EventLogger
@@ -88,70 +89,46 @@ def signal_handler(signum, frame):
     This function handles the ctrl + c exit condition
     if it's raised through the console
     """
-    main.CLOSE = True
+    global CLOSE
+    CLOSE = True
 
-
-signal.signal(signal.SIGINT, signal_handler)
-
-
-def __manage_eventlog(arguments_map):
-    """EventLogger.EVENT_CONSOLE_LOGGING = arguments_map[ConfigurationReader.GENERAL_EVENTLOG_TO_CONSOLE]
-    EventLogger.EVENT_FILE_LOGGING = arguments_map[ConfigurationReader.GENERAL_EVENTLOG_TO_FILE]
-    EventLogger.EVENT_FILE_LOGGING_PATH = arguments_map[ConfigurationReader.GENERAL_EVENTLOG_PATH]
-    EventLogger.EVENT_LOG_LEVEL = arguments_map[ConfigurationReader.GENERAL_EVENTLOG_LEVEL]
-
-    if EventLogger.EVENT_FILE_LOGGING:
-        EventLogger.add_logger(
-            FileLogger("FileLogger", EventLogger.EVENT_LOG_LEVEL, EventLogger.EVENT_FILE_LOGGING_PATH))
-    if not EventLogger.EVENT_CONSOLE_LOGGING:
-        EventLogger.remove_logger("ConsoleLogger")
+def log_level_name_to_id(log_level):
+    if log_level == 'debug':
+        return logging.DEBUG
+    elif log_level == 'info':
+        return logging.INFO
+    elif log_level == 'warning':
+        return logging.WARNING
+    elif log_level == 'error':
+        return logging.ERROR
+    elif log_level == 'critical':
+        return logging.CRITICAL
     else:
-        EventLogger.remove_logger("ConsoleLogger")
-        EventLogger.add_logger(ConsoleLogger("ConsoleLogger", EventLogger.EVENT_LOG_LEVEL))
-"""
+        return logging.INFO
 
-def main(arguments_map):
+def main(config_filename, gui_config, gui_job):
     """
     This function initialize the data logger and starts the logging process
     """
     config = None
     gui_start = False
-    try:
-        # was started via console
-        if CONSOLE_CONFIG_FILE in arguments_map and arguments_map[CONSOLE_CONFIG_FILE] is not None:
-            config = load_and_validate_config(arguments_map[CONSOLE_CONFIG_FILE])
 
-            if config == None:
-                return
+    if config_filename != None: # started via console
+        config = load_and_validate_config(config_filename)
 
-        # was started via gui
-        elif GUI_CONFIG in arguments_map and arguments_map[GUI_CONFIG] is not None:
-            gui_start = True
-            config = arguments_map[GUI_CONFIG]
-
-        # no configuration file was given
-        else:
-            raise DataLoggerException(desc="Can not run data logger without a configuration.")
-
-        if CONSOLE_VALIDATE_ONLY in arguments_map and arguments_map[CONSOLE_VALIDATE_ONLY]:
-            return
-
-        # activate eventlogger
-        __manage_eventlog(config)
-
-    except Exception as exc:
-        EventLogger.critical(str(exc))
-        if gui_start:
+        if config == None:
             return None
-        else:
-            sys.exit(DataLoggerException.DL_CRITICAL_ERROR)
+    else: # started via GUI
+        config = gui_config
+        gui_start = True
+
+    if config['events']['log']['enabled']:
+        EventLogger.add_logger(FileLogger('FileLogger', log_level_name_to_id(config['events']['log']['level']),
+                                          config['events']['log']['file_name']))
 
     data_logger = None
     try:
-        if gui_start:
-            data_logger = DataLogger(config, arguments_map[GUI_ELEMENT])
-        else:
-            data_logger = DataLogger(config)
+        data_logger = DataLogger(config, gui_job)
 
         if data_logger.ipcon is not None:
             data_logger.run()
@@ -170,25 +147,18 @@ def main(arguments_map):
 
     return data_logger
 
-def command_line_start(argv, program_name):
-    """
-    This function processes the command line arguments, if it was started via the console.
-    """
-    cl_parser = argparse.ArgumentParser(description='Tinkerforge Data Logger')
-
-    cl_parser.add_argument('config_file', help="Path to the config file")
-    cl_parser.add_argument('-v', action="store_true", dest="validate",
-                           help="Just process the validation of the config file")
-
-    results = cl_parser.parse_args(argv)
-
-    arguments_map = {}
-    arguments_map[CONSOLE_CONFIG_FILE] = results.config_file
-    arguments_map[CONSOLE_VALIDATE_ONLY] = results.validate
-
-    return arguments_map
-
-###main###
 if __name__ == '__main__':
-    arguments_map = command_line_start(sys.argv[1:], sys.argv[0])
-    main(arguments_map)
+    parser = argparse.ArgumentParser(description='Tinkerforge Data Logger')
+
+    parser.add_argument('config', help='config file location')
+    parser.add_argument('--log-level', choices=['none', 'debug', 'info', 'warning', 'error', 'critical'],
+                        default='info', help='config file location')
+
+    args = parser.parse_args(sys.argv[1:])
+
+    if args.log_level != 'none':
+        EventLogger.add_logger(ConsoleLogger('ConsoleLogger', log_level_name_to_id(args.log_level)))
+
+    signal.signal(signal.SIGINT, signal_handler)
+
+    main(args.config, None, None)

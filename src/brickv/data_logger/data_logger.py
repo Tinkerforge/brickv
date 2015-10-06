@@ -42,7 +42,7 @@ class DataLogger(threading.Thread):
     """
 
     # constructor and other functions
-    def __init__(self, config, gui_job=None):
+    def __init__(self, config, gui_job):
         super(DataLogger, self).__init__()
 
         self.jobs = []  # thread hashmap for all running threads/jobs

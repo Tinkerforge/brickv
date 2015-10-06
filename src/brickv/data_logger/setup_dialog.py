@@ -210,13 +210,10 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         elif self.data_logger_thread is None:
             from brickv.data_logger import main
 
-            arguments_map = {}
-            arguments_map[main.GUI_CONFIG] = GuiConfigHandler.create_config(self)
             self._gui_job = GuiDataJob(name="GuiData-Writer")
             self.connect(self._gui_job, QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), self.table_add_row)
-            arguments_map[main.GUI_ELEMENT] = self._gui_job
 
-            self.data_logger_thread = main.main(arguments_map)
+            self.data_logger_thread = main.main(None, GuiConfigHandler.create_config(self), self._gui_job)
 
             if self.data_logger_thread is not None:
                 self.btn_start_logging.setText("Stop Logging")
