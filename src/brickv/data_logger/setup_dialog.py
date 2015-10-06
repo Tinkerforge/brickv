@@ -434,7 +434,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         value_specs = Identifier.DEVICE_DEFINITIONS[device['name']]['values']
         parent_item = QStandardItem('Values')
 
-        name_item.appendRow(parent_item)
+        name_item.appendRow([parent_item, QStandardItem('')])
         self.tree_devices.expand(parent_item.index())
 
         # add values
@@ -472,7 +472,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         if option_specs != None:
             parent_item = QStandardItem('Options')
 
-            name_item.appendRow(parent_item)
+            name_item.appendRow([parent_item, QStandardItem('')])
 
             for option_spec in option_specs:
                 option_name_item = QStandardItem(option_spec['name'])
