@@ -26,7 +26,7 @@ import logging
 import threading
 import time
 
-from brickv.bindings.ip_connection import IPConnection
+from brickv.bindings.ip_connection import IPConnection, base58decode
 from brickv.data_logger.event_logger import EventLogger
 from brickv.data_logger.job import CSVWriterJob#, GuiDataJob
 import brickv.data_logger.loggable_devices as loggable_devices
@@ -89,34 +89,31 @@ class DataLogger(threading.Thread):
         """
         This function creates the actual objects for each device out of the configuration
         """
-        devices = self._config['devices']
-
-        wrong_uid_msg = "The following Devices got an invalid UID: "
-        got_wrong_uid_exception = False
-
         # start the timers
-        try:
-            for device in devices:
-                # FIXME: verify UID, ignore invalid ones
+        for device in self._config['devices']:
+            if len(device['uid']) == 0:
+                EventLogger.warning('Ignoring "{0}" with empty UID'.format(device['name']))
+                continue
 
-                try:
-                    loggable_devices.DeviceImpl(device, self).start_timer()
+            try:
+                decoded_uid = base58decode(device['uid'])
+            except:
+                EventLogger.warning('Ignoring "{0}" with invalid UID: {1}'.format(device['name'], device['uid']))
+                continue
 
-                except Exception as e:
-                    if str(e) == "substring not found":
-                        got_wrong_uid_exception = True
-                        wrong_uid_msg += str(device[Idf.DD_NAME])+"("+str(device[Idf.DD_UID])+"), "
-                    else:
-                        # other important exception -> raise
-                        raise
+            if decoded_uid < 2:
+                EventLogger.warning('Ignoring "{0}" with invalid UID: {1}'.format(device['name'], device['uid']))
+                continue
 
-            if got_wrong_uid_exception:
-                raise Exception(wrong_uid_msg)
+            try:
+                loggable_devices.DeviceImpl(device, self).start_timer()
+            except Exception as e:
+                msg = "A critical error occur: " + str(e)
+                self.stop()
+                raise DataLoggerException(DataLoggerException.DL_CRITICAL_ERROR, msg)
 
-        except Exception as exc:
-            msg = "A critical error occur: " + str(exc)
-            self.stop()
-            raise DataLoggerException(DataLoggerException.DL_CRITICAL_ERROR, msg)
+                if got_wrong_uid_exception:
+                    raise Exception(wrong_uid_msg)
 
     def run(self):
         """
