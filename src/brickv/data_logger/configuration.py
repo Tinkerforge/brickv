@@ -4,7 +4,7 @@ brickv (Brick Viewer)
 Copyright (C) 2012, 2014 Roland Dudko <roland.dudko@gmail.com>
 Copyright (C) 2012, 2014 Marvin Lutz <marvin.lutz.mail@gmail.com>
 
-configuration_validator.py: Data logger configuration validator
+configuration.py: Data logger configuration validator
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License

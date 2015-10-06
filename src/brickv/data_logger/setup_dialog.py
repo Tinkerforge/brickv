@@ -45,7 +45,7 @@ from brickv.data_logger.job import GuiDataJob
 from brickv.data_logger.loggable_devices import Identifier
 from brickv.data_logger import utils
 from brickv.data_logger.device_dialog import DeviceDialog
-from brickv.data_logger.configuration_validator import load_and_validate_config, save_config
+from brickv.data_logger.configuration import load_and_validate_config, save_config
 from brickv.data_logger.ui_setup_dialog import Ui_SetupDialog
 
 # noinspection PyProtectedMember,PyCallByClass
