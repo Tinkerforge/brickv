@@ -22,8 +22,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPainter, \
-                        QColor, QBrush, QFrame
+from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_uv_light import BrickletUVLight
@@ -33,18 +32,13 @@ from brickv.callback_emulator import CallbackEmulator
 
 class UVLabel(QLabel):
     def setText(self, text):
-        text = u"UV Index: " + text
+        text = u"UV Light: " + text + u'µW/cm²'
         super(UVLabel, self).setText(text)
-        
-class IRLabel(QLabel):
+
+class IndexLabel(QLabel):
     def setText(self, text):
-        text = u"IR Value: " + text + u" W/m²"
-        super(IRLabel, self).setText(text)
-        
-class AmbLabel(QLabel):
-    def setText(self, text):
-        text = u"Illuminance: " + text + u" lx (Lux)"
-        super(AmbLabel, self).setText(text)
+        text = u"UV Index: " + text
+        super(IndexLabel, self).setText(text)
 
 class UVLight(PluginBase):
     def __init__(self, *args):
@@ -52,81 +46,43 @@ class UVLight(PluginBase):
 
         self.uv_light = self.device
 
-        self.cbe_uv_index = CallbackEmulator(self.uv_light.get_uv_index,
-                                             self.cb_uv_index,
+        self.cbe_uv_light = CallbackEmulator(self.uv_light.get_uv_light,
+                                             self.cb_uv_light,
                                              self.increase_error_count)
-        self.cbe_ir_value = CallbackEmulator(self.uv_light.get_ir_value,
-                                             self.cb_ir_value,
-                                             self.increase_error_count)
-        self.cbe_illuminance = CallbackEmulator(self.uv_light.get_illuminance,
-                                                self.cb_illuminance,
-                                                self.increase_error_count)
 
-        self.uv_label = UVLabel('UV Index: ')
-        self.ir_label = IRLabel('IR Value: ')
-        self.amb_label = AmbLabel('Illuminance: ')
+        self.uv_label = UVLabel(u'UV Light: ')
+        self.index_label = IndexLabel(u'UV Index: ')
 
-        self.current_uv_index = None
-        self.current_ir_value = None
-        self.current_illuminance = None
+        self.current_uv_light = None
         
-        plot_list = [['', Qt.red, self.get_current_uv_index]]
-        self.plot_widget_uv = PlotWidget('UV Index', plot_list)
-
-        plot_list = [['', Qt.red, self.get_current_ir_value]]
-        self.plot_widget_ir = PlotWidget('IR Value [W/m²]', plot_list)
-
-        plot_list = [['', Qt.red, self.get_current_illuminance]]
-        self.plot_widget_amb = PlotWidget('Illuminance [lx]', plot_list)
+        plot_list = [['', Qt.red, self.get_current_uv_light]]
+        self.plot_widget_uv = PlotWidget(u'UV Light [µW/cm²]', plot_list)
         
-        layout_uv = QVBoxLayout()
-        layout_uv.addStretch()
-        layout_uv.addWidget(self.uv_label)
-        layout_uv.addWidget(self.plot_widget_uv)
-        layout_uv.addStretch()
+        layout_h1 = QHBoxLayout()
+        layout_h1.addStretch()
+        layout_h1.addWidget(self.uv_label)
+        layout_h1.addStretch()
         
-        layout_ir = QVBoxLayout()
-        layout_ir.addStretch()
-        layout_ir.addWidget(self.ir_label)
-        layout_ir.addWidget(self.plot_widget_ir)
-        layout_ir.addStretch()
-        
-        layout_amb = QVBoxLayout()
-        layout_amb.addStretch()
-        layout_amb.addWidget(self.amb_label)
-        layout_amb.addWidget(self.plot_widget_amb)
-        layout_amb.addStretch()
-
-        layout_h = QHBoxLayout()
-        layout_h.addStretch()
-        layout_h.addLayout(layout_uv)
-        layout_h.addLayout(layout_ir)
-        layout_h.addLayout(layout_amb)
-        layout_h.addStretch()
+        layout_h2 = QHBoxLayout()
+        layout_h2.addStretch()
+        layout_h2.addWidget(self.index_label)
+        layout_h2.addStretch()
 
         layout = QVBoxLayout(self)
-        layout.addLayout(layout_h)
+        layout.addLayout(layout_h1)
+        layout.addLayout(layout_h2)
+        layout.addWidget(self.plot_widget_uv)
 
     def start(self):
-        async_call(self.uv_light.get_uv_index, None, self.cb_uv_index, self.increase_error_count)
-        async_call(self.uv_light.get_ir_value, None, self.cb_ir_value, self.increase_error_count)
-        async_call(self.uv_light.get_illuminance, None, self.cb_illuminance, self.increase_error_count)
-        self.cbe_uv_index.set_period(100)
-        self.cbe_ir_value.set_period(100)
-        self.cbe_illuminance.set_period(100)
+        async_call(self.uv_light.get_uv_light, None, self.cb_uv_light, self.increase_error_count)
+        self.cbe_uv_light.set_period(100)
 
         self.plot_widget_uv.stop = False
-        self.plot_widget_ir.stop = False
-        self.plot_widget_amb.stop = False
 
     def stop(self):
-        self.cbe_uv_index.set_period(0)
-        self.cbe_ir_value.set_period(0)
-        self.cbe_illuminance.set_period(0)
+        self.cbe_uv_light.set_period(0)
 
         self.plot_widget_uv.stop = True
-        self.plot_widget_ir.stop = True
-        self.plot_widget_amb.stop = True
 
     def destroy(self):
         pass
@@ -138,23 +94,25 @@ class UVLight(PluginBase):
     def has_device_identifier(device_identifier):
         return device_identifier == BrickletUVLight.DEVICE_IDENTIFIER
 
-    def get_current_uv_index(self):
-        return self.current_uv_index
-    
-    def get_current_ir_value(self):
-        return self.current_ir_value
-    
-    def get_current_illuminance(self):
-        return self.current_illuminance
+    def get_current_uv_light(self):
+        return self.current_uv_light
 
-    def cb_uv_index(self, uv_index):
-        self.current_uv_index = round(uv_index/100.0, 1)        
-        self.uv_label.setText(unicode(self.current_uv_index))
+    def cb_uv_light(self, uv_light):
+        self.current_uv_light = uv_light
+        self.uv_label.setText(unicode(uv_light))
         
-    def cb_ir_value(self, ir_value):
-        self.current_ir_value = round(ir_value/1000.0, 1)        
-        self.ir_label.setText(unicode(self.current_ir_value))
+        index = round(uv_light/250.0, 1)
+        self.index_label.setText(unicode(index))
+        if index < 2.5:
+            color = 'green'
+        elif index < 5.5:
+            color = 'yellow'
+        elif index < 7.5:
+            color = 'orange'
+        elif index < 10.5:
+            color = 'red'
+        else:
+            color = 'magenta'
+
+        self.index_label.setStyleSheet('QLabel {{ color : {0} }}'.format(color))
         
-    def cb_illuminance(self, illuminance):
-        self.current_illuminance = illuminance
-        self.amb_label.setText(unicode(self.current_illuminance))
