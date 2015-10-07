@@ -368,7 +368,7 @@ class Identifier(object):
                 }
             ],
             'options_setter': lambda device, reference_air_pressure, moving_average_length_air_pressure, average_length_air_pressure, average_length_temperature: \
-                              [device.set_reference_air_pressure(int(air_pressure * 1000.0)),
+                              [device.set_reference_air_pressure(int(reference_air_pressure * 1000.0)),
                                device.set_averaging(moving_average_length_air_pressure, average_length_air_pressure, average_length_temperature)],
             'options': [
                 {
