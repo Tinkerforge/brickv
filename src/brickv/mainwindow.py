@@ -390,17 +390,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.do_disconnect()
 
     def item_double_clicked(self, index):
-        name_index = index.sibling(index.row(), 0)
-        if name_index.isValid():
-            name_text = name_index.data()
-            if name_text.startswith('ext'):
+        position_index = index.sibling(index.row(), 2)
+
+        if position_index.isValid() and position_index.data().startswith('Ext'):
                 index = index.parent()
 
         uid_index = index.sibling(index.row(), 1)
 
         if uid_index.isValid():
-            uid_text = uid_index.data()
-            self.show_plugin(uid_text)
+            self.show_plugin(uid_index.data())
 
     def create_tab_window(self, device_info):
         tab_window = TabWindow(self.tab_widget, device_info.name, self.untab)
