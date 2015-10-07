@@ -62,13 +62,7 @@ if 'brickv' not in sys.modules:
         # directory named differently than 'brickv'
         sys.modules['brickv'] = __import__(tail, globals(), locals(), [], -1)
 
-# HashMap keywords to store results of the command line arguments
-CONSOLE_CONFIG_FILE = "config_file"
-GUI_CONFIG = "configuration"
-GUI_ELEMENT = "gui_element"
-CONSOLE_VALIDATE_ONLY = "validate"
 CLOSE = False
-
 
 def __exit_condition(data_logger):
     """
