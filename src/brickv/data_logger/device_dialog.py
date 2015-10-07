@@ -22,9 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-# -*- coding: utf-8 -*-
 from PyQt4.QtGui import QDialog # , QMessageBox
-from brickv.data_logger.loggable_devices import Identifier
+from brickv.data_logger.loggable_devices import device_specs
 from brickv.data_logger.event_logger import EventLogger
 from brickv.data_logger.utils import Utilities
 from brickv.data_logger.ui_device_dialog import Ui_DeviceDialog
@@ -32,9 +31,6 @@ from brickv.data_logger.ui_device_dialog import Ui_DeviceDialog
 from brickv.data_logger.gui_config_handler import GuiConfigHandler
 from PyQt4.QtCore import Qt
 from brickv import infos
-
-from brickv.data_logger.loggable_devices import Identifier
-
 
 # noinspection PyTypeChecker
 class DeviceDialog(QDialog, Ui_DeviceDialog):
@@ -77,7 +73,7 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
 
     def btn_add_all_devices_clicked(self):
         for device_info in infos.get_device_infos():
-            if device_info.name in Identifier.DEVICE_DEFINITIONS:
+            if device_info.name in device_specs:
                 self._logger_window.add_device_to_tree(self.create_device_config('{0} [{1}]'.format(device_info.name, device_info.uid)))
 
     def btn_add_device_clicked(self):
@@ -92,7 +88,7 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
 
     def create_device_config(self, item_text):
         name, uid = Utilities.parse_device_name(item_text) # FIXME
-        device_spec = Identifier.DEVICE_DEFINITIONS[name]
+        device_spec = device_specs[name]
 
         if uid == None: # FIXME
             uid = ''
@@ -134,7 +130,7 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
             list_blueprint.append(self._no_connected_device_string)
         else:
             for device_info in connected_devices:
-                if device_info.name in Identifier.DEVICE_DEFINITIONS:
+                if device_info.name in device_specs:
                     list_blueprint.append(device_info.name + " [" + device_info.uid + "]")
 
         # self.combo_devices.insertSeparator(self.combo_devices.count() + 1)
@@ -142,7 +138,7 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
 
         # list of all devices
         default_devices = []
-        for device in Identifier.DEVICE_DEFINITIONS:
+        for device in device_specs:
             default_devices.append(device)
         default_devices.sort()
         for val in default_devices:

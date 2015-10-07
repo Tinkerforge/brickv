@@ -42,7 +42,7 @@ from brickv.utils import get_save_file_name, get_open_file_name, get_main_window
 from brickv.data_logger.event_logger import EventLogger, GUILogger
 from brickv.data_logger.gui_config_handler import GuiConfigHandler
 from brickv.data_logger.job import GuiDataJob
-from brickv.data_logger.loggable_devices import Identifier
+from brickv.data_logger.loggable_devices import device_specs
 from brickv.data_logger import utils
 from brickv.data_logger.device_dialog import DeviceDialog
 from brickv.data_logger.configuration import load_and_validate_config, save_config
@@ -301,7 +301,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         if self.device_dialog is None:
             self.device_dialog = DeviceDialog(self)
 
-        # blueprint = Identifier.DEVICE_DEFINITIONS
         self.device_dialog.init_dialog(self)
         self.device_dialog.show()
 
@@ -428,7 +427,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.tree_devices.setIndexWidget(uid_item.index(), edit_uid)
 
-        value_specs = Identifier.DEVICE_DEFINITIONS[device['name']]['values']
+        value_specs = device_specs[device['name']]['values']
         parent_item = QStandardItem('Values')
 
         name_item.appendRow([parent_item, QStandardItem('')])
@@ -464,7 +463,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.tree_devices.expand(name_item.index())
 
         # add options
-        option_specs = Identifier.DEVICE_DEFINITIONS[device['name']]['options']
+        option_specs = device_specs[device['name']]['options']
 
         if option_specs != None:
             parent_item = QStandardItem('Options')

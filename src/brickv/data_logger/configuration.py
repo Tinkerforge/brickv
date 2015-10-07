@@ -28,7 +28,7 @@ import json
 from brickv.bindings.ip_connection import base58decode
 from brickv.data_logger.event_logger import EventLogger
 from brickv.data_logger.utils import DataLoggerException, Utilities
-from brickv.data_logger.loggable_devices import Identifier as Idf
+from brickv.data_logger.loggable_devices import device_specs
 
 def load_and_validate_config(filename):
     EventLogger.info('Loading config from file: {0}'.format(filename))
@@ -271,8 +271,6 @@ class ConfigValidator(object):
         if not isinstance(devices, list):
             self._report_error('"devices" section is not a list')
             return
-
-        device_specs = Idf.DEVICE_DEFINITIONS
 
         for device in devices:
             # uid

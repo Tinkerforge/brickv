@@ -29,10 +29,9 @@ import time
 from brickv.bindings.ip_connection import IPConnection, base58decode
 from brickv.data_logger.event_logger import EventLogger
 from brickv.data_logger.job import CSVWriterJob#, GuiDataJob
-import brickv.data_logger.loggable_devices as loggable_devices
+from brickv.data_logger.loggable_devices import DeviceImpl
 from brickv.data_logger.utils import DataLoggerException
 import brickv.data_logger.utils as utils
-from brickv.data_logger.loggable_devices import Identifier as Idf
 
 
 class DataLogger(threading.Thread):
@@ -121,7 +120,7 @@ class DataLogger(threading.Thread):
                 continue
 
             try:
-                loggable_device = loggable_devices.DeviceImpl(device, self)
+                loggable_device = DeviceImpl(device, self)
                 loggable_device.start_timer()
             except Exception as e:
                 msg = "A critical error occur: " + str(e)

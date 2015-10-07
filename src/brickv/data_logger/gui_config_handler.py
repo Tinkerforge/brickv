@@ -27,7 +27,6 @@ import collections
 from PyQt4.QtGui import QComboBox, QSpinBox, QDoubleSpinBox
 
 from brickv.data_logger.event_logger import EventLogger, GUILogger
-from brickv.data_logger.loggable_devices import Identifier as Idf
 
 '''
 /*---------------------------------------------------------------------------
