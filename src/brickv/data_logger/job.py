@@ -87,9 +87,7 @@ class CSVWriterJob(AbstractJob):
                 return
 
             EventLogger.debug(self._job_name + " Started")
-            csv_writer = CSVWriter(self._datalogger.csv_file_name,
-                                   self._datalogger.csv_file_count,
-                                   self._datalogger.csv_file_size)
+            csv_writer = CSVWriter(self._datalogger.csv_file_name)
 
             while True:
                 if not self._datalogger.data_queue[self.name].empty():

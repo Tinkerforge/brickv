@@ -67,9 +67,7 @@ class GuiConfigHandler(object):
         """
         data = {'time_format': setup_dialog.combo_data_time_format.itemData(setup_dialog.combo_data_time_format.currentIndex()),
                 'csv': {'enabled': setup_dialog.check_data_to_csv_file.isChecked(),
-                        'file_name': setup_dialog.edit_csv_file_name.text(),
-                        'file_count': setup_dialog.spin_csv_file_count.value(),
-                        'file_size': setup_dialog.spin_csv_file_size.value()}}
+                        'file_name': setup_dialog.edit_csv_file_name.text()}}
 
         return data
 

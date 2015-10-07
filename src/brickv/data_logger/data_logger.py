@@ -50,8 +50,6 @@ class DataLogger(threading.Thread):
         self.job_sleep = 1  # TODO: Enahncement -> use condition objects
         self.timers = []
         self._gui_job = gui_job
-        self.csv_file_count = 1
-        self.csv_file_size = 0
         self.data_queue = {}  # universal data_queue hash map
         self.host = config['hosts']['default']['name']
         self.port = config['hosts']['default']['port']
@@ -98,8 +96,6 @@ class DataLogger(threading.Thread):
 
         self.csv_enabled = csv['enabled']
         self.csv_file_name = csv['file_name']
-        self.csv_file_count = csv['file_count']
-        self.csv_file_size = csv['file_size'] * 1024 * 1024 # megabyte to byte
 
         EventLogger.debug("Logging output to CSV file: " + str(self.csv_enabled))
         EventLogger.debug("Output file path: " + str(self.csv_file_name))

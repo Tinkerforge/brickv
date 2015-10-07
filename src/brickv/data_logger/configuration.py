@@ -203,28 +203,6 @@ class ConfigValidator(object):
             elif len(file_name) == 0:
                 self._report_error('"data/csv/file_name" is empty')
 
-        # file_count
-        try:
-            file_count = csv['file_count']
-        except KeyError:
-            self._report_error('"data/csv" section has no "file_count" member')
-        else:
-            if not isinstance(file_count, int):
-                self._report_error('"data/csv/file_count" is not an integer')
-            elif file_count < 1 or file_count > 65535:
-                self._report_error('"data/csv/file_count" is out-of-range')
-
-        # file_size
-        try:
-            file_size = csv['file_size']
-        except KeyError:
-            self._report_error('"data/csv" section has no "file_size" member')
-        else:
-            if not isinstance(file_size, int):
-                self._report_error('"data/csv/file_size" is not an integer')
-            elif file_size < 0 or file_size > 2097152:
-                self._report_error('"data/csv/file_size" is out-of-range')
-
     def _validate_events(self):
         try:
             events = self._config['events']

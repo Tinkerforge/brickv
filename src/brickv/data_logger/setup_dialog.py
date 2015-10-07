@@ -129,10 +129,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.label_csv_file_name.setVisible(data_to_csv_file)
         self.edit_csv_file_name.setVisible(data_to_csv_file)
         self.btn_browse_csv_file_name.setVisible(data_to_csv_file)
-        self.label_csv_file_count.setVisible(data_to_csv_file)
-        self.spin_csv_file_count.setVisible(data_to_csv_file)
-        self.label_csv_file_size.setVisible(data_to_csv_file)
-        self.spin_csv_file_size.setVisible(data_to_csv_file)
 
         self.label_log_file_name.setVisible(events_to_log_file)
         self.edit_log_file_name.setVisible(events_to_log_file)
@@ -393,8 +389,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.combo_data_time_format.setCurrentIndex(max(self.combo_data_time_format.findData(config['data']['time_format']), 0))
         self.check_data_to_csv_file.setChecked(config['data']['csv']['enabled'])
         self.edit_csv_file_name.setText(config['data']['csv']['file_name'])
-        self.spin_csv_file_count.setValue(config['data']['csv']['file_count'])
-        self.spin_csv_file_size.setValue(config['data']['csv']['file_size'])
 
         self.combo_events_time_format.setCurrentIndex(max(self.combo_events_time_format.findData(config['events']['time_format']), 0))
         self.check_events_to_log_file.setChecked(config['events']['log']['enabled'])
