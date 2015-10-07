@@ -33,6 +33,7 @@ import logging
 from brickv.data_logger.data_logger import DataLogger
 from brickv.data_logger.event_logger import ConsoleLogger, FileLogger, EventLogger
 from brickv.data_logger.utils import DataLoggerException
+from brickv.data_logger.configuration import load_and_validate_config
 
 if hasattr(sys, "frozen"):
     program_path = os.path.dirname(os.path.realpath(unicode(sys.executable, sys.getfilesystemencoding())))
@@ -82,7 +83,6 @@ def __exit_condition(data_logger):
     except (KeyboardInterrupt, EOFError):
         sys.stdin.close()
         data_logger.stop()
-
 
 def signal_handler(signum, frame):
     """
@@ -152,7 +152,7 @@ if __name__ == '__main__':
 
     parser.add_argument('config', help='config file location')
     parser.add_argument('--log-level', choices=['none', 'debug', 'info', 'warning', 'error', 'critical'],
-                        default='info', help='config file location')
+                        default='info', help='console logger log level')
 
     args = parser.parse_args(sys.argv[1:])
 
