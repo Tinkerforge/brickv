@@ -798,7 +798,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             for port in sorted(info.bricklets):
                 if info.bricklets[port] and info.bricklets[port].protocol_version == 2:
-                    child = [QStandardItem(port.upper() + ': ' + info.bricklets[port].name),
+                    child = [QStandardItem(info.bricklets[port].name),
                              QStandardItem(info.bricklets[port].uid),
                              QStandardItem(info.bricklets[port].position.upper()),
                              QStandardItem('.'.join(map(str, info.bricklets[port].firmware_version_installed)))]
@@ -809,14 +809,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if info.can_have_extension:
                 extensions = []
                 if info.extensions['ext0'] != None:
-                    extensions.append(('Ext0', info.extensions['ext0'], 'Ext0'))
+                    extensions.append((info.extensions['ext0'], 'Ext0'))
                 if info.extensions['ext1'] != None:
-                    extensions.append(('Ext1', info.extensions['ext1'], 'Ext1'))
+                    extensions.append((info.extensions['ext1'], 'Ext1'))
 
                 for extension in extensions:
-                    child = [QStandardItem(extension[0] + ': ' + extension[1].name),
+                    child = [QStandardItem(extension[0].name),
                              QStandardItem(''),
-                             QStandardItem(extension[2]),
+                             QStandardItem(extension[1]),
                              QStandardItem('')]
                     for item in child:
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
