@@ -88,11 +88,7 @@
               <item row="2" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_3">
                 <item>
-                 <widget class="QLineEdit" name="edit_log_file_name">
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
+                 <widget class="QLineEdit" name="edit_log_file_name"/>
                 </item>
                 <item>
                  <widget class="QPushButton" name="btn_browse_log_file_name">
@@ -235,11 +231,7 @@
               <item row="2" column="1">
                <layout class="QHBoxLayout" name="horizontalLayout_2">
                 <item>
-                 <widget class="QLineEdit" name="edit_csv_file_name">
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
+                 <widget class="QLineEdit" name="edit_csv_file_name"/>
                 </item>
                 <item>
                  <widget class="QPushButton" name="btn_browse_csv_file_name">
