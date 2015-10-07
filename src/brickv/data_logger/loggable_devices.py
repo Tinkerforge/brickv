@@ -161,7 +161,7 @@ class Identifier(object):
                     'name': 'Temperature',
                     'getter': lambda device: device.get_temperature(),
                     'subvalues': None,
-                    'unit': 'deg C',
+                    'unit': '°C',
                     'advanced': True
                 }
             ],
@@ -363,7 +363,7 @@ class Identifier(object):
                     'name': 'Chip Temperature',
                     'getter': lambda device: device.get_chip_temperature(),
                     'subvalues': None,
-                    'unit': 'deg C/100',
+                    'unit': '°C/100',
                     'advanced': False
                 }
             ],
@@ -540,7 +540,7 @@ class Identifier(object):
                     'name': 'Dust Density',
                     'getter': lambda device: device.get_dust_density(),
                     'subvalues': None,
-                    'unit': 'ug/m^3',
+                    'unit': 'µg/m³',
                     'advanced': False
                 }
             ],
@@ -962,7 +962,7 @@ class Identifier(object):
                     'name': 'Temperature',
                     'getter': special_get_ptc_temperature,
                     'subvalues': None,
-                    'unit': 'deg C/100',
+                    'unit': '°C/100',
                     'advanced': False
                 }
             ],
@@ -1036,7 +1036,7 @@ class Identifier(object):
                     'name': 'Temperature',
                     'getter': lambda device: device.get_temperature(),
                     'subvalues': None,
-                    'unit': 'deg C/100',
+                    'unit': '°C/100',
                     'advanced': False
                 }
             ],
@@ -1051,14 +1051,14 @@ class Identifier(object):
                     'name': 'Ambient Temperature',
                     'getter': lambda device: device.get_ambient_temperature(),
                     'subvalues': None,
-                    'unit': 'deg C/10',
+                    'unit': '°C/10',
                     'advanced': False
                 },
                 {
                     'name': 'Object Temperature',
                     'getter': lambda device: device.get_object_temperature(),
                     'subvalues': None,
-                    'unit': 'deg C/10',
+                    'unit': '°C/10',
                     'advanced': False
                 }
             ],
@@ -1184,7 +1184,7 @@ class Identifier(object):
                     'name': 'Chip Temperature',
                     'getter': lambda device: device.get_chip_temperature(),
                     'subvalues': None,
-                    'unit': 'deg C/10',
+                    'unit': '°C/10',
                     'advanced': False
                 }
             ],

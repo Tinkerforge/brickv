@@ -558,7 +558,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
                                    QStandardItem(csv_data.uid),
                                    QStandardItem(csv_data.var_name),
                                    QStandardItem(str(csv_data.raw_data)),
-                                   QStandardItem(csv_data.var_unit)])
+                                   QStandardItem(csv_data.var_unit.decode('utf-8'))])
 
         if row_number != None:
             self.model_data.setHeaderData(rows, Qt.Vertical, str(row_number + 1))
