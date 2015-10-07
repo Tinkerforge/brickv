@@ -809,14 +809,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if info.can_have_extension:
                 extensions = []
                 if info.extensions['ext0'] != None:
-                    extensions.append(('ext0', info.extensions['ext0']))
+                    extensions.append(('Ext0', info.extensions['ext0'], 'Ext0'))
                 if info.extensions['ext1'] != None:
-                    extensions.append(('ext1', info.extensions['ext1']))
+                    extensions.append(('Ext1', info.extensions['ext1'], 'Ext1'))
 
                 for extension in extensions:
                     child = [QStandardItem(extension[0] + ': ' + extension[1].name),
                              QStandardItem(''),
-                             QStandardItem(''),
+                             QStandardItem(extension[2]),
                              QStandardItem('')]
                     for item in child:
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
