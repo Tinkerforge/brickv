@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>454</width>
-    <height>440</height>
+    <width>435</width>
+    <height>471</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,26 +19,6 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="1" column="0" colspan="4">
-      <widget class="QListWidget" name="list_widget">
-       <property name="selectionMode">
-        <enum>QAbstractItemView::ExtendedSelection</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QPushButton" name="btn_add_all_devices">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>Only active when Connected</string>
-       </property>
-       <property name="text">
-        <string>Add All Connected Devices</string>
-       </property>
-      </widget>
-     </item>
      <item row="0" column="0">
       <widget class="QPushButton" name="btn_add_device">
        <property name="text">
@@ -46,11 +26,19 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="3">
-      <widget class="QPushButton" name="btn_cancel">
-       <property name="text">
-        <string>Close</string>
+     <item row="1" column="0" colspan="4">
+      <widget class="QTreeWidget" name="tree_widget">
+       <property name="selectionMode">
+        <enum>QAbstractItemView::ExtendedSelection</enum>
        </property>
+       <attribute name="headerVisible">
+        <bool>false</bool>
+       </attribute>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
       </widget>
      </item>
      <item row="0" column="2">
@@ -66,10 +54,30 @@
        </property>
       </spacer>
      </item>
+     <item row="0" column="3">
+      <widget class="QPushButton" name="btn_close">
+       <property name="text">
+        <string>Close</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="btn_refresh">
+       <property name="text">
+        <string>Refresh</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>btn_add_device</tabstop>
+  <tabstop>btn_refresh</tabstop>
+  <tabstop>btn_close</tabstop>
+  <tabstop>tree_widget</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

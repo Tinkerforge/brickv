@@ -301,7 +301,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         if self.device_dialog is None:
             self.device_dialog = DeviceDialog(self)
 
-        self.device_dialog.init_dialog(self)
+        self.device_dialog.btn_refresh_clicked()
         self.device_dialog.show()
 
     def btn_remove_device_clicked(self):

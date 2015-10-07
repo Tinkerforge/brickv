@@ -22,7 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtGui import QDialog # , QMessageBox
+from PyQt4.QtCore import pyqtSignal, Qt
+from PyQt4.QtGui import QDialog, QTreeWidgetItem
 from brickv.data_logger.loggable_devices import device_specs
 from brickv.data_logger.event_logger import EventLogger
 from brickv.data_logger.utils import Utilities
@@ -30,61 +31,132 @@ from brickv.data_logger.ui_device_dialog import Ui_DeviceDialog
 # from PyQt4 import QtGui, QtCore
 from brickv.data_logger.gui_config_handler import GuiConfigHandler
 from PyQt4.QtCore import Qt
-from brickv import infos
+from brickv.bindings.ip_connection import IPConnection
+from brickv.bindings import device_factory
 
 # noinspection PyTypeChecker
 class DeviceDialog(QDialog, Ui_DeviceDialog):
     """
         Function and Event handling class for the Ui_DeviceDialog.
     """
+    qtcb_enumerate = pyqtSignal(str, str, 'char', type((0,)), type((0,)), int, int)
+    qtcb_connected = pyqtSignal(int)
 
     def __init__(self, parent):
         QDialog.__init__(self, parent)
 
         self._logger_window = parent
-        self._no_connected_device_string = "No Connected Devices found"
-        self._list_separator_string = "----------------------------------------"
-        self.Ui_Logger = None
+
+        self.qtcb_enumerate.connect(self.cb_enumerate)
+        self.qtcb_connected.connect(self.cb_connected)
+
+        self.host = None
+        self.port = None
+
+        self.ipcon = IPConnection()
+        self.ipcon.register_callback(IPConnection.CALLBACK_CONNECTED,
+                                     self.qtcb_connected.emit)
+        self.ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE,
+                                     self.qtcb_enumerate.emit)
 
         self.setupUi(self)
-        self.signal_initialization()
 
-    # noinspection PyUnresolvedReferences
-    def signal_initialization(self):
-        """
-            Init of all important Signals and connections.
-        """
         self.btn_add_device.clicked.connect(self.btn_add_device_clicked)
-        self.btn_add_all_devices.clicked.connect(self.btn_add_all_devices_clicked)
-        self.btn_cancel.clicked.connect(self._btn_cancel_clicked)
+        self.btn_refresh.clicked.connect(self.btn_refresh_clicked)
+        self.btn_close.clicked.connect(self.btn_close_clicked)
+        self.tree_widget.itemActivated.connect(self.add_item)
 
-    def init_dialog(self, Ui_Logger):
-        """
-           Builds the Tree.
-        """
-        self.Ui_Logger = Ui_Logger
+        self.connected_uids = []
+        self.available_item = QTreeWidgetItem(['No devices available'])
+        self.supported_item = QTreeWidgetItem(['Supported devices'])
 
-        self.btn_add_all_devices.setEnabled(len(infos.get_device_infos()) > 0)
+        self.tree_widget.addTopLevelItem(self.available_item)
+        self.tree_widget.addTopLevelItem(self.supported_item)
 
-        self._create_tree()
+        for device_name in device_specs:
+            self.supported_item.addChild(QTreeWidgetItem([device_name]))
 
-    def _btn_cancel_clicked(self):
-        self.close()
+        self.supported_item.sortChildren(0, Qt.AscendingOrder)
+        self.supported_item.setExpanded(True)
 
-    def btn_add_all_devices_clicked(self):
-        for device_info in infos.get_device_infos():
-            if device_info.name in device_specs:
-                self._logger_window.add_device_to_tree(self.create_device_config('{0} [{1}]'.format(device_info.name, device_info.uid)))
+    def cb_connected(self, connect_reason):
+        self.tree_widget.clearSelection()
+        self.available_item.takeChildren()
+        self.available_item.setExpanded(True)
+        self.available_item.setText(0, 'No devices available at {0}:{1}'.format(self.host, self.port))
+
+        self.connected_uids = []
+
+        try:
+            self.ipcon.enumerate()
+        except:
+            pass
+
+    def cb_enumerate(self, uid, connected_uid, position,
+                     hardware_version, firmware_version,
+                     device_identifier, enumeration_type):
+        if enumeration_type in [IPConnection.ENUMERATION_TYPE_AVAILABLE,
+                                IPConnection.ENUMERATION_TYPE_CONNECTED] and \
+           uid not in self.connected_uids:
+            try:
+                display_name = device_factory.get_device_display_name(device_identifier)
+            except KeyError:
+                return # unknown device identifier
+
+            if display_name in device_specs:
+                self.connected_uids.append(uid)
+                self.available_item.addChild(QTreeWidgetItem(['{0} [{1}]'.format(display_name, uid)]))
+                self.available_item.setText(0, 'Devices available at {0}:{1}'.format(self.host, self.port))
+                self.available_item.sortChildren(0, Qt.AscendingOrder)
+        else:
+            if uid in self.connected_uids:
+                self.connected_uids.remove(uid)
+
+            for i in range(self.available_item.childCount()):
+                child = self.available_item.child(i)
+
+                if '[{0}]'.format(uid) in child.text(0):
+                    self.available_item.takeChild(i)
+                    break
+
+            if self.available_item.childCount() == 0:
+                self.available_item.setText(0, 'No devices available at {0}:{1}'.format(self.host, self.port))
 
     def btn_add_device_clicked(self):
-        for item in self.list_widget.selectedItems():
-            name = item.text()
-
-            if name == self._no_connected_device_string or name == self._list_separator_string: # FIXME
-                # ignore those
+        for item in self.tree_widget.selectedItems():
+            if item == self.available_item or item == self.supported_item:
                 continue
 
-            self._logger_window.add_device_to_tree(self.create_device_config(name))
+            self._logger_window.add_device_to_tree(self.create_device_config(item.text(0)))
+
+    def btn_refresh_clicked(self):
+        try:
+            self.ipcon.disconnect()
+        except:
+            pass
+
+        self.tree_widget.clearSelection()
+        self.available_item.takeChildren()
+        self.available_item.setExpanded(True)
+
+        self.connected_uids = []
+        self.host = self._logger_window.combo_host.currentText()
+        self.port = self._logger_window.spin_port.value()
+
+        try:
+            self.ipcon.connect(self.host, self.port)
+            self.available_item.setText(0, 'No devices available at {0}:{1}'.format(self.host, self.port))
+        except:
+            self.available_item.setText(0, 'Could not connect to {0}:{1}'.format(self.host, self.port))
+
+    def btn_close_clicked(self):
+        self.close()
+
+    def add_item(self, item):
+        if item == self.available_item or item == self.supported_item:
+            return
+
+        self._logger_window.add_device_to_tree(self.create_device_config(item.text(0)))
 
     def create_device_config(self, item_text):
         name, uid = Utilities.parse_device_name(item_text) # FIXME
@@ -115,36 +187,3 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
                 device['options'][option_spec['name']] = {'value': option_spec['default']}
 
         return device
-
-    def _create_tree(self, connected_devices=0):
-        """
-            Create the tree in the corresponding Dialog Mode(Add/Remove).
-        """
-        list_blueprint = []
-
-        # connected devices
-        if connected_devices <= 0:
-            connected_devices = infos.get_device_infos()
-
-        if len(connected_devices) <= 0:
-            list_blueprint.append(self._no_connected_device_string)
-        else:
-            for device_info in connected_devices:
-                if device_info.name in device_specs:
-                    list_blueprint.append(device_info.name + " [" + device_info.uid + "]")
-
-        # self.combo_devices.insertSeparator(self.combo_devices.count() + 1)
-        list_blueprint.append(self._list_separator_string)
-
-        # list of all devices
-        default_devices = []
-        for device in device_specs:
-            default_devices.append(device)
-        default_devices.sort()
-        for val in default_devices:
-            list_blueprint.append(val)
-
-        # add to list widget
-        self.list_widget.clear()
-        for dev in list_blueprint:
-            self.list_widget.addItem(str(dev))
