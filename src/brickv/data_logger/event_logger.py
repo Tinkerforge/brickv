@@ -170,15 +170,6 @@ class GUILogger(logging.Logger, QtCore.QObject):
     This class outputs the logged data to the brickv gui
     """
 
-    # for level as string
-    _convert_level = {}
-    _convert_level[logging.DEBUG] = logging._levelNames.get(logging.DEBUG)  # "DEBUG"
-    _convert_level[logging.INFO] = logging._levelNames.get(logging.INFO)  # "INFO"
-    _convert_level[logging.WARN] = logging._levelNames.get(logging.WARN)  # "WARNING"
-    _convert_level[logging.WARNING] = logging._levelNames.get(logging.WARNING)  # "WARNING"
-    _convert_level[logging.CRITICAL] = logging._levelNames.get(logging.CRITICAL)  # "CRITICAL"
-    _convert_level[logging.ERROR] = logging._levelNames.get(logging.ERROR)  # "ERROR"
-
     _output_format = "{asctime} - <b>{levelname:8}</b> - {message}"
     _output_format_warning = "<font color=\"orange\">{asctime} - <b>{levelname:8}</b> - {message}</font>"
     _output_format_critical = "<font color=\"red\">{asctime} - <b>{levelname:8}</b> - {message}</font>"
@@ -209,10 +200,9 @@ class GUILogger(logging.Logger, QtCore.QObject):
         self.log(logging.ERROR, msg)
 
     def log(self, level, msg):
-
         if level >= self.level:
             asctime = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
-            levelname = GUILogger._convert_level[level]
+            levelname = logging._levelNames.get(level)
 
             if level == logging.WARN or level == logging.WARNING:
                 self.emit(SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE),
