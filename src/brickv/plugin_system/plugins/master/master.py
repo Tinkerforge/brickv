@@ -35,6 +35,8 @@ from brickv.plugin_system.plugins.master.ethernet import Ethernet
 from brickv.plugin_system.plugins.master.wifi2 import Wifi2
 from brickv.bindings.brick_master import BrickMaster
 from brickv.async_call import async_call
+from brickv import infos
+from brickv.utils import get_main_window
         
 class Master(PluginBase, Ui_Master):
     def __init__(self, *args):
@@ -68,8 +70,48 @@ class Master(PluginBase, Ui_Master):
             reset.triggered.connect(lambda: self.master.reset())
             self.set_actions(reset)
 
+        self.extension_type_preset = [None, False, False, False, False, False]
+        self.extension_type_present_counter = 0
+        self.master_info = infos.get_info(self.uid)
+        self.update_extensions_in_info()
+
+    def update_extensions_in_info(self):
+        def is_present(present, extension_type, name):
+            self.extension_type_present_counter += 1
+            self.extension_type_preset[extension_type] = present
+            if present:
+                if self.master_info.extensions['ext0'] == None:
+                    self.master_info.extensions['ext0'] = infos.ExtensionInfo()
+                    self.master_info.extensions['ext0'].name = name
+                    self.master_info.extensions['ext0'].extension_type = extension_type
+                elif self.master_info.extensions['ext1'] == None:
+                    self.master_info.extensions['ext1'] = infos.ExtensionInfo()
+                    self.master_info.extensions['ext1'].name = name
+                    self.master_info.extensions['ext1'].extension_type = extension_type
+                else:
+                    pass # This should never be the case
+
+            # Update tree view if we did find a extension
+            if self.extension_type_present_counter == 5:
+                if True in self.extension_type_preset:
+                    get_main_window().update_tree_view()
+
+        if self.firmware_version >= (1, 1, 0):
+            async_call(self.master.is_chibi_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_CHIBI, 'Chibi Extension'), self.increase_error_count)
+
+        if self.firmware_version >= (1, 2, 0):
+            async_call(self.master.is_rs485_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_RS485, 'RS485 Extension'), self.increase_error_count)
+
+        if self.firmware_version >= (1, 3, 0):
+            async_call(self.master.is_wifi_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_WIFI, 'WIFI Extension'), self.increase_error_count)
+
+        if self.firmware_version >= (2, 1, 0):
+            async_call(self.master.is_ethernet_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_ETHERNET, 'Ethernet Extension'), self.increase_error_count)
+
+        if self.firmware_version >= (2, 4, 0):
+            async_call(self.master.is_wifi2_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_WIFI2, 'WIFI Extension 2.0'), self.increase_error_count)
+
     def is_wifi2_present_async(self, present):
-        print "wifi2_present:", present
         if present:
             wifi2 = Wifi2(self)
             self.extensions.append(wifi2)
@@ -123,25 +165,11 @@ class Master(PluginBase, Ui_Master):
         if self.check_extensions:
             self.check_extensions = False
 
-            # Chibi widget
-            if self.firmware_version >= (1, 1, 0):
-                async_call(self.master.is_chibi_present, None, self.is_chibi_present_async, self.increase_error_count)
-
-            # RS485 widget
-            if self.firmware_version >= (1, 2, 0):
-                async_call(self.master.is_rs485_present, None, self.is_rs485_present_async, self.increase_error_count)
-
-            # Wifi widget
-            if self.firmware_version >= (1, 3, 0):
-                async_call(self.master.is_wifi_present, None, self.is_wifi_present_async, self.increase_error_count)
-
-            # Ethernet widget
-            if self.firmware_version >= (2, 1, 0):
-                async_call(self.master.is_ethernet_present, None, self.is_ethernet_present_async, self.increase_error_count)
-
-            # Wifi2 widget
-            if self.firmware_version >= (2, 4, 0):
-                async_call(self.master.is_wifi2_present, None, self.is_wifi2_present_async, self.increase_error_count)
+            self.is_chibi_present_async(self.extension_type_preset[self.master.EXTENSION_TYPE_CHIBI])
+            self.is_rs485_present_async(self.extension_type_preset[self.master.EXTENSION_TYPE_RS485])
+            self.is_wifi_present_async(self.extension_type_preset[self.master.EXTENSION_TYPE_WIFI])
+            self.is_ethernet_present_async(self.extension_type_preset[self.master.EXTENSION_TYPE_ETHERNET])
+            self.is_wifi2_present_async(self.extension_type_preset[self.master.EXTENSION_TYPE_WIFI2])
 
         self.update_timer.start(1000)
 

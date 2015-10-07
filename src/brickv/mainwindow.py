@@ -390,6 +390,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.do_disconnect()
 
     def item_double_clicked(self, index):
+        name_index = index.sibling(index.row(), 0)
+        if name_index.isValid():
+            name_text = name_index.data()
+            if name_text.startswith('ext'):
+                index = index.parent()
+
         uid_index = index.sibling(index.row(), 1)
 
         if uid_index.isValid():
@@ -587,14 +593,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                             something_changed_ref[0] = True
 
             if device_info.plugin == None:
+                # We have to add device_info before we call get_plugin, otherwise we
+                # have a race condition when we search for extensions.
+                infos.add_info(device_info)
+
                 plugin = self.plugin_manager.get_plugin(device_identifier, self.ipcon,
                                                         uid, hardware_version, firmware_version)
 
                 device_info.plugin = plugin
                 device_info.name = plugin.name
                 device_info.url_part = plugin.get_url_part()
-
-                infos.add_info(device_info)
 
                 device_info.tab_window = self.create_tab_window(device_info, connected_uid, position)
                 device_info.tab_window.setWindowFlags(Qt.Widget)
@@ -801,6 +809,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                              QStandardItem(info.bricklets[port].uid),
                              QStandardItem(info.bricklets[port].position.upper()),
                              QStandardItem('.'.join(map(str, info.bricklets[port].firmware_version_installed)))]
+                    for item in child:
+                        item.setFlags(item.flags() & ~Qt.ItemIsEditable)
+                    parent[0].appendRow(child)
+
+            if info.can_have_extension:
+                extensions = []
+                if info.extensions['ext0'] != None:
+                    extensions.append(('ext0', info.extensions['ext0']))
+                if info.extensions['ext1'] != None:
+                    extensions.append(('ext1', info.extensions['ext1']))
+
+                for extension in extensions:
+                    child = [QStandardItem(extension[0] + ': ' + extension[1].name),
+                             QStandardItem(''),
+                             QStandardItem(''),
+                             QStandardItem('')]
                     for item in child:
                         item.setFlags(item.flags() & ~Qt.ItemIsEditable)
                     parent[0].appendRow(child)

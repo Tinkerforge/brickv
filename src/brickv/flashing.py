@@ -1361,8 +1361,9 @@ There was an error during the auto-detection of Bricklets with Protocol 1.0 plug
         self.extension_infos = []
 
         for info in infos.get_brick_infos():
-            if info.device_identifier == BrickMaster.DEVICE_IDENTIFIER and info.firmware_version_installed >= (2, 4, 0):
-                if info.plugin.device.is_wifi2_present():
+            if info.device_identifier == BrickMaster.DEVICE_IDENTIFIER:
+                if (info.extensions['ext0'] != None and info.extensions['ext0'].extension_type == BrickMaster.EXTENSION_TYPE_WIFI2) or \
+                   (info.extensions['ext1'] != None and info.extensions['ext1'].extension_type == BrickMaster.EXTENSION_TYPE_WIFI2):
                     self.combo_extension.addItem(info.get_combo_item_extension())
                     self.extension_infos.append(info)
 
