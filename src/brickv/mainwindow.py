@@ -402,7 +402,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             uid_text = uid_index.data()
             self.show_plugin(uid_text)
 
-    def create_tab_window(self, device_info, connected_uid, position):
+    def create_tab_window(self, device_info):
         tab_window = TabWindow(self.tab_widget, device_info.name, self.untab)
         tab_window._info = device_info
         tab_window.set_callback_on_tab(lambda index:
@@ -423,19 +423,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         info_bar.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
         # connected uid
-        if connected_uid != '0':
+        if device_info.connected_uid != '0':
             info_bar.addWidget(QLabel('Connected to:'))
 
             button = QToolButton()
-            button.setText(connected_uid)
-            button.clicked.connect(lambda: self.show_plugin(connected_uid))
+            button.setText(device_info.connected_uid)
+            button.clicked.connect(lambda: self.show_plugin(device_info.connected_uid))
 
             info_bar.addWidget(button)
             info_bar.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
         # position
         info_bar.addWidget(QLabel('Position:'))
-        info_bar.addWidget(QLabel('{0}'.format(position.upper())))
+        info_bar.addWidget(QLabel('{0}'.format(device_info.position.upper())))
 
         info_bar.addSpacerItem(QSpacerItem(1, 1, QSizePolicy.Expanding))
 
@@ -604,7 +604,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 device_info.name = plugin.name
                 device_info.url_part = plugin.get_url_part()
 
-                device_info.tab_window = self.create_tab_window(device_info, connected_uid, position)
+                device_info.tab_window = self.create_tab_window(device_info)
                 device_info.tab_window.setWindowFlags(Qt.Widget)
                 device_info.tab_window.tab()
 
