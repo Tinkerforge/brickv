@@ -34,10 +34,11 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt, QRegExp
 from PyQt4.QtGui import QDialog, QMessageBox, QPalette, QStandardItemModel, \
                         QStandardItem, QLineEdit, QSpinBox, QCheckBox, QComboBox, \
-                        QSpinBox, QDoubleSpinBox, QRegExpValidator, QTextCursor
+                        QSpinBox, QDoubleSpinBox, QRegExpValidator, QTextCursor, QIcon
 
 from brickv import config
 from brickv.bindings.ip_connection import BASE58
+from brickv.load_pixmap import load_pixmap
 from brickv.utils import get_save_file_name, get_open_file_name, get_main_window, get_home_path
 from brickv.data_logger.event_logger import EventLogger, GUILogger
 from brickv.data_logger.gui_config_handler import GuiConfigHandler
@@ -91,6 +92,8 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.tree_devices.setColumnWidth(0, 300)
 
         self.widget_initialization()
+
+        self.btn_start_logging.setIcon(QIcon(load_pixmap('data_logger/start-icon.png')))
 
         timestamp = int(time.time())
         self.edit_csv_file_name.setText(os.path.join(get_home_path(), 'logger_data_{0}.csv'.format(timestamp)))
@@ -170,13 +173,8 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.connect(self._gui_logger, QtCore.SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT),
                      self.highlight_events_tab)
 
-        # login information
         self.combo_host.currentIndexChanged.connect(self._host_index_changed)
         self.spin_port.valueChanged.connect(self._port_changed)
-
-        #self.tree_devices.itemDoubleClicked.connect(self.tree_on_double_click)
-        #self.tree_devices.itemChanged.connect(self.tree_on_change)
-        #self.tree_devices.itemChanged.connect(self.cb_device_interval_changed)
 
     def host_info_initialization(self):
         """
@@ -213,6 +211,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
             if self.data_logger_thread is not None:
                 self.btn_start_logging.setText("Stop Logging")
+                self.btn_start_logging.setIcon(QIcon(load_pixmap('data_logger/stop-icon.png')))
                 self.tab_devices.setEnabled(False)
                 self.tab_setup.setEnabled(False)
                 self.tab_widget.setCurrentIndex(self.tab_widget.indexOf(self.tab_csv_data))
@@ -222,6 +221,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.tab_devices.setEnabled(True)
         self.tab_setup.setEnabled(True)
         self.btn_start_logging.setText("Start Logging")
+        self.btn_start_logging.setIcon(QIcon(load_pixmap('data_logger/start-icon.png')))
 
         self.disconnect(self._gui_job, QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), self.table_add_row)
         self.data_logger_thread = None
