@@ -32,22 +32,22 @@ class PluginBase(QWidget, object):
     PLUGIN_STATE_RUNNING = 1
     PLUGIN_STATE_PAUSED = 2
 
-    def __init__(self, device_class, ipcon, uid, hardware_version,
-                 firmware_version, override_base_name=None):
+    def __init__(self, device_class, ipcon, device_info, override_base_name=None):
         QWidget.__init__(self)
 
         self.plugin_state = PluginBase.PLUGIN_STATE_STOPPED
         self.label_timeouts = None
         self.ipcon = ipcon
-        self.uid = uid
-        self.hardware_version = hardware_version
-        self.firmware_version = firmware_version
+        self.device_info = device_info
+        self.uid = device_info.uid
+        self.hardware_version = device_info.hardware_version
+        self.firmware_version = device_info.firmware_version_installed
         self.error_count = 0
         self.actions = None
 
         if device_class is not None:
             self.base_name = device_class.DEVICE_DISPLAY_NAME
-            self.device = device_class(uid, ipcon)
+            self.device = device_class(self.uid, self.ipcon)
         else:
             self.base_name = 'Unnamed'
             self.device = None
@@ -61,6 +61,10 @@ class PluginBase(QWidget, object):
                                              self.hardware_version[1])
         else:
             self.name = self.base_name
+
+        self.device_info.plugin = self
+        self.device_info.name = self.name
+        self.device_info.url_part = self.get_url_part()
 
     def start_plugin(self):
         # only consider starting the plugin, if it's stopped

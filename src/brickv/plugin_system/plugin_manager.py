@@ -31,13 +31,13 @@ class PluginManager(object):
     def __init__(self):
         self.plugins = device_classes
 
-    def get_plugin(self, device_identifier, ipcon, uid, hardware_version, firmware_version):
+    def create_plugin_instance(self, device_identifier, ipcon, device_info):
         for plugin in self.plugins:
             if plugin.has_device_identifier(device_identifier):
                 try:
-                    return plugin(ipcon, uid, hardware_version, firmware_version)
+                    return plugin(ipcon, device_info)
                 except:
                     traceback.print_exc()
-                    return Error(ipcon, uid, hardware_version, firmware_version)
+                    return Error(ipcon, device_info)
 
-        return Unknown(ipcon, uid, hardware_version, firmware_version)
+        return Unknown(ipcon, device_info)

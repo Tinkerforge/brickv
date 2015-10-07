@@ -71,21 +71,20 @@ class Master(PluginBase, Ui_Master):
             self.set_actions(reset)
 
         self.extension_type_preset = [None, False, False, False, False, False]
-        self.master_info = infos.get_info(self.uid)
-        self.update_extensions_in_info()
+        self.update_extensions_in_device_info()
 
-    def update_extensions_in_info(self):
+    def update_extensions_in_device_info(self):
         def is_present(present, extension_type, name):
             self.extension_type_preset[extension_type] = present
             if present:
-                if self.master_info.extensions['ext0'] == None:
-                    self.master_info.extensions['ext0'] = infos.ExtensionInfo()
-                    self.master_info.extensions['ext0'].name = name
-                    self.master_info.extensions['ext0'].extension_type = extension_type
-                elif self.master_info.extensions['ext1'] == None:
-                    self.master_info.extensions['ext1'] = infos.ExtensionInfo()
-                    self.master_info.extensions['ext1'].name = name
-                    self.master_info.extensions['ext1'].extension_type = extension_type
+                if self.device_info.extensions['ext0'] == None:
+                    self.device_info.extensions['ext0'] = infos.ExtensionInfo()
+                    self.device_info.extensions['ext0'].name = name
+                    self.device_info.extensions['ext0'].extension_type = extension_type
+                elif self.device_info.extensions['ext1'] == None:
+                    self.device_info.extensions['ext1'] = infos.ExtensionInfo()
+                    self.device_info.extensions['ext1'].name = name
+                    self.device_info.extensions['ext1'].extension_type = extension_type
                 else:
                     pass # This should never be the case
 

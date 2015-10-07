@@ -593,20 +593,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                             something_changed_ref[0] = True
 
             if device_info.plugin == None:
-                # We have to add device_info before we call get_plugin, otherwise we
-                # have a race condition when we search for extensions.
-                infos.add_info(device_info)
-
-                plugin = self.plugin_manager.get_plugin(device_identifier, self.ipcon,
-                                                        uid, hardware_version, firmware_version)
-
-                device_info.plugin = plugin
-                device_info.name = plugin.name
-                device_info.url_part = plugin.get_url_part()
+                self.plugin_manager.create_plugin_instance(device_identifier, self.ipcon, device_info)
 
                 device_info.tab_window = self.create_tab_window(device_info)
                 device_info.tab_window.setWindowFlags(Qt.Widget)
                 device_info.tab_window.tab()
+
+                infos.add_info(device_info)
 
                 something_changed_ref[0] = True
 
