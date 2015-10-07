@@ -732,7 +732,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tree_view.setColumnWidth(3, 90)
         self.tree_view.setExpandsOnDoubleClick(False)
         self.tree_view.setSortingEnabled(True)
-        self.tree_view.header().setSortIndicator(0, Qt.AscendingOrder)
+        self.tree_view.header().setSortIndicator(2, Qt.AscendingOrder)
 
     def update_ui_state(self, connection_state=None):
         # FIXME: need to call processEvents() otherwise get_connection_state()
