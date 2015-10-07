@@ -35,7 +35,6 @@ import time
 from brickv.data_logger.event_logger import EventLogger
 from brickv.data_logger.utils import CSVWriter
 
-
 class AbstractJob(threading.Thread):
     def __init__(self, datalogger=None, group=None, target=None, name=None, args=(), kwargs=None, verbose=None):
         threading.Thread.__init__(self, group=group, target=target, name=name, args=args, kwargs=kwargs,
@@ -67,7 +66,7 @@ class AbstractJob(threading.Thread):
         try:
             self._datalogger.data_queue.pop(self.name)
         except KeyError as key_err:
-            EventLogger.warning("Job:" + self.name + " was not ine the DataQueue! -> " + str(key_err))
+            EventLogger.warning("Job:" + self.name + " was not in the DataQueue! -> " + str(key_err))
 
 
 class CSVWriterJob(AbstractJob):
@@ -92,7 +91,7 @@ class CSVWriterJob(AbstractJob):
             while True:
                 if not self._datalogger.data_queue[self.name].empty():
                     csv_data = self._get_data_from_queue()
-                    EventLogger.debug(self._job_name + " -> " + str(csv_data))
+                    #EventLogger.debug(self._job_name + " -> " + str(csv_data))
                     if not csv_writer.write_data_row(csv_data):
                         EventLogger.warning(self._job_name + " Could not write csv row!")
 
@@ -144,7 +143,7 @@ class GuiDataJob(AbstractJob, QtCore.QObject):
             while True:
                 if not self._datalogger.data_queue[self.name].empty():
                     csv_data = self._get_data_from_queue()
-                    EventLogger.debug(self._job_name + " -> " + str(csv_data))
+                    #EventLogger.debug(self._job_name + " -> " + str(csv_data))
                     self.emit(QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), csv_data)
 
                 if not self._exit_flag and self._datalogger.data_queue[self.name].empty():
