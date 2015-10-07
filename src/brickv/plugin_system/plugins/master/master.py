@@ -71,13 +71,11 @@ class Master(PluginBase, Ui_Master):
             self.set_actions(reset)
 
         self.extension_type_preset = [None, False, False, False, False, False]
-        self.extension_type_present_counter = 0
         self.master_info = infos.get_info(self.uid)
         self.update_extensions_in_info()
 
     def update_extensions_in_info(self):
         def is_present(present, extension_type, name):
-            self.extension_type_present_counter += 1
             self.extension_type_preset[extension_type] = present
             if present:
                 if self.master_info.extensions['ext0'] == None:
@@ -90,11 +88,6 @@ class Master(PluginBase, Ui_Master):
                     self.master_info.extensions['ext1'].extension_type = extension_type
                 else:
                     pass # This should never be the case
-
-            # Update tree view if we did find a extension
-            if self.extension_type_present_counter == 5:
-                if True in self.extension_type_preset:
-                    get_main_window().update_tree_view()
 
         if self.firmware_version >= (1, 1, 0):
             async_call(self.master.is_chibi_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_CHIBI, 'Chibi Extension'), self.increase_error_count)
@@ -110,6 +103,8 @@ class Master(PluginBase, Ui_Master):
 
         if self.firmware_version >= (2, 4, 0):
             async_call(self.master.is_wifi2_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_WIFI2, 'WIFI Extension 2.0'), self.increase_error_count)
+
+        async_call(lambda: None, None, lambda: get_main_window().update_tree_view(), None)
 
     def is_wifi2_present_async(self, present):
         if present:
