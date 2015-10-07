@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-09-15.      #
+# This file was automatically generated on 2015-10-07.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -110,7 +110,7 @@ class BrickletAccelerometer(Device):
     def get_acceleration(self):
         """
         Returns the acceleration in x, y and z direction. The values
-        are given in mg (1/1000 g), not to be confused with grams.
+        are given in g/1000 (1g = 9.80665m/s²), not to be confused with grams.
         
         If you want to get the acceleration periodically, it is recommended 
         to use the callback :func:`Acceleration` and set the period with 

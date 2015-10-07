@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-09-28.      #
+# This file was automatically generated on 2015-10-07.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -101,7 +101,7 @@ class BrickletAmbientLightV2(Device):
         The illuminance is given in lux/100, i.e. a value of 450000 means that an
         illuminance of 4500lux is measured.
         
-        .. versionchanged:: 2.0.2~(Plugin)
+        .. versionchanged:: 2.0.2$nbsp;(Plugin)
           An illuminance of 0lux indicates that the sensor is saturated and the
           configuration should be modified, see :func:`SetConfiguration`.
         

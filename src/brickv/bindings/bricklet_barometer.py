@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-28.      #
+# This file was automatically generated on 2015-10-07.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -241,6 +241,7 @@ class BrickletBarometer(Device):
     def set_reference_air_pressure(self, air_pressure):
         """
         Sets the reference air pressure in mbar/1000 for the altitude calculation.
+        Valid values are between 10000 and 1200000.
         Setting the reference to the current air pressure results in a calculated
         altitude of 0cm. Passing 0 is a shortcut for passing the current air pressure as
         reference.
