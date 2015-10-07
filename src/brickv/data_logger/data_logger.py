@@ -55,7 +55,12 @@ class DataLogger(threading.Thread):
         self.data_queue = {}  # universal data_queue hash map
         self.host = config['hosts']['default']['name']
         self.port = config['hosts']['default']['port']
+        self.loggable_devices = []
         self.ipcon = IPConnection()
+
+        self.ipcon.register_callback(IPConnection.CALLBACK_CONNECTED, self.cb_connected)
+        self.ipcon.register_callback(IPConnection.CALLBACK_ENUMERATE, self.cb_enumerate)
+
         try:
             self.ipcon.connect(self.host, self.port)  # Connect to brickd
         except Exception as e:
@@ -70,6 +75,20 @@ class DataLogger(threading.Thread):
         self.csv_file_name = 'logger_data_{0}.csv'.format(int(time.time()))
         self.csv_enabled = True
         self.stopped = False
+
+    def cb_connected(self, connect_reason):
+        self.apply_options()
+
+    def cb_enumerate(self, uid, connected_uid, position,
+                     hardware_version, firmware_version,
+                     device_identifier, enumeration_type):
+        if enumeration_type in [IPConnection.ENUMERATION_TYPE_AVAILABLE,
+                                IPConnection.ENUMERATION_TYPE_CONNECTED]:
+            self.apply_options()
+
+    def apply_options(self):
+        for loggable_device in self.loggable_devices:
+            loggable_device.apply_options()
 
     def process_data_csv_section(self):
         """
@@ -106,14 +125,16 @@ class DataLogger(threading.Thread):
                 continue
 
             try:
-                loggable_devices.DeviceImpl(device, self).start_timer()
+                loggable_device = loggable_devices.DeviceImpl(device, self)
+                loggable_device.start_timer()
             except Exception as e:
                 msg = "A critical error occur: " + str(e)
                 self.stop()
                 raise DataLoggerException(DataLoggerException.DL_CRITICAL_ERROR, msg)
 
-                if got_wrong_uid_exception:
-                    raise Exception(wrong_uid_msg)
+            self.loggable_devices.append(loggable_device)
+
+        self.apply_options()
 
     def run(self):
         """

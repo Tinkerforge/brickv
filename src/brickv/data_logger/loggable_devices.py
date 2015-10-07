@@ -1274,6 +1274,35 @@ class DeviceImpl(AbstractDevice):
 
             self.datalogger.timers.append(utils.LoggerTimer(interval, func_name, var_name, self))
 
+    def apply_options(self):
+        options_setter = self.device_definition['options_setter']
+        option_specs = self.device_definition['options']
+
+        if options_setter != None and option_specs != None:
+            EventLogger.debug('Applying options for "{0}" with UID "{1}"'.format(self.device_name, self.device_uid))
+
+            args = []
+
+            for option_spec in option_specs:
+                for option_name in self.data['options']:
+                    if option_name == option_spec['name']:
+                        option_value = self.data['options'][option_name]['value']
+
+                        if option_spec['type'] == 'choice':
+                            for option_value_spec in option_spec['values']:
+                                if option_value == option_value_spec[0]:
+                                    args.append(option_value_spec[1])
+                        elif option_spec['type'] == 'int':
+                            args.append(option_value)
+                        elif option_spec['type'] == 'float':
+                            args.append(option_value)
+
+            try:
+                options_setter(self.device, *tuple(args))
+            except Exception as e:
+                EventLogger.warning('Could not apply options for "{0}" with UID "{1}": {2}'
+                                    .format(self.device_name, self.device_uid, e))
+
     def _timer(self, var_name):
         """
         This function is used by the LoggerTimer to get the variable values from the brickd.
