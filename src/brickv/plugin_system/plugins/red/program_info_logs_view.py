@@ -133,7 +133,7 @@ class ProgramInfoLogsView(QDialog, Ui_ProgramInfoLogsView):
 
         try:
             # FIXME: add progress dialog if content is bigger than some megabytes
-            f.write(self.content)
+            f.write(self.content.encode('utf-8'))
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save Log Error',
                                  u'Could not write to {0}:\n\n{1}'.format(filename, e))

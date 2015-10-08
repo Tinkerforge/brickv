@@ -195,7 +195,7 @@ class REDTabImportExportSystemLogs(QWidget, Ui_REDTabImportExportSystemLogs):
 
         try:
             # FIXME: add progress dialog if content is bigger than some megabytes
-            f.write(content)
+            f.write(content.encode('utf-8'))
         except Exception as e:
             QMessageBox.critical(get_main_window(), 'Save System Log Error',
                                  u'Could not write to {0}:\n\n{1}'.format(filename, e))
