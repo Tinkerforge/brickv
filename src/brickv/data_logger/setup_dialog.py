@@ -388,11 +388,11 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.combo_data_time_format.setCurrentIndex(max(self.combo_data_time_format.findData(config['data']['time_format']), 0))
         self.check_data_to_csv_file.setChecked(config['data']['csv']['enabled'])
-        self.edit_csv_file_name.setText(config['data']['csv']['file_name'])
+        self.edit_csv_file_name.setText(config['data']['csv']['file_name'].decode('utf-8'))
 
         self.combo_debug_time_format.setCurrentIndex(max(self.combo_debug_time_format.findData(config['debug']['time_format']), 0))
         self.check_debug_to_log_file.setChecked(config['debug']['log']['enabled'])
-        self.edit_log_file_name.setText(config['debug']['log']['file_name'])
+        self.edit_log_file_name.setText(config['debug']['log']['file_name'].decode('utf-8'))
         self.combo_log_level.setCurrentIndex(max(self.combo_debug_time_format.findData(config['debug']['log']['level']), 0))
 
     def update_devices_tab(self, config):
@@ -481,9 +481,9 @@ class SetupDialog(QDialog, Ui_SetupDialog):
                     widget_option_value = QComboBox()
 
                     for option_value_spec in option_spec['values']:
-                        widget_option_value.addItem(option_value_spec[0], option_value_spec[1])
+                        widget_option_value.addItem(option_value_spec[0].decode('utf-8'), option_value_spec[1])
 
-                    widget_option_value.setCurrentIndex(widget_option_value.findText(device['options'][option_spec['name']]['value']))
+                    widget_option_value.setCurrentIndex(widget_option_value.findText(device['options'][option_spec['name']]['value'].decode('utf-8')))
                 elif option_spec['type'] == 'int':
                     widget_option_value = QSpinBox()
 

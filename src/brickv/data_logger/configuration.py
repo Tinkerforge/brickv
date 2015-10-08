@@ -22,7 +22,6 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-import codecs
 import json
 
 from brickv.bindings.ip_connection import base58decode
@@ -30,15 +29,34 @@ from brickv.data_logger.event_logger import EventLogger
 from brickv.data_logger.utils import DataLoggerException, Utilities
 from brickv.data_logger.loggable_devices import device_specs
 
+def fix_strings(obj):
+    if isinstance(obj, unicode):
+        return obj.encode('utf-8')
+    elif isinstance(obj, dict):
+        fixed_obj = {}
+
+        for key in obj:
+            fixed_obj[fix_strings(key)] = fix_strings(obj[key])
+
+        return fixed_obj
+    elif isinstance(obj, list):
+        return [fix_strings(item) for item in obj]
+    else:
+        return obj
+
 def load_and_validate_config(filename):
     EventLogger.info('Loading config from file: {0}'.format(filename))
 
-    with codecs.open(filename, 'rb', 'UTF-8') as f:
-        try:
-            config = json.load(f)
-        except Exception as e:
-            EventLogger.critical('Could not parse config file as JSON: {0}'.format(e))
-            return None
+    with open(filename, 'rb') as f:
+        s = f.read()
+
+    try:
+        config = json.loads(s, encoding='utf-8')
+    except Exception as e:
+        EventLogger.critical('Could not parse config file as JSON: {0}'.format(e))
+        return None
+
+    config = fix_strings(config)
 
     if not ConfigValidator(config).validate():
         return None
@@ -51,9 +69,11 @@ def save_config(config, filename):
     EventLogger.info('Saving config to file: {0}'.format(filename))
 
     try:
+        s = json.dumps(config, ensure_ascii=False, sort_keys=True, indent=2).encode('utf-8')
+
         with open(filename, 'wb') as f:
-            json.dump(config, f, sort_keys=True, indent=2)
-    except Exception:
+            f.write(s)
+    except Exception as e:
         EventLogger.critical('Could not write config file as JSON: {0}'.format(e))
         return False
 
