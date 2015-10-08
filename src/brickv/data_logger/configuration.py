@@ -97,7 +97,7 @@ class ConfigValidator(object):
 
         self._validate_hosts()
         self._validate_data()
-        self._validate_events()
+        self._validate_debug()
         self._validate_devices()
 
         if self._error_count > 0:
@@ -203,63 +203,63 @@ class ConfigValidator(object):
             elif len(file_name) == 0:
                 self._report_error('"data/csv/file_name" is empty')
 
-    def _validate_events(self):
+    def _validate_debug(self):
         try:
-            events = self._config['events']
+            debug = self._config['debug']
         except KeyError:
-            self._report_error('Config has no "events" section')
+            self._report_error('Config has no "debug" section')
             return
 
         # time_format
         try:
-            time_format = events['time_format']
+            time_format = debug['time_format']
         except KeyError:
-            self._report_error('"events" section has no "time_format" member')
+            self._report_error('"debug" section has no "time_format" member')
         else:
             if not isinstance(time_format, basestring):
-                self._report_error('"events/time_format" is not a string')
+                self._report_error('"debug/time_format" is not a string')
             elif time_format not in ['de', 'us', 'iso', 'unix']:
-                self._report_error('Invalid "events/time_format" value: {0}'.format(time_format))
+                self._report_error('Invalid "debug/time_format" value: {0}'.format(time_format))
 
-        self._validate_events_log()
+        self._validate_debug_log()
 
-    def _validate_events_log(self):
+    def _validate_debug_log(self):
         try:
-            log = self._config['events']['log']
+            log = self._config['debug']['log']
         except KeyError:
-            self._report_error('Config has no "events/log" section')
+            self._report_error('Config has no "debug/log" section')
             return
 
         # enabled
         try:
             enabled = log['enabled']
         except KeyError:
-            self._report_error('"events/log" section has no "enabled" member')
+            self._report_error('"debug/log" section has no "enabled" member')
         else:
             if not isinstance(enabled, bool):
-                self._report_error('"events/log/enabled" is not an bool')
+                self._report_error('"debug/log/enabled" is not an bool')
 
         # file_name
         try:
             file_name = log['file_name']
         except KeyError:
-            self._report_error('"events/log" section has no "file_name" member')
+            self._report_error('"debug/log" section has no "file_name" member')
         else:
             if not isinstance(file_name, basestring):
-                self._report_error('"events/log/file_name" is not an string')
+                self._report_error('"debug/log/file_name" is not an string')
             elif len(file_name) == 0:
-                self._report_error('"events/log/file_name" is empty')
+                self._report_error('"debug/log/file_name" is empty')
 
         # level
         try:
             level = log['level']
         except KeyError:
-            self._report_error('"events/log" section has no "level" member')
+            self._report_error('"debug/log" section has no "level" member')
         else:
             if not isinstance(level, basestring):
-                self._report_error('"events/log/level" is not an integer')
+                self._report_error('"debug/log/level" is not an integer')
             elif level not in ['debug', 'info', 'warning', 'error', 'critical']:
-                self._report_error('Invalid "events/log/level" value: {0}'.format(level))
+                self._report_error('Invalid "debug/log/level" value: {0}'.format(level))
 
     def _validate_devices(self):
         try:

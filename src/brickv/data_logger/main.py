@@ -116,9 +116,9 @@ def main(config_filename, gui_config, gui_job):
         config = gui_config
         gui_start = True
 
-    if config['events']['log']['enabled']:
-        EventLogger.add_logger(FileLogger('FileLogger', log_level_name_to_id(config['events']['log']['level']),
-                                          config['events']['log']['file_name']))
+    if config['debug']['log']['enabled']:
+        EventLogger.add_logger(FileLogger('FileLogger', log_level_name_to_id(config['debug']['log']['level']),
+                                          config['debug']['log']['file_name']))
 
     data_logger = None
     try:

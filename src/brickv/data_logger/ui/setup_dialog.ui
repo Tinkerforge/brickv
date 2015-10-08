@@ -51,9 +51,9 @@
        <item>
         <layout class="QGridLayout" name="gridLayout">
          <item row="2" column="0">
-          <widget class="QGroupBox" name="group_events_file">
+          <widget class="QGroupBox" name="group_debug_file">
            <property name="title">
-            <string>Events</string>
+            <string>Debug</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
@@ -69,7 +69,7 @@
                <widget class="QComboBox" name="combo_log_level"/>
               </item>
               <item row="0" column="1">
-               <widget class="QComboBox" name="combo_events_time_format">
+               <widget class="QComboBox" name="combo_debug_time_format">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>1</horstretch>
@@ -107,7 +107,7 @@
                </widget>
               </item>
               <item row="1" column="1">
-               <widget class="QCheckBox" name="check_events_to_log_file">
+               <widget class="QCheckBox" name="check_debug_to_log_file">
                 <property name="text">
                  <string>Write to Log File</string>
                 </property>
@@ -321,7 +321,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_csv_data">
+     <widget class="QWidget" name="tab_data">
       <attribute name="title">
        <string>Data</string>
       </attribute>
@@ -344,7 +344,7 @@
          <item row="0" column="3">
           <widget class="QPushButton" name="btn_clear_data">
            <property name="text">
-            <string>Clear Data</string>
+            <string>Clear</string>
            </property>
           </widget>
          </item>
@@ -375,32 +375,32 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_console">
+     <widget class="QWidget" name="tab_debug">
       <attribute name="title">
-       <string>Events</string>
+       <string>Debug</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
         <layout class="QGridLayout" name="gridLayout_5">
          <item row="1" column="0" colspan="4">
-          <widget class="QTextBrowser" name="text_events">
+          <widget class="QTextBrowser" name="text_debug">
            <property name="lineWrapMode">
             <enum>QTextEdit::NoWrap</enum>
            </property>
           </widget>
          </item>
          <item row="0" column="3">
-          <widget class="QPushButton" name="btn_clear_events">
+          <widget class="QPushButton" name="btn_clear_debug">
            <property name="focusPolicy">
             <enum>Qt::TabFocus</enum>
            </property>
            <property name="text">
-            <string>Clear Events</string>
+            <string>Clear</string>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QCheckBox" name="checkbox_console_auto_scroll">
+          <widget class="QCheckBox" name="checkbox_debug_auto_scroll">
            <property name="text">
             <string>Auto Scroll</string>
            </property>
@@ -418,12 +418,12 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Shows the latest 1000 events</string>
+            <string>Shows the latest 1000 debug messages</string>
            </property>
           </widget>
          </item>
          <item row="0" column="2">
-          <widget class="QComboBox" name="combo_events_level">
+          <widget class="QComboBox" name="combo_debug_level">
            <property name="currentIndex">
             <number>-1</number>
            </property>
@@ -492,8 +492,8 @@
   <tabstop>check_data_to_csv_file</tabstop>
   <tabstop>edit_csv_file_name</tabstop>
   <tabstop>btn_browse_csv_file_name</tabstop>
-  <tabstop>combo_events_time_format</tabstop>
-  <tabstop>check_events_to_log_file</tabstop>
+  <tabstop>combo_debug_time_format</tabstop>
+  <tabstop>check_debug_to_log_file</tabstop>
   <tabstop>edit_log_file_name</tabstop>
   <tabstop>btn_browse_log_file_name</tabstop>
   <tabstop>combo_log_level</tabstop>
@@ -507,10 +507,10 @@
   <tabstop>table_data</tabstop>
   <tabstop>checkbox_data_auto_scroll</tabstop>
   <tabstop>btn_clear_data</tabstop>
-  <tabstop>text_events</tabstop>
-  <tabstop>checkbox_console_auto_scroll</tabstop>
-  <tabstop>combo_events_level</tabstop>
-  <tabstop>btn_clear_events</tabstop>
+  <tabstop>text_debug</tabstop>
+  <tabstop>checkbox_debug_auto_scroll</tabstop>
+  <tabstop>combo_debug_level</tabstop>
+  <tabstop>btn_clear_debug</tabstop>
  </tabstops>
  <resources/>
  <connections/>

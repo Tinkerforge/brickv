@@ -42,7 +42,7 @@ class GuiConfigHandler(object):
         """
         config = {'hosts': GuiConfigHandler.create_hosts_section(setup_dialog),
                   'data': GuiConfigHandler.create_data_section(setup_dialog),
-                  'events': GuiConfigHandler.create_events_section(setup_dialog),
+                  'debug': GuiConfigHandler.create_debug_section(setup_dialog),
                   'devices': GuiConfigHandler.create_devices_section(setup_dialog)}
 
         return config
@@ -70,17 +70,17 @@ class GuiConfigHandler(object):
 
         return data
 
-    def create_events_section(setup_dialog):
+    def create_debug_section(setup_dialog):
         """
-        Creates the events section part of the config file
+        Creates the debug section part of the config file
         and returns it as a dictonary.
         """
-        events = {'time_format': setup_dialog.combo_events_time_format.itemData(setup_dialog.combo_events_time_format.currentIndex()),
-                  'log': {'enabled': setup_dialog.check_events_to_log_file.isChecked(),
-                          'file_name': setup_dialog.edit_log_file_name.text(),
-                          'level': setup_dialog.combo_log_level.itemData(setup_dialog.combo_log_level.currentIndex())}}
+        debug = {'time_format': setup_dialog.combo_debug_time_format.itemData(setup_dialog.combo_debug_time_format.currentIndex()),
+                 'log': {'enabled': setup_dialog.check_debug_to_log_file.isChecked(),
+                         'file_name': setup_dialog.edit_log_file_name.text(),
+                         'level': setup_dialog.combo_log_level.itemData(setup_dialog.combo_log_level.currentIndex())}}
 
-        return events
+        return debug
 
     def create_devices_section(setup_dialog):
         devices = []
@@ -137,5 +137,5 @@ class GuiConfigHandler(object):
     create_config = staticmethod(create_config)
     create_hosts_section = staticmethod(create_hosts_section)
     create_data_section = staticmethod(create_data_section)
-    create_events_section = staticmethod(create_events_section)
+    create_debug_section = staticmethod(create_debug_section)
     create_devices_section = staticmethod(create_devices_section)

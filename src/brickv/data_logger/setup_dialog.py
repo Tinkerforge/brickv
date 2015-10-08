@@ -34,12 +34,14 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt, QRegExp
 from PyQt4.QtGui import QDialog, QMessageBox, QPalette, QStandardItemModel, \
                         QStandardItem, QLineEdit, QSpinBox, QCheckBox, QComboBox, \
-                        QSpinBox, QDoubleSpinBox, QRegExpValidator, QTextCursor, QIcon
+                        QSpinBox, QDoubleSpinBox, QRegExpValidator, QTextCursor, \
+                        QIcon, QColor
 
 from brickv import config
 from brickv.bindings.ip_connection import BASE58
 from brickv.load_pixmap import load_pixmap
-from brickv.utils import get_save_file_name, get_open_file_name, get_main_window, get_home_path
+from brickv.utils import get_save_file_name, get_open_file_name, get_main_window, \
+                         get_home_path, get_resources_path
 from brickv.data_logger.event_logger import EventLogger, GUILogger
 from brickv.data_logger.gui_config_handler import GuiConfigHandler
 from brickv.data_logger.job import GuiDataJob
@@ -58,7 +60,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
     def __init__(self, parent):
         QDialog.__init__(self, parent)
 
-        self._gui_logger = GUILogger("GUILogger", EventLogger.EVENT_LOG_LEVEL)
+        self._gui_logger = GUILogger("GUILogger", logging.INFO)
         self._gui_job = None
         EventLogger.add_logger(self._gui_logger)
 
@@ -66,7 +68,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.__tree_interval_tooltip = "Update interval in seconds"
         self.__tree_uid_tooltip = "UID cannot be empty"
         self.data_logger_thread = None
-        self.tab_console_warning = False
+        self.tab_debug_warning = False
 
         self.device_dialog = None
 
@@ -97,17 +99,17 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         timestamp = int(time.time())
         self.edit_csv_file_name.setText(os.path.join(get_home_path(), 'logger_data_{0}.csv'.format(timestamp)))
-        self.edit_log_file_name.setText(os.path.join(get_home_path(), 'logger_events_{0}.log'.format(timestamp)))
+        self.edit_log_file_name.setText(os.path.join(get_home_path(), 'logger_debug_{0}.log'.format(timestamp)))
 
         self.combo_data_time_format.addItem(utils.timestamp_to_de(timestamp) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
         self.combo_data_time_format.addItem(utils.timestamp_to_us(timestamp) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
         self.combo_data_time_format.addItem(utils.timestamp_to_iso(timestamp) + ' (ISO 8601)', 'iso')
         self.combo_data_time_format.addItem(utils.timestamp_to_unix(timestamp) + ' (Unix)', 'unix')
 
-        self.combo_events_time_format.addItem(utils.timestamp_to_de(timestamp) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
-        self.combo_events_time_format.addItem(utils.timestamp_to_us(timestamp) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
-        self.combo_events_time_format.addItem(utils.timestamp_to_iso(timestamp) + ' (ISO 8601)', 'iso')
-        self.combo_events_time_format.addItem(utils.timestamp_to_unix(timestamp) + ' (Unix)', 'unix')
+        self.combo_debug_time_format.addItem(utils.timestamp_to_de(timestamp) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
+        self.combo_debug_time_format.addItem(utils.timestamp_to_us(timestamp) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
+        self.combo_debug_time_format.addItem(utils.timestamp_to_iso(timestamp) + ' (ISO 8601)', 'iso')
+        self.combo_debug_time_format.addItem(utils.timestamp_to_unix(timestamp) + ' (Unix)', 'unix')
 
         self.combo_log_level.addItem('Debug', 'debug')
         self.combo_log_level.addItem('Info', 'info')
@@ -116,28 +118,28 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.combo_log_level.addItem('Critical', 'critical')
         self.combo_log_level.setCurrentIndex(0) # debug
 
-        self.combo_events_level.addItem('Debug', logging.DEBUG)
-        self.combo_events_level.addItem('Info', logging.INFO)
-        self.combo_events_level.addItem('Warning', logging.WARNING)
-        self.combo_events_level.addItem('Error', logging.ERROR)
-        self.combo_events_level.addItem('Critical', logging.CRITICAL)
-        self.combo_events_level.setCurrentIndex(1) # info
+        self.combo_debug_level.addItem('Debug', logging.DEBUG)
+        self.combo_debug_level.addItem('Info', logging.INFO)
+        self.combo_debug_level.addItem('Warning', logging.WARNING)
+        self.combo_debug_level.addItem('Error', logging.ERROR)
+        self.combo_debug_level.addItem('Critical', logging.CRITICAL)
+        self.combo_debug_level.setCurrentIndex(1) # info
 
         self.update_ui_state()
 
     def update_ui_state(self):
         data_to_csv_file = self.check_data_to_csv_file.isChecked()
-        events_to_log_file = self.check_events_to_log_file.isChecked()
+        debug_to_log_file = self.check_debug_to_log_file.isChecked()
 
         self.label_csv_file_name.setVisible(data_to_csv_file)
         self.edit_csv_file_name.setVisible(data_to_csv_file)
         self.btn_browse_csv_file_name.setVisible(data_to_csv_file)
 
-        self.label_log_file_name.setVisible(events_to_log_file)
-        self.edit_log_file_name.setVisible(events_to_log_file)
-        self.btn_browse_log_file_name.setVisible(events_to_log_file)
-        self.label_log_level.setVisible(events_to_log_file)
-        self.combo_log_level.setVisible(events_to_log_file)
+        self.label_log_file_name.setVisible(debug_to_log_file)
+        self.edit_log_file_name.setVisible(debug_to_log_file)
+        self.btn_browse_log_file_name.setVisible(debug_to_log_file)
+        self.label_log_level.setVisible(debug_to_log_file)
+        self.combo_log_level.setVisible(debug_to_log_file)
 
     def widget_initialization(self):
         """
@@ -157,11 +159,11 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.btn_save_config.clicked.connect(self.btn_save_config_clicked)
         self.btn_load_config.clicked.connect(self.btn_load_config_clicked)
         self.check_data_to_csv_file.stateChanged.connect(self.update_ui_state)
-        self.check_events_to_log_file.stateChanged.connect(self.update_ui_state)
+        self.check_debug_to_log_file.stateChanged.connect(self.update_ui_state)
         self.btn_browse_csv_file_name.clicked.connect(self.btn_browse_csv_file_name_clicked)
         self.btn_browse_log_file_name.clicked.connect(self.btn_browse_log_file_name_clicked)
-        self.btn_clear_events.clicked.connect(self.btn_clear_events_clicked)
-        self.combo_events_level.currentIndexChanged.connect(self.combo_events_level_changed)
+        self.btn_clear_debug.clicked.connect(self.btn_clear_debug_clicked)
+        self.combo_debug_level.currentIndexChanged.connect(self.combo_debug_level_changed)
         self.btn_add_device.clicked.connect(self.btn_add_device_clicked)
         self.btn_remove_device.clicked.connect(self.btn_remove_device_clicked)
         self.btn_remove_all_devices.clicked.connect(self.btn_remove_all_devices_clicked)
@@ -169,9 +171,9 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.tab_widget.currentChanged.connect(self.tab_reset_warning)
         self.btn_clear_data.clicked.connect(self.btn_clear_data_clicked)
 
-        self.connect(self._gui_logger, QtCore.SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE), self.add_event_message)
+        self.connect(self._gui_logger, QtCore.SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE), self.add_debug_message)
         self.connect(self._gui_logger, QtCore.SIGNAL(GUILogger.SIGNAL_NEW_MESSAGE_TAB_HIGHLIGHT),
-                     self.highlight_events_tab)
+                     self.highlight_debug_tab)
 
         self.combo_host.currentIndexChanged.connect(self._host_index_changed)
         self.spin_port.valueChanged.connect(self._port_changed)
@@ -214,7 +216,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
                 self.btn_start_logging.setIcon(QIcon(load_pixmap('data_logger/stop-icon.png')))
                 self.tab_devices.setEnabled(False)
                 self.tab_setup.setEnabled(False)
-                self.tab_widget.setCurrentIndex(self.tab_widget.indexOf(self.tab_csv_data))
+                self.tab_widget.setCurrentIndex(self.tab_widget.indexOf(self.tab_data))
                 self.tab_reset_warning()
 
     def _reset_stop(self):
@@ -243,7 +245,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         if not save_config(config, filename):
             QMessageBox.warning(get_main_window(), 'Save Config',
-                                'Could not save config to file! See Events tab for details.',
+                                'Could not save config to file! See Debug tab for details.',
                                 QMessageBox.Ok)
 
     def btn_load_config_clicked(self):
@@ -257,7 +259,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         if config == None:
             QMessageBox.warning(get_main_window(), 'Load Config',
-                                'Could not load config from file! See Events tab for details.',
+                                'Could not load config from file! See Debug tab for details.',
                                 QMessageBox.Ok)
             return
 
@@ -326,21 +328,20 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
     def tab_reset_warning(self):
         """
-            Resets the Warning @ the console tab.
+            Resets the Warning @ the debug tab.
         """
-        if not self.tab_console_warning or self.tab_widget.currentWidget().objectName() != self.tab_console.objectName():
+        if not self.tab_debug_warning or self.tab_widget.currentWidget().objectName() != self.tab_debug.objectName():
             return
 
-        self.tab_console_warning = False
-        from PyQt4.QtGui import QColor
+        self.tab_debug_warning = False
 
-        self.tab_set(self.tab_widget.indexOf(self.tab_console), self.palette().color(QPalette.WindowText), None)
+        self.tab_set(self.tab_widget.indexOf(self.tab_debug), self.palette().color(QPalette.WindowText), None)
 
-    def combo_events_level_changed(self):
+    def combo_debug_level_changed(self):
         """
             Changes the log level dynamically.
         """
-        self._gui_logger.level = self.combo_events_level.itemData(self.combo_events_level.currentIndex())
+        self._gui_logger.level = self.combo_debug_level.itemData(self.combo_debug_level.currentIndex())
 
     def tab_set(self, tab_index, color, icon=None):
         """
@@ -389,10 +390,10 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.check_data_to_csv_file.setChecked(config['data']['csv']['enabled'])
         self.edit_csv_file_name.setText(config['data']['csv']['file_name'])
 
-        self.combo_events_time_format.setCurrentIndex(max(self.combo_events_time_format.findData(config['events']['time_format']), 0))
-        self.check_events_to_log_file.setChecked(config['events']['log']['enabled'])
-        self.edit_log_file_name.setText(config['events']['log']['file_name'])
-        self.combo_log_level.setCurrentIndex(max(self.combo_events_time_format.findData(config['events']['log']['level']), 0))
+        self.combo_debug_time_format.setCurrentIndex(max(self.combo_debug_time_format.findData(config['debug']['time_format']), 0))
+        self.check_debug_to_log_file.setChecked(config['debug']['log']['enabled'])
+        self.edit_log_file_name.setText(config['debug']['log']['file_name'])
+        self.combo_log_level.setCurrentIndex(max(self.combo_debug_time_format.findData(config['debug']['log']['level']), 0))
 
     def update_devices_tab(self, config):
         EventLogger.debug('Updating devices tab from config')
@@ -499,32 +500,29 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
                 self.tree_devices.setIndexWidget(option_widget_item.index(), widget_option_value)
 
-    def add_event_message(self, message):
-        self.text_events.append(message)
+    def add_debug_message(self, message):
+        self.text_debug.append(message)
 
-        while self.text_events.document().blockCount() > 1000:
-            cursor = QTextCursor(self.text_events.document().begin())
+        while self.text_debug.document().blockCount() > 1000:
+            cursor = QTextCursor(self.text_debug.document().begin())
             cursor.select(QTextCursor.BlockUnderCursor)
             cursor.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor)
             cursor.removeSelectedText()
 
-        if self.checkbox_console_auto_scroll.isChecked():
-            self.text_events.verticalScrollBar().setValue(self.text_events.verticalScrollBar().maximum())
+        if self.checkbox_debug_auto_scroll.isChecked():
+            self.text_debug.verticalScrollBar().setValue(self.text_debug.verticalScrollBar().maximum())
 
-    def btn_clear_events_clicked(self):
-        self.text_events.clear()
+    def btn_clear_debug_clicked(self):
+        self.text_debug.clear()
 
-    def highlight_events_tab(self):
+    def highlight_debug_tab(self):
         """
             SIGNAL function:
-            Highlight the events tab when an error occurs.
+            Highlight the debug tab when an error occurs.
         """
-        if not self.tab_console_warning and self.tab_widget.currentWidget().objectName() != self.tab_console.objectName():
-            self.tab_console_warning = True
-            from brickv.utils import get_resources_path
-            from PyQt4.QtGui import QColor
-
-            self.tab_set(self.tab_widget.indexOf(self.tab_console), QColor(255, 0, 0),
+        if not self.tab_debug_warning and self.tab_widget.currentWidget().objectName() != self.tab_debug.objectName():
+            self.tab_debug_warning = True
+            self.tab_set(self.tab_widget.indexOf(self.tab_debug), QColor(255, 0, 0),
                          os.path.join(get_resources_path(), "warning-icon.png"))
 
     def table_add_row(self, csv_data):

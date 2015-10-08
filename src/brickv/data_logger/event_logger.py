@@ -32,13 +32,10 @@ import logging
 import datetime
 from PyQt4.QtCore import SIGNAL
 
-
 class EventLogger():
     """
         Basic EventLogger class.
     """
-
-    EVENT_LOG_LEVEL = logging.DEBUG
 
     format = "%(asctime)s - %(levelname)8s - %(message)s"
     __loggers = {}
@@ -116,7 +113,7 @@ class EventLogger():
 
 class ConsoleLogger(logging.Logger):
     """
-    This class outputs the logged events to the console
+    This class outputs the logged debug messages to the console
     """
 
     def __init__(self, name, log_level):
@@ -138,7 +135,7 @@ class ConsoleLogger(logging.Logger):
 
 class FileLogger(logging.Logger):
     """
-    This class writes the logged events to a log file
+    This class writes the logged debug messages to a log file
     """
 
     def __init__(self, name, log_level, filename):
