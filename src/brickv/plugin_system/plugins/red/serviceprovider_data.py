@@ -8,7 +8,19 @@
 
 dict_provider = \
 {'@format': '2.0',
- 'country': [{'@code': 'ae',
+ 'country': [{'@code': 'ad',
+              'provider': {'gsm': {'apn': [{'@value': 'internetand',
+                                            'name': 'Mobiland',
+                                            'plan': {'@type': 'postpaid'},
+                                            'usage': {'@type': 'internet'}},
+                                           {'@value': 'internetclic',
+                                            'name': 'Mobiland Click!',
+                                            'plan': {'@type': 'prepaid'},
+                                            'usage': {'@type': 'internet'}}],
+                                   'network-id': {'@mcc': '213',
+                                                  '@mnc': '03'}},
+                           'name': 'Andorra Telecom (Mobiland)'}},
+             {'@code': 'ae',
               'provider': [{'gsm': {'apn': [{'@value': 'mnet',
                                              'dns': ['194.170.1.6',
                                                      '194.170.1.7'],
@@ -9725,7 +9737,8 @@ dict_provider = \
 # /usr/share/xml/iso-codes/iso_3166.xml
 
 dict_country = \
-{'ae': 'United Arab Emirates',
+{'ad': 'Andorra',
+ 'ae': 'United Arab Emirates',
  'af': 'Afghanistan',
  'al': 'Albania',
  'am': 'Armenia',
