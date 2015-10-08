@@ -81,6 +81,34 @@ import brickv.data_logger.utils as utils
 # If the GPS Bricklet does not have a fix, then the function will return an Error
 # instead of the specified return values.
 
+# BrickletColor
+def special_get_get_illuminance(device):
+    gain, integration_time = device.get_config()
+
+    if gain == BrickletColor.GAIN_1X:
+        gain_factor = 1
+    elif gain == BrickletColor.GAIN_4X:
+        gain_factor = 4
+    elif gain == BrickletColor.GAIN_16X:
+        gain_factor = 16
+    elif gain == BrickletColor.GAIN_60X:
+        gain_factor = 60
+
+    if integration_time == BrickletColor.INTEGRATION_TIME_2MS:
+        integration_time_factor = 2.4
+    elif integration_time == BrickletColor.INTEGRATION_TIME_24MS:
+        integration_time_factor = 24
+    elif integration_time == BrickletColor.INTEGRATION_TIME_101MS:
+        integration_time_factor = 101
+    elif integration_time == BrickletColor.INTEGRATION_TIME_154MS:
+        integration_time_factor = 154
+    elif integration_time == BrickletColor.INTEGRATION_TIME_700MS:
+        integration_time_factor = 700
+
+    illuminance = device.get_illuminance()
+
+    return int(round(illuminance * 700.0 / float(gain_factor) / float(integration_time_factor), 1) * 10)
+
 # BrickletGPS
 def special_get_gps_coordinates(device):
     if device.get_status()[0] == BrickletGPS.FIX_NO_FIX:
@@ -385,14 +413,14 @@ device_specs = {
             },
             {
                 'name': 'Illuminance',
-                'getter': lambda device: device.get_illuminance(), # FIXME: need to apply formula: illuminance * 700 / gain / integration_time
+                'getter': special_get_get_illuminance, # FIXME: saturation handling is missing
                 'subvalues': None,
-                'unit': 'lx',
+                'unit': 'lx/10',
                 'advanced': False
             },
             {
                 'name': 'Color Temperature',
-                'getter': lambda device: device.get_color_temperature(),
+                'getter': lambda device: device.get_color_temperature(), # FIXME: saturation handling is missing
                 'subvalues': None,
                 'unit': 'K',
                 'advanced': False
