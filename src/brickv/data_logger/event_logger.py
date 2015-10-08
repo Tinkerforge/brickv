@@ -38,9 +38,6 @@ class EventLogger():
         Basic EventLogger class.
     """
 
-    EVENT_CONSOLE_LOGGING = True  # for logging to the console
-    EVENT_FILE_LOGGING = True  # for event logging in to a file
-    EVENT_FILE_LOGGING_PATH = "data_logger.log"  # default file path for logging events
     EVENT_LOG_LEVEL = logging.DEBUG
 
     format = "%(asctime)s - %(levelname)8s - %(message)s"
@@ -103,7 +100,6 @@ class EventLogger():
             for logger in EventLogger.__loggers.values():
                 logger.log(level, msg)
 
-
     # static methods
     add_logger = staticmethod(add_logger)
     remove_logger = staticmethod(remove_logger)
@@ -140,10 +136,9 @@ class ConsoleLogger(logging.Logger):
         # add ch to logger
         self.addHandler(ch)
 
-
 class FileLogger(logging.Logger):
     """
-    This class writes the logged events to an LOG file (EventLogger.EVENT_FILE_LOGGING_PATH)
+    This class writes the logged events to a log file
     """
 
     def __init__(self, name, log_level, filename):
@@ -163,7 +158,6 @@ class FileLogger(logging.Logger):
         self.addHandler(ch)
 
         self.info("###### NEW LOGGING SESSION STARTED ######")
-
 
 class GUILogger(logging.Logger, QtCore.QObject):
     """
