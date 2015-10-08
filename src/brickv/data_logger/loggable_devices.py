@@ -47,8 +47,8 @@ from brickv.bindings.bricklet_humidity import BrickletHumidity
 from brickv.bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
 from brickv.bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
 from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
-from brickv.bindings.bricklet_io16 import BrickletIO16 # config: port_configuration
-from brickv.bindings.bricklet_io4 import BrickletIO4 # config: port
+from brickv.bindings.bricklet_io16 import BrickletIO16
+from brickv.bindings.bricklet_io4 import BrickletIO4
 from brickv.bindings.bricklet_joystick import BrickletJoystick
 # from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
 from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
@@ -67,13 +67,24 @@ from brickv.bindings.bricklet_temperature import BrickletTemperature
 from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
 from brickv.bindings.bricklet_tilt import BrickletTilt
 from brickv.bindings.bricklet_voltage import BrickletVoltage
-from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent # config: averaging, voltage_conversion_time, current_conversion_time
+from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent
 # Bricks ###############################################################################################################
 from brickv.bindings.brick_dc import BrickDC
 # from brickv.bindings.brick_stepper import BricklStepper #NYI
 
 from brickv.data_logger.event_logger import EventLogger
 import brickv.data_logger.utils as utils
+
+def value_to_bits(value, length):
+    bits = []
+
+    for i in range(length):
+        if (value & (1 << i)) != 0:
+            bits.append(1)
+        else:
+            bits.append(0)
+
+    return bits
 
 # special_* functions are for special Bricks/Bricklets. Some device functions can
 # return different values, depending on different situations, e.g. the GPS Bricklet.
@@ -126,6 +137,55 @@ def special_get_gps_motion(device):
         raise Exception('No fix')
     else:
         return device.get_motion()
+
+# BrickletMultiTouch
+def special_set_multi_touch_options(device, electrode0, electrode1, electrode2, electrode3,
+                                    electrode4, electrode5, electrode6, electrode7,
+                                    electrode8, electrode9, electrode10, electrode11,
+                                    proximity, electrode_sensitivity):
+    electrode_config = 0
+
+    if electrode0:
+        electrode_config |= 1 << 0
+
+    if electrode1:
+        electrode_config |= 1 << 1
+
+    if electrode2:
+        electrode_config |= 1 << 2
+
+    if electrode3:
+        electrode_config |= 1 << 3
+
+    if electrode4:
+        electrode_config |= 1 << 4
+
+    if electrode5:
+        electrode_config |= 1 << 5
+
+    if electrode6:
+        electrode_config |= 1 << 6
+
+    if electrode7:
+        electrode_config |= 1 << 7
+
+    if electrode8:
+        electrode_config |= 1 << 8
+
+    if electrode9:
+        electrode_config |= 1 << 9
+
+    if electrode10:
+        electrode_config |= 1 << 10
+
+    if electrode11:
+        electrode_config |= 1 << 11
+
+    if proximity:
+        electrode_config |= 1 << 12
+
+    device.set_electrode_config(electrode_config)
+    device.set_electrode_sensitivity(electrode_sensitivity)
 
 # BrickletPTC
 def special_get_ptc_resistance(device):
@@ -693,9 +753,9 @@ device_specs = {
         'values': [
             {
                 'name': 'Value',
-                'getter': lambda device: device.get_value(),
-                'subvalues': None,
-                'unit': None,
+                'getter': lambda device: value_to_bits(device.get_value(), 4),
+                'subvalues': ['Pin 0', 'Pin 1', 'Pin 2', 'Pin 3'],
+                'unit': [None, None, None, None],
                 'advanced': False
             },
             {
@@ -727,8 +787,79 @@ device_specs = {
                 'advanced': True
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, edge_count_type_pin0, edge_count_debounce_pin0, \
+                                         edge_count_type_pin1, edge_count_debounce_pin1, \
+                                         edge_count_type_pin2, edge_count_debounce_pin2, \
+                                         edge_count_type_pin3, edge_count_debounce_pin3: \
+                          [device.set_edge_count_config(0b0001, edge_count_type_pin0, edge_count_debounce_pin0),
+                           device.set_edge_count_config(0b0010, edge_count_type_pin1, edge_count_debounce_pin1),
+                           device.set_edge_count_config(0b0100, edge_count_type_pin2, edge_count_debounce_pin2),
+                           device.set_edge_count_config(0b1000, edge_count_type_pin3, edge_count_debounce_pin3)],
         'options': [
+            {
+                'name': 'Edge Count Type (Pin 0)',
+                'type': 'choice',
+                'values': [('Rising', BrickletIndustrialDigitalIn4.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIndustrialDigitalIn4.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIndustrialDigitalIn4.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce (Pin 0)',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            },
+            {
+                'name': 'Edge Count Type (Pin 1)',
+                'type': 'choice',
+                'values': [('Rising', BrickletIndustrialDigitalIn4.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIndustrialDigitalIn4.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIndustrialDigitalIn4.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce (Pin 1)',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            },
+            {
+                'name': 'Edge Count Type (Pin 2)',
+                'type': 'choice',
+                'values': [('Rising', BrickletIndustrialDigitalIn4.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIndustrialDigitalIn4.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIndustrialDigitalIn4.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce (Pin 2)',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            },
+            {
+                'name': 'Edge Count Type (Pin 3)',
+                'type': 'choice',
+                'values': [('Rising', BrickletIndustrialDigitalIn4.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIndustrialDigitalIn4.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIndustrialDigitalIn4.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce (Pin 3)',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            }
         ]
     },
     BrickletIndustrialDual020mA.DEVICE_DISPLAY_NAME: {
@@ -809,16 +940,16 @@ device_specs = {
         'values': [
             {
                 'name': 'Port A',
-                'getter': lambda device: device.get_port('a'),
-                'subvalues': None,
-                'unit': None,
+                'getter': lambda device: value_to_bits(device.get_port('a'), 8),
+                'subvalues': ['Pin 0', 'Pin 1', 'Pin 2', 'Pin 3', 'Pin 4', 'Pin 5', 'Pin 6', 'Pin 7'],
+                'unit': [None, None, None, None, None, None, None, None],
                 'advanced': False
             },
             {
                 'name': 'Port B',
-                'getter': lambda device: device.get_port('b'),
-                'subvalues': None,
-                'unit': None,
+                'getter': lambda device: value_to_bits(device.get_port('b'), 8),
+                'subvalues': ['Pin 0', 'Pin 1', 'Pin 2', 'Pin 3', 'Pin 4', 'Pin 5', 'Pin 6', 'Pin 7'],
+                'unit': [None, None, None, None, None, None, None, None],
                 'advanced': False
             },
             {
@@ -836,8 +967,205 @@ device_specs = {
                 'advanced': True
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, pinA0, pinA1, pinA2, pinA3, pinA4, pinA5, pinA6, pinA7,
+                                         pinB0, pinB1, pinB2, pinB3, pinB4, pinB5, pinB6, pinB7,
+                                         edge_count_type_pinA0, edge_count_debounce_pinA0, \
+                                         edge_count_type_pinA1, edge_count_debounce_pinA1: \
+                          [device.set_port_configuration(*pinA0),
+                           device.set_port_configuration(*pinA1),
+                           device.set_port_configuration(*pinA2),
+                           device.set_port_configuration(*pinA3),
+                           device.set_port_configuration(*pinA4),
+                           device.set_port_configuration(*pinA5),
+                           device.set_port_configuration(*pinA6),
+                           device.set_port_configuration(*pinA7),
+                           device.set_port_configuration(*pinB0),
+                           device.set_port_configuration(*pinB1),
+                           device.set_port_configuration(*pinB2),
+                           device.set_port_configuration(*pinB3),
+                           device.set_port_configuration(*pinB4),
+                           device.set_port_configuration(*pinB5),
+                           device.set_port_configuration(*pinB6),
+                           device.set_port_configuration(*pinB7),
+                           device.set_edge_count_config(0, edge_count_type_pinA0, edge_count_debounce_pinA0),
+                           device.set_edge_count_config(1, edge_count_type_pinA1, edge_count_debounce_pinA1)],
         'options': [
+            {
+                'name': 'Pin A0',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('a', 0b00000001, 'i', True)),
+                           ('Input', ('a', 0b00000001, 'i', False)),
+                           ('Output High', ('a', 0b00000001, 'o', True)),
+                           ('Output Low', ('a', 0b00000001, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin A1',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('a', 0b00000010, 'i', True)),
+                           ('Input', ('a', 0b00000010, 'i', False)),
+                           ('Output High', ('a', 0b00000010, 'o', True)),
+                           ('Output Low', ('a', 0b00000010, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin A2',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('a', 0b00000100, 'i', True)),
+                           ('Input', ('a', 0b00000100, 'i', False)),
+                           ('Output High', ('a', 0b00000100, 'o', True)),
+                           ('Output Low', ('a', 0b00000100, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin A3',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('a', 0b00001000, 'i', True)),
+                           ('Input', ('a', 0b00001000, 'i', False)),
+                           ('Output High', ('a', 0b00001000, 'o', True)),
+                           ('Output Low', ('a', 0b00001000, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin A4',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('a', 0b00010000, 'i', True)),
+                           ('Input', ('a', 0b00010000, 'i', False)),
+                           ('Output High', ('a', 0b00010000, 'o', True)),
+                           ('Output Low', ('a', 0b00010000, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin A5',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('a', 0b00100000, 'i', True)),
+                           ('Input', ('a', 0b00100000, 'i', False)),
+                           ('Output High', ('a', 0b00100000, 'o', True)),
+                           ('Output Low', ('a', 0b00100000, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin A6',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('a', 0b01000000, 'i', True)),
+                           ('Input', ('a', 0b01000000, 'i', False)),
+                           ('Output High', ('a', 0b01000000, 'o', True)),
+                           ('Output Low', ('a', 0b01000000, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin A7',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('a', 0b10000000, 'i', True)),
+                           ('Input', ('a', 0b10000000, 'i', False)),
+                           ('Output High', ('a', 0b10000000, 'o', True)),
+                           ('Output Low', ('a', 0b10000000, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin B0',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('b', 0b00000001, 'i', True)),
+                           ('Input', ('b', 0b00000001, 'i', False)),
+                           ('Output High', ('b', 0b00000001, 'o', True)),
+                           ('Output Low', ('b', 0b00000001, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin B1',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('b', 0b00000010, 'i', True)),
+                           ('Input', ('b', 0b00000010, 'i', False)),
+                           ('Output High', ('b', 0b00000010, 'o', True)),
+                           ('Output Low', ('b', 0b00000010, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin B2',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('b', 0b00000100, 'i', True)),
+                           ('Input', ('b', 0b00000100, 'i', False)),
+                           ('Output High', ('b', 0b00000100, 'o', True)),
+                           ('Output Low', ('b', 0b00000100, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin B3',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('b', 0b00001000, 'i', True)),
+                           ('Input', ('b', 0b00001000, 'i', False)),
+                           ('Output High', ('b', 0b00001000, 'o', True)),
+                           ('Output Low', ('b', 0b00001000, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin B4',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('b', 0b00010000, 'i', True)),
+                           ('Input', ('b', 0b00010000, 'i', False)),
+                           ('Output High', ('b', 0b00010000, 'o', True)),
+                           ('Output Low', ('b', 0b00010000, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin B5',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('b', 0b00100000, 'i', True)),
+                           ('Input', ('b', 0b00100000, 'i', False)),
+                           ('Output High', ('b', 0b00100000, 'o', True)),
+                           ('Output Low', ('b', 0b00100000, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin B6',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('b', 0b01000000, 'i', True)),
+                           ('Input', ('b', 0b01000000, 'i', False)),
+                           ('Output High', ('b', 0b01000000, 'o', True)),
+                           ('Output Low', ('b', 0b01000000, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin B7',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('b', 0b10000000, 'i', True)),
+                           ('Input', ('b', 0b10000000, 'i', False)),
+                           ('Output High', ('b', 0b10000000, 'o', True)),
+                           ('Output Low', ('b', 0b10000000, 'o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Edge Count Type (Pin A0)',
+                'type': 'choice',
+                'values': [('Rising', BrickletIO16.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIO16.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIO16.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce (Pin A0)',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            },
+            {
+                'name': 'Edge Count Type (Pin A1)',
+                'type': 'choice',
+                'values': [('Rising', BrickletIO16.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIO16.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIO16.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce (Pin A1)',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            }
         ]
     },
     BrickletIO4.DEVICE_DISPLAY_NAME: {
@@ -845,9 +1173,9 @@ device_specs = {
         'values': [
             {
                 'name': 'Value',
-                'getter': lambda device: device.get_value(),
-                'subvalues': None,
-                'unit': None,
+                'getter': lambda device: value_to_bits(device.get_value(), 4),
+                'subvalues': ['Pin 0', 'Pin 1', 'Pin 2', 'Pin 3'],
+                'unit': [None, None, None, None],
                 'advanced': False
             },
             {
@@ -879,8 +1207,120 @@ device_specs = {
                 'advanced': True
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, pin0, pin1, pin2, pin3,
+                                         edge_count_type_pin0, edge_count_debounce_pin0, \
+                                         edge_count_type_pin1, edge_count_debounce_pin1, \
+                                         edge_count_type_pin2, edge_count_debounce_pin2, \
+                                         edge_count_type_pin3, edge_count_debounce_pin3: \
+                          [device.set_configuration(0b0001, *pin0),
+                           device.set_configuration(0b0010, *pin1),
+                           device.set_configuration(0b0100, *pin2),
+                           device.set_configuration(0b1000, *pin3),
+                           device.set_edge_count_config(0b0001, edge_count_type_pin0, edge_count_debounce_pin0),
+                           device.set_edge_count_config(0b0010, edge_count_type_pin1, edge_count_debounce_pin1),
+                           device.set_edge_count_config(0b0100, edge_count_type_pin2, edge_count_debounce_pin2),
+                           device.set_edge_count_config(0b1000, edge_count_type_pin3, edge_count_debounce_pin3)],
         'options': [
+            {
+                'name': 'Pin 0',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('i', True)),
+                           ('Input', ('i', False)),
+                           ('Output High', ('o', True)),
+                           ('Output Low', ('o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin 1',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('i', True)),
+                           ('Input', ('i', False)),
+                           ('Output High', ('o', True)),
+                           ('Output Low', ('o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin 2',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('i', True)),
+                           ('Input', ('i', False)),
+                           ('Output High', ('o', True)),
+                           ('Output Low', ('o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Pin 3',
+                'type': 'choice',
+                'values': [('Input Pull-Up', ('i', True)),
+                           ('Input', ('i', False)),
+                           ('Output High', ('o', True)),
+                           ('Output Low', ('o', False))],
+                'default': 'Input Pull-Up'
+            },
+            {
+                'name': 'Edge Count Type (Pin 0)',
+                'type': 'choice',
+                'values': [('Rising', BrickletIndustrialDigitalIn4.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIndustrialDigitalIn4.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIndustrialDigitalIn4.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce (Pin 0)',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            },
+            {
+                'name': 'Edge Count Type (Pin 1)',
+                'type': 'choice',
+                'values': [('Rising', BrickletIO4.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIO4.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIO4.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce (Pin 1)',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            },
+            {
+                'name': 'Edge Count Type (Pin 2)',
+                'type': 'choice',
+                'values': [('Rising', BrickletIO4.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIO4.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIO4.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce (Pin 2)',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            },
+            {
+                'name': 'Edge Count Type (Pin 3)',
+                'type': 'choice',
+                'values': [('Rising', BrickletIO4.EDGE_TYPE_RISING),
+                           ('Falling', BrickletIO4.EDGE_TYPE_FALLING),
+                           ('Both', BrickletIO4.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce (Pin 3)',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            }
         ]
     },
     BrickletJoystick.DEVICE_DISPLAY_NAME: {
@@ -1041,14 +1481,88 @@ device_specs = {
         'values': [
             {
                 'name': 'State',
-                'getter': lambda device: device.get_touch_state(),
-                'subvalues': None,
-                'unit': None,
+                'getter': lambda device: value_to_bits(device.get_touch_state(), 13),
+                'subvalues': ['Electrode 0', 'Electrode 1', 'Electrode 2', 'Electrode 3', 'Electrode 4', 'Electrode 5',
+                              'Electrode 6', 'Electrode 7', 'Electrode 8', 'Electrode 9', 'Electrode 10', 'Electrode 11', 'Proximity'],
+                'unit': [None, None, None, None, None, None, None, None, None, None, None, None, None],
                 'advanced': False
             }
         ],
-        'options_setter': None,
+        'options_setter': special_set_multi_touch_options,
         'options': [
+            {
+                'name': 'Electrode 0',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 1',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 2',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 3',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 4',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 5',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 6',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 7',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 8',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 9',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 10',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode 11',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Proximity',
+                'type': 'bool',
+                'default': True
+            },
+            {
+                'name': 'Electrode Sensitivity',
+                'type': 'int',
+                'minimum': 5,
+                'maximum': 201,
+                'suffix': None,
+                'default': 181
+            }
         ]
     },
     BrickletPTC.DEVICE_DISPLAY_NAME: {
