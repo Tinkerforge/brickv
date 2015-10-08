@@ -202,18 +202,18 @@ device_specs = {
         'class': BrickletAmbientLight,
         'values': [
             {
-                'name': 'Analog Value',
-                'getter': lambda device: device.get_analog_value(),
-                'subvalues': None,
-                'unit': None,
-                'advanced': True
-            },
-            {
                 'name': 'Illuminance',
                 'getter': lambda device: device.get_illuminance(),
                 'subvalues': None,
                 'unit': 'lx/10',
                 'advanced': False
+            },
+            {
+                'name': 'Analog Value',
+                'getter': lambda device: device.get_analog_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -263,18 +263,18 @@ device_specs = {
         'class': BrickletAnalogIn,
         'values': [
             {
-                'name': 'Analog Value',
-                'getter': lambda device: device.get_analog_value(),
-                'subvalues': None,
-                'unit': None,
-                'advanced': True
-            },
-            {
                 'name': 'Voltage',
                 'getter': lambda device: device.get_voltage(),
                 'subvalues': None,
                 'unit': 'mV',
                 'advanced': False
+            },
+            {
+                'name': 'Analog Value',
+                'getter': lambda device: device.get_analog_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
             }
         ],
         'options_setter': lambda device, voltage_range, average_length: [device.set_range(voltage_range), device.set_averaging(average_length)],
@@ -304,18 +304,18 @@ device_specs = {
         'class': BrickletAnalogInV2,
         'values': [
             {
-                'name': 'Analog Value',
-                'getter': lambda device: device.get_analog_value(),
-                'subvalues': None,
-                'unit': None,
-                'advanced': True
-            },
-            {
                 'name': 'Voltage',
                 'getter': lambda device: device.get_voltage(),
                 'subvalues': None,
                 'unit': 'mV',
                 'advanced': False
+            },
+            {
+                'name': 'Analog Value',
+                'getter': lambda device: device.get_analog_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -412,17 +412,17 @@ device_specs = {
                 'advanced': False
             },
             {
-                'name': 'Illuminance',
-                'getter': special_get_get_illuminance, # FIXME: saturation handling is missing
-                'subvalues': None,
-                'unit': 'lx/10',
-                'advanced': False
-            },
-            {
                 'name': 'Color Temperature',
                 'getter': lambda device: device.get_color_temperature(), # FIXME: saturation handling is missing
                 'subvalues': None,
                 'unit': 'K',
+                'advanced': False
+            },
+            {
+                'name': 'Illuminance',
+                'getter': special_get_get_illuminance, # FIXME: saturation handling is missing
+                'subvalues': None,
+                'unit': 'lx/10',
                 'advanced': False
             }
         ],
@@ -433,18 +433,18 @@ device_specs = {
         'class': BrickletCurrent12,
         'values': [
             {
-                'name': 'Analog Value',
-                'getter': lambda device: device.get_analog_value(),
-                'subvalues': None,
-                'unit': None,
-                'advanced': True
-            },
-            {
                 'name': 'Current',
                 'getter': lambda device: device.get_current(),
                 'subvalues': None,
                 'unit': 'mA',
                 'advanced': False
+            },
+            {
+                'name': 'Analog Value',
+                'getter': lambda device: device.get_analog_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -454,18 +454,18 @@ device_specs = {
         'class': BrickletCurrent25,
         'values': [
             {
-                'name': 'Analog Value',
-                'getter': lambda device: device.get_analog_value(),
-                'subvalues': None,
-                'unit': None,
-                'advanced': True
-            },
-            {
                 'name': 'Current',
                 'getter': lambda device: device.get_current(),
                 'subvalues': None,
                 'unit': 'mA',
                 'advanced': False
+            },
+            {
+                'name': 'Analog Value',
+                'getter': lambda device: device.get_analog_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -475,18 +475,18 @@ device_specs = {
         'class': BrickletDistanceIR,
         'values': [
             {
-                'name': 'Analog Value',
-                'getter': lambda device: device.get_analog_value(),
-                'subvalues': None,
-                'unit': None,
-                'advanced': True
-            },
-            {
                 'name': 'Distance',
                 'getter': lambda device: device.get_distance(),
                 'subvalues': None,
                 'unit': 'mm',
                 'advanced': False
+            },
+            {
+                'name': 'Analog Value',
+                'getter': lambda device: device.get_analog_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -547,13 +547,6 @@ device_specs = {
         'class': BrickletGPS,
         'values': [
             {
-                'name': 'Altitude',
-                'getter': special_get_gps_altitude,
-                'subvalues': ['Altitude', 'Geoidal Separation'],
-                'unit': ['cm', 'cm'],
-                'advanced': False
-            },
-            {
                 'name': 'Coordinates',
                 'getter': special_get_gps_coordinates,
                 'subvalues': ['Latitude', 'NS', 'Longitude', 'EW', 'PDOP', 'HDOP', 'VDOP', 'EPE'],
@@ -561,10 +554,10 @@ device_specs = {
                 'advanced': False
             },
             {
-                'name': 'Date Time',
-                'getter': lambda device: device.get_date_time(),
-                'subvalues': ['Date', 'Time'],
-                'unit': ['ddmmyy', 'hhmmss|sss'],
+                'name': 'Altitude',
+                'getter': special_get_gps_altitude,
+                'subvalues': ['Altitude', 'Geoidal Separation'],
+                'unit': ['cm', 'cm'],
                 'advanced': False
             },
             {
@@ -572,6 +565,13 @@ device_specs = {
                 'getter': special_get_gps_motion,
                 'subvalues': ['Course', 'Speed'],
                 'unit': ['deg/100', '10m/h'],
+                'advanced': False
+            },
+            {
+                'name': 'Date Time',
+                'getter': lambda device: device.get_date_time(),
+                'subvalues': ['Date', 'Time'],
+                'unit': ['ddmmyy', 'hhmmss|sss'],
                 'advanced': False
             },
             {
@@ -590,15 +590,15 @@ device_specs = {
         'class': BrickletHallEffect,
         'values': [
             {
-                'name': 'Edge Count',
-                'getter': lambda device: device.get_edge_count(False),
+                'name': 'Value',
+                'getter': lambda device: device.get_value(),
                 'subvalues': None,
                 'unit': None,
                 'advanced': False
             },
             {
-                'name': 'Value',
-                'getter': lambda device: device.get_value(),
+                'name': 'Edge Count',
+                'getter': lambda device: device.get_edge_count(False),
                 'subvalues': None,
                 'unit': None,
                 'advanced': False
@@ -612,18 +612,18 @@ device_specs = {
         'class': BrickletHumidity,
         'values': [
             {
-                'name': 'Analog Value',
-                'getter': lambda device: device.get_analog_value(),
-                'subvalues': None,
-                'unit': None,
-                'advanced': True
-            },
-            {
                 'name': 'Humidity',
                 'getter': lambda device: device.get_humidity(),
                 'subvalues': None,
                 'unit': '%RH/10',
                 'advanced': False
+            },
+            {
+                'name': 'Analog Value',
+                'getter': lambda device: device.get_analog_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -632,6 +632,13 @@ device_specs = {
     BrickletIndustrialDigitalIn4.DEVICE_DISPLAY_NAME: {
         'class': BrickletIndustrialDigitalIn4,
         'values': [
+            {
+                'name': 'Value',
+                'getter': lambda device: device.get_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            },
             {
                 'name': 'Edge Count (Pin 0)',
                 'getter': lambda device: device.get_edge_count(0, False),
@@ -659,13 +666,6 @@ device_specs = {
                 'subvalues': None,
                 'unit': None,
                 'advanced': True
-            },
-            {
-                'name': 'Value',
-                'getter': lambda device: device.get_value(),
-                'subvalues': None,
-                'unit': None,
-                'advanced': False
             }
         ],
         'options_setter': None,
@@ -698,13 +698,6 @@ device_specs = {
         'class': BrickletIndustrialDualAnalogIn,
         'values': [
             {
-                'name': 'ADC Values',
-                'getter': lambda device: device.get_adc_values(),
-                'subvalues': ['Channel 0', 'Channel 1'],
-                'unit': [None, None],
-                'advanced': True
-            },
-            {
                 'name': 'Voltage (Channel 0)',
                 'getter': lambda device: device.get_voltage(0),
                 'subvalues': None,
@@ -717,6 +710,13 @@ device_specs = {
                 'subvalues': None,
                 'unit': 'mV',
                 'advanced': False
+            },
+            {
+                'name': 'ADC Values',
+                'getter': lambda device: device.get_adc_values(),
+                'subvalues': ['Channel 0', 'Channel 1'],
+                'unit': [None, None],
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -726,20 +726,6 @@ device_specs = {
     BrickletIO16.DEVICE_DISPLAY_NAME: {
         'class': BrickletIO16,
         'values': [
-            {
-                'name': 'Edge Count (Pin A0)',
-                'getter': lambda device: device.get_edge_count(0, False),
-                'subvalues': None,
-                'unit': None,
-                'advanced': True
-            },
-            {
-                'name': 'Edge Count (Pin A1)',
-                'getter': lambda device: device.get_edge_count(1, False),
-                'subvalues': None,
-                'unit': None,
-                'advanced': True
-            },
             {
                 'name': 'Port A',
                 'getter': lambda device: device.get_port('a'),
@@ -753,6 +739,20 @@ device_specs = {
                 'subvalues': None,
                 'unit': None,
                 'advanced': False
+            },
+            {
+                'name': 'Edge Count (Pin A0)',
+                'getter': lambda device: device.get_edge_count(0, False),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
+            },
+            {
+                'name': 'Edge Count (Pin A1)',
+                'getter': lambda device: device.get_edge_count(1, False),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -762,6 +762,13 @@ device_specs = {
     BrickletIO4.DEVICE_DISPLAY_NAME: {
         'class': BrickletIO4,
         'values': [
+            {
+                'name': 'Value',
+                'getter': lambda device: device.get_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': False
+            },
             {
                 'name': 'Edge Count (Pin 0)',
                 'getter': lambda device: device.get_edge_count(0, False),
@@ -789,13 +796,6 @@ device_specs = {
                 'subvalues': None,
                 'unit': None,
                 'advanced': True
-            },
-            {
-                'name': 'Value',
-                'getter': lambda device: device.get_value(),
-                'subvalues': None,
-                'unit': None,
-                'advanced': False
             }
         ],
         'options_setter': None,
@@ -805,13 +805,6 @@ device_specs = {
     BrickletJoystick.DEVICE_DISPLAY_NAME: {
         'class': BrickletJoystick,
         'values': [
-            {
-                'name': 'Analog Value',
-                'getter': lambda device: device.get_analog_value(),
-                'subvalues': ['X', 'Y'],
-                'unit': [None, None],
-                'advanced': True
-            },
             {
                 'name': 'Position',
                 'getter': lambda device: device.get_position(),
@@ -825,6 +818,13 @@ device_specs = {
                 'subvalues': None,
                 'unit': None,
                 'advanced': False
+            },
+            {
+                'name': 'Analog Value',
+                'getter': lambda device: device.get_analog_value(),
+                'subvalues': ['X', 'Y'],
+                'unit': [None, None],
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -865,18 +865,18 @@ device_specs = {
         'class': BrickletLinearPoti,
         'values': [
             {
-                'name': 'Analog Value',
-                'getter': lambda device: device.get_analog_value(),
-                'subvalues': None,
-                'unit': None,
-                'advanced': True
-            },
-            {
                 'name': 'Position',
                 'getter': lambda device: device.get_position(),
                 'subvalues': None,
                 'unit': None,
                 'advanced': False
+            },
+            {
+                'name': 'Analog Value',
+                'getter': lambda device: device.get_analog_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -947,18 +947,18 @@ device_specs = {
         'class': BrickletPTC,
         'values': [
             {
-                'name': 'Resistance',
-                'getter': special_get_ptc_resistance,
-                'subvalues': None,
-                'unit': None,
-                'advanced': True
-            },
-            {
                 'name': 'Temperature',
                 'getter': special_get_ptc_temperature,
                 'subvalues': None,
                 'unit': '°C/100',
                 'advanced': False
+            },
+            {
+                'name': 'Resistance',
+                'getter': special_get_ptc_resistance,
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -991,18 +991,18 @@ device_specs = {
         'class': BrickletRotaryPoti,
         'values': [
             {
-                'name': 'Analog Value',
-                'getter': lambda device: device.get_analog_value(),
-                'subvalues': None,
-                'unit': None,
-                'advanced': True
-            },
-            {
                 'name': 'Position',
                 'getter': lambda device: device.get_position(),
                 'subvalues': None,
                 'unit': None,
                 'advanced': False
+            },
+            {
+                'name': 'Analog Value',
+                'getter': lambda device: device.get_analog_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
             }
         ],
         'options_setter': None,
@@ -1080,19 +1080,18 @@ device_specs = {
         'class': BrickletVoltage,
         'values': [
             {
-                'name': 'Analog Value',
-                'getter': lambda device: device.get_analog_value(),
-                'subvalues': None,
-                'unit': None,
-                'advanced': True
-            },
-            {
                 'name': 'Voltage',
                 'getter': lambda device: device.get_voltage(),
                 'subvalues': None,
                 'unit': 'mV',
                 'advanced': False
             },
+            {
+                'name': 'Analog Value',
+                'getter': lambda device: device.get_analog_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
         ],
         'options_setter': None,
         'options': [
@@ -1102,17 +1101,17 @@ device_specs = {
         'class': BrickletVoltageCurrent,
         'values': [
             {
-                'name': 'Current',
-                'getter': lambda device: device.get_current(),
-                'subvalues': None,
-                'unit': 'mA',
-                'advanced': False
-            },
-            {
                 'name': 'Voltage',
                 'getter': lambda device: device.get_voltage(),
                 'subvalues': None,
                 'unit': 'mV',
+                'advanced': False
+            },
+            {
+                'name': 'Current',
+                'getter': lambda device: device.get_current(),
+                'subvalues': None,
+                'unit': 'mA',
                 'advanced': False
             },
             {
