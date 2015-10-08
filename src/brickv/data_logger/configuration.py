@@ -443,13 +443,13 @@ class ConfigValidator(object):
                                         continue
 
                                     valid = value >= option_spec['minimum'] and value <= option_spec['maximum']
-                                elif option_spec['type'] == 'float':
-                                    if not isinstance(value, float):
-                                        self._report_error('Value of option "{0}" of device "{1}" is not a float'
+                                elif option_spec['type'] == 'bool':
+                                    if not isinstance(value, bool):
+                                        self._report_error('Value of option "{0}" of device "{1}" is not a bool'
                                                            .format(option_spec['name'], uid))
                                         continue
 
-                                    valid = value >= option_spec['minimum'] and value <= option_spec['maximum']
+                                    valid = True
 
                                 if not valid:
                                     self._report_error('Value of option "{0}" of device "{1}" is invalid: {2}'

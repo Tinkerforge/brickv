@@ -34,8 +34,7 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt, QRegExp
 from PyQt4.QtGui import QDialog, QMessageBox, QPalette, QStandardItemModel, \
                         QStandardItem, QLineEdit, QSpinBox, QCheckBox, QComboBox, \
-                        QSpinBox, QDoubleSpinBox, QRegExpValidator, QTextCursor, \
-                        QIcon, QColor
+                        QSpinBox, QRegExpValidator, QTextCursor, QIcon, QColor
 
 from brickv import config
 from brickv.bindings.ip_connection import BASE58
@@ -486,17 +485,12 @@ class SetupDialog(QDialog, Ui_SetupDialog):
                     widget_option_value.setCurrentIndex(widget_option_value.findText(device['options'][option_spec['name']]['value'].decode('utf-8')))
                 elif option_spec['type'] == 'int':
                     widget_option_value = QSpinBox()
-
                     widget_option_value.setRange(option_spec['minimum'], option_spec['maximum'])
                     widget_option_value.setSuffix(option_spec['suffix'])
                     widget_option_value.setValue(device['options'][option_spec['name']]['value'])
-                elif option_spec['type'] == 'float':
-                    widget_option_value = QDoubleSpinBox()
-
-                    widget_option_value.setRange(option_spec['minimum'], option_spec['maximum'])
-                    widget_option_value.setDecimals(option_spec['decimals'])
-                    widget_option_value.setSuffix(option_spec['suffix'])
-                    widget_option_value.setValue(device['options'][option_spec['name']]['value'])
+                elif option_spec['type'] == 'bool':
+                    widget_option_value = QCheckBox()
+                    widget_option_value.setChecked(device['options'][option_spec['name']]['value'])
 
                 self.tree_devices.setIndexWidget(option_widget_item.index(), widget_option_value)
 

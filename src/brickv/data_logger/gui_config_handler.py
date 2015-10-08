@@ -24,7 +24,7 @@ Boston, MA 02111-1307, USA.
 
 import collections
 
-from PyQt4.QtGui import QComboBox, QSpinBox, QDoubleSpinBox
+from PyQt4.QtGui import QComboBox, QSpinBox, QCheckBox
 
 from brickv.data_logger.event_logger import EventLogger, GUILogger
 
@@ -125,8 +125,8 @@ class GuiConfigHandler(object):
                             options[option_name_item.text()] = {'value': widget_option_value.currentText()}
                         elif isinstance(widget_option_value, QSpinBox):
                             options[option_name_item.text()] = {'value': widget_option_value.value()}
-                        elif isinstance(widget_option_value, QDoubleSpinBox):
-                            options[option_name_item.text()] = {'value': widget_option_value.value()}
+                        elif isinstance(widget_option_value, QCheckBox):
+                            options[option_name_item.text()] = {'value': widget_option_value.isChecked()}
 
                     device['options'] = options
 

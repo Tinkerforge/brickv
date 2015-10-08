@@ -30,23 +30,23 @@ import time
 from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer
 from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
 from brickv.bindings.bricklet_ambient_light_v2 import BrickletAmbientLightV2
-from brickv.bindings.bricklet_analog_in import BrickletAnalogIn # config: range, averaging
-from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2 # config: moving_average
+from brickv.bindings.bricklet_analog_in import BrickletAnalogIn
+from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2
 from brickv.bindings.bricklet_analog_out_v2 import BrickletAnalogOutV2
 from brickv.bindings.bricklet_barometer import BrickletBarometer
-from brickv.bindings.bricklet_color import BrickletColor # config: gain, integration_time
+from brickv.bindings.bricklet_color import BrickletColor
 from brickv.bindings.bricklet_current12 import BrickletCurrent12
 from brickv.bindings.bricklet_current25 import BrickletCurrent25
 from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
-from brickv.bindings.bricklet_distance_us import BrickletDistanceUS # config: moving_average
+from brickv.bindings.bricklet_distance_us import BrickletDistanceUS
 from brickv.bindings.bricklet_dual_button import BrickletDualButton
-from brickv.bindings.bricklet_dust_detector import BrickletDustDetector # config: moving_average
+from brickv.bindings.bricklet_dust_detector import BrickletDustDetector
 from brickv.bindings.bricklet_gps import BrickletGPS
-from brickv.bindings.bricklet_hall_effect import BrickletHallEffect # config: edge_type, debounce
+from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
 from brickv.bindings.bricklet_humidity import BrickletHumidity
-from brickv.bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4 # config: selection_mask, edge_type, debounce
-from brickv.bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA # config: sample_rate
-from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn # config: sample_rate
+from brickv.bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
+from brickv.bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
+from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
 from brickv.bindings.bricklet_io16 import BrickletIO16 # config: port_configuration
 from brickv.bindings.bricklet_io4 import BrickletIO4 # config: port
 from brickv.bindings.bricklet_joystick import BrickletJoystick
@@ -54,27 +54,26 @@ from brickv.bindings.bricklet_joystick import BrickletJoystick
 from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
 from brickv.bindings.bricklet_line import BrickletLine
 from brickv.bindings.bricklet_linear_poti import BrickletLinearPoti
-from brickv.bindings.bricklet_load_cell import BrickletLoadCell # config: moving_average
-from brickv.bindings.bricklet_moisture import BrickletMoisture # config: moving_average
+from brickv.bindings.bricklet_load_cell import BrickletLoadCell
+from brickv.bindings.bricklet_moisture import BrickletMoisture
 from brickv.bindings.bricklet_motion_detector import BrickletMotionDetector
-from brickv.bindings.bricklet_multi_touch import BrickletMultiTouch # config: electrode_config, electrode_sensitivity
-from brickv.bindings.bricklet_ptc import BrickletPTC # config: wire_mode
+from brickv.bindings.bricklet_multi_touch import BrickletMultiTouch
+from brickv.bindings.bricklet_ptc import BrickletPTC
 from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
 from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
 # from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback to get all data
 from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
-from brickv.bindings.bricklet_temperature import BrickletTemperature # config: i2c_mode
-from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR # config: emissivity
+from brickv.bindings.bricklet_temperature import BrickletTemperature
+from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
 from brickv.bindings.bricklet_tilt import BrickletTilt
 from brickv.bindings.bricklet_voltage import BrickletVoltage
 from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent # config: averaging, voltage_conversion_time, current_conversion_time
 # Bricks ###############################################################################################################
-from brickv.bindings.brick_dc import BrickDC  # NYI
+from brickv.bindings.brick_dc import BrickDC
 # from brickv.bindings.brick_stepper import BricklStepper #NYI
 
 from brickv.data_logger.event_logger import EventLogger
 import brickv.data_logger.utils as utils
-
 
 # special_* functions are for special Bricks/Bricklets. Some device functions can
 # return different values, depending on different situations, e.g. the GPS Bricklet.
@@ -318,8 +317,16 @@ device_specs = {
                 'advanced': True
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, moving_average_length: device.set_moving_average(moving_average_length),
         'options': [
+            {
+                'name': 'Moving Average Length',
+                'type': 'int',
+                'minimum': 1,
+                'maximum': 50,
+                'suffix': None,
+                'default': 50
+            }
         ]
     },
     BrickletAnalogOutV2.DEVICE_DISPLAY_NAME: {
@@ -334,8 +341,7 @@ device_specs = {
             }
         ],
         'options_setter': None,
-        'options': [
-        ]
+        'options': None
     },
     BrickletBarometer.DEVICE_DISPLAY_NAME: {
         'class': BrickletBarometer,
@@ -362,18 +368,20 @@ device_specs = {
                 'advanced': False
             }
         ],
-        'options_setter': lambda device, reference_air_pressure, moving_average_length_air_pressure, average_length_air_pressure, average_length_temperature: \
-                          [device.set_reference_air_pressure(int(reference_air_pressure * 1000.0)),
-                           device.set_averaging(moving_average_length_air_pressure, average_length_air_pressure, average_length_temperature)],
+        'options_setter': lambda device, reference_air_pressure, moving_average_length_air_pressure, \
+                                         average_length_air_pressure, average_length_temperature: \
+                          [device.set_reference_air_pressure(reference_air_pressure),
+                           device.set_averaging(moving_average_length_air_pressure,
+                                                average_length_air_pressure,
+                                                average_length_temperature)],
         'options': [
             {
                 'name': 'Reference Air Pressure',
-                'type': 'float',
-                'minimum': 10.0,
-                'maximum': 1200.0,
-                'decimals': 3,
-                'suffix': ' mbar',
-                'default': 1013.25
+                'type': 'int',
+                'minimum': 10000,
+                'maximum': 1200000,
+                'suffix': ' mbar/1000',
+                'default': 1013250
             },
             {
                 'name': 'Moving Average Length (Air Pressure)',
@@ -426,7 +434,27 @@ device_specs = {
                 'advanced': False
             }
         ],
+        'options_setter': lambda device, gain, integration_time: device.set_config(gain, integration_time),
         'options': [
+            {
+                'name': 'Gain',
+                'type': 'choice',
+                'values': [('1x', BrickletColor.GAIN_1X),
+                           ('4x', BrickletColor.GAIN_4X),
+                           ('16x', BrickletColor.GAIN_16X),
+                           ('60x', BrickletColor.GAIN_60X)],
+                'default': '60x'
+            },
+            {
+                'name': 'Integration Time',
+                'type': 'choice',
+                'values': [('2.4ms', BrickletColor.INTEGRATION_TIME_2MS),
+                           ('24ms', BrickletColor.INTEGRATION_TIME_24MS),
+                           ('101ms', BrickletColor.INTEGRATION_TIME_101MS),
+                           ('154ms', BrickletColor.INTEGRATION_TIME_154MS),
+                           ('700ms', BrickletColor.INTEGRATION_TIME_700MS)],
+                'default': '154ms'
+            }
         ]
     },
     BrickletCurrent12.DEVICE_DISPLAY_NAME: {
@@ -503,8 +531,16 @@ device_specs = {
                 'advanced': False
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, moving_average_length: device.set_moving_average(moving_average_length),
         'options': [
+            {
+                'name': 'Moving Average Length',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 100,
+                'suffix': None,
+                'default': 20
+            }
         ]
     },
     BrickletDualButton.DEVICE_DISPLAY_NAME: {
@@ -539,8 +575,16 @@ device_specs = {
                 'advanced': False
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, moving_average_length: device.set_moving_average(moving_average_length),
         'options': [
+            {
+                'name': 'Moving Average Length',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 100,
+                'suffix': None,
+                'default': 100
+            }
         ]
     },
     BrickletGPS.DEVICE_DISPLAY_NAME: {
@@ -583,8 +627,7 @@ device_specs = {
             }
         ],
         'options_setter': None,
-        'options': [
-        ]
+        'options': None
     },
     BrickletHallEffect.DEVICE_DISPLAY_NAME: {
         'class': BrickletHallEffect,
@@ -604,8 +647,24 @@ device_specs = {
                 'advanced': False
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, edge_count_type, edge_count_debounce: device.set_edge_count_config(edge_count_type, edge_count_debounce),
         'options': [
+            {
+                'name': 'Edge Count Type',
+                'type': 'choice',
+                'values': [('Rising', BrickletHallEffect.EDGE_TYPE_RISING),
+                           ('Falling', BrickletHallEffect.EDGE_TYPE_FALLING),
+                           ('Both', BrickletHallEffect.EDGE_TYPE_BOTH)],
+                'default': 'Rising'
+            },
+            {
+                'name': 'Edge Count Debounce',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 255,
+                'suffix': ' ms',
+                'default': 100
+            }
         ]
     },
     BrickletHumidity.DEVICE_DISPLAY_NAME: {
@@ -690,8 +749,17 @@ device_specs = {
                 'advanced': False
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, sample_rate: device.set_sample_rate(sample_rate),
         'options': [
+            {
+                'name': 'Sample Rate',
+                'type': 'choice',
+                'values': [('240 SPS', BrickletIndustrialDual020mA.SAMPLE_RATE_240_SPS),
+                           ('60 SPS', BrickletIndustrialDual020mA.SAMPLE_RATE_60_SPS),
+                           ('15 SPS', BrickletIndustrialDual020mA.SAMPLE_RATE_15_SPS),
+                           ('4 SPS', BrickletIndustrialDual020mA.SAMPLE_RATE_4_SPS)],
+                'default': '4 SPS'
+            }
         ]
     },
     BrickletIndustrialDualAnalogIn.DEVICE_DISPLAY_NAME: {
@@ -719,8 +787,21 @@ device_specs = {
                 'advanced': True
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, sample_rate: device.set_sample_rate(sample_rate),
         'options': [
+            {
+                'name': 'Sample Rate',
+                'type': 'choice',
+                'values': [('976 SPS', BrickletIndustrialDualAnalogIn.SAMPLE_RATE_976_SPS),
+                           ('488 SPS', BrickletIndustrialDualAnalogIn.SAMPLE_RATE_488_SPS),
+                           ('244 SPS', BrickletIndustrialDualAnalogIn.SAMPLE_RATE_244_SPS),
+                           ('122 SPS', BrickletIndustrialDualAnalogIn.SAMPLE_RATE_122_SPS),
+                           ('61 SPS', BrickletIndustrialDualAnalogIn.SAMPLE_RATE_61_SPS),
+                           ('4 SPS', BrickletIndustrialDualAnalogIn.SAMPLE_RATE_4_SPS),
+                           ('2 SPS', BrickletIndustrialDualAnalogIn.SAMPLE_RATE_2_SPS),
+                           ('1 SPS', BrickletIndustrialDualAnalogIn.SAMPLE_RATE_1_SPS)],
+                'default': '2 SPS'
+            }
         ]
     },
     BrickletIO16.DEVICE_DISPLAY_NAME: {
@@ -828,8 +909,7 @@ device_specs = {
             }
         ],
         'options_setter': None,
-        'options': [
-        ]
+        'options': None
     },
     BrickletLEDStrip.DEVICE_DISPLAY_NAME: {
         'class': BrickletLEDStrip,
@@ -843,8 +923,7 @@ device_specs = {
             }
         ],
         'options_setter': None,
-        'options': [
-        ]
+        'options': None
     },
     BrickletLine.DEVICE_DISPLAY_NAME: {
         'class': BrickletLine,
@@ -858,8 +937,7 @@ device_specs = {
             }
         ],
         'options_setter': None,
-        'options': [
-        ]
+        'options': None
     },
     BrickletLinearPoti.DEVICE_DISPLAY_NAME: {
         'class': BrickletLinearPoti,
@@ -880,8 +958,7 @@ device_specs = {
             }
         ],
         'options_setter': None,
-        'options': [
-        ]
+        'options': None
     },
     BrickletLoadCell.DEVICE_DISPLAY_NAME: {
         'class': BrickletLoadCell,
@@ -894,8 +971,32 @@ device_specs = {
                 'advanced': False
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, moving_average_length, rate, gain: \
+                          [device.set_moving_average(moving_average_length), device.set_configuration(rate, gain)],
         'options': [
+            {
+                'name': 'Moving Average Length',
+                'type': 'int',
+                'minimum': 1,
+                'maximum': 40,
+                'suffix': None,
+                'default': 4
+            },
+            {
+                'name': 'Rate',
+                'type': 'choice',
+                'values': [('10Hz', BrickletLoadCell.RATE_10HZ),
+                           ('80Hz', BrickletLoadCell.RATE_80HZ)],
+                'default': '10Hz'
+            },
+            {
+                'name': 'Gain',
+                'type': 'choice',
+                'values': [('128x', BrickletLoadCell.GAIN_128X),
+                           ('64x', BrickletLoadCell.GAIN_64X),
+                           ('32x', BrickletLoadCell.GAIN_32X)],
+                'default': '128x'
+            }
         ]
     },
     BrickletMoisture.DEVICE_DISPLAY_NAME: {
@@ -909,8 +1010,16 @@ device_specs = {
                 'advanced': False
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, moving_average_length: device.set_moving_average(moving_average_length),
         'options': [
+            {
+                'name': 'Moving Average Length',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 100,
+                'suffix': None,
+                'default': 100
+            }
         ]
     },
     BrickletMotionDetector.DEVICE_DISPLAY_NAME: {
@@ -925,8 +1034,7 @@ device_specs = {
             }
         ],
         'options_setter': None,
-        'options': [
-        ]
+        'options': None
     },
     BrickletMultiTouch.DEVICE_DISPLAY_NAME: {
         'class': BrickletMultiTouch,
@@ -961,8 +1069,16 @@ device_specs = {
                 'advanced': True
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, wire_mode: device.set_wire_mode(wire_mode),
         'options': [
+            {
+                'name': 'Wire Mode',
+                'type': 'choice',
+                'values': [('2-Wire', BrickletPTC.WIRE_MODE_2),
+                           ('3-Wire', BrickletPTC.WIRE_MODE_3),
+                           ('4-Wire', BrickletPTC.WIRE_MODE_4)],
+                'default': '2-Wire'
+            }
         ]
     },
     BrickletRotaryEncoder.DEVICE_DISPLAY_NAME: {
@@ -984,8 +1100,7 @@ device_specs = {
             }
         ],
         'options_setter': None,
-        'options': [
-        ]
+        'options': None
     },
     BrickletRotaryPoti.DEVICE_DISPLAY_NAME: {
         'class': BrickletRotaryPoti,
@@ -1006,8 +1121,7 @@ device_specs = {
             }
         ],
         'options_setter': None,
-        'options': [
-        ]
+        'options': None
     },
     BrickletSoundIntensity.DEVICE_DISPLAY_NAME: {
         'class': BrickletSoundIntensity,
@@ -1021,8 +1135,7 @@ device_specs = {
             }
         ],
         'options_setter': None,
-        'options': [
-        ]
+        'options': None
     },
     BrickletTemperature.DEVICE_DISPLAY_NAME: {
         'class': BrickletTemperature,
@@ -1035,8 +1148,15 @@ device_specs = {
                 'advanced': False
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, i2c_mode: device.set_i2c_mode(i2c_mode),
         'options': [
+            {
+                'name': 'I2C Mode',
+                'type': 'choice',
+                'values': [('400kHz', BrickletTemperature.I2C_MODE_FAST),
+                           ('100kHz', BrickletTemperature.I2C_MODE_SLOW)],
+                'default': '400kHz'
+            }
         ]
     },
     BrickletTemperatureIR.DEVICE_DISPLAY_NAME: {
@@ -1057,8 +1177,16 @@ device_specs = {
                 'advanced': False
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, emissivity: device.set_emissivity(emissivity),
         'options': [
+            {
+                'name': 'Emissivity',
+                'type': 'int',
+                'minimum': 6553,
+                'maximum': 65535,
+                'suffix': None,
+                'default': 65535
+            }
         ]
     },
     BrickletTilt.DEVICE_DISPLAY_NAME: {
@@ -1073,8 +1201,7 @@ device_specs = {
             }
         ],
         'options_setter': None,
-        'options': [
-        ]
+        'options': None
     },
     BrickletVoltage.DEVICE_DISPLAY_NAME: {
         'class': BrickletVoltage,
@@ -1092,10 +1219,10 @@ device_specs = {
                 'subvalues': None,
                 'unit': None,
                 'advanced': True
+            }
         ],
         'options_setter': None,
-        'options': [
-        ]
+        'options': None
     },
     BrickletVoltageCurrent.DEVICE_DISPLAY_NAME: {
         'class': BrickletVoltageCurrent,
@@ -1122,8 +1249,48 @@ device_specs = {
                 'advanced': False
             }
         ],
-        'options_setter': None,
+        'options_setter': lambda device, average_length, voltage_conversion_time, current_conversion_time: \
+                          device.set_configuration(average_length, voltage_conversion_time, current_conversion_time),
         'options': [
+            {
+                'name': 'Average Length',
+                'type': 'choice',
+                'values': [('1', BrickletVoltageCurrent.AVERAGING_1),
+                           ('4', BrickletVoltageCurrent.AVERAGING_4),
+                           ('16', BrickletVoltageCurrent.AVERAGING_16),
+                           ('64', BrickletVoltageCurrent.AVERAGING_64),
+                           ('128', BrickletVoltageCurrent.AVERAGING_128),
+                           ('256', BrickletVoltageCurrent.AVERAGING_256),
+                           ('512', BrickletVoltageCurrent.AVERAGING_512),
+                           ('1024', BrickletVoltageCurrent.AVERAGING_1024)],
+                'default': '64'
+            },
+            {
+                'name': 'Voltage Conversion Time',
+                'type': 'choice',
+                'values': [('140µs', 0),
+                           ('204µs', 1),
+                           ('332µs', 2),
+                           ('588µs', 3),
+                           ('1.1ms', 4),
+                           ('2.116ms', 5),
+                           ('4.156ms', 6),
+                           ('8.244ms', 7)],
+                'default': '1.1ms'
+            },
+            {
+                'name': 'Current Conversion Time',
+                'type': 'choice',
+                'values': [('140µs', 0),
+                           ('204µs', 1),
+                           ('332µs', 2),
+                           ('588µs', 3),
+                           ('1.1ms', 4),
+                           ('2.116ms', 5),
+                           ('4.156ms', 6),
+                           ('8.244ms', 7)],
+                'default': '1.1ms'
+            }
         ]
     },
     BrickDC.DEVICE_DISPLAY_NAME: {
@@ -1180,8 +1347,7 @@ device_specs = {
             }
         ],
         'options_setter': None,
-        'options': [
-        ]
+        'options': None
     }
 }
 
@@ -1283,7 +1449,7 @@ class DeviceImpl(AbstractDevice):
                                     args.append(option_value_spec[1])
                         elif option_spec['type'] == 'int':
                             args.append(option_value)
-                        elif option_spec['type'] == 'float':
+                        elif option_spec['type'] == 'bool':
                             args.append(option_value)
 
             try:
