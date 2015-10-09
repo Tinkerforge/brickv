@@ -44,6 +44,8 @@ class DataLogger(threading.Thread):
     def __init__(self, config, gui_job):
         super(DataLogger, self).__init__()
 
+        self.daemon = True
+
         self.jobs = []  # thread hashmap for all running threads/jobs
         self.job_exit_flag = False  # flag for stopping the thread
         self.job_sleep = 1  # TODO: Enahncement -> use condition objects

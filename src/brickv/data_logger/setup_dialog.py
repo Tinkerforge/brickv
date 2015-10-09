@@ -208,7 +208,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             self._gui_job = GuiDataJob(name="GuiData-Writer")
             self.connect(self._gui_job, QtCore.SIGNAL(GuiDataJob.SIGNAL_NEW_DATA), self.table_add_row)
 
-            self.data_logger_thread = main.main(None, GuiConfigHandler.create_config(self), self._gui_job, None, None)
+            self.data_logger_thread = main.main(None, GuiConfigHandler.create_config(self), self._gui_job, None, None, None)
 
             if self.data_logger_thread is not None:
                 self.btn_start_logging.setText("Stop Logging")

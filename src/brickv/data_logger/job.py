@@ -39,6 +39,8 @@ class AbstractJob(threading.Thread):
     def __init__(self, datalogger=None, group=None, target=None, name=None, args=(), kwargs=None, verbose=None):
         threading.Thread.__init__(self, group=group, target=target, name=name, args=args, kwargs=kwargs,
                                   verbose=verbose)
+
+        self.daemon = True
         self._exit_flag = False
         self._datalogger = datalogger
         self._job_name = "[Job:" + self.name + "]"

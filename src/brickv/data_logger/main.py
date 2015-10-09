@@ -29,6 +29,8 @@ import signal
 import sys
 import traceback
 import logging
+import functools
+import time
 
 from brickv.data_logger.data_logger import DataLogger
 from brickv.data_logger.event_logger import ConsoleLogger, FileLogger, EventLogger
@@ -62,29 +64,13 @@ if 'brickv' not in sys.modules:
         # directory named differently than 'brickv'
         sys.modules['brickv'] = __import__(tail, globals(), locals(), [], -1)
 
-CLOSE = False
-
-def __exit_condition(data_logger):
-    """
-    Waits for an 'exit' or 'quit' to stop logging and close the program
-    """
-    try:
-        while True:
-            raw_input("")  # FIXME: is raw_input the right approach
-            if CLOSE:
-                raise KeyboardInterrupt()
-
-    except (KeyboardInterrupt, EOFError):
-        sys.stdin.close()
-        data_logger.stop()
-
-def signal_handler(signum, frame):
+def signal_handler(interrupted_ref, signum, frame):
     """
     This function handles the ctrl + c exit condition
     if it's raised through the console
     """
-    global CLOSE
-    CLOSE = True
+    EventLogger.info('Received SIGINT/SIGTERM')
+    interrupted_ref[0] = True
 
 def log_level_name_to_id(log_level):
     if log_level == 'debug':
@@ -101,7 +87,7 @@ def log_level_name_to_id(log_level):
         return logging.INFO
 
 def main(config_filename, gui_config, gui_job, override_csv_file_name,
-         override_log_file_name):
+         override_log_file_name, interrupted_ref):
     """
     This function initialize the data logger and starts the logging process
     """
@@ -127,14 +113,17 @@ def main(config_filename, gui_config, gui_job, override_csv_file_name,
         EventLogger.add_logger(FileLogger('FileLogger', log_level_name_to_id(config['debug']['log']['level']),
                                           config['debug']['log']['file_name']))
 
-    data_logger = None
     try:
         data_logger = DataLogger(config, gui_job)
 
         if data_logger.ipcon is not None:
             data_logger.run()
+
             if not gui_start:
-                __exit_condition(data_logger)
+                while not interrupted_ref[0]:
+                    time.sleep(0.25)
+                data_logger.stop()
+                sys.exit(0)
         else:
             raise DataLoggerException(DataLoggerException.DL_CRITICAL_ERROR,
                                       "DataLogger did not start logging process! Please check for errors.")
@@ -164,6 +153,9 @@ if __name__ == '__main__':
     if args.console_log_level != 'none':
         EventLogger.add_logger(ConsoleLogger('ConsoleLogger', log_level_name_to_id(args.console_log_level)))
 
-    signal.signal(signal.SIGINT, signal_handler)
+    interrupted_ref = [False]
 
-    main(args.config, None, None, args.override_csv_file_name, args.override_log_file_name)
+    signal.signal(signal.SIGINT, functools.partial(signal_handler, interrupted_ref))
+    signal.signal(signal.SIGTERM, functools.partial(signal_handler, interrupted_ref))
+
+    main(args.config, None, None, args.override_csv_file_name, args.override_log_file_name, interrupted_ref)
