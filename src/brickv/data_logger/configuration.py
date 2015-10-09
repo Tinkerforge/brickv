@@ -47,10 +47,10 @@ def fix_strings(obj):
 def load_and_validate_config(filename):
     EventLogger.info('Loading config from file: {0}'.format(filename))
 
-    with open(filename, 'rb') as f:
-        s = f.read()
-
     try:
+        with open(filename, 'rb') as f:
+            s = f.read()
+
         config = json.loads(s, encoding='utf-8')
     except Exception as e:
         EventLogger.critical('Could not parse config file as JSON: {0}'.format(e))
