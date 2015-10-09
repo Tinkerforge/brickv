@@ -100,7 +100,8 @@ def log_level_name_to_id(log_level):
     else:
         return logging.INFO
 
-def main(config_filename, gui_config, gui_job):
+def main(config_filename, gui_config, gui_job, override_csv_file_name,
+         override_log_file_name):
     """
     This function initialize the data logger and starts the logging process
     """
@@ -115,6 +116,12 @@ def main(config_filename, gui_config, gui_job):
     else: # started via GUI
         config = gui_config
         gui_start = True
+
+    if override_csv_file_name != None:
+        config['data']['csv']['file_name'] = override_csv_file_name
+
+    if override_log_file_name != None:
+        config['data']['log']['file_name'] = override_log_file_name
 
     if config['debug']['log']['enabled']:
         EventLogger.add_logger(FileLogger('FileLogger', log_level_name_to_id(config['debug']['log']['level']),
@@ -144,15 +151,19 @@ def main(config_filename, gui_config, gui_job):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tinkerforge Data Logger')
 
-    parser.add_argument('config', help='config file location')
-    parser.add_argument('--log-level', choices=['none', 'debug', 'info', 'warning', 'error', 'critical'],
-                        default='info', help='console logger log level')
+    parser.add_argument('config', help='config file location', metavar='CONFIG')
+    parser.add_argument('--console-log-level', choices=['none', 'debug', 'info', 'warning', 'error', 'critical'],
+                        default='none', help='console logger log level')
+    parser.add_argument('--override-csv-file-name', type=str, default=None,
+                        help='override CSV file name in config')
+    parser.add_argument('--override-log-file-name', type=str, default=None,
+                        help='override log file name in config')
 
     args = parser.parse_args(sys.argv[1:])
 
-    if args.log_level != 'none':
-        EventLogger.add_logger(ConsoleLogger('ConsoleLogger', log_level_name_to_id(args.log_level)))
+    if args.console_log_level != 'none':
+        EventLogger.add_logger(ConsoleLogger('ConsoleLogger', log_level_name_to_id(args.console_log_level)))
 
     signal.signal(signal.SIGINT, signal_handler)
 
-    main(args.config, None, None)
+    main(args.config, None, None, args.override_csv_file_name, args.override_log_file_name)
