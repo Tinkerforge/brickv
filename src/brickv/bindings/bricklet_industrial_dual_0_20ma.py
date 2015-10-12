@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-28.      #
+# This file was automatically generated on 2015-10-12.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -181,7 +181,7 @@ class BrickletIndustrialDual020mA(Device):
          "2",    "15 samples per second, 16 bit resolution"
          "3",    "4 samples per second, 18 bit resolution"
         
-        The default value is 3: 4 samples per second with 18 bit resolution.
+        The default value is 3 (4 samples per second with 18 bit resolution).
         """
         self.ipcon.send_request(self, BrickletIndustrialDual020mA.FUNCTION_SET_SAMPLE_RATE, (rate,), 'B', '')
 

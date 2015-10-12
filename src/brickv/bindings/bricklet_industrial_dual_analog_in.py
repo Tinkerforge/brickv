@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-28.      #
+# This file was automatically generated on 2015-10-12.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -175,6 +175,8 @@ class BrickletIndustrialDualAnalogIn(Device):
         Sets the sample rate. The sample rate can be between 1 sample per second
         and 976 samples per second. Decreasing the sample rate will also decrease the
         noise on the data.
+        
+        The default value is 6 (2 samples per second).
         """
         self.ipcon.send_request(self, BrickletIndustrialDualAnalogIn.FUNCTION_SET_SAMPLE_RATE, (rate,), 'B', '')
 
