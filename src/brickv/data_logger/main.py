@@ -85,7 +85,7 @@ def main(config_filename, gui_config, gui_job, override_csv_file_name,
         config['data']['csv']['file_name'] = override_csv_file_name
 
     if override_log_file_name != None:
-        config['data']['log']['file_name'] = override_log_file_name
+        config['debug']['log']['file_name'] = override_log_file_name
 
     if config['debug']['log']['enabled']:
         EventLogger.add_logger(FileLogger('FileLogger', log_level_name_to_id(config['debug']['log']['level']),
