@@ -22,17 +22,20 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+#### skip here for brick-logger ####
+
 import logging
 import threading
 import time
 
-from brickv.bindings.ip_connection import IPConnection, base58decode
-from brickv.data_logger.event_logger import EventLogger
-from brickv.data_logger.job import CSVWriterJob#, GuiDataJob
-from brickv.data_logger.loggable_devices import DeviceImpl
-from brickv.data_logger.utils import DataLoggerException
-import brickv.data_logger.utils as utils
-
+if 'merged_data_logger_modules' not in globals():
+    from brickv.bindings.ip_connection import IPConnection, base58decode
+    from brickv.data_logger.event_logger import EventLogger
+    from brickv.data_logger.job import CSVWriterJob#, GuiDataJob
+    from brickv.data_logger.loggable_devices import DeviceImpl
+    from brickv.data_logger.utils import DataLoggerException
+else:
+    from tinkerforge.ip_connection import IPConnection, base58decode
 
 class DataLogger(threading.Thread):
     """

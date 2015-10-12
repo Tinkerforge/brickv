@@ -22,12 +22,17 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+#### skip here for brick-logger ####
+
 import json
 
-from brickv.bindings.ip_connection import base58decode
-from brickv.data_logger.event_logger import EventLogger
-from brickv.data_logger.utils import DataLoggerException, Utilities
-from brickv.data_logger.loggable_devices import device_specs
+if 'merged_data_logger_modules' not in globals():
+    from brickv.bindings.ip_connection import base58decode
+    from brickv.data_logger.event_logger import EventLogger
+    from brickv.data_logger.utils import DataLoggerException, Utilities
+    from brickv.data_logger.loggable_devices import device_specs
+else:
+    from tinkerforge.ip_connection import base58decode
 
 def fix_strings(obj):
     if isinstance(obj, unicode):

@@ -22,6 +22,10 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+data_logger_version = 'invalid'
+
+#### skip here for brick-logger ####
+
 # MAIN DATA_LOGGER PROGRAM
 import argparse  # command line argument parser
 import os
@@ -32,37 +36,11 @@ import logging
 import functools
 import time
 
-from brickv.data_logger.data_logger import DataLogger
-from brickv.data_logger.event_logger import ConsoleLogger, FileLogger, EventLogger
-from brickv.data_logger.utils import DataLoggerException
-from brickv.data_logger.configuration import load_and_validate_config
-
-if hasattr(sys, "frozen"):
-    program_path = os.path.dirname(os.path.realpath(unicode(sys.executable, sys.getfilesystemencoding())))
-
-    if sys.platform == "darwin":
-        resources_path = os.path.join(os.path.split(program_path)[0], 'Resources')
-    else:
-        resources_path = program_path
-else:
-    program_path = os.path.dirname(os.path.realpath(unicode(__file__, sys.getfilesystemencoding())))
-    resources_path = program_path
-
-# add program_path so OpenGL is properly imported
-sys.path.insert(0, program_path)
-
-# Allow brickv to be directly started by calling "main.py"
-# without "brickv" being in the path already
-if 'brickv' not in sys.modules:
-    head, tail = os.path.split(program_path)
-
-    if head not in sys.path:
-        sys.path.insert(0, head)
-
-    if not hasattr(sys, "frozen"):
-        # load and inject in modules list, this allows to have the source in a
-        # directory named differently than 'brickv'
-        sys.modules['brickv'] = __import__(tail, globals(), locals(), [], -1)
+if 'merged_data_logger_modules' not in globals():
+    from brickv.data_logger.data_logger import DataLogger
+    from brickv.data_logger.event_logger import ConsoleLogger, FileLogger, EventLogger
+    from brickv.data_logger.utils import DataLoggerException
+    from brickv.data_logger.configuration import load_and_validate_config
 
 def signal_handler(interrupted_ref, signum, frame):
     """
@@ -140,9 +118,15 @@ def main(config_filename, gui_config, gui_job, override_csv_file_name,
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tinkerforge Data Logger')
 
+    class VersionAction(argparse.Action):
+        def __call__(self, parser, namespace, values, option_string=None):
+            print data_logger_version
+            sys.exit(0)
+
+    parser.add_argument('-v', '--version',  action=VersionAction, nargs=0, help='show version and exit')
     parser.add_argument('config', help='config file location', metavar='CONFIG')
     parser.add_argument('--console-log-level', choices=['none', 'debug', 'info', 'warning', 'error', 'critical'],
-                        default='none', help='console logger log level')
+                        default='info', help='change console log level (default: info)')
     parser.add_argument('--override-csv-file-name', type=str, default=None,
                         help='override CSV file name in config')
     parser.add_argument('--override-log-file-name', type=str, default=None,

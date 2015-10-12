@@ -22,58 +22,101 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+#### skip here for brick-logger ####
+
 import time
 
-# https://docs.google.com/spreadsheets/d/14p6N8rAg8M9Ozr1fmOZePPflvNJmgt0pSAebliDrasI/edit?usp=sharing
-# Documented for Testing and Blueprints
-# Bricklets ############################################################################################################
-from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer
-from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
-from brickv.bindings.bricklet_ambient_light_v2 import BrickletAmbientLightV2
-from brickv.bindings.bricklet_analog_in import BrickletAnalogIn
-from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2
-from brickv.bindings.bricklet_analog_out_v2 import BrickletAnalogOutV2
-from brickv.bindings.bricklet_barometer import BrickletBarometer
-from brickv.bindings.bricklet_color import BrickletColor
-from brickv.bindings.bricklet_current12 import BrickletCurrent12
-from brickv.bindings.bricklet_current25 import BrickletCurrent25
-from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
-from brickv.bindings.bricklet_distance_us import BrickletDistanceUS
-from brickv.bindings.bricklet_dual_button import BrickletDualButton
-from brickv.bindings.bricklet_dust_detector import BrickletDustDetector
-from brickv.bindings.bricklet_gps import BrickletGPS
-from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
-from brickv.bindings.bricklet_humidity import BrickletHumidity
-from brickv.bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
-from brickv.bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
-from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
-from brickv.bindings.bricklet_io16 import BrickletIO16
-from brickv.bindings.bricklet_io4 import BrickletIO4
-from brickv.bindings.bricklet_joystick import BrickletJoystick
-# from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
-from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
-from brickv.bindings.bricklet_line import BrickletLine
-from brickv.bindings.bricklet_linear_poti import BrickletLinearPoti
-from brickv.bindings.bricklet_load_cell import BrickletLoadCell
-from brickv.bindings.bricklet_moisture import BrickletMoisture
-from brickv.bindings.bricklet_motion_detector import BrickletMotionDetector
-from brickv.bindings.bricklet_multi_touch import BrickletMultiTouch
-from brickv.bindings.bricklet_ptc import BrickletPTC
-from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
-from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
-# from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback to get all data
-from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
-from brickv.bindings.bricklet_temperature import BrickletTemperature
-from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
-from brickv.bindings.bricklet_tilt import BrickletTilt
-from brickv.bindings.bricklet_voltage import BrickletVoltage
-from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent
-# Bricks ###############################################################################################################
-from brickv.bindings.brick_dc import BrickDC
-# from brickv.bindings.brick_stepper import BricklStepper #NYI
+if 'merged_data_logger_modules' not in globals():
+    from brickv.bindings.bricklet_accelerometer import BrickletAccelerometer
+    from brickv.bindings.bricklet_ambient_light import BrickletAmbientLight
+    from brickv.bindings.bricklet_ambient_light_v2 import BrickletAmbientLightV2
+    from brickv.bindings.bricklet_analog_in import BrickletAnalogIn
+    from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2
+    from brickv.bindings.bricklet_analog_out_v2 import BrickletAnalogOutV2
+    from brickv.bindings.bricklet_barometer import BrickletBarometer
+    from brickv.bindings.bricklet_color import BrickletColor
+    from brickv.bindings.bricklet_current12 import BrickletCurrent12
+    from brickv.bindings.bricklet_current25 import BrickletCurrent25
+    from brickv.bindings.bricklet_distance_ir import BrickletDistanceIR
+    from brickv.bindings.bricklet_distance_us import BrickletDistanceUS
+    from brickv.bindings.bricklet_dual_button import BrickletDualButton
+    from brickv.bindings.bricklet_dust_detector import BrickletDustDetector
+    from brickv.bindings.bricklet_gps import BrickletGPS
+    from brickv.bindings.bricklet_hall_effect import BrickletHallEffect
+    from brickv.bindings.bricklet_humidity import BrickletHumidity
+    from brickv.bindings.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
+    from brickv.bindings.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
+    from brickv.bindings.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
+    from brickv.bindings.bricklet_io16 import BrickletIO16
+    from brickv.bindings.bricklet_io4 import BrickletIO4
+    from brickv.bindings.bricklet_joystick import BrickletJoystick
+    # from brickv.bindings.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
+    from brickv.bindings.bricklet_led_strip import BrickletLEDStrip
+    from brickv.bindings.bricklet_line import BrickletLine
+    from brickv.bindings.bricklet_linear_poti import BrickletLinearPoti
+    from brickv.bindings.bricklet_load_cell import BrickletLoadCell
+    from brickv.bindings.bricklet_moisture import BrickletMoisture
+    from brickv.bindings.bricklet_motion_detector import BrickletMotionDetector
+    from brickv.bindings.bricklet_multi_touch import BrickletMultiTouch
+    from brickv.bindings.bricklet_ptc import BrickletPTC
+    from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
+    from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
+    # from brickv.bindings.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback to get all data
+    from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
+    from brickv.bindings.bricklet_temperature import BrickletTemperature
+    from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
+    from brickv.bindings.bricklet_tilt import BrickletTilt
+    from brickv.bindings.bricklet_voltage import BrickletVoltage
+    from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent
+    from brickv.bindings.brick_dc import BrickDC
+    # from brickv.bindings.brick_stepper import BricklStepper #NYI
 
-from brickv.data_logger.event_logger import EventLogger
-import brickv.data_logger.utils as utils
+    from brickv.data_logger.event_logger import EventLogger
+    from brickv.data_logger.utils import LoggerTimer, timestamp_to_de, timestamp_to_us, timestamp_to_iso, timestamp_to_unix, CSVData
+else:
+    from tinkerforge.bricklet_accelerometer import BrickletAccelerometer
+    from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
+    from tinkerforge.bricklet_ambient_light_v2 import BrickletAmbientLightV2
+    from tinkerforge.bricklet_analog_in import BrickletAnalogIn
+    from tinkerforge.bricklet_analog_in_v2 import BrickletAnalogInV2
+    from tinkerforge.bricklet_analog_out_v2 import BrickletAnalogOutV2
+    from tinkerforge.bricklet_barometer import BrickletBarometer
+    from tinkerforge.bricklet_color import BrickletColor
+    from tinkerforge.bricklet_current12 import BrickletCurrent12
+    from tinkerforge.bricklet_current25 import BrickletCurrent25
+    from tinkerforge.bricklet_distance_ir import BrickletDistanceIR
+    from tinkerforge.bricklet_distance_us import BrickletDistanceUS
+    from tinkerforge.bricklet_dual_button import BrickletDualButton
+    from tinkerforge.bricklet_dust_detector import BrickletDustDetector
+    from tinkerforge.bricklet_gps import BrickletGPS
+    from tinkerforge.bricklet_hall_effect import BrickletHallEffect
+    from tinkerforge.bricklet_humidity import BrickletHumidity
+    from tinkerforge.bricklet_industrial_digital_in_4 import BrickletIndustrialDigitalIn4
+    from tinkerforge.bricklet_industrial_dual_0_20ma import BrickletIndustrialDual020mA
+    from tinkerforge.bricklet_industrial_dual_analog_in import BrickletIndustrialDualAnalogIn
+    from tinkerforge.bricklet_io16 import BrickletIO16
+    from tinkerforge.bricklet_io4 import BrickletIO4
+    from tinkerforge.bricklet_joystick import BrickletJoystick
+    #from tinkerforge.bricklet_laser_range_finder import BrickletLaserRangeFinder #NYI # config: mode, FIXME: special laser handling
+    from tinkerforge.bricklet_led_strip import BrickletLEDStrip
+    from tinkerforge.bricklet_line import BrickletLine
+    from tinkerforge.bricklet_linear_poti import BrickletLinearPoti
+    from tinkerforge.bricklet_load_cell import BrickletLoadCell
+    from tinkerforge.bricklet_moisture import BrickletMoisture
+    from tinkerforge.bricklet_motion_detector import BrickletMotionDetector
+    from tinkerforge.bricklet_multi_touch import BrickletMultiTouch
+    from tinkerforge.bricklet_ptc import BrickletPTC
+    from tinkerforge.bricklet_rotary_encoder import BrickletRotaryEncoder
+    from tinkerforge.bricklet_rotary_poti import BrickletRotaryPoti
+    #from tinkerforge.bricklet_rs232 import BrickletRS232 #NYI FIXME: has to use read_callback to get all data
+    from tinkerforge.bricklet_sound_intensity import BrickletSoundIntensity
+    from tinkerforge.bricklet_temperature import BrickletTemperature
+    from tinkerforge.bricklet_temperature_ir import BrickletTemperatureIR
+    from tinkerforge.bricklet_tilt import BrickletTilt
+    from tinkerforge.bricklet_voltage import BrickletVoltage
+    from tinkerforge.bricklet_voltage_current import BrickletVoltageCurrent
+    from tinkerforge.brick_dc import BrickDC
+    #from tinkerforge.brick_stepper import BricklStepper #NYI
 
 def value_to_bits(value, length):
     bits = []
@@ -294,7 +337,7 @@ device_specs = {
             {
                 'name': 'Illuminance Range',
                 'type': 'choice',
-                'values': [('Unlimited', BrickletAmbientLightV2.ILLUMINANCE_RANGE_UNLIMITED),
+                'values': [('Unlimited', 6), # FIXME: BrickletAmbientLightV2.ILLUMINANCE_RANGE_UNLIMITED
                            ('64000Lux', BrickletAmbientLightV2.ILLUMINANCE_RANGE_64000LUX),
                            ('32000Lux', BrickletAmbientLightV2.ILLUMINANCE_RANGE_32000LUX),
                            ('16000Lux', BrickletAmbientLightV2.ILLUMINANCE_RANGE_16000LUX),
@@ -1941,7 +1984,7 @@ class DeviceImpl(AbstractDevice):
             func_name = "_timer"
             var_name = value
 
-            self.datalogger.timers.append(utils.LoggerTimer(interval, func_name, var_name, self))
+            self.datalogger.timers.append(LoggerTimer(interval, func_name, var_name, self))
 
     def apply_options(self):
         options_setter = self.device_spec['options_setter']
@@ -1989,24 +2032,24 @@ class DeviceImpl(AbstractDevice):
         time_format = self.datalogger._config['data']['time_format']
 
         if time_format == 'de':
-            timestamp = utils.timestamp_to_de(now)
+            timestamp = timestamp_to_de(now)
         elif time_format == 'us':
-            timestamp = utils.timestamp_to_us(now)
+            timestamp = timestamp_to_us(now)
         elif time_format == 'iso':
-            timestamp = utils.timestamp_to_iso(now)
+            timestamp = timestamp_to_iso(now)
         else:
-            timestamp = utils.timestamp_to_unix(now)
+            timestamp = timestamp_to_unix(now)
 
         try:
             value = getter(self.device)
         except Exception as e:
             value = self._exception_msg(str(self.device_name) + "-" + str(var_name), e)
-            self.datalogger.add_to_queue(utils.CSVData(timestamp,
-                                                       self.device_name,
-                                                       self.device_uid,
-                                                       var_name,
-                                                       value,
-                                                       ''))
+            self.datalogger.add_to_queue(CSVData(timestamp,
+                                                 self.device_name,
+                                                 self.device_uid,
+                                                 var_name,
+                                                 value,
+                                                 ''))
             # log_exception(timestamp, value_name, e)
             return
 
@@ -2018,12 +2061,12 @@ class DeviceImpl(AbstractDevice):
                     unit_str = unit
 
                 # log_value(value_name, value)
-                self.datalogger.add_to_queue(utils.CSVData(timestamp,
-                                                           self.device_name,
-                                                           self.device_uid,
-                                                           var_name,
-                                                           value,
-                                                           unit_str))
+                self.datalogger.add_to_queue(CSVData(timestamp,
+                                                     self.device_name,
+                                                     self.device_uid,
+                                                     var_name,
+                                                     value,
+                                                     unit_str))
             else:
                 subvalue_bool = self.data['values'][var_name]['subvalues']
                 for i in range(len(subvalue_names)):
@@ -2034,20 +2077,20 @@ class DeviceImpl(AbstractDevice):
                                     unit_str = ''
                                 else:
                                     unit_str = unit[i]
-                                self.datalogger.add_to_queue(utils.CSVData(timestamp,
-                                                                           self.device_name,
-                                                                           self.device_uid,
-                                                                           str(var_name) + "-" + str(subvalue_names[i]),
-                                                                           value[i],
-                                                                           unit_str))
+                                self.datalogger.add_to_queue(CSVData(timestamp,
+                                                                     self.device_name,
+                                                                     self.device_uid,
+                                                                     str(var_name) + "-" + str(subvalue_names[i]),
+                                                                     value[i],
+                                                                     unit_str))
                         except Exception as e:
                             value = self._exception_msg(str(self.device_name) + "-" + str(var_name), e)
-                            self.datalogger.add_to_queue(utils.CSVData(timestamp,
-                                                                       self.device_name,
-                                                                       self.device_uid,
-                                                                       str(var_name) + "-" + str(subvalue_names[i]),
-                                                                       value[i],
-                                                                       ''))
+                            self.datalogger.add_to_queue(CSVData(timestamp,
+                                                                 self.device_name,
+                                                                 self.device_uid,
+                                                                 str(var_name) + "-" + str(subvalue_names[i]),
+                                                                 value[i],
+                                                                 ''))
                             return
                     else:
                         for k in range(len(subvalue_names[i])):
@@ -2057,26 +2100,26 @@ class DeviceImpl(AbstractDevice):
                                         unit_str = ''
                                     else:
                                         unit_str = unit[i][k]
-                                    self.datalogger.add_to_queue(utils.CSVData(timestamp,
-                                                                               self.device_name,
-                                                                               self.device_uid,
-                                                                               str(var_name) + "-" + str(subvalue_names[i][k]),
-                                                                               value[i][k],
-                                                                               unit_str))
+                                    self.datalogger.add_to_queue(CSVData(timestamp,
+                                                                         self.device_name,
+                                                                         self.device_uid,
+                                                                         str(var_name) + "-" + str(subvalue_names[i][k]),
+                                                                         value[i][k],
+                                                                         unit_str))
                             except Exception as e:
                                 value = self._exception_msg(str(self.device_name) + "-" + str(var_name), e)
-                                self.datalogger.add_to_queue(utils.CSVData(timestamp,
-                                                                           self.device_name,
-                                                                           self.device_uid,
-                                                                           str(var_name) + "-" + str(subvalue_names[i][k]),
-                                                                           value[i][k],
-                                                                           ''))
+                                self.datalogger.add_to_queue(CSVData(timestamp,
+                                                                     self.device_name,
+                                                                     self.device_uid,
+                                                                     str(var_name) + "-" + str(subvalue_names[i][k]),
+                                                                     value[i][k],
+                                                                     ''))
                                 return
         except Exception as e:
             value = self._exception_msg(str(self.device_name) + "-" + str(var_name), e)
-            self.datalogger.add_to_queue(utils.CSVData(timestamp,
-                                                       self.device_name,
-                                                       self.device_uid,
-                                                       var_name,
-                                                       value,
-                                                       ''))
+            self.datalogger.add_to_queue(CSVData(timestamp,
+                                                 self.device_name,
+                                                 self.device_uid,
+                                                 var_name,
+                                                 value,
+                                                 ''))

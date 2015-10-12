@@ -403,13 +403,62 @@ def build_linux_flash_pkg():
     #system('lintian --pedantic brick-flash-{0}_all.deb'.format(BRICK_FLASH_VERSION))
 
 
+BRICK_LOGGER_VERSION = '2.0.0'
+
+def build_logger_zip():
+    print('building brick-logger ZIP file')
+    root_path = os.getcwd()
+
+    print('removing old build directories')
+    dist_path = os.path.join(root_path, 'dist')
+
+    if os.path.exists(dist_path):
+        shutil.rmtree(dist_path)
+
+    os.makedirs(dist_path)
+
+    print('creating brick-logger.py from template')
+    with open(os.path.join(root_path, 'brickv', 'data_logger', 'brick-logger.py.template'), 'rb') as f:
+        template = f.read()
+
+    template = template.replace('<<VERSION>>', BRICK_LOGGER_VERSION)
+
+    for module in ['configuration', 'data_logger', 'event_logger', 'loggable_devices', 'job', 'main', 'utils']:
+        with open(os.path.join(root_path, 'brickv', 'data_logger', module + '.py'), 'rb') as f:
+            lines = f.readlines()
+
+        while len(lines) > 0 and not lines[0].startswith('#### skip here for brick-logger ####'):
+            del lines[0]
+
+        if len(lines) > 0 and lines[0].startswith('#### skip here for brick-logger ####'):
+            del lines[0]
+
+        template = template.replace('#### insert {0} module here ####'.format(module), ''.join(lines))
+
+    with open(os.path.join(dist_path, 'brick-logger.py'), 'wb') as f:
+        f.write(template)
+
+    print('changing brick-logger.py mode to 0755')
+    system('chmod 0755 dist/brick-logger.py')
+
+    print('building ZIP file')
+    zip_name = 'brick_logger_{0}.zip'.format(BRICK_LOGGER_VERSION.replace('.', '_'))
+
+    if os.path.exists(zip_name):
+        os.remove(zip_name)
+
+    system('cd {0}; zip -q ../{1} brick-logger.py'.format(dist_path, zip_name))
+
+
 # run 'python build_pkg.py' to build the windows/linux/macosx package
 if __name__ == '__main__':
     if sys.platform != 'win32' and os.geteuid() == 0:
         print('error: must not be started as root, exiting')
         sys.exit(1)
 
-    if sys.platform.startswith('linux'):
+    if 'logger' in sys.argv:
+        build_logger_zip()
+    elif sys.platform.startswith('linux'):
         if 'flash' in sys.argv:
             build_linux_flash_pkg()
         else:

@@ -22,11 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-'''
-/*---------------------------------------------------------------------------
-                                DataLoggerException
- ---------------------------------------------------------------------------*/
- '''
+#### skip here for brick-logger ####
 
 import csv  # CSV_Writer
 from datetime import datetime  # CSV_Data
@@ -36,7 +32,8 @@ import sys  # CSV_Writer
 from threading import Timer
 import time  # Writer Thread
 
-from brickv.data_logger.event_logger import EventLogger
+if 'merged_data_logger_modules' not in globals():
+    from brickv.data_logger.event_logger import EventLogger
 
 def timestamp_to_de(timestamp):
     return datetime.fromtimestamp(timestamp).strftime('%d.%m.%Y %H:%M:%S')

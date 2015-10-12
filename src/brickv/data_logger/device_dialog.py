@@ -22,6 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+#### skip here for brick-logger ####
+
 from PyQt4.QtCore import pyqtSignal, Qt
 from PyQt4.QtGui import QDialog, QTreeWidgetItem
 from brickv.data_logger.loggable_devices import device_specs

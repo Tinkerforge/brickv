@@ -22,6 +22,8 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+#### skip here for brick-logger ####
+
 """"
 /*---------------------------------------------------------------------------
                                 Jobs
@@ -32,8 +34,9 @@ import Queue
 import threading
 import time
 
-from brickv.data_logger.event_logger import EventLogger
-from brickv.data_logger.utils import CSVWriter
+if 'merged_data_logger_modules' not in globals():
+    from brickv.data_logger.event_logger import EventLogger
+    from brickv.data_logger.utils import CSVWriter
 
 class AbstractJob(threading.Thread):
     def __init__(self, datalogger=None, group=None, target=None, name=None, args=(), kwargs=None, verbose=None):

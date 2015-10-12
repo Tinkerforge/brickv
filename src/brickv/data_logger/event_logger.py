@@ -22,15 +22,18 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
+#### skip here for brick-logger ####
+
 """
 /*---------------------------------------------------------------------------
                                 Event Logger
  ---------------------------------------------------------------------------*/
 """
 from PyQt4 import QtCore
-import logging
-import datetime
 from PyQt4.QtCore import SIGNAL
+
+import logging
+from datetime import datetime
 
 class EventLogger():
     """
@@ -192,7 +195,7 @@ class GUILogger(logging.Logger, QtCore.QObject):
 
     def log(self, level, msg):
         if level >= self.level:
-            asctime = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())
+            asctime = '{:%Y-%m-%d %H:%M:%S}'.format(datetime.now())
             levelname = logging._levelNames.get(level)
 
             if level == logging.WARN or level == logging.WARNING:
