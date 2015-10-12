@@ -101,8 +101,8 @@ class DataLogger(threading.Thread):
         self.csv_enabled = csv['enabled']
         self.csv_file_name = csv['file_name']
 
-        EventLogger.debug("Logging output to CSV file: " + str(self.csv_enabled))
-        EventLogger.debug("Output file path: " + str(self.csv_file_name))
+        if self.csv_enabled:
+            EventLogger.info("Logging data to CSV file: " + str(self.csv_file_name))
 
     def initialize_loggable_devices(self):
         """
