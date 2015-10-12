@@ -99,7 +99,11 @@ def main(config_filename, gui_config, gui_job, override_csv_file_name,
 
             if not gui_start:
                 while not interrupted_ref[0]:
-                    time.sleep(0.25)
+                    try:
+                        time.sleep(0.25)
+                    except:
+                        pass
+
                 data_logger.stop()
                 sys.exit(0)
         else:
