@@ -1,4 +1,4 @@
-Package: brick-flash-cmd
+Package: brick-flash
 Version: <<VERSION>>
 Section: electronics
 Maintainer: Matthias Bolte <matthias@tinkerforge.com>
@@ -6,6 +6,8 @@ Architecture: all
 Priority: optional
 Installed-Size: <<INSTALLED_SIZE>>
 Depends: python, python-argparse, python-serial
+Conflicts: brick-flash-cmd
+Replaces: brick-flash-cmd
 Description: Flash firmware onto Bricks from a terminal
- brick-flash-cmd can be used to update the firmware of Tinkerforge Bricks
- from a terminal (see www.tinkerforge.com)
+ brick-flash can be used to update the firmware of Tinkerforge Bricks from
+ a terminal (see www.tinkerforge.com)

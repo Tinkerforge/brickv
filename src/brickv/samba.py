@@ -91,7 +91,7 @@ else:
     def get_serial_ports():
         return []
 
-#### skip here for brick-flash-cmd ####
+#### skip here for brick-flash ####
 
 CHIPID_CIDR = 0x400E0740
 
@@ -148,7 +148,7 @@ class SAMBARebootError(SAMBAException):
     pass
 
 class SAMBA(object):
-    def __init__(self, port_name, progress=None):
+    def __init__(self, port_name, progress=None, application_name='Brick Viewer'):
         self.current_mode = None
         self.progress = progress
 
@@ -157,7 +157,7 @@ class SAMBA(object):
         except SerialException as e:
             if '[Errno 13]' in str(e):
                 if sys.platform.startswith('linux'):
-                    raise SAMBAException("No permission to open serial port, try starting Brick Viewer as root")
+                    raise SAMBAException("No permission to open serial port, try starting {0} as root".format(application_name))
                 else:
                     raise SAMBAException("No permission to open serial port")
             else:

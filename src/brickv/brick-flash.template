@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-brick-flash-cmd
+brick-flash
 Copyright (C) 2013 Jan Sandbrink
 Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
 
@@ -79,9 +79,18 @@ class Progress:
         self.print_progress()
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Used to flash firmwares onto a Tinkerforge Bricks')
-    parser.add_argument('-p', '--port', dest='port', required=True, type=str, help='name of the serial port the Brick is connected to, typically /dev/ttyUSB0 or /dev/ttyACM0')
-    parser.add_argument('-f', '--file', dest='file', required=True, type=str, help='path to the firmware file')
+    parser = argparse.ArgumentParser(description='Tinkerforge Brick Flash Tool')
+
+    class VersionAction(argparse.Action):
+        def __call__(self, parser, namespace, values, option_string=None):
+            print('<<VERSION>>')
+            exit(0)
+
+    parser.add_argument('-v', '--version',  action=VersionAction, nargs=0, help='show version and exit')
+    parser.add_argument('-p', '--port', dest='port', required=True, type=str,
+                        help='Brick serial port, typically /dev/ttyUSB0 or /dev/ttyACM0')
+    parser.add_argument('-f', '--file', dest='file', required=True, type=str,
+                        help='Brick firmware file')
 
     args = parser.parse_args()
     firmware = None
@@ -96,7 +105,7 @@ if __name__ == '__main__':
     progress = Progress()
 
     try:
-        samba = SAMBA(args.port, progress)
+        samba = SAMBA(args.port, progress, 'brick-flash')
     except SAMBAException as e:
         print('Error: Could not connect to Brick: {0}'.format(str(e)))
         exit(4)
