@@ -288,3 +288,20 @@
 - Fix exception in RED Brick PHP program info screen UI status logic
 - Fix TLS checkbox on RED Brick server monitoring tab
 - Add support for changed Industrial Dual Analog In Bricklet calibration
+
+2.3.0:
+- Add data logger for Bricks and Bricklets
+- Show WIFI and GSM signal quality on RED Brick Network and Mobile Internet tab
+- Make SIM PIN optional for RED Brick Mobile Internet service
+- Add "Test Email" button to RED Brick Server Monitoring tab
+- Add support for more openHAB config file types (.persist, .script and
+  .transform) to RED Brick plugin
+- Reduce Mobile Internet connection checks to reduce RED Brick CPU load
+- Add configurable line ending for RS232 Bricklet plugin
+- Handle split multi-byte line ending correctly in RS232 Bricklet plugin
+- Add error counters to RS232 Bricklet plugin
+- Add support for unlimited range and out-of-range and overflow states to
+  Ambient Light Bricklet 2.0 plugin
+- Show Master Extensions in devices tree
+- Sort device tree by position by default
+- Fix download of non-ASCII log files from RED Brick
