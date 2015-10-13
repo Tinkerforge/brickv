@@ -69,7 +69,11 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_voltage import BrickletVoltage
     from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent
     from brickv.bindings.brick_dc import BrickDC
-    # from brickv.bindings.brick_stepper import BricklStepper #NYI
+    from brickv.bindings.brick_imu import BrickIMU
+    from brickv.bindings.brick_imu_v2 import BrickIMUV2
+    from brickv.bindings.brick_master import BrickMaster
+    from brickv.bindings.brick_servo import BrickServo
+    from brickv.bindings.brick_stepper import BrickStepper
 
     from brickv.data_logger.event_logger import EventLogger
     from brickv.data_logger.utils import LoggerTimer, timestamp_to_de, timestamp_to_us, timestamp_to_iso, timestamp_to_unix, CSVData
@@ -116,7 +120,11 @@ else:
     from tinkerforge.bricklet_voltage import BrickletVoltage
     from tinkerforge.bricklet_voltage_current import BrickletVoltageCurrent
     from tinkerforge.brick_dc import BrickDC
-    #from tinkerforge.brick_stepper import BricklStepper #NYI
+    from tinkerforge.brick_imu import BrickIMU
+    from tinkerforge.brick_imu_v2 import BrickIMUV2
+    from tinkerforge.brick_master import BrickMaster
+    from tinkerforge.brick_servo import BrickServo
+    from tinkerforge.brick_stepper import BrickStepper
 
 def value_to_bits(value, length):
     bits = []
@@ -1854,26 +1862,293 @@ device_specs = {
         'class': BrickDC,
         'values': [
             {
-                'name': 'Velocity',
-                'getter': lambda device: device.get_velocity(),
+                'name': 'Stack Input Voltage',
+                'getter': lambda device: device.get_stack_input_voltage(),
                 'subvalues': None,
-                'unit': None,
+                'unit': 'mV',
                 'advanced': False
             },
             {
-                'name': 'Current Velocity',
-                'getter': lambda device: device.get_current_velocity(),
+                'name': 'External Input Voltage',
+                'getter': lambda device: device.get_external_input_voltage(),
                 'subvalues': None,
-                'unit': None,
+                'unit': 'mV',
+                'advanced': False
+            },
+            {
+                'name': 'Current Consumption',
+                'getter': lambda device: device.get_current_consumption(),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C/10',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickIMU.DEVICE_DISPLAY_NAME: {
+        'class': BrickIMU,
+        'values': [
+            {
+                'name': 'Orientation',
+                'getter': lambda device: device.get_orientation(),
+                'subvalues': ['Roll', 'Pitch', 'Yaw'],
+                'unit': ['°/100', '°/100', '°/100'],
+                'advanced': False
+            },
+            {
+                'name': 'Quaternion',
+                'getter': lambda device: device.get_quaternion(),
+                'subvalues': ['X', 'Y', 'Z', 'W'],
+                'unit': [None, None, None, None],
                 'advanced': False
             },
             {
                 'name': 'Acceleration',
                 'getter': lambda device: device.get_acceleration(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['g/1000', 'g/1000', 'g/1000'],
+                'advanced': True
+            },
+            {
+                'name': 'Magnetic Field',
+                'getter': lambda device: device.get_magnetic_field(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['G/1000', 'G/1000', 'G/1000'],
+                'advanced': True
+            },
+            {
+                'name': 'Angular Velocity',
+                'getter': lambda device: device.get_angular_velocity(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['8/115 °/s', '8/115 °/s', '8/115 °/s'],
+                'advanced': True
+            },
+            {
+                'name': 'IMU Temperature',
+                'getter': lambda device: device.get_imu_temperature(),
                 'subvalues': None,
-                'unit': 'velocity/s',
+                'unit': '°C/100',
+                'advanced': True
+            },
+            {
+                'name': 'All Data',
+                'getter': lambda device: device.get_all_data(),
+                'subvalues': ['Acceleration-X', 'Acceleration-Y', 'Acceleration-Z', 'Acceleration-X', 'Acceleration-Y', 'Acceleration-Z',
+                              'Angular Velocity-X', 'Angular Velocity-Y', 'Angular Velocity-Z', 'IMU Temperature'],
+                'unit': ['g/1000', 'g/1000', 'g/1000', 'G/1000', 'G/1000', 'G/1000', '8/115 °/s', '8/115 °/s', '8/115 °/s', '°C/100'],
+                'advanced': True
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C/10',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None # FIXME: ranges
+    },
+    BrickIMUV2.DEVICE_DISPLAY_NAME: {
+        'class': BrickIMUV2,
+        'values': [
+            {
+                'name': 'Orientation',
+                'getter': lambda device: device.get_orientation(),
+                'subvalues': ['Heading', 'Roll', 'Pitch'],
+                'unit': ['°/16', '°/16', '°/16'],
                 'advanced': False
             },
+            {
+                'name': 'Linear Acceleration',
+                'getter': lambda device: device.get_linear_acceleration(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['1/100 m/s²', '1/100 m/s²', '1/100 m/s²'],
+                'advanced': False
+            },
+            {
+                'name': 'Gravity Vector',
+                'getter': lambda device: device.get_gravity_vector(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['1/100 m/s²', '1/100 m/s²', '1/100 m/s²'],
+                'advanced': False
+            },
+            {
+                'name': 'Quaternion',
+                'getter': lambda device: device.get_quaternion(),
+                'subvalues': ['W', 'X', 'Y', 'Z'],
+                'unit': ['1/16383', '1/16383', '1/16383', '1/16383'],
+                'advanced': False
+            },
+            {
+                'name': 'Acceleration',
+                'getter': lambda device: device.get_acceleration(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['1/100 m/s²', '1/100 m/s²', '1/100 m/s²'],
+                'advanced': True
+            },
+            {
+                'name': 'Magnetic Field',
+                'getter': lambda device: device.get_magnetic_field(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['1/16 µT ', '1/16 µT ', '1/16 µT '],
+                'advanced': True
+            },
+            {
+                'name': 'Angular Velocity',
+                'getter': lambda device: device.get_angular_velocity(),
+                'subvalues': ['X', 'Y', 'Z'],
+                'unit': ['1/16 °/s', '1/16 °/s', '1/16 °/s'],
+                'advanced': True
+            },
+            {
+                'name': 'Temperature',
+                'getter': lambda device: device.get_temperature(),
+                'subvalues': None,
+                'unit': '°C/100',
+                'advanced': True
+            },
+            #{
+            #    'name': 'All Data',
+            #    'getter': lambda device: device.get_all_data(),
+            #    'subvalues': # FIXME: nested arrays
+            #    'unit': # FIXME: nested arrays
+            #    'advanced': False
+            #},
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C/10',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None # FIXME: ranges
+    },
+    BrickMaster.DEVICE_DISPLAY_NAME: {
+        'class': BrickMaster,
+        'values': [
+            {
+                'name': 'Stack Voltage',
+                'getter': lambda device: device.get_stack_voltage(),
+                'subvalues': None,
+                'unit': 'mV',
+                'advanced': False
+            },
+            {
+                'name': 'Stack Current',
+                'getter': lambda device: device.get_stack_current(),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C/10',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickServo.DEVICE_DISPLAY_NAME: {
+        'class': BrickServo,
+        'values': [
+            {
+                'name': 'Servo Current (Servo 0)',
+                'getter': lambda device: device.get_servo_current(0),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 1)',
+                'getter': lambda device: device.get_servo_current(1),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 2)',
+                'getter': lambda device: device.get_servo_current(2),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 3)',
+                'getter': lambda device: device.get_servo_current(3),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 4)',
+                'getter': lambda device: device.get_servo_current(4),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 5)',
+                'getter': lambda device: device.get_servo_current(5),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Servo Current (Servo 6)',
+                'getter': lambda device: device.get_servo_current(6),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Overall Current',
+                'getter': lambda device: device.get_overall_current(),
+                'subvalues': None,
+                'unit': 'mA',
+                'advanced': False
+            },
+            {
+                'name': 'Stack Input Voltage',
+                'getter': lambda device: device.get_stack_input_voltage(),
+                'subvalues': None,
+                'unit': 'mV',
+                'advanced': False
+            },
+            {
+                'name': 'External Input Voltage',
+                'getter': lambda device: device.get_external_input_voltage(),
+                'subvalues': None,
+                'unit': 'mV',
+                'advanced': False
+            },
+            {
+                'name': 'Chip Temperature',
+                'getter': lambda device: device.get_chip_temperature(),
+                'subvalues': None,
+                'unit': '°C/10',
+                'advanced': True
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickStepper.DEVICE_DISPLAY_NAME: {
+        'class': BrickStepper,
+        'values': [
             {
                 'name': 'Stack Input Voltage',
                 'getter': lambda device: device.get_stack_input_voltage(),
@@ -1900,7 +2175,7 @@ device_specs = {
                 'getter': lambda device: device.get_chip_temperature(),
                 'subvalues': None,
                 'unit': '°C/10',
-                'advanced': False
+                'advanced': True
             }
         ],
         'options_setter': None,
