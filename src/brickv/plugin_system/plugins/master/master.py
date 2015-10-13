@@ -100,8 +100,8 @@ class Master(PluginBase, Ui_Master):
         if self.firmware_version >= (2, 1, 0):
             async_call(self.master.is_ethernet_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_ETHERNET, 'Ethernet Extension'), self.increase_error_count)
 
-        if self.firmware_version >= (2, 4, 0):
-            async_call(self.master.is_wifi2_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_WIFI2, 'WIFI Extension 2.0'), self.increase_error_count)
+        #if self.firmware_version >= (2, 4, 0):
+        #    async_call(self.master.is_wifi2_present, None, lambda p: is_present(p, self.master.EXTENSION_TYPE_WIFI2, 'WIFI Extension 2.0'), self.increase_error_count)
 
         async_call(lambda: None, None, lambda: get_main_window().update_tree_view(), None)
 
