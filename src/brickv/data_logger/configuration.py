@@ -313,7 +313,6 @@ class ConfigValidator(object):
                 try:
                     decoded_uid = base58decode(uid)
                 except Exception as e:
-                    print e
                     self._report_error('Invalid device UID: {0}'.format(uid))
                     continue
 

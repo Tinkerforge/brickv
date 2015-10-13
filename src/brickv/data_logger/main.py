@@ -124,7 +124,7 @@ if __name__ == '__main__':
 
     class VersionAction(argparse.Action):
         def __call__(self, parser, namespace, values, option_string=None):
-            print data_logger_version
+            print(data_logger_version)
             sys.exit(0)
 
     parser.add_argument('-v', '--version',  action=VersionAction, nargs=0, help='show version and exit')
