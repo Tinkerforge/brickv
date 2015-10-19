@@ -127,7 +127,7 @@ if __name__ == '__main__':
             print(data_logger_version)
             sys.exit(0)
 
-    parser.add_argument('-v', '--version',  action=VersionAction, nargs=0, help='show version and exit')
+    parser.add_argument('-v', '--version', action=VersionAction, nargs=0, help='show version and exit')
     parser.add_argument('config', help='config file location', metavar='CONFIG')
     parser.add_argument('--console-log-level', choices=['none', 'debug', 'info', 'warning', 'error', 'critical'],
                         default='info', help='change console log level (default: info)')
