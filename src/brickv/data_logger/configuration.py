@@ -196,19 +196,17 @@ class ConfigValidator(object):
         else:
             if not isinstance(time_format, basestring):
                 self._report_error('"data/time_format" is not a string')
-            elif time_format not in ['de', 'us', 'iso', 'unix']:
+            elif time_format not in ['de', 'de-msec', 'us', 'us-msec', 'iso', 'iso-msec', 'unix', 'unix-msec', 'strftime']:
                 self._report_error('Invalid "data/time_format" value: {0}'.format(time_format))
 
-        # time_resolution (optional)
+        # time_format_strftime (optional)
         try:
-            time_resolution = data['time_resolution']
+            time_format_strftime = data['time_format_strftime']
         except KeyError:
-            data['time_resolution'] = 'seconds'
+            data['time_format_strftime'] = '%Y%m%d_%H%M%S'
         else:
-            if not isinstance(time_resolution, basestring):
-                self._report_error('"data/time_resolution" is not a string')
-            elif time_resolution not in ['milliseconds', 'seconds']:
-                self._report_error('Invalid "data/time_resolution" value: {0}'.format(time_resolution))
+            if not isinstance(time_format_strftime, basestring):
+                self._report_error('"data/time_format_strftime" is not a string')
 
         self._validate_data_csv()
 

@@ -65,7 +65,7 @@ class GuiConfigHandler(object):
         and returns it as a dictonary.
         """
         data = {'time_format': setup_dialog.combo_data_time_format.itemData(setup_dialog.combo_data_time_format.currentIndex()),
-                'time_resolution': setup_dialog.combo_data_time_resolution.itemData(setup_dialog.combo_data_time_resolution.currentIndex()),
+                'time_format_strftime': setup_dialog.edit_data_time_format_strftime.text(),
                 'csv': {'enabled': setup_dialog.check_data_to_csv_file.isChecked(),
                         'file_name': setup_dialog.edit_csv_file_name.text()}}
 

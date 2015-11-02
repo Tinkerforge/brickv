@@ -32,20 +32,24 @@ import sys  # CSV_Writer
 from threading import Timer
 import time  # Writer Thread
 import math
+import locale
 
 if 'merged_data_logger_modules' not in globals():
     from brickv.data_logger.event_logger import EventLogger
 
-def timestamp_to_de(timestamp):
-    return datetime.fromtimestamp(timestamp).strftime('%d.%m.%Y %H:%M:%S')
+def utf8_strftime(timestamp, fmt):
+    return datetime.fromtimestamp(timestamp).strftime(fmt).decode(locale.getlocale()[1]).encode('utf-8')
 
-def timestamp_to_de_milli(timestamp):
+def timestamp_to_de(timestamp):
+    return utf8_strftime(timestamp, '%d.%m.%Y %H:%M:%S')
+
+def timestamp_to_de_msec(timestamp):
     return timestamp_to_de(timestamp) + ',' + ('%.3f' % math.modf(timestamp)[0])[2:]
 
 def timestamp_to_us(timestamp):
-    return datetime.fromtimestamp(timestamp).strftime('%m/%d/%Y %H:%M:%S')
+    return utf8_strftime(timestamp, '%m/%d/%Y %H:%M:%S')
 
-def timestamp_to_us_milli(timestamp):
+def timestamp_to_us_msec(timestamp):
     return timestamp_to_us(timestamp) + '.' + ('%.3f' % math.modf(timestamp)[0])[2:]
 
 def timestamp_to_iso(timestamp, milli=False):
@@ -72,16 +76,22 @@ def timestamp_to_iso(timestamp, milli=False):
     else:
         ms = ''
 
-    return datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%dT%H:%M:%S') + ms + tz
+    return utf8_strftime(timestamp, '%Y-%m-%dT%H:%M:%S') + ms + tz
 
-def timestamp_to_iso_milli(timestamp):
+def timestamp_to_iso_msec(timestamp):
     return timestamp_to_iso(timestamp, True)
 
 def timestamp_to_unix(timestamp):
     return str(int(timestamp))
 
-def timestamp_to_unix_milli(timestamp):
+def timestamp_to_unix_msec(timestamp):
     return '%.3f' % timestamp
+
+def timestamp_to_strftime(timestamp, time_format):
+    try:
+        return utf8_strftime(timestamp, time_format.encode('utf-8'))
+    except Exception as e:
+        return 'Error: ' + str(e).replace('\n', ' ')
 
 class DataLoggerException(Exception):
     # Error Codes
