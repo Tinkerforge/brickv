@@ -199,6 +199,17 @@ class ConfigValidator(object):
             elif time_format not in ['de', 'us', 'iso', 'unix']:
                 self._report_error('Invalid "data/time_format" value: {0}'.format(time_format))
 
+        # time_resolution (optional)
+        try:
+            time_resolution = data['time_resolution']
+        except KeyError:
+            data['time_resolution'] = 'seconds'
+        else:
+            if not isinstance(time_resolution, basestring):
+                self._report_error('"data/time_resolution" is not a string')
+            elif time_resolution not in ['milliseconds', 'seconds']:
+                self._report_error('Invalid "data/time_resolution" value: {0}'.format(time_resolution))
+
         self._validate_data_csv()
 
     def _validate_data_csv(self):
@@ -376,8 +387,8 @@ class ConfigValidator(object):
                         except KeyError:
                             self._report_error('Value "{0}" of device "{1}" has no interval'.format(value_spec['name'], uid))
                         else:
-                            if not isinstance(interval, int):
-                                self._report_error('Interval of value "{0}" of device "{1}" is not an int'.format(value_spec['name'], uid))
+                            if not isinstance(interval, int) and not isinstance(interval, float):
+                                self._report_error('Interval of value "{0}" of device "{1}" is neiter an int nor a float'.format(value_spec['name'], uid))
                             elif interval < 0:
                                 self._report_error('Interval of value "{0}" of device "{1}" is ouf-of-range'.format(value_spec['name'], uid))
 

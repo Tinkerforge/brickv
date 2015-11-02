@@ -31,6 +31,7 @@ from shutil import copyfile
 import sys  # CSV_Writer
 from threading import Timer
 import time  # Writer Thread
+import math
 
 if 'merged_data_logger_modules' not in globals():
     from brickv.data_logger.event_logger import EventLogger
@@ -38,14 +39,20 @@ if 'merged_data_logger_modules' not in globals():
 def timestamp_to_de(timestamp):
     return datetime.fromtimestamp(timestamp).strftime('%d.%m.%Y %H:%M:%S')
 
+def timestamp_to_de_milli(timestamp):
+    return timestamp_to_de(timestamp) + ',' + ('%.3f' % math.modf(timestamp)[0])[2:]
+
 def timestamp_to_us(timestamp):
     return datetime.fromtimestamp(timestamp).strftime('%m/%d/%Y %H:%M:%S')
 
-def timestamp_to_iso(timestamp):
+def timestamp_to_us_milli(timestamp):
+    return timestamp_to_us(timestamp) + '.' + ('%.3f' % math.modf(timestamp)[0])[2:]
+
+def timestamp_to_iso(timestamp, milli=False):
     """
     Format a timestamp in ISO 8601 standard
-    ISO 8601 = YYYY-MM-DDThh:mm:ss+tz:tz
-               2014-09-10T14:12:05+02:00
+    ISO 8601 = YYYY-MM-DDThh:mm:ss.fff+tz:tz
+               2014-09-10T14:12:05.563+02:00
     """
 
     if time.localtime().tm_isdst and time.daylight:
@@ -60,10 +67,21 @@ def timestamp_to_iso(timestamp):
     else:
         tz = '+' + tz
 
-    return datetime.fromtimestamp(timestamp).strftime('%Y-%m-%dT%H:%M:%S') + tz
+    if milli:
+        ms = '.' + ('%.3f' % math.modf(timestamp)[0])[2:]
+    else:
+        ms = ''
+
+    return datetime.fromtimestamp(int(timestamp)).strftime('%Y-%m-%dT%H:%M:%S') + ms + tz
+
+def timestamp_to_iso_milli(timestamp):
+    return timestamp_to_iso(timestamp, True)
 
 def timestamp_to_unix(timestamp):
     return str(int(timestamp))
+
+def timestamp_to_unix_milli(timestamp):
+    return '%.3f' % timestamp
 
 class DataLoggerException(Exception):
     # Error Codes

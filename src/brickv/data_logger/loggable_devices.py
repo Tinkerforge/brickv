@@ -76,7 +76,11 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.brick_stepper import BrickStepper
 
     from brickv.data_logger.event_logger import EventLogger
-    from brickv.data_logger.utils import LoggerTimer, timestamp_to_de, timestamp_to_us, timestamp_to_iso, timestamp_to_unix, CSVData
+    from brickv.data_logger.utils import LoggerTimer, CSVData, \
+                                         timestamp_to_de, timestamp_to_us, \
+                                         timestamp_to_iso, timestamp_to_unix, \
+                                         timestamp_to_de_milli, timestamp_to_us_milli, \
+                                         timestamp_to_iso_milli, timestamp_to_unix_milli
 else:
     from tinkerforge.bricklet_accelerometer import BrickletAccelerometer
     from tinkerforge.bricklet_ambient_light import BrickletAmbientLight
@@ -2305,15 +2309,26 @@ class DeviceImpl(AbstractDevice):
         unit = value_spec['unit']
         now = time.time()
         time_format = self.datalogger._config['data']['time_format']
+        time_resolution = self.datalogger._config['data']['time_resolution']
 
-        if time_format == 'de':
-            timestamp = timestamp_to_de(now)
-        elif time_format == 'us':
-            timestamp = timestamp_to_us(now)
-        elif time_format == 'iso':
-            timestamp = timestamp_to_iso(now)
+        if time_resolution == 'milliseconds':
+            if time_format == 'de':
+                timestamp = timestamp_to_de_milli(now)
+            elif time_format == 'us':
+                timestamp = timestamp_to_us_milli(now)
+            elif time_format == 'iso':
+                timestamp = timestamp_to_iso_milli(now)
+            else:
+                timestamp = timestamp_to_unix_milli(now)
         else:
-            timestamp = timestamp_to_unix(now)
+            if time_format == 'de':
+                timestamp = timestamp_to_de(now)
+            elif time_format == 'us':
+                timestamp = timestamp_to_us(now)
+            elif time_format == 'iso':
+                timestamp = timestamp_to_iso(now)
+            else:
+                timestamp = timestamp_to_unix(now)
 
         try:
             value = getter(self.device)

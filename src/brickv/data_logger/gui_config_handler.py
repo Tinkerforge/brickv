@@ -65,6 +65,7 @@ class GuiConfigHandler(object):
         and returns it as a dictonary.
         """
         data = {'time_format': setup_dialog.combo_data_time_format.itemData(setup_dialog.combo_data_time_format.currentIndex()),
+                'time_resolution': setup_dialog.combo_data_time_resolution.itemData(setup_dialog.combo_data_time_resolution.currentIndex()),
                 'csv': {'enabled': setup_dialog.check_data_to_csv_file.isChecked(),
                         'file_name': setup_dialog.edit_csv_file_name.text()}}
 
@@ -103,7 +104,7 @@ class GuiConfigHandler(object):
                         value_name_item = child_item.child(value_row, 0)
                         value_interval_item = child_item.child(value_row, 1)
 
-                        device['values'][value_name_item.text()] = {'interval': setup_dialog.tree_devices.indexWidget(value_interval_item.index()).value()}
+                        device['values'][value_name_item.text()] = {'interval': setup_dialog.tree_devices.indexWidget(value_interval_item.index()).get_interval()}
                         subvalues = {}
 
                         for subvalue_row in range(value_name_item.rowCount()):
