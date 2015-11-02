@@ -146,11 +146,13 @@ class LoggerTimer(object):
 
     def _loop(self):
         """Runs the <self._func_name> function every <self._interval> seconds"""
+        start = time.time() # FIXME: use time.monotonic() in Python 3
         getattr(self._device, self._func_name)(self._var_name)
+        elapsed = max(time.time() - start, 0) # FIXME: use time.monotonic() in Python 3
         self.cancel()
         if self.exit_flag:
             return
-        self._t = Timer(self._interval, self._loop)
+        self._t = Timer(max(self._interval - elapsed, 0), self._loop)
         self.start()
 
     def start(self):
