@@ -140,10 +140,10 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.update_time_format_examples()
 
-        self.combo_debug_time_format.addItem(utils.timestamp_to_de(self.example_timestamp) + '\t(DD.MM.YYYY HH:MM:SS)', 'de')
-        self.combo_debug_time_format.addItem(utils.timestamp_to_us(self.example_timestamp) + '\t(MM/DD/YYYY HH:MM:SS)', 'us')
-        self.combo_debug_time_format.addItem(utils.timestamp_to_iso(self.example_timestamp) + '\t(ISO 8601)', 'iso')
-        self.combo_debug_time_format.addItem(utils.timestamp_to_unix(self.example_timestamp) + '\t(Unix)', 'unix')
+        self.combo_debug_time_format.addItem(utils.timestamp_to_de(self.example_timestamp) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
+        self.combo_debug_time_format.addItem(utils.timestamp_to_us(self.example_timestamp) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
+        self.combo_debug_time_format.addItem(utils.timestamp_to_iso(self.example_timestamp) + ' (ISO 8601)', 'iso')
+        self.combo_debug_time_format.addItem(utils.timestamp_to_unix(self.example_timestamp) + ' (Unix)', 'unix')
 
         self.combo_log_level.addItem('Debug', 'debug')
         self.combo_log_level.addItem('Info', 'info')
@@ -282,24 +282,24 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         index = self.combo_data_time_format.currentIndex()
 
         self.combo_data_time_format.clear()
-        self.combo_data_time_format.addItem(utils.timestamp_to_de(self.example_timestamp) + '\t(DD.MM.YYYY HH:MM:SS)', 'de')
-        self.combo_data_time_format.addItem(utils.timestamp_to_de_msec(self.example_timestamp) + '\t(DD.MM.YYYY HH:MM:SS,000)', 'de-msec')
+        self.combo_data_time_format.addItem(utils.timestamp_to_de(self.example_timestamp) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
+        self.combo_data_time_format.addItem(utils.timestamp_to_de_msec(self.example_timestamp) + ' (DD.MM.YYYY HH:MM:SS,000)', 'de-msec')
         self.combo_data_time_format.insertSeparator(self.combo_data_time_format.count())
-        self.combo_data_time_format.addItem(utils.timestamp_to_us(self.example_timestamp) + '\t(MM/DD/YYYY HH:MM:SS)', 'us')
-        self.combo_data_time_format.addItem(utils.timestamp_to_us_msec(self.example_timestamp) + '\t(MM/DD/YYYY HH:MM:SS.000)', 'us-msec')
+        self.combo_data_time_format.addItem(utils.timestamp_to_us(self.example_timestamp) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
+        self.combo_data_time_format.addItem(utils.timestamp_to_us_msec(self.example_timestamp) + ' (MM/DD/YYYY HH:MM:SS.000)', 'us-msec')
         self.combo_data_time_format.insertSeparator(self.combo_data_time_format.count())
-        self.combo_data_time_format.addItem(utils.timestamp_to_iso(self.example_timestamp) + '\t(ISO 8601)', 'iso')
-        self.combo_data_time_format.addItem(utils.timestamp_to_iso_msec(self.example_timestamp) + '\t(ISO 8601 + Milliseconds)', 'iso-msec')
+        self.combo_data_time_format.addItem(utils.timestamp_to_iso(self.example_timestamp) + ' (ISO 8601)', 'iso')
+        self.combo_data_time_format.addItem(utils.timestamp_to_iso_msec(self.example_timestamp) + ' (ISO 8601 + Milliseconds)', 'iso-msec')
         self.combo_data_time_format.insertSeparator(self.combo_data_time_format.count())
-        self.combo_data_time_format.addItem(utils.timestamp_to_unix(self.example_timestamp) + '\t(Unix)', 'unix')
-        self.combo_data_time_format.addItem(utils.timestamp_to_unix_msec(self.example_timestamp) + '\t(Unix + Milliseconds)', 'unix-msec')
+        self.combo_data_time_format.addItem(utils.timestamp_to_unix(self.example_timestamp) + ' (Unix)', 'unix')
+        self.combo_data_time_format.addItem(utils.timestamp_to_unix_msec(self.example_timestamp) + ' (Unix + Milliseconds)', 'unix-msec')
         self.combo_data_time_format.insertSeparator(self.combo_data_time_format.count())
 
         t = utils.timestamp_to_strftime(self.example_timestamp, self.edit_data_time_format_strftime.text())
         if len(t) == 0:
             t = '<empty>'
 
-        self.combo_data_time_format.addItem((t + '\t(strftime)').decode('utf-8'), 'strftime')
+        self.combo_data_time_format.addItem((t + ' (strftime)').decode('utf-8'), 'strftime')
 
         self.combo_data_time_format.setCurrentIndex(max(index, 0))
 
