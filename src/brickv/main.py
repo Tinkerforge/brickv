@@ -30,6 +30,7 @@ sip.setapi('QVariant', 2)
 import os
 import sys
 import logging
+import locale
 
 def prepare_package(package_name):
     # from http://www.py2exe.org/index.cgi/WhereAmI
@@ -88,6 +89,8 @@ class BrickViewer(QApplication):
         return QApplication.notify(self, receiver, event)
 
 def main():
+    locale.setlocale(locale.LC_ALL, '')
+
     argv = sys.argv
 
     if sys.platform == 'win32':
