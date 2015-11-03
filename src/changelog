@@ -305,3 +305,7 @@
 - Show Master Extensions in devices tree
 - Sort device tree by position by default
 - Fix download of non-ASCII log files from RED Brick
+
+2.3.1:
+- Add millisecond interval support for data logger
+- Add custom strftime format for data logger

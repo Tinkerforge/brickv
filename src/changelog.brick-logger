@@ -3,3 +3,7 @@
 
 2.0.1:
 - Add support for IMU (2.0), Master, Servo and Stepper Brick
+
+2.0.2:
+- Add millisecond interval support
+- Add custom strftime format
