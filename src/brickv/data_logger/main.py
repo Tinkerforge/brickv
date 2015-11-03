@@ -35,6 +35,7 @@ import traceback
 import logging
 import functools
 import time
+import locale
 
 if 'merged_data_logger_modules' not in globals():
     from brickv.data_logger.data_logger import DataLogger
@@ -120,6 +121,8 @@ def main(config_filename, gui_config, gui_job, override_csv_file_name,
     return data_logger
 
 if __name__ == '__main__':
+    locale.setlocale(locale.LC_ALL, '')
+
     parser = argparse.ArgumentParser(description='Tinkerforge Data Logger')
 
     class VersionAction(argparse.Action):
