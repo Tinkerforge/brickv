@@ -230,11 +230,8 @@
               </item>
               <item row="0" column="1">
                <widget class="QComboBox" name="combo_data_time_format">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                  <horstretch>1</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+                <property name="maxVisibleItems">
+                 <number>15</number>
                 </property>
                </widget>
               </item>
