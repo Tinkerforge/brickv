@@ -193,6 +193,45 @@ def build_macosx_pkg():
     with open(boot_path, 'wb') as f:
         f.write(boot_prefix + boot)
 
+    print('signing brickv binary')
+    # NOTE: codesign_identity contains "Developer ID Application: ..."
+    codesign_command = 'codesign --force --verify --verbose --sign "`cat codesign_identity`" {0}'
+    frameworks_path = os.path.join(dist_path, 'Brickv.app', 'Contents', 'Frameworks')
+    qtcore_framework = os.path.join(frameworks_path, 'QtCore.framework')
+    qtgui_framework = os.path.join(frameworks_path, 'QtGui.framework')
+    qtopengl_framework = os.path.join(frameworks_path, 'QtOpenGL.framework')
+
+    os.unlink(os.path.join(qtcore_framework, 'QtCore'))
+    shutil.move(os.path.join(qtcore_framework, 'QtCore.prl'), os.path.join(qtcore_framework, 'Versions', 'Current'))
+    shutil.move(os.path.join(qtcore_framework, 'Contents'), os.path.join(qtcore_framework, 'Versions', 'Current'))
+
+    os.unlink(os.path.join(qtgui_framework, 'QtGui'))
+    os.unlink(os.path.join(qtgui_framework, 'Resources'))
+    shutil.move(os.path.join(qtgui_framework, 'QtGui.prl'), os.path.join(qtgui_framework, 'Versions', 'Current'))
+    shutil.move(os.path.join(qtgui_framework, 'Contents'), os.path.join(qtgui_framework, 'Versions', 'Current'))
+
+    os.unlink(os.path.join(qtopengl_framework, 'QtOpenGL'))
+    shutil.move(os.path.join(qtopengl_framework, 'QtOpenGL.prl'), os.path.join(qtopengl_framework, 'Versions', 'Current'))
+    shutil.move(os.path.join(qtopengl_framework, 'Contents'), os.path.join(qtopengl_framework, 'Versions', 'Current'))
+
+    system(codesign_command.format(os.path.join(frameworks_path, 'Python.framework')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'QtCore.framework')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'QtGui.framework')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'QtOpenGL.framework')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'libbz2.1.0.6.dylib')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'libcrypto.1.0.0.dylib')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'libdbus-1.3.dylib')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'libiconv.2.dylib')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'libintl.8.dylib')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'libncurses.6.dylib')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'libpng16.16.dylib')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'libssl.1.0.0.dylib')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'libtcl8.6.dylib')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'libtk8.6.dylib')))
+    system(codesign_command.format(os.path.join(frameworks_path, 'libz.1.2.8.dylib')))
+    system(codesign_command.format(os.path.join(dist_path, 'Brickv.app', 'Contents', 'MacOS', 'python')))
+    system(codesign_command.format(os.path.join(dist_path, 'Brickv.app')))
+
     print('building disk image')
     dmg_name = 'brickv_macos_{0}.dmg'.format(BRICKV_VERSION.replace('.', '_'))
 

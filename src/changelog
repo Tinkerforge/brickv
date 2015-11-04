@@ -310,3 +310,4 @@
 - Add millisecond interval support for data logger
 - Add custom strftime format for data logger
 - Improve UI font selection on Mac OS X 10.11
+- Sign Brickv.app on Mac OS X to silence the Gate Keeper

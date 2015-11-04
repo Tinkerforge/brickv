@@ -171,6 +171,7 @@ elif sys.platform == 'darwin':
                                'PyQt4.QtScript',
                                'PyQt4.QtScriptTools',
                                'PyQt4.QtSql',
+                               'PyQt4.QtSvg',
                                'PyQt4.QtTest',
                                'PyQt4.QtWebKit',
                                'PyQt4.QtXml',
