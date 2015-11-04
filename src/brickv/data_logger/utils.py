@@ -38,7 +38,15 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.data_logger.event_logger import EventLogger
 
 def utf8_strftime(timestamp, fmt):
-    return datetime.fromtimestamp(timestamp).strftime(fmt).decode(locale.getlocale()[1]).encode('utf-8')
+    encoding = locale.getlocale()[1]
+
+    # FIXME: Mac OS X doesn't have LANG set when running from an .app container.
+    # therefore, locale.setlocale() cannot detect the encoding from the environment.
+    # in this case we just default to UTF-8 and hope for the best
+    if encoding == None:
+        encoding = 'utf-8'
+
+    return datetime.fromtimestamp(timestamp).strftime(fmt).decode(encoding).encode('utf-8')
 
 def timestamp_to_de(timestamp):
     return utf8_strftime(timestamp, '%d.%m.%Y %H:%M:%S')
