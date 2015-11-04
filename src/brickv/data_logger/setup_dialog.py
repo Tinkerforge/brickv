@@ -101,9 +101,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self._gui_job = None
         EventLogger.add_logger(self._gui_logger)
 
-        # FIXME better way to find interval and uids in tree_widget?!
-        self.__tree_interval_tooltip = "Update interval in seconds"
-        self.__tree_uid_tooltip = "UID cannot be empty"
         self.data_logger_thread = None
         self.tab_debug_warning = False
 
