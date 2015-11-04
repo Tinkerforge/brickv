@@ -104,6 +104,9 @@ def main():
         # fix OSX 10.10 font
         # https://bugreports.qt-project.org/browse/QTBUG-40833
         QFont.insertSubstitution('.Helvetica Neue DeskInterface', 'Helvetica Neue')
+        # fix OSX 10.11 font
+        # https://bugreports.qt.io/browse/QTBUG-47206
+        QFont.insertSubstitution('.SF NS Text', 'Helvetica Neue')
 
     brick_viewer = BrickViewer(argv)
     main_window = MainWindow()
