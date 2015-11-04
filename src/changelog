@@ -309,3 +309,4 @@
 2.3.1:
 - Add millisecond interval support for data logger
 - Add custom strftime format for data logger
+- Improve UI font selection on Mac OS X 10.11
