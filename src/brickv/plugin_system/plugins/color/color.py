@@ -138,12 +138,15 @@ class Color(PluginBase):
                      ['B', Qt.blue, self.get_current_b],
                      ['C', Qt.black, self.get_current_c]]
         self.plot_widget = PlotWidget('Color Value', plot_list, self.clear_graphs_button)
+        self.plot_widget.setMinimumSize(250, 200)
 
         plot_list_illuminance = [['', Qt.red, self.get_current_illuminance_value]]
         self.plot_widget_illuminance = PlotWidget('Illuminance [Lux]', plot_list_illuminance, self.clear_graphs_button)
+        self.plot_widget_illuminance.setMinimumSize(250, 200)
 
         plot_list_color_temperature = [['', Qt.red, self.get_current_color_temperature_value]]
         self.plot_widget_color_temperature = PlotWidget('Color Temperature [K]', plot_list_color_temperature, self.clear_graphs_button)
+        self.plot_widget_color_temperature.setMinimumSize(250, 200)
 
         self.gain_label = QLabel('Gain: ')
         self.gain_combo = QComboBox()
