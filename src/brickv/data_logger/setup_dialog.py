@@ -132,10 +132,28 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.btn_start_logging.setIcon(QIcon(load_pixmap('data_logger/start-icon.png')))
 
         self.example_timestamp = time.time()
+
         self.edit_csv_file_name.setText(os.path.join(get_home_path(), 'logger_data_{0}.csv'.format(int(self.example_timestamp))))
         self.edit_log_file_name.setText(os.path.join(get_home_path(), 'logger_debug_{0}.log'.format(int(self.example_timestamp))))
 
-        self.update_time_format_examples()
+        self.combo_data_time_format.addItem(utils.timestamp_to_de(self.example_timestamp) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
+        self.combo_data_time_format.addItem(utils.timestamp_to_de_msec(self.example_timestamp) + ' (DD.MM.YYYY HH:MM:SS,000)', 'de-msec')
+        self.combo_data_time_format.insertSeparator(self.combo_data_time_format.count())
+        self.combo_data_time_format.addItem(utils.timestamp_to_us(self.example_timestamp) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
+        self.combo_data_time_format.addItem(utils.timestamp_to_us_msec(self.example_timestamp) + ' (MM/DD/YYYY HH:MM:SS.000)', 'us-msec')
+        self.combo_data_time_format.insertSeparator(self.combo_data_time_format.count())
+        self.combo_data_time_format.addItem(utils.timestamp_to_iso(self.example_timestamp) + ' (ISO 8601)', 'iso')
+        self.combo_data_time_format.addItem(utils.timestamp_to_iso_msec(self.example_timestamp) + ' (ISO 8601 + Milliseconds)', 'iso-msec')
+        self.combo_data_time_format.insertSeparator(self.combo_data_time_format.count())
+        self.combo_data_time_format.addItem(utils.timestamp_to_unix(self.example_timestamp) + ' (Unix)', 'unix')
+        self.combo_data_time_format.addItem(utils.timestamp_to_unix_msec(self.example_timestamp) + ' (Unix + Milliseconds)', 'unix-msec')
+        self.combo_data_time_format.insertSeparator(self.combo_data_time_format.count())
+
+        t = utils.timestamp_to_strftime(self.example_timestamp, self.edit_data_time_format_strftime.text())
+        if len(t) == 0:
+            t = '<empty>'
+
+        self.combo_data_time_format.addItem((t + ' (strftime)').decode('utf-8'), 'strftime')
 
         self.combo_debug_time_format.addItem(utils.timestamp_to_de(self.example_timestamp) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
         self.combo_debug_time_format.addItem(utils.timestamp_to_us(self.example_timestamp) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
@@ -200,8 +218,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.btn_save_config.clicked.connect(self.btn_save_config_clicked)
         self.btn_load_config.clicked.connect(self.btn_load_config_clicked)
         self.combo_data_time_format.currentIndexChanged.connect(self.update_ui_state)
-        self.edit_data_time_format_strftime.textChanged.connect(self.update_time_format_examples)
-        self.edit_data_time_format_strftime.textChanged.connect(self.edit_data_time_format_strftime.setFocus)
+        self.edit_data_time_format_strftime.textChanged.connect(self.edit_data_time_format_strftime_changed)
         self.check_data_to_csv_file.stateChanged.connect(self.update_ui_state)
         self.check_debug_to_log_file.stateChanged.connect(self.update_ui_state)
         self.btn_browse_csv_file_name.clicked.connect(self.btn_browse_csv_file_name_clicked)
@@ -275,30 +292,20 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.btn_start_logging.clicked.connect(self.btn_start_logging_clicked)
 
-    def update_time_format_examples(self):
-        index = self.combo_data_time_format.currentIndex()
+    def edit_data_time_format_strftime_changed(self):
+        index = self.combo_data_time_format.findData('strftime')
 
-        self.combo_data_time_format.clear()
-        self.combo_data_time_format.addItem(utils.timestamp_to_de(self.example_timestamp) + ' (DD.MM.YYYY HH:MM:SS)', 'de')
-        self.combo_data_time_format.addItem(utils.timestamp_to_de_msec(self.example_timestamp) + ' (DD.MM.YYYY HH:MM:SS,000)', 'de-msec')
-        self.combo_data_time_format.insertSeparator(self.combo_data_time_format.count())
-        self.combo_data_time_format.addItem(utils.timestamp_to_us(self.example_timestamp) + ' (MM/DD/YYYY HH:MM:SS)', 'us')
-        self.combo_data_time_format.addItem(utils.timestamp_to_us_msec(self.example_timestamp) + ' (MM/DD/YYYY HH:MM:SS.000)', 'us-msec')
-        self.combo_data_time_format.insertSeparator(self.combo_data_time_format.count())
-        self.combo_data_time_format.addItem(utils.timestamp_to_iso(self.example_timestamp) + ' (ISO 8601)', 'iso')
-        self.combo_data_time_format.addItem(utils.timestamp_to_iso_msec(self.example_timestamp) + ' (ISO 8601 + Milliseconds)', 'iso-msec')
-        self.combo_data_time_format.insertSeparator(self.combo_data_time_format.count())
-        self.combo_data_time_format.addItem(utils.timestamp_to_unix(self.example_timestamp) + ' (Unix)', 'unix')
-        self.combo_data_time_format.addItem(utils.timestamp_to_unix_msec(self.example_timestamp) + ' (Unix + Milliseconds)', 'unix-msec')
-        self.combo_data_time_format.insertSeparator(self.combo_data_time_format.count())
+        if index < 0:
+            return
 
         t = utils.timestamp_to_strftime(self.example_timestamp, self.edit_data_time_format_strftime.text())
         if len(t) == 0:
             t = '<empty>'
 
-        self.combo_data_time_format.addItem((t + ' (strftime)').decode('utf-8'), 'strftime')
+        self.combo_data_time_format.setItemText(index, (t + ' (strftime)').decode('utf-8'))
 
-        self.combo_data_time_format.setCurrentIndex(max(index, 0))
+        if self.edit_data_time_format_strftime.isVisible():
+            self.edit_data_time_format_strftime.setFocus()
 
     def btn_save_config_clicked(self):
         filename = get_save_file_name(get_main_window(), 'Save Config',
