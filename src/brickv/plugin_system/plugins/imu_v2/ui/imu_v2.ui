@@ -691,7 +691,7 @@
          <item>
           <widget class="QLabel" name="orientation_label">
            <property name="text">
-            <string>Position your IMU Brick 2.0 as shown in the image to the right. Press &quot;Save Orientation&quot; to start an animation of you IMU.</string>
+            <string>Position your IMU Brick 2.0 as shown in the image to the right. Press &quot;Save Orientation&quot; to start an animation of your IMU.</string>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
