@@ -33,6 +33,7 @@ from brickv.plugin_system.plugins.imu.calibrate_gyroscope_bias import CalibrateG
 from brickv.plugin_system.plugins.imu.calibrate_gyroscope_gain import CalibrateGyroscopeGain
 from brickv.plugin_system.plugins.imu.calibrate_temperature import CalibrateTemperature
 from brickv.plugin_system.plugins.imu.calibrate_import_export import CalibrateImportExport
+from brickv.utils import get_modeless_dialog_flags
 
 class CalibrateWindow(QDialog, Ui_Calibrate):
     TYPE_ACC_GAIN = 0
@@ -43,7 +44,7 @@ class CalibrateWindow(QDialog, Ui_Calibrate):
     TYPE_GYR_BIAS = 5
 
     def __init__(self, parent):
-        QDialog.__init__(self, parent)
+        QDialog.__init__(self, parent, get_modeless_dialog_flags())
 
         self.setupUi(self)
         

@@ -33,7 +33,8 @@ from PyQt4.QtGui import QApplication, QColor, QDialog, QMessageBox, \
                         QProgressDialog, QStandardItemModel, QStandardItem, QBrush
 from brickv.samba import SAMBA, SAMBAException, SAMBARebootError, get_serial_ports
 from brickv.infos import get_version_string
-from brickv.utils import get_main_window, get_home_path, get_open_file_name
+from brickv.utils import get_main_window, get_home_path, get_open_file_name, \
+                         get_modeless_dialog_flags
 from brickv.esp_flash import ESPROM
 from brickv import infos
 
@@ -88,7 +89,7 @@ class ProgressWrapper(object):
 
 class FlashingWindow(QDialog, Ui_Flashing):
     def __init__(self, parent):
-        QDialog.__init__(self, parent)
+        QDialog.__init__(self, parent, get_modeless_dialog_flags())
 
         self.setupUi(self)
 

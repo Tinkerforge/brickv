@@ -407,8 +407,7 @@ class REDTabSettingsAP(QtGui.QWidget, Ui_REDTabSettingsAP):
 
     def slot_pbutton_ap_show_dhcp_leases_clicked(self):
         leases_dialog = REDTabSettingsAPDhcpLeasesDialog(self, self.session)
-        leases_dialog.setModal(True)
-        leases_dialog.show()
+        leases_dialog.exec_()
 
     def read_config_files(self):
         def cb_hostapd_conf_content(content):

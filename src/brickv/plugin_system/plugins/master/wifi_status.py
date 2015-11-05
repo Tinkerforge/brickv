@@ -26,10 +26,11 @@ from PyQt4.QtGui import QDialog
 
 from brickv.plugin_system.plugins.master.ui_wifi_status import Ui_WifiStatus
 from brickv.async_call import async_call
+from brickv.utils import get_modeless_dialog_flags
 
 class WifiStatus(QDialog, Ui_WifiStatus):
     def __init__(self, parent):
-        QDialog.__init__(self, parent)
+        QDialog.__init__(self, parent, get_modeless_dialog_flags())
 
         self.setupUi(self)
 

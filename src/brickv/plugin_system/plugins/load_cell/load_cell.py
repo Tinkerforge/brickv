@@ -32,6 +32,7 @@ from brickv.plugin_system.plugins.load_cell.ui_calibration import Ui_Calibration
 from brickv.plot_widget import PlotWidget
 from brickv.async_call import async_call
 from brickv.callback_emulator import CallbackEmulator
+from brickv.utils import get_modeless_dialog_flags
 
 class WeightLabel(QLabel):
     def setText(self, weight):
@@ -43,7 +44,7 @@ class WeightLabel(QLabel):
 
 class Calibration(QDialog, Ui_Calibration):
     def __init__(self, parent):
-        QDialog.__init__(self, parent)
+        QDialog.__init__(self, parent, get_modeless_dialog_flags())
 
         self.setupUi(self)
 

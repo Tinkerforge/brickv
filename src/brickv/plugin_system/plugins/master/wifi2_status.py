@@ -25,6 +25,7 @@ from PyQt4.QtGui import QDialog
 
 from brickv.plugin_system.plugins.master.ui_wifi2_status import Ui_Wifi2Status
 from brickv.async_call import async_call
+from brickv.utils import get_modeless_dialog_flags
 
 def disable_group(group):
     for t in group:
@@ -36,7 +37,7 @@ def enable_group(group):
 
 class Wifi2Status(QDialog, Ui_Wifi2Status):
     def __init__(self, parent):
-        QDialog.__init__(self, parent)
+        QDialog.__init__(self, parent, get_modeless_dialog_flags())
 
         self.setupUi(self)
 

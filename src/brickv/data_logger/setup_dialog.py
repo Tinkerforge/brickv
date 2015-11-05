@@ -41,7 +41,7 @@ from brickv import config
 from brickv.bindings.ip_connection import BASE58
 from brickv.load_pixmap import load_pixmap
 from brickv.utils import get_save_file_name, get_open_file_name, get_main_window, \
-                         get_home_path, get_resources_path
+                         get_home_path, get_resources_path, get_modeless_dialog_flags
 from brickv.data_logger.event_logger import EventLogger, GUILogger
 from brickv.data_logger.gui_config_handler import GuiConfigHandler
 from brickv.data_logger.job import GuiDataJob
@@ -53,7 +53,7 @@ from brickv.data_logger.ui_setup_dialog import Ui_SetupDialog
 
 class IntervalWidget(QWidget):
     def __init__(self, parent=None):
-        QDialog.__init__(self, parent)
+        QWidget.__init__(self, parent)
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0,0,0,0)
@@ -95,7 +95,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
     """
 
     def __init__(self, parent):
-        QDialog.__init__(self, parent)
+        QDialog.__init__(self, parent, get_modeless_dialog_flags())
 
         self._gui_logger = GUILogger("GUILogger", logging.INFO)
         self._gui_job = None

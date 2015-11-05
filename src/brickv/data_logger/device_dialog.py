@@ -35,6 +35,7 @@ from brickv.data_logger.gui_config_handler import GuiConfigHandler
 from PyQt4.QtCore import Qt
 from brickv.bindings.ip_connection import IPConnection
 from brickv.bindings import device_factory
+from brickv.utils import get_modeless_dialog_flags
 
 # noinspection PyTypeChecker
 class DeviceDialog(QDialog, Ui_DeviceDialog):
@@ -45,7 +46,7 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
     qtcb_connected = pyqtSignal(int)
 
     def __init__(self, parent):
-        QDialog.__init__(self, parent)
+        QDialog.__init__(self, parent, get_modeless_dialog_flags())
 
         self._logger_window = parent
 

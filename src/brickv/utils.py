@@ -22,7 +22,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import QDir
+from PyQt4.QtCore import Qt, QDir
 from PyQt4.QtGui import QApplication, QMainWindow, QFileDialog
 import os
 import sys
@@ -89,3 +89,12 @@ def get_main_window():
             return widget
 
     return None
+
+def get_modeless_dialog_flags(default=Qt.WindowFlags(0)):
+    # FIXME: on Mac OS X (at least since 10.10) modeless QDialogs don't work
+    # properly anymore. they don't show up if the programs is run from an .app
+    # container. Setting the tool window flag for such dialogs works around this
+    if sys.platform == 'darwin':
+        return Qt.Tool
+    else:
+        return default

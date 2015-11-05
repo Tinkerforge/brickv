@@ -29,12 +29,13 @@ from PyQt4.QtCore import Qt, QTimer
 from PyQt4.QtGui import QDialog
 
 from brickv import infos
+from brickv.utils import get_modeless_dialog_flags
 
 NO_BRICK = 'No Brick found'
 
 class AdvancedWindow(QDialog, Ui_Advanced):
     def __init__(self, parent):
-        QDialog.__init__(self, parent)
+        QDialog.__init__(self, parent, get_modeless_dialog_flags())
 
         self.setupUi(self)
 
