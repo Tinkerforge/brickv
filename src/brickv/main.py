@@ -89,7 +89,10 @@ class BrickViewer(QApplication):
         return QApplication.notify(self, receiver, event)
 
 def main():
-    locale.setlocale(locale.LC_ALL, '')
+    try:
+        locale.setlocale(locale.LC_ALL, '')
+    except locale.Error:
+        pass # ignore this as it might fail on Mac OS X, we'll fallback to UTF-8 in that case
 
     argv = sys.argv
 
