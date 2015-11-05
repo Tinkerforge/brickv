@@ -314,4 +314,4 @@
 
 2.3.2:
 - Ignore errors during locale initialization
-- Rework modeless dialog handling to workaround problem on Mac OS X
+- Change modeless dialog handling to workaround problem on Mac OS X
