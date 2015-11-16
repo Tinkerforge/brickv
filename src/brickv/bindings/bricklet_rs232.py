@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-09-15.      #
+# This file was automatically generated on 2015-11-13.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -162,11 +162,6 @@ class BrickletRS232(Device):
         * Hard-/Software flow control can each be on or off.
         
         The default is: 115200 baud, parity none, 1 stop bit, word length 8, hard-/software flow control off.
-        
-        .. note::
-         The currently released Bindings have a off-by-one in the baudrate constants.
-         Please use the actual number and not the constant. The bug will be fixed
-         with the next Binding release.
         """
         self.ipcon.send_request(self, BrickletRS232.FUNCTION_SET_CONFIGURATION, (baudrate, parity, stopbits, wordlength, hardware_flowcontrol, software_flowcontrol), 'B B B B B B', '')
 

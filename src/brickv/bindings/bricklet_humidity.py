@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-08-14.      #
+# This file was automatically generated on 2015-11-13.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -66,7 +66,7 @@ class BrickletHumidity(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletHumidity.FUNCTION_GET_HUMIDITY] = BrickletHumidity.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletHumidity.FUNCTION_GET_ANALOG_VALUE] = BrickletHumidity.RESPONSE_EXPECTED_ALWAYS_TRUE

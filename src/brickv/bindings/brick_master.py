@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-09-28.      #
+# This file was automatically generated on 2015-11-16.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -1272,7 +1272,7 @@ class BrickMaster(Device):
         
         The default value is an empty string (authentication disabled).
         
-        .. versionadded:: 2.2.0$nbsp;(Firmware)
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_AUTHENTICATION_SECRET, (secret,), '64s', '')
 
@@ -1280,7 +1280,7 @@ class BrickMaster(Device):
         """
         Returns the authentication secret as set by :func:`SetWifiAuthenticationSecret`.
         
-        .. versionadded:: 2.2.0$nbsp;(Firmware)
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_AUTHENTICATION_SECRET, (), '', '64s')
 

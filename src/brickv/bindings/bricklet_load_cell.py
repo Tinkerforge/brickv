@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-07-28.      #
+# This file was automatically generated on 2015-11-16.      #
 #                                                           #
 # Bindings Version 2.1.5                                    #
 #                                                           #
@@ -210,7 +210,7 @@ class BrickletLoadCell(Device):
         """
         Returns *true* if the led is on, *false* otherwise.
         """
-        return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_IS_LED_ON, (), '', 'B')
+        return self.ipcon.send_request(self, BrickletLoadCell.FUNCTION_IS_LED_ON, (), '', '?')
 
     def calibrate(self, weight):
         """
