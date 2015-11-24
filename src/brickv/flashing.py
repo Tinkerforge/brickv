@@ -381,7 +381,8 @@ class FlashingWindow(QDialog, Ui_Flashing):
                        'ttyUSB' in port[0] or \
                        'usbmodemfd' in port[0] or \
                        'AT91 USB to Serial Converter' in port[1] or \
-                       'GPS Camera Detect' in port[1]:
+                       'GPS Camera Detect' in port[1] or \
+                       'Bossa Program Port' in port[1]:
                         preferred_index = self.combo_serial_port.count()
 
                 if len(port[1]) > 0 and port[0] != port[1]:
