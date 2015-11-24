@@ -94,7 +94,7 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         Function and Event handling class for the Ui_SetupDialog.
     """
 
-    def __init__(self, parent):
+    def __init__(self, parent, host_infos):
         QDialog.__init__(self, parent, get_modeless_dialog_flags())
 
         self._gui_logger = GUILogger("GUILogger", logging.INFO)
@@ -103,12 +103,8 @@ class SetupDialog(QDialog, Ui_SetupDialog):
 
         self.data_logger_thread = None
         self.tab_debug_warning = False
-
         self.device_dialog = None
-
-        self.host_infos = None
-        self.last_host = None
-        self.host_index_changing = None
+        self.last_host_index = -1
 
         self.setupUi(self)
 
@@ -127,7 +123,14 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.tree_devices.setModel(self.model_devices)
         self.tree_devices.setColumnWidth(0, 300)
 
-        self.widget_initialization()
+        self.signal_initialization()
+
+        self.check_authentication.stateChanged.connect(self.authentication_state_changed)
+        self.label_secret.hide()
+        self.edit_secret.hide()
+        self.edit_secret.setEchoMode(QLineEdit.Password)
+        self.check_secret_show.hide()
+        self.check_secret_show.stateChanged.connect(self.secret_show_state_changed)
 
         self.btn_start_logging.setIcon(QIcon(load_pixmap('data_logger/start-icon.png')))
 
@@ -174,6 +177,11 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.combo_debug_level.addItem('Critical', logging.CRITICAL)
         self.combo_debug_level.setCurrentIndex(1) # info
 
+        for host_info in host_infos:
+            self.combo_host.addItem(host_info.host, (host_info.port, host_info.use_authentication, host_info.secret))
+
+        self._host_index_changed(0)
+
         self.update_ui_state()
 
     def update_ui_state(self):
@@ -199,15 +207,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self.btn_browse_log_file_name.setVisible(debug_to_log_file)
         self.label_log_level.setVisible(debug_to_log_file)
         self.combo_log_level.setVisible(debug_to_log_file)
-
-    def widget_initialization(self):
-        """
-            Sets default values for some widgets
-        """
-        # Login data
-        self.host_info_initialization()
-
-        self.signal_initialization()
 
     def signal_initialization(self):
         """
@@ -237,22 +236,6 @@ class SetupDialog(QDialog, Ui_SetupDialog):
                      self.highlight_debug_tab)
 
         self.combo_host.currentIndexChanged.connect(self._host_index_changed)
-        self.spin_port.valueChanged.connect(self._port_changed)
-
-    def host_info_initialization(self):
-        """
-            initialize host by getting information out of brickv.config
-        """
-        self.host_infos = config.get_host_infos(config.HOST_INFO_COUNT)
-        self.host_index_changing = True
-
-        for host_info in self.host_infos:
-            self.combo_host.addItem(host_info.host)
-
-        self.last_host = None
-        self.combo_host.setCurrentIndex(0)
-        self.spin_port.setValue(self.host_infos[0].port)
-        self.host_index_changing = False
 
     def btn_start_logging_clicked(self):
         """
@@ -291,6 +274,19 @@ class SetupDialog(QDialog, Ui_SetupDialog):
         self._gui_job = None
 
         self.btn_start_logging.clicked.connect(self.btn_start_logging_clicked)
+
+    def authentication_state_changed(self, state):
+        visible = state == Qt.Checked
+
+        self.label_secret.setVisible(visible)
+        self.edit_secret.setVisible(visible)
+        self.check_secret_show.setVisible(visible)
+
+    def secret_show_state_changed(self, state):
+        if state == Qt.Checked:
+            self.edit_secret.setEchoMode(QLineEdit.Normal)
+        else:
+            self.edit_secret.setEchoMode(QLineEdit.Password)
 
     def edit_data_time_format_strftime_changed(self):
         index = self.combo_data_time_format.findData('strftime')
@@ -432,35 +428,41 @@ class SetupDialog(QDialog, Ui_SetupDialog):
             self.tab_widget.setTabIcon(tab_index, QIcon())
 
     def _host_index_changed(self, i):
-        """
-            Persists host information changes like in brickv.mainwindow
-            Changes port if the host was changed
-        """
+        if self.last_host_index >= 0:
+            self.combo_host.setItemData(self.last_host_index,
+                                        (self.spin_port.value(),
+                                         self.check_authentication.isChecked(),
+                                         self.edit_secret.text()))
+
+        self.last_host_index = i
+
         if i < 0:
             return
 
-        self.host_index_changing = True
-        self.spin_port.setValue(self.host_infos[i].port)
-        self.host_index_changing = False
+        host_info = self.combo_host.itemData(i)
 
-    def _port_changed(self, value):
-        """
-            Persists host information changes like in brickv.mainwindow
-        """
-        if self.host_index_changing:
-            return
-
-        i = self.combo_host.currentIndex()
-        if i < 0:
-            return
-
-        self.host_infos[i].port = self.spin_port.value()
+        self.spin_port.setValue(host_info[0])
+        self.check_authentication.setChecked(host_info[1])
+        self.edit_secret.setText(host_info[2])
 
     def update_setup_tab(self, config):
         EventLogger.debug('Updating setup tab from config')
 
-        self.combo_host.setEditText(config['hosts']['default']['name'])
-        self.spin_port.setValue(config['hosts']['default']['port'])
+        name = config['hosts']['default']['name']
+        port = config['hosts']['default']['port']
+        secret = config['hosts']['default']['secret']
+
+        i = self.combo_host.findText(name)
+        if i >= 0:
+            self.combo_host.setCurrentIndex(i)
+        else:
+            self.combo_host.insertItem(0, name, (port, secret != None, secret))
+            self.combo_host.setCurrentIndex(0)
+
+        self.spin_port.setValue(port)
+
+        self.check_authentication.setChecked(secret != None)
+        self.edit_secret.setText(secret if secret != None else '')
 
         self.combo_data_time_format.setCurrentIndex(max(self.combo_data_time_format.findData(config['data']['time_format']), 0))
         self.edit_data_time_format_strftime.setText(config['data']['time_format_strftime'].decode('utf-8'))

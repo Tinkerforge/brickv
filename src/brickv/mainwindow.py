@@ -367,7 +367,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
     def data_logger_clicked(self):
         if self.data_logger_window is None:
-            self.data_logger_window = DataLoggerWindow(self)
+            self.data_logger_window = DataLoggerWindow(self, self.host_infos)
         
         self.data_logger_window.show()
 

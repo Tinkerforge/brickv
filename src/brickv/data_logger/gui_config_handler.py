@@ -55,7 +55,8 @@ class GuiConfigHandler(object):
         # store hosts as a dict as preparation for multi-host support. so the
         # config format doesn't have to be changed if multi-host support is added
         hosts = {'default': {'name': setup_dialog.combo_host.currentText(),
-                             'port': setup_dialog.spin_port.value()}}
+                             'port': setup_dialog.spin_port.value(),
+                             'secret': setup_dialog.edit_secret.text() if setup_dialog.check_authentication.isChecked() else None}}
 
         return hosts
 

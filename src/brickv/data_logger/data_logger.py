@@ -57,6 +57,15 @@ class DataLogger(threading.Thread):
         self.data_queue = {}  # universal data_queue hash map
         self.host = config['hosts']['default']['name']
         self.port = config['hosts']['default']['port']
+        self.secret = config['hosts']['default']['secret']
+
+        if self.secret != None:
+            try:
+                self.secret = self.secret.encode('ascii')
+            except:
+                EventLogger.critical('Authentication secret cannot contain non-ASCII characters')
+                self.secret = None
+
         self.loggable_devices = []
         self.ipcon = IPConnection()
 
@@ -79,6 +88,40 @@ class DataLogger(threading.Thread):
         self.stopped = False
 
     def cb_connected(self, connect_reason):
+        if self.secret != None:
+            try:
+                secret = self.secret.encode('ascii')
+            except:
+                try:
+                    self.ipcon.disconnect()
+                except:
+                    pass
+
+                EventLogger.critical('Authentication secret cannot contain non-ASCII characters')
+                return
+
+            self.ipcon.set_auto_reconnect(False) # don't auto-reconnect on authentication error
+
+            try:
+                self.ipcon.authenticate(secret)
+            except:
+                try:
+                    self.ipcon.disconnect()
+                except:
+                    pass
+
+                if connect_reason == IPConnection.CONNECT_REASON_AUTO_RECONNECT:
+                    extra = ' after auto-reconnect'
+                else:
+                    extra = ''
+
+                EventLogger.critical('Could not authenticate' + extra)
+                return
+
+            self.ipcon.set_auto_reconnect(True)
+
+            EventLogger.info("Successfully authenticated")
+
         self.apply_options()
 
     def cb_enumerate(self, uid, connected_uid, position,
@@ -190,8 +233,11 @@ class DataLogger(threading.Thread):
             job.join()
         EventLogger.debug("Jobs[" + str(len(self.jobs)) + "] stopped.")
 
-        if self.ipcon is not None and self.ipcon.get_connection_state() == IPConnection.CONNECTION_STATE_CONNECTED:
+        try:
             self.ipcon.disconnect()
+        except:
+            pass
+
         EventLogger.info("Connection closed successfully.")
 
         self.stopped = True

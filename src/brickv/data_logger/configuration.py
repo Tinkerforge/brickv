@@ -181,6 +181,19 @@ class ConfigValidator(object):
                 elif port < 1 or port > 65535:
                     self._report_error('Port of host "{0}" is out-of-range'.format(host_id))
 
+            # secret (optional)
+            try:
+                secret = host['secret']
+            except KeyError:
+                host['secret'] = None
+            else:
+                if secret == None:
+                    pass
+                elif not isinstance(secret, basestring):
+                    self._report_error('Secret of host "{0}" is not a string'.format(host_id))
+                elif len(secret) > 64:
+                    self._report_error('Secret of host "{0}" is too long'.format(host_id))
+
     def _validate_data(self):
         try:
             data = self._config['data']
