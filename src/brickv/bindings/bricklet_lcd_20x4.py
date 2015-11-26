@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-11-17.      #
+# This file was automatically generated on 2015-11-25.      #
 #                                                           #
 # Bindings Version 2.1.6                                    #
 #                                                           #
@@ -143,9 +143,10 @@ class BrickletLCD20x4(Device):
     def is_button_pressed(self, button):
         """
         Returns *true* if the button (0 to 2 or 0 to 3 since hardware version 1.2)
-        is pressed. If you want to react
-        on button presses and releases it is recommended to use the
-        :func:`ButtonPressed` and :func:`ButtonReleased` callbacks.
+        is pressed.
+        
+        If you want to react on button presses and releases it is recommended to use
+        the :func:`ButtonPressed` and :func:`ButtonReleased` callbacks.
         """
         return self.ipcon.send_request(self, BrickletLCD20x4.FUNCTION_IS_BUTTON_PRESSED, (button,), 'B', '?')
 
