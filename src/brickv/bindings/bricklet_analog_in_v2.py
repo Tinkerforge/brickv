@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-11-30.      #
+# This file was automatically generated on 2015-12-10.      #
 #                                                           #
 # Python Bindings Version 2.1.6                             #
 #                                                           #
@@ -232,7 +232,7 @@ class BrickletAnalogInV2(Device):
     def set_moving_average(self, average):
         """
         Sets the length of a `moving averaging <https://en.wikipedia.org/wiki/Moving_average>`__
-        for the moisture value.
+        for the voltage.
         
         Setting the length to 1 will turn the averaging off. With less
         averaging, there is more noise on the data.
