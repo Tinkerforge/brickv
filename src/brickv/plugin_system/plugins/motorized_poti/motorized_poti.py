@@ -117,12 +117,10 @@ class MotorizedPoti(PluginBase):
         self.position_label.setText(str(position))
         
     def cb_motor_position(self, motor_position):
-        print motor_position
         self.motor_slider.setValue(motor_position.position)
         self.motor_slider_moved(motor_position.position)
         
     def cb_is_motor_enabled(self, enabled):
-        print enabled
         self.motor_enable.setChecked(enabled)
         
     def motor_slider_moved(self, position):
