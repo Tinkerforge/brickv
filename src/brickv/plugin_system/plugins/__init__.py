@@ -43,6 +43,7 @@ from brickv.plugin_system.plugins.load_cell import device_class as load_cell
 from brickv.plugin_system.plugins.master import device_class as master
 from brickv.plugin_system.plugins.moisture import device_class as moisture
 from brickv.plugin_system.plugins.motion_detector import device_class as motion_detector
+from brickv.plugin_system.plugins.motorized_poti import device_class as motorized_poti
 from brickv.plugin_system.plugins.multi_touch import device_class as multi_touch
 from brickv.plugin_system.plugins.nfc_rfid import device_class as nfc_rfid
 from brickv.plugin_system.plugins.oled_128x64 import device_class as oled_128x64
@@ -58,6 +59,7 @@ from brickv.plugin_system.plugins.rotary_poti import device_class as rotary_poti
 from brickv.plugin_system.plugins.rs232 import device_class as rs232
 from brickv.plugin_system.plugins.segment_display_4x7 import device_class as segment_display_4x7
 from brickv.plugin_system.plugins.servo import device_class as servo
+from brickv.plugin_system.plugins.silent_stepper import device_class as silent_stepper
 from brickv.plugin_system.plugins.solid_state_relay import device_class as solid_state_relay
 from brickv.plugin_system.plugins.sound_intensity import device_class as sound_intensity
 from brickv.plugin_system.plugins.stepper import device_class as stepper
@@ -115,6 +117,7 @@ device_classes = [
     master,
     moisture,
     motion_detector,
+    motorized_poti,
     multi_touch,
     nfc_rfid,
     oled_128x64,
@@ -130,6 +133,7 @@ device_classes = [
     rs232,
     segment_display_4x7,
     servo,
+    silent_stepper,
     solid_state_relay,
     sound_intensity,
     stepper,
