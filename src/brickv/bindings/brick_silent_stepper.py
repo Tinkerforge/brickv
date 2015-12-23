@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-12-22.      #
+# This file was automatically generated on 2015-12-23.      #
 #                                                           #
 # Python Bindings Version 2.1.6                             #
 #                                                           #
@@ -25,6 +25,7 @@ except ValueError:
     from ip_connection import Device, IPConnection, Error
 
 GetSpeedRamping = namedtuple('SpeedRamping', ['acceleration', 'deacceleration'])
+GetConfiguration = namedtuple('Configuration', ['standstill_power_down', 'chopper_off_time', 'chopper_hysteresis', 'chopper_blank_time'])
 GetAllData = namedtuple('AllData', ['current_velocity', 'current_position', 'remaining_steps', 'stack_voltage', 'external_voltage', 'current_consumption'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
@@ -85,6 +86,26 @@ class BrickSilentStepper(Device):
     FUNCTION_RESET = 243
     FUNCTION_GET_IDENTITY = 255
 
+    STEP_MODE_NORMAL_FULL = 0
+    STEP_MODE_NORMAL_HALF = 1
+    STEP_MODE_NORMAL_HALF_INTERPOLATE = 2
+    STEP_MODE_NORMAL_QUARTER = 3
+    STEP_MODE_NORMAL_SIXTEENTH = 4
+    STEP_MODE_NORMAL_QUARTER_INTERPOLATE = 5
+    STEP_MODE_NORMAL_SIXTEENTH_INTERPOLATE = 6
+    STEP_MODE_SILENT_QUARTER_INTERPOLATE = 7
+    STEP_MODE_SILENT_SIXTEENTH_INTERPOLATE = 8
+    STANDSTILL_POWER_DOWN_ON = 0
+    STANDSTILL_POWER_DOWN_OFF = 1
+    CHOPPER_OFF_TIME_LOW = 0
+    CHOPPER_OFF_TIME_MEDIUM = 1
+    CHOPPER_OFF_TIME_HIGH = 2
+    CHOPPER_HYSTERESIS_LOW = 0
+    CHOPPER_HYSTERESIS_MEDIUM = 1
+    CHOPPER_HYSTERESIS_HIGH = 2
+    CHOPPER_BLANK_TIME_LOW = 0
+    CHOPPER_BLANK_TIME_MEDIUM = 1
+    CHOPPER_BLANK_TIME_HIGH = 2
     STATE_STOP = 1
     STATE_ACCELERATION = 2
     STATE_RUN = 3
@@ -274,11 +295,11 @@ class BrickSilentStepper(Device):
         """
         return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_REMAINING_STEPS, (), '', 'i')
 
-    def set_step_mode(self, mode):
+    def set_step_mode(self, step_mode):
         """
         TODO
         """
-        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_STEP_MODE, (mode,), 'B', '')
+        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_STEP_MODE, (step_mode,), 'B', '')
 
     def get_step_mode(self):
         """
@@ -378,17 +399,17 @@ class BrickSilentStepper(Device):
         """
         return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_IS_ENABLED, (), '', '?')
 
-    def set_configuration(self, decay):
+    def set_configuration(self, standstill_power_down, chopper_off_time, chopper_hysteresis, chopper_blank_time):
         """
         TODO
         """
-        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_CONFIGURATION, (decay,), 'H', '')
+        self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_SET_CONFIGURATION, (standstill_power_down, chopper_off_time, chopper_hysteresis, chopper_blank_time), 'B B B B', '')
 
     def get_configuration(self):
         """
         Returns the configuration as set by :func:`SetConfiguration`.
         """
-        return self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_CONFIGURATION, (), '', 'H')
+        return GetConfiguration(*self.ipcon.send_request(self, BrickSilentStepper.FUNCTION_GET_CONFIGURATION, (), '', 'B B B B'))
 
     def set_minimum_voltage(self, voltage):
         """

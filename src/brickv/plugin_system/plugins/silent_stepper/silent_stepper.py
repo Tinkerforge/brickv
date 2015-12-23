@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-  
 """
 brickv (Brick Viewer) 
-Copyright (C) 2005 Olaf Lüke <olaf@tinkerforge.com>
+Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
 
 silent_stepper.py: Silent Stepper Brick Plugin implementation
 
@@ -71,10 +71,6 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
                                                     self.deceleration_spin,
                                                     self.deceleration_changed)
 
-#        self.decay_syncer = SliderSpinSyncer(self.decay_slider,
-#                                             self.decay_spin,
-#                                             self.decay_changed)
-
         self.enable_checkbox.stateChanged.connect(self.enable_state_changed)
         self.forward_button.clicked.connect(self.forward_clicked)
         self.stop_button.clicked.connect(self.stop_clicked)
@@ -86,6 +82,11 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         self.minimum_motor_voltage_button.clicked.connect(self.minimum_motor_voltage_button_clicked)
         
         self.mode_dropbox.currentIndexChanged.connect(self.mode_changed)
+        
+        self.combo_standstill_power_down.currentIndexChanged.connect(self.apply_configuration)
+        self.combo_chopper_off_time.currentIndexChanged.connect(self.apply_configuration)
+        self.combo_chopper_hysteresis.currentIndexChanged.connect(self.apply_configuration)
+        self.combo_chopper_blank_time.currentIndexChanged.connect(self.apply_configuration)
         
         self.qtcb_position_reached.connect(self.cb_position_reached)
         self.silent_stepper.register_callback(self.silent_stepper.CALLBACK_POSITION_REACHED, 
@@ -104,10 +105,9 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         self.mv  = 0
         self.mod = 0
 
-        if self.firmware_version >= (1, 1, 4):
-            reset = QAction('Reset', self)
-            reset.triggered.connect(lambda: self.silent_stepper.reset())
-            self.set_actions(reset)
+        reset = QAction('Reset', self)
+        reset.triggered.connect(lambda: self.silent_stepper.reset())
+        self.set_actions(reset)
         
     def start(self):
         self.update_timer.start(100)
@@ -142,10 +142,20 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         self.steps_button.setEnabled(value)
         self.full_brake_button.setEnabled(value)
         
-    def mode_changed(self, index):
+    def apply_configuration(self, _):
+        standstill_power_down = self.combo_standstill_power_down.currentIndex()
+        chopper_off_time = self.combo_chopper_off_time.currentIndex()
+        chopper_hysteresis = self.combo_chopper_hysteresis.currentIndex()
+        chopper_blank_time = self.combo_chopper_blank_time.currentIndex()
+        
         try:
-            self.silent_stepper.set_step_mode(1 << index)
-            self.mod = 1 << index
+            self.silent_stepper.set_configuration(standstill_power_down, chopper_off_time, chopper_hysteresis, chopper_blank_time)
+        except ip_connection.Error:
+            return
+        
+    def mode_changed(self, mode):
+        try:
+            self.silent_stepper.set_step_mode(mode)
         except ip_connection.Error:
             return
         
@@ -277,17 +287,10 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         ste_str = "%d" % ste
         self.remaining_steps_label.setText(ste_str)
         
-    def mode_update(self, mod):
-        if mod == 8:
-            index = 3
-        elif mod == 4:
-            index = 2
-        elif mod == 2:
-            index = 1
-        else:
-            index = 0
-            
-        self.mode_dropbox.setCurrentIndex(index)
+    def mode_update(self, mode):
+        self.mode_dropbox.blockSignals(True)
+        self.mode_dropbox.setCurrentIndex(mode)
+        self.mode_dropbox.blockSignals(False)
         
     def get_max_velocity_async(self, velocity):
         if not self.velocity_slider.isSliderDown():
@@ -310,16 +313,38 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
         if enabled:
             if not self.enable_checkbox.isChecked():
                 self.endis_all(True)
+                self.enable_checkbox.blockSignals(True)
                 self.enable_checkbox.setChecked(True)
+                self.enable_checkbox.blockSignals(False)
         else:
             if self.enable_checkbox.isChecked():
                 self.endis_all(False)
+                self.enable_checkbox.blockSignals(True)
                 self.enable_checkbox.setChecked(False)
+                self.enable_checkbox.blockSignals(False)
+                
+    def get_configuration_async(self, conf):
+        self.combo_standstill_power_down.blockSignals(True)
+        self.combo_standstill_power_down.setCurrentIndex(conf.standstill_power_down)
+        self.combo_standstill_power_down.blockSignals(False)
+        
+        self.combo_chopper_off_time.blockSignals(True)
+        self.combo_chopper_off_time.setCurrentIndex(conf.chopper_off_time)
+        self.combo_chopper_off_time.blockSignals(False)
+
+        self.combo_chopper_hysteresis.blockSignals(True)
+        self.combo_chopper_hysteresis.setCurrentIndex(conf.chopper_hysteresis)
+        self.combo_chopper_hysteresis.blockSignals(False)
+        
+        self.combo_chopper_blank_time.blockSignals(True)
+        self.combo_chopper_blank_time.setCurrentIndex(conf.chopper_blank_time)
+        self.combo_chopper_blank_time.blockSignals(False)
         
     def update_start(self):
         async_call(self.silent_stepper.get_max_velocity, None, self.get_max_velocity_async, self.increase_error_count)
         async_call(self.silent_stepper.get_speed_ramping, None, self.get_speed_ramping_async, self.increase_error_count)
         async_call(self.silent_stepper.is_enabled, None, self.is_enabled_async, self.increase_error_count)
+        async_call(self.silent_stepper.get_configuration, None, self.get_configuration_async, self.increase_error_count)
 
     def update_data(self):
         async_call(self.silent_stepper.get_remaining_steps, None, self.remaining_steps_update, self.increase_error_count)
@@ -353,9 +378,3 @@ class SilentStepper(PluginBase, Ui_SilentStepper):
             self.silent_stepper.set_speed_ramping(acc, value)
         except ip_connection.Error:
             return
-
-#    def decay_changed(self, value):
-#        try:
-#            self.silent_stepper.set_decay(value)
-#        except ip_connection.Error:
-#            return
