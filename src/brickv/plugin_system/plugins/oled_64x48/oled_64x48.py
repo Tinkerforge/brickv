@@ -23,7 +23,8 @@ Boston, MA 02111-1307, USA.
 
 from PyQt4.QtCore import pyqtSignal, Qt, QSize, QPoint
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
-                        QLineEdit, QComboBox, QFrame, QGridLayout, QToolButton, QWidget, QImage, qRgb, QPainter, QPen, QPushButton, QColor
+                        QLineEdit, QComboBox, QFrame, QGridLayout, QToolButton, \
+                        QWidget, QImage, QPainter, QPen, QPushButton, QColor
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
@@ -39,13 +40,12 @@ class ScribbleArea(QWidget):
         super(ScribbleArea, self).__init__(parent)
         
         self.setAttribute(Qt.WA_StaticContents)
-        self.scribbling = False
+        self.scribbling = 0
         
         self.width = w
         self.height = h
         self.image_pen_width = 5
         self.pen_width = 1
-        self.pen_color = Qt.white
         self.image = QImage(QSize(w, h), QImage.Format_RGB32)
         
         self.setMaximumSize(w*self.image_pen_width, w*self.image_pen_width)
@@ -55,22 +55,30 @@ class ScribbleArea(QWidget):
         self.clear_image()
 
     def clear_image(self):
-        self.image.fill(qRgb(0, 0, 0))
+        self.image.fill(Qt.black)
         self.update()
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.last_point = event.pos()
-            self.scribbling = True
+            self.scribbling = 1
+        elif event.button() == Qt.RightButton:
+            self.last_point = event.pos()
+            self.scribbling = 2
 
     def mouseMoveEvent(self, event):
-        if (event.buttons() & Qt.LeftButton) and self.scribbling:
+        if (event.buttons() & Qt.LeftButton) and self.scribbling == 1:
+            self.draw_line_to(event.pos())
+        elif (event.buttons() & Qt.RightButton) and self.scribbling == 2:
             self.draw_line_to(event.pos())
 
     def mouseReleaseEvent(self, event):
-        if event.button() == Qt.LeftButton and self.scribbling:
+        if event.button() == Qt.LeftButton and self.scribbling == 1:
             self.draw_line_to(event.pos())
-            self.scribbling = False
+            self.scribbling = 0
+        elif event.button() == Qt.RightButton and self.scribbling == 2:
+            self.draw_line_to(event.pos())
+            self.scribbling = 0
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -78,7 +86,8 @@ class ScribbleArea(QWidget):
 
     def draw_line_to(self, end_point):
         painter = QPainter(self.image)
-        painter.setPen(QPen(self.pen_color, self.pen_width, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
+        painter.setPen(QPen(Qt.white if self.scribbling == 1 else Qt.black,
+                            self.pen_width, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
         painter.drawLine(self.last_point/5, end_point/5)
 
         self.update()
