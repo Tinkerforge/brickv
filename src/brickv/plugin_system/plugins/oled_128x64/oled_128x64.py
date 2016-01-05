@@ -172,8 +172,6 @@ class OLED128x64(PluginBase, Ui_OLED128x64):
                 if len(lcd[lcd_index]) == 64:
                     lcd_index += 1
 
-        import pprint
-        pprint.pprint(lcd)
         self.oled.new_window(0, 127, 0, 7)
         for i in range(len(lcd)):
             self.oled.write(lcd[i])
