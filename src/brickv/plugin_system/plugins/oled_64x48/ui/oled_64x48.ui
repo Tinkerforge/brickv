@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>639</width>
-    <height>252</height>
+    <width>780</width>
+    <height>250</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -161,7 +161,7 @@
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Draw Character on LCD:</string>
+        <string>Draw Character Map on LCD:</string>
        </property>
       </widget>
      </item>
@@ -180,12 +180,6 @@
      </item>
      <item>
       <widget class="QSpinBox" name="char_spin">
-       <property name="readOnly">
-        <bool>false</bool>
-       </property>
-       <property name="buttonSymbols">
-        <enum>QAbstractSpinBox::UpDownArrows</enum>
-       </property>
        <property name="minimum">
         <number>1</number>
        </property>
@@ -289,6 +283,13 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_4">
      <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Contrast:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QSlider" name="contrast_slider">
        <property name="maximum">
         <number>255</number>
@@ -300,15 +301,6 @@
      </item>
      <item>
       <widget class="QSpinBox" name="contrast_spin">
-       <property name="frame">
-        <bool>true</bool>
-       </property>
-       <property name="readOnly">
-        <bool>true</bool>
-       </property>
-       <property name="buttonSymbols">
-        <enum>QAbstractSpinBox::NoButtons</enum>
-       </property>
        <property name="maximum">
         <number>255</number>
        </property>

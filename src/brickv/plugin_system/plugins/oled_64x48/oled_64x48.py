@@ -29,6 +29,7 @@ from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QLabel, QPushButton, \
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings import ip_connection
 from brickv.async_call import async_call
+from brickv.slider_spin_syncer import SliderSpinSyncer
 from brickv.plugin_system.plugins.oled_64x48.ui_oled_64x48 import Ui_OLED64x48
 from brickv.bindings.bricklet_oled_64x48 import BrickletOLED64x48
 
@@ -104,18 +105,15 @@ class OLED64x48(PluginBase, Ui_OLED64x48):
         self.scribble_area = ScribbleArea(64, 48)
         self.image_button_layout.insertWidget(0, self.scribble_area)
 
+        self.contrast_syncer = SliderSpinSyncer(self.contrast_slider, self.contrast_spin, lambda value: self.new_configuration())
+        self.char_syncer = SliderSpinSyncer(self.char_slider, self.char_spin, self.char_slider_changed)
+
         self.draw_button.clicked.connect(self.draw_clicked)
         self.clear_button.clicked.connect(self.clear_clicked)
         self.send_button.clicked.connect(self.send_clicked)
         self.clear_display_button.clicked.connect(self.clear_display_clicked)
-        self.contrast_slider.sliderReleased.connect(self.new_configuration)
-        self.char_spin.valueChanged.connect(self.char_slider_changed)
-        self.char_slider.valueChanged.connect(self.char_slider_changed)
         self.invert_checkbox.stateChanged.connect(self.new_configuration)
-        
-        self.contrast_spin.setSuffix(' contrast')
-        self.char_spin.setSuffix(' char value')
-        
+
         self.current_char_value = -1
     
     def char_slider_changed(self, value):
@@ -123,12 +121,10 @@ class OLED64x48(PluginBase, Ui_OLED64x48):
             self.current_char_value = value
             self.write_chars(value)
             self.char_slider.setValue(value)
-            self.char_spin.setValue(value)
     
     def new_configuration(self):
-        contrast = self.contrast_slider.sliderPosition()
+        contrast = self.contrast_spin.value()
         invert = self.invert_checkbox.isChecked()
-        self.contrast_spin.setValue(contrast)
         self.oled.set_display_configuration(contrast, invert)
         
     def write_chars(self, value):
@@ -172,8 +168,7 @@ class OLED64x48(PluginBase, Ui_OLED64x48):
             self.oled.write(lcd[i])
 
     def cb_display_configuration(self, conf):
-        self.contrast_slider.setSliderPosition(conf.contrast)
-        self.contrast_spin.setValue(conf.contrast)
+        self.contrast_slider.setValue(conf.contrast)
         self.invert_checkbox.setChecked(conf.invert)
 
     def start(self):
