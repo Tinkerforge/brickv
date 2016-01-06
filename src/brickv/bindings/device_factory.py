@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-11-30.      #
+# This file was automatically generated on 2016-01-06.      #
 #                                                           #
-# Python Bindings Version 2.1.6                             #
+# Python Bindings Version 2.1.7                             #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
@@ -83,6 +83,11 @@ try:
     from .bricklet_barometer import BrickletBarometer
 except ValueError:
     from bricklet_barometer import BrickletBarometer
+
+try:
+    from .bricklet_co2 import BrickletCO2
+except ValueError:
+    from bricklet_co2 import BrickletCO2
 
 try:
     from .bricklet_color import BrickletColor
@@ -240,6 +245,16 @@ except ValueError:
     from bricklet_nfc_rfid import BrickletNFCRFID
 
 try:
+    from .bricklet_oled_128x64 import BrickletOLED128x64
+except ValueError:
+    from bricklet_oled_128x64 import BrickletOLED128x64
+
+try:
+    from .bricklet_oled_64x48 import BrickletOLED64x48
+except ValueError:
+    from bricklet_oled_64x48 import BrickletOLED64x48
+
+try:
     from .bricklet_piezo_buzzer import BrickletPiezoBuzzer
 except ValueError:
     from bricklet_piezo_buzzer import BrickletPiezoBuzzer
@@ -300,9 +315,19 @@ except ValueError:
     from bricklet_temperature_ir import BrickletTemperatureIR
 
 try:
+    from .bricklet_thermocouple import BrickletThermocouple
+except ValueError:
+    from bricklet_thermocouple import BrickletThermocouple
+
+try:
     from .bricklet_tilt import BrickletTilt
 except ValueError:
     from bricklet_tilt import BrickletTilt
+
+try:
+    from .bricklet_uv_light import BrickletUVLight
+except ValueError:
+    from bricklet_uv_light import BrickletUVLight
 
 try:
     from .bricklet_voltage import BrickletVoltage
@@ -331,6 +356,7 @@ BrickletAnalogInV2.DEVICE_IDENTIFIER: BrickletAnalogInV2,
 BrickletAnalogOut.DEVICE_IDENTIFIER: BrickletAnalogOut,
 BrickletAnalogOutV2.DEVICE_IDENTIFIER: BrickletAnalogOutV2,
 BrickletBarometer.DEVICE_IDENTIFIER: BrickletBarometer,
+BrickletCO2.DEVICE_IDENTIFIER: BrickletCO2,
 BrickletColor.DEVICE_IDENTIFIER: BrickletColor,
 BrickletCurrent12.DEVICE_IDENTIFIER: BrickletCurrent12,
 BrickletCurrent25.DEVICE_IDENTIFIER: BrickletCurrent25,
@@ -362,6 +388,8 @@ BrickletMoisture.DEVICE_IDENTIFIER: BrickletMoisture,
 BrickletMotionDetector.DEVICE_IDENTIFIER: BrickletMotionDetector,
 BrickletMultiTouch.DEVICE_IDENTIFIER: BrickletMultiTouch,
 BrickletNFCRFID.DEVICE_IDENTIFIER: BrickletNFCRFID,
+BrickletOLED128x64.DEVICE_IDENTIFIER: BrickletOLED128x64,
+BrickletOLED64x48.DEVICE_IDENTIFIER: BrickletOLED64x48,
 BrickletPiezoBuzzer.DEVICE_IDENTIFIER: BrickletPiezoBuzzer,
 BrickletPiezoSpeaker.DEVICE_IDENTIFIER: BrickletPiezoSpeaker,
 BrickletPTC.DEVICE_IDENTIFIER: BrickletPTC,
@@ -374,7 +402,9 @@ BrickletSolidStateRelay.DEVICE_IDENTIFIER: BrickletSolidStateRelay,
 BrickletSoundIntensity.DEVICE_IDENTIFIER: BrickletSoundIntensity,
 BrickletTemperature.DEVICE_IDENTIFIER: BrickletTemperature,
 BrickletTemperatureIR.DEVICE_IDENTIFIER: BrickletTemperatureIR,
+BrickletThermocouple.DEVICE_IDENTIFIER: BrickletThermocouple,
 BrickletTilt.DEVICE_IDENTIFIER: BrickletTilt,
+BrickletUVLight.DEVICE_IDENTIFIER: BrickletUVLight,
 BrickletVoltage.DEVICE_IDENTIFIER: BrickletVoltage,
 BrickletVoltageCurrent.DEVICE_IDENTIFIER: BrickletVoltageCurrent,
 }

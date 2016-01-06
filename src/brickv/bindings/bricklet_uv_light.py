@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-12-17.      #
+# This file was automatically generated on 2016-01-06.      #
 #                                                           #
-# Python Bindings Version 2.1.6                             #
+# Python Bindings Version 2.1.7                             #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 try:
     from collections import namedtuple
@@ -81,7 +79,7 @@ class BrickletUVLight(Device):
         Returns the UV Light intensity of the sensor, the intensity is given 
         in µW/cm².
         
-        To get UV Index you have to divide the value by 250. E.g. a UV Light
+        To get UV Index you have to divide the value by 250. For example, a UV Light
         intensity of 500µW/cm² is equivalent to an UV Index of 2.
         
         If you want to get the intensity periodically, it is recommended to use the

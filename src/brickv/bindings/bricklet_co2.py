@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2015-11-30.      #
+# This file was automatically generated on 2016-01-06.      #
 #                                                           #
-# Python Bindings Version 2.1.6                             #
+# Python Bindings Version 2.1.7                             #
 #                                                           #
 # If you have a bugfix for this file and want to commit it, #
 # please fix the bug in the generator. You can find a link  #
 # to the generators git repository on tinkerforge.com       #
 #############################################################
-
-#### __DEVICE_IS_NOT_RELEASED__ ####
 
 try:
     from collections import namedtuple
@@ -80,7 +78,7 @@ class BrickletCO2(Device):
         """
         Returns the measured CO2 concentration. The value is in 
         `ppm (parts per million) <https://en.wikipedia.org/wiki/Parts-per_notation>`__
-        and between 0 to TBD.
+        and between 0 to 10000.
         
         If you want to get the CO2 concentration periodically, it is recommended to use the
         callback :func:`CO2Concentration` and set the period with
@@ -93,7 +91,7 @@ class BrickletCO2(Device):
         Sets the period in ms with which the :func:`CO2Concentration` callback is triggered
         periodically. A value of 0 turns the callback off.
         
-        :func:`CO2Concentration` is only triggered if the co2_concentration has changed since the
+        :func:`CO2Concentration` is only triggered if the CO2 concentration has changed since the
         last triggering.
         
         The default value is 0.
@@ -117,10 +115,10 @@ class BrickletCO2(Device):
          :widths: 10, 100
         
          "'x'",    "Callback is turned off"
-         "'o'",    "Callback is triggered when the co2_concentration is *outside* the min and max values"
-         "'i'",    "Callback is triggered when the co2_concentration is *inside* the min and max values"
-         "'<'",    "Callback is triggered when the co2_concentration is smaller than the min value (max is ignored)"
-         "'>'",    "Callback is triggered when the co2_concentration is greater than the min value (max is ignored)"
+         "'o'",    "Callback is triggered when the CO2 concentration is *outside* the min and max values"
+         "'i'",    "Callback is triggered when the CO2 concentration is *inside* the min and max values"
+         "'<'",    "Callback is triggered when the CO2 concentration is smaller than the min value (max is ignored)"
+         "'>'",    "Callback is triggered when the CO2 concentration is greater than the min value (max is ignored)"
         
         The default value is ('x', 0, 0).
         """
