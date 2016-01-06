@@ -34,6 +34,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_analog_in_v2 import BrickletAnalogInV2
     from brickv.bindings.bricklet_analog_out_v2 import BrickletAnalogOutV2
     from brickv.bindings.bricklet_barometer import BrickletBarometer
+    from brickv.bindings.bricklet_co2 import BrickletCO2
     from brickv.bindings.bricklet_color import BrickletColor
     from brickv.bindings.bricklet_current12 import BrickletCurrent12
     from brickv.bindings.bricklet_current25 import BrickletCurrent25
@@ -65,7 +66,9 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_sound_intensity import BrickletSoundIntensity
     from brickv.bindings.bricklet_temperature import BrickletTemperature
     from brickv.bindings.bricklet_temperature_ir import BrickletTemperatureIR
+    from brickv.bindings.bricklet_thermocouple import BrickletThermocouple
     from brickv.bindings.bricklet_tilt import BrickletTilt
+    from brickv.bindings.bricklet_uv_light import BrickletUVLight
     from brickv.bindings.bricklet_voltage import BrickletVoltage
     from brickv.bindings.bricklet_voltage_current import BrickletVoltageCurrent
     from brickv.bindings.brick_dc import BrickDC
@@ -90,6 +93,7 @@ else:
     from tinkerforge.bricklet_analog_in_v2 import BrickletAnalogInV2
     from tinkerforge.bricklet_analog_out_v2 import BrickletAnalogOutV2
     from tinkerforge.bricklet_barometer import BrickletBarometer
+    from tinkerforge.bricklet_co2 import BrickletCO2
     from tinkerforge.bricklet_color import BrickletColor
     from tinkerforge.bricklet_current12 import BrickletCurrent12
     from tinkerforge.bricklet_current25 import BrickletCurrent25
@@ -121,7 +125,9 @@ else:
     from tinkerforge.bricklet_sound_intensity import BrickletSoundIntensity
     from tinkerforge.bricklet_temperature import BrickletTemperature
     from tinkerforge.bricklet_temperature_ir import BrickletTemperatureIR
+    from tinkerforge.bricklet_thermocouple import BrickletThermocouple
     from tinkerforge.bricklet_tilt import BrickletTilt
+    from tinkerforge.bricklet_uv_light import BrickletUVLight
     from tinkerforge.bricklet_voltage import BrickletVoltage
     from tinkerforge.bricklet_voltage_current import BrickletVoltageCurrent
     from tinkerforge.brick_dc import BrickDC
@@ -524,6 +530,20 @@ device_specs = {
                 'default': 10
             }
         ]
+    },
+    BrickletCO2.DEVICE_DISPLAY_NAME: {
+        'class': BrickletCO2,
+        'values': [
+            {
+                'name': 'CO2 Concentration',
+                'getter': lambda device: device.get_co2_concentration(),
+                'subvalues': None,
+                'unit': 'ppm',
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
     },
     BrickletColor.DEVICE_DISPLAY_NAME: {
         'class': BrickletColor,
@@ -1729,6 +1749,61 @@ device_specs = {
             }
         ]
     },
+    BrickletThermocouple.DEVICE_DISPLAY_NAME: {
+        'class': BrickletThermocouple,
+        'values': [
+            {
+                'name': 'Temperature',
+                'getter': lambda device: device.get_temperature(),
+                'subvalues': None,
+                'unit': '°C/100',
+                'advanced': False
+            },
+            {
+                'name': 'Error State',
+                'getter': lambda device: device.get_error_state(),
+                'subvalues': ['Over/Under Voltage', 'Open Circuit'],
+                'unit': [None, None],
+                'advanced': True
+            }
+        ],
+        'options_setter': lambda device, averaging, thermocouple_type, filter: \
+                          device.set_configuration(averaging, thermocouple_type, filter),
+        'options': [
+            {
+                'name': 'Averaging',
+                'type': 'choice',
+                'values': [('1', BrickletThermocouple.AVERAGING_1),
+                           ('2', BrickletThermocouple.AVERAGING_2),
+                           ('4', BrickletThermocouple.AVERAGING_4),
+                           ('8', BrickletThermocouple.AVERAGING_8),
+                           ('16', BrickletThermocouple.AVERAGING_16)],
+                'default': '16'
+            },
+            {
+                'name': 'Thermocouple Type',
+                'type': 'choice',
+                'values': [('B', BrickletThermocouple.TYPE_B),
+                           ('E', BrickletThermocouple.TYPE_E),
+                           ('J', BrickletThermocouple.TYPE_J),
+                           ('K', BrickletThermocouple.TYPE_K),
+                           ('N', BrickletThermocouple.TYPE_N),
+                           ('R', BrickletThermocouple.TYPE_R),
+                           ('S', BrickletThermocouple.TYPE_S),
+                           ('T', BrickletThermocouple.TYPE_T),
+                           ('G8', BrickletThermocouple.TYPE_G8),
+                           ('G32', BrickletThermocouple.TYPE_G32)],
+                'default': 'K'
+            },
+            {
+                'name': 'Filter',
+                'type': 'choice',
+                'values': [('50Hz', BrickletThermocouple.FILTER_OPTION_50HZ),
+                           ('60Hz', BrickletThermocouple.FILTER_OPTION_60HZ)],
+                'default': '50Hz'
+            }
+        ]
+    },
     BrickletTemperatureIR.DEVICE_DISPLAY_NAME: {
         'class': BrickletTemperatureIR,
         'values': [
@@ -1767,6 +1842,20 @@ device_specs = {
                 'getter': lambda device: device.get_tilt_state(),
                 'subvalues': None,
                 'unit': None,
+                'advanced': False
+            }
+        ],
+        'options_setter': None,
+        'options': None
+    },
+    BrickletUVLight.DEVICE_DISPLAY_NAME: {
+        'class': BrickletUVLight,
+        'values': [
+            {
+                'name': 'UV Light',
+                'getter': lambda device: device.get_uv_light(),
+                'subvalues': None,
+                'unit': 'µW/cm²',
                 'advanced': False
             }
         ],
