@@ -1,9 +1,13 @@
-2.0.0:
+2015-10-12: 2.0.0 (3233844)
 - Initial version
 
-2.0.1:
+2015-10-13: 2.0.1 (1149efd)
 - Add support for IMU (2.0), Master, Servo and Stepper Brick
 
-2.0.2:
+2015-11-04: 2.0.2 (0475a2d)
 - Add millisecond interval support
 - Add custom strftime format
+
+<unknown>: 2.0.3 (<unknown>)
+- Add authentication support
+- Add support for CO2, OLED 64x48 and 128x64, Thermocouple and UV Light Bricklet

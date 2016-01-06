@@ -442,7 +442,7 @@ def build_linux_flash_pkg():
     #system('lintian --pedantic brick-flash-{0}_all.deb'.format(BRICK_FLASH_VERSION))
 
 
-BRICK_LOGGER_VERSION = '2.0.2'
+BRICK_LOGGER_VERSION = '2.0.3'
 
 def build_logger_zip():
     print('building brick-logger ZIP file')

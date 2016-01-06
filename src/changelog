@@ -315,3 +315,7 @@
 2015-11-05: 2.3.2 (3d3df3e)
 - Ignore errors during locale initialization
 - Change modeless dialog handling to workaround problem on Mac OS X
+
+<unknown>: 2.3.3 (<unknown>)
+- Add authentication support for data logger
+- Add support for CO2, OLED 64x48 and 128x64, Thermocouple and UV Light Bricklet

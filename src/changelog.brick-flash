@@ -1,7 +1,7 @@
-1.0.0:
+2014-04-11: 1.0.0 (596c2c9)
 - Initial version
 
-1.0.1:
+2015-10-12: 1.0.1 (be1922e)
 - Add support for Python 3
 - Add --version argument
 - Rename to brick-flash
