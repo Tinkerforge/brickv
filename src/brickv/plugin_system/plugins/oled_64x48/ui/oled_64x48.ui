@@ -161,7 +161,7 @@
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Draw Character Map on LCD:</string>
+        <string>Draw Character Map:</string>
        </property>
       </widget>
      </item>
@@ -230,7 +230,7 @@
          <item>
           <widget class="QPushButton" name="draw_button">
            <property name="text">
-            <string>Draw on LCD</string>
+            <string>Draw on Display</string>
            </property>
           </widget>
          </item>
