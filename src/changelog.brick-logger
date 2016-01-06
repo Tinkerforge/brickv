@@ -8,6 +8,6 @@
 - Add millisecond interval support
 - Add custom strftime format
 
-2016-01-06: 2.0.3 (<unknown>)
+2016-01-06: 2.0.3 (8e7c45b)
 - Add authentication support
 - Add support for CO2, OLED 64x48 and 128x64, Thermocouple and UV Light Bricklet
