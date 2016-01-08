@@ -4,7 +4,7 @@
 """
 brick-flash
 Copyright (C) 2013 Jan Sandbrink
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 Atmel SAM-BA flash protocol implementation
 
@@ -38,6 +38,7 @@ except ImportError:
 
 import sys
 import struct
+import time
 
 #### insert samba module here ####
 
@@ -73,10 +74,6 @@ class Progress:
 
     def cancel(self):
         print('')
-
-    def setMaximum(self, value):
-        self.maximum = value
-        self.print_progress()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Tinkerforge Brick Flash Tool')

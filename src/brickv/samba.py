@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 brickv (Brick Viewer)
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
 
 samba.py: Atmel SAM-BA flash protocol implementation
@@ -25,6 +25,7 @@ Boston, MA 02111-1307, USA.
 import sys
 import glob
 import struct
+import time
 from serial import Serial, SerialException
 
 if sys.platform.startswith('linux'):
@@ -95,8 +96,12 @@ else:
 
 CHIPID_CIDR = 0x400E0740
 
-ATSAM3SxB = 0x89
-ATSAM3SxC = 0x8A
+CHIPID_CIDR_ATSAM3S2B_A = 0x289A0760
+CHIPID_CIDR_ATSAM3S4C_A = 0x28A00960
+CHIPID_CIDR_ATSAM4S2B_A = 0x289B07E0
+CHIPID_CIDR_ATSAM4S2B_B = 0x289B07E1
+CHIPID_CIDR_ATSAM4S4C_A = 0x28AB09E0
+CHIPID_CIDR_ATSAM4S4C_B = 0x28AB09E1
 
 EEFC_FMR = 0x400E0A00
 EEFC_FCR = 0x400E0A04
@@ -106,6 +111,7 @@ EEFC_FRR = 0x400E0A0C
 EEFC_FSR_FRDY   = 0b0001
 EEFC_FSR_FCMDE  = 0b0010
 EEFC_FSR_FLOCKE = 0b0100
+EEFC_FSR_FLERR  = 0b1000 # SAM4S only
 
 EEFC_FCR_FKEY = 0x5A
 
@@ -149,6 +155,7 @@ class SAMBARebootError(SAMBAException):
 
 class SAMBA(object):
     def __init__(self, port_name, progress=None, application_name='Brick Viewer'):
+        self.sam_series = None
         self.current_mode = None
         self.progress = progress
 
@@ -170,22 +177,37 @@ class SAMBA(object):
             raise SAMBAException('No Brick in Bootloader found')
 
         chipid = self.read_uint32(CHIPID_CIDR)
-        arch = (chipid >> 20) & 0b11111111
 
-        if arch == ATSAM3SxB:
+        if chipid == CHIPID_CIDR_ATSAM3S2B_A:
+            self.sam_series = 3
             self.flash_base = 0x400000
             self.flash_size = 0x20000
             self.flash_page_count = 512
             self.flash_page_size = 256
             self.flash_lockbit_count = 8
-        elif arch == ATSAM3SxC:
+        elif chipid == CHIPID_CIDR_ATSAM3S4C_A:
+            self.sam_series = 3
             self.flash_base = 0x400000
             self.flash_size = 0x40000
             self.flash_page_count = 1024
             self.flash_page_size = 256
             self.flash_lockbit_count = 16
+        elif chipid in [CHIPID_CIDR_ATSAM4S2B_A, CHIPID_CIDR_ATSAM4S2B_B]:
+            self.sam_series = 4
+            self.flash_base = 0x400000
+            self.flash_size = 0x20000
+            self.flash_page_count = 256
+            self.flash_page_size = 512
+            self.flash_lockbit_count = 16
+        elif chipid in [CHIPID_CIDR_ATSAM4S4C_A, CHIPID_CIDR_ATSAM4S4C_B]:
+            self.sam_series = 4
+            self.flash_base = 0x400000
+            self.flash_size = 0x40000
+            self.flash_page_count = 512
+            self.flash_page_size = 512
+            self.flash_lockbit_count = 32
         else:
-            raise SAMBAException('Brick with unknown SAM3S architecture: 0x%08X' % arch)
+            raise SAMBAException('Brick has unknown CHIPID: 0x%08X' % chipid)
 
         self.flash_lockregion_size = self.flash_size // self.flash_lockbit_count
         self.flash_pages_per_lockregion = self.flash_lockregion_size // self.flash_page_size
@@ -225,7 +247,7 @@ class SAMBA(object):
 
     def read_uid64(self):
         self.write_flash_command(EEFC_FCR_FCMD_STUI, 0)
-        self.wait_for_flash_ready('while reading UID', False)
+        self.wait_for_flash_ready('while reading UID', ready=False)
 
         uid1 = self.read_uint32(self.flash_base + 8)
         uid2 = self.read_uint32(self.flash_base + 12)
@@ -249,20 +271,23 @@ class SAMBA(object):
             firmware_pages.append(page)
             offset += self.flash_page_size
 
-        # Flash Programming Erata: FWS must be 6
-        self.write_uint32(EEFC_FMR, 0x06 << 8)
+        if self.sam_series == 3:
+            # SAM3S flash programming erata: FWS must be 6
+            self.write_uint32(EEFC_FMR, 0x06 << 8)
 
         # Unlock
+        self.reset_progress('Unlocking flash pages', 0)
+        self.wait_for_flash_ready('before unlocking flash pages')
+
         for region in range(self.flash_lockbit_count):
-            self.wait_for_flash_ready('while unlocking flash pages')
             page_num = (region * self.flash_page_count) // self.flash_lockbit_count
             self.write_flash_command(EEFC_FCR_FCMD_CLB, page_num)
-
-        self.wait_for_flash_ready('after unlocking flash pages')
+            self.wait_for_flash_ready('while unlocking flash pages')
 
         # Erase All
+        self.reset_progress('Erasing flash pages', 0)
         self.write_flash_command(EEFC_FCR_FCMD_EA, 0)
-        self.wait_for_flash_ready('while erasing flash pages')
+        self.wait_for_flash_ready('while erasing flash pages', timeout=10000)
 
         # Write firmware
         self.write_pages(firmware_pages, 0, 'Writing firmware')
@@ -302,6 +327,7 @@ class SAMBA(object):
             self.write_pages(imu_calibration_pages, page_num_offset, 'Writing IMU calibration')
 
         # Lock firmware
+        self.reset_progress('Locking flash pages', 0)
         self.lock_pages(0, len(firmware_pages))
 
         # Lock IMU calibration
@@ -331,11 +357,11 @@ class SAMBA(object):
             raise SAMBARebootError(str(e))
 
     def reset_progress(self, title, length):
-        if self.progress is not None:
+        if self.progress != None:
             self.progress.reset(title, length)
 
     def update_progress(self, value):
-        if self.progress is not None:
+        if self.progress != None:
             self.progress.update(value)
 
     def write_pages(self, pages, page_num_offset, title):
@@ -384,13 +410,13 @@ class SAMBA(object):
         if (end_page_num % self.flash_pages_per_lockregion) != 0:
             end_page_num += self.flash_pages_per_lockregion - (end_page_num % self.flash_pages_per_lockregion)
 
+        self.wait_for_flash_ready('before locking flash pages')
+
         for region in range(start_page_num // self.flash_pages_per_lockregion,
                             end_page_num // self.flash_pages_per_lockregion):
-            self.wait_for_flash_ready('while locking flash pages')
             page_num = (region * self.flash_page_count) // self.flash_lockbit_count
             self.write_flash_command(EEFC_FCR_FCMD_SLB, page_num)
-
-        self.wait_for_flash_ready('after locking flash pages')
+            self.wait_for_flash_ready('while locking flash pages')
 
     def read_word(self, address): # 4 bytes
         self.change_mode('N')
@@ -486,8 +512,8 @@ class SAMBA(object):
         except:
             raise SAMBAException('Write error while executing code at address 0x%08X' % address)
 
-    def wait_for_flash_ready(self, message, ready=True):
-        for i in range(1000):
+    def wait_for_flash_ready(self, message, timeout=2000, ready=True):
+        for i in range(timeout):
             fsr = self.read_uint32(EEFC_FSR)
 
             if (fsr & EEFC_FSR_FLOCKE) != 0:
@@ -496,12 +522,17 @@ class SAMBA(object):
             if (fsr & EEFC_FSR_FCMDE) != 0:
                 raise SAMBAException('Flash command error ' + message)
 
+            if self.sam_series == 4 and (fsr & EEFC_FSR_FLERR) != 0:
+                raise SAMBAException('Flash memory error ' + message)
+
             if ready:
                 if (fsr & EEFC_FSR_FRDY) != 0:
                     break
             else:
                 if (fsr & EEFC_FSR_FRDY) == 0:
                     break
+
+            time.sleep(0.001)
         else:
             raise SAMBAException('Flash timeout ' + message)
 

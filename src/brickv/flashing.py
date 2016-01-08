@@ -76,6 +76,7 @@ class ProgressWrapper(object):
         self.progress.setMaximum(length)
         self.progress.setValue(0)
         self.progress.show()
+        QApplication.processEvents()
 
     def update(self, value):
         self.progress.setValue(value)
