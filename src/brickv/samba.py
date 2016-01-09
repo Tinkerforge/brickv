@@ -230,7 +230,8 @@ class SAMBA(object):
 
                 if len(response) == 0:
                     raise SAMBAException('Read timeout during mode change')
-                elif response == b'>':
+
+                if response == b'>':
                     break
         else:
             try:
@@ -240,7 +241,8 @@ class SAMBA(object):
 
             if len(response) == 0:
                 raise SAMBAException('Read timeout during mode change')
-            elif response != b'\n\r':
+
+            if response != b'\n\r':
                 raise SAMBAException('Protocol error during mode change')
 
         self.current_mode = mode
@@ -435,7 +437,7 @@ class SAMBA(object):
             raise SAMBAException('Timeout while reading from address 0x%08X' % address)
 
         if len(response) != 4:
-            raise SAMBAException('Protocol error while reading from address 0x%08X' % address)
+            raise SAMBAException('Length error while reading from address 0x%08X' % address)
 
         return response
 
@@ -470,6 +472,9 @@ class SAMBA(object):
             raise SAMBAException('Timeout while reading from address 0x%08X' % address)
 
         if len(response) != length + 3:
+            raise SAMBAException('Length error while reading from address 0x%08X' % address)
+
+        if response[:2] != b'\n\r' or response[-1] != b'>':
             raise SAMBAException('Protocol error while reading from address 0x%08X' % address)
 
         return response[2:-1]
