@@ -145,7 +145,8 @@ RSTC_MR_KEY_OFFSET = 24
 RSTC_MR_ERSTL_OFFSET = 8
 
 # http://www.varsanofiev.com/inside/at91_sam_ba.htm
-# http://sourceforge.net/apps/mediawiki/lejos/index.php?title=Documentation:SAM-BA
+# http://sourceforge.net/p/lejos/wiki-nxt/SAM-BA%20Protocol/
+# http://sourceforge.net/p/b-o-s-s-a/code/ci/master/tree/
 
 class SAMBAException(Exception):
     pass
@@ -155,6 +156,7 @@ class SAMBARebootError(SAMBAException):
 
 class SAMBA(object):
     def __init__(self, port_name, progress=None, application_name='Brick Viewer'):
+        self.r_command_bug = False
         self.sam_series = None
         self.current_mode = None
         self.progress = progress
@@ -372,12 +374,18 @@ class SAMBA(object):
         page_num = 0
 
         for page in pages:
-            offset = 0
+            # FIXME: the S command used by the write_bytes function doesn't
+            #        write the data correctly. instead use the write_word function
+            if False:
+                address = self.flash_base + (page_num_offset + page_num) * self.flash_page_size
+                self.write_bytes(address, page)
+            else:
+                offset = 0
 
-            while offset < len(page):
-                address = self.flash_base + (page_num_offset + page_num) * self.flash_page_size + offset
-                self.write_word(address, page[offset:offset + 4])
-                offset += 4
+                while offset < len(page):
+                    address = self.flash_base + (page_num_offset + page_num) * self.flash_page_size + offset
+                    self.write_word(address, page[offset:offset + 4])
+                    offset += 4
 
             self.wait_for_flash_ready('while writing flash pages')
             self.write_flash_command(EEFC_FCR_FCMD_WP, page_num_offset + page_num)
@@ -456,6 +464,16 @@ class SAMBA(object):
             raise SAMBAException('Write error while writing to address 0x%08X' % address)
 
     def read_bytes(self, address, length):
+        # according to the BOSSA flash program, SAM-BA can have a bug regarding
+        # reading more than 32 bytes at a time if the amount to be read is a
+        # power of 2. to work around this split the read operation in two steps
+        prefix = b''
+
+        if self.r_command_bug and length > 32 and length & (length - 1) == 0:
+            prefix = self.read_word(address)
+            address += 4
+            length -= 4
+
         self.change_mode('T')
 
         try:
@@ -477,14 +495,19 @@ class SAMBA(object):
         if response[:2] != b'\n\r' or response[-1] != b'>':
             raise SAMBAException('Protocol error while reading from address 0x%08X' % address)
 
-        return response[2:-1]
+        return prefix + response[2:-1]
 
     def write_bytes(self, address, bytes_):
         self.change_mode('T')
 
+        # FIXME: writes '33337777BBBBFFFF' instead of '0123456789ABCDEF'
         try:
-            # FIXME: writes '33337777BBBBFFFF' instead of '0123456789ABCDEF'
+            # according to the BOSSA flash program, SAM-BA can get confused if
+            # the command and the data to be written is received in the same USB
+            # packet. to work around this, flush the serial port in between the
+            # command and the data
             self.port.write(('S%X,%X#' % (address, len(bytes_))).encode('ascii'))
+            self.port.flush()
             self.port.write(bytes_)
         except:
             raise SAMBAException('Write error while writing to address 0x%08X' % address)
@@ -513,7 +536,11 @@ class SAMBA(object):
         self.change_mode('N')
 
         try:
+            # according to the BOSSA flash program, SAM-BA can get confused if
+            # another command is received in the same USB packet as the G
+            # command. to work around this, flush the serial port afterwards
             self.port.write(('G%X#' % address).encode('ascii'))
+            self.port.flush()
         except:
             raise SAMBAException('Write error while executing code at address 0x%08X' % address)
 
