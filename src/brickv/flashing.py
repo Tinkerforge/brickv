@@ -3,7 +3,7 @@
 brickv (Brick Viewer)
 Copyright (C) 2011-2015 Olaf Lüke <olaf@tinkerforge.com>
 Copyright (C) 2012 Bastian Nordmeyer <bastian@tinkerforge.com>
-Copyright (C) 2012-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2012-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 flashing.py: GUI for flashing features
 
@@ -306,6 +306,10 @@ class FlashingWindow(QDialog, Ui_Flashing):
             name = name.replace('_us', '_US')
         elif name.startswith('led_'):
             name = name.replace('led_', 'LED_')
+        elif name.startswith('oled_'):
+            name = name.replace('oled_', 'OLED_')
+        elif name.startswith('uv_'):
+            name = name.replace('uv_', 'UV_')
 
         words = name.split('_')
         parts = []
