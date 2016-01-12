@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-01-06.      #
+# This file was automatically generated on 2016-01-12.      #
 #                                                           #
 # Python Bindings Version 2.1.7                             #
 #                                                           #
@@ -27,7 +27,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletOLED128x64(Device):
     """
-    1.3" OLED with 128x64 pixels
+    3.3cm (1.3") OLED with 128x64 pixels
     """
 
     DEVICE_IDENTIFIER = 263

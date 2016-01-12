@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-01-06.      #
+# This file was automatically generated on 2016-01-12.      #
 #                                                           #
 # Python Bindings Version 2.1.7                             #
 #                                                           #
@@ -27,7 +27,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletOLED64x48(Device):
     """
-    0.66" OLED with 64x48 pixels
+    1.68cm (0.66") OLED with 64x48 pixels
     """
 
     DEVICE_IDENTIFIER = 264
@@ -120,7 +120,7 @@ class BrickletOLED64x48(Device):
     def write_line(self, line, position, text):
         """
         Writes text to a specific line (0 to 5) with a specific position 
-        (0 to 13). The text can have a maximum of 14 characters.
+        (0 to 12). The text can have a maximum of 13 characters.
         
         For example: (1, 4, "Hello") will write *Hello* in the middle of the
         second line of the display.
