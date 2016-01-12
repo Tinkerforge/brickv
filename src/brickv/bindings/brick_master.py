@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-01-06.      #
+# This file was automatically generated on 2016-01-12.      #
 #                                                           #
 # Python Bindings Version 2.1.7                             #
 #                                                           #
@@ -35,6 +35,11 @@ GetUSBVoltageCallbackThreshold = namedtuple('USBVoltageCallbackThreshold', ['opt
 GetEthernetConfiguration = namedtuple('EthernetConfiguration', ['connection', 'ip', 'subnet_mask', 'gateway', 'port'])
 GetEthernetStatus = namedtuple('EthernetStatus', ['mac_address', 'ip', 'subnet_mask', 'gateway', 'rx_count', 'tx_count', 'hostname'])
 GetEthernetWebsocketConfiguration = namedtuple('EthernetWebsocketConfiguration', ['sockets', 'port'])
+ReadWifi2Flash = namedtuple('ReadWifi2Flash', ['data', 'length_out'])
+GetWifi2Configuration = namedtuple('Wifi2Configuration', ['port', 'websocket_port', 'website_port', 'phy_mode', 'sleep_mode', 'website'])
+GetWifi2Status = namedtuple('Wifi2Status', ['client_enabled', 'client_status', 'client_ip', 'client_subnet_mask', 'client_gateway', 'client_mac_address', 'client_rx_count', 'client_tx_count', 'client_rssi', 'ap_enabled', 'ap_ip', 'ap_subnet_mask', 'ap_gateway', 'ap_mac_address', 'ap_rx_count', 'ap_tx_count', 'ap_connected_count'])
+GetWifi2ClientConfiguration = namedtuple('Wifi2ClientConfiguration', ['enable', 'ssid', 'ip', 'subnet_mask', 'gateway', 'mac_address', 'bssid'])
+GetWifi2APConfiguration = namedtuple('Wifi2APConfiguration', ['enable', 'ssid', 'ip', 'subnet_mask', 'gateway', 'encryption', 'hidden', 'channel', 'mac_address'])
 GetProtocol1BrickletName = namedtuple('Protocol1BrickletName', ['protocol_version', 'firmware_version', 'name'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
@@ -123,6 +128,27 @@ class BrickMaster(Device):
     FUNCTION_GET_ETHERNET_AUTHENTICATION_SECRET = 74
     FUNCTION_SET_WIFI_AUTHENTICATION_SECRET = 75
     FUNCTION_GET_WIFI_AUTHENTICATION_SECRET = 76
+    FUNCTION_GET_CONNECTION_TYPE = 77
+    FUNCTION_IS_WIFI2_PRESENT = 78
+    FUNCTION_START_WIFI2_BOOTLOADER = 79
+    FUNCTION_WRITE_WIFI2_FLASH = 80
+    FUNCTION_READ_WIFI2_FLASH = 81
+    FUNCTION_SET_WIFI2_AUTHENTICATION_SECRET = 82
+    FUNCTION_GET_WIFI2_AUTHENTICATION_SECRET = 83
+    FUNCTION_SET_WIFI2_CONFIGURATION = 84
+    FUNCTION_GET_WIFI2_CONFIGURATION = 85
+    FUNCTION_GET_WIFI2_STATUS = 86
+    FUNCTION_SET_WIFI2_CLIENT_CONFIGURATION = 87
+    FUNCTION_GET_WIFI2_CLIENT_CONFIGURATION = 88
+    FUNCTION_SET_WIFI2_CLIENT_HOSTNAME = 89
+    FUNCTION_GET_WIFI2_CLIENT_HOSTNAME = 90
+    FUNCTION_SET_WIFI2_CLIENT_PASSWORD = 91
+    FUNCTION_GET_WIFI2_CLIENT_PASSWORD = 92
+    FUNCTION_SET_WIFI2_AP_CONFIGURATION = 93
+    FUNCTION_GET_WIFI2_AP_CONFIGURATION = 94
+    FUNCTION_SET_WIFI2_AP_PASSWORD = 95
+    FUNCTION_GET_WIFI2_AP_PASSWORD = 96
+    FUNCTION_SAVE_WIFI2_CONFIGURATION = 97
     FUNCTION_ENABLE_STATUS_LED = 238
     FUNCTION_DISABLE_STATUS_LED = 239
     FUNCTION_IS_STATUS_LED_ENABLED = 240
@@ -135,6 +161,7 @@ class BrickMaster(Device):
     EXTENSION_TYPE_RS485 = 2
     EXTENSION_TYPE_WIFI = 3
     EXTENSION_TYPE_ETHERNET = 4
+    EXTENSION_TYPE_WIFI2 = 5
     CHIBI_FREQUENCY_OQPSK_868_MHZ = 0
     CHIBI_FREQUENCY_OQPSK_915_MHZ = 1
     CHIBI_FREQUENCY_OQPSK_780_MHZ = 2
@@ -186,7 +213,7 @@ class BrickMaster(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 3)
+        self.api_version = (2, 0, 4)
 
         self.response_expected[BrickMaster.FUNCTION_GET_STACK_VOLTAGE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_GET_STACK_CURRENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -264,6 +291,27 @@ class BrickMaster(Device):
         self.response_expected[BrickMaster.FUNCTION_GET_ETHERNET_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_SET_WIFI_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_GET_WIFI_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_CONNECTION_TYPE] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_IS_WIFI2_PRESENT] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_START_WIFI2_BOOTLOADER] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_WRITE_WIFI2_FLASH] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_READ_WIFI2_FLASH] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI2_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_AUTHENTICATION_SECRET] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI2_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_STATUS] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI2_CLIENT_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_CLIENT_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI2_CLIENT_HOSTNAME] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_CLIENT_HOSTNAME] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI2_CLIENT_PASSWORD] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_CLIENT_PASSWORD] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI2_AP_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_AP_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SET_WIFI2_AP_PASSWORD] = BrickMaster.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickMaster.FUNCTION_GET_WIFI2_AP_PASSWORD] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickMaster.FUNCTION_SAVE_WIFI2_CONFIGURATION] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickMaster.FUNCTION_ENABLE_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_DISABLE_STATUS_LED] = BrickMaster.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickMaster.FUNCTION_IS_STATUS_LED_ENABLED] = BrickMaster.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -311,6 +359,7 @@ class BrickMaster(Device):
          "2",    "RS485"
          "3",    "WIFI"
          "4",    "Ethernet"
+         "5",    "WIFI 2.0"
         
         The extension type is already set when bought and it can be set with the 
         Brick Viewer, it is unlikely that you need this function.
@@ -1165,6 +1214,161 @@ class BrickMaster(Device):
         .. versionadded:: 2.2.0$nbsp;(Firmware)
         """
         return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI_AUTHENTICATION_SECRET, (), '', '64s')
+
+    def get_connection_type(self):
+        """
+        COM_NONE      = 0,
+        	COM_USB       = 1,
+        	COM_SPI_STACK = 2,
+        	COM_CHIBI     = 3,
+        	COM_RS485     = 4,
+        	COM_WIFI      = 5,
+        	COM_ETHERNET  = 6,
+        	COM_WIFI2     = 7,
+        
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_CONNECTION_TYPE, (), '', 'B')
+
+    def is_wifi2_present(self):
+        """
+        Returns *true* if a WIFI Extension 2.0 is available to be used by the Master
+        Brick.
+        
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_IS_WIFI2_PRESENT, (), '', '?')
+
+    def start_wifi2_bootloader(self):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_START_WIFI2_BOOTLOADER, (), '', 'b')
+
+    def write_wifi2_flash(self, data, length):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_WRITE_WIFI2_FLASH, (data, length), '60B B', 'b')
+
+    def read_wifi2_flash(self, length_in):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return ReadWifi2Flash(*self.ipcon.send_request(self, BrickMaster.FUNCTION_READ_WIFI2_FLASH, (length_in,), 'B', '60B B'))
+
+    def set_wifi2_authentication_secret(self, secret):
+        """
+        Sets the WIFI authentication secret. The secret can be a string of up to 64
+        characters. An empty string disables the authentication.
+        
+        See the :ref:`authentication tutorial <tutorial_authentication>` for more
+        information.
+        
+        The secret is stored in the EEPROM and only applied on startup. That means
+        you have to restart the Master Brick after configuration.
+        
+        It is recommended to use the Brick Viewer to set the WIFI authentication secret.
+        
+        The default value is an empty string (authentication disabled).
+        
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_AUTHENTICATION_SECRET, (secret,), '64s', '')
+
+    def get_wifi2_authentication_secret(self):
+        """
+        Returns the authentication secret as set by :func:`SetWifiAuthenticationSecret`.
+        
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_AUTHENTICATION_SECRET, (), '', '64s')
+
+    def set_wifi2_configuration(self, port, websocket_port, website_port, phy_mode, sleep_mode, website):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_CONFIGURATION, (port, websocket_port, website_port, phy_mode, sleep_mode, website), 'H H H B B B', '')
+
+    def get_wifi2_configuration(self):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return GetWifi2Configuration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_CONFIGURATION, (), '', 'H H H B B B'))
+
+    def get_wifi2_status(self):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return GetWifi2Status(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_STATUS, (), '', '? B 4B 4B 4B 6B I I b ? 4B 4B 4B 6B I I B'))
+
+    def set_wifi2_client_configuration(self, enable, ssid, ip, subnet_mask, gateway, mac_address, bssid):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_CLIENT_CONFIGURATION, (enable, ssid, ip, subnet_mask, gateway, mac_address, bssid), '? 32s 4B 4B 4B 6B 6B', '')
+
+    def get_wifi2_client_configuration(self):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return GetWifi2ClientConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_CLIENT_CONFIGURATION, (), '', '? 32s 4B 4B 4B 6B 6B'))
+
+    def set_wifi2_client_hostname(self, hostname):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_CLIENT_HOSTNAME, (hostname,), '32s', '')
+
+    def get_wifi2_client_hostname(self):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_CLIENT_HOSTNAME, (), '', '32s')
+
+    def set_wifi2_client_password(self, password):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_CLIENT_PASSWORD, (password,), '64s', '')
+
+    def get_wifi2_client_password(self):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_CLIENT_PASSWORD, (), '', '64s')
+
+    def set_wifi2_ap_configuration(self, enable, ssid, ip, subnet_mask, gateway, auth, hidden, channel, mac_address):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_AP_CONFIGURATION, (enable, ssid, ip, subnet_mask, gateway, auth, hidden, channel, mac_address), '? 32s 4B 4B 4B B ? B 6B', '')
+
+    def get_wifi2_ap_configuration(self):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return GetWifi2APConfiguration(*self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_AP_CONFIGURATION, (), '', '? 32s 4B 4B 4B B ? B 6B'))
+
+    def set_wifi2_ap_password(self, password):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        self.ipcon.send_request(self, BrickMaster.FUNCTION_SET_WIFI2_AP_PASSWORD, (password,), '64s', '')
+
+    def get_wifi2_ap_password(self):
+        """
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_GET_WIFI2_AP_PASSWORD, (), '', '64s')
+
+    def save_wifi2_configuration(self):
+        """
+        Call this function to actually save configuration
+        
+        .. versionadded:: 2.4.0$nbsp;(Firmware)
+        """
+        return self.ipcon.send_request(self, BrickMaster.FUNCTION_SAVE_WIFI2_CONFIGURATION, (), '', 'B')
 
     def enable_status_led(self):
         """
