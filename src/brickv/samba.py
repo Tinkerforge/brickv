@@ -492,7 +492,7 @@ class SAMBA(object):
         if len(response) != length + 3:
             raise SAMBAException('Length error while reading from address 0x%08X' % address)
 
-        if response[:2] != b'\n\r' or response[-1] != b'>':
+        if not response.startswith(b'\n\r') or not response.endswith(b'>'):
             raise SAMBAException('Protocol error while reading from address 0x%08X' % address)
 
         return prefix + response[2:-1]
