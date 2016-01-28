@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-01-12.      #
+# This file was automatically generated on 2016-01-25.      #
 #                                                           #
 # Python Bindings Version 2.1.7                             #
 #                                                           #
@@ -96,7 +96,7 @@ class BrickletOLED64x48(Device):
 
     def clear_display(self):
         """
-        Clears the current content of the display.
+        Clears the current content of the window as set by :func:`NewWindow`.
         """
         self.ipcon.send_request(self, BrickletOLED64x48.FUNCTION_CLEAR_DISPLAY, (), '', '')
 

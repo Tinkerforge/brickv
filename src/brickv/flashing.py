@@ -321,6 +321,7 @@ class FlashingWindow(QDialog, Ui_Flashing):
         name = name.replace('Voltage Current', 'Voltage/Current')
         name = name.replace('Nfc Rfid', 'NFC/RFID')
         name = name.replace('0 20ma', '0-20mA')
+        name = name.replace('Real Time', 'Real-Time')
 
         plugin_info = infos.PluginInfo()
         plugin_info.name = name
