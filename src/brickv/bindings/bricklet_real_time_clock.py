@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-01-28.      #
+# This file was automatically generated on 2016-02-08.      #
 #                                                           #
 # Python Bindings Version 2.1.7                             #
 #                                                           #
@@ -29,7 +29,7 @@ GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardw
 
 class BrickletRealTimeClock(Device):
     """
-    Battery backed real-time clock
+    Battery-backed real-time clock
     """
 
     DEVICE_IDENTIFIER = 268
@@ -115,8 +115,8 @@ class BrickletRealTimeClock(Device):
         
         The real-time clock time can deviate from the actual time due to the frequency
         deviation of its 32.768 kHz crystal. Even without compensation (factory
-        default) the resulting time deviation should be at most ±20 ppm (±1.728
-        seconds per day).
+        default) the resulting time deviation should be at most ±20 ppm (±52.6
+        seconds per month).
         
         This deviation can be calculated by comparing the same duration measured by the
         real-time clock (``rtc_duration``) an accurate reference clock
@@ -132,6 +132,9 @@ class BrickletRealTimeClock(Device):
         
         If you want to calculate the offset, then we recommend using the calibration
         dialog in Brick Viewer, instead of doing it manually.
+        
+        The offset is saved in the EEPROM of the Bricklet and only needs to be
+        configured once.
         """
         self.ipcon.send_request(self, BrickletRealTimeClock.FUNCTION_SET_OFFSET, (offset,), 'b', '')
 
