@@ -2,7 +2,7 @@
 """
 DC Plugin
 Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 dc.py: DC Plugin implementation
 
@@ -26,7 +26,6 @@ from PyQt4.QtGui import QErrorMessage, QInputDialog, QAction
 from PyQt4.QtCore import QTimer, Qt, pyqtSignal
 
 from brickv.plugin_system.plugin_base import PluginBase
-from brickv.plugin_system.plugins.dc.speedometer import SpeedoMeter
 from brickv.plugin_system.plugins.dc.ui_dc import Ui_DC
 from brickv.bindings import ip_connection
 from brickv.bindings.brick_dc import BrickDC
@@ -50,10 +49,7 @@ class DC(PluginBase, Ui_DC):
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
-        
-        self.speedometer = SpeedoMeter()
-        self.vertical_layout_right.insertWidget(4, self.speedometer)
-        
+
         self.new_value = 0
         self.update_counter = 0
         
@@ -264,6 +260,7 @@ class DC(PluginBase, Ui_DC):
 
     def update_velocity(self, value):
         self.speedometer.set_velocity(value)
+        self.current_velocity_label.setText('{0} ({1}%)'.format(value, round(abs(value) * 100 / 32768.0, 1)))
         
     def get_velocity_async(self, velocity):
         if not self.velocity_slider.isSliderDown():
@@ -271,7 +268,7 @@ class DC(PluginBase, Ui_DC):
                 self.velocity_slider.setSliderPosition(velocity)
                 self.velocity_spin.setValue(velocity)
 
-        self.speedometer.set_velocity(velocity)
+        self.update_velocity(velocity)
 
     def get_acceleration_async(self, acceleration):
         if not self.acceleration_slider.isSliderDown():
