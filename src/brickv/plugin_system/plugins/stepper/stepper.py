@@ -2,7 +2,7 @@
 """
 brickv (Brick Viewer) 
 Copyright (C) 2009-2012 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 stepper.py: Stepper Plugin implementation
 
@@ -26,7 +26,6 @@ from PyQt4.QtCore import QTimer, Qt, pyqtSignal
 from PyQt4.QtGui import QErrorMessage, QInputDialog, QAction
 
 from brickv.plugin_system.plugin_base import PluginBase
-from brickv.plugin_system.plugins.stepper.speedometer import SpeedoMeter
 from brickv.plugin_system.plugins.stepper.ui_stepper import Ui_Stepper
 from brickv.bindings import ip_connection
 from brickv.bindings.brick_stepper import BrickStepper
@@ -48,9 +47,6 @@ class Stepper(PluginBase, Ui_Stepper):
         
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_data)
-
-        self.speedometer = SpeedoMeter()
-        self.vertical_layout_right.insertWidget(5, self.speedometer)
         
         self.new_value = 0
         self.update_counter = 0
@@ -278,6 +274,11 @@ class Stepper(PluginBase, Ui_Stepper):
         ste_str = "%d" % ste
         self.remaining_steps_label.setText(ste_str)
         
+    def current_velocity_update(self, velocity):
+        velocity_str = "%d" % velocity
+        self.current_velocity_label.setText(velocity_str)
+        self.speedometer.set_velocity(velocity)
+
     def mode_update(self, mod):
         if mod == 8:
             index = 3
@@ -325,7 +326,7 @@ class Stepper(PluginBase, Ui_Stepper):
     def update_data(self):
         async_call(self.stepper.get_remaining_steps, None, self.remaining_steps_update, self.increase_error_count)
         async_call(self.stepper.get_current_position, None, self.position_update, self.increase_error_count)
-        async_call(self.stepper.get_current_velocity, None, self.speedometer.set_velocity, self.increase_error_count)
+        async_call(self.stepper.get_current_velocity, None, self.current_velocity_update, self.increase_error_count)
 
         self.update_counter += 1
         if self.update_counter % 10 == 0:
