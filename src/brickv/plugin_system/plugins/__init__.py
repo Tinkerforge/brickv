@@ -51,6 +51,7 @@ from brickv.plugin_system.plugins.oled_64x48 import device_class as oled_64x48
 from brickv.plugin_system.plugins.ozone import device_class as ozone
 from brickv.plugin_system.plugins.piezo_buzzer import device_class as piezo_buzzer
 from brickv.plugin_system.plugins.piezo_speaker import device_class as piezo_speaker
+from brickv.plugin_system.plugins.pressure import device_class as pressure
 from brickv.plugin_system.plugins.ptc import device_class as ptc
 from brickv.plugin_system.plugins.real_time_clock import device_class as real_time_clock
 from brickv.plugin_system.plugins.red import device_class as red
@@ -126,6 +127,7 @@ device_classes = [
     ozone,
     piezo_buzzer,
     piezo_speaker,
+    pressure,
     ptc,
     real_time_clock,
     red,
