@@ -24,6 +24,7 @@ Boston, MA 02111-1307, USA.
 from datetime import datetime
 from threading import Thread
 import time
+import math
 
 from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QDialog
@@ -82,13 +83,13 @@ class MeasurmentThread(Thread):
 
             local_diff = local_now - last_local
 
-            if local_diff < 0.95 or local_diff > 1.05:
+            if local_diff < 0.9 or local_diff > 1.1:
                 self.calibration.qtcb_measurement_error.emit('Measurement interrupted by Local Clock jump')
                 return
 
             rtc_diff = rtc_now - last_rtc
 
-            if rtc_diff < 0.95 or rtc_diff > 1.05:
+            if rtc_diff < 0.9 or rtc_diff > 1.1:
                 self.calibration.qtcb_measurement_error.emit('Measurement interrupted by Real-Time Clock jump')
                 return
 
@@ -108,6 +109,9 @@ class Calibration(QDialog, Ui_Calibration):
         self.parent = parent
         self.rtc = parent.rtc
         self.measured_ppm = 0
+        self.measured_ppm_avg = 0
+        self.measured_ppm_history = []
+        self.measured_ppm_index = 0
 
         self.label_error_title.hide()
         self.label_error_message.hide()
@@ -143,6 +147,9 @@ class Calibration(QDialog, Ui_Calibration):
         self.label_error_message.hide()
 
         self.measured_ppm = 0
+        self.measured_ppm_avg = 0
+        self.measured_ppm_history = []
+        self.measured_ppm_index = 0
 
         self.measurment_thread = MeasurmentThread(self)
         self.measurment_thread.start()
@@ -151,7 +158,7 @@ class Calibration(QDialog, Ui_Calibration):
         self.label_new_offset.setText('%.02f ppm' % (new_offset * 2.17))
 
     def optimize(self):
-        self.spin_new_offset.setValue(self.parent.offset + round(self.measured_ppm / 2.17))
+        self.spin_new_offset.setValue(self.parent.offset + round(self.measured_ppm_avg / 2.17))
 
     def save(self):
         self.parent.offset = self.spin_new_offset.value()
@@ -180,7 +187,22 @@ class Calibration(QDialog, Ui_Calibration):
         if rtc_duration > 0:
             self.measured_ppm = 1000000 * (rtc_duration - local_duration) / rtc_duration
 
-            self.label_measured_offset.setText('%.06f ppm' % self.measured_ppm)
+            if len(self.measured_ppm_history) < 600:
+                self.measured_ppm_history.append(self.measured_ppm)
+                self.measured_ppm_index = 0
+            else:
+                self.measured_ppm_history[self.measured_ppm_index] = self.measured_ppm
+                self.measured_ppm_index = (self.measured_ppm_index + 1) % 600
+
+            self.measured_ppm_avg = sum(self.measured_ppm_history) / len(self.measured_ppm_history)
+            stddev_sum = 0
+
+            for h in self.measured_ppm_history:
+                stddev_sum += (h - self.measured_ppm_avg)**2
+
+            stddev = math.sqrt(stddev_sum / len(self.measured_ppm_history))
+
+            self.label_measured_offset.setText(u'%.03f ppm (%.03f ppm ± %.03f ppm)' % (self.measured_ppm, self.measured_ppm_avg, stddev))
         else:
             self.label_measured_offset.setText('undefined')
 

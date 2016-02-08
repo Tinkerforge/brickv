@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>612</width>
-    <height>645</height>
+    <width>558</width>
+    <height>730</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,7 +39,7 @@
         <item row="0" column="0" colspan="2">
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>The Real-Time Clock time can deviate from the actual time due to the frequency deviation of its 32.768 kHz crystal. Even without compensation (factory default) the resulting time deviation should be at most &lt;b&gt;±20 ppm&lt;/b&gt; (±1.728 seconds per day).</string>
+           <string>The Real-Time Clock time can deviate from the actual time due to the frequency deviation of its 32.768 kHz crystal. Even without compensation (factory default) the resulting time deviation should be at most &lt;b&gt;±20 ppm&lt;/b&gt; (±52.6 seconds per month).</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
@@ -69,14 +69,14 @@
         <item row="7" column="0">
          <widget class="QLabel" name="label_6">
           <property name="text">
-           <string>Offset:</string>
+           <string>Offset (10 min Average):</string>
           </property>
          </widget>
         </item>
         <item row="7" column="1">
          <widget class="QLabel" name="label_measured_offset">
           <property name="text">
-           <string>0.000000 ppm</string>
+           <string>0.000 ppm (0.000 ppm ± 0.000 ppm)</string>
           </property>
          </widget>
         </item>
@@ -147,7 +147,7 @@
         <item row="2" column="0" colspan="2">
          <widget class="QLabel" name="label_4">
           <property name="text">
-           <string>For best results the configured offset should be set to &lt;b&gt;0 ppm&lt;/b&gt; first and then a duration of at least &lt;b&gt;6 hours&lt;/b&gt; should be measured.</string>
+           <string>For best results the configured offset should be set to &lt;b&gt;0 ppm&lt;/b&gt; first and then a duration of at least &lt;b&gt;6 hours&lt;/b&gt; should be measured. The deviation of the 10 min average should be less than &lt;b&gt;±0.25 ppm&lt;/b&gt; before the measured offset is applied as the configured offset.</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
