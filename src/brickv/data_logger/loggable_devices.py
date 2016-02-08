@@ -59,6 +59,7 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_moisture import BrickletMoisture
     from brickv.bindings.bricklet_motion_detector import BrickletMotionDetector
     from brickv.bindings.bricklet_multi_touch import BrickletMultiTouch
+    from brickv.bindings.bricklet_pressure import BrickletPressure
     from brickv.bindings.bricklet_ptc import BrickletPTC
     from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
     from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
@@ -118,6 +119,7 @@ else:
     from tinkerforge.bricklet_moisture import BrickletMoisture
     from tinkerforge.bricklet_motion_detector import BrickletMotionDetector
     from tinkerforge.bricklet_multi_touch import BrickletMultiTouch
+    from tinkerforge.bricklet_pressure import BrickletPressure
     from tinkerforge.bricklet_ptc import BrickletPTC
     from tinkerforge.bricklet_rotary_encoder import BrickletRotaryEncoder
     from tinkerforge.bricklet_rotary_poti import BrickletRotaryPoti
@@ -1638,6 +1640,44 @@ device_specs = {
                 'maximum': 201,
                 'suffix': None,
                 'default': 181
+            }
+        ]
+    },
+    BrickletPressure.DEVICE_DISPLAY_NAME: {
+        'class': BrickletPressure,
+        'values': [
+            {
+                'name': 'Pressure',
+                'getter': lambda device: device.get_pressure(),
+                'subvalues': None,
+                'unit': 'Pa',
+                'advanced': False
+            },
+            {
+                'name': 'Analog Value',
+                'getter': lambda device: device.get_analog_value(),
+                'subvalues': None,
+                'unit': None,
+                'advanced': True
+            }
+        ],
+        'options_setter': lambda device, sensor, moving_average_length: [device.set_sensor_type(sensor), device.set_moving_average(moving_average_length)],
+        'options': [
+            {
+                'name': 'Sensor Type',
+                'type': 'choice',
+                'values': [('MPX5500', BrickletPressure.SENSOR_TYPE_MPX5500),
+                           ('MPXV5004', BrickletPressure.SENSOR_TYPE_MPXV5004),
+                           ('MPX4115A', BrickletPressure.SENSOR_TYPE_MPX4115A)],
+                'default': 'MPX5500'
+            },
+            {
+                'name': 'Moving Average Length',
+                'type': 'int',
+                'minimum': 0,
+                'maximum': 50,
+                'suffix': None,
+                'default': 50
             }
         ]
     },
