@@ -72,7 +72,7 @@ class Stepper(PluginBase, Ui_Stepper):
 #                                             self.decay_spin,
 #                                             self.decay_changed)
 
-        self.enable_checkbox.stateChanged.connect(self.enable_state_changed)
+        self.enable_checkbox.toggled.connect(self.enable_toggled)
         self.forward_button.clicked.connect(self.forward_clicked)
         self.stop_button.clicked.connect(self.stop_clicked)
         self.full_brake_button.clicked.connect(self.full_brake_clicked)
@@ -238,15 +238,17 @@ class Stepper(PluginBase, Ui_Stepper):
             self.qem.showMessage("Under Voltage: Output Voltage of " + ov_str +
                                  " is below minimum voltage of " + mv_str,
                                  "Stepper_UnderVoltage")
-        
-    def enable_state_changed(self, state):
+
+    def enable_toggled(self, checked):
         try:
-            if state == Qt.Checked:
-                self.endis_all(True)
-                self.stepper.enable()
-            elif state == Qt.Unchecked:
-                self.endis_all(False)
-                self.stepper.disable()
+            if checked:
+                if not self.stepper.is_enabled():
+                    self.endis_all(True)
+                    self.stepper.enable()
+            else:
+                if self.stepper.is_enabled():
+                    self.endis_all(False)
+                    self.stepper.disable()
         except ip_connection.Error:
             return
         
