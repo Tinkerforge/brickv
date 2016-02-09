@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-02-05.      #
+# This file was automatically generated on 2016-02-08.      #
 #                                                           #
 # Python Bindings Version 2.1.7                             #
 #                                                           #
@@ -270,6 +270,11 @@ except ValueError:
     from bricklet_ptc import BrickletPTC
 
 try:
+    from .bricklet_real_time_clock import BrickletRealTimeClock
+except ValueError:
+    from bricklet_real_time_clock import BrickletRealTimeClock
+
+try:
     from .bricklet_remote_switch import BrickletRemoteSwitch
 except ValueError:
     from bricklet_remote_switch import BrickletRemoteSwitch
@@ -393,6 +398,7 @@ BrickletOLED64x48.DEVICE_IDENTIFIER: BrickletOLED64x48,
 BrickletPiezoBuzzer.DEVICE_IDENTIFIER: BrickletPiezoBuzzer,
 BrickletPiezoSpeaker.DEVICE_IDENTIFIER: BrickletPiezoSpeaker,
 BrickletPTC.DEVICE_IDENTIFIER: BrickletPTC,
+BrickletRealTimeClock.DEVICE_IDENTIFIER: BrickletRealTimeClock,
 BrickletRemoteSwitch.DEVICE_IDENTIFIER: BrickletRemoteSwitch,
 BrickletRotaryEncoder.DEVICE_IDENTIFIER: BrickletRotaryEncoder,
 BrickletRotaryPoti.DEVICE_IDENTIFIER: BrickletRotaryPoti,

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-01-06.      #
+# This file was automatically generated on 2016-02-05.      #
 #                                                           #
 # Python Bindings Version 2.1.7                             #
 #                                                           #
@@ -76,7 +76,7 @@ class BrickletGPS(Device):
         """
         Device.__init__(self, uid, ipcon)
 
-        self.api_version = (2, 0, 0)
+        self.api_version = (2, 0, 1)
 
         self.response_expected[BrickletGPS.FUNCTION_GET_COORDINATES] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletGPS.FUNCTION_GET_STATUS] = BrickletGPS.RESPONSE_EXPECTED_ALWAYS_TRUE
@@ -103,7 +103,7 @@ class BrickletGPS(Device):
 
         self.callback_formats[BrickletGPS.CALLBACK_COORDINATES] = 'I c I c H H H H'
         self.callback_formats[BrickletGPS.CALLBACK_STATUS] = 'B B B'
-        self.callback_formats[BrickletGPS.CALLBACK_ALTITUDE] = 'I I'
+        self.callback_formats[BrickletGPS.CALLBACK_ALTITUDE] = 'i i'
         self.callback_formats[BrickletGPS.CALLBACK_MOTION] = 'I I'
         self.callback_formats[BrickletGPS.CALLBACK_DATE_TIME] = 'I I'
 
@@ -141,9 +141,9 @@ class BrickletGPS(Device):
          :header: "Value", "Description"
          :widths: 10, 100
         
-         "1", "No Fix, :func:`GetCoordinates` and :func:`GetAltitude` return invalid data"
-         "2", "2D Fix, only :func:`GetCoordinates` returns valid data"
-         "3", "3D Fix, :func:`GetCoordinates` and :func:`GetAltitude` return valid data"
+         "1", "No Fix, :func:`GetCoordinates`, :func:`GetAltitude` and :func:`GetMotion` return invalid data"
+         "2", "2D Fix, only :func:`GetCoordinates` and :func:`GetMotion` return valid data"
+         "3", "3D Fix, :func:`GetCoordinates`, :func:`GetAltitude` and :func:`GetMotion` return valid data"
         
         There is also a :ref:`blue LED <gps_bricklet_fix_led>` on the Bricklet that
         indicates the fix status.
@@ -159,7 +159,7 @@ class BrickletGPS(Device):
         This data is only valid if there is currently a fix as indicated by
         :func:`GetStatus`.
         """
-        return GetAltitude(*self.ipcon.send_request(self, BrickletGPS.FUNCTION_GET_ALTITUDE, (), '', 'I I'))
+        return GetAltitude(*self.ipcon.send_request(self, BrickletGPS.FUNCTION_GET_ALTITUDE, (), '', 'i i'))
 
     def get_motion(self):
         """
