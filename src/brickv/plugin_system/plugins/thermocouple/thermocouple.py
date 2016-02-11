@@ -143,7 +143,7 @@ class Thermocouple(PluginBase):
         pass
 
     def get_url_part(self):
-        return 'temperature'
+        return 'thermocouple'
 
     @staticmethod
     def has_device_identifier(device_identifier):
@@ -222,4 +222,3 @@ class Thermocouple(PluginBase):
         else:
             self.error_label.setStyleSheet('')
             self.error_label.setText('Current errors: None')
-            
