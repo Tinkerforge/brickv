@@ -2,7 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2013 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 spin_box_hex.py: SpinBoxHex implementation
 
@@ -29,21 +29,27 @@ class SpinBoxHex(QSpinBox):
     def __init__(self, parent=None, default_value=0):
         QSpinBox.__init__(self, parent)
 
-        self.validator = QRegExpValidator(QRegExp("[0-9A-Fa-f]{1,2}"), self)
-
-        self.setRange(0, 255)
+        self.validator = QRegExpValidator(QRegExp('^([ ]*[0-9A-Fa-f][ ]*){1,8}$'), self)
         self.setValue(default_value)
 
     def validate(self, text, pos):
         return self.validator.validate(text, pos)
 
     def valueFromText(self, text):
-        return int(text, 16)
+        return min(int(text.replace(' ', ''), 16), (1 << 31) - 1)
 
     def textFromValue(self, value):
-        s = hex(value).replace('0x', '').upper()
+        s = ''
 
-        if len(s) == 1:
+        for i, c in enumerate(reversed(hex(value).replace('0x', '').upper())):
+            if i % 2 == 0:
+                s = ' ' + s
+
+            s = c + s
+
+        s = s.strip()
+
+        if len(s.replace(' ', '')) % 2 == 1:
             s = '0' + s
 
         return s

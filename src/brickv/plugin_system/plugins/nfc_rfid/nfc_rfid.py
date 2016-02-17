@@ -51,12 +51,14 @@ class NFCRFID(PluginBase, Ui_NFCRFID):
         self.key_read_spinbox = []
         for i in range(6):
             sb = SpinBoxHex()
+            sb.setRange(0, 255)
             self.key_read_spinbox.append(sb)
             self.widget_read_spinbox.layout().addWidget(sb)
             
         self.key_write_spinbox = []
         for i in range(16):
-            sb = SpinBoxHex(default_value=0)
+            sb = SpinBoxHex()
+            sb.setRange(0, 255)
             self.key_write_spinbox.append(sb)
             if i < 4:
                 self.layout_write1.addWidget(sb)

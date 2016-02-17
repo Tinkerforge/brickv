@@ -28,9 +28,9 @@ from brickv.plugin_system.plugin_base import PluginBase
 from brickv.bindings.bricklet_rs232 import BrickletRS232
 from brickv.plugin_system.plugins.rs232.ui_rs232 import Ui_RS232
 from brickv.async_call import async_call
+from brickv.hex_validator import HexValidator
 
 from brickv.plugin_system.plugins.rs232.qhexedit import QHexeditWidget
-from brickv.plugin_system.plugins.rs232.TFHexValidator import TFHexValidator
 
 class RS232(PluginBase, Ui_RS232):
     qtcb_read = pyqtSignal(object, int)
@@ -63,7 +63,7 @@ class RS232(PluginBase, Ui_RS232):
         self.input_combobox.lineEdit().setMaxLength(58)
         self.input_combobox.lineEdit().returnPressed.connect(self.input_changed)
 
-        self.line_ending_lineedit.setValidator(TFHexValidator())
+        self.line_ending_lineedit.setValidator(HexValidator())
         self.line_ending_combobox.currentIndexChanged.connect(self.line_ending_changed)
         self.line_ending_lineedit.editingFinished.connect(self.line_ending_changed)
 
