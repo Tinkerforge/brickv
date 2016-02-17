@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #############################################################
-# This file was automatically generated on 2016-02-10.      #
+# This file was automatically generated on 2016-02-16.      #
 #                                                           #
 # Python Bindings Version 2.1.8                             #
 #                                                           #
@@ -26,6 +26,8 @@ except ValueError:
 
 ReadFrame = namedtuple('ReadFrame', ['success', 'frame_type', 'identifier', 'data', 'length'])
 GetConfiguration = namedtuple('Configuration', ['baud_rate', 'transceiver_mode', 'write_timeout'])
+GetReadFilter = namedtuple('ReadFilter', ['mode', 'mask', 'filter1', 'filter2'])
+GetErrorLog = namedtuple('ErrorLog', ['transceiver_disabled', 'write_error_level', 'read_error_level', 'write_timeout_count', 'read_register_overflow_count', 'read_buffer_overflow_count'])
 GetIdentity = namedtuple('Identity', ['uid', 'connected_uid', 'position', 'hardware_version', 'firmware_version', 'device_identifier'])
 
 class BrickletCAN(Device):
@@ -36,12 +38,18 @@ class BrickletCAN(Device):
     DEVICE_IDENTIFIER = 270
     DEVICE_DISPLAY_NAME = 'CAN Bricklet'
 
-    CALLBACK_ERROR = 5
+    CALLBACK_FRAME_READ = 11
 
     FUNCTION_WRITE_FRAME = 1
     FUNCTION_READ_FRAME = 2
-    FUNCTION_SET_CONFIGURATION = 3
-    FUNCTION_GET_CONFIGURATION = 4
+    FUNCTION_ENABLE_FRAME_READ_CALLBACK = 3
+    FUNCTION_DISABLE_FRAME_READ_CALLBACK = 4
+    FUNCTION_IS_FRAME_READ_CALLBACK_ENABLED = 5
+    FUNCTION_SET_CONFIGURATION = 6
+    FUNCTION_GET_CONFIGURATION = 7
+    FUNCTION_SET_READ_FILTER = 8
+    FUNCTION_GET_READ_FILTER = 9
+    FUNCTION_GET_ERROR_LOG = 10
     FUNCTION_GET_IDENTITY = 255
 
     FRAME_TYPE_STANDARD_DATA = 0
@@ -59,8 +67,11 @@ class BrickletCAN(Device):
     TRANSCEIVER_MODE_NORMAL = 0
     TRANSCEIVER_MODE_LOOPBACK = 1
     TRANSCEIVER_MODE_READ_ONLY = 2
-    ERROR_READ_REGISTER_FULL = 1
-    ERROR_READ_BUFFER_FULL = 2
+    FILTER_MODE_DISABLED = 0
+    FILTER_MODE_ACCEPT_ALL = 1
+    FILTER_MODE_MATCH_STANDARD = 2
+    FILTER_MODE_MATCH_STANDARD_AND_DATA = 3
+    FILTER_MODE_MATCH_EXTENDED = 4
 
     def __init__(self, uid, ipcon):
         """
@@ -73,12 +84,18 @@ class BrickletCAN(Device):
 
         self.response_expected[BrickletCAN.FUNCTION_WRITE_FRAME] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCAN.FUNCTION_READ_FRAME] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCAN.FUNCTION_ENABLE_FRAME_READ_CALLBACK] = BrickletCAN.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletCAN.FUNCTION_DISABLE_FRAME_READ_CALLBACK] = BrickletCAN.RESPONSE_EXPECTED_TRUE
+        self.response_expected[BrickletCAN.FUNCTION_IS_FRAME_READ_CALLBACK_ENABLED] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_TRUE
         self.response_expected[BrickletCAN.FUNCTION_SET_CONFIGURATION] = BrickletCAN.RESPONSE_EXPECTED_FALSE
         self.response_expected[BrickletCAN.FUNCTION_GET_CONFIGURATION] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_TRUE
-        self.response_expected[BrickletCAN.CALLBACK_ERROR] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_FALSE
+        self.response_expected[BrickletCAN.FUNCTION_SET_READ_FILTER] = BrickletCAN.RESPONSE_EXPECTED_FALSE
+        self.response_expected[BrickletCAN.FUNCTION_GET_READ_FILTER] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCAN.FUNCTION_GET_ERROR_LOG] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_TRUE
+        self.response_expected[BrickletCAN.CALLBACK_FRAME_READ] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_FALSE
         self.response_expected[BrickletCAN.FUNCTION_GET_IDENTITY] = BrickletCAN.RESPONSE_EXPECTED_ALWAYS_TRUE
 
-        self.callback_formats[BrickletCAN.CALLBACK_ERROR] = 'I'
+        self.callback_formats[BrickletCAN.CALLBACK_FRAME_READ] = 'B I 8B B'
 
     def write_frame(self, frame_type, identifier, data, length):
         """
@@ -92,17 +109,57 @@ class BrickletCAN(Device):
         """
         return ReadFrame(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_READ_FRAME, (), '', '? B I 8B B'))
 
-    def set_configuration(self, baud_rate, transceiver, write_timeout):
+    def enable_frame_read_callback(self):
+        """
+        Enables the :func:`FrameRead` callback.
+        
+        By default the callback is disabled.
+        """
+        self.ipcon.send_request(self, BrickletCAN.FUNCTION_ENABLE_FRAME_READ_CALLBACK, (), '', '')
+
+    def disable_frame_read_callback(self):
+        """
+        Disables the :func:`FrameRead` callback.
+        
+        By default the callback is disabled.
+        """
+        self.ipcon.send_request(self, BrickletCAN.FUNCTION_DISABLE_FRAME_READ_CALLBACK, (), '', '')
+
+    def is_frame_read_callback_enabled(self):
+        """
+        Returns *true* if the :func:`FrameRead` callback is enabled, *false* otherwise.
+        """
+        return self.ipcon.send_request(self, BrickletCAN.FUNCTION_IS_FRAME_READ_CALLBACK_ENABLED, (), '', '?')
+
+    def set_configuration(self, baud_rate, transceiver_mode, write_timeout):
         """
         
         """
-        self.ipcon.send_request(self, BrickletCAN.FUNCTION_SET_CONFIGURATION, (baud_rate, transceiver, write_timeout), 'B B i', '')
+        self.ipcon.send_request(self, BrickletCAN.FUNCTION_SET_CONFIGURATION, (baud_rate, transceiver_mode, write_timeout), 'B B i', '')
 
     def get_configuration(self):
         """
         Returns the configuration as set by :func:`SetConfiguration`.
         """
         return GetConfiguration(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_CONFIGURATION, (), '', 'B B i'))
+
+    def set_read_filter(self, mode, mask, filter1, filter2):
+        """
+        
+        """
+        self.ipcon.send_request(self, BrickletCAN.FUNCTION_SET_READ_FILTER, (mode, mask, filter1, filter2), 'B I I I', '')
+
+    def get_read_filter(self):
+        """
+        Returns the read filter as set by :func:`SetReadFilter`.
+        """
+        return GetReadFilter(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_READ_FILTER, (), '', 'B I I I'))
+
+    def get_error_log(self):
+        """
+        FIXME: in what modes are which values available and how are they reset if they are?
+        """
+        return GetErrorLog(*self.ipcon.send_request(self, BrickletCAN.FUNCTION_GET_ERROR_LOG, (), '', '? B B I I I'))
 
     def get_identity(self):
         """
