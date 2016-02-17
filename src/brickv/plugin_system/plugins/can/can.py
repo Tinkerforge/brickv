@@ -79,7 +79,7 @@ class CAN(PluginBase, Ui_CAN):
         self.spin_filter2_data2.valueChanged.connect(self.mask_or_filter_changed)
         self.spin_filter2_extended.valueChanged.connect(self.mask_or_filter_changed)
 
-        self.button_write_frame.clicked.connect(self.write_frame) # FIXME: disable button in read-only mode
+        self.button_write_frame.clicked.connect(self.write_frame)
         self.button_clear_history.clicked.connect(self.tree_frames.clear)
         self.button_save_history.clicked.connect(self.save_history)
         self.button_save_configuration.clicked.connect(self.save_configuration)
