@@ -59,7 +59,18 @@ if 'merged_data_logger_modules' not in globals():
     from brickv.bindings.bricklet_moisture import BrickletMoisture
     from brickv.bindings.bricklet_motion_detector import BrickletMotionDetector
     from brickv.bindings.bricklet_multi_touch import BrickletMultiTouch
-    from brickv.bindings.bricklet_pressure import BrickletPressure
+
+    # FIXME: hack to deal with unreleased Pressure Bricklet
+    try:
+        from brickv.bindings.bricklet_pressure import BrickletPressure
+    except:
+        class BrickletPressure:
+            DUMMY = True
+            DEVICE_DISPLAY_NAME = 'Pressure Bricklet'
+            SENSOR_TYPE_MPX5500 = 0
+            SENSOR_TYPE_MPXV5004 = 1
+            SENSOR_TYPE_MPX4115A = 2
+
     from brickv.bindings.bricklet_ptc import BrickletPTC
     from brickv.bindings.bricklet_rotary_encoder import BrickletRotaryEncoder
     from brickv.bindings.bricklet_rotary_poti import BrickletRotaryPoti
@@ -2316,6 +2327,10 @@ device_specs = {
         'options': None
     }
 }
+
+# FIXME: hack to deal with unreleased Pressure Bricklet
+if hasattr(BrickletPressure, 'DUMMY'):
+    del device_specs[BrickletPressure.DEVICE_DISPLAY_NAME]
 
 '''
 /*---------------------------------------------------------------------------
