@@ -47,6 +47,8 @@ class RS232(PluginBase, Ui_RS232):
 
         self.rs232 = self.device
 
+        self.read_callback_was_enabled = False
+
         self.qtcb_read.connect(self.cb_read)
         self.rs232.register_callback(self.rs232.CALLBACK_READ_CALLBACK,
                                      self.qtcb_read.emit)
@@ -208,14 +210,19 @@ class RS232(PluginBase, Ui_RS232):
         self.rs232.set_configuration(baudrate, parity, stopbits, wordlength, hardware_flowcontrol, software_flowcontrol)
         self.save_button.setEnabled(False)
 
-    def start(self):
-        async_call(self.rs232.get_configuration, None, self.get_configuration_async, self.increase_error_count)
+    def is_read_callback_enabled_async(self, enabled):
+        self.read_callback_was_enabled = enabled
         self.rs232.enable_read_callback()
-#        self.cbe_read.set_period(100)
+
+    def start(self):
+        self.read_callback_was_enabled = False
+
+        async_call(self.rs232.is_read_callback_enabled, None, self.is_read_callback_enabled_async, self.increase_error_count)
+        async_call(self.rs232.get_configuration, None, self.get_configuration_async, self.increase_error_count)
 
     def stop(self):
-        pass
-#        self.cbe_read.set_period(0)
+        if not self.read_callback_was_enabled:
+            self.rs232.disable_read_callback()
 
     def destroy(self):
         pass

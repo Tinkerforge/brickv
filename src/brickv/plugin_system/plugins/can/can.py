@@ -53,6 +53,8 @@ class CAN(PluginBase, Ui_CAN):
         self.filter1 = 0
         self.filter2 = 0
 
+        self.frame_read_callback_was_enabled = False
+
         self.tree_frames.header().resizeSection(0, 150)
         self.tree_frames.header().resizeSection(1, 120)
         self.tree_frames.header().resizeSection(2, 350)
@@ -93,15 +95,21 @@ class CAN(PluginBase, Ui_CAN):
         self.filter_mode_changed()
 
     def start(self):
+        self.frame_read_callback_was_enabled = False
+
+        async_call(self.can.is_frame_read_callback_enabled, None, self.is_frame_read_callback_enabled_async, self.increase_error_count)
         async_call(self.can.get_configuration, None, self.get_configuration_async, self.increase_error_count)
         async_call(self.can.get_read_filter, None, self.get_read_filter_async, self.increase_error_count)
-        self.can.enable_frame_read_callback()
 
         self.update_error_log()
         self.error_log_timer.start()
 
     def stop(self):
         self.error_log_timer.stop()
+
+        if not self.frame_read_callback_was_enabled:
+            print 'off'
+            self.can.disable_frame_read_callback()
 
     def destroy(self):
         pass
@@ -141,6 +149,10 @@ class CAN(PluginBase, Ui_CAN):
 
         if at_bottom:
             self.tree_frames.scrollToBottom()
+
+    def is_frame_read_callback_enabled_async(self, enabled):
+        self.frame_read_callback_was_enabled = enabled
+        self.can.enable_frame_read_callback()
 
     def get_configuration_async(self, conf):
         self.combo_baud_rate.setCurrentIndex(conf.baud_rate)
