@@ -108,7 +108,6 @@ class CAN(PluginBase, Ui_CAN):
         self.error_log_timer.stop()
 
         if not self.frame_read_callback_was_enabled:
-            print 'off'
             self.can.disable_frame_read_callback()
 
     def destroy(self):
