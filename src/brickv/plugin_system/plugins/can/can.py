@@ -169,13 +169,14 @@ class CAN(PluginBase, Ui_CAN):
         self.button_save_read_filter.setEnabled(False)
 
     def get_error_log_async(self, log):
+        self.label_write_error_level.setText(str(log.write_error_level))
+        self.label_read_error_level.setText(str(log.read_error_level))
+
         if log.transceiver_disabled:
             self.label_transceiver_status.setText('Disabled by Error')
         else:
             self.label_transceiver_status.setText('Active')
 
-        self.label_write_error_level.setText(str(log.write_error_level))
-        self.label_read_error_level.setText(str(log.read_error_level))
         self.label_write_timeouts.setText(str(log.write_timeout_count))
         self.label_read_register_overflows.setText(str(log.read_register_overflow_count))
         self.label_read_buffer_overflows.setText(str(log.read_buffer_overflow_count))
