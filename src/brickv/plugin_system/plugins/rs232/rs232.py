@@ -222,7 +222,10 @@ class RS232(PluginBase, Ui_RS232):
 
     def stop(self):
         if not self.read_callback_was_enabled:
-            self.rs232.disable_read_callback()
+            try:
+                self.rs232.disable_read_callback()
+            except:
+                pass
 
     def destroy(self):
         pass
