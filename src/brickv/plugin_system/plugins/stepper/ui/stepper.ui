@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>635</width>
-    <height>337</height>
+    <width>910</width>
+    <height>506</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -323,6 +323,85 @@ steps/s²</string>
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <widget class="QWidget" name="decay_widget" native="true">
+           <layout class="QVBoxLayout" name="verticalLayout_8">
+            <property name="margin">
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <item>
+               <widget class="QLabel" name="label_11">
+                <property name="text">
+                 <string>Decay</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_16">
+                <item>
+                 <spacer name="horizontalSpacer_9">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QSlider" name="decay_slider">
+                  <property name="maximum">
+                   <number>65535</number>
+                  </property>
+                  <property name="pageStep">
+                   <number>1000</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_10">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="decay_spin">
+                <property name="buttonSymbols">
+                 <enum>QAbstractSpinBox::NoButtons</enum>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+                <property name="singleStep">
+                 <number>1000</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
          </item>
         </layout>
        </item>
@@ -711,6 +790,13 @@ steps/s²</string>
           </widget>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="sync_rect_checkbox">
+         <property name="text">
+          <string>Enable Synchronous Rectification</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

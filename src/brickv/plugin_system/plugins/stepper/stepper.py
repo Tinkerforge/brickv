@@ -23,7 +23,7 @@ Boston, MA 02111-1307, USA.
 """
 
 from PyQt4.QtCore import QTimer, Qt, pyqtSignal
-from PyQt4.QtGui import QErrorMessage, QInputDialog, QAction
+from PyQt4.QtGui import QErrorMessage, QInputDialog, QAction, QMessageBox
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.stepper.ui_stepper import Ui_Stepper
@@ -31,6 +31,7 @@ from brickv.bindings import ip_connection
 from brickv.bindings.brick_stepper import BrickStepper
 from brickv.async_call import async_call
 from brickv.slider_spin_syncer import SliderSpinSyncer
+from brickv.utils import get_main_window
 
 class Stepper(PluginBase, Ui_Stepper):
     qtcb_position_reached = pyqtSignal(int)
@@ -56,6 +57,10 @@ class Stepper(PluginBase, Ui_Stepper):
         self.qem = QErrorMessage(self)
         self.qem.setWindowTitle("Under Voltage")
 
+        self.decay_widget.hide()
+
+        self.setting_sync_rect_checkbox = False
+
         self.velocity_syncer = SliderSpinSyncer(self.velocity_slider,
                                                 self.velocity_spin,
                                                 self.velocity_changed)
@@ -68,9 +73,9 @@ class Stepper(PluginBase, Ui_Stepper):
                                                     self.deceleration_spin,
                                                     self.deceleration_changed)
 
-#        self.decay_syncer = SliderSpinSyncer(self.decay_slider,
-#                                             self.decay_spin,
-#                                             self.decay_changed)
+        self.decay_syncer = SliderSpinSyncer(self.decay_slider,
+                                             self.decay_spin,
+                                             self.decay_changed)
 
         self.enable_checkbox.toggled.connect(self.enable_toggled)
         self.forward_button.clicked.connect(self.forward_clicked)
@@ -81,6 +86,7 @@ class Stepper(PluginBase, Ui_Stepper):
         self.steps_button.clicked.connect(self.steps_button_clicked)
         self.motor_current_button.clicked.connect(self.motor_current_button_clicked)
         self.minimum_motor_voltage_button.clicked.connect(self.minimum_motor_voltage_button_clicked)
+        self.sync_rect_checkbox.toggled.connect(self.sync_rect_toggled)
         
         self.mode_dropbox.currentIndexChanged.connect(self.mode_changed)
         
@@ -233,7 +239,7 @@ class Stepper(PluginBase, Ui_Stepper):
         
     def cb_under_voltage(self, ov):
         mv_str = self.minimum_voltage_label.text()
-        ov_str = "%gV"  % round(ov/1000.0, 1)
+        ov_str = "%gV" % round(ov/1000.0, 1)
         if not self.qem.isVisible():
             self.qem.showMessage("Under Voltage: Output Voltage of " + ov_str +
                                  " is below minimum voltage of " + mv_str,
@@ -251,7 +257,26 @@ class Stepper(PluginBase, Ui_Stepper):
                     self.stepper.disable()
         except ip_connection.Error:
             return
-        
+
+    def sync_rect_toggled(self, checked):
+        if not self.setting_sync_rect_checkbox and checked:
+            rc = QMessageBox.warning(get_main_window(), 'Synchronous Rectification',
+                                     'If you want to use high speeds (> 10000 steps/s) for a large stepper motor with a ' +
+                                     'large inductivity we strongly suggest that you do not enable synchronous rectification. ' +
+                                     'Otherwise the Brick may not be able to cope with the load and overheat.',
+                                     QMessageBox.Ok | QMessageBox.Cancel)
+
+            if rc != QMessageBox.Ok:
+                self.sync_rect_checkbox.setChecked(False)
+                return
+
+        try:
+            self.stepper.set_sync_rect(checked)
+        except ip_connection.Error:
+            return
+
+        self.decay_widget.setVisible(checked)
+
     def stack_input_voltage_update(self, sv):
         sv_str = "%gV"  % round(sv/1000.0, 1)
         self.stack_voltage_label.setText(sv_str)
@@ -309,6 +334,12 @@ class Stepper(PluginBase, Ui_Stepper):
             if dec != self.deceleration_slider.sliderPosition():
                 self.deceleration_slider.setSliderPosition(dec)
                 self.deceleration_spin.setValue(dec)
+
+    def get_decay_async(self, decay):
+        if not self.decay_slider.isSliderDown():
+            if decay != self.decay_slider.sliderPosition():
+                self.decay_slider.setSliderPosition(decay)
+                self.decay_spin.setValue(decay)
         
     def is_enabled_async(self, enabled):
         if enabled:
@@ -319,11 +350,18 @@ class Stepper(PluginBase, Ui_Stepper):
             if self.enable_checkbox.isChecked():
                 self.endis_all(False)
                 self.enable_checkbox.setChecked(False)
-        
+
+    def is_sync_rect_async(self, sync_rect):
+        self.setting_sync_rect_checkbox = True
+        self.sync_rect_checkbox.setChecked(sync_rect)
+        self.setting_sync_rect_checkbox = False
+
     def update_start(self):
         async_call(self.stepper.get_max_velocity, None, self.get_max_velocity_async, self.increase_error_count)
         async_call(self.stepper.get_speed_ramping, None, self.get_speed_ramping_async, self.increase_error_count)
+        async_call(self.stepper.get_decay, None, self.get_decay_async, self.increase_error_count)
         async_call(self.stepper.is_enabled, None, self.is_enabled_async, self.increase_error_count)
+        async_call(self.stepper.is_sync_rect, None, self.is_sync_rect_async, self.increase_error_count)
 
     def update_data(self):
         async_call(self.stepper.get_remaining_steps, None, self.remaining_steps_update, self.increase_error_count)
@@ -358,8 +396,8 @@ class Stepper(PluginBase, Ui_Stepper):
         except ip_connection.Error:
             return
 
-#    def decay_changed(self, value):
-#        try:
-#            self.stepper.set_decay(value)
-#        except ip_connection.Error:
-#            return
+    def decay_changed(self, value):
+        try:
+            self.stepper.set_decay(value)
+        except ip_connection.Error:
+            return
