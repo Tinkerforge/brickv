@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>589</width>
-    <height>605</height>
+    <width>700</width>
+    <height>504</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1" colspan="4">
+     <item row="0" column="1" colspan="5">
       <widget class="QComboBox" name="combo_version">
        <property name="enabled">
         <bool>false</bool>
@@ -54,7 +54,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1" colspan="4">
+     <item row="1" column="1" colspan="5">
       <widget class="QComboBox" name="combo_start_mode">
        <item>
         <property name="text">
@@ -83,7 +83,7 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1" colspan="4">
+     <item row="2" column="1" colspan="5">
       <widget class="QComboBox" name="combo_script_file">
        <property name="editable">
         <bool>true</bool>
@@ -93,7 +93,7 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1" colspan="4">
+     <item row="4" column="1" colspan="5">
       <widget class="QLabel" name="label_script_file_help">
        <property name="text">
         <string>The specified PHP script will be executed.</string>
@@ -113,10 +113,10 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1" colspan="4">
+     <item row="5" column="1" colspan="5">
       <widget class="QLineEdit" name="edit_command"/>
      </item>
-     <item row="6" column="1" colspan="4">
+     <item row="6" column="1" colspan="5">
       <widget class="QLabel" name="label_command_help">
        <property name="text">
         <string>The specified PHP command will be executed with the -r option.</string>
@@ -126,7 +126,7 @@
        </property>
       </widget>
      </item>
-     <item row="10" column="1" colspan="4">
+     <item row="10" column="1" colspan="5">
       <widget class="QCheckBox" name="check_show_advanced_options">
        <property name="text">
         <string>Show Advanced Options</string>
@@ -143,7 +143,7 @@
        </property>
       </widget>
      </item>
-     <item row="11" column="1" colspan="4">
+     <item row="11" column="1" colspan="5">
       <widget class="QComboBox" name="combo_working_directory">
        <property name="editable">
         <bool>true</bool>
@@ -171,10 +171,10 @@
        </property>
       </widget>
      </item>
-     <item row="12" column="1" colspan="4">
+     <item row="12" column="1" colspan="5">
       <widget class="ExpandingListWidget" name="list_options"/>
      </item>
-     <item row="13" column="1" colspan="4">
+     <item row="13" column="1" colspan="5">
       <widget class="QLabel" name="label_options_help">
        <property name="text">
         <string>This list of options will be passed to the PHP interpreter.</string>
@@ -198,28 +198,28 @@
        </property>
       </widget>
      </item>
-     <item row="14" column="3">
+     <item row="14" column="4">
       <widget class="QPushButton" name="button_up_option">
        <property name="text">
         <string>Up</string>
        </property>
       </widget>
      </item>
-     <item row="14" column="4">
+     <item row="14" column="5">
       <widget class="QPushButton" name="button_down_option">
        <property name="text">
         <string>Down</string>
        </property>
       </widget>
      </item>
-     <item row="9" column="0" colspan="5">
+     <item row="9" column="0" colspan="6">
       <widget class="Line" name="line">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="3" column="1" colspan="4">
+     <item row="3" column="1" colspan="5">
       <widget class="QComboBox" name="combo_script_file_type">
        <property name="currentIndex">
         <number>1</number>
@@ -253,7 +253,7 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="1" colspan="4">
+     <item row="8" column="1" colspan="5">
       <widget class="QLabel" name="label_url">
        <property name="text">
         <string>http://&lt;SERVER&gt;/programs/&lt;IDENTIFIER&gt;/bin/</string>
@@ -266,7 +266,7 @@
        </property>
       </widget>
      </item>
-     <item row="7" column="1" colspan="4">
+     <item row="7" column="1" colspan="5">
       <widget class="QLabel" name="label_web_interface_help">
        <property name="text">
         <string>The RED Brick web server will automatically try to execute index.php if the URL below is accessed.</string>
@@ -276,7 +276,7 @@
        </property>
       </widget>
      </item>
-     <item row="15" column="1" colspan="4">
+     <item row="15" column="1" colspan="5">
       <widget class="QLabel" name="label_spacer">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -286,6 +286,13 @@
        </property>
        <property name="text">
         <string>&lt;spacer&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item row="14" column="3">
+      <widget class="QPushButton" name="button_edit_option">
+       <property name="text">
+        <string>Edit</string>
        </property>
       </widget>
      </item>
@@ -311,6 +318,7 @@
   <tabstop>list_options</tabstop>
   <tabstop>button_add_option</tabstop>
   <tabstop>button_remove_option</tabstop>
+  <tabstop>button_edit_option</tabstop>
   <tabstop>button_up_option</tabstop>
   <tabstop>button_down_option</tabstop>
  </tabstops>

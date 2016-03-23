@@ -42,8 +42,8 @@ class ProgramWizard(QWizard):
     def sizeHint(self):
         size = QWizard.sizeHint(self)
 
-        if size.width() < 600:
-            size.setWidth(600)
+        if size.width() < 700:
+            size.setWidth(700)
 
         if size.height() < 700:
             size.setHeight(700)

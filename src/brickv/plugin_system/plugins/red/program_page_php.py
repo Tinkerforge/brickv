@@ -84,6 +84,7 @@ class ProgramPagePHP(ProgramPage, Ui_ProgramPagePHP):
                                                                  self.label_options_help,
                                                                  self.button_add_option,
                                                                  self.button_remove_option,
+                                                                 self.button_edit_option,
                                                                  self.button_up_option,
                                                                  self.button_down_option,
                                                                  '<new PHP option {0}>')

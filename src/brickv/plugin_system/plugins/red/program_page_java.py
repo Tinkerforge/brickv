@@ -116,6 +116,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
                                                                  self.label_class_path_help,
                                                                  None,
                                                                  self.button_remove_class_path_entry,
+                                                                 self.button_edit_class_path_entry,
                                                                  self.button_up_class_path_entry,
                                                                  self.button_down_class_path_entry,
                                                                  '<new class path entry {0}>')
@@ -124,6 +125,7 @@ class ProgramPageJava(ProgramPage, Ui_ProgramPageJava):
                                                                  self.label_options_help,
                                                                  self.button_add_option,
                                                                  self.button_remove_option,
+                                                                 self.button_edit_option,
                                                                  self.button_up_option,
                                                                  self.button_down_option,
                                                                  '<new JVM option {0}>')

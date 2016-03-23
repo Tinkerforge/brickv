@@ -103,6 +103,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
                                                                  self.label_make_options_help,
                                                                  self.button_add_make_option,
                                                                  self.button_remove_make_option,
+                                                                 self.button_edit_make_option,
                                                                  self.button_up_make_option,
                                                                  self.button_down_make_option,
                                                                  '<new Make option {0}>')
@@ -111,6 +112,7 @@ class ProgramPageDelphi(ProgramPage, Ui_ProgramPageDelphi):
                                                                  self.label_lazbuild_options_help,
                                                                  self.button_add_lazbuild_option,
                                                                  self.button_remove_lazbuild_option,
+                                                                 self.button_edit_lazbuild_option,
                                                                  self.button_up_lazbuild_option,
                                                                  self.button_down_lazbuild_option,
                                                                  '<new Lazbuild option {0}>')

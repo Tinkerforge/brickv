@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>596</width>
-    <height>858</height>
+    <width>700</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="1" colspan="4">
+     <item row="0" column="1" colspan="5">
       <widget class="QComboBox" name="combo_start_mode">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -51,7 +51,7 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1" colspan="4">
+     <item row="2" column="1" colspan="5">
       <widget class="QLabel" name="label_executable_help">
        <property name="text">
         <string>The specified executable will be executed. It has to be (cross) compiled for the ARM Hard Float (armhf) architecture. If &quot;Compile From Source&quot; is enabled then use the name of the executable as it will be &lt;b&gt;after&lt;/b&gt; compilation.</string>
@@ -74,7 +74,7 @@
        </property>
       </widget>
      </item>
-     <item row="13" column="1" colspan="4">
+     <item row="13" column="1" colspan="5">
       <widget class="ExpandingListWidget" name="list_make_options"/>
      </item>
      <item row="15" column="1">
@@ -91,21 +91,21 @@
        </property>
       </widget>
      </item>
-     <item row="15" column="3">
+     <item row="15" column="4">
       <widget class="QPushButton" name="button_up_make_option">
        <property name="text">
         <string>Up</string>
        </property>
       </widget>
      </item>
-     <item row="15" column="4">
+     <item row="15" column="5">
       <widget class="QPushButton" name="button_down_make_option">
        <property name="text">
         <string>Down</string>
        </property>
       </widget>
      </item>
-     <item row="14" column="1" colspan="4">
+     <item row="14" column="1" colspan="5">
       <widget class="QLabel" name="label_make_options_help">
        <property name="text">
         <string>This list of options will be passed to Make, if &quot;Compile From Source&quot; is enabled.</string>
@@ -115,21 +115,21 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0" colspan="5">
+     <item row="3" column="0" colspan="6">
       <widget class="Line" name="line1">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="4" column="1" colspan="4">
+     <item row="4" column="1" colspan="5">
       <widget class="QCheckBox" name="check_compile_from_source">
        <property name="text">
         <string>Compile From Source</string>
        </property>
       </widget>
      </item>
-     <item row="5" column="1" colspan="4">
+     <item row="5" column="1" colspan="5">
       <widget class="QLabel" name="label_compile_from_source_help_new">
        <property name="text">
         <string>If enabled then the executable will be compiled from source on the RED Brick during the upload process.</string>
@@ -139,21 +139,21 @@
        </property>
       </widget>
      </item>
-     <item row="11" column="1" colspan="4">
+     <item row="11" column="1" colspan="5">
       <widget class="QCheckBox" name="check_show_advanced_options">
        <property name="text">
         <string>Show Advanced Options</string>
        </property>
       </widget>
      </item>
-     <item row="10" column="0" colspan="5">
+     <item row="10" column="0" colspan="6">
       <widget class="Line" name="line2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="12" column="1" colspan="4">
+     <item row="12" column="1" colspan="5">
       <widget class="QComboBox" name="combo_working_directory">
        <property name="editable">
         <bool>true</bool>
@@ -178,10 +178,10 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1" colspan="4">
+     <item row="1" column="1" colspan="5">
       <widget class="QLineEdit" name="edit_executable"/>
      </item>
-     <item row="6" column="1" colspan="4">
+     <item row="6" column="1" colspan="5">
       <widget class="QLabel" name="label_compile_from_source_help_edit">
        <property name="text">
         <string>If enabled then the executable can be compiled from source on the RED Brick.</string>
@@ -191,7 +191,7 @@
        </property>
       </widget>
      </item>
-     <item row="19" column="1" colspan="4">
+     <item row="19" column="1" colspan="5">
       <widget class="QLabel" name="label_spacer">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -204,7 +204,7 @@
        </property>
       </widget>
      </item>
-     <item row="9" column="1" colspan="4">
+     <item row="9" column="1" colspan="5">
       <widget class="QLabel" name="label_build_system_lazbuild_help">
        <property name="text">
         <string>For compilation it is assumed that a Lazarus project file (*.lpi) is present in the working directory. &lt;LAZBUILD&gt; will be used as build tool.</string>
@@ -214,7 +214,7 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="1" colspan="4">
+     <item row="8" column="1" colspan="5">
       <widget class="QLabel" name="label_build_system_fpcmake_help">
        <property name="text">
         <string>For compilation it is assumed that a fpcmake file named &quot;Makefile.fpc&quot; is present in the working directory. &lt;FPC&gt; will be used as compiler.</string>
@@ -224,7 +224,7 @@
        </property>
       </widget>
      </item>
-     <item row="7" column="1" colspan="4">
+     <item row="7" column="1" colspan="5">
       <widget class="QComboBox" name="combo_build_system">
        <item>
         <property name="text">
@@ -245,7 +245,7 @@
        </property>
       </widget>
      </item>
-     <item row="16" column="1" colspan="4">
+     <item row="16" column="1" colspan="5">
       <widget class="ExpandingListWidget" name="list_lazbuild_options"/>
      </item>
      <item row="18" column="1">
@@ -262,14 +262,14 @@
        </property>
       </widget>
      </item>
-     <item row="18" column="3">
+     <item row="18" column="4">
       <widget class="QPushButton" name="button_up_lazbuild_option">
        <property name="text">
         <string>Up</string>
        </property>
       </widget>
      </item>
-     <item row="18" column="4">
+     <item row="18" column="5">
       <widget class="QPushButton" name="button_down_lazbuild_option">
        <property name="text">
         <string>Down</string>
@@ -286,13 +286,27 @@
        </property>
       </widget>
      </item>
-     <item row="17" column="1" colspan="4">
+     <item row="17" column="1" colspan="5">
       <widget class="QLabel" name="label_lazbuild_options_help">
        <property name="text">
         <string>This list of options will be passed to Lazbuild, if &quot;Compile From Source&quot; is enabled.</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="15" column="3">
+      <widget class="QPushButton" name="button_edit_make_option">
+       <property name="text">
+        <string>Edit</string>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="3">
+      <widget class="QPushButton" name="button_edit_lazbuild_option">
+       <property name="text">
+        <string>Edit</string>
        </property>
       </widget>
      </item>
@@ -317,11 +331,13 @@
   <tabstop>list_make_options</tabstop>
   <tabstop>button_add_make_option</tabstop>
   <tabstop>button_remove_make_option</tabstop>
+  <tabstop>button_edit_make_option</tabstop>
   <tabstop>button_up_make_option</tabstop>
   <tabstop>button_down_make_option</tabstop>
   <tabstop>list_lazbuild_options</tabstop>
   <tabstop>button_add_lazbuild_option</tabstop>
   <tabstop>button_remove_lazbuild_option</tabstop>
+  <tabstop>button_edit_lazbuild_option</tabstop>
   <tabstop>button_up_lazbuild_option</tabstop>
   <tabstop>button_down_lazbuild_option</tabstop>
  </tabstops>

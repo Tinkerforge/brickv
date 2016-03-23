@@ -47,6 +47,7 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
                                                      self.label_arguments_help,
                                                      self.button_add_argument,
                                                      self.button_remove_argument,
+                                                     self.button_edit_argument,
                                                      self.button_up_argument,
                                                      self.button_down_argument,
                                                      '<new argument {0}>')
@@ -56,6 +57,7 @@ class ProgramPageArguments(ProgramPage, Ui_ProgramPageArguments):
                                                         self.label_environment_help,
                                                         self.button_add_environment_variable,
                                                         self.button_remove_environment_variable,
+                                                        self.button_edit_environment_variable,
                                                         self.button_up_environment_variable,
                                                         self.button_down_environment_variable,
                                                         ['<new name {0}>', '<new value {0}>'])

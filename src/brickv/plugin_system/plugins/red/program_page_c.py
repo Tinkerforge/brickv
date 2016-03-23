@@ -85,6 +85,7 @@ class ProgramPageC(ProgramPage, Ui_ProgramPageC):
                                                                  self.label_make_options_help,
                                                                  self.button_add_make_option,
                                                                  self.button_remove_make_option,
+                                                                 self.button_edit_make_option,
                                                                  self.button_up_make_option,
                                                                  self.button_down_make_option,
                                                                  '<new Make option {0}>')

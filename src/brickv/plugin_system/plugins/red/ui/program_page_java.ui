@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>613</width>
-    <height>744</height>
+    <width>700</width>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -26,7 +26,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1" colspan="4">
+     <item row="0" column="1" colspan="5">
       <widget class="QComboBox" name="combo_version">
        <property name="enabled">
         <bool>false</bool>
@@ -51,7 +51,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1" colspan="4">
+     <item row="1" column="1" colspan="5">
       <widget class="QComboBox" name="combo_start_mode">
        <item>
         <property name="text">
@@ -85,7 +85,7 @@
        </property>
       </widget>
      </item>
-     <item row="7" column="1" colspan="4">
+     <item row="7" column="1" colspan="5">
       <widget class="QLabel" name="label_jar_file_help">
        <property name="text">
         <string>The specified Java archive has to contain the main() method and will be executed with the -jar option.</string>
@@ -95,7 +95,7 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1" colspan="4">
+     <item row="4" column="1" colspan="5">
       <widget class="QLabel" name="label_main_class_help">
        <property name="text">
         <string>The specified Java class has to contain the main() method.</string>
@@ -105,7 +105,7 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1" colspan="4">
+     <item row="5" column="1" colspan="5">
       <widget class="QComboBox" name="combo_jar_file">
        <property name="editable">
         <bool>true</bool>
@@ -128,7 +128,7 @@
        </property>
       </widget>
      </item>
-     <item row="10" column="1" colspan="4">
+     <item row="10" column="1" colspan="5">
       <widget class="QListWidget" name="list_class_path"/>
      </item>
      <item row="12" column="1">
@@ -145,14 +145,7 @@
        </property>
       </widget>
      </item>
-     <item row="12" column="3">
-      <widget class="QPushButton" name="button_up_class_path_entry">
-       <property name="text">
-        <string>Up</string>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="1" colspan="4">
+     <item row="11" column="1" colspan="5">
       <widget class="QLabel" name="label_class_path_help">
        <property name="text">
         <string>This list of class path entries will be passed to the Java virtual machine (JVM).</string>
@@ -162,14 +155,14 @@
        </property>
       </widget>
      </item>
-     <item row="14" column="1" colspan="4">
+     <item row="14" column="1" colspan="5">
       <widget class="QCheckBox" name="check_show_advanced_options">
        <property name="text">
         <string>Show Advanced Options</string>
        </property>
       </widget>
      </item>
-     <item row="13" column="0" colspan="5">
+     <item row="13" column="0" colspan="6">
       <widget class="Line" name="line">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -199,7 +192,7 @@
        </property>
       </widget>
      </item>
-     <item row="15" column="1" colspan="4">
+     <item row="15" column="1" colspan="5">
       <widget class="QComboBox" name="combo_working_directory">
        <property name="editable">
         <bool>true</bool>
@@ -214,7 +207,7 @@
        </item>
       </widget>
      </item>
-     <item row="16" column="1" colspan="4">
+     <item row="16" column="1" colspan="5">
       <widget class="QListWidget" name="list_options"/>
      </item>
      <item row="18" column="1">
@@ -232,27 +225,27 @@
       </widget>
      </item>
      <item row="18" column="3">
-      <widget class="QPushButton" name="button_up_option">
+      <widget class="QPushButton" name="button_edit_option">
        <property name="text">
-        <string>Up</string>
+        <string>Edit</string>
        </property>
       </widget>
      </item>
-     <item row="18" column="4">
+     <item row="18" column="5">
       <widget class="QPushButton" name="button_down_option">
        <property name="text">
         <string>Down</string>
        </property>
       </widget>
      </item>
-     <item row="12" column="4">
+     <item row="12" column="5">
       <widget class="QPushButton" name="button_down_class_path_entry">
        <property name="text">
         <string>Down</string>
        </property>
       </widget>
      </item>
-     <item row="17" column="1" colspan="4">
+     <item row="17" column="1" colspan="5">
       <widget class="QLabel" name="label_options_help">
        <property name="text">
         <string>This list of options will be passed to the Java virtual machine (JVM).</string>
@@ -272,7 +265,7 @@
        </property>
       </widget>
      </item>
-     <item row="6" column="1" colspan="4">
+     <item row="6" column="1" colspan="5">
       <widget class="QComboBox" name="combo_jar_file_type">
        <property name="currentIndex">
         <number>1</number>
@@ -289,7 +282,7 @@
        </item>
       </widget>
      </item>
-     <item row="2" column="1" colspan="4">
+     <item row="2" column="1" colspan="5">
       <widget class="QComboBox" name="combo_main_class">
        <property name="editable">
         <bool>true</bool>
@@ -299,7 +292,7 @@
        </property>
       </widget>
      </item>
-     <item row="19" column="1" colspan="4">
+     <item row="19" column="1" colspan="5">
       <widget class="QLabel" name="label_spacer">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -312,27 +305,48 @@
        </property>
       </widget>
      </item>
-     <item row="8" column="0" colspan="5">
+     <item row="8" column="0" colspan="6">
       <widget class="Line" name="line_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
-     <item row="9" column="1" colspan="4">
+     <item row="9" column="1" colspan="5">
       <widget class="QCheckBox" name="check_show_class_path">
        <property name="text">
         <string>Show Class Path</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1" colspan="4">
+     <item row="3" column="1" colspan="5">
       <widget class="QLabel" name="label_main_class_error">
        <property name="text">
         <string>&lt;main-class-error&gt;</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="18" column="4">
+      <widget class="QPushButton" name="button_up_option">
+       <property name="text">
+        <string>Up</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="4">
+      <widget class="QPushButton" name="button_up_class_path_entry">
+       <property name="text">
+        <string>Up</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="3">
+      <widget class="QPushButton" name="button_edit_class_path_entry">
+       <property name="text">
+        <string>Edit</string>
        </property>
       </widget>
      </item>
@@ -350,6 +364,7 @@
   <tabstop>list_class_path</tabstop>
   <tabstop>button_add_class_path_entry</tabstop>
   <tabstop>button_remove_class_path_entry</tabstop>
+  <tabstop>button_edit_class_path_entry</tabstop>
   <tabstop>button_up_class_path_entry</tabstop>
   <tabstop>button_down_class_path_entry</tabstop>
   <tabstop>check_show_advanced_options</tabstop>
@@ -357,6 +372,7 @@
   <tabstop>list_options</tabstop>
   <tabstop>button_add_option</tabstop>
   <tabstop>button_remove_option</tabstop>
+  <tabstop>button_edit_option</tabstop>
   <tabstop>button_up_option</tabstop>
   <tabstop>button_down_option</tabstop>
  </tabstops>

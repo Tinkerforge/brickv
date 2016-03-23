@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 program_utils.py: Program Utils
 
@@ -653,13 +653,14 @@ class ExpandingInputDialog(QInputDialog):
 
 class ListWidgetEditor(object):
     def __init__(self, label_items, list_items, label_items_help,
-                 button_add_item, button_remove_item,
+                 button_add_item, button_remove_item, button_edit_item,
                  button_up_item, button_down_item, new_item_text):
         self.label_items        = label_items
         self.list_items         = list_items
         self.label_items_help   = label_items_help
         self.button_add_item    = button_add_item
         self.button_remove_item = button_remove_item
+        self.button_edit_item   = button_edit_item
         self.button_up_item     = button_up_item
         self.button_down_item   = button_down_item
         self.new_item_text      = new_item_text
@@ -671,6 +672,7 @@ class ListWidgetEditor(object):
             self.button_add_item.clicked.connect(self.add_new_item)
 
         self.button_remove_item.clicked.connect(self.remove_selected_item)
+        self.button_edit_item.clicked.connect(self.edit_selected_item)
         self.button_up_item.clicked.connect(self.up_selected_item)
         self.button_down_item.clicked.connect(self.down_selected_item)
 
@@ -689,6 +691,7 @@ class ListWidgetEditor(object):
             selected_index = -1
 
         self.button_remove_item.setEnabled(has_selection)
+        self.button_edit_item.setEnabled(has_selection)
         self.button_up_item.setEnabled(item_count > 1 and has_selection and selected_index > 0)
         self.button_down_item.setEnabled(item_count > 1 and has_selection and selected_index < item_count - 1)
 
@@ -701,6 +704,7 @@ class ListWidgetEditor(object):
             self.button_add_item.setVisible(visible)
 
         self.button_remove_item.setVisible(visible)
+        self.button_edit_item.setVisible(visible)
         self.button_up_item.setVisible(visible)
         self.button_down_item.setVisible(visible)
 
@@ -732,6 +736,15 @@ class ListWidgetEditor(object):
             self.list_items.takeItem(self.list_items.row(item))
 
         self.update_ui_state()
+
+    def edit_selected_item(self):
+        selected_items = self.list_items.selectedItems()
+
+        if len(selected_items) == 0:
+            return
+
+        self.list_items.setFocus()
+        self.list_items.editItem(selected_items[0])
 
     def up_selected_item(self):
         selected_items = self.list_items.selectedItems()
@@ -779,21 +792,25 @@ class ListWidgetEditor(object):
 
 class TreeWidgetEditor(object):
     def __init__(self, label_items, tree_items, label_items_help,
-                 button_add_item, button_remove_item,
+                 button_add_item, button_remove_item, button_edit_item,
                  button_up_item, button_down_item, new_item_texts):
         self.label_items        = label_items
         self.tree_items         = tree_items
         self.label_items_help   = label_items_help
         self.button_add_item    = button_add_item
         self.button_remove_item = button_remove_item
+        self.button_edit_item   = button_edit_item
         self.button_up_item     = button_up_item
         self.button_down_item   = button_down_item
         self.new_item_texts     = new_item_texts
         self.new_item_counter   = 1
+        self.last_edited_item   = None
+        self.last_edited_column = None
 
         self.tree_items.itemSelectionChanged.connect(self.update_ui_state)
         self.button_add_item.clicked.connect(self.add_new_item)
         self.button_remove_item.clicked.connect(self.remove_selected_item)
+        self.button_edit_item.clicked.connect(self.edit_selected_item)
         self.button_up_item.clicked.connect(self.up_selected_item)
         self.button_down_item.clicked.connect(self.down_selected_item)
 
@@ -820,6 +837,7 @@ class TreeWidgetEditor(object):
             selected_index = -1
 
         self.button_remove_item.setEnabled(has_selection)
+        self.button_edit_item.setEnabled(has_selection)
         self.button_up_item.setEnabled(item_count > 1 and has_selection and selected_index > 0)
         self.button_down_item.setEnabled(item_count > 1 and has_selection and selected_index < item_count - 1)
 
@@ -829,6 +847,7 @@ class TreeWidgetEditor(object):
         self.label_items_help.setVisible(visible)
         self.button_add_item.setVisible(visible)
         self.button_remove_item.setVisible(visible)
+        self.button_edit_item.setVisible(visible)
         self.button_up_item.setVisible(visible)
         self.button_down_item.setVisible(visible)
 
@@ -865,6 +884,24 @@ class TreeWidgetEditor(object):
             self.tree_items.takeTopLevelItem(row)
 
         self.update_ui_state()
+
+    def edit_selected_item(self):
+        selected_items = self.tree_items.selectedItems()
+
+        if len(selected_items) == 0:
+            return
+
+        self.tree_items.setFocus()
+
+        if self.last_edited_item == selected_items[0]:
+            column = (self.last_edited_column + 1) % self.last_edited_item.columnCount()
+        else:
+            column = 0
+
+        self.tree_items.editItem(selected_items[0], column)
+
+        self.last_edited_item = selected_items[0]
+        self.last_edited_column = column
 
     def up_selected_item(self):
         selected_items = self.tree_items.selectedItems()
