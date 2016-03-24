@@ -2,7 +2,7 @@
 """
 IMU 2.0 Plugin
 Copyright (C) 2015 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2015-2016 Matthias Bolte <matthias@tinkerforge.com>
 
 imu_v2.py: IMU 2.0 Plugin implementation
 
@@ -22,9 +22,9 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 """
 
-from PyQt4.QtCore import Qt, QTimer
+from PyQt4.QtCore import Qt, QTimer, QSize
 from PyQt4.QtGui import QVBoxLayout, QColor, QPalette, QFrame, QPainter, \
-                        QBrush, QDialog, QAction
+                        QBrush, QDialog, QAction, QWidget
 
 from brickv.plugin_system.plugin_base import PluginBase
 from brickv.plugin_system.plugins.imu_v2.ui_imu_v2 import Ui_IMUV2
@@ -94,6 +94,7 @@ during stabilization.</p>""")
         
     def closeEvent(self, event):
         self.parent.button_calibration.setEnabled(True)
+        self.parent.calibration = None
         
 class ColorFrame(QFrame):
     def __init__(self, parent = None):
@@ -116,6 +117,27 @@ class ColorFrame(QFrame):
         qp.setPen(Qt.black)
         qp.drawRect(1, 1, 14, 14)
         qp.end()
+
+class WrapperWidget(QWidget):
+    def __init__(self, plugin):
+        QWidget.__init__(self)
+
+        self.plugin = plugin
+
+        self.setLayout(QVBoxLayout())
+        self.setWindowTitle('IMU 3D View')
+
+    def closeEvent(self, event):
+        self.plugin.imu_gl.setFixedSize(200, 200)
+        self.plugin.gl_layout.addWidget(self.plugin.imu_gl)
+        self.plugin.button_detach_3d_view.setEnabled(True)
+        self.plugin.imu_gl_wrapper = None
+
+    def minimumSizeHint(self):
+        return QSize(500, 500)
+
+    def sizeHint(self):
+        return QSize(500, 500)
 
 class IMUV2(PluginBase, Ui_IMUV2):
     def __init__(self, *args):
@@ -140,6 +162,9 @@ class IMUV2(PluginBase, Ui_IMUV2):
 
         self.imu_gl = IMUV2GLWidget(self)
         self.imu_gl.setFixedSize(200, 200)
+
+        self.imu_gl_wrapper = None
+
         self.min_x = 0
         self.min_y = 0
         self.min_z = 0
@@ -230,6 +255,7 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.save_orientation.clicked.connect(self.imu_gl.save_orientation)
         self.checkbox_leds.stateChanged.connect(self.led_clicked)
         self.button_calibration.clicked.connect(self.calibration_clicked)
+        self.button_detach_3d_view.clicked.connect(self.detach_3d_view_clicked)
         self.calibration_color = [Qt.red, QColor(0xFF, 0xA0, 0x00), Qt.yellow, Qt.darkGreen]
 
         self.calibration = None
@@ -260,6 +286,8 @@ class IMUV2(PluginBase, Ui_IMUV2):
         self.alive = False
         if self.calibration:
             self.calibration.close()
+        if self.imu_gl_wrapper:
+            self.imu_gl_wrapper.close()
 
     def get_url_part(self):
         return 'imu_v2'
@@ -274,6 +302,23 @@ class IMUV2(PluginBase, Ui_IMUV2):
 
         self.button_calibration.setEnabled(False)
         self.calibration.show()
+
+    def detach_3d_view_clicked(self):
+        if self.imu_gl_wrapper != None:
+            self.imu_gl_wrapper.close()
+
+        self.button_detach_3d_view.setEnabled(False)
+
+        self.imu_gl_wrapper = WrapperWidget(self)
+
+        self.gl_layout.removeWidget(self.imu_gl)
+
+        self.imu_gl.setParent(None)
+        self.imu_gl.setMinimumSize(0, 0)
+        self.imu_gl.setMaximumSize(16777215, 16777215)
+
+        self.imu_gl_wrapper.layout().addWidget(self.imu_gl)
+        self.imu_gl_wrapper.show()
 
     def all_data_callback(self, data):
         self.callback_counter += 1

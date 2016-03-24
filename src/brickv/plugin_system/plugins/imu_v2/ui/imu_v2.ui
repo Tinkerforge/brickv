@@ -33,7 +33,7 @@
           <x>0</x>
           <y>0</y>
           <width>483</width>
-          <height>504</height>
+          <height>511</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -694,6 +694,13 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="button_detach_3d_view">
+           <property name="text">
+            <string>Detach 3D View</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QCheckBox" name="checkbox_leds">
            <property name="text">
             <string>LEDs On</string>
@@ -711,7 +718,7 @@
            <property name="sizeHint" stdset="0">
             <size>
              <width>20</width>
-             <height>40</height>
+             <height>0</height>
             </size>
            </property>
           </spacer>
