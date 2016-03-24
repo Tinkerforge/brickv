@@ -34,6 +34,7 @@ system("pyuic4 -o ui_red_tab_importexport_systemlogs.py ui/red_tab_importexport_
 
 system("pyuic4 -o ui_program_info_main.py ui/program_info_main.ui")
 system("pyuic4 -o ui_program_info_files.py ui/program_info_files.ui")
+system("pyuic4 -o ui_program_info_files_permissions.py ui/program_info_files_permissions.ui")
 system("pyuic4 -o ui_program_info_logs.py ui/program_info_logs.ui")
 system("pyuic4 -o ui_program_info_logs_view.py ui/program_info_logs_view.ui")
 system("pyuic4 -o ui_program_info_c.py ui/program_info_c.ui")

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 RED Plugin
-Copyright (C) 2014-2015 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014-2016 Matthias Bolte <matthias@tinkerforge.com>
 Copyright (C) 2014 Ishraq Ibne Ashraf <ishraq@tinkerforge.com>
 
 program_info_files.py: Program Files Info Widget
@@ -30,6 +30,7 @@ from brickv.plugin_system.plugins.red.api import *
 from brickv.plugin_system.plugins.red.program_utils import Download, ExpandingProgressDialog, \
                                                            ExpandingInputDialog, get_file_display_size
 from brickv.plugin_system.plugins.red.ui_program_info_files import Ui_ProgramInfoFiles
+from brickv.plugin_system.plugins.red.program_info_files_permissions import ProgramInfoFilesPermissions
 from brickv.plugin_system.plugins.red.script_manager import check_script_result, report_script_result
 from brickv.async_call import async_call
 from brickv.utils import get_main_window, get_home_path, get_existing_directory
@@ -43,6 +44,7 @@ import sys
 USER_ROLE_ITEM_TYPE     = Qt.UserRole + 2
 USER_ROLE_SIZE          = Qt.UserRole + 3
 USER_ROLE_LAST_MODIFIED = Qt.UserRole + 4
+USER_ROLE_PERMISSIONS   = Qt.UserRole + 5
 
 ITEM_TYPE_FILE      = 1
 ITEM_TYPE_DIRECTORY = 2
@@ -97,6 +99,7 @@ def expand_walk_to_model(walk, model, folder_icon, file_icon):
                 name_item = QStandardItem(name)
                 name_item.setData(folder_icon, Qt.DecorationRole)
                 name_item.setData(ITEM_TYPE_DIRECTORY, USER_ROLE_ITEM_TYPE)
+                name_item.setData(int(dw['p']), USER_ROLE_PERMISSIONS)
 
                 size_item          = QStandardItem('')
                 last_modified_item = create_last_modified_item(int(dw['l']))
@@ -117,6 +120,7 @@ def expand_walk_to_model(walk, model, folder_icon, file_icon):
             name_item = QStandardItem(name)
             name_item.setData(file_icon, Qt.DecorationRole)
             name_item.setData(ITEM_TYPE_FILE, USER_ROLE_ITEM_TYPE)
+            name_item.setData(int(dw['p']), USER_ROLE_PERMISSIONS)
 
             size      = int(dw['s'])
             size_item = QStandardItem(get_file_display_size(size))
@@ -181,6 +185,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.button_upload_files.clicked.connect(show_upload_files_wizard)
         self.button_download_files.clicked.connect(self.download_selected_files)
         self.button_rename_file.clicked.connect(self.rename_selected_file)
+        self.button_change_file_permissions.clicked.connect(self.change_permissions_of_selected_file)
         self.button_delete_files.clicked.connect(self.delete_selected_files)
 
         self.label_error.setVisible(False)
@@ -191,6 +196,7 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
         self.set_widget_enabled(self.button_upload_files, not self.any_refresh_in_progress)
         self.set_widget_enabled(self.button_download_files, not self.any_refresh_in_progress and selection_count > 0)
         self.set_widget_enabled(self.button_rename_file, not self.any_refresh_in_progress and selection_count == 1)
+        self.set_widget_enabled(self.button_change_file_permissions, not self.any_refresh_in_progress and selection_count == 1)
         self.set_widget_enabled(self.button_delete_files, not self.any_refresh_in_progress and selection_count > 0)
 
     def close_all_dialogs(self):
@@ -395,6 +401,49 @@ class ProgramInfoFiles(QWidget, Ui_ProgramInfoFiles):
 
         self.script_manager.execute_script('rename', cb_rename,
                                            [absolute_old_name, absolute_new_name])
+
+    def change_permissions_of_selected_file(self):
+        selection_count = len(self.tree_files.selectionModel().selectedRows())
+
+        if selection_count != 1:
+            return
+
+        selected_name_items = self.get_directly_selected_name_items()
+
+        if len(selected_name_items) != 1:
+            return
+
+        name_item = selected_name_items[0]
+        item_type = name_item.data(USER_ROLE_ITEM_TYPE)
+        old_permissions = name_item.data(USER_ROLE_PERMISSIONS)
+
+        if item_type == ITEM_TYPE_FILE:
+            title     = 'Change File Permissions'
+            type_name = 'file'
+        else:
+            title     = 'Change Directory Permissions'
+            type_name = 'directory'
+
+        dialog = ProgramInfoFilesPermissions(get_main_window(), title, old_permissions)
+
+        if dialog.exec_() != QDialog.Accepted:
+            return
+
+        new_permissions = dialog.get_permissions()
+
+        if new_permissions == (old_permissions & 0o777):
+            return
+
+        absolute_name = posixpath.join(self.bin_directory, get_full_item_path(name_item))
+
+        def cb_change_permissions(result):
+            if not report_script_result(result, title + ' Error', u'Could change {0} permissions'.format(type_name)):
+                return
+
+            name_item.setData(new_permissions, USER_ROLE_PERMISSIONS)
+
+        self.script_manager.execute_script('change_permissions', cb_change_permissions,
+                                           [absolute_name, str(new_permissions)])
 
     def delete_selected_files(self):
         button = QMessageBox.question(get_main_window(), 'Delete Files',

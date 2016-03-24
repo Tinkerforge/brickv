@@ -25,12 +25,14 @@ try:
                 children  = directory.setdefault('c', {})
 
                 if 'l' not in directory:
-                    directory['l'] = int(os.lstat(root).st_mtime)
+                    st             = os.lstat(root)
+                    directory['l'] = int(st.st_mtime)
+                    directory['p'] = int(st.st_mode)
 
         for filename in files:
             absolute           = os.path.join(root, filename)
             st                 = os.lstat(absolute)
-            children[filename] = {'s': st.st_size, 'l': int(st.st_mtime)}
+            children[filename] = {'s': st.st_size, 'l': int(st.st_mtime), 'p': int(st.st_mode)}
 except Exception as e:
     sys.stderr.write(unicode(e).encode('utf-8'))
     exit(3)
