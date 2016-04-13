@@ -121,18 +121,18 @@ class DeviceDialog(QDialog, Ui_DeviceDialog):
                      hardware_version, firmware_version,
                      device_identifier, enumeration_type):
         if enumeration_type in [IPConnection.ENUMERATION_TYPE_AVAILABLE,
-                                IPConnection.ENUMERATION_TYPE_CONNECTED] and \
-           uid not in self.connected_uids:
-            try:
-                display_name = device_factory.get_device_display_name(device_identifier)
-            except KeyError:
-                return # unknown device identifier
+                                IPConnection.ENUMERATION_TYPE_CONNECTED]:
+            if uid not in self.connected_uids:
+                try:
+                    display_name = device_factory.get_device_display_name(device_identifier)
+                except KeyError:
+                    return # unknown device identifier
 
-            if display_name in device_specs:
-                self.connected_uids.append(uid)
-                self.available_item.addChild(QTreeWidgetItem(['{0} [{1}]'.format(display_name, uid)]))
-                self.available_item.setText(0, 'Devices available at {0}:{1}'.format(self.host, self.port))
-                self.available_item.sortChildren(0, Qt.AscendingOrder)
+                if display_name in device_specs:
+                    self.connected_uids.append(uid)
+                    self.available_item.addChild(QTreeWidgetItem(['{0} [{1}]'.format(display_name, uid)]))
+                    self.available_item.setText(0, 'Devices available at {0}:{1}'.format(self.host, self.port))
+                    self.available_item.sortChildren(0, Qt.AscendingOrder)
         else:
             if uid in self.connected_uids:
                 self.connected_uids.remove(uid)
