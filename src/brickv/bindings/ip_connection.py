@@ -541,8 +541,10 @@ class IPConnection:
         # create and connect socket
         try:
             tmp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            tmp.settimeout(5)
             tmp.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
             tmp.connect((self.host, self.port))
+            tmp.settimeout(None)
         except:
             def cleanup():
                 # end callback thread
