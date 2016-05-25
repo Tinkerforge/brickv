@@ -47,6 +47,16 @@ WEEKDAY_BY_NAME = {
     'Sunday' : BrickletRealTimeClock.WEEKDAY_SUNDAY,
 }
 
+WEEKDAY_BY_NUMBER = {
+    BrickletRealTimeClock.WEEKDAY_MONDAY : 'Monday',
+    BrickletRealTimeClock.WEEKDAY_TUESDAY : 'Tuesday',
+    BrickletRealTimeClock.WEEKDAY_WEDNESDAY : 'Wednesday',
+    BrickletRealTimeClock.WEEKDAY_THURSDAY : 'Thursday',
+    BrickletRealTimeClock.WEEKDAY_FRIDAY : 'Friday',
+    BrickletRealTimeClock.WEEKDAY_SATURDAY : 'Saturday',
+    BrickletRealTimeClock.WEEKDAY_SUNDAY : 'Sunday',
+}
+
 class MeasurmentThread(Thread):
     def __init__(self, calibration):
         Thread.__init__(self, target=self.loop)
@@ -215,6 +225,8 @@ class Calibration(QDialog, Ui_Calibration):
         self.label_error_message.show()
 
 class RealTimeClock(PluginBase, Ui_RealTimeClock):
+    qtcb_alarm = pyqtSignal(int, int, int, int, int, int, int, int, int)
+
     def __init__(self, *args):
         PluginBase.__init__(self, BrickletRealTimeClock, *args)
 
@@ -246,8 +258,37 @@ class RealTimeClock(PluginBase, Ui_RealTimeClock):
 
         self.button_calibration.clicked.connect(self.calibrate)
 
+        self.combo_alarm_weekday.addItem('Disabled', BrickletRealTimeClock.ALARM_MATCH_DISABLED)
+        self.combo_alarm_weekday.addItem('Monday', BrickletRealTimeClock.WEEKDAY_MONDAY)
+        self.combo_alarm_weekday.addItem('Tuesday', BrickletRealTimeClock.WEEKDAY_TUESDAY)
+        self.combo_alarm_weekday.addItem('Wednesday', BrickletRealTimeClock.WEEKDAY_WEDNESDAY)
+        self.combo_alarm_weekday.addItem('Thursday', BrickletRealTimeClock.WEEKDAY_THURSDAY)
+        self.combo_alarm_weekday.addItem('Friday', BrickletRealTimeClock.WEEKDAY_FRIDAY)
+        self.combo_alarm_weekday.addItem('Saturday', BrickletRealTimeClock.WEEKDAY_SATURDAY)
+        self.combo_alarm_weekday.addItem('Sunday', BrickletRealTimeClock.WEEKDAY_SUNDAY)
+
+        if self.firmware_version < (2, 0, 1):
+            self.group_alarm.setTitle('Alarm (FW Version >= 2.0.1 required)')
+            self.group_alarm.setEnabled(False)
+        else:
+            self.button_set_alarm.clicked.connect(self.set_alarm)
+            self.button_disable_alarm.clicked.connect(self.disable_alarm)
+            self.button_clear_alarms.clicked.connect(self.clear_alarms)
+
+            self.spin_alarm_month.valueChanged.connect(self.check_alarm)
+            self.spin_alarm_day.valueChanged.connect(self.check_alarm)
+            self.spin_alarm_interval.valueChanged.connect(self.check_alarm)
+
+            self.qtcb_alarm.connect(self.cb_alarm)
+            self.rtc.register_callback(self.rtc.CALLBACK_ALARM,
+                                       self.qtcb_alarm.emit)
+
     def start(self):
         async_call(self.rtc.get_offset, None, self.get_offset_async, self.increase_error_count)
+
+        if self.firmware_version >= (2, 0, 1):
+            async_call(self.rtc.get_alarm, None, self.get_alarm_async, self.increase_error_count)
+
         self.cbe_date_time.set_period(50)
 
     def stop(self):
@@ -345,3 +386,60 @@ class RealTimeClock(PluginBase, Ui_RealTimeClock):
 
     def get_offset_async(self, offset):
         self.offset = offset
+
+    def check_alarm(self):
+        month = self.spin_alarm_month.value()
+        day = self.spin_alarm_day.value()
+        interval = self.spin_alarm_interval.value()
+
+        self.button_set_alarm.setEnabled(month != 0 and day != 0 and interval != 0)
+
+    def set_alarm(self):
+        month = self.spin_alarm_month.value()
+        day = self.spin_alarm_day.value()
+        hour = self.spin_alarm_hour.value()
+        minute = self.spin_alarm_minute.value()
+        second = self.spin_alarm_second.value()
+        weekday = self.combo_alarm_weekday.itemData(self.combo_alarm_weekday.currentIndex())
+        interval = self.spin_alarm_interval.value()
+
+        if month == 0 or day == 0 or interval == 0:
+            return
+
+        self.rtc.set_alarm(month, day, hour, minute, second, weekday, interval)
+
+    def disable_alarm(self):
+        self.spin_alarm_month.setValue(-1)
+        self.spin_alarm_day.setValue(-1)
+        self.spin_alarm_hour.setValue(-1)
+        self.spin_alarm_minute.setValue(-1)
+        self.spin_alarm_second.setValue(-1)
+        self.combo_alarm_weekday.setCurrentIndex(0)
+        self.spin_alarm_interval.setValue(-1)
+
+        self.set_alarm()
+
+    def clear_alarms(self):
+        self.list_alarms.clear()
+
+    def get_alarm_async(self, alarm):
+        month, day, hour, minute, second, weekday, interval = alarm
+
+        self.spin_alarm_month.setValue(month)
+        self.spin_alarm_day.setValue(day)
+        self.spin_alarm_hour.setValue(hour)
+        self.spin_alarm_minute.setValue(minute)
+        self.spin_alarm_second.setValue(second)
+
+        if weekday < 0:
+            self.combo_alarm_weekday.setCurrentIndex(0)
+        else:
+            self.combo_alarm_weekday.setCurrentIndex(weekday)
+
+        self.spin_alarm_interval.setValue(interval)
+
+    def cb_alarm(self, year, month, day, hour, minute, second, centisecond, weekday, interval):
+        async_call(self.rtc.get_alarm, None, self.get_alarm_async, self.increase_error_count)
+
+        self.list_alarms.addItem('{0}-{1}-{2} T {3:02}:{4:02}:{5:02}.{6:02} {7}'
+                                 .format(year, month, day, hour, minute, second, centisecond, WEEKDAY_BY_NUMBER[weekday]))
