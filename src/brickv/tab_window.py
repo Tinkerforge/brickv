@@ -84,9 +84,14 @@ class TabWindow(QDialog):
         self.cb_on_tab = None
         self.cb_on_untab = None
 
+    # overrides QDialog.closeEvent
     def closeEvent(self, event):
         self.tab()
         event.accept()
+
+    # overrides QDialog.reject
+    def reject(self):
+        pass # ignore escape key, because QDialog.reject would hide the widget
 
     def untab(self):
         index = self.tab_widget.indexOf(self)
