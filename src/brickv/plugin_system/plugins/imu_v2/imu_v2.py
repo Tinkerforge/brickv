@@ -133,6 +133,9 @@ class WrapperWidget(QWidget):
         self.plugin.button_detach_3d_view.setEnabled(True)
         self.plugin.imu_gl_wrapper = None
 
+        if self.plugin.plugin_state != PluginBase.PLUGIN_STATE_RUNNING:
+            self.plugin.cbe_all_data.set_period(0)
+
     def minimumSizeHint(self):
         return QSize(500, 500)
 
@@ -280,7 +283,8 @@ class IMUV2(PluginBase, Ui_IMUV2):
         for w in self.data_plot_widget:
             w.stop = True
 
-        self.cbe_all_data.set_period(0)
+        if self.imu_gl_wrapper == None:
+            self.cbe_all_data.set_period(0)
 
     def destroy(self):
         self.alive = False
