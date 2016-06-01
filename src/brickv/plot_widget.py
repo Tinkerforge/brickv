@@ -2,7 +2,7 @@
 """
 brickv (Brick Viewer)
 Copyright (C) 2011 Olaf Lüke <olaf@tinkerforge.com>
-Copyright (C) 2014 Matthias Bolte <matthias@tinkerforge.com>
+Copyright (C) 2014, 2016 Matthias Bolte <matthias@tinkerforge.com>
 
 plot_widget.py: Graph for simple value over time representation
 
@@ -27,8 +27,8 @@ import math
 import functools
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
-                        QPushButton, QPainter, QSizePolicy, QFontMetrics, \
-                        QPixmap, QIcon, QColor, QCursor, QPen, QPainterPath
+                        QPainter, QSizePolicy, QFontMetrics, QPixmap, \
+                        QIcon, QColor, QCursor, QPen, QPainterPath, QGridLayout
 from PyQt4.QtCore import QTimer, Qt, QSize, QPointF
 
 EPSILON = 0.000001
@@ -698,13 +698,23 @@ class PlotWidget(QWidget):
 
         self.stop = True
         self.plot = Plot(self, y_scale_title_text, plots, scales_visible,
-                         curve_outer_border_visible, curve_motion_granularity, canvas_color)
+                         curve_outer_border_visible, curve_motion_granularity,
+                         canvas_color)
         self.set_fixed_y_scale = self.plot.set_fixed_y_scale
         self.plot_buttons = []
         self.first_show = True
 
         if clear_button == None:
-            self.clear_button = QPushButton('Clear Graph')
+            self.clear_button = QToolButton()
+            self.clear_button.setText('Clear Graph')
+
+            playout = QGridLayout()
+            playout.setContentsMargins(0, 0, 0, 0)
+            playout.setRowStretch(0, 1)
+            playout.setColumnStretch(0, 1)
+            playout.addWidget(self.clear_button, 1, 1)
+
+            self.plot.setLayout(playout)
         else:
             self.clear_button = clear_button
 
@@ -745,9 +755,6 @@ class PlotWidget(QWidget):
             vlayout.addLayout(hlayout)
         else:
             vlayout.addWidget(self.plot)
-
-        if clear_button == None:
-            vlayout.addWidget(self.clear_button)
 
         self.counter = 0
         self.update_funcs = []
