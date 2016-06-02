@@ -29,6 +29,7 @@ from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QDialog, QAbstractButton, QTabBar, QPainter, \
                         QSizePolicy, QIcon
 
+from brickv import config
 from brickv.load_pixmap import load_pixmap
 from brickv.utils import get_modeless_dialog_flags
 
@@ -101,7 +102,7 @@ class TabWindow(QDialog):
 
             self.tab_widget.removeTab(index)
             self.setWindowFlags(get_modeless_dialog_flags(Qt.Window))
-            self.setWindowTitle(self.name)
+            self.setWindowTitle('Brick Viewer ' + config.BRICKV_VERSION + ' - ' + self.name)
             self.adjustSize()
             self.show()
 

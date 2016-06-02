@@ -34,6 +34,7 @@ from brickv.async_call import async_call
 from brickv.plot_widget import PlotWidget
 from brickv.callback_emulator import CallbackEmulator
 from brickv.utils import get_modeless_dialog_flags
+from brickv import config
 
 class Calibration(QDialog, Ui_Calibration):
     def __init__(self, parent):
@@ -125,7 +126,7 @@ class WrapperWidget(QWidget):
         self.plugin = plugin
 
         self.setLayout(QVBoxLayout())
-        self.setWindowTitle('IMU 3D View')
+        self.setWindowTitle('Brick Viewer ' + config.BRICKV_VERSION + ' - IMU Brick 2.0 - 3D View')
 
     def closeEvent(self, event):
         self.plugin.imu_gl.setFixedSize(200, 200)
