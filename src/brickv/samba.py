@@ -102,10 +102,17 @@ CHIPID_CIDR_ATSAM4S2B_A = 0x289B07E0
 CHIPID_CIDR_ATSAM4S2B_B = 0x289B07E1
 CHIPID_CIDR_ATSAM4S4C_A = 0x28AB09E0
 CHIPID_CIDR_ATSAM4S4C_B = 0x28AB09E1
-CHIPID_CIDR_ATSAM4E8E_A = 0xA3CC0CE0
-CHIPID_CIDR_ATSAM4E8E_B = 0xA3CC0CE1
+CHIPID_CIDR_ATSAM4E8C_A = 0xA3CC0CE0
+CHIPID_CIDR_ATSAM4E8C_B = 0xA3CC0CE1
 CHIPID_CIDR_ATSAM4E16E_A = 0xA3CC0CE0
 CHIPID_CIDR_ATSAM4E16E_B = 0xA3CC0CE1
+
+CHIPID_EXID = 0x400E0744
+
+CHIPID_EXID_ATSAM4E8C_A = 0x00120209
+CHIPID_EXID_ATSAM4E8C_B = 0x00120209
+CHIPID_EXID_ATSAM4E16E_A = 0x00120200
+CHIPID_EXID_ATSAM4E16E_B = 0x00120200
 
 EEFC_FMR = 0x400E0A00
 EEFC_FCR = 0x400E0A04
@@ -115,7 +122,7 @@ EEFC_FRR = 0x400E0A0C
 EEFC_FSR_FRDY   = 0b0001
 EEFC_FSR_FCMDE  = 0b0010
 EEFC_FSR_FLOCKE = 0b0100
-EEFC_FSR_FLERR  = 0b1000 # SAM4S only
+EEFC_FSR_FLERR  = 0b1000 # SAM4 only
 
 EEFC_FCR_FKEY = 0x5A
 
@@ -182,53 +189,58 @@ class SAMBA(object):
         except:
             raise SAMBAException('No Brick in Bootloader found')
 
-        chipid = self.read_uint32(CHIPID_CIDR)
+        chipid_cidr = self.read_uint32(CHIPID_CIDR)
+        chipid_exid = self.read_uint32(CHIPID_EXID)
 
-        if chipid == CHIPID_CIDR_ATSAM3S2B_A:
+        # SAM3
+        if chipid_cidr == CHIPID_CIDR_ATSAM3S2B_A:
             self.sam_series = 3
             self.flash_base = 0x400000
-            self.flash_size = 0x20000
             self.flash_page_count = 512
             self.flash_page_size = 256
             self.flash_lockbit_count = 8
-        elif chipid == CHIPID_CIDR_ATSAM3S4C_A:
+        elif chipid_cidr == CHIPID_CIDR_ATSAM3S4C_A:
             self.sam_series = 3
             self.flash_base = 0x400000
-            self.flash_size = 0x40000
             self.flash_page_count = 1024
             self.flash_page_size = 256
             self.flash_lockbit_count = 16
-        elif chipid in [CHIPID_CIDR_ATSAM4S2B_A, CHIPID_CIDR_ATSAM4S2B_B]:
+
+        # SAM4S
+        elif chipid_cidr in [CHIPID_CIDR_ATSAM4S2B_A, CHIPID_CIDR_ATSAM4S2B_B]:
             self.sam_series = 4
             self.flash_base = 0x400000
-            self.flash_size = 0x20000
             self.flash_page_count = 256
             self.flash_page_size = 512
             self.flash_lockbit_count = 16
-        elif chipid in [CHIPID_CIDR_ATSAM4S4C_A, CHIPID_CIDR_ATSAM4S4C_B]:
+        elif chipid_cidr in [CHIPID_CIDR_ATSAM4S4C_A, CHIPID_CIDR_ATSAM4S4C_B]:
             self.sam_series = 4
             self.flash_base = 0x400000
-            self.flash_size = 0x40000
             self.flash_page_count = 512
             self.flash_page_size = 512
             self.flash_lockbit_count = 32
-        elif chipid in [CHIPID_CIDR_ATSAM4E8E_A, CHIPID_CIDR_ATSAM4E8E_B]:
+
+        # SAM4E
+        elif chipid_cidr in [CHIPID_CIDR_ATSAM4E8C_A, CHIPID_CIDR_ATSAM4E8C_B] and \
+             chipid_exid in [CHIPID_EXID_ATSAM4E8C_A, CHIPID_EXID_ATSAM4E8C_B]:
             self.sam_series = 4
             self.flash_base = 0x400000
-            self.flash_size = 0x80000
             self.flash_page_count = 1024
             self.flash_page_size = 512
-            self.flash_lockbit_count = 32
-        elif chipid in [CHIPID_CIDR_ATSAM4E16E_A, CHIPID_CIDR_ATSAM4E16E_B]:
+            self.flash_lockbit_count = 128
+        elif chipid_cidr in [CHIPID_CIDR_ATSAM4E16E_A, CHIPID_CIDR_ATSAM4E16E_B] and \
+             chipid_exid in [CHIPID_EXID_ATSAM4E16E_A, CHIPID_EXID_ATSAM4E16E_B]:
             self.sam_series = 4
             self.flash_base = 0x400000
-            self.flash_size = 0x80000
             self.flash_page_count = 2048
             self.flash_page_size = 512
-            self.flash_lockbit_count = 32
-        else:
-            raise SAMBAException('Brick has unknown CHIPID: 0x%08X' % chipid)
+            self.flash_lockbit_count = 128
 
+        # unknown
+        else:
+            raise SAMBAException('Brick has unknown CHIPID: 0x%08X / 0x%08X' % (chipid_cidr, chipid_exid))
+
+        self.flash_size = self.flash_page_count * self.flash_page_size
         self.flash_lockregion_size = self.flash_size // self.flash_lockbit_count
         self.flash_pages_per_lockregion = self.flash_lockregion_size // self.flash_page_size
 
