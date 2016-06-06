@@ -25,11 +25,13 @@ Boston, MA 02111-1307, USA.
 import sys
 import math
 import functools
+import bisect
 
 from PyQt4.QtGui import QVBoxLayout, QHBoxLayout, QWidget, QToolButton, \
                         QPainter, QSizePolicy, QFontMetrics, QPixmap, \
-                        QIcon, QColor, QCursor, QPen, QPainterPath, QLabel
-from PyQt4.QtCore import QTimer, Qt, QSize, QPointF
+                        QIcon, QColor, QCursor, QPen, QPainterPath, QLabel, \
+                        QTransform, QPalette
+from PyQt4.QtCore import QTimer, Qt, QSize, QPointF, QRectF, QLineF
 
 EPSILON = 0.000001
 DEBUG = False
@@ -309,6 +311,10 @@ class Plot(QWidget):
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
+        # FIXME: need to enable opaque painting to avoid that updates of other
+        #        widgets trigger a full update of the plot
+        self.setAttribute(Qt.WA_OpaquePaintEvent, True)
+
         self.configs = configs
         self.scales_visible = scales_visible
         self.history_length_x = 20 # seconds
@@ -329,6 +335,8 @@ class Plot(QWidget):
         self.curve_to_scale = 8 # px, fixed
         self.cross_hair_visible = False
         self.canvas_color = canvas_color
+        self.partial_update_width = 50 # px, initial value, calculated in update
+        self.partial_update_enabled = False
 
         self.tick_text_font = self.font()
 
@@ -362,6 +370,8 @@ class Plot(QWidget):
         painter = QPainter(self)
         width = self.width()
         height = self.height()
+
+        painter.fillRect(event.rect(), self.palette().color(QPalette.Window)) # FIXME: this is slightly the wrong color on GNOME
 
         if self.scales_visible:
             curve_width = width - self.y_scale.total_width - self.curve_to_scale - self.curve_outer_border
@@ -432,11 +442,19 @@ class Plot(QWidget):
             else:
                 curve_x_offset = round((self.history_length_x - (x_max - x_min)) * factor_x)
 
+            transform = QTransform()
+
+            transform.translate(canvas_x + self.curve_outer_border + curve_x_offset,
+                                canvas_y + self.curve_outer_border + curve_height - 1 + self.curve_y_offset) # -1 to accommodate the 1px width of the curve
+            transform.scale(factor_x, -factor_y)
+            transform.translate(-x_min, -y_min_scale)
+
+            self.partial_update_width = math.ceil(transform.map(QLineF(0, 0, 1.5, 0)).length())
+
+            inverted_event_rect = transform.inverted()[0].mapRect(QRectF(event.rect()))
+
             painter.save()
-            painter.translate(canvas_x + self.curve_outer_border + curve_x_offset,
-                              canvas_y + self.curve_outer_border + curve_height - 1 + self.curve_y_offset) # -1 to accommodate the 1px width of the curve
-            painter.scale(factor_x, -factor_y)
-            painter.translate(-x_min, -y_min_scale)
+            painter.setTransform(transform)
 
             for c in range(len(self.curves_x)):
                 if not self.curves_visible[c]:
@@ -446,10 +464,11 @@ class Plot(QWidget):
                 curve_y = self.curves_y[c]
                 path = QPainterPath()
                 lineTo = path.lineTo
+                start = max(min(bisect.bisect_left(curve_x, inverted_event_rect.left()), len(curve_x) - 1) - 1, 0)
 
-                path.moveTo(curve_x[0], curve_y[0])
+                path.moveTo(curve_x[start], curve_y[start])
 
-                for i in xrange(1, len(curve_x)):
+                for i in xrange(start + 1, len(curve_x)):
                     lineTo(curve_x[i], curve_y[i])
 
                 painter.setPen(self.configs[c][1])
@@ -557,6 +576,8 @@ class Plot(QWidget):
                 self.curves_y_max[c] = max(self.curves_y[c])
 
                 self.update_x_min_max_y_min_max()
+
+                self.partial_update_enabled = True
             else:
                 self.curves_x_max[c] = self.curves_x[c][-1]
                 self.x_max = min(self.curves_x_max)
@@ -564,9 +585,14 @@ class Plot(QWidget):
         if self.curves_visible[c] and (last_y_min != self.y_min or last_y_max != self.y_max):
             self.update_y_min_max_scale()
 
-        self.update()
+        if self.partial_update_enabled:
+            self.update(self.width() - self.partial_update_width - self.curve_outer_border, 0, self.partial_update_width, self.height())
+        else:
+            self.update()
 
     def update_x_min_max_y_min_max(self):
+        last_x_min, last_x_max, last_y_min, last_y_max = self.x_min, self.x_max, self.y_min, self.y_max
+
         self.x_min = min(self.curves_x_min)
         self.x_max = min(self.curves_x_max)
 
@@ -576,6 +602,9 @@ class Plot(QWidget):
         else:
             self.y_min = None
             self.y_max = None
+
+        if (last_x_min, last_x_max, last_y_min, last_y_max) != (self.x_min, self.x_max, self.y_min, self.y_max):
+            self.update()
 
     def update_y_min_max_scale(self):
         if self.y_scale_fixed:
@@ -648,6 +677,8 @@ class Plot(QWidget):
         self.y_scale.update_tick_config(y_min_scale, y_max_scale,
                                         step_size, step_subdivision_count)
 
+        self.update()
+
     def show_curve(self, c, show):
         if self.curves_visible[c] == show:
             return
@@ -684,6 +715,7 @@ class Plot(QWidget):
         self.y_min = None # minimum y value over all curves
         self.y_max = None # maximum y value over all curves
         self.y_type = None
+        self.partial_update_enabled = False
 
         self.update()
 
